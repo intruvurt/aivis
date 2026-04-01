@@ -1,0 +1,44 @@
+/**
+ * Audit-related types
+ */
+
+export interface Audit {
+  id: string;
+  user_id: string;
+  url: string;
+  status: AuditStatus;
+  visibility_score: number | null;
+  result: AuditResult | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}
+
+export type AuditStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+export interface AuditResult {
+  visibility_score: number;
+  ai_platform_scores: Record<string, number>;
+  recommendations: AuditRecommendation[];
+  summary: string;
+}
+
+export interface AuditRecommendation {
+  id: string;
+  priority: 'high' | 'medium' | 'low';
+  category: string;
+  title: string;
+  description: string;
+  impact: string;
+}
+
+export interface AuditRequest {
+  url: string;
+  force_refresh?: boolean;
+}
+
+export interface AuditListParams {
+  page?: number;
+  page_size?: number;
+  status?: AuditStatus;
+}

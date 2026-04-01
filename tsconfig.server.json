@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+
+    "noEmit": true,
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    }
+  },
+  "include": [
+    "server/**/*.ts",
+    "shared/**/*.ts",
+    "tools/**/*.ts",
+    "shared/types.ts",
+    "server/src/lib/utils/evidenceUtils.ts",
+    "api/**/*.ts"
+, "client/eslint.config.ts", "client/src/vite.config.ts"  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "client",
+    "server/src/services/authService.ts",
+    "server/src/controllers/authController.ts",
+    "server/src/middleware/usageEnforcement.ts",
+    "server/src/config/oauth.ts",
+    "server/src/config/redis.ts",
+    "server/src/lib/utils/forensicPipeline.ts",
+    "server/src/lib/utils/pricingUtils.ts",
+    "server/src/lib/utils/technicalChecker.ts",
+    "server/src/lib/utils/redisClient.ts",
+    "server/src/lib/utils/scoringEngine.ts",
+    "server/src/lib/utils/webCrawler.ts",
+    "server/src/lib/utils/db.ts",
+    "server/src/cli"
+  ]
+}

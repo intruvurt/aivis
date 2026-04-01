@@ -1,0 +1,2447 @@
+import 'dotenv/config';
+import pg from 'pg';
+import type { Pool, PoolClient } from 'pg';
+import { IS_PRODUCTION } from '../config/runtime.js';
+
+const { Pool: PgPool } = pg;
+
+function normalizeDatabaseUrl(raw: string): string {
+  const input = String(raw || '').trim();
+  if (!input) return '';
+
+  if (!IS_PRODUCTION) return input;
+
+  // Only upgrade 'prefer' to 'require' — do NOT force 'verify-full'
+  // which needs a CA cert that Render doesn't provide by default.
+  if (/sslmode=prefer/i.test(input)) {
+    return input.replace(/sslmode=prefer/i, 'sslmode=require');
+  }
+
+  return input;
+}
+
+const DATABASE_URL = normalizeDatabaseUrl(process.env.DATABASE_URL?.trim() || '');
+
+export const dbConfigured = DATABASE_URL.length > 0;
+
+let poolInstance: Pool | null = null;
+let migrationsRan = false;
+let databaseAvailable = dbConfigured;
+let lastDatabaseError: string | null = dbConfigured ? null : 'DATABASE_URL not configured';
+let lastDatabaseErrorTime: number = 0;
+const DB_UNAVAILABLE_RETRY_MS = 60_000; // retry DB check after 60s
+
+export function isDatabaseQuotaError(err: unknown): boolean {
+  const message = err instanceof Error ? err.message : String(err || '');
+  return /exceeded the compute time quota/i.test(message);
+}
+
+function shouldRetryDatabaseError(err: unknown): boolean {
+  return !isDatabaseQuotaError(err);
+}
+
+export function isDatabaseAvailable(): boolean {
+  return dbConfigured && databaseAvailable;
+}
+
+export function getDatabaseStatus(): { configured: boolean; available: boolean; lastError: string | null } {
+  return {
+    configured: dbConfigured,
+    available: isDatabaseAvailable(),
+    lastError: lastDatabaseError,
+  };
+}
+
+function markDatabaseAvailable(): void {
+  databaseAvailable = true;
+  lastDatabaseError = null;
+}
+
+function markDatabaseUnavailable(err: unknown): void {
+  databaseAvailable = false;
+  lastDatabaseError = err instanceof Error ? err.message : String(err || 'Unknown database error');
+  lastDatabaseErrorTime = Date.now();
+}
+
+export function getPool(): Pool {
+  if (!dbConfigured) {
+    throw new Error('DATABASE_URL not configured');
+  }
+  if (!poolInstance) {
+    poolInstance = new PgPool({
+      connectionString: DATABASE_URL,
+      max: 20,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 30_000,
+      statement_timeout: 30_000,
+    });
+  }
+  return poolInstance;
+}
+
+async function runSingleMigration(client: PoolClient, query: string, description?: string): Promise<boolean> {
+  try {
+    await client.query(query);
+    if (description) console.log(`  ✓ ${description}`);
+    return true;
+  } catch (err: any) {
+    // Log but don't fail on idempotent operations that already exist
+    if (description) console.warn(`  ⚠ ${description}: ${err.message.substring(0, 60)}`);
+    return false;
+  }
+}
+
+async function checkDatabaseInitialized(client: PoolClient): Promise<boolean> {
+  try {
+    const result = await client.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_name = 'users'
+      ) as exists
+    `);
+    return result.rows[0]?.exists === true;
+  } catch {
+    return false;
+  }
+}
+
+export async function runMigrations(): Promise<void> {
+  if (migrationsRan || !dbConfigured) return;
+  
+  let client: PoolClient | null = null;
+  const retriesFromEnv = Number(process.env.DB_MIGRATION_MAX_RETRIES || '');
+  const maxRetries = Number.isFinite(retriesFromEnv) && retriesFromEnv > 0
+    ? Math.floor(retriesFromEnv)
+    : 3;
+  let lastError: any;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      client = await getPool().connect();
+      
+      // Check if core tables already exist
+      const coreTablesExist = await checkDatabaseInitialized(client);
+      if (coreTablesExist) {
+        // Tables exist, but we still need to run idempotent ALTER/CREATE statements
+        // to ensure newer columns and tables added after initial deployment are present.
+        // Each statement runs independently so one failure doesn't block the rest.
+        {
+          const patchStatements = [
+            // ── Workspace infrastructure (may be missing if initial DDL batch failed partway) ──
+            `CREATE TABLE IF NOT EXISTS organizations (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              name TEXT NOT NULL,
+              slug VARCHAR(60) NOT NULL,
+              owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              is_personal BOOLEAN NOT NULL DEFAULT FALSE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (owner_user_id, slug)
+            )`,
+            `CREATE TABLE IF NOT EXISTS workspaces (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+              name TEXT NOT NULL,
+              slug VARCHAR(60) NOT NULL DEFAULT 'default',
+              created_by_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              is_default BOOLEAN NOT NULL DEFAULT FALSE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (organization_id, slug)
+            )`,
+            `CREATE TABLE IF NOT EXISTS workspace_members (
+              workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              role VARCHAR(20) NOT NULL DEFAULT 'member',
+              joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              PRIMARY KEY (workspace_id, user_id)
+            )`,
+            `CREATE TABLE IF NOT EXISTS workspace_invites (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+              email TEXT NOT NULL,
+              role VARCHAR(20) NOT NULL DEFAULT 'member',
+              token TEXT UNIQUE NOT NULL,
+              expires_at TIMESTAMPTZ NOT NULL,
+              invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              accepted_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `ALTER TABLE workspace_invites ADD COLUMN IF NOT EXISTS invited_by UUID REFERENCES users(id) ON DELETE CASCADE`,
+            `CREATE INDEX IF NOT EXISTS idx_workspace_invites_token ON workspace_invites(token)`,
+            `CREATE INDEX IF NOT EXISTS idx_workspace_invites_workspace ON workspace_invites(workspace_id)`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`,
+            // ── Support tickets (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS support_tickets (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              ticket_number VARCHAR(16) NOT NULL UNIQUE,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              subject VARCHAR(200) NOT NULL,
+              category VARCHAR(32) NOT NULL DEFAULT 'general',
+              priority VARCHAR(16) NOT NULL DEFAULT 'normal',
+              status VARCHAR(32) NOT NULL DEFAULT 'open',
+              description TEXT NOT NULL,
+              metadata JSONB DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              resolved_at TIMESTAMPTZ
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)`,
+            `CREATE INDEX IF NOT EXISTS idx_support_tickets_number ON support_tickets(ticket_number)`,
+            `CREATE TABLE IF NOT EXISTS support_ticket_messages (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
+              sender_type VARCHAR(16) NOT NULL DEFAULT 'user',
+              sender_id UUID,
+              message TEXT NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON support_ticket_messages(ticket_id)`,
+            // ── audits columns for MCP queue processor ──
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'completed'`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ`,
+            `CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`,
+            // ── Agent task queue ──
+            `CREATE TABLE IF NOT EXISTS agent_tasks (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              task_type VARCHAR(40) NOT NULL,
+              payload JSONB NOT NULL DEFAULT '{}',
+              status VARCHAR(20) NOT NULL DEFAULT 'pending',
+              result JSONB,
+              error TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              started_at TIMESTAMPTZ,
+              completed_at TIMESTAMPTZ
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_agent_tasks_user ON agent_tasks(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status) WHERE status = 'pending'`,
+            // ── Niche Discovery Jobs (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS niche_discovery_jobs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              workspace_id UUID NOT NULL,
+              query TEXT NOT NULL,
+              location TEXT NOT NULL DEFAULT '',
+              status VARCHAR(20) NOT NULL DEFAULT 'pending',
+              discovered_urls JSONB DEFAULT '[]'::jsonb,
+              scheduled_count INTEGER DEFAULT 0,
+              audited_count INTEGER DEFAULT 0,
+              error TEXT,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_niche_discovery_user ON niche_discovery_jobs(user_id)`,
+            // ── Auto Score Fix Jobs (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS auto_score_fix_jobs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+              audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              target_url TEXT NOT NULL,
+              vcs_provider VARCHAR(20) NOT NULL DEFAULT 'github',
+              repo_owner TEXT NOT NULL,
+              repo_name TEXT NOT NULL,
+              repo_branch TEXT NOT NULL DEFAULT 'main',
+              status VARCHAR(30) NOT NULL DEFAULT 'pending',
+              credits_spent NUMERIC(12,2) NOT NULL DEFAULT 10,
+              pr_number INTEGER,
+              pr_url TEXT,
+              pr_title TEXT,
+              pr_body TEXT,
+              fix_plan JSONB,
+              evidence_snapshot JSONB,
+              error_message TEXT,
+              implementation_duration_minutes INTEGER,
+              checks_status VARCHAR(32) NOT NULL DEFAULT 'unknown',
+              github_pr_merged_at TIMESTAMPTZ,
+              rescan_status VARCHAR(24) NOT NULL DEFAULT 'not_scheduled',
+              rescan_scheduled_for TIMESTAMPTZ,
+              rescan_started_at TIMESTAMPTZ,
+              rescan_completed_at TIMESTAMPTZ,
+              rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              score_before NUMERIC(6,2),
+              score_after NUMERIC(6,2),
+              score_delta NUMERIC(6,2),
+              expires_at TIMESTAMPTZ NOT NULL,
+              approved_at TIMESTAMPTZ,
+              rejected_at TIMESTAMPTZ,
+              refund_processed_at TIMESTAMPTZ,
+              refund_credits NUMERIC(12,2),
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_asf_jobs_user ON auto_score_fix_jobs(user_id, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_asf_jobs_status ON auto_score_fix_jobs(status)`,
+            `CREATE INDEX IF NOT EXISTS idx_asf_jobs_expires ON auto_score_fix_jobs(expires_at) WHERE status IN ('pending_approval', 'pending')`,
+            `CREATE INDEX IF NOT EXISTS idx_asf_jobs_workspace ON auto_score_fix_jobs(workspace_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_asf_jobs_rescan_status ON auto_score_fix_jobs(rescan_status)`,
+            // ── VCS Tokens (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS vcs_tokens (
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              provider VARCHAR(20) NOT NULL,
+              encrypted_token TEXT NOT NULL,
+              token_hint VARCHAR(12) NOT NULL,
+              scopes TEXT[],
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              PRIMARY KEY(user_id, provider)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_vcs_tokens_user ON vcs_tokens(user_id)`,
+            // ── OAuth 2.0 Tables (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS oauth_clients (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              client_id VARCHAR(64) NOT NULL UNIQUE,
+              client_secret_hash VARCHAR(128) NOT NULL,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              name VARCHAR(120) NOT NULL,
+              redirect_uris JSONB NOT NULL DEFAULT '[]',
+              scopes JSONB NOT NULL DEFAULT '[]',
+              enabled BOOLEAN NOT NULL DEFAULT TRUE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_oauth_clients_user ON oauth_clients(user_id)`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_oauth_clients_client_id ON oauth_clients(client_id)`,
+            `CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              code_hash VARCHAR(128) NOT NULL,
+              client_id VARCHAR(64) NOT NULL,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              redirect_uri TEXT NOT NULL,
+              scopes JSONB NOT NULL DEFAULT '[]',
+              redeemed BOOLEAN NOT NULL DEFAULT FALSE,
+              expires_at TIMESTAMPTZ NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_oauth_codes_hash ON oauth_authorization_codes(code_hash)`,
+            `CREATE TABLE IF NOT EXISTS oauth_tokens (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              token_hash VARCHAR(128) NOT NULL,
+              client_id VARCHAR(64) NOT NULL,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              scopes JSONB NOT NULL DEFAULT '[]',
+              revoked BOOLEAN NOT NULL DEFAULT FALSE,
+              expires_at TIMESTAMPTZ NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash)`,
+            `CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user ON oauth_tokens(user_id)`,
+            // ── Visibility Snapshots (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS visibility_snapshots (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              prompt TEXT NOT NULL,
+              engine VARCHAR(64) NOT NULL,
+              brand_found BOOLEAN NOT NULL DEFAULT FALSE,
+              position INT,
+              cited_urls TEXT[],
+              competitors TEXT[],
+              sentiment VARCHAR(32),
+              raw_text TEXT,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_vs_engine_time ON visibility_snapshots(engine, captured_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_vs_brand_time ON visibility_snapshots(brand_found, captured_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_vs_captured ON visibility_snapshots(captured_at DESC)`,
+            // ── Fixpack Status (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS fixpack_status (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+              fixpack_id VARCHAR(128) NOT NULL,
+              status VARCHAR(20) NOT NULL DEFAULT 'open',
+              owner VARCHAR(255),
+              started_at TIMESTAMPTZ,
+              validated_at TIMESTAMPTZ,
+              re_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              blocked_at TIMESTAMPTZ,
+              resolved_at TIMESTAMPTZ,
+              reopened_at TIMESTAMPTZ,
+              blocker_reason TEXT,
+              lifecycle_state VARCHAR(32) NOT NULL DEFAULT 'opened',
+              verification_status VARCHAR(24) NOT NULL DEFAULT 'not_requested',
+              verification_notes TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(user_id, audit_id, fixpack_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_fixpack_status_user ON fixpack_status(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_fixpack_status_audit ON fixpack_status(audit_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_fixpack_status_lifecycle_state ON fixpack_status(lifecycle_state)`,
+            `CREATE INDEX IF NOT EXISTS idx_fixpack_status_status ON fixpack_status(status)`,
+            `CREATE INDEX IF NOT EXISTS idx_fixpack_status_verification_status ON fixpack_status(verification_status)`,
+            // ── GSC Intelligence Console (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS gsc_connections (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              google_account_email VARCHAR(320) NOT NULL,
+              google_sub VARCHAR(255) NOT NULL,
+              encrypted_refresh_token TEXT NOT NULL,
+              encrypted_access_token TEXT NOT NULL,
+              token_expires_at TIMESTAMPTZ,
+              is_active BOOLEAN NOT NULL DEFAULT TRUE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(user_id, google_sub)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_connections_user ON gsc_connections(user_id)`,
+            `CREATE TABLE IF NOT EXISTS gsc_properties (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              gsc_connection_id UUID NOT NULL REFERENCES gsc_connections(id) ON DELETE CASCADE,
+              site_url TEXT NOT NULL,
+              permission_level VARCHAR(40) NOT NULL DEFAULT 'siteUnverifiedUser',
+              is_selected BOOLEAN NOT NULL DEFAULT FALSE,
+              is_active BOOLEAN NOT NULL DEFAULT TRUE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(user_id, site_url)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_properties_user ON gsc_properties(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_properties_conn ON gsc_properties(gsc_connection_id)`,
+            `CREATE TABLE IF NOT EXISTS gsc_snapshots (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              source_mode VARCHAR(20) NOT NULL DEFAULT 'snapshot',
+              start_date DATE NOT NULL,
+              end_date DATE NOT NULL,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_snapshots_prop ON gsc_snapshots(property_id)`,
+            `CREATE TABLE IF NOT EXISTS gsc_snapshots_pages (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              start_date DATE NOT NULL,
+              end_date DATE NOT NULL,
+              page TEXT NOT NULL,
+              clicks DOUBLE PRECISION NOT NULL DEFAULT 0,
+              impressions DOUBLE PRECISION NOT NULL DEFAULT 0,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_snap_pages_prop ON gsc_snapshots_pages(property_id, start_date, end_date)`,
+            `CREATE TABLE IF NOT EXISTS gsc_snapshots_queries (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              start_date DATE NOT NULL,
+              end_date DATE NOT NULL,
+              query TEXT NOT NULL,
+              page TEXT NOT NULL,
+              clicks DOUBLE PRECISION NOT NULL DEFAULT 0,
+              impressions DOUBLE PRECISION NOT NULL DEFAULT 0,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_snap_queries_prop ON gsc_snapshots_queries(property_id, start_date, end_date)`,
+            `CREATE TABLE IF NOT EXISTS gsc_tool_runs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              tool_name VARCHAR(64) NOT NULL,
+              source_mode VARCHAR(20) NOT NULL DEFAULT 'live_gsc',
+              input_args JSONB NOT NULL DEFAULT '{}',
+              output_summary JSONB NOT NULL DEFAULT '{}',
+              executed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_tool_runs_user ON gsc_tool_runs(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_tool_runs_prop ON gsc_tool_runs(property_id)`,
+            `CREATE TABLE IF NOT EXISTS gsc_evidence_links (
+              evidence_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              source_type VARCHAR(20) NOT NULL,
+              source_ref TEXT NOT NULL,
+              payload JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_evidence_user ON gsc_evidence_links(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_evidence_prop ON gsc_evidence_links(property_id)`,
+            `CREATE TABLE IF NOT EXISTS gsc_snapshot_jobs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              property_id UUID NOT NULL REFERENCES gsc_properties(id) ON DELETE CASCADE,
+              status VARCHAR(20) NOT NULL DEFAULT 'pending',
+              details JSONB,
+              started_at TIMESTAMPTZ,
+              finished_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_gsc_snapshot_jobs_user ON gsc_snapshot_jobs(user_id)`,
+            // ── SSFR + Deterministic pipeline column reconciliation ──
+            // These columns are required by the audit pipeline but were only
+            // created inside the full DDL batch (which never runs after first deploy).
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS content_hash VARCHAR(64)`,
+            `CREATE TABLE IF NOT EXISTS audit_evidence (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_run_id UUID,
+              url TEXT,
+              category VARCHAR(60),
+              key VARCHAR(80),
+              label VARCHAR(200),
+              value_json JSONB,
+              source VARCHAR(120),
+              selector VARCHAR(255),
+              attribute VARCHAR(120),
+              status VARCHAR(20) NOT NULL DEFAULT 'present',
+              confidence NUMERIC(3,2) DEFAULT 1.0,
+              notes_json JSONB DEFAULT '[]'::jsonb,
+              created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS audit_id UUID`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_key TEXT`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS value JSONB DEFAULT '{}'`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`,
+            `ALTER TABLE audit_evidence ALTER COLUMN category DROP NOT NULL`,
+            `ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`,
+            `CREATE TABLE IF NOT EXISTS audit_rule_results (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_id UUID,
+              rule_id VARCHAR(120) NOT NULL,
+              family VARCHAR(20),
+              passed BOOLEAN NOT NULL DEFAULT FALSE,
+              weight NUMERIC(5,2) DEFAULT 1.0,
+              score_contribution NUMERIC(5,2) DEFAULT 0,
+              is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE,
+              evidence_ids UUID[],
+              explanation TEXT,
+              created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_id UUID`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids UUID[]`,
+            `CREATE TABLE IF NOT EXISTS audit_score_snapshots (
+              audit_id UUID PRIMARY KEY,
+              user_id UUID NOT NULL,
+              url TEXT NOT NULL,
+              normalized_url TEXT NOT NULL,
+              visibility_score NUMERIC(6,2) NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS prior_run_id UUID`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS workspace_id UUID`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS execution_class VARCHAR(40)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS information_gain VARCHAR(20)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS contradiction_status VARCHAR(20)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS blocker_count INTEGER NOT NULL DEFAULT 0`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS geo_signal_profile JSONB`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS contradiction_report JSONB`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS family_scores JSONB`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS final_score NUMERIC(6,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_version VARCHAR(20)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS framework_detected VARCHAR(60)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS crawlability_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS indexability_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS renderability_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS metadata_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS schema_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS entity_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`,
+            `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`,
+          ];
+          let patchOk = 0;
+          let patchFail = 0;
+          for (const stmt of patchStatements) {
+            try {
+              await client.query(stmt);
+              patchOk++;
+            } catch (stmtErr: any) {
+              patchFail++;
+              // Log first 100 chars of the failing statement + error for debuggability
+              const stmtPreview = stmt.replace(/\s+/g, ' ').substring(0, 100);
+              console.warn(`[DB] Patch stmt failed (non-fatal): ${stmtPreview}... | ${stmtErr?.message?.substring(0, 80)}`);
+            }
+          }
+          console.log(`[DB] Schema patch complete: ${patchOk} applied, ${patchFail} skipped`);
+        }
+        markDatabaseAvailable();
+        console.log('[DB] Database already initialized, schema verified');
+        migrationsRan = true;
+        return;
+      }
+      
+      console.log(`[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`);
+      // Batch all DDL into a single round-trip to minimize Neon compute usage
+      // (~200 queries → 1 query = ~99% reduction in compute time)
+      const _ddl: string[] = [];
+      const _q = (sql: string) => { _ddl.push(sql.trim().replace(/;\s*$/, '')); };
+    _q(`
+      CREATE TABLE IF NOT EXISTS analysis_cache (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url TEXT UNIQUE NOT NULL,
+        result JSONB NOT NULL,
+        analyzed_at_timestamp BIGINT NOT NULL,
+        analyzed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_analysis_cache_url ON analysis_cache(url)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        tier VARCHAR(20) DEFAULT 'observer',
+        is_verified BOOLEAN DEFAULT FALSE,
+        mfa_secret VARCHAR(32),
+        login_attempts INTEGER DEFAULT 0,
+        locked_until TIMESTAMPTZ,
+        last_login TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_users_tier ON users(tier)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS user_sessions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        session_token VARCHAR(512) UNIQUE NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        user_agent TEXT,
+        ip_address INET,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(
+      `CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token)`
+    );
+
+    // ─── Organizations / Workspaces (must be created early — many tables reference workspaces) ───
+    _q(`
+      CREATE TABLE IF NOT EXISTS organizations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        slug TEXT NOT NULL UNIQUE,
+        owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        is_personal BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_organizations_owner ON organizations(owner_user_id)`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_organizations_personal_owner ON organizations(owner_user_id) WHERE is_personal = TRUE`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS workspaces (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        slug TEXT NOT NULL,
+        created_by_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        is_default BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (organization_id, slug)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspaces_org ON workspaces(organization_id)`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_workspaces_default_org ON workspaces(organization_id) WHERE is_default = TRUE`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS workspace_members (
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        role VARCHAR(20) NOT NULL DEFAULT 'member',
+        joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (workspace_id, user_id)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS workspace_invites (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        email TEXT NOT NULL,
+        role VARCHAR(20) NOT NULL DEFAULT 'member',
+        token TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        accepted_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_invites_token ON workspace_invites(token)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_invites_workspace ON workspace_invites(workspace_id)`);
+    // Ensure invited_by column exists for tables created before it was added to the schema
+    _q(`ALTER TABLE workspace_invites ADD COLUMN IF NOT EXISTS invited_by UUID REFERENCES users(id) ON DELETE CASCADE`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS usage_daily (
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        requests INT NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, date)
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS scan_pack_credits (
+        user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        credits_remaining NUMERIC(12,2) NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS scan_pack_transactions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        pack_key VARCHAR(64) NOT NULL,
+        credits_added NUMERIC(12,2) NOT NULL,
+        amount_cents INT,
+        currency VARCHAR(10) DEFAULT 'usd',
+        stripe_session_id VARCHAR(255) UNIQUE,
+        stripe_payment_intent_id VARCHAR(255),
+        status VARCHAR(30) DEFAULT 'completed',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_user_id ON scan_pack_transactions(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_pack_key ON scan_pack_transactions(pack_key)`);
+    _q(`ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_percent INT NOT NULL DEFAULT 0`);
+    _q(`ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_source VARCHAR(80)`);
+    _q(`ALTER TABLE scan_pack_credits ALTER COLUMN credits_remaining TYPE NUMERIC(12,2) USING credits_remaining::numeric(12,2)`);
+    _q(`ALTER TABLE scan_pack_transactions ALTER COLUMN credits_added TYPE NUMERIC(12,2) USING credits_added::numeric(12,2)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS credit_usage_ledger (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        delta_credits NUMERIC(12,2) NOT NULL,
+        balance_after NUMERIC(12,2) NOT NULL,
+        reason VARCHAR(80) NOT NULL,
+        metadata JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_credit_usage_ledger_user ON credit_usage_ledger(user_id, created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS tier_credit_bonus_grants (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        tier_key VARCHAR(20) NOT NULL,
+        billing_period VARCHAR(20) NOT NULL,
+        base_credits INT NOT NULL,
+        bonus_percent INT NOT NULL,
+        bonus_credits INT NOT NULL,
+        total_credits_added INT NOT NULL,
+        milestone_qualified BOOLEAN NOT NULL DEFAULT FALSE,
+        milestone_window_minutes INT,
+        reason VARCHAR(60) NOT NULL DEFAULT 'initial_tier_bonus',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, tier_key, billing_period, reason)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_tier_bonus_user_id ON tier_credit_bonus_grants(user_id)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS referral_codes (
+        user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        code VARCHAR(24) UNIQUE NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_codes_code ON referral_codes(code)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS referral_attributions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        referrer_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        referred_user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        referral_code VARCHAR(24) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        credits_awarded_referrer INT NOT NULL DEFAULT 0,
+        credits_awarded_referred INT NOT NULL DEFAULT 0,
+        rejected_reason TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        awarded_at TIMESTAMPTZ,
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(referrer_user_id, referred_user_id)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_referrer ON referral_attributions(referrer_user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_referred ON referral_attributions(referred_user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_status ON referral_attributions(status)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS referral_credit_ledger (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        counterparty_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        attribution_id UUID REFERENCES referral_attributions(id) ON DELETE SET NULL,
+        delta_credits INT NOT NULL,
+        reason VARCHAR(80) NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_ledger_user ON referral_credit_ledger(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_ledger_attr ON referral_credit_ledger(attribution_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS user_milestones (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        milestone_key VARCHAR(40) NOT NULL,
+        credits_awarded NUMERIC(8,2) NOT NULL DEFAULT 0,
+        unlocked_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, milestone_key)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_user_milestones_user ON user_milestones(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS tool_usage_monthly (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        tool_action VARCHAR(40) NOT NULL,
+        month_key VARCHAR(7) NOT NULL,
+        usage_count INT NOT NULL DEFAULT 0,
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, tool_action, month_key)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_tool_usage_monthly_user_month ON tool_usage_monthly(user_id, month_key)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS newsletter_dispatches (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        edition_key VARCHAR(32) NOT NULL,
+        channel VARCHAR(20) NOT NULL DEFAULT 'email',
+        metadata JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, edition_key)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_edition ON newsletter_dispatches(edition_key)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_user ON newsletter_dispatches(user_id)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS admin_runtime_settings (
+        key VARCHAR(100) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_admin_runtime_settings_updated ON admin_runtime_settings(updated_at DESC)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS newsletter_editions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        edition_key VARCHAR(64) UNIQUE NOT NULL,
+        title VARCHAR(180),
+        summary TEXT,
+        status VARCHAR(20) NOT NULL DEFAULT 'draft',
+        metadata JSONB,
+        created_by VARCHAR(80) NOT NULL DEFAULT 'admin',
+        sent_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_editions_status_created ON newsletter_editions(status, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_editions_key ON newsletter_editions(edition_key)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS user_notification_preferences (
+        user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        email_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+        share_link_expiration_days INTEGER NOT NULL DEFAULT 30,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS share_link_expiration_days INTEGER`);
+    _q(`UPDATE user_notification_preferences SET share_link_expiration_days = 30 WHERE share_link_expiration_days IS NULL`);
+    _q(`ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET DEFAULT 30`);
+    _q(`ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET NOT NULL`);
+    _q(`ALTER TABLE user_notification_preferences DROP CONSTRAINT IF EXISTS user_notification_preferences_share_link_expiration_days_check`);
+    _q(`
+      ALTER TABLE user_notification_preferences
+      ADD CONSTRAINT user_notification_preferences_share_link_expiration_days_check
+      CHECK (share_link_expiration_days IN (0, 7, 14, 30, 90))
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_user_notification_email ON user_notification_preferences(email_notifications)`);
+    // Granular notification preferences — per-category and channel toggles (2026-03-29)
+    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
+    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS sound_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
+    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS browser_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
+    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS muted_categories TEXT[] NOT NULL DEFAULT '{}'`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        scope VARCHAR(20) NOT NULL DEFAULT 'user',
+        event_type VARCHAR(80) NOT NULL,
+        title VARCHAR(140) NOT NULL,
+        message VARCHAR(500) NOT NULL,
+        metadata JSONB,
+        is_read BOOLEAN NOT NULL DEFAULT FALSE,
+        read_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_scope_created ON notifications(scope, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(is_read, created_at DESC)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS notification_reads (
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        notification_id UUID NOT NULL REFERENCES notifications(id) ON DELETE CASCADE,
+        read_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (user_id, notification_id)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_notification_reads_user ON notification_reads(user_id, read_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_notification_reads_notification ON notification_reads(notification_id)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS scheduled_platform_notifications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        event_type VARCHAR(80) NOT NULL DEFAULT 'platform_event',
+        title VARCHAR(140) NOT NULL,
+        message VARCHAR(500) NOT NULL,
+        metadata JSONB,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        scheduled_for TIMESTAMPTZ NOT NULL,
+        published_at TIMESTAMPTZ,
+        created_by_user_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+        last_error VARCHAR(400),
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_status_time ON scheduled_platform_notifications(status, scheduled_for ASC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_created_by ON scheduled_platform_notifications(created_by_user_id, created_at DESC)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS payments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        stripe_customer_id VARCHAR(255),
+        stripe_subscription_id VARCHAR(255),
+        plan VARCHAR(50),
+        status VARCHAR(50),
+        current_period_start TIMESTAMPTZ,
+        current_period_end TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS audits (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        url TEXT NOT NULL,
+        visibility_score INTEGER,
+        result JSONB,
+        status VARCHAR(20) DEFAULT 'completed',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audits_user_id ON audits(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audits_created_at ON audits(created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS competitor_tracking (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        competitor_url TEXT NOT NULL,
+        nickname VARCHAR(255) NOT NULL,
+        latest_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        latest_score INTEGER,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, competitor_url)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_user_id ON competitor_tracking(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_tests (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        queries JSONB NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        results JSONB,
+        summary JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_user_id ON citation_tests(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_status ON citation_tests(status)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        citation_test_id UUID NOT NULL REFERENCES citation_tests(id) ON DELETE CASCADE,
+        query TEXT NOT NULL,
+        platform VARCHAR(20) NOT NULL,
+        mentioned BOOLEAN DEFAULT FALSE,
+        position INTEGER DEFAULT 0,
+        excerpt TEXT,
+        screenshot_url TEXT,
+        competitors_mentioned JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_results_test_id ON citation_results(citation_test_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_prompt_ledger (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        citation_test_id UUID NOT NULL REFERENCES citation_tests(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        query TEXT NOT NULL,
+        prompt_text TEXT NOT NULL,
+        prompt_hash VARCHAR(64) NOT NULL,
+        validation_status VARCHAR(20) NOT NULL DEFAULT 'validated',
+        platform VARCHAR(20) NOT NULL,
+        model_used TEXT,
+        model_role VARCHAR(20),
+        mentioned BOOLEAN NOT NULL DEFAULT FALSE,
+        position INTEGER NOT NULL DEFAULT 0,
+        evidence_excerpt TEXT,
+        metadata JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(citation_test_id, prompt_hash, platform)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_user_created ON citation_prompt_ledger(user_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_url_created ON citation_prompt_ledger(url, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_test ON citation_prompt_ledger(citation_test_id)`);
+
+    // ─── Additive column migrations (safe to re-run) ─────────────────────────
+    // users: columns added after initial schema
+    const userCols: [string, string][] = [
+      ['name', 'VARCHAR(255)'],
+      ['role', "VARCHAR(20) DEFAULT 'user'"],
+      ['verification_token', 'VARCHAR(128)'],
+      ['verification_token_expires', 'TIMESTAMPTZ'],
+      ['stripe_subscription_id', 'VARCHAR(255)'],
+      ['stripe_customer_id', 'VARCHAR(255)'],
+      ['login_attempts', 'INTEGER DEFAULT 0'],
+      ['locked_until', 'TIMESTAMPTZ'],
+      ['last_login', 'TIMESTAMPTZ'],
+      ['mfa_secret', 'VARCHAR(32)'],
+      ['company', 'VARCHAR(255)'],
+      ['website', 'TEXT'],
+      ['bio', 'TEXT'],
+      ['avatar_url', 'TEXT'],
+      ['timezone', 'VARCHAR(80)'],
+      ['language', 'VARCHAR(32)'],
+      ['org_description', 'TEXT'],
+      ['org_logo_url', 'TEXT'],
+      ['org_favicon_url', 'TEXT'],
+      ['org_phone', 'VARCHAR(64)'],
+      ['org_address', 'TEXT'],
+      ['org_verified', 'BOOLEAN DEFAULT FALSE'],
+      ['org_verification_confidence', 'INTEGER'],
+      ['org_verification_reasons', 'JSONB'],
+      ['trial_ends_at', 'TIMESTAMPTZ'],
+      ['trial_used', 'BOOLEAN DEFAULT FALSE'],
+      ['trial_tier', 'TEXT'],
+      ['trial_started_at', 'TIMESTAMPTZ'],
+      ['trial_converted', 'BOOLEAN DEFAULT FALSE'],
+    ];
+    for (const [col, def] of userCols) {
+      _q(
+        `ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col} ${def}`
+      );
+    }
+
+    // payments: expand to hold full Stripe lifecycle data
+    const paymentCols: [string, string][] = [
+      ['tier', "VARCHAR(50) DEFAULT 'observer'"],
+      ['method', "VARCHAR(20) DEFAULT 'stripe'"],
+      ['stripe_session_id', 'VARCHAR(255)'],
+      ['stripe_price_id', 'VARCHAR(255)'],
+      ['amount_cents', 'INTEGER'],
+      ['currency', "VARCHAR(10) DEFAULT 'usd'"],
+      ['completed_at', 'TIMESTAMPTZ'],
+      ['failed_at', 'TIMESTAMPTZ'],
+      ['canceled_at', 'TIMESTAMPTZ'],
+      ['subscription_status', 'VARCHAR(30)'],
+      ['cancel_at_period_end', 'BOOLEAN DEFAULT FALSE'],
+      ['last_payment_at', 'TIMESTAMPTZ'],
+      ['last_invoice_id', 'VARCHAR(255)'],
+      ['last_failed_payment_at', 'TIMESTAMPTZ'],
+      ['failed_invoice_id', 'VARCHAR(255)'],
+      ['metadata', 'JSONB'],
+    ];
+    for (const [col, def] of paymentCols) {
+      _q(
+        `ALTER TABLE payments ADD COLUMN IF NOT EXISTS ${col} ${def}`
+      );
+    }
+    _q(
+      `CREATE INDEX IF NOT EXISTS idx_payments_stripe_session ON payments(stripe_session_id) WHERE stripe_session_id IS NOT NULL`
+    );
+    _q(
+      `CREATE INDEX IF NOT EXISTS idx_payments_stripe_sub ON payments(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL`
+    );
+    _q(
+      `CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id)`
+    );
+
+    // analysis_cache: columns added after initial schema
+    const cacheCols: [string, string][] = [
+      ['analyzed_at_timestamp', 'BIGINT'],
+      ['analyzed_at', 'TIMESTAMPTZ'],
+      ['updated_at', 'TIMESTAMPTZ DEFAULT NOW()'],
+    ];
+    for (const [col, def] of cacheCols) {
+      _q(
+        `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS ${col} ${def}`
+      );
+    }
+    // Backfill analyzed_at_timestamp for rows that existed before the column
+    _q(`
+      UPDATE analysis_cache
+      SET analyzed_at_timestamp = EXTRACT(EPOCH FROM created_at)::BIGINT * 1000
+      WHERE analyzed_at_timestamp IS NULL
+    `);
+
+    // ─── License tables ───────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS licenses (
+        id VARCHAR(255) PRIMARY KEY,
+        license_key VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        product_id VARCHAR(255) NOT NULL,
+        product_name VARCHAR(500) NOT NULL,
+        order_number INTEGER NOT NULL,
+        sale_id VARCHAR(255) NOT NULL,
+        purchase_date TIMESTAMP NOT NULL,
+        is_active BOOLEAN DEFAULT true,
+        activation_count INTEGER DEFAULT 0,
+        max_activations INTEGER DEFAULT 3,
+        metadata JSONB DEFAULT '{}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS license_activations (
+        id VARCHAR(255) PRIMARY KEY,
+        license_id VARCHAR(255) REFERENCES licenses(id),
+        machine_id VARCHAR(500) NOT NULL,
+        activated_at TIMESTAMP NOT NULL,
+        deactivated_at TIMESTAMP,
+        is_active BOOLEAN DEFAULT true,
+        metadata JSONB DEFAULT '{}',
+        UNIQUE(license_id, machine_id)
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS license_verifications (
+        id VARCHAR(255) PRIMARY KEY,
+        license_id VARCHAR(255) REFERENCES licenses(id),
+        verified_at TIMESTAMP NOT NULL,
+        metadata JSONB DEFAULT '{}'
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(license_key)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_activations_license ON license_activations(license_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_activations_machine ON license_activations(machine_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_verifications_license ON license_verifications(license_id)`);
+
+    // ─── Assistant usage tracking ─────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS assistant_usage (
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        messages INT NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, date)
+      )
+    `);
+
+    // ─── SEO crawl persistence ───────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS seo_crawls (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        root_url TEXT NOT NULL,
+        max_pages INTEGER NOT NULL,
+        pages_crawled INTEGER NOT NULL DEFAULT 0,
+        pages_with_errors INTEGER NOT NULL DEFAULT 0,
+        average_word_count INTEGER NOT NULL DEFAULT 0,
+        summary JSONB NOT NULL DEFAULT '{}',
+        started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        completed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawls_user ON seo_crawls(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawls_created ON seo_crawls(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS seo_crawl_pages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        crawl_id UUID NOT NULL REFERENCES seo_crawls(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        depth INTEGER NOT NULL DEFAULT 0,
+        status VARCHAR(20) NOT NULL DEFAULT 'ok',
+        diagnostics JSONB NOT NULL DEFAULT '{}',
+        issues JSONB NOT NULL DEFAULT '[]',
+        links_discovered INTEGER NOT NULL DEFAULT 0,
+        canonical_url TEXT,
+        word_count INTEGER,
+        title TEXT,
+        error TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(crawl_id, url)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawl_pages_crawl ON seo_crawl_pages(crawl_id)`);
+
+    // ─── Scheduled Rescans ────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS scheduled_rescans (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        frequency VARCHAR(20) NOT NULL DEFAULT 'weekly',
+        next_run_at TIMESTAMPTZ NOT NULL,
+        last_run_at TIMESTAMPTZ,
+        last_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        enabled BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, url)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_user ON scheduled_rescans(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_next ON scheduled_rescans(next_run_at) WHERE enabled = TRUE`);
+
+    // ─── Audit Score Snapshots ─────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_score_snapshots (
+        audit_id UUID PRIMARY KEY REFERENCES audits(id) ON DELETE CASCADE,
+        prior_run_id UUID REFERENCES audit_score_snapshots(audit_id) ON DELETE SET NULL,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        normalized_url TEXT NOT NULL,
+        visibility_score NUMERIC(6,2) NOT NULL,
+        execution_class VARCHAR(40),
+        information_gain VARCHAR(20),
+        contradiction_status VARCHAR(20),
+        blocker_count INTEGER NOT NULL DEFAULT 0,
+        geo_signal_profile JSONB,
+        contradiction_report JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_user_url ON audit_score_snapshots(user_id, normalized_url, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_workspace_url ON audit_score_snapshots(workspace_id, normalized_url, created_at DESC)`);
+
+    // ── Reconcile audit_score_snapshots schema: add SSFR pipeline columns ──
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS family_scores JSONB`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS final_score NUMERIC(6,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_cap INTEGER`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_version VARCHAR(20)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS framework_detected VARCHAR(60)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS crawlability_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS indexability_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS renderability_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS metadata_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS schema_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS entity_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`);
+    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`);
+
+    // NOTE: audit_rule_results reconciliation ALTERs moved to after CREATE TABLE (line ~1315)
+
+    // ─── Deploy Hook Endpoints ─────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS deploy_hook_endpoints (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        provider VARCHAR(24) NOT NULL DEFAULT 'generic',
+        name VARCHAR(120) NOT NULL,
+        secret_hash VARCHAR(128) NOT NULL,
+        secret_hint VARCHAR(16) NOT NULL,
+        default_url TEXT,
+        enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_hook_endpoints_workspace ON deploy_hook_endpoints(workspace_id, created_at DESC)`);
+
+    // ─── Deploy Verification Jobs ───────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS deploy_verification_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        status VARCHAR(24) NOT NULL DEFAULT 'pending',
+        source VARCHAR(64) NOT NULL DEFAULT 'manual_deploy_verification',
+        provider VARCHAR(32),
+        environment VARCHAR(32),
+        deployment_id VARCHAR(120),
+        commit_sha VARCHAR(120),
+        baseline_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        baseline_score NUMERIC(6,2),
+        verification_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        score_after NUMERIC(6,2),
+        score_delta NUMERIC(6,2),
+        scheduled_for TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        started_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ,
+        failed_at TIMESTAMPTZ,
+        last_error TEXT,
+        trigger_metadata JSONB NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_user ON deploy_verification_jobs(user_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_workspace ON deploy_verification_jobs(workspace_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_due ON deploy_verification_jobs(scheduled_for ASC) WHERE status IN ('pending', 'failed', 'running')`);
+
+    // ─── API Keys ─────────────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS api_keys (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        key_hash VARCHAR(128) NOT NULL UNIQUE,
+        key_prefix VARCHAR(12) NOT NULL,
+        name VARCHAR(100) NOT NULL DEFAULT 'Default',
+        scopes TEXT[] NOT NULL DEFAULT '{"read:audits","read:analytics"}',
+        last_used_at TIMESTAMPTZ,
+        expires_at TIMESTAMPTZ,
+        enabled BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash) WHERE enabled = TRUE`);
+
+    // ─── External API Metering ───────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS api_usage_daily (
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        api_key_id UUID NOT NULL REFERENCES api_keys(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        requests INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, workspace_id, api_key_id, date)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_usage_workspace_date ON api_usage_daily(workspace_id, date)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_usage_key_date ON api_usage_daily(api_key_id, date)`);
+
+    // ─── External API Page Validation Records ───────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS api_page_validations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        api_key_id UUID REFERENCES api_keys(id) ON DELETE SET NULL,
+        url TEXT NOT NULL,
+        result JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_page_validations_workspace_created ON api_page_validations(workspace_id, created_at DESC)`);
+
+    // ─── MCP Export Tokens ──────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS mcp_export_tokens (
+        token UUID PRIMARY KEY,
+        audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        format VARCHAR(10) NOT NULL DEFAULT 'json',
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_mcp_export_tokens_expires ON mcp_export_tokens(expires_at)`);
+
+    // ─── Authority Check Cache ──────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS authority_check_cache (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        cache_key VARCHAR(512) NOT NULL,
+        result JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_authority_cache_key ON authority_check_cache(user_id, cache_key)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_authority_cache_created ON authority_check_cache(created_at)`);
+
+    // ─── Consent / Compliance Persistence ───────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS user_consents (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        consent_type VARCHAR(40) NOT NULL,
+        status VARCHAR(20) NOT NULL,
+        policy_version VARCHAR(40),
+        source VARCHAR(20) NOT NULL DEFAULT 'web',
+        metadata JSONB NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, workspace_id, consent_type)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_user_consents_workspace ON user_consents(workspace_id)`);
+
+    // ─── Webhooks ─────────────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS webhooks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        provider VARCHAR(20) NOT NULL DEFAULT 'generic',
+        display_name VARCHAR(120),
+        url TEXT NOT NULL,
+        events TEXT[] NOT NULL DEFAULT '{"audit.completed"}',
+        secret VARCHAR(64) NOT NULL,
+        enabled BOOLEAN DEFAULT TRUE,
+        last_triggered_at TIMESTAMPTZ,
+        failure_count INTEGER DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_user ON webhooks(user_id)`);
+
+    // ─── User Branding (White-Label) ──────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS user_branding (
+        user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        company_name VARCHAR(255),
+        logo_url TEXT,
+        logo_base64 TEXT,
+        primary_color VARCHAR(7) DEFAULT '#0ea5e9',
+        accent_color VARCHAR(7) DEFAULT '#6366f1',
+        footer_text TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    // Workspace foreign keys for tenant-scoped resources
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitoring_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitor_frequency VARCHAR(20) NOT NULL DEFAULT 'daily'`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS next_monitor_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_detected_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`);
+    _q(`ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS source_type VARCHAR(20)`);
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS citation_urls JSONB`);
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_used TEXT`);
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_role VARCHAR(20)`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS workspace_id UUID`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`);
+    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`);
+    _q(`ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS provider VARCHAR(20) NOT NULL DEFAULT 'generic'`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_provider ON webhooks(provider)`);
+    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS display_name VARCHAR(120)`);
+    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS tagline VARCHAR(255)`);
+    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255)`);
+    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS website_url TEXT`);
+    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS show_cover_page BOOLEAN DEFAULT FALSE`);
+
+    // ─── Automatic Report Delivery Targets ───────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS report_delivery_targets (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        provider VARCHAR(20) NOT NULL DEFAULT 'email',
+        display_name VARCHAR(120),
+        target TEXT NOT NULL,
+        branded BOOLEAN NOT NULL DEFAULT TRUE,
+        include_pdf BOOLEAN NOT NULL DEFAULT TRUE,
+        include_share_link BOOLEAN NOT NULL DEFAULT TRUE,
+        enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        last_triggered_at TIMESTAMPTZ,
+        failure_count INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_user ON report_delivery_targets(user_id)`);
+    _q(`ALTER TABLE report_delivery_targets ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+
+    // ─── IndexNow Submissions ─────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS indexnow_submissions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        urls JSONB NOT NULL DEFAULT '[]',
+        submitted_count INTEGER NOT NULL DEFAULT 0,
+        skipped_count INTEGER NOT NULL DEFAULT 0,
+        error TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_indexnow_submissions_user ON indexnow_submissions(user_id)`);
+
+    // ─── Agent Tasks (GuideBot task queue) ─────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS agent_tasks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        task_type VARCHAR(60) NOT NULL,
+        payload JSONB NOT NULL DEFAULT '{}',
+        status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'completed', 'failed', 'cancelled')),
+        result JSONB,
+        error TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        started_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_user_status ON agent_tasks(user_id, status)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_pending ON agent_tasks(status, created_at) WHERE status = 'pending'`);
+
+    // ─── SSFR Audit Evidence ────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_evidence (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        family VARCHAR(20) NOT NULL CHECK (family IN ('source', 'signal', 'fact', 'relationship')),
+        evidence_key TEXT NOT NULL,
+        value JSONB NOT NULL DEFAULT '{}',
+        source TEXT NOT NULL DEFAULT 'scraper',
+        status VARCHAR(20) NOT NULL DEFAULT 'present' CHECK (status IN ('present', 'missing', 'invalid', 'partial')),
+        confidence NUMERIC(5,2) DEFAULT 1.0,
+        notes JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_audit ON audit_evidence(audit_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_family ON audit_evidence(audit_id, family)`);
+
+    // ── Reconcile audit_evidence: add columns used by SSFR pipeline ──
+    // The legacy deterministic-pipeline definition (line ~1825) lacks these columns.
+    // If the table was created from that definition first, these must be added.
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS audit_id UUID`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS family VARCHAR(20)`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_key TEXT`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS value JSONB DEFAULT '{}'`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'present'`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`);
+    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`);
+    _q(`ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`);
+
+    // ─── SSFR Rule Results ──────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_rule_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        family VARCHAR(20) NOT NULL CHECK (family IN ('source', 'signal', 'fact', 'relationship')),
+        rule_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        passed BOOLEAN NOT NULL DEFAULT FALSE,
+        severity VARCHAR(12) NOT NULL DEFAULT 'medium' CHECK (severity IN ('critical', 'high', 'medium', 'low')),
+        is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE,
+        score_cap INTEGER,
+        evidence_ids JSONB NOT NULL DEFAULT '[]',
+        details JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit ON audit_rule_results(audit_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_blocker ON audit_rule_results(audit_id) WHERE is_hard_blocker = TRUE`);
+
+    // ── Reconcile audit_rule_results: add columns used by ruleEngine inserts ──
+    // These columns exist in the legacy second definition but not in the primary one above.
+    // ADD COLUMN IF NOT EXISTS is safe for both fresh and existing tables.
+    // audit_id may be missing if the table was originally created with the legacy schema (audit_run_id).
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_id UUID`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS description TEXT`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_impact NUMERIC(5,2) DEFAULT 0`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS hard_blocker BOOLEAN DEFAULT FALSE`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids_json JSONB DEFAULT '[]'::jsonb`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS remediation_key VARCHAR(80)`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS title TEXT`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS passed BOOLEAN DEFAULT FALSE`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS severity VARCHAR(12) DEFAULT 'medium'`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN DEFAULT FALSE`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids JSONB DEFAULT '[]'`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_run_id UUID`);
+
+    // ─── SSFR Fixpacks ─────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_fixpacks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        type VARCHAR(30) NOT NULL DEFAULT 'insight' CHECK (type IN ('insight', 'entity_patch', 'schema_fix', 'content_block', 'meta_fix')),
+        title TEXT NOT NULL,
+        summary TEXT,
+        priority VARCHAR(12) NOT NULL DEFAULT 'medium' CHECK (priority IN ('critical', 'high', 'medium', 'low')),
+        assets JSONB NOT NULL DEFAULT '[]',
+        auto_generatable BOOLEAN NOT NULL DEFAULT FALSE,
+        verification_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (verification_status IN ('pending', 'verified', 'failed', 'skipped')),
+        based_on_rule_ids JSONB NOT NULL DEFAULT '[]',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_audit ON audit_fixpacks(audit_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_priority ON audit_fixpacks(audit_id, priority)`);
+    _q(`ALTER TABLE audit_fixpacks ADD COLUMN IF NOT EXISTS audit_run_id UUID`);
+    // Seed personal organization/workspace for existing users (idempotent)
+    _q(`
+      INSERT INTO organizations (name, slug, owner_user_id, is_personal)
+      SELECT
+        COALESCE(NULLIF(u.name, ''), split_part(u.email, '@', 1) || '''s Organization') AS name,
+        'personal-' || substr(replace(u.id::text, '-', ''), 1, 24) AS slug,
+        u.id,
+        TRUE
+      FROM users u
+      WHERE NOT EXISTS (
+        SELECT 1 FROM organizations o WHERE o.owner_user_id = u.id AND o.is_personal = TRUE
+      )
+    `);
+
+    _q(`
+      INSERT INTO workspaces (organization_id, name, slug, created_by_user_id, is_default)
+      SELECT o.id, 'Personal Workspace', 'default', o.owner_user_id, TRUE
+      FROM organizations o
+      WHERE o.is_personal = TRUE
+        AND NOT EXISTS (
+          SELECT 1 FROM workspaces w WHERE w.organization_id = o.id AND w.is_default = TRUE
+        )
+    `);
+
+    _q(`
+      INSERT INTO workspace_members (workspace_id, user_id, role)
+      SELECT w.id, o.owner_user_id, 'owner'
+      FROM organizations o
+      JOIN workspaces w ON w.organization_id = o.id AND w.is_default = TRUE
+      WHERE o.is_personal = TRUE
+      ON CONFLICT (workspace_id, user_id) DO NOTHING
+    `);
+
+    // Backfill workspace_id on existing rows via user's default workspace
+    _q(`
+      UPDATE audits a
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE a.workspace_id IS NULL AND a.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE competitor_tracking ct
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE ct.workspace_id IS NULL AND ct.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE competitor_tracking
+      SET next_monitor_at = NOW() + INTERVAL '24 hours'
+      WHERE next_monitor_at IS NULL
+    `);
+    _q(`ALTER TABLE competitor_tracking ALTER COLUMN next_monitor_at SET DEFAULT (NOW() + INTERVAL '24 hours')`);
+    _q(`
+      UPDATE citation_tests t
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE t.workspace_id IS NULL AND t.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE scheduled_rescans sr
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE sr.workspace_id IS NULL AND sr.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE api_keys ak
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE ak.workspace_id IS NULL AND ak.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE webhooks wh
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE wh.workspace_id IS NULL AND wh.user_id = wm.user_id
+    `);
+    _q(`
+      UPDATE user_branding ub
+      SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+      JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
+      WHERE ub.workspace_id IS NULL AND ub.user_id = wm.user_id
+    `);
+
+    _q(`CREATE INDEX IF NOT EXISTS idx_audits_workspace ON audits(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_workspace ON competitor_tracking(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_next_monitor ON competitor_tracking(next_monitor_at) WHERE monitoring_enabled = TRUE`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_workspace ON citation_tests(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_workspace ON scheduled_rescans(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_workspace ON api_keys(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_workspace ON webhooks(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_workspace ON report_delivery_targets(workspace_id)`);
+
+    // ─── Niche Competitive Ranking Table ─────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_niche_rankings (
+        id VARCHAR(64) PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        target_url TEXT NOT NULL,
+        brand_name TEXT NOT NULL,
+        niche TEXT NOT NULL,
+        niche_keywords TEXT[] DEFAULT '{}',
+        target_rank INTEGER,
+        in_top_50 BOOLEAN NOT NULL DEFAULT FALSE,
+        in_top_100 BOOLEAN NOT NULL DEFAULT FALSE,
+        top_50 JSONB NOT NULL DEFAULT '[]',
+        top_100 JSONB NOT NULL DEFAULT '[]',
+        ranking_model_id TEXT NOT NULL,
+        ranking_model_short TEXT NOT NULL,
+        ranking_model_role TEXT NOT NULL DEFAULT 'primary',
+        citation_models_used JSONB NOT NULL DEFAULT '[]',
+        scheduled_job_id UUID,
+        ran_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_user ON citation_niche_rankings(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_url ON citation_niche_rankings(target_url)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_ran_at ON citation_niche_rankings(ran_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_in_top50 ON citation_niche_rankings(in_top_50) WHERE in_top_50 = TRUE`);
+
+    // ─── Scheduled Citation Ranking Jobs ─────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_scheduled_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        target_url TEXT NOT NULL,
+        niche TEXT,
+        niche_keywords TEXT[] DEFAULT '{}',
+        interval_hours INTEGER NOT NULL DEFAULT 24,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        last_run_at TIMESTAMPTZ,
+        next_run_at TIMESTAMPTZ,
+        last_ranking_id VARCHAR(64),
+        run_count INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_user ON citation_scheduled_jobs(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_active ON citation_scheduled_jobs(is_active) WHERE is_active = TRUE`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_next_run ON citation_scheduled_jobs(next_run_at ASC) WHERE is_active = TRUE`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_branding_workspace ON user_branding(workspace_id)`);
+
+    _q(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM pg_constraint
+          WHERE conname = 'scheduled_rescans_user_id_url_key' AND conrelid = 'scheduled_rescans'::regclass
+        ) THEN
+          ALTER TABLE scheduled_rescans DROP CONSTRAINT scheduled_rescans_user_id_url_key;
+        END IF;
+      END $$;
+    `);
+    _q(`DROP INDEX IF EXISTS idx_scheduled_rescans_user_workspace_url`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_scheduled_rescans_user_ws_url ON scheduled_rescans(user_id, COALESCE(workspace_id, '00000000-0000-0000-0000-000000000000'::uuid), url)`);
+
+    _q(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM pg_constraint
+          WHERE conname = 'users_tier_allowed' AND conrelid = 'users'::regclass
+        ) THEN
+          ALTER TABLE users DROP CONSTRAINT users_tier_allowed;
+        END IF;
+
+        UPDATE users SET tier = 'observer' WHERE tier IN ('free', 'Free');
+        UPDATE users SET tier = 'alignment' WHERE tier IN ('core', 'Core', 'Jump Start');
+        UPDATE users SET tier = 'signal' WHERE tier IN ('premium', 'Premium', 'pro', 'Pro', 'enterprise', 'Enterprise', 'Agency');
+        UPDATE users SET tier = 'scorefix' WHERE tier IN ('scorefix', 'ScoreFix', 'Score Fix', 'blockbuster', 'Blockbuster');
+
+        IF EXISTS (
+          SELECT 1 FROM pg_constraint
+          WHERE conname = 'users_tier_canonical' AND conrelid = 'users'::regclass
+        ) THEN
+          ALTER TABLE users DROP CONSTRAINT users_tier_canonical;
+        END IF;
+
+        ALTER TABLE users ADD CONSTRAINT users_tier_canonical
+          CHECK (tier IN ('observer', 'alignment', 'signal', 'scorefix'));
+      END $$;
+    `);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS query_packs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        queries JSONB NOT NULL,
+        tags TEXT[] DEFAULT '{}',
+        client_name VARCHAR(255),
+        execution_count INTEGER DEFAULT 0,
+        last_executed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_user ON query_packs(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_workspace ON query_packs(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_created ON query_packs(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS query_pack_executions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        query_pack_id UUID NOT NULL REFERENCES query_packs(id) ON DELETE CASCADE,
+        citation_test_id UUID NOT NULL REFERENCES citation_tests(id) ON DELETE CASCADE,
+        mention_rate_snapshot DECIMAL(5, 2),
+        top_3_count INTEGER,
+        executed_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_pack_executions_pack ON query_pack_executions(query_pack_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_pack_executions_test ON query_pack_executions(citation_test_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_evidences (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        citation_result_id UUID NOT NULL REFERENCES citation_results(id) ON DELETE CASCADE,
+        query_pack_id UUID REFERENCES query_packs(id) ON DELETE SET NULL,
+        evidence_key VARCHAR(255) NOT NULL,
+        confidence_score DECIMAL(3, 2) DEFAULT 0.85,
+        curated BOOLEAN DEFAULT FALSE,
+        curation_note TEXT,
+        rev_cite_suggestions JSONB,
+        starred BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(citation_result_id, evidence_key)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_result ON citation_evidences(citation_result_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_pack ON citation_evidences(query_pack_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_curated ON citation_evidences(curated) WHERE curated = TRUE`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_starred ON citation_evidences(starred) WHERE starred = TRUE`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_confidence ON citation_evidences(confidence_score DESC)`);
+
+    // ─── Auto Score Fix Jobs ──────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS auto_score_fix_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+        audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        target_url TEXT NOT NULL,
+        vcs_provider VARCHAR(20) NOT NULL DEFAULT 'github',
+        repo_owner TEXT NOT NULL,
+        repo_name TEXT NOT NULL,
+        repo_branch TEXT NOT NULL DEFAULT 'main',
+        status VARCHAR(30) NOT NULL DEFAULT 'pending',
+        credits_spent NUMERIC(12,2) NOT NULL DEFAULT 10,
+        pr_number INTEGER,
+        pr_url TEXT,
+        pr_title TEXT,
+        pr_body TEXT,
+        fix_plan JSONB,
+        evidence_snapshot JSONB,
+        error_message TEXT,
+        implementation_duration_minutes INTEGER,
+        checks_status VARCHAR(32) NOT NULL DEFAULT 'unknown',
+        github_pr_merged_at TIMESTAMPTZ,
+        rescan_status VARCHAR(24) NOT NULL DEFAULT 'not_scheduled',
+        rescan_scheduled_for TIMESTAMPTZ,
+        rescan_started_at TIMESTAMPTZ,
+        rescan_completed_at TIMESTAMPTZ,
+        rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        score_before NUMERIC(6,2),
+        score_after NUMERIC(6,2),
+        score_delta NUMERIC(6,2),
+        expires_at TIMESTAMPTZ NOT NULL,
+        approved_at TIMESTAMPTZ,
+        rejected_at TIMESTAMPTZ,
+        refund_processed_at TIMESTAMPTZ,
+        refund_credits NUMERIC(12,2),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_user ON auto_score_fix_jobs(user_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_status ON auto_score_fix_jobs(status)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_expires ON auto_score_fix_jobs(expires_at) WHERE status IN ('pending_approval', 'pending')`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_workspace ON auto_score_fix_jobs(workspace_id)`);
+
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS implementation_duration_minutes INTEGER`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS checks_status VARCHAR(32) NOT NULL DEFAULT 'unknown'`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS github_pr_merged_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_status VARCHAR(24) NOT NULL DEFAULT 'not_scheduled'`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_rescan_status ON auto_score_fix_jobs(rescan_status)`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_scheduled_for TIMESTAMPTZ`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_started_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_completed_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_before NUMERIC(6,2)`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_after NUMERIC(6,2)`);
+    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_delta NUMERIC(6,2)`);
+
+    // ─── VCS Tokens (encrypted at rest) ──────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS vcs_tokens (
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        provider VARCHAR(20) NOT NULL,
+        encrypted_token TEXT NOT NULL,
+        token_hint VARCHAR(12) NOT NULL,
+        scopes TEXT[],
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY(user_id, provider)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_vcs_tokens_user ON vcs_tokens(user_id)`);
+
+    // ─── Visibility Snapshots (self-hosted tracker) ───────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS visibility_snapshots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        prompt TEXT NOT NULL,
+        engine VARCHAR(64) NOT NULL,
+        brand_found BOOLEAN NOT NULL DEFAULT FALSE,
+        position INT,
+        cited_urls TEXT[],
+        competitors TEXT[],
+        sentiment VARCHAR(32),
+        raw_text TEXT,
+        captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_vs_engine_time ON visibility_snapshots(engine, captured_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_vs_brand_time ON visibility_snapshots(brand_found, captured_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_vs_captured ON visibility_snapshots(captured_at DESC)`);
+
+    // ─── Fixpack completion tracking ─────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS fixpack_status (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        fixpack_id VARCHAR(128) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'open',
+        owner VARCHAR(255),
+        started_at TIMESTAMPTZ,
+        validated_at TIMESTAMPTZ,
+        re_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, audit_id, fixpack_id)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_user ON fixpack_status(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_audit ON fixpack_status(audit_id)`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocked_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS reopened_at TIMESTAMPTZ`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocker_reason TEXT`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS lifecycle_state VARCHAR(32) NOT NULL DEFAULT 'opened'`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_status VARCHAR(24) NOT NULL DEFAULT 'not_requested'`);
+    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_notes TEXT`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_lifecycle_state ON fixpack_status(lifecycle_state)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_status ON fixpack_status(status)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_verification_status ON fixpack_status(verification_status)`);
+
+    // ─── Deterministic audit pipeline tables ──────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_evidence (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_run_id UUID NOT NULL,
+        url TEXT,
+        category VARCHAR(60) NOT NULL,
+        key VARCHAR(80) NOT NULL,
+        label VARCHAR(200) NOT NULL,
+        value_json JSONB,
+        source VARCHAR(120),
+        selector VARCHAR(255),
+        attribute VARCHAR(120),
+        status VARCHAR(20) NOT NULL DEFAULT 'present',
+        confidence NUMERIC(3,2) DEFAULT 1.0,
+        notes_json JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_run ON audit_evidence(audit_run_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_url ON audit_evidence(url)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_created ON audit_evidence(created_at DESC)`);
+
+    // NOTE: audit_rule_results is already created at line ~1315 with the
+    // correct schema (audit_id FK, is_hard_blocker, evidence_ids, etc.).
+    // Legacy duplicate definition removed to prevent schema confusion.
+    // The ALTER TABLE reconciliation at line ~1030 adds any missing columns.
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit_id ON audit_rule_results(audit_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_created ON audit_rule_results(created_at DESC)`);
+
+    // NOTE: audit_score_snapshots is already created at line ~739 with the
+    // correct schema (audit_id PK, prior_run_id, normalized_url, etc.).
+    // Legacy duplicate definition removed to prevent schema confusion.
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_user ON audit_score_snapshots(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_url ON audit_score_snapshots(url)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_created ON audit_score_snapshots(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS fixpacks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_run_id UUID NOT NULL,
+        user_id UUID NOT NULL,
+        title VARCHAR(200) NOT NULL,
+        summary TEXT,
+        priority INTEGER DEFAULT 0,
+        type VARCHAR(60) NOT NULL,
+        framework_targets JSONB DEFAULT '[]'::jsonb,
+        auto_generatable BOOLEAN DEFAULT TRUE,
+        estimated_lift_min NUMERIC(5,2) DEFAULT 0,
+        estimated_lift_max NUMERIC(5,2) DEFAULT 0,
+        evidence_ids_json JSONB DEFAULT '[]'::jsonb,
+        rule_ids_json JSONB DEFAULT '[]'::jsonb,
+        verification_checks JSONB DEFAULT '[]'::jsonb,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_run ON fixpacks(audit_run_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_user ON fixpacks(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_created ON fixpacks(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS fixpack_assets (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        fixpack_id UUID NOT NULL REFERENCES fixpacks(id) ON DELETE CASCADE,
+        asset_type VARCHAR(60) NOT NULL,
+        label VARCHAR(200),
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_assets_fp ON fixpack_assets(fixpack_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS verification_runs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
+        prior_audit_run_id UUID,
+        new_audit_run_id UUID,
+        fixpack_ids JSONB DEFAULT '[]'::jsonb,
+        checks_json JSONB DEFAULT '[]'::jsonb,
+        verified_lift NUMERIC(5,2),
+        blockers_cleared INTEGER DEFAULT 0,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_verification_runs_user ON verification_runs(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_verification_runs_created ON verification_runs(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS brag_trail (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_run_id UUID NOT NULL,
+        recommendation_id VARCHAR(80),
+        build_source VARCHAR(60) NOT NULL DEFAULT 'rule_engine_v1',
+        reference_ids JSONB DEFAULT '[]'::jsonb,
+        audit_linkage VARCHAR(80),
+        ground_output JSONB,
+        confidence NUMERIC(3,2) DEFAULT 1.0,
+        advisory_only BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_brag_trail_run ON brag_trail(audit_run_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_brag_trail_created ON brag_trail(created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS trial_email_log (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
+        email_type VARCHAR(40) NOT NULL,
+        sent_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, email_type)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_trial_email_log_user ON trial_email_log(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS rate_limit_events (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID,
+        ip VARCHAR(100),
+        endpoint VARCHAR(255),
+        tier VARCHAR(30),
+        blocked BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_rate_limit_events_created ON rate_limit_events(created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_rate_limit_events_user ON rate_limit_events(user_id)`);
+
+    // ─── Citation Intelligence Tables ─────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_mention_trends (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        test_id UUID REFERENCES citation_tests(id) ON DELETE SET NULL,
+        mention_rate NUMERIC(5,2) NOT NULL,
+        total_queries INTEGER NOT NULL,
+        mentioned_count INTEGER NOT NULL,
+        platform_breakdown JSONB NOT NULL DEFAULT '{}',
+        sampled_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_cite_trends_user_url ON citation_mention_trends(user_id, url, sampled_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_cite_trends_sampled ON citation_mention_trends(sampled_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_competitor_share (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        competitor_name TEXT NOT NULL,
+        mention_count INTEGER NOT NULL DEFAULT 0,
+        total_queries INTEGER NOT NULL DEFAULT 0,
+        platforms_present TEXT[] DEFAULT '{}',
+        window_start TIMESTAMPTZ NOT NULL,
+        window_end TIMESTAMPTZ NOT NULL,
+        computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_cite_share_user_url ON citation_competitor_share(user_id, url, computed_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_drop_alerts (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        previous_mention_rate NUMERIC(5,2) NOT NULL,
+        current_mention_rate NUMERIC(5,2) NOT NULL,
+        drop_magnitude NUMERIC(5,2) NOT NULL,
+        alert_type VARCHAR(30) NOT NULL DEFAULT 'mention_drop',
+        dismissed BOOLEAN NOT NULL DEFAULT FALSE,
+        dismissed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_cite_alerts_user ON citation_drop_alerts(user_id, dismissed, created_at DESC)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS citation_cooccurrences (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        brand_name TEXT NOT NULL,
+        query_used TEXT NOT NULL,
+        source_url TEXT NOT NULL,
+        source_title TEXT,
+        mention_context TEXT,
+        has_link BOOLEAN NOT NULL DEFAULT FALSE,
+        found_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_cite_cooccur_user_url ON citation_cooccurrences(user_id, url, found_at DESC)`);
+
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS mention_quality_score SMALLINT`);
+
+    // ─── SOC1 Compliance Tables ─────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS security_audit_log (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        actor_email VARCHAR(255),
+        action VARCHAR(100) NOT NULL,
+        category VARCHAR(50) NOT NULL,
+        target_type VARCHAR(50),
+        target_id TEXT,
+        details JSONB DEFAULT '{}',
+        ip VARCHAR(100),
+        user_agent TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_created ON security_audit_log(created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_actor ON security_audit_log(actor_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_action ON security_audit_log(action, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_category ON security_audit_log(category, created_at DESC)`);
+
+    // ─── Brand Mention Tracker ───────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS brand_mentions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        brand TEXT NOT NULL,
+        domain TEXT NOT NULL DEFAULT '',
+        source VARCHAR(50) NOT NULL,
+        url TEXT NOT NULL,
+        title TEXT,
+        snippet TEXT,
+        detected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, source, url)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_brand_mentions_user_brand ON brand_mentions(user_id, LOWER(brand), detected_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_brand_mentions_source ON brand_mentions(user_id, source)`);
+
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS content_hash VARCHAR(64)`);
+
+    // ─── MCP audit queue columns ────────────────────────────────────────────
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(24) NOT NULL DEFAULT 'complete'`);
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS goal TEXT`);
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS platform_focus JSONB`);
+    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status IN ('queued', 'scanning', 'analyzing')`);
+
+    // ─── Niche Discovery Jobs ───────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS niche_discovery_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL,
+        query TEXT NOT NULL,
+        location TEXT NOT NULL DEFAULT '',
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        discovered_urls JSONB DEFAULT '[]'::jsonb,
+        scheduled_count INTEGER DEFAULT 0,
+        audited_count INTEGER DEFAULT 0,
+        error TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_niche_discovery_user ON niche_discovery_jobs(user_id)`);
+
+    // ─── OAuth 2.0 Tables ────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS oauth_clients (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        client_id VARCHAR(64) NOT NULL UNIQUE,
+        client_secret_hash VARCHAR(128) NOT NULL,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name VARCHAR(120) NOT NULL,
+        redirect_uris JSONB NOT NULL DEFAULT '[]',
+        scopes JSONB NOT NULL DEFAULT '[]',
+        enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_clients_user ON oauth_clients(user_id)`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_oauth_clients_client_id ON oauth_clients(client_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        code_hash VARCHAR(128) NOT NULL,
+        client_id VARCHAR(64) NOT NULL,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        redirect_uri TEXT NOT NULL,
+        scopes JSONB NOT NULL DEFAULT '[]',
+        redeemed BOOLEAN NOT NULL DEFAULT FALSE,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_codes_hash ON oauth_authorization_codes(code_hash)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS oauth_tokens (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        token_hash VARCHAR(128) NOT NULL,
+        client_id VARCHAR(64) NOT NULL,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        scopes JSONB NOT NULL DEFAULT '[]',
+        revoked BOOLEAN NOT NULL DEFAULT FALSE,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user ON oauth_tokens(user_id)`);
+
+    // ─── Support tickets ──────────────────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS support_tickets (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        ticket_number VARCHAR(16) NOT NULL UNIQUE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        subject VARCHAR(200) NOT NULL,
+        category VARCHAR(32) NOT NULL DEFAULT 'general',
+        priority VARCHAR(16) NOT NULL DEFAULT 'normal',
+        status VARCHAR(32) NOT NULL DEFAULT 'open',
+        description TEXT NOT NULL,
+        metadata JSONB DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        resolved_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_number ON support_tickets(ticket_number)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS support_ticket_messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
+        sender_type VARCHAR(16) NOT NULL DEFAULT 'user',
+        sender_id UUID,
+        message TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON support_ticket_messages(ticket_id)`);
+
+    // ── Agent task queue ──
+    _q(`
+      CREATE TABLE IF NOT EXISTS agent_tasks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        task_type VARCHAR(40) NOT NULL,
+        payload JSONB NOT NULL DEFAULT '{}',
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        result JSONB,
+        error TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        started_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_user ON agent_tasks(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status) WHERE status = 'pending'`);
+
+    // Execute all migrations in a single round-trip
+    if (_ddl.length > 0) {
+      console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);
+      await client.query(_ddl.join(';\n'));
+    }
+
+    // Migration complete
+  markDatabaseAvailable();
+    migrationsRan = true;
+    console.log('[DB] Database migrations complete');
+    return;
+  } catch (err) {
+    lastError = err;
+    const msg = (err as any).message || String(err);
+    console.warn(`[DB] Migration error on attempt ${attempt}/${maxRetries}: ${msg.substring(0, 80)}`);
+
+    if (!shouldRetryDatabaseError(err)) {
+      console.warn('[DB] Migration retries skipped because the database reported a quota exhaustion error');
+      break;
+    }
+    
+    if (attempt < maxRetries) {
+      const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 15000);
+      console.log(`[DB] Retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  } finally {
+    if (client) client.release();
+  }
+  }
+  
+  // After all retries exhausted
+  markDatabaseUnavailable(lastError);
+  console.error('[DB] Migration failed after all retries:', (lastError as any).message);
+  // Don't throw - allow server to start even if migrations fail
+  // This allows recovery when DB is temporarily overloaded
+  migrationsRan = true;
+}
+
+export const pool = new Proxy({} as Pool, {
+  get(_target, prop) {
+    const real = getPool() as any;
+    return real[prop];
+  },
+});
+
+export async function getConnection(): Promise<PoolClient> {
+  return getPool().connect();
+}
+
+export async function executeTransaction<T>(
+  callback: (client: PoolClient) => Promise<T>
+): Promise<T> {
+  const client = await getPool().connect();
+  try {
+    await client.query('BEGIN');
+    const result = await callback(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    try {
+      await client.query('ROLLBACK');
+    } catch {
+      /* ignore rollback errors */
+    }
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+export async function healthCheck(): Promise<boolean> {
+  if (!dbConfigured) return false;
+  // If DB was marked unavailable, allow periodic retry after TTL
+  if (!databaseAvailable && lastDatabaseError) {
+    const elapsed = Date.now() - lastDatabaseErrorTime;
+    if (elapsed < DB_UNAVAILABLE_RETRY_MS) {
+      return false;
+    }
+    // TTL expired — attempt a real connection check
+  }
+  try {
+    await getPool().query('SELECT 1');
+    markDatabaseAvailable();
+    return true;
+  } catch (err) {
+    markDatabaseUnavailable(err);
+    return false;
+  }
+}
+
+export async function closePool(): Promise<void> {
+  if (poolInstance) await poolInstance.end();
+  poolInstance = null;
+}

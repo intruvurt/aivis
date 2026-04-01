@@ -1,0 +1,272 @@
+{
+  "generatedAt": "2026-03-18T13:31:23.745437+00:00",
+  "target": "https://aivis.biz",
+  "robots": {
+    "url": "https://aivis.biz/robots.txt",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "llms_txt": {
+    "url": "https://aivis.biz/llms.txt",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "sitemap": {
+    "url": "https://aivis.biz/sitemap.xml",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "scores": {
+    "overall": 88,
+    "technical": 62,
+    "ai_visibility": 48,
+    "template_duplication_penalty": 22,
+    "template_duplication_ratio": 0.833,
+    "template_unique_pages": 1,
+    "template_total_pages": 6
+  },
+  "urlsAudited": [
+    {
+      "url": "https://aivis.biz/",
+      "status": 200,
+      "latency_ms": 157,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    },
+    {
+      "url": "https://aivis.biz/landing",
+      "status": 200,
+      "latency_ms": 283,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    },
+    {
+      "url": "https://aivis.biz/pricing",
+      "status": 200,
+      "latency_ms": 246,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    },
+    {
+      "url": "https://aivis.biz/analyze",
+      "status": 200,
+      "latency_ms": 223,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    },
+    {
+      "url": "https://aivis.biz/insights",
+      "status": 200,
+      "latency_ms": 279,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    },
+    {
+      "url": "https://aivis.biz/blogs",
+      "status": 200,
+      "latency_ms": 215,
+      "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "canonical": "https://aivis.biz",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "FAQPage",
+        "HowTo",
+        "WebPage"
+      ],
+      "internal_links": 17,
+      "external_links": 4,
+      "word_count": 2765,
+      "error": null
+    }
+  ],
+  "claims": [
+    {
+      "claim": "robots.txt reachable (200)",
+      "evidenceIds": [
+        "ev-web-b0b17b7569fe"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "llms.txt reachable (200)",
+      "evidenceIds": [
+        "ev-web-ac3850d911c0"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "sitemap.xml reachable (200)",
+      "evidenceIds": [
+        "ev-web-eac87b896841"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage has title",
+      "evidenceIds": [
+        "ev-web-07ec97f80215"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage has meta description",
+      "evidenceIds": [
+        "ev-web-9173fef73bc4"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage exposes JSON-LD",
+      "evidenceIds": [
+        "ev-web-3cf2fb46c54a"
+      ],
+      "status": "SUPPORTED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-web-b0b17b7569fe",
+      "source": "web",
+      "url": "https://aivis.biz/robots.txt",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-18T13:31:23.745286+00:00"
+    },
+    {
+      "id": "ev-web-ac3850d911c0",
+      "source": "web",
+      "url": "https://aivis.biz/llms.txt",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-18T13:31:23.745322+00:00"
+    },
+    {
+      "id": "ev-web-eac87b896841",
+      "source": "web",
+      "url": "https://aivis.biz/sitemap.xml",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-18T13:31:23.745341+00:00"
+    },
+    {
+      "id": "ev-web-07ec97f80215",
+      "source": "web",
+      "url": "https://aivis.biz/",
+      "snippet": "homepage_title=AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "retrievedAt": "2026-03-18T13:31:23.745361+00:00"
+    },
+    {
+      "id": "ev-web-9173fef73bc4",
+      "source": "web",
+      "url": "https://aivis.biz/",
+      "snippet": "homepage_meta_description=AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
+      "retrievedAt": "2026-03-18T13:31:23.745382+00:00"
+    },
+    {
+      "id": "ev-web-3cf2fb46c54a",
+      "source": "web",
+      "url": "https://aivis.biz/",
+      "snippet": "homepage_jsonld=FAQPage,HowTo,WebPage",
+      "retrievedAt": "2026-03-18T13:31:23.745400+00:00"
+    }
+  ],
+  "ledger": {
+    "runId": "ev-internal-4c57fe4f92f9",
+    "auditTimestamp": "2026-03-18T13:31:23.745422+00:00",
+    "claimsTotal": 6,
+    "claimsSupported": 6,
+    "claimsNoEvidence": 0,
+    "claimsExcluded": 0,
+    "severeFindingsCount": 0,
+    "rescanRecommended": false,
+    "rescanReasons": [],
+    "noEvidenceClaims": [],
+    "collectionIssues": []
+  },
+  "fixes": [
+    "Keep robots.txt, llms.txt, and sitemap.xml consistently reachable from all crawler networks.",
+    "Maintain citation-ready pages with canonical URL, author/date fields, and source links.",
+    "Expand JSON-LD coverage (Organization, WebSite, Service, FAQPage) across core pages.",
+    "Track weekly competitor citation share and trend movement using identical deterministic checks."
+  ]
+}

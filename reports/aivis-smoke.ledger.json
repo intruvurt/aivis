@@ -1,0 +1,13 @@
+{
+  "runId": "ev-internal-4c57fe4f92f9",
+  "auditTimestamp": "2026-03-18T13:31:23.745422+00:00",
+  "claimsTotal": 6,
+  "claimsSupported": 6,
+  "claimsNoEvidence": 0,
+  "claimsExcluded": 0,
+  "severeFindingsCount": 0,
+  "rescanRecommended": false,
+  "rescanReasons": [],
+  "noEvidenceClaims": [],
+  "collectionIssues": []
+}

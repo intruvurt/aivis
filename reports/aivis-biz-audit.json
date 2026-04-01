@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-03-13T09:09:29.558262+00:00",
+  "target": "https://aivis.biz",
+  "robots": {
+    "url": "https://aivis.biz/robots.txt",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "llms_txt": {
+    "url": "https://aivis.biz/llms.txt",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "sitemap": {
+    "url": "https://aivis.biz/sitemap.xml",
+    "status": 200,
+    "ok": true,
+    "error": null
+  },
+  "scores": {
+    "overall": 100,
+    "technical": 62,
+    "ai_visibility": 48
+  },
+  "urlsAudited": [
+    {
+      "url": "https://aivis.biz",
+      "status": 200,
+      "latency_ms": null,
+      "title": "AiVIS: AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "meta_description": "AiVIS audits how AI systems interpret website content and returns evidence-backed visibility scoring with implementation-ready fixes.",
+      "canonical": "https://aivis.biz/",
+      "h1_count": 1,
+      "has_og_title": true,
+      "has_og_description": true,
+      "has_twitter_card": true,
+      "has_jsonld": true,
+      "schema_types": [
+        "SoftwareApplication",
+        "WebPage",
+        "FAQPage",
+        "Organization",
+        "WebSite"
+      ],
+      "internal_links": 39,
+      "external_links": 1,
+      "word_count": 755,
+      "error": null
+    }
+  ],
+  "claims": [
+    {
+      "claim": "robots.txt reachable (200)",
+      "evidenceIds": [
+        "ev-web-b0b17b7569fe"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "llms.txt reachable (200)",
+      "evidenceIds": [
+        "ev-web-ac3850d911c0"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "sitemap.xml reachable (200)",
+      "evidenceIds": [
+        "ev-web-eac87b896841"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage has title",
+      "evidenceIds": [
+        "ev-web-34f60b5fa27d"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage has meta description",
+      "evidenceIds": [
+        "ev-web-0bb4e8b8aa5e"
+      ],
+      "status": "SUPPORTED"
+    },
+    {
+      "claim": "Homepage exposes JSON-LD",
+      "evidenceIds": [
+        "ev-web-90f98c32f506"
+      ],
+      "status": "SUPPORTED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-web-b0b17b7569fe",
+      "source": "web",
+      "url": "https://aivis.biz/robots.txt",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-13T09:09:29.558201+00:00"
+    },
+    {
+      "id": "ev-web-ac3850d911c0",
+      "source": "web",
+      "url": "https://aivis.biz/llms.txt",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-13T09:09:29.558227+00:00"
+    },
+    {
+      "id": "ev-web-eac87b896841",
+      "source": "web",
+      "url": "https://aivis.biz/sitemap.xml",
+      "snippet": "status=200 ok=True",
+      "retrievedAt": "2026-03-13T09:09:29.558232+00:00"
+    },
+    {
+      "id": "ev-web-34f60b5fa27d",
+      "source": "web",
+      "url": "https://aivis.biz",
+      "snippet": "homepage_title=AiVIS: AI Visibility Audit for ChatGPT, Perplexity, Claude",
+      "retrievedAt": "2026-03-13T09:09:29.558238+00:00"
+    },
+    {
+      "id": "ev-web-0bb4e8b8aa5e",
+      "source": "web",
+      "url": "https://aivis.biz",
+      "snippet": "homepage_meta_description=AiVIS audits how AI systems interpret website content and returns evidence-backed visibility scoring with implementation-ready fixes.",
+      "retrievedAt": "2026-03-13T09:09:29.558244+00:00"
+    },
+    {
+      "id": "ev-web-90f98c32f506",
+      "source": "web",
+      "url": "https://aivis.biz",
+      "snippet": "homepage_jsonld=SoftwareApplication,WebPage,FAQPage,Organization,WebSite",
+      "retrievedAt": "2026-03-13T09:09:29.558249+00:00"
+    }
+  ],
+  "ledger": {
+    "runId": "ev-internal-2105f737a107",
+    "auditTimestamp": "2026-03-13T09:09:29.558256+00:00",
+    "claimsTotal": 6,
+    "claimsSupported": 6,
+    "claimsNoEvidence": 0,
+    "claimsExcluded": 0,
+    "severeFindingsCount": 0,
+    "rescanRecommended": false,
+    "rescanReasons": [],
+    "noEvidenceClaims": [],
+    "collectionIssues": []
+  },
+  "fixes": [
+    "Keep robots.txt, llms.txt, and sitemap.xml consistently reachable from all crawler networks.",
+    "Maintain citation-ready pages with canonical URL, author/date fields, and source links.",
+    "Expand JSON-LD coverage (Organization, WebSite, Service, FAQPage) across core pages.",
+    "Track weekly competitor citation share and trend movement using identical deterministic checks."
+  ]
+}

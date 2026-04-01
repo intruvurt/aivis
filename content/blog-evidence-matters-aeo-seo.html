@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Evidence Is the Only Thing That Matters in SEO and AEO Right Now | AiVIS</title>
+  <meta name="description" content="Every SEO tool gives you opinions. Evidence-backed auditing changes the game for AEO and AI visibility. Here's why proof-first scoring is the only strategy that survives the AI shift." />
+  <meta name="keywords" content="AEO, SEO, AI visibility, evidence-based SEO, answer engine optimization, machine legibility, structured data, AI citations, SSFR evidence, website audit" />
+  <meta name="author" content="AiVIS Team" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://aivis.biz/blog/evidence-matters-aeo-seo" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Why Evidence Is the Only Thing That Matters in SEO and AEO Right Now" />
+  <meta property="og:description" content="Every SEO tool gives you opinions. Evidence-backed auditing changes the game for AEO and AI visibility. Here's why proof-first scoring is the only strategy that survives the AI shift." />
+  <meta property="og:url" content="https://aivis.biz/blog/evidence-matters-aeo-seo" />
+  <meta property="og:site_name" content="AiVIS" />
+  <meta property="og:image" content="https://aivis.biz/og-evidence-blog.png" />
+  <meta property="og:image:alt" content="AiVIS evidence-backed audit report showing scored recommendations with proof anchors" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Why Evidence Is the Only Thing That Matters in SEO and AEO Right Now" />
+  <meta name="twitter:description" content="Opinions don't rank in AI answers. Evidence does. Here's the proof-first approach to AEO and SEO." />
+  <meta name="twitter:image" content="https://aivis.biz/og-evidence-blog.png" />
+  <meta name="twitter:image:alt" content="Dashboard showing AI visibility score with evidence coverage percentage and integrity metrics" />
+
+  <!-- Schema.org Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Why Evidence Is the Only Thing That Matters in SEO and AEO Right Now",
+    "description": "Every SEO tool gives you opinions. Evidence-backed auditing changes the game for AEO and AI visibility. Here's why proof-first scoring is the only strategy that survives the AI shift.",
+    "author": {
+      "@type": "Organization",
+      "name": "AiVIS",
+      "url": "https://aivis.biz"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "AiVIS",
+      "url": "https://aivis.biz",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://aivis.biz/logo.png"
+      }
+    },
+    "datePublished": "2026-03-24",
+    "dateModified": "2026-03-24",
+    "mainEntityOfPage": "https://aivis.biz/blog/evidence-matters-aeo-seo",
+    "image": "https://aivis.biz/og-evidence-blog.png",
+    "keywords": ["AEO", "SEO", "AI visibility", "evidence-based auditing", "answer engine optimization", "machine legibility"]
+  }
+  </script>
+
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is evidence-based SEO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Evidence-based SEO ties every audit recommendation to a specific, verifiable data point from the live page crawl. Instead of generic advice, each finding is anchored to proof — like a missing schema type, a weak heading hierarchy, or absent alt text — so you know exactly what to fix and why it matters."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does AEO require evidence more than traditional SEO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI models deciding whether to cite your content evaluate structural clarity, factual density, and source trustworthiness in milliseconds. Unlike traditional search engines that weight backlinks and domain age, answer engines need extractable proof — structured data, clear heading hierarchies, and quotable answer blocks. Without evidence of these elements, optimization is guesswork."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is evidence coverage percentage in an AI visibility audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Evidence coverage percentage measures how many recommendations in your audit are backed by verifiable proof from the live crawl. A high coverage percentage means every suggestion has a traceable evidence anchor — nothing is invented or assumed. AiVIS tracks both evidence coverage and evidence integrity to ensure audit quality."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is SSFR evidence different from a normal SEO audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SSFR (Source-Signal-Fact-Relationship) is a four-family evidence framework. Source evidence confirms your identity and authority. Signal evidence validates your metadata and schema consistency. Fact evidence measures your content depth and information quality. Relationship evidence checks your citation anchors and cross-references. Traditional SEO audits don't categorize findings this way."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --muted: #5a5a7a;
+      --accent: #118ad1;
+      --accent-light: #e8f4fd;
+      --green: #16a34a;
+      --amber: #d97706;
+      --border: #e5e7eb;
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .article-container {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .article-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 20px;
+    }
+
+    .article-meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    .article-meta time { font-weight: 600; }
+
+    .hero-img {
+      width: 100%;
+      border-radius: var(--radius);
+      margin-bottom: 48px;
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+
+    p { margin-bottom: 20px; color: var(--text); }
+    p.muted { color: var(--muted); }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .callout {
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      padding: 20px 24px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 32px 0;
+      font-size: 17px;
+    }
+
+    .callout strong { color: var(--accent); }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .evidence-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .evidence-card .emoji { font-size: 28px; margin-bottom: 8px; }
+    .evidence-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .evidence-card p { font-size: 14px; color: var(--muted); margin-bottom: 0; }
+
+    blockquote {
+      border-left: 3px solid var(--border);
+      padding-left: 20px;
+      margin: 28px 0;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 24px;
+    }
+
+    li { margin-bottom: 8px; }
+
+    .img-block {
+      margin: 36px 0;
+      text-align: center;
+    }
+
+    .img-block img {
+      width: 100%;
+      max-width: 680px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .img-block .caption {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0c1929, #112240);
+      color: #f0f4f8;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      text-align: center;
+      margin: 48px 0;
+    }
+
+    .cta-box h3 { color: #37a6de; margin-top: 0; }
+    .cta-box p { color: #8b9cb0; }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      margin-top: 16px;
+      text-decoration: none;
+    }
+
+    .cta-btn:hover { background: #0d7abf; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .evidence-grid { grid-template-columns: 1fr; }
+      .article-container { padding: 32px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<article class="article-container" itemscope itemtype="https://schema.org/Article">
+  <span class="article-label">AEO &amp; SEO Strategy</span>
+  <h1 itemprop="headline">Why Evidence Is the Only Thing That Matters in SEO and AEO Right Now</h1>
+  <div class="article-meta">
+    By <span itemprop="author">AiVIS Team</span> · <time datetime="2026-03-24" itemprop="datePublished">March 24, 2026</time> · 7 min read
+  </div>
+
+  <img
+    class="hero-img"
+    src="/images/blog/evidence-hero-audit-dashboard.png"
+    alt="AiVIS audit dashboard displaying an AI visibility score alongside evidence-linked recommendations for a live website"
+    itemprop="image"
+    loading="eager"
+  />
+
+  <p>Let me be honest with you. The SEO game you learned three years ago is not the same game running today. Not even close.</p>
+
+  <p>There was a time when you could throw keywords into a blog post, build some backlinks, cross your fingers, and watch the traffic roll in. That era ended quietly while most people were still arguing about meta descriptions. What replaced it is harder, sharper, and way less forgiving.</p>
+
+  <p>AI happened. And not in the way most marketers talk about it.</p>
+
+  <p>ChatGPT, Perplexity, Claude, Google AI Overviews — these platforms are quietly deciding who gets cited, who gets recommended, and who gets completely ignored. Every single day. Millions of queries. Billions of answers. And the criteria they use to pick winners looks nothing like traditional search rankings.</p>
+
+  <p>The question is not whether your content is good. The question is: <strong>can you prove it?</strong></p>
+
+  <h2>The Problem Nobody Talks About</h2>
+
+  <p>Most SEO tools give you opinions. They scan your page, run it through some checklist, and spit out a score. Maybe a 74. Maybe an 88. You get a list of "things to fix." You fix a few. Your score goes up. Everybody feels productive.</p>
+
+  <p>But here is the uncomfortable truth: none of those recommendations are tied to anything real.</p>
+
+  <p>When a tool tells you to "improve your content quality" — what does that even mean? Where is the proof that your current content quality is lacking? Which specific piece of data from your actual page supports that claim? What evidence exists?</p>
+
+  <p>Usually: none. The tool is guessing. And you're implementing those guesses with real hours and real money.</p>
+
+  <div class="callout">
+    <strong>This is the core issue:</strong> If your audit tool cannot point to a specific, verifiable data point for every single recommendation it makes, you're optimizing on vibes. And vibes do not survive when AI models are the ones deciding who gets cited.
+  </div>
+
+  <p>Answer Engine Optimization — AEO — makes this problem ten times worse. Traditional SEO at least gave you some measurable feedback loops. You made a change, waited for the next crawl, checked your ranking. With AEO, the feedback loop is invisible. An AI model decides whether to mention your brand in a conversation happening right now, and you have zero insight into why unless your audit system is built on evidence.</p>
+
+  <h2>What Evidence Actually Means in This Context</h2>
+
+  <p>When we say "evidence" in the context of AI visibility, we don't mean testimonials on your homepage or case studies in your blog. We mean something very specific.</p>
+
+  <p>Evidence is a verifiable data point extracted from the live crawl of your page, tied directly to a recommendation, with a traceable ID that anyone can check.</p>
+
+  <div class="img-block">
+    <img
+      src="/images/blog/evidence-recommendation-anchors.png"
+      alt="Three audit recommendations each linked to specific evidence IDs from the live crawl with status indicators showing present, partial, and missing"
+      loading="lazy"
+    />
+    <div class="caption">Each recommendation traces back to a specific evidence anchor from your live page.</div>
+  </div>
+
+  <p>Here is what that looks like in practice:</p>
+
+  <ul>
+    <li><strong>Your title tag is 112 characters.</strong> That is evidence. The scraper measured it. It is a fact.</li>
+    <li><strong>Your page has zero FAQ schema.</strong> That is evidence. The structured data parser confirmed it.</li>
+    <li><strong>You have 4 images with missing alt text out of 11 total.</strong> That is evidence. The alt coverage ratio is 63.6% and the tool can show you exactly which images.</li>
+    <li><strong>Your page loads in 4,200ms.</strong> That is evidence. The performance measurement logged it.</li>
+  </ul>
+
+  <p>When a recommendation says "add FAQ structured data to improve extractability," it is linked to the evidence that FAQ schema is missing on your page right now. Not a hunch. Not a best practice from a blog post written in 2019. Proof.</p>
+
+  <p>This changes everything about how you prioritize your work.</p>
+
+  <h2>Why AEO Demands Evidence More Than SEO Ever Did</h2>
+
+  <p>Google's traditional search algorithm was complex, but it was also somewhat forgiving. Pages with strong backlink profiles could rank even with messy structure. Domain age bought you credibility you hadn't fully earned. You could get away with a lot.</p>
+
+  <p>AI answer engines don't play like that.</p>
+
+  <p>When ChatGPT or Perplexity decides which source to cite in a response, it evaluates your content in a fundamentally different way. The AI model needs to:</p>
+
+  <ol>
+    <li><strong>Find your content</strong> — which means it needs to be crawlable, indexable, and accessible to AI-specific crawlers</li>
+    <li><strong>Understand your content</strong> — which means clean structure, clear headings, consistent metadata</li>
+    <li><strong>Trust your content</strong> — which means schema markup, author entities, organizational identity, external verification</li>
+    <li><strong>Extract from your content</strong> — which means quotable answer blocks, factual claims, and self-contained explanations</li>
+  </ol>
+
+  <p>Every single one of those steps is measurable. Every single one produces evidence. And if your audit tool is not measuring them and linking its recommendations to that evidence, you are flying blind in an environment where precision is the only thing that matters.</p>
+
+  <div class="img-block">
+    <img
+      src="/images/blog/aeo-vs-seo-evaluation-criteria.png"
+      alt="Comparison chart showing traditional SEO evaluation criteria versus AEO evaluation criteria with evidence requirements highlighted for each step"
+      loading="lazy"
+    />
+    <div class="caption">AEO evaluation requires proof at every step. Traditional SEO let you skip most of them.</div>
+  </div>
+
+  <h2>The Four Families of Evidence That Matter</h2>
+
+  <p>Not all evidence is equal, and not all of it serves the same purpose. When you break down what AI models actually evaluate, it falls into four distinct families. Understanding them is the difference between random fixes and strategic improvement.</p>
+
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <div class="emoji">🔍</div>
+      <h4>Source</h4>
+      <p>Who you are. Organization schema, author entities, sameAs links to verified profiles, canonical URLs, AI crawler access permissions. This is your digital identity proof.</p>
+    </div>
+    <div class="evidence-card">
+      <div class="emoji">📡</div>
+      <h4>Signal</h4>
+      <p>How consistent your presentation is. Title quality, meta coherence, Open Graph completeness, JSON-LD coverage, heading hierarchy, sitemap presence. These are your structural markers.</p>
+    </div>
+    <div class="evidence-card">
+      <div class="emoji">📊</div>
+      <h4>Fact</h4>
+      <p>How deep and useful your content is. Word count, question headings, summary blocks, image alt coverage, link diversity. This is your information quality proof.</p>
+    </div>
+    <div class="evidence-card">
+      <div class="emoji">🔗</div>
+      <h4>Relationship</h4>
+      <p>How you connect to the wider web. Internationalization signals, schema depth, citation anchors, internal-to-external link ratio, performance metrics. This is your cross-reference proof.</p>
+    </div>
+  </div>
+
+  <p>When all four families have strong evidence, your page becomes what AI models consider a reliable, citable source. When any family is weak, you have a specific, addressable gap — not a vague "your content needs improvement" message.</p>
+
+  <p>This is the framework behind how <a href="https://aivis.biz">AiVIS</a> scores every page it audits. Source. Signal. Fact. Relationship. Four families of evidence, each mapped to specific data points from your live page, each producing verifiable proof of what is working and what is not.</p>
+
+  <h2>What Happens When You Audit Without Evidence</h2>
+
+  <p>I have seen this pattern repeat hundreds of times. A business runs an audit with a popular tool. Gets a score. Gets a list of recommendations. Spends two weeks implementing changes. Runs the audit again. Score goes up by 8 points.</p>
+
+  <p>Everyone celebrates.</p>
+
+  <p>Three months later, their AI visibility has not changed at all. They're still not getting cited. They're still not appearing in AI-generated answers. The score improvement was real — but it was meaningless. Because the recommendations were never connected to the actual criteria that AI models use to decide who gets cited.</p>
+
+  <div class="callout">
+    <strong>This is the trap:</strong> Scoring without evidence creates the illusion of progress. You're moving numbers on a dashboard while the things that actually matter — crawlability, extractability, trust, citation anchors — remain unchanged.
+  </div>
+
+  <p>The worst part is you'll never know why. Without evidence anchors, you can't trace back from "we're not getting cited" to "this specific element is the reason." You're stuck guessing. Again.</p>
+
+  <h2>What Evidence-Backed Auditing Actually Looks Like</h2>
+
+  <p>Here's the difference. An evidence-backed audit does not just tell you that your structured data "needs improvement." It tells you:</p>
+
+  <ul>
+    <li>You have 2 JSON-LD schema types detected (FAQPage, WebSite)</li>
+    <li>Organization schema is <strong>missing</strong> — no entity identity for AI models to reference</li>
+    <li>Author entity is <strong>missing</strong> — content has no attributed creator in structured data</li>
+    <li>sameAs links: <strong>0 found</strong> — no cross-platform verification for your entity</li>
+  </ul>
+
+  <p>Each of those is a specific evidence item with a status: present, partial, or missing. Each one maps to a recommendation. And each recommendation maps back to the evidence that justifies it.</p>
+
+  <div class="img-block">
+    <img
+      src="/images/blog/evidence-coverage-integrity-metrics.png"
+      alt="Evidence coverage percentage at 94% and evidence integrity percentage at 91% displayed in a clean metric bar from an AiVIS audit report"
+      loading="lazy"
+    />
+    <div class="caption">Evidence coverage and integrity metrics tell you how trustworthy your audit actually is.</div>
+  </div>
+
+  <p>This system also tracks two numbers that most people have never heard of but that change how you think about audits entirely:</p>
+
+  <p><strong>Evidence coverage percentage</strong> — what proportion of your recommendations have verifiable proof behind them. If this number is low, the audit is making claims it cannot back up.</p>
+
+  <p><strong>Evidence integrity percentage</strong> — how reliable the evidence chain is from crawl data to recommendation. Think of it as the audit auditing itself.</p>
+
+  <p>When both numbers are high, you know every single suggestion on your report is real, traceable, and worth implementing. That is a fundamentally different experience than "your score is 74, here are some tips."</p>
+
+  <h2>How This Connects to Getting Cited by AI</h2>
+
+  <p>The endgame is citation. That is what AEO is really about. Getting your brand, your content, your answers pulled into AI-generated responses where millions of people see them.</p>
+
+  <p>And citations don't happen by accident. They happen because your page had the right structural signals, the right depth of content, the right identity markers, and the right cross-references — all at the same time, all verifiable.</p>
+
+  <p>An AI model scanning your page does not care about your gut feeling. It does not care how long you spent writing. It cares about:</p>
+
+  <ul>
+    <li>Can I identify who published this? (Source evidence)</li>
+    <li>Is this page structurally consistent? (Signal evidence)</li>
+    <li>Does this content contain useful, extractable facts? (Fact evidence)</li>
+    <li>Is this content connected to other reliable sources? (Relationship evidence)</li>
+  </ul>
+
+  <p>If the answer to all four is yes, your chances of being cited go way up. If any one of them is weak, you lose to whoever has all four covered. It's that straightforward.</p>
+
+  <h2>The Proof Mode Test</h2>
+
+  <p>Here is something that separates evidence-based auditing from everything else: the before-and-after proof.</p>
+
+  <p>You run your first audit. You get your evidence map, your recommendations, your score. Then you implement one specific fix — maybe you add Organization schema, or you restructure your heading hierarchy, or you create proper FAQ markup.</p>
+
+  <p>Then you run the audit again on the same page.</p>
+
+  <p>The system shows you the exact delta. Not just "your score went up 6 points." It shows you which evidence items changed status. Which went from missing to present. Which moved from partial to complete. The improvement is traced, measured, and reproducible.</p>
+
+  <div class="img-block">
+    <img
+      src="/images/blog/proof-mode-before-after-delta.png"
+      alt="Before-and-after proof mode comparison showing score improvement from 62 to 74 with highlighted evidence items that changed from missing to present"
+      loading="lazy"
+    />
+    <div class="caption">Proof mode shows exactly which evidence items improved — not just the score.</div>
+  </div>
+
+  <p>That is how you build confidence that your optimization work is actually moving the needle. Not dashboard vanity metrics. Measured, evidence-backed improvement.</p>
+
+  <h2>What This Means for Your Strategy Right Now</h2>
+
+  <p>If you're still running audits with tools that give you scores without evidence, you're spending time and money on optimization theater. It might feel productive. It is not.</p>
+
+  <p>The shift to AEO is not coming. It already happened. AI models are generating answers, citing sources, and recommending brands right now. The businesses that show up in those answers are the ones with clean structure, verified identity, strong factual depth, and traceable cross-references.</p>
+
+  <p>The businesses that don't? They're invisible. Not because their content is bad. Because they can't prove it's good.</p>
+
+  <p>Evidence-backed auditing is not a nice-to-have. It is the only approach that gives you real information, real priorities, and real results in a world where AI models are the new gatekeepers.</p>
+
+  <p>Stop optimizing on vibes. Start optimizing on proof.</p>
+
+  <div class="cta-box">
+    <h3>See Your Evidence Map</h3>
+    <p>Run a free audit on any URL. Get your Source, Signal, Fact, and Relationship evidence items with coverage and integrity metrics included.</p>
+    <a href="https://aivis.biz" class="cta-btn">Run Your Free Audit →</a>
+  </div>
+
+  <h2>Frequently Asked Questions</h2>
+
+  <h3>What is evidence-based SEO?</h3>
+  <p>Evidence-based SEO ties every audit recommendation to a specific, verifiable data point from the live page crawl. Instead of generic advice, each finding is anchored to proof — like a missing schema type, a weak heading hierarchy, or absent alt text — so you know exactly what to fix and why it matters.</p>
+
+  <h3>Why does AEO require evidence more than traditional SEO?</h3>
+  <p>AI models deciding whether to cite your content evaluate structural clarity, factual density, and source trustworthiness in milliseconds. Unlike traditional search engines that weight backlinks and domain age, answer engines need extractable proof — structured data, clear heading hierarchies, and quotable answer blocks. Without evidence of these elements, optimization is guesswork.</p>
+
+  <h3>What is evidence coverage percentage in an AI visibility audit?</h3>
+  <p>Evidence coverage percentage measures how many recommendations in your audit are backed by verifiable proof from the live crawl. A high coverage percentage means every suggestion has a traceable evidence anchor — nothing is invented or assumed.</p>
+
+  <h3>How is SSFR evidence different from a normal SEO audit?</h3>
+  <p>SSFR — Source, Signal, Fact, Relationship — is a four-family evidence framework. Source confirms your identity and authority. Signal validates your metadata consistency. Fact measures your content depth. Relationship checks your citation anchors and cross-references. Traditional SEO audits don't categorize findings with this level of traceability.</p>
+
+</article>
+
+</body>
+</html>

@@ -237,7 +237,7 @@ export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier | 'scorefix',
 export type AnalysisExecutionClass = 'LIVE' | 'DETERMINISTIC_FALLBACK' | 'SCRAPE_ONLY' | 'UPLOAD';
 
 export function getAnalysisExecutionClass(result: AnalysisResponse): AnalysisExecutionClass {
-  const r = result as Record<string, unknown>;
+  const r = result as unknown as Record<string, unknown>;
   const explicit =
     (r.analysis_integrity as Record<string, unknown> | undefined)?.execution_class ??
     r.execution_class;

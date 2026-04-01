@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/*"]
+    }
+  },
+  "include": ["src", "../shared"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/auth/neonAuthClient.ts",
+    "src/context/AuthContext.tsx",
+    "src/context/DarkModeContext.tsx",
+    "src/components/AnalyticalDashboard.tsx",
+    "src/components/AnalyticsBridge.tsx",
+    "src/components/AuditForm.tsx",
+    "src/components/AuditReport.tsx",
+    "src/components/Landing.tsx",
+       "src/pages/Admin.tsx",
+    "src/pages/NotFound.tsx",
+    "src/pages/BillingPage.tsx",
+    "src/pages/SettingsPage.tsx",
+     "src/pages/TermsPage.tsx",
+      "src/pages/VerifyEmailPage.tsx",
+       "src/pages/WhyAIVisibility.tsx",
+    "src/pages/Dashboard.tsx",
+    "src/pages/Landing.tsx",
+    "src/pages/Login.tsx",
+    "src/pages/Pricing.tsx",
+    "src/pages/Profile.tsx",
+    "src/pages/FAQ.tsx",
+    "src/pages/PrivacyPage.tsx",
+    "src/pages/PaymentSuccessPage.tsx",
+     "src/pages/PaymentCanceledPage.tsx",
+    "src/pages/ResetPassword.tsx",
+    "src/utils/e2e.test.ts",
+    "src/utils/validation.test.ts"
+  ]
+}

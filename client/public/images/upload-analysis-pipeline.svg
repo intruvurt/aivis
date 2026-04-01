@@ -1,0 +1,54 @@
+<svg width="1500" height="860" viewBox="0 0 1500 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="uBg" x1="0" y1="0" x2="1500" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A0A0F" />
+      <stop offset="1" stop-color="#2E3646" />
+    </linearGradient>
+    <marker id="uArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 z" fill="rgba(255,255,255,0.65)"/>
+    </marker>
+  </defs>
+
+  <rect width="1500" height="860" fill="url(#uBg)"/>
+  <rect x="100" y="90" width="1300" height="680" rx="28" fill="#323A4C" fill-opacity="0.92" stroke="rgba(255,255,255,0.12)"/>
+
+  <text x="170" y="165" fill="rgba(255,255,255,0.9)" font-family="Inter, Arial, sans-serif" font-size="33" font-weight="700">Upload Analysis Pipeline</text>
+  <text x="170" y="202" fill="rgba(255,255,255,0.58)" font-family="Inter, Arial, sans-serif" font-size="18">From raw document or source file to evidence-backed AI visibility recommendations</text>
+
+  <g>
+    <rect x="170" y="280" width="250" height="170" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+    <text x="200" y="336" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">1. Ingest</text>
+    <text x="200" y="370" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">Read TXT/MD/HTML</text>
+    <text x="200" y="394" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">or JS/TS/PY source</text>
+  </g>
+
+  <g>
+    <rect x="475" y="280" width="250" height="170" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+    <text x="505" y="336" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">2. Normalize</text>
+    <text x="505" y="370" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">Extract structures,</text>
+    <text x="505" y="394" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">headings, entities</text>
+  </g>
+
+  <g>
+    <rect x="780" y="280" width="250" height="170" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+    <text x="810" y="336" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">3. Score</text>
+    <text x="810" y="370" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">Category-by-category</text>
+    <text x="810" y="394" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">AI visibility grading</text>
+  </g>
+
+  <g>
+    <rect x="1085" y="280" width="250" height="170" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+    <text x="1115" y="336" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600">4. Recommend</text>
+    <text x="1115" y="370" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">Prioritized fixes with</text>
+    <text x="1115" y="394" fill="rgba(255,255,255,0.64)" font-family="Inter, Arial, sans-serif" font-size="15">evidence references</text>
+  </g>
+
+  <line x1="420" y1="365" x2="465" y2="365" stroke="rgba(255,255,255,0.62)" stroke-width="4" marker-end="url(#uArrow)"/>
+  <line x1="725" y1="365" x2="770" y2="365" stroke="rgba(255,255,255,0.62)" stroke-width="4" marker-end="url(#uArrow)"/>
+  <line x1="1030" y1="365" x2="1075" y2="365" stroke="rgba(255,255,255,0.62)" stroke-width="4" marker-end="url(#uArrow)"/>
+
+  <rect x="170" y="520" width="1165" height="190" rx="20" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+  <text x="220" y="580" fill="rgba(255,255,255,0.84)" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="700">Upload-specific outputs</text>
+  <text x="220" y="622" fill="rgba(255,255,255,0.66)" font-family="Inter, Arial, sans-serif" font-size="17">• Source-aware visibility score  • Content depth + structure findings  • Actionable recommendations mapped to detected gaps</text>
+  <text x="220" y="656" fill="rgba(255,255,255,0.66)" font-family="Inter, Arial, sans-serif" font-size="17">• Suitable for docs, pages, and application source files in one audit flow</text>
+</svg>

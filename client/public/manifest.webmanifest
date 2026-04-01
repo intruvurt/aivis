@@ -1,0 +1,51 @@
+{
+  "name": "AiVIS",
+  "short_name": "AiVIS",
+  "description": "AI Visibility Audit platform for ChatGPT, Perplexity, Google AI and Claude. Sign in with Google or GitHub.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2e3646",
+  "theme_color": "#0891b2",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "/favicon-32x32.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/android-chrome-192x192.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/aivis-adaptive-foreground.png?v=20260321b",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "maskable"
+    }
+  ]
+}

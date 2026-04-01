@@ -1,0 +1,36 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#171C2A"/>
+      <stop offset="1" stop-color="#0D111A"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#364158" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#222A3B" stop-opacity="0.75"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" rx="28" fill="url(#bg)"/>
+  <rect x="24" y="24" width="1232" height="672" rx="24" fill="#0B0F17" stroke="#4D5B78" stroke-opacity="0.45"/>
+
+  <rect x="56" y="52" width="1168" height="70" rx="14" fill="#121826" stroke="#5F6E8D" stroke-opacity="0.45"/>
+  <text x="88" y="94" fill="#EAF0FF" font-size="30" font-family="Inter, Arial, sans-serif" font-weight="700">Score Fix Pack Preview</text>
+  <text x="756" y="94" fill="#B9C5DE" font-size="20" font-family="Inter, Arial, sans-serif">JSON-LD + H1 Rewrite + FAQ Block</text>
+
+  <rect x="56" y="146" width="1168" height="182" rx="16" fill="url(#card)" stroke="#6A7898" stroke-opacity="0.42"/>
+  <text x="86" y="184" fill="#E7EDFF" font-size="24" font-family="Inter, Arial, sans-serif" font-weight="700">1) JSON-LD Patch</text>
+  <rect x="86" y="206" width="1106" height="94" rx="10" fill="#0E1522" stroke="#566485" stroke-opacity="0.6"/>
+  <text x="106" y="239" fill="#94E2FF" font-size="20" font-family="Consolas, 'Courier New', monospace">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[...]}</text>
+  <text x="106" y="269" fill="#D0DBF3" font-size="18" font-family="Consolas, 'Courier New', monospace">{"@type":"Organization","name":"Acme Co","url":"https://example.com"}</text>
+
+  <rect x="56" y="346" width="1168" height="144" rx="16" fill="url(#card)" stroke="#6A7898" stroke-opacity="0.42"/>
+  <text x="86" y="384" fill="#E7EDFF" font-size="24" font-family="Inter, Arial, sans-serif" font-weight="700">2) H1 Rewrite</text>
+  <rect x="86" y="406" width="1106" height="56" rx="10" fill="#0E1522" stroke="#566485" stroke-opacity="0.6"/>
+  <text x="106" y="441" fill="#D8E4FF" font-size="22" font-family="Inter, Arial, sans-serif">From: "Home" → "AI Visibility Audit for SaaS Growth Teams"</text>
+
+  <rect x="56" y="508" width="1168" height="162" rx="16" fill="url(#card)" stroke="#6A7898" stroke-opacity="0.42"/>
+  <text x="86" y="546" fill="#E7EDFF" font-size="24" font-family="Inter, Arial, sans-serif" font-weight="700">3) FAQ Block</text>
+  <rect x="86" y="568" width="1106" height="74" rx="10" fill="#0E1522" stroke="#566485" stroke-opacity="0.6"/>
+  <text x="106" y="597" fill="#D7E2FA" font-size="18" font-family="Inter, Arial, sans-serif">Q: How does AI visibility differ from traditional SEO?</text>
+  <text x="106" y="624" fill="#AFC0E4" font-size="17" font-family="Inter, Arial, sans-serif">A: AI systems prioritize extractable structure, evidence clarity, and citation-ready content blocks.</text>
+</svg>

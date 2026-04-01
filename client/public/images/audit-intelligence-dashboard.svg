@@ -1,0 +1,55 @@
+<svg width="1600" height="960" viewBox="0 0 1600 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#060607" />
+      <stop offset="1" stop-color="#2E3646" />
+    </linearGradient>
+    <linearGradient id="panel" x1="220" y1="130" x2="1380" y2="830" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#323A4C" stop-opacity="0.95" />
+      <stop offset="1" stop-color="#242B38" stop-opacity="0.95" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="960" fill="url(#bg)"/>
+  <rect x="220" y="120" width="1160" height="720" rx="28" fill="url(#panel)" stroke="rgba(255,255,255,0.12)"/>
+
+  <text x="280" y="200" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700">AI Visibility Audit Snapshot</text>
+  <text x="280" y="234" fill="rgba(255,255,255,0.58)" font-family="Inter, Arial, sans-serif" font-size="18">Evidence-backed scoring across ChatGPT, Perplexity, Google AI, Claude</text>
+
+  <rect x="280" y="280" width="290" height="210" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.10)"/>
+  <text x="312" y="330" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="16">Visibility Score</text>
+  <text x="312" y="410" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="78" font-weight="800">64</text>
+  <text x="432" y="410" fill="rgba(255,255,255,0.52)" font-family="Inter, Arial, sans-serif" font-size="22">/100</text>
+  <text x="312" y="446" fill="rgba(255,255,255,0.68)" font-family="Inter, Arial, sans-serif" font-size="15">+12 vs previous sprint</text>
+
+  <rect x="600" y="280" width="360" height="210" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.10)"/>
+  <text x="632" y="330" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="16">Model Confidence Spread</text>
+  <rect x="632" y="354" width="290" height="14" rx="7" fill="rgba(255,255,255,0.12)"/>
+  <rect x="632" y="354" width="235" height="14" rx="7" fill="rgba(255,255,255,0.64)"/>
+  <text x="632" y="396" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">ChatGPT</text>
+  <text x="860" y="396" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">81</text>
+  <text x="632" y="426" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">Perplexity</text>
+  <text x="860" y="426" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">72</text>
+  <text x="632" y="456" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">Claude</text>
+  <text x="860" y="456" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">76</text>
+
+  <rect x="990" y="280" width="330" height="210" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.10)"/>
+  <text x="1022" y="330" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="16">Priority Actions</text>
+  <text x="1022" y="370" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="15">• Add FAQ schema block</text>
+  <text x="1022" y="400" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="15">• Expand service entity citations</text>
+  <text x="1022" y="430" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="15">• Tighten H2 query intent match</text>
+
+  <rect x="280" y="525" width="1040" height="270" rx="18" fill="#2E3646" stroke="rgba(255,255,255,0.10)"/>
+  <text x="314" y="575" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="16">Evidence Timeline</text>
+
+  <polyline points="340,730 470,690 600,705 730,640 860,620 990,580 1120,560 1250,520" stroke="rgba(255,255,255,0.75)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="470" cy="690" r="8" fill="#fff" fill-opacity="0.78"/>
+  <circle cx="730" cy="640" r="8" fill="#fff" fill-opacity="0.78"/>
+  <circle cx="990" cy="580" r="8" fill="#fff" fill-opacity="0.78"/>
+  <circle cx="1250" cy="520" r="8" fill="#fff" fill-opacity="0.78"/>
+
+  <text x="340" y="760" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">Week 1</text>
+  <text x="590" y="760" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">Week 2</text>
+  <text x="840" y="760" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">Week 3</text>
+  <text x="1090" y="760" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">Week 4</text>
+</svg>

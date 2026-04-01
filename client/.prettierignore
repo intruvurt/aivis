@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+coverage
+*.log
+.env*
+.env.local
+.ESLint*
+.vscode
+.idea
+.DS_Store
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

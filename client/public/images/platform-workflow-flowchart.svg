@@ -1,0 +1,60 @@
+<svg width="1500" height="880" viewBox="0 0 1500 880" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1500" y2="880" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#060607"/>
+      <stop offset="1" stop-color="#2E3646"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 z" fill="rgba(255,255,255,0.65)"/>
+    </marker>
+  </defs>
+
+  <rect width="1500" height="880" fill="url(#bg3)"/>
+  <text x="140" y="120" fill="rgba(255,255,255,0.9)" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700">Platform Value Workflow</text>
+  <text x="140" y="158" fill="rgba(255,255,255,0.58)" font-family="Inter, Arial, sans-serif" font-size="18">Evidence-first loop for measurable AI visibility growth</text>
+
+  <g>
+    <rect x="120" y="230" width="290" height="140" rx="20" fill="#323A4C" stroke="rgba(255,255,255,0.12)"/>
+    <text x="150" y="282" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="600">1. Baseline Audit</text>
+    <text x="150" y="318" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">Scan core pages and collect</text>
+    <text x="150" y="342" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">initial visibility evidence</text>
+  </g>
+
+  <g>
+    <rect x="470" y="230" width="290" height="140" rx="20" fill="#323A4C" stroke="rgba(255,255,255,0.12)"/>
+    <text x="500" y="282" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="600">2. Prioritize Fixes</text>
+    <text x="500" y="318" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">Select highest-impact actions</text>
+    <text x="500" y="342" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">from recommendation stack</text>
+  </g>
+
+  <g>
+    <rect x="820" y="230" width="290" height="140" rx="20" fill="#323A4C" stroke="rgba(255,255,255,0.12)"/>
+    <text x="850" y="282" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="600">3. Sprint Execution</text>
+    <text x="850" y="318" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">Ship technical + entity +</text>
+    <text x="850" y="342" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">citation improvements</text>
+  </g>
+
+  <g>
+    <rect x="1170" y="230" width="210" height="140" rx="20" fill="#323A4C" stroke="rgba(255,255,255,0.12)"/>
+    <text x="1200" y="282" fill="rgba(255,255,255,0.86)" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="600">4. Re-Audit</text>
+    <text x="1200" y="318" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">Measure deltas</text>
+    <text x="1200" y="342" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="15">and close gaps</text>
+  </g>
+
+  <line x1="410" y1="300" x2="460" y2="300" stroke="rgba(255,255,255,0.65)" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="760" y1="300" x2="810" y2="300" stroke="rgba(255,255,255,0.65)" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="1110" y1="300" x2="1160" y2="300" stroke="rgba(255,255,255,0.65)" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="260" y="500" width="980" height="220" rx="24" fill="#2E3646" stroke="rgba(255,255,255,0.12)"/>
+  <text x="310" y="560" fill="rgba(255,255,255,0.84)" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700">Continuous Loop Outcome</text>
+  <text x="310" y="602" fill="rgba(255,255,255,0.66)" font-family="Inter, Arial, sans-serif" font-size="18">Higher inclusion in AI answers, tighter evidence quality, faster iteration cycles.</text>
+
+  <rect x="310" y="636" width="280" height="48" rx="14" fill="rgba(255,255,255,0.14)"/>
+  <text x="338" y="666" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="16">Visibility Score Lift</text>
+
+  <rect x="618" y="636" width="280" height="48" rx="14" fill="rgba(255,255,255,0.14)"/>
+  <text x="646" y="666" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="16">Recommendation Burn-down</text>
+
+  <rect x="926" y="636" width="280" height="48" rx="14" fill="rgba(255,255,255,0.14)"/>
+  <text x="954" y="666" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="16">Citation Stability</text>
+</svg>

@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AiVIS — Pitchbook 2026</title>
+  <style>
+    :root {
+      --bg:        #07090f;
+      --surface:   #0d1117;
+      --card:      #111827;
+      --border:    rgba(255,255,255,0.08);
+      --accent:    #118ad1;
+      --accent2:   #37a6de;
+      --green:     #22c55e;
+      --amber:     #f59e0b;
+      --pink:      #ec4899;
+      --text:      #f0f4f8;
+      --muted:     #8b9cb0;
+      --radius:    14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* ─── UTILITIES ─────────────────────────────── */
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+    .section    { padding: 100px 0; }
+    .section--dark { background: var(--surface); }
+
+    .label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(17,138,209,.35);
+      background: rgba(17,138,209,.08);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+
+    h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.12; letter-spacing: -.02em; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; line-height: 1.2; letter-spacing: -.015em; }
+    h3 { font-size: 1.25rem; font-weight: 600; }
+    p  { color: var(--muted); }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #37a6de 0%, #118ad1 40%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    @media (max-width: 760px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .container { padding: 0 20px; }
+      .section { padding: 72px 0; }
+    }
+
+    /* ─── NAV ────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,9,15,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: .04em;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      text-decoration: none;
+    }
+
+    /* ─── HERO ───────────────────────────────────── */
+    #hero {
+      padding: 120px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 60% 20%, rgba(17,138,209,.13) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(55,166,222,.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .hero-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #f97316, #22d3ee);
+      color: #07090f;
+      padding: 4px 14px;
+      border-radius: 999px;
+    }
+
+    .hero-date {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    #hero h1 { margin-bottom: 24px; max-width: 740px; }
+    #hero p.lead { font-size: 1.2rem; max-width: 580px; margin-bottom: 40px; color: #9dafc4; }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #0f7abe; }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 64px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat .value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.02em;
+      color: var(--text);
+    }
+
+    .hero-stat .value span { color: var(--accent); }
+    .hero-stat .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ─── PROBLEM ────────────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .problem-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .problem-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .problem-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .problem-icon.red   { background: rgba(239,68,68,.15); }
+    .problem-icon.amber { background: rgba(245,158,11,.15); }
+    .problem-icon.purple{ background: rgba(168,85,247,.15); }
+
+    .problem-text strong { color: var(--text); display: block; font-size: 15px; }
+    .problem-text span   { font-size: 13px; color: var(--muted); }
+
+    .big-quote {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+    }
+
+    .big-quote blockquote {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .big-quote cite { font-size: 13px; color: var(--muted); font-style: normal; }
+
+    /* ─── SOLUTION ───────────────────────────────── */
+    .flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+      position: relative;
+      padding: 0 8px;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 24px;
+      color: var(--accent);
+      font-size: 20px;
+    }
+
+    .flow-num {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      margin: 0 auto 14px;
+    }
+
+    .flow-step h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .flow-step p  { font-size: 12px; color: var(--muted); }
+
+    /* ─── FEATURES ───────────────────────────────── */
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      transition: border-color .2s;
+    }
+
+    .feature-card:hover { border-color: rgba(17,138,209,.4); }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 { color: var(--text); font-size: 15px; margin-bottom: 8px; }
+    .feature-card p  { font-size: 13px; line-height: 1.65; }
+
+    /* ─── DIFFERENTIATION ────────────────────────── */
+    .vs-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 40px;
+    }
+
+    .vs-table th {
+      background: var(--card);
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .vs-table th.aivis-col { color: var(--accent); }
+
+    .vs-table td {
+      padding: 13px 20px;
+      font-size: 13px;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+
+    .vs-table tr:last-child td { border-bottom: none; }
+    .vs-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+    .check  { color: var(--green);  font-weight: 700; }
+    .cross  { color: #ef4444;       font-weight: 700; }
+    .partial{ color: var(--amber);  font-weight: 700; }
+
+    /* ─── MARKET ─────────────────────────────────── */
+    .market-numbers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .market-num {
+      text-align: center;
+      padding: 40px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .market-num .big {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .market-num .label2 {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .market-num .source {
+      font-size: 11px;
+      color: rgba(139,156,176,.5);
+      margin-top: 6px;
+    }
+
+    /* ─── PRICING ────────────────────────────────── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 900px) {
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .market-numbers { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 22px;
+      position: relative;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .price-card:hover { border-color: rgba(17,138,209,.4); transform: translateY(-3px); }
+    .price-card.featured { border-color: var(--accent); }
+
+    .price-card .popular-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .price-tier {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .price-card h3 { font-size: 16px; color: var(--text); margin-bottom: 4px; }
+
+    .price-amount {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin: 16px 0 4px;
+    }
+
+    .price-amount sub {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--muted);
+      vertical-align: baseline;
+    }
+
+    .price-scans {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .price-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .price-features li {
+      font-size: 12px;
+      color: var(--muted);
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* ─── REVENUE ────────────────────────────────── */
+    .scenario-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 760px) { .scenario-cards { grid-template-columns: 1fr; } }
+
+    .scenario {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .scenario.base { border-color: rgba(17,138,209,.5); }
+
+    .scenario-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .scenario-mrr {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .scenario.base .scenario-mrr { color: var(--accent); }
+
+    .scenario-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .scenario-mix {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .mix-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .mix-row .tier-name { color: var(--muted); }
+    .mix-row .tier-rev  { color: var(--text); font-weight: 600; }
+
+    /* ─── TECHNOLOGY ─────────────────────────────── */
+    .tech-moat {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tech-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .tech-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .tech-list strong { color: var(--text); display: block; font-size: 14px; }
+    .tech-list span   { font-size: 13px; color: var(--muted); }
+
+    .evidence-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .evidence-box .ev-title {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .ev-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      font-size: 13px;
+    }
+
+    .ev-row:last-child { border-bottom: none; }
+
+    .ev-id {
+      font-family: monospace;
+      font-size: 11px;
+      background: rgba(17,138,209,.12);
+      color: var(--accent2);
+      padding: 2px 7px;
+      border-radius: 5px;
+      min-width: 130px;
+    }
+
+    .ev-label { color: var(--muted); }
+
+    .ev-status {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .ev-pass   { background: rgba(34,197,94,.15);  color: var(--green); }
+    .ev-warn   { background: rgba(245,158,11,.15);  color: var(--amber); }
+    .ev-crit   { background: rgba(239,68,68,.15);   color: #ef4444; }
+
+    /* ─── TEAM / COMPANY ─────────────────────────── */
+    .company-facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .fact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+    }
+
+    .fact-card .fact-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .fact-card .fact-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── CTA ────────────────────────────────────── */
+    #cta {
+      padding: 120px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(17,138,209,.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #cta h2 { max-width: 600px; margin: 0 auto 16px; }
+    #cta p   { max-width: 480px; margin: 0 auto 40px; font-size: 1.1rem; }
+
+    .cta-links {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-item .c-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 600;
+    }
+
+    .contact-item a {
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-item a:hover { text-decoration: underline; }
+    .contact-item span { font-size: 14px; color: var(--text); font-weight: 600; }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(139,156,176,.5);
+    }
+
+    /* ─── PROGRESS BARS ──────────────────────────── */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .bar-label {
+      min-width: 110px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .bar-val {
+      min-width: 36px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── PLATFORM SCORES ────────────────────────── */
+    .platform-scores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .plat-score {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .plat-name { font-size: 13px; color: var(--muted); }
+
+    .plat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .plat-val.green  { color: var(--green); }
+    .plat-val.amber  { color: var(--amber); }
+    .plat-val.accent { color: var(--accent);}
+
+    /* timeline */
+    .roadmap {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .roadmap-item {
+      position: relative;
+      padding: 0 0 36px 24px;
+    }
+
+    .roadmap-item::before {
+      content: '';
+      position: absolute;
+      left: -29px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+
+    .roadmap-item .ri-phase {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .roadmap-item h4 { font-size: 15px; color: var(--text); margin-bottom: 6px; }
+    .roadmap-item p  { font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Ai<span>VIS</span></div>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#market">Market</a></li>
+      <li><a href="#business">Business</a></li>
+      <li><a href="#technology">Technology</a></li>
+      <li><a href="#cta" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-eyebrow">
+      <span class="hero-badge">Pitchbook 2026</span>
+      <span class="hero-date">March 2026 · Confidential</span>
+    </div>
+
+    <h1>The AI era has a<br /><span class="gradient-text">visibility gap.</span><br />We measure it.</h1>
+
+    <p class="lead">
+      AiVIS is the first evidence-backed AI visibility audit platform —
+      scoring how well websites are parsed, trusted, and cited by AI assistants
+      like ChatGPT, Perplexity, Claude, and Google AI.
+    </p>
+
+    <div class="hero-actions">
+      <a href="https://aivis.biz" target="_blank" class="btn btn-primary">Live Product →</a>
+      <a href="https://aivis.biz/pricing" target="_blank" class="btn btn-outline">Pricing</a>
+      <a href="mailto:support@aivis.biz" class="btn btn-outline">Get in Touch</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="value"><span>6</span></div>
+        <div class="desc">Graded audit categories</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value"><span>16+</span></div>
+        <div class="desc">Auditable evidence IDs per scan</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value"><span>4</span></div>
+        <div class="desc">Major AI platforms scored</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value"><span>0</span></div>
+        <div class="desc">Hallucinated findings by design</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROBLEM ───────────────────────────────────── -->
+<section id="problem" class="section section--dark">
+  <div class="container">
+    <div class="label">The Problem</div>
+    <div class="problem-grid">
+      <div>
+        <h2>Ranking in Google is no longer enough.</h2>
+        <p style="margin:20px 0 32px">AI assistants have become a first-stop research and buying layer —
+          and they independently decide which sources to trust, cite, and surface.
+          Traditional SEO tools cannot see this gap. Most businesses have no idea they have one.</p>
+
+        <ul class="problem-list">
+          <li>
+            <div class="problem-icon red">🔍</div>
+            <div class="problem-text">
+              <strong>Invisible to AI, visible on Google</strong>
+              <span>A site can rank #1 in search and still never appear in any AI-generated answer. No tool was measuring this.</span>
+            </div>
+          </li>
+          <li>
+            <div class="problem-icon amber">📊</div>
+            <div class="problem-text">
+              <strong>Black-box scoring breeds distrust</strong>
+              <span>Existing visibility tools give scores with no evidence, making them impossible to act on or verify.</span>
+            </div>
+          </li>
+          <li>
+            <div class="problem-icon purple">⚡</div>
+            <div class="problem-text">
+              <strong>No fix path, no accountability</strong>
+              <span>Even when a gap is identified, teams have no structured method for closing it at the page-element level.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="big-quote">
+        <blockquote>
+          "More buying journeys now begin inside AI answers.
+           Teams that can't measure their AI presence have no playbook
+           for fixing it."
+        </blockquote>
+        <cite>— AiVIS founding thesis, 2025</cite>
+
+        <div style="margin-top:36px;">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:600;">Real audit — aivis.biz category scores (March 2026)</div>
+          <div class="bar-row">
+            <span class="bar-label">Technical SEO</span>
+            <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
+            <span class="bar-val">A · 95</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Heading Structure</span>
+            <div class="bar-track"><div class="bar-fill" style="width:85%"></div></div>
+            <span class="bar-val">B · 85</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">AI Readability</span>
+            <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+            <span class="bar-val">B · 80</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Content Depth</span>
+            <div class="bar-track"><div class="bar-fill" style="width:78%"></div></div>
+            <span class="bar-val">B · 78</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Meta Tags / OG</span>
+            <div class="bar-track"><div class="bar-fill" style="width:55%;background:linear-gradient(90deg,var(--amber),#fbbf24);"></div></div>
+            <span class="bar-val">C · 55</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Schema / JSON-LD</span>
+            <div class="bar-track"><div class="bar-fill" style="width:42%;background:linear-gradient(90deg,#ef4444,#f97316);"></div></div>
+            <span class="bar-val">D · 42</span>
+          </div>
+          <div style="font-size:11px;color:rgba(139,156,176,.5);margin-top:10px;">Source: live triple-check audit of aivis.biz · scorefix tier · 2026-03-16</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOLUTION ──────────────────────────────────── -->
+<section id="solution" class="section">
+  <div class="container">
+    <div class="label">The Solution</div>
+    <h2>Evidence-backed AI visibility audits,<br />built for <span class="gradient-text">page-level action.</span></h2>
+    <p style="max-width:600px;margin-top:16px">
+      AiVIS scrapes your live page, runs it through a multi-model AI pipeline,
+      and returns a 0–100 visibility score backed by auditable evidence IDs —
+      no hallucination, no vague recommendations.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h4>Crawl</h4>
+        <p>Live Puppeteer scrape of target URL capturing all structural signals</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h4>Analyze</h4>
+        <p>Multi-model AI pipeline evaluates content, schema, trust, and extractability</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h4>Score</h4>
+        <p>0–100 composite score across 6 graded categories + per-platform AI estimates</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h4>Evidence</h4>
+        <p>Every finding linked to a specific <code style="font-size:11px;color:var(--accent2)">ev_*</code> evidence ID from the scraped page</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <h4>Fix</h4>
+        <p>8–12 prioritized, evidence-linked recommendations with a clear execution path</p>
+      </div>
+    </div>
+
+    <!-- Sample output card -->
+    <div style="margin-top:56px;display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="grid-2">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">AI Visibility Score</div>
+            <div style="font-size:3.2rem;font-weight:900;letter-spacing:-.03em;color:var(--amber);">64<span style="font-size:1.2rem;color:var(--muted);font-weight:400;">/100</span></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Category grades</div>
+            <div style="display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;">
+              <span style="background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">Technical A</span>
+              <span style="background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">AI Readability B</span>
+              <span style="background:rgba(245,158,11,.15);color:var(--amber);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">Meta C</span>
+              <span style="background:rgba(239,68,68,.15);color:#ef4444;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">Schema D</span>
+            </div>
+          </div>
+        </div>
+        <div class="platform-scores">
+          <div class="plat-score">
+            <span class="plat-name">ChatGPT</span>
+            <span class="plat-val green">82</span>
+          </div>
+          <div class="plat-score">
+            <span class="plat-name">Perplexity</span>
+            <span class="plat-val green">80</span>
+          </div>
+          <div class="plat-score">
+            <span class="plat-name">Claude</span>
+            <span class="plat-val accent">77</span>
+          </div>
+          <div class="plat-score">
+            <span class="plat-name">Google AI</span>
+            <span class="plat-val accent">75</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(139,156,176,.5);margin-top:12px;">Source: live triple-check audit of aivis.biz · 2026-03-16</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;">Sample Recommendations</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:3px;">Shorten meta description (166 chars → under 155)</div>
+            <div style="font-size:11px;color:var(--muted);">Evidence: <code style="color:var(--accent2)">ev_meta_desc</code> · High priority · Easy</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:3px;">Expand structured data coverage beyond FAQPage</div>
+            <div style="font-size:11px;color:var(--muted);">Evidence: <code style="color:var(--accent2)">ev_schema</code> · High priority · Medium</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:3px;">Add Organization schema with credibility signals</div>
+            <div style="font-size:11px;color:var(--muted);">Evidence: <code style="color:var(--accent2)">ev_schema</code> · High priority · Medium</div>
+          </div>
+          <div style="padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:3px;">Increase OG description specificity</div>
+            <div style="font-size:11px;color:var(--muted);">Evidence: <code style="color:var(--accent2)">ev_og_desc</code> · Medium priority · Easy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ──────────────────────────────────── -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="label">Platform Capabilities</div>
+    <h2>Built for practitioners,<br /><span class="gradient-text">not dashboards.</span></h2>
+
+    <div class="grid-3" style="margin-top:48px;">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(17,138,209,.12);">🔬</div>
+        <h3>BRAG Evidence System</h3>
+        <p>Every finding is anchored to a specific <code style="font-size:11px">ev_*</code> evidence ID from the live scrape. Zero hallucination is enforced by design — if the scraper didn't find it, the AI can't claim it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,197,94,.1);">🤖</div>
+        <h3>Triple-Check AI Pipeline</h3>
+        <p>Signal tier runs a 3-stage model pipeline: primary analysis → peer critique → validation gate. Scores are independently verified across all three passes before delivery.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(168,85,247,.12);">📊</div>
+        <h3>Keyword Intelligence</h3>
+        <p>Intent classification, volume tier, competition scoring, and opportunity analysis — all derived from the scrape, not third-party estimates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,158,11,.12);">🏆</div>
+        <h3>Competitor Tracking</h3>
+        <p>Side-by-side AI visibility comparison against competing domains. Identify exactly where competitors outperform you and close the gap systematically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(236,72,153,.12);">🔗</div>
+        <h3>Citation Testing</h3>
+        <p>Run live citation tests across AI platforms to verify whether specific queries surface your domain. Signal and above. Automated query generation included.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(17,138,209,.12);">🛡️</div>
+        <h3>Threat Intelligence</h3>
+        <p>Every audit includes a real-time security check via URLhaus + Google Safe Browsing + hostname heuristics — protecting users from auditing malicious targets.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,197,94,.1);">🔄</div>
+        <h3>Reverse Engineer Tools</h3>
+        <p>Decompile an AI-generated answer to understand why a competitor was cited. Generate blueprint pages. Simulate visibility changes before publishing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(55,166,222,.12);">⚙️</div>
+        <h3>Developer API</h3>
+        <p>Full REST API for Signal and above. Integrate AI visibility scoring directly into CI/CD pipelines, CMS workflows, or internal dashboards.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,158,11,.12);">💬</div>
+        <h3>AiVIS Guide Assistant</h3>
+        <p>Context-aware AI chatbot embedded in the platform. Page-aware suggestions, platform methodology Q&amp;A, and tier-aware daily usage limits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DIFFERENTIATION ───────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="label">Competitive Position</div>
+    <h2>There is no direct<br /><span class="gradient-text">apples-to-apples competitor.</span></h2>
+    <p style="margin-top:16px;max-width:560px">The adjacent tools are either traditional SEO auditors, AI content generators, or citation trackers. None close the loop from crawl → AI model analysis → evidence-linked fix path.</p>
+
+    <table class="vs-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th class="aivis-col">AiVIS</th>
+          <th>SEO platforms</th>
+          <th>AI content tools</th>
+          <th>Citation monitors</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AI model visibility scoring</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="partial">~</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Evidence-linked findings (no hallucination)</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Per-platform AI scores (GPT / Perplexity / Claude)</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="partial">~</td>
+        </tr>
+        <tr>
+          <td>Page-element-level fix recommendations</td>
+          <td class="check">✓</td>
+          <td class="partial">~</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Triple-check multi-model validation</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Live citation test runner</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="partial">~</td>
+        </tr>
+        <tr>
+          <td>Reverse-engineer AI answers</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Developer API</td>
+          <td class="check">✓</td>
+          <td class="check">✓</td>
+          <td class="partial">~</td>
+          <td class="partial">~</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── MARKET ────────────────────────────────────── -->
+<section id="market" class="section section--dark">
+  <div class="container">
+    <div class="label">Market Opportunity</div>
+    <h2>A new category forming at the<br /><span class="gradient-text">intersection of AI and search.</span></h2>
+    <p style="margin-top:16px;max-width:600px">
+      AI search is reshaping how information is surfaced and consumed.
+      The market for tools that help content teams, agencies, and enterprises
+      optimize for this layer is nascent — and large.
+    </p>
+
+    <div class="market-numbers">
+      <div class="market-num">
+        <div class="big gradient-text">New</div>
+        <div class="label2">Category — no direct incumbent covers crawl → AI model analysis → evidence-linked fix path in one product</div>
+        <div class="source">Verified by competitive analysis in this pitchbook</div>
+      </div>
+      <div class="market-num">
+        <div class="big gradient-text">SMB</div>
+        <div class="label2">Primary addressable — founders, agencies, and growth teams operating in AI-influenced search</div>
+        <div class="source">AiVIS ICP definition</div>
+      </div>
+      <div class="market-num">
+        <div class="big gradient-text">API</div>
+        <div class="label2">Developer and platform expansion — REST API tier enables CMS integrations and white-label pipelines</div>
+        <div class="source">Signal tier capability, live today</div>
+      </div>
+    </div>
+
+    <div style="margin-top:56px;">
+      <h3 style="color:var(--text);margin-bottom:24px;">Who buys AiVIS</h3>
+      <div class="grid-3">
+        <div class="card">
+          <div style="font-size:28px;margin-bottom:12px;">🏢</div>
+          <h3 style="margin-bottom:8px;">Agencies</h3>
+          <p>Deliver AI-era visibility reports to clients with explainable evidence. White-label API output for branded reporting pipelines.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:28px;margin-bottom:12px;">🚀</div>
+          <h3 style="margin-bottom:8px;">Founders & Growth Teams</h3>
+          <p>Understand why their site is excluded from AI answers and track improvement over time with structured sprint workflows.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:28px;margin-bottom:12px;">💻</div>
+          <h3 style="margin-bottom:8px;">Developers / Platforms</h3>
+          <p>Integrate AI visibility scoring via REST API into CMS workflows, content pipelines, and publishing dashboards.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BUSINESS MODEL ─────────────────────────────── -->
+<section id="business" class="section">
+  <div class="container">
+    <div class="label">Business Model</div>
+    <h2>Subscription SaaS with a<br /><span class="gradient-text">freemium conversion funnel.</span></h2>
+    <p style="margin-top:16px;max-width:560px">Four tiers optimized for acquisition, conversion, and expansion revenue. Free tier drives organic discovery; paid tiers unlock the full audit and monitoring stack.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Observer</div>
+        <h3>Free</h3>
+        <div class="price-amount">$0</div>
+        <div class="price-scans">10 audits / month</div>
+        <ul class="price-features">
+          <li>Evidence-backed AI score</li>
+          <li>6-category report</li>
+          <li>Platform scores (GPT, Perplexity, Claude, Google)</li>
+          <li>Shareable report links</li>
+          <li>Report history</li>
+        </ul>
+      </div>
+
+      <div class="price-card featured">
+        <div class="popular-badge">Most Popular</div>
+        <div class="price-tier">Alignment</div>
+        <h3>Core</h3>
+        <div class="price-amount">$49<sub>/mo</sub></div>
+        <div class="price-scans">60 audits / month</div>
+        <ul class="price-features">
+          <li>Everything in Free</li>
+          <li>Exports (PDF / JSON)</li>
+          <li>Force-refresh audits</li>
+          <li>Competitor tracking (2)</li>
+          <li>BRA Authority Checker</li>
+          <li>Reverse-engineer tools</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Signal</div>
+        <h3>Premium</h3>
+        <div class="price-amount">$99<sub>/mo</sub></div>
+        <div class="price-scans">110 audits / month</div>
+        <ul class="price-features">
+          <li>Everything in Core</li>
+          <li>Triple-check AI pipeline</li>
+          <li>Citation test workflows</li>
+          <li>Developer API access</li>
+          <li>White-label reports</li>
+          <li>Scheduled rescans</li>
+          <li>Competitor tracking (5)</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Scorefix</div>
+        <h3>Blockbuster</h3>
+        <div class="price-amount">$299<sub> once</sub></div>
+        <div class="price-scans">250 audits / month</div>
+        <ul class="price-features">
+          <li>Everything in Signal</li>
+          <li>Deep evidence audit mode</li>
+          <li>Actual Fix Plans</li>
+          <li>Issue-level validation checklists</li>
+          <li>Competitor tracking (10)</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVENUE ────────────────────────────────────── -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="label">Revenue Projections</div>
+    <h2>Three growth scenarios<br /><span class="gradient-text">grounded in unit economics.</span></h2>
+    <p style="margin-top:16px;max-width:580px">
+      MRR model excludes annual plans and add-ons. Based on active paid subscribers only.
+      Score Fix annual at $2,978/yr (~17% off) positions as enterprise commitment tier.
+    </p>
+
+    <div class="scenario-cards">
+      <div class="scenario">
+        <div class="scenario-label">Conservative</div>
+        <div class="scenario-mrr">$10,345</div>
+        <div class="scenario-sub">MRR · ~$124K ARR</div>
+        <div class="scenario-mix">
+          <div class="mix-row"><span class="tier-name">120 × Alignment ($49)</span><span class="tier-rev">$5,880</span></div>
+          <div class="mix-row"><span class="tier-name">30 × Signal ($99)</span><span class="tier-rev">$2,970</span></div>
+          <div class="mix-row"><span class="tier-name">5 × Scorefix ($299)</span><span class="tier-rev">$1,495</span></div>
+        </div>
+      </div>
+
+      <div class="scenario base">
+        <div class="scenario-label">Base ← target</div>
+        <div class="scenario-mrr">$27,105</div>
+        <div class="scenario-sub">MRR · ~$325K ARR</div>
+        <div class="scenario-mix">
+          <div class="mix-row"><span class="tier-name">300 × Alignment ($49)</span><span class="tier-rev">$14,700</span></div>
+          <div class="mix-row"><span class="tier-name">80 × Signal ($99)</span><span class="tier-rev">$7,920</span></div>
+          <div class="mix-row"><span class="tier-name">15 × Scorefix ($299)</span><span class="tier-rev">$4,485</span></div>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-label">Ambitious</div>
+        <div class="scenario-mrr">$70,490</div>
+        <div class="scenario-sub">MRR · ~$846K ARR</div>
+        <div class="scenario-mix">
+          <div class="mix-row"><span class="tier-name">750 × Alignment ($49)</span><span class="tier-rev">$36,750</span></div>
+          <div class="mix-row"><span class="tier-name">220 × Signal ($99)</span><span class="tier-rev">$21,780</span></div>
+          <div class="mix-row"><span class="tier-name">40 × Scorefix ($299)</span><span class="tier-rev">$11,960</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;" class="card">
+      <h3 style="margin-bottom:16px;color:var(--text);">Growth drivers (no ad spend)</h3>
+      <div class="grid-3">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Content Engine</div>
+          <p style="font-size:13px;">Weekly benchmark posts, before/after teardowns, and FAQ-format AEO content — all derivative of real audit data with no PII.</p>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Product-Led Loops</div>
+          <p style="font-size:13px;">Share-link prompts post-audit, competitor comparison nudges after first score, and citation test prompts at the recommendation stage.</p>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Developer Distribution</div>
+          <p style="font-size:13px;">API-first Signal tier enables agency integration, CMS plugin embedding, and platform partnerships that compound without direct sales.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TECHNOLOGY ─────────────────────────────────── -->
+<section id="technology" class="section">
+  <div class="container">
+    <div class="label">Technology</div>
+    <h2>The moat is the<br /><span class="gradient-text">evidence contract.</span></h2>
+
+    <div class="tech-moat" style="margin-top:48px;">
+      <div>
+        <ul class="tech-list">
+          <li>
+            <div class="tech-dot"></div>
+            <div>
+              <strong>BRAG — Based Retrieval &amp; Auditable Grading</strong>
+              <span>Proprietary evidence methodology. Every AI finding must cite a specific <code style="font-size:11px">ev_*</code> ID from the live scrape or it is excluded. Machine-verifiable output contract enforced by JSON Schema (draft-07, <code style="font-size:11px">additionalProperties: false</code>).</span>
+            </div>
+          </li>
+          <li>
+            <div class="tech-dot"></div>
+            <div>
+              <strong>Triple-Check AI Pipeline (Signal+)</strong>
+              <span>Three-model consensus: GPT-4o Mini primary → Claude 3.5 Haiku peer critique → GPT-4o Mini validation gate. Each stage can adjust scores within bounded ranges; graceful degradation preserves results if any stage fails.</span>
+            </div>
+          </li>
+          <li>
+            <div class="tech-dot"></div>
+            <div>
+              <strong>Provider-agnostic model routing</strong>
+              <span>OpenRouter-backed with per-tier cost optimization. Free tier target cost: $0.00/scan. Signal target: ~$0.004/scan. Full fallback chain of 6+ models prevents downtime from any provider rate limit.</span>
+            </div>
+          </li>
+          <li>
+            <div class="tech-dot"></div>
+            <div>
+              <strong>Real-time threat intelligence layer</strong>
+              <span>URLhaus, Google Safe Browsing API v4, and hostname heuristics run in parallel with the audit pipeline — blocking private/local hosts in production and flagging malicious targets before any analysis runs.</span>
+            </div>
+          </li>
+          <li>
+            <div class="tech-dot"></div>
+            <div>
+              <strong>Structured evidence ledger export</strong>
+              <span>Full audit trail grouped by category (Meta, Headings, Content, Technical, Links, Social) with pass/warn/critical status. Exportable as JSON or PDF. Strict schema enforcement means integrations can rely on the contract.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="evidence-box">
+        <div class="ev-title">Evidence Ledger — Sample Output</div>
+        <div class="ev-row"><span class="ev-id">ev_title</span><span class="ev-label">Page title (47 chars)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_meta_desc</span><span class="ev-label">Meta description (166 chars)</span><span class="ev-status ev-warn">WARN</span></div>
+        <div class="ev-row"><span class="ev-id">ev_schema</span><span class="ev-label">JSON-LD (2 blocks: WebPage, FAQPage)</span><span class="ev-status ev-warn">WARN</span></div>
+        <div class="ev-row"><span class="ev-id">ev_h1</span><span class="ev-label">H1 tag (1 found)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_h2</span><span class="ev-label">H2 tags (6 found)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_word_count</span><span class="ev-label">Word count (1035 words)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_og_status</span><span class="ev-label">Open Graph (title + desc present)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_lcp_ms</span><span class="ev-label">LCP response time (121ms)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_https</span><span class="ev-label">HTTPS enabled</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_canonical</span><span class="ev-label">Canonical URL (present)</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_faq_schema</span><span class="ev-label">FAQPage schema</span><span class="ev-status ev-pass">PASS</span></div>
+        <div class="ev-row"><span class="ev-id">ev_robots</span><span class="ev-label">Robots / AI crawler blocks</span><span class="ev-status ev-pass">PASS</span></div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="display:flex;gap:16px;font-size:12px;">
+            <span style="color:var(--green);font-weight:700;">10 PASS</span>
+            <span style="color:var(--amber);font-weight:700;">2 WARN</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Real evidence manifest from live triple-check audit of aivis.biz · 2026-03-16. Zero hallucinated findings.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stack -->
+    <div style="margin-top:56px;">
+      <h3 style="color:var(--text);margin-bottom:24px;">Technology stack</h3>
+      <div class="grid-4">
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Frontend</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;">React 19<br/>Vite 7 + Tailwind<br/>TypeScript<br/>Zustand</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Backend</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;">Express 5<br/>TypeScript<br/>PostgreSQL<br/>Puppeteer</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">AI / Models</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;">OpenRouter API<br/>GPT-4o Mini<br/>Claude 3.5 Haiku<br/>Llama 3.3 70B + 5 fallbacks</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Infrastructure</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;">Render (deploy)<br/>Neon (Postgres)<br/>Stripe (billing)<br/>Sentry (observability)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ROADMAP ────────────────────────────────────── -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="label">Roadmap</div>
+    <h2>Stabilize → prove → <span class="gradient-text">scale.</span></h2>
+
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <div class="ri-phase">Now — Days 1–14</div>
+        <h4>Stabilize &amp; Instrument</h4>
+        <p>CI green baseline, Sentry + health alerting live in production, deployment docs current.</p>
+      </div>
+      <div class="roadmap-item">
+        <div class="ri-phase">Days 15–45</div>
+        <h4>Proof &amp; Packaging</h4>
+        <p>Publish first 4 benchmark posts and 4 before/after teardowns. Ship pricing proof sections on all conversion pages. Contract consistency checks (shared types vs. API response).</p>
+      </div>
+      <div class="roadmap-item">
+        <div class="ri-phase">Days 46–90</div>
+        <h4>Scale Acquisition</h4>
+        <p>Weekly editorial pipeline (benchmark + teardown + FAQ). Monthly "State of AI Visibility" roundup from aggregated audit data. Upgrade nudges based on actual feature-use thresholds.</p>
+      </div>
+      <div class="roadmap-item">
+        <div class="ri-phase">Q3 2026</div>
+        <h4>Enterprise &amp; Platform Layer</h4>
+        <p>Agency white-label portal. Scheduled monitoring with alert workflows. CMS plugin integrations. Batch URL auditing via API for large content teams.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMPANY ───────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="label">Company</div>
+    <h2>Intruvurt Labs — <span class="gradient-text">built to ship.</span></h2>
+    <p style="margin-top:16px;max-width:560px">A lean, product-first engineering team shipping a production SaaS with a full audit pipeline, billing, API, and evidence methodology — in the window before this category has clear incumbents.</p>
+
+    <div class="company-facts">
+      <div class="fact-card">
+        <div class="fact-label">Company</div>
+        <div class="fact-value">Intruvurt Labs</div>
+      </div>
+      <div class="fact-card">
+        <div class="fact-label">Location</div>
+        <div class="fact-value">Georgia, USA</div>
+      </div>
+      <div class="fact-card">
+        <div class="fact-label">Product</div>
+        <div class="fact-value">AiVIS — aivis.biz</div>
+      </div>
+      <div class="fact-card">
+        <div class="fact-label">Stage</div>
+        <div class="fact-value">Live, revenue-ready, paid tiers active</div>
+      </div>
+      <div class="fact-card">
+        <div class="fact-label">Business model</div>
+        <div class="fact-value">B2B / B2SMB SaaS subscription + one-time</div>
+      </div>
+      <div class="fact-card">
+        <div class="fact-label">Contact</div>
+        <div class="fact-value">support@aivis.biz</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────── -->
+<section id="cta">
+  <div class="container">
+    <div class="label">Get in Touch</div>
+    <h2>Ready for press, partnerships,<br /><span class="gradient-text">and editorial review.</span></h2>
+    <p>We can provide product walkthrough assets, methodology documentation,
+       screenshots, a 1-minute demo video, and a concise press brief
+       tailored to your angle — on request.</p>
+
+    <div class="cta-links">
+      <a href="https://aivis.biz" target="_blank" class="btn btn-primary">Try the Live Product</a>
+      <a href="https://aivis.biz/pricing" target="_blank" class="btn btn-outline">View Pricing</a>
+      <a href="mailto:support@aivis.biz" class="btn btn-outline">Email Us</a>
+    </div>
+
+    <div class="contact-row">
+      <div class="contact-item">
+        <span class="c-label">Product</span>
+        <a href="https://aivis.biz" target="_blank">aivis.biz</a>
+      </div>
+      <div class="contact-item">
+        <span class="c-label">Email</span>
+        <a href="mailto:support@aivis.biz">support@aivis.biz</a>
+      </div>
+      <div class="contact-item">
+        <span class="c-label">Pricing</span>
+        <a href="https://aivis.biz/pricing" target="_blank">aivis.biz/pricing</a>
+      </div>
+      <div class="contact-item">
+        <span class="c-label">API Docs</span>
+        <a href="https://aivis.biz/api-docs" target="_blank">aivis.biz/api-docs</a>
+      </div>
+      <div class="contact-item">
+        <span class="c-label">Company</span>
+        <span>Intruvurt Labs · Georgia, USA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────── -->
+<footer>
+  <div>AiVIS · Intruvurt Labs · Georgia, USA · March 2026 · Confidential — for press and nominee review only</div>
+  <div style="margin-top:6px;"><a href="https://aivis.biz" style="color:var(--accent);text-decoration:none;">aivis.biz</a> · <a href="mailto:support@aivis.biz" style="color:var(--accent);text-decoration:none;">support@aivis.biz</a></div>
+</footer>
+
+</body>
+</html>

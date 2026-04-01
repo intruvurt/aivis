@@ -1,0 +1,91 @@
+// test-analyze.ts - Simple test for the analyze endpoint
+import axios from 'axios';
+
+const API_URL = process.env.VITE_API_URL || 'http://localhost:3001';
+<<<<<<<< HEAD:client/test-analyze.ts
+const TEST_URL = 'https://intruvurt.space';
+========
+<<<<<<< Updated upstream
+<<<<<<<< Updated upstream:server/src/test-analyze.ts
+<<<<<<< Updated upstream
+const TEST_URL = 'https://intruvurt.space';
+=======
+const TEST_URL = 'https://example.com';
+>>>>>>> Stashed changes
+========
+const TEST_URL = 'https://intruvurt.space';
+>>>>>>>> Stashed changes:test-analyze.ts
+=======
+const TEST_URL = 'https://example.com';
+>>>>>>> Stashed changes
+>>>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3:server/src/test-analyze.ts
+
+async function testAnalyze() {
+  console.log('🧪 Testing analyze endpoint...');
+  console.log(`API URL: ${API_URL}`);
+  console.log(`Test URL: ${TEST_URL}`);
+  console.log('');
+
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/analyze`,
+      { url: TEST_URL },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 60000, // 60 second timeout
+      }
+    );
+
+    console.log('✅ Analysis successful!');
+    console.log('');
+    console.log('Response status:', response.status);
+    console.log('');
+    console.log('Results:');
+    console.log('- Visibility Score:', response.data.visibility_score);
+    console.log('- Cached:', response.data.cached);
+    console.log('- Processing Time:', response.data.processing_time_ms, 'ms');
+    console.log('- Analyzed At:', response.data.analyzed_at);
+    console.log('');
+    console.log('AI Platform Scores:');
+    if (response.data.ai_platform_scores) {
+      console.log('- ChatGPT:', response.data.ai_platform_scores.chatgpt);
+      console.log('- Perplexity:', response.data.ai_platform_scores.perplexity);
+      console.log('- Google AI:', response.data.ai_platform_scores.google_ai);
+      console.log('- Claude:', response.data.ai_platform_scores.claude);
+    }
+    console.log('');
+    console.log('Recommendations:', response.data.recommendations?.length || 0);
+
+    return response.data;
+  } catch (error) {
+    console.error('❌ Test failed!');
+    console.error('');
+
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Error:', error.response.data);
+    } else if (error.request) {
+      console.error('No response received. Is the server running?');
+      console.error('Error:', error.message);
+    } else {
+      console.error('Error:', error.message);
+    }
+
+    process.exit(1);
+  }
+}
+
+// Run test
+testAnalyze()
+  .then(() => {
+    console.log('');
+    console.log('✅ All tests passed!');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('');
+    console.error('❌ Test suite failed:', error.message);
+    process.exit(1);
+  });

@@ -1,0 +1,45 @@
+<svg width="1400" height="860" viewBox="0 0 1400 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1400" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A0A0F" />
+      <stop offset="1" stop-color="#2E3646" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="860" fill="url(#bg2)"/>
+  <rect x="120" y="90" width="1160" height="680" rx="26" fill="#323A4C" fill-opacity="0.92" stroke="rgba(255,255,255,0.12)"/>
+
+  <text x="180" y="160" fill="rgba(255,255,255,0.88)" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">AI Visibility Capability Gap</text>
+  <text x="180" y="196" fill="rgba(255,255,255,0.58)" font-family="Inter, Arial, sans-serif" font-size="18">Relative coverage across core workflow capabilities</text>
+
+  <line x1="220" y1="650" x2="1180" y2="650" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+  <line x1="220" y1="280" x2="220" y2="650" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+
+  <text x="170" y="650" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">0</text>
+  <text x="158" y="560" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">25</text>
+  <text x="158" y="470" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">50</text>
+  <text x="158" y="380" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">75</text>
+  <text x="148" y="290" fill="rgba(255,255,255,0.5)" font-family="Inter, Arial, sans-serif" font-size="13">100</text>
+
+  <rect x="280" y="300" width="110" height="350" rx="12" fill="rgba(255,255,255,0.86)"/>
+  <rect x="450" y="420" width="110" height="230" rx="12" fill="rgba(255,255,255,0.35)"/>
+  <rect x="620" y="470" width="110" height="180" rx="12" fill="rgba(255,255,255,0.26)"/>
+  <rect x="790" y="510" width="110" height="140" rx="12" fill="rgba(255,255,255,0.22)"/>
+  <rect x="960" y="540" width="110" height="110" rx="12" fill="rgba(255,255,255,0.2)"/>
+
+  <text x="308" y="690" fill="rgba(255,255,255,0.82)" font-family="Inter, Arial, sans-serif" font-size="14">AiVIS</text>
+  <text x="463" y="690" fill="rgba(255,255,255,0.68)" font-family="Inter, Arial, sans-serif" font-size="14">Semrush</text>
+  <text x="644" y="690" fill="rgba(255,255,255,0.68)" font-family="Inter, Arial, sans-serif" font-size="14">Ahrefs</text>
+  <text x="810" y="690" fill="rgba(255,255,255,0.68)" font-family="Inter, Arial, sans-serif" font-size="14">Surfer</text>
+  <text x="977" y="690" fill="rgba(255,255,255,0.68)" font-family="Inter, Arial, sans-serif" font-size="14">MarketMuse</text>
+
+  <text x="314" y="286" fill="rgba(255,255,255,0.9)" font-family="Inter, Arial, sans-serif" font-size="15">95</text>
+  <text x="486" y="406" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">62</text>
+  <text x="656" y="456" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">48</text>
+  <text x="826" y="496" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">37</text>
+  <text x="996" y="526" fill="rgba(255,255,255,0.75)" font-family="Inter, Arial, sans-serif" font-size="15">29</text>
+
+  <rect x="780" y="248" width="410" height="86" rx="14" fill="#2E3646" stroke="rgba(255,255,255,0.1)"/>
+  <text x="810" y="282" fill="rgba(255,255,255,0.84)" font-family="Inter, Arial, sans-serif" font-size="15">Coverage Index = URL audit + evidence + citation tests</text>
+  <text x="810" y="308" fill="rgba(255,255,255,0.62)" font-family="Inter, Arial, sans-serif" font-size="14">Visual illustrates directional capability depth</text>
+</svg>

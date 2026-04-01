@@ -124,7 +124,14 @@ export const performDiscovery = async (baseUrl) => {
  */
 export const performCrawl = async (url) => {
   const evidence = [];
-  const crawlData = {
+  const crawlData: {
+    statusCode: number | null;
+    headers: Record<string, any>;
+    redirectChain: Array<{ count: number; finalUrl: string }>;
+    timingMetrics: Record<string, number>;
+    content: any;
+    error: string | null;
+  } = {
     statusCode: null,
     headers: {},
     redirectChain: [],

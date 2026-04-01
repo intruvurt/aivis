@@ -847,6 +847,85 @@ export type AnswerSourceType =
   | 'news_synthesis'
   | 'academic_citation';
 
+/* ========================= Engine tier gating ========================= */
+
+export interface EngineAccess {
+  hasComparison: boolean;
+  hasRepair: boolean;
+}
+
+/**
+ * Determines which intelligence engines a given tier can access.
+ * - Comparison: available for alignment+ tiers
+ * - Repair: available for scorefix tier only
+ */
+export function getEnginesForTier(tier: CanonicalTier | 'scorefix'): EngineAccess {
+  return {
+    hasComparison: tier === 'alignment' || tier === 'signal' || tier === 'scorefix',
+    hasRepair: tier === 'scorefix',
+  };
+}
+
+/* ========================= Engine output types ========================= */
+
+export interface EngineOutputBase {
+  status: 'ok' | 'failed';
+  timeMs: number;
+  errors?: string[];
+}
+
+export interface CitationReadinessOutput extends EngineOutputBase {
+  data: {
+    citation_readiness_score: number;
+    quotability_index: number;
+    citable_sections: string[];
+    blockers_to_citation: string[];
+    recommendations: string[];
+  };
+}
+
+export interface TrustLayerOutput extends EngineOutputBase {
+  data: {
+    trust_score: number;
+    signal_status: {
+      https_enabled: boolean;
+      domain_age_years: number;
+      tls_certificate_trusted: boolean;
+      contact_info_present: boolean;
+      privacy_policy_accessible: boolean;
+      [key: string]: unknown;
+    };
+    risk_flags?: string[];
+    recommendations?: string[];
+    [key: string]: unknown;
+  };
+}
+
+export interface EntityGraphOutput extends EngineOutputBase {
+  data: {
+    entity_clarity_score: number;
+    entities?: unknown[];
+    recommendations?: string[];
+    [key: string]: unknown;
+  };
+}
+
+export interface IntelligenceAnalysisResponse {
+  url: string;
+  analyzed_at: string;
+  tier: CanonicalTier | 'scorefix';
+  processing_time_ms: number;
+  is_cached: boolean;
+  overall_ai_visibility_score: number;
+  citation_readiness_score: number;
+  trust_score: number;
+  entity_clarity_score: number;
+  citation_readiness: CitationReadinessOutput | null;
+  trust_layer: TrustLayerOutput | null;
+  entity_graph: EntityGraphOutput | null;
+  [key: string]: unknown;
+}
+
 export type AnswerStructuralPattern =
   | 'numbered_list'
   | 'bullet_hierarchy'

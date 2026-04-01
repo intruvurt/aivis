@@ -5,6 +5,12 @@ import { existsSync } from 'fs';
 import { URL } from 'url';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 
+/* ── capture-size caps (bytes of text kept per field) ────────────────── */
+const MAX_HTML_CAPTURE_CHARS  = 250_000;
+const MAX_BODY_CAPTURE_CHARS  =  50_000;
+const MAX_JSONLD_BLOCK_CHARS  =  80_000;
+const MAX_SITEMAP_CHARS       =  50_000;
+
 export type StructuredData = {
   jsonLdCount: number;
   types: Record<string, number>;
@@ -204,7 +210,7 @@ async function fetchSitemap(origin: string): Promise<{ fetched: boolean; present
       headers: { 'User-Agent': 'ai-visible-engine-bot/1.0' },
     });
     if (!res.ok) return { fetched: true, present: false };
-    const raw = (await res.text()).slice(0, 50000);
+    const raw = (await res.text()).slice(0, MAX_SITEMAP_CHARS);
     const urlCount = (raw.match(/<loc>/gi) || []).length;
     return { fetched: true, present: true, urlCount };
   } catch {
@@ -381,7 +387,7 @@ function parseHtml(html: string, baseUrl: string): ScrapeResult['data'] {
   const canonical = (html.match(canonicalRe1) || html.match(canonicalRe2) || [])[1] || '';
 
   const noScript = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
-  const body = noScript.replace(/<[^>]+>/g, ' ').replace(/\s{2,}/g, ' ').trim().substring(0, 50000);
+  const body = noScript.replace(/<[^>]+>/g, ' ').replace(/\s{2,}/g, ' ').trim().substring(0, MAX_BODY_CAPTURE_CHARS);
 
   const extractHeadings = (tag: string) => {
     const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'gi');
@@ -463,7 +469,7 @@ function parseHtml(html: string, baseUrl: string): ScrapeResult['data'] {
   return {
     title,
     body,
-    html: html.substring(0, 100000),
+    html: html.substring(0, MAX_HTML_CAPTURE_CHARS),
     structuredData: structured,
     questionH2Count: questionH2s.length,
     questionH2s,
@@ -773,7 +779,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
           return alt !== null && alt.trim().length > 0;
         }).length;
         const wordCount = body.split(/\s+/).filter((w) => w.length > 0).length;
-        const html = document.documentElement.outerHTML.substring(0, 30000);
+        const html = document.documentElement.outerHTML.substring(0, 100000);
         const ld = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
           .map((s) => s.textContent || '')
           .filter(Boolean);

@@ -571,7 +571,7 @@ export interface AnalysisResponse {
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
   if (!obj || typeof obj !== 'object') return false;
-  const r = obj as Record<string, unknown>;
+  const r = obj as unknown as Record<string, unknown>;
   return (
     typeof r.visibility_score === 'number' &&
     typeof r.url === 'string' &&

@@ -1,0 +1,144 @@
+/* Shimmer flow animation for action buttons */
+@keyframes shimmerFlow {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(249, 115, 22, 0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.6));
+  }
+}
+
+/* Action button with shimmer */
+.btn-action-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(249, 115, 22, 0.15) 0%,
+    rgba(249, 115, 22, 0.25) 25%,
+    rgba(249, 115, 22, 0.15) 50%,
+    rgba(249, 115, 22, 0.08) 75%,
+    rgba(249, 115, 22, 0.15) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmerFlow 3s linear infinite;
+}
+
+.btn-action-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerFlow 2.5s linear infinite;
+  pointer-events: none;
+}
+
+.btn-action-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.btn-action-glow:hover {
+  animation: glow-pulse 1.5s ease-in-out infinite;
+}
+
+/* Subtle pulse for secondary action */
+.btn-action-pulse {
+  animation: subtle-pulse 2s infinite;
+}
+
+/* Highly visible action button style */
+.action-button-prominent {
+  position: relative;
+  font-weight: 600;
+  border: 2px solid rgba(249, 115, 22, 0.5);
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.2) 0%,
+    rgba(249, 115, 22, 0.12) 100%
+  );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-button-prominent:hover {
+  border-color: rgba(249, 115, 22, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.3) 0%,
+    rgba(249, 115, 22, 0.2) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);
+}
+
+.action-button-prominent:active {
+  transform: translateY(0);
+}
+
+/* Visible state indicator */
+.action-indicator-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fb923c;
+  animation: glow-pulse 1.5s ease-in-out infinite;
+  margin-right: 6px;
+}
+
+/* Export/Download specific styling */
+.btn-export-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(34, 211, 238, 0.08) 0%,
+    rgba(34, 211, 238, 0.15) 25%,
+    rgba(34, 211, 238, 0.08) 50%,
+    rgba(34, 211, 238, 0.03) 75%,
+    rgba(34, 211, 238, 0.08) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmerFlow 3s linear infinite;
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+/* Share/Copy specific styling */
+.btn-share-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.08) 0%,
+    rgba(52, 211, 153, 0.15) 25%,
+    rgba(52, 211, 153, 0.08) 50%,
+    rgba(52, 211, 153, 0.03) 75%,
+    rgba(52, 211, 153, 0.08) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmerFlow 3s linear infinite;
+  border-color: rgba(52, 211, 153, 0.4);
+}

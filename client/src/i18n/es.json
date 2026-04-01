@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "research": "Investigación",
+    "aiTools": "Herramientas IA",
+    "docs": "Documentación",
+    "pricing": "Precios",
+    "methodology": "Metodología",
+    "guide": "Guía",
+    "about": "Acerca de",
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar sesión",
+    "logIn": "Ingresar",
+    "getStarted": "Comenzar",
+    "free": "GRATIS",
+    "settings": "Configuración",
+    "upgrade": "Mejorar plan"
+  },
+  "hero": {
+    "title": "Motor de Visibilidad IA",
+    "signedOutSubtitle": "La mayoría de herramientas de visibilidad IA se quedan en un panel. AiVIS diagnostica por qué la IA omite tu sitio, lo rastrea hasta fallos específicos y envía la corrección — hasta el pull request.",
+    "cta": "Iniciar Auditoría",
+    "ctaSecondary": "Ver Metodología"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Algo salió mal",
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "export": "Exportar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "search": "Buscar",
+    "noResults": "No se encontraron resultados",
+    "learnMore": "Saber más",
+    "viewAll": "Ver todos"
+  },
+  "pricing": {
+    "title": "Elige tu Plan de Visibilidad",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "currentPlan": "Plan Actual",
+    "getStarted": "Comenzar",
+    "popular": "Más Popular",
+    "perMonth": "/mes"
+  },
+  "audit": {
+    "runAudit": "Ejecutar Auditoría",
+    "analyzing": "Analizando…",
+    "visibilityScore": "Puntuación de Visibilidad",
+    "recommendations": "Recomendaciones",
+    "technicalSignals": "Señales Técnicas",
+    "contentAnalysis": "Análisis de Contenido",
+    "schemaMarkup": "Marcado Schema",
+    "enterUrl": "Ingresa una URL para auditar"
+  },
+  "gsc": {
+    "title": "Inteligencia Search Console",
+    "description": "Conecta Google Search Console para datos de rendimiento reales. Detecta caídas, descubre oportunidades CTR y fusiona evidencia GSC con tus auditorías de visibilidad IA.",
+    "connect": "Conectar con Google",
+    "connected": "Google Search Console Conectado",
+    "askQuestion": "Hacer una Pregunta",
+    "tools": "Herramientas de Inteligencia",
+    "analyze": "Analizar"
+  },
+  "indexing": {
+    "title": "Indexación de URL e IndexNow",
+    "description": "Verifica el estado de indexación en Google/Bing y envía URLs para descubrimiento de rastreo más rápido",
+    "checkStatus": "Verificar Estado de Indexación",
+    "bulkSubmit": "Envío Masivo IndexNow",
+    "history": "Historial de Envíos",
+    "setupGuide": "Cómo Configurar Bing IndexNow",
+    "submitToIndexNow": "Enviar a IndexNow",
+    "importFile": "Importar Archivo"
+  },
+  "bix": {
+    "placeholder": "Envía una URL para auditar o dime qué hacer…",
+    "voiceInput": "Entrada de voz",
+    "stopListening": "Dejar de escuchar",
+    "signInRequired": "Inicia sesión para hablar con BIX",
+    "signIn": "Iniciar sesión →"
+  },
+  "footer": {
+    "product": "Producto",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "contact": "Contacto",
+    "copyright": "© {{year}} AiVIS. Todos los derechos reservados."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "react-vite-app",
+  "version": "1.0.0",
+  "private": true,
+  "type" : "module",
+  "scripts": {
+    "start": "vite --force --host 0.0.0.0 --clearScreen false",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "dev": "vite --force --host 0.0.0.0 --clearScreen false",
+    "test:e2e": "cypress open",
+    "test:e2e:headless": "cypress run"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^6.22.3",
+    "react-hot-toast": "^2.4.1",
+    "axios": "^1.6.8",
+    "framer-motion": "^11.0.28",
+    "prop-types": "^15.8.1",
+    "react-hook-form": "^7.51.0",
+    "@stripe/stripe-js": "^2.4.0",
+    "react-query": "^3.39.3",
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "tailwindcss": "^3.4.3",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19",
+    "cypress": "^13.6.0"
+  }
+}

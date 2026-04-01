@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "research": "Forschung",
+    "aiTools": "KI-Tools",
+    "docs": "Dokumentation",
+    "pricing": "Preise",
+    "methodology": "Methodik",
+    "guide": "Leitfaden",
+    "about": "Über uns",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "signOut": "Abmelden",
+    "logIn": "Einloggen",
+    "getStarted": "Loslegen",
+    "free": "KOSTENLOS",
+    "settings": "Einstellungen",
+    "upgrade": "Upgraden"
+  },
+  "hero": {
+    "title": "KI-Sichtbarkeits-Engine",
+    "signedOutSubtitle": "Die meisten KI-Sichtbarkeitstools enden beim Dashboard. AiVIS diagnostiziert, warum KI Ihre Website überspringt, verfolgt es bis zu spezifischen Seitenfehlern und liefert den Fix — bis zum Pull Request.",
+    "cta": "Audit starten",
+    "ctaSecondary": "Methodik ansehen"
+  },
+  "common": {
+    "loading": "Laden…",
+    "error": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Absenden",
+    "export": "Exportieren",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "search": "Suchen",
+    "noResults": "Keine Ergebnisse gefunden",
+    "learnMore": "Mehr erfahren",
+    "viewAll": "Alle anzeigen"
+  },
+  "pricing": {
+    "title": "Wählen Sie Ihren Sichtbarkeitsplan",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "currentPlan": "Aktueller Plan",
+    "getStarted": "Loslegen",
+    "popular": "Am beliebtesten",
+    "perMonth": "/Monat"
+  },
+  "audit": {
+    "runAudit": "Audit ausführen",
+    "analyzing": "Wird analysiert…",
+    "visibilityScore": "Sichtbarkeits-Score",
+    "recommendations": "Empfehlungen",
+    "technicalSignals": "Technische Signale",
+    "contentAnalysis": "Inhaltsanalyse",
+    "schemaMarkup": "Schema-Markup",
+    "enterUrl": "URL zum Auditieren eingeben"
+  },
+  "gsc": {
+    "title": "Search Console Intelligenz",
+    "description": "Verbinden Sie Google Search Console für echte Leistungsdaten. Erkennen Sie Rückgänge, entdecken Sie CTR-Chancen und kombinieren Sie GSC-Daten mit Ihren KI-Sichtbarkeitsaudits.",
+    "connect": "Mit Google verbinden",
+    "connected": "Google Search Console Verbunden",
+    "askQuestion": "Frage stellen",
+    "tools": "Intelligenz-Tools",
+    "analyze": "Analysieren"
+  },
+  "indexing": {
+    "title": "URL-Indexierung & IndexNow",
+    "description": "Überprüfen Sie den Google/Bing-Indexierungsstatus und reichen Sie URLs für schnellere Crawl-Erkennung ein",
+    "checkStatus": "Indexierungsstatus prüfen",
+    "bulkSubmit": "Massen-IndexNow-Übermittlung",
+    "history": "Übermittlungsverlauf",
+    "setupGuide": "Bing IndexNow einrichten",
+    "submitToIndexNow": "An IndexNow senden",
+    "importFile": "Datei importieren"
+  },
+  "bix": {
+    "placeholder": "URL zum Auditieren senden oder sage mir was zu tun ist…",
+    "voiceInput": "Spracheingabe",
+    "stopListening": "Zuhören beenden",
+    "signInRequired": "Melden Sie sich an, um mit BIX zu sprechen",
+    "signIn": "Anmelden →"
+  },
+  "footer": {
+    "product": "Produkt",
+    "resources": "Ressourcen",
+    "legal": "Rechtliches",
+    "contact": "Kontakt",
+    "copyright": "© {{year}} AiVIS. Alle Rechte vorbehalten."
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "research": "Research",
+    "aiTools": "AI Tools",
+    "docs": "Docs",
+    "pricing": "Pricing",
+    "methodology": "Methodology",
+    "guide": "Guide",
+    "about": "About",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "logIn": "Log in",
+    "getStarted": "Get Started",
+    "free": "FREE",
+    "settings": "Settings",
+    "upgrade": "Upgrade"
+  },
+  "hero": {
+    "title": "AI Visibility Engine",
+    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.",
+    "cta": "Start Audit",
+    "ctaSecondary": "View Methodology"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "export": "Export",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "search": "Search",
+    "noResults": "No results found",
+    "learnMore": "Learn more",
+    "viewAll": "View all"
+  },
+  "pricing": {
+    "title": "Choose Your Visibility Plan",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "currentPlan": "Current Plan",
+    "getStarted": "Get Started",
+    "popular": "Most Popular",
+    "perMonth": "/month"
+  },
+  "audit": {
+    "runAudit": "Run Audit",
+    "analyzing": "Analyzing…",
+    "visibilityScore": "Visibility Score",
+    "recommendations": "Recommendations",
+    "technicalSignals": "Technical Signals",
+    "contentAnalysis": "Content Analysis",
+    "schemaMarkup": "Schema Markup",
+    "enterUrl": "Enter a URL to audit"
+  },
+  "gsc": {
+    "title": "Search Console Intelligence",
+    "description": "Connect Google Search Console for real performance data. Detect declines, discover CTR opportunities, and merge GSC evidence with your AI visibility audits.",
+    "connect": "Connect with Google",
+    "connected": "Google Search Console Connected",
+    "askQuestion": "Ask a Question",
+    "tools": "Intelligence Tools",
+    "analyze": "Analyze"
+  },
+  "indexing": {
+    "title": "URL Indexing & IndexNow",
+    "description": "Check Google/Bing indexing status and submit URLs for faster crawl discovery",
+    "checkStatus": "Check Indexing Status",
+    "bulkSubmit": "Bulk IndexNow Submit",
+    "history": "Submission History",
+    "setupGuide": "How to Set Up Bing IndexNow",
+    "submitToIndexNow": "Submit to IndexNow",
+    "importFile": "Import File"
+  },
+  "bix": {
+    "placeholder": "Send a URL to audit, or tell me what to do…",
+    "voiceInput": "Voice input",
+    "stopListening": "Stop listening",
+    "signInRequired": "Sign in to talk to BIX",
+    "signIn": "Sign in →"
+  },
+  "footer": {
+    "product": "Product",
+    "resources": "Resources",
+    "legal": "Legal",
+    "contact": "Contact",
+    "copyright": "© {{year}} AiVIS. All rights reserved."
+  }
+}

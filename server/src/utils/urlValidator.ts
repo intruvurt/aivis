@@ -1,4 +1,4 @@
-import punycode from "punycode/punycode.ts";
+import punycode from "punycode";
 import { URL } from "url";
 import { buildEvidence } from "./evidence.ts";
 

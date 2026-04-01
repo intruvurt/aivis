@@ -7,7 +7,7 @@
  * @param {string} params.description - Description of the evidence
  * @returns {Object} Structured evidence object
  */
-export function buildEvidence({ proof, source, verifiedBy, description }) {
+export function buildEvidence({ proof, source, verifiedBy = null, description }: { proof: string | null; source?: string | null; verifiedBy?: string | null; description?: string | null }) {
   if (proof) {
     return {
       status: 'verified',
@@ -34,7 +34,7 @@ export function buildEvidence({ proof, source, verifiedBy, description }) {
  * @param {Object} evidenceObj - The evidence object to attach
  * @returns {Object} Claim with attached evidence
  */
-export function attachEvidenceToClaim(claim, evidenceObj) {
+export function attachEvidenceToClaim(claim: any, evidenceObj: any) {
   return { ...claim, evidence: evidenceObj };
 }
 
@@ -43,7 +43,7 @@ export function attachEvidenceToClaim(claim, evidenceObj) {
  * @param {Array} evidenceArray - Array of evidence items
  * @returns {Array} Normalized evidence array with structured objects
  */
-export function normalizeEvidenceArray(evidenceArray) {
+export function normalizeEvidenceArray(evidenceArray: any[]) {
   if (!Array.isArray(evidenceArray)) {
     return [];
   }

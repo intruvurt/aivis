@@ -27,7 +27,7 @@ export const performDiscovery = async (baseUrl) => {
 
       if (robotsResponse.status === 200 && robotsResponse.data) {
         discoveryData.robotsTxt = robotsResponse.data;
-        const robots = robotsParser(robotsUrl, robotsResponse.data);
+        const robots = (robotsParser as any)(robotsUrl, robotsResponse.data);
         
         evidence.push(buildEvidence({
           proof: `robots.txt found at ${robotsUrl}`,

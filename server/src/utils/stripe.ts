@@ -6,7 +6,7 @@ export const getStripeInstance = () => {
   if (!stripeInstance) {
     const stripeKey = process.env.STRIPE_SECRET_KEY || "";
     stripeInstance = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16"
+      apiVersion: "2025-02-24.acacia"
     });
   }
   return stripeInstance;

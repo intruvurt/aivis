@@ -935,6 +935,17 @@ const heavyActionLimiter = rateLimit({
   },
 });
 
+const licenseLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: IS_PRODUCTION ? 30 : 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator,
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'Too many license requests', code: 'LICENSE_RATE_LIMIT', retryAfter: 60 });
+  },
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Body parsers
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.

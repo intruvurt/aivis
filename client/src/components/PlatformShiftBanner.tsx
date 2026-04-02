@@ -6,7 +6,7 @@ interface PlatformShiftBannerProps {
   title?: string;
   body?: string;
   bullets?: readonly string[];
-  tone?: "cyan" | "emerald" | "amber";
+  tone?: "cyan" | "emerald" | "amber" | "neutral";
 }
 
 const toneClasses = {
@@ -27,6 +27,12 @@ const toneClasses = {
     eyebrow: "text-amber-100",
     body: "text-amber-50/90",
     bullet: "text-amber-100/85",
+  },
+  neutral: {
+    shell: "border-white/20 bg-white/5",
+    eyebrow: "text-white/85",
+    body: "text-white/80",
+    bullet: "text-white/80",
   },
 } as const;
 

@@ -166,7 +166,18 @@ export default function App() {
         <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/"
+              element={
+                isAuthenticated ? (
+                  <Dashboard />
+                ) : (
+                  <React.Suspense fallback={<PageLoadingSpinner />}>
+                    <Landing />
+                  </React.Suspense>
+                )
+              }
+            />
             <Route path="/analyze" element={<AnalyzePage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/auth" element={<AuthRouteGate />} />

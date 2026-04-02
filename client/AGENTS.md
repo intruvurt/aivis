@@ -35,6 +35,10 @@ POST /api/analyze
 
 ---
 
+## Terminal commands: use npm.cmd / npx.cmd
+
+The workspace owner's Windows path contains `$e` (`Ma$e`). PowerShell expands `$e` as a variable, breaking bare `npm`/`npx`. **Always use `npm.cmd` / `npx.cmd`** for all terminal operations.
+
 ## Development commands
 
 ### Client
@@ -42,10 +46,10 @@ POST /api/analyze
 Run from `client/`
 
 ```bash
-npm install
-npm run dev
-npm test
-npm run typecheck
+npm.cmd install
+npm.cmd run dev
+npm.cmd test
+npm.cmd run typecheck
 ```
 
 ### Server
@@ -53,9 +57,9 @@ npm run typecheck
 Run from `server/`
 
 ```bash
-npm install
-npm run dev
-npm run build
+npm.cmd install
+npm.cmd run dev
+npm.cmd run build
 ```
 
 ---

@@ -21,6 +21,14 @@ If the client and server disagree, the server wins.
 
 ---
 
+## Terminal commands
+
+The workspace owner's Windows path contains `$e` (`Ma$e`). PowerShell expands `$e` as a variable, breaking any bare `npm` or `npx` call that resolves the user profile.
+
+**Always use `npm.cmd` / `npx.cmd`** for all terminal operations (installs, builds, typechecks, dev servers).
+
+---
+
 ## Critical backend files
 
 - `src/server.ts` — route wiring and middleware chain

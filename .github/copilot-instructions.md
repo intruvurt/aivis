@@ -6,15 +6,18 @@
 - **Entry points**: [client/src/main.tsx](client/src/main.tsx) (React router), [server/src/server.ts](server/src/server.ts) (Express routes)
 
 ## Development commands
+
+> **Terminal rule:** The workspace owner's Windows username contains `$` (`Ma$e`). PowerShell treats `$e` as a variable, breaking paths. **Always use `npm.cmd` / `npx.cmd`** instead of bare `npm` / `npx` in terminal commands.
+
 ```bash
 # Client (from client/)
-npm install && npm run dev     # Vite dev server on :5173
-npm test                       # Vitest
-npm run typecheck              # tsc --noEmit
+npm.cmd install && npm.cmd run dev     # Vite dev server on :5173
+npm.cmd test                           # Vitest
+npm.cmd run typecheck                  # tsc --noEmit
 
 # Server (from server/)
-npm install && npm run dev     # tsx watch on :3001
-npm run build                  # Compile to dist/
+npm.cmd install && npm.cmd run dev     # tsx watch on :3001
+npm.cmd run build                      # Compile to dist/
 ```
 
 ## Critical conventions

@@ -38,6 +38,24 @@ The coding agent must treat `shared/` as the source of truth for cross-layer beh
 
 ## Hard rules for all agents
 
+### 0) Terminal commands: use npm.cmd / npx.cmd
+
+The workspace owner's Windows username contains a `$` character (`Ma$e`). PowerShell interprets `$e` as an undefined variable, which corrupts paths resolved through `npm`, `npx`, or any command that expands the user profile path.
+
+**Always use `npm.cmd` and `npx.cmd`** (the `.cmd` shim) instead of bare `npm` / `npx` when running terminal commands. This bypasses PowerShell's string interpolation and resolves the correct path.
+
+```powershell
+# WRONG — will fail with "The variable '$e' cannot be retrieved"
+npm --prefix server run typecheck
+npx tsc --noEmit
+
+# CORRECT
+npm.cmd --prefix server run typecheck
+npx.cmd tsc --noEmit
+```
+
+This applies to all terminal invocations: installs, builds, typechecks, scripts, and dev servers.
+
 ### 1) Shared types first
 
 If a change touches:

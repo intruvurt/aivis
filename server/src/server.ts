@@ -10506,7 +10506,6 @@ process.on('unhandledRejection', (reason) => {
     startAuditWorkerLoop();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();
-    console.log('[AuditQueue] Redis queue worker loop started');
   } else {
     console.warn('[Startup] Skipping DB-backed worker loops because database is unavailable');
   }

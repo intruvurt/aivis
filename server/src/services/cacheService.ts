@@ -1,45 +1,13 @@
 import { Redis } from 'ioredis';
 import { getPool } from './postgresql.js';
+import { getRedis } from '../infra/redis.js';
 
 type CacheValue = Record<string, any> & { analyzed_at?: string };
 
 const CACHE_TTL = 7 * 24 * 60 * 60; // 7 days in seconds
-const USE_REDIS = (process.env.REDIS_URL?.trim().length ?? 0) > 0;
-
-let redisClient: Redis | null = null;
 
 function getRedisClient(): Redis | null {
-  if (!USE_REDIS) return null;
-
-  if (!redisClient) {
-    try {
-      redisClient = new Redis(process.env.REDIS_URL!, {
-        maxRetriesPerRequest: 3,
-        retryStrategy: (times) => {
-          if (times > 3) {
-            console.error('[Cache] Redis connection failed after 3 retries');
-            return null;
-          }
-          return Math.min(times * 200, 2000);
-        },
-      });
-
-      redisClient.on('error', (err) => {
-        console.error('[Cache] Redis error:', err.message);
-      });
-
-      redisClient.on('connect', () => {
-        console.log('[Cache]  Redis connected');
-      });
-
-      console.log('[Cache] Redis client initialized');
-    } catch (error: any) {
-      console.error('[Cache] Failed to initialize Redis:', error.message);
-      return null;
-    }
-  }
-
-  return redisClient;
+  return getRedis();
 }
 
 export class AnalysisCacheService {
@@ -203,15 +171,13 @@ export class AnalysisCacheService {
   }
 }
 
-// Cleanup on process exit
+// Cleanup on process exit — shared connection is managed by infra/redis
 process.on('SIGTERM', async () => {
-  if (redisClient) {
-    await redisClient.quit();
-  }
+  const r = getRedis();
+  if (r) await r.quit();
 });
 
 process.on('SIGINT', async () => {
-  if (redisClient) {
-    await redisClient.quit();
-  }
+  const r = getRedis();
+  if (r) await r.quit();
 });

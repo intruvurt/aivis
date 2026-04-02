@@ -3669,18 +3669,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white flex flex-col">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
-        <div
-          className="absolute inset-0 opacity-[0.045]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(80,55,35,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(80,55,35,0.18) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
+    <div className="min-h-screen text-white flex flex-col">
 
       <AuditProgressOverlay
         isActive={auditOverlayActive && !overlayMinimized}

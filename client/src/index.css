@@ -60,6 +60,13 @@
    Base
 -------------------------------------------------------- */
 @layer base {
+  /* Ensure sidebar / nav lists never show bullets */
+  ul, ol, menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   html {
     text-rendering: geometricPrecision;
     -webkit-text-size-adjust: 100%;
@@ -628,45 +635,6 @@
     animation: hero-flow-pan 16s ease-in-out infinite;
   }
 
-  .hero-logo-float {
-    will-change: transform;
-    animation: hero-logo-float 6s ease-in-out infinite;
-  }
-
-  @keyframes hero-logo-float {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -6px, 0); }
-  }
-
-  /* ── Logo hero panel with shimmer overlay ─────────────────────────── */
-  .logo-hero-panel {
-    animation: hero-panel-glow 4s ease-in-out infinite;
-  }
-
-  .logo-shimmer-overlay {
-    display: block;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(
-      108deg,
-      transparent 38%,
-      rgba(255, 255, 255, 0.07) 50%,
-      transparent 62%
-    );
-    background-size: 240% 100%;
-    animation: logo-shimmer-sweep 6s ease-in-out infinite;
-  }
-
-  @keyframes logo-shimmer-sweep {
-    0%   { background-position: 160% center; opacity: 0; }
-    20%  { opacity: 1; }
-    50%  { background-position: -60% center; opacity: 1; }
-    80%  { opacity: 0.6; }
-    100% { background-position: -160% center; opacity: 0; }
-  }
-
   @keyframes nav-logo-glow {
     0%, 100% {
       box-shadow:
@@ -717,8 +685,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .logo-hero-panel,
-    .logo-shimmer-overlay,
     .hero-flow-overlay,
     .nav-logo-pill,
     .logo-pill,

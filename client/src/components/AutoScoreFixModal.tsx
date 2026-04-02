@@ -132,6 +132,11 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
 
   const [tab, setTab] = useState<"connect" | "submit" | "jobs">("connect");
 
+  // GitHub App state
+  const [githubAppInstalled, setGithubAppInstalled] = useState(false);
+  const [githubAppLogin, setGithubAppLogin] = useState("");
+  const [githubAppInstallUrl, setGithubAppInstallUrl] = useState<string | null>(null);
+
   // Connect tab state
   const [provider, setProvider] = useState<VcsProvider>("github");
   const [rawToken, setRawToken] = useState("");
@@ -175,14 +180,20 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
       current.searchParams.delete("github_connected");
       window.history.replaceState({}, "", `${current.pathname}${current.search}${current.hash}`);
     }
+    if (current.searchParams.get("github_app") === "installed") {
+      setTokenMsg({ ok: true, text: "AiVIS AutoFix Engine installed! You can now submit auto fixes." });
+      current.searchParams.delete("github_app");
+      window.history.replaceState({}, "", `${current.pathname}${current.search}${current.hash}`);
+    }
 
     fetchTokens();
     fetchJobs();
+    fetchGitHubAppStatus();
   }, [open, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open || !token) return;
-    const githubConnected = connectedTokens.some((t) => t.provider === "github");
+    const githubConnected = connectedTokens.some((t) => t.provider === "github") || githubAppInstalled;
     if (!githubConnected || provider !== "github") {
       setRepos([]);
       setBranches([]);
@@ -216,10 +227,30 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
       .finally(() => setLoadingJobs(false));
   }
 
+  function fetchGitHubAppStatus() {
+    const base = (API_URL || "").replace(/\/+$/, "");
+    const hdrs = headers();
+    Promise.all([
+      fetch(`${base}/api/github-app/status`, { headers: hdrs }).then(r => r.ok ? r.json() : null),
+      fetch(`${base}/api/github-app/install-url`, { headers: hdrs }).then(r => r.ok ? r.json() : null),
+    ])
+      .then(([s, u]) => {
+        setGithubAppInstalled(!!s?.installed);
+        setGithubAppLogin(s?.installation?.account_login || "");
+        setGithubAppInstallUrl(u?.url || null);
+      })
+      .catch(() => {});
+  }
+
   async function fetchGitHubRepos() {
     setLoadingRepos(true);
     try {
-      const response = await fetch(apiUrl("/github/repos"), { headers: headers() });
+      // Try the auto-score-fix endpoint first (uses OAuth token), then GitHub App endpoint
+      let response = await fetch(apiUrl("/github/repos"), { headers: headers() });
+      if (!response.ok && githubAppInstalled) {
+        const base = (API_URL || "").replace(/\/+$/, "");
+        response = await fetch(`${base}/api/github-app/repos`, { headers: headers() });
+      }
       const payload = await response.json();
       if (!response.ok) throw new Error(payload?.error || "Failed to load repositories");
 
@@ -245,9 +276,15 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
   async function fetchGitHubBranches(owner: string, repo: string) {
     setLoadingBranches(true);
     try {
-      const response = await fetch(apiUrl(`/github/branches?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}`), {
+      let response = await fetch(apiUrl(`/github/branches?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}`), {
         headers: headers(),
       });
+      if (!response.ok && githubAppInstalled) {
+        const base = (API_URL || "").replace(/\/+$/, "");
+        response = await fetch(`${base}/api/github-app/branches?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}`, {
+          headers: headers(),
+        });
+      }
       const payload = await response.json();
       if (!response.ok) throw new Error(payload?.error || "Failed to load branches");
 
@@ -376,7 +413,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
 
   if (!open) return null;
 
-  const hasConnectedProvider = connectedTokens.some((t) => t.provider === provider);
+  const hasConnectedProvider = connectedTokens.some((t) => t.provider === provider) || (provider === "github" && githubAppInstalled);
 
   // ─── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -476,6 +513,49 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
 
               {/* Token input form */}
               <form onSubmit={handleSaveToken} className="space-y-4">
+                {provider === "github" && (
+                  <div className="rounded-xl bg-white/5 border border-white/10 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                          GitHub App (recommended)
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Fine-grained permissions, no personal tokens. Acts as a system identity.
+                        </p>
+                      </div>
+                      {githubAppInstalled && (
+                        <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-2 py-0.5 text-[11px] text-emerald-200/80">
+                          Connected as {githubAppLogin}
+                        </span>
+                      )}
+                    </div>
+                    {githubAppInstalled ? (
+                      <button
+                        type="button"
+                        onClick={() => setTab("submit")}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+                      >
+                        ✓ GitHub App Installed — Continue to Submit
+                      </button>
+                    ) : githubAppInstallUrl ? (
+                      <a
+                        href={githubAppInstallUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white text-sm font-semibold text-center hover:opacity-90 transition-opacity"
+                      >
+                        Install AiVIS AutoFix Engine on GitHub
+                      </a>
+                    ) : null}
+                    <div className="relative flex items-center">
+                      <div className="flex-grow border-t border-white/10" />
+                      <span className="flex-shrink mx-3 text-[11px] text-slate-500">or use tokens</span>
+                      <div className="flex-grow border-t border-white/10" />
+                    </div>
+                  </div>
+                )}
+
                 {provider === "github" && (
                   <button
                     type="button"
@@ -682,7 +762,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
 
               {!hasConnectedProvider && (
                 <p className="text-xs text-amber-400">
-                  No {provider} token saved. Go to "Connect Repo" tab to add one first.
+                  No {provider} connection found. Go to "Connect Repo" tab to install the GitHub App or add a token.
                 </p>
               )}
 

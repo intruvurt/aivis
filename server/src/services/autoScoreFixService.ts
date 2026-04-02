@@ -16,6 +16,7 @@ import crypto from 'crypto';
 import { getPool, executeTransaction } from './postgresql.js';
 import { consumePackCredits } from './scanPackCredits.js';
 import { callAIProvider, SIGNAL_AI1 } from './aiProviders.js';
+import { isGitHubAppConfigured, getInstallationForUser, createPRViaApp } from './githubAppService.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -703,18 +704,67 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
       );
     }
 
-    if (!row.encrypted_token) {
-      throw new Error(`No ${row.vcs_provider} token found for this job owner.`);
-    }
-
-    const plainToken = decryptVcsToken(row.encrypted_token);
     let prResult: { pr_number: number; pr_url: string };
-    if (row.vcs_provider === 'github') {
-      prResult = await createGitHubPR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
-    } else if (row.vcs_provider === 'gitlab') {
-      prResult = await createGitLabMR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+    if (!row.encrypted_token) {
+      // For GitHub: try GitHub App installation before failing
+      if (row.vcs_provider === 'github' && isGitHubAppConfigured()) {
+        const installation = await getInstallationForUser(row.user_id);
+        if (installation) {
+          // Use GitHub App to create PR
+          const appResult = await createPRViaApp({
+            installationId: installation.installation_id,
+            owner: row.repo_owner,
+            repo: row.repo_name,
+            baseBranch: row.repo_branch,
+            title: plan!.pr_title,
+            body: plan!.pr_body,
+            files: plan!.file_changes.map(f => ({
+              path: f.path,
+              content: f.content,
+              operation: f.operation as 'create' | 'update',
+              justification: f.justification,
+            })),
+          });
+          prResult = { pr_number: appResult.pr_number, pr_url: appResult.pr_url };
+        } else {
+          throw new Error(`No ${row.vcs_provider} token or GitHub App installation found for this job owner.`);
+        }
+      } else {
+        throw new Error(`No ${row.vcs_provider} token found for this job owner.`);
+      }
     } else {
-      prResult = await createBitbucketPR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+      const plainToken = decryptVcsToken(row.encrypted_token);
+      if (row.vcs_provider === 'github') {
+        // Prefer GitHub App installation if available
+        if (isGitHubAppConfigured()) {
+          const installation = await getInstallationForUser(row.user_id);
+          if (installation) {
+            const appResult = await createPRViaApp({
+              installationId: installation.installation_id,
+              owner: row.repo_owner,
+              repo: row.repo_name,
+              baseBranch: row.repo_branch,
+              title: plan!.pr_title,
+              body: plan!.pr_body,
+              files: plan!.file_changes.map(f => ({
+                path: f.path,
+                content: f.content,
+                operation: f.operation as 'create' | 'update',
+                justification: f.justification,
+              })),
+            });
+            prResult = { pr_number: appResult.pr_number, pr_url: appResult.pr_url };
+          } else {
+            prResult = await createGitHubPR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+          }
+        } else {
+          prResult = await createGitHubPR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+        }
+      } else if (row.vcs_provider === 'gitlab') {
+        prResult = await createGitLabMR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+      } else {
+        prResult = await createBitbucketPR(plainToken, row.repo_owner, row.repo_name, row.repo_branch, plan!);
+      }
     }
 
     await pool.query(

@@ -2475,6 +2475,24 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_user ON agent_tasks(user_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status) WHERE status = 'pending'`);
 
+    // ── GitHub App installations ──
+    _q(`
+      CREATE TABLE IF NOT EXISTS github_app_installations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR(255) NOT NULL,
+        installation_id INTEGER NOT NULL UNIQUE,
+        account_login VARCHAR(255) NOT NULL,
+        account_type VARCHAR(20) NOT NULL DEFAULT 'User',
+        permissions JSONB NOT NULL DEFAULT '{}',
+        repo_selection VARCHAR(20) NOT NULL DEFAULT 'all',
+        suspended_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

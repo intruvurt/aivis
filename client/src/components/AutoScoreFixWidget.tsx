@@ -1,10 +1,12 @@
 /**
  * AutoScoreFixWidget — inline launcher card for Auto Score Fix.
  *
- * FEATURE LOCKED — shows "Coming Soon" while GitHub remediation mechanism is redesigned.
+ * Supports both GitHub App installation flow and legacy OAuth token flow.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { API_URL } from "../config";
+import { buildBearerHeader } from "../utils/authToken";
 
 interface AutoScoreFixWidgetProps {
   auditResult: {
@@ -16,32 +18,101 @@ interface AutoScoreFixWidgetProps {
   onOpen: () => void;
 }
 
-export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = () => {
+interface InstallationStatus {
+  configured: boolean;
+  installed: boolean;
+  installation: {
+    installation_id: number;
+    account_login: string;
+    account_type: string;
+    repo_selection: string;
+    created_at: string;
+  } | null;
+}
+
+export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditResult, onOpen }) => {
+  const [status, setStatus] = useState<InstallationStatus | null>(null);
+  const [installUrl, setInstallUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const base = (API_URL || "").replace(/\/+$/, "");
+    const headers = buildBearerHeader();
+
+    Promise.all([
+      fetch(`${base}/api/github-app/status`, { headers }).then(r => r.ok ? r.json() : null),
+      fetch(`${base}/api/github-app/install-url`, { headers }).then(r => r.ok ? r.json() : null),
+    ])
+      .then(([s, u]) => {
+        setStatus(s);
+        setInstallUrl(u?.url || null);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const score = auditResult?.visibility_score ?? 0;
+  const isInstalled = status?.installed;
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-violet-300/10 bg-gradient-to-br from-violet-500/5 via-[#13182a] to-cyan-500/5 p-4 animate-pulse">
+        <div className="h-4 w-24 bg-violet-300/10 rounded mb-2" />
+        <div className="h-3 w-40 bg-violet-300/5 rounded" />
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="rounded-2xl border border-violet-300/10 bg-gradient-to-br from-violet-500/5 via-[#13182a] to-cyan-500/5 p-4 opacity-60"
-      title="Auto Score Fix is being upgraded — coming soon"
-    >
+    <div className="rounded-2xl border border-violet-300/10 bg-gradient-to-br from-violet-500/5 via-[#13182a] to-cyan-500/5 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[11px] uppercase tracking-[0.14em] text-violet-200/60">Auto Score Fix</div>
           <p className="mt-1 text-xs leading-6 text-white/50">
-            Automated GitHub remediation pipeline — coming soon.
+            {isInstalled
+              ? `Connected to GitHub as ${status?.installation?.account_login}. AI-generated PRs fix visibility issues automatically.`
+              : "Install the AiVIS AutoFix Engine on GitHub to enable automated code-level visibility fixes."}
           </p>
         </div>
-        <div className="rounded-full border border-violet-300/15 bg-violet-400/8 px-2.5 py-1 text-[11px] text-violet-200/60">
-          Coming Soon
-        </div>
+        {isInstalled ? (
+          <div className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-2.5 py-1 text-[11px] text-emerald-200/80">
+            Connected
+          </div>
+        ) : (
+          <div className="rounded-full border border-amber-300/15 bg-amber-400/8 px-2.5 py-1 text-[11px] text-amber-200/60">
+            Not Connected
+          </div>
+        )}
       </div>
-      <button
-        disabled
-        className="mt-3 w-full rounded-xl py-2.5 px-3 text-sm font-semibold tracking-tight bg-slate-700/40 text-slate-500 cursor-not-allowed opacity-60"
-      >
-        ⚡ Auto Score Fix (Upgrading)
-      </button>
-      <p className="mt-2 text-[11px] leading-5 text-white/35">
-        The remediation pipeline is being redesigned for better GitHub integration. Check back soon.
-      </p>
+      {isInstalled ? (
+        <button
+          onClick={onOpen}
+          className="mt-3 w-full rounded-xl py-2.5 px-3 text-sm font-semibold tracking-tight bg-gradient-to-r from-violet-600 to-cyan-600 text-white hover:from-violet-500 hover:to-cyan-500 transition-all"
+        >
+          ⚡ Auto Score Fix {score ? `(Score: ${score})` : ""}
+        </button>
+      ) : installUrl ? (
+        <a
+          href={installUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 block w-full rounded-xl py-2.5 px-3 text-sm font-semibold tracking-tight text-center bg-gradient-to-r from-violet-600 to-cyan-600 text-white hover:from-violet-500 hover:to-cyan-500 transition-all"
+        >
+          Install AiVIS AutoFix Engine
+        </a>
+      ) : (
+        <button
+          onClick={onOpen}
+          className="mt-3 w-full rounded-xl py-2.5 px-3 text-sm font-semibold tracking-tight bg-gradient-to-r from-violet-600 to-cyan-600 text-white hover:from-violet-500 hover:to-cyan-500 transition-all"
+        >
+          ⚡ Auto Score Fix
+        </button>
+      )}
+      {!isInstalled && (
+        <p className="mt-2 text-[11px] leading-5 text-white/35">
+          The GitHub App uses fine-grained permissions — no personal access tokens needed.
+        </p>
+      )}
     </div>
   );
 };

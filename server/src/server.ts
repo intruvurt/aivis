@@ -121,6 +121,7 @@ import autoVisibilityFixRoutes from './routes/autoVisibilityFixRoutes.js';
 import selfHealingRoutes from './routes/selfHealingRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import growthEngineRoutes from './routes/growthEngineRoutes.js';
+import githubAppRoutes from './routes/githubAppRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
@@ -950,7 +951,7 @@ const heavyActionLimiter = rateLimit({
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.
 // The webhook route itself (in paymentRoutes.ts) uses express.raw().
 // ─────────────────────────────────────────────────────────────────────────────
-const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook']);
+const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook', '/api/github-app/webhook']);
 
 const JSON_MW = express.json({
   limit: '2mb',
@@ -1037,6 +1038,7 @@ app.use('/api/competitors', competitorRoutes);
 app.use('/api/citations', citationRoutes);
 app.use('/api/mentions', mentionRoutes);
 app.use('/api/auto-score-fix', autoScoreFixRoutes);
+app.use('/api/github-app', githubAppRoutes);
 app.use('/api/reverse-engineer', reverseEngineerApi);
 app.use('/api/schema-generator', schemaGeneratorRoutes);
 app.use('/api/content', contentRoutes);

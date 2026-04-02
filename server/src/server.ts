@@ -135,6 +135,7 @@ import { extractEvidenceFromScrape, enrichEvidenceFromAnalysis } from './service
 import { evaluateSSFRRules, buildSSFRSummary } from './services/ssfrRuleEngine.js';
 import { generateFixpacks } from './services/fixpackGenerator.js';
 import { persistSSFRResults } from './services/ssfrVerificationService.js';
+import { isPythonServiceAvailable, analyzeContentDeep, recordEvidenceLedger, generateFingerprint } from './services/deepAnalysisClient.js';
 
 installConsoleRedaction();
 
@@ -1076,6 +1077,37 @@ app.use('/api/compliance', complianceRoutes);
 app.use('/api/trial', trialRoutes);
 app.use('/api/indexing', indexingRoutes);
 app.use('/licenses', licenseLimiter, createLicenseAPI());
+
+// ── Deep Analysis (Python NLP microservice proxy) ────────────────────────
+app.get('/api/deep-analysis/status', async (_req: Request, res: Response) => {
+  const available = await isPythonServiceAvailable();
+  res.json({ available, service: 'aivis-deep-analysis', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/audits/:auditId/deep-analysis', authRequired, async (req: Request, res: Response) => {
+  try {
+    const userId = String((req as any).user?.id || '');
+    const auditId = req.params.auditId;
+    if (!auditId || !userId) return res.status(400).json({ error: 'Missing audit ID' });
+
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT result->'deep_analysis' AS deep_analysis FROM audits WHERE id = $1 AND user_id = $2`,
+      [auditId, userId]
+    );
+    if (!rows[0]) return res.status(404).json({ error: 'Audit not found' });
+
+    const deepAnalysis = rows[0].deep_analysis;
+    if (!deepAnalysis) {
+      return res.json({ available: false, message: 'Deep analysis not yet available for this audit. It runs as a background enrichment after the main audit completes.' });
+    }
+
+    return res.json({ available: true, deep_analysis: deepAnalysis });
+  } catch (err: any) {
+    console.error('[deep-analysis] Fetch failed:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch deep analysis' });
+  }
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Refresh endpoint
@@ -2096,6 +2128,8 @@ app.get('/api/health', async (_req, res) => {
     /* leave dbOk false */
   }
 
+  const pythonOk = await isPythonServiceAvailable();
+
   const status = dbOk ? 'healthy' : 'degraded';
   res.status(dbOk ? 200 : 503).json({
     success: dbOk,
@@ -2106,6 +2140,7 @@ app.get('/api/health', async (_req, res) => {
     deploy: DEPLOY_VERSION,
     uptime: process.uptime(),
     db: dbOk ? 'connected' : 'unreachable',
+    python_deep_analysis: pythonOk ? 'connected' : 'unavailable',
     memory: {
       used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
       total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
@@ -8650,6 +8685,69 @@ Return ONLY valid JSON:
               console.log(`[${requestId}] SSFR pipeline complete: ${summary.passed_rules}/${summary.total_rules} rules passed, ${fixpacks.length} fixpacks, cap=${summary.effective_score_cap ?? 'none'}`);
             } catch (ssfrErr: any) {
               console.warn(`[${requestId}] SSFR pipeline failed (non-fatal):`, ssfrErr?.message);
+            }
+          })();
+        }
+
+        // ── Background Python deep analysis + cryptographic evidence ledger ──
+        if (dbAuditId && scraped) {
+          (async () => {
+            try {
+              const pyAvailable = await isPythonServiceAvailable();
+              if (!pyAvailable) return;
+
+              const scrapedText = scraped.data?.bodyText || scraped.data?.rawHtml || '';
+              const scrapedHeadings = [
+                ...(scraped.data?.headings?.h1 || []),
+                ...(scraped.data?.headings?.h2 || []),
+                ...(scraped.data?.headings?.h3 || []),
+              ];
+
+              // Run deep NLP analysis
+              const deepResult = await analyzeContentDeep({
+                url: targetUrl,
+                text: scrapedText,
+                title: scraped.data?.title || '',
+                meta_description: scraped.data?.meta?.description || '',
+                headings: scrapedHeadings,
+                json_ld_blocks: scraped.data?.structuredData?.jsonLdBlocks?.map((b: any) => typeof b === 'string' ? b : JSON.stringify(b)) || [],
+              });
+
+              if (deepResult) {
+                // Record evidence in cryptographic ledger
+                const evidenceEntries = deepResult.evidence || [];
+                const ledgerResult = await recordEvidenceLedger({
+                  audit_id: dbAuditId!,
+                  url: targetUrl,
+                  evidence_entries: evidenceEntries as Array<Record<string, unknown>>,
+                });
+
+                // Generate content fingerprint
+                const fingerprint = await generateFingerprint({
+                  text: scrapedText,
+                  url: targetUrl,
+                });
+
+                // Persist deep analysis results to audit record
+                const pool = getPool();
+                await pool.query(
+                  `UPDATE audits SET result = jsonb_set(
+                    COALESCE(result, '{}'::jsonb),
+                    '{deep_analysis}',
+                    $1::jsonb
+                  ) WHERE id = $2`,
+                  [JSON.stringify({
+                    nlp: deepResult,
+                    evidence_ledger: ledgerResult ? { root_hash: ledgerResult.root_hash, entry_count: ledgerResult.entry_count } : null,
+                    content_fingerprint: fingerprint ? { fingerprint: fingerprint.fingerprint, method: fingerprint.method } : null,
+                    enriched_at: new Date().toISOString(),
+                  }), dbAuditId!]
+                );
+
+                console.log(`[${requestId}] Python deep analysis complete: readability=${deepResult.readability?.reading_level}, entities=${deepResult.entities?.total_entity_count}, ledger_root=${ledgerResult?.root_hash?.slice(0, 12) ?? 'none'}`);
+              }
+            } catch (deepErr: any) {
+              console.warn(`[${requestId}] Python deep analysis failed (non-fatal):`, deepErr?.message);
             }
           })();
         }

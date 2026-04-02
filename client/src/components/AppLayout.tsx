@@ -11,7 +11,7 @@ import TrialBanner from "./TrialBanner";
  */
 export default function AppLayout() {
   return (
-    <div className="min-h-screen bg-[#060a14] text-white flex">
+    <div className="min-h-screen bg-[#0b0f1a] text-white flex">
       <AppSidebar />
 
       {/* Main area — offset by sidebar width */}
@@ -19,7 +19,7 @@ export default function AppLayout() {
         <AppTopBar />
         <TrialBanner />
 
-        <main className="flex-1 px-6 py-6 overflow-y-auto">
+        <main className="flex-1 px-6 py-5 overflow-y-auto">
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

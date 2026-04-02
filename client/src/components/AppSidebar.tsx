@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle,
+  Eye, Layers, HelpCircle, ChevronDown,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier } from "@shared/types";
@@ -55,8 +55,8 @@ function NavSection({ title, items }: { title: string; items: NavItem[] }) {
   const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
 
   return (
-    <div className="mb-5">
-      <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+    <div className="mb-4">
+      <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
         {title}
       </p>
       <ul className="space-y-0.5">
@@ -68,17 +68,17 @@ function NavSection({ title, items }: { title: string; items: NavItem[] }) {
                 to={item.to}
                 end={item.to === "/app"}
                 className={({ isActive }) =>
-                  `group flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                  `group flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium transition-all duration-150 ${
                     isActive
-                      ? "bg-cyan-500/15 text-cyan-300"
-                      : "text-white/60 hover:text-white hover:bg-white/[0.04]"
-                  } ${locked ? "opacity-40 pointer-events-none" : ""}`
+                      ? "bg-cyan-500/10 text-cyan-400 shadow-sm shadow-cyan-500/5"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                  } ${locked ? "opacity-35 pointer-events-none" : ""}`
                 }
               >
-                <item.icon className="w-4 h-4 shrink-0" />
+                <item.icon className="w-[18px] h-[18px] shrink-0 opacity-80" />
                 <span className="truncate">{item.label}</span>
                 {locked && (
-                  <span className="ml-auto text-[9px] font-semibold uppercase tracking-wide text-white/30 bg-white/[0.06] px-1.5 py-0.5 rounded">
+                  <span className="ml-auto text-[9px] font-semibold uppercase tracking-wide text-slate-600 bg-white/[0.04] px-1.5 py-0.5 rounded">
                     {item.minTier}
                   </span>
                 )}
@@ -95,7 +95,7 @@ export default function AppSidebar() {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0a0e18]/95 backdrop-blur-xl border-r border-white/[0.06]">
+    <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0b0f1a] border-r border-white/[0.06]">
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 h-14 shrink-0 border-b border-white/[0.06]">
         <NavLink to="/" className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function AppSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin">
+      <nav className="flex-1 overflow-y-auto py-3 px-2 scrollbar-thin">
         <NavSection title="Main" items={mainNav} />
         <NavSection title="Intelligence" items={intelligenceNav} />
         <NavSection title="Tools" items={toolsNav} />
@@ -114,14 +114,15 @@ export default function AppSidebar() {
       {/* User pill */}
       {user && (
         <div className="shrink-0 border-t border-white/[0.06] px-3 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-[11px] font-bold text-cyan-300">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center text-[12px] font-bold text-cyan-400">
               {(user.name || user.email || "U").charAt(0).toUpperCase()}
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-white/80 truncate">{user.name || user.email}</p>
-              <p className="text-[10px] text-white/40 capitalize">{user.tier || "observer"}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium text-white/80 truncate">{user.name || user.email}</p>
+              <p className="text-[10px] text-slate-500 capitalize">{user.tier || "observer"}</p>
             </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-600" />
           </div>
         </div>
       )}

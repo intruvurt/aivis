@@ -139,28 +139,28 @@ function getScoreInterpretation(score: number): { level: string; color: string; 
   if (score >= 80) {
     return {
       level: "Excellent",
-      color: "text-white/80 bg-charcoal border-white/10",
-      icon: <CheckCircle2 className="w-6 h-6 text-white/80" />
+      color: "text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
+      icon: <CheckCircle2 className="w-6 h-6 text-emerald-400" />
     };
   }
   if (score >= 60) {
     return {
       level: "Good",
-      color: "text-white/85 bg-charcoal/10 border-white/12/30",
-      icon: <TrendingUp className="w-6 h-6 text-white/85" />
+      color: "text-cyan-300 bg-cyan-500/10 border-cyan-500/20",
+      icon: <TrendingUp className="w-6 h-6 text-cyan-400" />
     };
   }
   if (score >= 40) {
     return {
       level: "Needs Improvement",
-      color: "text-white/80 bg-charcoal border-white/10",
-      icon: <Eye className="w-6 h-6 text-white/80" />
+      color: "text-amber-300 bg-amber-500/10 border-amber-500/20",
+      icon: <Eye className="w-6 h-6 text-amber-400" />
     };
   }
   return {
     level: "Critical",
-    color: "text-white/80 bg-charcoal border-white/10",
-    icon: <AlertCircle className="w-6 h-6 text-white/80" />
+    color: "text-red-300 bg-red-500/10 border-red-500/20",
+    icon: <AlertCircle className="w-6 h-6 text-red-400" />
   };
 }
 
@@ -423,7 +423,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
               {result.evidence_fix_plan.issues.length > 6 && (
                 <button
                   onClick={() => setShowAllFixPlanIssues((v) => !v)}
-                  className="text-xs text-orange-400 hover:text-orange-300 transition-colors mt-1"
+                  className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors mt-1"
                 >
                   {showAllFixPlanIssues ? 'Show less' : `Show all ${result.evidence_fix_plan.issues.length} issues`}
                 </button>
@@ -537,7 +537,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                 </div>
                 <Link
                   to={item.to}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full border border-white/15 bg-charcoal-light text-white/80 text-xs font-semibold hover:text-white transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 transition-colors"
                 >
                   See why they win
                   <ArrowRight className="w-3.5 h-3.5" />

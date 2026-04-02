@@ -12,13 +12,13 @@ export const Button: React.FC<ButtonProps> = ({
   className = '', 
   ...props 
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-full border-2 border-black/85 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+  const baseStyles = "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:ring-offset-1 focus:ring-offset-[#0b0f1a] disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
   
   const variants = {
-    primary: "bg-charcoal text-white hover:bg-charcoal focus:ring-white/30 shadow-md hover:shadow-xl hover:shadow-white/20",
-    secondary: "bg-charcoal text-white hover:bg-charcoal-light focus:ring-white/40 shadow-sm",
-    outline: "bg-transparent hover:bg-charcoal-light text-white/80 focus:ring-white/40",
-    ghost: "bg-transparent hover:bg-charcoal-light text-white/80 hover:text-white"
+    primary: "bg-cyan-500 text-white hover:bg-cyan-400 shadow-md shadow-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/30",
+    secondary: "bg-white/[0.06] text-white border border-white/[0.08] hover:bg-white/[0.10] shadow-sm",
+    outline: "bg-transparent border border-white/[0.10] text-slate-300 hover:bg-white/[0.04] hover:text-white",
+    ghost: "bg-transparent text-slate-400 hover:bg-white/[0.04] hover:text-white"
   };
 
   const sizes = {

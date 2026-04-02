@@ -56,6 +56,7 @@ import { safeJsonParse } from './lib/jsonUtils.js';
 import { AnalysisCacheService } from './services/cacheService.js';
 import { consumePackCredits, getAvailablePackCredits } from './services/scanPackCredits.js';
 import { createPlatformNotification, createUserNotification } from './services/notificationService.js';
+import { createPlatformNotification, createUserNotification } from './services/notificationService.js';
 import { scrapeWebsite } from './services/scraper.js';
 import { PROVIDERS, FREE_PROVIDERS, SIGNAL_AI1, SIGNAL_AI2, SIGNAL_AI3, SCOREFIX_AI1, SCOREFIX_AI2, SCOREFIX_AI3, ALIGNMENT_PRIMARY, callAIProvider, isProviderInBackoff, clearProviderBackoff } from './services/aiProviders.js';
 import { runCryptoScan } from './services/cryptoScanner.js';
@@ -121,7 +122,6 @@ import autoVisibilityFixRoutes from './routes/autoVisibilityFixRoutes.js';
 import selfHealingRoutes from './routes/selfHealingRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import growthEngineRoutes from './routes/growthEngineRoutes.js';
-import githubAppRoutes from './routes/githubAppRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
@@ -143,6 +143,15 @@ installConsoleRedaction();
 // HARD PROXY WINDOW ≈ 60s
 // Safe pipeline cap: 52s (leaves buffer for serialization + network flush).
 // ─────────────────────────────────────────────────────────────────────────────
+const PROXY_HARD_LIMIT_MS = 60_000;
+const PIPELINE_DEADLINE_MS = 52_000;
+const PIPELINE_FLUSH_BUFFER_MS = 4_000;
+const MIN_AI_BUDGET_MS = 10_000;
+
+const app = express();
+app.disable('x-powered-by');
+applySecurityMiddleware(app);
+const PORT = Number(process.env.PORT) || 10000;
 const PROXY_HARD_LIMIT_MS = 60_000;
 const PIPELINE_DEADLINE_MS = 52_000;
 const PIPELINE_FLUSH_BUFFER_MS = 4_000;
@@ -920,17 +929,6 @@ const apiLimiter = rateLimit({
   },
 });
 
-const licenseLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => req.path === '/webhook/gumroad',
-  handler: (_req, res) => {
-    res.status(429).json({ error: 'Too many requests', code: 'RATE_LIMIT_EXCEEDED', retryAfter: 60 });
-  },
-});
-
 const heavyActionLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: IS_PRODUCTION ? 15 : 80,
@@ -951,7 +949,7 @@ const heavyActionLimiter = rateLimit({
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.
 // The webhook route itself (in paymentRoutes.ts) uses express.raw().
 // ─────────────────────────────────────────────────────────────────────────────
-const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook', '/api/github-app/webhook']);
+const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook']);
 
 const JSON_MW = express.json({
   limit: '2mb',
@@ -1005,6 +1003,19 @@ app.use(
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Request-Id', 'X-Workspace-Id', 'Cache-Control', 'Pragma'],
+    exposedHeaders: ['X-Total-Count', 'X-Page-Count', 'X-Audit-Request-Id', 'X-Workspace-Id'],
+    maxAge: 86400,
+  })
+);
+
+// OPTIONS handler
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
 });
 
 // Security headers — handled by applySecurityMiddleware() (Helmet + nonce CSP)
@@ -1038,7 +1049,6 @@ app.use('/api/competitors', competitorRoutes);
 app.use('/api/citations', citationRoutes);
 app.use('/api/mentions', mentionRoutes);
 app.use('/api/auto-score-fix', autoScoreFixRoutes);
-app.use('/api/github-app', githubAppRoutes);
 app.use('/api/reverse-engineer', reverseEngineerApi);
 app.use('/api/schema-generator', schemaGeneratorRoutes);
 app.use('/api/content', contentRoutes);
@@ -1077,6 +1087,14 @@ app.get('/.well-known/webmcp.json', (_req, res) => {
 
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/trial', trialRoutes);
+app.use('/api/indexing', indexingRoutes);
+app.use('/licenses', licenseLimiter, createLicenseAPI());
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Refresh endpoint
+// ─────────────────────────────────────────────────────────────────────────────
+app.post('/api/user/refresh', async (req: Request, res: Response) => {
+  try {
 app.use('/api/indexing', indexingRoutes);
 app.use('/licenses', licenseLimiter, createLicenseAPI());
 
@@ -2252,6 +2270,14 @@ app.get('/api/compliance/status', (_req, res) => {
       soc2_type1: {
         status: 'not_attested',
         last_audit: null,
+        valid_until: null,
+        auditor: null,
+      },
+      vanta: {
+        enabled: false,
+        monitoring_status: 'not_configured',
+        last_sync: null,
+        controls_monitored: 0,
         valid_until: null,
         auditor: null,
       },
@@ -10415,36 +10441,40 @@ process.on('unhandledRejection', (reason) => {
       await dispatchWebhooks(userId, workspaceId, 'rescan.failed', {
         job_id: jobId,
         url,
-        source: 'auto_score_fix',
+        source: 'deploy_verification',
         reason,
       }).catch(() => {});
 
       await createUserNotification({
         userId,
-        eventType: 'auto_score_fix_rescan_failed',
-        title: 'Post-fix verification failed',
-        message: `AiVIS could not complete the verification scan for ${url}.`,
+        eventType: 'deploy_verification_failed',
+        title: 'Deploy verification failed',
+        message: `Deploy verification failed for ${url}.`,
         metadata: {
           workspaceId,
           jobId,
           url,
           reason,
-          source: 'auto_score_fix',
+          source: 'deploy_verification',
         },
       }).catch(() => {});
+    },
+    });
+    startTrialExpiryLoop();
+    startScheduledPlatformNotificationLoop();
+    startDbCleanupLoop();
+    startMcpAuditLoop();
+    startTaskWorker();
+    startAuditWorkerLoop();
+    startSelfHealingLoop();
+    bootstrapAgencyAutomation();
+    console.log('[AuditQueue] Redis queue worker loop started');
+  } else {
+    console.warn('[Startup] Skipping DB-backed worker loops because database is unavailable');
+  }
+})();
 
-      await createPlatformNotification({
-        eventType: 'auto_score_fix_rescan_failed',
-        title: 'Auto Score Fix verification failed',
-        message: `Job ${jobId} failed post-fix verification for ${url}`,
-        metadata: {
-          userId,
-          workspaceId,
-          jobId,
-          url,
-          reason,
-          source: 'auto_score_fix',
-        },
+export default app;
       }).catch(() => {});
     },
     });

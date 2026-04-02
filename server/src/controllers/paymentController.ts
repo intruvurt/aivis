@@ -805,6 +805,16 @@ async function handleCheckoutCompleted(session: any) {
       currency: session.currency,
       completedAt: new Date(),
     });
+      tier: tierKey || 'unknown',
+      method: 'stripe',
+      status: 'completed',
+      stripeSessionId: session.id,
+      stripeCustomerId: session.customer,
+      stripeSubscriptionId: session.subscription,
+      amountCents: session.amount_total,
+      currency: session.currency,
+      completedAt: new Date(),
+    });
   }
 
   // One-time scan pack purchase (credit grant, no tier change)
@@ -970,27 +980,6 @@ async function handleSubscriptionUpdated(subscription: any) {
 
   // Handle status-based tier changes
   if (subscription.status === 'active' && userId && newTierKey) {
-    const billingPeriod = String(subscription.metadata?.billing_period || 'monthly');
-    await updateUserTier(userId, newTierKey, subscription.id, billingPeriod);
-    // Trial converted to paid — clear trial_ends_at since they're now a real subscriber
-    await getPool().query(
-      `UPDATE users SET trial_ends_at = NULL, updated_at = NOW() WHERE id = $1`,
-      [userId]
-    );
-    console.log(`[Subscription Updated] User ${userId} converted from trial to active — trial cleared`);
-  } else if (subscription.status === 'trialing' && userId && newTierKey) {
-    // Subscription still trialing (e.g. metadata update) — keep trial_ends_at
-    if (subscription.trial_end) {
-      const trialEndsAt = new Date(subscription.trial_end * 1000);
-      await getPool().query(
-        `UPDATE users SET trial_ends_at = $2, trial_used = TRUE, updated_at = NOW() WHERE id = $1`,
-        [userId, trialEndsAt.toISOString()]
-      );
-    }
-  } else if (['canceled', 'unpaid', 'past_due'].includes(subscription.status) && userId) {
-    // Downgrade to free on cancellation/failure
-    console.log(
-      `[Subscription Updated] Downgrading user ${userId} due to status: ${subscription.status}`
     );
     await updateUserTier(userId, 'free', null, null);
     // Also clear trial state
@@ -1004,6 +993,99 @@ async function handleSubscriptionUpdated(subscription: any) {
       eventType: 'plan_downgraded',
       title: 'Plan Downgraded',
       message: `Your subscription status changed to ${subscription.status}. You\'ve been moved to the Observer plan.`,
+      metadata: { reason: subscription.status },
+    }).catch(() => {});
+  }
+}
+
+/**
+ * Handle subscription deletion/cancellation
+ */
+async function handleSubscriptionDeleted(subscription: any) {
+  console.log(`[Subscription Deleted] ID: ${subscription.id}`);
+
+  const userId = subscription.metadata?.userId;
+  const priceId = String(subscription.items?.data?.[0]?.price?.id || '');
+
+  // Update payment record
+  await Payment.findOneAndUpdate(
+    { stripeSubscriptionId: subscription.id },
+    {
+      subscriptionStatus: 'canceled',
+      canceledAt: new Date(),
+    }
+  );
+
+  // Downgrade user to free tier
+  if (userId) {
+    await upsertSubscriptionRecord({
+      userId,
+      stripeSubscriptionId: String(subscription.id),
+      status: 'canceled',
+      priceId: priceId || null,
+      currentPeriodEnd: null,
+    });
+    await updateUserTier(userId, 'free', null, null);
+    await getPool().query(
+      `UPDATE users SET trial_ends_at = NULL, updated_at = NOW() WHERE id = $1`,
+      [userId]
+    );
+    console.log(`[Subscription Deleted] User ${userId} downgraded to free tier`);
+
+    createUserNotification({
+      userId,
+      eventType: 'plan_canceled',
+      title: 'Subscription Canceled',
+      message: 'Your subscription has been canceled. You\'ve been moved to the free Observer plan.',
+      metadata: { subscriptionId: subscription.id },
+    }).catch(() => {});
+  }
+}
+
+async function upsertSubscriptionRecord(args: {
+  userId: string;
+  stripeSubscriptionId: string;
+  status: string;
+  priceId: string | null;
+  currentPeriodEnd: string | null;
+}) {
+  await getPool().query(
+    `INSERT INTO subscriptions (user_id, stripe_subscription_id, status, price_id, current_period_end, updated_at)
+     VALUES ($1, $2, $3, $4, $5, NOW())
+     ON CONFLICT (stripe_subscription_id)
+     DO UPDATE SET status = EXCLUDED.status,
+                   price_id = EXCLUDED.price_id,
+                   current_period_end = EXCLUDED.current_period_end,
+                   updated_at = NOW()`,
+    [args.userId, args.stripeSubscriptionId, args.status, args.priceId, args.currentPeriodEnd]
+  );
+}
+
+/**
+ * Handle successful invoice payment
+ */
+async function handleInvoicePaid(invoice: any) {
+  console.log(`[Invoice Paid] ID: ${invoice.id}, Subscription: ${invoice.subscription}`);
+
+  if (!invoice.subscription) return; // Skip one-time invoices
+
+  // Record the successful payment
+  await Payment.findOneAndUpdate(
+    { stripeSubscriptionId: invoice.subscription },
+    {
+      lastPaymentAt: new Date(),
+      lastInvoiceId: invoice.id,
+      subscriptionStatus: 'active',
+    }
+  );
+}
+
+/**
+ * Handle failed invoice payment
+ */
+async function handleInvoicePaymentFailed(invoice: any) {
+  console.log(`[Invoice Payment Failed] ID: ${invoice.id}, Subscription: ${invoice.subscription}`);
+
       metadata: { reason: subscription.status },
     }).catch(() => {});
   }

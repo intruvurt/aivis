@@ -85,4 +85,4 @@ export function toAuditReport(result: AnalysisResponse): AuditReport {
     competitorGaps,
     createdAt: result.analyzed_at,
   };
-}
+}

@@ -184,6 +184,40 @@ const AnalyzePage: React.FC = () => {
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
 
+  if (normalized.includes("recommend") || normalized.includes("report")) {
+    return ["Building report", "Prioritizing top fixes", "Preparing evidence view"];
+  }
+  if (normalized.includes("complete")) {
+    return ["Audit complete", "Verdict ready", "Open report below"];
+  }
+  return ["Analyzing how AI reads your site", "Checking structure", "Comparing competitors"];
+}
+
+function sanitizeResponseJson<T>(response: Response): Promise<T> {
+  return response.text().then((text) => {
+    if (!text) throw new Error("Empty response from server. Please try again.");
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new Error("Invalid response from server. Please try again.");
+    }
+  });
+}
+
+const AnalyzePage: React.FC = () => {
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<ProgressState>({
+    requestId: null,
+    step: "idle",
+    percent: 0,
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
+  const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
+
   usePageMeta({
     title: "Analyze",
     description: "Run an AI visibility audit on any website. Get evidence-backed scoring and actionable recommendations.",
@@ -321,6 +355,22 @@ const AnalyzePage: React.FC = () => {
 
     es.onerror = () => {
       closeProgressStream();
+    };
+  }
+
+  async function fetchWithRetry(requestUrl: string, options: RequestInit, retries = 2): Promise<Response> {
+    for (let i = 0; i <= retries; i += 1) {
+      try {
+        const response = await apiFetch(requestUrl, options);
+
+        if (response.status === 429 && i < retries) {
+          await new Promise<void>((resolve, reject) => {
+            const timer = window.setTimeout(resolve, 1500 * (i + 1));
+            const signal = (options as any)?.signal as AbortSignal | undefined;
+
+            if (signal) {
+              const onAbort = () => {
+                window.clearTimeout(timer);
     };
   }
 
@@ -551,6 +601,7 @@ const AnalyzePage: React.FC = () => {
     const baselineCategories = new Map((demoBaseline.category_grades ?? []).map((c) => [c.label, c.score]));
 
     const categoryDeltas = (result.category_grades ?? [])
+      .map((grade) => {
       .map((grade) => {
         const previous = baselineCategories.get(grade.label);
         if (typeof previous !== "number") return null;

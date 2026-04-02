@@ -68,4 +68,4 @@ try {
 } catch (error) {
   console.error(`Static platform wiring smoke FAILED: ${error?.message || String(error)}`);
   process.exit(1);
-}
+}

@@ -73,4 +73,4 @@ Dashboard/report surfaces should include a concise “Since last scan” block w
 - citations gained/lost
 - competitor movement
 - new blockers detected
-- fix impact delta
+- fix impact delta

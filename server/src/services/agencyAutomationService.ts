@@ -175,4 +175,4 @@ export function bootstrapAgencyAutomation(): void {
 
 export async function publishAuditCompleted(args: { userId: string; domain: string; score: number; projectId?: string }) {
   await emitAgencyEvent('audit.completed', args);
-}
+}

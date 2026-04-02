@@ -163,7 +163,6 @@ export default function App() {
       <ScrollToTop />
 
       {!isHydrated ? null : (
-        <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
           <Route element={<Layout />}>
             <Route
@@ -263,7 +262,6 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-        </React.Suspense>
       )}
     </div>
   );

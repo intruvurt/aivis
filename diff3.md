@@ -18,7 +18,7 @@ index 7d3d0bd8fddc49cc84cd3ef1c6fb13f69bbeee43..2b19d32654c8575574c422d875291d33
  - Bluesky: https://bsky.app/profile/intruvurt.bsky.social
  - X: https://twitter.com/dobleduche
  - LinkedIn: https://linkedin.com/in/web4aidev
- - Reddit: https://reddit.com/user/renomase
+ - Reddit: https://reddit.com/user/intruvurt
  - Substack publication: https://dobleduche.substack.com/
  - Substack article: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
  - Substack article: https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web
@@ -4580,7 +4580,7 @@ index 321b9b15fd5659aeadd27e170bbf1cac8003f850..1a7675d22a4e0cbfb4251c7264631b8d
  - Bluesky: https://bsky.app/profile/intruvurt.bsky.social
  - X: https://twitter.com/dobleduche
  - LinkedIn: https://linkedin.com/in/web4aidev
- - Reddit: https://reddit.com/user/renomase
+ - Reddit: https://reddit.com/user/intruvurt
  - Substack publication: https://dobleduche.substack.com/
  - Substack article: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
  - Substack article: https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web

@@ -2,8 +2,6 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import TopNav from "./TopNav";
 import Footer from "./Footer";
-import GuideBot from "./GuideBot";
-import BixThoughtBubble from "./BixThoughtBubble";
 import BackgroundDecoration from "./BackgroundDecoration";
 import ScrollToTopButton from "./ScrollToTopButton";
 import GlobalCommandPalette from "./GlobalCommandPalette";
@@ -38,8 +36,6 @@ export default function Layout() {
       </div>
       <GlobalCommandPalette />
       <ScrollToTopButton />
-      <GuideBot />
-      <BixThoughtBubble />
     </div>
   );
 }

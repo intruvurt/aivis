@@ -76,4 +76,4 @@ export function normalizePlan(plan: CanonicalTier | LegacyTier): Plan {
 export function canAccess(feature: EntitlementKey, plan: CanonicalTier | LegacyTier): AccessLevel {
   const normalized = normalizePlan(plan);
   return ENTITLEMENTS[normalized][feature];
-}
+}

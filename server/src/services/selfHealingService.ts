@@ -227,4 +227,4 @@ export function startSelfHealingLoop(): void {
       running = false;
     }
   }, DEFAULT_INTERVAL_MINUTES * 60 * 1000);
-}
+}

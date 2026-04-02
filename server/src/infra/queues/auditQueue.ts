@@ -107,4 +107,4 @@ export async function failAuditJob(id: string, error: string) {
 export async function getAuditJob(id: string): Promise<StoredJob | null> {
   const raw = await redisConnection.get(JOB_KEY(id));
   return raw ? (JSON.parse(raw) as StoredJob) : null;
-}
+}

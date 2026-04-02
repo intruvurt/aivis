@@ -21,4 +21,4 @@ export function onAgencyEvent<K extends AgencyEventName>(name: K, handler: Handl
 export async function emitAgencyEvent<K extends AgencyEventName>(name: K, payload: AgencyEventPayloadMap[K]): Promise<void> {
   const handlers = listeners[name] || [];
   await Promise.allSettled(handlers.map((handler) => Promise.resolve(handler(payload as any))));
-}
+}

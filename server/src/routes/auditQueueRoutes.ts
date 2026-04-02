@@ -53,4 +53,4 @@ router.get('/audit/progress/:jobId', authRequired, async (req: Request, res: Res
   });
 });
 
-export default router;
+export default router;

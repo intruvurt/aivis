@@ -59,4 +59,4 @@ export default function PartnershipTermsPage() {
       </section>
     </main>
   );
-}
+}

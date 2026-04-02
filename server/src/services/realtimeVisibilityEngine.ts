@@ -341,4 +341,4 @@ export async function getVisibilityHistory(domainInput: string, limit = 20): Pro
     [domain, safeLimit]
   );
   return rows;
-}
+}

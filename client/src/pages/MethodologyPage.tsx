@@ -307,6 +307,14 @@ export default function MethodologyPage() {
               <span>+</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">AI Readability</span>
               <span className="font-semibold text-cyan-300">× 0.20</span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Content Depth</span>
+              <span className="font-semibold text-cyan-300">× 0.25</span>
+              <span>+</span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Schema Coverage</span>
+              <span className="font-semibold text-cyan-300">× 0.22</span>
+              <span>+</span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">AI Readability</span>
+              <span className="font-semibold text-cyan-300">× 0.20</span>
               <span>+</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Metadata Quality</span>
               <span className="font-semibold text-cyan-300">× 0.15</span>

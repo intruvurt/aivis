@@ -59,4 +59,10 @@ export default function PlatformShiftBanner({
       </div>
     </div>
   );
+            {bullet}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }

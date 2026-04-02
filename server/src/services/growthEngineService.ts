@@ -147,4 +147,4 @@ export function buildViralReportSnippet(args: {
   competitorScore: number;
 }): string {
   return `This site vs competitors\n\nYou: ${Math.round(args.score)}\nCompetitor: ${Math.round(args.competitorScore)}\n\nSee if your site is being ignored too.`;
-}
+}

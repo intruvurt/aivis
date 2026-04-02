@@ -102,6 +102,7 @@ type CategoryInsight = {
   score: number;
   summary: string;
   samples?: number;
+  samples?: number;
 };
 
 type ApiError = Error & {
@@ -636,6 +637,7 @@ function AuditSnapshot({
     }, new Map<string, any>()).values()
   );
 
+
   const rankedIssues = dedupedRecommendations.map((issue) => {
     const issueText = `${issue.category || ''} ${issue.title || ''} ${issue.description || ''}`.toLowerCase();
     const priorityWeight = issue.priority === 'high' ? 40 : issue.priority === 'medium' ? 25 : 10;
@@ -709,6 +711,16 @@ function AuditSnapshot({
 
   return (
     <section className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-[#0f1d2f]/95 via-[#111827]/95 to-[#241a2f]/90 p-6 shadow-2xl sm:p-8">
+      <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-4 sm:p-5">
+          <div className="text-[11px] uppercase tracking-wide text-white/55">Audit snapshot</div>
+          <div className="mt-2 text-4xl sm:text-5xl font-black text-white tabular-nums">
+            {hasLiveSnapshotScore ? (
+              <>
+                {data.visibilityScore}
+                <span className="text-base text-white/55">/100</span>
+              </>
+            ) : (
       <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-4 sm:p-5">
           <div className="text-[11px] uppercase tracking-wide text-white/55">Audit snapshot</div>
@@ -873,6 +885,51 @@ function AuditSnapshot({
             <p className="text-sm text-white/75">
               {competitorAccess === false
                 ? "Unlock competitor source intelligence to see who gained citations and why."
+                : latestAnalysisResult.competitor_hint?.match_reasons?.[0]
+                ? `Competitor signal: ${latestAnalysisResult.competitor_hint.match_reasons[0]}.`
+                : "Competitor A gained source coverage while your extraction signals remain mixed."}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-wide text-white/45 mb-2">Fix queue</p>
+            <div className="space-y-1 text-sm text-white/80">
+              <p>{pendingFixes} fixes pending</p>
+              <p>{verifiedImprovements} verified improvements</p>
+              <p>{failedToImprove} failed to improve score</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-3">
+          <p className="text-xs uppercase tracking-wide text-cyan-200 mb-1">Next best action</p>
+          <p className="text-sm font-semibold text-white">{nextBestAction}</p>
+          <p className="text-xs text-cyan-100/80 mt-1">Expected impact: increase citation readiness and extraction confidence.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AutoScoreFixPipelinePanel({
+  jobs,
+  loading,
+  onOpenAutoScoreFix,
+}: {
+  jobs: AutoScoreFixPipelineJob[];
+  loading: boolean;
+  onOpenAutoScoreFix: () => void;
+}) {
+  const scheduled = jobs.filter((job) => String(job.rescan_status || '') === 'scheduled').length;
+  const completed = jobs.filter((job) => String(job.rescan_status || '') === 'completed').length;
+  const implementationMins = jobs
+    .map((job) => Number(job.implementation_duration_minutes || 0))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const avgImplementationMins = implementationMins.length
+    ? Math.round(implementationMins.reduce((acc, value) => acc + value, 0) / implementationMins.length)
+    : 0;
+
+  const recentCompleted = jobs
+    .filter((job) => String(job.rescan_status || '') === 'completed')
+    .sort((left, right) => {
                 : latestAnalysisResult.competitor_hint?.match_reasons?.[0]
                 ? `Competitor signal: ${latestAnalysisResult.competitor_hint.match_reasons[0]}.`
                 : "Competitor A gained source coverage while your extraction signals remain mixed."}

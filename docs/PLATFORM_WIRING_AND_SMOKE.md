@@ -112,4 +112,4 @@ New backend endpoints:
 - `POST /api/growth/outreach/preview` — generate personalized outreach copy using report link context.
 - `GET /api/growth/digest/daily` — “biggest drops / biggest wins” digest payload for content loops.
 - `POST /api/growth/referrals/redeem` — apply +5 credit referral bonus on conversion events.
-- `POST /api/growth/viral/snippet` — generate report-embedded competitor curiosity snippet.
+- `POST /api/growth/viral/snippet` — generate report-embedded competitor curiosity snippet.

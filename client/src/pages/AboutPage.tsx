@@ -142,7 +142,7 @@ export default function AboutPage() {
           <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-2">
             <div className="rounded-lg border border-white/10 overflow-hidden bg-white/5">
               {/* Founder card */}
-              <div className="p-5 sm:p-8 md:p-12">
+              <div className="p-8 md:p-12">
                 <div className="mb-6">
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/10 flex items-center justify-center mb-4">
                     <Users className="w-10 h-10 text-white/60" />
@@ -267,7 +267,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team section */}
       <section className="px-4 py-16 bg-white/5 border-y border-white/10" id="team">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-4 text-center">The Team</h2>

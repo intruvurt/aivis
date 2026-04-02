@@ -204,4 +204,4 @@ export function verifyFixLoop(beforeScore: number, afterScore: number, changedEv
       : 'No measurable lift yet. Prioritize entity/schema fixes and rerun.',
     changedEvidence,
   };
-}
+}

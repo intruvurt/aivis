@@ -229,6 +229,61 @@ const PRICING_FAQ_ITEMS = [
     answer:
       "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers — contact sales@aivis.biz. Crypto payment options are available by contacting support.",
   },
+  {
+    icon: Zap,
+    title: "Evidence-linked fixes, not generic advice",
+    detail:
+      "Every recommendation traces to a specific crawled element on your page — not a vague suggestion to 'improve your content.'",
+  },
+  {
+    icon: Rocket,
+    title: "Ship the fix, not just the report",
+    detail:
+      "Score Fix opens a real GitHub PR with schema patches, H1 rewrites, and FAQ blocks. No other AI visibility tool goes from audit to merged code.",
+  },
+] as const;
+
+const PRICING_FAQ_ITEMS = [
+  {
+    question: "Is AiVIS free to use?",
+    answer:
+      "Yes. Observer is free and includes 3 lifetime audits, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
+  },
+  {
+    question: "How is AiVIS different from AI visibility dashboards like Semrush?",
+    answer:
+      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and — with Score Fix — opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
+  },
+  {
+    question: "What is the difference between Observer, Alignment, and Signal?",
+    answer:
+      "Observer gives a verdict, top blockers, and a competitor gap preview. Alignment unlocks full evidence and fix planning. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
+  },
+  {
+    question: "What does multi-model AI validation mean?",
+    answer:
+      "Multi-model validation runs a triple-check AI pipeline: three independent models score, critique, and validate each audit. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Signal and Score Fix plans. Score Fix also adds automated GitHub PR generation via MCP, costing 10-25 credits per fix.",
+  },
+  {
+    question: "How does annual billing work?",
+    answer:
+      "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Observer remains free. Alignment and Signal annual totals are shown at checkout and billing settings, and you can switch from monthly to annual at any time.",
+  },
+  {
+    question: "Can I cancel at any time?",
+    answer:
+      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Annual plan refund windows and terms are shown during checkout.",
+  },
+  {
+    question: "Do audits roll over if I don't use them all?",
+    answer:
+      "No. Audit allowances reset at the start of each billing cycle. If your team consistently exceeds your allowance, upgrading to a higher tier is usually more cost-effective than staying on a constrained plan.",
+  },
+  {
+    question: "What payment methods are accepted?",
+    answer:
+      "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers — contact sales@aivis.biz. Crypto payment options are available by contacting support.",
+  },
 ] as const;
 
 function normalizeTierPrice(input: unknown): TierPrice | null {
@@ -1135,36 +1190,6 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {error && (
-          <div className="max-w-md mx-auto mb-8 p-4 card-charcoal rounded-xl text-white/80 text-sm text-center">
-            {error}
-          </div>
-        )}
-
-        {isLoadingPricing ? (
-          <PricingPageSkeleton />
-        ) : tiers.length > 0 ? (
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-            {tiers.map((tier) => (
-              <PricingCard
-                key={tier.key}
-                tier={tier}
-                billingPeriod={billingPeriod}
-                onSelect={handleSelectTier}
-                onStartTrial={handleStartTrial}
-                currentTier={currentTier}
-                isLoading={isCheckingOutTier === tier.key}
-                isHighlighted={tier.key === "signal"}
-                canStartTrial={canStartTrial}
-                isStartingTrial={isStartingTrial}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="max-w-md mx-auto p-6 rounded-2xl border border-white/10 bg-charcoal text-center surface-structured">
-            <p className="text-white/85 text-sm font-medium">
-              Pricing is temporarily unavailable.
-            </p>
             <p className="text-white/60 text-xs mt-2">
               Please retry in a moment to load live plan data.
             </p>
@@ -1193,6 +1218,36 @@ export default function PricingPage() {
                   ["Audit allowance", "3 lifetime", "40–60/mo", "110/mo", "250 credits"],
                   ["Visibility score + recs", true, true, true, true],
                   ["Citation gap diagnosis", true, true, true, true],
+                  ["Shareable report links", true, true, true, true],
+                  ["Export (PDF / JSON)", false, true, true, true],
+                  ["Competitor advantage signals", false, true, true, true],
+                  ["Brand mention tracking", false, true, true, true],
+                  ["Decision query gap analysis", false, true, true, true],
+                  ["API + OAuth access", false, true, true, true],
+                  ["Triple-check AI validation", false, false, true, true],
+                  ["Citation testing", false, false, true, true],
+                  ["MCP Server (AI agents)", false, false, true, true],
+                  ["Team seats", "1", "3", "10", "10"],
+                  ["White-label reports", false, false, true, true],
+                  ["Auto GitHub PRs via MCP", false, false, false, true],
+                ].map(([label, ...vals], idx) => (
+                  <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3 text-white/80">{label}</td>
+                    {vals.map((v, vi) => (
+                      <td key={vi} className="px-4 py-3 text-center">
+                        {v === true ? (
+                          <Check className="h-3.5 w-3.5 text-emerald-400 mx-auto" />
+                        ) : v === false ? (
+                          <span className="text-white/20">—</span>
+                        ) : (
+                          <span className="text-white/70 font-medium">{v}</span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
                   ["Shareable report links", true, true, true, true],
                   ["Export (PDF / JSON)", false, true, true, true],
                   ["Competitor advantage signals", false, true, true, true],

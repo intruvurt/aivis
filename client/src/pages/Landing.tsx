@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { Sparkles, Check } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
 import { usePageMeta } from '../hooks/usePageMeta';
@@ -167,7 +168,6 @@ const Landing = () => {
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [heroUrl, setHeroUrl] = useState('');
-  const [expVariant, setExpVariant] = useState<'a' | 'b'>('a');
 
   const pageVisible = usePageVisible();
 
@@ -178,22 +178,6 @@ const Landing = () => {
     const iv = setInterval(() => { getPlatformStats().then((d) => { if (!cancelled) setPlatformStats(d); }); }, 30_000);
     return () => { cancelled = true; clearInterval(iv); };
   }, [pageVisible]);
-
-  useEffect(() => {
-    const forced = new URLSearchParams(window.location.search).get('exp');
-    if (forced === 'headline_b') {
-      setExpVariant('b');
-      return;
-    }
-    const bucket = window.localStorage.getItem('aivis.exp.hero.v1');
-    if (bucket === 'a' || bucket === 'b') {
-      setExpVariant(bucket);
-      return;
-    }
-    const assigned = Math.random() < 0.5 ? 'a' : 'b';
-    window.localStorage.setItem('aivis.exp.hero.v1', assigned);
-    setExpVariant(assigned);
-  }, []);
 
   const handlePayment = async (tier: string) => {
     if (!isAuthenticated) { toast.error('Please login to upgrade'); return; }

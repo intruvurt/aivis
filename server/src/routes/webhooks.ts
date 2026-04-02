@@ -112,22 +112,6 @@ router.post(
   }
 );
 
-// Referral webhook endpoint
-router.post("/referral", express.json(), async (req: express.Request, res: express.Response) => {
-  try {
-    const { referrer_id, referred_email, referral_code } = req.body as any;
-    // TODO:
-    // - Validate referral code
-    // - Credit referrer account
-    // - Track conversion
-    // - Send notification
-    res.json({ success: true, message: "Referral processed successfully" });
-  } catch (error) {
-    console.error("Referral webhook error:", normalizeErr(error));
-    res.status(500).json({ success: false, error: normalizeErr(error) });
-  }
-});
-
 /**
  * Helper functions
  *

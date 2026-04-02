@@ -2,16 +2,16 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import TopNav from "./TopNav";
 import Footer from "./Footer";
-import BackgroundDecoration from "./BackgroundDecoration";
 import ScrollToTopButton from "./ScrollToTopButton";
 import GlobalCommandPalette from "./GlobalCommandPalette";
-import TrialBanner from "./TrialBanner";
-import InfraNoticeBanner from "./InfraNoticeBanner";
-import PlatformUpdateBanner from "./PlatformUpdateBanner";
 
+/**
+ * Public marketing shell — clean, premium, no app clutter.
+ * Used for /, /pricing, /faq, /methodology, /blogs, etc.
+ */
 export default function Layout() {
   return (
-    <div className="premium-shell min-h-screen flex flex-col text-white dark:text-white">
+    <div className="min-h-screen flex flex-col bg-[#060a14] text-white">
       {/* Skip to content — WCAG 2.1 Level A */}
       <a
         href="#main-content"
@@ -19,21 +19,11 @@ export default function Layout() {
       >
         Skip to content
       </a>
-      <BackgroundDecoration />
-      <div className="pointer-events-none fixed inset-0 z-0 elemental-vibrancy-splash" aria-hidden="true" />
-      {/* Smoked glass overlays — drifting accent glows + intersecting line art */}
-      <div className="smoke-drift" aria-hidden="true" />
-      <div className="line-art-overlay" aria-hidden="true" />
       <TopNav />
-      <PlatformUpdateBanner />
-      <InfraNoticeBanner />
-      <TrialBanner />
-      <main id="main-content" className="flex-1 relative z-10">
+      <main id="main-content" className="flex-1 relative">
         <Outlet />
       </main>
-      <div className="relative z-20 flex-shrink-0">
-        <Footer />
-      </div>
+      <Footer />
       <GlobalCommandPalette />
       <ScrollToTopButton />
     </div>

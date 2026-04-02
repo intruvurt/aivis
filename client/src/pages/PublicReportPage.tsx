@@ -276,34 +276,6 @@ export default function PublicReportPage() {
         <div className="pt-3">
           <Link to="/" className="text-sm text-[#6A911E] hover:text-[#5A8018]">Return to AiVIS →</Link>
         </div>
-              </div>
-            </div>
-
-            {reportResult.text_summary && (
-              <TextSummaryView
-                summary={reportResult.text_summary}
-                score={audit.visibility_score}
-                url={audit.url}
-                isObserver={audit.redacted}
-              />
-            )}
-
-            <AuditReportCard result={reportResult} hideHero hideGrades />
-
-            {Array.isArray(reportResult.recommendations) && reportResult.recommendations.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-400">Recommended Fixes</h2>
-                <RecommendationList recommendations={reportResult.recommendations} />
-              </div>
-            )}
-
-            <AuditReportCard result={reportResult} hideHero hideHighlights />
-          </>
-        )}
-
-        <div className="pt-3">
-          <Link to="/" className="text-sm text-[#6A911E] hover:text-[#5A8018]">Return to AiVIS →</Link>
-        </div>
       </main>
     </div>
   );

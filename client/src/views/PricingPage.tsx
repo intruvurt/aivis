@@ -229,61 +229,6 @@ const PRICING_FAQ_ITEMS = [
     answer:
       "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers — contact sales@aivis.biz. Crypto payment options are available by contacting support.",
   },
-  {
-    icon: Zap,
-    title: "Evidence-linked fixes, not generic advice",
-    detail:
-      "Every recommendation traces to a specific crawled element on your page — not a vague suggestion to 'improve your content.'",
-  },
-  {
-    icon: Rocket,
-    title: "Ship the fix, not just the report",
-    detail:
-      "Score Fix opens a real GitHub PR with schema patches, H1 rewrites, and FAQ blocks. No other AI visibility tool goes from audit to merged code.",
-  },
-] as const;
-
-const PRICING_FAQ_ITEMS = [
-  {
-    question: "Is AiVIS free to use?",
-    answer:
-      "Yes. Observer is free and includes 3 lifetime audits, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
-  },
-  {
-    question: "How is AiVIS different from AI visibility dashboards like Semrush?",
-    answer:
-      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and — with Score Fix — opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
-  },
-  {
-    question: "What is the difference between Observer, Alignment, and Signal?",
-    answer:
-      "Observer gives a verdict, top blockers, and a competitor gap preview. Alignment unlocks full evidence and fix planning. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
-  },
-  {
-    question: "What does multi-model AI validation mean?",
-    answer:
-      "Multi-model validation runs a triple-check AI pipeline: three independent models score, critique, and validate each audit. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Signal and Score Fix plans. Score Fix also adds automated GitHub PR generation via MCP, costing 10-25 credits per fix.",
-  },
-  {
-    question: "How does annual billing work?",
-    answer:
-      "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Observer remains free. Alignment and Signal annual totals are shown at checkout and billing settings, and you can switch from monthly to annual at any time.",
-  },
-  {
-    question: "Can I cancel at any time?",
-    answer:
-      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Annual plan refund windows and terms are shown during checkout.",
-  },
-  {
-    question: "Do audits roll over if I don't use them all?",
-    answer:
-      "No. Audit allowances reset at the start of each billing cycle. If your team consistently exceeds your allowance, upgrading to a higher tier is usually more cost-effective than staying on a constrained plan.",
-  },
-  {
-    question: "What payment methods are accepted?",
-    answer:
-      "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers — contact sales@aivis.biz. Crypto payment options are available by contacting support.",
-  },
 ] as const;
 
 function normalizeTierPrice(input: unknown): TierPrice | null {

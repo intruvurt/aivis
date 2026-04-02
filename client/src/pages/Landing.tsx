@@ -602,7 +602,8 @@ const Landing = () => {
                   <h3 className="text-lg font-bold text-white mb-2">Live audit intelligence, not a static mockup</h3>
                   <p className="text-sm text-white/60 leading-relaxed">
                     AiVIS connects scoring, evidence, and remediation into one operating loop so teams can move from diagnosis to implementation without losing context.
-              </div>
+                  </p>
+                </div>
               <div className="mt-5 rounded-2xl border border-white/10 bg-[#111827]/50 p-4 overflow-hidden">
                 <img src="/images/upload-analysis-pipeline.svg" alt="AiVIS analysis pipeline visualization" className="w-full h-auto rounded-xl border border-white/10 bg-black/20" loading="lazy" />
               </div>

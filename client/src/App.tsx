@@ -8,6 +8,7 @@ import { useAuthStore } from "./stores/authStore";
 import { useWorkspaceStore } from "./stores/workspaceStore";
 
 import Layout from "./components/Layout";
+import AppLayout from "./components/AppLayout";
 import { CookieConsent } from "./components/CookieConsent";
 import PageLoadingSpinner from "./components/PageLoadingSpinner";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -165,25 +166,30 @@ export default function App() {
       {!isHydrated ? null : (
         <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
+          {/* ═══ Public Marketing Shell ═══ */}
           <Route element={<Layout />}>
-            <Route
-              path="/"
-              element={isAuthenticated ? <Dashboard /> : <Landing />}
-            />
-            <Route path="/analyze" element={<AnalyzePage />} />
+            <Route path="/" element={isAuthenticated ? <Navigate to="/app" replace /> : <Landing />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/auth" element={<AuthRouteGate />} />
             <Route path="/reset-auth" element={<ResetAuth />} />
-            <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
-            <Route path="/keywords" element={<ProtectedRoute><KeywordsPage /></ProtectedRoute>} />
-            <Route path="/competitors" element={<ProtectedRoute><CompetitorsPage /></ProtectedRoute>} />
-            <Route path="/niche-discovery" element={<ProtectedRoute><NicheDiscoveryPage /></ProtectedRoute>} />
-            <Route path="/citations" element={<ProtectedRoute><CitationsPage /></ProtectedRoute>} />
-            <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-            <Route path="/reverse-engineer" element={<ProtectedRoute><ReverseEngineerPage /></ProtectedRoute>} />
-            <Route path="/prompt-intelligence" element={<ProtectedRoute><PromptIntelligencePage /></ProtectedRoute>} />
-            <Route path="/answer-presence" element={<ProtectedRoute><AnswerPresencePage /></ProtectedRoute>} />
-            <Route path="/brand-integrity" element={<ProtectedRoute><BrandIntegrityPage /></ProtectedRoute>} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/verify-license" element={<VerifyLicensePage />} />
+            <Route path="/invite/:token" element={<InviteAcceptPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/press" element={<PressPage />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/guide" element={<GuidePage />} />
+            <Route path="/api-docs" element={<ApiDocsPage />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/support" element={<Navigate to="/help" replace />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/compliance" element={<CompliancePage />} />
+            <Route path="/methodology" element={<MethodologyPage />} />
+            <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
+            <Route path="/changelog" element={<ChangelogPage />} />
             <Route path="/compare" element={<ComparisonPage />} />
             <Route path="/compare/aivis-vs-otterly" element={<CompareOtterlyPage />} />
             <Route path="/compare/aivis-vs-reaudit" element={<CompareReauditPage />} />
@@ -191,51 +197,9 @@ export default function App() {
             <Route path="/compare/aivis-vs-semrush" element={<CompareSemrushPage />} />
             <Route path="/compare/aivis-vs-ahrefs" element={<CompareAhrefsPage />} />
             <Route path="/compare/aivis-vs-rankscale" element={<CompareRankScalePage />} />
-            <Route path="/glossary" element={<GlossaryPage />} />
-            <Route path="/benchmarks" element={<AiVisibilityBenchmark />} />
-            <Route path="/workflow" element={<PlatformWorkflowPage />} />
-            <Route path="/methodology" element={<MethodologyPage />} />
-            <Route path="/integrations" element={<IntegrationsHubPage />} />
-            <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
-            <Route path="/mcp" element={<ProtectedRoute><McpConsolePage /></ProtectedRoute>} />
-            <Route path="/gsc" element={<ProtectedRoute><GscConsolePage /></ProtectedRoute>} />
             <Route path="/competitive-landscape" element={<CompetitiveLandscapePage />} />
-            <Route path="/score-fix" element={<ProtectedRoute><ScoreFixPage /></ProtectedRoute>} />
-
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/referrals" element={<ProtectedRoute><ReferralsPage /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-            <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
-            <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-            <Route path="/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/press" element={<PressPage />} />
-
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/guide" element={<GuidePage />} />
-            <Route path="/api-docs" element={<ApiDocsPage />} />
-            <Route path="/server-headers" element={<ServerHeadersPage />} />
-            <Route path="/indexing" element={<IndexingPage />} />
-            <Route path="/tools/schema-validator" element={<SchemaValidatorPage />} />
-            <Route path="/tools/robots-checker" element={<RobotsCheckerPage />} />
-            <Route path="/tools/content-extractability" element={<ContentExtractabilityPage />} />
-            <Route path="/help" element={<HelpCenter />} />
-            <Route path="/support" element={<Navigate to="/help" replace />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/compliance" element={<CompliancePage />} />
-            <Route path="/changelog" element={<ChangelogPage />} />
-
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
-            <Route path="/verify-license" element={<VerifyLicensePage />} />
-            <Route path="/invite/:token" element={<InviteAcceptPage />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-
-            <Route path="/payment-success" element={<PaymentSuccessPage />} />
-            <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
-
-            <Route path="/landing" element={<Landing />} />
+            <Route path="/glossary" element={<GlossaryPage />} />
+            <Route path="/integrations" element={<IntegrationsHubPage />} />
             <Route path="/why-ai-visibility" element={<WhyAIVisibility />} />
             <Route path="/ai-search-visibility-2026" element={<AISearchVisibility2026 />} />
             <Route path="/insights" element={<InsightsPage />} />
@@ -247,11 +211,77 @@ export default function App() {
             <Route path="/voice-search-ai-answer-optimization-2026" element={<VoiceSearchAIAnswerOptimization2026 />} />
             <Route path="/report/public/:token" element={<PublicReportPage />} />
             <Route path="/report/:token" element={<PublicReportPage />} />
-
+            <Route path="/payment-success" element={<PaymentSuccessPage />} />
+            <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
             <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
             <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          </Route>
 
+          {/* ═══ Authenticated App Shell ═══ */}
+          <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+            <Route index element={<Dashboard />} />
+            <Route path="analyze" element={<AnalyzePage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="keywords" element={<KeywordsPage />} />
+            <Route path="competitors" element={<CompetitorsPage />} />
+            <Route path="niche-discovery" element={<NicheDiscoveryPage />} />
+            <Route path="citations" element={<CitationsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="reverse-engineer" element={<ReverseEngineerPage />} />
+            <Route path="prompt-intelligence" element={<PromptIntelligencePage />} />
+            <Route path="answer-presence" element={<AnswerPresencePage />} />
+            <Route path="brand-integrity" element={<BrandIntegrityPage />} />
+            <Route path="score-fix" element={<ScoreFixPage />} />
+            <Route path="benchmarks" element={<AiVisibilityBenchmark />} />
+            <Route path="workflow" element={<PlatformWorkflowPage />} />
+            <Route path="mcp" element={<McpConsolePage />} />
+            <Route path="gsc" element={<GscConsolePage />} />
+            <Route path="schema-validator" element={<SchemaValidatorPage />} />
+            <Route path="server-headers" element={<ServerHeadersPage />} />
+            <Route path="robots-checker" element={<RobotsCheckerPage />} />
+            <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="indexing" element={<IndexingPage />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="referrals" element={<ReferralsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="billing" element={<BillingPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="admin" element={<Admin />} />
+            <Route path="team" element={<TeamPage />} />
+          </Route>
+
+          {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
+          <Route path="/analyze" element={<Navigate to="/app/analyze" replace />} />
+          <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+          <Route path="/keywords" element={<Navigate to="/app/keywords" replace />} />
+          <Route path="/competitors" element={<Navigate to="/app/competitors" replace />} />
+          <Route path="/citations" element={<Navigate to="/app/citations" replace />} />
+          <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
+          <Route path="/reverse-engineer" element={<Navigate to="/app/reverse-engineer" replace />} />
+          <Route path="/prompt-intelligence" element={<Navigate to="/app/prompt-intelligence" replace />} />
+          <Route path="/answer-presence" element={<Navigate to="/app/answer-presence" replace />} />
+          <Route path="/brand-integrity" element={<Navigate to="/app/brand-integrity" replace />} />
+          <Route path="/score-fix" element={<Navigate to="/app/score-fix" replace />} />
+          <Route path="/benchmarks" element={<Navigate to="/app/benchmarks" replace />} />
+          <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
+          <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />
+          <Route path="/server-headers" element={<Navigate to="/app/server-headers" replace />} />
+          <Route path="/indexing" element={<Navigate to="/app/indexing" replace />} />
+          <Route path="/tools/schema-validator" element={<Navigate to="/app/schema-validator" replace />} />
+          <Route path="/tools/robots-checker" element={<Navigate to="/app/robots-checker" replace />} />
+          <Route path="/tools/content-extractability" element={<Navigate to="/app/content-extractability" replace />} />
+          <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+          <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+          <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
+          <Route path="/notifications" element={<Navigate to="/app/notifications" replace />} />
+          <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
+          <Route path="/team" element={<Navigate to="/app/team" replace />} />
+          <Route path="/niche-discovery" element={<Navigate to="/app/niche-discovery" replace />} />
+          <Route path="/workflow" element={<Navigate to="/app/workflow" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/app" replace />} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<Layout />}>
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

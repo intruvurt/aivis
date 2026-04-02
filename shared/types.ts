@@ -168,60 +168,69 @@ export interface TierLimits {
   hasScheduledRescans: boolean;
   hasReportHistory: boolean;
   hasShareableLink: boolean;
+  hasMentionDigests: boolean;
+  hasNicheDiscovery: boolean;
+  hasTripleCheck: boolean;
+  hasAlertIntegrations: boolean;
+  hasAutomationWorkflows: boolean;
+  hasPriorityQueue: boolean;
+  hasAutoPR: boolean;
+  hasBatchRemediation: boolean;
+  hasEvidenceLinkedPRs: boolean;
+  hasTeamWorkspaces: boolean;
+  maxScheduledRescans: number;
+  allowedRescanFrequencies: readonly string[];
+  maxApiKeys: number;
+  maxWebhooks: number;
+  maxReportDeliveries: number;
+  maxTeamMembers: number;
+  maxStoredAudits: number;
 }
 
 export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
   observer: {
-    scansPerMonth: 3,
-    pagesPerScan: 3,
-    competitors: 0,
-    cacheDays: 7,
-    hasExports: false,
-    hasForceRefresh: false,
-    hasApiAccess: false,
-    hasWhiteLabel: false,
-    hasScheduledRescans: false,
-    hasReportHistory: false,
-    hasShareableLink: false,
+    scansPerMonth: 3, pagesPerScan: 3, competitors: 0, cacheDays: 7,
+    hasExports: false, hasForceRefresh: false, hasApiAccess: false, hasWhiteLabel: false,
+    hasScheduledRescans: false, hasReportHistory: false, hasShareableLink: false,
+    hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
+    hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
+    hasAutoPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasTeamWorkspaces: false,
+    maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
+    maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 1, maxStoredAudits: 10,
   },
   alignment: {
-    scansPerMonth: 25,
-    pagesPerScan: 3,
-    competitors: 2,
-    cacheDays: 30,
-    hasExports: true,
-    hasForceRefresh: true,
-    hasApiAccess: false,
-    hasWhiteLabel: false,
-    hasScheduledRescans: false,
-    hasReportHistory: true,
-    hasShareableLink: true,
+    scansPerMonth: 25, pagesPerScan: 3, competitors: 2, cacheDays: 30,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
+    hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
+    hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
+    hasAutoPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasTeamWorkspaces: false,
+    maxScheduledRescans: 2, allowedRescanFrequencies: ['weekly', 'monthly'] as readonly string[],
+    maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 1, maxStoredAudits: 50,
   },
   signal: {
-    scansPerMonth: 100,
-    pagesPerScan: 10,
-    competitors: 5,
-    cacheDays: 90,
-    hasExports: true,
-    hasForceRefresh: true,
-    hasApiAccess: true,
-    hasWhiteLabel: true,
-    hasScheduledRescans: true,
-    hasReportHistory: true,
-    hasShareableLink: true,
+    scansPerMonth: 100, pagesPerScan: 10, competitors: 5, cacheDays: 90,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
+    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasTeamWorkspaces: true,
+    maxScheduledRescans: 10, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
+    maxApiKeys: 5, maxWebhooks: 10, maxReportDeliveries: 25, maxTeamMembers: 10, maxStoredAudits: 500,
   },
   scorefix: {
-    scansPerMonth: 15,
-    pagesPerScan: 10,
-    competitors: 5,
-    cacheDays: 90,
-    hasExports: true,
-    hasForceRefresh: true,
-    hasApiAccess: true,
-    hasWhiteLabel: false,
-    hasScheduledRescans: true,
-    hasReportHistory: true,
-    hasShareableLink: true,
+    scansPerMonth: 15, pagesPerScan: 10, competitors: 5, cacheDays: 90,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: false,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
+    hasAlertIntegrations: false, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasTeamWorkspaces: false,
+    maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
+    maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 1, maxStoredAudits: 200,
   },
 } as const;
 
@@ -407,6 +416,7 @@ export interface SchemaMarkup {
   has_faq_schema: boolean;
   schema_types: string[];
   validation_errors?: string[];
+  schema_score?: number;
 }
 
 export interface CitationStrength {
@@ -587,6 +597,21 @@ export interface AnalysisResponse {
   /** Set when the page returned very little server-rendered content (JS SPA detected) */
   thin_content_warning?: string;
   request_id?: string;
+
+  /** Evidence-driven fix plan generated by SSFR pipeline */
+  evidence_fix_plan?: { issues: Array<{ id: string; label: string; severity: string; fix_type: string; evidence_ids: string[] }> };
+  /** Competitor hint from analysis */
+  competitor_hint?: { match_reasons: string[] };
+  /** Audit ID for linking to stored audits */
+  audit_id?: string;
+  /** AI recommendation evidence summary */
+  recommendation_evidence_summary?: unknown;
+  /** Geo-adaptive signal profile */
+  geo_signal_profile?: unknown;
+  /** Contradiction report from multi-model analysis */
+  contradiction_report?: unknown;
+  /** Threat intelligence from security scan */
+  threat_intel?: { risk_level?: string; [key: string]: unknown };
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
@@ -1030,7 +1055,7 @@ export const BRAG_EXPANSION = 'Build-Reference-Audit-Ground';
 export const BRAG_TRAIL_LABEL = 'BRAG Trail';
 
 /* ── Text summary depth helper ──────────────────────────────────────────── */
-export type TextSummaryDepth = 'brief' | 'standard' | 'detailed';
+export type TextSummaryDepth = 'minimal' | 'brief' | 'standard' | 'detailed';
 
 export function getTextSummaryDepth(tier: CanonicalTier): TextSummaryDepth {
   switch (tier) {
@@ -1103,15 +1128,15 @@ export interface SSFRRuleResult {
   details?: Record<string, unknown>;
 }
 
-export type SSFRFixpackType = 'schema_fix' | 'entity_patch' | 'meta_fix' | 'content_block';
+export type SSFRFixpackType = 'schema_fix' | 'entity_patch' | 'meta_fix' | 'content_block' | 'insight';
 
 export interface SSFRFixpackAsset {
-  type: 'json_ld' | 'markdown' | 'meta_tag' | 'text';
+  type: 'json_ld' | 'markdown' | 'meta_tag' | 'text' | 'html_block';
   label: string;
   content: string;
 }
 
-export type SSFRVerificationStatus = 'verified' | 'failed';
+export type SSFRVerificationStatus = 'verified' | 'failed' | 'pending';
 
 export interface SSFRFixpack {
   type: SSFRFixpackType;

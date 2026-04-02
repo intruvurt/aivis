@@ -112,6 +112,61 @@ const TIER_AUDIENCE: Record<string, string> = {
   scorefix: "For teams who want fixes shipped as pull requests automatically",
 };
 
+const TIER_COPY: Record<string, { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }> = {
+  observer: {
+    headline: "See what AI gets wrong",
+    body: "Run your first audits and expose the blockers stopping AI from trusting and citing your site.",
+    includes: [
+      "3 lifetime audits (NOT 10/month)",
+      "up to 3 pages per audit",
+      "top 3 proven blockers",
+      "limited evidence preview",
+      "1 competitor gap snapshot",
+      "shareable report",
+    ],
+    cta: "Run free audit",
+  },
+  alignment: {
+    headline: "Turn findings into fixes",
+    body: "Get full evidence and a clear fix plan so you stop guessing what matters.",
+    includes: [
+      "full report",
+      "full evidence",
+      "prioritized fix plan",
+      "exportable reports",
+      "limited competitor intelligence",
+      "40–60 audits/month",
+    ],
+    cta: "Fix what’s blocking you",
+    priceLabel: "$29–49/mo",
+  },
+  signal: {
+    headline: "Track who is beating you and why",
+    body: "Monitor citations, competitors, and visibility shifts over time and see what changes after every fix.",
+    includes: [
+      "citation tracking",
+      "competitor intelligence",
+      "source gap detection",
+      "scheduled rescans",
+      "historical deltas",
+      "alerts",
+      "full evidence ledger",
+    ],
+    cta: "Track your visibility",
+  },
+  scorefix: {
+    headline: "Ship fixes, not guesses",
+    body: "Get exact remediation mapped to code, pages, or structure and verify what improved after deployment.",
+    includes: [
+      "exact remediation",
+      "PR-ready outputs",
+      "verification after fix",
+    ],
+    cta: "Get the fix pack",
+    priceLabel: "$299",
+  },
+};
+
 const VALUE_RAIL = [
   {
     icon: ShieldCheck,
@@ -137,7 +192,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "Is AiVIS free to use?",
     answer:
-      "Yes. Observer is permanently free and includes 10 audits per month, a composite 0–100 visibility score, six-category dimension grading, and prioritized findings. No credit card is required to start.",
+      "Yes. Observer is free and includes 3 lifetime audits, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
   },
   {
     question: "How is AiVIS different from AI visibility dashboards like Semrush?",
@@ -147,7 +202,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "What is the difference between Observer, Alignment, and Signal?",
     answer:
-      "Observer gives you evidence-linked reports, historical tracking, and a baseline optimization loop. Alignment adds competitor tracking, exports, API access, and scheduled rescans. Signal adds triple-check AI validation, advanced citation testing, MCP protocol, reverse-engineer tools, and team-scale automation.",
+      "Observer gives a verdict, top blockers, and a competitor gap preview. Alignment unlocks full evidence and fix planning. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
   },
   {
     question: "What does multi-model AI validation mean?",
@@ -261,16 +316,16 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
     };
 
     if (tier.key === "observer") {
-      ensureFeature("Keyword intelligence", /keyword intelligence/i);
+      ensureFeature("Citation gap diagnosis", /citation gap|keyword intelligence/i);
       ensureFeature("Shareable public report links", /shareable|public report/i);
       ensureFeature("Team-ready baseline audits", /team-ready baseline audits/i);
     }
 
     if (tier.key === "alignment") {
-      ensureFeature("Analytics dashboard & trends", /analytics dashboard/i);
+      ensureFeature("Decision query gap analysis", /decision query gap|analytics dashboard/i);
       ensureFeature("Brand mention tracking (15 sources)", /brand mention/i);
       ensureFeature("Private exposure scan", /private exposure/i);
-      ensureFeature("Niche URL discovery", /niche url/i);
+      ensureFeature("Competitor advantage signals", /competitor advantage|niche url/i);
       ensureFeature("MCP Server access", /mcp server/i);
       ensureFeature(
         "OpenAPI spec + OAuth 2.0 developer access",
@@ -349,6 +404,7 @@ function PricingCard({
   const isFree = tier.billingModel === "free" || !tier.isPaid;
   const isCurrent = currentTier?.toLowerCase() === tier.key.toLowerCase();
   const colors = TIER_COLORS[tier.key] || TIER_COLORS.observer;
+  const tierCopy = TIER_COPY[tier.key];
 
   const yearlyEffectiveMonthly =
     pricing.yearly && pricing.yearly.amount > 0
@@ -411,13 +467,17 @@ function PricingCard({
             </div>
             <div>
               <h3 className="text-xl font-bold text-white">{tier.name}</h3>
-              <p className="text-xs text-white/60">{TIER_AUDIENCE[tier.key]}</p>
+              <p className="text-xs text-white/60">{tierCopy?.headline || TIER_AUDIENCE[tier.key]}</p>
             </div>
           </div>
         </div>
 
         <div className="mb-5">
-          {isFree ? (
+          {tierCopy?.priceLabel ? (
+            <div className="flex items-baseline gap-1">
+              <span className="text-4xl font-bold text-white">{tierCopy.priceLabel}</span>
+            </div>
+          ) : isFree ? (
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold text-white">$0</span>
               <span className="text-white/60">/forever</span>
@@ -462,12 +522,12 @@ function PricingCard({
           )}
         </div>
 
-        <p className="text-sm text-white/75 font-mono mb-5 pb-4 border-b border-white/8 min-h-[48px]">
-          → {TIER_POSITIONING[tier.key]}
+        <p className="text-sm text-white/75 mb-5 pb-4 border-b border-white/8 min-h-[72px]">
+          {tierCopy?.body || `→ ${TIER_POSITIONING[tier.key]}`}
         </p>
 
         <ul className="space-y-2.5 mb-6 flex-grow min-h-[210px]">
-          {tier.features.map((feature, idx) => (
+          {(tierCopy?.includes || tier.features).map((feature, idx) => (
             <li
               key={`${tier.key}-${idx}-${feature}`}
               className="flex items-start gap-2.5 text-sm text-white/80"
@@ -520,13 +580,11 @@ function PricingCard({
           ) : isCurrent ? (
             "Current Plan"
           ) : isFree ? (
-            "Start Free"
+            tierCopy?.cta || "Start Free"
           ) : isOneTime ? (
-            "Buy One-Time"
+            tierCopy?.cta || "Buy One-Time"
           ) : (
-            <>
-              Upgrade <ArrowRight className="w-4 h-4" />
-            </>
+            tierCopy?.cta || <>Upgrade <ArrowRight className="w-4 h-4" /></>
           )}
         </button>
 
@@ -955,20 +1013,25 @@ export default function PricingPage() {
 
           <div className="lonely-text">
             <h1 className="text-4xl md:text-5xl brand-title-lg mb-4">
-              Pricing that matches the way you ship fixes
+              Stop guessing why AI ignores your site.
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              Start with baseline evidence, then upgrade when you need exports, team workflows, API access, or full remediation support.
+              Most sites don’t have an AI visibility problem.
             </p>
             <p className="text-sm text-white/55 mt-3 max-w-3xl mx-auto leading-relaxed">
-              Live pricing is loaded from the backend. This page is about plan fit, workflow depth, and what each tier helps your team do next.
+              They have a citation problem.
             </p>
 
             <div className="mt-6 max-w-3xl mx-auto text-left rounded-2xl border border-cyan-300/25 bg-cyan-500/10 px-5 py-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-cyan-100">Plan fit for the category shift</h2>
-              <p className="mt-2 text-sm leading-7 text-cyan-50/90">
-                Choose plans based on proof depth: baseline audits, remediation follow-through, team workflows, and repeated before-versus-after validation on the same live target.
-              </p>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-cyan-100">Most sites don’t have an AI visibility problem.</h2>
+              <p className="mt-2 text-sm leading-7 text-cyan-50/90">They have a citation problem.</p>
+              <p className="text-sm leading-7 text-cyan-50/90">AI can read your site. But it won’t trust it. And it won’t cite it.</p>
+              <p className="text-sm leading-7 text-cyan-50/90">AiVIS shows:</p>
+              <ul className="list-disc pl-5 text-sm leading-7 text-cyan-50/90">
+                <li>what AI can’t verify</li>
+                <li>why competitors get chosen instead</li>
+                <li>what to fix first to change that</li>
+              </ul>
             </div>
 
             <div className="mt-5 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -984,7 +1047,7 @@ export default function PricingPage() {
                 Live plan data
               </span>
               <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                10 free audits to start
+                3 lifetime audits
               </span>
               <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
                 Exports on Alignment+
@@ -1023,6 +1086,12 @@ export default function PricingPage() {
             <CreditCard className="w-3.5 h-3.5 text-violet-400/70" />
             Stripe-secured billing
           </span>
+        </div>
+
+        <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
+          <h2 className="text-2xl font-bold text-white mb-3">You don’t need more SEO tools.</h2>
+          <p className="text-white/75">You need to know:</p>
+          <p className="text-white/65">why AI ignores you · who is taking your citations · what to fix first</p>
         </div>
 
         <div id="plans" className="section-anchor flex justify-center mb-8">
@@ -1121,14 +1190,14 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Monthly audits", "10", "60", "110", "250 credits"],
+                  ["Audit allowance", "3 lifetime", "40–60/mo", "110/mo", "250 credits"],
                   ["Visibility score + recs", true, true, true, true],
-                  ["Keyword intelligence", true, true, true, true],
+                  ["Citation gap diagnosis", true, true, true, true],
                   ["Shareable report links", true, true, true, true],
                   ["Export (PDF / JSON)", false, true, true, true],
-                  ["Competitor tracking", false, true, true, true],
+                  ["Competitor advantage signals", false, true, true, true],
                   ["Brand mention tracking", false, true, true, true],
-                  ["Analytics dashboard", false, true, true, true],
+                  ["Decision query gap analysis", false, true, true, true],
                   ["API + OAuth access", false, true, true, true],
                   ["Triple-check AI validation", false, false, true, true],
                   ["Citation testing", false, false, true, true],

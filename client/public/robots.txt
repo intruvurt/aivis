@@ -4,74 +4,42 @@
 User-agent: *
 Allow: /
 
-# Billing and private user data only
-Disallow: /auth
-Disallow: /reset-auth
-Disallow: /reset-password
-Disallow: /profile
-Disallow: /settings
-Disallow: /billing
-Disallow: /notifications
+# Public routes to prioritize
+Allow: /about
+Allow: /blogs
+Allow: /blogs/*
+Allow: /compare
+Allow: /compare/*
+Allow: /faq
+Allow: /guide
+Allow: /indexing
+Allow: /insights
+Allow: /integrations
+Allow: /methodology
+Allow: /pricing
+Allow: /press
+Allow: /workflow
+Allow: /why-ai-visibility
+Allow: /tools/schema-validator
+Allow: /tools/robots-checker
+Allow: /tools/content-extractability
+
+# Private/authenticated/non-public routes
 Disallow: /admin
-Disallow: /payment-success
-Disallow: /payment-canceled
-Disallow: /verify-email
-Disallow: /invite/
-
-# Internal API
 Disallow: /api/
-
-# Private report links (public shares allowed)
+Disallow: /auth
+Disallow: /billing
+Disallow: /mcp
+Disallow: /niche-discovery
+Disallow: /notifications
+Disallow: /payment-canceled
+Disallow: /payment-success
+Disallow: /profile
+Disallow: /referrals
 Disallow: /report/
-Allow: /report/public/
+Disallow: /settings
+Disallow: /team
+Disallow: /verify-email
+Disallow: /partnership-terms
 
 Sitemap: https://aivis.biz/sitemap.xml
-
-# AI / search fetchers — explicit allow
-User-agent: GPTBot
-Allow: /
-
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Claude-User
-Allow: /
-
-User-agent: Googlebot
-Allow: /
-
-User-agent: Googlebot-News
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Applebot
-Allow: /
-
-User-agent: Applebot-Extended
-Allow: /
-
-User-agent: DuckAssistBot
-Allow: /
-
-User-agent: cohere-ai
-Allow: /
-
-User-agent: YouBot
-Allow: /
-
-User-agent: meta-externalagent
-Allow: /
-
-User-agent: Bytespider
-Allow: /

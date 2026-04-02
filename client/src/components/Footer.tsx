@@ -37,7 +37,7 @@ const Footer = () => {
               <li><Link to="/analytics" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Analytics</Link></li>
               <li><Link to="/citations" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Citations</Link></li>
               <li><Link to="/competitors" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Competitors</Link></li>
-              <li><Link to="/niche-discovery" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Niche Discovery</Link></li>
+              <li><Link to="/prompt-intelligence" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Decision Query Gaps</Link></li>
               <li><Link to="/mcp" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">MCP Console</Link></li>
               <li><Link to="/reports" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Reports</Link></li>
               <li><Link to="/reverse-engineer" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Reverse Engineer</Link></li>
@@ -76,6 +76,7 @@ const Footer = () => {
               <li><Link to="/compliance" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Compliance &amp; Security</Link></li>
               <li><Link to="/privacy" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link to="/partnership-terms" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Partnership Terms (Private)</Link></li>
               <li><Link to="/verify-license" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Verify License</Link></li>
               <li><Link to="/help" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">Contact Support</Link></li>
               <li><Link to="/about" className="text-white/70 dark:text-white/55 hover:text-white dark:hover:text-white transition-colors">About</Link></li>
@@ -114,7 +115,7 @@ const Footer = () => {
               &copy; {currentYear} AiVIS. {t('footer.copyright', { year: currentYear })}
             </p>
             <p className="text-white/45 text-[11px]">
-              TechCrunch Startup Battlefield Top 200 nominee · Built for AI visibility, citation readiness, and answer engine discovery
+              TechCrunch Startup Battlefield Top 200 nominee · Evidence-backed AI citation diagnosis + fix execution
             </p>
           </div>
           <a

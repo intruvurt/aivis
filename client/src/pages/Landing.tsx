@@ -1,6 +1,6 @@
 // Enterprise Landing — AiVIS
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
@@ -154,6 +154,7 @@ const WHAT_CHANGED_DIFF = [
 
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
+  const navigate = useNavigate();
   usePageMeta({
     title: 'AI Visibility Audit Platform | AiVIS',
     description: 'Enterprise AI visibility auditing for ChatGPT, Perplexity, Google AI, and Claude. Evidence-backed scoring with implementation-ready fixes.',
@@ -165,6 +166,8 @@ const Landing = () => {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [heroUrl, setHeroUrl] = useState('');
+  const [expVariant, setExpVariant] = useState<'a' | 'b'>('a');
 
   const pageVisible = usePageVisible();
 
@@ -175,6 +178,22 @@ const Landing = () => {
     const iv = setInterval(() => { getPlatformStats().then((d) => { if (!cancelled) setPlatformStats(d); }); }, 30_000);
     return () => { cancelled = true; clearInterval(iv); };
   }, [pageVisible]);
+
+  useEffect(() => {
+    const forced = new URLSearchParams(window.location.search).get('exp');
+    if (forced === 'headline_b') {
+      setExpVariant('b');
+      return;
+    }
+    const bucket = window.localStorage.getItem('aivis.exp.hero.v1');
+    if (bucket === 'a' || bucket === 'b') {
+      setExpVariant(bucket);
+      return;
+    }
+    const assigned = Math.random() < 0.5 ? 'a' : 'b';
+    window.localStorage.setItem('aivis.exp.hero.v1', assigned);
+    setExpVariant(assigned);
+  }, []);
 
   const handlePayment = async (tier: string) => {
     if (!isAuthenticated) { toast.error('Please login to upgrade'); return; }
@@ -190,47 +209,57 @@ const Landing = () => {
     }
   };
 
+  const heroHeadline =
+    expVariant === 'a'
+      ? 'AI is answering.\nYour site isn't being chosen.'
+      : 'Your site is invisible to AI answers';
+  const heroPrimaryCta = expVariant === 'a' ? 'Run free audit' : 'See if AI ignores your site';
+
   return (
     <div className="min-h-screen bg-[#060607]">
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[70vh] lg:min-h-screen flex items-center overflow-hidden bg-[#060607]">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#060607]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.07),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_60%,rgba(139,92,246,0.06),transparent)]" />
         <div className="hero-flow-overlay" aria-hidden="true" />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <motion.div initial={{ opacity: 1, x: 0 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: 'easeOut' }}>
+            <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-8">
-                <img src="/text-logo.png" alt="AiVIS – AI Visibility Intelligence Audits" className="h-12 sm:h-14 lg:h-16 w-auto object-contain mix-blend-screen brightness-110 saturate-125" width="240" height="64" loading="eager" fetchPriority="high" />
+                <img src="/text-logo.png" alt="AiVIS – AI Visibility Intelligence Audits" className="h-12 sm:h-14 lg:h-16 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Free Starter Tier
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-xs font-semibold tracking-wide">Evidence-backed · No black box</span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-300/90 text-xs font-semibold tracking-wide">Top 200 · TechCrunch Startup Battlefield 2026</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-xs font-semibold tracking-wide">No signup required · results in seconds</span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-blue-500 mb-6 tracking-tight">
-                AiVIS tracks whether AI{' '}
-                <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">includes you, cites you,</span>
-                <br />or hands the win to someone else
+                {heroHeadline.split('\n')[0]}
+                {heroHeadline.includes('\n') && <br />}
+                {heroHeadline.includes('\n') && (
+                  <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">{heroHeadline.split('\n')[1]}</span>
+                )}
               </h1>
               <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
-                Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.
+                See what AI cannot verify and why competitors get cited instead.
               </p>
-              <p className="text-sm text-white/50 mb-2 max-w-xl">
-                TechCrunch Startup Battlefield Top 200 nominee.
-              </p>
-              <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
-                Built for agencies, operators, and developers shipping evidence-backed visibility fixes.
-              </p>
-              <div className="flex flex-wrap items-center gap-4 mb-8">
-                <div className="flex items-center gap-3 px-4 sm:px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
-                  <span className="text-3xl sm:text-5xl font-black text-white tabular-nums leading-none">10</span>
+              <p className="text-sm text-white/40 font-mono mb-6 max-w-xl">No signup required. Results in seconds.</p>
+              <div className="max-w-xl mb-6">
+                <input
+                  value={heroUrl}
+                  onChange={(e) => setHeroUrl(e.target.value)}
+                  placeholder="enter your site url"
+                  className="w-full rounded-xl border border-white/15 bg-[#111827]/70 px-4 py-3 text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                />
+              </div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
+                  <span className="text-5xl font-black text-white tabular-nums leading-none">3</span>
                   <div>
-                    <p className="text-white font-bold text-lg leading-tight">FREE Audits</p>
-                    <p className="text-white/50 text-xs">every month · no credit card</p>
+                    <p className="text-white font-bold text-lg leading-tight">LIFETIME Audits</p>
+                    <p className="text-white/50 text-xs">free starter cap · no credit card</p>
                   </div>
                 </div>
                 {platformStats?.completedAudits && (
@@ -241,19 +270,19 @@ const Landing = () => {
                 )}
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link to="/auth?mode=signup" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-                  Analyze your site free
+                <button
+                  type="button"
+                  onClick={() => navigate(heroUrl.trim() ? `/analyze?url=${encodeURIComponent(heroUrl.trim())}` : '/analyze')}
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20"
+                >
+                  {heroPrimaryCta}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </Link>
+                </button>
                 <Link to="/pricing" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
                   View plans &amp; pricing
                 </Link>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2 text-[11px]">
-                <span className="px-2.5 py-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 text-cyan-300">Agencies: show client-ready evidence</span>
-                <span className="px-2.5 py-1 rounded-full border border-violet-400/20 bg-violet-500/10 text-violet-300">Operators: prioritize revenue-impact fixes</span>
-                <span className="px-2.5 py-1 rounded-full border border-emerald-400/20 bg-emerald-500/10 text-emerald-300">Developers: ship structured changes quickly</span>
-              </div>
+              <p className="mt-3 text-xs text-white/40">No signup required. Results in seconds.</p>
               <div className="mt-6 max-w-2xl">
                 <PlatformShiftBanner
                   eyebrow="Platform reality"
@@ -264,10 +293,10 @@ const Landing = () => {
                 />
               </div>
             </motion.div>
-            <motion.div initial={{ opacity: 0.6, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }} className="hidden lg:block">
+            <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden lg:block">
               <div className="card-smoke glass-bleed-cyan relative rounded-2xl p-4 shadow-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-violet-500/5" />
-                <img src="/images/audit-intelligence-dashboard.svg" alt="Audit Intelligence Dashboard" className="w-full h-auto object-contain rounded-lg" width="520" height="390" />
+                <img src="/images/audit-intelligence-dashboard.svg" alt="Audit Intelligence Dashboard" className="w-full h-auto object-contain rounded-lg" />
                 <div className="absolute top-4 left-4 flex gap-2">
                   <span className="px-2 py-0.5 rounded bg-cyan-400/15 border border-cyan-400/25 text-cyan-300 text-[9px] font-mono tracking-wider">SCAN ACTIVE</span>
                   <span className="px-2 py-0.5 rounded bg-violet-400/15 border border-violet-400/25 text-violet-300 text-[9px] font-mono tracking-wider">AI LAYER</span>
@@ -281,16 +310,83 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ── TWO PILLARS OF AI VISIBILITY ── */}
+      {/* ── WHAT'S ACTUALLY HAPPENING ── */}
+      <section className="py-16 bg-[#060607] border-t border-white/8 border-b border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-white/10 bg-[#111827]/45 p-6 md:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What's actually happening</h2>
+            <p className="text-white/70 mb-3">Your site can rank and still be invisible to AI.</p>
+            <p className="text-white/60 mb-4">AI doesn't choose the best page. It chooses the clearest, most verifiable one.</p>
+            <ul className="list-disc pl-5 text-white/65 space-y-1 mb-4">
+              <li>unclear content structure</li>
+              <li>missing entity signals</li>
+              <li>weak trust pages</li>
+              <li>incomplete schema relationships</li>
+            </ul>
+            <p className="text-white/70 font-semibold">If AI can't verify it, it won't cite it.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHAT AIVIS SHOWS ── */}
+      <section className="py-16 bg-[#060607] border-b border-white/8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-white mb-8">What AiVIS shows you</h2>
+          <div className="grid md:grid-cols-3 gap-5">
+            <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/10 p-5">
+              <h3 className="text-cyan-300 font-semibold mb-2">What AI cannot verify</h3>
+              <p className="text-white/65 text-sm">Missing structure, weak trust signals, incomplete schema, and low extraction clarity.</p>
+            </div>
+            <div className="rounded-xl border border-violet-400/20 bg-violet-500/10 p-5">
+              <h3 className="text-violet-300 font-semibold mb-2">Why competitors get chosen</h3>
+              <p className="text-white/65 text-sm">Stronger citation patterns, better source presence, and cleaner extraction signals.</p>
+            </div>
+            <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-5">
+              <h3 className="text-emerald-300 font-semibold mb-2">What to fix first</h3>
+              <p className="text-white/65 text-sm">Evidence-backed issues prioritized by impact and mapped directly to real pages.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHAT YOU'RE LOSING ── */}
+      <section className="py-14 bg-[#060607] border-b border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What you're losing</h2>
+          <p className="text-white/70 mb-4">You're not losing rankings. You're losing answers.</p>
+          <ul className="list-disc pl-5 text-white/65 space-y-1">
+            <li>competitors get quoted instead of you</li>
+            <li>your content gets read but not used</li>
+            <li>your pages show up but don't get chosen</li>
+          </ul>
+          <p className="text-white/70 mt-4">That gap is where traffic disappears.</p>
+        </div>
+      </section>
+
+      {/* ── WHAT AIVIS ACTUALLY DOES ── */}
+      <section className="py-14 bg-[#060607] border-b border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What AiVIS actually does</h2>
+          <p className="text-white/70 mb-3">AiVIS audits how AI systems interpret your site. Not opinions. Not guesses. Evidence.</p>
+          <ul className="list-disc pl-5 text-white/65 space-y-1">
+            <li>what was found</li>
+            <li>where it was found</li>
+            <li>why it matters</li>
+            <li>what to fix</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* ── HOW THIS WORKS ── */}
       <section className="py-24 bg-gradient-to-b from-[#060607] to-[#0a0a0f] border-b border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Platform scope</span>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">Two pillars of AI visibility — both real, both measured</span>
+              <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">How this works: Run audit → See evidence → Fix → Re-audit → Track movement</span>
             </h2>
             <p className="text-white/55 text-lg max-w-3xl mx-auto">
-              AI visibility is not one thing. It has two measurable dimensions: whether AI systems can understand your content, and whether your brand appears when they answer questions. AiVIS measures both with real data and live infrastructure — not mockups or illustrative demos.
+              AI visibility is not one thing. It has two measurable dimensions: whether AI systems can understand your content, and whether your brand appears when they answer questions. AiVIS is built for repeated improvement cycles, not one-off scans. Evidence, scoring, and remediation are chained in one loop so teams can ship and verify outcomes.
             </p>
           </div>
           <div className="grid lg:grid-cols-2 gap-8">
@@ -343,6 +439,30 @@ const Landing = () => {
           <p className="text-center text-sm text-white/40 mt-8 max-w-2xl mx-auto">
             Both pillars operate on real infrastructure with live data. Structural readiness audits run through a Puppeteer scraper and AI model pipeline. Brand presence checks hit real search engines and public sources. No synthetic data, no static previews.
           </p>
+        </div>
+      </section>
+
+      {/* ── WHY MOST SITES FAIL AI ── */}
+      <section className="py-14 bg-[#060607] border-b border-white/8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-6">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="text-lg font-semibold text-white mb-2">What works</h3>
+            <ul className="list-disc pl-5 text-white/65 space-y-1">
+              <li>clear entities</li>
+              <li>strong headings</li>
+              <li>real schema relationships</li>
+              <li>concise answer blocks</li>
+            </ul>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="text-lg font-semibold text-white mb-2">What fails</h3>
+            <ul className="list-disc pl-5 text-white/65 space-y-1">
+              <li>vague language</li>
+              <li>thin content</li>
+              <li>disconnected structure</li>
+              <li>incomplete metadata</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -654,11 +774,11 @@ const Landing = () => {
             {([
               { icon: '🔍', title: 'AI Visibility Audits', desc: 'Puppeteer-based crawling with evidence-linked AI analysis. Six weighted categories scored 0–100 with letter grades. Single-page, multi-page (up to 500 pages), and document upload modes.', tier: 'All tiers' },
               { icon: '🧠', title: 'Triple-Check AI Pipeline', desc: 'Three independent AI models in sequence: primary analysis, peer critique with bounded score adjustment, and validation gate. If any stage fails, the system degrades gracefully to the last valid result.', tier: 'Signal+' },
-              { icon: '📊', title: 'Analytics Dashboard', desc: 'Score history trends, domain-level metrics, family breakdowns across crawlability, indexability, and discoverability. Community benchmarks show aggregate platform-wide statistics without exposing individual data.', tier: 'Alignment+' },
+              { icon: '📊', title: 'Decision Query Gaps', desc: 'Score history trends and query-level diagnostics that show where AI chooses competitors over your pages.', tier: 'Alignment+' },
               { icon: '🏷️', title: 'Schema & Content Generators', desc: 'AI-powered JSON-LD schema generation from your page content plus content fix suggestions for weak audit categories. Both generators reference your actual crawl evidence, not generic templates.', tier: 'Alignment+' },
               { icon: '🔗', title: 'Citation Testing', desc: 'Live citation checks across DuckDuckGo HTML, Bing HTML, and DDG Instant Answer — all running in parallel. Includes AI-generated query packs, scheduled recurring tests, niche ranking engine, and evidence curation.', tier: 'Signal+' },
               { icon: '📡', title: 'Brand Mention Tracking', desc: 'Scans nine free public sources — Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News RSS, GitHub, Quora, and Product Hunt — for brand mentions. Timeline view and trend analysis included.', tier: 'Alignment+' },
-              { icon: '⚔️', title: 'Competitor Tracking', desc: 'Track up to 10 competitor URLs with category-by-category comparison, opportunity detection, and AI-powered discovery suggestions. Automated autopilot rescans run on schedule.', tier: 'Alignment+' },
+              { icon: '⚔️', title: 'Competitor Advantage Signals', desc: 'Track up to 10 competitor URLs with category comparison, source-level deltas, and opportunity detection to expose why they get cited.', tier: 'Alignment+' },
               { icon: '🔬', title: 'Reverse Engineering Suite', desc: 'Five tools for understanding AI answers: decompile AI responses, generate ghost blueprints of ideal cited pages, diff how models answer differently, simulate citation likelihood, and get AI rewrite suggestions.', tier: 'Alignment+' },
               { icon: '🛠️', title: 'Score Fix AutoPR', desc: 'Connects to your GitHub repo via MCP and pushes pull requests with concrete fixes — JSON-LD patches, H1 rewrites, FAQ blocks — each costing 10–25 credits per fix based on complexity.', tier: 'Score Fix' },
               { icon: '🔌', title: 'API, OAuth 2.0 & MCP', desc: 'REST API with OpenAPI 3.0 spec and full OAuth 2.0 authorization code flow. MCP Server with 14 tool endpoints for AI coding agents. WebMCP discovery for browser-based AI integration.', tier: 'Alignment+' },
@@ -777,6 +897,7 @@ const Landing = () => {
           </div>
           <dl className="space-y-5">
             {([
+              { q:'What is included in the free tier?', a:'Observer includes 3 lifetime audits with up to 3 pages per audit. You get verdict, top blockers, and a competitor gap preview. Full evidence + competitor source intelligence are intentionally locked for paid tiers.' },
               { q:'What does AiVIS actually audit?', a:'AiVIS audits whether ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page. It scores six evidence-backed categories — content depth, heading structure, schema markup, metadata, technical SEO, and AI citability — from your live URL. The output is a 0–100 visibility score with category grades and prioritized, evidence-linked recommendations. Every finding references a specific crawled page element through BRAG evidence IDs.' },
               { q:'How is this different from a standard SEO audit?', a:'Standard SEO audits optimize for ranked pages and clicks. AiVIS measures whether AI systems can actually understand, trust, and cite your business when answers replace links, summaries, and overviews. Every finding is tied to a specific crawled signal, not a generic checklist. The platform also tracks brand presence across citation sources and public discussion platforms — something traditional SEO tools do not measure.' },
               { q:'What are the two types of AI visibility?', a:'The first type is structural readiness — whether AI can parse your schema, headings, content depth, and metadata well enough to extract trustworthy information. The second type is brand presence — whether your business actually appears when AI systems answer questions in your industry. AiVIS measures both: the audit pipeline handles structural readiness, while citation testing, brand mention scanning, and competitor tracking handle brand presence.' },

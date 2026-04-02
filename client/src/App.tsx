@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
 const AnalyzePage = React.lazy(() => import("./views/AnalyzePage"));
 const PricingPage = React.lazy(() => import("./views/PricingPage"));
+import PartnershipTermsPage from "./pages/PartnershipTermsPage";
 const AuthPage = React.lazy(() => import("./views/AuthPage"));
 const AnalyticsPage = React.lazy(() => import("./views/AnalyticsPage"));
 const KeywordsPage = React.lazy(() => import("./views/KeywordsPage"));
@@ -192,6 +193,7 @@ export default function App() {
             <Route path="/workflow" element={<PlatformWorkflowPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/integrations" element={<IntegrationsHubPage />} />
+            <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
             <Route path="/mcp" element={<ProtectedRoute><McpConsolePage /></ProtectedRoute>} />
             <Route path="/gsc" element={<ProtectedRoute><GscConsolePage /></ProtectedRoute>} />
             <Route path="/competitive-landscape" element={<CompetitiveLandscapePage />} />

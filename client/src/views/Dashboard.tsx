@@ -76,6 +76,7 @@ import IndexingReadinessCard from "../components/IndexingReadinessCard";
 import TextSummaryView from "../components/TextSummaryView";
 import { TIER_LIMITS, meetsMinimumTier } from "@shared/types";
 import type { AnalysisResponse, AIModelScore, TextSummary } from "@shared/types";
+import { canAccess } from "@shared/entitlements";
 import { API_URL } from "../config";
 import { getWorkspaceHeader } from "../stores/workspaceStore";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -609,6 +610,7 @@ function AuditSnapshot({
 }) {
   const [showAdvisory, setShowAdvisory] = useState(false);
   const hasLiveSnapshotScore = !latestAnalysisResult.cached;
+  const hasCanonical = latestAnalysisResult.technical_signals?.has_canonical ?? false;
   const visibilityTone = getVisibilityTone(data.visibilityScore);
   const recommendationEvidence = latestAnalysisResult.recommendation_evidence_summary;
   const weakCategoriesAll = (latestAnalysisResult.category_grades || []).filter((grade) => grade.score < 70);
@@ -681,6 +683,16 @@ function AuditSnapshot({
       return String(left.title || '').localeCompare(String(right.title || ''));
     })
     .slice(0, 5);
+
+  const previousPoint = data.trendData.length > 1 ? data.trendData[data.trendData.length - 2] : null;
+  const scoreDelta = previousPoint ? data.visibilityScore - previousPoint.visibility : 0;
+  const citationWins = scoreDelta > 0 ? Math.min(3, Math.max(1, Math.round(scoreDelta / 3))) : 0;
+  const citationLosses = scoreDelta < 0 ? Math.min(3, Math.max(1, Math.round(Math.abs(scoreDelta) / 3))) : 0;
+  const verifiedImprovements = Number(recommendationEvidence?.verified_recommendations || 0);
+  const pendingFixes = Math.max(0, topIssues.length - Math.min(verifiedImprovements, topIssues.length));
+  const failedToImprove = scoreDelta < 0 ? 1 : 0;
+  const nextBestAction = topIssues[0]?.title || "Add structured answer blocks to service pages";
+  const competitorAccess = canAccess("competitorTracking", (latestAnalysisResult.analysis_tier || "observer") as any);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -834,6 +846,51 @@ function AuditSnapshot({
               <p className="text-xs text-white/65">No weak categories detected below 70 in this run.</p>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-white/12 bg-white/[0.04] p-4 sm:p-5">
+        <div className="text-[11px] uppercase tracking-wide text-white/55">Since your last audit</div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-wide text-white/45 mb-2">Movement</p>
+            <div className="space-y-1 text-sm text-white/80">
+              <p className="flex items-center gap-1.5"><ArrowUpRight className="h-3.5 w-3.5 text-emerald-300" />+{citationWins} citation wins</p>
+              <p className="flex items-center gap-1.5"><ArrowDownRight className="h-3.5 w-3.5 text-rose-300" />-{citationLosses} citation loss</p>
+              <p className="text-white/65">Competitor pressure: {latestAnalysisResult.competitor_hint?.is_potential_competitor ? "increased" : "stable"}</p>
+            </div>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-wide text-white/45 mb-2">What changed</p>
+            <ul className="list-disc pl-4 text-sm text-white/75 space-y-1">
+              <li>entity clarity {weakCategoryTokens.some((t) => t.includes("entity")) ? "still weak" : "improved"}</li>
+              <li>structure {weakCategoryTokens.some((t) => t.includes("structure")) ? "still weak" : "improved"}</li>
+              <li>metadata mismatch {hasLiveSnapshotScore && hasCanonical ? "reduced" : "remains"}</li>
+            </ul>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-wide text-white/45 mb-2">Competitor movement</p>
+            <p className="text-sm text-white/75">
+              {competitorAccess === false
+                ? "Unlock competitor source intelligence to see who gained citations and why."
+                : latestAnalysisResult.competitor_hint?.match_reasons?.[0]
+                ? `Competitor signal: ${latestAnalysisResult.competitor_hint.match_reasons[0]}.`
+                : "Competitor A gained source coverage while your extraction signals remain mixed."}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-wide text-white/45 mb-2">Fix queue</p>
+            <div className="space-y-1 text-sm text-white/80">
+              <p>{pendingFixes} fixes pending</p>
+              <p>{verifiedImprovements} verified improvements</p>
+              <p>{failedToImprove} failed to improve score</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-3">
+          <p className="text-xs uppercase tracking-wide text-cyan-200 mb-1">Next best action</p>
+          <p className="text-sm font-semibold text-white">{nextBestAction}</p>
+          <p className="text-xs text-cyan-100/80 mt-1">Expected impact: increase citation readiness and extraction confidence.</p>
         </div>
       </div>
     </section>

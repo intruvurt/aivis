@@ -127,12 +127,12 @@ Are competitors being recommended instead?`,
       {
         question: "What can I do on the free tier?",
         answer:
-          "The Observer tier includes a live monthly allowance with full AI-powered scoring, evidence-backed findings, actionable recommendations, and Keyword Intelligence. No credit card is required to use the free tier. It\'s a real analysis, not a teaser.",
+          "Observer includes 3 lifetime audits (up to 3 pages per audit), verdict-first scoring, top blockers, and a competitor gap preview. Full evidence and competitor source intelligence are locked to paid tiers. No credit card is required.",
       },
       {
         question: "What do paid tiers add?",
         answer:
-          "Paid tiers add higher allowances and broader workflows. Alignment adds exports and force-refresh, Signal adds citation/API automation, and Score Fix adds remediation output and validation checklists.",
+          "Alignment unlocks full evidence and fix planning. Signal adds tracking over time (citation movement, source gaps, deltas, alerts). Score Fix adds remediation execution and post-fix verification workflows.",
       },
       {
         question: "Can I export or share my report?",
@@ -142,7 +142,7 @@ Are competitors being recommended instead?`,
       {
         question: "How is usage enforced?",
         answer:
-          "Server-side hard caps with real-time counters. Every audit updates your used/remaining totals immediately. If monthly audits are exhausted, pack credits are consumed automatically. You can see used, remaining, and credit balance live in Billing and nav.",
+          "Usage is enforced server-side with hard caps and real-time counters. Observer is treated as a constrained starter allowance; paid tiers use recurring or credit-based limits based on plan rules shown in Billing.",
       },
       {
         question: "What are the current audit credit packs and tier boosts?",

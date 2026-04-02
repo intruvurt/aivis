@@ -1,0 +1,28 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Sadiq Khan profile avatar</title>
+  <desc id="desc">Unique soccer-ball themed geometric avatar with midnight and cyan accents.</desc>
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(120 72) rotate(90) scale(180)">
+      <stop offset="0" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#020617"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="40" y1="40" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="120" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="92" stroke="url(#ring)" stroke-width="4"/>
+  <g transform="translate(120 120)">
+    <circle r="48" fill="#F8FAFC"/>
+    <polygon points="0,-23 22,-7 14,19 -14,19 -22,-7" fill="#0F172A"/>
+    <path d="M-22 -7L-41 -19L-35 -40L-11 -36L0 -23" fill="#E2E8F0"/>
+    <path d="M22 -7L41 -19L35 -40L11 -36L0 -23" fill="#E2E8F0"/>
+    <path d="M14 19L25 42L0 52L-25 42L-14 19" fill="#E2E8F0"/>
+    <path d="M-14 19L-25 42L-42 27L-34 8L-22 -7" fill="#CBD5E1"/>
+    <path d="M14 19L25 42L42 27L34 8L22 -7" fill="#CBD5E1"/>
+    <path d="M-11 -36L-35 -40L-43 -20L-41 -19L-22 -7L0 -23" stroke="#0F172A" stroke-width="2" fill="none"/>
+    <path d="M11 -36L35 -40L43 -20L41 -19L22 -7L0 -23" stroke="#0F172A" stroke-width="2" fill="none"/>
+    <path d="M-14 19L-25 42L0 52L25 42L14 19" stroke="#0F172A" stroke-width="2" fill="none"/>
+  </g>
+</svg>

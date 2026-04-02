@@ -135,11 +135,11 @@ export default function AboutPage() {
       </section>
 
       {/* Founder section */}
-      <section className="px-4 py-16" id="founder">
+      <section className="px-4 py-16" id="leadership">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-12 text-center">Leadership</h2>
 
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-2">
             <div className="rounded-lg border border-white/10 overflow-hidden bg-white/5">
               {/* Founder card */}
               <div className="p-5 sm:p-8 md:p-12">
@@ -208,6 +208,53 @@ export default function AboutPage() {
                   <p className="text-xs text-white/50 mb-3">Focus areas:</p>
                   <div className="flex flex-wrap gap-2">
                     {["Citation Parity", "Machine Readability", "AI Optimization", "Executive Audit"].map((topic) => (
+                      <span key={topic} className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-white/70">
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-white/10 overflow-hidden bg-white/5">
+              <div className="p-8 md:p-12">
+                <div className="mb-6">
+                  <img
+                    src="/team/sadiq-khan-avatar.svg"
+                    alt="Sadiq Khan profile avatar"
+                    className="w-20 h-20 rounded-full border border-cyan-300/40 shadow-lg shadow-cyan-500/20 object-cover mb-4 bg-slate-900"
+                    loading="lazy"
+                  />
+                </div>
+
+                <h3 className="text-2xl font-bold mb-1 text-blue-800 dark:text-blue-200">Sadiq Khan</h3>
+                <p className="text-lg text-white/60 mb-2">Marketing Specialist</p>
+                <p className="text-sm text-white/45 mb-6">Timezone: India Standard Time (UTC+5:30)</p>
+
+                <p className="text-white/70 leading-relaxed mb-4">
+                  Sadiq leads marketing execution across campaign operations, funnel messaging, and partnership
+                  communications so product work and market visibility stay aligned.
+                </p>
+
+                <p className="text-white/70 leading-relaxed mb-4">
+                  Internal collaboration includes private lead-generation coordination with
+                  {" "}
+                  <a
+                    href="https://zeeniith.in"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline decoration-cyan-300/50 underline-offset-4 hover:text-white"
+                  >
+                    zeeniith.in
+                  </a>
+                  , used only for approved partner workflows.
+                </p>
+
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <p className="text-xs text-white/50 mb-3">Focus areas:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {["Go-To-Market", "Lead Quality", "Partnership Outreach", "Conversion Messaging"].map((topic) => (
                       <span key={topic} className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-white/70">
                         {topic}
                       </span>

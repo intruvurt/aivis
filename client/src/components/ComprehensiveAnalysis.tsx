@@ -1,13 +1,14 @@
 // client/src/components/ComprehensiveAnalysis.tsx
 import React from "react";
-import { AlertCircle, CheckCircle2, TrendingUp, Zap, Target, Eye, FileText, ArrowRight, Download } from "lucide-react";
+import { AlertCircle, CheckCircle2, TrendingUp, Zap, Target, Eye, ArrowRight, Download } from "lucide-react";
 import DocumentGenerator from "./DocumentGenerator";
 import CryptoIntelligencePanel from "./CryptoIntelligencePanel";
 import ThreatIntelBanner from "./ThreatIntelBanner";
-import EvidenceLedger from "./EvidenceLedger";
 import WritingAuditPanel from "./WritingAuditPanel";
 import SSFRPanel from "./SSFRPanel";
-import { getAnalysisExecutionClass, meetsMinimumTier, type AnalysisExecutionClass, type AnalysisResponse, type CanonicalTier, type LegacyTier } from "@shared/types";
+import { getAnalysisExecutionClass, type AnalysisExecutionClass, type AnalysisResponse, type CanonicalTier, type LegacyTier } from "@shared/types";
+import { canAccess } from "@shared/entitlements";
+import { toAuditReport } from "@shared/domain";
 import { Link } from "react-router-dom";
 import CollapsibleSection from "./CollapsibleSection";
 
@@ -195,8 +196,12 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
       ? tier
       : "observer";
 
-  const hasAlignment = meetsMinimumTier(normalizedTier, "alignment");
-  const hasSignal = meetsMinimumTier(normalizedTier, "signal");
+  const fullEvidenceAccess = canAccess("fullEvidence", normalizedTier);
+  const competitorTrackingAccess = canAccess("competitorTracking", normalizedTier);
+  const citationTrackingAccess = canAccess("citationTracking", normalizedTier);
+  const hasAlignment = fullEvidenceAccess === true;
+  const hasSignal = citationTrackingAccess === true;
+  const auditReport = toAuditReport(result);
 
   const contentWordCount = result.content_analysis?.word_count || 0;
   const schemaCount = result.schema_markup?.json_ld_count || 0;
@@ -245,6 +250,29 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
   return (
     <div className="space-y-8">
+      {/* SECTION 1 — VERDICT */}
+      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
+        <p className="text-[11px] uppercase tracking-[0.14em] text-cyan-300 mb-2">Verdict</p>
+        <h2 className="text-xl font-bold text-white mb-1">
+          AI can read your site. It doesn’t trust it enough to cite it.
+        </h2>
+        <p className="text-sm text-white/65">
+          AI visibility score: <span className="text-white font-semibold">{result.visibility_score} / 100</span> · Confidence:{" "}
+          <span className="text-white font-semibold">{scoreInfo.level}</span> · Citation readiness:{" "}
+          <span className="text-white font-semibold">{result.visibility_score >= 70 ? "Moderate" : "Weak"}</span>
+        </p>
+        {keypoints.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">Top blockers</p>
+            <ul className="list-disc pl-5 text-sm text-white/75 space-y-1">
+              {keypoints.slice(0, 3).map((kp) => (
+                <li key={`blocker-${kp.title}`}>{kp.title.toLowerCase()}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
       {/* Overall Score Summary */}
       <div className={`rounded-xl border-2 p-6 ${scoreInfo.color}`}>
         <div className="flex items-center gap-4 mb-4">
@@ -268,19 +296,84 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         <ThreatIntelBanner data={(result as any).threat_intel} />
       )}
 
-      {/* Evidence Ledger — open by default so users see the proof behind every score */}
-      <CollapsibleSection
-        title="Evidence Ledger & Citation Details"
-        description="What the AI engine scraped and identified — the foundation for every score and recommendation"
-        icon={FileText}
-        defaultOpen={false}
-      >
-        <EvidenceLedger
-          evidenceManifest={(result as any).evidence_manifest}
-          contentHighlights={result.content_highlights}
-          recommendations={result.recommendations}
-        />
-      </CollapsibleSection>
+      {!hasAlignment && (
+        <div className="rounded-xl border border-violet-400/20 bg-violet-500/10 p-4">
+          <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">Competitor gap preview</p>
+          <p className="text-sm text-white/80">
+            Competitors with clearer schema + stronger answer structure are more likely to be cited first. Your highest visible gap is in
+            <span className="font-semibold text-white"> schema coverage and extractable answer blocks</span>.
+          </p>
+        </div>
+      )}
+
+      {/* SECTION 2 — PROOF */}
+      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h3 className="text-lg font-semibold text-white">What we actually observed</h3>
+          <span className="text-[11px] uppercase tracking-[0.12em] text-white/45">Proof layer</span>
+        </div>
+        {result.evidence_fix_plan?.issues?.length ? (
+          <div className="space-y-3">
+            {auditReport.blockers.slice(0, 4).map((issue) => (
+              <div key={`proof-${issue.id}`} className="rounded-lg border border-white/10 bg-charcoal-light p-3">
+                <p className="text-sm font-semibold text-white/90">{issue.title}</p>
+                <p className="text-xs text-amber-200/90 mt-1">AI could not confirm what your site represents.</p>
+                <p className="text-xs text-white/60 mt-1">Affected pages: {auditReport.domain}</p>
+                <p className="text-xs text-white/60 mt-1">Extracted value: {auditReport.evidence.find((ev) => ev.id === issue.evidenceIds[0])?.description || issue.title}</p>
+                <p className="text-xs text-white/60 mt-1">Expected value: {issue.fix}</p>
+                <p className="text-xs text-white/60 mt-1">Why this matters: AI avoids citing unclear sources.</p>
+                <p className="text-xs text-white/60 mt-1">Verified by: {auditReport.evidence.find((ev) => ev.id === issue.evidenceIds[0])?.verifiedBy || "system"}</p>
+                <p className="text-xs text-white/45 mt-1">Evidence ID: {issue.evidenceIds?.[0] || issue.id}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-white/65">
+            We did not receive structured proof records for this run. Re-run audit to capture evidence-linked deltas.
+          </p>
+        )}
+      </div>
+
+      {/* SECTION 3 — COMPETITOR GAP */}
+      {hasAlignment ? (
+        <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
+          <h3 className="text-lg font-semibold text-white mb-2">Why competitors get cited instead</h3>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
+              <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">Competitors</p>
+              <ul className="list-disc pl-4 text-sm text-white/70 space-y-1">
+                <li>appear in answer sources you do not</li>
+                <li>stronger entity clarity and extraction cues</li>
+                <li>clearer structured answers for retrieval</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
+              <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">You</p>
+              <ul className="list-disc pl-4 text-sm text-white/70 space-y-1">
+                <li>missing source presence on key intents</li>
+                <li>weaker extraction signals</li>
+                <li>inconsistent metadata trust surface</li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-4 rounded-lg border border-violet-400/25 bg-violet-500/10 p-3">
+            <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">🔒 Unlock full competitor intelligence</p>
+            <p className="text-sm text-white/70">
+              {competitorTrackingAccess === true
+                ? "Full competitor intelligence is active on your current plan."
+                : "Source-level competitor evidence, citation movement tracking, and full parity detail are available on higher tiers."}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-amber-400/25 bg-amber-500/10 p-5">
+          <p className="text-xs uppercase tracking-[0.12em] text-amber-300 mb-1">Locked section</p>
+          <h3 className="text-base font-semibold text-white mb-2">Full evidence + competitor source intelligence</h3>
+          <p className="text-sm text-white/65">
+            You’ve unlocked the verdict, top blockers, and competitor gap preview. Upgrade to access source-level proof, full evidence ledger, and competitor intelligence over time.
+          </p>
+        </div>
+      )}
 
       {isUploadResult && result.upload_analysis_mode === 'writing_audit' && result.writing_audit && (
         <WritingAuditPanel result={result} />
@@ -298,12 +391,13 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         </div>
       )}
 
-      {/* Prioritized Keypoints */}
+      {/* SECTION 4 — FIX FIRST */}
       <div className="card-charcoal/50 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <Target className="w-6 h-6 text-white/80" />
-          <h3 className="text-xl font-bold text-white">Priority Action Items</h3>
+          <h3 className="text-xl font-bold text-white">Fix this first</h3>
         </div>
+        <p className="text-xs text-white/55 mb-4">Top 3 actions ranked by impact.</p>
 
         {result.evidence_fix_plan && result.evidence_fix_plan.issues.length > 0 && (
           <div className="mb-4 rounded-xl border border-white/10 bg-charcoal p-4">
@@ -457,7 +551,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
         )}
         <div className="space-y-4">
-          {keypoints.map((kp, idx) => {
+          {keypoints.slice(0, 3).map((kp, idx) => {
             const config = priorityConfig[kp.priority];
             return (
               <div
@@ -494,12 +588,25 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
 
 
+      {/* SECTION 5 — FIX LOOP */}
+      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
+        <h3 className="text-lg font-semibold text-white mb-2">What happens after you fix</h3>
+        <ul className="list-disc pl-5 text-sm text-white/70 space-y-1">
+          <li>mark as fixed</li>
+          <li>re-run audit</li>
+          <li>see score change</li>
+          <li>see evidence change</li>
+        </ul>
+      </div>
+
+      {/* SECTION 6 — PAYWALL */}
       {upgradeSuggestions.length > 0 && (
         <div className="card-charcoal/50 rounded-xl p-6 border border-white/10">
           <div className="flex items-center gap-3 mb-4">
             <Target className="w-5 h-5 text-white/80" />
-            <h3 className="text-lg font-bold text-white">Recommended Upgrade Tools for These Findings</h3>
+            <h3 className="text-lg font-bold text-white">You’re missing where competitors are getting picked</h3>
           </div>
+          <p className="text-xs text-white/55 mb-4">Competitor appears in key answer sources while you do not. Unlock full source breakdown to see why they win.</p>
           <div className="space-y-3">
             {upgradeSuggestions.map((item) => (
               <div key={item.id} className="rounded-xl border border-white/10 bg-charcoal p-4 flex flex-col sm:flex-row sm:items-center gap-3">
@@ -511,7 +618,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                   to={item.to}
                   className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full border border-white/15 bg-charcoal-light text-white/80 text-xs font-semibold hover:text-white transition-colors"
                 >
-                  Unlock on {item.requirement === "signal" ? "Signal" : "Alignment"}
+                  See why they win
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

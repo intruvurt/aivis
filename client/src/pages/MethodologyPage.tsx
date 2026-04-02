@@ -274,6 +274,14 @@ export default function MethodologyPage() {
             dimension weights, validation pipeline, and the {BRAG_PROTOCOL_LABEL} that connects every
             finding to a specific crawl observation.
           </p>
+          <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.04] p-4">
+            <p className="text-xs uppercase tracking-[0.12em] text-white/55 mb-1">Commercial policy alignment</p>
+            <p className="text-sm text-white/75">
+              Observer is intentionally limited to verdict + top blockers + competitor gap preview. Full evidence and
+              competitor source intelligence are unlocked on paid tiers so the pricing page, FAQ, and methodology all
+              describe the same product contract.
+            </p>
+          </div>
         </header>
 
         <section className="mt-12">
@@ -334,7 +342,7 @@ export default function MethodologyPage() {
                   <tr key={dimension.name} className="border-b border-black/10 align-top">
                     <td className="px-3 py-4 font-semibold text-black">{dimension.name}</td>
                     <td className="px-3 py-4">
-                      <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-900">
+                      <span className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/85">
                         {dimension.weight}
                       </span>
                       <div className="mt-2 h-1.5 w-24 overflow-hidden rounded-full bg-black/10">
@@ -553,7 +561,7 @@ export default function MethodologyPage() {
           <h2 className="text-2xl font-bold tracking-tight text-black">Related documentation</h2>
           <p className="mt-4 leading-8 text-black/70">
             The <Link to="/guide" className="text-blue-700 underline hover:text-blue-900">AiVIS Guide</Link> covers how to interpret audit output and sequence implementation.
-            The <Link to="/faq" className="ml-1 text-blue-700 underline hover:text-blue-900">FAQ</Link> addresses common questions about score interpretation,
+            The <Link to="/faq" className="ml-1 text-white underline hover:text-white/80">FAQ</Link> addresses common questions about score interpretation,
             category grades, and optimization sequencing. The <Link to="/compliance" className="ml-1 text-blue-700 underline hover:text-blue-900">Compliance</Link> page documents data handling
             and crawl governance policies. Teams running the full optimization loop can track progress in <Link to="/reports" className="ml-1 text-blue-700 underline hover:text-blue-900">Report History</Link>.
           </p>

@@ -770,6 +770,16 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
+  if (session.customer) {
+    await getPool().query(
+      `UPDATE users
+       SET stripe_customer_id = COALESCE(stripe_customer_id, $2),
+           updated_at = NOW()
+       WHERE id = $1`,
+      [userId, String(session.customer)]
+    );
+  }
+
   // Update payment record if it exists; otherwise create it (webhook can arrive before our DB write)
   const existing = await Payment.findBySessionId(session.id);
   if (existing) {
@@ -865,6 +875,29 @@ async function handleSubscriptionCreated(subscription: any) {
   const userId = subscription.metadata?.userId;
   const tierKey =
     subscription.metadata?.tier_key || getTierFromPriceId(subscription.items.data[0]?.price?.id);
+  const priceId = String(subscription.items?.data?.[0]?.price?.id || '');
+  const stripeCustomerId = String(subscription.customer || '');
+
+  if (userId && stripeCustomerId) {
+    await getPool().query(
+      `UPDATE users
+       SET stripe_customer_id = COALESCE(stripe_customer_id, $2),
+           stripe_subscription_id = $3,
+           updated_at = NOW()
+       WHERE id = $1`,
+      [userId, stripeCustomerId, String(subscription.id)]
+    );
+  }
+
+  if (userId) {
+    await upsertSubscriptionRecord({
+      userId,
+      stripeSubscriptionId: String(subscription.id),
+      status: mapSubscriptionStatus(subscription.status),
+      priceId: priceId || null,
+      currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+    });
+  }
 
   if (userId && tierKey) {
     const billingPeriod = String(subscription.metadata?.billing_period || 'monthly');
@@ -902,6 +935,28 @@ async function handleSubscriptionUpdated(subscription: any) {
   // Get the new tier from the subscription's price
   const priceId = subscription.items.data[0]?.price?.id;
   const newTierKey = subscription.metadata?.tier_key || getTierFromPriceId(priceId);
+  const stripeCustomerId = String(subscription.customer || '');
+
+  if (userId && stripeCustomerId) {
+    await getPool().query(
+      `UPDATE users
+       SET stripe_customer_id = COALESCE(stripe_customer_id, $2),
+           stripe_subscription_id = $3,
+           updated_at = NOW()
+       WHERE id = $1`,
+      [userId, stripeCustomerId, String(subscription.id)]
+    );
+  }
+
+  if (userId) {
+    await upsertSubscriptionRecord({
+      userId,
+      stripeSubscriptionId: String(subscription.id),
+      status: mapSubscriptionStatus(subscription.status),
+      priceId: priceId || null,
+      currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+    });
+  }
 
   // Update payment record
   await Payment.findOneAndUpdate(
@@ -961,6 +1016,7 @@ async function handleSubscriptionDeleted(subscription: any) {
   console.log(`[Subscription Deleted] ID: ${subscription.id}`);
 
   const userId = subscription.metadata?.userId;
+  const priceId = String(subscription.items?.data?.[0]?.price?.id || '');
 
   // Update payment record
   await Payment.findOneAndUpdate(
@@ -973,6 +1029,13 @@ async function handleSubscriptionDeleted(subscription: any) {
 
   // Downgrade user to free tier
   if (userId) {
+    await upsertSubscriptionRecord({
+      userId,
+      stripeSubscriptionId: String(subscription.id),
+      status: 'canceled',
+      priceId: priceId || null,
+      currentPeriodEnd: null,
+    });
     await updateUserTier(userId, 'free', null, null);
     await getPool().query(
       `UPDATE users SET trial_ends_at = NULL, updated_at = NOW() WHERE id = $1`,
@@ -988,6 +1051,25 @@ async function handleSubscriptionDeleted(subscription: any) {
       metadata: { subscriptionId: subscription.id },
     }).catch(() => {});
   }
+}
+
+async function upsertSubscriptionRecord(args: {
+  userId: string;
+  stripeSubscriptionId: string;
+  status: string;
+  priceId: string | null;
+  currentPeriodEnd: string | null;
+}) {
+  await getPool().query(
+    `INSERT INTO subscriptions (user_id, stripe_subscription_id, status, price_id, current_period_end, updated_at)
+     VALUES ($1, $2, $3, $4, $5, NOW())
+     ON CONFLICT (stripe_subscription_id)
+     DO UPDATE SET status = EXCLUDED.status,
+                   price_id = EXCLUDED.price_id,
+                   current_period_end = EXCLUDED.current_period_end,
+                   updated_at = NOW()`,
+    [args.userId, args.stripeSubscriptionId, args.status, args.priceId, args.currentPeriodEnd]
+  );
 }
 
 /**

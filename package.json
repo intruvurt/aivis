@@ -13,7 +13,15 @@
      "start": "npm --prefix server run start",
      "lint": "npm --prefix client run lint && npm --prefix server run lint",
     "dev": "cd server && npm run dev",
-    "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck"
+    "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck",
+    "smoke:features": "node ./tools/verify-feature-status-smoke.mjs",
+    "smoke:analyze": "node ./tools/verify-analyze-integrity-smoke.mjs",
+    "smoke:analyze:tiers": "node ./tools/verify-analyze-integrity-by-tier.mjs",
+    "smoke:seed:tiers": "node ./tools/seed-tier-smoke-users.mjs",
+    "smoke:prod": "node ./tools/verify-prod-endpoints-smoke.mjs",
+    "smoke:prod:crawl": "node ./tools/verify-prod-crawl-surface.mjs",
+    "smoke:visibility:gate": "node ./tools/verify-visibility-gate.mjs",
+    "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs"
   },
   "dependencies": {
     "axios": "^1.13.5",
@@ -31,5 +39,8 @@
     "@types/node": "^25.2.3",
     "@types/pg": "^8.16.0",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "undici": "^7.23.1"
   }
 }

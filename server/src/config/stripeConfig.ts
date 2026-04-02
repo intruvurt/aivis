@@ -171,7 +171,11 @@ export function getTierConfig(tierKey: string): any {
  */
 export function getTierFromPriceId(priceId: string) {
   for (const [tierKey, config] of Object.entries(STRIPE_PRICING)) {
-    if ((config as any).priceId === priceId || (config as any).setupPriceId === priceId) {
+    if (
+      (config as any).priceId === priceId ||
+      (config as any).yearlyPriceId === priceId ||
+      (config as any).setupPriceId === priceId
+    ) {
       return tierKey;
     }
   }

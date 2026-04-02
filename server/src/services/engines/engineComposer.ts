@@ -12,7 +12,6 @@ import type {
   TrustLayerOutput,
   EntityGraphOutput,
 } from '../../../../shared/types.js';
-import { getEnginesForTier } from '../../../../shared/types.js';
 import { runCitationReadinessEngine } from './citationEngine.js';
 import { runTrustLayerEngine } from './trustEngine.js';
 import { runEntityGraphEngine } from './entityEngine.js';
@@ -44,6 +43,25 @@ interface RepairAction {
 interface RepairInsight {
   priorityActions: RepairAction[];
   projectedScoreAfterFixes: number;
+}
+
+function getEnginesForTierSafe(tier: CanonicalTier): {
+  hasScanning: boolean;
+  hasComparison: boolean;
+  hasRepair: boolean;
+} {
+  const rank: Record<CanonicalTier, number> = {
+    observer: 0,
+    alignment: 1,
+    signal: 2,
+    scorefix: 3,
+  };
+  const current = rank[tier] ?? 0;
+  return {
+    hasScanning: true,
+    hasComparison: current >= rank.alignment,
+    hasRepair: current >= rank.scorefix,
+  };
 }
 
 function clampScore(value: number): number {
@@ -258,7 +276,7 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
   const timerBreakdown: Record<string, number> = {};
 
   // Determine which engines this tier can run
-  const engineAccess = getEnginesForTier(input.tier);
+  const engineAccess = getEnginesForTierSafe(input.tier);
 
   let citationResult: CitationReadinessOutput | null = null;
   let trustResult: TrustLayerOutput | null = null;

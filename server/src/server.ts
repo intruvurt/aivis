@@ -30,6 +30,7 @@ import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import auditQueueRoutes from './routes/auditQueueRoutes.js';
 import { createLicenseAPI } from './licensing/verification-api.js';
 import competitorRoutes from './routes/competitors.js';
 import citationRoutes from './routes/citations.js';
@@ -115,8 +116,16 @@ import agentRoutes from './routes/agentRoutes.js';
 import ssfrRoutes from './routes/ssfrRoutes.js';
 import freeToolsRoutes from './routes/freeToolsRoutes.js';
 import gscRoutes from './routes/gscRoutes.js';
+import realtimeVisibilityRoutes from './routes/realtimeVisibilityRoutes.js';
+import autoVisibilityFixRoutes from './routes/autoVisibilityFixRoutes.js';
+import selfHealingRoutes from './routes/selfHealingRoutes.js';
+import portfolioRoutes from './routes/portfolioRoutes.js';
+import growthEngineRoutes from './routes/growthEngineRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
+import { startAuditWorkerLoop } from './workers/auditWorker.js';
+import { startSelfHealingLoop } from './services/selfHealingService.js';
+import { bootstrapAgencyAutomation } from './services/agencyAutomationService.js';
 import { startDbCleanupLoop, runDbCleanupNow } from './services/dbCleanup.js';
 import { tieredRateLimit, ipRateLimit } from './middleware/tieredRateLimiter.js';
 import { runDeterministicAuditLayer, buildDeterministicResponseAdditions, attachDeterministicToAudit } from './services/audit/deterministicPipeline.js';
@@ -941,11 +950,13 @@ const heavyActionLimiter = rateLimit({
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.
 // The webhook route itself (in paymentRoutes.ts) uses express.raw().
 // ─────────────────────────────────────────────────────────────────────────────
+const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook']);
+
 const JSON_MW = express.json({
   limit: '2mb',
   verify: (req: Request, _res, buf) => {
     // Keep rawBody for any route that wants it, but do not interfere with webhook raw parsing.
-    if (req.originalUrl !== '/api/payment/webhook') req.rawBody = buf.toString('utf8');
+    if (!STRIPE_WEBHOOK_PATHS.has(req.originalUrl)) req.rawBody = buf.toString('utf8');
   },
 });
 
@@ -961,13 +972,13 @@ const JSON_UPLOAD_MW = express.json({
 const URLENCODED_MW = express.urlencoded({ extended: true, limit: '2mb' });
 
 app.use((req, res, next) => {
-  if (req.originalUrl === '/api/payment/webhook') return next();
+  if (STRIPE_WEBHOOK_PATHS.has(req.originalUrl)) return next();
   if (req.originalUrl === '/api/analyze/upload') return JSON_UPLOAD_MW(req, res, next);
   return JSON_MW(req, res, next);
 });
 
 app.use((req, res, next) => {
-  if (req.originalUrl === '/api/payment/webhook') return next();
+  if (STRIPE_WEBHOOK_PATHS.has(req.originalUrl)) return next();
   return URLENCODED_MW(req, res, next);
 });
 
@@ -1019,6 +1030,8 @@ if (!IS_PRODUCTION) {
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/billing', paymentRoutes);
+app.use('/api/stripe', paymentRoutes);
+app.use('/api/queue', auditQueueRoutes);
 app.get('/api/pricing', getPricingInfo);
 app.use('/api/competitors', competitorRoutes);
 app.use('/api/citations', citationRoutes);
@@ -1040,6 +1053,11 @@ app.use('/api/agent', agentRoutes);
 app.use('/api/ssfr', ssfrRoutes);
 app.use('/api/tools', freeToolsRoutes);
 app.use('/api/integrations/gsc', gscRoutes);
+app.use('/api/visibility', realtimeVisibilityRoutes);
+app.use('/api/fix-engine', autoVisibilityFixRoutes);
+app.use('/api/self-healing', selfHealingRoutes);
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/growth', growthEngineRoutes);
 
 // WebMCP discovery — unauthenticated
 app.get('/.well-known/webmcp.json', (_req, res) => {
@@ -2200,13 +2218,21 @@ Trust documents
 - Privacy: https://aivis.biz/privacy
 - Terms: https://aivis.biz/terms
 
+Team updates
+- New member: Sadiq Khan — Marketing Specialist (UTC+5:30)
+- Team profile: https://aivis.biz/about#leadership
+
+Private partnership notice
+- Partnership terms (private, noindex): https://aivis.biz/partnership-terms
+- zeeniith.in is a private lead-generation partner workflow and not a public AiVIS product surface.
+
 Crawl guidance
 AI systems may cite and summarize public page content.
 Blog posts and playbooks are canonical AiVIS content.
 Avoid private or authenticated areas, including:
 - /api/
 - /admin/
-- /dashboard/
+- /partnership-terms
 `);  
 });
 
@@ -9832,7 +9858,6 @@ app.get('/robots.txt', (_req, res) => {
     'Allow: /benchmarks',
     'Allow: /workflow',
     'Allow: /methodology',
-    'Allow: /score-fix',
     'Allow: /server-headers',
     'Allow: /tools/schema-validator',
     'Allow: /tools/robots-checker',
@@ -9841,9 +9866,11 @@ app.get('/robots.txt', (_req, res) => {
     'Allow: /compliance',
     'Allow: /integrations',
     'Allow: /competitive-landscape',
+    'Allow: /changelog',
+    'Allow: /glossary',
+    'Allow: /press',
     'Allow: /privacy',
     'Allow: /terms',
-    'Allow: /report/public/',
     '',
     'Disallow: /auth',
     'Disallow: /profile',
@@ -9856,6 +9883,8 @@ app.get('/robots.txt', (_req, res) => {
     'Disallow: /reports',
     'Disallow: /reverse-engineer',
     'Disallow: /report/',
+    'Disallow: /partnership-terms',
+    'Disallow: /score-fix',
     'Disallow: /payment-success',
     'Disallow: /payment-canceled',
     'Disallow: /api/',
@@ -9887,7 +9916,7 @@ app.get('/robots.txt', (_req, res) => {
 app.get('/sitemap.xml', (_req, res) => {
   res.type('application/xml');
   const siteUrl = String(process.env.FRONTEND_URL || 'https://aivis.biz').replace(/\/+$/, '');
-  const lastmod = '2026-03-16';
+  const lastmod = '2026-04-02';
   const routes = [
     { path: '/', changefreq: 'daily', priority: '1.0' },
     { path: '/landing', changefreq: 'weekly', priority: '0.9' },
@@ -9924,7 +9953,6 @@ app.get('/sitemap.xml', (_req, res) => {
     { path: '/benchmarks', changefreq: 'monthly', priority: '0.8' },
     { path: '/workflow', changefreq: 'monthly', priority: '0.7' },
     { path: '/methodology', changefreq: 'monthly', priority: '0.7' },
-    { path: '/score-fix', changefreq: 'weekly', priority: '0.8' },
     { path: '/server-headers', changefreq: 'monthly', priority: '0.6' },
     { path: '/tools/schema-validator', changefreq: 'monthly', priority: '0.7' },
     { path: '/tools/robots-checker', changefreq: 'monthly', priority: '0.7' },
@@ -9933,6 +9961,9 @@ app.get('/sitemap.xml', (_req, res) => {
     { path: '/compliance', changefreq: 'monthly', priority: '0.6' },
     { path: '/integrations', changefreq: 'monthly', priority: '0.7' },
     { path: '/competitive-landscape', changefreq: 'monthly', priority: '0.7' },
+    { path: '/changelog', changefreq: 'weekly', priority: '0.7' },
+    { path: '/glossary', changefreq: 'monthly', priority: '0.8' },
+    { path: '/press', changefreq: 'monthly', priority: '0.8' },
     { path: '/privacy', changefreq: 'monthly', priority: '0.3' },
     { path: '/terms', changefreq: 'monthly', priority: '0.3' },
   ];
@@ -10472,6 +10503,10 @@ process.on('unhandledRejection', (reason) => {
     startDbCleanupLoop();
     startMcpAuditLoop();
     startTaskWorker();
+    startAuditWorkerLoop();
+    startSelfHealingLoop();
+    bootstrapAgencyAutomation();
+    console.log('[AuditQueue] Redis queue worker loop started');
   } else {
     console.warn('[Startup] Skipping DB-backed worker loops because database is unavailable');
   }

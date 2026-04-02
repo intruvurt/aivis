@@ -203,6 +203,106 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'completed'`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ`,
             `CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`,
+            // ── Incremental audit page hashes ──
+            `CREATE TABLE IF NOT EXISTS audit_page_hashes (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              domain TEXT NOT NULL,
+              path TEXT NOT NULL,
+              content_hash VARCHAR(64) NOT NULL,
+              change_count INTEGER NOT NULL DEFAULT 0,
+              last_checked_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              last_changed_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (domain, path)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_page_hashes_domain ON audit_page_hashes(domain)`,
+            // ── Self-healing loop state ──
+            `CREATE TABLE IF NOT EXISTS self_healing_preferences (
+              user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+              mode VARCHAR(20) NOT NULL DEFAULT 'manual',
+              enabled BOOLEAN NOT NULL DEFAULT TRUE,
+              drop_threshold NUMERIC(6,2) NOT NULL DEFAULT 10,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS self_healing_events (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              domain TEXT NOT NULL,
+              before_score NUMERIC(6,2) NOT NULL,
+              after_score NUMERIC(6,2) NOT NULL,
+              score_drop NUMERIC(6,2) NOT NULL,
+              mention_drop NUMERIC(6,4) NOT NULL DEFAULT 0,
+              mode VARCHAR(20) NOT NULL,
+              status VARCHAR(30) NOT NULL,
+              confidence NUMERIC(5,4) NOT NULL DEFAULT 0,
+              reason TEXT,
+              fix_plan JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_self_healing_events_user_time ON self_healing_events(user_id, created_at DESC)`,
+            // ── Agency portfolio control system ──
+            `CREATE TABLE IF NOT EXISTS portfolio_projects (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              organization_name TEXT NOT NULL,
+              domain TEXT NOT NULL,
+              plan VARCHAR(20) NOT NULL DEFAULT 'observer',
+              status VARCHAR(20) NOT NULL DEFAULT 'active',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(owner_user_id, domain)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_portfolio_projects_owner ON portfolio_projects(owner_user_id, created_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS portfolio_agents (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID NOT NULL REFERENCES portfolio_projects(id) ON DELETE CASCADE,
+              agent_type VARCHAR(40) NOT NULL,
+              status VARCHAR(20) NOT NULL DEFAULT 'active',
+              config JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(project_id, agent_type)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_portfolio_agents_project ON portfolio_agents(project_id)`,
+            `CREATE TABLE IF NOT EXISTS portfolio_tasks (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID NOT NULL REFERENCES portfolio_projects(id) ON DELETE CASCADE,
+              owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              issue TEXT NOT NULL,
+              impact TEXT,
+              priority VARCHAR(10) NOT NULL DEFAULT 'medium',
+              auto_fixable BOOLEAN NOT NULL DEFAULT FALSE,
+              status VARCHAR(20) NOT NULL DEFAULT 'open',
+              payload JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_portfolio_tasks_owner ON portfolio_tasks(owner_user_id, created_at DESC)`,
+            // ── Product-led growth engine ──
+            `CREATE TABLE IF NOT EXISTS growth_leads (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              domain TEXT NOT NULL,
+              source VARCHAR(40) NOT NULL DEFAULT 'manual',
+              status VARCHAR(20) NOT NULL DEFAULT 'queued',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(owner_user_id, domain)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_growth_leads_owner ON growth_leads(owner_user_id, created_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS growth_referrals (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              referral_code VARCHAR(100) NOT NULL,
+              converted_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              bonus_credits NUMERIC(12,2) NOT NULL DEFAULT 5,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(owner_user_id, referral_code, converted_user_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_growth_referrals_owner ON growth_referrals(owner_user_id, created_at DESC)`,
             // ── Agent task queue ──
             `CREATE TABLE IF NOT EXISTS agent_tasks (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -925,6 +1025,31 @@ export async function runMigrations(): Promise<void> {
         status VARCHAR(50),
         current_period_start TIMESTAMPTZ,
         current_period_end TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        stripe_subscription_id VARCHAR(255) UNIQUE NOT NULL,
+        status VARCHAR(40) NOT NULL,
+        price_id VARCHAR(255),
+        current_period_end TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status)`);
+    _q(`
+      CREATE TABLE IF NOT EXISTS usage (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        audits_used INT NOT NULL DEFAULT 0,
+        period_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        period_end TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '1 month'),
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )

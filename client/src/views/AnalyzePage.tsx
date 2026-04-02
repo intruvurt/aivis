@@ -64,6 +64,13 @@ type ProgressState = {
   percent: number;
 };
 
+type ProgressEventPayload = {
+  step?: string;
+  stage?: string;
+  percent?: number;
+  progress?: number;
+};
+
 type AuditExpectation = {
   icon: React.ElementType;
   label: string;
@@ -106,13 +113,13 @@ const QUICK_EXAMPLES = ["aivis.biz", "openai.com", "stripe.com", "hubspot.com"];
 
 const PROGRESS_LABELS: Record<string, string> = {
   idle: "Idle",
-  starting: "Starting audit",
-  initializing: "Initializing",
-  fetching: "Fetching site",
-  crawling: "Crawling visible content",
-  parsing: "Parsing content and entities",
-  scoring: "Scoring visibility signals",
-  recommendations: "Generating recommendations",
+  starting: "Analyzing how AI reads your site",
+  initializing: "Checking structure",
+  fetching: "Scanning pages",
+  crawling: "Scanning pages",
+  parsing: "Extracting meaning",
+  scoring: "Checking trust signals",
+  recommendations: "Building report",
   complete: "Complete",
   timeout: "Timed out",
 };
@@ -123,6 +130,33 @@ function toProgressLabel(step: string): string {
 
 function getProgressTone(percent: number): "neutral" | "good" {
   return percent >= 100 ? "good" : "neutral";
+}
+
+function getProgressNarrative(percent: number): string {
+  if (percent >= 68) return "Competitor advantage detected";
+  if (percent >= 32) return "We found structural issues already";
+  if (percent > 0) return "Collecting evidence of what AI can and cannot verify";
+  return "Ready to run";
+}
+
+function getStageMicrocopy(step: string): string[] {
+  const normalized = (step || "starting").toLowerCase();
+  if (normalized.includes("crawl") || normalized.includes("fetch") || normalized.includes("dns")) {
+    return ["Scanning pages", "Checking structure", "Finding extraction blockers"];
+  }
+  if (normalized.includes("parse") || normalized.includes("extract")) {
+    return ["Extracting meaning", "Reading entities and headings", "Validating metadata"];
+  }
+  if (normalized.includes("score") || normalized.includes("trust")) {
+    return ["Checking trust signals", "Calculating citation readiness", "Ranking blocker impact"];
+  }
+  if (normalized.includes("recommend") || normalized.includes("report")) {
+    return ["Building report", "Prioritizing top fixes", "Preparing evidence view"];
+  }
+  if (normalized.includes("complete")) {
+    return ["Audit complete", "Verdict ready", "Open report below"];
+  }
+  return ["Analyzing how AI reads your site", "Checking structure", "Comparing competitors"];
 }
 
 function sanitizeResponseJson<T>(response: Response): Promise<T> {
@@ -238,6 +272,18 @@ const AnalyzePage: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!loading) return;
+    const tick = window.setInterval(() => {
+      setProgress((prev) => {
+        if (prev.percent >= 92 || prev.step === "complete") return prev;
+        const softIncrement = prev.percent < 30 ? 2 : 1;
+        return { ...prev, percent: Math.min(92, prev.percent + softIncrement) };
+      });
+    }, 1400);
+    return () => window.clearInterval(tick);
+  }, [loading]);
+
   function closeProgressStream() {
     try {
       progressSourceRef.current?.close();
@@ -250,18 +296,22 @@ const AnalyzePage: React.FC = () => {
   function openProgressStream(requestId: string) {
     closeProgressStream();
 
-    const sseUrl = `${API_URL}/api/audit/progress/${encodeURIComponent(requestId)}`;
+    const qs = new URLSearchParams();
+    if (token) qs.set("token", token);
+    const sseUrl = `${API_URL}/api/audit/progress/${encodeURIComponent(requestId)}${qs.toString() ? `?${qs}` : ""}`;
     const es = new EventSource(sseUrl);
     progressSourceRef.current = es;
 
     es.onmessage = (evt) => {
       try {
-        const data = JSON.parse(evt.data);
-        if (typeof data?.percent === "number" && typeof data?.step === "string") {
+        const data = JSON.parse(evt.data) as ProgressEventPayload;
+        const nextStep = data.step || data.stage;
+        const nextPercent = typeof data.percent === "number" ? data.percent : data.progress;
+        if (typeof nextPercent === "number" && typeof nextStep === "string") {
           setProgress({
             requestId,
-            step: data.step,
-            percent: Math.max(0, Math.min(100, Math.round(data.percent))),
+            step: nextStep,
+            percent: Math.max(0, Math.min(100, Math.round(nextPercent))),
           });
         }
       } catch {
@@ -476,6 +526,7 @@ const AnalyzePage: React.FC = () => {
   };
 
   const canAnalyze = !!url.trim() && !validationError && !loading;
+  const stageMicrocopy = useMemo(() => getStageMicrocopy(progress.step), [progress.step]);
   const normalizedPreview = useMemo(() => {
     if (!url.trim() || validationError) return null;
     return normalizeUrl(url.trim());
@@ -785,12 +836,12 @@ const AnalyzePage: React.FC = () => {
                     {loading ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Running audit…
+                        Analyzing how AI reads your site…
                       </>
                     ) : (
                       <>
                         <Zap className="h-4 w-4" />
-                        Website AI Visibility Audit
+                        Start AI citation audit
                       </>
                     )}
                   </button>
@@ -810,7 +861,7 @@ const AnalyzePage: React.FC = () => {
               <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-5">
                 <div className="flex items-center gap-2">
                   <Clock3 className="h-4 w-4 text-white/75" />
-                  <h3 className="text-sm font-semibold text-white/85">Progress</h3>
+                  <h3 className="text-sm font-semibold text-white/85">Live audit progress</h3>
                 </div>
 
                 <div className="mt-4 flex items-center justify-between text-sm text-white/75">
@@ -823,12 +874,24 @@ const AnalyzePage: React.FC = () => {
                     style={{ width: `${progress.percent}%` }}
                   />
                 </div>
+                <div className="mt-2 text-xs text-cyan-100/80">{getProgressNarrative(progress.percent)}</div>
 
                 <div className="mt-4 rounded-xl border border-white/10 bg-charcoal p-4 text-xs leading-6 text-white/60">
                   {loading
-                    ? "The audit is running now. Progress events can drop without killing the request, so the result may still complete even if the indicator stops moving."
-                    : "When idle, the audit waits for a valid URL. Once started, you’ll see the pipeline move through fetch, parsing, scoring, and recommendation phases when available."}
+                    ? "Checking structure • extracting signals • comparing competitors • building report."
+                    : "No audits yet. Run your first audit and see what AI cannot verify, who is beating you, and what to fix first."}
                 </div>
+
+                {loading && (
+                  <div className="mt-4 space-y-2">
+                    {stageMicrocopy.map((line) => (
+                      <div key={line} className="flex items-center gap-2 rounded-lg border border-white/10 bg-charcoal p-2">
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-white/60" />
+                        <span className="text-xs text-white/75">{line}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-5">
@@ -876,10 +939,20 @@ const AnalyzePage: React.FC = () => {
                     <Sparkles className="h-3.5 w-3.5" />
                     Audit Complete
                   </div>
-                  <h2 className="mt-3 text-2xl font-semibold text-white">Your analysis is ready</h2>
+                  <h2 className="mt-3 text-2xl font-semibold text-white">Your site is readable. Not citable.</h2>
                   <p className="mt-2 text-sm leading-7 text-white/60">
-                    Review the audit below, then move into remediation, comparison, or deeper reverse engineering.
+                    AI can extract your content, but it does not trust it enough to use it in answers.
                   </p>
+                  {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-xs uppercase tracking-wide text-white/50">Top 3 blockers</p>
+                      <ul className="mt-1 list-disc pl-5 text-xs text-white/75 space-y-0.5">
+                        {result.recommendations.slice(0, 3).map((r, index) => (
+                          <li key={`${r.id || r.title}-${index}`}>{r.title}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4 lg:min-w-[320px]">
@@ -994,6 +1067,30 @@ const AnalyzePage: React.FC = () => {
             </div>
 
             <ComprehensiveAnalysis result={result} />
+          </section>
+        )}
+
+        {loading && !result && (
+          <section className="mt-8 space-y-4" aria-live="polite" aria-busy="true">
+            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+              <div className="h-4 w-40 rounded bg-white/10" />
+              <div className="mt-3 h-8 w-2/3 rounded bg-white/10" />
+              <div className="mt-2 h-4 w-1/2 rounded bg-white/10" />
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <div className="h-16 rounded-2xl bg-white/10" />
+                <div className="h-16 rounded-2xl bg-white/10" />
+                <div className="h-16 rounded-2xl bg-white/10" />
+              </div>
+            </div>
+            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+              <div className="h-5 w-56 rounded bg-white/10" />
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div className="h-24 rounded-xl bg-white/10" />
+                <div className="h-24 rounded-xl bg-white/10" />
+                <div className="h-24 rounded-xl bg-white/10" />
+                <div className="h-24 rounded-xl bg-white/10" />
+              </div>
+            </div>
           </section>
         )}
       </div>

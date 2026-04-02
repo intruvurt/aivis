@@ -166,8 +166,8 @@ export interface TierLimits {
 
 export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
   observer: {
-    scansPerMonth: 5,
-    pagesPerScan: 1,
+    scansPerMonth: 3,
+    pagesPerScan: 3,
     competitors: 0,
     cacheDays: 7,
     hasExports: false,

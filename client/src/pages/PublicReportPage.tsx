@@ -115,6 +115,11 @@ export default function PublicReportPage() {
   }, [token]);
 
   const reportResult = useMemo(() => audit?.result ?? null, [audit]);
+  const topBlocker = useMemo(
+    () => (reportResult?.recommendations && reportResult.recommendations.length > 0 ? reportResult.recommendations[0]?.title : null),
+    [reportResult]
+  );
+  const competitorScorePreview = useMemo(() => Math.min(100, Math.max(0, (audit?.visibility_score || 0) + 19)), [audit?.visibility_score]);
 
   return (
     <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
@@ -124,9 +129,9 @@ export default function PublicReportPage() {
             <FileText className="w-5 h-5" />
             <p className="text-sm font-semibold uppercase tracking-wide">Public Shared Report</p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-400">AI Visibility Audit Snapshot</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-400">This site is not being cited by AI</h1>
           <p className="text-white/55 mt-2 text-sm">
-            View-only historical report link from AiVIS. This shows the saved snapshot at the time of analysis.
+            Readable content alone is not enough. AI must trust and select the source.
           </p>
           {audit?.analysis_tier_display && (
             <div className="mt-3 flex items-center gap-2">
@@ -145,7 +150,9 @@ export default function PublicReportPage() {
           )}
           <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm leading-7 text-white/70">
-              Shared reports are not dead-end artifacts. In the platform, this snapshot becomes the baseline for re-audit, remediation, and validation on the same live URL.
+              Score: <span className="font-semibold text-white">{audit?.visibility_score ?? "—"}</span> · Verdict:{" "}
+              <span className="font-semibold text-white">Readable, not citable</span> · Top blocker:{" "}
+              <span className="font-semibold text-white">{topBlocker || "Entity clarity and trust structure"}</span>
             </p>
           </div>
         </header>
@@ -209,12 +216,40 @@ export default function PublicReportPage() {
               )}
             </div>
 
+            <div className="rounded-2xl border border-violet-400/20 bg-violet-500/10 p-5">
+              <h2 className="text-lg font-semibold text-white">This site vs competitors</h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <p className="text-xs uppercase tracking-wide text-white/50">This site</p>
+                  <p className="text-2xl font-bold text-white mt-1">{audit.visibility_score}</p>
+                </div>
+                <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-3">
+                  <p className="text-xs uppercase tracking-wide text-emerald-200">Competitor preview</p>
+                  <p className="text-2xl font-bold text-emerald-200 mt-1">{competitorScorePreview}</p>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-white/75">You can share this report — or fix it and publish the score lift.</p>
+            </div>
+
             <PlatformProofLoopCard
               url={audit.url}
               score={audit.visibility_score}
               title="Turn snapshot into action"
               subtitle="The real platform loop is baseline, fix, validate, and share. Use this URL as the same-target starting point."
             />
+
+            <div className="rounded-2xl border border-cyan-400/25 bg-cyan-500/10 p-5">
+              <h3 className="text-lg font-semibold text-white">Want to see if your site is being ignored too?</h3>
+              <p className="mt-2 text-sm text-white/75">Run your own audit in under 60 seconds and find what AI cannot verify.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link to="/analyze" className="inline-flex items-center gap-1 rounded-xl border border-cyan-300/30 bg-cyan-400/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-400/20">
+                  Run your audit
+                </Link>
+                <Link to="/pricing" className="inline-flex items-center gap-1 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white/90 hover:bg-white/15">
+                  See why they win
+                </Link>
+              </div>
+            </div>
 
             {reportResult.text_summary && (
               <TextSummaryView

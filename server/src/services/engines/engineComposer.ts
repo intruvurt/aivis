@@ -89,24 +89,6 @@ function scoreBenchmarkForTier(tier: CanonicalTier): number {
       return 62;
     case 'alignment':
       return 74;
-  const out: string[] = [];
-  for (const value of values) {
-    const normalized = value.trim();
-    if (!normalized) continue;
-    const key = normalized.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(normalized);
-  }
-  return out;
-}
-
-function scoreBenchmarkForTier(tier: CanonicalTier): number {
-  switch (tier) {
-    case 'observer':
-      return 62;
-    case 'alignment':
-      return 74;
     case 'signal':
       return 82;
     case 'scorefix':

@@ -1003,19 +1003,6 @@ app.use(
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Request-Id', 'X-Workspace-Id', 'Cache-Control', 'Pragma'],
-    exposedHeaders: ['X-Total-Count', 'X-Page-Count', 'X-Audit-Request-Id', 'X-Workspace-Id'],
-    maxAge: 86400,
-  })
-);
-
-// OPTIONS handler
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') return res.sendStatus(204);
-  next();
 });
 
 // Security headers — handled by applySecurityMiddleware() (Helmet + nonce CSP)
@@ -1087,14 +1074,6 @@ app.get('/.well-known/webmcp.json', (_req, res) => {
 
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/trial', trialRoutes);
-app.use('/api/indexing', indexingRoutes);
-app.use('/licenses', licenseLimiter, createLicenseAPI());
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Refresh endpoint
-// ─────────────────────────────────────────────────────────────────────────────
-app.post('/api/user/refresh', async (req: Request, res: Response) => {
-  try {
 app.use('/api/indexing', indexingRoutes);
 app.use('/licenses', licenseLimiter, createLicenseAPI());
 
@@ -10441,43 +10420,26 @@ process.on('unhandledRejection', (reason) => {
       await dispatchWebhooks(userId, workspaceId, 'rescan.failed', {
         job_id: jobId,
         url,
-        source: 'deploy_verification',
+        source: 'auto_score_fix',
         reason,
       }).catch(() => {});
 
       await createUserNotification({
         userId,
-        eventType: 'deploy_verification_failed',
-        title: 'Deploy verification failed',
-        message: `Deploy verification failed for ${url}.`,
+        eventType: 'auto_score_fix_rescan_failed',
+        title: 'Post-fix verification failed',
+        message: `Post-fix verification failed for ${url}.`,
         metadata: {
           workspaceId,
           jobId,
           url,
           reason,
-          source: 'deploy_verification',
+          source: 'auto_score_fix',
         },
       }).catch(() => {});
     },
     });
-    startTrialExpiryLoop();
-    startScheduledPlatformNotificationLoop();
-    startDbCleanupLoop();
-    startMcpAuditLoop();
-    startTaskWorker();
-    startAuditWorkerLoop();
-    startSelfHealingLoop();
-    bootstrapAgencyAutomation();
-    console.log('[AuditQueue] Redis queue worker loop started');
-  } else {
-    console.warn('[Startup] Skipping DB-backed worker loops because database is unavailable');
-  }
-})();
 
-export default app;
-      }).catch(() => {});
-    },
-    });
     startDeployVerificationLoop(analyzeInternally, {
     onCompleted: async ({ userId, workspaceId, jobId, url, auditId, scoreBefore, scoreAfter, scoreDelta }) => {
       await dispatchWebhooks(userId, workspaceId, 'rescan.completed', {
@@ -10538,6 +10500,7 @@ export default app;
     startAuditWorkerLoop();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();
+    console.log('[AuditQueue] Redis queue worker loop started');
   } else {
     console.warn('[Startup] Skipping DB-backed worker loops because database is unavailable');
   }

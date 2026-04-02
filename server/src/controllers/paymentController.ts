@@ -970,7 +970,16 @@ async function handleSubscriptionUpdated(subscription: any) {
 
   // Handle status-based tier changes
   if (subscription.status === 'active' && userId && newTierKey) {
-    );
+    await updateUserTier(userId, newTierKey, String(subscription.id), stripeCustomerId);
+
+    createUserNotification({
+      userId,
+      eventType: 'plan_upgraded',
+      title: `Plan Updated`,
+      message: `Your subscription is now active on the ${newTierKey} plan.`,
+      metadata: { tier: newTierKey },
+    }).catch(() => {});
+  } else if (['past_due', 'canceled', 'unpaid', 'incomplete_expired'].includes(subscription.status) && userId) {
     await updateUserTier(userId, 'free', null, null);
     // Also clear trial state
     await getPool().query(
@@ -982,7 +991,7 @@ async function handleSubscriptionUpdated(subscription: any) {
       userId,
       eventType: 'plan_downgraded',
       title: 'Plan Downgraded',
-      message: `Your subscription status changed to ${subscription.status}. You\'ve been moved to the Observer plan.`,
+      message: `Your subscription status changed to ${subscription.status}. You've been moved to the Observer plan.`,
       metadata: { reason: subscription.status },
     }).catch(() => {});
   }
@@ -1076,8 +1085,15 @@ async function handleInvoicePaid(invoice: any) {
 async function handleInvoicePaymentFailed(invoice: any) {
   console.log(`[Invoice Payment Failed] ID: ${invoice.id}, Subscription: ${invoice.subscription}`);
 
-      metadata: { reason: subscription.status },
-    }).catch(() => {});
+  const subscriptionId = invoice.subscription;
+  if (subscriptionId) {
+    await Payment.findOneAndUpdate(
+      { stripeSubscriptionId: subscriptionId },
+      {
+        subscriptionStatus: 'past_due',
+        lastInvoiceId: invoice.id,
+      }
+    );
   }
 }
 

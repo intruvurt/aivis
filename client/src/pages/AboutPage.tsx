@@ -32,7 +32,7 @@ const ABOUT_STRUCTURED_DATA = [
     ],
     sameAs: [
       'https://linkedin.com/in/web4aidev',
-      'https://www.reddit.com/user/renomase/',
+      'https://www.reddit.com/user/intruvurt/',
       'https://www.reddit.com/r/AiVIS/',
     ],
   }),
@@ -170,12 +170,12 @@ export default function AboutPage() {
                     LinkedIn
                   </a>
                   <a
-                    href="https://www.reddit.com/user/renomase/"
+                    href="https://www.reddit.com/user/intruvurt/"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-white/70 transition hover:border-white/20 hover:text-white"
                   >
-                    Reddit u/renomase <span className="text-white/40">(Founder)</span>
+                    Reddit u/intruvurt <span className="text-white/40">(Founder)</span>
                   </a>
                   <a
                     href="https://www.reddit.com/r/AiVIS/"

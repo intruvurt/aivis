@@ -53,7 +53,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     sameAs: [
       'https://twitter.com/dobleduche',
       'https://bsky.app/profile/intruvurt.bsky.social',
-      'https://reddit.com/user/renomase',
+      'https://reddit.com/user/intruvurt',
       'https://www.reddit.com/r/AiVIS/',
       'https://linkedin.com/in/web4aidev',
       'https://dobleduche.substack.com/',

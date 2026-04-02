@@ -11,6 +11,7 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
 import express from 'express';
+import { createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import { authRequired } from '../middleware/authRequired.js';
 import {
   isGitHubAppConfigured,
@@ -24,6 +25,50 @@ import {
   listInstallationRepos,
   listInstallationBranches,
 } from '../services/githubAppService.js';
+
+// ─── Signed state for install callback (mirrors authRoutes OAuth pattern) ────
+
+interface GitHubAppState {
+  userId: string;
+  nonce: string;
+  ts: number;
+}
+
+function getStateSecret(): string {
+  const secret = String(process.env.JWT_SECRET || process.env.SESSION_SECRET || '').trim();
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('GitHub App state secret missing: set JWT_SECRET or SESSION_SECRET');
+    }
+    return 'aivis-github-app-state-dev-only';
+  }
+  return secret;
+}
+
+function encodeAppState(payload: GitHubAppState): string {
+  const json = JSON.stringify(payload);
+  const base = Buffer.from(json, 'utf8').toString('base64url');
+  const sig = createHmac('sha256', getStateSecret()).update(base).digest('base64url');
+  return `${base}.${sig}`;
+}
+
+function decodeAppState(raw: string): GitHubAppState | null {
+  const [base, sig] = String(raw || '').split('.');
+  if (!base || !sig) return null;
+  const expected = createHmac('sha256', getStateSecret()).update(base).digest('base64url');
+  const sigBuf = Buffer.from(sig, 'utf8');
+  const expectedBuf = Buffer.from(expected, 'utf8');
+  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(base, 'base64url').toString('utf8')) as GitHubAppState;
+    if (!parsed?.userId || !parsed?.nonce || typeof parsed?.ts !== 'number') return null;
+    // 15 min expiry — GitHub App installation flow can take a while
+    if (Date.now() - parsed.ts > 15 * 60 * 1000) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 const router = Router();
 
@@ -120,6 +165,57 @@ router.post(
 
 // ─── Authenticated routes ────────────────────────────────────────────────────
 
+// Callback MUST be before authRequired — it's a browser redirect from GitHub
+// with no Bearer token. User identity comes from the HMAC-signed state param.
+
+/**
+ * GET /api/github-app/callback
+ *
+ * After the user installs the GitHub App, GitHub redirects here with
+ * ?installation_id=<id>&setup_action=install&state=<signed>.
+ * We decode the state to identify the user (no auth header in browser redirects).
+ */
+router.get('/callback', async (req: Request, res: Response) => {
+  const installationId = Number(req.query.installation_id);
+  const setupAction = String(req.query.setup_action || '');
+  const stateRaw = String(req.query.state || '');
+
+  const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
+
+  if (!installationId || isNaN(installationId)) {
+    return res.redirect(`${frontendUrl}/scorefix?github_app=error&reason=missing_installation`);
+  }
+
+  const appState = decodeAppState(stateRaw);
+  if (!appState) {
+    return res.redirect(`${frontendUrl}/scorefix?github_app=error&reason=invalid_state`);
+  }
+
+  if (setupAction === 'install' || setupAction === 'update') {
+    try {
+      // The webhook may have already saved the installation with a placeholder user.
+      // Update it with the real user ID from the signed state.
+      const existing = await getInstallationById(installationId);
+      await saveInstallation(
+        appState.userId,
+        installationId,
+        existing?.account_login || '',
+        existing?.account_type || 'User',
+        existing?.permissions || {},
+        existing?.repo_selection || 'all',
+      );
+      console.log(`[GitHubApp] Installation ${installationId} associated with user ${appState.userId}`);
+
+      return res.redirect(`${frontendUrl}/scorefix?github_app=installed`);
+    } catch (err: any) {
+      console.error('[GitHubApp] Callback error:', err?.message);
+      return res.redirect(`${frontendUrl}/scorefix?github_app=error&reason=save_failed`);
+    }
+  }
+
+  return res.redirect(`${frontendUrl}/scorefix?github_app=error&reason=unsupported_action`);
+});
+
 router.use(authRequired);
 
 /**
@@ -160,58 +256,18 @@ router.get('/status', async (req: Request, res: Response) => {
  * GET /api/github-app/install-url
  *
  * Returns the URL the user should visit to install the GitHub App on their account/org.
+ * Encodes a signed state param so the callback can identify the user without auth.
  */
-router.get('/install-url', (_req: Request, res: Response) => {
+router.get('/install-url', (req: Request, res: Response) => {
   const slug = (process.env.GITHUB_APP_SLUG || '').trim();
   if (!slug) {
     return res.status(503).json({ error: 'GitHub App is not configured' });
   }
-  return res.json({
-    url: `https://github.com/apps/${encodeURIComponent(slug)}/installations/new`,
-  });
-});
-
-/**
- * GET /api/github-app/callback
- *
- * After the user installs the GitHub App, GitHub redirects here with
- * ?installation_id=<id>&setup_action=install.
- * We associate the installation with the authenticated user.
- */
-router.get('/callback', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
-  const installationId = Number(req.query.installation_id);
-  const setupAction = String(req.query.setup_action || '');
-
-  if (!installationId || isNaN(installationId)) {
-    return res.status(400).json({ error: 'Missing or invalid installation_id' });
-  }
-
-  if (setupAction === 'install' || setupAction === 'update') {
-    try {
-      // The webhook may have already saved the installation with a placeholder user.
-      // Update it with the real user ID.
-      const existing = await getInstallationById(installationId);
-      await saveInstallation(
-        userId,
-        installationId,
-        existing?.account_login || '',
-        existing?.account_type || 'User',
-        existing?.permissions || {},
-        existing?.repo_selection || 'all',
-      );
-      console.log(`[GitHubApp] Installation ${installationId} associated with user ${userId}`);
-
-      // Redirect to client ScoreFix page
-      const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
-      return res.redirect(`${frontendUrl}/scorefix?github_app=installed`);
-    } catch (err: any) {
-      console.error('[GitHubApp] Callback error:', err?.message);
-      return res.status(500).json({ error: 'Failed to save installation' });
-    }
-  }
-
-  return res.status(400).json({ error: `Unsupported setup_action: ${setupAction}` });
+  const state = encodeAppState({ userId, nonce: randomUUID(), ts: Date.now() });
+  return res.json({
+    url: `https://github.com/apps/${encodeURIComponent(slug)}/installations/new?state=${encodeURIComponent(state)}`,
+  });
 });
 
 /**

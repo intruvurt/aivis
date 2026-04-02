@@ -38,7 +38,7 @@ export default function AuditProgressBanner({
       <button
         type="button"
         onClick={onExpand}
-        className="w-full text-left rounded-2xl border border-white/[0.12] bg-[#1a1f2e]/95 backdrop-blur-xl shadow-[0_12px_48px_rgba(0,0,0,0.5)] px-4 py-3.5 transition-all hover:border-cyan-400/25 hover:shadow-[0_12px_48px_rgba(6,182,212,0.12)] group"
+        className="w-full text-left rounded-2xl border border-white/[0.12] bg-[#1a1f2e]/95 shadow-[0_12px_48px_rgba(0,0,0,0.5)] px-4 py-3.5 transition-all hover:border-cyan-400/25 hover:shadow-[0_12px_48px_rgba(6,182,212,0.12)] group"
       >
         {/* Progress bar */}
         <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl overflow-hidden bg-white/[0.06]">

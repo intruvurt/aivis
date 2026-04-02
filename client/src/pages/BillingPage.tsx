@@ -584,7 +584,7 @@ export default function BillingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
         <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: "linear-gradient(rgba(80,55,35,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(80,55,35,0.18) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
       </div>
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl relative z-10">
+      <header className="border-b border-white/10 bg-charcoal-deep relative z-10">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-4 sm:px-6">
           <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />

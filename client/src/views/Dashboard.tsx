@@ -508,7 +508,7 @@ function StatCard({
       onClick={onClick}
       whileHover={{ y: -2, scale: 1.015, transition: { duration: 0.2 } }}
       whileTap={{ scale: 0.985 }}
-      className="w-full rounded-2xl border border-white/10 bg-[#121827]/90 p-5 text-left transition-colors hover:border-white/20 hover:bg-[#151c2d] hover:shadow-lg hover:shadow-white/[0.03] backdrop-blur-sm"
+      className="w-full rounded-2xl border border-white/10 bg-[#121827]/90 p-5 text-left transition-colors hover:border-white/20 hover:bg-[#151c2d] hover:shadow-lg hover:shadow-white/[0.03]"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -2067,7 +2067,7 @@ function HeroAnalyze({
         <form onSubmit={handleSubmit} className={`${hasResults ? "" : "mt-12"}`}>
           {/* ── Mode toggle ──────────────────────────────────────── */}
           <div className="mb-4 flex justify-center">
-            <div className={`inline-flex rounded-2xl border p-1 backdrop-blur-md ${!hasResults ? "border-white/[0.10] bg-[#0d1420]/80 shadow-[0_4px_24px_rgba(0,0,0,0.4)]" : "border-white/10 bg-[#111827]/80"}`}>
+            <div className={`inline-flex rounded-2xl border p-1 ${!hasResults ? "border-white/[0.10] bg-[#0d1420]/80 shadow-[0_4px_24px_rgba(0,0,0,0.4)]" : "border-white/10 bg-[#111827]/80"}`}>
               <button
                 type="button"
                 onClick={() => setMode("url")}
@@ -2100,7 +2100,7 @@ function HeroAnalyze({
           </div>
 
           {/* ── Input container ───────────────────────────────────── */}
-          <div className={`relative rounded-2xl border p-4 backdrop-blur-xl transition-all duration-300 ${!hasResults ? "border-white/[0.10] bg-[#0b1422]/90 shadow-[0_20px_80px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.04)] ring-1 ring-white/[0.03]" : "border-white/10 bg-[#111827]/90 shadow-2xl"}`}>
+          <div className={`relative rounded-2xl border p-4 transition-all duration-300 ${!hasResults ? "border-white/[0.10] bg-[#0b1422]/90 shadow-[0_20px_80px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.04)] ring-1 ring-white/[0.03]" : "border-white/10 bg-[#111827]/90 shadow-2xl"}`}>
             {/* Accent glow bleed — top edge */}
             <div className="pointer-events-none absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" aria-hidden="true" />
             <div className="pointer-events-none absolute top-0 left-[8%] right-[8%] h-10 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(34,211,238,0.05),transparent)]" aria-hidden="true" />
@@ -3704,7 +3704,7 @@ export default function Dashboard() {
 
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {upgradeSuccess && (
-          <div className="mt-4 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.06] p-4 flex items-center gap-3 backdrop-blur-md">
+          <div className="mt-4 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.06] p-4 flex items-center gap-3">
             <Sparkles className="h-5 w-5 shrink-0 text-emerald-300/80" />
             <p className="text-sm text-white/80">{upgradeSuccess}</p>
             <button type="button" onClick={() => setUpgradeSuccess(null)} className="ml-auto text-sm text-white/45 transition hover:text-white/75">
@@ -3714,7 +3714,7 @@ export default function Dashboard() {
         )}
 
         {error && (
-          <div className="mt-4 rounded-xl border border-red-400/15 bg-red-500/[0.06] p-4 flex items-center gap-3 backdrop-blur-md">
+          <div className="mt-4 rounded-xl border border-red-400/15 bg-red-500/[0.06] p-4 flex items-center gap-3">
             <AlertCircle className="h-5 w-5 shrink-0 text-red-300/80" />
             <p className="text-sm text-red-100/90">
               {error}
@@ -3729,7 +3729,7 @@ export default function Dashboard() {
         )}
 
         {isAnalyzing && (
-          <div className="mt-4 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 flex items-center gap-3 backdrop-blur-md">
+          <div className="mt-4 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4 flex items-center gap-3">
             <Loader2 className="h-5 w-5 animate-spin shrink-0 text-cyan-300/70" />
             <p className="text-sm text-white/65">Running deep audit. This can take a minute.</p>
           </div>
@@ -3752,7 +3752,7 @@ export default function Dashboard() {
 
           {/* ── Compact audit meta strip ──────────────────────────────── */}
           {(auditUrl || data.url) && (
-            <div className="mb-8 rounded-2xl border border-white/[0.08] bg-gradient-to-r from-[#0c1628]/95 via-[#111827]/95 to-[#15122a]/95 px-5 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] ring-1 ring-white/[0.03] backdrop-blur-xl">
+            <div className="mb-8 rounded-2xl border border-white/[0.08] bg-gradient-to-r from-[#0c1628]/95 via-[#111827]/95 to-[#15122a]/95 px-5 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] ring-1 ring-white/[0.03]">
               <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0 flex-1">
                   {/* ── Badges row ── */}
@@ -3904,7 +3904,7 @@ export default function Dashboard() {
 
           {/* ── Section layout panel (shown directly under controls) ───── */}
           {showSectionOrder && viewMode === 'technical' && (
-            <section className="mt-4 rounded-2xl border border-white/[0.07] bg-[#111827]/80 p-5 backdrop-blur-md">
+            <section className="mt-4 rounded-2xl border border-white/[0.07] bg-[#111827]/80 p-5">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <span className="text-xs font-semibold tracking-wide text-white/55">Reorder result sections</span>
                 <button
@@ -3955,7 +3955,7 @@ export default function Dashboard() {
             aria-label="Jump to audit section"
             className="sticky top-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 mb-6"
           >
-            <div className="border-b border-white/[0.05] bg-[#111827]/95 px-4 py-2.5 backdrop-blur-xl sm:px-6 lg:px-8">
+            <div className="border-b border-white/[0.05] bg-[#111827]/95 px-4 py-2.5 sm:px-6 lg:px-8">
               <div className="flex gap-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 {orderedSections.map((section) => {
                   const meta = SECTION_META[section];

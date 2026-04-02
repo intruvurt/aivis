@@ -349,7 +349,7 @@ export default function KeywordsPage() {
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button onClick={() => navigate("/")} className="p-2 rounded-full hover:bg-white/8 transition-colors" type="button" aria-label="Go back">

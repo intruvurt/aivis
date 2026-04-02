@@ -1323,7 +1323,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-start gap-4 sm:items-center">

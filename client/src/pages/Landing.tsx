@@ -604,8 +604,9 @@ const Landing = () => {
                     AiVIS connects scoring, evidence, and remediation into one operating loop so teams can move from diagnosis to implementation without losing context.
                   </p>
                 </div>
-              <div className="mt-5 rounded-2xl border border-white/10 bg-[#111827]/50 p-4 overflow-hidden">
-                <img src="/images/upload-analysis-pipeline.svg" alt="AiVIS analysis pipeline visualization" className="w-full h-auto rounded-xl border border-white/10 bg-black/20" loading="lazy" />
+                <div className="mt-5 rounded-2xl border border-white/10 bg-[#111827]/50 p-4 overflow-hidden">
+                  <img src="/images/upload-analysis-pipeline.svg" alt="AiVIS analysis pipeline visualization" className="w-full h-auto rounded-xl border border-white/10 bg-black/20" loading="lazy" />
+                </div>
               </div>
             </div>
           </div>

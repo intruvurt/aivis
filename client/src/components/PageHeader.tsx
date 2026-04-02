@@ -51,7 +51,7 @@ export default function PageHeader({
 
   return (
     <header
-      className={`border-b border-white/10 bg-charcoal-deep backdrop-blur-xl ${className}`}
+      className={`border-b border-white/10 bg-charcoal-deep ${className}`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <button

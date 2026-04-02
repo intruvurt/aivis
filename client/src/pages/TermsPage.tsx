@@ -23,7 +23,7 @@ export default function TermsPage() {
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl sticky top-0 z-20">
+      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />

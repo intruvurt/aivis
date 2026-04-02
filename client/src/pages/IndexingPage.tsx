@@ -311,7 +311,7 @@ export default function IndexingPage() {
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500/50 placeholder:text-white/30"
             />
             {showSuggestions && suggestions.length > 0 && !url && (
-              <div className="absolute z-10 top-full mt-1 left-0 right-0 rounded-xl overflow-hidden border border-white/10 bg-[#0a0e1c]/95 backdrop-blur-sm shadow-xl">
+              <div className="absolute z-10 top-full mt-1 left-0 right-0 rounded-xl overflow-hidden border border-white/10 bg-[#0a0e1c]/95 shadow-xl">
                 <p className="text-xs text-white/40 px-3 pt-2 pb-1">From your audits</p>
                 {suggestions.slice(0, 5).map((s) => (
                   <button key={s} onClick={() => { setUrl(s); setShowSuggestions(false); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-white/5 text-white/70 truncate">

@@ -26,7 +26,7 @@ export default function PlatformUpdateBanner() {
   };
 
   return (
-    <div className="relative z-20 w-full border-y border-indigo-300/25 bg-gradient-to-r from-slate-900/85 via-indigo-900/55 to-slate-900/85 backdrop-blur-md text-white">
+    <div className="relative z-20 w-full border-y border-indigo-300/25 bg-gradient-to-r from-slate-900/85 via-indigo-900/55 to-slate-900/85 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-3 sm:px-6 lg:px-8">
         <div className="inline-flex items-center gap-2 text-sm sm:text-[15px]">
           <Sparkles className="h-4 w-4 shrink-0 text-indigo-200" />

@@ -299,7 +299,7 @@ export default function TopNav() {
 
   const navActiveClass = `${tierTheme.navActive}`;
   const navInactiveClass = `text-white/65 ${tierTheme.navHover}`;
-  const menuPanelClass = `bg-charcoal-deep backdrop-blur-xl border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
+  const menuPanelClass = `bg-charcoal-deep border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
 
   const isToolLocked = useCallback(
     (link: ToolLink) => !meetsMinimumTier(tierKey, link.minTier),
@@ -320,7 +320,7 @@ export default function TopNav() {
   const closeDocs = useCallback(() => { docsTimeout.current = setTimeout(() => setDocsOpen(false), 150); }, []);
 
   return (
-    <nav className="topnav-rounded sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light/90 backdrop-blur-2xl overflow-visible">
+    <nav className="topnav-rounded sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
       {/* Gradient emanation — logo colors bleeding across the nav */}
       <div className="nav-logo-bleed" aria-hidden="true" />
       {/* Smoke edge — subtle accent glow along bottom */}
@@ -722,7 +722,7 @@ export default function TopNav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div id="mobile-nav-menu" className="lg:hidden border-t border-white/12 dark:border-white/10 bg-charcoal-deep dark:bg-charcoal-solid backdrop-blur-xl">
+        <div id="mobile-nav-menu" className="lg:hidden border-t border-white/12 dark:border-white/10 bg-charcoal-deep dark:bg-charcoal-solid">
           <div className="px-4 py-3 space-y-1">
             {hasSession && tierTheme && (
               <div className="px-3 pb-2">

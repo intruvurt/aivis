@@ -209,7 +209,7 @@ export default function GuideBot() {
             aria-label="Open BIX"
           >
             <img src="/bix-agent.png" alt="BIX" className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 inset-x-0 bg-black/70 backdrop-blur-sm py-0.5">
+            <div className="absolute bottom-0 inset-x-0 bg-black/70 py-0.5">
               <span className="block text-center text-[9px] font-bold tracking-[0.15em] text-cyan-300">BIX</span>
             </div>
             {hasUnread && (

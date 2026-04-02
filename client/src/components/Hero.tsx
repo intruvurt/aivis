@@ -154,7 +154,7 @@ export const Hero: FC<HeroProps> = ({
           initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
           animate={shouldAnimate ? { opacity: 1, y: 0 } : false}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-charcoal-light backdrop-blur-sm border border-white/8 mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-charcoal-light border border-white/8 mb-8"
         >
           <Sparkles className="w-4 h-4 text-white/80" />
           <span className="text-sm font-medium text-white">Powered by AI</span>

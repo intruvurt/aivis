@@ -57,7 +57,7 @@ export default function PressPage() {
 
   return (
     <>
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl sticky top-0 z-20">
+      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <button
             onClick={() => navigate("/")}

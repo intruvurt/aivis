@@ -805,16 +805,6 @@ async function handleCheckoutCompleted(session: any) {
       currency: session.currency,
       completedAt: new Date(),
     });
-      tier: tierKey || 'unknown',
-      method: 'stripe',
-      status: 'completed',
-      stripeSessionId: session.id,
-      stripeCustomerId: session.customer,
-      stripeSubscriptionId: session.subscription,
-      amountCents: session.amount_total,
-      currency: session.currency,
-      completedAt: new Date(),
-    });
   }
 
   // One-time scan pack purchase (credit grant, no tier change)

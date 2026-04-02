@@ -58,7 +58,7 @@ const Dashboard = () => {
           </Link>
         </div>
 
-        <section id="dashboard_brushsteel_wrap" className="dashboard-wrapper backdrop-blur-md bg-sectionBg rounded-3xl px-4 sm:px-6 lg:px-10 py-8 md:py-12 border border-borderGray shadow-steel">
+        <section id="dashboard_brushsteel_wrap" className="dashboard-wrapper bg-sectionBg rounded-3xl px-4 sm:px-6 lg:px-10 py-8 md:py-12 border border-borderGray shadow-steel">
           <motion.div
             id="src_pages_Dashboard_zul1" 
             initial={{ opacity: 0, y: 20 }}

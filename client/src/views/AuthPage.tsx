@@ -480,7 +480,7 @@ export default function AuthPage() {
 
         <div className="relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0ea5e9]/35 via-[#7c2d12]/35 to-[#f97316]/35 rounded-2xl blur opacity-70" />
-          <div className="relative bg-charcoal backdrop-blur-xl border border-white/12 rounded-2xl p-8">
+          <div className="relative bg-charcoal border border-white/12 rounded-2xl p-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-white mb-2">
                 {mode === "signin" && "Welcome Back"}

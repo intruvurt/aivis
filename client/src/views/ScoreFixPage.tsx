@@ -422,7 +422,7 @@ export default function ScoreFixPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(scoreFixJsonLd).replace(/</g, "\\u003c") }}
       />
       {/* ── Standard page header ─────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl sticky top-0 z-20">
+      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />
@@ -455,7 +455,7 @@ export default function ScoreFixPage() {
       <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
         <motion.section
           {...sectionFade}
-          className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl sm:p-6 lg:p-7"
+          className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-4 shadow-2xl sm:p-6 lg:p-7"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_20%),radial-gradient(circle_at_15%_85%,rgba(168,85,247,0.12),transparent_22%)]" />
           <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -555,7 +555,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <AuditEngineIcon className="h-5 w-5 text-violet-300" />
@@ -584,7 +584,7 @@ export default function ScoreFixPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <ScoreFixIcon className="h-5 w-5 text-amber-300" />
@@ -603,7 +603,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6">
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5 lg:p-6">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5">
@@ -649,7 +649,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6">
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5 lg:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-2xl brand-title">Live recommendation evidence linkage</h2>
@@ -709,7 +709,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5">
@@ -728,7 +728,7 @@ export default function ScoreFixPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <div className="flex items-center gap-3">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5">
@@ -750,7 +750,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6 grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <h2 className="text-2xl brand-title">Implementation checklist</h2>
               <div className="mt-6 grid gap-3">
@@ -773,7 +773,7 @@ export default function ScoreFixPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5">
               <h2 className="text-2xl brand-title">FAQ for retrieval and buyer clarity</h2>
               <div className="mt-6 space-y-4">
@@ -789,7 +789,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6">
-          <Card className="rounded-[22px] border-amber-400/20 bg-amber-400/10 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-[22px] border-amber-400/20 bg-amber-400/10 text-white shadow-2xl">
             <CardContent className="p-4 sm:p-5 lg:p-6">
               <h2 className="text-2xl font-semibold tracking-tight text-amber-100">Structured data and trust notes</h2>
               <p className="mt-4 max-w-5xl text-sm leading-7 text-amber-50/90 sm:text-base">
@@ -800,7 +800,7 @@ export default function ScoreFixPage() {
         </motion.section>
 
         <motion.section {...sectionFade} className="mt-6">
-          <Card className="overflow-hidden rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl backdrop-blur-xl">
+          <Card className="overflow-hidden rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
             <CardContent className="relative p-4 sm:p-5 lg:p-6">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(251,191,36,0.16),transparent_22%),radial-gradient(circle_at_10%_90%,rgba(59,130,246,0.14),transparent_20%)]" />
               <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">

@@ -276,7 +276,7 @@ export default function CompetitorsPage() {
         <div className="absolute bottom-1/3 right-1/4 h-80 w-80 rounded-full bg-charcoal/5 blur-3xl" />
       </div>
 
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate("/")}

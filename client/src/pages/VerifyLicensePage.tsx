@@ -63,7 +63,7 @@ export default function VerifyLicensePage() {
         </div>
 
         {/* Card */}
-        <div className="bg-charcoal-deep border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+        <div className="bg-charcoal-deep border border-white/10 rounded-2xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="licenseKey" className="block text-sm font-medium text-white/75 mb-1.5">

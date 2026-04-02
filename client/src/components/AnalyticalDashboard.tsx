@@ -22,7 +22,7 @@ export default function AnalyticalDashboard() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.95 }}
-        className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-indigo-800/60 backdrop-blur-xl backdrop-saturate-125 px-4 sm:px-7 py-4 sm:py-6 flex justify-center items-center pointer-events-auto"
+        className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-indigo-800/60 px-4 sm:px-7 py-4 sm:py-6 flex justify-center items-center pointer-events-auto"
       >
         <span id="src_components_AnalyticalDashboard_oto7" className="text-gray-300 text-sm">Loading live stats...</span>
       </motion.div>
@@ -37,7 +37,7 @@ export default function AnalyticalDashboard() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.95 }}
-        className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-red-800/60 backdrop-blur-xl backdrop-saturate-125 px-4 sm:px-7 py-4 sm:py-6 flex justify-center items-center pointer-events-auto"
+        className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-red-800/60 px-4 sm:px-7 py-4 sm:py-6 flex justify-center items-center pointer-events-auto"
       >
         <span id="src_components_AnalyticalDashboard_mpy3" className="text-red-400 text-sm">Stats unavailable</span>
       </motion.div>
@@ -74,7 +74,7 @@ export default function AnalyticalDashboard() {
       initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.95 }}
-      className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-indigo-800/60 backdrop-blur-xl backdrop-saturate-125 px-4 sm:px-7 py-4 sm:py-6 flex flex-wrap gap-2 sm:gap-6 justify-center pointer-events-auto"
+      className="rounded-2xl bg-gradient-to-br from-gray-950 to-gray-900/85 shadow-2xl border border-indigo-800/60 px-4 sm:px-7 py-4 sm:py-6 flex flex-wrap gap-2 sm:gap-6 justify-center pointer-events-auto"
       style={{ backgroundBlendMode: "multiply" }}
     >
       {metrics.map((m, i) => {

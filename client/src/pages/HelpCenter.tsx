@@ -448,7 +448,7 @@ export default function HelpCenter() {
       </div>
 
       {/* Fixed header */}
-      <header className="sticky top-0 z-30 border-b border-white/8 bg-[#1a1f2e]/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-white/8 bg-[#1a1f2e]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">

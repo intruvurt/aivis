@@ -73,7 +73,7 @@ const SteelCard: React.FC<{
   glow?: boolean;
 }> = ({ children, className = "", glow = false }) => (
   <div
-    className={`relative overflow-hidden rounded-2xl border border-white/14 bg-charcoal shadow-steel backdrop-blur-sm transition-all duration-300 ${
+    className={`relative overflow-hidden rounded-2xl border border-white/14 bg-charcoal shadow-steel transition-all duration-300 ${
       glow ? "ring-1 ring-white/35/20" : ""
     } ${className}`}
     style={{ backgroundImage: noiseUrl }}
@@ -571,7 +571,7 @@ const SettingsPage: React.FC = () => {
   /* ================================================================ */
   return (
     <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl">
+      <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />
@@ -595,7 +595,7 @@ const SettingsPage: React.FC = () => {
           {/* ─── LEFT: Nav sidebar ─── */}
           <div className="lg:w-56 flex-shrink-0">
             <div
-              className="rounded-2xl border border-white/14 bg-charcoal shadow-steel backdrop-blur-sm p-4 sticky top-8"
+              className="rounded-2xl border border-white/14 bg-charcoal shadow-steel p-4 sticky top-8"
               style={{ backgroundImage: noiseUrl }}
             >
               {/* User mini-card */}

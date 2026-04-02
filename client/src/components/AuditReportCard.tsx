@@ -405,7 +405,7 @@ const AuditReportCard: React.FC<AuditReportCardProps> = ({ result, hideHero, hid
     <div className="space-y-6">
       {/* ─── Overall Grade Hero ──────────────────────────────────────── */}
       {!hideHero && (
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep">
         {/* Decorative gradient */}
         <div
           className={`absolute inset-0 bg-gradient-to-br ${gradeCfg.bg} opacity-30 pointer-events-none`}
@@ -533,7 +533,7 @@ const AuditReportCard: React.FC<AuditReportCardProps> = ({ result, hideHero, hid
 
       {/* ─── Category Grade Cards ───────────────────────────────────── */}
       {grades.length > 0 && !hideGrades && (
-        <div className="rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep backdrop-blur-xl p-6">
+        <div className="rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="p-2 rounded-xl bg-gradient-to-br from-white/55/20 to-white/40/20">
               <Award className="w-5 h-5 text-white/80 dark:text-white/80" />
@@ -581,7 +581,7 @@ const AuditReportCard: React.FC<AuditReportCardProps> = ({ result, hideHero, hid
 
       {/* ─── Content Highlights ─────────────────────────────────────── */}
       {highlights.length > 0 && !hideHighlights && (
-        <div className="rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep backdrop-blur-xl p-6">
+        <div className="rounded-2xl border border-white/10 dark:border-white/10 bg-charcoal dark:bg-charcoal-deep p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="p-2 rounded-xl bg-gradient-to-br from-white/65/20 to-white/48/20">
               <FileSearch className="w-5 h-5 text-white/80 dark:text-white/85" />

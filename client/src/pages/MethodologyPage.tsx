@@ -248,7 +248,7 @@ export default function MethodologyPage() {
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
       </div>
-      <nav className="border-b border-white/10 bg-white/[0.02] backdrop-blur px-6 py-4">
+      <nav className="border-b border-white/10 bg-white/[0.02] px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center gap-6 text-sm text-white/75">
           <Link to="/" className="text-base font-bold tracking-tight text-white">AiVIS</Link>
           <div className="ml-auto flex flex-wrap items-center gap-4">

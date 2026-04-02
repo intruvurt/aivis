@@ -55,7 +55,7 @@ export default function FAQSection() {
             <div 
               key={idx} 
               id={`src_components_FAQSection_item_${idx}`}
-              className="bg-[#323a4c]/50 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:border-white/10 transition-all"
+              className="bg-[#323a4c]/50 border border-white/10 rounded-lg p-6 hover:border-white/10 transition-all"
             >
               <dt id={`src_components_FAQSection_q_${idx}`} className="text-xl font-semibold text-white mb-3">
                 {faq.question}

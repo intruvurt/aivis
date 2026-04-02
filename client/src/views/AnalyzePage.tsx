@@ -337,22 +337,6 @@ const AnalyzePage: React.FC = () => {
             if (signal) {
               const onAbort = () => {
                 window.clearTimeout(timer);
-    };
-  }
-
-  async function fetchWithRetry(requestUrl: string, options: RequestInit, retries = 2): Promise<Response> {
-    for (let i = 0; i <= retries; i += 1) {
-      try {
-        const response = await apiFetch(requestUrl, options);
-
-        if (response.status === 429 && i < retries) {
-          await new Promise<void>((resolve, reject) => {
-            const timer = window.setTimeout(resolve, 1500 * (i + 1));
-            const signal = (options as any)?.signal as AbortSignal | undefined;
-
-            if (signal) {
-              const onAbort = () => {
-                window.clearTimeout(timer);
                 reject(Object.assign(new Error("Aborted"), { name: "AbortError" }));
               };
               if (signal.aborted) return onAbort();
@@ -622,7 +606,7 @@ const AnalyzePage: React.FC = () => {
       </div>
 
       {/* ── Page header banner ─────────────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl relative z-10">
+      <header className="border-b border-white/10 bg-charcoal-deep relative z-10">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate("/")}
@@ -646,7 +630,7 @@ const AnalyzePage: React.FC = () => {
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-          <section className="rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8 lg:p-10">
+          <section className="rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl sm:p-8 lg:p-10">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
               <AuditEngineIcon className="h-3.5 w-3.5" />
               AI Visibility Audit
@@ -693,7 +677,7 @@ const AnalyzePage: React.FC = () => {
             </div>
           </section>
 
-          <aside className="rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+          <aside className="rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl sm:p-8">
             <div className="flex items-center gap-2">
               <Lock className="h-4 w-4 text-white/70" />
               <h2 className="text-sm font-semibold text-white/85">What happens during the audit</h2>
@@ -738,7 +722,7 @@ const AnalyzePage: React.FC = () => {
           </aside>
         </div>
 
-        <section className="mt-6 rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+        <section className="mt-6 rounded-3xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
             <div>
               <div className="flex items-center gap-2">
@@ -948,7 +932,7 @@ const AnalyzePage: React.FC = () => {
 
         {result && (
           <section id="analysis-report" className="mt-8 space-y-4">
-            <div className="rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+            <div className="rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
@@ -1088,7 +1072,7 @@ const AnalyzePage: React.FC = () => {
 
         {loading && !result && (
           <section className="mt-8 space-y-4" aria-live="polite" aria-busy="true">
-            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
               <div className="h-4 w-40 rounded bg-white/10" />
               <div className="mt-3 h-8 w-2/3 rounded bg-white/10" />
               <div className="mt-2 h-4 w-1/2 rounded bg-white/10" />
@@ -1098,7 +1082,7 @@ const AnalyzePage: React.FC = () => {
                 <div className="h-16 rounded-2xl bg-white/10" />
               </div>
             </div>
-            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+            <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
               <div className="h-5 w-56 rounded bg-white/10" />
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 <div className="h-24 rounded-xl bg-white/10" />

@@ -113,7 +113,7 @@ export function TrustSection({ featureStatus = null }: TrustSectionProps) {
           {trustPillars.map((pillar) => (
             <div key={pillar.title} className="relative group">
               <div className={`absolute -inset-0.5 bg-gradient-to-r ${pillar.color} rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500`} />
-              <div className="relative bg-charcoal dark:bg-charcoal-deep backdrop-blur-xl border border-white/14 dark:border-white/10 rounded-2xl p-6 hover:border-white/12 dark:hover:border-white/10 transition-all">
+              <div className="relative bg-charcoal dark:bg-charcoal-deep border border-white/14 dark:border-white/10 rounded-2xl p-6 hover:border-white/12 dark:hover:border-white/10 transition-all">
                 <div className="flex items-start gap-4">
                   <div className={`p-2.5 rounded-xl bg-gradient-to-br ${pillar.color}`}>
                     <pillar.icon className={`w-5 h-5 ${pillar.iconColor}`} />

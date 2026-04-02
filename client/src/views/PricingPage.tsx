@@ -428,7 +428,7 @@ function PricingCard({
       />
 
       <div
-        className={`relative h-full bg-charcoal backdrop-blur-xl rounded-2xl p-6 flex flex-col transition-all duration-300 hover:translate-y-[-2px] ${
+        className={`relative h-full bg-charcoal rounded-2xl p-6 flex flex-col transition-all duration-300 hover:translate-y-[-2px] ${
           isHighlighted
             ? `${colors.border} border-2 shadow-xl ${colors.glow}`
             : "border border-white/10 hover:border-white/14"
@@ -615,7 +615,7 @@ function PricingPageSkeleton() {
     <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="relative">
-          <div className="bg-charcoal backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-pulse">
+          <div className="bg-charcoal border border-white/10 rounded-2xl p-6 animate-pulse">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-charcoal-light rounded-lg" />
               <div>
@@ -990,7 +990,7 @@ export default function PricingPage() {
       </div>
 
       {/* ── Standard page header ─────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep/95 backdrop-blur-xl sticky top-16 z-20">
+      <header className="border-b border-white/10 bg-charcoal-deep sticky top-16 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />
@@ -1006,7 +1006,7 @@ export default function PricingPage() {
       </header>
       <div className="max-w-6xl mx-auto px-4 py-16 relative">
         <div id="overview" className="section-anchor text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light backdrop-blur-sm border border-white/10 rounded-full text-sm text-white/80 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
             <Sparkles className="w-4 h-4" />
             Ai Visibility Intelligence Audits
           </div>
@@ -1095,7 +1095,7 @@ export default function PricingPage() {
         </div>
 
         <div id="plans" className="section-anchor flex justify-center mb-8">
-          <div className="relative bg-charcoal-light backdrop-blur-xl border border-white/10 rounded-full p-1.5 flex items-center">
+          <div className="relative bg-charcoal-light border border-white/10 rounded-full p-1.5 flex items-center">
             <button
               onClick={() => setBillingPeriod("monthly")}
               className={`relative px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
@@ -1135,12 +1135,6 @@ export default function PricingPage() {
           </div>
         </div>
 
-            <p className="text-white/60 text-xs mt-2">
-              Please retry in a moment to load live plan data.
-            </p>
-          </div>
-        )}
-
         {/* ── Quick comparison table ──────────────────────── */}
         <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
           <div className="p-5 border-b border-white/8">
@@ -1163,36 +1157,6 @@ export default function PricingPage() {
                   ["Audit allowance", "3 lifetime", "40–60/mo", "110/mo", "250 credits"],
                   ["Visibility score + recs", true, true, true, true],
                   ["Citation gap diagnosis", true, true, true, true],
-                  ["Shareable report links", true, true, true, true],
-                  ["Export (PDF / JSON)", false, true, true, true],
-                  ["Competitor advantage signals", false, true, true, true],
-                  ["Brand mention tracking", false, true, true, true],
-                  ["Decision query gap analysis", false, true, true, true],
-                  ["API + OAuth access", false, true, true, true],
-                  ["Triple-check AI validation", false, false, true, true],
-                  ["Citation testing", false, false, true, true],
-                  ["MCP Server (AI agents)", false, false, true, true],
-                  ["Team seats", "1", "3", "10", "10"],
-                  ["White-label reports", false, false, true, true],
-                  ["Auto GitHub PRs via MCP", false, false, false, true],
-                ].map(([label, ...vals], idx) => (
-                  <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3 text-white/80">{label}</td>
-                    {vals.map((v, vi) => (
-                      <td key={vi} className="px-4 py-3 text-center">
-                        {v === true ? (
-                          <Check className="h-3.5 w-3.5 text-emerald-400 mx-auto" />
-                        ) : v === false ? (
-                          <span className="text-white/20">—</span>
-                        ) : (
-                          <span className="text-white/70 font-medium">{v}</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
                   ["Shareable report links", true, true, true, true],
                   ["Export (PDF / JSON)", false, true, true, true],
                   ["Competitor advantage signals", false, true, true, true],
@@ -1296,7 +1260,7 @@ export default function PricingPage() {
         </div>
 
         <div id="features" className="section-anchor mt-16 text-center">
-          <div className="inline-flex flex-wrap justify-center gap-4 p-4 bg-charcoal-light backdrop-blur-sm border border-white/10 rounded-2xl shadow-sm surface-structured-muted">
+          <div className="inline-flex flex-wrap justify-center gap-4 p-4 bg-charcoal-light border border-white/10 rounded-2xl shadow-sm surface-structured-muted">
             {[
               "JSON-LD audit",
               "Meta tag audit",

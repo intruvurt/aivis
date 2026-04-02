@@ -32,6 +32,7 @@ const ABOUT_STRUCTURED_DATA = [
     ],
     sameAs: [
       'https://linkedin.com/in/web4aidev',
+      'https://twitter.com/intruvurt',
       'https://www.reddit.com/user/intruvurt/',
       'https://www.reddit.com/r/AiVIS/',
     ],
@@ -59,7 +60,7 @@ export default function AboutPage() {
   });
   return (
     <>
-      <header className="border-b border-white/10 bg-charcoal-deep backdrop-blur-xl sticky top-0 z-20">
+      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
             <ArrowLeft className="h-5 w-5 text-white/55" />
@@ -170,6 +171,14 @@ export default function AboutPage() {
                     LinkedIn
                   </a>
                   <a
+                    href="https://twitter.com/intruvurt"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-white/70 transition hover:border-white/20 hover:text-white"
+                  >
+                    X <span className="text-white/40">(Twitter)</span>
+                  </a>
+                  <a
                     href="https://www.reddit.com/user/intruvurt/"
                     target="_blank"
                     rel="noreferrer"
@@ -208,53 +217,6 @@ export default function AboutPage() {
                   <p className="text-xs text-white/50 mb-3">Focus areas:</p>
                   <div className="flex flex-wrap gap-2">
                     {["Citation Parity", "Machine Readability", "AI Optimization", "Executive Audit"].map((topic) => (
-                      <span key={topic} className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-white/70">
-                        {topic}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-white/10 overflow-hidden bg-white/5">
-              <div className="p-8 md:p-12">
-                <div className="mb-6">
-                  <img
-                    src="/team/sadiq-khan-avatar.svg"
-                    alt="Sadiq Khan profile avatar"
-                    className="w-20 h-20 rounded-full border border-cyan-300/40 shadow-lg shadow-cyan-500/20 object-cover mb-4 bg-slate-900"
-                    loading="lazy"
-                  />
-                </div>
-
-                <h3 className="text-2xl font-bold mb-1 text-blue-800 dark:text-blue-200">Sadiq Khan</h3>
-                <p className="text-lg text-white/60 mb-2">Marketing Specialist</p>
-                <p className="text-sm text-white/45 mb-6">Timezone: India Standard Time (UTC+5:30)</p>
-
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Sadiq leads marketing execution across campaign operations, funnel messaging, and partnership
-                  communications so product work and market visibility stay aligned.
-                </p>
-
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Internal collaboration includes private lead-generation coordination with
-                  {" "}
-                  <a
-                    href="https://zeeniith.in"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline decoration-cyan-300/50 underline-offset-4 hover:text-white"
-                  >
-                    zeeniith.in
-                  </a>
-                  , used only for approved partner workflows.
-                </p>
-
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <p className="text-xs text-white/50 mb-3">Focus areas:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {["Go-To-Market", "Lead Quality", "Partnership Outreach", "Conversion Messaging"].map((topic) => (
                       <span key={topic} className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-white/70">
                         {topic}
                       </span>
@@ -307,6 +269,15 @@ export default function AboutPage() {
               <p className="text-white/70 leading-relaxed mb-4">
                 Responsible for outreach, content pipeline, partnership coordination, and ensuring the platform reaches builders and agencies who need AI visibility intelligence.
               </p>
+
+              <div className="mt-4 rounded-lg border border-cyan-400/15 bg-cyan-500/5 p-4">
+                <p className="text-xs uppercase tracking-wider text-cyan-300/70 mb-2">Private commission terms</p>
+                <ul className="text-sm text-white/65 space-y-1.5">
+                  <li>18.5% commission on each successful purchase via referral link</li>
+                  <li>Marketing tools and methods chosen at sole discretion of specialist</li>
+                  <li>Paid ads budget capped at 10% of sales minus $2,000–$5,000 reserve (refunds &amp; Stripe chargebacks)</li>
+                </ul>
+              </div>
 
               <div className="mt-6 pt-6 border-t border-white/10">
                 <p className="text-xs text-white/50 mb-3">Focus areas:</p>

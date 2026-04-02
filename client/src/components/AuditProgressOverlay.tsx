@@ -406,7 +406,7 @@ export default function AuditProgressOverlay({
   return (
     <div className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-700 ${finishing ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/75 backdrop-blur-xl" />
+      <div className="absolute inset-0 bg-black/75" />
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

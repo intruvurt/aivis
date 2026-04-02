@@ -16,7 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
 const AnalyzePage = React.lazy(() => import("./views/AnalyzePage"));
 const PricingPage = React.lazy(() => import("./views/PricingPage"));
-import PartnershipTermsPage from "./pages/PartnershipTermsPage";
+const PartnershipTermsPage = React.lazy(() => import("./pages/PartnershipTermsPage"));
 const AuthPage = React.lazy(() => import("./views/AuthPage"));
 const AnalyticsPage = React.lazy(() => import("./views/AnalyticsPage"));
 const KeywordsPage = React.lazy(() => import("./views/KeywordsPage"));
@@ -163,19 +163,12 @@ export default function App() {
       <ScrollToTop />
 
       {!isHydrated ? null : (
+        <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
           <Route element={<Layout />}>
             <Route
               path="/"
-              element={
-                isAuthenticated ? (
-                  <Dashboard />
-                ) : (
-                  <React.Suspense fallback={<PageLoadingSpinner />}>
-                    <Landing />
-                  </React.Suspense>
-                )
-              }
+              element={isAuthenticated ? <Dashboard /> : <Landing />}
             />
             <Route path="/analyze" element={<AnalyzePage />} />
             <Route path="/pricing" element={<PricingPage />} />
@@ -262,6 +255,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+        </React.Suspense>
       )}
     </div>
   );

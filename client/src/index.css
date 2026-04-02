@@ -466,7 +466,7 @@
   /* ── Charcoal fill utilities (Tailwind-variant–compatible) ── */
   .bg-charcoal              { background: rgba(20,24,36,0.65); }
   .bg-charcoal-deep         { background: rgba(14,18,28,0.85); }
-  .bg-charcoal-light        { background: rgba(30,36,50,0.45); }
+  .bg-charcoal-light        { background: rgba(30,36,50,1); }
   .bg-charcoal-solid        { background: rgba(18,22,34,0.95); }
 
   /* ── White text-shadow for readability on dark / busy backgrounds ── */

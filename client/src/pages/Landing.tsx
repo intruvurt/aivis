@@ -193,109 +193,176 @@ const Landing = () => {
     }
   };
 
-  const heroHeadline =
-    expVariant === 'a'
-      ? 'AI is answering.\nYour site isn’t being chosen.'
-      : 'Your site is invisible to AI answers';
-  const heroPrimaryCta = expVariant === 'a' ? 'Run free audit' : 'See if AI ignores your site';
-
   return (
-    <div className="min-h-screen bg-[#060607]">
+    <div className="min-h-screen">
 
       {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#111318]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.07),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_60%,rgba(148,163,184,0.08),transparent)]" />
-        <div className="hero-flow-overlay" aria-hidden="true" />
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
-              <div className="mb-8">
-                <img src="/text-logo.png" alt="AiVIS – AI Visibility Intelligence Audits" className="h-12 sm:h-14 lg:h-16 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
-              </div>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/25 bg-white/5 text-white/85 text-xs font-bold tracking-widest uppercase">
-                  Free Starter Tier
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300/20 bg-slate-200/5 text-slate-200/90 text-xs font-semibold tracking-wide">No signup required · results in seconds</span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6 tracking-tight">
-                {heroHeadline.split('\n')[0]}
-                {heroHeadline.includes('\n') && <br />}
-                {heroHeadline.includes('\n') && (
-                  <span className="text-slate-300">{heroHeadline.split('\n')[1]}</span>
-                )}
-              </h1>
-              <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
-                See what AI cannot verify and why competitors get cited instead.
-              </p>
-              <p className="text-sm text-white/40 font-mono mb-6 max-w-xl">No signup required. Results in seconds.</p>
-              <div className="max-w-xl mb-6">
-                <input
-                  value={heroUrl}
-                  onChange={(e) => setHeroUrl(e.target.value)}
-                  placeholder="enter your site url"
-                  className="w-full rounded-xl border border-white/15 bg-[#171a20] px-4 py-3 text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-slate-300/40"
-                />
-              </div>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
-                  <span className="text-5xl font-black text-white tabular-nums leading-none">3</span>
-                  <div>
-                    <p className="text-white font-bold text-lg leading-tight">LIFETIME Audits</p>
-                    <p className="text-white/50 text-xs">free starter cap · no credit card</p>
+      <section className="relative overflow-hidden pt-10 pb-16 min-h-[90vh] flex items-center">
+        <div className="pointer-events-none absolute -top-60 -left-40 h-[700px] w-[700px] rounded-full bg-cyan-500/[0.09] blur-[160px]" />
+        <div className="pointer-events-none absolute -top-32 right-[-120px] h-[550px] w-[550px] rounded-full bg-violet-500/[0.08] blur-[140px]" />
+        <div className="pointer-events-none absolute bottom-[-50px] left-1/2 -translate-x-1/2 h-[250px] w-[700px] rounded-full bg-fuchsia-500/[0.05] blur-[110px]" />
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="select-none">
+            <div className="grid items-center gap-8 sm:grid-cols-[1fr_320px] lg:grid-cols-[1fr_400px] sm:gap-10 lg:gap-16">
+
+              {/* ── Left: Headline + context ── */}
+              <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
+                {/* Badge + logo */}
+                <div className="mb-7 flex flex-wrap items-center gap-3">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-500/[0.08] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-300/90">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    AI Visibility Intelligence Audits
+                  </div>
+                  <img
+                    src="/text-logo.png"
+                    alt="AiVIS logo"
+                    className="h-8 w-auto object-contain"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </div>
+
+                {/* H1 with gradient accent */}
+                <h1 className="text-4xl font-extrabold leading-[1.06] tracking-tight text-white sm:text-[40px] lg:text-5xl xl:text-[64px]">
+                  Measure whether AI can
+                  <br className="hidden sm:block" />
+                  <span
+                    className="bg-gradient-to-r from-cyan-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent"
+                    style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                  >
+                    &nbsp;read, trust &amp; cite
+                  </span>
+                  <br />
+                  your site
+                </h1>
+
+                <p className="mt-5 max-w-xl text-base leading-7 text-white/55 sm:text-[17px] sm:leading-8">
+                  One audit returns a 0&#x2013;100 visibility score, six category grades, and
+                  evidence-backed fixes &#x2014; ready to implement and re-audit.
+                </p>
+
+                {/* Platform coverage badges */}
+                <div className="mt-7 flex flex-wrap gap-2">
+                  {[
+                    { name: 'ChatGPT',    dot: 'bg-emerald-400' },
+                    { name: 'Perplexity', dot: 'bg-violet-400'  },
+                    { name: 'Claude',     dot: 'bg-amber-400'   },
+                    { name: 'Google AI',  dot: 'bg-cyan-400'    },
+                  ].map((p) => (
+                    <span
+                      key={p.name}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.09] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/60"
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${p.dot}`} />
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Trust checklist */}
+                <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+                  {['6 scored categories', '8-12 fixes per audit', 'Evidence-backed findings', 'Export-ready reports'].map((stat) => (
+                    <span key={stat} className="flex items-center gap-1.5 text-xs text-white/40">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400/80" />
+                      {stat}
+                    </span>
+                  ))}
+                </div>
+
+                {/* URL input */}
+                <div className="mt-8 max-w-xl">
+                  <input
+                    value={heroUrl}
+                    onChange={(e) => setHeroUrl(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); navigate(heroUrl.trim() ? `/analyze?url=${encodeURIComponent(heroUrl.trim())}` : '/analyze'); } }}
+                    placeholder="enter your site url"
+                    className="w-full rounded-xl border border-white/15 bg-[#171a20] px-4 py-3 text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                  />
+                </div>
+
+                {/* CTAs */}
+                <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate(heroUrl.trim() ? `/analyze?url=${encodeURIComponent(heroUrl.trim())}` : '/analyze')}
+                    className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-500 hover:to-violet-500 transition-all shadow-lg shadow-cyan-500/20"
+                  >
+                    Run free audit
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                  </button>
+                  <Link to="/pricing" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
+                    View plans &amp; pricing
+                  </Link>
+                </div>
+                <p className="mt-3 text-xs text-white/40">No signup required. Results in seconds.</p>
+              </motion.div>
+
+              {/* ── Right: Sample audit preview card ── */}
+              <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden sm:block">
+                <div className="card-smoke glass-bleed-cyan relative rounded-3xl p-6 shadow-[0_40px_100px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.035]">
+                  <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/[0.05] via-transparent to-violet-500/[0.06]" />
+                  <div className="relative space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/30">Example Audit</span>
+                      <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">Live run</span>
+                    </div>
+                    <div className="flex items-center gap-4 border-b border-white/[0.06] pb-4">
+                      <div className="relative flex h-[68px] w-[68px] shrink-0 items-center justify-center">
+                        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 68 68">
+                          <circle cx="34" cy="34" r="28" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+                          <circle cx="34" cy="34" r="28" fill="none" stroke="url(#hsg-landing)" strokeWidth="5" strokeLinecap="round" strokeDasharray="112.6 175.9" />
+                          <defs><linearGradient id="hsg-landing" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#22d3ee" /><stop offset="100%" stopColor="#a78bfa" /></linearGradient></defs>
+                        </svg>
+                        <span className="relative text-xl font-black tabular-nums text-white">64</span>
+                      </div>
+                      <div>
+                        <div className="font-mono text-[11px] text-white/30">example-site.com</div>
+                        <div className="mt-1 text-sm font-bold text-amber-300">At Risk</div>
+                        <div className="mt-0.5 text-[11px] text-white/35">3 high-priority issues</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2.5">
+                      {([
+                        { label: 'Content Depth',  grade: 'A', score: 78, grad: 'from-emerald-400 to-emerald-300', gc: 'text-emerald-400' },
+                        { label: 'Schema Markup',  grade: 'C', score: 52, grad: 'from-amber-400 to-orange-300',   gc: 'text-amber-400'   },
+                        { label: 'Technical SEO',  grade: 'B', score: 66, grad: 'from-cyan-400 to-blue-300',      gc: 'text-cyan-400'    },
+                        { label: 'AI Readability', grade: 'D', score: 38, grad: 'from-red-400 to-rose-300',       gc: 'text-red-400'     },
+                      ] as const).map((cat) => (
+                        <div key={cat.label} className="flex items-center gap-2.5">
+                          <span className="w-24 shrink-0 truncate text-[10px] text-white/40">{cat.label}</span>
+                          <div className="flex-1 overflow-hidden rounded-full bg-white/[0.07]" style={{ height: '6px' }}>
+                            <div className={`h-full rounded-full bg-gradient-to-r ${cat.grad}`} style={{ width: `${cat.score}%` }} />
+                          </div>
+                          <span className={`w-4 text-right text-[10px] font-bold ${cat.gc}`}>{cat.grade}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-white/[0.06] pt-3.5">
+                      <div className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.13em] text-white/25">Top Findings</div>
+                      <div className="space-y-2">
+                        {([
+                          { text: 'Add FAQPage JSON-LD schema', hi: true  },
+                          { text: 'Meta description too short (22 chars)', hi: true  },
+                          { text: 'Add structured H2 heading hierarchy',  hi: false },
+                        ] as const).map((rec) => (
+                          <div key={rec.text} className="flex items-start gap-2">
+                            <span className={`mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full ${rec.hi ? 'bg-red-400' : 'bg-amber-400'}`} />
+                            <span className="text-[11px] leading-4 text-white/45">{rec.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {platformStats?.completedAudits && (
-                  <div className="hidden sm:flex flex-col items-start px-4 py-3 rounded-2xl border border-white/8 bg-[#111827]/40">
-                    <span className="text-2xl font-bold text-cyan-300">{Number(platformStats.completedAudits).toLocaleString()}+</span>
-                    <span className="text-xs text-white/45">audits completed</span>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  type="button"
-                  onClick={() => navigate(heroUrl.trim() ? `/analyze?url=${encodeURIComponent(heroUrl.trim())}` : '/analyze')}
-                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-slate-700 to-slate-500 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-slate-600 hover:to-slate-400 transition-all shadow-lg shadow-black/35"
-                >
-                  {heroPrimaryCta}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </button>
-                <Link to="/pricing" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
-                  View plans &amp; pricing
-                </Link>
-              </div>
-              <p className="mt-3 text-xs text-white/40">No signup required. Results in seconds.</p>
-              <div className="mt-6 max-w-2xl">
-                <PlatformShiftBanner
-                  eyebrow="Platform reality"
-                  title={PLATFORM_NARRATIVE.disruption}
-                  body="AiVIS is a real operating platform for auditing, fixing, validating, and tracking AI visibility across live websites."
-                  bullets={PLATFORM_NARRATIVE.pillars}
-                  tone="neutral"
-                />
-              </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden lg:block">
-              <div className="card-smoke relative rounded-2xl p-4 shadow-2xl overflow-hidden border border-white/10 bg-[#151922]">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-slate-400/5" />
-                <img src="/images/audit-intelligence-dashboard.svg" alt="Audit Intelligence Dashboard" className="w-full h-auto object-contain rounded-lg" />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white/90 text-[9px] font-mono tracking-wider">SCAN ACTIVE</span>
-                  <span className="px-2 py-0.5 rounded bg-slate-300/10 border border-slate-300/20 text-slate-200 text-[9px] font-mono tracking-wider">AI LAYER</span>
-                </div>
-                <div className="absolute bottom-4 right-4">
-                  <span className="px-2 py-0.5 rounded bg-slate-300/10 border border-slate-300/20 text-slate-200 text-[9px] font-mono tracking-wider">AIVIS.BIZ</span>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── WHAT'S ACTUALLY HAPPENING ── */}
-      <section className="py-16 bg-[#060607] border-t border-white/8 border-b border-white/8">
+      <section className="py-16 bg-[#060607]/80 border-t border-white/8 border-b border-white/8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-white/10 bg-[#111827]/45 p-6 md:p-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What’s actually happening</h2>
@@ -313,7 +380,7 @@ const Landing = () => {
       </section>
 
       {/* ── WHAT AIVIS SHOWS ── */}
-      <section className="py-16 bg-[#060607] border-b border-white/8">
+      <section className="py-16 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-white mb-8">What AiVIS shows you</h2>
           <div className="grid md:grid-cols-3 gap-5">
@@ -334,7 +401,7 @@ const Landing = () => {
       </section>
 
       {/* ── WHAT YOU'RE LOSING ── */}
-      <section className="py-14 bg-[#060607] border-b border-white/8">
+      <section className="py-14 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What you’re losing</h2>
           <p className="text-white/70 mb-4">You’re not losing rankings. You’re losing answers.</p>
@@ -348,7 +415,7 @@ const Landing = () => {
       </section>
 
       {/* ── WHAT AIVIS ACTUALLY DOES ── */}
-      <section className="py-14 bg-[#060607] border-b border-white/8">
+      <section className="py-14 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">What AiVIS actually does</h2>
           <p className="text-white/70 mb-3">AiVIS audits how AI systems interpret your site. Not opinions. Not guesses. Evidence.</p>
@@ -427,7 +494,7 @@ const Landing = () => {
       </section>
 
       {/* ── WHY MOST SITES FAIL AI ── */}
-      <section className="py-14 bg-[#060607] border-b border-white/8">
+      <section className="py-14 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-6">
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="text-lg font-semibold text-white mb-2">What works</h3>
@@ -451,7 +518,7 @@ const Landing = () => {
       </section>
 
       {/* ── INTELLIGENCE MODULES ── */}
-      <section className="py-16 bg-[#060607] border-b border-white/8">
+      <section className="py-16 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-[11px] tracking-widest uppercase text-violet-300 font-semibold mb-2">Intelligence modules</p>
@@ -547,7 +614,7 @@ const Landing = () => {
       </section>
 
       {/* ── PUBLIC PROOF ── */}
-      <section className="py-14 bg-[#060607] border-b border-white/8">
+      <section className="py-14 bg-[#060607]/80 border-b border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-white/10 bg-[#111827]/65 p-6 sm:p-7">
             <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
@@ -598,7 +665,7 @@ const Landing = () => {
       </section>
 
       {/* ── FULL PLATFORM CAPABILITIES ── */}
-      <section className="py-24 bg-[#060607] border-t border-white/8">
+      <section className="py-24 bg-[#060607]/80 border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">Full platform</span>
@@ -647,7 +714,7 @@ const Landing = () => {
       </section>
 
       {/* ── SCORE FIX PREVIEW ── */}
-      <section className="py-20 bg-[#060607] border-t border-white/8">
+      <section className="py-20 bg-[#060607]/80 border-t border-white/8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">✓ Automated PRs</span>

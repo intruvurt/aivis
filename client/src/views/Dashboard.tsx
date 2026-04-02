@@ -1946,7 +1946,10 @@ function HeroAnalyze({
                 <h1 className="text-4xl font-extrabold leading-[1.06] tracking-tight text-white sm:text-[40px] lg:text-5xl xl:text-[64px]">
                   Measure whether AI can
                   <br className="hidden sm:block" />
-                  <span className="bg-gradient-to-r from-cyan-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                  <span
+                    className="bg-gradient-to-r from-cyan-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent"
+                    style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                  >
                     &nbsp;read, trust &amp; cite
                   </span>
                   <br />

@@ -1,7 +1,13 @@
 import { randomUUID } from 'crypto';
 import { callAIProvider } from './aiProviders.js';
-import { redisConnection } from '../infra/redis.js';
+import { getRedis } from '../infra/redis.js';
 import { getPool } from './postgresql.js';
+
+function redis() {
+  const r = getRedis();
+  if (!r) throw new Error('Redis is not configured — realtime visibility engine requires REDIS_URL or REDIS_HOST');
+  return r;
+}
 
 type MentionStrength = 'strong' | 'medium' | 'weak' | 'none';
 
@@ -119,11 +125,11 @@ function detectContext(text: string, domain: string, brand: string): 'recommende
 }
 
 async function saveRunState(state: RunState): Promise<void> {
-  await redisConnection.set(runKey(state.runId), JSON.stringify(state), 'EX', RUN_TTL_SECONDS);
+  await redis().set(runKey(state.runId), JSON.stringify(state), 'EX', RUN_TTL_SECONDS);
 }
 
 export async function getRealtimeVisibilityRun(runId: string): Promise<RunState | null> {
-  const raw = await redisConnection.get(runKey(runId));
+  const raw = await redis().get(runKey(runId));
   if (!raw) return null;
   return JSON.parse(raw) as RunState;
 }
@@ -238,7 +244,7 @@ export async function startRealtimeVisibilityRun(args: {
 
   const totalRuns = promptSet.length * MODELS.length;
   const dayCacheKey = dayKey(domain);
-  const cacheRaw = await redisConnection.get(dayCacheKey);
+  const cacheRaw = await redis().get(dayCacheKey);
 
   if (cacheRaw) {
     const aggregate = JSON.parse(cacheRaw);
@@ -291,7 +297,7 @@ export async function startRealtimeVisibilityRun(args: {
 
       const aggregate = aggregateResults(allResults);
       await persistSnapshots(domain, allResults);
-      await redisConnection.set(dayCacheKey, JSON.stringify(aggregate), 'EX', CACHE_TTL_SECONDS);
+      await redis().set(dayCacheKey, JSON.stringify(aggregate), 'EX', CACHE_TTL_SECONDS);
 
       await saveRunState({
         runId,
@@ -341,4 +347,4 @@ export async function getVisibilityHistory(domainInput: string, limit = 20): Pro
     [domain, safeLimit]
   );
   return rows;
-}
+}

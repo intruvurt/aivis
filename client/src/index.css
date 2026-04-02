@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Sans:wght@400;500;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Sans:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,7 +12,7 @@
 }
 
 :root {
-  --font-app: "DM Sans", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-app: "DM Sans", "Caveat", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --app-corner-radius: 0.75rem;
 
   /* ── Modern dark palette ──────────────────────── */
@@ -469,6 +466,19 @@
 
   /* Accessibility: honor reduced motion */
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
     .animate-in,
     .fade-in,
     .slide-in-from-bottom-2,
@@ -482,7 +492,6 @@
     .zoom-in-95 {
       animation: none !important;
       transition: none !important;
-      scroll-behavior: auto !important;
     }
   }
 

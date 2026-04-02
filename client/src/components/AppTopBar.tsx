@@ -12,7 +12,7 @@ export default function AppTopBar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-6 bg-[#0b0f1a]/95 backdrop-blur-md border-b border-white/[0.06]">
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-6 bg-[#0b0f1a]/95 backdrop-blur-md border-b border-white/[0.06]" role="banner" aria-label="App toolbar">
       {/* Left — App context + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <button className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-400 text-xs font-medium hover:bg-white/[0.06] transition-colors border border-white/[0.06]">
@@ -22,12 +22,13 @@ export default function AppTopBar() {
 
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
           <input
-            type="text"
+            type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search audits..."
+            aria-label="Search audits"
             className="w-full h-8 pl-9 pr-3 rounded-lg bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/30 focus:bg-white/[0.06] transition-all"
           />
         </div>
@@ -49,23 +50,25 @@ export default function AppTopBar() {
           to="/docs"
           className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-colors"
           title="Documentation"
+          aria-label="Documentation"
         >
-          <BookOpen className="w-4 h-4" />
+          <BookOpen className="w-4 h-4" aria-hidden="true" />
         </Link>
 
         {/* Notifications */}
         <Link
           to="/app/notifications"
           className="relative p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-colors"
+          aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
         >
-          <Bell className="w-4 h-4" />
+          <Bell className="w-4 h-4" aria-hidden="true" />
           {unreadCount > 0 && (
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0b0f1a]" />
           )}
         </Link>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-white/[0.06] mx-1" />
+        <div className="w-px h-6 bg-white/[0.06] mx-1" aria-hidden="true" />
 
         {/* User */}
         <Link
@@ -83,8 +86,9 @@ export default function AppTopBar() {
           onClick={() => { logout(); navigate("/"); }}
           className="p-2 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/[0.04] transition-colors"
           title="Sign out"
+          aria-label="Sign out"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
     </header>

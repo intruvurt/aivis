@@ -69,7 +69,8 @@ export default {
         md:  "var(--r-md)",
       },
       fontFamily: {
-        sans: ["DM Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["DM Sans", "Caveat", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        accent: ["Caveat", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
         corporate: ["Inter", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
         fancy: ["Space Grotesk", "DM Sans", "ui-sans-serif", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],

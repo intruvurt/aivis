@@ -95,7 +95,7 @@ export default function AppSidebar() {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0b0f1a] border-r border-white/[0.06]">
+    <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0b0f1a] border-r border-white/[0.06]" role="navigation" aria-label="Main navigation">
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 h-14 shrink-0 border-b border-white/[0.06]">
         <NavLink to="/" className="flex items-center gap-2">

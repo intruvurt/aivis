@@ -1,5 +1,11 @@
 import { randomUUID } from 'crypto';
-import { redisConnection } from '../redis.js';
+import { getRedis } from '../redis.js';
+
+function redis() {
+  const r = getRedis();
+  if (!r) throw new Error('Redis is not configured — audit queue requires REDIS_URL or REDIS_HOST');
+  return r;
+}
 
 export type AuditQueueJobData = {
   url: string;
@@ -37,39 +43,39 @@ export async function enqueueAuditJob(data: AuditQueueJobData): Promise<string> 
     createdAt: now,
     updatedAt: now,
   };
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
   const queueKey = data.priority === 'normal' ? NORMAL_PRIORITY_QUEUE_KEY : HIGH_PRIORITY_QUEUE_KEY;
-  await redisConnection.rpush(queueKey, id);
+  await redis().rpush(queueKey, id);
   return id;
 }
 
 export async function claimNextAuditJob(): Promise<StoredJob | null> {
-  const id = (await redisConnection.lpop(HIGH_PRIORITY_QUEUE_KEY)) ?? (await redisConnection.lpop(NORMAL_PRIORITY_QUEUE_KEY));
+  const id = (await redis().lpop(HIGH_PRIORITY_QUEUE_KEY)) ?? (await redis().lpop(NORMAL_PRIORITY_QUEUE_KEY));
   if (!id) return null;
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   if (!raw) return null;
   const job = JSON.parse(raw) as StoredJob;
   job.state = 'running';
   job.stage = 'starting';
   job.updatedAt = new Date().toISOString();
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
   return job;
 }
 
 export async function requeueAuditJob(id: string): Promise<void> {
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   if (!raw) return;
   const job = JSON.parse(raw) as StoredJob;
   job.state = 'queued';
   job.stage = 'queued';
   job.updatedAt = new Date().toISOString();
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
   const queueKey = job.payload.priority === 'normal' ? NORMAL_PRIORITY_QUEUE_KEY : HIGH_PRIORITY_QUEUE_KEY;
-  await redisConnection.rpush(queueKey, id);
+  await redis().rpush(queueKey, id);
 }
 
 export async function updateAuditJobProgress(id: string, stage: string, progress: number, hints?: string[]) {
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   if (!raw) return;
   const job = JSON.parse(raw) as StoredJob;
   job.stage = stage;
@@ -78,11 +84,11 @@ export async function updateAuditJobProgress(id: string, stage: string, progress
     job.hints = hints.slice(0, 4);
   }
   job.updatedAt = new Date().toISOString();
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
 }
 
 export async function completeAuditJob(id: string, result: unknown) {
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   if (!raw) return;
   const job = JSON.parse(raw) as StoredJob;
   job.state = 'completed';
@@ -90,21 +96,21 @@ export async function completeAuditJob(id: string, result: unknown) {
   job.progress = 100;
   job.result = result;
   job.updatedAt = new Date().toISOString();
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
 }
 
 export async function failAuditJob(id: string, error: string) {
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   if (!raw) return;
   const job = JSON.parse(raw) as StoredJob;
   job.state = 'failed';
   job.stage = 'failed';
   job.error = error;
   job.updatedAt = new Date().toISOString();
-  await redisConnection.set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
+  await redis().set(JOB_KEY(id), JSON.stringify(job), 'EX', 60 * 60 * 24);
 }
 
 export async function getAuditJob(id: string): Promise<StoredJob | null> {
-  const raw = await redisConnection.get(JOB_KEY(id));
+  const raw = await redis().get(JOB_KEY(id));
   return raw ? (JSON.parse(raw) as StoredJob) : null;
-}
+}

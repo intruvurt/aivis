@@ -114,18 +114,7 @@ export default function CitationsPage() {
   ];
 
   return (
-    <div className="min-h-screen page-splash-bg flex flex-col bg-[#2e3646] text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-white/16 to-white dark:bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] dark:from-white/20 dark:via-white/16 dark:to-black" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
+    <div className="min-h-screen flex flex-col text-white">
 
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <header className="border-b border-white/10 bg-charcoal-deep">

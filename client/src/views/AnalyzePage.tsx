@@ -598,12 +598,7 @@ const AnalyzePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />
-        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-charcoal/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-charcoal blur-3xl" />
-      </div>
+    <div className="min-h-screen text-white">
 
       {/* ── Page header banner ─────────────────────────────────────── */}
       <header className="border-b border-white/10 bg-charcoal-deep relative z-10">

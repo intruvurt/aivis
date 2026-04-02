@@ -74,7 +74,7 @@ export default function AboutPage() {
           </div>
         </div>
       </header>
-      <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+      <div className="min-h-screen text-white">
 
       {/* Hero section */}
       <section className="px-4 py-16 md:py-24 max-w-6xl mx-auto">

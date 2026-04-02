@@ -122,7 +122,7 @@ export default function PublicReportPage() {
   const competitorScorePreview = useMemo(() => Math.min(100, Math.max(0, (audit?.visibility_score || 0) + 19)), [audit?.visibility_score]);
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
         <header className="rounded-2xl border border-white/10/70 bg-charcoal-deep p-6">
           <div className="flex items-center gap-2 text-[#6A911E] mb-2">

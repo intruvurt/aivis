@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function PaymentCanceledPage() {
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8">
       <div className="max-w-md w-full text-center">
         <div className="w-20 h-20 rounded-2xl card-charcoal flex items-center justify-center mx-auto mb-6">
           <span className="text-4xl">↩</span>

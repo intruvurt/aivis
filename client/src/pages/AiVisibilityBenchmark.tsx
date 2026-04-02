@@ -65,9 +65,9 @@ export default function AiVisibilityBenchmark() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#060607] text-white relative overflow-hidden">
+    <div className="min-h-screen text-white relative overflow-hidden">
       {/* ── Ambient background ── */}
-      <div className="pointer-events-none fixed inset-0 z-0">
+      <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-60 -right-40 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-3xl" />
       </div>

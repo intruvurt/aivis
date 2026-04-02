@@ -444,7 +444,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="fixed inset-0 -z-10">
         {/* Warm base gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d1f3a] via-[#3d2048] to-[#6a1f1f]" />

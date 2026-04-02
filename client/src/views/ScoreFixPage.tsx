@@ -451,7 +451,7 @@ export default function ScoreFixPage() {
           />
         </div>
       ) : (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.12),_transparent_22%),linear-gradient(135deg,#09090b_0%,#111827_45%,#0f172a_100%)] text-white">
+      <div className="min-h-screen text-white">
       <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
         <motion.section
           {...sectionFade}

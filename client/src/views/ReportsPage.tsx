@@ -1314,13 +1314,7 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
-      {/* Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-charcoal/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/4 right-1/3 w-80 h-80 bg-charcoal/5 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen text-white">
 
       {/* Header */}
       <header className="border-b border-white/10 bg-charcoal-deep">

@@ -328,7 +328,7 @@ export default function GscConsolePage() {
   /* ── Tier gate ──────────────────────────────────── */
   if (!hasAccess) {
     return (
-      <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+      <div className="min-h-screen text-white">
         <div className="mx-auto max-w-3xl px-4 py-16">
           <UpgradeWall
             feature="Search Console Intelligence"
@@ -342,7 +342,7 @@ export default function GscConsolePage() {
   }
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
 
       {/* ── Header ────────────────────────────────────────────────── */}

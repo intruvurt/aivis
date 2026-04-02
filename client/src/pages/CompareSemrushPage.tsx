@@ -69,7 +69,7 @@ export default function CompareSemrushPage() {
   });
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white py-10">
+    <div className="min-h-screen text-white py-10">
       <section className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-12">
         <div className="card-charcoal rounded-2xl p-8 border border-white/10">
           {/* ── Category Claim ── */}

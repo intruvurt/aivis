@@ -16,7 +16,7 @@ export default function TermsPage() {
   });
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white flex flex-col">
+    <div className="min-h-screen text-white flex flex-col">
       {/* Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />

@@ -79,7 +79,7 @@ export default function PressPage() {
         </div>
       </header>
 
-      <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+      <div className="min-h-screen text-white">
         {/* Hero */}
         <section className="px-4 py-16 md:py-20 max-w-6xl mx-auto text-center">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-300/90 text-xs font-semibold tracking-wide mb-6">

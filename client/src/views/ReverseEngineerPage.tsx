@@ -2566,13 +2566,7 @@ export default function ReverseEngineerPage() {
   };
 
   return (
-    <div className="min-h-screen page-splash-bg flex flex-col bg-[#2e3646] text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />
-        <div className="absolute left-1/3 top-1/4 h-96 w-96 rounded-full bg-charcoal blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 h-80 w-80 rounded-full bg-charcoal/5 blur-3xl" />
-        <div className="absolute left-1/4 top-2/3 h-72 w-72 rounded-full bg-charcoal/5 blur-3xl" />
-      </div>
+    <div className="min-h-screen flex flex-col text-white">
 
       <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">

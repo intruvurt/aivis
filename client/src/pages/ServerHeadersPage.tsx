@@ -274,7 +274,7 @@ export default function ServerHeadersPage() {
   };
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
           <button

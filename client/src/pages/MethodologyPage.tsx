@@ -244,7 +244,7 @@ export default function MethodologyPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#2e3646] text-white flex flex-col">
+    <div className="min-h-screen text-white flex flex-col">
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
       </div>

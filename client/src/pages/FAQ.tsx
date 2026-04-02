@@ -378,7 +378,7 @@ const FAQ: React.FC = () => {
     setOpenIndex((prev) => (prev === key ? null : key));
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white transition-colors">
+    <div className="min-h-screen text-white transition-colors">
       {/* ── Standard page header banner ────────────────────────── */}
       <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">

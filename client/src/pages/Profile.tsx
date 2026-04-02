@@ -154,7 +154,7 @@ export default function ProfilePage() {
   }, [user.full_name, user.display_name, user.email]);
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       {/* ──── Hero header ──── */}
       <header className={`relative overflow-hidden border-b ${tc.border} bg-charcoal-deep`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${tc.bg} opacity-60 pointer-events-none`} />

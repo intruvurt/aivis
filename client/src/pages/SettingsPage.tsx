@@ -570,7 +570,7 @@ const SettingsPage: React.FC = () => {
   /*  RENDER                                                           */
   /* ================================================================ */
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <header className="border-b border-white/10 bg-charcoal-deep">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">

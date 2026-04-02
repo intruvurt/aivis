@@ -311,7 +311,7 @@ const Admin: React.FC = () => {
   // Admin key lock screen — show when user has no role or stored key
   if (!isAdmin) {
     return (
-      <div id="src_pages_Admin_lock" className="min-h-screen page-splash-bg bg-[#2e3646] flex items-center justify-center py-12">
+      <div id="src_pages_Admin_lock" className="min-h-screen flex items-center justify-center py-12">
         <div className="max-w-sm w-full mx-auto px-4">
           <div className="card-charcoal rounded-2xl p-8 text-center space-y-4">
             <div className="w-12 h-12 mx-auto rounded-full bg-white/10 flex items-center justify-center">
@@ -350,7 +350,7 @@ const Admin: React.FC = () => {
   }
 
   return (
-    <div id="src_pages_Admin_main" className="min-h-screen page-splash-bg bg-[#2e3646] py-12">
+    <div id="src_pages_Admin_main" className="min-h-screen py-12">
       <div
         id="src_pages_Admin_container"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"

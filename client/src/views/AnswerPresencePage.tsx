@@ -111,7 +111,7 @@ export default function AnswerPresencePage() {
   /* ── Upgrade wall for observer tier ── */
   if (!hasAccess) {
     return (
-      <div className="min-h-screen page-splash-bg bg-[#2e3646]">
+      <div className="min-h-screen">
         <div className="max-w-4xl mx-auto px-4 py-16">
           <Link to="/" className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition mb-8 text-sm">
             <ArrowLeft className="w-4 h-4" /> Back
@@ -192,7 +192,7 @@ export default function AnswerPresencePage() {
 
   /* ── Main page for Alignment+ ── */
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646]">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">

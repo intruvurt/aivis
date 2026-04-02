@@ -976,7 +976,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-[#2a3040] via-[#323a4c] to-[#2e3646]" />
         <div

@@ -55,7 +55,7 @@ export default function GuidePage() {
   });
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
+    <div className="min-h-screen text-white">
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 xl:pl-64">
       <aside className="fixed left-8 top-28 hidden w-52 space-y-2 xl:block">
         <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-white/35">Guide Navigation</p>

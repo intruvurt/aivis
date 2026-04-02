@@ -833,7 +833,7 @@ export default function AnalyticsPage() {
 
   /* ── render ────────────────────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen page-splash-bg text-white" style={{ background: 'rgba(10,14,28,0.98)' }}>
+    <div className="min-h-screen text-white">
 
       {/* ── Page header banner ─────────────────────────────────────────── */}
       <header className="border-b border-white/10 bg-charcoal-deep">

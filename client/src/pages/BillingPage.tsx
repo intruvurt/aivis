@@ -579,11 +579,7 @@ export default function BillingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
-        <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: "linear-gradient(rgba(80,55,35,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(80,55,35,0.18) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-      </div>
+    <div className="min-h-screen text-white">
       <header className="border-b border-white/10 bg-charcoal-deep relative z-10">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-4 sm:px-6">
           <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">

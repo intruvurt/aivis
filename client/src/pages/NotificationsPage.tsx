@@ -147,10 +147,7 @@ export default function NotificationsPage() {
   }, [notifications, scopeFilter, creditOnly]);
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#2e3646] text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
-      </div>
+    <div className="min-h-screen text-white">
 
       <header className="border-b border-white/10 bg-charcoal-deep relative z-10">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6">

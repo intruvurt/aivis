@@ -28,7 +28,7 @@ export default function CompetitiveLandscapePage() {
   });
 
   return (
-    <div className="min-h-screen page-splash-bg bg-[#121725] text-white">
+    <div className="min-h-screen bg-[#121725] text-white">
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-10 rounded-2xl border border-white/10 bg-charcoal-deep/90 p-8">
           <p className="text-xs font-semibold tracking-wide uppercase text-white/70 mb-3">

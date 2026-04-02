@@ -1866,6 +1866,20 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_ran_at ON citation_niche_rankings(ran_at DESC)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_in_top50 ON citation_niche_rankings(in_top_50) WHERE in_top_50 = TRUE`);
 
+    // ─── GDPR fix: change citation_niche_rankings from SET NULL → CASCADE ──
+    _q(`DO $$ BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'citation_niche_rankings_user_id_fkey'
+          AND table_name = 'citation_niche_rankings'
+      ) THEN
+        ALTER TABLE citation_niche_rankings DROP CONSTRAINT citation_niche_rankings_user_id_fkey;
+        ALTER TABLE citation_niche_rankings
+          ADD CONSTRAINT citation_niche_rankings_user_id_fkey
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+      END IF;
+    END $$`);
+
     // ─── Scheduled Citation Ranking Jobs ─────────────────────────────────────
     _q(`
       CREATE TABLE IF NOT EXISTS citation_scheduled_jobs (

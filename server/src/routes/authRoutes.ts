@@ -717,6 +717,8 @@ router.delete('/account', authRequired, async (req: any, res) => {
     await client.query('DELETE FROM trial_email_log WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM rate_limit_events WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM verification_runs WHERE user_id = $1', [userId]);
+    // github_app_installations uses VARCHAR user_id — no FK cascade
+    await client.query('DELETE FROM github_app_installations WHERE user_id = $1', [userId]);
 
     // ── Phase 3: Audit chain — audits uses ON DELETE SET NULL, so child rows orphan ──
     // Clean audit-linked tables that would survive due to SET NULL on audits.user_id
@@ -728,6 +730,12 @@ router.delete('/account', authRequired, async (req: any, res) => {
     await client.query(`DELETE FROM audit_rule_results WHERE audit_id IN (${auditIds})`, [userId]);
     await client.query(`DELETE FROM audit_evidence WHERE audit_id IN (${auditIds})`, [userId]);
     await client.query(`DELETE FROM audits WHERE user_id = $1`, [userId]);
+
+    // ── Phase 3b: SET NULL tables that orphan user data ───────────────────
+    // citation_niche_rankings uses ON DELETE SET NULL — must explicitly delete
+    await client.query('DELETE FROM citation_niche_rankings WHERE user_id = $1', [userId]);
+    // security_audit_log uses ON DELETE SET NULL — scrub actor identity but keep audit trail
+    await client.query(`UPDATE security_audit_log SET actor_email = NULL, details = details - 'email' WHERE actor_id = $1`, [userId]);
 
     // ── Phase 4: License chain (no user FK) ───────────────────────────────
     await client.query(`DELETE FROM license_verifications WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);

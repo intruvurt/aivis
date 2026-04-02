@@ -9,6 +9,7 @@ import {
   requeueAuditJob,
   updateAuditJobProgress,
 } from '../infra/queues/auditQueue.js';
+import { getRedis } from '../infra/redis.js';
 
 const JOB_TIMEOUT_MS = 55_000;
 const FAST_FETCH_TIMEOUT_MS = 6_500;
@@ -228,6 +229,10 @@ async function runSingleJob() {
 
 export function startAuditWorkerLoop() {
   if (workerInterval) return;
+  if (!getRedis()) {
+    console.warn('[AuditQueue] Redis unavailable — worker loop not started');
+    return;
+  }
   const concurrency = Math.max(1, Number(process.env.AUDIT_WORKER_CONCURRENCY || 3));
   workerInterval = setInterval(async () => {
     while (active < concurrency) {

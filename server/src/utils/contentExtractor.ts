@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { buildEvidence } from "./evidence";
+import { buildEvidence } from "./evidence.js";
 
 /**
  * Stage 4: Extraction - Extract all relevant signals from HTML

@@ -20,7 +20,7 @@
 
 /* ========================= Canonical tier system ========================= */
 
-export type CanonicalTier = 'observer' | 'alignment' | 'signal';
+export type CanonicalTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -33,7 +33,7 @@ export type LegacyTier = 'free' | 'core' | 'premium';
  * If UI naming ever diverges from canonical naming, update the
  * LEGACY_TO_UI_TIER map and canonicalTierFromUi() accordingly.
  */
-export type UiTier = 'observer' | 'alignment' | 'signal';
+export type UiTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
 
 /** Convenience re-aliases for external consumers */
 export type Tier = CanonicalTier;
@@ -46,6 +46,7 @@ const LEGACY_TO_UI_TIER: Readonly<Record<CanonicalTier | LegacyTier, UiTier>> = 
   observer: 'observer',
   alignment: 'alignment',
   signal: 'signal',
+  scorefix: 'scorefix',
   // legacy aliases
   free: 'observer',
   core: 'alignment',
@@ -56,24 +57,28 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   observer: 'Observer (Free)',
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
+  scorefix: 'Score Fix [AutoPR]',
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
   observer: 'see how AI systems parse and interpret your site — free forever',
   alignment: 'turn structural gaps into extractable evidence with single-model production audits',
   signal: 'full visibility into how AI crawlers trust your content — triple-check pipeline included',
+  scorefix: 'automated score remediation — AI-generated PRs to fix visibility issues',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   observer: 'curious builders • founders testing the mirror • free forever',
   alignment: 'solo builders • early founders • no-code creators • production-ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
+  scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
 };
 
 const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
   observer: 0,
   alignment: 1,
   signal: 2,
+  scorefix: 3,
   free: 0,
   core: 1,
   premium: 2,
@@ -89,6 +94,7 @@ const VALID_TIER_STRINGS: ReadonlySet<string> = new Set<CanonicalTier | LegacyTi
   'observer',
   'alignment',
   'signal',
+  'scorefix',
   'free',
   'core',
   'premium',
@@ -204,6 +210,19 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasReportHistory: true,
     hasShareableLink: true,
   },
+  scorefix: {
+    scansPerMonth: 15,
+    pagesPerScan: 10,
+    competitors: 5,
+    cacheDays: 90,
+    hasExports: true,
+    hasForceRefresh: true,
+    hasApiAccess: true,
+    hasWhiteLabel: false,
+    hasScheduledRescans: true,
+    hasReportHistory: true,
+    hasShareableLink: true,
+  },
 } as const;
 
 /**
@@ -226,7 +245,7 @@ export interface TierPricing {
   billingModel: TierBillingModel;
 }
 
-export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier | 'scorefix', TierPricing>> = {
+export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>> = {
   observer:  { monthlyUsd: 0,  yearlyUsd: 0,   oneTimeUsd: 0,   billingModel: 'free' },
   alignment: { monthlyUsd: 9,  yearlyUsd: 84,  oneTimeUsd: 0,   billingModel: 'subscription' },
   signal:    { monthlyUsd: 29, yearlyUsd: 276,  oneTimeUsd: 0,   billingModel: 'subscription' },
@@ -262,10 +281,10 @@ export interface ToolCreditRule {
 }
 
 export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
-  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20 }, creditCost: 1 },
-  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10 }, creditCost: 2 },
-  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10 }, creditCost: 1 },
-  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5  }, creditCost: 2 },
+  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20, scorefix: 10 }, creditCost: 1 },
+  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 2 },
+  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 1 },
+  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5,  scorefix: 3  }, creditCost: 2 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */
@@ -310,6 +329,7 @@ export const PRIVATE_EXPOSURE_SCAN_PACKAGING: Readonly<Record<CanonicalTier, Pri
   observer:  { available: false, label: 'Not available', maxTargetsPerScan: 0,  description: 'Upgrade to Alignment to access Private Exposure Scans.' },
   alignment: { available: true,  label: 'Standard',      maxTargetsPerScan: 3,  description: 'Run private exposure scans on up to 3 targets per request.' },
   signal:    { available: true,  label: 'Advanced',       maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
+  scorefix:  { available: true,  label: 'Premium',        maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
 };
 
 /* ========================= AI Platform scores ========================= */
@@ -1052,3 +1072,500 @@ export const SUPPORT_TICKET_CATEGORIES: ReadonlyArray<{ value: SupportTicketCate
   { value: 'feature_request', label: 'Feature Request' },
   { value: 'bug_report',      label: 'Bug Report' },
 ];
+
+/* ── SSFR types ─────────────────────────────────────────────────────────── */
+
+export type SSFRFamily = 'source' | 'signal' | 'fact' | 'relationship';
+
+export type SSFREvidenceStatus = 'present' | 'missing' | 'partial' | 'invalid';
+
+export type SSFRRuleSeverity = 'critical' | 'high' | 'medium' | 'low';
+
+export interface SSFREvidenceItem {
+  family: SSFRFamily;
+  evidence_key: string;
+  value: unknown;
+  source: string;
+  status: SSFREvidenceStatus;
+  confidence: number;
+  notes?: unknown;
+}
+
+export interface SSFRRuleResult {
+  family: SSFRFamily;
+  rule_id: string;
+  title: string;
+  passed: boolean;
+  severity: SSFRRuleSeverity;
+  is_hard_blocker: boolean;
+  score_cap?: number;
+  evidence_ids: string[];
+  details?: Record<string, unknown>;
+}
+
+export type SSFRFixpackType = 'schema_fix' | 'entity_patch' | 'meta_fix' | 'content_block';
+
+export interface SSFRFixpackAsset {
+  type: 'json_ld' | 'markdown' | 'meta_tag' | 'text';
+  label: string;
+  content: string;
+}
+
+export type SSFRVerificationStatus = 'verified' | 'failed';
+
+export interface SSFRFixpack {
+  type: SSFRFixpackType;
+  title: string;
+  summary: string;
+  priority: number;
+  assets: SSFRFixpackAsset[];
+  auto_generatable: boolean;
+  verification_status: SSFRVerificationStatus;
+  based_on_rule_ids: string[];
+}
+
+/* ── Citation types ─────────────────────────────────────────────────────── */
+
+export interface CitationMentionTrend {
+  id: string;
+  user_id: string;
+  url: string;
+  test_id: string | null;
+  mention_rate: number;
+  total_queries: number;
+  mentioned_count: number;
+  platform_breakdown: Record<string, number>;
+  sampled_at: string;
+}
+
+export interface CitationDropAlert {
+  id: string;
+  user_id: string;
+  url: string;
+  previous_mention_rate: number;
+  current_mention_rate: number;
+  drop_magnitude: number;
+  alert_type: string;
+  created_at: string;
+}
+
+export interface CitationCoOccurrence {
+  id: string;
+  user_id: string;
+  url: string;
+  brand_name: string;
+  query_used: string;
+  source_url: string;
+  source_title: string;
+  mention_context: string;
+  has_link: boolean;
+  found_at: string;
+}
+
+export interface CitationCompetitorShareEntry {
+  competitor_name: string;
+  mention_count: number;
+  total_queries: number;
+  share_pct: number;
+  platforms_present: string[];
+}
+
+export interface ConsistencyMatrixCell {
+  query: string;
+  platform: string;
+  mentioned: boolean;
+  position: number;
+  excerpt: string;
+}
+
+export interface CitationIdentityResponse {
+  normalized_url: string;
+  business_name: string;
+  business_name_source: 'audit_evidence' | 'schema_org' | 'og_site_name' | 'page_title' | 'domain';
+  page_title?: string;
+  evidence_updated_at?: string;
+  evidence_url: string;
+  recent_audit_found: boolean;
+}
+
+export interface CitableSection {
+  page: string;
+  section_heading: string;
+  confidence: number;
+  extractable_text: string;
+  word_count: number;
+  risk_factors: string[];
+}
+
+export interface ScheduledCitationJob {
+  id: string;
+  user_id: string;
+  target_url: string;
+  niche?: string;
+  niche_keywords: string[];
+  interval_hours: number;
+  is_active: boolean;
+  last_run_at?: string;
+  next_run_at?: string;
+  last_ranking_id?: string;
+  run_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CitationDimensionKey =
+  | 'entity_clarity'
+  | 'answer_density'
+  | 'structured_data'
+  | 'trust_architecture'
+  | 'content_query_alignment'
+  | 'topical_authority_depth'
+  | 'noise_to_signal'
+  | 'technical_crawl_integrity'
+  | 'citation_surface_area'
+  | 'offpage_visibility_footprint';
+
+export interface CitationDimensionScore {
+  key: CitationDimensionKey;
+  label: string;
+  score_0_10: number;
+  weighted_points: number;
+  evidence_count: number;
+  rationale: string;
+}
+
+export interface CitationEvidenceArtifact {
+  dimension: CitationDimensionKey;
+  score_0_10: number;
+  finding: string;
+  evidence_type: 'metadata' | 'dom' | 'schema' | 'link' | 'http' | 'search';
+  evidence_id: string;
+  source_url: string;
+  selector_or_locator: string;
+  observed_value: string;
+  capture_time_utc: string;
+  confidence: 'high' | 'medium' | 'low';
+}
+
+export interface ModelParityCheck {
+  required_dimensions: CitationDimensionKey[];
+  covered_dimensions: CitationDimensionKey[];
+  missing_dimensions: CitationDimensionKey[];
+  required_outputs: string[];
+  outputs_present: string[];
+  outputs_missing: string[];
+  pass: boolean;
+}
+
+export interface CitationParityAudit {
+  rubric_version: string;
+  parity_complete: boolean;
+  ai_visibility_score_0_100: number;
+  verdict: 'Safe to cite as factual' | 'OK as opinion' | 'Avoid for serious factual claims';
+  strongest_reliability_indicators: string[];
+  biggest_concerns_or_limitations: string[];
+  visibility_note: {
+    level: 'high' | 'medium' | 'low';
+    reasons: string[];
+  };
+  dimensions: CitationDimensionScore[];
+  top_friction_points: string[];
+  priority_fixes: string[];
+  model_parity: Record<string, ModelParityCheck>;
+  evidence: CitationEvidenceArtifact[];
+}
+
+/* ── Authority types ────────────────────────────────────────────────────── */
+
+export type AuthorityPlatform =
+  | 'reddit' | 'linkedin' | 'substack' | 'medium' | 'github'
+  | 'stackoverflow' | 'wikipedia' | 'youtube' | 'g2' | 'trustpilot'
+  | 'crunchbase' | 'producthunt' | 'techcrunch' | 'blogger'
+  | 'facebook' | 'devpost' | 'hackernews' | 'chrome_web_store';
+
+export type ContentNature = 'spammy' | 'direct_promo' | 'organic_pain_solution' | 'neutral';
+
+export interface AuthorityCitationItem {
+  platform: AuthorityPlatform;
+  rank: number;
+  title: string;
+  snippet: string;
+  source_url: string;
+  backlink_found: boolean;
+  authority_score: number;
+  content_nature: ContentNature;
+  confidence: number;
+}
+
+export interface AuthorityCheckResponse {
+  target: string;
+  mode: string;
+  official_domain?: string;
+  checked_at: string;
+  platforms: Array<{
+    platform: AuthorityPlatform;
+    authority_score: number;
+    citation_count: number;
+    backlink_count: number;
+    content_breakdown: Record<ContentNature, number>;
+    items: AuthorityCitationItem[];
+  }>;
+  overall: {
+    authority_index: number;
+    total_citations: number;
+    total_backlinks: number;
+    spammy_count: number;
+    direct_promo_count: number;
+    organic_pain_solution_count: number;
+  };
+  audit: {
+    policy: string;
+    citation_density: number;
+    refusal: boolean;
+    refusal_reason?: string;
+    notes: string[];
+  };
+  security: unknown;
+  phishing_risk: unknown;
+  compliance: unknown;
+}
+
+/* ── Niche ranking types ────────────────────────────────────────────────── */
+
+export type ModelRole = 'primary' | 'fallback';
+
+export type ModelShortName = string;
+
+export interface NicheRankingEntry {
+  rank: number;
+  brand_name: string;
+  is_target: boolean;
+  citation_excerpt?: string;
+}
+
+export interface NicheRankingResult {
+  id: string;
+  target_url: string;
+  brand_name: string;
+  niche: string;
+  niche_keywords: string[];
+  target_rank: number | null;
+  in_top_50: boolean;
+  in_top_100: boolean;
+  top_50: NicheRankingEntry[];
+  top_100: NicheRankingEntry[];
+  ranking_model_id: string;
+  ranking_model_short: ModelShortName;
+  ranking_model_role: ModelRole;
+  citation_models_used: Array<{
+    platform: string;
+    model_id: string;
+    model_short: ModelShortName;
+    role: ModelRole;
+    mentioned: boolean;
+    position: number | null;
+  }>;
+  ran_at: string;
+  scheduled_job_id?: string;
+}
+
+/* ── Geo / Rubric / Truth types ─────────────────────────────────────────── */
+
+export interface GeoSignalProfile {
+  source_verified: boolean;
+  signal_consistent: boolean;
+  fact_unique: boolean;
+  relationship_anchored: boolean;
+  information_gain: 'unique' | 'standard' | 'redundant';
+}
+
+export interface ContradictionReport {
+  status: 'critical' | 'attention' | 'clean';
+  blocker_count: number;
+  issue_count: number;
+  issues: Array<{
+    id: string;
+    severity: 'critical' | 'high' | 'medium' | 'low';
+    dimension: 'source' | 'signal' | 'fact' | 'relationship';
+    title: string;
+    detail: string;
+    blocking: boolean;
+    evidence_keys: string[];
+  }>;
+}
+
+export interface AuditTruthHistoryEntry {
+  audit_id: string;
+  url: string;
+  created_at: string;
+  visibility_score: number;
+  execution_class: string | null;
+  geo_signal_profile: GeoSignalProfile | null;
+  contradiction_report: ContradictionReport | null;
+}
+
+export interface StrictRubricSystem {
+  version: string;
+  score_0_100: number;
+  reliability_index_0_100: number;
+  gates: Array<{
+    id: string;
+    label: string;
+    weight: number;
+    status: 'pass' | 'warn' | 'fail';
+    score_0_100: number;
+    threshold_pass: number;
+    actual_value: number;
+    evidence_ids: string[];
+  }>;
+  required_fixpacks: Array<{
+    id: string;
+    label: string;
+    target_gate_ids: string[];
+    estimated_score_lift_min: number;
+    estimated_score_lift_max: number;
+    actions: string[];
+    validation_steps: string[];
+  }>;
+  pass_rate: number;
+  cross_platform_ready: boolean;
+  guarantee_policy: {
+    mode: string;
+    baseline_preconditions: string[];
+    expected_delta_band: { min: number; max: number };
+  };
+}
+
+/* ── Text summary types ─────────────────────────────────────────────────── */
+
+export interface TextSummaryFinding {
+  title: string;
+  explanation: string;
+  fix: string;
+}
+
+export interface TextSummary {
+  depth: TextSummaryDepth;
+  intro: string;
+  findings: TextSummaryFinding[];
+  priority_order: string[];
+  closing: string;
+}
+
+/* ── SEO diagnostics ────────────────────────────────────────────────────── */
+
+export interface SeoDiagnosticEntry {
+  status: 'pass' | 'warn' | 'fail';
+  detail: string;
+}
+
+export interface SeoDiagnostics {
+  title: SeoDiagnosticEntry;
+  meta_description: SeoDiagnosticEntry;
+  h1: SeoDiagnosticEntry;
+  schema: SeoDiagnosticEntry;
+  canonical: SeoDiagnosticEntry;
+  https: SeoDiagnosticEntry;
+  robots: SeoDiagnosticEntry;
+  indexability: SeoDiagnosticEntry;
+  internal_link_health: SeoDiagnosticEntry;
+  content_uniqueness: SeoDiagnosticEntry;
+  performance_hint: SeoDiagnosticEntry;
+  image_alt_coverage: SeoDiagnosticEntry;
+  semantic_landmarks: SeoDiagnosticEntry;
+  form_accessibility: SeoDiagnosticEntry;
+  [key: string]: SeoDiagnosticEntry;
+}
+
+/* ── Private exposure types ─────────────────────────────────────────────── */
+
+export type PrivateExposureTargetType = 'site' | string;
+
+export type PrivateExposureFindingSeverity = 'critical' | 'high' | 'medium' | 'low' | 'informational';
+
+export type PrivateExposureFindingConfidence = 'high' | 'medium' | 'low';
+
+export type PrivateExposureFindingDomain =
+  | 'client_secret_leakage'
+  | 'route_protection_integrity'
+  | 'session_hardening'
+  | 'header_hardening'
+  | 'public_data_spill_risk';
+
+export type PrivateExposureFindingStatus = 'confirmed' | 'possible';
+
+export type PrivateExposureScoreBand =
+  | 'hardened_surface'
+  | 'mostly_sound_notable_trust_gaps'
+  | 'meaningful_exposure_risk'
+  | 'high_risk_public_surface'
+  | 'critical_exposure_posture';
+
+export type PrivateExposureVerdict = 'confirmed_exposure' | 'possible_exposure' | 'no_clear_exposure';
+
+export interface PrivateExposureFinding {
+  evidence_id: string;
+  title: string;
+  domain: PrivateExposureFindingDomain;
+  severity: PrivateExposureFindingSeverity;
+  confidence: PrivateExposureFindingConfidence;
+  status: PrivateExposureFindingStatus;
+  where_found: {
+    asset_type: 'response_header' | 'cookie' | 'javascript_bundle' | 'source_map' | 'api_endpoint';
+    location: string;
+    line_hint: number | null;
+  };
+  what_was_observed: string;
+  why_it_matters: string;
+  minimal_redacted_proof: string;
+  fix_path: string[];
+  retest_steps: string[];
+  affected_assets: string[];
+  tags: string[];
+}
+
+export interface PrivateExposureScanReport {
+  scan_type: 'private_exposure_scan';
+  scan_version: string;
+  scope: {
+    target_type: PrivateExposureTargetType;
+    target_label: string;
+    ownership_asserted: boolean;
+    scan_mode: 'passive';
+    authenticated_context_provided: boolean;
+  };
+  summary: {
+    exposure_surface_score: number;
+    score_band: PrivateExposureScoreBand;
+    verdict: PrivateExposureVerdict;
+    top_priorities: string[];
+  };
+  domain_scores: Record<PrivateExposureFindingDomain, {
+    score: number;
+    weight: number;
+    status: 'hardened' | 'not_observed' | 'high_risk_exposure' | 'at_risk' | 'needs_attention';
+  }>;
+  findings: PrivateExposureFinding[];
+  quick_wins_under_30m: string[];
+  needs_engineering_changes: string[];
+  retest_plan: {
+    recommended: boolean;
+    retest_scope: string[];
+  };
+  history: {
+    prior_scan_id: string | null;
+    regressions: unknown[];
+    resolved_evidence_ids: string[];
+  };
+}
+
+/* ── Evidence-driven fix types ──────────────────────────────────────────── */
+
+export interface EvidenceDrivenFixIssue {
+  id: string;
+  finding: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  evidence_ids: string[];
+  actual_fix: string;
+  evidence_excerpt?: string;
+}

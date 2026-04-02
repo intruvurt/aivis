@@ -1,7 +1,7 @@
-import { openrouterPrompt, ollamaPrompt } from "../config/aiProviders";
-import { PROMPT_SCHEMAS, PROMPT_STAGES } from "../constants/promptTemplates";
-import { AnalysisAuditLogModel } from "../models/AnalysisAuditLog";
-import { EvidenceModel } from "../models/Evidence";
+import { openrouterPrompt, ollamaPrompt } from "../config/aiProviders.js";
+import { PROMPT_SCHEMAS, PROMPT_STAGES } from "../constants/promptTemplates.js";
+import { AnalysisAuditLogModel } from "../models/AnalysisAuditLog.js";
+import { EvidenceModel } from "../models/Evidence.js";
 import type { Request, Response } from "express";
 
 export async function runAnalysisPipeline(req: Request, res: Response) {

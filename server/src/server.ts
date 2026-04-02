@@ -56,7 +56,6 @@ import { safeJsonParse } from './lib/jsonUtils.js';
 import { AnalysisCacheService } from './services/cacheService.js';
 import { consumePackCredits, getAvailablePackCredits } from './services/scanPackCredits.js';
 import { createPlatformNotification, createUserNotification } from './services/notificationService.js';
-import { createPlatformNotification, createUserNotification } from './services/notificationService.js';
 import { scrapeWebsite } from './services/scraper.js';
 import { PROVIDERS, FREE_PROVIDERS, SIGNAL_AI1, SIGNAL_AI2, SIGNAL_AI3, SCOREFIX_AI1, SCOREFIX_AI2, SCOREFIX_AI3, ALIGNMENT_PRIMARY, callAIProvider, isProviderInBackoff, clearProviderBackoff } from './services/aiProviders.js';
 import { runCryptoScan } from './services/cryptoScanner.js';
@@ -144,15 +143,6 @@ installConsoleRedaction();
 // HARD PROXY WINDOW ≈ 60s
 // Safe pipeline cap: 52s (leaves buffer for serialization + network flush).
 // ─────────────────────────────────────────────────────────────────────────────
-const PROXY_HARD_LIMIT_MS = 60_000;
-const PIPELINE_DEADLINE_MS = 52_000;
-const PIPELINE_FLUSH_BUFFER_MS = 4_000;
-const MIN_AI_BUDGET_MS = 10_000;
-
-const app = express();
-app.disable('x-powered-by');
-applySecurityMiddleware(app);
-const PORT = Number(process.env.PORT) || 10000;
 const PROXY_HARD_LIMIT_MS = 60_000;
 const PIPELINE_DEADLINE_MS = 52_000;
 const PIPELINE_FLUSH_BUFFER_MS = 4_000;

@@ -1,10 +1,10 @@
-import Audit from "../models/Audit";
-import Website from "../models/Website";
-import User from "../models/User";
+import Audit from "../models/Audit.js";
+import Website from "../models/Website.js";
+import User from "../models/User.js";
 import { validationResult } from "express-validator";
-import { normalizeEvidenceArray } from "../utils/evidence";
-import { runForensicPipeline } from "../utils/forensicPipeline";
-import { checkUsageLimit } from "../utils/pricingUtils";
+import { normalizeEvidenceArray } from "../utils/evidence.js";
+import { runForensicPipeline } from "../utils/forensicPipeline.js";
+import { checkUsageLimit } from "../utils/pricingUtils.js";
 
 export const createAudit = async (req, res) => {
   try {

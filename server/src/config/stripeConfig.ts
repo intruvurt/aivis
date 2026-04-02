@@ -201,10 +201,6 @@ export function isSubscriptionTier(tierKey: string) {
   const config = getTierConfig(tierKey);
   return config?.mode === 'subscription';
 }
-export function isSubscriptionTier(tierKey: string) {
-  const config = getTierConfig(tierKey);
-  return config?.mode === 'subscription';
-}
 
 /**
  * Check if a tier is a one-time payment

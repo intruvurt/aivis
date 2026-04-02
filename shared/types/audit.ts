@@ -42,3 +42,56 @@ export interface AuditListParams {
   page_size?: number;
   status?: AuditStatus;
 }
+
+/* ── Audit module types ─────────────────────────────────────────────────── */
+
+export interface AuditEvidence {
+  id: string;
+  type: string;
+  label: string;
+  pageUrl: string;
+  observedValue: string;
+  captureTimeUtc: string;
+  source: string;
+  confidence: number;
+}
+
+export interface AuditFinding {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  severity: string;
+  pageUrl?: string;
+  impact?: string;
+  evidenceIds: string[];
+}
+
+export interface AuditFix {
+  id: string;
+  title: string;
+  priority: string;
+  implementationSurface?: string;
+  findingIds: string[];
+  evidenceIds: string[];
+  instructions: string;
+  expectedOutcome?: string;
+}
+
+export interface AuditScoreBreakdown {
+  source: number;
+  signal: number;
+  fact: number;
+  relationship: number;
+  overall: number;
+}
+
+export interface AuditModuleResult {
+  findings: AuditFinding[];
+  evidence: AuditEvidence[];
+  fixes: AuditFix[];
+  scores: Partial<AuditScoreBreakdown>;
+  completeness: number;
+  confidence: number;
+  constraints: string[];
+}

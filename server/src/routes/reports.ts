@@ -7,7 +7,7 @@ import crypto from "crypto";
 type AuthedRequest = any; // replace with your actual typed Request if you have it
 
 // You must already have this in your project (JWT middleware)
-import { requireAuth } from "./middleware/requireAuth";
+import { requireAuth } from "./middleware/requireAuth.js";
 
 // If you have a DB, replace these with real queries.
 // The route contract stays the same.

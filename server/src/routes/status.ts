@@ -1,7 +1,7 @@
 import express from "express";
-import { updateStatus, getStatus } from "../controllers/statusController";
+import { updateStatus, getStatus } from "../controllers/statusController.js";
 import { body } from "express-validator";
-import { protect } from "../middleware/auth";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 

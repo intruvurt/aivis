@@ -13,4 +13,8 @@ export const redisConnection = new Redis({
 redisConnection.on('error', (err: unknown) => {
   const e = err as { message?: string };
   console.warn('[Redis] connection error:', e?.message || String(err));
-});
+});
+
+export function getRedis(): Redis {
+  return redisConnection;
+}

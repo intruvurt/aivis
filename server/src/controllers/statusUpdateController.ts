@@ -1,4 +1,4 @@
-import StatusUpdate from "../models/StatusUpdate";
+import StatusUpdate from "../models/StatusUpdate.js";
 
 export const getStatusUpdates = async (req, res, next) => {
   try {

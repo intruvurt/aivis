@@ -1,4 +1,4 @@
-import { buildEvidence } from "./evidence";
+import { buildEvidence } from "./evidence.js";
 
 /**
  * Stage 6: Content Clarity - Assess content structure and clarity

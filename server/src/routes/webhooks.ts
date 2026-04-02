@@ -1,6 +1,6 @@
 import express from "express";
-import { getStripeInstance } from "../utils/stripe";
-import { getUserById, getUserByStripeCustomerId, updateUserById, User } from "../models/User";
+import { getStripeInstance } from "../utils/stripe.js";
+import { getUserById, getUserByStripeCustomerId, updateUserById, User } from "../models/User.js";
 
 const router = express.Router();
 

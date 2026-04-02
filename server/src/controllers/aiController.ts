@@ -1,7 +1,7 @@
-import { Audit } from "../models/Audit";
+import { Audit } from "../models/Audit.js";
 import type { Request, Response } from "express";
-import { analyzeWithFailover } from "../config/aiProviders";
-import { normalizeEvidenceArray } from "../utils/evidence";
+import { analyzeWithFailover } from "../config/aiProviders.js";
+import { normalizeEvidenceArray } from "../utils/evidence.js";
 
 export const analyzeWebsite = async (req: Request, res: Response) => {
   try {

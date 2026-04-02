@@ -1,4 +1,4 @@
-import Brand from "../models/Brand";
+import Brand from "../models/Brand.js";
 import { validationResult } from "express-validator";
 
 export const getBrand = async (req, res) => {

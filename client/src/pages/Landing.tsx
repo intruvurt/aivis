@@ -211,7 +211,7 @@ const Landing = () => {
 
   const heroHeadline =
     expVariant === 'a'
-      ? 'AI is answering.\nYour site isn't being chosen.'
+      ? "AI is answering.\nYour site isn't being chosen."
       : 'Your site is invisible to AI answers';
   const heroPrimaryCta = expVariant === 'a' ? 'Run free audit' : 'See if AI ignores your site';
 

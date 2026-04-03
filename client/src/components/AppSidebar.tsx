@@ -97,9 +97,19 @@ export default function AppSidebar() {
   return (
     <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0b0f1a] border-r border-white/[0.06]" role="navigation" aria-label="Main navigation">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-4 h-14 shrink-0 border-b border-white/[0.06]">
-        <NavLink to="/" className="flex items-center gap-2">
-          <img src={LOGO_URL} alt="AiVIS" className="h-7 w-auto" />
+      <div className="flex items-center gap-2 px-4 h-14 shrink-0 border-b border-white/[0.06] overflow-hidden">
+        <NavLink to="/app" className="flex items-center gap-2 overflow-hidden">
+          <img
+            src={LOGO_URL}
+            alt="AiVIS"
+            width={28}
+            height={28}
+            className="h-7 w-7 max-h-7 max-w-7 shrink-0 object-contain"
+          />
+          <div className="min-w-0">
+            <span className="block text-sm font-bold text-white tracking-tight leading-tight">AiVIS</span>
+            <span className="block text-[10px] text-slate-500 leading-tight">AI Visibility Engine</span>
+          </div>
         </NavLink>
       </div>
 

@@ -2,6 +2,8 @@ import { getPool } from './postgresql.js';
 import { buildFixPlan } from './autoVisibilityFixEngine.js';
 import { getVisibilityHistory } from './realtimeVisibilityEngine.js';
 import { emitAgencyEvent } from './agencyEventBus.js';
+import { decideAll, type DetectedIssue } from './fixDecisionEngine.js';
+import { sendAlert } from './alertService.js';
 
 type HealingMode = 'manual' | 'assisted' | 'autonomous';
 
@@ -49,12 +51,12 @@ async function getPreference(userId: string) {
   };
 }
 
-function inferIssuesFromResult(result: any): Array<{ issue: string; severity: 'low' | 'medium' | 'high'; page: string }> {
+function inferIssuesFromResult(result: any): DetectedIssue[] {
   const recs = Array.isArray(result?.recommendations) ? result.recommendations : [];
   if (!recs.length) {
     return [
-      { issue: 'not mentioned consistently across AI responses', severity: 'high', page: '/' },
-      { issue: 'weak structure and heading hierarchy', severity: 'medium', page: '/pricing' },
+      { issue: 'not mentioned consistently across AI responses', severity: 'high', page: '/', auto_fixable: false },
+      { issue: 'weak structure and heading hierarchy', severity: 'medium', page: '/pricing', fix_type: 'heading', auto_fixable: true, impact_score: 4 },
     ];
   }
 
@@ -62,6 +64,9 @@ function inferIssuesFromResult(result: any): Array<{ issue: string; severity: 'l
     issue: String(rec?.title || rec?.description || 'visibility issue').trim(),
     severity: rec?.priority === 'high' ? 'high' : rec?.priority === 'medium' ? 'medium' : 'low',
     page: '/pricing',
+    fix_type: rec?.fix_type ?? 'generic',
+    impact_score: rec?.impact_score ?? undefined,
+    auto_fixable: rec?.auto_fixable ?? false,
   }));
 }
 
@@ -130,12 +135,17 @@ async function evaluateCandidate(candidate: CandidateRow): Promise<void> {
   });
 
   const confidence = scoreConfidence(fixPlan.prioritizedFixes);
-  let status = 'suggested';
 
+  // ── Fix Decision Engine ──────────────────────────────────────────────────────
+  const decisions = decideAll(issues, preference.mode, confidence);
+  const topAction = decisions[0]?.action ?? 'notify';
+
+  let status = 'suggested';
   if (preference.mode === 'assisted') {
-    status = 'awaiting_approval';
+    status = topAction === 'generate_pr' ? 'awaiting_approval' : 'suggested';
   } else if (preference.mode === 'autonomous') {
-    status = confidence >= MIN_AUTO_CONFIDENCE ? 'auto_applied' : 'awaiting_approval';
+    if (topAction === 'auto_merge') status = 'auto_applied';
+    else if (topAction === 'generate_pr') status = 'awaiting_approval';
   }
 
   await recordEvent({
@@ -149,8 +159,16 @@ async function evaluateCandidate(candidate: CandidateRow): Promise<void> {
     status,
     confidence,
     reason: `Score dropped by ${scoreDrop.toFixed(1)} points`,
-    fixPlan,
+    fixPlan: { ...fixPlan, decisions },
   });
+
+  // ── Alert dispatch ───────────────────────────────────────────────────────────
+  sendAlert(candidate.user_id, {
+    type: 'score_regression',
+    title: `Visibility score dropped by ${scoreDrop.toFixed(0)} points — ${domain}`,
+    body: `Your AI visibility score fell from ${Number(candidate.previous_score).toFixed(0)} to ${Number(candidate.latest_score).toFixed(0)}. ${decisions[0]?.reason ?? ''}`,
+    metadata: { url: candidate.url, domain, scoreDrop, beforeScore: Number(candidate.previous_score), afterScore: Number(candidate.latest_score) },
+  }).catch((err: any) => console.warn('[SelfHealing] alert dispatch failed:', err?.message));
 
   await emitAgencyEvent('visibility.drop', {
     userId: candidate.user_id,
@@ -227,4 +245,4 @@ export function startSelfHealingLoop(): void {
       running = false;
     }
   }, DEFAULT_INTERVAL_MINUTES * 60 * 1000);
-}
+}

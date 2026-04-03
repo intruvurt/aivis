@@ -118,6 +118,7 @@ import freeToolsRoutes from './routes/freeToolsRoutes.js';
 import gscRoutes from './routes/gscRoutes.js';
 import realtimeVisibilityRoutes from './routes/realtimeVisibilityRoutes.js';
 import autoVisibilityFixRoutes from './routes/autoVisibilityFixRoutes.js';
+import githubAppRoutes from './routes/githubAppRoutes.js';
 import selfHealingRoutes from './routes/selfHealingRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import growthEngineRoutes from './routes/growthEngineRoutes.js';
@@ -127,6 +128,8 @@ import { startAuditWorkerLoop } from './workers/auditWorker.js';
 import { startSelfHealingLoop } from './services/selfHealingService.js';
 import { bootstrapAgencyAutomation } from './services/agencyAutomationService.js';
 import { startDbCleanupLoop, runDbCleanupNow } from './services/dbCleanup.js';
+import { recordTimelinePoint } from './services/visibilityTimeline.js';
+import { recordFixOutcome } from './services/fixLearning.js';
 import { tieredRateLimit, ipRateLimit } from './middleware/tieredRateLimiter.js';
 import { runDeterministicAuditLayer, buildDeterministicResponseAdditions, attachDeterministicToAudit } from './services/audit/deterministicPipeline.js';
 import { loadEvidenceForRun } from './services/audit/evidenceLedger.js';
@@ -951,7 +954,7 @@ const licenseLimiter = rateLimit({
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.
 // The webhook route itself (in paymentRoutes.ts) uses express.raw().
 // ─────────────────────────────────────────────────────────────────────────────
-const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook']);
+const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook', '/api/github-app/webhook']);
 
 const JSON_MW = express.json({
   limit: '2mb',
@@ -1038,6 +1041,7 @@ app.use('/api/competitors', competitorRoutes);
 app.use('/api/citations', citationRoutes);
 app.use('/api/mentions', mentionRoutes);
 app.use('/api/auto-score-fix', autoScoreFixRoutes);
+app.use('/api/github-app', githubAppRoutes);
 app.use('/api/reverse-engineer', reverseEngineerApi);
 app.use('/api/schema-generator', schemaGeneratorRoutes);
 app.use('/api/content', contentRoutes);
@@ -10368,6 +10372,30 @@ process.on('unhandledRejection', (reason) => {
       } catch (trendErr: any) {
         console.warn(`[rescan] Trend alert failed (non-fatal):`, trendErr?.message);
       }
+
+      // ── Timeline record ───────────────────────────────────────────────
+      if (auditId) {
+        try {
+          const pool = getPool();
+          const { rows: scoreRow } = await pool.query(
+            `SELECT visibility_score FROM audits WHERE id = $1 LIMIT 1`,
+            [auditId],
+          );
+          const score = Number(scoreRow[0]?.visibility_score);
+          if (Number.isFinite(score)) {
+            await recordTimelinePoint({
+              userId,
+              workspaceId: workspaceId ?? null,
+              url,
+              score,
+              auditId,
+              eventType: 'scheduled_rescan',
+            });
+          }
+        } catch (tlErr: any) {
+          console.warn(`[rescan] timeline record failed (non-fatal):`, tlErr?.message);
+        }
+      }
     },
     onFailed: async ({ userId, workspaceId, url, scheduleId, reason }) => {
       await dispatchWebhooks(userId, workspaceId, 'rescan.failed', {
@@ -10480,6 +10508,28 @@ process.on('unhandledRejection', (reason) => {
         score_after: scoreAfter,
         score_delta: scoreDelta,
       }).catch(() => {});
+
+      // ── Fix learning + timeline ───────────────────────────────────────
+      if (scoreAfter !== null && Number.isFinite(scoreAfter)) {
+        recordFixOutcome({
+          userId,
+          fixType: 'meta',  // auto score fix jobs are primarily meta/schema changes
+          expectedDelta: 5, // conservative default; job-level deltas are tracked separately
+          actualDelta: scoreDelta ?? 0,
+          url,
+        }).catch(() => {});
+
+        recordTimelinePoint({
+          userId,
+          workspaceId: workspaceId ?? null,
+          url,
+          score: scoreAfter,
+          auditId: auditId ?? null,
+          fixId: jobId ?? null,
+          eventType: 'fix_merged',
+          eventLabel: `Auto fix merged (job ${jobId})`,
+        }).catch(() => {});
+      }
 
       await createUserNotification({
         userId,

@@ -2607,6 +2607,74 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`);
 
+    // ── Audit score timeline (Level 4 – Visibility Timeline) ─────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS audit_score_timeline (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR(255) NOT NULL,
+        workspace_id UUID,
+        url TEXT NOT NULL,
+        score NUMERIC(5,2) NOT NULL,
+        score_delta NUMERIC(6,2),
+        event_type VARCHAR(50) NOT NULL DEFAULT 'manual_audit',
+        event_label TEXT,
+        audit_id UUID,
+        fix_id UUID,
+        captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_ast_user_url ON audit_score_timeline(user_id, url)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_ast_captured_at ON audit_score_timeline(captured_at DESC)`);
+
+    // ── Alert subscriptions (Level 4 – Alert Service) ────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS alert_subscriptions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR(255) NOT NULL,
+        channel VARCHAR(20) NOT NULL,
+        channel_config JSONB NOT NULL DEFAULT '{}',
+        alert_types TEXT[] NOT NULL DEFAULT '{}',
+        enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (user_id, channel)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_alert_sub_user ON alert_subscriptions(user_id)`);
+
+    // ── In-app alert notifications (Level 4 – Alert Service) ─────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS alert_notifications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR(255) NOT NULL,
+        alert_type VARCHAR(50) NOT NULL,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}',
+        read_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_alert_notif_user ON alert_notifications(user_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_alert_notif_unread ON alert_notifications(user_id) WHERE read_at IS NULL`);
+
+    // ── Fix outcomes / ROI tracking (Level 4 – Fix Learning) ─────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS fix_outcomes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id VARCHAR(255) NOT NULL,
+        fix_type VARCHAR(50) NOT NULL,
+        fix_subtype VARCHAR(100),
+        expected_delta NUMERIC(6,2) NOT NULL,
+        actual_delta NUMERIC(6,2) NOT NULL,
+        roi_ratio NUMERIC(8,4) NOT NULL DEFAULT 0,
+        url TEXT NOT NULL,
+        captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

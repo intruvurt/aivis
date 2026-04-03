@@ -147,44 +147,32 @@ export default function NotificationsPage() {
   }, [notifications, scopeFilter, creditOnly]);
 
   return (
-    <div className="min-h-screen text-white">
-
-      <header className="border-b border-white/10 bg-charcoal-deep relative z-10">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6">
+    <div className="space-y-6 text-white">
+      {/* Page heading */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+            <Bell className="h-5 w-5 text-blue-400" />
+            Notifications
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">Monitor background actions, scheduled events, and credit activity.</p>
+        </div>
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate("/")}
-            className="rounded-full p-2 transition-colors hover:bg-white/8"
             type="button"
-            aria-label="Go back"
+            onClick={() => setShowPrefs((p) => !p)}
+            className="rounded-full p-2 transition-colors hover:bg-white/8"
+            aria-label="Notification settings"
           >
-            <ArrowLeft className="h-5 w-5 text-white/55" />
+            <Settings2 className="h-4.5 w-4.5 text-white/55" />
           </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Bell className="h-5 w-5 text-cyan-300" />
-              Notifications
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">
-              Monitor background actions, scheduled events, and credit activity.
-            </p>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowPrefs((p) => !p)}
-              className="rounded-full p-2 transition-colors hover:bg-white/8"
-              aria-label="Notification settings"
-            >
-              <Settings2 className="h-4.5 w-4.5 text-white/55" />
-            </button>
-            <div className="text-xs px-3 py-1 rounded-full border border-white/10 bg-charcoal-light text-white/75">
-              {unreadCount} unread
-            </div>
+          <div className="text-xs px-3 py-1 rounded-full border border-white/10 bg-charcoal-light text-white/75">
+            {unreadCount} unread
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-4">
+      <div className="space-y-4">
         {/* ── Notification Preferences (collapsible) ──────────────── */}
         {showPrefs && (
           <div className="rounded-xl border border-white/10 bg-charcoal p-5">

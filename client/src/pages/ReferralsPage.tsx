@@ -175,22 +175,8 @@ export default function ReferralsPage() {
   };
 
   return (
-    <div className="min-h-screen text-white flex flex-col">
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Gift className="h-5 w-5 text-orange-400" />
-              Referral Hub
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Invite peers, earn scan credits, and track conversion outcomes in real time</p>
-          </div>
-        </div>
-      </header>
-      <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8 space-y-6">
+    <div className="space-y-6 text-white">
+      <div className="space-y-6">
 
         {/* ── Hero + reward cards ── */}
         <div className="overflow-hidden rounded-xl border border-cyan-400/20 bg-gradient-to-br from-[#0b1c2f]/95 via-[#151a2f]/95 to-[#2a1d3b]/90 p-6 sm:p-8 shadow-[0_26px_70px_rgba(0,0,0,0.5)]">

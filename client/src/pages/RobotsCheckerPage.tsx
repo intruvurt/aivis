@@ -119,7 +119,7 @@ export default function RobotsCheckerPage() {
         {/* Hero */}
         <section className="relative py-16 px-4 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/8 via-transparent to-transparent" />
-          <div className="relative max-w-4xl mx-auto text-center">
+          <div className="relative text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-300 mb-6">
               Free Tool — No Account Required
             </div>
@@ -134,7 +134,7 @@ export default function RobotsCheckerPage() {
         </section>
 
         {/* Form */}
-        <section className="max-w-4xl mx-auto px-4 pb-8">
+        <section className="px-4 pb-8">
           <form onSubmit={run} className="flex gap-3">
             <input
               type="url"
@@ -160,7 +160,7 @@ export default function RobotsCheckerPage() {
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-5xl mx-auto px-4 pb-16 space-y-8"
+            className="px-4 pb-16 space-y-8"
           >
             {/* Score hero */}
             <div className={`rounded-2xl border bg-gradient-to-br p-6 ${gradeBg(result.grade)}`}>
@@ -271,7 +271,7 @@ export default function RobotsCheckerPage() {
 
         {/* History */}
         {history.length > 0 && !loading && (
-          <section className="max-w-5xl mx-auto px-4 pb-16">
+          <section className="px-4 pb-16">
             <h2 className="text-lg font-bold text-white mb-4">Recent Checks</h2>
             <div className="space-y-2">
               {history.slice(0, 10).map((h, i) => (

@@ -230,7 +230,7 @@ export default function McpConsolePage() {
   if (!hasAccess) {
     return (
       <div className="text-white">
-        <div className="mx-auto max-w-3xl px-4 py-16">
+        <div className="px-4 py-16">
           <UpgradeWall
             feature="MCP Server Console"
             description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports — all from your agent's toolbox."

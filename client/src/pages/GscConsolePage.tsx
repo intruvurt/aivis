@@ -329,7 +329,7 @@ export default function GscConsolePage() {
   if (!hasAccess) {
     return (
       <div className="text-white">
-        <div className="mx-auto max-w-3xl px-4 py-16">
+        <div className="px-4 py-16">
           <UpgradeWall
             feature="Search Console Intelligence"
             description="Connect Google Search Console to detect declining pages, find low-CTR opportunities, and merge real performance data with your AI visibility audits."

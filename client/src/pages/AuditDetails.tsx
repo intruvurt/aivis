@@ -80,7 +80,7 @@ const AuditDetails = () => {
 
   return (
     <div id="src_pages_AuditDetails_a6vs" className="min-h-screen bg-gray-50 py-12">
-      <div id="src_pages_AuditDetails_ob3t" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div id="src_pages_AuditDetails_ob3t" className="px-4 sm:px-6 lg:px-8">
         {/* AI Visibility Status Banner */}
         {audit.visibilityStatus && (
           <div id="src_pages_AuditDetails_visstat_banner" className={`mb-6 p-4 rounded-lg border-2 ${

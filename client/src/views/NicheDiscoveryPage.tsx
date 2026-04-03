@@ -265,7 +265,7 @@ export default function NicheDiscoveryPage() {
   /* ── Upgrade wall for Observer ──────────────────── */
   if (!hasAccess) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16">
+      <div className="px-4 py-16">
         <UpgradeWall
           feature="Niche URL Discovery"
           description="Discover real business URLs by niche and location, validate them, and add to your scheduled audit list — all powered by web search."
@@ -287,7 +287,7 @@ export default function NicheDiscoveryPage() {
   const invalidCount = urls.filter((u) => !u.valid && !u.duplicate).length;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
+    <div className="px-4 py-8 sm:py-12">
       {/* Header */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>

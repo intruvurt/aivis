@@ -72,7 +72,7 @@ export default function AiVisibilityBenchmark() {
         <div className="absolute -bottom-60 -right-40 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
 
         {/* ── Hero section ── */}
         <motion.section

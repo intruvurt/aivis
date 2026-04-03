@@ -279,7 +279,7 @@ export default function TeamPage() {
   // Observer tier gate — personal workspace only
   if (!hasTeamAccess) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="px-4 py-8">
         <div className="flex items-center gap-2.5 mb-8">
           <Users className="w-6 h-6 text-cyan-400" />
           <h1 className="text-2xl font-bold text-white">Team &amp; Workspaces</h1>
@@ -302,7 +302,7 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="px-4 py-8 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

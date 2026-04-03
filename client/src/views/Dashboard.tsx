@@ -1919,7 +1919,7 @@ function HeroAnalyze({
         </>
       )}
 
-      <div className={`relative z-10 w-full ${hasResults ? "max-w-6xl mx-auto px-4" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}`}>
+      <div className={`relative z-10 w-full ${hasResults ? "px-4" : "px-4 sm:px-6 lg:px-8"}`}>
         {!hasResults && (
           <div className="select-none">
             <div className="grid items-center gap-8 sm:grid-cols-[1fr_320px] lg:grid-cols-[1fr_400px] sm:gap-10 lg:gap-16">
@@ -3693,7 +3693,7 @@ export default function Dashboard() {
         isFinished={apiFinished}
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         {upgradeSuccess && (
           <div className="mt-4 rounded-xl border border-emerald-400/15 bg-emerald-500/[0.06] p-4 flex items-center gap-3">
             <Sparkles className="h-5 w-5 shrink-0 text-emerald-300/80" />
@@ -3739,7 +3739,7 @@ export default function Dashboard() {
       {!data && <TrustBadgesBar />}
 
       {data && latestAnalysisResult && (
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-12 sm:px-6 lg:px-8">
+        <main className="w-full flex-1 px-4 pb-12 sm:px-6 lg:px-8">
 
           {/* ── Compact audit meta strip ──────────────────────────────── */}
           {(auditUrl || data.url) && (
@@ -4018,7 +4018,7 @@ export default function Dashboard() {
       )}
 
       {isAuthenticated && !data && (
-        <div className="mx-auto mb-3 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-3 w-full px-4 sm:px-6 lg:px-8">
           <Link
             to="/integrations"
             className="flex items-center justify-between gap-2 rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-2.5 text-xs text-white/45 transition hover:border-white/10 hover:text-white/65"

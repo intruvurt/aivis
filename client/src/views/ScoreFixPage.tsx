@@ -428,7 +428,7 @@ export default function ScoreFixPage() {
         <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP — 10-25 credits per fix</p>
       </div>
       {!hasAccess ? (
-        <div className="mx-auto w-full max-w-3xl py-16">
+        <div className="w-full py-16">
           <UpgradeWall
             feature="Score Fix"
             description="Purchase a Score Fix credit pack to unlock automated GitHub PR remediations via MCP (10-25 credits per fix)."

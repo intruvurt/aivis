@@ -6,8 +6,10 @@ import GlobalCommandPalette from "./GlobalCommandPalette";
 import TrialBanner from "./TrialBanner";
 
 /**
- * Authenticated app shell — responsive sidebar (hidden mobile, visible ≥1024px).
- * Used for all /app/* routes.
+ * Authenticated app shell — fixed viewport grid.
+ * Mobile: single column (sidebar overlay).
+ * Desktop ≥1024px: sidebar(248px) + workspace(1fr).
+ * Content area fills all available space — no max-w or mx-auto.
  */
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,14 +37,12 @@ export default function AppLayout() {
 
       <AppSidebar isOpen={sidebarOpen} onClose={close} />
 
-      {/* Main area */}
+      {/* Main workspace area */}
       <div className="aurora-main">
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
-          <div className="w-full">
-            <Outlet />
-          </div>
+          <Outlet />
         </main>
       </div>
 

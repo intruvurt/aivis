@@ -186,7 +186,7 @@ export default function PlatformWorkflowPage() {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden pt-16 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent pointer-events-none" />
-        <div className="relative max-w-5xl mx-auto text-center">
+        <div className="relative text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-cyan-400 mb-4">
               <Sparkles className="w-3.5 h-3.5" /> Platform Workflow
@@ -213,7 +213,6 @@ export default function PlatformWorkflowPage() {
 
       {/* ── 6-Step Workflow Pipeline ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">The execution loop</h2>
             <p className="text-white/55 max-w-xl mx-auto">Six steps from baseline to continuous improvement. Run it weekly, per-client, or on autopilot.</p>
@@ -251,12 +250,9 @@ export default function PlatformWorkflowPage() {
               );
             })}
           </div>
-        </div>
       </section>
-
-      {/* ── Platform Tools ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        <div className="max-w-6xl mx-auto">
+        <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Every tool you need</h2>
             <p className="text-white/55 max-w-xl mx-auto">Not a single-trick auditor. A complete toolkit for AI visibility — from diagnostics to competitive intelligence.</p>
@@ -293,7 +289,7 @@ export default function PlatformWorkflowPage() {
 
       {/* ── Feature-Specific Workflow Chains ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+        <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Real workflow chains</h2>
             <p className="text-white/55 max-w-xl mx-auto">Proven multi-tool sequences for specific outcomes. Each chain uses actual platform tools in the order that produces the best results.</p>
@@ -471,7 +467,7 @@ export default function PlatformWorkflowPage() {
 
       {/* ── Execution Tracks ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+        <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Built for how you work</h2>
             <p className="text-white/55 max-w-xl mx-auto">Whether you're a solo founder, an agency running 20 clients, or a growth team — there's a workflow for you.</p>
@@ -539,7 +535,7 @@ export default function PlatformWorkflowPage() {
 
       {/* ── Integration & Automation ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        <div className="max-w-6xl mx-auto">
+        <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Automate everything</h2>
             <p className="text-white/55 max-w-lg mx-auto">Connect AiVIS to your stack. Trigger audits programmatically, pipe results to dashboards, and get alerted on regressions.</p>
@@ -592,7 +588,7 @@ export default function PlatformWorkflowPage() {
 
       {/* ── FAQ ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
+        <div>
           <h2 className="text-2xl font-bold text-center mb-8">Common questions</h2>
           <div className="space-y-2">
             {faqs.map((faq, i) => (
@@ -624,7 +620,7 @@ export default function PlatformWorkflowPage() {
 
       {/* ── CTA ── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="text-center">
           <div className="rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 p-8 sm:p-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Ready to start the loop?</h2>
             <p className="text-white/55 text-sm mb-6 max-w-md mx-auto">

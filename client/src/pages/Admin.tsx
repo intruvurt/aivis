@@ -353,7 +353,7 @@ const Admin: React.FC = () => {
     <div id="src_pages_Admin_main" className="py-12">
       <div
         id="src_pages_Admin_container"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        className="px-4 sm:px-6 lg:px-8"
       >
         <motion.div
           id="src_pages_Admin_header"

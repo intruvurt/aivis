@@ -153,7 +153,7 @@ export default function ProfilePage() {
   }, [user.full_name, user.display_name, user.email]);
 
   return (
-    <div className="space-y-6 text-white max-w-3xl">
+    <div className="space-y-6 text-white">
       {/* ──── Profile Hero Card ──── */}
       <div className={`relative overflow-hidden rounded-2xl border ${tc.border} bg-charcoal-deep`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${tc.bg} opacity-60 pointer-events-none`} />

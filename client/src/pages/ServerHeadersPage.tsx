@@ -275,7 +275,7 @@ export default function ServerHeadersPage() {
 
   return (
     <div className="text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      <div className="px-4 sm:px-6 py-10">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
           <button
             onClick={() => navigate(-1)}

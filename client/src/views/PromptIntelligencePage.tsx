@@ -121,7 +121,7 @@ export default function PromptIntelligencePage() {
   if (!hasAccess) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto py-16">
+        <div className="py-16">
           <h1 className="text-2xl font-semibold text-white mb-4">
             Prompt Intelligence
           </h1>
@@ -170,7 +170,7 @@ export default function PromptIntelligencePage() {
   /* ── Main page for Alignment+ ── */
   return (
     <div className="space-y-6">
-      <div className="max-w-6xl mx-auto">
+      <div>
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
           <h1 className="text-xl font-semibold text-white">

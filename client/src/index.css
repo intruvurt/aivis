@@ -1707,10 +1707,16 @@ nav button[class*="rounded-lg"][class*="text-white"] {
    Used by AppLayout for all /app/* routes
    ═══════════════════════════════════════════════════════ */
 
-/* Top-level app wrapper */
+/* ─────────────────────────────────────────────
+   App shell — CSS-grid based layout
+   Mobile: single column (sidebar hidden)
+   Desktop ≥1024: sidebar(240) + workspace(1fr)
+   ───────────────────────────────────────────── */
 .aurora-shell {
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
   background: #060a14;
   background-image:
     radial-gradient(ellipse 70% 55% at 75% -5%, rgba(79,109,231,0.08) 0%, transparent 65%),
@@ -1718,14 +1724,14 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   color: #fff;
 }
 
-/* Sidebar — hidden by default on mobile */
+/* Sidebar — hidden mobile, fixed left on desktop */
 .aurora-sidebar {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 240px;
+  width: 248px;
   z-index: 40;
   flex-direction: column;
   background: linear-gradient(180deg, #0c1221 0%, #080c1a 100%);
@@ -1734,34 +1740,33 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   overflow-y: auto;
 }
 
-/* Show sidebar on desktop */
 @media (min-width: 1024px) {
   .aurora-sidebar {
     display: flex;
   }
 }
 
-/* Main content area */
+/* Main area — fills remaining space next to sidebar */
 .aurora-main {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
-/* Desktop: offset main by sidebar width */
 @media (min-width: 1024px) {
   .aurora-main {
-    margin-left: 240px;
+    margin-left: 248px;
   }
 }
 
-/* Content frame wrapper */
+/* Content frame — scrollable workspace area, no centering */
 .aurora-content {
   flex: 1;
   padding: 1.25rem 1.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 @media (max-width: 767px) {

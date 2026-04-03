@@ -261,30 +261,18 @@ export default function CompetitorsPage() {
   const userTier = user?.tier || "observer";
 
   return (
-    <div className="min-h-screen flex flex-col text-white">
+    <div className="space-y-6">
+      <div>
+        <h1 className="flex items-center gap-2 text-xl font-semibold text-white">
+          <CompetitorRadarIcon className="h-5 w-5 text-slate-400" />
+          Competitor Intelligence
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">
+          Track competitors and compare your AI visibility side by side.
+        </p>
+      </div>
 
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <button
-            onClick={() => navigate("/")}
-            className="rounded-full p-2 transition-colors hover:bg-charcoal"
-            type="button"
-          >
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <CompetitorRadarIcon className="h-5 w-5 text-white/80" />
-              Competitor Intelligence
-            </h1>
-            <p className="text-sm text-white/60">
-              Track competitors and compare your AI visibility side by side.
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto flex-1 w-full max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="space-y-6">
         {!hasAccess ? (
           <UpgradeWall
             feature="Competitor Intelligence"
@@ -300,7 +288,7 @@ export default function CompetitorsPage() {
         ) : (
           <>
             <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-6 shadow-2xl sm:p-8">
+              <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-6 shadow-2xl sm:p-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
                   <Sparkles className="h-3.5 w-3.5" />
                   Competitor Intelligence
@@ -341,7 +329,7 @@ export default function CompetitorsPage() {
                 </div>
               </div>
 
-              <aside className="rounded-3xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
+              <aside className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
                 <div className="flex items-center gap-2">
                   <Layers3 className="h-4 w-4 text-white/75" />
                   <h2 className="text-sm font-semibold text-white/85">
@@ -402,7 +390,7 @@ export default function CompetitorsPage() {
             </section>
 
             <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="rounded-3xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
+              <div className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
                 <div className="flex items-center gap-2">
                   <CompetitorRadarIcon className="h-4 w-4 text-white/75" />
                   <h2 className="text-lg font-semibold text-white">
@@ -491,7 +479,7 @@ export default function CompetitorsPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
+              <div className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
                 <div className="flex items-center gap-2">
                   <TrustGraphIcon className="h-4 w-4 text-white/75" />
                   <h2 className="text-lg font-semibold text-white">
@@ -576,7 +564,7 @@ export default function CompetitorsPage() {
                 />
               </section>
             ) : (
-              <section className="rounded-3xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
+              <section className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
                 <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
                   <div>
                     <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-amber-200">
@@ -593,7 +581,7 @@ export default function CompetitorsPage() {
                     </p>
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                       <button
-                        onClick={() => navigate("/analyze")}
+                        onClick={() => navigate("/app/analyze")}
                         className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-white/28 to-white/14 px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
                         type="button"
                       >
@@ -601,8 +589,8 @@ export default function CompetitorsPage() {
                         <ArrowRight className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => navigate("/")}
-                        className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-6 py-3 text-sm text-white/75 transition-colors hover:text-white"
+                        onClick={() => navigate("/app")}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-surface-raised px-6 py-3 text-sm text-white/75 transition-colors hover:text-white"
                         type="button"
                       >
                         Go to Dashboard
@@ -635,7 +623,7 @@ export default function CompetitorsPage() {
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ const redisPort = Number(process.env.REDIS_PORT || 6379);
  * Without either env var, Redis is unavailable and all consumers degrade gracefully.
  */
 let redisInstance: Redis | null = null;
+let evictionWarned = false;
 
 const MAX_RETRIES = 3;
 
@@ -48,17 +49,16 @@ if (redisInstance) {
     console.log('[Redis] connected');
   });
   redisInstance.on('ready', () => {
-    // BullMQ requires noeviction to prevent silent job loss under memory pressure
+    // BullMQ requires noeviction to prevent silent job loss under memory pressure.
+    // Only warn once — managed providers (Render, etc.) block CONFIG SET.
     redisInstance?.config('GET', 'maxmemory-policy').then((res) => {
       const policy = Array.isArray(res) ? res[1] : undefined;
-      if (policy && policy !== 'noeviction') {
-        console.warn(`IMPORTANT! Eviction policy is ${policy}. It should be "noeviction"`);
-        // Attempt to fix automatically (works on self-hosted, usually blocked on managed)
-        redisInstance?.config('SET', 'maxmemory-policy', 'noeviction').then(() => {
-          console.log('[Redis] Eviction policy changed to noeviction');
-        }).catch(() => {
-          console.warn('[Redis] Could not auto-set eviction policy — update it in your Redis provider dashboard');
-        });
+      if (policy && policy !== 'noeviction' && !evictionWarned) {
+        evictionWarned = true;
+        console.warn(
+          `[Redis] Eviction policy is "${policy}" — should be "noeviction" for BullMQ safety. ` +
+          `Change it in your Redis provider dashboard (CONFIG SET is blocked on managed instances).`
+        );
       }
     }).catch(() => { /* CONFIG command may be disabled on managed Redis */ });
   });

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { CreditCard, Sparkles, Receipt, WalletCards, ShieldCheck, ArrowLeft, Clock, TrendingUp, AlertTriangle, CheckCircle2, X as XIcon, ExternalLink } from "lucide-react";
+import { CreditCard, Sparkles, Receipt, WalletCards, ShieldCheck, Clock, TrendingUp, AlertTriangle, CheckCircle2, X as XIcon, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { useAuthStore } from "../stores/authStore";

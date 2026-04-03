@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Shield,
   Zap,
   Calendar,

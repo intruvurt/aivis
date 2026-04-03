@@ -20,7 +20,6 @@ import {
   Sun,
   Monitor,
   ChevronLeft,
-  ArrowLeft,
   User,
   CheckCircle2,
   AlertCircle,

@@ -992,14 +992,11 @@ nav button[class*="rounded-lg"][class*="text-white"] {
 
   /* ═══════════════════════════════════════════════════
      BRAND TITLE SYSTEM
-     Gradient text for all section headers across every page.
+     Clean white text for section headers across every page.
      Usage: <h2 className="brand-title">My Section</h2>
   ════════════════════════════════════════════════════ */
   .brand-title {
-    background: linear-gradient(92deg, #f97316 0%, #fbbf24 48%, #22d3ee 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #fff;
     font-weight: 700;
     letter-spacing: -0.01em;
     padding-bottom: 0.06em;
@@ -1007,10 +1004,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
 
   /* Larger hero variant */
   .brand-title-lg {
-    background: linear-gradient(95deg, #fb923c 0%, #fcd34d 40%, #67e8f9 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #fff;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.18;
@@ -1019,10 +1013,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
 
   /* Muted/subtle variant */
   .brand-title-muted {
-    background: linear-gradient(90deg, rgba(249,115,22,0.85) 0%, rgba(251,191,36,0.80) 50%, rgba(34,211,238,0.85) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: rgba(255,255,255,0.75);
     font-weight: 600;
     padding-bottom: 0.04em;
   }

@@ -50,7 +50,7 @@ export default function IntegrationsHubPage() {
     return (
       <div className="min-h-screen text-white px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl mt-16">
-          <div className="rounded-3xl border border-white/10 bg-[#111827]/90 p-10 text-center shadow-2xl">
+          <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-10 text-center shadow-2xl">
             <div className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-500/25 flex items-center justify-center mx-auto mb-5">
               <Lock className="w-7 h-7 text-violet-400" />
             </div>
@@ -196,7 +196,7 @@ export default function IntegrationsHubPage() {
   return (
     <div className="min-h-screen text-white px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <header className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+        <header className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
@@ -256,7 +256,7 @@ export default function IntegrationsHubPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+        <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="h-4 w-4 text-white/75" />
             <h2 className="text-lg brand-title">Endpoint validation</h2>
@@ -284,7 +284,7 @@ export default function IntegrationsHubPage() {
         </section>
 
         {/* Featured: MCP Console */}
-        <section className="rounded-3xl border border-violet-500/20 bg-gradient-to-r from-[#111827]/95 to-[#1a1040]/90 p-6 shadow-2xl sm:p-8 relative overflow-hidden">
+        <section className="rounded-xl border border-violet-500/20 bg-gradient-to-r from-[#111827]/95 to-[#1a1040]/90 p-6 shadow-2xl sm:p-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_20%,rgba(139,92,246,0.08),transparent)]" />
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -308,7 +308,7 @@ export default function IntegrationsHubPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+        <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex items-center gap-2 mb-4">
             <CalendarClock className="h-4 w-4 text-white/75" />
             <h2 className="text-lg brand-title">What each integration is for</h2>
@@ -355,7 +355,7 @@ export default function IntegrationsHubPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+        <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex items-center justify-between gap-3 mb-4">
             <h2 className="text-lg brand-title">Integration controls</h2>
             <span className="text-xs text-white/50">Moved from buried settings path for direct discoverability</span>

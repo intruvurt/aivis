@@ -46,7 +46,7 @@ export default function TextSummaryView({
   return (
     <div className="space-y-6">
       {/* ── Score banner ───────────────────────────────────────────── */}
-      <div className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 sm:p-8 shadow-2xl">
+      <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 sm:p-8 shadow-2xl">
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <span
             className={`rounded-full border px-3 py-1 text-sm font-semibold ${scoreBadgeColor(score)}`}

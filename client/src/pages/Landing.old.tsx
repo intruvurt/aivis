@@ -299,8 +299,8 @@ const Landing = () => {
 
               {/* ── Right: Sample audit preview card ── */}
               <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden sm:block">
-                <div className="card-smoke glass-bleed-cyan relative rounded-3xl p-6 shadow-[0_40px_100px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.035]">
-                  <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/[0.05] via-transparent to-violet-500/[0.06]" />
+                <div className="card-smoke glass-bleed-cyan relative rounded-xl p-6 shadow-[0_40px_100px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.035]">
+                  <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-500/[0.05] via-transparent to-violet-500/[0.06]" />
                   <div className="relative space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/30">Example Audit</span>

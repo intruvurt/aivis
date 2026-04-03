@@ -4,7 +4,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useAnalysisStore } from "../stores/analysisStore";
 import CitationTracker from "../components/CitationTracker";
 import {
-  ArrowLeft, Globe, Eye, Search, BarChart3, Target, TrendingUp,
+  Globe, Eye, Search, BarChart3, Target, TrendingUp,
   ArrowRight, Layers3, Sparkles, CheckCircle2, AlertTriangle,
   MessageSquare, Brain, Loader2, ExternalLink,
 } from "lucide-react";
@@ -111,12 +111,9 @@ export default function AnswerPresencePage() {
   /* ── Upgrade wall for observer tier ── */
   if (!hasAccess) {
     return (
-      <div className="min-h-screen">
-        <div className="max-w-4xl mx-auto px-4 py-16">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-white/50 hover:text-white transition mb-8 text-sm">
-            <ArrowLeft className="w-4 h-4" /> Back
-          </Link>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-emerald-300 mb-4">
+      <div>
+        <div className="max-w-4xl mx-auto py-16">
+          <h1 className="text-2xl font-semibold text-white mb-4">
             Answer Presence Engine
           </h1>
           <p className="text-white/60 text-lg mb-8 max-w-2xl">
@@ -192,14 +189,11 @@ export default function AnswerPresencePage() {
 
   /* ── Main page for Alignment+ ── */
   return (
-    <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="space-y-6">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">
-          <Link to="/" className="text-white/50 hover:text-white transition">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-emerald-300">
+          <h1 className="text-xl font-semibold text-white">
             Answer Presence Engine
           </h1>
           <span className="ml-auto px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-400/25 text-cyan-300 text-[10px] font-bold uppercase tracking-widest">

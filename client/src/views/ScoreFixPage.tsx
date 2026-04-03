@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, ArrowRight, Sparkles, Search, BadgeCheck, Link2, Workflow, ClipboardList, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowRight, Sparkles, Search, BadgeCheck, Link2, Workflow, ClipboardList } from "lucide-react";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
@@ -318,7 +318,6 @@ export default function ScoreFixPage() {
       content: OG_IMAGE,
     });
   }, []);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -421,23 +420,15 @@ export default function ScoreFixPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(scoreFixJsonLd).replace(/</g, "\\u003c") }}
       />
-      {/* ── Standard page header ─────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h2 className="flex items-center gap-2 text-xl brand-title">
-              <Sparkles className="h-5 w-5 text-amber-400" />
-              Score Fix
-            </h2>
-            <p className="text-sm text-white/60 leading-relaxed">Automated GitHub PR remediation via MCP — 10-25 credits per fix</p>
-          </div>
-        </div>
-      </header>
+      <div>
+        <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-amber-400" />
+          Score Fix
+        </h1>
+        <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP — 10-25 credits per fix</p>
+      </div>
       {!hasAccess ? (
-        <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
+        <div className="mx-auto w-full max-w-3xl py-16">
           <UpgradeWall
             feature="Score Fix"
             description="Purchase a Score Fix credit pack to unlock automated GitHub PR remediations via MCP (10-25 credits per fix)."
@@ -451,8 +442,8 @@ export default function ScoreFixPage() {
           />
         </div>
       ) : (
-      <div className="min-h-screen text-white">
-      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+      <div className="text-white">
+      <div className="space-y-6">
         <motion.section
           {...sectionFade}
           className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-4 shadow-2xl sm:p-6 lg:p-7"

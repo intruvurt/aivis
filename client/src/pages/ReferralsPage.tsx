@@ -193,7 +193,7 @@ export default function ReferralsPage() {
       <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8 space-y-6">
 
         {/* ── Hero + reward cards ── */}
-        <div className="overflow-hidden rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-[#0b1c2f]/95 via-[#151a2f]/95 to-[#2a1d3b]/90 p-6 sm:p-8 shadow-[0_26px_70px_rgba(0,0,0,0.5)]">
+        <div className="overflow-hidden rounded-xl border border-cyan-400/20 bg-gradient-to-br from-[#0b1c2f]/95 via-[#151a2f]/95 to-[#2a1d3b]/90 p-6 sm:p-8 shadow-[0_26px_70px_rgba(0,0,0,0.5)]">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-300/30 bg-cyan-400/15 text-cyan-200 text-[11px] font-semibold uppercase tracking-[0.18em] mb-3">
@@ -237,7 +237,7 @@ export default function ReferralsPage() {
         </div>
 
         {/* ── Main content ── */}
-        <div className="rounded-3xl border border-white/10 bg-charcoal p-5 sm:p-6 shadow-[0_18px_45px_rgba(0,0,0,0.48)]">
+        <div className="rounded-xl border border-white/10 bg-charcoal p-5 sm:p-6 shadow-[0_18px_45px_rgba(0,0,0,0.48)]">
           {loading ? (
             <p className="text-sm text-white/70">Loading referral summary…</p>
           ) : error ? (

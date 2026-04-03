@@ -438,7 +438,7 @@ export default function AuditProgressOverlay({
         <div className="absolute -inset-2 rounded-[28px] blur-2xl opacity-40 animate-pulse"
           style={{ background: "conic-gradient(from 0deg, #06b6d4, #8b5cf6, #e9a634, #06b6d4)", animationDuration: "4s" }} />
 
-        <div className="relative bg-[#1a1f2e] border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl overflow-hidden">
+        <div className="relative bg-[#1a1f2e] border border-white/[0.08] rounded-xl p-6 md:p-8 shadow-2xl overflow-hidden">
           {/* Inner corner accents */}
           <div className="absolute top-0 left-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-0 w-40 h-40 bg-violet-500/5 rounded-full blur-3xl" />

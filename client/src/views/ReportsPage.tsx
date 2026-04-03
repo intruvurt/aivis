@@ -1508,7 +1508,7 @@ export default function ReportsPage() {
           />
         ) : (
           <>
-            <section className="brand-bar-top card-charcoal rounded-3xl p-6 mb-8">
+            <section className="brand-bar-top card-charcoal rounded-xl p-6 mb-8">
               <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                 <div className="max-w-3xl">
                   <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/25 bg-orange-500/10 px-3 py-1 text-[11px] uppercase tracking-wide text-orange-300">

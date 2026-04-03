@@ -170,7 +170,7 @@ export const AIVisualization: FC<AIVisualizationProps> = ({
   }, [nodes, showConnections]);
 
   return (
-    <div className={`relative w-full ${height} bg-charcoal rounded-3xl overflow-hidden`}>
+    <div className={`relative w-full ${height} bg-charcoal rounded-xl overflow-hidden`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/25/10 via-white/14 to-white/14/10" />
 
       <motion.div

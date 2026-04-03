@@ -547,7 +547,7 @@ function ExecutiveRail({
   const topRecommendation = latestAnalysisResult.recommendations?.[0];
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+    <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
@@ -710,7 +710,7 @@ function AuditSnapshot({
   };
 
   return (
-    <section className="rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-[#0f1d2f]/95 via-[#111827]/95 to-[#241a2f]/90 p-6 shadow-2xl sm:p-8">
+    <section className="rounded-xl border border-cyan-300/20 bg-gradient-to-br from-[#0f1d2f]/95 via-[#111827]/95 to-[#241a2f]/90 p-6 shadow-2xl sm:p-8">
       <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-2xl border border-white/12 bg-white/[0.05] p-4 sm:p-5">
           <div className="text-[11px] uppercase tracking-wide text-white/55">Audit snapshot</div>
@@ -934,7 +934,7 @@ function AutoScoreFixPipelinePanel({
   }).length;
 
   return (
-    <section className="rounded-3xl border border-violet-300/20 bg-gradient-to-br from-[#0f1a2d]/95 via-[#111827]/95 to-[#251c31]/90 p-6 shadow-2xl sm:p-8">
+    <section className="rounded-xl border border-violet-300/20 bg-gradient-to-br from-[#0f1a2d]/95 via-[#111827]/95 to-[#251c31]/90 p-6 shadow-2xl sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="text-[11px] uppercase tracking-wide text-white/55">Auto Score Fix systems status</div>
@@ -1031,7 +1031,7 @@ function AIPlatformScores({
   ] as const;
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+    <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
       <div className="flex items-center gap-2 mb-5">
         <Eye className="h-4 w-4 text-white/75" />
         <h3 className="text-lg font-semibold text-white">AI scoring coverage</h3>
@@ -1213,7 +1213,7 @@ function VisibilityTrend({
   };
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+    <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <div className="flex items-center gap-2">
@@ -1323,7 +1323,7 @@ function VisibilityTrend({
 function PlatformComparisonSection() {
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-5xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Sparkles className="h-3.5 w-3.5" />
@@ -1373,7 +1373,7 @@ function PlatformComparisonSection() {
 function ScoringMethodologySection() {
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-5xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Sparkles className="h-3.5 w-3.5" />
@@ -1434,7 +1434,7 @@ function ScoringMethodologySection() {
 function CitationSignalsSection() {
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-5xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Sparkles className="h-3.5 w-3.5" />
@@ -1484,7 +1484,7 @@ function CitationSignalsSection() {
 function HomeFaqSection() {
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-5xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mx-auto text-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Sparkles className="h-3.5 w-3.5" />
@@ -1531,7 +1531,7 @@ function WorkflowSection() {
 
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-6xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Sparkles className="h-3.5 w-3.5" />
@@ -1585,7 +1585,7 @@ function ReturningUserQuickPanel({
 
   return (
     <section className="px-4 pt-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl rounded-3xl border border-cyan-300/15 bg-gradient-to-r from-cyan-500/[0.06] via-[#111827]/95 to-violet-500/[0.06] p-6 shadow-2xl">
+      <div className="mx-auto max-w-7xl rounded-xl border border-cyan-300/15 bg-gradient-to-r from-cyan-500/[0.06] via-[#111827]/95 to-violet-500/[0.06] p-6 shadow-2xl">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div>
             <h2 className="text-lg font-bold text-white">Your Visibility Overview</h2>
@@ -1783,7 +1783,7 @@ function AuditPreviewTeaser() {
 function AgencyValueSection() {
   return (
     <section className="px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
+      <div className="mx-auto max-w-6xl rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-wide text-white/65">
             <Briefcase className="h-3.5 w-3.5" />
@@ -1992,8 +1992,8 @@ function HeroAnalyze({
 
               {/* ── Right: Sample audit preview card ── */}
               <div className="hidden sm:block">
-                <div className="card-smoke glass-bleed-cyan relative rounded-3xl p-6 shadow-[0_40px_100px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.035]">
-                  <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/[0.05] via-transparent to-violet-500/[0.06]" />
+                <div className="card-smoke glass-bleed-cyan relative rounded-xl p-6 shadow-[0_40px_100px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.035]">
+                  <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-500/[0.05] via-transparent to-violet-500/[0.06]" />
                   <div className="relative space-y-4">
 
                     {/* Card header */}
@@ -3078,7 +3078,7 @@ export default function Dashboard() {
         const threatLevel = latestAnalysisResult.threat_intel?.risk_level || "low";
 
         return (
-          <section id="section-evidence" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-cyan">
+          <section id="section-evidence" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-cyan">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
               <h3 className="brand-title text-lg">Evidence &amp; Findings</h3>
               {recEvidence && (
@@ -3170,7 +3170,7 @@ export default function Dashboard() {
         if (!hasThreatData) return null;
 
         return (
-          <section id="section-threat_intel" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-red">
+          <section id="section-threat_intel" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-red">
             <div className="flex items-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-white/75" />
               <h3 className="brand-title text-lg">Security & Threat Intelligence</h3>
@@ -3275,7 +3275,7 @@ export default function Dashboard() {
       }
       case "grades":
         return latestAnalysisResult.category_grades?.length ? (
-          <section id="section-grades" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-emerald">
+          <section id="section-grades" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-emerald">
             <div className="flex items-center justify-between gap-3 mb-2">
               <h3 className="brand-title text-lg">Category Grades</h3>
               <span className="text-xs text-white/50">A–F performance layer</span>
@@ -3307,7 +3307,7 @@ export default function Dashboard() {
         ) : null;
       case "priority":
         return latestAnalysisResult.recommendations?.length ? (
-          <section id="section-priority" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-orange">
+          <section id="section-priority" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-orange">
             <div className="flex items-center justify-between gap-3 mb-2">
               <h3 className="brand-title text-lg">Priority Actions</h3>
               <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/65">
@@ -3413,7 +3413,7 @@ export default function Dashboard() {
       case "analysis":
         return (
           <div key={key} id="section-analysis" className="space-y-6">
-            <div className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-amber">
+            <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-amber">
               <div className="section-header-row mb-2">
                 <h3 className="brand-title text-lg">Comprehensive Analysis</h3>
               </div>
@@ -3456,7 +3456,7 @@ export default function Dashboard() {
         const canAccessCitations = meetsMinimumTier(user?.tier || 'observer', 'alignment');
 
         return (
-          <section id="section-citations" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-cyan">
+          <section id="section-citations" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-cyan">
             <div className="flex items-center justify-between gap-3 mb-2">
               <h3 className="brand-title text-lg">Citation & Mention Snapshot</h3>
               <span className="text-xs text-white/45">AI presence overview</span>
@@ -3604,7 +3604,7 @@ export default function Dashboard() {
         };
 
         return (
-          <section id="section-modules" key={key} className="rounded-3xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-violet">
+          <section id="section-modules" key={key} className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8 section-accent-violet">
             <div className="flex items-center justify-between gap-3 mb-2">
               <h3 className="brand-title text-lg">Explore Modules</h3>
               <span className="text-xs text-white/45">
@@ -3669,7 +3669,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen text-white flex flex-col">
+    <div className="text-white flex flex-col">
 
       <AuditProgressOverlay
         isActive={auditOverlayActive && !overlayMinimized}

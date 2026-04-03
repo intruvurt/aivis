@@ -580,9 +580,9 @@ export default function OnboardingModal({ onClose, onAnalyze }: OnboardingModalP
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
       >
         {/* Outer glow */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/15 via-cyan-500/10 to-violet-500/15 rounded-3xl blur-xl pointer-events-none" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/15 via-cyan-500/10 to-violet-500/15 rounded-xl blur-xl pointer-events-none" />
 
-        <div className="relative bg-[#1e2433] border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
+        <div className="relative bg-[#1e2433] border border-white/10 rounded-xl p-6 shadow-2xl overflow-hidden">
           {/* Subtle grid pattern overlay */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 

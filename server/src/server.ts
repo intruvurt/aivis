@@ -2134,6 +2134,16 @@ app.get('/api/contacts', authRequired, async (req: Request, res: Response) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// IndexNow key file — serve from API server so IndexNow bot can verify
+// ─────────────────────────────────────────────────────────────────────────────
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY || '';
+if (INDEXNOW_KEY) {
+  app.get(`/${INDEXNOW_KEY}.txt`, (_req, res) => {
+    res.type('text/plain').send(INDEXNOW_KEY);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Health check
 // ─────────────────────────────────────────────────────────────────────────────
 const DEPLOY_VERSION = '2026-03-19_credit-gate-fix';
@@ -10196,7 +10206,14 @@ process.on('unhandledRejection', (reason) => {
   }
 
   // ── IndexNow startup ping — submit canonical AiVIS insight URLs ────────────
-  if ((process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY) && process.env.NODE_ENV === 'production') {
+  // Guarded by INDEXNOW_STARTUP_PING=true because the static CDN may block
+  // IndexNow's verification bot, causing 403 noise on every deploy.
+  // Use the admin endpoint POST /api/admin/indexnow/ping for on-demand pings.
+  if (
+    process.env.INDEXNOW_STARTUP_PING === 'true' &&
+    (process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY) &&
+    process.env.NODE_ENV === 'production'
+  ) {
     const frontendUrl = process.env.FRONTEND_URL || 'https://aivis.biz';
     const ownInsightUrls = [
       '/',

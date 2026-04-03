@@ -48,7 +48,9 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
     return { submitted: 0, skipped: urls.length, error: `No submitted URLs match the site host (${host}). IndexNow can only notify for URLs on your own domain.` };
   }
 
-  // Self-check: verify key file is accessible before submitting
+  // Self-check: verify key file is accessible before submitting.
+  // Hard gate — if the key file can't be verified, bail out. IndexNow will
+  // reject the submission anyway (403 UserForbiddedToAccessSite).
   try {
     const probe = await fetch(keyLocation, {
       method: 'GET',
@@ -65,7 +67,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
     }
   } catch (err: any) {
     console.warn(`[IndexNow] Could not verify key file at ${keyLocation}:`, err?.message);
-    // Continue anyway — the file may be fine but our fetch couldn't reach it due to network
+    return { submitted: 0, skipped: urls.length, error: `Key file verification failed: ${err?.message}` };
   }
 
   try {

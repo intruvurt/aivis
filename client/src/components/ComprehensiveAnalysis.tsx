@@ -248,211 +248,211 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
     medium: { bg: "bg-amber-950/60", border: "border-amber-500/40", text: "text-amber-300", label: "Medium Priority" }
   };
 
+  // Derived colour helpers used in JSX
+  const scoreColor =
+    result.visibility_score >= 80
+      ? '#10b981'
+      : result.visibility_score >= 60
+        ? '#06b6d4'
+        : result.visibility_score >= 40
+          ? '#f59e0b'
+          : '#ef4444';
+
+  const circumference = 2 * Math.PI * 40; // r=40
+  const dashOffset = circumference * (1 - result.visibility_score / 100);
+
+  // Build the issues rows — prefer evidence_fix_plan, fall back to keypoints
+  const issueRows: Array<{ id: string; severity: string; title: string; description: string; fix: string }> =
+    result.evidence_fix_plan?.issues.length
+      ? result.evidence_fix_plan.issues.map((iss) => ({
+          id: iss.id,
+          severity: iss.severity as string,
+          title: iss.area,
+          description: iss.finding,
+          fix: iss.actual_fix,
+        }))
+      : keypoints.map((kp, i) => ({
+          id: `kp-${i}`,
+          severity: kp.priority,
+          title: kp.title,
+          description: kp.description,
+          fix: kp.impact,
+        }));
+
+  const visibleIssues = showAllFixPlanIssues ? issueRows : issueRows.slice(0, 8);
+
+  function severityPill(sev: string) {
+    const s = sev?.toLowerCase() ?? '';
+    if (s === 'critical' || s === 'high')
+      return 'text-red-400 border-red-500/30 bg-red-500/10';
+    if (s === 'medium')
+      return 'text-amber-400 border-amber-500/30 bg-amber-500/10';
+    return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
+  }
+
   return (
-    <div className="space-y-8">
-      {/* SECTION 1 — VERDICT */}
-      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-cyan-300 mb-2">Verdict</p>
-        <h2 className="text-xl font-bold text-white mb-1">
-          AI can read your site. It doesn’t trust it enough to cite it.
-        </h2>
-        <p className="text-sm text-white/65">
-          AI visibility score: <span className="text-white font-semibold">{result.visibility_score} / 100</span> · Confidence:{" "}
-          <span className="text-white font-semibold">{scoreInfo.level}</span> · Citation readiness:{" "}
-          <span className="text-white font-semibold">{result.visibility_score >= 70 ? "Moderate" : "Weak"}</span>
-        </p>
-        {keypoints.length > 0 && (
-          <div className="mt-4">
-            <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">Top blockers</p>
-            <ul className="list-disc pl-5 text-sm text-white/75 space-y-1">
-              {keypoints.slice(0, 3).map((kp) => (
-                <li key={`blocker-${kp.title}`}>{kp.title.toLowerCase()}</li>
-              ))}
-            </ul>
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+
+      {/* LEFT COLUMN */}
+      <div className="xl:col-span-8 space-y-5">
+
+        {/* 1. Score overview card */}
+        <div className="rounded-2xl border border-white/10 bg-[#0c1221] p-6">
+          <div className="flex items-center gap-6">
+            <div className="relative flex-shrink-0 w-24 h-24">
+              <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
+                <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+                <circle cx="48" cy="48" r="40" fill="none" stroke={scoreColor} strokeWidth="8"
+                  strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset}
+                  style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl font-bold text-white leading-none">{result.visibility_score}</span>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 mb-0.5">AI Visibility Score</p>
+              <h2 className="text-2xl font-bold text-white leading-tight">{scoreInfo.level}</h2>
+              <p className="text-sm text-white/50 mt-1 mb-2 break-all" style={{ overflowWrap: 'anywhere' }}>{result.url}</p>
+              <div className="flex flex-wrap gap-2">
+                <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide ${executionPresentation.className}`}>
+                  {executionPresentation.label}
+                </span>
+                {result.triple_check_summary && (
+                  <span className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-300">
+                    Triple-Check ✓
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+            <div className="h-full rounded-full transition-all duration-700"
+              style={{ width: `${result.visibility_score}%`, background: `linear-gradient(90deg, ${scoreColor}, ${scoreColor}cc)` }} />
+          </div>
+          <div className="flex justify-between mt-1.5">
+            <span className="text-[10px] text-red-400/70">Critical</span>
+            <span className="text-[10px] text-amber-400/70">Needs Work</span>
+            <span className="text-[10px] text-cyan-400/70">Good</span>
+            <span className="text-[10px] text-emerald-400/70">Excellent</span>
+          </div>
+        </div>
+
+        {/* 2. Metric cards row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { label: 'Schema Types', value: String(schemaCount), sub: schemaCount > 0 ? 'detected' : 'none found', valueColor: schemaCount > 0 ? 'text-emerald-400' : 'text-red-400' },
+            { label: 'Word Count', value: contentWordCount > 0 ? contentWordCount.toLocaleString() : '—', sub: contentWordCount >= 800 ? 'sufficient depth' : contentWordCount > 0 ? 'thin content' : 'not measured', valueColor: contentWordCount >= 800 ? 'text-emerald-400' : contentWordCount > 0 ? 'text-amber-400' : 'text-white/35' },
+            { label: 'Issues Found', value: String(issueRows.length), sub: 'visibility blockers', valueColor: issueRows.length > 0 ? 'text-orange-400' : 'text-emerald-400' },
+            { label: 'HTTPS', value: hasHttps ? 'Enabled' : 'Missing', sub: hasCanonical ? 'Canonical ✓' : 'No canonical', valueColor: hasHttps ? 'text-emerald-400' : 'text-red-400' },
+          ].map((m) => (
+            <div key={m.label} className="rounded-xl border border-white/10 bg-[#0c1221] p-4">
+              <p className="text-[11px] uppercase tracking-widest text-white/40 mb-1">{m.label}</p>
+              <p className={`text-xl font-bold ${m.valueColor}`}>{m.value}</p>
+              <p className="text-[11px] text-white/40 mt-0.5">{m.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 3. Threat intelligence */}
+        {(result as any).threat_intel && <ThreatIntelBanner data={(result as any).threat_intel} />}
+
+        {/* 4. Category grid */}
+        {result.category_grades && result.category_grades.length > 0 && (
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-white/40 mb-3">Category Breakdown</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {result.category_grades.slice(0, 6).map((cat) => {
+                const catBadge = cat.score >= 80 ? 'text-emerald-400 border-emerald-500/25 bg-emerald-500/[0.07]'
+                  : cat.score >= 60 ? 'text-cyan-400 border-cyan-500/25 bg-cyan-500/[0.07]'
+                  : cat.score >= 40 ? 'text-amber-400 border-amber-500/25 bg-amber-500/[0.07]'
+                  : 'text-red-400 border-red-500/25 bg-red-500/[0.07]';
+                const catColor = cat.score >= 80 ? '#10b981' : cat.score >= 60 ? '#06b6d4' : cat.score >= 40 ? '#f59e0b' : '#ef4444';
+                const catLabel = cat.score >= 80 ? 'Excellent' : cat.score >= 60 ? 'Good' : cat.score >= 40 ? 'Weak' : 'Critical';
+                const fixCount = cat.improvements?.length ?? 0;
+                return (
+                  <div key={cat.label} className="rounded-xl border border-white/10 bg-[#0c1221] p-4">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <p className="text-sm font-semibold text-white leading-snug">{cat.label}</p>
+                      <span className={`flex-shrink-0 text-[11px] px-2 py-0.5 rounded-full border font-semibold ${catBadge}`}>{cat.score}</span>
+                    </div>
+                    <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden mb-2">
+                      <div className="h-full rounded-full" style={{ width: `${cat.score}%`, background: catColor }} />
+                    </div>
+                    <p className="text-[11px] text-white/40">{catLabel} · {fixCount} fix{fixCount !== 1 ? 'es' : ''}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Overall Score Summary */}
-      <div className={`rounded-xl border-2 p-6 ${scoreInfo.color}`}>
-        <div className="flex items-center gap-4 mb-4">
-          {scoreInfo.icon}
-          <div className="flex-1">
-            <h3 className="text-xl font-bold">AI Visibility Score: {result.visibility_score}/100</h3>
-            <div className="mt-1">
-              <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide ${executionPresentation.className}`}>
-                {executionPresentation.label}
-              </span>
+        {/* 5. Upload-specific panels */}
+        {isUploadResult && result.upload_analysis_mode === 'writing_audit' && result.writing_audit && (
+          <WritingAuditPanel result={result} />
+        )}
+        {isUploadResult && result.upload_analysis_mode !== 'writing_audit' && (
+          <div className="rounded-xl border border-white/10 bg-[#0c1221] p-4">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h3 className="text-white font-semibold">Code &amp; Template Analysis</h3>
+              <span className="text-[11px] px-2 py-1 rounded-full border border-white/15 bg-charcoal-light text-white/65">AEO / SEO / GEO / Security Scan</span>
             </div>
-            <p className="text-sm opacity-80 break-all [overflow-wrap:anywhere]">{scoreInfo.level} - {result.url}</p>
+            <p className="text-sm text-white/60">This upload was analyzed as source code or template content. The audit covers deployable SEO signals, structured data opportunities, AI extractability, and security surface.</p>
           </div>
-        </div>
-      </div>
+        )}
 
-
-
-      {/* Threat Intelligence — immediately after score */}
-      {(result as any).threat_intel && (
-        <ThreatIntelBanner data={(result as any).threat_intel} />
-      )}
-
-      {!hasAlignment && (
-        <div className="rounded-xl border border-violet-400/20 bg-violet-500/10 p-4">
-          <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">Competitor gap preview</p>
-          <p className="text-sm text-white/80">
-            Competitors with clearer schema + stronger answer structure are more likely to be cited first. Your highest visible gap is in
-            <span className="font-semibold text-white"> schema coverage and extractable answer blocks</span>.
-          </p>
-        </div>
-      )}
-
-      {/* SECTION 2 — PROOF */}
-      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <h3 className="text-lg font-semibold text-white">What we actually observed</h3>
-          <span className="text-[11px] uppercase tracking-[0.12em] text-white/45">Proof layer</span>
-        </div>
-        {result.evidence_fix_plan?.issues?.length ? (
-          <div className="space-y-3">
-            {auditReport.blockers.slice(0, 4).map((issue) => (
-              <div key={`proof-${issue.id}`} className="rounded-lg border border-white/10 bg-charcoal-light p-3">
-                <p className="text-sm font-semibold text-white/90">{issue.title}</p>
-                <p className="text-xs text-amber-200/90 mt-1">AI could not confirm what your site represents.</p>
-                <p className="text-xs text-white/60 mt-1">Affected pages: {auditReport.domain}</p>
-                <p className="text-xs text-white/60 mt-1">Extracted value: {auditReport.evidence.find((ev) => ev.id === issue.evidenceIds[0])?.description || issue.title}</p>
-                <p className="text-xs text-white/60 mt-1">Expected value: {issue.fix}</p>
-                <p className="text-xs text-white/60 mt-1">Why this matters: AI avoids citing unclear sources.</p>
-                <p className="text-xs text-white/60 mt-1">Verified by: {auditReport.evidence.find((ev) => ev.id === issue.evidenceIds[0])?.verifiedBy || "system"}</p>
-                <p className="text-xs text-white/45 mt-1">Evidence ID: {issue.evidenceIds?.[0] || issue.id}</p>
+        {/* 6. Priority issues table */}
+        <div className="rounded-2xl border border-white/10 bg-[#0c1221] overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-white/60" />
+              <h3 className="text-sm font-semibold text-white">Priority Issues</h3>
+            </div>
+            <span className="text-[11px] text-white/35">{issueRows.length} total</span>
+          </div>
+          <div className="divide-y divide-white/[0.05]">
+            {visibleIssues.map((issue) => (
+              <div key={issue.id} className="px-5 py-3.5 flex items-start gap-3">
+                <span className={`flex-shrink-0 mt-0.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${severityPill(issue.severity)}`}>
+                  {issue.severity?.toUpperCase() || 'MED'}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-white/90">{issue.title}</p>
+                  <p className="text-xs text-white/50 mt-0.5">{issue.description}</p>
+                  {issue.fix && <p className="text-xs text-blue-400/70 mt-1">↳ {issue.fix}</p>}
+                </div>
               </div>
             ))}
           </div>
-        ) : (
-          <p className="text-sm text-white/65">
-            We did not receive structured proof records for this run. Re-run audit to capture evidence-linked deltas.
-          </p>
-        )}
-      </div>
-
-      {/* SECTION 3 — COMPETITOR GAP */}
-      {hasAlignment ? (
-        <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
-          <h3 className="text-lg font-semibold text-white mb-2">Why competitors get cited instead</h3>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
-              <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">Competitors</p>
-              <ul className="list-disc pl-4 text-sm text-white/70 space-y-1">
-                <li>appear in answer sources you do not</li>
-                <li>stronger entity clarity and extraction cues</li>
-                <li>clearer structured answers for retrieval</li>
-              </ul>
+          {issueRows.length > 8 && (
+            <div className="px-5 py-3 border-t border-white/[0.05]">
+              <button onClick={() => setShowAllFixPlanIssues((v) => !v)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                {showAllFixPlanIssues ? 'Show less' : `Show all ${issueRows.length} issues`}
+              </button>
             </div>
-            <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
-              <p className="text-xs uppercase tracking-[0.12em] text-white/45 mb-2">You</p>
-              <ul className="list-disc pl-4 text-sm text-white/70 space-y-1">
-                <li>missing source presence on key intents</li>
-                <li>weaker extraction signals</li>
-                <li>inconsistent metadata trust surface</li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-4 rounded-lg border border-violet-400/25 bg-violet-500/10 p-3">
-            <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">🔒 Unlock full competitor intelligence</p>
-            <p className="text-sm text-white/70">
-              {competitorTrackingAccess === true
-                ? "Full competitor intelligence is active on your current plan."
-                : "Source-level competitor evidence, citation movement tracking, and full parity detail are available on higher tiers."}
-            </p>
-          </div>
+          )}
         </div>
-      ) : (
-        <div className="rounded-xl border border-amber-400/25 bg-amber-500/10 p-5">
-          <p className="text-xs uppercase tracking-[0.12em] text-amber-300 mb-1">Locked section</p>
-          <h3 className="text-base font-semibold text-white mb-2">Full evidence + competitor source intelligence</h3>
-          <p className="text-sm text-white/65">
-            You’ve unlocked the verdict, top blockers, and competitor gap preview. Upgrade to access source-level proof, full evidence ledger, and competitor intelligence over time.
-          </p>
-        </div>
-      )}
 
-      {isUploadResult && result.upload_analysis_mode === 'writing_audit' && result.writing_audit && (
-        <WritingAuditPanel result={result} />
-      )}
-
-      {isUploadResult && result.upload_analysis_mode !== 'writing_audit' && (
-        <div className="card-charcoal/50 rounded-xl p-4 border border-white/10">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <h3 className="text-white font-semibold">Code & Template Analysis</h3>
-            <span className="text-[11px] px-2 py-1 rounded-full border border-white/15 bg-charcoal-light text-white/65">AEO / SEO / GEO / Security Scan</span>
-          </div>
-          <p className="text-sm text-white/60">
-            This upload was analyzed as source code or template content. The audit covers deployable SEO signals, structured data opportunities, AI extractability, and security surface — not a full code review.
-          </p>
-        </div>
-      )}
-
-
-
-      {/* SECTION 4 — FIX FIRST */}
-      <div className="card-charcoal/50 rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Target className="w-6 h-6 text-white/80" />
-          <h3 className="text-xl font-bold text-white">Fix this first</h3>
-        </div>
-        <p className="text-xs text-white/55 mb-4">Top 3 actions ranked by impact.</p>
-
-        {result.evidence_fix_plan && result.evidence_fix_plan.issues.length > 0 && (
-          <div className="mb-4 rounded-xl border border-white/10 bg-charcoal p-4">
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <p className="text-xs uppercase tracking-wider text-white/55">Actual Fix Plan</p>
-              <span className="text-[11px] px-2 py-0.5 rounded-full border border-white/10 text-white/70">
-                {result.evidence_fix_plan.mode === 'thorough' ? 'Thorough' : 'Standard'} · {result.evidence_fix_plan.issue_count} issues
-              </span>
-            </div>
-            <div className="space-y-2.5">
-              {(showAllFixPlanIssues ? result.evidence_fix_plan.issues : result.evidence_fix_plan.issues.slice(0, 6)).map((issue) => (
-                <div key={issue.id} className="rounded-lg border border-white/10 bg-charcoal-light p-3">
-                  <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                    <span className="text-[11px] px-2 py-0.5 rounded-full border border-white/10 text-white/70 uppercase">{issue.severity}</span>
-                    <span className="text-xs text-white/80 font-medium">{issue.area}</span>
-                  </div>
-                  <p className="text-sm text-white/80">{issue.finding}</p>
-                  <p className="text-xs text-white/60 mt-1">Fix: {issue.actual_fix}</p>
-                </div>
-              ))}
-              {result.evidence_fix_plan.issues.length > 6 && (
-                <button
-                  onClick={() => setShowAllFixPlanIssues((v) => !v)}
-                  className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors mt-1"
-                >
-                  {showAllFixPlanIssues ? 'Show less' : `Show all ${result.evidence_fix_plan.issues.length} issues`}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
+        {/* 7. GEO / SSFR Truth Layer */}
         {(geoSignalProfile || contradictionReport) && (
-          <div className="mb-4 rounded-xl border border-white/10 bg-charcoal p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-              <p className="text-xs uppercase tracking-wider text-white/55">GEO / SSFR Truth Layer</p>
+          <div className="rounded-xl border border-white/10 bg-[#0c1221] p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <p className="text-xs uppercase tracking-wider text-white/50 font-semibold">GEO / SSFR Truth Layer</p>
               {contradictionReport && (
                 <span className={`text-[11px] px-2 py-0.5 rounded-full border ${
-                  contradictionReport.status === 'clean'
-                    ? 'border-emerald-500/35 text-emerald-300'
-                    : contradictionReport.status === 'critical'
-                      ? 'border-rose-500/35 text-rose-300'
-                      : 'border-amber-500/35 text-amber-300'
+                  (contradictionReport as any).status === 'clean' ? 'border-emerald-500/35 text-emerald-300'
+                    : (contradictionReport as any).status === 'critical' ? 'border-rose-500/35 text-rose-300'
+                    : 'border-amber-500/35 text-amber-300'
                 }`}>
-                  {contradictionReport.status.toUpperCase()} · {contradictionReport.blocker_count} blockers
+                  {(contradictionReport as any).status?.toUpperCase()} · {(contradictionReport as any).blocker_count} blockers
                 </span>
               )}
             </div>
-
-            {strictRubric.required_fixpacks.length > 0 && (
+            {(strictRubric as any)?.required_fixpacks?.length > 0 && (
               <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
-                <p className="text-xs uppercase tracking-wider text-white/55 mb-2">Required Fixpacks</p>
+                <p className="text-xs uppercase tracking-wider text-white/50 mb-2">Required Fixpacks</p>
                 <div className="space-y-2">
-                  {strictRubric.required_fixpacks.map((pack) => (
+                  {(strictRubric as any).required_fixpacks.map((pack: any) => (
                     <div key={pack.id} className="rounded-md border border-white/10 bg-charcoal p-2.5">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                         <p className="text-sm text-white/80 font-medium">{pack.label}</p>
@@ -460,9 +460,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                           Lift +{pack.estimated_score_lift_min} to +{pack.estimated_score_lift_max}
                         </span>
                       </div>
-                      <p className="text-xs text-white/60">
-                        Targets: {pack.target_gate_ids.map(humanizeGateId).join(', ')}
-                      </p>
+                      <p className="text-xs text-white/55">Targets: {pack.target_gate_ids?.map(humanizeGateId).join(', ')}</p>
                     </div>
                   ))}
                 </div>
@@ -470,105 +468,182 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             )}
           </div>
         )}
-        <div className="space-y-4">
-          {keypoints.slice(0, 3).map((kp, idx) => {
-            const config = priorityConfig[kp.priority];
-            return (
-              <div
-                key={idx}
-                className={`rounded-xl border-2 p-4 ${config.border} ${config.bg}`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 rounded-full bg-charcoal-deep flex items-center justify-center font-bold ${config.text}`}>
-                      {idx + 1}
-                    </div>
-                  </div>
+
+        {/* 8. Competitor gap */}
+        {hasAlignment ? (
+          <div className="rounded-xl border border-white/10 bg-[#0c1221] p-5">
+            <h3 className="text-base font-semibold text-white mb-3">Why competitors get cited instead</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-white/40 mb-2">Competitors</p>
+                <ul className="list-disc pl-4 text-sm text-white/65 space-y-1">
+                  <li>appear in answer sources you do not</li>
+                  <li>stronger entity clarity and extraction cues</li>
+                  <li>clearer structured answers for retrieval</li>
+                </ul>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-charcoal-light p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-white/40 mb-2">You</p>
+                <ul className="list-disc pl-4 text-sm text-white/65 space-y-1">
+                  <li>missing source presence on key intents</li>
+                  <li>weaker extraction signals</li>
+                  <li>inconsistent metadata trust surface</li>
+                </ul>
+              </div>
+            </div>
+            {competitorTrackingAccess !== true && (
+              <div className="mt-3 rounded-lg border border-violet-400/20 bg-violet-500/10 p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">Unlock full competitor intelligence</p>
+                <p className="text-sm text-white/65">Source-level competitor evidence, citation movement tracking, and full parity detail are available on higher tiers.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-violet-400/20 bg-violet-500/10 p-5">
+            <p className="text-xs uppercase tracking-[0.12em] text-violet-300 mb-1">Competitor gap preview</p>
+            <p className="text-sm text-white/80">
+              Competitors with clearer schema + stronger answer structure are more likely to be cited first. Your highest visible gap is in{' '}
+              <span className="font-semibold text-white">schema coverage and extractable answer blocks</span>.
+            </p>
+          </div>
+        )}
+
+        {/* 9. Upgrade suggestions */}
+        {upgradeSuggestions.length > 0 && (
+          <div className="rounded-xl border border-white/10 bg-[#0c1221] p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <Target className="w-4 h-4 text-white/60" />
+              <h3 className="text-sm font-semibold text-white">You're missing where competitors are getting picked</h3>
+            </div>
+            <p className="text-xs text-white/45 mb-4">Competitor appears in key answer sources while you do not. Unlock full source breakdown to see why they win.</p>
+            <div className="space-y-3">
+              {upgradeSuggestions.map((item) => (
+                <div key={item.id} className="rounded-xl border border-white/10 bg-charcoal p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className={`font-bold ${config.text}`}>{kp.title}</h4>
-                      <span className={`text-xs px-2 py-0.5 rounded-full border ${config.border} ${config.text}`}>
-                        {config.label}
-                      </span>
-                    </div>
-                    <p className="text-white/75 text-sm mb-2">{kp.description}</p>
-                    <div className="flex items-start gap-2 mt-3 p-3 bg-charcoal rounded-xl">
-                      <Zap className="w-4 h-4 text-white/80 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-white/55">
-                        <span className="font-semibold text-white">Impact:</span> {kp.impact}
-                      </p>
-                    </div>
+                    <p className="text-sm font-semibold text-white">{item.title}</p>
+                    <p className="text-xs text-white/55 mt-1">{item.description}</p>
+                  </div>
+                  <Link to={item.to} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400 text-xs font-semibold hover:bg-blue-500/20 transition-colors">
+                    See why they win
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 10. SSFR / Crypto / Export */}
+        {(result as any)?.audit_id && <SSFRPanel auditId={result.audit_id} />}
+        {result.crypto_intelligence && <CryptoIntelligencePanel data={result.crypto_intelligence} />}
+        <CollapsibleSection title="Export & Document Generation" description="Generate reports in PDF, DOCX, Markdown, and other formats" icon={Download} defaultOpen={false}>
+          <DocumentGenerator result={result} />
+        </CollapsibleSection>
+      </div>
+
+      {/* RIGHT COLUMN — sticky fix panel */}
+      <div className="xl:col-span-4">
+        <div className="sticky top-20 space-y-4">
+
+          {/* Verdict card */}
+          <div className={`rounded-2xl border-2 p-5 ${scoreInfo.color}`}>
+            <div className="flex items-center gap-3 mb-3">
+              {scoreInfo.icon}
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.12em] opacity-60">Verdict</p>
+                <p className="text-sm font-bold leading-snug">AI reads. Doesn't cite.</p>
+              </div>
+            </div>
+            <p className="text-xs opacity-70 mb-3">
+              Score <strong>{result.visibility_score}/100</strong> — {scoreInfo.level}.{' '}
+              Citation readiness: <strong>{result.visibility_score >= 70 ? 'Moderate' : 'Weak'}</strong>.
+            </p>
+            {keypoints.length > 0 && (
+              <>
+                <p className="text-[10px] uppercase tracking-[0.12em] opacity-55 mb-1.5">Top blockers</p>
+                <ul className="space-y-1">
+                  {keypoints.slice(0, 3).map((kp) => (
+                    <li key={kp.title} className="text-xs flex items-start gap-1.5 opacity-80">
+                      <AlertCircle className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                      <span>{kp.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+
+          {/* Top priority fix */}
+          {keypoints.length > 0 && (() => {
+            const top = keypoints[0];
+            const cfg = priorityConfig[top.priority];
+            return (
+              <div className="rounded-2xl border border-white/10 bg-[#0c1221] p-4">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-white/35 mb-3">Highest Priority Fix</p>
+                <div className={`rounded-xl border p-3 ${cfg.border} ${cfg.bg}`}>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${cfg.border} ${cfg.text}`}>{cfg.label}</span>
+                  <p className={`text-sm font-semibold mt-2 mb-1 ${cfg.text}`}>{top.title}</p>
+                  <p className="text-xs text-white/55 mb-2">{top.description}</p>
+                  <div className="flex items-start gap-1.5 p-2 rounded-lg bg-charcoal-deep/60">
+                    <Zap className="w-3.5 h-3.5 text-white/50 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-white/45"><span className="text-white/70 font-medium">Impact:</span> {top.impact}</p>
                   </div>
                 </div>
               </div>
             );
-          })}
-        </div>
-      </div>
+          })()}
 
-
-
-
-      {/* SECTION 5 — FIX LOOP */}
-      <div className="rounded-xl border border-white/10 bg-charcoal/40 p-5">
-        <h3 className="text-lg font-semibold text-white mb-2">What happens after you fix</h3>
-        <ul className="list-disc pl-5 text-sm text-white/70 space-y-1">
-          <li>mark as fixed</li>
-          <li>re-run audit</li>
-          <li>see score change</li>
-          <li>see evidence change</li>
-        </ul>
-      </div>
-
-      {/* SECTION 6 — PAYWALL */}
-      {upgradeSuggestions.length > 0 && (
-        <div className="card-charcoal/50 rounded-xl p-6 border border-white/10">
-          <div className="flex items-center gap-3 mb-4">
-            <Target className="w-5 h-5 text-white/80" />
-            <h3 className="text-lg font-bold text-white">You’re missing where competitors are getting picked</h3>
-          </div>
-          <p className="text-xs text-white/55 mb-4">Competitor appears in key answer sources while you do not. Unlock full source breakdown to see why they win.</p>
-          <div className="space-y-3">
-            {upgradeSuggestions.map((item) => (
-              <div key={item.id} className="rounded-xl border border-white/10 bg-charcoal p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white">{item.title}</p>
-                  <p className="text-xs text-white/60 mt-1">{item.description}</p>
-                </div>
-                <Link
-                  to={item.to}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 transition-colors"
-                >
-                  See why they win
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+          {/* Fix plan bullets */}
+          {result.evidence_fix_plan && result.evidence_fix_plan.issues.length > 0 && (
+            <div className="rounded-2xl border border-white/10 bg-[#0c1221] p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-white/35">Fix Plan</p>
+                <span className="text-[11px] text-white/35">
+                  {result.evidence_fix_plan.mode === 'thorough' ? 'Thorough' : 'Standard'} · {result.evidence_fix_plan.issue_count ?? result.evidence_fix_plan.issues.length} issues
+                </span>
               </div>
-            ))}
-          </div>
+              <div className="space-y-2.5">
+                {result.evidence_fix_plan.issues.slice(0, 5).map((iss) => {
+                  const s = iss.severity?.toLowerCase() ?? '';
+                  const dot = s === 'critical' || s === 'high' ? 'bg-red-500' : s === 'medium' ? 'bg-amber-500' : 'bg-emerald-500';
+                  return (
+                    <div key={iss.id} className="flex items-start gap-2.5">
+                      <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5 ${dot}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-white/80">{iss.area}</p>
+                        <p className="text-[11px] text-white/40 mt-0.5">{iss.actual_fix}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+                {result.evidence_fix_plan.issues.length > 5 && (
+                  <p className="text-[11px] text-white/30 pl-4">+{result.evidence_fix_plan.issues.length - 5} more issues</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Required fixpacks */}
+          {(strictRubric as any)?.required_fixpacks?.length > 0 && (
+            <div className="rounded-2xl border border-white/10 bg-[#0c1221] p-4">
+              <p className="text-[10px] uppercase tracking-[0.14em] text-white/35 mb-3">Required Fixpacks</p>
+              <div className="space-y-2">
+                {(strictRubric as any).required_fixpacks.map((pack: any) => (
+                  <div key={pack.id} className="rounded-lg border border-white/10 p-2.5">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <p className="text-xs font-medium text-white/75 truncate">{pack.label}</p>
+                      <span className="flex-shrink-0 text-[10px] text-emerald-400 font-semibold">+{pack.estimated_score_lift_min}–{pack.estimated_score_lift_max}</span>
+                    </div>
+                    <p className="text-[10px] text-white/35">{pack.target_gate_ids?.map(humanizeGateId).join(', ')}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
-      )}
+      </div>
 
-
-
-      {/* SSFR Evidence Audit */}
-      {(result as any)?.audit_id && (
-        <SSFRPanel auditId={result.audit_id} />
-      )}
-
-      {/* Crypto Intelligence */}
-      {result.crypto_intelligence && (
-        <CryptoIntelligencePanel data={result.crypto_intelligence} />
-      )}
-
-      {/* Document Export */}
-      <CollapsibleSection
-        title="Export & Document Generation"
-        description="Generate reports in PDF, DOCX, Markdown, and other formats"
-        icon={Download}
-        defaultOpen={false}
-      >
-        <DocumentGenerator result={result} />
-      </CollapsibleSection>
     </div>
   );
 };

@@ -16,7 +16,7 @@ services:
       - key: PUPPETEER_CACHE_DIR
         value: /opt/render/.cache/puppeteer
       - key: PUPPETEER_SKIP_DOWNLOAD
-        value: "false"
+        value: "true"
       # REQUIRED: Set to your deployed frontend URL (e.g. https://aivis.biz)
       # Used for CORS — server exits(1) in production without this.
       - key: FRONTEND_URL

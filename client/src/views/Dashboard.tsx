@@ -102,7 +102,6 @@ type CategoryInsight = {
   score: number;
   summary: string;
   samples?: number;
-  samples?: number;
 };
 
 type ApiError = Error & {

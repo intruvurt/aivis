@@ -1,10 +1,10 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle, ChevronDown,
+  Eye, Layers, HelpCircle, X,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier } from "@shared/types";
@@ -16,6 +16,11 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   minTier?: "observer" | "alignment" | "signal";
+}
+
+interface AppSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const mainNav: NavItem[] = [
@@ -50,89 +55,83 @@ const accountNav: NavItem[] = [
   { to: "/help", label: "Help", icon: HelpCircle },
 ];
 
-function NavSection({ title, items }: { title: string; items: NavItem[] }) {
+function NavSection({ title, items, onClose }: { title: string; items: NavItem[]; onClose?: () => void }) {
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
 
   return (
-    <div className="mb-4">
-      <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-        {title}
-      </p>
-      <ul className="space-y-0.5">
-        {items.map((item) => {
-          const locked = item.minTier ? !meetsMinimumTier(tier, item.minTier) : false;
-          return (
-            <li key={item.to}>
-              <NavLink
-                to={item.to}
-                end={item.to === "/app"}
-                className={({ isActive }) =>
-                  `group flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium transition-all duration-150 ${
-                    isActive
-                      ? "bg-cyan-500/10 text-cyan-400 shadow-sm shadow-cyan-500/5"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                  } ${locked ? "opacity-35 pointer-events-none" : ""}`
-                }
-              >
-                <item.icon className="w-[18px] h-[18px] shrink-0 opacity-80" />
-                <span className="truncate">{item.label}</span>
-                {locked && (
-                  <span className="ml-auto text-[9px] font-semibold uppercase tracking-wide text-slate-600 bg-white/[0.04] px-1.5 py-0.5 rounded">
-                    {item.minTier}
-                  </span>
-                )}
-              </NavLink>
-            </li>
-          );
-        })}
-      </ul>
+    <div className="aurora-sidebar-section">
+      <p className="aurora-sidebar-heading">{title}</p>
+      {items.map((item) => {
+        const locked = item.minTier ? !meetsMinimumTier(tier, item.minTier) : false;
+        const Icon = item.icon;
+        return (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === "/app"}
+            onClick={onClose}
+            className={({ isActive }) =>
+              `aurora-sidebar-link ${isActive ? "is-active" : ""} ${locked ? "pointer-events-none opacity-40" : ""}`
+            }
+          >
+            <Icon className="w-[16px] h-[16px] shrink-0" />
+            <span className="truncate">{item.label}</span>
+            {locked && <span className="aurora-sidebar-lock">{item.minTier}</span>}
+          </NavLink>
+        );
+      })}
     </div>
   );
 }
 
-export default function AppSidebar() {
+export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps) {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <aside className="fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col bg-[#0b0f1a] border-r border-white/[0.06]" role="navigation" aria-label="Main navigation">
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-4 h-14 shrink-0 border-b border-white/[0.06] overflow-hidden">
-        <NavLink to="/app" className="flex items-center gap-2 overflow-hidden">
-          <img
-            src={LOGO_URL}
-            alt="AiVIS"
-            width={28}
-            height={28}
-            className="h-7 w-7 max-h-7 max-w-7 shrink-0 object-contain"
-          />
+    <aside
+      className={`aurora-sidebar ${isOpen ? "is-open" : ""}`}
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      {/* Brand */}
+      <div className="aurora-sidebar-brand">
+        <NavLink to="/app" className="flex items-center gap-2 min-w-0 flex-1" onClick={onClose}>
+          <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
           <div className="min-w-0">
-            <span className="block text-sm font-bold text-white tracking-tight leading-tight">AiVIS</span>
-            <span className="block text-[10px] text-slate-500 leading-tight">AI Visibility Engine</span>
+            <p className="aurora-sidebar-title">AiVIS</p>
+            <p className="aurora-sidebar-subtitle">AI Visibility Engine</p>
           </div>
         </NavLink>
+        {/* Mobile close button */}
+        <button
+          className="lg:hidden ml-auto p-1 rounded-md text-white/50 hover:text-white hover:bg-white/08 transition-colors"
+          onClick={onClose}
+          aria-label="Close menu"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 scrollbar-thin">
-        <NavSection title="Main" items={mainNav} />
-        <NavSection title="Intelligence" items={intelligenceNav} />
-        <NavSection title="Tools" items={toolsNav} />
-        <NavSection title="Account" items={accountNav} />
+      <nav className="aurora-sidebar-nav">
+        <NavSection title="Main" items={mainNav} onClose={onClose} />
+        <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} />
+        <NavSection title="Tools" items={toolsNav} onClose={onClose} />
+        <NavSection title="Account" items={accountNav} onClose={onClose} />
       </nav>
 
       {/* User pill */}
       {user && (
-        <div className="shrink-0 border-t border-white/[0.06] px-3 py-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center text-[12px] font-bold text-cyan-400">
+        <div className="aurora-user-pill">
+          <div className="aurora-user-pill-inner">
+            <div className="aurora-user-avatar">
               {(user.name || user.email || "U").charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium text-white/80 truncate">{user.name || user.email}</p>
-              <p className="text-[10px] text-slate-500 capitalize">{user.tier || "observer"}</p>
+              <p className="aurora-user-name">{user.name || user.email}</p>
+              <p className="aurora-user-tier">{user.tier || "observer"}</p>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-600" />
           </div>
         </div>
       )}

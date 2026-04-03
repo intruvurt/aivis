@@ -320,7 +320,7 @@ export default function TopNav() {
   const closeDocs = useCallback(() => { docsTimeout.current = setTimeout(() => setDocsOpen(false), 150); }, []);
 
   return (
-    <nav className="topnav-rounded sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
+    <nav className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
       {/* Gradient emanation — logo colors bleeding across the nav */}
       <div className="nav-logo-bleed" aria-hidden="true" />
       {/* Smoke edge — subtle accent glow along bottom */}
@@ -330,7 +330,7 @@ export default function TopNav() {
         <div className="flex items-center gap-2 shrink-0">
           {/* Logo */}
           <Link to="/" className="flex items-center py-1">
-            <img src={LOGO_URL} alt="AiVIS" className="nav-logo-image h-[72px] w-auto object-contain bg-transparent" />
+            <img src={LOGO_URL} alt="AiVIS" className="nav-logo-image h-10 w-auto object-contain bg-transparent" />
           </Link>
 
           <span
@@ -607,7 +607,7 @@ export default function TopNav() {
                         type="button"
                         onClick={() => {
                           setNotificationsOpen(false);
-                          navigate("/notifications");
+                          navigate("/app/notifications");
                         }}
                         className="w-full text-center text-xs px-3 py-2 rounded-lg border border-white/10 bg-charcoal-light text-cyan-200 hover:text-cyan-100"
                       >
@@ -651,16 +651,16 @@ export default function TopNav() {
                     {/* Account section */}
                     <div className="p-1.5">
                       <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Account</p>
-                      <button onClick={() => { setMenuOpen(false); navigate("/profile"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                      <button onClick={() => { setMenuOpen(false); navigate("/app/profile"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                         <User className="w-4 h-4 text-cyan-400" /> Profile
                       </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/settings"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                      <button onClick={() => { setMenuOpen(false); navigate("/app/settings"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                         <Settings className="w-4 h-4 text-amber-400" /> Settings
                       </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/billing"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                      <button onClick={() => { setMenuOpen(false); navigate("/app/billing"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                         <CreditCard className="w-4 h-4 text-emerald-400" /> Billing
                       </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/referrals"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                      <button onClick={() => { setMenuOpen(false); navigate("/app/referrals"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                         <Gift className="w-4 h-4 text-violet-400" /> Referrals
                       </button>
                     </div>
@@ -678,7 +678,7 @@ export default function TopNav() {
                     </div>
                     {/* Team / Workspace */}
                     <div className="p-1.5 border-t border-white/8">
-                      <button onClick={() => { setMenuOpen(false); navigate("/team"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                      <button onClick={() => { setMenuOpen(false); navigate("/app/team"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                         <Users className="w-4 h-4 text-cyan-400" /> Team &amp; Workspaces
                       </button>
                     </div>
@@ -686,7 +686,7 @@ export default function TopNav() {
                     {String(user?.role || "").toLowerCase() === "admin" && (
                       <div className="p-1.5 border-t border-white/10">
                         <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Admin</p>
-                        <button onClick={() => { setMenuOpen(false); navigate("/admin"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
+                        <button onClick={() => { setMenuOpen(false); navigate("/app/admin"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
                           <Shield className="w-4 h-4 text-rose-400" /> Admin Portal
                         </button>
                       </div>

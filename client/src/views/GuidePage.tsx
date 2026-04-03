@@ -56,7 +56,7 @@ export default function GuidePage() {
 
   return (
     <div className="text-white">
-      <main className="mx-auto w-full max-w-7xl xl:pl-64">
+      <div className="mx-auto w-full max-w-7xl xl:pl-64">
       <aside className="fixed left-8 top-28 hidden w-52 space-y-2 xl:block">
         <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-white/35">Guide Navigation</p>
         {GUIDE_SECTIONS.map((section) => (
@@ -367,7 +367,7 @@ export default function GuidePage() {
           </Link>
         </div>
       </section>
-      </main>
+      </div>
     </div>
   );
 }

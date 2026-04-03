@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, User, BookOpen, ChevronDown } from "lucide-react";
+import { Search, Bell, LogOut, User, BookOpen, ChevronDown, Menu } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import useNotifications from "../hooks/useNotifications";
 
-export default function AppTopBar() {
+interface AppTopBarProps {
+  onMenuClick?: () => void;
+}
+
+export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
@@ -12,12 +16,16 @@ export default function AppTopBar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-6 bg-[#0b0f1a]/95 backdrop-blur-md border-b border-white/[0.06]" role="banner" aria-label="App toolbar">
-      {/* Left — App context + search */}
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0b0f1a]/95 backdrop-blur-md border-b border-white/[0.06]" role="banner" aria-label="App toolbar">
+      {/* Left — hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <button className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-400 text-xs font-medium hover:bg-white/[0.06] transition-colors border border-white/[0.06]">
-          App
-          <ChevronDown className="w-3 h-3" />
+        {/* Mobile menu button */}
+        <button
+          className="aurora-menu-btn"
+          onClick={onMenuClick}
+          aria-label="Open navigation menu"
+        >
+          <Menu className="w-4 h-4" />
         </button>
 
         {/* Search */}

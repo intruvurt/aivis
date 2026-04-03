@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import AppTopBar from "./AppTopBar";
@@ -6,13 +6,19 @@ import GlobalCommandPalette from "./GlobalCommandPalette";
 import TrialBanner from "./TrialBanner";
 
 /**
- * Authenticated app shell — fixed sidebar + top bar + scrollable main content.
+ * Authenticated app shell — responsive sidebar (hidden mobile, visible ≥1024px).
  * Used for all /app/* routes.
  */
 export default function AppLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const close = useCallback(() => setSidebarOpen(false), []);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => { close(); }, [close]);
+
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-white flex">
-      {/* Skip to content — WCAG 2.1 Level A (2.4.1) */}
+    <div className="aurora-shell">
+      {/* Skip to content — WCAG 2.1 Level A */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white"
@@ -20,14 +26,20 @@ export default function AppLayout() {
         Skip to content
       </a>
 
-      <AppSidebar />
+      {/* Mobile overlay */}
+      <div
+        className={`aurora-overlay ${sidebarOpen ? "is-open" : ""}`}
+        onClick={close}
+        aria-hidden="true"
+      />
 
-      {/* Main area — offset by sidebar width */}
-      <div className="flex-1 ml-[220px] flex flex-col min-h-screen">
-        <AppTopBar />
+      <AppSidebar isOpen={sidebarOpen} onClose={close} />
+
+      {/* Main area */}
+      <div className="aurora-main">
+        <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
-
-        <main id="main-content" className="flex-1 px-6 py-5 overflow-y-auto" role="main" aria-label="App content">
+        <main id="main-content" className="aurora-content" role="main" aria-label="App content">
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

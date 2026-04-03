@@ -2675,6 +2675,61 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`);
 
+    // ── Level 5: VaaS — Industry benchmarks ───────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS industry_benchmarks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        category VARCHAR(100) NOT NULL,
+        subcategory VARCHAR(100),
+        avg_score NUMERIC(5,2) NOT NULL,
+        p25 NUMERIC(5,2) NOT NULL DEFAULT 0,
+        p50 NUMERIC(5,2) NOT NULL DEFAULT 0,
+        p75 NUMERIC(5,2) NOT NULL DEFAULT 0,
+        p90 NUMERIC(5,2) NOT NULL DEFAULT 0,
+        sample_count INTEGER NOT NULL DEFAULT 0,
+        computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_category ON industry_benchmarks(category)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_computed ON industry_benchmarks(computed_at DESC)`);
+
+    // ── Level 5: VaaS — Embeddable widget tokens ──────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS widget_embed_tokens (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        token VARCHAR(64) NOT NULL UNIQUE,
+        label VARCHAR(120),
+        url TEXT NOT NULL,
+        config JSONB NOT NULL DEFAULT '{}',
+        views INTEGER NOT NULL DEFAULT 0,
+        last_viewed_at TIMESTAMPTZ,
+        expires_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_widget_tokens_user ON widget_embed_tokens(user_id)`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_widget_tokens_token ON widget_embed_tokens(token)`);
+
+    // ── Level 5: VaaS — Bulk fix jobs ─────────────────────────────────────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS bulk_fix_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        fix_type VARCHAR(50) NOT NULL DEFAULT 'schema',
+        project_ids TEXT[] NOT NULL DEFAULT '{}',
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        progress JSONB NOT NULL DEFAULT '{"total":0,"completed":0,"failed":0,"results":[]}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_user ON bulk_fix_jobs(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_status ON bulk_fix_jobs(status, created_at DESC)`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

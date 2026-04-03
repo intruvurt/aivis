@@ -87,6 +87,7 @@ const CompliancePage = React.lazy(() => import("./pages/CompliancePage"));
 const ChangelogPage = React.lazy(() => import("./pages/ChangelogPage"));
 const PressPage = React.lazy(() => import("./pages/PressPage"));
 const InviteAcceptPage = React.lazy(() => import("./pages/InviteAcceptPage"));
+const AgencyPage = React.lazy(() => import("./pages/AgencyPage"));
 
 /* ── Scroll to top on route change ─────────────────────── */
 function ScrollToTop() {
@@ -248,6 +249,7 @@ export default function App() {
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="admin" element={<Admin />} />
             <Route path="team" element={<TeamPage />} />
+            <Route path="agency" element={<AgencyPage />} />
           </Route>
 
           {/* ═══ Legacy redirects: old paths → /app/* ═══ */}

@@ -20,7 +20,7 @@
 
 /* ========================= Canonical tier system ========================= */
 
-export type CanonicalTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
+export type CanonicalTier = 'observer' | 'alignment' | 'signal' | 'scorefix' | 'agency' | 'enterprise';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -33,7 +33,7 @@ export type LegacyTier = 'free' | 'core' | 'premium';
  * If UI naming ever diverges from canonical naming, update the
  * LEGACY_TO_UI_TIER map and canonicalTierFromUi() accordingly.
  */
-export type UiTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
+export type UiTier = 'observer' | 'alignment' | 'signal' | 'scorefix' | 'agency' | 'enterprise';
 
 /** Convenience re-aliases for external consumers */
 export type Tier = CanonicalTier;
@@ -47,6 +47,8 @@ const LEGACY_TO_UI_TIER: Readonly<Record<CanonicalTier | LegacyTier, UiTier>> = 
   alignment: 'alignment',
   signal: 'signal',
   scorefix: 'scorefix',
+  agency: 'agency',
+  enterprise: 'enterprise',
   // legacy aliases
   free: 'observer',
   core: 'alignment',
@@ -58,6 +60,8 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
   scorefix: 'Score Fix [AutoPR]',
+  agency: 'Agency',
+  enterprise: 'Enterprise',
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
@@ -65,6 +69,8 @@ const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
   alignment: 'turn structural gaps into extractable evidence with single-model production audits',
   signal: 'full visibility into how AI crawlers trust your content — triple-check pipeline included',
   scorefix: 'automated score remediation — AI-generated PRs to fix visibility issues',
+  agency: 'manage, automate, and resell AI visibility audits at portfolio scale',
+  enterprise: 'unlimited API-first infrastructure — the visibility layer your platform plugs into',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
@@ -72,6 +78,8 @@ const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   alignment: 'solo builders • early founders • no-code creators • production-ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
   scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
+  agency: 'agencies • studios • white-label resellers • 100+ site portfolios',
+  enterprise: 'platforms • dev tooling • SaaS integrations • custom SLAs',
 };
 
 const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
@@ -79,6 +87,8 @@ const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
   alignment: 1,
   signal: 2,
   scorefix: 3,
+  agency: 4,
+  enterprise: 5,
   free: 0,
   core: 1,
   premium: 2,
@@ -95,6 +105,8 @@ const VALID_TIER_STRINGS: ReadonlySet<string> = new Set<CanonicalTier | LegacyTi
   'alignment',
   'signal',
   'scorefix',
+  'agency',
+  'enterprise',
   'free',
   'core',
   'premium',
@@ -185,6 +197,15 @@ export interface TierLimits {
   maxReportDeliveries: number;
   maxTeamMembers: number;
   maxStoredAudits: number;
+  /** Agency / VaaS extras */
+  hasAgencyDashboard: boolean;
+  hasBulkFix: boolean;
+  hasOrgBranding: boolean;
+  hasEmbedWidgets: boolean;
+  hasIndustryBenchmarks: boolean;
+  hasCustomDomain: boolean;
+  /** -1 = unlimited */
+  maxProjects: number;
 }
 
 export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
@@ -198,6 +219,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasTeamWorkspaces: false,
     maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
     maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 1, maxStoredAudits: 10,
+    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },
   alignment: {
     scansPerMonth: 25, pagesPerScan: 3, competitors: 2, cacheDays: 30,
@@ -209,6 +232,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasTeamWorkspaces: false,
     maxScheduledRescans: 2, allowedRescanFrequencies: ['weekly', 'monthly'] as readonly string[],
     maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 1, maxStoredAudits: 50,
+    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
   signal: {
     scansPerMonth: 100, pagesPerScan: 10, competitors: 5, cacheDays: 90,
@@ -220,6 +245,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasTeamWorkspaces: true,
     maxScheduledRescans: 10, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
     maxApiKeys: 5, maxWebhooks: 10, maxReportDeliveries: 25, maxTeamMembers: 10, maxStoredAudits: 500,
+    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 10,
   },
   scorefix: {
     scansPerMonth: 15, pagesPerScan: 10, competitors: 5, cacheDays: 90,
@@ -231,6 +258,34 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasTeamWorkspaces: false,
     maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
     maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 1, maxStoredAudits: 200,
+    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
+  },
+  agency: {
+    scansPerMonth: 500, pagesPerScan: 10, competitors: 25, cacheDays: 180,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
+    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasTeamWorkspaces: true,
+    maxScheduledRescans: 100, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
+    maxApiKeys: 25, maxWebhooks: 50, maxReportDeliveries: 200, maxTeamMembers: 50, maxStoredAudits: 5000,
+    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
+    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: true, maxProjects: 200,
+  },
+  enterprise: {
+    scansPerMonth: -1, pagesPerScan: 25, competitors: 100, cacheDays: 365,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
+    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasTeamWorkspaces: true,
+    maxScheduledRescans: -1, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
+    maxApiKeys: 100, maxWebhooks: 200, maxReportDeliveries: -1, maxTeamMembers: -1, maxStoredAudits: 50000,
+    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
+    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: true, maxProjects: -1,
   },
 } as const;
 
@@ -255,10 +310,12 @@ export interface TierPricing {
 }
 
 export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>> = {
-  observer:  { monthlyUsd: 0,  yearlyUsd: 0,   oneTimeUsd: 0,   billingModel: 'free' },
-  alignment: { monthlyUsd: 9,  yearlyUsd: 84,  oneTimeUsd: 0,   billingModel: 'subscription' },
-  signal:    { monthlyUsd: 29, yearlyUsd: 276,  oneTimeUsd: 0,   billingModel: 'subscription' },
-  scorefix:  { monthlyUsd: 0,  yearlyUsd: 0,   oneTimeUsd: 299, billingModel: 'one_time' },
+  observer:   { monthlyUsd: 0,   yearlyUsd: 0,     oneTimeUsd: 0,   billingModel: 'free' },
+  alignment:  { monthlyUsd: 9,   yearlyUsd: 84,    oneTimeUsd: 0,   billingModel: 'subscription' },
+  signal:     { monthlyUsd: 29,  yearlyUsd: 276,   oneTimeUsd: 0,   billingModel: 'subscription' },
+  scorefix:   { monthlyUsd: 0,   yearlyUsd: 0,     oneTimeUsd: 299, billingModel: 'one_time' },
+  agency:     { monthlyUsd: 199, yearlyUsd: 1908,  oneTimeUsd: 0,   billingModel: 'subscription' },
+  enterprise: { monthlyUsd: 999, yearlyUsd: 9588,  oneTimeUsd: 0,   billingModel: 'subscription' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */
@@ -290,10 +347,10 @@ export interface ToolCreditRule {
 }
 
 export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
-  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20, scorefix: 10 }, creditCost: 1 },
-  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 2 },
-  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 1 },
-  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5,  scorefix: 3  }, creditCost: 2 },
+  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20, scorefix: 10, agency: 100, enterprise: -1 }, creditCost: 1 },
+  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5,  agency: 50,  enterprise: -1 }, creditCost: 2 },
+  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5,  agency: 50,  enterprise: -1 }, creditCost: 1 },
+  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5,  scorefix: 3,  agency: 25,  enterprise: -1 }, creditCost: 2 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */
@@ -335,10 +392,12 @@ export interface PrivateExposureTierPackaging {
 }
 
 export const PRIVATE_EXPOSURE_SCAN_PACKAGING: Readonly<Record<CanonicalTier, PrivateExposureTierPackaging>> = {
-  observer:  { available: false, label: 'Not available', maxTargetsPerScan: 0,  description: 'Upgrade to Alignment to access Private Exposure Scans.' },
-  alignment: { available: true,  label: 'Standard',      maxTargetsPerScan: 3,  description: 'Run private exposure scans on up to 3 targets per request.' },
-  signal:    { available: true,  label: 'Advanced',       maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
-  scorefix:  { available: true,  label: 'Premium',        maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
+  observer:   { available: false, label: 'Not available', maxTargetsPerScan: 0,  description: 'Upgrade to Alignment to access Private Exposure Scans.' },
+  alignment:  { available: true,  label: 'Standard',      maxTargetsPerScan: 3,  description: 'Run private exposure scans on up to 3 targets per request.' },
+  signal:     { available: true,  label: 'Advanced',      maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
+  scorefix:   { available: true,  label: 'Premium',       maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
+  agency:     { available: true,  label: 'Agency',        maxTargetsPerScan: 50, description: 'Bulk private exposure scanning for portfolio-scale operations.' },
+  enterprise: { available: true,  label: 'Unlimited',     maxTargetsPerScan: -1, description: 'Unrestricted private exposure scanning across all targets.' },
 };
 
 /* ========================= AI Platform scores ========================= */

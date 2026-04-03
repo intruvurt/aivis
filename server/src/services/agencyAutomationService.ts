@@ -175,4 +175,102 @@ export function bootstrapAgencyAutomation(): void {
 
 export async function publishAuditCompleted(args: { userId: string; domain: string; score: number; projectId?: string }) {
   await emitAgencyEvent('audit.completed', args);
-}
+}
+
+// ── Level 5: Bulk fix ─────────────────────────────────────────────────────────
+
+export interface BulkFixProgress {
+  total: number;
+  completed: number;
+  failed: number;
+  results: Array<{ project_id: string; domain: string; status: 'queued' | 'failed'; error?: string }>;
+}
+
+export interface BulkFixJob {
+  id: string;
+  user_id: string;
+  workspace_id: string;
+  fix_type: string;
+  project_ids: string[];
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  progress: BulkFixProgress;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}
+
+export async function runBulkFix(args: {
+  userId: string;
+  workspaceId: string;
+  projectIds: string[];
+  fixType: string;
+}): Promise<BulkFixJob> {
+  const pool = getPool();
+
+  // Create the job record
+  const initialProgress: BulkFixProgress = {
+    total: args.projectIds.length,
+    completed: 0,
+    failed: 0,
+    results: [],
+  };
+
+  const { rows } = await pool.query<BulkFixJob>(
+    `INSERT INTO bulk_fix_jobs (user_id, workspace_id, fix_type, project_ids, status, progress)
+     VALUES ($1, $2, $3, $4::text[], 'running', $5::jsonb)
+     RETURNING *`,
+    [args.userId, args.workspaceId, args.fixType, args.projectIds, JSON.stringify(initialProgress)]
+  );
+  const job = rows[0] as BulkFixJob;
+
+  // Fetch projects and enqueue in background (fire-and-forget)
+  void (async () => {
+    const progress: BulkFixProgress = { ...initialProgress, results: [] };
+    try {
+      const { rows: projects } = await pool.query<{ id: string; domain: string }>(
+        `SELECT id, domain FROM portfolio_projects
+          WHERE id = ANY($1::text[]) AND owner_user_id = $2`,
+        [args.projectIds, args.userId]
+      );
+
+      for (const project of projects) {
+        try {
+          await enqueueAuditJob({ url: project.domain, userId: args.userId, priority: 'normal' });
+          progress.results.push({ project_id: project.id, domain: project.domain, status: 'queued' });
+          progress.completed += 1;
+        } catch (err) {
+          progress.results.push({
+            project_id: project.id,
+            domain: project.domain,
+            status: 'failed',
+            error: String((err as Error).message || 'enqueue failed'),
+          });
+          progress.failed += 1;
+        }
+      }
+
+      await pool.query(
+        `UPDATE bulk_fix_jobs
+            SET status = 'completed', progress = $2::jsonb, completed_at = NOW(), updated_at = NOW()
+          WHERE id = $1`,
+        [job.id, JSON.stringify(progress)]
+      );
+    } catch (err) {
+      await pool.query(
+        `UPDATE bulk_fix_jobs SET status = 'failed', updated_at = NOW() WHERE id = $1`,
+        [job.id]
+      ).catch(() => {});
+    }
+  })();
+
+  return job;
+}
+
+export async function getBulkFixJob(userId: string, jobId: string): Promise<BulkFixJob | null> {
+  const { rows } = await getPool().query<BulkFixJob>(
+    `SELECT * FROM bulk_fix_jobs WHERE id = $1 AND user_id = $2`,
+    [jobId, userId]
+  );
+  return (rows[0] as BulkFixJob) ?? null;
+}
+

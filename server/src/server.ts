@@ -75,7 +75,7 @@ import { extractContactsFromHtml } from './lib/contactUtils.js';
 import { pingIndexNow } from './utils/indexNow.js';
 import featureRoutes from './routes/featureRoutes.js';
 import workspaceRoutes from './routes/workspaceRoutes.js';
-import externalApiV1 from './routes/externalApiV1.js';
+import externalApiV1, { widgetPublicRouter } from './routes/externalApiV1.js';
 import complianceRoutes from './routes/complianceRoutes.js';
 import { startCompetitorAutopilotLoop, startRescanLoop } from './services/scheduledRescanService.js';
 import { createDeployVerificationJob, startDeployVerificationLoop } from './services/deployVerificationService.js';
@@ -122,6 +122,7 @@ import githubAppRoutes from './routes/githubAppRoutes.js';
 import selfHealingRoutes from './routes/selfHealingRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import growthEngineRoutes from './routes/growthEngineRoutes.js';
+import orgRoutes from './routes/orgRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
@@ -1063,6 +1064,8 @@ app.use('/api/fix-engine', autoVisibilityFixRoutes);
 app.use('/api/self-healing', selfHealingRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/growth', growthEngineRoutes);
+app.use('/api/orgs', orgRoutes);
+app.use('/widget', widgetPublicRouter);
 
 // WebMCP discovery — unauthenticated
 app.get('/.well-known/webmcp.json', (_req, res) => {

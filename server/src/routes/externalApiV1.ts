@@ -9,6 +9,9 @@ import { validateApiKey } from '../services/apiKeyService.js';
 import { getPool } from '../services/postgresql.js';
 import * as cheerio from 'cheerio';
 import { normalizePublicHttpUrl, isPrivateOrLocalHost } from '../lib/urlSafety.js';
+import { getAllBenchmarks, getBenchmarkForCategory, compareToBenchmarks, recomputeBenchmarks } from '../services/industryBenchmarkService.js';
+import { resolveWidgetToken, createWidgetToken, listWidgetTokens, deleteWidgetToken } from '../services/widgetService.js';
+import { getTimeline } from '../services/visibilityTimeline.js';
 
 const router = Router();
 
@@ -504,4 +507,241 @@ router.get('/evidence/:auditId', requireScope('read:audits'), async (req: Reques
   }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// GET /api/v1/benchmarks — Industry visibility benchmarks
+// GET /api/v1/benchmarks/:category — Single category benchmark
+// GET /api/v1/benchmarks/compare — Compare a score to benchmarks
+// ═══════════════════════════════════════════════════════════════════════════════
+
+router.get('/benchmarks', async (req: Request, res: Response) => {
+  try {
+    // Trigger background recompute (non-blocking)
+    void recomputeBenchmarks().catch(() => {});
+
+    const category = req.query.category as string | undefined;
+
+    if (category) {
+      const benchmark = await getBenchmarkForCategory(category.trim());
+      if (!benchmark) {
+        return res.status(404).json({ success: false, error: `No benchmark data for category: ${category}` });
+      }
+      return res.json({ success: true, data: benchmark });
+    }
+
+    const benchmarks = await getAllBenchmarks();
+    return res.json({ success: true, data: benchmarks, count: benchmarks.length });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+router.get('/benchmarks/compare', async (req: Request, res: Response) => {
+  try {
+    const url = String(req.query.url || '').trim();
+    const score = parseFloat(String(req.query.score || ''));
+
+    if (!url || isNaN(score) || score < 0 || score > 100) {
+      return res.status(400).json({ success: false, error: 'url and score (0–100) are required' });
+    }
+
+    const comparison = await compareToBenchmarks(score, url);
+    if (!comparison) {
+      return res.status(404).json({ success: false, error: 'Not enough benchmark data to compare. Retry after more audits have been indexed.' });
+    }
+
+    return res.json({ success: true, data: comparison });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GET /api/v1/project/:projectId/timeline — Score timeline for a portfolio project
+// ═══════════════════════════════════════════════════════════════════════════════
+
+router.get('/project/:projectId/timeline', requireScope('read:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const workspaceId = (req as any).apiWorkspaceId as string;
+    const projectId = String(req.params.projectId || '').trim();
+    const days = Math.min(parseInt(String(req.query.days || '30')), 365);
+
+    // Resolve the domain for the portfolio project
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT domain FROM portfolio_projects WHERE id = $1 AND owner_user_id = $2`,
+      [projectId, userId]
+    );
+    if (!rows.length) {
+      return res.status(404).json({ success: false, error: 'Project not found' });
+    }
+
+    const url = rows[0].domain as string;
+    const timeline = await getTimeline(userId, url, days);
+    return res.json({ success: true, data: { project_id: projectId, domain: url, ...timeline } });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// POST /api/v1/audit — Enqueue an audit via API
+// GET  /api/v1/audit/:auditId — Poll audit status
+// ═══════════════════════════════════════════════════════════════════════════════
+
+router.post('/audit', requireScope('write:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const workspaceId = (req as any).apiWorkspaceId as string;
+    const rawUrl = String(req.body?.url || '').trim();
+
+    if (!rawUrl) {
+      return res.status(400).json({ success: false, error: '`url` is required' });
+    }
+
+    // Normalise + safety-check the URL
+    const normalized = normalizePublicHttpUrl(rawUrl);
+    if (!normalized.ok) {
+      return res.status(400).json({ success: false, error: normalized.error });
+    }
+
+    try {
+      const parsed = new URL(normalized.url);
+      if (isPrivateOrLocalHost(parsed.hostname)) {
+        return res.status(400).json({ success: false, error: 'Private and localhost URLs are not allowed' });
+      }
+    } catch {
+      return res.status(400).json({ success: false, error: 'Invalid URL' });
+    }
+
+    // Insert into audit queue
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `INSERT INTO agent_tasks (user_id, workspace_id, type, payload, status, created_at, updated_at)
+       VALUES ($1, $2, 'api_audit', $3::jsonb, 'pending', NOW(), NOW())
+       RETURNING id, status, created_at`,
+      [userId, workspaceId, JSON.stringify({ url: normalized.url, triggered_by: 'api_key' })]
+    );
+
+    return res.status(202).json({
+      success: true,
+      data: {
+        task_id: rows[0].id,
+        status: 'pending',
+        url: normalized.url,
+        created_at: rows[0].created_at,
+        poll_url: `/api/v1/audit/${rows[0].id}`,
+      },
+    });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+router.get('/audit/:taskId', requireScope('read:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const taskId = String(req.params.taskId || '').trim();
+    const pool = getPool();
+
+    const { rows } = await pool.query(
+      `SELECT id, type, status, payload, created_at, updated_at
+         FROM agent_tasks
+        WHERE id = $1 AND user_id = $2`,
+      [taskId, userId]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ success: false, error: 'Task not found' });
+    }
+
+    return res.json({ success: true, data: rows[0] });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Widget tokens — GET/POST/DELETE /api/v1/widgets
+// GET /api/v1/widget/:token — Public (no api key) widget data
+// ═══════════════════════════════════════════════════════════════════════════════
+
+router.get('/widgets', requireScope('read:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const workspaceId = (req as any).apiWorkspaceId as string;
+    const tokens = await listWidgetTokens(userId, workspaceId);
+    return res.json({ success: true, data: tokens, count: tokens.length });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+router.post('/widgets', requireScope('write:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const workspaceId = (req as any).apiWorkspaceId as string;
+    const url = String(req.body?.url || '').trim();
+    if (!url) return res.status(400).json({ success: false, error: '`url` is required' });
+
+    const token = await createWidgetToken({
+      userId, workspaceId, url,
+      label: String(req.body?.label || '').trim() || undefined,
+      config: req.body?.config ?? {},
+      expiresInDays: req.body?.expires_in_days ? Number(req.body.expires_in_days) : undefined,
+    });
+    return res.status(201).json({ success: true, data: token });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+router.delete('/widgets/:id', requireScope('write:audits'), async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).apiUserId as string;
+    const workspaceId = (req as any).apiWorkspaceId as string;
+    const ok = await deleteWidgetToken(userId, workspaceId, String(req.params.id));
+    if (!ok) return res.status(404).json({ success: false, error: 'Widget token not found' });
+    return res.json({ success: true });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 export default router;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Public (no auth) widget endpoint — served separately by server.ts
+// GET /api/widget/:token
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const widgetPublicRouter = Router();
+
+widgetPublicRouter.get('/:token', async (req: Request, res: Response) => {
+  try {
+    const token = String(req.params.token || '').trim();
+    if (!token.startsWith('wgt_') || token.length < 20) {
+      return res.status(400).json({ success: false, error: 'Invalid widget token format' });
+    }
+
+    const data = await resolveWidgetToken(token);
+    if (!data) {
+      return res.status(404).json({ success: false, error: 'Widget not found or expired' });
+    }
+
+    // Cache for 5 minutes in CDN / browser
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    res.set('Access-Control-Allow-Origin', '*'); // embeddable cross-origin
+    return res.json({ success: true, data });
+  } catch {
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+widgetPublicRouter.options('/:token', (_req: Request, res: Response) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+  res.sendStatus(204);
+});
+

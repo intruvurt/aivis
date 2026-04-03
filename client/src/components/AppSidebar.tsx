@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle, X,
+  Eye, Layers, HelpCircle, X, Building2, Network, Code2,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier } from "@shared/types";
@@ -15,7 +15,7 @@ interface NavItem {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  minTier?: "observer" | "alignment" | "signal";
+  minTier?: "observer" | "alignment" | "signal" | "agency" | "enterprise";
 }
 
 interface AppSidebarProps {
@@ -49,6 +49,12 @@ const toolsNav: NavItem[] = [
   { to: "/app/mcp", label: "MCP Console", icon: Wrench, minTier: "alignment" },
 ];
 
+const agencyNav: NavItem[] = [
+  { to: "/app/agency", label: "Agency Dashboard", icon: Building2, minTier: "agency" },
+  { to: "/app/api-docs", label: "API Docs", icon: Code2, minTier: "agency" },
+  { to: "/app/integrations", label: "Integrations", icon: Network, minTier: "agency" },
+];
+
 const accountNav: NavItem[] = [
   { to: "/app/billing", label: "Billing", icon: CreditCard },
   { to: "/app/settings", label: "Settings", icon: Settings },
@@ -57,7 +63,7 @@ const accountNav: NavItem[] = [
 
 function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
-  const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
+  const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal" | "agency" | "enterprise";
 
   return (
     <div className="aurora-sidebar-section">
@@ -120,6 +126,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
         <NavSection title="Main" items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
         <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
         <NavSection title="Tools" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
+        <NavSection title="Agency" items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
         <NavSection title="Account" items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>
 

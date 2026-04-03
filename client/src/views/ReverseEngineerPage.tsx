@@ -2566,24 +2566,17 @@ export default function ReverseEngineerPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col text-white">
+    <div className="space-y-6">
 
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-charcoal" type="button">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <FlaskConical className="h-5 w-5 text-orange-400" />
-              Reverse Engineer
-            </h1>
-            <p className="text-sm text-white/60">Deconstruct AI answers, generate page blueprints, compare models, and simulate probabilistic visibility impact.</p>
-          </div>
-        </div>
-      </header>
+      <div>
+        <h1 className="flex items-center gap-2 text-xl font-semibold text-white">
+          <FlaskConical className="h-5 w-5 text-slate-400" />
+          Reverse Engineer
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">Deconstruct AI answers, generate page blueprints, compare models, and simulate probabilistic visibility impact.</p>
+      </div>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="space-y-6">
         {!hasAccess ? (
           <UpgradeWall
             feature="Reverse Engineer Tools"
@@ -2907,7 +2900,7 @@ export default function ReverseEngineerPage() {
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 }

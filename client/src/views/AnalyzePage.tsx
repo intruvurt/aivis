@@ -1091,6 +1091,6 @@ const AnalyzePage: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default AnalyzePage;

@@ -833,54 +833,44 @@ export default function AnalyticsPage() {
 
   /* ── render ────────────────────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen text-white">
+    <div className="space-y-6">
 
-      {/* ── Page header banner ─────────────────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate("/")}
-            className="p-2 rounded-full hover:bg-white/8 transition-colors"
-            type="button"
-            aria-label="Go back">
-            <ArrowLeft className="w-5 h-5 text-white/55" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-xl brand-title flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-orange-400" />
-              Analytics
-              {hasData && (
-                <span className="ml-1 text-xs font-medium px-2.5 py-1 rounded-full text-orange-300"
-                  style={{ background: 'rgba(249,115,22,0.15)', border: '1px solid rgba(249,115,22,0.25)' }}>
-                  {data.totalAnalyses} scans
-                </span>
-              )}
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">AI visibility insights across your audit history</p>
-          </div>
-          {/* Range + refresh controls */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex rounded-xl p-1 gap-0.5"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              {(["7d", "30d", "90d", "all"] as RangeKey[]).map((r) => (
-                <button key={r} onClick={() => setRange(r)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-                  style={range === r
-                    ? { background: 'rgba(249,115,22,0.22)', border: '1px solid rgba(249,115,22,0.35)', color: '#fb923c' }
-                    : { color: 'rgba(255,255,255,0.50)' }}>
-                  {r === "all" ? "All time" : `Last ${r}`}
-                </button>
-              ))}
-            </div>
-            <button onClick={fetchAnalytics} disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-50 hover:bg-white/10"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}>
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
-            </button>
-          </div>
+      {/* Page heading + controls */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-slate-400" />
+            Analytics
+            {hasData && (
+              <span className="ml-1 text-xs font-medium px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300">
+                {data.totalAnalyses} scans
+              </span>
+            )}
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">AI visibility insights across your audit history</p>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex rounded-xl p-1 gap-0.5 bg-white/[0.05] border border-white/[0.08]">
+            {(["7d", "30d", "90d", "all"] as RangeKey[]).map((r) => (
+              <button key={r} onClick={() => setRange(r)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  range === r
+                    ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400'
+                    : 'text-slate-500 hover:text-white'
+                }`}>
+                {r === "all" ? "All time" : `Last ${r}`}
+              </button>
+            ))}
+          </div>
+          <button onClick={fetchAnalytics} disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-50 hover:bg-white/10 bg-white/[0.06] border border-white/10">
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </button>
+        </div>
+      </div>
+
+      <div>
 
         {/* ── Auth guard ────────────────────────────────────────────────── */}
         {!token && (
@@ -1658,8 +1648,6 @@ export default function AnalyticsPage() {
               </div>
             )}
 
-          </>
-        )}
       </div>
     </div>
   );

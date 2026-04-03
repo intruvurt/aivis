@@ -342,52 +342,45 @@ export default function KeywordsPage() {
   );
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="space-y-6">
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate("/")} className="p-2 rounded-full hover:bg-white/8 transition-colors" type="button" aria-label="Go back">
-              <ArrowLeft className="w-5 h-5 text-white/55" />
-            </button>
-            <div className="min-w-0">
-              <h1 className="text-xl brand-title flex items-center gap-2">
-                <Target className="w-5 h-5 text-orange-400" />
-                Keywords
-              </h1>
-              <p className="text-sm text-white/60 leading-relaxed">
-                {hasData
-                  ? `${keywords.length} keywords aggregated from ${hostData?.auditCount ?? 1} audit${(hostData?.auditCount ?? 1) > 1 ? "s" : ""}`
-                  : "AI-extracted topical keyword signals from your audits"}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {!hasData && history.length > 0 && (
-              <span className="text-xs text-white/60 hidden sm:inline">Re-run analysis for keyword data</span>
-            )}
-            <button
-              onClick={exportCSV}
-              disabled={!filtered.length}
-              className="flex items-center gap-2 px-3 py-2 rounded-full bg-charcoal hover:bg-charcoal/50 text-white/75 text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              type="button"
-            >
-              <Download className="w-4 h-4" />
-              Export CSV
-            </button>
-          </div>
+      {/* Heading + export */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+            <Target className="w-5 h-5 text-slate-400" />
+            Keywords
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">
+            {hasData
+              ? `${keywords.length} keywords aggregated from ${hostData?.auditCount ?? 1} audit${(hostData?.auditCount ?? 1) > 1 ? "s" : ""}`
+              : "AI-extracted topical keyword signals from your audits"}
+          </p>
         </div>
-      </header>
+        <div className="flex items-center gap-2">
+          {!hasData && history.length > 0 && (
+            <span className="text-xs text-slate-500 hidden sm:inline">Re-run analysis for keyword data</span>
+          )}
+          <button
+            onClick={exportCSV}
+            disabled={!filtered.length}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.06] border border-white/10 hover:bg-white/[0.10] text-white/75 text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            type="button"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </button>
+        </div>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="space-y-6">
         {/* Empty state */}
         {!history.length && (
           <div className="text-center py-20">
-            <Target className="w-14 h-14 text-white/80 mx-auto mb-4" />
-            <p className="text-white/75 text-lg font-medium">No analysis yet</p>
-            <p className="text-white/60 text-sm mt-2 mb-6">Run an analysis on your website to discover your topical keywords.</p>
-            <button onClick={() => navigate("/")} className="px-6 py-2.5 bg-charcoal hover:bg-charcoal text-white rounded-full text-sm font-medium transition-colors" type="button">
+            <Target className="w-14 h-14 text-slate-600 mx-auto mb-4" />
+            <p className="text-white text-lg font-medium">No analysis yet</p>
+            <p className="text-slate-400 text-sm mt-2 mb-6">Run an analysis on your website to discover your topical keywords.</p>
+            <button onClick={() => navigate("/app/analyze")} className="px-6 py-2.5 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 text-cyan-400 rounded-lg text-sm font-medium transition-colors" type="button">
               Analyze a Website
             </button>
           </div>
@@ -688,7 +681,7 @@ export default function KeywordsPage() {
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 }

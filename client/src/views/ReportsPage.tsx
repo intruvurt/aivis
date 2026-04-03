@@ -1314,114 +1314,92 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="space-y-6">
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex min-w-0 items-start gap-4 sm:items-center">
-              <button
-                onClick={() => navigate("/")}
-                className="p-2 rounded-full hover:bg-white/8 transition-colors"
-                type="button"
-                aria-label="Go back"
+      {/* Page heading + controls */}
+      <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+            <FileText className="w-5 h-5 text-slate-400" />
+            Audit Reports
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">
+            Delivery hub for agencies, operators, and executive reviews
+          </p>
+        </div>
+
+        <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:max-w-full lg:items-end">
+          <div className="relative w-full lg:w-[18rem] lg:max-w-full">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search reports"
+              className="w-full min-w-0 pl-9 pr-3 py-2 rounded-lg border border-white/10 bg-white/[0.04] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/30"
+            />
+          </div>
+
+          <div className="flex min-w-0 flex-wrap items-center gap-2 lg:justify-end">
+            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10">
+              <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "score-desc" | "score-asc")}
+                className="min-w-0 bg-transparent text-xs text-white/80 outline-none"
               >
-                <ArrowLeft className="w-5 h-5 text-white/55" />
-              </button>
-              <div className="min-w-0">
-                <h1 className="text-xl brand-title flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-orange-400" />
-                  Audit Reports
-                </h1>
-                <p className="text-sm text-white/55 mt-0.5 leading-relaxed">
-                  Delivery hub for agencies, operators, and executive reviews
-                </p>
-              </div>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="score-desc">Score High → Low</option>
+                <option value="score-asc">Score Low → High</option>
+              </select>
             </div>
 
-            <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:max-w-full lg:items-end">
-              <div className="hidden lg:block overflow-hidden rounded-xl border border-white/10 bg-charcoal-deep">
-                <img
-                  src="/reports.jpeg"
-                  alt="Reports dashboard preview"
-                  className="h-16 w-44 object-cover object-center opacity-90"
-                  loading="lazy"
-                />
-              </div>
-              <div className="relative w-full lg:w-[18rem] lg:max-w-full">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/55" />
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search reports"
-                  className="w-full min-w-0 pl-9 pr-3 py-2 rounded-lg border border-white/10 text-sm text-white/85 placeholder-white/50"
-                />
-              </div>
+            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10">
+              <select
+                value={scoreRange}
+                onChange={(e) => setScoreRange(e.target.value as typeof scoreRange)}
+                className="min-w-0 bg-transparent text-xs text-white/80 outline-none"
+              >
+                <option value="all">All Scores</option>
+                <option value="critical">Critical (0-24)</option>
+                <option value="low">Low (25-49)</option>
+                <option value="medium">Medium (50-74)</option>
+                <option value="high">High (75-100)</option>
+              </select>
+            </div>
 
-              <div className="flex min-w-0 flex-wrap items-center gap-2 lg:justify-end">
-                <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-charcoal border border-white/10">
-                  <ArrowUpDown className="w-3.5 h-3.5 text-white/60 shrink-0" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "score-desc" | "score-asc")}
-                    className="min-w-0 bg-transparent text-xs text-white/80 outline-none"
-                  >
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="score-desc">Score High → Low</option>
-                    <option value="score-asc">Score Low → High</option>
-                  </select>
-                </div>
-
-                <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-charcoal border border-white/10">
-                  <select
-                    value={scoreRange}
-                    onChange={(e) => setScoreRange(e.target.value as typeof scoreRange)}
-                    className="min-w-0 bg-transparent text-xs text-white/80 outline-none"
-                  >
-                    <option value="all">All Scores</option>
-                    <option value="critical">Critical (0-24)</option>
-                    <option value="low">Low (25-49)</option>
-                    <option value="medium">Medium (50-74)</option>
-                    <option value="high">High (75-100)</option>
-                  </select>
-                </div>
-
-                <div className="flex max-w-full flex-wrap items-center gap-1 rounded-lg bg-charcoal p-1">
-                  {(["all", "completed", "processing"] as const).map((f) => (
-                    <button
-                      key={f}
-                      onClick={() => setFilter(f)}
-                      className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-all ${
-                        filter === f
-                          ? "bg-charcoal/20 text-white/80 border border-white/10"
-                          : "text-white/55 hover:text-white"
-                      }`}
-                      type="button"
-                    >
-                      {f}
-                    </button>
-                  ))}
-                </div>
-
+            <div className="flex max-w-full flex-wrap items-center gap-1 rounded-lg bg-white/[0.04] p-1">
+              {(["all", "completed", "processing"] as const).map((f) => (
                 <button
-                  onClick={() => setConsolidateByUrl((prev) => !prev)}
-                  className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
-                    consolidateByUrl
-                      ? "bg-charcoal/20 text-white border-white/12"
-                      : "bg-charcoal text-white/70 border-white/10 hover:text-white"
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-all ${
+                    filter === f
+                      ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                      : "text-slate-500 hover:text-white"
                   }`}
                   type="button"
-                  title="Consolidate duplicate URLs"
                 >
-                  Consolidate URLs
+                  {f}
                 </button>
-              </div>
+              ))}
             </div>
+
+            <button
+              onClick={() => setConsolidateByUrl((prev) => !prev)}
+              className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
+                consolidateByUrl
+                  ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+                  : "bg-white/[0.04] text-slate-400 border-white/10 hover:text-white"
+              }`}
+              type="button"
+              title="Consolidate duplicate URLs"
+            >
+              Consolidate URLs
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Share Modal */}
       {share.open && (
@@ -1520,7 +1498,7 @@ export default function ReportsPage() {
       )}
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto min-w-0 px-4 sm:px-6 lg:px-8 py-8">
+      <div>
         {!hasAccess ? (
           <UpgradeWall
             feature="Report History"
@@ -2081,11 +2059,11 @@ export default function ReportsPage() {
                   <p className="text-white/60 text-sm mt-1">
                     Run an analysis from the{" "}
                     <button
-                      onClick={() => navigate("/")}
-                      className="text-white/80 hover:underline"
+                      onClick={() => navigate("/app/analyze")}
+                      className="text-cyan-400 hover:underline"
                       type="button"
                     >
-                      dashboard
+                      audit page
                     </button>{" "}
                     to generate your first report.
                   </p>
@@ -2094,7 +2072,7 @@ export default function ReportsPage() {
             </div>
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 }

@@ -114,29 +114,24 @@ export default function CitationsPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col text-white">
+    <div className="space-y-6">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-charcoal" type="button">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <h1 className="flex items-center gap-2 text-lg font-semibold sm:text-xl brand-title">
-              <Eye className="h-5 w-5 text-orange-400 shrink-0" />
-              AI Citation Tracker
-            </h1>
-            <p className="text-xs text-white/55 sm:text-sm">Generate citation queries from any URL and test where AI platforms mention you.</p>
-          </div>
-          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-charcoal px-3 py-1 text-[11px] uppercase tracking-wide text-white/60">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            {userTier}
-          </span>
+      {/* Page heading */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="flex items-center gap-2 text-xl font-semibold text-white">
+            <Eye className="h-5 w-5 text-slate-400 shrink-0" />
+            AI Citation Tracker
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">Generate citation queries from any URL and test where AI platforms mention you.</p>
         </div>
-      </header>
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-wide text-slate-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          {userTier}
+        </span>
+      </div>
 
-      <main className="mx-auto flex-1 w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <div className="space-y-6">
         {/* ── Hero: URL input ────────────────────────────────────────────── */}
         <section className="brand-bar-top rounded-2xl border border-white/10 bg-gradient-to-br from-white/8 via-charcoal to-charcoal-deep p-5 shadow-2xl sm:p-7">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8">
@@ -371,7 +366,7 @@ export default function CitationsPage() {
             )}
           </section>
         )}
-      </main>
+      </div>
     </div>
   );
 }

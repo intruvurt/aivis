@@ -464,33 +464,31 @@
 
   <body>
     <div id="root">
-      <header>
-        <nav aria-label="Primary navigation">
-          <a href="/">Home</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/guide">Guide</a>
-          <a href="/workflow">Workflow</a>
-          <a href="/methodology">Methodology</a>
-          <a href="/compliance">Compliance</a>
-          <a href="/insights">Insights</a>
-          <a href="/faq">FAQ</a>
+      <!-- Minimal loading skeleton — React replaces this on mount -->
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0f1a;font-family:system-ui,sans-serif">
+        <div style="text-align:center">
+          <img src="/aivis-logo.png" alt="AiVIS" width="48" height="48" style="margin:0 auto 16px;display:block;border-radius:10px" />
+          <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
+        </div>
+      </div>
+      <!-- SEO fallback for crawlers (hidden when JS runs) -->
+      <noscript>
+      <main style="max-width:800px;margin:0 auto;padding:40px 20px;color:#e2e8f0;font-family:system-ui,sans-serif">
+        <h1 style="font-size:28px;margin:0 0 12px">AiVIS &mdash; AI Visibility Intelligence Audits</h1>
+        <p style="color:#94a3b8;line-height:1.6">
+          AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI interpret your website.
+          It returns a visibility score with evidence-linked findings and prioritized implementation-ready fixes.
+        </p>
+        <nav aria-label="Primary navigation" style="margin-top:24px">
+          <a href="/" style="color:#06b6d4;margin-right:16px">Home</a>
+          <a href="/pricing" style="color:#06b6d4;margin-right:16px">Pricing</a>
+          <a href="/guide" style="color:#06b6d4;margin-right:16px">Guide</a>
+          <a href="/methodology" style="color:#06b6d4;margin-right:16px">Methodology</a>
+          <a href="/faq" style="color:#06b6d4">FAQ</a>
         </nav>
-      </header>
-
-      <main>
-        <section aria-labelledby="tldr-heading">
-          <h2 id="tldr-heading">TLDR</h2>
-          <p>
-            AiVIS shows how ChatGPT, Perplexity, Claude, and Google AI likely interpret your website.
-            It returns a visibility score with evidence-linked findings instead of generic SEO tips.
-            Teams can prioritize the biggest citation blockers first, ship fixes quickly, and re-audit to verify movement.
-            The platform is designed for operators, agencies, and developers who need repeatable score improvement workflows.
-          </p>
-        </section>
-
-        <section aria-labelledby="hero-heading">
-          <h1 id="hero-heading">AiVIS AI Visibility Audit for ChatGPT, Perplexity, Claude, and Google AI</h1>
-          <p>
+      </main>
+      </noscript>
+    </div>
             AiVIS is an AI visibility audit platform that shows whether answer engines can parse,
             trust, and cite your page clearly. Each report ties findings back to real page evidence
             and turns them into practical fixes.

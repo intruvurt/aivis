@@ -171,72 +171,63 @@ const METHODOLOGY_FAQ = [
   },
 ] as const;
 
-const RELATED_LINKS = [
-  { label: "Pricing", to: "/pricing" },
-  { label: "Guide", to: "/guide" },
-  { label: "Workflow", to: "/workflow" },
-  { label: "Insights", to: "/insights" },
-  { label: "FAQ", to: "/faq" },
-  { label: "Reports", to: "/reports" },
-] as const;
-
 export default function MethodologyPage() {
   usePageMeta({
-    title: 'AiVIS Methodology | How AI Visibility Scoring Works',
+    title: "AiVIS Methodology | How AI Visibility Scoring Works",
     description:
       `How AiVIS scores AI visibility: 6-category evidence model covering content, schema, headings, metadata, and technical SEO with ${BRAG_TRAIL_LABEL} docs.`,
     path: "/methodology",
-    ogTitle: 'AiVIS Methodology - Evidence Grounded AI Visibility Scoring',
+    ogTitle: "AiVIS Methodology - Evidence Grounded AI Visibility Scoring",
     ogDescription:
       `The complete scoring framework behind AiVIS audits: dimension weights, validation logic, ${BRAG_PROTOCOL_LABEL}, and how scores translate to real citation improvements.`,
-    ogType: 'article',
+    ogType: "article",
     structuredData: {
-      '@context': 'https://schema.org',
-      '@graph': [
+      "@context": "https://schema.org",
+      "@graph": [
         {
-          '@type': 'TechArticle',
-          '@id': 'https://aivis.biz/methodology#article',
-          headline: 'AiVIS Methodology: Evidence-Grounded AI Visibility Scoring',
+          "@type": "TechArticle",
+          "@id": "https://aivis.biz/methodology#article",
+          headline: "AiVIS Methodology: Evidence-Grounded AI Visibility Scoring",
           description:
             `The complete scoring framework behind AiVIS audits: 6 weighted dimensions, validation logic, ${BRAG_PROTOCOL_LABEL}, and how scores translate to citation improvements in answer engines.`,
-          url: 'https://aivis.biz/methodology',
+          url: "https://aivis.biz/methodology",
           publisher: {
-            '@type': 'Organization',
-            '@id': 'https://aivis.biz/#organization',
-            name: 'AiVIS',
-            url: 'https://aivis.biz',
-            logo: 'https://aivis.biz/aivis-logo.png',
+            "@type": "Organization",
+            "@id": "https://aivis.biz/#organization",
+            name: "AiVIS",
+            url: "https://aivis.biz",
+            logo: "https://aivis.biz/aivis-logo.png",
           },
           about: {
-            '@type': 'SoftwareApplication',
-            name: 'AiVIS',
-            url: 'https://aivis.biz',
+            "@type": "SoftwareApplication",
+            name: "AiVIS",
+            url: "https://aivis.biz",
           },
           keywords: [
-            'AI visibility scoring',
-            'generative engine optimization',
-            'answer engine optimization',
-            'AEO audit methodology',
-            'LLM citability',
-            'AI search scoring',
+            "AI visibility scoring",
+            "generative engine optimization",
+            "answer engine optimization",
+            "AEO audit methodology",
+            "LLM citability",
+            "AI search scoring",
           ],
         },
         {
-          '@type': 'FAQPage',
+          "@type": "FAQPage",
           mainEntity: METHODOLOGY_FAQ.map((item) => ({
-            '@type': 'Question',
+            "@type": "Question",
             name: item.question,
             acceptedAnswer: {
-              '@type': 'Answer',
+              "@type": "Answer",
               text: item.answer,
             },
           })),
         },
         {
-          '@type': 'BreadcrumbList',
+          "@type": "BreadcrumbList",
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aivis.biz' },
-            { '@type': 'ListItem', position: 2, name: 'Methodology', item: 'https://aivis.biz/methodology' },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://aivis.biz" },
+            { "@type": "ListItem", position: 2, name: "Methodology", item: "https://aivis.biz/methodology" },
           ],
         },
       ],
@@ -244,22 +235,10 @@ export default function MethodologyPage() {
   });
 
   return (
-    <div className="min-h-screen text-white flex flex-col">
+    <div className="min-h-screen bg-[#2e3646] text-white flex flex-col">
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-[#232a38] via-[#2b3343] to-[#222a38]" />
       </div>
-      <nav className="border-b border-white/10 bg-white/[0.02] px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center gap-6 text-sm text-white/75">
-          <Link to="/" className="text-base font-bold tracking-tight text-white">AiVIS</Link>
-          <div className="ml-auto flex flex-wrap items-center gap-4">
-            {RELATED_LINKS.map((link) => (
-              <Link key={link.to} to={link.to} className="text-white/75 transition hover:text-white">
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </nav>
 
       <main className="relative z-0 mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="border-b border-white/10 pb-10">
@@ -300,30 +279,22 @@ export default function MethodologyPage() {
             <div className="flex flex-wrap items-center gap-2 leading-8 text-white/85">
               <span>Score =</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Content Depth</span>
-              <span className="font-semibold text-cyan-300">× 0.25</span>
+              <span className="font-semibold text-cyan-300">× 0.20</span>
               <span>+</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Schema Coverage</span>
-              <span className="font-semibold text-cyan-300">× 0.22</span>
+              <span className="font-semibold text-cyan-300">× 0.20</span>
               <span>+</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">AI Readability</span>
               <span className="font-semibold text-cyan-300">× 0.20</span>
-              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Content Depth</span>
-              <span className="font-semibold text-cyan-300">× 0.25</span>
-              <span>+</span>
-              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Schema Coverage</span>
-              <span className="font-semibold text-cyan-300">× 0.22</span>
-              <span>+</span>
-              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">AI Readability</span>
-              <span className="font-semibold text-cyan-300">× 0.20</span>
-              <span>+</span>
-              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Metadata Quality</span>
-              <span className="font-semibold text-cyan-300">× 0.15</span>
-              <span>+</span>
-              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Heading Structure</span>
-              <span className="font-semibold text-cyan-300">× 0.10</span>
               <span>+</span>
               <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Technical SEO</span>
-              <span className="font-semibold text-cyan-300">× 0.08</span>
+              <span className="font-semibold text-cyan-300">× 0.15</span>
+              <span>+</span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Metadata Quality</span>
+              <span className="font-semibold text-cyan-300">× 0.13</span>
+              <span>+</span>
+              <span className="rounded border border-white/10 bg-white/5 px-2 py-1 text-sm font-semibold">Heading Structure</span>
+              <span className="font-semibold text-cyan-300">× 0.12</span>
             </div>
           </div>
 
@@ -335,11 +306,11 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Dimension weights and signals</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Dimension weights and signals</h2>
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-black/15 text-xs uppercase tracking-[0.12em] text-black/45">
+                <tr className="border-b border-white/15 text-xs uppercase tracking-[0.12em] text-white/45">
                   <th className="px-3 py-3 font-semibold">Dimension</th>
                   <th className="px-3 py-3 font-semibold">Weight</th>
                   <th className="px-3 py-3 font-semibold">Primary signals evaluated</th>
@@ -347,24 +318,24 @@ export default function MethodologyPage() {
               </thead>
               <tbody>
                 {DIMENSIONS.map((dimension) => (
-                  <tr key={dimension.name} className="border-b border-black/10 align-top">
-                    <td className="px-3 py-4 font-semibold text-black">{dimension.name}</td>
+                  <tr key={dimension.name} className="border-b border-white/10 align-top">
+                    <td className="px-3 py-4 font-semibold text-white">{dimension.name}</td>
                     <td className="px-3 py-4">
-                      <span className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/85">
+                      <span className="inline-flex rounded-full bg-cyan-500/20 px-3 py-1 text-xs font-bold text-cyan-200">
                         {dimension.weight}
                       </span>
-                      <div className="mt-2 h-1.5 w-24 overflow-hidden rounded-full bg-black/10">
-                        <div className="h-full rounded-full bg-blue-700" style={{ width: dimension.barWidth }} />
+                      <div className="mt-2 h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
+                        <div className="h-full rounded-full bg-cyan-300" style={{ width: dimension.barWidth }} />
                       </div>
                     </td>
-                    <td className="px-3 py-4 leading-7 text-black/65">{dimension.signals}</td>
+                    <td className="px-3 py-4 leading-7 text-white/65">{dimension.signals}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          <div className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-7 text-blue-950">
+          <div className="mt-8 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-5 text-sm leading-7 text-cyan-100">
             <p>
               <strong>Why schema outweighs technical SEO:</strong> In generative engine pipelines, structured
               data provides machine-readable entity relationships that directly inform knowledge graph
@@ -375,28 +346,28 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Score tiers and citation readiness</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Score tiers and citation readiness</h2>
+          <p className="mt-4 leading-8 text-white/70">
             AiVIS maps composite scores to five citation readiness tiers. These thresholds reflect observed
             behavior across Perplexity, ChatGPT Browse, and Google AI Overviews — not theoretical ideals.
             Pages below 40 face structural extraction barriers that content improvements alone cannot resolve.
           </p>
-          <div className="mt-6 rounded-2xl border border-black/10 bg-white">
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04]">
             {SCORE_TIERS.map((tier) => (
-              <div key={tier.badge} className="flex flex-col gap-3 border-b border-black/10 px-5 py-4 last:border-b-0 sm:flex-row sm:items-center">
+              <div key={tier.badge} className="flex flex-col gap-3 border-b border-white/10 px-5 py-4 last:border-b-0 sm:flex-row sm:items-center">
                 <span className={`inline-flex min-w-[92px] items-center justify-center rounded-md border px-3 py-1 text-xs font-bold ${tier.tone}`}>
                   {tier.badge}
                 </span>
-                <p className="flex-1 text-sm leading-7 text-black/65">{tier.description}</p>
-                <span className="text-xs font-medium text-black/45">{tier.range}</span>
+                <p className="flex-1 text-sm leading-7 text-white/65">{tier.description}</p>
+                <span className="text-xs font-medium text-white/45">{tier.range}</span>
               </div>
             ))}
           </div>
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">The {BRAG_PROTOCOL_LABEL}</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">The {BRAG_PROTOCOL_LABEL}</h2>
+          <p className="mt-4 leading-8 text-white/70">
             {BRAG_ACRONYM} is AiVIS&apos;s internal evidence chain standard. Every finding in an AiVIS audit report must
             pass a four-step {BRAG_ACRONYM} verification before it is surfaced as a recommendation. This prevents
             generic advice — the kind that applies to every site and helps none of them — from appearing
@@ -404,27 +375,27 @@ export default function MethodologyPage() {
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {BRAG_STEPS.map((step) => (
-              <div key={step.letter} className="rounded-2xl border border-black/10 bg-white p-5">
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-black text-sm font-bold text-white">
+              <div key={step.letter} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-sm font-bold text-white">
                   {step.letter}
                 </div>
-                <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">{step.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-black/65">{step.text}</p>
+                <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">{step.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-white/65">{step.text}</p>
               </div>
             ))}
           </div>
-          <p className="mt-6 leading-8 text-black/70">
+          <p className="mt-6 leading-8 text-white/70">
             In practice, the {BRAG_TRAIL_LABEL} means every recommendation in an AiVIS report answers three
-            questions simultaneously: <strong className="text-black">what exactly is wrong</strong> on this
-            specific page, <strong className="text-black">where is the evidence</strong> in the crawl output,
-            and <strong className="text-black">what specific change</strong> will move the score. Teams that
+            questions simultaneously: <strong className="text-white">what exactly is wrong</strong> on this
+            specific page, <strong className="text-white">where is the evidence</strong> in the crawl output,
+            and <strong className="text-white">what specific change</strong> will move the score. Teams that
             implement fixes without this chain typically address symptoms while missing root causes.
           </p>
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Validation pipeline</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Validation pipeline</h2>
+          <p className="mt-4 leading-8 text-white/70">
             AiVIS audits run through a multi-stage validation pipeline before scores are finalized. The
             pipeline is designed to distinguish high-confidence findings — those grounded in directly
             observable page structure — from advisory findings that reflect best practice patterns but
@@ -433,12 +404,12 @@ export default function MethodologyPage() {
           <div className="mt-6 space-y-5">
             {PIPELINE_STEPS.map((step, index) => (
               <div key={step.title} className="flex gap-4">
-                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black/20 text-xs font-bold text-black">
+                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/20 text-xs font-bold text-white">
                   {index + 1}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-black/65">{step.text}</p>
+                  <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-white/65">{step.text}</p>
                 </div>
               </div>
             ))}
@@ -446,31 +417,31 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">The optimization loop</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">The optimization loop</h2>
+          <p className="mt-4 leading-8 text-white/70">
             A single audit is a diagnostic, not a solution. AiVIS is designed for iterative improvement cycles
             where teams fix a cluster of related findings, re-audit, and measure category-level delta rather
             than overall score movement alone. Overall score can mask improvement in one dimension while
             another degrades — category tracking prevents this.
           </p>
-          <div className="mt-6 rounded-2xl border border-black/10 bg-[#f0efe9] p-6">
-            <div className="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-black/45">Recommended cycle</div>
-            <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-black/75">
-              {['Baseline audit', 'Fix high-confidence cluster', 'Re-audit', 'Compare category delta', 'Log change', 'Repeat'].map((label, index, arr) => (
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+            <div className="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-white/45">Recommended cycle</div>
+            <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white/75">
+              {["Baseline audit", "Fix high-confidence cluster", "Re-audit", "Compare category delta", "Log change", "Repeat"].map((label, index, arr) => (
                 <React.Fragment key={label}>
-                  <span className="rounded-md bg-black px-3 py-2 text-white">{label}</span>
-                  {index < arr.length - 1 ? <span className="px-1 text-black/45">→</span> : null}
+                  <span className="rounded-md bg-white/10 px-3 py-2 text-white">{label}</span>
+                  {index < arr.length - 1 ? <span className="px-1 text-white/45">→</span> : null}
                 </React.Fragment>
               ))}
             </div>
           </div>
-          <p className="mt-6 leading-8 text-black/70">
+          <p className="mt-6 leading-8 text-white/70">
             The most common optimization failure mode is fixing all technical issues first while leaving
-            content depth and schema untouched. Technical SEO accounts for only 8% of the composite score.
+            content depth and schema untouched. Technical SEO accounts for only 15% of the composite score.
             A page can achieve a perfect technical score and still sit at 30 overall if content depth and
             schema coverage are near zero. Always prioritize dimension weight when sequencing fixes.
           </p>
-          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-amber-900">
+          <div className="mt-6 rounded-xl border border-amber-300/25 bg-amber-500/10 p-5 text-sm leading-7 text-amber-100">
             <p>
               <strong>Score inflation warning:</strong> Adding schema markup without validating relationship
               completeness can produce a misleading score increase. AiVIS distinguishes between schema presence
@@ -481,32 +452,32 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">What answer engines actually extract</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">What answer engines actually extract</h2>
+          <p className="mt-4 leading-8 text-white/70">
             AiVIS scoring is grounded in the extraction behavior of retrieval-augmented generation pipelines.
             When Perplexity, ChatGPT, or Gemini answers a question using web sources, the selection and
             extraction process follows a predictable pattern:
           </p>
-          <p className="mt-5 leading-8 text-black/70">
-            <strong className="text-black">Entity resolution first.</strong> The model identifies what the page
-            is about by reading the title, H1, first paragraph, and any schema with a <code className="rounded bg-black/5 px-1 py-0.5 text-sm">name</code>
-            or <code className="rounded bg-black/5 px-1 py-0.5 text-sm">description</code> field. Pages with
+          <p className="mt-5 leading-8 text-white/70">
+            <strong className="text-white">Entity resolution first.</strong> The model identifies what the page
+            is about by reading the title, H1, first paragraph, and any schema with a <code className="rounded bg-white/10 px-1 py-0.5 text-sm">name</code>
+            or <code className="rounded bg-white/10 px-1 py-0.5 text-sm">description</code> field. Pages with
             ambiguous or inconsistent entity signals are assigned lower retrieval priority regardless of content quality.
           </p>
-          <p className="mt-5 leading-8 text-black/70">
-            <strong className="text-black">Passage extraction second.</strong> The model scans for short,
+          <p className="mt-5 leading-8 text-white/70">
+            <strong className="text-white">Passage extraction second.</strong> The model scans for short,
             self-contained answer units — sentences or paragraphs that fully answer a question without requiring
             surrounding context. This is why direct answer blocks and FAQ-style sections outperform long narrative
             content in citation selection even when the narrative is higher quality.
           </p>
-          <p className="mt-5 leading-8 text-black/70">
-            <strong className="text-black">Trust verification third.</strong> The model cross-references the
+          <p className="mt-5 leading-8 text-white/70">
+            <strong className="text-white">Trust verification third.</strong> The model cross-references the
             source against signals that indicate authority: presence of a methodology or about page, internal links
             to trust documents like privacy and terms, external corroboration from other indexed sources, and schema
             that asserts organizational identity. Pages without these signals are cited less frequently on contested
             or consequential queries.
           </p>
-          <p className="mt-5 leading-8 text-black/70">
+          <p className="mt-5 leading-8 text-white/70">
             AiVIS scores each of these extraction phases through its dimension framework. Content depth and AI
             readability measure extractability. Schema and heading structure measure entity resolution quality.
             Metadata and technical SEO measure trust and accessibility. Improving all six dimensions together is
@@ -515,38 +486,38 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Threat detection</h2>
-          <p className="mt-4 leading-8 text-black/70">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Threat detection</h2>
+          <p className="mt-4 leading-8 text-white/70">
             Every audit includes a real-time threat intelligence scan (up to three layers) that runs in
             parallel with the visibility analysis. This protects teams from auditing domains that may be
             compromised or flagged by security providers.
           </p>
           <div className="mt-6 space-y-4">
-            <div className="rounded-2xl border border-black/10 bg-white p-5">
-              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">URLhaus (abuse.ch)</h3>
-              <p className="mt-3 text-sm leading-7 text-black/65">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">URLhaus (abuse.ch)</h3>
+              <p className="mt-3 text-sm leading-7 text-white/65">
                 Checks the target URL against the abuse.ch malicious URL database — a community-driven
                 feed of known malware distribution, phishing, and botnet command-and-control endpoints.
               </p>
             </div>
-            <div className="rounded-2xl border border-black/10 bg-white p-5">
-              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">Google Safe Browsing API v4</h3>
-              <p className="mt-3 text-sm leading-7 text-black/65">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">Google Safe Browsing API v4</h3>
+              <p className="mt-3 text-sm leading-7 text-white/65">
                 Checks for social engineering, malware, unwanted software, and potentially harmful
                 applications using Google&apos;s continuously updated threat list. Requires a server-configured
                 API key; if not configured, this layer is skipped without affecting the audit.
               </p>
             </div>
-            <div className="rounded-2xl border border-black/10 bg-white p-5">
-              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">Hostname heuristics</h3>
-              <p className="mt-3 text-sm leading-7 text-black/65">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">Hostname heuristics</h3>
+              <p className="mt-3 text-sm leading-7 text-white/65">
                 Detects punycode/IDN homograph attacks, raw IP hosting, suspicious URL patterns, and risky
                 top-level domains (.tk, .ml, .cf, .gq, .zip, .mov). This layer runs without external
                 dependencies and covers threats that database lookups may miss.
               </p>
             </div>
           </div>
-          <p className="mt-6 leading-8 text-black/70">
+          <p className="mt-6 leading-8 text-white/70">
             Results appear as a Threat Intel banner on the audit report with composite risk levels from
             Low to Critical. A high-risk result does not block the audit but is prominently surfaced so
             teams can investigate before implementing any recommendations.
@@ -554,24 +525,24 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Methodology FAQ</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Methodology FAQ</h2>
           <div className="mt-6 space-y-4">
             {METHODOLOGY_FAQ.map((item) => (
-              <div key={item.question} className="rounded-2xl border border-black/10 bg-white p-5">
-                <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-black/70">{item.question}</h3>
-                <p className="mt-3 text-sm leading-7 text-black/65">{item.answer}</p>
+              <div key={item.question} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white/70">{item.question}</h3>
+                <p className="mt-3 text-sm leading-7 text-white/65">{item.answer}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mt-14 border-t border-black/10 pt-10">
-          <h2 className="text-2xl font-bold tracking-tight text-black">Related documentation</h2>
-          <p className="mt-4 leading-8 text-black/70">
-            The <Link to="/guide" className="text-blue-700 underline hover:text-blue-900">AiVIS Guide</Link> covers how to interpret audit output and sequence implementation.
-            The <Link to="/faq" className="ml-1 text-white underline hover:text-white/80">FAQ</Link> addresses common questions about score interpretation,
-            category grades, and optimization sequencing. The <Link to="/compliance" className="ml-1 text-blue-700 underline hover:text-blue-900">Compliance</Link> page documents data handling
-            and crawl governance policies. Teams running the full optimization loop can track progress in <Link to="/app/reports" className="ml-1 text-blue-700 underline hover:text-blue-900">Report History</Link>.
+        <section className="mt-14 border-t border-white/10 pt-10">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Related documentation</h2>
+          <p className="mt-4 leading-8 text-white/70">
+            The <Link to="/guide" className="text-cyan-300 underline hover:text-cyan-200">AiVIS Guide</Link> covers how to interpret audit output and sequence implementation.
+            The <Link to="/faq" className="ml-1 text-cyan-300 underline hover:text-cyan-200">FAQ</Link> addresses common questions about score interpretation,
+            category grades, and optimization sequencing. The <Link to="/compliance" className="ml-1 text-cyan-300 underline hover:text-cyan-200">Compliance</Link> page documents data handling
+            and crawl governance policies. Teams running the full optimization loop can track progress in <Link to="/app/reports" className="ml-1 text-cyan-300 underline hover:text-cyan-200">Report History</Link>.
           </p>
         </section>
       </main>

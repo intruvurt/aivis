@@ -48,125 +48,117 @@ export default function ConversationalQueryPlaybook2026() {
   });
 
   return (
-    <div className="min-h-screen text-white page-splash-bg">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-
-        {/* ── Header ────────────────────────────────── */}
-        <header className="card-charcoal rounded-2xl p-8 glass-bleed-cyan">
-          <p className="text-xs font-semibold tracking-wide uppercase text-cyan-400/90 mb-3">Conversational Playbook</p>
-          <h1 className="text-3xl md:text-4xl brand-title-lg mb-4">{ARTICLE.title}</h1>
-          <p className="text-slate-300 leading-relaxed max-w-2xl">{ARTICLE.description}</p>
+    <div className="min-h-screen bg-gradient-to-b from-[#0b1220] via-[#111827] to-[#0b1220] text-white">
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        <header className="mb-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Conversational Playbook</p>
+          <h1 className="text-3xl font-semibold leading-tight sm:text-4xl">{ARTICLE.title}</h1>
+          <p className="mt-4 max-w-2xl text-white/75">{ARTICLE.description}</p>
         </header>
 
-        {/* ── Why Conversational Queries Break Traditional Content ── */}
-        <section className="card-charcoal rounded-2xl p-6 section-accent-orange">
-          <h2 className="text-2xl brand-title mb-4">Why Conversational Queries Break Traditional Content</h2>
-          <p className="text-slate-300 leading-relaxed mb-4">
+        <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-2xl font-semibold">Why conversational queries break traditional content</h2>
+          <p className="mt-3 text-white/75">
             When someone types "best project management tool" into Google, your keyword-optimized listicle has a chance.
             When someone asks ChatGPT "What project management tool should I use if my team is fully remote, we have 8
-            people, and we need something that integrates with Figma and Slack?" your listicle is useless.
+            people, and we need something that integrates with Figma and Slack?" your listicle is not the right shape.
           </p>
-          <p className="text-slate-300 leading-relaxed mb-5">
+          <p className="mt-4 text-white/75">
             Conversational queries carry context, constraints, and expectations that keyword-fragment pages were never designed
             to answer. The user is not searching for a topic. They are describing a specific situation and expecting a specific
             recommendation.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {[
               { keyword: '2–4 words', conv: '12–25 words', label: 'Length' },
               { keyword: 'Express topics', conv: 'Express situations', label: 'Intent' },
               { keyword: 'Answered with lists', conv: 'Need reasoning', label: 'Format' },
               { keyword: 'Match pages', conv: 'Match sections', label: 'Scope' },
-            ].map((r) => (
-              <div key={r.label} className="card-charcoal-inner rounded-xl p-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{r.label}</span>
-                <div className="mt-2 flex items-center gap-3 text-sm">
-                  <span className="text-slate-400 line-through decoration-slate-600">{r.keyword}</span>
+            ].map((row) => (
+              <div key={row.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-white/45">{row.label}</span>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm sm:gap-3">
+                  <span className="text-white/45 line-through decoration-white/25">{row.keyword}</span>
                   <span className="text-cyan-400">→</span>
-                  <span className="text-white font-medium">{r.conv}</span>
+                  <span className="font-medium text-white">{row.conv}</span>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── The Structural Problem ──────────────── */}
-        <section className="card-charcoal rounded-2xl p-6 section-accent-violet">
-          <h2 className="text-2xl brand-title mb-4">The Structural Problem</h2>
-          <p className="text-slate-300 leading-relaxed mb-4">
+        <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-2xl font-semibold">The structural problem</h2>
+          <p className="mt-3 text-white/75">
             Most websites are built around keyword clusters. Each page targets a primary keyword and a handful of related terms.
             The page structure assumes the user will read top-to-bottom and self-select the relevant sections.
           </p>
-          <p className="text-slate-300 leading-relaxed mb-4">
+          <p className="mt-4 text-white/75">
             AI models do not read top-to-bottom. They scan for extractable answer blocks that match the specific query context.
             If your page has a section that perfectly answers the question but it is buried under a generic heading like
             "Features" or "Benefits," the model may not identify it as the answer.
           </p>
-          <p className="text-slate-300 leading-relaxed">
+          <p className="mt-4 text-white/75">
             The fix is not to write more content. It is to restructure existing content around the questions people actually ask,
             using the language they actually use when talking to an AI assistant.
           </p>
         </section>
 
-        {/* ── Implementation Framework ────────────── */}
-        <section className="card-charcoal rounded-2xl p-6 section-accent-cyan">
-          <h2 className="text-2xl brand-title mb-5">Implementation Framework</h2>
-          <ol className="space-y-3">
-            {FRAMEWORK.map((item, i) => (
-              <li key={item.label} className="card-charcoal-inner rounded-xl p-4 flex gap-4 items-start">
-                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-sm font-bold text-cyan-400">
-                  {i + 1}
+        <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-2xl font-semibold">Implementation framework</h2>
+          <ol className="mt-5 space-y-3">
+            {FRAMEWORK.map((item, index) => (
+              <li key={item.label} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:gap-4">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-sm font-bold text-cyan-400">
+                  {index + 1}
                 </span>
                 <div className="min-w-0">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{item.label}</span>
-                  <p className="text-slate-300 text-sm leading-relaxed mt-1">{item.step}</p>
+                  <span className="text-xs font-bold uppercase tracking-wider text-white/45">{item.label}</span>
+                  <p className="mt-1 text-sm leading-relaxed text-white/75">{item.step}</p>
                 </div>
               </li>
             ))}
           </ol>
         </section>
 
-        {/* ── Where to Find Real Conversational Queries ── */}
-        <section className="card-charcoal rounded-2xl p-6 section-accent-amber">
-          <h2 className="text-2xl brand-title mb-4">Where to Find Real Conversational Queries</h2>
-          <p className="text-slate-300 leading-relaxed mb-5">
+        <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-2xl font-semibold">Where to find real conversational queries</h2>
+          <p className="mt-3 text-white/75">
             Do not guess what people ask. Extract real conversational patterns from these sources:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {QUERY_SOURCES.map((src) => (
-              <div key={src.name} className="card-charcoal-inner rounded-xl p-4">
-                <h3 className="text-sm font-semibold text-white mb-1">{src.name}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{src.desc}</p>
+              <div key={src.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <h3 className="text-sm font-semibold text-white">{src.name}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-white/60">{src.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Q/A Reference ───────────────────────── */}
-        <section>
-          <h2 className="text-2xl brand-title mb-5">Q/A Reference</h2>
+        <section className="mb-8">
+          <h2 className="mb-4 text-2xl font-semibold">Q/A reference</h2>
           <div className="space-y-4">
             {ARTICLE.faq.map((item) => (
-              <article key={item.question} className="card-charcoal rounded-xl p-5 section-accent-emerald">
-                <h3 className="text-base font-semibold text-white mb-2">Q: {item.question}</h3>
-                <p className="text-slate-300 leading-relaxed">A: {item.answer}</p>
+              <article key={item.question} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+                <h3 className="text-base font-semibold text-white/90">Q: {item.question}</h3>
+                <p className="mt-2 text-white/75">A: {item.answer}</p>
               </article>
             ))}
           </div>
         </section>
 
-        {/* ── Continue the Cluster ────────────────── */}
-        <section className="card-charcoal-inner rounded-2xl p-6">
-          <h2 className="text-xl brand-title mb-4">Continue the Cluster</h2>
-          <div className="flex flex-wrap gap-3">
-            <Link to="/voice-search-ai-answer-optimization-2026" className="btn-cta-secondary text-sm px-4 py-2 rounded-lg">
-              Voice Search &amp; AI Answer Optimization →
+        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-xl font-semibold">Continue the cluster</h2>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center text-sm">
+            <Link to="/voice-search-ai-answer-optimization-2026" className="rounded-lg border border-white/20 px-4 py-2 text-white/80 hover:text-white">
+              Voice Search &amp; AI Answer Optimization 2026
             </Link>
-            <Link to="/aeo-playbook-2026" className="btn-cta-secondary text-sm px-4 py-2 rounded-lg">
-              AEO Playbook 2026 →
+            <Link to="/aeo-playbook-2026" className="rounded-lg border border-white/20 px-4 py-2 text-white/80 hover:text-white">
+              AEO Playbook 2026
             </Link>
-            <Link to="/insights" className="text-sm text-slate-400 hover:text-white font-medium px-4 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors">
-              ← Back to Insights Hub
+            <Link to="/insights" className="rounded-lg border border-white/20 px-4 py-2 text-white/80 hover:text-white">
+              Insights Hub
             </Link>
           </div>
         </section>

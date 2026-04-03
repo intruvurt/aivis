@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Bell, Filter, RefreshCw, CheckCheck, Settings2, ChevronDown, ChevronUp } from "lucide-react";
+import { Bell, Filter, RefreshCw, CheckCheck, Settings2, ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
 import { useAuthStore } from "../stores/authStore";

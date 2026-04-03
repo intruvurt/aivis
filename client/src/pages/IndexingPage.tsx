@@ -240,7 +240,7 @@ export default function IndexingPage() {
   const totalSubmitted = history.reduce((sum, h) => sum + h.submittedCount, 0);
 
   return (
-    <div className="min-h-screen text-white px-4 py-10 max-w-6xl mx-auto">
+    <div className="text-white px-4 py-10 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <button onClick={() => navigate(-1)} className="p-2 rounded-lg hover:bg-white/5 transition">

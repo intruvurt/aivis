@@ -117,7 +117,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
       {/* Navigation */}
       <nav className="aurora-sidebar-nav">
-        <NavSection title="Main" items={mainNav} onClose={onClose} iconClass="text-cyan-400" iconBg="bg-cyan-500/10" />
+        <NavSection title="Main" items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
         <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
         <NavSection title="Tools" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
         <NavSection title="Account" items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />

@@ -115,7 +115,7 @@ export default function RobotsCheckerPage() {
 
   return (
     <>
-      <div className="min-h-screen">
+      <div>
         {/* Hero */}
         <section className="relative py-16 px-4 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/8 via-transparent to-transparent" />

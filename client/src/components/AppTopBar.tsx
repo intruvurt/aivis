@@ -83,7 +83,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
           to="/app/settings"
           className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
         >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500/25 to-teal-500/20 border border-cyan-500/20 flex items-center justify-center text-[11px] font-bold text-cyan-300">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600/30 to-indigo-600/20 border border-blue-500/25 flex items-center justify-center text-[11px] font-bold text-blue-300">
             {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
           </div>
           <span className="hidden md:inline text-xs font-medium truncate max-w-[100px]">{user?.name || user?.email}</span>

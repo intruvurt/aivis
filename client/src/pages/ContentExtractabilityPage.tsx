@@ -109,7 +109,7 @@ export default function ContentExtractabilityPage() {
   return (
     <>
 
-      <div className="min-h-screen">
+      <div>
         {/* Hero */}
         <section className="relative py-16 px-4 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-amber-600/8 via-transparent to-transparent" />

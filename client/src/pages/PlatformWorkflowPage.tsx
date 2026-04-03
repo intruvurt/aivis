@@ -181,7 +181,7 @@ export default function PlatformWorkflowPage() {
   });
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="text-white">
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden pt-16 pb-20 px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Gift, Trophy, Star, Users, TrendingUp, Copy, Share2, Mail, Zap, Target, Crown, Award } from "lucide-react";
+import { Gift, Trophy, Star, Users, TrendingUp, Copy, Share2, Mail, Zap, Target, Crown, Award } from "lucide-react";
 import { API_URL } from "../config";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";

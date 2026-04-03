@@ -229,7 +229,7 @@ export default function McpConsolePage() {
   /* ── Tier gate ──────────────────────────────────── */
   if (!hasAccess) {
     return (
-      <div className="min-h-screen text-white">
+      <div className="text-white">
         <div className="mx-auto max-w-3xl px-4 py-16">
           <UpgradeWall
             feature="MCP Server Console"
@@ -245,8 +245,8 @@ export default function McpConsolePage() {
   const statusColor = connectionStatus === "connected" ? "emerald" : connectionStatus === "failed" ? "red" : connectionStatus === "testing" ? "amber" : "white";
 
   return (
-    <div className="min-h-screen text-white">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
+    <div className="text-white">
+      <div className="max-w-6xl">
 
       {/* ── Header ────────────────────────────────────────────────── */}
       <div className="mb-8 flex items-start justify-between gap-4">

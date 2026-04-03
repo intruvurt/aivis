@@ -123,9 +123,14 @@ import selfHealingRoutes from './routes/selfHealingRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import growthEngineRoutes from './routes/growthEngineRoutes.js';
 import orgRoutes from './routes/orgRoutes.js';
+import v1Routes from './routes/v1Routes.js';
+import v1WebhookRoutes from './routes/v1WebhookRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
+import { startFixWorker } from './workers/fixWorker.js';
+import { startPRWorker } from './workers/prWorker.js';
+import { startScheduler } from './services/scheduler.js';
 import { startSelfHealingLoop } from './services/selfHealingService.js';
 import { bootstrapAgencyAutomation } from './services/agencyAutomationService.js';
 import { startDbCleanupLoop, runDbCleanupNow } from './services/dbCleanup.js';
@@ -1065,6 +1070,8 @@ app.use('/api/self-healing', selfHealingRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/growth', growthEngineRoutes);
 app.use('/api/orgs', orgRoutes);
+app.use('/v1', v1Routes);
+app.use('/v1/webhooks', v1WebhookRoutes);
 app.use('/widget', widgetPublicRouter);
 
 // WebMCP discovery — unauthenticated
@@ -10650,6 +10657,9 @@ process.on('unhandledRejection', (reason) => {
     startMcpAuditLoop();
     startTaskWorker();
     startAuditWorkerLoop();
+    startFixWorker();
+    startPRWorker();
+    startScheduler();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();
     console.log('[AuditQueue] Redis queue worker loop started');

@@ -742,6 +742,80 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`,
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`,
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`,
+            // ── V1 Infrastructure Tables (projects, issues, fixes, PRs) ──
+            `CREATE TABLE IF NOT EXISTS v1_projects (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              org_id UUID NOT NULL,
+              domain TEXT NOT NULL,
+              repo_owner TEXT,
+              repo_name TEXT,
+              repo_installation_id TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`,
+            `CREATE TABLE IF NOT EXISTS v1_audits (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
+              score INT,
+              delta INT DEFAULT 0,
+              status VARCHAR(20) NOT NULL DEFAULT 'queued',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_audits_project ON v1_audits(project_id, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_audits_status ON v1_audits(status)`,
+            `CREATE TABLE IF NOT EXISTS v1_audit_categories (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
+              name TEXT NOT NULL,
+              score INT NOT NULL DEFAULT 0
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_audit_categories_audit ON v1_audit_categories(audit_id)`,
+            `CREATE TABLE IF NOT EXISTS v1_issues (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
+              severity VARCHAR(20) NOT NULL DEFAULT 'medium',
+              title TEXT NOT NULL,
+              impact_score INT DEFAULT 0,
+              effort VARCHAR(20) DEFAULT 'medium',
+              auto_fixable BOOLEAN NOT NULL DEFAULT FALSE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_issues_audit ON v1_issues(audit_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_issues_severity ON v1_issues(severity)`,
+            `CREATE TABLE IF NOT EXISTS v1_evidence (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
+              url TEXT,
+              message TEXT,
+              raw JSONB DEFAULT '{}'
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_evidence_issue ON v1_evidence(issue_id)`,
+            `CREATE TABLE IF NOT EXISTS v1_fixes (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
+              status VARCHAR(30) NOT NULL DEFAULT 'pending',
+              expected_delta INT DEFAULT 0,
+              actual_delta INT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_fixes_issue ON v1_fixes(issue_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_fixes_status ON v1_fixes(status)`,
+            `CREATE TABLE IF NOT EXISTS v1_pull_requests (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
+              fix_id UUID REFERENCES v1_fixes(id) ON DELETE SET NULL,
+              pr_url TEXT,
+              pr_number INT,
+              status VARCHAR(20) NOT NULL DEFAULT 'open',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`,
           ];
           let patchOk = 0;
           let patchFail = 0;
@@ -2729,6 +2803,101 @@ export async function runMigrations(): Promise<void> {
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_user ON bulk_fix_jobs(user_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_status ON bulk_fix_jobs(status, created_at DESC)`);
+
+    // ── V1 Infrastructure Tables (projects, issues, evidence, fixes, PRs) ──
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_projects (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        org_id UUID NOT NULL,
+        domain TEXT NOT NULL,
+        repo_owner TEXT,
+        repo_name TEXT,
+        repo_installation_id TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_audits (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
+        score INT,
+        delta INT DEFAULT 0,
+        status VARCHAR(20) NOT NULL DEFAULT 'queued',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audits_project ON v1_audits(project_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audits_status ON v1_audits(status)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_audit_categories (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        score INT NOT NULL DEFAULT 0
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audit_categories_audit ON v1_audit_categories(audit_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_issues (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
+        severity VARCHAR(20) NOT NULL DEFAULT 'medium',
+        title TEXT NOT NULL,
+        impact_score INT DEFAULT 0,
+        effort VARCHAR(20) DEFAULT 'medium',
+        auto_fixable BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_issues_audit ON v1_issues(audit_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_issues_severity ON v1_issues(severity)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_evidence (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
+        url TEXT,
+        message TEXT,
+        raw JSONB DEFAULT '{}'
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_evidence_issue ON v1_evidence(issue_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_fixes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
+        status VARCHAR(30) NOT NULL DEFAULT 'pending',
+        expected_delta INT DEFAULT 0,
+        actual_delta INT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_issue ON v1_fixes(issue_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_status ON v1_fixes(status)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS v1_pull_requests (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
+        fix_id UUID REFERENCES v1_fixes(id) ON DELETE SET NULL,
+        pr_url TEXT,
+        pr_number INT,
+        status VARCHAR(20) NOT NULL DEFAULT 'open',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`);
 
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {

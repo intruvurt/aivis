@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
+import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import toast from "react-hot-toast";
 import { meetsMinimumTier, TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
 import type { CanonicalTier } from "@shared/types";
@@ -446,12 +447,12 @@ function ScheduledRescansPanel() {
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && url.trim() && !atCap && handleAdd()}
           enterKeyHint="done"
-          className="flex-1 text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30"
+          className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
         <select
           value={freq}
           onChange={(e) => setFreq(e.target.value)}
-          className="text-sm px-2 py-2 rounded-lg border border-white/10 text-white/80 focus:outline-none"
+          className={`text-sm px-2 py-2 rounded-lg text-white/80 ${appSelectSurfaceClass}`}
         >
           {allowedFreqs.includes("daily") && <option value="daily">Daily</option>}
           {allowedFreqs.includes("weekly") && <option value="weekly">Weekly</option>}
@@ -678,7 +679,7 @@ function ThirdPartyIntegrationsPanel() {
           <select
             value={selectedWorkspaceId}
             onChange={(e) => setSelectedWorkspaceId(e.target.value)}
-            className="w-full text-sm px-3 py-1.5 rounded-lg border border-white/10 text-white bg-charcoal-deep focus:outline-none focus:ring-1 focus:ring-white/30"
+            className={`w-full text-sm px-3 py-1.5 rounded-lg bg-charcoal-deep ${appSelectSurfaceClass}`}
           >
             {workspaces.map((workspace) => (
               <option key={workspace.workspaceId} value={workspace.workspaceId}>
@@ -834,7 +835,7 @@ function ThirdPartyIntegrationsPanel() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && url.trim() && handleAdd()}
-                  className="flex-1 text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-white/30"
+                  className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
                   autoFocus
                 />
                 <button
@@ -977,7 +978,7 @@ function ApiKeysPanel() {
           placeholder="Key name (e.g. Production)"
           value={newKeyName}
           onChange={(e) => setNewKeyName(e.target.value)}
-          className="flex-1 text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30"
+          className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
         <button
           onClick={handleCreate}
@@ -1100,7 +1101,7 @@ function WebhooksPanel() {
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && url.trim() && !atCap && handleAdd()}
           enterKeyHint="done"
-          className="flex-1 text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30"
+          className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
         <button
           onClick={handleAdd}
@@ -1246,7 +1247,7 @@ function ReportDeliveryPanel() {
         <select
           value={provider}
           onChange={(e) => setProvider(e.target.value as ReportDeliveryProvider)}
-          className="text-sm px-3 py-2 rounded-lg border border-white/10 text-white/80 focus:outline-none"
+          className={`text-sm px-3 py-2 rounded-lg text-white/80 ${appSelectSurfaceClass}`}
         >
           <option value="email">Email</option>
           <option value="slack">Slack</option>
@@ -1259,7 +1260,7 @@ function ReportDeliveryPanel() {
           placeholder="Optional label"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          className="text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30"
+          className={`text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
       </div>
 
@@ -1269,7 +1270,7 @@ function ReportDeliveryPanel() {
           placeholder={placeholders[provider]}
           value={target}
           onChange={(e) => setTarget(e.target.value)}
-          className="flex-1 text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30"
+          className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
         <button
           onClick={handleAdd}
@@ -1471,7 +1472,7 @@ function BrandingPanel() {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             placeholder="Your Company"
-            className="w-full text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 bg-transparent"
+            className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
           />
         </div>
         <div>
@@ -1481,7 +1482,7 @@ function BrandingPanel() {
             value={tagline}
             onChange={(e) => setTagline(e.target.value)}
             placeholder="AI Visibility Intelligence"
-            className="w-full text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 bg-transparent"
+            className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
           />
         </div>
       </div>
@@ -1495,7 +1496,7 @@ function BrandingPanel() {
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
             placeholder="reports@yourcompany.com"
-            className="w-full text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 bg-transparent"
+            className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
           />
         </div>
         <div>
@@ -1505,7 +1506,7 @@ function BrandingPanel() {
             value={websiteUrl}
             onChange={(e) => setWebsiteUrl(e.target.value)}
             placeholder="https://yourcompany.com"
-            className="w-full text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 bg-transparent"
+            className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
           />
         </div>
       </div>
@@ -1536,7 +1537,7 @@ function BrandingPanel() {
           value={footerText}
           onChange={(e) => setFooterText(e.target.value)}
           placeholder="Generated by Your Company"
-          className="w-full text-sm px-3 py-2 rounded-lg border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/30 bg-transparent"
+          className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
         />
       </div>
 

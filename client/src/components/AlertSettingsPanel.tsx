@@ -8,6 +8,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
+import { appInputSurfaceClass } from "../lib/formStyles";
 import { buildBearerHeader } from "../utils/authToken";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -167,7 +168,7 @@ function ChannelRow({ channel, sub, onSave, onDelete, onTest }: ChannelRowProps)
                 value={configValue}
                 onChange={(e) => setConfigValue(e.target.value)}
                 placeholder={meta.placeholder}
-                className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className={`w-full rounded-lg px-3 py-2 text-sm placeholder-slate-500 ${appInputSurfaceClass} bg-slate-800 border-slate-600 focus:border-indigo-500 focus:ring-indigo-500/10`}
               />
             </div>
           )}

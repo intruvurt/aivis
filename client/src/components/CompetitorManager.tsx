@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { API_URL } from '../config';
+import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import apiFetch from '../utils/api';
 import { toSafeHref } from '../utils/safeHref';
 
@@ -474,7 +475,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                 enterKeyHint="done"
                 placeholder="https://competitor.com"
                 disabled={submitting}
-                className="w-full px-3 py-2 border border-white/10 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:border-white/12 disabled:opacity-50"
+                className={`w-full px-3 py-2 rounded-lg text-sm ${appInputSurfaceClass}`}
               />
             </div>
             <div>
@@ -487,7 +488,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                 enterKeyHint="done"
                 placeholder="Main Competitor"
                 disabled={submitting}
-                className="w-full px-3 py-2 border border-white/10 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:border-white/12 disabled:opacity-50"
+                className={`w-full px-3 py-2 rounded-lg text-sm ${appInputSurfaceClass}`}
               />
             </div>
 
@@ -498,7 +499,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                   value={selectedNiche}
                   onChange={(e) => setSelectedNiche(e.target.value)}
                   disabled={suggestionsLoading || submitting}
-                  className="px-2 py-1 border border-white/10 rounded-md text-xs text-white"
+                  className={`px-2 py-1 rounded-md text-xs ${appSelectSurfaceClass}`}
                 >
                   <option value="">Popular options</option>
                   {niches.map((niche) => (
@@ -605,13 +606,13 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search competitors"
-                className="w-full pl-9 pr-3 py-2 border border-white/10 rounded-lg text-white text-sm placeholder-white/50"
+                className={`w-full pl-9 pr-3 py-2 rounded-lg text-sm ${appInputSurfaceClass}`}
               />
             </div>
             <select
               value={sortMode}
               onChange={(e) => setSortMode(e.target.value as "recent" | "score-desc" | "score-asc")}
-              className="px-3 py-2 border border-white/10 rounded-lg text-sm text-white"
+              className={`px-3 py-2 rounded-lg text-sm ${appSelectSurfaceClass}`}
             >
               <option value="recent">Sort: Recently Updated</option>
               <option value="score-desc">Sort: Score High → Low</option>

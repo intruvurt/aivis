@@ -17,6 +17,7 @@ import {
   Sparkles,
   Globe,
 } from "lucide-react";
+import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 // ─── UI config ────────────────────────────────────────────────────────────────
@@ -492,13 +493,13 @@ export default function KeywordsPage() {
                         value={plan?.targetUrl || ""}
                         onChange={(e) => updateKeywordPlan(keyword.keyword, { targetUrl: e.target.value })}
                         placeholder="Target page URL"
-                        className="w-full lg:w-[280px] px-3 py-2 border border-white/10 rounded-lg text-xs text-white/85 placeholder-white/50"
+                        className={`w-full lg:w-[280px] px-3 py-2 rounded-lg text-xs text-white/85 ${appInputSurfaceClass}`}
                       />
 
                       <select
                         value={plan?.status || "todo"}
                         onChange={(e) => updateKeywordPlan(keyword.keyword, { status: e.target.value as PlanStatus })}
-                        className="px-3 py-2 border border-white/10 rounded-lg text-xs text-white"
+                        className={`px-3 py-2 rounded-lg text-xs ${appSelectSurfaceClass}`}
                       >
                         <option value="todo">To Do</option>
                         <option value="in-progress">In Progress</option>
@@ -553,7 +554,7 @@ export default function KeywordsPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Filter keywords..."
-                  className="w-full pl-9 pr-3 py-2 border border-white/10 rounded-lg text-sm text-white/85 placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/35/50"
+                  className={`w-full pl-9 pr-3 py-2 rounded-lg text-sm text-white/85 ${appInputSurfaceClass}`}
                 />
               </div>
 

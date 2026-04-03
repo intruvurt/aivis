@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useAnalysisStore } from "../stores/analysisStore";
+import { appInputSurfaceClass, appTextareaSurfaceClass } from "../lib/formStyles";
 import {
   ArrowLeft,
   FlaskConical,
@@ -2723,7 +2724,7 @@ export default function ReverseEngineerPage() {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={currentTool.placeholder}
                   rows={6}
-                  className="w-full resize-y rounded-xl border border-white/10 px-4 py-3 text-sm text-white/85 placeholder-white/50 focus:border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  className={`w-full resize-y rounded-xl px-4 py-3 text-sm text-white/85 ${appTextareaSurfaceClass}`}
                   onKeyDown={(e) => {
                     if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && canRun) handleRun();
                   }}
@@ -2734,7 +2735,7 @@ export default function ReverseEngineerPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={currentTool.placeholder}
-                  className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm text-white/85 placeholder-white/50 focus:border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  className={`w-full rounded-xl px-4 py-3 text-sm text-white/85 ${appInputSurfaceClass}`}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && canRun) handleRun();
                   }}
@@ -2791,7 +2792,7 @@ export default function ReverseEngineerPage() {
                         ? "Brief summary of your page content for gap analysis…"
                         : "Specific query you want to rank for…"
                     }
-                    className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm text-white/85 placeholder-white/50 focus:border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                    className={`w-full rounded-xl px-4 py-3 text-sm text-white/85 ${appInputSurfaceClass}`}
                   />
                 </div>
               )}

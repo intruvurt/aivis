@@ -860,16 +860,21 @@ const NORMALIZED_ALLOWED_ORIGINS = [...new Set(ALLOWED_ORIGINS.map(normalizeOrig
 console.log('[CORS] Allowed origins (normalized):', NORMALIZED_ALLOWED_ORIGINS);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sentry
+// Sentry — init is handled by instrument.ts via --import flag.
+// If running without --import (e.g. dev), fall back to inline init.
 // ─────────────────────────────────────────────────────────────────────────────
 if (process.env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: NODE_ENV,
-    tracesSampleRate: IS_PRODUCTION ? 0.1 : 1.0,
-    integrations: [Sentry.httpIntegration()],
-  });
-  console.log('[Sentry] Initialized successfully');
+  const client = Sentry.getClient();
+  if (!client) {
+    // Fallback: instrument.ts was not loaded via --import
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      environment: NODE_ENV,
+      tracesSampleRate: IS_PRODUCTION ? 0.1 : 1.0,
+      integrations: [Sentry.httpIntegration()],
+    });
+    console.log('[Sentry] Initialized (inline fallback)');
+  }
 } else {
   console.warn('[Sentry] SENTRY_DSN not configured - error tracking disabled');
 }

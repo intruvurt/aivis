@@ -40,7 +40,7 @@ export default function AppLayout() {
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
-          <div className="max-w-7xl mx-auto w-full">
+          <div className="w-full">
             <Outlet />
           </div>
         </main>

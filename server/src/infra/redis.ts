@@ -47,6 +47,21 @@ if (redisInstance) {
     errorCount = 0;
     console.log('[Redis] connected');
   });
+  redisInstance.on('ready', () => {
+    // BullMQ requires noeviction to prevent silent job loss under memory pressure
+    redisInstance?.config('GET', 'maxmemory-policy').then((res) => {
+      const policy = Array.isArray(res) ? res[1] : undefined;
+      if (policy && policy !== 'noeviction') {
+        console.warn(`IMPORTANT! Eviction policy is ${policy}. It should be "noeviction"`);
+        // Attempt to fix automatically (works on self-hosted, usually blocked on managed)
+        redisInstance?.config('SET', 'maxmemory-policy', 'noeviction').then(() => {
+          console.log('[Redis] Eviction policy changed to noeviction');
+        }).catch(() => {
+          console.warn('[Redis] Could not auto-set eviction policy — update it in your Redis provider dashboard');
+        });
+      }
+    }).catch(() => { /* CONFIG command may be disabled on managed Redis */ });
+  });
 } else {
   console.log('[Redis] no REDIS_URL or REDIS_HOST configured — running without Redis');
 }

@@ -11,10 +11,11 @@ function normalizeDatabaseUrl(raw: string): string {
 
   if (!IS_PRODUCTION) return input;
 
-  // Only upgrade 'prefer' to 'require' — do NOT force 'verify-full'
-  // which needs a CA cert that Render doesn't provide by default.
-  if (/sslmode=prefer/i.test(input)) {
-    return input.replace(/sslmode=prefer/i, 'sslmode=require');
+  // pg v8 treats require/prefer/verify-ca as verify-full anyway.
+  // Make it explicit to silence the deprecation warning and preserve
+  // the same behaviour when pg v9 changes semantics.
+  if (/sslmode=(prefer|require|verify-ca)\b/i.test(input)) {
+    return input.replace(/sslmode=(prefer|require|verify-ca)\b/i, 'sslmode=verify-full');
   }
 
   return input;

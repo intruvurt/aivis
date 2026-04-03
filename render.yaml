@@ -6,7 +6,7 @@ services:
     plan: starter
     region: ohio
     buildCommand: cd server && npm install --include=dev && npm run build && npx puppeteer browsers install chrome
-    startCommand: cd server && node dist/server/src/server.js
+    startCommand: cd server && node --import ./dist/server/src/instrument.js dist/server/src/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV

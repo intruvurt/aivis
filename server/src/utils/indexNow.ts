@@ -48,6 +48,26 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
     return { submitted: 0, skipped: urls.length, error: `No submitted URLs match the site host (${host}). IndexNow can only notify for URLs on your own domain.` };
   }
 
+  // Self-check: verify key file is accessible before submitting
+  try {
+    const probe = await fetch(keyLocation, {
+      method: 'GET',
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!probe.ok) {
+      console.warn(`[IndexNow] Key file not accessible at ${keyLocation} (HTTP ${probe.status}). Upload ${key}.txt containing "${key}" to your site root.`);
+      return { submitted: 0, skipped: urls.length, error: `Key file unreachable at ${keyLocation} (HTTP ${probe.status})` };
+    }
+    const body = (await probe.text()).trim();
+    if (body !== key) {
+      console.warn(`[IndexNow] Key file at ${keyLocation} returned unexpected content. Expected "${key}", got "${body.slice(0, 60)}…". Ensure the file contains only the key string.`);
+      return { submitted: 0, skipped: urls.length, error: `Key file content mismatch` };
+    }
+  } catch (err: any) {
+    console.warn(`[IndexNow] Could not verify key file at ${keyLocation}:`, err?.message);
+    // Continue anyway — the file may be fine but our fetch couldn't reach it due to network
+  }
+
   try {
     const body = JSON.stringify({
       host,

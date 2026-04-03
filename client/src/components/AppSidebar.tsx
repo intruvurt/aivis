@@ -55,7 +55,7 @@ const accountNav: NavItem[] = [
   { to: "/help", label: "Help", icon: HelpCircle },
 ];
 
-function NavSection({ title, items, onClose }: { title: string; items: NavItem[]; onClose?: () => void }) {
+function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
 
@@ -75,7 +75,9 @@ function NavSection({ title, items, onClose }: { title: string; items: NavItem[]
               `aurora-sidebar-link ${isActive ? "is-active" : ""} ${locked ? "pointer-events-none opacity-40" : ""}`
             }
           >
-            <Icon className="w-[16px] h-[16px] shrink-0" />
+            <span className={`inline-flex items-center justify-center w-[22px] h-[22px] rounded-md shrink-0 ${iconBg}`}>
+              <Icon className={`w-[13px] h-[13px] ${iconClass}`} />
+            </span>
             <span className="truncate">{item.label}</span>
             {locked && <span className="aurora-sidebar-lock">{item.minTier}</span>}
           </NavLink>
@@ -115,10 +117,10 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
       {/* Navigation */}
       <nav className="aurora-sidebar-nav">
-        <NavSection title="Main" items={mainNav} onClose={onClose} />
-        <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} />
-        <NavSection title="Tools" items={toolsNav} onClose={onClose} />
-        <NavSection title="Account" items={accountNav} onClose={onClose} />
+        <NavSection title="Main" items={mainNav} onClose={onClose} iconClass="text-cyan-400" iconBg="bg-cyan-500/10" />
+        <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
+        <NavSection title="Tools" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
+        <NavSection title="Account" items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>
 
       {/* User pill */}

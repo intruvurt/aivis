@@ -16,7 +16,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0b0f1a]/95 backdrop-blur-md border-b border-white/[0.06]" role="banner" aria-label="App toolbar">
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0c1221]/95 backdrop-blur-md border-b border-white/[0.08]" role="banner" aria-label="App toolbar">
       {/* Left — hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Mobile menu button */}
@@ -37,7 +37,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search audits..."
             aria-label="Search audits"
-            className="w-full h-8 pl-9 pr-3 rounded-lg bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/30 focus:bg-white/[0.06] transition-all"
+            className="w-full h-8 pl-9 pr-3 rounded-lg bg-white/[0.06] border border-white/[0.09] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/40 focus:bg-white/[0.08] transition-all"
           />
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Quick audit */}
         <button
           onClick={() => navigate("/app/analyze")}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs font-semibold hover:bg-cyan-500/20 transition-colors border border-cyan-500/20"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/20 transition-colors border border-cyan-500/20"
         >
           <Search className="w-3.5 h-3.5" />
           Run Audit
@@ -56,7 +56,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Documentation */}
         <Link
           to="/docs"
-          className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-colors"
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
           title="Documentation"
           aria-label="Documentation"
         >
@@ -66,24 +66,24 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Notifications */}
         <Link
           to="/app/notifications"
-          className="relative p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-colors"
+          className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
           aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0b0f1a]" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0c1221]" />
           )}
         </Link>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-white/[0.06] mx-1" aria-hidden="true" />
+        <div className="w-px h-6 bg-white/[0.08] mx-1" aria-hidden="true" />
 
         {/* User */}
         <Link
           to="/app/settings"
-          className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+          className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
         >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center text-[11px] font-bold text-cyan-400">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500/25 to-teal-500/20 border border-cyan-500/20 flex items-center justify-center text-[11px] font-bold text-cyan-300">
             {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
           </div>
           <span className="hidden md:inline text-xs font-medium truncate max-w-[100px]">{user?.name || user?.email}</span>
@@ -92,7 +92,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Logout */}
         <button
           onClick={() => { logout(); navigate("/"); }}
-          className="p-2 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/[0.04] transition-colors"
+          className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.06] transition-colors"
           title="Sign out"
           aria-label="Sign out"
         >

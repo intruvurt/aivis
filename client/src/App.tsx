@@ -7,8 +7,8 @@ import { useInitializeSettings } from "./hooks/useInitializeSettings";
 import { useAuthStore } from "./stores/authStore";
 import { useWorkspaceStore } from "./stores/workspaceStore";
 
-import Layout from "./components/Layout";
-import AppLayout from "./components/AppLayout";
+import PublicShell from "./components/PublicShell";
+import AppShell from "./components/AppShell";
 import { CookieConsent } from "./components/CookieConsent";
 import PageLoadingSpinner from "./components/PageLoadingSpinner";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -168,7 +168,7 @@ export default function App() {
         <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
           {/* ═══ Public Marketing Shell ═══ */}
-          <Route element={<Layout />}>
+          <Route element={<PublicShell />}>
             <Route path="/" element={isAuthenticated ? <Navigate to="/app" replace /> : <Landing />} />
             <Route path="/landing" element={<Landing />} />
             <Route path="/pricing" element={<PricingPage />} />
@@ -219,7 +219,7 @@ export default function App() {
           </Route>
 
           {/* ═══ Authenticated App Shell ═══ */}
-          <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route path="/app" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="analyze" element={<AnalyzePage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
@@ -283,7 +283,7 @@ export default function App() {
           <Route path="/dashboard" element={<Navigate to="/app" replace />} />
 
           {/* Catch-all */}
-          <Route path="*" element={<Layout />}>
+          <Route path="*" element={<PublicShell />}>
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

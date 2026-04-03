@@ -108,9 +108,6 @@ export default function useFeatureStatus() {
           const base = (API_URL || "").replace(/\/+$/, "");
           const res = await apiFetch(`${base}/api/features/status`, {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
             credentials: "include",
           });
 

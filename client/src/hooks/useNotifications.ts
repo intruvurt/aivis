@@ -130,9 +130,6 @@ export default function useNotifications() {
       const base = (API_URL || "").replace(/\/+$/, "");
       const res = await apiFetch(`${base}/api/features/notifications?limit=25`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
 
@@ -206,9 +203,6 @@ export default function useNotifications() {
       const base = (API_URL || "").replace(/\/+$/, "");
       const res = await apiFetch(`${base}/api/features/notifications/${encodeURIComponent(id)}/read`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
 
@@ -225,9 +219,6 @@ export default function useNotifications() {
     const base = (API_URL || "").replace(/\/+$/, "");
     const res = await apiFetch(`${base}/api/features/notifications/read-all`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       credentials: "include",
     });
 

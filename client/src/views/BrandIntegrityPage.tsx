@@ -413,7 +413,7 @@ export default function BrandIntegrityPage() {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            to="/prompt-intelligence"
+            to="/app/prompt-intelligence"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-violet-400/20 bg-violet-500/10 text-violet-300 text-sm font-medium hover:bg-violet-500/20 transition"
           >
             <Brain className="w-4 h-4" /> Prompt Intelligence <ArrowRight className="w-3.5 h-3.5" />

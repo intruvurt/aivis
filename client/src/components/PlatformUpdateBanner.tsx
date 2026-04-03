@@ -36,13 +36,13 @@ export default function PlatformUpdateBanner() {
         </div>
         <div className="flex items-center gap-2 sm:ml-auto">
           <Link
-            to="/team"
+            to="/app/team"
             className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-colors"
           >
             Open Team Workspace
           </Link>
           <Link
-            to="/mcp"
+            to="/app/mcp"
             className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-colors"
           >
             Open WebMCP

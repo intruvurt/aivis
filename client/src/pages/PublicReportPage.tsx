@@ -242,7 +242,7 @@ export default function PublicReportPage() {
               <h3 className="text-lg font-semibold text-white">Want to see if your site is being ignored too?</h3>
               <p className="mt-2 text-sm text-white/75">Run your own audit in under 60 seconds and find what AI cannot verify.</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Link to="/analyze" className="inline-flex items-center gap-1 rounded-xl border border-cyan-300/30 bg-cyan-400/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-400/20">
+                <Link to="/app/analyze" className="inline-flex items-center gap-1 rounded-xl border border-cyan-300/30 bg-cyan-400/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-400/20">
                   Run your audit
                 </Link>
                 <Link to="/pricing" className="inline-flex items-center gap-1 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white/90 hover:bg-white/15">

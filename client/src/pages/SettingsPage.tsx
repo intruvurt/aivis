@@ -697,7 +697,7 @@ const SettingsPage: React.FC = () => {
                       </p>
                     </div>
                     <Link
-                      to="/billing"
+                      to="/app/billing"
                       className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
                     >
                       <Zap className="h-3.5 w-3.5 text-amber-400" />

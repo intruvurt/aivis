@@ -426,7 +426,7 @@ export default function McpConsolePage() {
                 />
               </div>
               <p className="mt-1.5 text-[11px] text-white/30">
-                Generate API keys in <Link to="/settings?section=api-keys" className="text-violet-400 hover:text-violet-300 underline">Settings → API Keys</Link>
+                Generate API keys in <Link to="/app/settings?section=api-keys" className="text-violet-400 hover:text-violet-300 underline">Settings → API Keys</Link>
               </p>
             </div>
 
@@ -785,7 +785,7 @@ export default function McpConsolePage() {
       {/* ── Resources & Links ─────────────────────────────────────── */}
       <div className="grid sm:grid-cols-4 gap-4">
         <Link
-          to="/gsc"
+          to="/app/gsc"
           className="rounded-2xl border border-white/10 bg-[#111827]/90 p-5 hover:border-emerald-500/20 hover:bg-white/[0.04] transition group"
         >
           <BarChart3 className="h-5 w-5 text-emerald-400 mb-3" />
@@ -803,7 +803,7 @@ export default function McpConsolePage() {
         </Link>
 
         <Link
-          to="/settings?section=api-keys"
+          to="/app/settings?section=api-keys"
           className="rounded-2xl border border-white/10 bg-[#111827]/90 p-5 hover:border-white/20 hover:bg-white/[0.04] transition group"
         >
           <Key className="h-5 w-5 text-amber-400 mb-3" />

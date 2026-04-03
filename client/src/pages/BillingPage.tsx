@@ -697,7 +697,7 @@ export default function BillingPage() {
           <div className="flex items-center justify-between gap-3 mb-3">
             <p className="text-sm font-semibold text-white">Automation & API</p>
             <Link
-              to="/settings?section=advanced"
+              to="/app/settings?section=advanced"
               className="text-xs px-3 py-1 rounded-full border border-white/12 bg-charcoal-light text-white/80 hover:text-white transition-colors"
             >
               Open Advanced

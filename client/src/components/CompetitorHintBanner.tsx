@@ -56,7 +56,7 @@ export default function CompetitorHintBanner({ hint, onDismiss }: Props) {
         <p className="text-sm text-emerald-100">
           <span className="font-medium">{hint.analyzed_domain}</span> added to your
           {" "}
-          <Link to="/competitors" className="underline underline-offset-2 hover:text-emerald-200">competitor tracking</Link>.
+          <Link to="/app/competitors" className="underline underline-offset-2 hover:text-emerald-200">competitor tracking</Link>.
         </p>
         <button type="button" onClick={onDismiss} className="ml-auto text-white/30 hover:text-white/60 transition flex-shrink-0">
           <X className="h-4 w-4" />

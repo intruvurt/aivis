@@ -1694,7 +1694,7 @@ export default function ReportsPage() {
                             </button>
                           )}
                           <button
-                            onClick={() => navigate(`/score-fix?source=ops-queue&report=${encodeURIComponent(item.auditId || item.reportId)}&url=${encodeURIComponent(item.url)}`)}
+                            onClick={() => navigate(`/app/score-fix?source=ops-queue&report=${encodeURIComponent(item.auditId || item.reportId)}&url=${encodeURIComponent(item.url)}`)}
                             className="inline-flex items-center gap-1.5 rounded-lg btn-cta-primary px-3 py-2 text-xs font-bold"
                             type="button"
                           >
@@ -1702,7 +1702,7 @@ export default function ReportsPage() {
                             Run fixpack
                           </button>
                           <button
-                            onClick={() => navigate(`/analyze?url=${encodeURIComponent(item.url)}`)}
+                            onClick={() => navigate(`/app/analyze?url=${encodeURIComponent(item.url)}`)}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-white/12 bg-charcoal px-3 py-2 text-xs text-white/70 hover:text-white transition-colors"
                             type="button"
                           >
@@ -1736,7 +1736,7 @@ export default function ReportsPage() {
 
                   <div className="grid gap-2 sm:grid-cols-2 lg:w-auto">
                     <button
-                      onClick={() => navigate(`/analyze?url=${encodeURIComponent(activeCompareTarget?.url || "")}`)}
+                      onClick={() => navigate(`/app/analyze?url=${encodeURIComponent(activeCompareTarget?.url || "")}`)}
                       className="inline-flex items-center justify-center gap-2 rounded-xl btn-cta-primary px-4 py-2.5 text-xs font-bold"
                       type="button"
                     >
@@ -1744,7 +1744,7 @@ export default function ReportsPage() {
                       Re-audit target
                     </button>
                     <button
-                      onClick={() => navigate(`/score-fix?source=reports-compare&url=${encodeURIComponent(activeCompareTarget?.url || "")}`)}
+                      onClick={() => navigate(`/app/score-fix?source=reports-compare&url=${encodeURIComponent(activeCompareTarget?.url || "")}`)}
                       className="inline-flex items-center justify-center gap-2 rounded-xl btn-cta-secondary px-4 py-2.5 text-xs font-semibold"
                       type="button"
                     >
@@ -1978,7 +1978,7 @@ export default function ReportsPage() {
                       {/* Score Fix for low scores */}
                       {report.status === 'completed' && report.score < 75 && (
                         <button
-                          onClick={() => navigate(`/score-fix?source=reports&report=${encodeURIComponent(report.auditId || report.id)}&url=${encodeURIComponent(report.url)}`)}
+                          onClick={() => navigate(`/app/score-fix?source=reports&report=${encodeURIComponent(report.auditId || report.id)}&url=${encodeURIComponent(report.url)}`)}
                           className="inline-flex items-center gap-1.5 rounded-lg btn-cta-secondary px-3 py-1.5 text-xs font-semibold"
                           title="Open Score Fix remediation"
                           type="button"

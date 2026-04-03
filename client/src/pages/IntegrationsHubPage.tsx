@@ -224,7 +224,7 @@ export default function IntegrationsHubPage() {
                 Revalidate
               </button>
               <Link
-                to="/settings?section=advanced"
+                to="/app/settings?section=advanced"
                 className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/75 hover:text-white transition"
               >
                 Settings
@@ -299,7 +299,7 @@ export default function IntegrationsHubPage() {
               </div>
             </div>
             <Link
-              to="/mcp"
+              to="/app/mcp"
               className="inline-flex items-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white transition shadow-lg shadow-violet-500/15"
             >
               Open MCP Console
@@ -349,7 +349,7 @@ export default function IntegrationsHubPage() {
               <p className="mt-2 text-xs leading-6 text-white/60">Expose AiVIS tools to AI agents via Model Context Protocol. 8 tools including audit execution, history retrieval, and analytics queries.</p>
               <div className="mt-2 flex items-center gap-2">
                 <span className="inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">Signal+</span>
-                <Link to="/mcp" className="text-[10px] text-violet-300 hover:text-violet-200 underline underline-offset-2">Open MCP Console →</Link>
+                <Link to="/app/mcp" className="text-[10px] text-violet-300 hover:text-violet-200 underline underline-offset-2">Open MCP Console →</Link>
               </div>
             </div>
           </div>

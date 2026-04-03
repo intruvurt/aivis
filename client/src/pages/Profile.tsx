@@ -285,7 +285,7 @@ export default function ProfilePage() {
               <Terminal className="h-4 w-4 text-violet-400" /> Automation & API
             </h2>
             <Link
-              to="/settings?section=advanced"
+              to="/app/settings?section=advanced"
               className="px-3 py-1 rounded-full border border-white/12 hover:bg-charcoal-light text-white text-xs transition"
             >
               Advanced Settings
@@ -304,7 +304,7 @@ export default function ProfilePage() {
               <Link to="/integrations" className="rounded-xl border border-violet-300/20 bg-violet-500/10 px-3 py-2 text-xs font-semibold text-violet-100 transition hover:border-violet-200/40 text-center">
                 Integrations
               </Link>
-              <Link to="/settings?section=advanced" className="rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:border-emerald-200/40 text-center">
+              <Link to="/app/settings?section=advanced" className="rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:border-emerald-200/40 text-center">
                 API Access
               </Link>
             </div>

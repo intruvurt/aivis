@@ -728,7 +728,7 @@ export default function TopNav() {
               <div className="px-3 pb-2">
                 <div className="flex items-center gap-2.5">
                   <Link
-                    to="/billing"
+                    to="/app/billing"
                     onClick={() => setMobileOpen(false)}
                     className={`relative inline-flex items-center gap-1.5 px-2.5 pr-4 py-1.5 rounded-lg text-[10px] font-semibold tracking-wide uppercase ${tierTheme.className}`}
                   >

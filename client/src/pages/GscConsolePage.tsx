@@ -777,7 +777,7 @@ export default function GscConsolePage() {
         className="text-center"
       >
         <Link
-          to="/mcp"
+          to="/app/mcp"
           className="inline-flex items-center gap-2 text-xs text-white/30 hover:text-white/60 transition"
         >
           Looking for the MCP Server Console? <ExternalLink className="h-3 w-3" />

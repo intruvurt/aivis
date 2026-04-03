@@ -163,7 +163,7 @@ export default function AISearchVisibility2026() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              to="/analyze"
+              to="/app/analyze"
               className="inline-flex items-center rounded-full bg-charcoal px-4 py-2 text-sm font-semibold text-white hover:bg-charcoal transition-colors"
             >
               Run an AI Visibility Audit

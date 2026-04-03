@@ -57,7 +57,7 @@ export default function PlatformProofLoopCard({
         )}
 
         <Link
-          to="/workflow"
+          to="/app/workflow"
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-black/20 px-3 py-2 text-xs font-semibold text-white/85 hover:bg-black/30"
         >
           <FileText className="h-3.5 w-3.5" />

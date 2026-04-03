@@ -41,13 +41,13 @@ export default function PaymentSuccessPage() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
-            to="/analyze"
+            to="/app/analyze"
             className="px-6 py-2.5 rounded-xl bg-charcoal hover:bg-charcoal text-white text-sm font-semibold transition-colors"
           >
             Start Analyzing
           </Link>
           <Link
-            to="/billing"
+            to="/app/billing"
             className="px-6 py-2.5 rounded-xl bg-charcoal-light hover:bg-charcoal text-white/75 text-sm font-semibold transition-colors border border-white/10"
           >
             View Billing

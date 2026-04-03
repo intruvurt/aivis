@@ -571,7 +571,7 @@ export default function MethodologyPage() {
             The <Link to="/guide" className="text-blue-700 underline hover:text-blue-900">AiVIS Guide</Link> covers how to interpret audit output and sequence implementation.
             The <Link to="/faq" className="ml-1 text-white underline hover:text-white/80">FAQ</Link> addresses common questions about score interpretation,
             category grades, and optimization sequencing. The <Link to="/compliance" className="ml-1 text-blue-700 underline hover:text-blue-900">Compliance</Link> page documents data handling
-            and crawl governance policies. Teams running the full optimization loop can track progress in <Link to="/reports" className="ml-1 text-blue-700 underline hover:text-blue-900">Report History</Link>.
+            and crawl governance policies. Teams running the full optimization loop can track progress in <Link to="/app/reports" className="ml-1 text-blue-700 underline hover:text-blue-900">Report History</Link>.
           </p>
         </section>
       </main>

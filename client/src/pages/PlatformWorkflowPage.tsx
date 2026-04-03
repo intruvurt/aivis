@@ -201,7 +201,7 @@ export default function PlatformWorkflowPage() {
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.5 }} className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link to="/analyze" className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-sm transition-colors">
+            <Link to="/app/analyze" className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-sm transition-colors">
               Start an Audit
             </Link>
             <Link to="/pricing" className="px-6 py-2.5 rounded-xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 text-sm transition-colors">
@@ -631,7 +631,7 @@ export default function PlatformWorkflowPage() {
               Run your first baseline audit free. See exactly what to fix, then measure the difference.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link to="/analyze" className="px-7 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-sm transition-colors">
+              <Link to="/app/analyze" className="px-7 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-sm transition-colors">
                 Run Free Audit
               </Link>
               <Link to="/guide" className="px-7 py-2.5 rounded-xl border border-white/15 text-white/70 hover:text-white text-sm transition-colors">

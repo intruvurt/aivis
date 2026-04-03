@@ -529,13 +529,13 @@ export default function CompetitorsPage() {
 
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Link
-                        to="/reverse-engineer"
+                        to="/app/reverse-engineer"
                         className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
                       >
                         Reverse Engineer
                       </Link>
                       <Link
-                        to="/score-fix"
+                        to="/app/score-fix"
                         className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
                       >
                         Score Fix

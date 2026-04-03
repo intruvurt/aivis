@@ -393,15 +393,15 @@ export default function ReferralsPage() {
 
               {/* ── Quick actions ── */}
               <div className="mt-5 grid gap-3 sm:grid-cols-4">
-                <Link to="/analyze" className="flex items-center gap-2 rounded-2xl border border-cyan-300/20 bg-cyan-500/10 p-3 text-xs font-semibold text-cyan-100 transition hover:border-cyan-200/40">
+                <Link to="/app/analyze" className="flex items-center gap-2 rounded-2xl border border-cyan-300/20 bg-cyan-500/10 p-3 text-xs font-semibold text-cyan-100 transition hover:border-cyan-200/40">
                   <Target className="h-3.5 w-3.5" />
                   Run audit baseline
                 </Link>
-                <Link to="/reports" className="flex items-center gap-2 rounded-2xl border border-violet-300/20 bg-violet-500/10 p-3 text-xs font-semibold text-violet-100 transition hover:border-violet-200/40">
+                <Link to="/app/reports" className="flex items-center gap-2 rounded-2xl border border-violet-300/20 bg-violet-500/10 p-3 text-xs font-semibold text-violet-100 transition hover:border-violet-200/40">
                   <TrendingUp className="h-3.5 w-3.5" />
                   Open report proofs
                 </Link>
-                <Link to="/billing" className="flex items-center gap-2 rounded-2xl border border-amber-300/20 bg-amber-500/10 p-3 text-xs font-semibold text-amber-100 transition hover:border-amber-200/40">
+                <Link to="/app/billing" className="flex items-center gap-2 rounded-2xl border border-amber-300/20 bg-amber-500/10 p-3 text-xs font-semibold text-amber-100 transition hover:border-amber-200/40">
                   <Zap className="h-3.5 w-3.5" />
                   Upgrade for multiplier
                 </Link>

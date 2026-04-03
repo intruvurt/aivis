@@ -581,13 +581,13 @@ function ExecutiveRail({
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <Link
-              to="/score-fix"
+              to="/app/score-fix"
               className="rounded-2xl border border-white/10 bg-[#171f31] px-4 py-3 text-sm text-white/75 transition hover:text-white"
             >
               Open Score Fix
             </Link>
             <Link
-              to="/reverse-engineer"
+              to="/app/reverse-engineer"
               className="rounded-2xl border border-white/10 bg-[#171f31] px-4 py-3 text-sm text-white/75 transition hover:text-white"
             >
               Reverse Engineer
@@ -1591,7 +1591,7 @@ function ReturningUserQuickPanel({
             <p className="text-xs text-white/45 mt-1">Performance snapshot across all audits</p>
           </div>
           <Link
-            to="/analytics"
+            to="/app/analytics"
             className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-white/70 transition hover:bg-white/10 hover:text-white"
           >
             <BarChart3 className="h-3.5 w-3.5" />
@@ -1666,28 +1666,28 @@ function ReturningUserQuickPanel({
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
-            to="/reports"
+            to="/app/reports"
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/55 transition hover:text-white/80"
           >
             <FileText className="h-3 w-3" />
             Reports
           </Link>
           <Link
-            to="/competitors"
+            to="/app/competitors"
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/55 transition hover:text-white/80"
           >
             <Users className="h-3 w-3" />
             Competitors
           </Link>
           <Link
-            to="/keywords"
+            to="/app/keywords"
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/55 transition hover:text-white/80"
           >
             <Target className="h-3 w-3" />
             Keywords
           </Link>
           <Link
-            to="/citations"
+            to="/app/citations"
             className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/55 transition hover:text-white/80"
           >
             <Eye className="h-3 w-3" />

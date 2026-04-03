@@ -490,7 +490,7 @@ export default function TopNav() {
           {hasSession && tierTheme && (
             <div className="hidden xl:flex items-center gap-2 pl-2">
               <Link
-                to="/billing"
+                to="/app/billing"
                 className={`relative inline-flex items-center gap-1.5 px-2.5 pr-4 py-1.5 rounded-lg text-[10px] font-semibold tracking-wide uppercase whitespace-nowrap transition-colors hover:opacity-90 ${tierTheme.className}`}
                 title={`Current tier: ${tierTheme.label}`}
               >

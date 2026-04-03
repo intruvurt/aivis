@@ -110,10 +110,10 @@ export default function GuidePage() {
           <li>Open these pages in advance: Analyze, Reports, and either Competitors or Citations.</li>
         </ul>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/analyze" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+          <Link to="/app/analyze" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <Target className="h-3.5 w-3.5" /> Open Analyze
           </Link>
-          <Link to="/reports" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+          <Link to="/app/reports" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <FileSearch className="h-3.5 w-3.5" /> Open Reports
           </Link>
         </div>
@@ -207,10 +207,10 @@ export default function GuidePage() {
           ))}
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/score-fix" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+          <Link to="/app/score-fix" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <Hammer className="h-3.5 w-3.5" /> Open Score Fix
           </Link>
-          <Link to="/reverse-engineer" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+          <Link to="/app/reverse-engineer" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <FlaskConical className="h-3.5 w-3.5" /> Reverse Engineer Answers
           </Link>
         </div>
@@ -233,12 +233,12 @@ export default function GuidePage() {
         <h2 className="text-xl brand-title">6) Tool routing map: which page to use and when</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {[
-            { to: '/analyze', title: 'Analyze', detail: 'Run baseline and post-fix audits.' },
-            { to: '/keywords', title: 'Keywords', detail: 'Prioritize execution queue by opportunity.' },
-            { to: '/competitors', title: 'Competitors', detail: 'Find where rivals are being surfaced instead of you.' },
-            { to: '/citations', title: 'Citations', detail: 'Test mention and source visibility in AI responses.' },
-            { to: '/analytics', title: 'Analytics', detail: 'Track trend stability and category movement over time.' },
-            { to: '/reports', title: 'Reports', detail: 'Create proof trail for clients, leadership, and retrospectives.' },
+            { to: '/app/analyze', title: 'Analyze', detail: 'Run baseline and post-fix audits.' },
+            { to: '/app/keywords', title: 'Keywords', detail: 'Prioritize execution queue by opportunity.' },
+            { to: '/app/competitors', title: 'Competitors', detail: 'Find where rivals are being surfaced instead of you.' },
+            { to: '/app/citations', title: 'Citations', detail: 'Test mention and source visibility in AI responses.' },
+            { to: '/app/analytics', title: 'Analytics', detail: 'Track trend stability and category movement over time.' },
+            { to: '/app/reports', title: 'Reports', detail: 'Create proof trail for clients, leadership, and retrospectives.' },
           ].map((item) => (
             <Link
               key={item.to}
@@ -326,10 +326,10 @@ export default function GuidePage() {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/analytics" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:text-white">
+          <Link to="/app/analytics" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:text-white">
             <TrendingUp className="h-3.5 w-3.5 text-cyan-300" /> Review Trend
           </Link>
-          <Link to="/workflow" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:text-white">
+          <Link to="/app/workflow" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:text-white">
             <Target className="h-3.5 w-3.5 text-orange-300" /> Open Workflow
           </Link>
         </div>
@@ -359,7 +359,7 @@ export default function GuidePage() {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link to="/settings" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+          <Link to="/app/settings" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <Target className="h-3.5 w-3.5" /> Configure delivery targets
           </Link>
           <Link to="/pricing" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">

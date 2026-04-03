@@ -31,7 +31,7 @@ export default function CompetitorHintBanner({ hint, onDismiss }: Props) {
           </p>
           <button
             type="button"
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate("/app/settings")}
             className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 py-1.5 text-xs font-medium text-amber-200 transition hover:bg-amber-400/20"
           >
             Go to Settings

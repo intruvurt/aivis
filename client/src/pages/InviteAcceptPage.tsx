@@ -40,7 +40,7 @@ export default function InviteAcceptPage() {
         if (res.ok && data.success) {
           setState('success');
           toast.success('Invitation accepted!');
-          setTimeout(() => navigate('/team', { replace: true }), 2000);
+          setTimeout(() => navigate('/app/team', { replace: true }), 2000);
         } else {
           setState('error');
           setErrorMsg(data.error || 'Failed to accept invitation');

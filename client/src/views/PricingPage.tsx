@@ -1331,7 +1331,7 @@ export default function PricingPage() {
 
           <div className="flex items-center gap-2">
             <Link
-              to="/billing?section=pricing"
+              to="/app/billing?section=pricing"
               className="inline-flex items-center gap-2 text-xs px-3.5 py-2 rounded-full bg-charcoal-light border border-white/10 text-white/85 hover:text-white transition-colors"
             >
               <Receipt className="w-3.5 h-3.5" />
@@ -1371,7 +1371,7 @@ export default function PricingPage() {
 
         <div className="mt-4 text-center">
           <Link
-            to="/billing"
+            to="/app/billing"
             className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm transition-colors px-5 py-2 rounded-full bg-charcoal-light border border-white/10 hover:bg-charcoal"
           >
             <CreditCard className="w-4 h-4" />

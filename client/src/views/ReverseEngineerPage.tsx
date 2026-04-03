@@ -2874,7 +2874,7 @@ export default function ReverseEngineerPage() {
                     <h4 className="text-sm font-semibold text-white">Next-best route</h4>
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <Link to="/score-fix" className="rounded-xl border border-white/10 bg-charcoal-deep p-4 text-sm text-white/75 transition-colors hover:text-white">
+                    <Link to="/app/score-fix" className="rounded-xl border border-white/10 bg-charcoal-deep p-4 text-sm text-white/75 transition-colors hover:text-white">
                       Turn this into a Score Fix path
                     </Link>
                     <Link to="/pricing?source=reverse-engineer" className="rounded-xl border border-white/10 bg-charcoal-deep p-4 text-sm text-white/75 transition-colors hover:text-white">

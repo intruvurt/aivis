@@ -1523,7 +1523,7 @@ export default function ReportsPage() {
 
                 <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:min-w-[16rem] xl:self-start">
                   <button
-                    onClick={() => navigate('/score-fix?source=reports')}
+                    onClick={() => navigate('/app/score-fix?source=reports')}
                     className="inline-flex items-center justify-center gap-2 rounded-xl btn-cta-primary px-5 py-3 text-sm font-bold"
                     type="button"
                   >

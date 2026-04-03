@@ -282,19 +282,19 @@ export default function AnswerPresencePage() {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            to="/prompt-intelligence"
+            to="/app/prompt-intelligence"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-violet-400/20 bg-violet-500/10 text-violet-300 text-sm font-medium hover:bg-violet-500/20 transition"
           >
             <Brain className="w-4 h-4" /> Prompt Intelligence <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
-            to="/citations"
+            to="/app/citations"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-violet-400/20 bg-violet-500/10 text-violet-300 text-sm font-medium hover:bg-violet-500/20 transition"
           >
             <Eye className="w-4 h-4" /> Citation Intelligence <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
-            to="/brand-integrity"
+            to="/app/brand-integrity"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 transition"
           >
             <CheckCircle2 className="w-4 h-4" /> Brand Integrity <ArrowRight className="w-3.5 h-3.5" />

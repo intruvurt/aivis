@@ -1143,7 +1143,7 @@ export default function AnalyticsPage() {
                   <div className="text-center py-16">
                     <Zap className="w-10 h-10 text-orange-400/60 mx-auto mb-4" />
                     <p className="text-white/50 mb-4">No analyses yet. Run your first analysis to populate data here.</p>
-                    <button onClick={() => navigate("/analyze")}
+                    <button onClick={() => navigate("/app/analyze")}
                       className="px-6 py-2.5 rounded-xl text-white text-sm font-semibold"
                       style={{ background: 'rgba(249,115,22,0.22)', border: '1px solid rgba(249,115,22,0.35)' }}>
                       Analyze a URL

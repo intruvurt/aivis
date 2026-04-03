@@ -10,6 +10,7 @@ const redisPort = Number(process.env.REDIS_PORT || 6379);
  */
 let redisInstance: Redis | null = null;
 let evictionWarned = false;
+let evictionCheckStarted = false;
 
 const MAX_RETRIES = 3;
 
@@ -51,6 +52,8 @@ if (redisInstance) {
   redisInstance.on('ready', () => {
     // BullMQ requires noeviction to prevent silent job loss under memory pressure.
     // Only warn once — managed providers (Render, etc.) block CONFIG SET.
+    if (evictionCheckStarted || evictionWarned) return;
+    evictionCheckStarted = true;
     redisInstance?.config('GET', 'maxmemory-policy').then((res) => {
       const policy = Array.isArray(res) ? res[1] : undefined;
       if (policy && policy !== 'noeviction' && !evictionWarned) {

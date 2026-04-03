@@ -570,25 +570,16 @@ const SettingsPage: React.FC = () => {
   /*  RENDER                                                           */
   /* ================================================================ */
   return (
-    <div className="min-h-screen text-white">
-      <header className="border-b border-white/10 bg-charcoal-deep">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <SettingsIcon className="h-5 w-5 text-orange-400" />
-              Settings
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Customize your AiVIS experience</p>
-          </div>
-          <div className="hidden md:block ml-auto shrink-0 overflow-hidden rounded-xl border border-white/10">
-            <img src="/gear.jpeg" alt="Settings gear icon" className="h-12 w-16 object-cover object-center opacity-70" aria-hidden="true" loading="lazy" />
-          </div>
-        </div>
-      </header>
-      <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6 text-white">
+      {/* Page heading */}
+      <div>
+        <h1 className="text-xl font-semibold text-white flex items-center gap-2">
+          <SettingsIcon className="h-5 w-5 text-orange-400" />
+          Settings
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">Customize your AiVIS experience</p>
+      </div>
+      <div>
 
         {/* Two-column layout */}
         <div className="flex flex-col lg:flex-row gap-6">

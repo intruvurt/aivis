@@ -47,7 +47,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Quick audit */}
         <button
           onClick={() => navigate("/app/analyze")}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/20 transition-colors border border-cyan-500/20"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-700/30 border border-blue-400/20"
         >
           <Search className="w-3.5 h-3.5" />
           Run Audit

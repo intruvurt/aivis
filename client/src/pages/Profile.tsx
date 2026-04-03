@@ -154,19 +154,11 @@ export default function ProfilePage() {
   }, [user.full_name, user.display_name, user.email]);
 
   return (
-    <div className="min-h-screen text-white">
-      {/* ──── Hero header ──── */}
-      <header className={`relative overflow-hidden border-b ${tc.border} bg-charcoal-deep`}>
+    <div className="space-y-6 text-white max-w-3xl">
+      {/* ──── Profile Hero Card ──── */}
+      <div className={`relative overflow-hidden rounded-2xl border ${tc.border} bg-charcoal-deep`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${tc.bg} opacity-60 pointer-events-none`} />
-        <div className="relative mx-auto max-w-3xl px-4 py-8 sm:px-6">
-          <button
-            onClick={() => navigate("/")}
-            className="mb-4 inline-flex items-center gap-1.5 text-xs text-white/55 hover:text-white transition-colors"
-            type="button"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
-          </button>
-
+        <div className="relative px-6 py-6">
           <div className="flex items-start gap-5">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
@@ -206,9 +198,9 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 space-y-6">
+      <div className="space-y-6">
         {/* ──── Usage & Quick Stats ──── */}
         <div className="grid gap-4 sm:grid-cols-3">
           {/* Usage ring card */}

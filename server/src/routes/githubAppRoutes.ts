@@ -13,11 +13,14 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import { createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import { authRequired } from '../middleware/authRequired.js';
+import { workspaceRequired } from '../middleware/workspaceRequired.js';
+import { requireWorkspacePermission } from '../middleware/workspacePermission.js';
 import {
   isGitHubAppConfigured,
   verifyWebhookSignature,
   saveInstallation,
   getInstallationForUser,
+  getInstallationForWorkspace,
   getInstallationById,
   suspendInstallation,
   removeInstallation,
@@ -25,11 +28,13 @@ import {
   listInstallationRepos,
   listInstallationBranches,
 } from '../services/githubAppService.js';
+import { logWorkspaceActivity } from '../services/workspaceActivityService.js';
 
 // ─── Signed state for install callback (mirrors authRoutes OAuth pattern) ────
 
 interface GitHubAppState {
   userId: string;
+  workspaceId?: string | null;
   nonce: string;
   ts: number;
 }
@@ -127,6 +132,7 @@ router.post(
           // we save with the GitHub sender ID as a lookup key.
           await saveInstallation(
             senderId, // temporary — updated when user hits /callback
+            null,
             installationId,
             accountLogin,
             accountType,
@@ -198,12 +204,25 @@ router.get('/callback', async (req: Request, res: Response) => {
       const existing = await getInstallationById(installationId);
       await saveInstallation(
         appState.userId,
+        appState.workspaceId || null,
         installationId,
         existing?.account_login || '',
         existing?.account_type || 'User',
         existing?.permissions || {},
         existing?.repo_selection || 'all',
       );
+      if (appState.workspaceId) {
+        await logWorkspaceActivity({
+          workspaceId: appState.workspaceId,
+          userId: appState.userId,
+          type: 'integration.github.connected',
+          metadata: {
+            installationId,
+            accountLogin: existing?.account_login || null,
+            setupAction,
+          },
+        });
+      }
       console.log(`[GitHubApp] Installation ${installationId} associated with user ${appState.userId}`);
 
       return res.redirect(`${frontendUrl}/scorefix?github_app=installed`);
@@ -217,6 +236,7 @@ router.get('/callback', async (req: Request, res: Response) => {
 });
 
 router.use(authRequired);
+router.use(workspaceRequired);
 
 /**
  * GET /api/github-app/status
@@ -225,6 +245,7 @@ router.use(authRequired);
  */
 router.get('/status', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
+  const workspaceId = String(req.workspace?.id || '');
   const configured = isGitHubAppConfigured();
 
   if (!configured) {
@@ -232,12 +253,14 @@ router.get('/status', async (req: Request, res: Response) => {
   }
 
   try {
-    const installation = await getInstallationForUser(userId);
+    const installation = await getInstallationForWorkspace(workspaceId) || await getInstallationForUser(userId);
     return res.json({
       configured: true,
       installed: !!installation,
+      workspace_id: workspaceId,
       installation: installation
         ? {
+            workspace_id: installation.workspace_id ?? null,
             installation_id: installation.installation_id,
             account_login: installation.account_login,
             account_type: installation.account_type,
@@ -258,13 +281,14 @@ router.get('/status', async (req: Request, res: Response) => {
  * Returns the URL the user should visit to install the GitHub App on their account/org.
  * Encodes a signed state param so the callback can identify the user without auth.
  */
-router.get('/install-url', (req: Request, res: Response) => {
+router.get('/install-url', requireWorkspacePermission('integrations:manage'), (req: Request, res: Response) => {
   const slug = (process.env.GITHUB_APP_SLUG || '').trim();
   if (!slug) {
     return res.status(503).json({ error: 'GitHub App is not configured' });
   }
   const userId = String((req as any).user?.id || '');
-  const state = encodeAppState({ userId, nonce: randomUUID(), ts: Date.now() });
+  const workspaceId = String(req.workspace?.id || '');
+  const state = encodeAppState({ userId, workspaceId, nonce: randomUUID(), ts: Date.now() });
   return res.json({
     url: `https://github.com/apps/${encodeURIComponent(slug)}/installations/new?state=${encodeURIComponent(state)}`,
   });
@@ -277,10 +301,11 @@ router.get('/install-url', (req: Request, res: Response) => {
  */
 router.get('/repos', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
+  const workspaceId = String(req.workspace?.id || '');
   const page = Math.max(1, Number(req.query.page) || 1);
 
   try {
-    const installation = await getInstallationForUser(userId);
+    const installation = await getInstallationForWorkspace(workspaceId) || await getInstallationForUser(userId);
     if (!installation) {
       return res.status(404).json({ error: 'No GitHub App installation found. Install the app first.' });
     }
@@ -300,6 +325,7 @@ router.get('/repos', async (req: Request, res: Response) => {
  */
 router.get('/branches', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
+  const workspaceId = String(req.workspace?.id || '');
   const owner = String(req.query.owner || '').trim();
   const repo = String(req.query.repo || '').trim();
 
@@ -313,7 +339,7 @@ router.get('/branches', async (req: Request, res: Response) => {
   }
 
   try {
-    const installation = await getInstallationForUser(userId);
+    const installation = await getInstallationForWorkspace(workspaceId) || await getInstallationForUser(userId);
     if (!installation) {
       return res.status(404).json({ error: 'No GitHub App installation found. Install the app first.' });
     }
@@ -332,16 +358,23 @@ router.get('/branches', async (req: Request, res: Response) => {
  * Remove the user's GitHub App installation record (does NOT uninstall from GitHub).
  * User must uninstall via GitHub Settings separately.
  */
-router.delete('/installation', async (req: Request, res: Response) => {
+router.delete('/installation', requireWorkspacePermission('integrations:manage'), async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
+  const workspaceId = String(req.workspace?.id || '');
 
   try {
-    const installation = await getInstallationForUser(userId);
+    const installation = await getInstallationForWorkspace(workspaceId) || await getInstallationForUser(userId);
     if (!installation) {
       return res.status(404).json({ error: 'No installation found' });
     }
 
     await removeInstallation(installation.installation_id);
+    await logWorkspaceActivity({
+      workspaceId,
+      userId,
+      type: 'integration.github.disconnected',
+      metadata: { installationId: installation.installation_id, accountLogin: installation.account_login },
+    });
     return res.json({ ok: true, message: 'Installation record removed. Uninstall the app from GitHub Settings to revoke access.' });
   } catch (err: any) {
     console.error('[GitHubApp] Remove installation error:', err?.message);

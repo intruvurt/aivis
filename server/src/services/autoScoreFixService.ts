@@ -16,7 +16,7 @@ import crypto from 'crypto';
 import { getPool, executeTransaction } from './postgresql.js';
 import { consumePackCredits } from './scanPackCredits.js';
 import { callAIProvider, SIGNAL_AI1 } from './aiProviders.js';
-import { isGitHubAppConfigured, getInstallationForUser, createPRViaApp } from './githubAppService.js';
+import { isGitHubAppConfigured, getInstallationForUser, getInstallationForWorkspace, createPRViaApp } from './githubAppService.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -708,7 +708,7 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
     if (!row.encrypted_token) {
       // For GitHub: try GitHub App installation before failing
       if (row.vcs_provider === 'github' && isGitHubAppConfigured()) {
-        const installation = await getInstallationForUser(row.user_id);
+        const installation = await getInstallationForWorkspace(String(row.workspace_id || '')) || await getInstallationForUser(row.user_id);
         if (installation) {
           // Use GitHub App to create PR
           const appResult = await createPRViaApp({
@@ -737,7 +737,7 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
       if (row.vcs_provider === 'github') {
         // Prefer GitHub App installation if available
         if (isGitHubAppConfigured()) {
-          const installation = await getInstallationForUser(row.user_id);
+          const installation = await getInstallationForWorkspace(String(row.workspace_id || '')) || await getInstallationForUser(row.user_id);
           if (installation) {
             const appResult = await createPRViaApp({
               installationId: installation.installation_id,

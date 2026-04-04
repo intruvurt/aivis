@@ -2685,6 +2685,7 @@ export async function runMigrations(): Promise<void> {
       CREATE TABLE IF NOT EXISTS github_app_installations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
+        workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
         installation_id INTEGER NOT NULL UNIQUE,
         account_login VARCHAR(255) NOT NULL,
         account_type VARCHAR(20) NOT NULL DEFAULT 'User',
@@ -2696,7 +2697,21 @@ export async function runMigrations(): Promise<void> {
       )
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_workspace ON github_app_installations(workspace_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS workspace_activity_log (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        type VARCHAR(80) NOT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_activity_ws ON workspace_activity_log(workspace_id, created_at DESC)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_activity_user ON workspace_activity_log(user_id, created_at DESC)`);
 
     // ── Audit score timeline (Level 4 – Visibility Timeline) ─────────────────
     _q(`

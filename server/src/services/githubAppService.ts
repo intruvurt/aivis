@@ -119,6 +119,7 @@ export async function getInstallationToken(installationId: number): Promise<stri
 export interface GitHubAppInstallation {
   id: string;
   user_id: string;
+  workspace_id?: string | null;
   installation_id: number;
   account_login: string;
   account_type: string; // 'User' | 'Organization'
@@ -133,6 +134,7 @@ export interface GitHubAppInstallation {
  */
 export async function saveInstallation(
   userId: string,
+  workspaceId: string | null,
   installationId: number,
   accountLogin: string,
   accountType: string,
@@ -142,18 +144,32 @@ export async function saveInstallation(
   const pool = getPool();
   await pool.query(
     `INSERT INTO github_app_installations
-       (user_id, installation_id, account_login, account_type, permissions, repo_selection, updated_at)
-     VALUES ($1, $2, $3, $4, $5, $6, NOW())
+       (user_id, workspace_id, installation_id, account_login, account_type, permissions, repo_selection, updated_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
      ON CONFLICT (installation_id) DO UPDATE
        SET user_id = $1,
-           account_login = $3,
-           account_type = $4,
-           permissions = $5,
-           repo_selection = $6,
+           workspace_id = COALESCE($2, github_app_installations.workspace_id),
+           account_login = $4,
+           account_type = $5,
+           permissions = $6,
+           repo_selection = $7,
            suspended_at = NULL,
            updated_at = NOW()`,
-    [userId, installationId, accountLogin, accountType, JSON.stringify(permissions), repoSelection]
+    [userId, workspaceId, installationId, accountLogin, accountType, JSON.stringify(permissions), repoSelection]
   );
+}
+
+export async function getInstallationForWorkspace(
+  workspaceId: string,
+): Promise<GitHubAppInstallation | null> {
+  const pool = getPool();
+  const { rows } = await pool.query(
+    `SELECT * FROM github_app_installations
+     WHERE workspace_id = $1 AND suspended_at IS NULL
+     ORDER BY updated_at DESC LIMIT 1`,
+    [workspaceId]
+  );
+  return rows[0] || null;
 }
 
 /**

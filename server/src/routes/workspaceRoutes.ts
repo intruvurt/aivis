@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { authRequired } from '../middleware/authRequired.js';
+import { workspaceRequired } from '../middleware/workspaceRequired.js';
+import { requireWorkspacePermission } from '../middleware/workspacePermission.js';
 import {
   addWorkspaceMember,
   createOrganizationWorkspace,
@@ -20,6 +22,7 @@ import { getUserByEmail } from '../models/User.js';
 import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier } from '../../../shared/types.js';
 import { sendWorkspaceInviteEmail } from '../services/emailService.js';
 import { getPool } from '../services/postgresql.js';
+import { listWorkspaceActivity, logWorkspaceActivity } from '../services/workspaceActivityService.js';
 
 const router = Router();
 
@@ -43,6 +46,7 @@ function getOwnerTierLimits(ownerTier: string) {
 }
 
 router.use(authRequired);
+router.use('/:workspaceId', workspaceRequired);
 
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -104,6 +108,7 @@ router.get('/:workspaceId/members', async (req: Request, res: Response) => {
 
 router.post(
   '/:workspaceId/members',
+  requireWorkspacePermission('team:manage'),
   [
     body('email').isEmail(),
     body('role').isIn(['admin', 'member', 'viewer']),
@@ -147,6 +152,12 @@ router.post(
       }
 
       const member = await addWorkspaceMember(workspaceId, actorUserId, target.id, role);
+      await logWorkspaceActivity({
+        workspaceId,
+        userId: actorUserId,
+        type: 'workspace.member_added',
+        metadata: { targetUserId: target.id, targetEmail: email, role },
+      });
       res.status(201).json({ success: true, data: member });
     } catch (err: any) {
       const msg = String(err?.message || '');
@@ -167,6 +178,7 @@ router.post(
 // Update member role
 router.patch(
   '/:workspaceId/members/:userId',
+  requireWorkspacePermission('team:manage'),
   [body('role').isIn(['admin', 'member', 'viewer'])],
   async (req: Request, res: Response) => {
     try {
@@ -176,6 +188,12 @@ router.patch(
       const role = req.body?.role as 'admin' | 'member' | 'viewer';
 
       const updated = await updateWorkspaceMemberRole(workspaceId, actorUserId, targetUserId, role);
+      await logWorkspaceActivity({
+        workspaceId,
+        userId: actorUserId,
+        type: 'workspace.member_role_updated',
+        metadata: { targetUserId, role },
+      });
       res.json({ success: true, data: updated });
     } catch (err: any) {
       const msg = String(err?.message || '');
@@ -194,13 +212,19 @@ router.patch(
 );
 
 // Remove member
-router.delete('/:workspaceId/members/:userId', async (req: Request, res: Response) => {
+router.delete('/:workspaceId/members/:userId', requireWorkspacePermission('team:manage'), async (req: Request, res: Response) => {
   try {
     const workspaceId = String(req.params.workspaceId || '');
     const targetUserId = String(req.params.userId || '');
     const actorUserId = String(req.user?.id || '');
 
     await removeWorkspaceMember(workspaceId, actorUserId, targetUserId);
+    await logWorkspaceActivity({
+      workspaceId,
+      userId: actorUserId,
+      type: 'workspace.member_removed',
+      metadata: { targetUserId },
+    });
     res.json({ success: true });
   } catch (err: any) {
     const msg = String(err?.message || '');
@@ -220,6 +244,7 @@ router.delete('/:workspaceId/members/:userId', async (req: Request, res: Respons
 // Rename workspace
 router.patch(
   '/:workspaceId',
+  requireWorkspacePermission('team:manage'),
   [body('name').isString().isLength({ min: 2, max: 120 })],
   async (req: Request, res: Response) => {
     try {
@@ -228,6 +253,12 @@ router.patch(
       const name = String(req.body?.name || '').trim();
 
       const updated = await renameWorkspace(workspaceId, actorUserId, name);
+      await logWorkspaceActivity({
+        workspaceId,
+        userId: actorUserId,
+        type: 'workspace.renamed',
+        metadata: { name },
+      });
       res.json({ success: true, data: updated });
     } catch (err: any) {
       const msg = String(err?.message || '');
@@ -242,6 +273,7 @@ router.patch(
 // Create invite
 router.post(
   '/:workspaceId/invites',
+  requireWorkspacePermission('team:manage'),
   [
     body('email').isEmail(),
     body('role').isIn(['admin', 'member', 'viewer']),
@@ -284,6 +316,12 @@ router.post(
       }
 
       const invite = await createWorkspaceInvite(workspaceId, actorUserId, email, role);
+      await logWorkspaceActivity({
+        workspaceId,
+        userId: actorUserId,
+        type: 'workspace.invite_created',
+        metadata: { email, role, inviteId: invite.id },
+      });
 
       // Send invite email (best-effort — don't fail the request if email fails)
       try {
@@ -329,13 +367,19 @@ router.post(
 );
 
 // Revoke invite
-router.delete('/:workspaceId/invites/:inviteId', async (req: Request, res: Response) => {
+router.delete('/:workspaceId/invites/:inviteId', requireWorkspacePermission('team:manage'), async (req: Request, res: Response) => {
   try {
     const workspaceId = String(req.params.workspaceId || '');
     const inviteId = String(req.params.inviteId || '');
     const actorUserId = String(req.user?.id || '');
 
     await revokeWorkspaceInvite(workspaceId, inviteId, actorUserId);
+    await logWorkspaceActivity({
+      workspaceId,
+      userId: actorUserId,
+      type: 'workspace.invite_revoked',
+      metadata: { inviteId },
+    });
     res.json({ success: true });
   } catch (err: any) {
     const msg = String(err?.message || '');
@@ -362,6 +406,31 @@ router.get('/:workspaceId/invites', async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: 'Access denied' });
     }
     internalServerError(res, 'Failed to list invites');
+  }
+});
+
+router.get('/:workspaceId/activity', async (req: Request, res: Response) => {
+  try {
+    const workspaceId = String(req.params.workspaceId || '');
+    const actorUserId = String(req.user?.id || '');
+    const members = await listWorkspaceMembers(workspaceId, actorUserId);
+    const userById = new Map(members.map((member: any) => [String(member.user_id), member]));
+    const limit = Number(req.query.limit || 25);
+    const activity = await listWorkspaceActivity(workspaceId, limit);
+
+    res.json({
+      success: true,
+      data: activity.map((entry) => ({
+        ...entry,
+        actor: entry.user_id ? userById.get(entry.user_id) || null : null,
+      })),
+    });
+  } catch (err: any) {
+    const msg = String(err?.message || '');
+    if (msg.includes('WORKSPACE_ACCESS_DENIED')) {
+      return res.status(403).json({ success: false, error: 'You do not have access to this workspace' });
+    }
+    internalServerError(res, 'Failed to load workspace activity');
   }
 });
 

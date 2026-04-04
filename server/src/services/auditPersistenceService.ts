@@ -2,6 +2,8 @@ import { getPool } from './postgresql.js';
 import { computeContentHash } from './securityAuditService.js';
 import { normalizeTrackedUrl } from '../utils/normalizeUrl.js';
 import { checkAuditMilestones, checkScoreImprovementMilestone } from './milestoneService.js';
+import { ensureWorkspaceProjectForUrl } from './workspaceProjectService.js';
+import { logWorkspaceActivity } from './workspaceActivityService.js';
 import type { ContradictionReport, GeoSignalProfile } from '../../../shared/types.js';
 
 function extractExecutionClass(result: Record<string, unknown>): string | null {
@@ -36,6 +38,7 @@ export async function persistAuditRecord(args: {
   const executionClass = extractExecutionClass(args.result);
   const geoSignalProfile = extractGeoSignalProfile(args.result);
   const contradictionReport = extractContradictionReport(args.result);
+  const projectId = args.workspaceId ? await ensureWorkspaceProjectForUrl(args.workspaceId, args.url) : null;
 
   // --- Step 1: Insert the audit row with content hash (CRITICAL — must not be blocked by snapshot logic) ---
   const contentHash = computeContentHash(args.result);
@@ -124,6 +127,18 @@ export async function persistAuditRecord(args: {
     console.warn('[persistAudit] Snapshot insert failed (non-fatal, audit row saved):', snapErr?.message);
   }
 
+  if (projectId) {
+    try {
+      await pool.query(
+        `INSERT INTO v1_audits (project_id, score, delta, status, created_at, updated_at)
+         VALUES ($1, $2, 0, 'completed', $3, $3)`,
+        [projectId, args.visibilityScore, createdAt.toISOString()]
+      );
+    } catch (v1Err: any) {
+      console.warn('[persistAudit] v1_audits mirror insert failed (non-fatal):', v1Err?.message);
+    }
+  }
+
   // --- Step 3: Check milestones in background (non-critical) ---
   try {
     checkAuditMilestones(args.userId).catch(() => {});
@@ -141,6 +156,25 @@ export async function persistAuditRecord(args: {
     }
   } catch {
     // Milestones are non-critical
+  }
+
+  if (args.workspaceId) {
+    try {
+      await logWorkspaceActivity({
+        workspaceId: args.workspaceId,
+        userId: args.userId,
+        type: 'audit.completed',
+        metadata: {
+          auditId,
+          projectId,
+          url: args.url,
+          visibilityScore: args.visibilityScore,
+          tierAtAnalysis: args.tierAtAnalysis || null,
+        },
+      });
+    } catch (activityErr: any) {
+      console.warn('[persistAudit] workspace activity insert failed (non-fatal):', activityErr?.message);
+    }
   }
 
   return auditId;

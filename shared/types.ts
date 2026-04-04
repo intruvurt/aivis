@@ -475,7 +475,21 @@ export interface SchemaMarkup {
   has_faq_schema: boolean;
   schema_types: string[];
   validation_errors?: string[];
-  schema_score?: number;
+  schema_score?: {
+    total: number;
+    validity: { score: number; max: number; details: string[] };
+    typeCoverage: { score: number; max: number; details: string[] };
+    propertyCompleteness: { score: number; max: number; details: string[] };
+    entityGraph: { score: number; max: number; details: string[] };
+    contentAlignment: { score: number; max: number; details: string[] };
+    advancedVocabulary: { score: number; max: number; details: string[] };
+    relationshipDepth: { score: number; max: number; details: string[] };
+    bestPractices: { score: number; max: number; details: string[] };
+    evidenceSummary: string[];
+    declaredIds: string[];
+    crossReferences: string[];
+    issues: string[];
+  };
 }
 
 export interface CitationStrength {

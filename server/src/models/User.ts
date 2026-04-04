@@ -83,6 +83,11 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return result.rows[0] || null;
 }
 
+export async function getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | null> {
+  const result = await pool.query(`SELECT * FROM users WHERE stripe_customer_id = $1`, [stripeCustomerId]);
+  return result.rows[0] || null;
+}
+
 export async function getUserByVerificationToken(token: string): Promise<User | null> {
   const result = await pool.query(
     `SELECT * FROM users WHERE verification_token = $1 AND verification_token_expires > NOW()`,

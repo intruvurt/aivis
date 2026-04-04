@@ -2156,32 +2156,50 @@ const DEPLOY_VERSION = '2026-03-19_credit-gate-fix';
 
 app.get('/api/health', async (_req, res) => {
   let dbOk = false;
+  let dbError: string | null = null;
   try {
     const pool = getPool();
     await pool.query('SELECT 1');
     dbOk = true;
-  } catch {
-    /* leave dbOk false */
+  } catch (error: any) {
+    dbError = error?.message || 'Database check failed';
   }
 
   const pythonOk = await isPythonServiceAvailable();
 
   const status = dbOk ? 'healthy' : 'degraded';
-  res.status(dbOk ? 200 : 503).json({
-    success: dbOk,
+  res.status(200).json({
+    success: true,
     status,
+    ready: dbOk,
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
     version: '1.0.0',
     deploy: DEPLOY_VERSION,
     uptime: process.uptime(),
     db: dbOk ? 'connected' : 'unreachable',
+    db_error: dbOk ? null : dbError,
     python_deep_analysis: pythonOk ? 'connected' : 'unavailable',
     memory: {
       used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
       total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
     },
   });
+});
+
+app.get('/api/ready', async (_req, res) => {
+  try {
+    const pool = getPool();
+    await pool.query('SELECT 1');
+    return res.status(200).json({ success: true, status: 'ready', timestamp: new Date().toISOString() });
+  } catch (error: any) {
+    return res.status(503).json({
+      success: false,
+      status: 'not_ready',
+      error: error?.message || 'Database check failed',
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // ── Public benchmark aggregates (anonymised, no auth) ─────────────────────
@@ -2330,12 +2348,6 @@ app.get('/api/compliance/status', (_req, res) => {
         controls_monitored: 0,
         valid_until: null,
         auditor: null,
-      },
-      vanta: {
-        enabled: false,
-        monitoring_status: 'not_configured',
-        last_sync: null,
-        controls_monitored: 0,
       },
       drata: {
         enabled: false,
@@ -8732,7 +8744,7 @@ Return ONLY valid JSON:
               const pyAvailable = await isPythonServiceAvailable();
               if (!pyAvailable) return;
 
-              const scrapedText = scraped.data?.bodyText || scraped.data?.rawHtml || '';
+              const scrapedText = scraped.data?.body || scraped.data?.html || '';
               const scrapedHeadings = [
                 ...(scraped.data?.headings?.h1 || []),
                 ...(scraped.data?.headings?.h2 || []),
@@ -8746,7 +8758,7 @@ Return ONLY valid JSON:
                 title: scraped.data?.title || '',
                 meta_description: scraped.data?.meta?.description || '',
                 headings: scrapedHeadings,
-                json_ld_blocks: scraped.data?.structuredData?.jsonLdBlocks?.map((b: any) => typeof b === 'string' ? b : JSON.stringify(b)) || [],
+                json_ld_blocks: scraped.data?.structuredData?.raw?.map((block: any) => typeof block === 'string' ? block : JSON.stringify(block)) || [],
               });
 
               if (deepResult) {

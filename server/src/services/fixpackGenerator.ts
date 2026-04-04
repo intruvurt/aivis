@@ -15,6 +15,13 @@ import type {
   SSFRRuleSeverity,
 } from '../../../shared/types.js';
 
+const SEVERITY_PRIORITY: Record<SSFRRuleSeverity, number> = {
+  critical: 1,
+  high: 2,
+  medium: 3,
+  low: 4,
+};
+
 // ─── Fixpack template registry ──────────────────────────────────────────────
 
 interface FixpackTemplate {
@@ -554,7 +561,7 @@ export function generateFixpacks(
       type: template.type,
       title: template.title,
       summary: template.summary,
-      priority: rule.severity,
+      priority: SEVERITY_PRIORITY[rule.severity] ?? 3,
       assets,
       auto_generatable: template.auto_generatable,
       verification_status: 'pending',

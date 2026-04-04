@@ -2,7 +2,7 @@
  * Scoring Engine - Calculate category and overall scores based on evidence
  */
 
-export const calculateScores = (allEvidence, discoveryData, technicalData, contentData) => {
+export const calculateScores = (allEvidence: any[], discoveryData: any, technicalData: any, contentData: any) => {
   const scores = {
     crawlability: 0,
     indexability: 0,
@@ -101,13 +101,13 @@ export const calculateScores = (allEvidence, discoveryData, technicalData, conte
   return scores;
 };
 
-export const determineVisibilityStatus = (overallScore) => {
+export const determineVisibilityStatus = (overallScore: number) => {
   if (overallScore >= 75) return "visible";
   if (overallScore >= 50) return "partially-visible";
   return "invisible";
 };
 
-export const generateRisks = (scores, technicalData, contentData) => {
+export const generateRisks = (scores: Record<string, number>, technicalData: any, contentData: any) => {
   const risks = [];
 
   if (scores.crawlability < 50) {
@@ -167,7 +167,7 @@ export const generateRisks = (scores, technicalData, contentData) => {
   return risks;
 };
 
-export const generateRecommendations = (scores, risks) => {
+export const generateRecommendations = (scores: Record<string, number>, risks: any[]) => {
   const recommendations = [];
 
   // Priority recommendations based on lowest scores

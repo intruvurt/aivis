@@ -10,8 +10,17 @@ import { buildEvidence } from "./evidence.ts";
  * Main Forensic Web Analysis Pipeline
  * Orchestrates all 8 stages and produces comprehensive audit report
  */
-export const runForensicPipeline = async (inputUrl) => {
-  const pipelineResult = {
+export const runForensicPipeline = async (inputUrl: string) => {
+  const pipelineResult: {
+    success: boolean;
+    stages: Record<string, any>;
+    allEvidence: any[];
+    scores: Record<string, number>;
+    risks: any[];
+    recommendations: any[];
+    errors: any[];
+    visibilityStatus?: string;
+  } = {
     success: false,
     stages: {},
     allEvidence: [],
@@ -99,7 +108,7 @@ export const runForensicPipeline = async (inputUrl) => {
 
     pipelineResult.success = true;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Pipeline error:", error);
     pipelineResult.errors.push(`Pipeline execution error: ${error.message}`);
     pipelineResult.allEvidence.push(buildEvidence({

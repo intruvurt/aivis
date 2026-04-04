@@ -3,7 +3,7 @@ import { buildEvidence } from "./evidence.js";
 /**
  * Stage 6: Content Clarity - Assess content structure and clarity
  */
-export const analyzeContentClarity = (extractedData, url) => {
+export const analyzeContentClarity = (extractedData: any, url: string) => {
   const evidence = [];
   const contentData = {
     wordCount: extractedData.wordCount,

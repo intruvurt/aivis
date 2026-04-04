@@ -609,6 +609,24 @@ export interface TripleCheckSummary {
 
 /* ========================= Core analysis response ========================= */
 
+export interface RecommendationEvidenceSummary {
+  evidence_coverage_percent: number;
+  evidence_ref_integrity_percent: number;
+}
+
+export interface GeoSignalProfile {
+  source_verified: boolean;
+  signal_consistent: boolean;
+  fact_unique: boolean;
+  relationship_anchored: boolean;
+  information_gain: string;
+}
+
+export interface ContradictionReport {
+  status: string;
+  blocker_count: number;
+}
+
 export interface AnalysisResponse {
   visibility_score: number;
 
@@ -664,11 +682,11 @@ export interface AnalysisResponse {
   /** Audit ID for linking to stored audits */
   audit_id?: string;
   /** AI recommendation evidence summary */
-  recommendation_evidence_summary?: unknown;
+  recommendation_evidence_summary?: RecommendationEvidenceSummary;
   /** Geo-adaptive signal profile */
-  geo_signal_profile?: unknown;
+  geo_signal_profile?: GeoSignalProfile;
   /** Contradiction report from multi-model analysis */
-  contradiction_report?: unknown;
+  contradiction_report?: ContradictionReport;
   /** Threat intelligence from security scan */
   threat_intel?: { risk_level?: string; [key: string]: unknown };
 }

@@ -67,6 +67,26 @@ export const ENTITLEMENTS: Readonly<Record<Plan, PlanEntitlements>> = {
     alerts: true,
     fixVerification: true,
   },
+  agency: {
+    auditsMonthly: 500,
+    pagesPerAudit: 50,
+    fullEvidence: true,
+    competitorTracking: true,
+    citationTracking: true,
+    history: true,
+    alerts: true,
+    fixVerification: true,
+  },
+  enterprise: {
+    auditsMonthly: 2000,
+    pagesPerAudit: 100,
+    fullEvidence: true,
+    competitorTracking: true,
+    citationTracking: true,
+    history: true,
+    alerts: true,
+    fixVerification: true,
+  },
 };
 
 export function normalizePlan(plan: CanonicalTier | LegacyTier): Plan {
@@ -76,4 +96,4 @@ export function normalizePlan(plan: CanonicalTier | LegacyTier): Plan {
 export function canAccess(feature: EntitlementKey, plan: CanonicalTier | LegacyTier): AccessLevel {
   const normalized = normalizePlan(plan);
   return ENTITLEMENTS[normalized][feature];
-}
+}

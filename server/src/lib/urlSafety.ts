@@ -1,4 +1,4 @@
-type NormalizePublicUrlResult =
+export type NormalizePublicUrlResult =
   | { ok: true; url: string; hostname: string }
   | { ok: false; error: string };
 

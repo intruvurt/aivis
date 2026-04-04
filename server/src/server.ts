@@ -838,10 +838,16 @@ if (!process.env.STRIPE_WEBHOOK_SECRET?.trim()) {
 }
 
 const normalizeOrigin = (origin: string): string => {
-  let s = String(origin || '').trim().toLowerCase();
-  // Aggressively strip every trailing slash — regex alone failed in production
-  while (s.endsWith('/')) s = s.slice(0, -1);
-  return s;
+  const raw = String(origin || '').trim();
+  if (!raw) return '';
+
+  try {
+    return new URL(raw).origin.toLowerCase();
+  } catch {
+    let normalized = raw.toLowerCase();
+    while (normalized.endsWith('/')) normalized = normalized.slice(0, -1);
+    return normalized;
+  }
 };
 
 const ALLOWED_ORIGINS = [

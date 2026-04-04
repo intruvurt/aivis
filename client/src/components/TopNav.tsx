@@ -300,6 +300,7 @@ export default function TopNav() {
   const navActiveClass = `${tierTheme.navActive}`;
   const navInactiveClass = `text-white/65 ${tierTheme.navHover}`;
   const menuPanelClass = `bg-charcoal-deep border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
+  const dropdownScrollClass = "max-h-[min(70vh,calc(100vh-5.5rem))] overflow-y-auto overscroll-contain";
 
   const isToolLocked = useCallback(
     (link: ToolLink) => !meetsMinimumTier(tierKey, link.minTier),
@@ -361,7 +362,7 @@ export default function TopNav() {
             </button>
             <div className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${researchOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
               <div className={`w-72 ${menuPanelClass}`}>
-                <div className="p-1.5">
+                <div className={`p-1.5 ${dropdownScrollClass}`}>
                   {RESEARCH_GROUPS.map((group, gi) => (
                     <div key={group.heading}>
                       {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
@@ -404,7 +405,7 @@ export default function TopNav() {
             </button>
             <div className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${aiToolsOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
               <div className={`w-72 ${menuPanelClass}`}>
-                <div className="p-1.5">
+                <div className={`p-1.5 ${dropdownScrollClass}`}>
                   {AI_TOOL_GROUPS.map((group, gi) => (
                     <div key={group.heading}>
                       {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
@@ -447,7 +448,7 @@ export default function TopNav() {
             </button>
             <div className={`absolute right-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${docsOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
               <div className={`w-56 ${menuPanelClass}`}>
-                <div className="p-1.5">
+                <div className={`p-1.5 ${dropdownScrollClass}`}>
                   {DOCS_LINKS.map((link) => {
                     const Icon = link.icon;
                     const isActive = location.pathname === link.to;

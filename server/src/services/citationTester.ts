@@ -1,7 +1,7 @@
 import { callAIProvider } from './aiProviders.js';
 import type { AICitationResult, WebSearchPresenceResult } from '../../../shared/types.js';
 import { modelShortName } from './citationRankingEngine.js';
-import { checkWebSearchPresence, checkBingSearchPresence, checkBraveSearchPresence } from './webSearch.js';
+import { checkWebSearchPresence, checkBingSearchPresence, checkBraveSearchPresence, checkYahooSearchPresence } from './webSearch.js';
 import { checkDDGPresence } from './duckDuckGoSearch.js';
 import { checkWikipediaPresence } from './wikipediaSearch.js';
 
@@ -48,6 +48,8 @@ export interface CitationTestResult {
   brave_search?: WebSearchPresenceResult;
   /** Wikipedia presence verification — always runs, free, no key */
   wikipedia_search?: WebSearchPresenceResult;
+  /** Yahoo web search verification — always runs, free, no key */
+  yahoo_search?: WebSearchPresenceResult;
 }
 
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
@@ -614,6 +616,12 @@ export async function testQueryCitations(
       return null;
     });
 
+  const yahooPromise = checkYahooSearchPresence(config.query, config.brandName, config.url, competitorUrls)
+    .catch((error: unknown) => {
+      console.warn(`[CitationTester] Yahoo Web Search failed: ${toErrorMessage(error)}`);
+      return null;
+    });
+
   for (const platform of platforms) {
     try {
       const result = await testSinglePlatform(
@@ -641,7 +649,14 @@ export async function testQueryCitations(
     }
   }
 
-  const [webSearchResult, bingResult, ddgResult, braveResult, wikiResult] = await Promise.all([webSearchPromise, bingPromise, ddgPromise, bravePromise, wikiPromise]);
+  const [webSearchResult, bingResult, ddgResult, braveResult, wikiResult, yahooResult] = await Promise.all([
+    webSearchPromise,
+    bingPromise,
+    ddgPromise,
+    bravePromise,
+    wikiPromise,
+    yahooPromise,
+  ]);
 
   return {
     query: config.query,
@@ -652,6 +667,7 @@ export async function testQueryCitations(
     ddg_search: ddgResult ?? undefined,
     brave_search: braveResult ?? undefined,
     wikipedia_search: wikiResult ?? undefined,
+    yahoo_search: yahooResult ?? undefined,
   };
 }
 
@@ -834,6 +850,10 @@ export function calculateCitationSummary(results: CitationTestResult[]): {
   ddg_avg_position?: number;
   wikipedia_found_rate?: number;
   wikipedia_avg_position?: number;
+  brave_found_rate?: number;
+  brave_avg_position?: number;
+  yahoo_found_rate?: number;
+  yahoo_avg_position?: number;
 } {
   const allResults = results.flatMap((result) => result.results);
   const mentioned = allResults.filter((result) => result.mentioned);
@@ -855,12 +875,20 @@ export function calculateCitationSummary(results: CitationTestResult[]): {
   const wikiResults = results.map((result) => (result as any).wikipedia_search).filter(isPresent);
   const wikiFound = wikiResults.filter((result: any) => result.found);
 
+  const braveResults = results.map((result) => result.brave_search).filter(isPresent);
+  const braveFound = braveResults.filter((result) => result.found);
+
+  const yahooResults = results.map((result) => result.yahoo_search).filter(isPresent);
+  const yahooFound = yahooResults.filter((result) => result.found);
+
   const mentionRate = allResults.length > 0 ? (mentioned.length / allResults.length) * 100 : 0;
   const avgPosition = average(mentioned.map((result) => result.position));
   const webSearchAvgPos = average(webSearchFound.map((result) => result.position));
   const bingAvgPos = average(bingFound.map((result) => result.position));
   const ddgAvgPos = average(ddgFound.map((result) => result.position));
   const wikiAvgPos = average(wikiFound.map((result: any) => result.position));
+  const braveAvgPos = average(braveFound.map((result) => result.position));
+  const yahooAvgPos = average(yahooFound.map((result) => result.position));
 
   return {
     total_queries: results.length,
@@ -890,6 +918,18 @@ export function calculateCitationSummary(results: CitationTestResult[]): {
     }),
     ...(wikiFound.length > 0 && {
       wikipedia_avg_position: Math.round(wikiAvgPos * 10) / 10,
+    }),
+    ...(braveResults.length > 0 && {
+      brave_found_rate: Math.round((braveFound.length / braveResults.length) * 1000) / 10,
+    }),
+    ...(braveFound.length > 0 && {
+      brave_avg_position: Math.round(braveAvgPos * 10) / 10,
+    }),
+    ...(yahooResults.length > 0 && {
+      yahoo_found_rate: Math.round((yahooFound.length / yahooResults.length) * 1000) / 10,
+    }),
+    ...(yahooFound.length > 0 && {
+      yahoo_avg_position: Math.round(yahooAvgPos * 10) / 10,
     }),
   };
 }

@@ -115,7 +115,7 @@ function resolvePublicShareUrl(sharePath?: string, token?: string): string {
       : PUBLIC_APP_ORIGIN
     ).replace(/\/$/, "");
 
-  const fallbackPath = token ? `/report/public/${token}` : "/report/public";
+  const fallbackPath = token ? `/report/public/${token}` : "/reports/public";
   const rawPath = String(sharePath || fallbackPath).trim();
   if (/^https?:\/\//i.test(rawPath)) return rawPath;
   const normalizedPath = rawPath.startsWith("/") ? rawPath : `/${rawPath}`;
@@ -1225,6 +1225,7 @@ export default function ReportsPage() {
 
       type SharePayload = {
         token?: string;
+        slug?: string;
         share_path?: string;
         expires_at?: string;
         scan_label?: string;

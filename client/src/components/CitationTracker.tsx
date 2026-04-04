@@ -179,12 +179,13 @@ function WebSearchCard({ data }: { data: WebSearchPresenceResult }) {
   const isInstant = data.source === 'ddg_instant';
   const isBrave = data.source === 'brave_web';
   const isWikipedia = data.source === 'wikipedia_web';
-  const accentBg = isWikipedia ? 'bg-violet-500/10' : isInstant ? 'bg-emerald-500/10' : isBing ? 'bg-blue-500/10' : isBrave ? 'bg-orange-500/10' : 'bg-cyan-500/10';
-  const accentIcon = isWikipedia ? 'text-violet-400' : isInstant ? 'text-emerald-400' : isBing ? 'text-blue-400' : isBrave ? 'text-orange-400' : 'text-cyan-400';
-  const accentText = isWikipedia ? 'text-violet-300/90' : isInstant ? 'text-emerald-300/90' : isBing ? 'text-blue-300/90' : isBrave ? 'text-orange-300/90' : 'text-cyan-300/90';
-  const accentBadgeBg = isWikipedia ? 'bg-violet-500/20' : isInstant ? 'bg-emerald-500/20' : isBing ? 'bg-blue-500/20' : isBrave ? 'bg-orange-500/20' : 'bg-cyan-500/20';
-  const accentBadgeText = isWikipedia ? 'text-violet-400' : isInstant ? 'text-emerald-400' : isBing ? 'text-blue-400' : isBrave ? 'text-orange-400' : 'text-cyan-400';
-  const label = isWikipedia ? 'Wikipedia' : isInstant ? 'DuckDuckGo Instant' : isBing ? 'Bing' : isBrave ? 'Brave' : 'DuckDuckGo Web';
+  const isYahoo = data.source === 'yahoo_web';
+  const accentBg = isWikipedia ? 'bg-violet-500/10' : isInstant ? 'bg-emerald-500/10' : isBing ? 'bg-blue-500/10' : isBrave ? 'bg-orange-500/10' : isYahoo ? 'bg-fuchsia-500/10' : 'bg-cyan-500/10';
+  const accentIcon = isWikipedia ? 'text-violet-400' : isInstant ? 'text-emerald-400' : isBing ? 'text-blue-400' : isBrave ? 'text-orange-400' : isYahoo ? 'text-fuchsia-400' : 'text-cyan-400';
+  const accentText = isWikipedia ? 'text-violet-300/90' : isInstant ? 'text-emerald-300/90' : isBing ? 'text-blue-300/90' : isBrave ? 'text-orange-300/90' : isYahoo ? 'text-fuchsia-300/90' : 'text-cyan-300/90';
+  const accentBadgeBg = isWikipedia ? 'bg-violet-500/20' : isInstant ? 'bg-emerald-500/20' : isBing ? 'bg-blue-500/20' : isBrave ? 'bg-orange-500/20' : isYahoo ? 'bg-fuchsia-500/20' : 'bg-cyan-500/20';
+  const accentBadgeText = isWikipedia ? 'text-violet-400' : isInstant ? 'text-emerald-400' : isBing ? 'text-blue-400' : isBrave ? 'text-orange-400' : isYahoo ? 'text-fuchsia-400' : 'text-cyan-400';
+  const label = isWikipedia ? 'Wikipedia' : isInstant ? 'DuckDuckGo Instant' : isBing ? 'Bing' : isBrave ? 'Brave' : isYahoo ? 'Yahoo' : 'DuckDuckGo Web';
 
   return (
     <div className="rounded-lg border border-white/10 bg-charcoal transition-all">
@@ -294,9 +295,10 @@ interface QueryResultsProps {
   ddgSearch?: WebSearchPresenceResult;
   braveSearch?: WebSearchPresenceResult;
   wikipediaSearch?: WebSearchPresenceResult;
+  yahooSearch?: WebSearchPresenceResult;
 }
 
-function QueryResults({ query, results, webSearch, bingSearch, ddgSearch, braveSearch, wikipediaSearch }: QueryResultsProps) {
+function QueryResults({ query, results, webSearch, bingSearch, ddgSearch, braveSearch, wikipediaSearch, yahooSearch }: QueryResultsProps) {
   const [expanded, setExpanded] = useState(false);
   const mentionCount = results.filter(r => r.mentioned).length;
   const totalPlatforms = results.length;
@@ -349,6 +351,7 @@ function QueryResults({ query, results, webSearch, bingSearch, ddgSearch, braveS
           {ddgSearch && <WebSearchCard data={ddgSearch} />}
           {braveSearch && <WebSearchCard data={braveSearch} />}
           {wikipediaSearch && <WebSearchCard data={wikipediaSearch} />}
+          {yahooSearch && <WebSearchCard data={yahooSearch} />}
           {results.map((result, i) => (
             <CitationResultCard key={i} result={result} />
           ))}
@@ -432,6 +435,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
   const [ddgSearchByQuery, setDdgSearchByQuery] = useState<Record<string, WebSearchPresenceResult> | null>(null);
   const [braveSearchByQuery, setBraveSearchByQuery] = useState<Record<string, WebSearchPresenceResult> | null>(null);
   const [wikipediaSearchByQuery, setWikipediaSearchByQuery] = useState<Record<string, WebSearchPresenceResult> | null>(null);
+  const [yahooSearchByQuery, setYahooSearchByQuery] = useState<Record<string, WebSearchPresenceResult> | null>(null);
   const [authorityLoading, setAuthorityLoading] = useState(false);
   const [authorityTarget, setAuthorityTarget] = useState(url || '');
   const [authorityReport, setAuthorityReport] = useState<AuthorityCheckResponse | null>(null);
@@ -558,6 +562,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
             setDdgSearchByQuery(data.test.ddg_search_by_query || null);
             setBraveSearchByQuery(data.test.brave_search_by_query || null);
             setWikipediaSearchByQuery(data.test.wikipedia_search_by_query || null);
+            setYahooSearchByQuery(data.test.yahoo_search_by_query || null);
             setLoading(false);
           } else if (data.test.status === 'failed') {
             setError('Citation test failed');
@@ -773,6 +778,18 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
     }
     if (testSummary.ddg_avg_position > 0) {
       lines.push(`DuckDuckGo avg position: #${testSummary.ddg_avg_position.toFixed(1)}`);
+    }
+    if (testSummary.brave_found_rate != null) {
+      lines.push(`Brave found rate: ${testSummary.brave_found_rate}%`);
+    }
+    if (testSummary.brave_avg_position > 0) {
+      lines.push(`Brave avg position: #${testSummary.brave_avg_position.toFixed(1)}`);
+    }
+    if (testSummary.yahoo_found_rate != null) {
+      lines.push(`Yahoo found rate: ${testSummary.yahoo_found_rate}%`);
+    }
+    if (testSummary.yahoo_avg_position > 0) {
+      lines.push(`Yahoo avg position: #${testSummary.yahoo_avg_position.toFixed(1)}`);
     }
     const text = lines.join('\n');
 
@@ -1157,7 +1174,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
               <span className="text-white/80 font-medium">AI platform simulation</span> — Each query is routed through proxy LLMs (via OpenRouter) configured to mimic ChatGPT, Perplexity, Claude, and Google AI response patterns. These are behavioral simulations, not direct API calls to those platforms.
             </p>
             <p>
-              <span className="text-white/80 font-medium">Web search verification</span> — Brand presence is cross-checked against real search results using DuckDuckGo HTML search, Bing web search, and DuckDuckGo Instant Answer API for ground-truth validation.
+              <span className="text-white/80 font-medium">Web search verification</span> — Brand presence is cross-checked against real search results using DuckDuckGo HTML, Bing, Brave, Yahoo, DuckDuckGo Instant, and locale-aware Wikipedia for ground-truth validation.
             </p>
             <p>
               <span className="text-white/80 font-medium">Google Gemini direct</span> — When available, Google AI tests use the Gemini API directly for higher-fidelity results.
@@ -1435,6 +1452,48 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
               </div>
             </div>
           )}
+          {(testSummary.brave_found_rate != null || testSummary.brave_avg_position != null) && (
+            <div className="rounded-xl border border-orange-500/20 bg-charcoal-deep p-4 mt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="w-3.5 h-3.5 text-orange-400" />
+                <p className="text-xs text-orange-400/80 font-semibold uppercase tracking-wide">Brave</p>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-bold uppercase tracking-wider">Free</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-white/55 mb-1">Found Rate</p>
+                  <p className="text-xl font-bold text-orange-300">{testSummary.brave_found_rate}%</p>
+                </div>
+                {testSummary.brave_avg_position > 0 && (
+                  <div>
+                    <p className="text-xs text-white/55 mb-1">Avg Position</p>
+                    <p className="text-xl font-bold text-orange-300">#{testSummary.brave_avg_position.toFixed(1)}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {(testSummary.yahoo_found_rate != null || testSummary.yahoo_avg_position != null) && (
+            <div className="rounded-xl border border-fuchsia-500/20 bg-charcoal-deep p-4 mt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="w-3.5 h-3.5 text-fuchsia-400" />
+                <p className="text-xs text-fuchsia-400/80 font-semibold uppercase tracking-wide">Yahoo</p>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-bold uppercase tracking-wider">Free</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-white/55 mb-1">Found Rate</p>
+                  <p className="text-xl font-bold text-fuchsia-300">{testSummary.yahoo_found_rate}%</p>
+                </div>
+                {testSummary.yahoo_avg_position > 0 && (
+                  <div>
+                    <p className="text-xs text-white/55 mb-1">Avg Position</p>
+                    <p className="text-xl font-bold text-fuchsia-300">#{testSummary.yahoo_avg_position.toFixed(1)}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1468,7 +1527,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
       {groupedResults.length > 0 && (
         <div className="space-y-3">
           {groupedResults.map((group, i) => (
-            <QueryResults key={i} query={group.query} results={group.results} webSearch={webSearchByQuery?.[group.query]} bingSearch={bingSearchByQuery?.[group.query]} ddgSearch={ddgSearchByQuery?.[group.query]} braveSearch={braveSearchByQuery?.[group.query]} wikipediaSearch={wikipediaSearchByQuery?.[group.query]} />
+            <QueryResults key={i} query={group.query} results={group.results} webSearch={webSearchByQuery?.[group.query]} bingSearch={bingSearchByQuery?.[group.query]} ddgSearch={ddgSearchByQuery?.[group.query]} braveSearch={braveSearchByQuery?.[group.query]} wikipediaSearch={wikipediaSearchByQuery?.[group.query]} yahooSearch={yahooSearchByQuery?.[group.query]} />
           ))}
         </div>
       )}

@@ -211,8 +211,9 @@ export default function App() {
             <Route path="/geo-ai-ranking-2026" element={<GeoAIRanking2026 />} />
             <Route path="/conversational-query-playbook-2026" element={<ConversationalQueryPlaybook2026 />} />
             <Route path="/voice-search-ai-answer-optimization-2026" element={<VoiceSearchAIAnswerOptimization2026 />} />
-            <Route path="/report/public/:token" element={<PublicReportPage />} />
-            <Route path="/report/:token" element={<PublicReportPage />} />
+            <Route path="/reports/public/:shareId" element={<PublicReportPage />} />
+            <Route path="/report/public/:shareId" element={<PublicReportPage />} />
+            <Route path="/report/:shareId" element={<PublicReportPage />} />
             <Route path="/payment-success" element={<PaymentSuccessPage />} />
             <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
             <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />

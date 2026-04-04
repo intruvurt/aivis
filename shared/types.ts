@@ -876,7 +876,7 @@ export interface WebSearchPresenceResult {
   matching_results: WebSearchResultEntry[];
   competitor_urls_found: string[];
   top_results: WebSearchResultEntry[];
-  source: 'ddg_web' | 'bing_web' | 'ddg_instant' | 'brave_web' | 'wikipedia_web';
+  source: 'ddg_web' | 'bing_web' | 'ddg_instant' | 'brave_web' | 'wikipedia_web' | 'yahoo_web';
 }
 
 /* ========================= Competitor intelligence ========================= */

@@ -1,4 +1,6 @@
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
+import type { SearchLocaleProfile } from './searchLocale.js';
+import { inferSearchLocaleProfile } from './searchLocale.js';
 
 interface WikiOpenSearchResponse {
   0: string;
@@ -20,12 +22,13 @@ export async function checkWikipediaPresence(
   brandName: string,
   targetUrl: string,
   competitorUrls: string[] = [],
+  localeProfile: SearchLocaleProfile = inferSearchLocaleProfile(targetUrl),
 ): Promise<WebSearchPresenceResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12_000);
 
   try {
-    const endpoint = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json`;
+    const endpoint = `https://${localeProfile.wikipediaLanguage}.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json`;
     const res = await fetch(endpoint, {
       method: 'GET',
       headers: {

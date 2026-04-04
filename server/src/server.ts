@@ -20,7 +20,7 @@ import * as cheerio from 'cheerio';
 import mammoth from 'mammoth';
 import { PDFParse } from 'pdf-parse';
 import Tesseract from 'tesseract.js';
-import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual } from 'crypto';
+import { timingSafeEqual } from 'crypto';
 import cors from 'cors';
 import helmet from 'helmet';
 import validator from 'validator';
@@ -106,6 +106,7 @@ import { installConsoleRedaction, redactSensitive } from './lib/safeLogging.js';
 import { logInvalidApiKey, logInvalidUpload, logInsufficientTier, logMalformedPayload, logPrivateHostAttempt } from './lib/securityEventLogger.js';
 import { enforceEffectiveTier, getAllowlistedElevatedEmails } from './services/entitlementGuard.js';
 import { applySecurityMiddleware, analyzeRequestSchema } from './middleware/securityMiddleware.js';
+import { createOrRefreshPublicReportLink, resolvePublicReportReference } from './services/publicReportLinks.js';
 import trialRoutes from './routes/trialRoutes.js';
 import indexingRoutes from './routes/indexingRoutes.js';
 import openApiSpec from './routes/openApiSpec.js';
@@ -162,7 +163,6 @@ const app = express();
 app.disable('x-powered-by');
 applySecurityMiddleware(app);
 const PORT = Number(process.env.PORT) || 10000;
-const PUBLIC_REPORT_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 const PUBLIC_REPORT_SIGNING_SECRET = process.env.PUBLIC_REPORT_SIGNING_SECRET || process.env.JWT_SECRET || '';
 if (!PUBLIC_REPORT_SIGNING_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('PUBLIC_REPORT_SIGNING_SECRET or JWT_SECRET must be set in production');
@@ -171,29 +171,6 @@ const ANALYZE_REENTRANCY_GUARD_ENABLED = String(process.env.ANALYZE_REENTRANCY_G
 const ANALYZE_LOCK_TTL_MS = Number(process.env.ANALYZE_LOCK_TTL_MS || 120_000);
 const STRICT_LIVE_SOFT_FAIL_ENABLED = String(process.env.STRICT_LIVE_SOFT_FAIL_ENABLED ?? 'true').toLowerCase() !== 'false';
 const inflightAnalyzeLocks = new Map<string, number>();
-
-function normalizeShareLinkExpirationDays(value: unknown): number {
-  const numeric = typeof value === 'number' ? value : Number(value);
-  if (numeric === 0 || numeric === 7 || numeric === 14 || numeric === 30 || numeric === 90) return numeric;
-  return 30;
-}
-
-async function getShareLinkExpirationDaysPreference(userId: string): Promise<number> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `SELECT share_link_expiration_days
-     FROM user_notification_preferences
-     WHERE user_id = $1
-     LIMIT 1`,
-    [userId]
-  );
-  return normalizeShareLinkExpirationDays(rows[0]?.share_link_expiration_days);
-}
-
-type PublicReportTokenPayload = {
-  auditId: string;
-  exp: number;
-};
 
 function getGaClientIdFromRequest(req: Request): string {
   const fromHeader = String(req.headers['x-ga-client-id'] || '').trim();
@@ -566,73 +543,6 @@ const DETERMINISTIC_CATEGORY_LABELS = new Set([
   'Technical SEO',
 ]);
 
-function base64UrlEncode(input: string): string {
-  return Buffer.from(input, 'utf8').toString('base64url');
-}
-
-function base64UrlDecode(input: string): string {
-  return Buffer.from(input, 'base64url').toString('utf8');
-}
-
-function getPublicReportCipherKey(): Buffer {
-  return createHash('sha256').update(PUBLIC_REPORT_SIGNING_SECRET).digest();
-}
-
-function signPublicReportToken(payload: PublicReportTokenPayload): string {
-  const iv = randomBytes(12);
-  const key = getPublicReportCipherKey();
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
-  const plaintext = JSON.stringify(payload);
-  const ciphertext = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
-  return Buffer.concat([iv, tag, ciphertext]).toString('base64url');
-}
-
-function verifyLegacyPublicReportToken(token: string): PublicReportTokenPayload | null {
-  const [payloadPart, signaturePart] = token.split('.');
-  if (!payloadPart || !signaturePart) return null;
-
-  const expectedSig = createHmac('sha256', PUBLIC_REPORT_SIGNING_SECRET).update(payloadPart).digest('base64url');
-  const a = Buffer.from(signaturePart);
-  const b = Buffer.from(expectedSig);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-
-  const payload = JSON.parse(base64UrlDecode(payloadPart)) as PublicReportTokenPayload;
-  if (!payload?.auditId || typeof payload.auditId !== 'string') return null;
-  if (!payload?.exp || typeof payload.exp !== 'number') return null;
-  if (payload.exp < Math.floor(Date.now() / 1000)) return null;
-
-  return payload;
-}
-
-function verifyPublicReportToken(token: string): PublicReportTokenPayload | null {
-  try {
-    if (token.includes('.')) {
-      return verifyLegacyPublicReportToken(token);
-    }
-
-    const key = getPublicReportCipherKey();
-    const blob = Buffer.from(token, 'base64url');
-    if (blob.length < 29) return null;
-
-    const iv = blob.subarray(0, 12);
-    const tag = blob.subarray(12, 28);
-    const ciphertext = blob.subarray(28);
-
-    const decipher = createDecipheriv('aes-256-gcm', key, iv);
-    decipher.setAuthTag(tag);
-    const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8');
-    const payload = JSON.parse(plaintext) as PublicReportTokenPayload;
-    if (!payload?.auditId || typeof payload.auditId !== 'string') return null;
-    if (!payload?.exp || typeof payload.exp !== 'number') return null;
-    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
-
-    return payload;
-  } catch (err) {
-    console.error('[public-report] Token verification failed:', err instanceof Error ? err.message : err);
-    return null;
-  }
-}
 
 function normalizeAuditTargetKey(input: string): string {
   const raw = String(input || '').trim();
@@ -6458,16 +6368,13 @@ app.post('/api/audits/share-link', authRequired, workspaceRequired, heavyActionL
     const scanOrdinalIndex = matchingTargetAudits.findIndex((row: any) => String(row.id) === String(audit.id));
     const scanOrdinal = scanOrdinalIndex >= 0 ? scanOrdinalIndex + 1 : 1;
     const scanLabel = scanOrdinal <= 1 ? 'First scan' : `Scan #${scanOrdinal}`;
-
-    const shareLinkExpirationDays = await getShareLinkExpirationDaysPreference(String(userId));
-
-    // 0 means "never expire" (10-year token).
-    const ageSecs =
-      shareLinkExpirationDays === 0
-        ? 60 * 60 * 24 * 3650
-        : Math.min(Math.max(1, shareLinkExpirationDays), 365) * 60 * 60 * 24;
-    const exp = Math.floor(Date.now() / 1000) + ageSecs;
-    const token = signPublicReportToken({ auditId: audit.id, exp });
+    const shareLink = await createOrRefreshPublicReportLink({
+      auditId: String(audit.id),
+      userId: String(userId),
+      workspaceId: workspaceId || null,
+      targetUrl: rawUrl.trim(),
+      scanOrdinal,
+    });
 
     fireMeasurementEvent('share_link_created', req, {
       workspace_id: workspaceId,
@@ -6476,14 +6383,16 @@ app.post('/api/audits/share-link', authRequired, workspaceRequired, heavyActionL
     });
 
     return res.json({
-      token,
-      expires_at: new Date(exp * 1000).toISOString(),
-      share_path: `/report/public/${token}`,
+      token: shareLink.token,
+      slug: shareLink.slug,
+      expires_at: shareLink.expiresAt,
+      share_path: shareLink.sharePath,
+      legacy_share_path: shareLink.legacySharePath,
       scan_ordinal: scanOrdinal,
       scan_count_for_target: matchingTargetAudits.length,
       scan_label: scanLabel,
       target_key: targetKey,
-      share_link_expiration_days: shareLinkExpirationDays,
+      share_link_expiration_days: shareLink.shareLinkExpirationDays,
       public_view: {
         tier: shareLinkUiTier,
         redacted: shareLinkUiTier === 'observer',
@@ -6550,13 +6459,12 @@ app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
   try {
     const token = String((req.params as any).token || '');
     if (!token) {
-      console.warn('[public-report] Empty token received');
+      console.warn('[public-report] Empty share reference received');
       return res.status(400).json({ error: 'Missing report token' });
     }
-    console.log(`[public-report] Verifying token (len=${token.length}, first4=${token.slice(0, 4)}, last4=${token.slice(-4)})`);
-    const decoded = verifyPublicReportToken(token);
+    const decoded = await resolvePublicReportReference(token);
     if (!decoded) {
-      console.warn(`[public-report] Token verification returned null (len=${token.length}, isLegacy=${token.includes('.')})`);
+      console.warn(`[public-report] Reference resolution returned null (len=${token.length}, isLegacy=${token.includes('.')})`);
       return res.status(401).json({ error: 'Invalid or expired public report token' });
     }
 

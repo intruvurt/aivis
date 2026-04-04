@@ -25,14 +25,14 @@ interface PublicAuditResponse {
 }
 
 export default function PublicReportPage() {
-  const { token } = useParams<{ token: string }>();
+  const { shareId } = useParams<{ shareId: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [audit, setAudit] = useState<PublicAuditResponse | null>(null);
   const [apiSource, setApiSource] = useState<'same-origin' | 'configured-fallback' | null>(null);
 
   const pageMeta = useMemo(() => {
-    const basePath = token ? `/report/public/${token}` : '/report/public';
+    const basePath = shareId ? `/reports/public/${shareId}` : '/reports/public';
     if (audit) {
       let domain: string;
       try { domain = new URL(audit.url).hostname; } catch { domain = audit.url; }
@@ -50,12 +50,12 @@ export default function PublicReportPage() {
       path: basePath,
       ogTitle: 'Shared AI Visibility Report',
     };
-  }, [audit, token]);
+  }, [audit, shareId]);
 
   usePageMeta(pageMeta);
 
   useEffect(() => {
-    if (!token) {
+    if (!shareId) {
       setError('Missing report token');
       setLoading(false);
       return;
@@ -68,7 +68,7 @@ export default function PublicReportPage() {
         setLoading(true);
         setError(null);
 
-        const tokenPath = `/api/public/audits/${encodeURIComponent(token)}`;
+        const tokenPath = `/api/public/audits/${encodeURIComponent(shareId)}`;
         const candidates = [
           tokenPath,
           `${API_URL}${tokenPath}`,
@@ -112,7 +112,7 @@ export default function PublicReportPage() {
     })();
 
     return () => controller.abort();
-  }, [token]);
+  }, [shareId]);
 
   const reportResult = useMemo(() => audit?.result ?? null, [audit]);
   const topBlocker = useMemo(

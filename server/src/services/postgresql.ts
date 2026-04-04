@@ -171,6 +171,21 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE workspace_invites ADD COLUMN IF NOT EXISTS invited_by UUID REFERENCES users(id) ON DELETE CASCADE`,
             `CREATE INDEX IF NOT EXISTS idx_workspace_invites_token ON workspace_invites(token)`,
             `CREATE INDEX IF NOT EXISTS idx_workspace_invites_workspace ON workspace_invites(workspace_id)`,
+            `CREATE TABLE IF NOT EXISTS public_report_links (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_id UUID NOT NULL UNIQUE REFERENCES audits(id) ON DELETE CASCADE,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
+              slug VARCHAR(140) NOT NULL UNIQUE,
+              public_token TEXT NOT NULL,
+              expires_at TIMESTAMPTZ NOT NULL,
+              is_active BOOLEAN NOT NULL DEFAULT TRUE,
+              last_accessed_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_public_report_links_slug ON public_report_links(slug)`,
+            `CREATE INDEX IF NOT EXISTS idx_public_report_links_workspace ON public_report_links(workspace_id)`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`,
             // ── Support tickets (added post-launch) ──
@@ -1809,6 +1824,23 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_user ON report_delivery_targets(user_id)`);
     _q(`ALTER TABLE report_delivery_targets ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
 
+    _q(`
+      CREATE TABLE IF NOT EXISTS public_report_links (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id UUID NOT NULL UNIQUE REFERENCES audits(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
+        slug VARCHAR(140) NOT NULL UNIQUE,
+        public_token TEXT NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        last_accessed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_public_report_links_slug ON public_report_links(slug)`);
+
     // ─── IndexNow Submissions ─────────────────────────────────────────────────
     _q(`
       CREATE TABLE IF NOT EXISTS indexnow_submissions (
@@ -2020,6 +2052,12 @@ export async function runMigrations(): Promise<void> {
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE ub.workspace_id IS NULL AND ub.user_id = wm.user_id
     `);
+    _q(`
+      UPDATE public_report_links prl
+      SET workspace_id = a.workspace_id
+      FROM audits a
+      WHERE prl.workspace_id IS NULL AND prl.audit_id = a.id
+    `);
 
     _q(`CREATE INDEX IF NOT EXISTS idx_audits_workspace ON audits(workspace_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_workspace ON competitor_tracking(workspace_id)`);
@@ -2029,6 +2067,7 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_workspace ON api_keys(workspace_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_workspace ON webhooks(workspace_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_workspace ON report_delivery_targets(workspace_id)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_public_report_links_workspace ON public_report_links(workspace_id)`);
 
     // ─── Niche Competitive Ranking Table ─────────────────────────────────────
     _q(`

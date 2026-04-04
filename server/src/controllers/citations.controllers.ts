@@ -1586,6 +1586,7 @@ async function runCitationTestAsync(
     const ddgSearchByQuery: Record<string, any> = {};
     const braveSearchByQuery: Record<string, any> = {};
     const wikipediaSearchByQuery: Record<string, any> = {};
+    const yahooSearchByQuery: Record<string, any> = {};
     for (const r of results) {
       if (r.web_search) {
         webSearchByQuery[r.query] = r.web_search;
@@ -1601,6 +1602,9 @@ async function runCitationTestAsync(
       }
       if ((r as any).wikipedia_search) {
         wikipediaSearchByQuery[r.query] = (r as any).wikipedia_search;
+      }
+      if ((r as any).yahoo_search) {
+        yahooSearchByQuery[r.query] = (r as any).yahoo_search;
       }
     }
 
@@ -1676,6 +1680,7 @@ async function runCitationTestAsync(
       ddg_search_by_query: Object.keys(ddgSearchByQuery).length > 0 ? ddgSearchByQuery : undefined,
       brave_search_by_query: Object.keys(braveSearchByQuery).length > 0 ? braveSearchByQuery : undefined,
       wikipedia_search_by_query: Object.keys(wikipediaSearchByQuery).length > 0 ? wikipediaSearchByQuery : undefined,
+      yahoo_search_by_query: Object.keys(yahooSearchByQuery).length > 0 ? yahooSearchByQuery : undefined,
     };
     await pool.query(
       `UPDATE citation_tests SET status = $1, results = $2, summary = $3, completed_at = NOW() WHERE id = $4`,
@@ -1741,6 +1746,7 @@ export async function getCitationTest(req: Request, res: Response) {
     let ddgSearchByQuery: Record<string, any> | undefined;
     let braveSearchByQuery: Record<string, any> | undefined;
     let wikipediaSearchByQuery: Record<string, any> | undefined;
+    let yahooSearchByQuery: Record<string, any> | undefined;
     if (parsedResults && !Array.isArray(parsedResults) && parsedResults.citations) {
       citations = parsedResults.citations;
       webSearchByQuery = parsedResults.web_search_by_query;
@@ -1748,6 +1754,7 @@ export async function getCitationTest(req: Request, res: Response) {
       ddgSearchByQuery = parsedResults.ddg_search_by_query;
       braveSearchByQuery = parsedResults.brave_search_by_query;
       wikipediaSearchByQuery = parsedResults.wikipedia_search_by_query;
+      yahooSearchByQuery = parsedResults.yahoo_search_by_query;
     } else {
       citations = Array.isArray(parsedResults) ? parsedResults : [];
       webSearchByQuery = undefined;
@@ -1755,6 +1762,7 @@ export async function getCitationTest(req: Request, res: Response) {
       ddgSearchByQuery = undefined;
       braveSearchByQuery = undefined;
       wikipediaSearchByQuery = undefined;
+      yahooSearchByQuery = undefined;
     }
 
     return res.json({
@@ -1770,6 +1778,7 @@ export async function getCitationTest(req: Request, res: Response) {
         ddg_search_by_query: ddgSearchByQuery,
         brave_search_by_query: braveSearchByQuery,
         wikipedia_search_by_query: wikipediaSearchByQuery,
+        yahoo_search_by_query: yahooSearchByQuery,
         summary: test.summary,
         created_at: test.created_at,
         completed_at: test.completed_at,

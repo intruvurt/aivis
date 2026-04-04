@@ -131,6 +131,7 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
       const rawText = await response.text();
       let payload: {
         token?: string;
+        slug?: string;
         share_path?: string;
         expires_at?: string;
         scan_label?: string;
@@ -146,7 +147,7 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
         console.error("[ShareButtons] Missing token/share_path:", JSON.stringify(payload).slice(0, 300));
         throw new Error("Share endpoint returned an incomplete response. Please retry.");
       }
-      const publicPath = payload.share_path || `/report/public/${payload.token}`;
+      const publicPath = payload.share_path || `/reports/public/${payload.slug || payload.token}`;
       const publicUrl = `${PUBLIC_APP_ORIGIN}${publicPath}`;
       setResolvedShareUrl(publicUrl);
       setResolvedExpiresAt(payload.expires_at);

@@ -3,6 +3,8 @@
 // Scrapes DDG HTML lite and Bing search with realistic browser headers.
 
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
+import type { SearchLocaleProfile } from './searchLocale.js';
+import { inferSearchLocaleProfile } from './searchLocale.js';
 
 const BROWSER_USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -119,20 +121,21 @@ export async function checkWebSearchPresence(
   query: string,
   brandName: string,
   targetUrl: string,
-  competitorUrls: string[] = []
+  competitorUrls: string[] = [],
+  localeProfile: SearchLocaleProfile = inferSearchLocaleProfile(targetUrl)
 ): Promise<WebSearchPresenceResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
-    const searchUrl = `https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+    const searchUrl = `https://duckduckgo.com/html/?q=${encodeURIComponent(query)}&kl=${encodeURIComponent(localeProfile.ddgRegion)}`;
 
     const res = await fetch(searchUrl, {
       method: 'GET',
       headers: {
         'User-Agent': pickUserAgent(),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Language': `${localeProfile.bingLanguage},en;q=0.8`,
         'Accept-Encoding': 'gzip, deflate',
         'DNT': '1',
         'Connection': 'keep-alive',
@@ -285,20 +288,21 @@ export async function checkBingSearchPresence(
   query: string,
   brandName: string,
   targetUrl: string,
-  competitorUrls: string[] = []
+  competitorUrls: string[] = [],
+  localeProfile: SearchLocaleProfile = inferSearchLocaleProfile(targetUrl)
 ): Promise<WebSearchPresenceResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
-    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}&count=20&setlang=en`;
+    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}&count=20&cc=${encodeURIComponent(localeProfile.region.toUpperCase())}&setlang=${encodeURIComponent(localeProfile.bingLanguage)}&mkt=${encodeURIComponent(localeProfile.bingMarket)}`;
 
     const res = await fetch(searchUrl, {
       method: 'GET',
       headers: {
         'User-Agent': pickUserAgent(),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Language': `${localeProfile.bingLanguage},en;q=0.8`,
         'Accept-Encoding': 'gzip, deflate',
         'DNT': '1',
         'Connection': 'keep-alive',
@@ -520,20 +524,21 @@ export async function checkBraveSearchPresence(
   query: string,
   brandName: string,
   targetUrl: string,
-  competitorUrls: string[] = []
+  competitorUrls: string[] = [],
+  localeProfile: SearchLocaleProfile = inferSearchLocaleProfile(targetUrl)
 ): Promise<WebSearchPresenceResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
-    const searchUrl = `https://search.brave.com/search?q=${encodeURIComponent(query)}&source=web`;
+    const searchUrl = `https://search.brave.com/search?q=${encodeURIComponent(query)}&source=web&country=${encodeURIComponent(localeProfile.braveCountry)}`;
 
     const res = await fetch(searchUrl, {
       method: 'GET',
       headers: {
         'User-Agent': pickUserAgent(),
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Language': `${localeProfile.bingLanguage},en;q=0.8`,
         'Accept-Encoding': 'gzip, deflate',
         'DNT': '1',
         'Connection': 'keep-alive',
@@ -626,5 +631,138 @@ function emptyBraveResult(): WebSearchPresenceResult {
     competitor_urls_found: [],
     top_results: [],
     source: 'brave_web',
+  };
+}
+
+function parseYahooHtmlResults(html: string): Array<{ title: string; snippet: string; href: string }> {
+  const resultBlockRegex = /<div[^>]*class="[^"]*(?:algo|dd\s+algo)[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/gi;
+  const headingRegex = /<h3[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i;
+  const snippetRegex = /<p[^>]*class="[^"]*(?:compText|lh-16)[^"]*"[^>]*>([\s\S]*?)<\/p>/i;
+  const results: Array<{ title: string; snippet: string; href: string }> = [];
+  let block: RegExpExecArray | null;
+
+  while ((block = resultBlockRegex.exec(html)) !== null) {
+    const inner = block[1];
+    const heading = headingRegex.exec(inner);
+    if (!heading) continue;
+    const href = decodeHtmlEntities(heading[1]);
+    if (!/^https?:\/\//i.test(href) || href.includes('search.yahoo.com')) continue;
+    const title = stripHtml(heading[2]);
+    if (!title) continue;
+    const snippet = stripHtml(snippetRegex.exec(inner)?.[1] || '');
+    results.push({ title, snippet, href });
+    if (results.length >= 20) break;
+  }
+
+  if (results.length === 0) {
+    const genericRegex = /<h3[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    let match: RegExpExecArray | null;
+    while ((match = genericRegex.exec(html)) !== null) {
+      const href = decodeHtmlEntities(match[1]);
+      if (!/^https?:\/\//i.test(href) || href.includes('search.yahoo.com')) continue;
+      const title = stripHtml(match[2]);
+      if (!title) continue;
+      results.push({ title, snippet: '', href });
+      if (results.length >= 20) break;
+    }
+  }
+
+  return results;
+}
+
+export async function checkYahooSearchPresence(
+  query: string,
+  brandName: string,
+  targetUrl: string,
+  competitorUrls: string[] = [],
+  localeProfile: SearchLocaleProfile = inferSearchLocaleProfile(targetUrl)
+): Promise<WebSearchPresenceResult> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}&vl=${encodeURIComponent(localeProfile.language)}`;
+
+    const res = await fetch(searchUrl, {
+      method: 'GET',
+      headers: {
+        'User-Agent': pickUserAgent(),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': `${localeProfile.bingLanguage},en;q=0.8`,
+        'Accept-Encoding': 'gzip, deflate',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+      },
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      return emptyYahooResult();
+    }
+
+    const html = await res.text();
+    const parsed = parseYahooHtmlResults(html);
+    const targetHostname = extractHost(targetUrl);
+    const brandLower = brandName.toLowerCase();
+
+    const topResults: WebSearchResultEntry[] = parsed.slice(0, 20).map((result, index) => ({
+      title: result.title,
+      url: result.href,
+      description: result.snippet,
+      position: index + 1,
+    }));
+
+    const matchingResults = topResults.filter((result) => {
+      const resultHost = extractHost(result.url);
+      const titleLower = result.title.toLowerCase();
+      const descLower = result.description.toLowerCase();
+
+      return (
+        resultHost === targetHostname ||
+        titleLower.includes(brandLower) ||
+        descLower.includes(brandLower) ||
+        result.url.toLowerCase().includes(targetHostname)
+      );
+    });
+
+    const competitorUrlsFound = competitorUrls.filter((compUrl) => {
+      const compHost = extractHost(compUrl);
+      const compBrand = compHost.split('.')[0];
+      return topResults.some((result) => {
+        const resultHost = extractHost(result.url);
+        return (
+          resultHost === compHost ||
+          result.title.toLowerCase().includes(compBrand) ||
+          result.description.toLowerCase().includes(compBrand)
+        );
+      });
+    });
+
+    return {
+      found: matchingResults.length > 0,
+      position: matchingResults[0]?.position || 0,
+      results_checked: topResults.length,
+      matching_results: matchingResults,
+      competitor_urls_found: competitorUrlsFound,
+      top_results: topResults.slice(0, 10),
+      source: 'yahoo_web',
+    };
+  } catch {
+    return emptyYahooResult();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function emptyYahooResult(): WebSearchPresenceResult {
+  return {
+    found: false,
+    position: 0,
+    results_checked: 0,
+    matching_results: [],
+    competitor_urls_found: [],
+    top_results: [],
+    source: 'yahoo_web',
   };
 }

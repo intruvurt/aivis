@@ -1,4 +1,3 @@
-import { createHash, createCipheriv, randomBytes } from 'crypto';
 import { getPool } from './postgresql.js';
 import { IS_PRODUCTION } from '../config/runtime.js';
 import { TIER_LIMITS, uiTierFromCanonical } from '../../../shared/types.js';
@@ -6,13 +5,7 @@ import { getBranding } from './brandingService.js';
 import { consumePackCredits, getAvailablePackCredits } from './scanPackCredits.js';
 import { generateAuditPdfBuffer } from './reportPdfService.js';
 import { sendAuditReportDeliveryEmail } from './emailService.js';
-
-const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
-  .split(',')[0]
-  .trim()
-  .replace(/\/+$/, '');
-const PUBLIC_REPORT_SIGNING_SECRET = process.env.JWT_SECRET || '';
-const PUBLIC_REPORT_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+import { createOrRefreshPublicReportLink } from './publicReportLinks.js';
 
 export type ReportDeliveryProvider = 'email' | 'generic' | 'slack' | 'discord' | 'zapier' | 'notion' | 'teams' | 'google_chat';
 
@@ -96,32 +89,6 @@ function validateWebhookTarget(provider: ReportDeliveryProvider, target: string)
       throw new Error('Notion webhook URL must be from api.notion.com or *.notion.site');
     }
   }
-}
-
-function getPublicReportCipherKey(): Buffer {
-  return createHash('sha256').update(PUBLIC_REPORT_SIGNING_SECRET).digest();
-}
-
-type PublicReportTokenPayload = {
-  auditId: string;
-  exp: number;
-};
-
-function signPublicReportToken(payload: PublicReportTokenPayload): string {
-  const iv = randomBytes(12);
-  const key = getPublicReportCipherKey();
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
-  const plaintext = JSON.stringify(payload);
-  const ciphertext = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
-  return Buffer.concat([iv, tag, ciphertext]).toString('base64url');
-}
-
-function buildPublicReportUrl(auditId: string): string | null {
-  if (!PUBLIC_REPORT_SIGNING_SECRET) return null;
-  const exp = Math.floor(Date.now() / 1000) + PUBLIC_REPORT_MAX_AGE_SECONDS;
-  const token = signPublicReportToken({ auditId, exp });
-  return `${FRONTEND_URL}/report/public/${token}`;
 }
 
 export async function listReportDeliveries(userId: string, workspaceId: string): Promise<ReportDeliveryTarget[]> {
@@ -409,7 +376,9 @@ export async function dispatchAuditReportDeliveries(args: {
   const enabledTargets = targets.filter((target) => target.enabled);
   if (!enabledTargets.length) return;
 
-  const shareLink = enabledTargets.some((target) => target.include_share_link) ? buildPublicReportUrl(auditId) : null;
+  const shareLink = enabledTargets.some((target) => target.include_share_link)
+    ? (await createOrRefreshPublicReportLink({ auditId, userId, workspaceId, targetUrl: url })).publicUrl
+    : null;
   const wantsBrandedPdf = enabledTargets.some((target) => target.include_pdf && target.branded);
   const wantsPlainPdf = enabledTargets.some((target) => target.include_pdf && !target.branded);
 

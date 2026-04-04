@@ -817,6 +817,34 @@ const getRateLimitClientIp = (req: Request): string => {
   return req.ip || (req.socket?.remoteAddress ?? '');
 };
 
+const normalizeRateLimitPath = (value: string): string => {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return '/';
+  const withoutQuery = trimmed.split('?')[0] || '/';
+  const normalized = withoutQuery.startsWith('/') ? withoutQuery : `/${withoutQuery}`;
+  return normalized.length > 1 ? normalized.replace(/\/+$/, '') : normalized;
+};
+
+const getRateLimitPathCandidates = (req: Request): string[] => {
+  const candidates = new Set<string>();
+  for (const raw of [req.originalUrl, req.path, req.url]) {
+    const normalized = normalizeRateLimitPath(String(raw || ''));
+    if (!normalized) continue;
+    candidates.add(normalized);
+  }
+  return [...candidates];
+};
+
+const matchesRateLimitPath = (req: Request, target: string): boolean => {
+  const normalizedTarget = normalizeRateLimitPath(target);
+  return getRateLimitPathCandidates(req).some((candidate) => candidate === normalizedTarget);
+};
+
+const startsWithRateLimitPath = (req: Request, prefix: string): boolean => {
+  const normalizedPrefix = normalizeRateLimitPath(prefix);
+  return getRateLimitPathCandidates(req).some((candidate) => candidate === normalizedPrefix || candidate.startsWith(`${normalizedPrefix}/`));
+};
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: IS_PRODUCTION ? 300 : 600,
@@ -841,9 +869,11 @@ const apiLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later', retryAfter: 60, code: 'RATE_LIMIT_EXCEEDED' },
   skip: (req) => {
     // Exempt lightweight polling and health checks from the global budget
-    if (req.path === '/api/health') return true;
-    if (req.method === 'GET' && req.path === '/api/features/status') return true;
-    if (req.method === 'GET' && req.path.startsWith('/api/features/notifications')) return true;
+    if (matchesRateLimitPath(req, '/api/health') || matchesRateLimitPath(req, '/health')) return true;
+    if (req.method === 'GET' && (matchesRateLimitPath(req, '/api/features/status') || matchesRateLimitPath(req, '/features/status'))) return true;
+    if (req.method === 'GET' && (startsWithRateLimitPath(req, '/api/features/notifications') || startsWithRateLimitPath(req, '/features/notifications'))) return true;
+    if (req.method === 'GET' && (matchesRateLimitPath(req, '/api/auth/profile') || matchesRateLimitPath(req, '/auth/profile'))) return true;
+    if (req.method === 'POST' && (matchesRateLimitPath(req, '/api/user/refresh') || matchesRateLimitPath(req, '/user/refresh'))) return true;
     return false;
   },
   handler: (_req, res) => {

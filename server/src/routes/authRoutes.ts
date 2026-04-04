@@ -98,6 +98,13 @@ function buildFrontendAuthRedirect(req: express.Request, params: Record<string, 
   return authUrl.toString();
 }
 
+function wantsJson(req: express.Request): boolean {
+  const format = String(req.query.format || '').trim().toLowerCase();
+  if (format === 'json') return true;
+  const accept = String(req.get('accept') || '').toLowerCase();
+  return accept.includes('application/json');
+}
+
 function publicOAuthErrorMessage(error: unknown, fallback: string): string {
   const message = String((error as any)?.message || '').trim();
   if (!message) return fallback;
@@ -373,6 +380,9 @@ router.get('/github/connect', authRequired, async (req, res) => {
   url.searchParams.set('redirect_uri', callbackUrl);
   url.searchParams.set('scope', 'repo read:user user:email');
   url.searchParams.set('state', state);
+  if (wantsJson(req)) {
+    return res.json({ success: true, authorization_url: url.toString() });
+  }
   return res.redirect(url.toString());
 });
 

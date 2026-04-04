@@ -298,7 +298,19 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
 
   function connectGitHubOAuth() {
     const returnPath = `${window.location.pathname}${window.location.search}` || "/score-fix";
-    window.location.href = `${API_URL}/api/auth/github/connect?redirect=${encodeURIComponent(returnPath)}`;
+    fetch(`${API_URL}/api/auth/github/connect?format=json&redirect=${encodeURIComponent(returnPath)}`, {
+      headers: headers(),
+    })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || typeof payload?.authorization_url !== "string") {
+          throw new Error(payload?.error || "Failed to start GitHub connection");
+        }
+        window.location.href = payload.authorization_url;
+      })
+      .catch((error: any) => {
+        setTokenMsg({ ok: false, text: error?.message || "Failed to start GitHub connection" });
+      });
   }
 
   // ─── Token save ──────────────────────────────────────────────────────────────

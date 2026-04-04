@@ -70,6 +70,8 @@ type ProgressEventPayload = {
   progress?: number;
 };
 
+type ApiFetchOptions = Parameters<typeof apiFetch>[1];
+
 type AuditExpectation = {
   icon: React.ElementType;
   label: string;
@@ -350,7 +352,7 @@ const AnalyzePage: React.FC = () => {
     };
   }
 
-  async function fetchWithRetry(requestUrl: string, options: RequestInit, retries = 2): Promise<Response> {
+  async function fetchWithRetry(requestUrl: string, options: ApiFetchOptions, retries = 2): Promise<Response> {
     for (let i = 0; i <= retries; i += 1) {
       try {
         const response = await apiFetch(requestUrl, options);
@@ -417,7 +419,7 @@ const AnalyzePage: React.FC = () => {
     abortControllerRef.current = new AbortController();
     const abortSignal = abortControllerRef.current.signal;
 
-    const HARD_TIMEOUT_MS = 70_000;
+    const HARD_TIMEOUT_MS = 300_000;
     const timeoutId = window.setTimeout(() => {
       abortControllerRef.current?.abort();
     }, HARD_TIMEOUT_MS);
@@ -437,8 +439,9 @@ const AnalyzePage: React.FC = () => {
           Accept: "application/json",
         },
         body: JSON.stringify({ url: normalizedUrl }),
+        timeoutMs: HARD_TIMEOUT_MS,
         signal: abortSignal,
-      });
+      }, 0);
 
       const requestId = response.headers.get("X-Audit-Request-Id");
       if (requestId) {

@@ -188,6 +188,32 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_public_report_links_workspace ON public_report_links(workspace_id)`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`,
+            `CREATE TABLE IF NOT EXISTS github_app_installations (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id VARCHAR(255) NOT NULL,
+              workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+              installation_id INTEGER NOT NULL UNIQUE,
+              account_login VARCHAR(255) NOT NULL,
+              account_type VARCHAR(20) NOT NULL DEFAULT 'User',
+              permissions JSONB NOT NULL DEFAULT '{}',
+              repo_selection VARCHAR(20) NOT NULL DEFAULT 'all',
+              suspended_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_github_app_inst_workspace ON github_app_installations(workspace_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`,
+            `CREATE TABLE IF NOT EXISTS workspace_activity_log (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+              user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+              type VARCHAR(80) NOT NULL,
+              metadata JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_workspace_activity_ws ON workspace_activity_log(workspace_id, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_workspace_activity_user ON workspace_activity_log(user_id, created_at DESC)`,
             // ── Support tickets (added post-launch) ──
             `CREATE TABLE IF NOT EXISTS support_tickets (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

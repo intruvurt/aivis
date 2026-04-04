@@ -697,6 +697,28 @@ export interface AnalysisResponse {
   audit_id?: string;
   /** AI recommendation evidence summary */
   recommendation_evidence_summary?: RecommendationEvidenceSummary;
+  /** Execution and truth-boundary metadata for evidence-backed vs model-interpreted output */
+  analysis_integrity?: {
+    mode?: 'live' | 'scrape-only' | 'deterministic-fallback' | 'upload';
+    execution_class?: string;
+    evidence_items?: number;
+    model_count?: number;
+    triple_check_enabled?: boolean;
+    recommendation_evidence_coverage_percent?: number;
+    recommendation_evidence_integrity_percent?: number;
+    reflection_applied?: boolean;
+    reflection_source?: 'evidence-bounds' | 'deterministic-fallback' | 'upload-evidence';
+    normalized_target_url?: string;
+    fallback_mode?: string;
+    warnings?: string[];
+    evidence_policy?: {
+      deterministic_core: boolean;
+      opinion_sections_labeled: boolean;
+      evidence_backed_label: 'EVIDENCE_BACKED';
+      opinion_only_label: 'AI_OPINION_ONLY';
+      anti_drift_mode: 'evidence-bounded' | 'deterministic-fallback' | 'upload-evidence';
+    };
+  };
   /** Geo-adaptive signal profile */
   geo_signal_profile?: GeoSignalProfile;
   /** Contradiction report from multi-model analysis */

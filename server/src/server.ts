@@ -4048,6 +4048,17 @@ function buildAnalysisIntegrity(params: {
       Math.max(0, Math.min(100, Number(params.recommendationEvidenceSummary?.evidence_ref_integrity_percent ?? 100))),
     reflection_applied: params.reflectionApplied !== false,
     reflection_source: params.reflectionSource || (params.mode === 'upload' ? 'upload-evidence' : params.mode === 'deterministic-fallback' ? 'deterministic-fallback' : 'evidence-bounds'),
+    evidence_policy: {
+      deterministic_core: true,
+      opinion_sections_labeled: true,
+      evidence_backed_label: 'EVIDENCE_BACKED' as const,
+      opinion_only_label: 'AI_OPINION_ONLY' as const,
+      anti_drift_mode: params.mode === 'upload'
+        ? 'upload-evidence' as const
+        : params.mode === 'deterministic-fallback'
+          ? 'deterministic-fallback' as const
+          : 'evidence-bounded' as const,
+    },
     ...(params.normalizedTargetUrl ? { normalized_target_url: params.normalizedTargetUrl } : {}),
     ...(params.fallbackMode ? { fallback_mode: params.fallbackMode } : {}),
     warnings: (params.warnings || []).filter(Boolean),

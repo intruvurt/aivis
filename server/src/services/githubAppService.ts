@@ -18,6 +18,46 @@
 import crypto from 'crypto';
 import { getPool } from './postgresql.js';
 
+let githubInstallationsTableReady = false;
+
+async function ensureGitHubInstallationsTable(): Promise<void> {
+  if (githubInstallationsTableReady) return;
+
+  const pool = getPool();
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS github_app_installations (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id VARCHAR(255) NOT NULL,
+      workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
+      installation_id INTEGER NOT NULL UNIQUE,
+      account_login VARCHAR(255) NOT NULL,
+      account_type VARCHAR(20) NOT NULL DEFAULT 'User',
+      permissions JSONB NOT NULL DEFAULT '{}',
+      repo_selection VARCHAR(20) NOT NULL DEFAULT 'all',
+      suspended_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`
+  );
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_workspace ON github_app_installations(workspace_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`);
+
+  githubInstallationsTableReady = true;
+}
+
+async function queryGitHubInstallations<T = any>(sql: string, params: unknown[]): Promise<{ rows: T[] }> {
+  const pool = getPool();
+
+  try {
+    return await pool.query(sql, params);
+  } catch (error: any) {
+    if (error?.code !== '42P01') throw error;
+    await ensureGitHubInstallationsTable();
+    return await pool.query(sql, params);
+  }
+}
+
 // ─── Env ──────────────────────────────────────────────────────────────────────
 
 function requireEnv(name: string): string {
@@ -141,8 +181,7 @@ export async function saveInstallation(
   permissions: Record<string, string>,
   repoSelection: string,
 ): Promise<void> {
-  const pool = getPool();
-  await pool.query(
+  await queryGitHubInstallations(
     `INSERT INTO github_app_installations
        (user_id, workspace_id, installation_id, account_login, account_type, permissions, repo_selection, updated_at)
      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
@@ -162,8 +201,7 @@ export async function saveInstallation(
 export async function getInstallationForWorkspace(
   workspaceId: string,
 ): Promise<GitHubAppInstallation | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(
+  const { rows } = await queryGitHubInstallations<GitHubAppInstallation>(
     `SELECT * FROM github_app_installations
      WHERE workspace_id = $1 AND suspended_at IS NULL
      ORDER BY updated_at DESC LIMIT 1`,
@@ -178,8 +216,7 @@ export async function getInstallationForWorkspace(
 export async function getInstallationForUser(
   userId: string,
 ): Promise<GitHubAppInstallation | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(
+  const { rows } = await queryGitHubInstallations<GitHubAppInstallation>(
     `SELECT * FROM github_app_installations
      WHERE user_id = $1 AND suspended_at IS NULL
      ORDER BY updated_at DESC LIMIT 1`,
@@ -194,8 +231,7 @@ export async function getInstallationForUser(
 export async function getInstallationById(
   installationId: number,
 ): Promise<GitHubAppInstallation | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(
+  const { rows } = await queryGitHubInstallations<GitHubAppInstallation>(
     'SELECT * FROM github_app_installations WHERE installation_id = $1 LIMIT 1',
     [installationId]
   );
@@ -206,8 +242,7 @@ export async function getInstallationById(
  * Mark installation as suspended (GitHub sends this when user suspends the app).
  */
 export async function suspendInstallation(installationId: number): Promise<void> {
-  const pool = getPool();
-  await pool.query(
+  await queryGitHubInstallations(
     `UPDATE github_app_installations SET suspended_at = NOW(), updated_at = NOW()
      WHERE installation_id = $1`,
     [installationId]
@@ -219,8 +254,7 @@ export async function suspendInstallation(installationId: number): Promise<void>
  * Remove installation (GitHub sends this when user uninstalls the app).
  */
 export async function removeInstallation(installationId: number): Promise<void> {
-  const pool = getPool();
-  await pool.query('DELETE FROM github_app_installations WHERE installation_id = $1', [installationId]);
+  await queryGitHubInstallations('DELETE FROM github_app_installations WHERE installation_id = $1', [installationId]);
   tokenCache.delete(installationId);
 }
 
@@ -228,8 +262,7 @@ export async function removeInstallation(installationId: number): Promise<void> 
  * Unsuspend installation.
  */
 export async function unsuspendInstallation(installationId: number): Promise<void> {
-  const pool = getPool();
-  await pool.query(
+  await queryGitHubInstallations(
     `UPDATE github_app_installations SET suspended_at = NULL, updated_at = NOW()
      WHERE installation_id = $1`,
     [installationId]

@@ -292,7 +292,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-4 text-center">Security & Compliance</h2>
           <p className="text-white/60 text-center max-w-2xl mx-auto mb-12">
-            Live controls should be stated conservatively. This page avoids third-party attestation claims unless they are published and verifiable.
+            Live controls should be stated conservatively. This page avoids third party attestation claims unless they are published and verifiable.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -364,7 +364,7 @@ export default function AboutPage() {
                 <h3 className="text-xl font-bold">Citation Auditing</h3>
               </div>
               <p className="text-white/70 mb-4">
-                Discover how AI platforms and search engines reference your organization, content, and authority. Get precise citation positioning and competitive intelligence.
+                Discover how AI platforms and search engines reference your organization, content and authority. Get precise citation positioning and competitive intelligence.
               </p>
               <ul className="space-y-2 text-sm text-white/60">
                 <li>✓ Multi-AI platform citation testing</li>
@@ -380,10 +380,10 @@ export default function AboutPage() {
                 <h3 className="text-xl font-bold">Visibility Scoring</h3>
               </div>
               <p className="text-white/70 mb-4">
-                Unified AI visibility score that measures machine readability, extractability, trust architecture, and citation-readiness across all critical dimensions.
+                Unified AI visibility score that measures machine readability, extractability, trust architecture and citation-readiness across all critical dimensions.
               </p>
               <ul className="space-y-2 text-sm text-white/60">
-                <li>✓ Real-time domain analysis</li>
+                <li>✓ Realtime domain analysis</li>
                 <li>✓ Schema.org completeness audit</li>
                 <li>✓ Content hierarchy validation</li>
                 <li>✓ Entity clarity scoring</li>
@@ -408,7 +408,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl brand-title mb-4">Work With Us</h2>
           <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-            Are you building with AI visibility, citation engineering, or need enterprise auditing for your agency? Let's talk.
+            Are you building with AI visibility, citation engineering or need enterprise auditing for your agency? Let's talk.
           </p>
           <a
             href="/pricing"
@@ -424,7 +424,7 @@ export default function AboutPage() {
       <footer className="px-4 py-12 border-t border-white/10">
         <div className="max-w-6xl mx-auto">
           <p className="text-xs text-white/50 text-center">
-            Intruvurt Labs • Enterprise Citation & AI Visibility Platform
+            Intruvurt Labs • Pro-grade Citation & AI Visibility Platform
             <br />
             US Federal Registration Pending • Security posture shown from live controls only
           </p>

@@ -12,7 +12,11 @@ if (OPEN_ROUTER_API_KEY) {
   );
 }
 
-console.log('[AI Providers]  Ollama base URL configured:', OLLAMA_BASE_URL);
+if (OLLAMA_BASE_URL.trim()) {
+  console.log('[AI Providers]  Ollama base URL configured:', OLLAMA_BASE_URL);
+} else {
+  console.log('[AI Providers]  Ollama base URL not configured');
+}
 
 // ── Tuned for production on Render starter plan ──
 // CloudFlare proxy drops connections at ~100 s; Render/socket hard limit ~60 s.

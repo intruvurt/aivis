@@ -270,9 +270,12 @@ router.get('/google/callback', async (req, res) => {
       try {
         await issueOAuthVerification(user.id, user.email);
       } catch (sendErr: any) {
-        const fallback = new URL(state.redirect || '/auth', getFrontendBase(req));
-        fallback.searchParams.set('oauth_error', publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'));
-        return res.redirect(fallback.toString());
+        return res.redirect(
+          buildFrontendAuthRedirect(req, {
+            oauth_error: publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'),
+            redirect: state.redirect || '/',
+          })
+        );
       }
 
       const pendingRedirect = buildFrontendAuthRedirect(req, {
@@ -495,9 +498,12 @@ router.get('/github/callback', async (req, res) => {
       try {
         await issueOAuthVerification(user.id, user.email);
       } catch (sendErr: any) {
-        const fallback = new URL(state.redirect || '/auth', getFrontendBase(req));
-        fallback.searchParams.set('oauth_error', publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'));
-        return res.redirect(fallback.toString());
+        return res.redirect(
+          buildFrontendAuthRedirect(req, {
+            oauth_error: publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'),
+            redirect: state.redirect || '/',
+          })
+        );
       }
 
       const pendingRedirect = buildFrontendAuthRedirect(req, {

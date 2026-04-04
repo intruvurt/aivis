@@ -2,3 +2,165 @@
 > aivis-server@1.0.0 typecheck
 > tsc -p tsconfig.build.json --noEmit
 
+src/controllers/aiController.ts(11,25): error TS2693: 'Audit' only refers to a type, but is being used as a value here.
+src/controllers/aiController.ts(109,25): error TS2693: 'Audit' only refers to a type, but is being used as a value here.
+src/controllers/auditController.ts(1,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' has no default export. Did you mean to use 'import { Audit } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' instead?
+src/controllers/auditController.ts(2,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Website"' has no default export. Did you mean to use 'import { Website } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Website"' instead?
+src/controllers/auditController.ts(37,12): error TS2339: Property 'usageCount' does not exist on type 'User'.
+src/controllers/auditController.ts(38,12): error TS2339: Property 'lastResetDate' does not exist on type 'User'.
+src/controllers/auditController.ts(39,18): error TS2339: Property 'save' does not exist on type 'User'.
+src/controllers/auditController.ts(68,10): error TS2339: Property 'usageCount' does not exist on type 'User'.
+src/controllers/auditController.ts(69,16): error TS2339: Property 'save' does not exist on type 'User'.
+src/controllers/auditController.ts(141,13): error TS2339: Property 'status' does not exist on type '{ userId: any; }'.
+src/controllers/brandController.ts(1,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Brand"' has no default export. Did you mean to use 'import { Brand } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Brand"' instead?
+src/controllers/citations.controllers.ts(919,63): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/citations.controllers.ts(925,65): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/citations.controllers.ts(1328,58): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/citations.controllers.ts(1655,26): error TS2339: Property 'model_used' does not exist on type 'AICitationResult'.
+src/controllers/citations.controllers.ts(1656,26): error TS2339: Property 'model_role' does not exist on type 'AICitationResult'.
+src/controllers/competitors.controllers.ts(167,55): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/competitors.controllers.ts(275,55): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/intelligenceAnalyzeController.ts(58,26): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/controllers/statusController.ts(22,7): error TS2554: Expected 2 arguments, but got 3.
+src/controllers/statusController.ts(23,7): error TS2339: Property 'select' does not exist on type 'Promise<User>'.
+src/controllers/statusController.ts(54,46): error TS2339: Property 'select' does not exist on type 'Promise<User>'.
+src/controllers/statusUpdateController.ts(1,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/StatusUpdate"' has no default export. Did you mean to use 'import { StatusUpdate } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/StatusUpdate"' instead?
+src/models/Audit.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/models/Brand.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/models/Website.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/routes/exportRoutes.ts(5,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' has no default export. Did you mean to use 'import { Audit } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' instead?
+src/routes/externalApiV1.ts(34,16): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/externalApiV1.ts(41,16): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/externalApiV1.ts(122,32): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/externalApiV1.ts(605,71): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/featureRoutes.ts(41,10): error TS2300: Duplicate identifier 'normalizePublicHttpUrl'.
+src/routes/featureRoutes.ts(90,10): error TS2300: Duplicate identifier 'normalizePublicHttpUrl'.
+src/routes/featureRoutes.ts(403,71): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/featureRoutes.ts(683,74): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/featureRoutes.ts(748,71): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/freeToolsRoutes.ts(23,64): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/freeToolsRoutes.ts(67,82): error TS2339: Property 'error' does not exist on type '{ valid: true; url: string; } | { valid: false; error: string; }'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/routes/freeToolsRoutes.ts(286,82): error TS2339: Property 'error' does not exist on type '{ valid: true; url: string; } | { valid: false; error: string; }'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/routes/freeToolsRoutes.ts(399,82): error TS2339: Property 'error' does not exist on type '{ valid: true; url: string; } | { valid: false; error: string; }'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/routes/mcpServer.ts(42,36): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/mcpServer.ts(43,161): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/mcpServer.ts(237,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/mcpServer.ts(351,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/mcpServer.ts(572,54): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/mcpServer.ts(792,54): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/mcpServer.ts(843,55): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/mcpServer.ts(904,54): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/reports.ts(10,29): error TS2307: Cannot find module './middleware/requireAuth.js' or its corresponding type declarations.
+src/routes/reverseEngineerApi.ts(161,69): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/v1Routes.ts(76,45): error TS2345: Argument of type 'NormalizePublicUrlResult' is not assignable to parameter of type 'string'.
+  Type '{ ok: true; url: string; hostname: string; }' is not assignable to type 'string'.
+src/routes/v1Routes.ts(82,5): error TS2322: Type 'NormalizePublicUrlResult' is not assignable to type 'string'.
+  Type '{ ok: true; url: string; hostname: string; }' is not assignable to type 'string'.
+src/routes/v1Routes.ts(100,38): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/webhooks.ts(154,7): error TS2353: Object literal may only specify known properties, and 'last_reset_date' does not exist in type 'Partial<User> & { password?: string; }'.
+src/routes/webMcp.ts(59,46): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/webMcp.ts(59,106): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/webMcp.ts(59,241): error TS2339: Property 'reason' does not exist on type 'ApiKeyValidationResult'.
+  Property 'reason' does not exist on type '{ ok: true; keyId: string; userId: string; workspaceId: string; scopes: string[]; }'.
+src/routes/webMcp.ts(322,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/webMcp.ts(459,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/webMcp.ts(580,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/routes/webMcp.ts(660,52): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/server.ts(964,3): error TS2322: Type '(ip: string, ipv6Subnet?: number | false) => string' is not assignable to type 'ValueDeterminingMiddleware<string>'.
+  Types of parameters 'ip' and 'request' are incompatible.
+    Type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'string'.
+src/server.ts(3377,46): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/server.ts(6521,71): error TS2339: Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; } | { ok: boolean; error: string; }'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/server.ts(10271,36): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/services/agentTaskService.ts(34,14): error TS2739: Type '{ observer: number; alignment: number; signal: number; scorefix: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
+src/services/audit/contentAnalysis.ts(93,77): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/contentAnalysis.ts(95,5): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/contentAnalysis.ts(98,5): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/contentAnalysis.ts(102,5): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/contentAnalysis.ts(106,5): error TS2353: Object literal may only specify known properties, and 'snippet' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/contentAnalysis.ts(142,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(166,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(191,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(216,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(239,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(264,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(300,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/contentAnalysis.ts(488,7): error TS2353: Object literal may only specify known properties, and 'interpretability' does not exist in type 'Partial<AuditScoreBreakdown>'.
+src/services/audit/entityClarity.ts(95,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/entityClarity.ts(137,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/entityClarity.ts(226,7): error TS2353: Object literal may only specify known properties, and 'trustEntityClarity' does not exist in type 'Partial<AuditScoreBreakdown>'.
+src/services/audit/privateExposureLite.ts(117,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/privateExposureLite.ts(150,15): error TS2353: Object literal may only specify known properties, and 'securityExposure' does not exist in type 'Partial<AuditScoreBreakdown>'.
+src/services/audit/technicalAnalysis.ts(51,91): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/technicalAnalysis.ts(52,89): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
+src/services/audit/technicalAnalysis.ts(140,7): error TS2322: Type 'string[]' is not assignable to type 'string'.
+src/services/audit/technicalAnalysis.ts(177,15): error TS2353: Object literal may only specify known properties, and 'technicalIntegrity' does not exist in type 'Partial<AuditScoreBreakdown>'.
+src/services/citationTester.ts(652,5): error TS2353: Object literal may only specify known properties, and 'wikipedia_search' does not exist in type 'CitationTestResult'.
+src/services/citationTester.ts(682,9): error TS2353: Object literal may only specify known properties, and 'model_used' does not exist in type 'AICitationResult'.
+src/services/citationTester.ts(759,5): error TS2353: Object literal may only specify known properties, and 'model_used' does not exist in type 'AICitationResult'.
+src/services/engines/citationEngine.ts(226,7): error TS2322: Type '"success"' is not assignable to type '"ok" | "failed"'.
+src/services/engines/citationEngine.ts(231,9): error TS2322: Type 'CitableSection[]' is not assignable to type 'string[]'.
+  Type 'CitableSection' is not assignable to type 'string'.
+src/services/engines/engineComposer.ts(53,9): error TS2739: Type '{ observer: number; alignment: number; signal: number; scorefix: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
+src/services/engines/engineComposer.ts(240,63): error TS2339: Property 'variance_issues' does not exist on type 'unknown'.
+src/services/engines/engineComposer.ts(245,65): error TS2339: Property 'consistency_ratio' does not exist on type 'unknown'.
+src/services/engines/engineComposer.ts(469,26): error TS2339: Property 'interpretability' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(470,26): error TS2339: Property 'extractability' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(471,26): error TS2339: Property 'structuralClarity' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(472,26): error TS2339: Property 'trustEntityClarity' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(473,26): error TS2339: Property 'technicalIntegrity' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(474,26): error TS2339: Property 'securityExposure' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/engineComposer.ts(474,70): error TS2339: Property 'securityExposure' does not exist on type 'Partial<AuditScoreBreakdown>'.
+src/services/engines/entityEngine.ts(301,7): error TS2322: Type '"success"' is not assignable to type '"ok" | "failed"'.
+src/services/engines/trustEngine.ts(216,7): error TS2322: Type '"success"' is not assignable to type '"ok" | "failed"'.
+src/services/privateExposureScanService.ts(287,32): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/services/scheduledRescanService.ts(74,32): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/services/scheduledRescanService.ts(200,66): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/services/scraper.ts(638,58): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
+  Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
+src/utils/contentAnalyzer.ts(23,5): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/utils/contentAnalyzer.ts(23,119): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/utils/contentAnalyzer.ts(60,106): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/contentAnalyzer.ts(81,110): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/contentAnalyzer.ts(102,110): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+../shared/types.ts(1495,3): error TS2717: Subsequent property declarations must have the same type.  Property 'information_gain' must be of type 'string', but here has type '"standard" | "unique" | "redundant"'.
+../shared/types.ts(1499,3): error TS2717: Subsequent property declarations must have the same type.  Property 'status' must be of type 'string', but here has type '"critical" | "attention" | "clean"'.

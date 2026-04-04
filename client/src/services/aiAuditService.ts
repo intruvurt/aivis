@@ -1,5 +1,7 @@
 import axios from "axios";
-const BASE = import.meta.env.VITE_API_URL + "/api/aiaudit";
+import { API_URL } from "../config";
+
+const BASE = `${API_URL.replace(/\/+$/, "")}/api/aiaudit`;
 
 export function runAiAudit({ prompts, blueprint }) {
   if (!Array.isArray(prompts) || !blueprint)

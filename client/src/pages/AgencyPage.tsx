@@ -26,11 +26,12 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { API_URL } from "../config";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier } from "@shared/types";
 import type { CanonicalTier } from "@shared/types";
 
-const API = import.meta.env.VITE_API_URL ?? "";
+const API = API_URL.replace(/\/+$/, "");
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

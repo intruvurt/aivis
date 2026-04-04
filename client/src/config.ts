@@ -3,21 +3,28 @@
  * VITE_API_URL is baked in at build time. Falls back to api.aivis.biz (confirmed live).
  */
 export const API_URL =
-  // Prefer explicit env var; otherwise use localhost during development
   (() => {
     const envUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "");
     if (envUrl) return envUrl;
-    // If running in a browser on localhost, default to the local server port used by the dev server
-    if (typeof window !== 'undefined') {
+
+    if (typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol)) {
       const host = window.location.hostname;
       if (host === 'localhost' || host === '127.0.0.1') {
         return 'http://localhost:3001';
       }
-      // Production fallback: prefer same-origin API to avoid stale hardcoded hostnames.
+
+      if (host === 'aivis.biz' || host === 'www.aivis.biz') {
+        return 'https://api.aivis.biz';
+      }
+
+      if (host === 'api.aivis.biz') {
+        return window.location.origin.replace(/\/$/, '');
+      }
+
       return window.location.origin.replace(/\/$/, '');
     }
-    // SSR/build fallback only (browser path above should handle runtime)
-    return 'https://aivis.biz';
+
+    return 'https://api.aivis.biz';
   })();
 
 export const PUBLIC_APP_ORIGIN =

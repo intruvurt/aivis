@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../config";
 
 /**
  * Base URL strategy:
@@ -9,8 +10,7 @@ import axios from "axios";
  *   VITE_API_URL="http://localhost:8787/api"
  *   VITE_API_URL="https://api.aivis.biz"
  */
-const API_BASE =
-  (import.meta?.env?.VITE_API_URL && String(import.meta.env.VITE_API_URL)) || "/api";
+const API_BASE = `${API_URL.replace(/\/+$/, "")}/api`;
 
 const http = axios.create({
   baseURL: API_BASE,

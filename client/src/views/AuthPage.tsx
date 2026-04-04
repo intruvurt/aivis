@@ -64,6 +64,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialMode = (searchParams.get("mode") as AuthMode) || "signup";
+  const apiBase = API_URL.replace(/\/+$/, "");
 
   // selectors (don’t destructure whole store)
   const login = useAuthStore((s) => s.login);
@@ -222,7 +223,7 @@ export default function AuthPage() {
 
     try {
       const captchaToken = await getCaptchaToken("resend_verification");
-      const res = await fetch(`${API_URL}/api/auth/resend-verification`, {
+      const res = await fetch(`${apiBase}/api/auth/resend-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -239,7 +240,7 @@ export default function AuthPage() {
     } finally {
       setResendLoading(false);
     }
-  }, [email, resendCooldown, getCaptchaToken]);
+  }, [apiBase, email, resendCooldown, getCaptchaToken]);
 
   const handleSignIn = useCallback(
     async (e: React.FormEvent) => {
@@ -251,7 +252,7 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken("login");
-        const res = await fetch(`${API_URL}/api/auth/login`, {
+        const res = await fetch(`${apiBase}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -311,6 +312,8 @@ export default function AuthPage() {
           setError(
             "We recently migrated our infrastructure. If you had an existing account, please re-register with the same email — your Stripe subscription will automatically re-link. Contact support@aivis.biz if you need assistance."
           );
+        } else if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("load failed")) {
+          setError("Could not reach the AiVIS API. This is usually a temporary network issue or a frontend API URL mismatch.");
         } else {
           setError(err?.message || "Sign in failed. Please try again.");
         }
@@ -318,7 +321,7 @@ export default function AuthPage() {
         setIsLoading(false);
       }
     },
-    [email, password, login, navigate, searchParams, getCaptchaToken]
+    [apiBase, email, password, login, navigate, searchParams, getCaptchaToken]
   );
 
   const handleSignUp = useCallback(
@@ -348,7 +351,7 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken("signup");
-        const res = await fetch(`${API_URL}/api/auth/signup`, {
+        const res = await fetch(`${apiBase}/api/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -405,7 +408,7 @@ export default function AuthPage() {
         setIsLoading(false);
       }
     },
-    [email, password, confirmPassword, name, login, navigate, acceptedTerms, acceptedPrivacy, marketingOptIn, referralCode, getCaptchaToken]
+    [apiBase, email, password, confirmPassword, name, login, navigate, acceptedTerms, acceptedPrivacy, marketingOptIn, referralCode, getCaptchaToken]
   );
 
   const handleResetPassword = useCallback(
@@ -417,7 +420,7 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken("reset_password");
-        const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+        const res = await fetch(`${apiBase}/api/auth/reset-password`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -435,7 +438,7 @@ export default function AuthPage() {
         setIsLoading(false);
       }
     },
-    [email, getCaptchaToken]
+    [apiBase, email, getCaptchaToken]
   );
 
   if (isAuthenticated) {
@@ -511,12 +514,14 @@ export default function AuthPage() {
             {mode === "signin" && (
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signin-email" className="block text-sm font-medium text-white/85 mb-2">
                     Email
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signin-email"
+                      name="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -530,12 +535,14 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signin-password" className="block text-sm font-medium text-white/85 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signin-password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -558,11 +565,13 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signin-referral-code" className="block text-sm font-medium text-white/85 mb-2">
                     Referral Code (optional)
                   </label>
                   <div className="relative">
                     <input
+                      id="signin-referral-code"
+                      name="referralCode"
                       type="text"
                       value={referralCode}
                       onChange={(e) => setReferralCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
@@ -613,12 +622,14 @@ export default function AuthPage() {
             {mode === "signup" && (
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signup-name" className="block text-sm font-medium text-white/85 mb-2">
                     Name
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signup-name"
+                      name="name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -631,12 +642,14 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signup-email" className="block text-sm font-medium text-white/85 mb-2">
                     Email
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signup-email"
+                      name="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -650,12 +663,14 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signup-password" className="block text-sm font-medium text-white/85 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signup-password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -693,12 +708,14 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signup-confirm-password" className="block text-sm font-medium text-white/85 mb-2">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="signup-confirm-password"
+                      name="confirmPassword"
                       type={showPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -712,11 +729,13 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="signup-referral-code" className="block text-sm font-medium text-white/85 mb-2">
                     Referral Code (optional)
                   </label>
                   <div className="relative">
                     <input
+                      id="signup-referral-code"
+                      name="referralCode"
                       type="text"
                       value={referralCode}
                       onChange={(e) => setReferralCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
@@ -732,6 +751,7 @@ export default function AuthPage() {
                 <div className="space-y-3 rounded-xl border border-white/10 bg-charcoal-light/60 p-4">
                   <label className="flex items-start gap-3 text-sm text-white/85">
                     <input
+                      name="termsAccepted"
                       type="checkbox"
                       checked={acceptedTerms}
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
@@ -744,6 +764,7 @@ export default function AuthPage() {
                   </label>
                   <label className="flex items-start gap-3 text-sm text-white/85">
                     <input
+                      name="privacyAccepted"
                       type="checkbox"
                       checked={acceptedPrivacy}
                       onChange={(e) => setAcceptedPrivacy(e.target.checked)}
@@ -756,6 +777,7 @@ export default function AuthPage() {
                   </label>
                   <label className="flex items-start gap-3 text-sm text-white/75">
                     <input
+                      name="marketingOptIn"
                       type="checkbox"
                       checked={marketingOptIn}
                       onChange={(e) => setMarketingOptIn(e.target.checked)}
@@ -805,12 +827,14 @@ export default function AuthPage() {
             {mode === "reset" && (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-white/85 mb-2">
+                  <label htmlFor="reset-email" className="block text-sm font-medium text-white/85 mb-2">
                     Email
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/55" />
                     <input
+                      id="reset-email"
+                      name="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}

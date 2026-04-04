@@ -29,6 +29,7 @@ import {
   Calendar,
   Cpu,
 } from "lucide-react";
+import { API_URL } from "../config";
 import { useAuthStore } from "../stores/authStore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -285,7 +286,7 @@ export default function NicheRankingPanel({
   showScheduler = true,
 }: Props) {
   const { token } = useAuthStore();
-  const apiBase = import.meta.env.VITE_API_URL || "";
+  const apiBase = API_URL.replace(/\/+$/, "");
 
   const [ranking, setRanking] = useState<NicheRankingResult | null>(
     initialResult ?? null

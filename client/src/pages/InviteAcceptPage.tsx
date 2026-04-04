@@ -2,10 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Loader2, Users } from 'lucide-react';
+import { API_URL } from '../config';
 import { useAuthStore } from '../stores/authStore';
 import toast from 'react-hot-toast';
-
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function InviteAcceptPage() {
   const { token } = useParams<{ token: string }>();

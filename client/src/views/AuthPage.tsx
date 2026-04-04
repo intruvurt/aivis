@@ -445,24 +445,23 @@ export default function AuthPage() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-4">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#0d1f3a] via-[#1a1030] to-[#2a1212] pointer-events-none" />
 
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-8">
-          <div className="relative">
-            <div className="relative logo-pill px-6 py-4">
-              <img
-                src="/text-logo.png"
-                alt="AiVIS: Ai Visibility Intelligence Audits"
-                className="h-10 sm:h-12 w-auto object-contain"
-              />
-            </div>
+          <div className="flex items-center gap-3">
+            <img
+              src="/aivis-logo.png"
+              alt="AiVIS"
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-lg object-contain"
+            />
+            <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
           </div>
         </div>
 
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0ea5e9]/20 via-[#7c2d12]/20 to-[#f97316]/20 rounded-2xl blur opacity-50" />
-          <div className="relative bg-charcoal border border-white/12 rounded-2xl p-8">
+        <div className="relative">
+          <div className="bg-[#0f1623] border border-white/[0.09] rounded-2xl p-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-white mb-2">
                 {mode === "signin" && "Welcome Back"}

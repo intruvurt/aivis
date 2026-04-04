@@ -507,35 +507,19 @@
     border-radius: var(--app-corner-radius) !important;
     background: rgba(24, 30, 44, 0.55);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
-    backdrop-filter: blur(10px);
-    animation: logo-pill-glow 7s ease-in-out infinite;
   }
 
   .nav-logo-pill {
     border-radius: var(--app-corner-radius) !important;
-    background:
-      linear-gradient(180deg, rgba(7, 11, 26, 0.12), rgba(8, 12, 30, 0.08)),
-      linear-gradient(135deg, #101a2c 0%, #16324f 52%, #2f4f78 100%) !important;
-    box-shadow:
-      0 4px 12px rgba(8, 18, 40, 0.25),
-      0 0 0 1px rgba(255,255,255,0.05),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
   }
 
   .nav-logo-image {
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
+    filter: none;
   }
 
-  /* ── Nav logo bleed — gradient emanation from logo into navbar bg ───── */
+  /* ── Nav logo bleed — disabled ───── */
   .nav-logo-bleed {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 12% 80% at 3% 50%, rgba(34,211,238,0.06) 0%, transparent 100%),
-      radial-gradient(ellipse 18% 70% at 5% 50%, rgba(59,130,246,0.07) 0%, transparent 100%),
-      radial-gradient(ellipse 14% 60% at 8% 55%, rgba(251,191,36,0.04) 0%, transparent 100%);
+    display: none;
   }
 
   /* ── Footer geometric pattern blend ──────────────────────────────────── */
@@ -594,7 +578,7 @@
 
   @keyframes logo-pill-glow {
     0%, 100% { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.30); }
-    50%       { box-shadow: 0 6px 22px rgba(0, 0, 0, 0.34), 0 0 18px 2px rgba(197, 109, 28, 0.09); }
+    50%       { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.30); }
   }
 
   @keyframes hero-panel-glow {

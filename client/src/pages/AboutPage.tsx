@@ -69,12 +69,17 @@ export default function AboutPage() {
       {/* Hero section */}
       <section className="py-4 md:py-10">
         <div className="text-center mb-12">
-          <img
-            src="/text-logo.png"
-            alt="AiVIS logo"
-            className="mx-auto mb-6 h-11 w-auto object-contain opacity-95"
-            loading="lazy"
-          />
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img
+              src="/aivis-logo.png"
+              alt="AiVIS"
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-lg object-contain"
+              loading="lazy"
+            />
+            <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
             About Intruvurt Labs
           </h1>

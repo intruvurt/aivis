@@ -71,12 +71,17 @@ export default function GuidePage() {
       </aside>
 
       <header id="start-here" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <img
-          src="/text-logo.png"
-          alt="AiVIS logo"
-          className="mb-4 h-9 w-auto object-contain opacity-90"
-          loading="lazy"
-        />
+        <div className="mb-4 flex items-center gap-2.5">
+          <img
+            src="/aivis-logo.png"
+            alt="AiVIS"
+            width={28}
+            height={28}
+            className="h-7 w-7 shrink-0 rounded-lg object-contain"
+            loading="lazy"
+          />
+          <span className="text-base font-bold text-white tracking-tight">AiVIS</span>
+        </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
           <FlaskConical className="h-3.5 w-3.5 text-orange-300" />
           Execution Guide

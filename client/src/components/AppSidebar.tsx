@@ -51,8 +51,8 @@ const toolsNav: NavItem[] = [
 
 const agencyNav: NavItem[] = [
   { to: "/app/agency", label: "Agency Dashboard", icon: Building2, minTier: "agency" },
-  { to: "/app/api-docs", label: "API Docs", icon: Code2, minTier: "agency" },
-  { to: "/app/integrations", label: "Integrations", icon: Network, minTier: "agency" },
+  { to: "/api-docs", label: "API Docs", icon: Code2, minTier: "agency" },
+  { to: "/integrations", label: "Integrations", icon: Network, minTier: "agency" },
 ];
 
 const accountNav: NavItem[] = [

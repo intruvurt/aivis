@@ -55,7 +55,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
 
         {/* Documentation */}
         <Link
-          to="/docs"
+          to="/api-docs"
           className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
           title="Documentation"
           aria-label="Documentation"

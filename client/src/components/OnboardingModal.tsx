@@ -173,17 +173,15 @@ function SceneWelcome() {
     <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col items-center text-center">
       {/* Orbital glow */}
       <motion.div variants={scaleIn} className="relative mb-6">
-        <div className="absolute -inset-10 pointer-events-none">
-          <div className="absolute -top-4 -left-6 w-28 h-28 rounded-full bg-violet-500/20 blur-3xl animate-pulse" style={{ animationDuration: "4s" }} />
-          <div className="absolute -bottom-4 -right-6 w-28 h-28 rounded-full bg-cyan-500/20 blur-3xl animate-pulse" style={{ animationDuration: "5s", animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-amber-500/10 blur-2xl animate-pulse" style={{ animationDuration: "3.5s", animationDelay: "0.5s" }} />
-        </div>
-        <div className="relative logo-pill p-3 brand-glow-violet">
+        <div className="flex items-center gap-3">
           <img
-            src="/text-logo.png"
+            src="/aivis-logo.png"
             alt="AiVIS"
-            className="w-56 h-16 object-contain drop-shadow-[0_0_40px_rgba(139,92,246,0.4)]"
+            width={40}
+            height={40}
+            className="h-10 w-10 shrink-0 rounded-lg object-contain"
           />
+          <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
         </div>
       </motion.div>
 

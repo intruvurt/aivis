@@ -321,16 +321,13 @@ export default function TopNav() {
 
   return (
     <nav className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
-      {/* Gradient emanation — logo colors bleeding across the nav */}
-      <div className="nav-logo-bleed" aria-hidden="true" />
-      {/* Smoke edge — subtle accent glow along bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent pointer-events-none" aria-hidden="true" />
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-orange-500/[0.03] to-transparent pointer-events-none" aria-hidden="true" />
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center gap-2 shrink-0">
           {/* Logo */}
-          <Link to="/" className="flex items-center py-1">
-            <img src={LOGO_URL} alt="AiVIS" className="nav-logo-image h-10 w-auto object-contain bg-transparent" />
+          <Link to="/" className="flex items-center gap-2 py-1">
+            <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
+            <span className="text-[15px] font-bold text-white tracking-tight">AiVIS</span>
           </Link>
 
           <span

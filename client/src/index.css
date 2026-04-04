@@ -238,17 +238,6 @@
   .section-anchor {
     scroll-margin-top: 92px;
   }
-
-  .surface-structured {
-    background: linear-gradient(160deg, #141c2e, #111827);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.15);
-  }
-
-  .surface-structured-muted {
-    background: linear-gradient(165deg, #111827, #0d1320);
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  }
 }
 
 /* -------------------------------------------------------
@@ -262,27 +251,6 @@
   [class*="line-clamp-"] {
     padding-left: 0.15em;
     padding-right: 0.15em;
-  }
-
-  .elemental-vibrancy-splash {
-    background-image:
-      radial-gradient(1400px 840px at 10%  6%, rgba(255,255,255,0.08), transparent 62%),
-      radial-gradient(1320px 800px at 92% 12%, rgba(255,255,255,0.05), transparent 64%),
-      radial-gradient(1180px 740px at 52% 104%, rgba(0,0,0,0.12), transparent 60%),
-      radial-gradient(920px  560px at 30% 34%, rgba(255,255,255,0.04), transparent 62%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
-
-  .page-splash-bg {
-    background-image:
-      radial-gradient(1200px 720px at 12%  8%, rgba(255,255,255,0.07), transparent 60%),
-      radial-gradient(1120px 680px at 88% 14%, rgba(255,255,255,0.04), transparent 62%),
-      radial-gradient(1020px 640px at 48% 98%, rgba(0,0,0,0.14), transparent 58%),
-      radial-gradient(920px  540px at 32% 36%, rgba(255,255,255,0.03), transparent 60%),
-      radial-gradient(760px  460px at 72% 72%, rgba(0,0,0,0.10), transparent 62%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
   }
 
   .animate-in {

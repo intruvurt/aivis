@@ -18,7 +18,7 @@ const ABOUT_STRUCTURED_DATA = [
   buildOrganizationSchema(),
   buildPersonSchema({
     id: AUTHOR_ID,
-    name: 'Intruvurt Labs',
+    name: 'Ryan Mason',
     jobTitle: 'AI Visibility Engineer',
     url: `${BASE_URL}/about`,
     description: 'AiVIS author profile for AI visibility engineering, machine readability, and citation-readiness strategy.',
@@ -39,7 +39,7 @@ const ABOUT_STRUCTURED_DATA = [
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About Intruvurt Labs – AiVIS AI Visibility Platform',
+    name: 'About AiVIS; AI Evidence-Backed Visibility Audits & Remediation Platform',
     description: 'Enterprise citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
   }),
   buildBreadcrumbSchema([
@@ -60,8 +60,8 @@ export default function AboutPage() {
   return (
     <PublicPageFrame
       icon={Info}
-      title="About Intruvurt Labs"
-      subtitle="Enterprise-grade AI visibility auditing platform built for agencies, teams, and operators."
+      title="About AiVIS"
+      subtitle="Enterprise-grade AI visibility Evidence-backed auditing and Auto Scorefix PR platform built for agencies, teams, and operators."
       backTo="/"
       maxWidthClass="max-w-6xl"
     >
@@ -81,10 +81,10 @@ export default function AboutPage() {
             <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
-            About Intruvurt Labs
+            About AiVIS
           </h1>
           <p className="text-lg text-white/70 max-w-3xl mx-auto">
-            Enterprise-grade citation engine and AI visibility auditing platform built for agencies, teams, and organizations that demand proof of their digital authority.
+            Comprehensive citation  tracking engine and Ai visibility evidence-backed auditing platform built for freelancers, solopreneurs, agencies, teams and organizations that demand proof of their digital authority.
           </p>
           <div className="mt-6 max-w-3xl mx-auto text-left">
             <PlatformShiftBanner
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 </div>
 
                 <h3 className="text-2xl font-bold mb-1 text-blue-800 dark:text-blue-200">R. Mason</h3>
-                <p className="text-lg text-white/60 mb-6">Head of Intruvurt Labs</p>
+                <p className="text-lg text-white/60 mb-6">Head of AiVIS, product of Intruvurt Labs</p>
 
                 <p className="text-white/70 leading-relaxed mb-4">
                   R. Mason leads the vision and engineering at Intruvurt Labs. With deep expertise in citation architecture, machine readability, and AI extractability, Mason drives the platform&apos;s commitment to enterprise-grade visibility auditing.
@@ -264,15 +264,6 @@ export default function AboutPage() {
               <p className="text-white/70 leading-relaxed mb-4">
                 Responsible for outreach, content pipeline, partnership coordination, and ensuring the platform reaches builders and agencies who need AI visibility intelligence.
               </p>
-
-              <div className="mt-4 rounded-lg border border-cyan-400/15 bg-cyan-500/5 p-4">
-                <p className="text-xs uppercase tracking-wider text-cyan-300/70 mb-2">Private commission terms</p>
-                <ul className="text-sm text-white/65 space-y-1.5">
-                  <li>18.5% commission on each successful purchase via referral link</li>
-                  <li>Marketing tools and methods chosen at sole discretion of specialist</li>
-                  <li>Paid ads budget capped at 10% of sales minus $2,000–$5,000 reserve (refunds &amp; Stripe chargebacks)</li>
-                </ul>
-              </div>
 
               <div className="mt-6 pt-6 border-t border-white/10">
                 <p className="text-xs text-white/50 mb-3">Focus areas:</p>

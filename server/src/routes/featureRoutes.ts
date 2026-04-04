@@ -87,7 +87,6 @@ import {
 } from '../services/googleMeasurement.js';
 import { runPrivateExposureScan } from '../services/privateExposureScanService.js';
 import { listAuditTruthHistory } from '../services/auditTruthService.js';
-import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 import { getUserMilestones, getNextMilestones } from '../services/milestoneService.js';
 import { getToolUsageSummary } from '../services/toolCreditGate.js';
 

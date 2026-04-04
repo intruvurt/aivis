@@ -961,7 +961,7 @@ const licenseLimiter = rateLimit({
   max: IS_PRODUCTION ? 30 : 200,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
   handler: (_req, res) => {
     res.status(429).json({ error: 'Too many license requests', code: 'LICENSE_RATE_LIMIT', retryAfter: 60 });
   },

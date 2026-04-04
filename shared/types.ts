@@ -942,6 +942,10 @@ export interface AICitationResult {
   screenshot_url?: string;
   competitors_mentioned: string[];
   created_at: string;
+  model_used?: string;
+  model_short?: string;
+  model_role?: 'primary' | 'fallback';
+  source_type?: 'direct' | 'simulated';
 }
 
 export interface CitationTest {
@@ -1005,7 +1009,7 @@ export function getEnginesForTier(tier: CanonicalTier | 'scorefix'): EngineAcces
 /* ========================= Engine output types ========================= */
 
 export interface EngineOutputBase {
-  status: 'ok' | 'failed';
+  status: 'ok' | 'success' | 'failed';
   timeMs: number;
   errors?: string[];
 }
@@ -1014,7 +1018,7 @@ export interface CitationReadinessOutput extends EngineOutputBase {
   data: {
     citation_readiness_score: number;
     quotability_index: number;
-    citable_sections: string[];
+    citable_sections: CitableSection[];
     blockers_to_citation: string[];
     recommendations: string[];
   };
@@ -1040,6 +1044,22 @@ export interface TrustLayerOutput extends EngineOutputBase {
 export interface EntityGraphOutput extends EngineOutputBase {
   data: {
     entity_clarity_score: number;
+    primary_entity?: {
+      canonical_name: string;
+      aliases: string[];
+      confidence: number;
+      primary_location: string;
+    };
+    entity_mentions?: {
+      count: number;
+      consistency_ratio: number;
+      variance_issues: string[];
+    };
+    organization_clarity?: {
+      has_leadership: boolean;
+      leadership_consistent: boolean;
+      department_clarity: string;
+    };
     entities?: unknown[];
     recommendations?: string[];
     [key: string]: unknown;
@@ -1492,11 +1512,11 @@ export interface GeoSignalProfile {
   signal_consistent: boolean;
   fact_unique: boolean;
   relationship_anchored: boolean;
-  information_gain: 'unique' | 'standard' | 'redundant';
+  information_gain: string;
 }
 
 export interface ContradictionReport {
-  status: 'critical' | 'attention' | 'clean';
+  status: string;
   blocker_count: number;
   issue_count: number;
   issues: Array<{

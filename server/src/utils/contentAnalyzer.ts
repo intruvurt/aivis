@@ -5,6 +5,8 @@ import { buildEvidence } from "./evidence.js";
  */
 export const analyzeContentClarity = (extractedData: any, url: string) => {
   const evidence = [];
+  const headingValues = Object.values(extractedData.headings || {}) as string[][];
+  const flattenedHeadings = headingValues.flat().filter((heading): heading is string => typeof heading === 'string');
   const contentData = {
     wordCount: extractedData.wordCount,
     headingStructure: { h1Count: 0, h2Count: 0, h3Count: 0, totalHeadings: 0 },
@@ -20,7 +22,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
     contentData.headingStructure.h1Count = extractedData.headings.h1.length;
     contentData.headingStructure.h2Count = extractedData.headings.h2.length;
     contentData.headingStructure.h3Count = extractedData.headings.h3.length;
-    contentData.headingStructure.totalHeadings = Object.values(extractedData.headings).reduce((sum, arr) => sum + arr.length, 0);
+    contentData.headingStructure.totalHeadings = headingValues.reduce((sum, arr) => sum + arr.length, 0);
 
     if (contentData.headingStructure.totalHeadings > 0) {
       evidence.push(buildEvidence({
@@ -57,7 +59,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
 
     // Check for About section
     const aboutKeywords = /about|who we are|our story|our mission/i;
-    const hasAboutInHeadings = Object.values(extractedData.headings).flat().some(h => aboutKeywords.test(h));
+    const hasAboutInHeadings = flattenedHeadings.some((heading) => aboutKeywords.test(heading));
     const hasAboutInText = aboutKeywords.test(extractedData.bodyText);
     
     if (hasAboutInHeadings || hasAboutInText) {
@@ -78,7 +80,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
 
     // Check for Pricing section
     const pricingKeywords = /pricing|plans|cost|price|subscription|buy now|purchase/i;
-    const hasPricingInHeadings = Object.values(extractedData.headings).flat().some(h => pricingKeywords.test(h));
+    const hasPricingInHeadings = flattenedHeadings.some((heading) => pricingKeywords.test(heading));
     const hasPricingInText = pricingKeywords.test(extractedData.bodyText);
     
     if (hasPricingInHeadings || hasPricingInText) {
@@ -99,7 +101,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
 
     // Check for Contact section
     const contactKeywords = /contact|email|phone|address|get in touch|reach us/i;
-    const hasContactInHeadings = Object.values(extractedData.headings).flat().some(h => contactKeywords.test(h));
+    const hasContactInHeadings = flattenedHeadings.some((heading) => contactKeywords.test(heading));
     const hasContactInText = contactKeywords.test(extractedData.bodyText);
     const hasContactInMeta = extractedData.metaTags["contact"] || extractedData.metaTags["email"];
     

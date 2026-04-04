@@ -46,6 +46,8 @@ export interface CitationTestResult {
   ddg_search?: WebSearchPresenceResult;
   /** Brave web search verification — always runs, free, no key */
   brave_search?: WebSearchPresenceResult;
+  /** Wikipedia presence verification — always runs, free, no key */
+  wikipedia_search?: WebSearchPresenceResult;
 }
 
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';

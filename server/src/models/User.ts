@@ -45,6 +45,7 @@ export interface User {
 
   // Internal tier tracking
   internal_tier_key?: string | null;
+  last_reset_date?: Date | null;
 
   // Stripe
   stripe_customer_id?: string | null;

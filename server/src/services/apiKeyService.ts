@@ -39,10 +39,15 @@ export type ApiKeyValidationResult =
       userId: string;
       workspaceId: string;
       scopes: string[];
+      reason?: undefined;
     }
   | {
       ok: false;
       reason: ApiKeyValidationFailureReason;
+      keyId?: undefined;
+      userId?: undefined;
+      workspaceId?: undefined;
+      scopes?: undefined;
     };
 
 const ALLOWED_API_SCOPES = ['read:audits', 'read:analytics'] as const;

@@ -55,6 +55,8 @@ function getEnginesForTierSafe(tier: CanonicalTier): {
     alignment: 1,
     signal: 2,
     scorefix: 3,
+    agency: 4,
+    enterprise: 5,
   };
   const current = rank[tier] ?? 0;
   return {

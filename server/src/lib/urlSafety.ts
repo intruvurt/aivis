@@ -1,6 +1,6 @@
 export type NormalizePublicUrlResult =
-  | { ok: true; url: string; hostname: string }
-  | { ok: false; error: string };
+  | { ok: true; url: string; hostname: string; error?: undefined }
+  | { ok: false; error: string; url?: undefined; hostname?: undefined };
 
 function isPrivateOrLocalHost(hostname: string): boolean {
   const host = String(hostname || '').trim().toLowerCase();

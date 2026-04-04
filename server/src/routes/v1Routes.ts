@@ -72,14 +72,16 @@ router.post('/audit', tieredRateLimit('analyze'), async (req: Request, res: Resp
 
   // Validate URL
   const normalized = normalizePublicHttpUrl(targetUrl);
-  if (!normalized) return res.status(400).json({ error: 'Invalid URL' });
-  if (IS_PRODUCTION && isPrivateOrLocalHost(normalized)) {
+  if (!normalized.ok) {
+    return res.status(400).json({ error: normalized.error || 'Invalid URL' });
+  }
+  if (IS_PRODUCTION && isPrivateOrLocalHost(normalized.hostname)) {
     return res.status(400).json({ error: 'Private/localhost URLs not allowed' });
   }
 
   const priority = req.body?.priority === 'high' ? 'high' : 'normal';
   const jobId = await enqueueAuditJob({
-    url: normalized,
+    url: normalized.url,
     userId,
     workspaceId: (req as any).workspace?.id,
     priority,
@@ -92,7 +94,7 @@ router.post('/audit', tieredRateLimit('analyze'), async (req: Request, res: Resp
 
 router.get('/audit/:id', async (req: Request, res: Response) => {
   const userId = getUserId(req);
-  const auditId = req.params.id;
+  const auditId = String(req.params.id || '');
 
   if (!auditId) return res.status(400).json({ error: 'Audit ID required' });
 
@@ -301,7 +303,8 @@ router.post('/projects', async (req: Request, res: Response) => {
   const orgId = requireOrgId(req, res);
   if (!orgId) return;
 
-  const domain = String(req.body?.domain || '').trim().toLowerCase();
+  const rawDomain = req.body?.domain;
+  const domain = typeof rawDomain === 'string' ? rawDomain.trim().toLowerCase() : '';
   const repoOwner = String(req.body?.repo_owner || '').trim();
   const repoName = String(req.body?.repo_name || '').trim();
   const repoInstallationId = String(req.body?.repo_installation_id || '').trim();

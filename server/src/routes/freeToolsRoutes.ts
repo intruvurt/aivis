@@ -15,7 +15,7 @@ const router = Router();
 
 // ── Shared helpers ──────────────────────────────────────────────
 
-function validateToolUrl(raw: unknown): { valid: true; url: string } | { valid: false; error: string } {
+function validateToolUrl(raw: unknown): { valid: true; url: string; error?: undefined } | { valid: false; error: string; url?: undefined } {
   if (typeof raw !== 'string' || !raw.trim()) {
     return { valid: false, error: 'URL is required' };
   }

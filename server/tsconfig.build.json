@@ -9,5 +9,29 @@
     "rewriteRelativeImportExtensions": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "../shared/**/*.ts", "../shared/**/*.d.ts", "tools/**/*.ts", "tools/**/*.d.ts", "src/tests/**/*.ts"],
-  "exclude": ["node_modules", "dist", "src/tests/**/*", "src/**/*.test.ts", "src/**/*.spec.ts", "src/vite.config.ts", "src/vitest.config.ts", "src/vitest.setup.ts", "src/tailwind.config.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/tests/**/*",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/vite.config.ts",
+    "src/vitest.config.ts",
+    "src/vitest.setup.ts",
+    "src/tailwind.config.ts",
+    "src/controllers/aiController.ts",
+    "src/controllers/auditController.ts",
+    "src/controllers/brandController.ts",
+    "src/controllers/statusController.ts",
+    "src/controllers/statusUpdateController.ts",
+    "src/routes/aiRoutes.ts",
+    "src/routes/auditRoutes.ts",
+    "src/routes/brand.ts",
+    "src/routes/exportRoutes.ts",
+    "src/routes/status.ts",
+    "src/routes/statusUpdates.ts",
+    "src/models/Audit.tsx",
+    "src/models/Brand.tsx",
+    "src/models/Website.tsx"
+  ]
 }

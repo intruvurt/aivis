@@ -54,6 +54,9 @@ export interface AuditEvidence {
   captureTimeUtc: string;
   source: string;
   confidence: number;
+  locator?: string;
+  expectedValue?: string;
+  snippet?: string;
 }
 
 export interface AuditFinding {
@@ -74,7 +77,7 @@ export interface AuditFix {
   implementationSurface?: string;
   findingIds: string[];
   evidenceIds: string[];
-  instructions: string;
+  instructions: string[];
   expectedOutcome?: string;
 }
 
@@ -84,6 +87,15 @@ export interface AuditScoreBreakdown {
   fact: number;
   relationship: number;
   overall: number;
+  interpretability?: number;
+  extractability?: number;
+  structuralClarity?: number;
+  evidenceAvailability?: number;
+  freshnessIntegrity?: number;
+  trustEntityClarity?: number;
+  technicalIntegrity?: number;
+  accessibilitySurface?: number;
+  securityExposure?: number;
 }
 
 export interface AuditModuleResult {

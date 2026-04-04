@@ -1,7 +1,9 @@
 // server/src/services/scraper.ts
 /// <reference lib="dom" />
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
+import { join } from 'path';
+import { homedir } from 'os';
 import { URL } from 'url';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 
@@ -295,8 +297,31 @@ function resolveChromePath(): string | undefined {
     }
   }
 
-  // If Puppeteer bundled Chromium exists, it will use its internal resolution.
-  console.warn('[Scraper] Chrome executable not found in common system paths; relying on Puppeteer default');
+  // Probe Puppeteer cache directory for installed Chrome binary
+  const cacheDir = process.env.PUPPETEER_CACHE_DIR || join(homedir(), '.cache', 'puppeteer');
+  const chromeCacheDir = join(cacheDir, 'chrome');
+  if (existsSync(chromeCacheDir)) {
+    try {
+      const versions = readdirSync(chromeCacheDir);
+      for (const ver of versions) {
+        // Linux: chrome-linux64/chrome, Mac: chrome-mac-arm64/...  
+        const linuxBin = join(chromeCacheDir, ver, 'chrome-linux64', 'chrome');
+        if (existsSync(linuxBin)) {
+          console.log(`[Scraper] Using Chrome from Puppeteer cache: ${linuxBin}`);
+          return linuxBin;
+        }
+        const macBin = join(chromeCacheDir, ver, 'chrome-mac-arm64', 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing');
+        if (existsSync(macBin)) {
+          console.log(`[Scraper] Using Chrome from Puppeteer cache: ${macBin}`);
+          return macBin;
+        }
+      }
+    } catch (e) {
+      console.warn('[Scraper] Failed to scan Chrome cache dir:', e);
+    }
+  }
+
+  console.warn('[Scraper] Chrome executable not found in system paths or cache; relying on Puppeteer default');
   return undefined;
 }
 

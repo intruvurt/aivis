@@ -817,6 +817,22 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`,
             `CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`,
+            // ── Audit score timeline (added post-launch — visibility timeline) ──
+            `CREATE TABLE IF NOT EXISTS audit_score_timeline (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id VARCHAR(255) NOT NULL,
+              workspace_id UUID,
+              url TEXT NOT NULL,
+              score NUMERIC(5,2) NOT NULL,
+              score_delta NUMERIC(6,2),
+              event_type VARCHAR(50) NOT NULL DEFAULT 'manual_audit',
+              event_label TEXT,
+              audit_id UUID,
+              fix_id UUID,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_ast_user_url ON audit_score_timeline(user_id, url)`,
+            `CREATE INDEX IF NOT EXISTS idx_ast_captured_at ON audit_score_timeline(captured_at DESC)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

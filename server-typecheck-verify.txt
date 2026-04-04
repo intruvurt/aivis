@@ -1,0 +1,4 @@
+
+> aivis-server@1.0.0 typecheck
+> tsc -p tsconfig.build.json --noEmit
+

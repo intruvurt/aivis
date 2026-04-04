@@ -1,18 +1,36 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, type ReactNode } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 // Ensure there are no accidental CSS imports here
 
-const BrandContext = createContext();
+type BrandState = {
+  brandName: string;
+  tier: number;
+  logoUrl: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+};
 
-export const BrandProvider = ({ children }) => {
-  const [brand, setBrand] = useState({
-    brandName: "AiVis",
-    tier: 1,
-    logoUrl: null,
-    primaryColor: "#4F46E5",
-    secondaryColor: "#06B6D4"
-  });
+type BrandContextValue = {
+  brand: BrandState;
+  loading: boolean;
+};
+
+const DEFAULT_BRAND: BrandState = {
+  brandName: "AiVis",
+  tier: 1,
+  logoUrl: null,
+  primaryColor: "#4F46E5",
+  secondaryColor: "#06B6D4",
+};
+
+const BrandContext = createContext<BrandContextValue>({
+  brand: DEFAULT_BRAND,
+  loading: true,
+});
+
+export const BrandProvider = ({ children }: { children: ReactNode }) => {
+  const [brand, setBrand] = useState<BrandState>(DEFAULT_BRAND);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

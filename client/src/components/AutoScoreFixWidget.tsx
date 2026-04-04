@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "../config";
 import { buildBearerHeader } from "../utils/authToken";
+import { useAuthStore } from "../stores/authStore";
 import type { AnalysisResponse } from "@shared/types";
 
 interface AutoScoreFixWidgetProps {
@@ -30,10 +31,12 @@ export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditRes
   const [status, setStatus] = useState<InstallationStatus | null>(null);
   const [installUrl, setInstallUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
     const base = (API_URL || "").replace(/\/+$/, "");
-    const headers = buildBearerHeader();
+    const authHeader = buildBearerHeader(token);
+    const headers = authHeader ? { Authorization: authHeader } : undefined;
 
     Promise.all([
       fetch(`${base}/api/github-app/status`, { headers }).then(r => r.ok ? r.json() : null),
@@ -45,7 +48,7 @@ export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditRes
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   const score = auditResult?.visibility_score ?? 0;
   const isInstalled = status?.installed;

@@ -16,6 +16,7 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "css.validate": false,
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
   "less.lint.unknownAtRules": "ignore",

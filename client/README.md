@@ -63,8 +63,9 @@ On Windows use `npm.cmd` in this workspace
 ```bash
 npm.cmd install
 npm.cmd run dev
+```
 
-Vite usually runs on http://localhost:5173 unless changed by config or environment
+Vite usually runs on <http://localhost:5173> unless changed by config or environment
 
 Product flow
 
@@ -279,7 +280,7 @@ Environment variables
 
 Create client/.env as needed
 
-VITE_API_URL=https://api.aivis.biz
+VITE_API_URL=<https://api.aivis.biz>
 VITE_ENV=production
 VITE_SENTRY_DSN=render environment variable
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { Bot, Layers3, Play } from "lucide-react";
+import AppPageFrame from "../components/AppPageFrame";
 import { runAiAudit, fetchAvailableBuildSpecs, fetchAuditRun } from "../services/aiAuditService";
 
 const defaultPrompts = [
@@ -68,66 +70,86 @@ export default function AiAuditPage() {
   }, [auditId]);
 
   return (
-    <motion.div 
-      id="src_pages_aiauditpage_main" 
-      className="p-6 max-w-3xl mx-auto space-y-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <h1 id="src_pages_aiau ditpage_h1" className="text-2xl font-bold text-white">Multi-Stage AI Reflection-x3 Audit System</h1>
-      <p id="src_pages_aiauditpage_desc" className="text-gray-300">
-        Configure an AI reflection triple check for factual and ai searchability for extreme visibility; AiVis is a Ai-structured quality and visibility audit pipeline using custom system prompts and a single executable build spec blueprint, with cross referecing/debates for best output from multi-model orhestration.
-      </p>
-      <div id="src_pages_aiauditpage_prompts" className="space-y-4">
-        {prompts.map((p, i) => (
-          <div key={i} id={`src_pages_aiauditpage_prompt_${i}`}>
-            <label id="src_pages_AiAuditPage_wkz6" className="font-semibold text-white">Stage: {p.stage}</label>
-            <textarea
-              className="w-full border border-gray-600 bg-gray-800 text-white rounded min-h-[88px] p-2 my-1 text-sm"
-              value={p.prompt}
-              onChange={e => handlePromptChange(i, e.target.value)}
-              id={`src_pages_aiauditpage_${i}pmt`}
-            />
-          </div>
-        ))}
-      </div>
-      <div id="src_pages_aiauditpage_blueprint">
-        <label id="src_pages_AiAuditPage_gd8z" className="font-semibold text-white">Executable Build Spec Blueprint</label>
-        <textarea
-          className="w-full border border-gray-600 bg-gray-800 text-white rounded min-h-[72px] p-2 my-1 text-sm"
-          value={blueprint}
-          onChange={e => setBlueprint(e.target.value)}
-          id="src_pages_aiauditpage_blpt"
-          placeholder="Enter your build spec blueprint (JSON, YAML, or Markdown)"
-        />
-      </div>
-      <div id="src_pages_aiauditpage_actions" className="flex space-x-2">
-        <button
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded disabled:opacity-50"
-          onClick={handleRunAudit}
-          disabled={loading}
-          id="src_pages_aiauditpage_runbtn"
-        >
-          {loading ? "Running..." : "Run Audit"}
-        </button>
-      </div>
-      {auditResult && (
-        <div id="src_pages_aiauditpage_results" className="mt-6">
-          <h2 id="src_pages_AiAuditPage_4xid" className="font-bold mb-2 text-white">Audit Pipeline - Rx3 Results</h2>
-          {auditResult.stageResults.map((stage, idx) => (
-            <div key={idx} className="border border-gray-600 rounded mb-3 p-3 bg-gray-800" id={`src_pages_aiauditpage_stage_${idx}`}>
-              <div id="src_pages_AiAuditPage_f3os" className="text-sm font-semibold text-white">Stage: {stage.name}</div>
-              <pre id="src_pages_AiAuditPage_de4g" className="overflow-x-auto text-xs bg-gray-900 border border-gray-700 rounded p-2 mt-2 text-gray-300">
-                {JSON.stringify(stage.output, null, 2)}
-              </pre>
-            </div>
-          ))}
+    <AppPageFrame
+      icon={<Bot className="h-5 w-5 text-cyan-300" />}
+      title="Multi-Stage AI Audit"
+      subtitle="Configure the internal reflection pipeline, build-spec blueprint, and stage output review in a usable workspace instead of a raw prototype panel."
+      maxWidthClass="max-w-5xl"
+      actions={
+        <div className="rounded-full border border-white/10 bg-charcoal-light px-3 py-1 text-xs text-white/70">
+          {buildSpecs.length} build specs available
         </div>
-      )}
-      <footer id="src_pages_aiauditpage_footer" className="text-xs text-center mt-12 text-gray-400">
-        © {new Date().getFullYear()} AI Visibility for Business. https://AiVis.biz All rights reserved. Powered by Intruvurt Labs
-      </footer>
-    </motion.div>
+      }
+    >
+      <motion.div
+        id="src_pages_aiauditpage_main"
+        className="space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
+          <div className="mb-4 flex items-center gap-2 text-white/75">
+            <Layers3 className="h-4 w-4 text-cyan-300" />
+            <p className="text-sm leading-relaxed text-white/70">
+              Tune each reflection stage, then execute the pipeline against a single build-spec blueprint. The output below stays inside the same review surface so the page reads like a product workflow, not an internal debug dump.
+            </p>
+          </div>
+
+          <div id="src_pages_aiauditpage_prompts" className="space-y-4">
+            {prompts.map((p, i) => (
+              <div key={i} id={`src_pages_aiauditpage_prompt_${i}`} className="rounded-xl border border-white/10 bg-charcoal-light/40 p-4">
+                <label id="src_pages_AiAuditPage_wkz6" className="mb-2 block text-sm font-semibold text-white">Stage: {p.stage}</label>
+                <textarea
+                  className="min-h-[120px] w-full rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-sm text-white placeholder:text-white/30"
+                  value={p.prompt}
+                  onChange={e => handlePromptChange(i, e.target.value)}
+                  id={`src_pages_aiauditpage_${i}pmt`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div id="src_pages_aiauditpage_blueprint" className="rounded-2xl border border-white/10 bg-charcoal p-5">
+          <label id="src_pages_AiAuditPage_gd8z" className="mb-2 block text-sm font-semibold text-white">Executable Build Spec Blueprint</label>
+          <textarea
+            className="min-h-[120px] w-full rounded-xl border border-white/10 bg-charcoal-light/40 px-4 py-3 text-sm text-white placeholder:text-white/30"
+            value={blueprint}
+            onChange={e => setBlueprint(e.target.value)}
+            id="src_pages_aiauditpage_blpt"
+            placeholder="Enter your build spec blueprint (JSON, YAML, or Markdown)"
+          />
+        </div>
+
+        <div id="src_pages_aiauditpage_actions" className="flex">
+          <button
+            className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            onClick={handleRunAudit}
+            disabled={loading}
+            id="src_pages_aiauditpage_runbtn"
+          >
+            <Play className="h-4 w-4" />
+            {loading ? "Running..." : "Run Audit"}
+          </button>
+        </div>
+
+        {auditResult && (
+          <div id="src_pages_aiauditpage_results" className="rounded-2xl border border-white/10 bg-charcoal p-5">
+            <h2 id="src_pages_AiAuditPage_4xid" className="mb-4 text-lg font-semibold text-white">Audit Pipeline Results</h2>
+            <div className="space-y-3">
+              {auditResult.stageResults.map((stage, idx) => (
+                <div key={idx} className="rounded-xl border border-white/10 bg-charcoal-light/40 p-4" id={`src_pages_aiauditpage_stage_${idx}`}>
+                  <div id="src_pages_AiAuditPage_f3os" className="text-sm font-semibold text-white">Stage: {stage.name}</div>
+                  <pre id="src_pages_AiAuditPage_de4g" className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-[#0a0f1d] p-3 text-xs text-gray-300">
+                    {JSON.stringify(stage.output, null, 2)}
+                  </pre>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </AppPageFrame>
   );
 }

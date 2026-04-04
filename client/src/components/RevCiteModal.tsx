@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Copy, Loader2, AlertCircle, TrendingDown } from "lucide-react";
+import ModalPanel from "./ModalPanel";
 import toast from "react-hot-toast";
 import type { CitationEvidence, RevCiteSuggestion } from "../../../shared/types";
 import { getRevCiteSuggestions } from "../api";
@@ -43,25 +44,15 @@ export default function RevCiteModal({ evidence, isOpen, onClose }: RevCiteModal
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
-      <div className="bg-charcoal-deep rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <TrendingDown className="w-5 h-5" />
-              Rev-Cite Alternatives
-            </h2>
-            <p className="text-xs text-white/55 mt-1">
-              Find less competitive search criteria with similar intent to: "{(evidence as any).query}"
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-white/60 hover:text-white transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+    <ModalPanel
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Rev-Cite Alternatives"
+      subtitle={`Find less competitive search criteria with similar intent to: "${(evidence as any).query}"`}
+      icon={<TrendingDown className="w-5 h-5" />}
+      maxWidthClass="max-w-2xl"
+      zIndexClass="z-[220]"
+    >
 
         {/* Original Query */}
         <div className="mb-6 p-4 rounded-xl border border-white/10 bg-charcoal/50">
@@ -150,7 +141,6 @@ export default function RevCiteModal({ evidence, isOpen, onClose }: RevCiteModal
             💡 <span className="font-medium">Tip:</span> Test these alternative queries to discover less competitive citation opportunities with the same customer intent.
           </p>
         </div>
-      </div>
-    </div>
+    </ModalPanel>
   );
 }

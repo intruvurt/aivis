@@ -1,7 +1,7 @@
 import React from "react";
-import { Shield, CheckCircle2, Users, Lightbulb, GitBranch, ArrowRight, ArrowLeft, Info } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Shield, CheckCircle2, Users, Lightbulb, GitBranch, ArrowRight, Info } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
+import PublicPageFrame from "../components/PublicPageFrame";
 import {
   AUTHOR_ID,
   BASE_URL,
@@ -49,7 +49,6 @@ const ABOUT_STRUCTURED_DATA = [
 ];
 
 export default function AboutPage() {
-  const navigate = useNavigate();
   usePageMeta({
     title: 'About Intruvurt Labs | AiVIS \u2013 AI Visibility Intelligence Audits',
     description: 'Intruvurt Labs: enterprise AI citation engine and visibility auditing platform. Founded December 2025. Ryan Mason, Head of Intruvurt Labs.',
@@ -59,25 +58,16 @@ export default function AboutPage() {
     structuredData: ABOUT_STRUCTURED_DATA,
   });
   return (
-    <>
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Info className="h-5 w-5 text-orange-400" />
-              About Intruvurt Labs
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Enterprise-grade AI visibility auditing platform built for agencies, teams, and operators</p>
-          </div>
-        </div>
-      </header>
-      <div className="min-h-screen text-white">
+    <PublicPageFrame
+      icon={Info}
+      title="About Intruvurt Labs"
+      subtitle="Enterprise-grade AI visibility auditing platform built for agencies, teams, and operators."
+      backTo="/"
+      maxWidthClass="max-w-6xl"
+    >
 
       {/* Hero section */}
-      <section className="px-4 py-16 md:py-24 max-w-6xl mx-auto">
+      <section className="py-4 md:py-10">
         <div className="text-center mb-12">
           <img
             src="/text-logo.png"
@@ -104,8 +94,8 @@ export default function AboutPage() {
       </section>
 
       {/* Company mission */}
-      <section className="px-4 py-16 bg-white/5 border-y border-white/10">
-        <div className="max-w-6xl mx-auto">
+      <section className="-mx-4 border-y border-white/10 bg-white/5 px-4 py-16 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div>
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h2 className="text-2xl brand-title mb-4">Our Mission</h2>
@@ -136,8 +126,8 @@ export default function AboutPage() {
       </section>
 
       {/* Founder section */}
-      <section className="px-4 py-16" id="leadership">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-16" id="leadership">
+        <div>
           <h2 className="text-3xl brand-title mb-12 text-center">Leadership</h2>
 
           <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-2">
@@ -444,7 +434,6 @@ export default function AboutPage() {
           </p>
         </div>
       </footer>
-    </div>
-    </>
+    </PublicPageFrame>
   );
 }

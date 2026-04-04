@@ -1,6 +1,7 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Newspaper } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ExternalLink, Newspaper } from "lucide-react";
+import PublicPageFrame from "../components/PublicPageFrame";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildWebPageSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
 
@@ -42,8 +43,6 @@ const MEDIA_KIT = [
 ];
 
 export default function PressPage() {
-  const navigate = useNavigate();
-
   usePageMeta({
     title: "Press & Media",
     description:
@@ -56,32 +55,15 @@ export default function PressPage() {
   });
 
   return (
-    <>
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button
-            onClick={() => navigate("/")}
-            className="rounded-full p-2 transition-colors hover:bg-white/8"
-            type="button"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Newspaper className="h-5 w-5 text-orange-400" />
-              Press &amp; Media
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">
-              Coverage, milestones, and media resources
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <div className="min-h-screen text-white">
+    <PublicPageFrame
+      icon={Newspaper}
+      title="Press & Media"
+      subtitle="Coverage, milestones, and media resources."
+      backTo="/"
+      maxWidthClass="max-w-6xl"
+    >
         {/* Hero */}
-        <section className="px-4 py-16 md:py-20 max-w-6xl mx-auto text-center">
+        <section className="py-4 text-center md:py-8">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-300/90 text-xs font-semibold tracking-wide mb-6">
             Top 200 · TechCrunch Startup Battlefield 2026
           </span>
@@ -96,7 +78,7 @@ export default function PressPage() {
         </section>
 
         {/* Milestones */}
-        <section className="px-4 py-12 max-w-4xl mx-auto">
+        <section className="mx-auto max-w-4xl py-12">
           <h3 className="text-2xl brand-title mb-8">Milestones</h3>
           <div className="space-y-6">
             {MILESTONES.map((m) => (
@@ -119,7 +101,7 @@ export default function PressPage() {
         </section>
 
         {/* Media Kit */}
-        <section className="px-4 py-12 max-w-4xl mx-auto">
+        <section className="mx-auto max-w-4xl py-12">
           <h3 className="text-2xl brand-title mb-8">Media Kit</h3>
           <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden">
             <table className="w-full text-sm">
@@ -157,7 +139,7 @@ export default function PressPage() {
         </section>
 
         {/* Contact */}
-        <section className="px-4 py-12 max-w-4xl mx-auto text-center">
+        <section className="mx-auto max-w-4xl py-12 text-center">
           <p className="text-white/55 text-sm">
             For press inquiries, contact{" "}
             <a
@@ -168,7 +150,6 @@ export default function PressPage() {
             </a>
           </p>
         </section>
-      </div>
-    </>
+    </PublicPageFrame>
   );
 }

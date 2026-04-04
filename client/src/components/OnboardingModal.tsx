@@ -563,7 +563,7 @@ export default function OnboardingModal({ onClose, onAnalyze }: OnboardingModalP
   const isLaunch = step === TOTAL_STEPS - 1;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[220] flex items-center justify-center p-4">
       {/* Backdrop with animated gradient */}
       <motion.div
         className="absolute inset-0 bg-black/75 backdrop-blur-lg"
@@ -582,7 +582,7 @@ export default function OnboardingModal({ onClose, onAnalyze }: OnboardingModalP
         {/* Outer glow */}
         <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/15 via-cyan-500/10 to-violet-500/15 rounded-xl blur-xl pointer-events-none" />
 
-        <div className="relative bg-[#1e2433] border border-white/10 rounded-xl p-6 shadow-2xl overflow-hidden">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(30,36,51,0.98),rgba(16,22,37,0.96))] p-6 shadow-[0_32px_90px_rgba(0,0,0,0.45)]">
           {/* Subtle grid pattern overlay */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 

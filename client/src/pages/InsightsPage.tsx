@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookMarked } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BookMarked } from 'lucide-react';
+import PublicPageFrame from '../components/PublicPageFrame';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { INSIGHT_ARTICLES } from '../content/insights';
 import { buildBreadcrumbSchema, buildCollectionSchema, buildItemListSchema } from '../lib/seoSchema';
@@ -25,27 +26,14 @@ export default function InsightsPage() {
       ]),
     ],
   });
-
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen text-white">
-      {/* ── Standard page header ─────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <BookMarked className="h-5 w-5 text-orange-400" />
-              Strategy &amp; Insights
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">AI visibility playbooks, AEO guides, and geo-adaptive ranking strategies for 2026</p>
-          </div>
-        </div>
-      </header>
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <PublicPageFrame
+      icon={BookMarked}
+      title="Strategy & Insights"
+      subtitle="AI visibility playbooks, AEO guides, and geo-adaptive ranking strategies for 2026."
+      backTo="/"
+      maxWidthClass="max-w-5xl"
+    >
         <div className="mb-10 w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative">
           <img src="/images/abstract-art-bg-image.png" alt="Abstract Art Background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
           <div className="relative p-8 px-6 sm:px-12 flex flex-col items-center justify-center bg-gradient-to-r from-blue-900/40 to-indigo-900/40 z-10">
@@ -114,7 +102,6 @@ export default function InsightsPage() {
             </Link>
           </div>
         </section>
-      </main>
-    </div>
+    </PublicPageFrame>
   );
 }

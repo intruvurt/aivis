@@ -108,6 +108,22 @@
     color: #e2e8f0;
   }
 
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
   *,
   *::before,
   *::after {

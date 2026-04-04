@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Bell, Filter, RefreshCw, CheckCheck, Settings2, ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
+import AppPageFrame from "../components/AppPageFrame";
 import { useAuthStore } from "../stores/authStore";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { getNotificationDestination } from "../hooks/useNotifications";
@@ -147,17 +148,13 @@ export default function NotificationsPage() {
   }, [notifications, scopeFilter, creditOnly]);
 
   return (
-    <div className="space-y-6 text-white">
-      {/* Page heading */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-white flex items-center gap-2">
-            <Bell className="h-5 w-5 text-blue-400" />
-            Notifications
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">Monitor background actions, scheduled events, and credit activity.</p>
-        </div>
-        <div className="flex items-center gap-2">
+    <AppPageFrame
+      icon={<Bell className="h-5 w-5 text-blue-400" />}
+      title="Notifications"
+      subtitle="Monitor background jobs, scheduled events, credit activity, and delivery status without losing context in the app shell."
+      maxWidthClass="max-w-6xl"
+      actions={
+        <>
           <button
             type="button"
             onClick={() => setShowPrefs((p) => !p)}
@@ -169,8 +166,9 @@ export default function NotificationsPage() {
           <div className="text-xs px-3 py-1 rounded-full border border-white/10 bg-charcoal-light text-white/75">
             {unreadCount} unread
           </div>
-        </div>
-      </div>
+        </>
+      }
+    >
 
       <div className="space-y-4">
         {/* ── Notification Preferences (collapsible) ──────────────── */}
@@ -308,6 +306,6 @@ export default function NotificationsPage() {
           )}
         </div>
       </div>
-    </div>
+    </AppPageFrame>
   );
 }

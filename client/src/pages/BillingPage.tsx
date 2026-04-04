@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { CreditCard, Sparkles, Receipt, WalletCards, ShieldCheck, Clock, TrendingUp, AlertTriangle, CheckCircle2, X as XIcon, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
+import AppPageFrame from "../components/AppPageFrame";
 import { API_URL } from "../config";
 import { useAuthStore } from "../stores/authStore";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -579,15 +580,12 @@ export default function BillingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-6 text-white">
-      {/* Page heading */}
-      <div>
-        <h1 className="text-xl font-semibold text-white flex items-center gap-2">
-          <CreditCard className="h-5 w-5 text-orange-400" />
-          Billing &amp; Subscription
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">Manage your subscription, invoices, scan credits, and payment methods</p>
-      </div>
+    <AppPageFrame
+      icon={<CreditCard className="h-5 w-5 text-orange-400" />}
+      title="Billing & Subscription"
+      subtitle="Manage your subscription, invoices, credit packs, live usage, and automation access from one client-safe billing workspace."
+      maxWidthClass="max-w-6xl"
+    >
       <div>
 
         <div id="overview" className="section-anchor grid grid-cols-1 sm:grid-cols-4 gap-3 mb-5">
@@ -1204,6 +1202,6 @@ export default function BillingPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AppPageFrame>
   );
 }

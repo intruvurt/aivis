@@ -17,6 +17,7 @@ import {
   executeQueryPack,
   updateQueryPack,
 } from "../api";
+import ModalPanel from "./ModalPanel";
 
 interface QueryPackManagerProps {
   isOpen: boolean;
@@ -150,25 +151,15 @@ export default function QueryPackManager({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-charcoal-deep rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-white/10">
-              <History className="w-5 h-5 text-white/85" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-white">Reusable Query Packs</h2>
-              <p className="text-xs text-white/55">Save and rerun tests for agencies and teams</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-white/60 hover:text-white transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+    <ModalPanel
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Reusable Query Packs"
+      subtitle="Save and rerun tests for agencies and teams."
+      icon={<History className="w-5 h-5 text-white/85" />}
+      maxWidthClass="max-w-2xl"
+      zIndexClass="z-[220]"
+    >
 
         {/* Save Current Queries */}
         {currentQueries.length > 0 && (
@@ -307,7 +298,6 @@ export default function QueryPackManager({
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </ModalPanel>
   );
 }

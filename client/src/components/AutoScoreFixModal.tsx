@@ -418,10 +418,10 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
   // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <div
-      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[220] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="relative w-full max-w-2xl rounded-2xl bg-[#10142a] border border-white/10 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(12,18,33,0.92))] shadow-[0_32px_90px_rgba(0,0,0,0.45)]">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">

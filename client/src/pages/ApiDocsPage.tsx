@@ -1,11 +1,11 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, KeyRound, Code2, AlertTriangle, Activity, ArrowLeft, Globe, Lock, Cpu } from "lucide-react";
+import { Link } from "react-router-dom";
+import { BookOpen, KeyRound, Code2, AlertTriangle, Activity, Globe, Lock, Cpu } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildTechArticleSchema, buildWebPageSchema } from "../lib/seoSchema";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function ApiDocsPage() {
-  const navigate = useNavigate();
   usePageMeta({
     title: "AiVIS API Docs | Auth, Endpoints, Quickstart",
     description:
@@ -85,22 +85,8 @@ export default function ApiDocsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-charcoal-deep text-white">
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Code2 className="h-5 w-5 text-orange-400" />
-              API Documentation
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Auth, endpoints, scopes, and integration quickstart for the AiVIS REST API</p>
-          </div>
-        </div>
-      </header>
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <PublicPageFrame icon={Code2} title="API Documentation" subtitle="Auth, endpoints, scopes, and integration quickstart for the AiVIS REST API" maxWidthClass="max-w-6xl">
+      <section>
         <div className="rounded-2xl border border-white/12 bg-charcoal-light/40 p-6 sm:p-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-300/40 bg-emerald-500/12 text-emerald-200 text-xs font-semibold tracking-[0.08em] uppercase">
             <Activity className="w-3.5 h-3.5" />
@@ -318,6 +304,6 @@ POST /api/mcp/call       # Execute tool`}
           </p>
         </div>
       </section>
-    </div>
+    </PublicPageFrame>
   );
 }

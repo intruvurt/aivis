@@ -1,8 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function PrivacyPage() {
   usePageMeta({
@@ -14,38 +14,12 @@ export default function PrivacyPage() {
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy' }]),
     ],
   });
-  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen text-white flex flex-col">
-      {/* Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />
-      </div>
+    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How Intruvurt Labs collects, uses, and protects your data on the AiVIS platform" maxWidthClass="max-w-4xl">
+      <p className="text-white/55 text-sm mb-10">Last updated: February 17, 2026</p>
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <Shield className="h-5 w-5 text-orange-400" />
-              Privacy Policy
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">How Intruvurt Labs collects, uses, and protects your data on the AiVIS platform</p>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="lonely-text mb-10">
-          <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-          <p className="text-white/55 text-sm">Last updated: February 17, 2026</p>
-        </div>
-
-        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
+      <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">The Short Version</h2>
             <p>Your data is yours. We collect what we need to run the Service, we don't sell it to anyone, and we give you control over what's stored. If you want something deleted, just ask. That's the vibe.</p>
@@ -165,8 +139,6 @@ export default function PrivacyPage() {
             <p className="mt-4 text-white/60 text-sm">Intruvurt Labs • Georgia, USA</p>
           </section>
         </div>
-      </main>
-
-    </div>
+    </PublicPageFrame>
   );
 }

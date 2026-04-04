@@ -70,7 +70,7 @@ const ResetPassword = () => {
 
   if (validating) {
     return (
-      <div id="src_pages_ResetPassword_validating" className="min-h-screen flex items-center justify-center">
+      <div id="src_pages_ResetPassword_validating" className="flex flex-1 items-center justify-center">
         <div id="src_pages_ResetPassword_spinner" className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/10"></div>
       </div>
     );
@@ -81,7 +81,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div id="src_pages_ResetPassword_main" className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div id="src_pages_ResetPassword_main" className="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div id="src_pages_ResetPassword_container" className="max-w-md w-full">
         <div id="src_pages_ResetPassword_header" className="text-center mb-8 lonely-text">
           <h2 id="src_pages_ResetPassword_title" className="text-3xl font-bold text-white">Reset Password</h2>

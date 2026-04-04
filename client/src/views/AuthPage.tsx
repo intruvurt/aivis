@@ -444,42 +444,24 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="fixed inset-0 -z-10">
-        {/* Warm base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d1f3a] via-[#3d2048] to-[#6a1f1f]" />
-        {/* Geometric accent shapes */}
-        <svg className="absolute" style={{top:'3%',left:'5%',opacity:0.10}} width="90" height="78" viewBox="0 0 90 78"><polygon points="45,0 90,78 0,78" fill="rgba(255,255,255,0.28)" /></svg>
-        <svg className="absolute" style={{top:'6%',right:'8%',opacity:0.08}} width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="7" /></svg>
-        <svg className="absolute" style={{top:'22%',left:'3%',opacity:0.07,transform:'rotate(45deg)'}} width="64" height="64" viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="4" fill="rgba(255,255,255,0.22)" /></svg>
-        <svg className="absolute" style={{top:'25%',right:'4%',opacity:0.08}} width="100" height="86" viewBox="0 0 100 86"><polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill="rgba(255,255,255,0.28)" /></svg>
-        <svg className="absolute" style={{top:'48%',left:'48%',opacity:0.07,transform:'rotate(10deg)'}} width="60" height="60" viewBox="0 0 60 60"><rect x="24" y="0" width="12" height="60" rx="4" fill="rgba(255,255,255,0.24)" /><rect x="0" y="24" width="60" height="12" rx="4" fill="rgba(255,255,255,0.24)" /></svg>
-        <svg className="absolute" style={{top:'70%',left:'6%',opacity:0.08}} width="88" height="76" viewBox="0 0 88 76"><polygon points="44,0 88,22 88,66 44,88 0,66 0,22" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="6" /></svg>
-        <svg className="absolute" style={{top:'85%',right:'6%',opacity:0.10,transform:'rotate(180deg)'}} width="78" height="68" viewBox="0 0 78 68"><polygon points="39,0 78,68 0,68" fill="rgba(255,255,255,0.28)" /></svg>
-        <svg className="absolute" style={{top:'92%',left:'38%',opacity:0.07,transform:'rotate(45deg)'}} width="58" height="58" viewBox="0 0 58 58"><rect x="6" y="6" width="46" height="46" rx="3" fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="5" /></svg>
-      </div>
+    <div className="flex flex-1 items-center justify-center p-4">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#0d1f3a] via-[#1a1030] to-[#2a1212] pointer-events-none" />
 
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-8">
           <div className="relative">
-            {/* Brand color splash orbs */}
-            <div className="absolute -inset-6 pointer-events-none">
-              <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full bg-sky-500/18 blur-2xl animate-pulse" style={{ animationDuration: '4s' }} />
-              <div className="absolute -bottom-4 -right-4 w-28 h-28 rounded-full bg-rose-900/25 blur-2xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-orange-500/20 blur-xl animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }} />
-            </div>
             <div className="relative logo-pill px-6 py-4">
               <img
                 src="/text-logo.png"
                 alt="AiVIS: Ai Visibility Intelligence Audits"
-                className="h-12 sm:h-14 w-auto object-contain"
+                className="h-10 sm:h-12 w-auto object-contain"
               />
             </div>
           </div>
         </div>
 
         <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0ea5e9]/35 via-[#7c2d12]/35 to-[#f97316]/35 rounded-2xl blur opacity-70" />
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0ea5e9]/20 via-[#7c2d12]/20 to-[#f97316]/20 rounded-2xl blur opacity-50" />
           <div className="relative bg-charcoal border border-white/12 rounded-2xl p-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-white mb-2">

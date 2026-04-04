@@ -52,7 +52,7 @@ export default function BlogPostPage() {
   });
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="text-white">
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <div className="mb-8 flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="rounded-full border border-white/10 p-2 transition-colors hover:bg-white/[0.05]" type="button" aria-label="Go back">

@@ -38,7 +38,7 @@ export default function AEOPlaybook2026() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0b1220] via-[#111827] to-[#0b1220] text-white">
+    <div className="text-white">
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <header className="mb-8 rounded-2xl border border-white/10 bg-white/[0.04] p-8">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">AEO Playbook</p>

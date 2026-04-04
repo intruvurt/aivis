@@ -151,7 +151,7 @@ const WhyAIVisibility = () => {
   ];
 
   return (
-    <div id="why-ai-visibility-page" className="min-h-screen bg-[#060607] text-white">
+    <div id="why-ai-visibility-page" className="text-white">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white/22/20 to-transparent" />

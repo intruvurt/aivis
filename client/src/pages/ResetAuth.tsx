@@ -12,5 +12,5 @@ export default function ResetAuth() {
     window.location.href = "/auth?mode=signin";
   }, []);
 
-  return <div className="min-h-screen text-white flex items-center justify-center">resetting…</div>;
+  return <div className="flex flex-1 items-center justify-center text-white/55 text-sm">Resetting…</div>;
 }

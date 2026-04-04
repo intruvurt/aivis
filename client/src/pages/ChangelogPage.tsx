@@ -7,7 +7,9 @@ import {
   Zap,
   DollarSign,
   ShieldCheck,
+  ScrollText,
 } from "lucide-react";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 const categoryMeta: Record<
   ChangelogEntry["category"],
@@ -46,21 +48,8 @@ export default function ChangelogPage() {
   });
 
   return (
-    <div className="min-h-screen bg-charcoal text-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-        {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Changelog
-          </h1>
-          <p className="mt-3 text-white/60 text-base sm:text-lg leading-relaxed">
-            A permanent ledger of every update, fix, and improvement we ship.
-            Transparency is non-negotiable.
-          </p>
-        </header>
-
-        {/* Timeline */}
-        <ol className="relative border-l border-white/10 pl-6 space-y-10">
+    <PublicPageFrame icon={ScrollText} title="Changelog" subtitle="A permanent ledger of every update, fix, and improvement we ship. Transparency is non-negotiable." maxWidthClass="max-w-3xl">
+      <ol className="relative border-l border-white/10 pl-6 space-y-10">
           {changelog.map((entry, i) => {
             const meta = categoryMeta[entry.category];
             return (
@@ -113,8 +102,7 @@ export default function ChangelogPage() {
               </li>
             );
           })}
-        </ol>
-      </div>
-    </div>
+      </ol>
+    </PublicPageFrame>
   );
 }

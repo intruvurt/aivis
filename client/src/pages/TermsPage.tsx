@@ -1,8 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function TermsPage() {
   usePageMeta({
@@ -14,38 +14,12 @@ export default function TermsPage() {
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Terms of Service', path: '/terms' }]),
     ],
   });
-  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen text-white flex flex-col">
-      {/* Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-white/16 to-black" />
-      </div>
+    <PublicPageFrame icon={FileText} title="Terms of Service" subtitle="Legal terms governing your use of the AiVIS platform by Intruvurt Labs" maxWidthClass="max-w-4xl">
+      <p className="text-white/55 text-sm mb-10">Last updated: February 17, 2026</p>
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <FileText className="h-5 w-5 text-orange-400" />
-              Terms of Service
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Legal terms governing your use of the AiVIS platform by Intruvurt Labs</p>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="lonely-text mb-10">
-          <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
-          <p className="text-white/55 text-sm">Last updated: February 17, 2026</p>
-        </div>
-
-        <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
+      <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">1. The Deal</h2>
             <p>Look, by using AiVIS you're agreeing to play by these rules. If something here doesn't sit right with you, that's okay. Just don't use the Service. No hard feelings, but no exceptions either.</p>
@@ -147,8 +121,6 @@ export default function TermsPage() {
             <p className="mt-4 text-white/60 text-sm">Intruvurt Labs • Georgia, USA</p>
           </section>
         </div>
-      </main>
-
-    </div>
+    </PublicPageFrame>
   );
 }

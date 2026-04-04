@@ -1,10 +1,9 @@
 import React from "react";
-import { ArrowLeft, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FileText } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function PartnershipAgreementPage() {
-  const navigate = useNavigate();
   usePageMeta({
     title: "Referral and Delivery Partnership Terms | AiVIS",
     description: "Private commercial terms for AiVIS referral and delivery partnerships.",
@@ -13,28 +12,8 @@ export default function PartnershipAgreementPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#09090d] to-[#0f1017] text-[#f5f7fb]">
-      <header className="border-b border-white/10 bg-[#12121a] sticky top-0 z-20">
-        <div className="max-w-[980px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate("/")} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <img src="/aivis-logo.png" alt="AiVIS" className="h-8 w-8 rounded-lg" />
-            <span className="text-white/30 text-lg select-none">/</span>
-            <img src="https://zeeniith.in/favicon.ico" alt="Zeeniith" className="h-8 w-8 rounded-lg" />
-            <div className="min-w-0">
-              <h1 className="flex items-center gap-2 text-xl font-semibold">
-                <FileText className="h-5 w-5 text-[#7c5cff]" />
-                Partnership Terms
-              </h1>
-              <p className="text-sm text-white/50 leading-tight mt-0.5">AiVIS &times; Zeeniith</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-[980px] mx-auto px-5 py-10 space-y-5">
+    <PublicPageFrame icon={FileText} title="Partnership Terms" subtitle="AiVIS × Zeeniith" maxWidthClass="max-w-[980px]">
+      <div className="space-y-5">
         {/* Hero card */}
         <section className="rounded-2xl border border-[#7c5cff]/28 bg-[radial-gradient(circle_at_top_right,rgba(124,92,255,0.18),transparent_32%),rgba(18,18,26,0.96)] p-7 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
           <span className="inline-block text-[0.8rem] text-[#d7ddff] bg-[rgba(124,92,255,0.15)] border border-[#7c5cff]/35 px-2.5 py-1.5 rounded-full mb-3">
@@ -185,7 +164,7 @@ export default function PartnershipAgreementPage() {
           <p className="text-center text-[#a6adbb] text-xs mt-4">Private commercial page for review and execution</p>
         </section>
       </div>
-    </div>
+    </PublicPageFrame>
   );
 }
 

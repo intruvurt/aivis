@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Search, X, Clock, Tag, Folder } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BookOpen, Search, X, Clock, Tag, Folder } from 'lucide-react';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { BLOG_ENTRIES, getAllTags, getAllCategories, filterEntries, BlogTag, BlogCategory } from '../content/blogs';
 import { buildBreadcrumbSchema, buildCollectionSchema, buildItemListSchema } from '../lib/seoSchema';
+import PublicPageFrame from '../components/PublicPageFrame';
 
 export default function BlogsPage() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<BlogTag[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<BlogCategory[]>([]);
@@ -109,23 +109,7 @@ export default function BlogsPage() {
   });
 
   return (
-    <div className="min-h-screen text-white">
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <BookOpen className="h-5 w-5 text-orange-400" />
-              AiVIS Insights
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">Enterprise blog on AI visibility, extractability, and citations.</p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <PublicPageFrame icon={BookOpen} title="AiVIS Insights" subtitle="Enterprise blog on AI visibility, extractability, and citations." maxWidthClass="max-w-6xl">
         {/* Featured carousel */}
         {featuredPosts.length > 0 && !hasActiveFilters && (
           <section className="mb-12">
@@ -325,7 +309,6 @@ export default function BlogsPage() {
             ))}
           </section>
         )}
-      </main>
-    </div>
+    </PublicPageFrame>
   );
 }

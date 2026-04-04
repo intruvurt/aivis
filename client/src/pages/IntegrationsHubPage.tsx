@@ -48,7 +48,7 @@ export default function IntegrationsHubPage() {
   // Observer tier gate — integrations are Alignment+ only
   if (!tierLimits.hasApiAccess) {
     return (
-      <div className="min-h-screen text-white px-4 py-8 sm:px-6 lg:px-8">
+      <div className="text-white px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl mt-16">
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-10 text-center shadow-2xl">
             <div className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-500/25 flex items-center justify-center mx-auto mb-5">
@@ -194,7 +194,7 @@ export default function IntegrationsHubPage() {
   }, [checks]);
 
   return (
-    <div className="min-h-screen text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div className="text-white px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">

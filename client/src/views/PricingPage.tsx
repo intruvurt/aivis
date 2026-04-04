@@ -976,34 +976,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen text-white">
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#2a3040] via-[#323a4c] to-[#2e3646]" />
-        <div
-          className="absolute inset-0 opacity-[0.045]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(80,55,35,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(80,55,35,0.18) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      {/* ── Standard page header ─────────────────────────────── */}
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-16 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h2 className="flex items-center gap-2 text-xl brand-title">
-              <WalletCards className="h-5 w-5 text-orange-400" />
-              {t('pricing.title')}
-            </h2>
-            <p className="text-sm text-white/60 leading-relaxed">Transparent pricing for every stage of AI visibility — no surprises</p>
-          </div>
-        </div>
-      </header>
+    <div className="text-white">
       <div className="max-w-6xl mx-auto px-4 py-16 relative">
         <div id="overview" className="section-anchor text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">

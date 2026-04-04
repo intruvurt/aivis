@@ -51,7 +51,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="text-white">
       <section className="relative overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_38%),linear-gradient(180deg,#09111e_0%,#060a14_100%)] pt-24 pb-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_28rem] lg:px-8">
           <div className="max-w-3xl">

@@ -440,15 +440,9 @@ export default function HelpCenter() {
   const openTicketCount = tickets.filter((t) => t.status !== 'closed' && t.status !== 'resolved').length;
 
   return (
-    <div className="min-h-screen bg-[#1a1f2e] text-white">
-      {/* Subtle background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1e2536] to-[#141825]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/5 rounded-full blur-[120px]" />
-      </div>
-
-      {/* Fixed header */}
-      <header className="sticky top-0 z-30 border-b border-white/8 bg-[#1a1f2e]">
+    <div className="text-white">
+      {/* Header */}
+      <header className="sticky top-0 z-30 border-b border-white/8 bg-charcoal-deep">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">

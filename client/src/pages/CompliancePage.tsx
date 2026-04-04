@@ -1,12 +1,11 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, ShieldCheck, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ShieldCheck, FileText } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";
+import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function CompliancePage() {
-  const navigate = useNavigate();
-
   usePageMeta({
     title: "Compliance & Security | AiVIS",
     description:
@@ -27,30 +26,8 @@ export default function CompliancePage() {
   });
 
   return (
-    <div className="min-h-screen text-white flex flex-col">
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="rounded-full p-2 transition-colors hover:bg-white/8"
-            type="button"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5 text-white/55" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-xl brand-title">
-              <ShieldCheck className="h-5 w-5 text-cyan-400" />
-              Compliance & Security
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed">
-              Formal posture, controls, and current certification status for AiVIS
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+    <PublicPageFrame icon={ShieldCheck} title="Compliance & Security" subtitle="Formal posture, controls, and current certification status for AiVIS" maxWidthClass="max-w-5xl">
+      <div className="space-y-6">
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">Current posture</h2>
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">
@@ -125,7 +102,7 @@ export default function CompliancePage() {
             Compliance statements are intentionally specific and evidence-based; this page avoids forward claims that cannot be independently verified.
           </p>
         </section>
-      </main>
-    </div>
+      </div>
+    </PublicPageFrame>
   );
 }

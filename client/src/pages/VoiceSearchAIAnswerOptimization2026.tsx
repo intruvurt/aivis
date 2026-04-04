@@ -39,7 +39,7 @@ export default function VoiceSearchAIAnswerOptimization2026() {
   });
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="text-white">
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-10 rounded-2xl border border-white/10/70 bg-charcoal-deep p-8">
           <p className="text-xs font-semibold tracking-wide uppercase text-white/85 mb-3">Voice + AI Answers</p>

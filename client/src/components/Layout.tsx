@@ -1,1 +1,1 @@
-export { default } from "./PublicShell";
+export { default } from "./PublicLayout";

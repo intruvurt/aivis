@@ -64,7 +64,7 @@ export default function PageHeader({
         </button>
 
         <div className="min-w-0 flex-1">
-          <h1 className="flex items-center gap-2 text-xl brand-title">
+          <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
             {icon}
             {title}
           </h1>

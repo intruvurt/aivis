@@ -2,8 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Lock, Shield } from "lucide-react";
 
-const LOGO_URL = "/full-logo.png";
-
 const linkGroups = [
   {
     title: "Platform",
@@ -34,30 +32,33 @@ const linkGroups = [
   },
 ] as const;
 
-const Footer = () => {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-20 border-t border-white/12 bg-[#111827]/80 py-10 text-white backdrop-blur-sm">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:px-8">
+    <footer className="relative z-20 border-t border-white/10 bg-[#08101d] py-12 text-white">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr_repeat(3,minmax(0,1fr))] lg:px-8">
         <div className="space-y-4">
-          <img src={LOGO_URL} alt="AiVIS" className="h-10 w-auto object-contain" loading="lazy" />
-          <p className="max-w-sm text-sm leading-6 text-white/70">
-            Audit machine readability, extraction quality, and citation readiness across modern AI answer engines.
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/75">AiVIS</p>
+            <h2 className="mt-2 text-lg font-semibold tracking-tight text-white">AI visibility intelligence for teams that need proof, not vibes.</h2>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-white/64">
+            Audit whether AI systems can read, trust, and cite your site. Run evidence-backed audits, track movement, and turn blockers into execution.
           </p>
-          <div className="space-y-2 text-xs text-white/65">
-            <p className="flex items-center gap-2"><Lock className="h-3.5 w-3.5" /> TLS encrypted platform</p>
-            <p className="flex items-center gap-2"><Shield className="h-3.5 w-3.5" /> No data resale policy</p>
+          <div className="flex flex-wrap gap-3 text-xs text-white/60">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><Lock className="h-3.5 w-3.5" /> TLS encrypted</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><Shield className="h-3.5 w-3.5" /> No data resale</span>
           </div>
         </div>
 
         {linkGroups.map((group) => (
           <div key={group.title}>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.08em] text-white/80">{group.title}</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/52">{group.title}</h3>
+            <ul className="space-y-2.5 text-sm">
               {group.links.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className="text-white/70 transition hover:text-white">
+                  <Link to={link.to} className="text-white/72 transition hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -67,11 +68,10 @@ const Footer = () => {
         ))}
       </div>
 
-      <div className="mx-auto mt-8 max-w-7xl border-t border-white/10 px-4 pt-5 text-xs text-white/55 sm:px-6 lg:px-8">
-        © {currentYear} AiVIS. All rights reserved.
+      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 pt-5 text-xs text-white/50 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <span>© {currentYear} AiVIS. All rights reserved.</span>
+        <span>Evidence-grounded AI visibility audits for operators, agencies, and in-house teams.</span>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

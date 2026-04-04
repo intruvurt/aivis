@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Tag, Folder, Clock, Award } from 'lucide-react';
+import { ArrowLeft, Award, Clock, ExternalLink, Folder, Tag } from 'lucide-react';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { BLOG_ENTRIES, getBlogBySlug, getRelatedPosts } from '../content/blogs';
+import { getBlogBySlug, getRelatedPosts } from '../content/blogs';
 import { buildArticleSchema, buildBreadcrumbSchema, buildWebPageSchema } from '../lib/seoSchema';
 
 const categoryLabels: Record<string, string> = {
@@ -53,74 +53,51 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen text-white">
-      <header className="border-b border-white/10 bg-charcoal-deep sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full p-2 transition-colors hover:bg-white/8" type="button" aria-label="Go back">
-            <ArrowLeft className="h-5 w-5 text-white/55" />
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="mb-8 flex items-center gap-4">
+          <button onClick={() => navigate(-1)} className="rounded-full border border-white/10 p-2 transition-colors hover:bg-white/[0.05]" type="button" aria-label="Go back">
+            <ArrowLeft className="h-5 w-5 text-white/60" />
           </button>
-          <div className="min-w-0">
-            <h1 className="text-xl brand-title">AiVIS Blog</h1>
-            <p className="text-sm text-white/60 leading-relaxed">Canonical publication on aivis.biz</p>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/72">AiVIS blog</p>
+            <p className="mt-1 text-sm text-white/56">Canonical publication on aivis.biz</p>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <article className="rounded-2xl border border-white/10 bg-charcoal p-7">
-          {/* Metadata row */}
-          <div className="flex items-center gap-4 mb-4 text-xs text-white/60 flex-wrap">
-            <span className="flex items-center gap-1">
-              <Folder className="h-3.5 w-3.5" />
-              {categoryLabels[entry.category] ?? entry.category}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" />
-              {entry.readMinutes} min read
-            </span>
+        <article className="rounded-[30px] border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+          <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-white/60">
+            <span className="flex items-center gap-1"><Folder className="h-3.5 w-3.5" />{categoryLabels[entry.category] ?? entry.category}</span>
+            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{entry.readMinutes} min read</span>
             <span>{entry.publishedAt}</span>
-            {entry.updatedAt && <span>Updated {entry.updatedAt}</span>}
+            {entry.updatedAt ? <span>Updated {entry.updatedAt}</span> : null}
           </div>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-4xl brand-title mb-4">{entry.title}</h1>
+          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">{entry.title}</h1>
+          <p className="mb-6 text-lg leading-relaxed text-white/75">{entry.description}</p>
 
-          {/* Description */}
-          <p className="text-white/75 leading-relaxed mb-6 text-lg">{entry.description}</p>
-
-          {entry.content && (
+          {entry.content ? (
             <div className="mb-8 space-y-4 text-white/80 leading-relaxed">
               {entry.content
                 .split(/\n\s*\n/)
                 .map((block) => block.trim())
                 .filter(Boolean)
                 .map((block, index) => {
-                  const looksLikeHeading =
-                    /^\d+\./.test(block) ||
-                    (/^[A-Z][^\n]{0,100}$/.test(block) && block.split(' ').length <= 14);
-                  const looksLikeDivider = /^(-{3,}|—{3,}|\*{3,})$/.test(block);
+                  const looksLikeHeading = /^\d+\./.test(block) || (/^[A-Z][^\n]{0,100}$/.test(block) && block.split(' ').length <= 14);
+                  const looksLikeDivider = /^(---|\*\*\*|———)$/.test(block);
                   const looksLikeList = block.includes('\n- ') || block.startsWith('- ');
-                  const looksLikeQuote =
-                    block.startsWith('> ') ||
-                    (/^[“"].+[”"]$/.test(block) && block.length < 260);
+                  const looksLikeQuote = block.startsWith('> ') || (/^[“"].+[”"]$/.test(block) && block.length < 260);
 
                   if (looksLikeDivider) {
-                    return <hr key={`content-divider-${index}`} className="border-white/10 my-6" />;
+                    return <hr key={`divider-${index}`} className="my-6 border-white/10" />;
                   }
 
                   if (looksLikeHeading) {
-                    return (
-                      <h3 key={`content-heading-${index}`} className="text-xl font-semibold text-white pt-2">
-                        {block}
-                      </h3>
-                    );
+                    return <h3 key={`heading-${index}`} className="pt-2 text-xl font-semibold text-white">{block}</h3>;
                   }
 
                   if (looksLikeQuote) {
                     return (
-                      <blockquote
-                        key={`content-quote-${index}`}
-                        className="border-l-4 border-orange-400/60 bg-orange-950/20 rounded-r-lg px-4 py-3 italic text-white/85"
-                      >
+                      <blockquote key={`quote-${index}`} className="rounded-r-2xl border-l-4 border-orange-400/60 bg-orange-950/18 px-4 py-3 italic text-white/85">
                         {block.replace(/^>\s*/, '')}
                       </blockquote>
                     );
@@ -135,140 +112,89 @@ export default function BlogPostPage() {
 
                     if (items.length > 0) {
                       return (
-                        <ul key={`content-list-${index}`} className="space-y-2 text-white/75 pl-5 list-disc marker:text-orange-400">
-                          {items.map((item) => (
-                            <li key={`${index}-${item}`}>{item}</li>
-                          ))}
+                        <ul key={`list-${index}`} className="list-disc space-y-2 pl-5 text-white/75 marker:text-orange-400">
+                          {items.map((item) => <li key={`${index}-${item}`}>{item}</li>)}
                         </ul>
                       );
                     }
                   }
 
-                  return (
-                    <p key={`content-paragraph-${index}`} className="text-white/75">
-                      {block}
-                    </p>
-                  );
+                  return <p key={`paragraph-${index}`} className="text-white/75">{block}</p>;
                 })}
             </div>
-          )}
+          ) : null}
 
-          {/* Author EEAT card */}
-          <div className="rounded-xl border border-orange-900/50 bg-orange-900/10 p-5 mb-7">
+          <div className="mb-7 rounded-3xl border border-orange-900/40 bg-orange-950/18 p-5">
             <div className="flex items-start gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="mb-1 flex items-center gap-2">
                   <h3 className="font-semibold text-orange-300">{entry.author.name}</h3>
                   <span className="text-xs text-orange-300/70">{entry.author.title}</span>
                 </div>
-                <p className="text-sm text-white/70 mb-3">{entry.author.experience}</p>
-                <div className="space-y-2">
-                  {entry.author.expertise.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-orange-300/80 mb-1 flex items-center gap-1">
-                        <Award className="h-3 w-3" />
-                        Expertise
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {entry.author.expertise.map((exp) => (
-                          <span key={exp} className="inline-flex text-xs px-2 py-0.5 rounded bg-orange-900/30 text-orange-200 border border-orange-900/50">
-                            {exp}
-                          </span>
-                        ))}
-                      </div>
+                <p className="mb-3 text-sm text-white/70">{entry.author.experience}</p>
+                {entry.author.expertise.length > 0 ? (
+                  <div>
+                    <p className="mb-1 flex items-center gap-1 text-xs font-semibold text-orange-300/80"><Award className="h-3 w-3" />Expertise</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {entry.author.expertise.map((item) => (
+                        <span key={item} className="inline-flex rounded-full border border-orange-900/50 bg-orange-900/30 px-2 py-0.5 text-xs text-orange-200">{item}</span>
+                      ))}
                     </div>
-                  )}
-                  {entry.author.credentials && entry.author.credentials.length > 0 && (
-                    <div>
-                      <p className="text-xs font-semibold text-orange-300/80 mb-1">Credentials</p>
-                      <ul className="text-xs text-white/70 space-y-0.5">
-                        {entry.author.credentials.map((cred) => (
-                          <li key={cred}>✓ {cred}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
 
-          {/* Key points */}
           <div className="mb-7">
-            <h2 className="text-lg font-semibold text-white mb-4">Key points</h2>
+            <h2 className="mb-4 text-lg font-semibold text-white">Key points</h2>
             <ul className="space-y-3">
               {entry.keyPoints.map((point) => (
                 <li key={point} className="flex gap-3 text-white/75">
-                  <span className="text-orange-400 font-bold mt-0.5">▪</span>
+                  <span className="mt-0.5 font-bold text-orange-400">▪</span>
                   <span>{point}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Tags */}
-          {entry.tags && entry.tags.length > 0 && (
+          {entry.tags?.length ? (
             <div className="mb-7">
-              <h3 className="text-sm font-semibold text-white/80 mb-3 flex items-center gap-2">
-                <Tag className="h-4 w-4" />
-                Topics
-              </h3>
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white/80"><Tag className="h-4 w-4" />Topics</h3>
               <div className="flex flex-wrap gap-2">
                 {entry.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    to={`/blogs?tag=${tag}`}
-                    className="inline-flex text-sm px-3 py-1.5 rounded-lg bg-blue-900/20 text-blue-300 border border-blue-900/50 hover:border-blue-400/50 transition-colors"
-                  >
+                  <Link key={tag} to={`/blogs?tag=${tag}`} className="inline-flex rounded-full border border-cyan-900/40 bg-cyan-900/16 px-3 py-1.5 text-sm text-cyan-200 transition hover:border-cyan-300/40">
                     {tag}
                   </Link>
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
 
-          {/* Source link */}
-          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4 mb-7">
+          <div className="mb-7 rounded-3xl border border-white/10 bg-white/[0.02] p-4">
             <p className="text-sm text-white/70">
               This article is originally published on Medium and canonically mirrored on AiVIS for ownership clarity and schema consistency.
             </p>
-            <a
-              href={entry.sourceMediumUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 mt-3 text-sm font-semibold text-white/85 hover:text-white transition-colors"
-            >
-              View source on Medium <ExternalLink className="w-4 h-4" />
+            <a href={entry.sourceMediumUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white">
+              View source on Medium <ExternalLink className="h-4 w-4" />
             </a>
           </div>
 
-          {/* Related posts */}
-          {relatedPosts.length > 0 && (
+          {relatedPosts.length > 0 ? (
             <div className="border-t border-white/10 pt-7">
-              <h3 className="text-lg font-semibold text-white mb-4">Related reading</h3>
-              <div className="grid md:grid-cols-2 gap-4">
+              <h3 className="mb-4 text-lg font-semibold text-white">Related reading</h3>
+              <div className="grid gap-4 md:grid-cols-2">
                 {relatedPosts.map((post) => (
-                  <Link
-                    key={post.slug}
-                    to={post.path}
-                    className="rounded-lg border border-white/10 bg-charcoal-deep p-4 hover:border-blue-400/50 hover:bg-charcoal transition-all"
-                  >
-                    <p className="text-xs text-white/60 mb-2">{post.publishedAt}</p>
-                    <h4 className="text-sm font-semibold text-blue-300 mb-1 line-clamp-2">{post.title}</h4>
-                    <p className="text-xs text-white/70 mb-3 line-clamp-2">{post.description}</p>
+                  <Link key={post.slug} to={post.path} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:border-cyan-300/35 hover:bg-white/[0.04]">
+                    <p className="mb-2 text-xs text-white/60">{post.publishedAt}</p>
+                    <h4 className="mb-1 line-clamp-2 text-sm font-semibold text-cyan-200">{post.title}</h4>
+                    <p className="mb-3 line-clamp-2 text-xs text-white/70">{post.description}</p>
                     <p className="text-xs text-white/50">{post.readMinutes} min read</p>
                   </Link>
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Back link */}
-          <div className="border-t border-white/10 pt-7">
-            <Link to="/blogs" className="inline-flex items-center text-sm font-semibold text-white/85 hover:text-white transition-colors">
-              ← Back to all posts
-            </Link>
-          </div>
+          ) : null}
         </article>
       </main>
     </div>

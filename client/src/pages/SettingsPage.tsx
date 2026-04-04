@@ -9,6 +9,7 @@ import { resetOnboarding } from "../components/OnboardingModal";
 import { API_URL } from "../config";
 import { apiFetch } from "../utils/api";
 import NotificationPreferencesPanel from "../components/NotificationPreferencesPanel";
+import AppPageFrame from "../components/AppPageFrame";
 import toast from "react-hot-toast";
 import {
   Zap,
@@ -64,33 +65,29 @@ const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = (
 /*  Styled building blocks                                             */
 /* ================================================================== */
 
-const noiseUrl = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E")`;
-
-const SteelCard: React.FC<{
+const SettingsPanel: React.FC<{
   children: React.ReactNode;
   className?: string;
   glow?: boolean;
 }> = ({ children, className = "", glow = false }) => (
   <div
-    className={`relative overflow-hidden rounded-2xl border border-white/14 bg-charcoal shadow-steel transition-all duration-300 ${
-      glow ? "ring-1 ring-white/35/20" : ""
+    className={`rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-200 md:p-8 ${
+      glow ? "shadow-[0_24px_60px_rgba(0,0,0,0.28)]" : ""
     } ${className}`}
-    style={{ backgroundImage: noiseUrl }}
   >
-    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-    <div className="relative p-6 md:p-8">{children}</div>
+    {children}
   </div>
 );
 
-const SectionHeading: React.FC<{
+const SettingsSectionHeader: React.FC<{
   title: string;
   description: string;
   icon?: LucideIcon;
 }> = ({ title, description, icon: Icon }) => (
   <div className="mb-6 flex items-start gap-3">
     {Icon && (
-      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-white/28/20 to-white/15/20 ring-1 ring-white/35/20">
-        <Icon className="h-5 w-5 text-white/85" />
+      <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
+        <Icon className="h-5 w-5 text-orange-300" />
       </div>
     )}
     <div>
@@ -115,7 +112,7 @@ const SettingRow: React.FC<{
 );
 
 const Divider: React.FC = () => (
-  <div className="my-5 h-px bg-gradient-to-r from-transparent via-white/16 to-transparent" />
+  <div className="my-5 h-px bg-white/10" />
 );
 
 const SteelInput: React.FC<
@@ -569,28 +566,19 @@ const SettingsPage: React.FC = () => {
   /*  RENDER                                                           */
   /* ================================================================ */
   return (
-    <div className="space-y-6 text-white">
-      {/* Page heading */}
-      <div>
-        <h1 className="text-xl font-semibold text-white flex items-center gap-2">
-          <SettingsIcon className="h-5 w-5 text-orange-400" />
-          Settings
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">Customize your AiVIS experience</p>
-      </div>
-      <div>
-
-        {/* Two-column layout */}
-        <div className="flex flex-col lg:flex-row gap-6">
+    <AppPageFrame
+      icon={<SettingsIcon className="h-5 w-5 text-orange-300" />}
+      title="Settings"
+      subtitle="Profile, privacy, usage, and advanced platform configuration in one workspace."
+      maxWidthClass="max-w-[96rem]"
+    >
+      <div className="flex flex-col gap-6 lg:flex-row">
           {/* ─── LEFT: Nav sidebar ─── */}
           <div className="lg:w-56 flex-shrink-0">
-            <div
-              className="rounded-2xl border border-white/14 bg-charcoal shadow-steel p-4 sticky top-8"
-              style={{ backgroundImage: noiseUrl }}
-            >
+            <div className="sticky top-8 rounded-3xl border border-white/10 bg-white/[0.03] p-4">
               {/* User mini-card */}
-              <div className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl bg-charcoal-light border border-white/10">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-white/28 to-white/15 text-white text-sm font-bold shadow-md">
+              <div className="mb-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white text-sm font-bold">
                   {s.profile.avatarUrl ? (
                     <img
                       src={s.profile.avatarUrl}
@@ -619,11 +607,11 @@ const SettingsPage: React.FC = () => {
                       onClick={() => setActiveSection(section.id)}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-left text-sm ${
                         active
-                          ? "bg-gradient-to-r from-white/28/10 to-white/15/10 text-white/85 font-semibold ring-1 ring-white/35/20"
-                          : "text-white/70 hover:bg-charcoal-light hover:text-white"
+                          ? "border border-orange-300/30 bg-orange-400/10 text-white font-semibold"
+                          : "border border-transparent text-white/70 hover:bg-white/[0.04] hover:text-white"
                       }`}
                     >
-                      <Icon className={`w-4 h-4 ${active ? "text-white/85" : ""}`} />
+                      <Icon className={`w-4 h-4 ${active ? "text-orange-300" : ""}`} />
                       {section.label}
                     </button>
                   );
@@ -631,16 +619,16 @@ const SettingsPage: React.FC = () => {
               </nav>
 
               {/* Utility actions */}
-              <div className="mt-5 pt-5 border-t border-white/14 space-y-1">
+              <div className="mt-5 space-y-1 border-t border-white/10 pt-5">
                 <button
                   onClick={exportSettings}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/70 hover:bg-charcoal-light hover:text-white rounded-xl transition-colors"
+                  className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
                 >
                   <Download className="w-4 h-4" /> Export Settings
                 </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/70 hover:bg-charcoal-light hover:text-white rounded-xl transition-colors"
+                  className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
                 >
                   <Upload className="w-4 h-4" /> Import Settings
                   <input
@@ -658,7 +646,7 @@ const SettingsPage: React.FC = () => {
                       toast.success("Settings reset to defaults");
                     }
                   }}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/80 hover:bg-charcoal rounded-xl transition-colors"
+                  className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/80 transition-colors hover:bg-white/[0.04]"
                 >
                   <RotateCcw className="w-4 h-4" /> Reset All
                 </button>
@@ -671,8 +659,8 @@ const SettingsPage: React.FC = () => {
             {/* ============================== USAGE & PLAN ============================== */}
             {activeSection === "usage" && (
               <>
-                <SteelCard glow>
-                  <SectionHeading
+                <SettingsPanel glow>
+                  <SettingsSectionHeader
                     icon={Activity}
                     title="Usage & Plan"
                     description="Your current plan, monthly scan usage, and available credits"
@@ -748,11 +736,11 @@ const SettingsPage: React.FC = () => {
                       </p>
                     </div>
                   )}
-                </SteelCard>
+                </SettingsPanel>
 
                 {/* ── Milestones ── */}
-                <SteelCard>
-                  <SectionHeading
+                <SettingsPanel>
+                  <SettingsSectionHeader
                     icon={Trophy}
                     title="Milestones"
                     description="Earn free credits by reaching platform milestones"
@@ -821,12 +809,12 @@ const SettingsPage: React.FC = () => {
                       {featureStatusLoading ? "Loading milestones\u2026" : "No milestones unlocked yet. Keep using the platform to earn credits!"}
                     </p>
                   )}
-                </SteelCard>
+                </SettingsPanel>
 
                 {/* ── Tool Credit Costs ── */}
                 {featureStatus?.toolUsage && (
-                  <SteelCard>
-                    <SectionHeading
+                  <SettingsPanel>
+                    <SettingsSectionHeader
                       icon={Zap}
                       title="Tool Credits"
                       description="Free monthly allowances and per-use credit costs"
@@ -867,7 +855,7 @@ const SettingsPage: React.FC = () => {
                     <p className="mt-3 text-xs text-white/40">
                       Free uses reset monthly. After exhaustion, credits are deducted per use.
                     </p>
-                  </SteelCard>
+                  </SettingsPanel>
                 )}
               </>
             )}
@@ -875,8 +863,8 @@ const SettingsPage: React.FC = () => {
             {/* ============================== PROFILE ============================== */}
             {activeSection === "profile" && (
               <>
-                <SteelCard glow>
-                  <SectionHeading
+                <SettingsPanel glow>
+                  <SettingsSectionHeader
                     icon={User}
                     title="Profile"
                     description="Your identity across the platform"
@@ -1019,11 +1007,11 @@ const SettingsPage: React.FC = () => {
                       </SteelSelect>
                     </div>
                   </div>
-                </SteelCard>
+                </SettingsPanel>
 
                 {/* Account Info */}
-                <SteelCard>
-                  <SectionHeading
+                <SettingsPanel>
+                  <SettingsSectionHeader
                     icon={Shield}
                     title="Account"
                     description="Your account details and subscription"
@@ -1071,14 +1059,14 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </SteelCard>
+                </SettingsPanel>
               </>
             )}
 
             {/* ============================== APPEARANCE ============================== */}
             {activeSection === "appearance" && (
-              <SteelCard glow>
-                <SectionHeading
+              <SettingsPanel glow>
+                <SettingsSectionHeader
                   icon={Monitor}
                   title="Appearance"
                   description="Theme, font size, and visual preferences"
@@ -1199,13 +1187,13 @@ const SettingsPage: React.FC = () => {
                     }}
                   />
                 </SettingRow>
-              </SteelCard>
+              </SettingsPanel>
             )}
 
             {/* ============================== PRIVACY & DATA ============================== */}
             {activeSection === "privacy" && (
-              <SteelCard glow>
-                <SectionHeading
+              <SettingsPanel glow>
+                <SettingsSectionHeader
                   icon={Shield}
                   title="Privacy & Data"
                   description="Data management, export, and account controls"
@@ -1392,13 +1380,13 @@ const SettingsPage: React.FC = () => {
                   GDPR data exports. Email update preference and public share-link
                   expiration policy are persisted server-side.
                 </p>
-              </SteelCard>
+              </SettingsPanel>
             )}
 
             {/* ============================== ADVANCED ============================== */}
             {activeSection === "advanced" && (
-              <SteelCard glow>
-                <SectionHeading
+              <SettingsPanel glow>
+                <SettingsSectionHeader
                   icon={Zap}
                   title="Advanced Features"
                   description="Scheduled rescans, API keys, webhooks, and white-label branding"
@@ -1407,7 +1395,7 @@ const SettingsPage: React.FC = () => {
 
                 <Divider />
 
-                <SectionHeading
+                <SettingsSectionHeader
                   icon={Play}
                   title="Onboarding Tour"
                   description="Replay the platform walkthrough to discover all features"
@@ -1423,12 +1411,11 @@ const SettingsPage: React.FC = () => {
                   <Play className="w-4 h-4" />
                   Replay Onboarding Tour
                 </button>
-              </SteelCard>
+              </SettingsPanel>
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </AppPageFrame>
   );
 };
 

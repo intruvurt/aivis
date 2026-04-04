@@ -7,8 +7,8 @@ import { useInitializeSettings } from "./hooks/useInitializeSettings";
 import { useAuthStore } from "./stores/authStore";
 import { useWorkspaceStore } from "./stores/workspaceStore";
 
-import PublicShell from "./components/PublicShell";
-import AppShell from "./components/AppShell";
+import PublicLayout from "./components/PublicLayout";
+import AppLayout from "./components/AppLayout";
 import { CookieConsent } from "./components/CookieConsent";
 import PageLoadingSpinner from "./components/PageLoadingSpinner";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -78,6 +78,7 @@ const AISearchVisibility2026 = React.lazy(() => import("./pages/AISearchVisibili
 const InsightsPage = React.lazy(() => import("./pages/InsightsPage"));
 const BlogsPage = React.lazy(() => import("./pages/BlogsPage"));
 const BlogPostPage = React.lazy(() => import("./pages/BlogPostPage"));
+const AuditDetails = React.lazy(() => import("./pages/AuditDetails"));
 const AEOPlaybook2026 = React.lazy(() => import("./pages/AEOPlaybook2026"));
 const GeoAIRanking2026 = React.lazy(() => import("./pages/GeoAIRanking2026"));
 const ConversationalQueryPlaybook2026 = React.lazy(() => import("./pages/ConversationalQueryPlaybook2026"));
@@ -168,7 +169,7 @@ export default function App() {
         <React.Suspense fallback={<PageLoadingSpinner />}>
         <Routes>
           {/* ═══ Public Marketing Shell ═══ */}
-          <Route element={<PublicShell />}>
+          <Route element={<PublicLayout />}>
             <Route path="/" element={isAuthenticated ? <Navigate to="/app" replace /> : <Landing />} />
             <Route path="/landing" element={<Landing />} />
             <Route path="/pricing" element={<PricingPage />} />
@@ -219,7 +220,7 @@ export default function App() {
           </Route>
 
           {/* ═══ Authenticated App Shell ═══ */}
-          <Route path="/app" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
+          <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="analyze" element={<AnalyzePage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
@@ -250,6 +251,11 @@ export default function App() {
             <Route path="admin" element={<Admin />} />
             <Route path="team" element={<TeamPage />} />
             <Route path="agency" element={<AgencyPage />} />
+            <Route path="audits/:id" element={<AuditDetails />} />
+          </Route>
+
+          <Route path="/audit/:id" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+            <Route index element={<AuditDetails />} />
           </Route>
 
           {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
@@ -283,7 +289,7 @@ export default function App() {
           <Route path="/dashboard" element={<Navigate to="/app" replace />} />
 
           {/* Catch-all */}
-          <Route path="*" element={<PublicShell />}>
+          <Route path="*" element={<PublicLayout />}>
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

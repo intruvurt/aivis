@@ -80,4 +80,12 @@ export const auditService = {
       throw normalizeError(err);
     }
   },
+
+  async getAuditById(auditId) {
+    return this.getAudit(auditId);
+  },
+
+  async getAudits() {
+    return this.listAudits();
+  },
 };

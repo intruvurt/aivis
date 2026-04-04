@@ -64,6 +64,7 @@ import { assessUrlRisk } from './services/threatIntel.js';
 import { buildCitationParityAudit } from './services/citationParityAudit.js';
 import { authRequired } from './middleware/authRequired.js';
 import { workspaceRequired } from './middleware/workspaceRequired.js';
+import { requireWorkspacePermission } from './middleware/workspacePermission.js';
 import { usageGate } from './middleware/usageGate.js';
 import { incrementUsage } from './middleware/incrementUsage.js';
 import { handleAssistantMessage } from './controllers/assistantController.js';
@@ -6597,7 +6598,7 @@ app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Analyze endpoint
 // ─────────────────────────────────────────────────────────────────────────────
-app.post('/api/analyze', authRequired, workspaceRequired, heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
+app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
   const startTime = Date.now();
   let analyzeLockKey = '';
 
@@ -8818,7 +8819,7 @@ Return ONLY valid JSON:
   }
 });
 
-app.post('/api/analyze/upload', authRequired, workspaceRequired, heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
+app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
   req.setTimeout(PROXY_HARD_LIMIT_MS);
   res.setTimeout(PROXY_HARD_LIMIT_MS);
 
@@ -9461,7 +9462,7 @@ Return ONLY valid JSON:
 // ─────────────────────────────────────────────────────────────────────────────
 // Intelligence Analysis endpoint - Phase 1 of intelligence engine pipeline
 // ─────────────────────────────────────────────────────────────────────────────
-app.post('/api/analyze/intelligence', authRequired, workspaceRequired, heavyActionLimiter, usageGate, incrementUsage, intelligenceAnalyzeHandler);
+app.post('/api/analyze/intelligence', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, incrementUsage, intelligenceAnalyzeHandler);
 
 // Admin endpoints
 const adminLimiter = rateLimit({ windowMs: 30_000, max: 5, standardHeaders: true, legacyHeaders: false });

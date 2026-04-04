@@ -104,7 +104,7 @@ VITE_SENTRY_DSN=
 
 | Tier | Price | audits/mo | Competitors | Key Features |
 | ---- | ----- | --------- | ----------- | ------------ |
-| Observer | Free | 10 | 0 | Basic audits, core recommendations, report history, shareable links |
+| Observer | Free | 3 | 0 | Basic audits, core recommendations, report history, shareable links |
 | Alignment | $49/mo | 60 | 2 | + Exports, report history, force-refresh, competitor tracking, reverse engineer, BRA authority checker |
 | Signal | $149/mo | 110 | 5 | + Citation testing, API access, white-label, scheduled reaudits |
 | Score Fix | $299 per 250-scan pack | 250 | 10 | + Thorough evidence audit mode, Actual Fix Plan, and issue-level validation guidance. Repurchase when scans exhausted. |
@@ -124,4 +124,4 @@ Output goes to `dist/` — deploy to any static host (Vercel, Netlify, etc.)
 
 ---
 
-**AI Visibility Intelligence Audits** — Intruvurt Labs • Georgia, USA
+**AI Evidence-backed Visibility Intelligence Audits & Auto PR Remediations** — Intruvurt Labs • Georgia, USA

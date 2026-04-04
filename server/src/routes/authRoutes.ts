@@ -98,6 +98,21 @@ function buildFrontendAuthRedirect(req: express.Request, params: Record<string, 
   return authUrl.toString();
 }
 
+function publicOAuthErrorMessage(error: unknown, fallback: string): string {
+  const message = String((error as any)?.message || '').trim();
+  if (!message) return fallback;
+
+  const lowered = message.toLowerCase();
+  if (lowered.includes('resend api error') || lowered.includes('mailer.aivis.biz') || lowered.includes('domain is not verified')) {
+    return 'Email verification is temporarily unavailable. Please contact support if this continues.';
+  }
+  if (lowered.includes('fetch failed') || lowered.includes('network')) {
+    return 'Could not complete sign-in right now. Please try again.';
+  }
+
+  return fallback;
+}
+
 function pickSafeOAuthUser(user: any) {
   return {
     id: user.id,
@@ -256,7 +271,7 @@ router.get('/google/callback', async (req, res) => {
         await issueOAuthVerification(user.id, user.email);
       } catch (sendErr: any) {
         const fallback = new URL(state.redirect || '/auth', getFrontendBase(req));
-        fallback.searchParams.set('oauth_error', sendErr?.message || 'Could not send verification email. Please try again.');
+        fallback.searchParams.set('oauth_error', publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'));
         return res.redirect(fallback.toString());
       }
 
@@ -285,7 +300,7 @@ router.get('/google/callback', async (req, res) => {
   } catch (err: any) {
     return res.redirect(
       buildFrontendAuthRedirect(req, {
-        oauth_error: err?.message || 'Google OAuth failed',
+        oauth_error: publicOAuthErrorMessage(err, 'Google OAuth failed'),
       })
     );
   }
@@ -481,7 +496,7 @@ router.get('/github/callback', async (req, res) => {
         await issueOAuthVerification(user.id, user.email);
       } catch (sendErr: any) {
         const fallback = new URL(state.redirect || '/auth', getFrontendBase(req));
-        fallback.searchParams.set('oauth_error', sendErr?.message || 'Could not send verification email. Please try again.');
+        fallback.searchParams.set('oauth_error', publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'));
         return res.redirect(fallback.toString());
       }
 
@@ -510,7 +525,7 @@ router.get('/github/callback', async (req, res) => {
   } catch (err: any) {
     return res.redirect(
       buildFrontendAuthRedirect(req, {
-        oauth_error: err?.message || 'GitHub OAuth failed',
+        oauth_error: publicOAuthErrorMessage(err, 'GitHub OAuth failed'),
       })
     );
   }

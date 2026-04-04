@@ -7,14 +7,10 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "../config";
 import { buildBearerHeader } from "../utils/authToken";
+import type { AnalysisResponse } from "@shared/types";
 
 interface AutoScoreFixWidgetProps {
-  auditResult: {
-    url?: string;
-    visibility_score?: number;
-    audit_id?: string;
-    [k: string]: unknown;
-  };
+  auditResult: Pick<AnalysisResponse, "url" | "visibility_score" | "audit_id">;
   onOpen: () => void;
 }
 

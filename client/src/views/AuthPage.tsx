@@ -31,6 +31,15 @@ function safeRedirect(raw: string | null): string {
   return val;
 }
 
+function clearOauthParamsFromUrl(redirect: string | null) {
+  const next = new URLSearchParams();
+  next.set("mode", "signin");
+  const safe = safeRedirect(redirect);
+  if (safe && safe !== "/") next.set("redirect", safe);
+  const query = next.toString();
+  window.history.replaceState({}, document.title, query ? `/auth?${query}` : "/auth");
+}
+
 function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
   if (!pw) return { score: 0, label: "", color: "bg-white/10" };
   let s = 0;
@@ -180,6 +189,7 @@ export default function AuthPage() {
 
     if (oauthError) {
       setError(oauthError);
+      clearOauthParamsFromUrl(redirect);
       return;
     }
 
@@ -190,7 +200,7 @@ export default function AuthPage() {
       setSuccess(
         `Verification email sent${verifyWindow ? ` (expires in ${verifyWindow} minutes)` : ""}. Please verify before signing in.`
       );
-      window.history.replaceState({}, document.title, "/auth");
+      clearOauthParamsFromUrl(redirect);
       return;
     }
 
@@ -208,11 +218,11 @@ export default function AuthPage() {
         created_at: parsed.created_at,
       };
       login(nextUser, oauthToken);
-      setSuccess("Successfully signed in");
-      window.history.replaceState({}, document.title, "/auth");
-      window.setTimeout(() => navigate(redirect), 250);
+      clearOauthParamsFromUrl(redirect);
+      navigate(redirect, { replace: true });
     } catch {
       setError("OAuth sign-in response was invalid. Please try again.");
+      clearOauthParamsFromUrl(redirect);
     }
   }, [searchParams, login, navigate]);
 

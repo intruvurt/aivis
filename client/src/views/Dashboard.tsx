@@ -3,33 +3,83 @@ import { Link } from "react-router-dom";
 import { Activity, ArrowRight, ClipboardList, Clock3, Gauge, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
-import { auditService } from "../services/auditService";
+import { useAuthStore } from "../stores/authStore";
+import { apiFetch } from "../utils/api";
+import { TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
 
 type AuditRecord = {
   _id?: string;
+  id?: string;
   url?: string;
   createdAt?: string;
+  created_at?: string;
   status?: string;
   overallScore?: number;
+  visibility_score?: number;
   visibilityStatus?: string;
 };
 
 function normalizeAudits(payload: any): AuditRecord[] {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.audits)) return payload.audits;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
+  const raw = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.audits)
+      ? payload.audits
+      : Array.isArray(payload?.data)
+        ? payload.data
+        : [];
+
+  return raw.map((item: any) => ({
+    _id: item?._id || item?.id,
+    id: item?.id || item?._id,
+    url: item?.url,
+    createdAt: item?.createdAt || item?.created_at,
+    created_at: item?.created_at || item?.createdAt,
+    status: item?.status || "completed",
+    overallScore:
+      typeof item?.overallScore === "number"
+        ? item.overallScore
+        : typeof item?.visibility_score === "number"
+          ? item.visibility_score
+          : undefined,
+    visibility_score:
+      typeof item?.visibility_score === "number"
+        ? item.visibility_score
+        : typeof item?.overallScore === "number"
+          ? item.overallScore
+          : undefined,
+    visibilityStatus: item?.visibilityStatus || item?.summary,
+  }));
 }
 
 export default function Dashboard() {
   const [audits, setAudits] = useState<AuditRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const userTier = useAuthStore((state) => state.user?.tier || "observer");
+  const uiTier = uiTierFromCanonical(userTier as any);
+  const canLoadHistory = TIER_LIMITS[uiTier].hasReportHistory;
 
   useEffect(() => {
     const run = async () => {
+      if (!canLoadHistory) {
+        setAudits([]);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await auditService.listAudits();
-        setAudits(normalizeAudits(response));
+        const response = await apiFetch("/api/audits?limit=20");
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          const isFeatureLocked = response.status === 403 && data?.code === "FEATURE_LOCKED";
+          if (isFeatureLocked) {
+            setAudits([]);
+            return;
+          }
+          throw new Error(data?.error || "Failed to load audit history");
+        }
+
+        setAudits(normalizeAudits(data));
       } catch {
         toast.error("Failed to load audits");
       } finally {
@@ -38,7 +88,7 @@ export default function Dashboard() {
     };
 
     void run();
-  }, []);
+  }, [canLoadHistory]);
 
   const sortedAudits = useMemo(() => {
     return [...audits].sort((left, right) => {
@@ -148,7 +198,11 @@ export default function Dashboard() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-white">Priority pages</h2>
-            <p className="mt-1 text-sm text-white/56">These are the lowest-scoring recent pages. Use the full report to inspect issue-level evidence.</p>
+            <p className="mt-1 text-sm text-white/56">
+              {canLoadHistory
+                ? "These are the lowest-scoring recent pages. Use the full report to inspect issue-level evidence."
+                : "Audit history unlocks on Alignment. Run a scan to see your latest score, then upgrade when you need retained history and evidence trails."}
+            </p>
           </div>
         </div>
 
@@ -158,7 +212,9 @@ export default function Dashboard() {
           </div>
         ) : audits.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-white/12 bg-white/[0.02] px-6 py-12 text-center text-sm text-white/58">
-            No audits yet. Run your first audit to start building a visibility history.
+            {canLoadHistory
+              ? "No audits yet. Run your first audit to start building a visibility history."
+              : "Run your first audit to see what AI can verify now. Alignment adds retained report history, evidence trails, and rescan comparison."}
           </div>
         ) : (
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">

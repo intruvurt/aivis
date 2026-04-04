@@ -138,9 +138,9 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
       : (result.recommendations || []).map((rec, i) => ({
           id: `rec-${i}`,
           severity: rec.priority || "medium",
-          title: rec.title || rec.area || `Issue ${i + 1}`,
-          description: rec.description || rec.finding || "",
-          fix: rec.recommendation || "",
+          title: rec.title || `Issue ${i + 1}`,
+          description: rec.description || rec.impact || "",
+          fix: rec.implementation || "",
           lift: undefined,
           evidenceIds: Array.isArray(rec.evidence_ids) ? rec.evidence_ids : [],
           evidenceExcerpt: undefined,

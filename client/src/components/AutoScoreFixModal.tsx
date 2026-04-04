@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
 import { buildBearerHeader } from "../utils/authToken";
+import type { AnalysisResponse } from "@shared/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,12 +65,7 @@ interface AsfJob {
   created_at: string;
 }
 
-interface AuditSnapshot {
-  url?: string;
-  visibility_score?: number;
-  audit_id?: string;
-  [k: string]: unknown;
-}
+type AuditSnapshot = Pick<AnalysisResponse, "url" | "visibility_score" | "audit_id">;
 
 interface GitHubRepo {
   id: number;

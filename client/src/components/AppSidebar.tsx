@@ -15,7 +15,7 @@ interface NavItem {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  minTier?: "observer" | "alignment" | "signal" | "agency" | "enterprise";
+  minTier?: "observer" | "alignment" | "signal" | "scorefix" | "agency" | "enterprise";
 }
 
 interface AppSidebarProps {
@@ -25,23 +25,29 @@ interface AppSidebarProps {
 
 const mainNav: NavItem[] = [
   { to: "/app", label: "Overview", icon: LayoutDashboard },
-  { to: "/app/analyze", label: "New Audit", icon: Search },
-  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/app/analyze", label: "See Visibility", icon: Search },
   { to: "/app/reports", label: "Reports", icon: FileText },
+  { to: "/app/score-fix", label: "Score Fix", icon: Zap, minTier: "signal" },
 ];
 
-const intelligenceNav: NavItem[] = [
+const evidenceNav: NavItem[] = [
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/app/citations", label: "Citations", icon: FlaskConical, minTier: "alignment" },
   { to: "/app/competitors", label: "Competitors", icon: Users, minTier: "alignment" },
+  { to: "/app/benchmarks", label: "Benchmarks", icon: Layers },
+];
+
+const extensionNav: NavItem[] = [
   { to: "/app/benchmarks", label: "Benchmarks", icon: Layers },
   { to: "/app/keywords", label: "Keywords", icon: Target },
   { to: "/app/prompt-intelligence", label: "Query Gaps", icon: Brain, minTier: "alignment" },
   { to: "/app/answer-presence", label: "Answer Presence", icon: Eye, minTier: "alignment" },
   { to: "/app/reverse-engineer", label: "Reverse Engineer", icon: ArrowLeftRight, minTier: "alignment" },
+  { to: "/app/brand-integrity", label: "Brand Integrity", icon: Shield, minTier: "alignment" },
+  { to: "/app/niche-discovery", label: "Niche Discovery", icon: Globe },
 ];
 
 const toolsNav: NavItem[] = [
-  { to: "/app/score-fix", label: "Score Fix", icon: Zap, minTier: "signal" },
   { to: "/app/schema-validator", label: "Schema Validator", icon: Shield },
   { to: "/app/server-headers", label: "Server Headers", icon: Globe },
   { to: "/app/robots-checker", label: "AI Crawlers", icon: Cpu },
@@ -123,9 +129,10 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
       {/* Navigation */}
       <nav className="aurora-sidebar-nav">
-        <NavSection title="Main" items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
-        <NavSection title="Intelligence" items={intelligenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
-        <NavSection title="Tools" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
+        <NavSection title="Core" items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
+        <NavSection title="Evidence" items={evidenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
+        <NavSection title="Extensions" items={extensionNav} onClose={onClose} iconClass="text-emerald-400" iconBg="bg-emerald-500/10" />
+        <NavSection title="Platform" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
         <NavSection title="Agency" items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
         <NavSection title="Account" items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>

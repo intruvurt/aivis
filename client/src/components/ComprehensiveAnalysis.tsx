@@ -20,6 +20,9 @@ import CryptoIntelligencePanel from "./CryptoIntelligencePanel";
 import ThreatIntelBanner from "./ThreatIntelBanner";
 import WritingAuditPanel from "./WritingAuditPanel";
 import SSFRPanel from "./SSFRPanel";
+import AutoScoreFixWidget from "./AutoScoreFixWidget";
+import AutoScoreFixModal from "./AutoScoreFixModal";
+import { RecommendationList } from "./RecommendationList";
 import { getAnalysisExecutionClass, type AnalysisResponse, type CanonicalTier, type LegacyTier } from "@shared/types";
 import { canAccess } from "@shared/entitlements";
 import { Link } from "react-router-dom";
@@ -81,6 +84,7 @@ function humanizeGateId(id: string): string {
 
 const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, tier = "observer" }) => {
   const [showAllIssues, setShowAllIssues] = React.useState(false);
+  const [autoFixOpen, setAutoFixOpen] = React.useState(false);
 
   // Tier
   const normalizedTier: CanonicalTier | LegacyTier =
@@ -110,15 +114,26 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   const categories = (result.category_grades || []).slice(0, 6);
 
   // Build issue rows — prefer evidence_fix_plan, fall back to recommendations
-  const issueRows: Array<{ id: string; severity: string; title: string; description: string; fix: string; lift?: string }> =
+  const issueRows: Array<{
+    id: string;
+    severity: string;
+    title: string;
+    description: string;
+    fix: string;
+    lift?: string;
+    evidenceIds: string[];
+    evidenceExcerpt?: string;
+  }> =
     result.evidence_fix_plan?.issues.length
       ? result.evidence_fix_plan.issues.map((iss) => ({
           id: iss.id,
           severity: iss.severity as string,
-          title: iss.area,
+          title: iss.finding,
           description: iss.finding,
           fix: iss.actual_fix,
-          lift: iss.estimated_score_lift != null ? `+${iss.estimated_score_lift}` : undefined,
+          lift: undefined,
+          evidenceIds: Array.isArray(iss.evidence_ids) ? iss.evidence_ids : [],
+          evidenceExcerpt: iss.evidence_excerpt,
         }))
       : (result.recommendations || []).map((rec, i) => ({
           id: `rec-${i}`,
@@ -127,6 +142,8 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           description: rec.description || rec.finding || "",
           fix: rec.recommendation || "",
           lift: undefined,
+          evidenceIds: Array.isArray(rec.evidence_ids) ? rec.evidence_ids : [],
+          evidenceExcerpt: undefined,
         }));
 
   const visibleIssues = showAllIssues ? issueRows : issueRows.slice(0, 8);
@@ -196,9 +213,13 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
               <Download className="h-4 w-4" /> Export
             </button>
             {hasAlignment && (
-              <Link to="/app/score-fix" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]">
+              <button
+                type="button"
+                onClick={() => setAutoFixOpen(true)}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]"
+              >
                 <GitPullRequest className="h-4 w-4" /> Fix Automatically
-              </Link>
+              </button>
             )}
           </div>
         </section>
@@ -280,27 +301,47 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
 
           {/* Table header */}
-          <div className="hidden sm:grid grid-cols-[100px_minmax(0,1fr)_80px_80px_100px] items-center gap-4 border-b border-white/10 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/33">
-            <div>Severity</div><div>Issue</div><div>Lift</div><div>Status</div><div>Action</div>
+          <div className="hidden sm:grid grid-cols-[100px_minmax(0,1fr)_minmax(0,220px)_110px] items-center gap-4 border-b border-white/10 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/33">
+            <div>Severity</div><div>Claim</div><div>Evidence / Fix</div><div>Action</div>
           </div>
 
           {/* Table rows */}
           <div className="divide-y divide-white/10">
             {visibleIssues.map((issue) => (
-              <div key={issue.id} className="grid grid-cols-1 sm:grid-cols-[100px_minmax(0,1fr)_80px_80px_100px] items-center gap-4 px-5 py-4 transition hover:bg-white/[0.025]">
+              <div key={issue.id} className="grid grid-cols-1 sm:grid-cols-[100px_minmax(0,1fr)_minmax(0,220px)_110px] items-start gap-4 px-5 py-4 transition hover:bg-white/[0.025]">
                 <div>
                   <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ${severityClasses(issue.severity)}`}>
                     {(issue.severity || "MED").toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-medium text-white">{issue.title}</div>
-                  {issue.description && <div className="mt-1 truncate text-xs text-white/38">{issue.description}</div>}
+                  <div className="text-sm font-medium text-white">{issue.title}</div>
+                  {issue.description && <div className="mt-1 text-xs text-white/45">{issue.description}</div>}
                 </div>
-                <div className="text-sm font-medium text-emerald-300">{issue.lift || "—"}</div>
-                <div className="text-xs text-white/50">{issue.fix ? "Fixable" : "Review"}</div>
                 <div>
-                  <Link to="/app/score-fix" className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.06]">Fix</Link>
+                  {issue.evidenceIds.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {issue.evidenceIds.slice(0, 3).map((id) => (
+                        <span key={id} className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] font-medium text-cyan-100/85">
+                          {id}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div className="text-xs text-white/55">{issue.evidenceExcerpt || issue.fix || "Review the full report for fix detail."}</div>
+                </div>
+                <div>
+                  {hasAlignment ? (
+                    <button
+                      type="button"
+                      onClick={() => setAutoFixOpen(true)}
+                      className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.06]"
+                    >
+                      Fix this
+                    </button>
+                  ) : (
+                    <Link to="/app/score-fix" className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.06]">View fix</Link>
+                  )}
                 </div>
               </div>
             ))}
@@ -318,6 +359,27 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {/* Upload-specific panels */}
         {isUploadResult && (result as any).upload_analysis_mode === "writing_audit" && (result as any).writing_audit && (
           <WritingAuditPanel result={result} />
+        )}
+
+        {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
+          <section className="rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold tracking-tight text-white">Evidence-Backed Fixes</h2>
+                <p className="mt-1 text-sm text-white/52">Each recommendation is tied to BRAG evidence or marked advisory when evidence links are absent.</p>
+              </div>
+              {hasAlignment && (
+                <button
+                  type="button"
+                  onClick={() => setAutoFixOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/15"
+                >
+                  <GitPullRequest className="h-4 w-4" /> Fix these automatically
+                </button>
+              )}
+            </div>
+            <RecommendationList recommendations={result.recommendations} />
+          </section>
         )}
 
         {/* GEO / SSFR Truth Layer */}
@@ -385,6 +447,12 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
       {/* ═══════ RIGHT PANEL — fix/context rail ═══════ */}
       <aside className="hidden xl:flex h-full flex-col border-l border-white/10 bg-[#0a1220] px-5 py-6 sticky top-0 self-start max-h-screen overflow-y-auto">
 
+        {result.audit_id && hasAlignment && (
+          <div className="mb-5">
+            <AutoScoreFixWidget auditResult={result} onOpen={() => setAutoFixOpen(true)} />
+          </div>
+        )}
+
         {/* 1. Fix impact */}
         <div className="mb-6">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/30">Fix Opportunity</div>
@@ -394,13 +462,13 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 2. Fix flow — detect → plan → PR → verify */}
         <div className="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs">
-          <div className="flex flex-col items-center gap-1 text-cyan-300"><CheckCircle2 className="h-4 w-4" /><span>Detect</span></div>
+          <div className="flex flex-col items-center gap-1 text-cyan-300"><CheckCircle2 className="h-4 w-4" /><span>Scan</span></div>
           <div className="h-px flex-1 bg-white/10" />
-          <div className="flex flex-col items-center gap-1 text-white/40"><Clock3 className="h-4 w-4" /><span>Plan</span></div>
+          <div className="flex flex-col items-center gap-1 text-white/40"><Clock3 className="h-4 w-4" /><span>Expose</span></div>
           <div className="h-px flex-1 bg-white/10" />
-          <div className="flex flex-col items-center gap-1 text-white/40"><GitPullRequest className="h-4 w-4" /><span>PR</span></div>
+          <div className="flex flex-col items-center gap-1 text-white/40"><GitPullRequest className="h-4 w-4" /><span>Fix</span></div>
           <div className="h-px flex-1 bg-white/10" />
-          <div className="flex flex-col items-center gap-1 text-white/40"><CheckCircle2 className="h-4 w-4" /><span>Verify</span></div>
+          <div className="flex flex-col items-center gap-1 text-white/40"><CheckCircle2 className="h-4 w-4" /><span>Re-scan</span></div>
         </div>
 
         {/* 3. Active fix card — top priority */}
@@ -422,9 +490,13 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                 <p className="text-[12px] leading-5 text-cyan-100/80">{topFix.fix}</p>
               </div>
             )}
-            <Link to="/app/score-fix" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]">
-              <GitPullRequest className="h-4 w-4" /> Create Fix PR
-            </Link>
+            <button
+              type="button"
+              onClick={() => setAutoFixOpen(true)}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]"
+            >
+              <GitPullRequest className="h-4 w-4" /> Fix this automatically
+            </button>
           </div>
         )}
 
@@ -468,7 +540,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                   <div key={iss.id} className="flex items-start gap-2.5">
                     <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5 ${dot}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-white/80">{iss.area}</p>
+                      <p className="text-xs font-medium text-white/80">{iss.finding}</p>
                       <p className="text-[11px] text-white/40 mt-0.5">{iss.actual_fix}</p>
                     </div>
                   </div>
@@ -503,6 +575,8 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           )}
         </div>
       </aside>
+
+      <AutoScoreFixModal open={autoFixOpen} onClose={() => setAutoFixOpen(false)} auditResult={result} />
     </div>
   );
 };

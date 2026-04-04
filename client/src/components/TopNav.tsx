@@ -711,7 +711,7 @@ export default function TopNav() {
                 {t('nav.free')}
               </span>
                   <Link to="/auth?mode=signup" className="text-sm px-4 py-1.5 bg-gradient-to-r from-white/20 to-white/12 dark:from-white/28 dark:to-white/14 rounded-lg text-white font-medium hover:opacity-90 transition-opacity">
-                {t('nav.getStarted')}
+                See Your Visibility
               </Link>
             </>
           )}

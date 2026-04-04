@@ -112,13 +112,19 @@ const QUICK_EXAMPLES = ["aivis.biz", "openai.com", "stripe.com", "hubspot.com"];
 
 const PROGRESS_LABELS: Record<string, string> = {
   idle: "Idle",
-  starting: "Analyzing how AI reads your site",
-  initializing: "Checking structure",
-  fetching: "Scanning pages",
-  crawling: "Scanning pages",
-  parsing: "Extracting meaning",
-  scoring: "Checking trust signals",
-  recommendations: "Building report",
+  starting: "Preparing audit",
+  initializing: "Preparing audit",
+  dns: "Resolving domain",
+  crawl: "Fetching page content",
+  extract: "Extracting visible signals",
+  schema: "Checking schema and entities",
+  technical: "Checking technical trust",
+  security: "Running security scan",
+  ai1: "Running primary AI analysis",
+  ai2: "Running peer critique",
+  ai3: "Running validation gate",
+  compile: "Compiling score",
+  finalize: "Building report",
   complete: "Complete",
   timeout: "Timed out",
 };
@@ -132,30 +138,51 @@ function getProgressTone(percent: number): "neutral" | "good" {
 }
 
 function getProgressNarrative(percent: number): string {
-  if (percent >= 68) return "Competitor advantage detected";
-  if (percent >= 32) return "We found structural issues already";
-  if (percent > 0) return "Collecting evidence of what AI can and cannot verify";
+  if (percent >= 75) return "Compiling the evidence into a verdict and fix path";
+  if (percent >= 40) return "We are validating structure, trust, and extraction blockers";
+  if (percent > 0) return "Collecting evidence of what AI can read, trust, and cite";
   return "Ready to run";
 }
 
 function getStageMicrocopy(step: string): string[] {
   const normalized = (step || "starting").toLowerCase();
-  if (normalized.includes("crawl") || normalized.includes("fetch") || normalized.includes("dns")) {
-    return ["Scanning pages", "Checking structure", "Finding extraction blockers"];
+  if (normalized.includes("dns")) {
+    return ["Resolving domain", "Checking reachability", "Starting the audit context"];
   }
-  if (normalized.includes("parse") || normalized.includes("extract")) {
-    return ["Extracting meaning", "Reading entities and headings", "Validating metadata"];
+  if (normalized.includes("crawl") || normalized.includes("fetch")) {
+    return ["Fetching page content", "Checking visible structure", "Capturing raw page signals"];
   }
-  if (normalized.includes("score") || normalized.includes("trust")) {
-    return ["Checking trust signals", "Calculating citation readiness", "Ranking blocker impact"];
+  if (normalized.includes("extract")) {
+    return ["Extracting visible signals", "Reading headings and metadata", "Linking evidence to findings"];
+  }
+  if (normalized.includes("schema")) {
+    return ["Validating JSON-LD", "Checking entity graph", "Comparing markup to visible content"];
+  }
+  if (normalized.includes("technical")) {
+    return ["Checking canonicals and HTTPS", "Reviewing crawl and answer-engine access", "Scoring technical trust"];
+  }
+  if (normalized.includes("security")) {
+    return ["Scanning threat indicators", "Reviewing exposure risk", "Adding security findings to the audit"];
+  }
+  if (normalized.includes("ai1")) {
+    return ["Running primary AI analysis", "Scoring citation readiness", "Ranking blocker impact"];
+  }
+  if (normalized.includes("ai2")) {
+    return ["Running peer critique", "Checking for missed blockers", "Adjusting score confidence"];
+  }
+  if (normalized.includes("ai3")) {
+    return ["Running validation gate", "Confirming critical findings", "Locking the final verdict"];
+  }
+  if (normalized.includes("compile")) {
+    return ["Compiling score", "Calculating category grades", "Preparing issue priority order"];
   }
   if (normalized.includes("recommend") || normalized.includes("report")) {
-    return ["Building report", "Prioritizing top fixes", "Preparing evidence view"];
+    return ["Building report", "Prioritizing fixes", "Preparing evidence view"];
   }
   if (normalized.includes("complete")) {
     return ["Audit complete", "Verdict ready", "Open report below"];
   }
-  return ["Analyzing how AI reads your site", "Checking structure", "Comparing competitors"];
+  return ["Preparing audit", "Checking structure", "Collecting evidence"];
 }
 
 function sanitizeResponseJson<T>(response: Response): Promise<T> {
@@ -194,7 +221,7 @@ const AnalyzePage: React.FC = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { token, isAuthenticated, refreshUser, logout } = useAuthStore();
+  const { token, isAuthenticated, refreshUser, logout, user } = useAuthStore();
 
   useEffect(() => {
     if (!isAuthenticated && token) {
@@ -822,7 +849,7 @@ const AnalyzePage: React.FC = () => {
                     ) : (
                       <>
                         <Zap className="h-4 w-4" />
-                        Start AI citation audit
+                        See Your Visibility
                       </>
                     )}
                   </button>
@@ -859,8 +886,8 @@ const AnalyzePage: React.FC = () => {
 
                 <div className="mt-4 rounded-xl border border-white/10 bg-charcoal p-4 text-xs leading-6 text-white/60">
                   {loading
-                    ? "Checking structure • extracting signals • comparing competitors • building report."
-                    : "No audits yet. Run your first audit and see what AI cannot verify, who is beating you, and what to fix first."}
+                    ? "Resolving the domain • extracting evidence • scoring trust and citation readiness • building the report."
+                    : "No audits yet. Run your first audit and see what AI cannot verify, what is blocking trust, and what to fix first."}
                 </div>
 
                 {loading && (
@@ -920,7 +947,7 @@ const AnalyzePage: React.FC = () => {
                     <Sparkles className="h-3.5 w-3.5" />
                     Audit Complete
                   </div>
-                  <h2 className="mt-3 text-2xl font-semibold text-white">Your site is readable. Not citable.</h2>
+                  <h2 className="mt-3 text-2xl font-semibold text-white">See your visibility. Then fix what AI cannot trust.</h2>
                   <p className="mt-2 text-sm leading-7 text-white/60">
                     AI can extract your content, but it does not trust it enough to use it in answers.
                   </p>
@@ -1047,7 +1074,7 @@ const AnalyzePage: React.FC = () => {
               </div>
             </div>
 
-            <ComprehensiveAnalysis result={result} />
+            <ComprehensiveAnalysis result={result} tier={(user?.tier as any) || "observer"} />
           </section>
         )}
 

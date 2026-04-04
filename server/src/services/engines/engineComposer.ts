@@ -15,7 +15,7 @@ import type {
 import { runCitationReadinessEngine } from './citationEngine.js';
 import { runTrustLayerEngine } from './trustEngine.js';
 import { runEntityGraphEngine } from './entityEngine.js';
-import { orchestrateAudit, composeAuditReport } from '../audit/auditOrchestrator.js';
+import { runAuditPipeline } from '../audit/pipeline.js';
 
 export interface EngineComposerInput {
   html: string;
@@ -454,10 +454,15 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
       ]);
     }
   }
-  const auditModules = input.scrapeResult
-    ? await orchestrateAudit({ scrapeResult: input.scrapeResult })
-    : await orchestrateAudit({ scrapeResult: { url: input.url, data: { html: input.html, title: '', body: '' } } as any });
-  const auditReport = composeAuditReport(auditModules, input.tier);
+  const auditPipeline = await runAuditPipeline({
+    scrapeResult: input.scrapeResult
+      ? input.scrapeResult
+      : ({ url: input.url, data: { html: input.html, title: '', body: '' } } as any),
+    tier: input.tier,
+    includeDeterministic: false,
+  });
+  const auditModules = auditPipeline.modules;
+  const auditReport = auditPipeline.report;
 
   const structuralSupportScore = Math.round(
     [

@@ -1,127 +1,192 @@
-# AI Visibility Intelligence Audits Client
+# AiVIS Client
 
-> Ai Visibility Intelligence Audits Engine — React + Vite + TypeScript + Tailwind
+> React 19 + Vite frontend for scan → evidence → fix → re-scan AI visibility workflows.
 
-## Overview
+## What This App Actually Does
 
-The AI Visibility Intelligence Audits frontend is a modern React 19 application that provides:
+The client is the delivery surface for the AiVIS product loop:
 
-- **AI Visibility Audits** — Analyze how AI systems parse and surface your website
-- **Platform Scoring** — Individual scores for ChatGPT, Perplexity, Claude, Google AI
-- **Reverse Engineer** — Decompile AI answers, generate blueprints, compare model preferences, simulate visibility changes
-- **Citation Tracking** — Test if AI platforms mention your brand (Signal tier)
-- **Competitor Tracking** — Compare your visibility against competitors (Alignment+)
-- **Analytics** — Track score trends over time across all your audited pages
-- **Keyword Intelligence** — Intent, volume, competition, opportunity scores from your audits
-- **Reports** — Manage and export your audit history
+1. Scan a public URL
+2. Expose evidence-backed blockers
+3. Launch fixes or remediation workflows
+4. Re-scan and compare score movement
 
-## Quick Start
+The frontend currently ships real, wired interfaces for:
+
+- AI visibility audits with live progress streaming
+- Evidence-backed reports with BRAG-linked recommendations
+- Report history, exports, public share views, and score comparisons
+- Analytics, competitors, citations, prompt intelligence, answer presence, and reverse engineering
+- Score Fix remediation flows, including GitHub App / Auto Score Fix UI
+- Workspaces, billing, referrals, notifications, and agency/admin surfaces
+
+This README only documents behavior that exists in the current codebase. It does not treat marketing copy as source of truth.
+
+## Runtime Notes
+
+Use `npm.cmd` on Windows in this workspace. The local username contains `$`, which breaks bare `npm` in PowerShell.
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
-The dev server runs on <https://aivis.biz>
+Vite typically serves locally on `http://localhost:5173` unless overridden by config or environment.
 
-## Tech Stack
+## Stack
 
-- **React 19** — Latest React with concurrent features
-- **Vite** — Fast build tool and dev server
-- **TypeScript** — Full type safety
-- **Tailwind CSS** — Utility-first styling
-- **Zustand** — Lightweight state management
-- **React Router** — Client-side routing
-- **jsPDF** — PDF report generation
+- React 19
+- Vite
+- TypeScript
+- Tailwind CSS
+- Zustand
+- React Router
+- Framer Motion
+- Axios + fetch-based API helpers
+- jsPDF export flows
 
-## Project Structure
+## Product Surfaces
+
+### Public shell
+
+- `/` — landing page with the audit launcher
+- `/pricing` — pricing and tier narrative
+- `/auth` — sign in / sign up / reset entry
+- `/guide`, `/methodology`, `/help`, `/api-docs`, `/blogs`, `/compare/*`, `/workflow`, `/compliance` — support and educational surfaces
+- `/report/public/:token` — public shared audit view
+
+### Authenticated app shell
+
+All primary product routes live under `/app/*`.
+
+- `/app` — dashboard / overview
+- `/app/analyze` — audit runner and report entry
+- `/app/reports` — report history and comparison
+- `/app/score-fix` — remediation and Auto Score Fix surface
+
+Supporting intelligence routes:
+
+- `/app/analytics`
+- `/app/citations`
+- `/app/competitors`
+- `/app/keywords`
+- `/app/prompt-intelligence`
+- `/app/answer-presence`
+- `/app/reverse-engineer`
+- `/app/brand-integrity`
+- `/app/niche-discovery`
+- `/app/benchmarks`
+
+Platform / utility routes:
+
+- `/app/schema-validator`
+- `/app/server-headers`
+- `/app/robots-checker`
+- `/app/indexing`
+- `/app/mcp`
+- `/app/gsc`
+- `/app/profile`
+- `/app/settings`
+- `/app/billing`
+- `/app/notifications`
+- `/app/team`
+- `/app/agency`
+- `/app/admin`
+
+## Tier Truth
+
+Tier truth comes from shared contracts in [../shared/types.ts](../shared/types.ts), not from this README.
+
+The current canonical tiers in code are:
+
+- `observer`
+- `alignment`
+- `signal`
+- `scorefix`
+- `agency`
+- `enterprise`
+
+Current capability highlights from shared limits:
+
+- `observer`: free entry tier, 3 scans/month, limited history/features
+- `alignment`: 25 scans/month, full evidence, exports, report history
+- `signal`: 100 scans/month, triple-check pipeline, scheduled rescans, team features
+- `scorefix`: remediation-oriented tier with Auto PR capabilities and credits-driven workflows
+- `agency`: high-volume, workspace-heavy, white-label and portfolio tooling
+- `enterprise`: effectively unlimited API-first tier
+
+Pricing display and checkout data are fetched from the backend. Do not hardcode price values here as product truth.
+
+## Audit Flow In The Client
+
+The client audit flow is already wired around the current backend:
+
+1. Submit URL to `POST /api/analyze`
+2. Read `X-Audit-Request-Id`
+3. Open SSE progress stream at `/api/audit/progress/:requestId`
+4. Render the analysis result when the JSON payload returns
+5. Offer reports, exports, comparison, and remediation next steps
+
+Key implementation files:
+
+- [src/views/AnalyzePage.tsx](src/views/AnalyzePage.tsx)
+- [src/components/AuditProgressOverlay.tsx](src/components/AuditProgressOverlay.tsx)
+- [src/components/ComprehensiveAnalysis.tsx](src/components/ComprehensiveAnalysis.tsx)
+- [src/components/RecommendationList.tsx](src/components/RecommendationList.tsx)
+- [src/components/AutoScoreFixModal.tsx](src/components/AutoScoreFixModal.tsx)
+
+## Directory Map
+
+The current app is not yet reorganized into feature folders; this README reflects the real structure in the repo today.
 
 ```text
 src/
-├── components/        # Reusable UI components
-├── views/             # Page-level components
-├── pages/             # Static pages (Terms, Privacy, FAQ)
-├── hooks/             # Custom React hooks
-├── stores/            # Zustand stores (auth, analysis)
-├── services/          # API service layer
-├── utils/             # Utility functions
-├── auth/              # Auth context and providers
-└── assets/            # Static assets
+├── components/   # shared UI, audit/report panels, nav, remediation modals
+├── views/        # authenticated product views and route targets
+├── pages/        # public marketing/docs/support pages and some utility screens
+├── hooks/        # auth, settings, notifications, feature status, page meta
+├── stores/       # Zustand auth, analysis, settings, workspaces
+├── services/     # API wrappers and product service clients
+├── utils/        # URL normalization, auth headers, fetch helpers, insight utilities
+├── lib/          # security, SEO schema, auth helpers, sentry
+├── content/      # generated blog/support content
+├── constants/    # product copy, colors, narrative constants
+└── auth/         # auth client helpers
 ```
 
 ## Environment Variables
 
-Create a `.env` file:
+Create `client/.env` as needed:
 
 ```bash
-# Backend API URL
 VITE_API_URL=https://api.aivis.biz
-
-# Environment
 VITE_ENV=development
-
-# Optional: Sentry DSN for error tracking
 VITE_SENTRY_DSN=
 ```
 
-## Available Scripts
+`VITE_API_URL` should point to the backend origin, not the `/api` path.
+
+## Scripts
 
 | Command | Description |
 | ------- | ----------- |
-| `npm run dev` | Start dev server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | TypeScript type checking |
-| `npm test` | Run Vitest tests |
+| `npm.cmd run dev` | Start Vite dev server |
+| `npm.cmd run build` | Build production assets |
+| `npm.cmd run preview` | Preview production build |
+| `npm.cmd run lint` | Run ESLint |
+| `npm.cmd run typecheck` | Run TypeScript checks |
+| `npm.cmd test` | Run Vitest |
 
-## Key Routes
+## Accuracy Rules For Future Edits
 
-| Route | Auth | Tier | Description |
-| ----- | ---- | ---- | ----------- |
-| `/` | No | — | Landing page + audit form |
-| `/auth` | No | — | Sign in / sign up / reset password |
-| `/dashboard` | Yes | — | User dashboard |
-| `/pricing` | No | — | Pricing plans |
-| `/compare` | No | — | Plan comparison overview |
-| `/workflow` | No | — | Platform workflow and value path |
-| `/methodology` | No | — | Scoring methodology |
-| `/guide` | No | — | How-to guide |
-| `/analytics` | Yes | Alignment+ | Score history & trends |
-| `/keywords` | Yes | Alignment+ | Keyword intelligence |
-| `/competitors` | Yes | Alignment+ | Competitor tracking & comparison |
-| `/reverse-engineer` | Yes | Alignment+ | AI answer tools (4 tools) |
-| `/citations` | Yes | Alignment+ / Signal split | BRA authority checks at Alignment; full citation testing at Signal |
-| `/reports` | Yes | All authenticated tiers | Audit report history |
-| `/terms` | No | — | Terms of Service |
-| `/privacy` | No | — | Privacy Policy |
-| `/faq` | No | — | FAQ |
-
-## Tier System
-
-| Tier | Price | audits/mo | Competitors | Key Features |
-| ---- | ----- | --------- | ----------- | ------------ |
-| Observer | Free | 3 | 0 | Basic audits, core recommendations, report history, shareable links |
-| Alignment | $49/mo | 60 | 2 | + Exports, report history, force-refresh, competitor tracking, reverse engineer, BRA authority checker |
-| Signal | $149/mo | 110 | 5 | + Citation testing, API access, white-label, scheduled reaudits |
-| Score Fix | $299 per 250-scan pack | 250 | 10 | + Thorough evidence audit mode, Actual Fix Plan, and issue-level validation guidance. Repurchase when scans exhausted. |
-
-## Building for Production
-
-```bash
-npm run build
-```
-
-Output goes to `dist/` — deploy to any static host (Vercel, Netlify, etc.)
+- Treat [../shared/types.ts](../shared/types.ts) as the cross-layer contract.
+- Treat [src/App.tsx](src/App.tsx) as the route map source of truth.
+- Treat pricing data as server-owned.
+- Do not describe Auto Score Fix as unavailable unless the routes are actually locked.
+- Do not describe public routes or tier limits from memory; verify them in code first.
 
 ## Related
 
-- [Server README](../server/README.md)
-- [Stripe Setup](../STRIPE_SETUP.md)
-
----
-
-**AI Evidence-backed Visibility Intelligence Audits & Auto PR Remediations** — Intruvurt Labs • Georgia, USA
+- [../server/README.md](../server/README.md)
+- [../shared/types.ts](../shared/types.ts)
+- [../STRIPE_SETUP.md](../STRIPE_SETUP.md)

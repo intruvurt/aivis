@@ -40,6 +40,16 @@ export default function Dashboard() {
     void run();
   }, []);
 
+  const sortedAudits = useMemo(() => {
+    return [...audits].sort((left, right) => {
+      const leftTime = left.createdAt ? new Date(left.createdAt).getTime() : 0;
+      const rightTime = right.createdAt ? new Date(right.createdAt).getTime() : 0;
+      return rightTime - leftTime;
+    });
+  }, [audits]);
+
+  const primaryAudit = sortedAudits[0] || null;
+
   const metrics = useMemo(() => {
     const completed = audits.filter((audit) => audit.status === "completed").length;
     const processing = audits.filter((audit) => audit.status === "processing").length;
@@ -56,6 +66,22 @@ export default function Dashboard() {
     ];
   }, [audits]);
 
+  const priorityPages = useMemo(() => {
+    return [...audits]
+      .filter((audit) => typeof audit.overallScore === "number")
+      .sort((left, right) => (left.overallScore || 0) - (right.overallScore || 0))
+      .slice(0, 3);
+  }, [audits]);
+
+  const primaryVerdict = useMemo(() => {
+    const score = primaryAudit?.overallScore || 0;
+    if (!primaryAudit || typeof primaryAudit.overallScore !== "number") return "No completed audit yet";
+    if (score >= 80) return "Citation-ready with minor gaps";
+    if (score >= 65) return "Readable, but still missing trust signals";
+    if (score >= 40) return "Not citation-ready yet";
+    return "Critical visibility blockers detected";
+  }, [primaryAudit]);
+
   return (
     <AppPageFrame
       icon={<Gauge className="h-5 w-5 text-orange-300" />}
@@ -71,6 +97,41 @@ export default function Dashboard() {
         </Link>
       }
     >
+      {primaryAudit && typeof primaryAudit.overallScore === "number" && (
+        <section className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict</p>
+              <div className="mt-3 flex items-end gap-4">
+                <div className="text-5xl font-semibold tracking-tight text-white">{primaryAudit.overallScore}</div>
+                <div className="pb-1 text-sm text-cyan-100/80">{primaryVerdict}</div>
+              </div>
+              <p className="mt-3 text-sm text-white/70">
+                Focus the next action on the latest audited page first, then re-scan the same target to prove the lift.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {primaryAudit._id && (
+                <Link
+                  to={`/audit/${primaryAudit._id}`}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
+                >
+                  Open latest report
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+              <Link
+                to="/app/score-fix"
+                className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
+              >
+                Fix these now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
           <article key={metric.label} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
@@ -86,8 +147,8 @@ export default function Dashboard() {
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Recent audits</h2>
-            <p className="mt-1 text-sm text-white/56">Recent runs only. The dashboard no longer inlines full report chrome.</p>
+            <h2 className="text-lg font-semibold text-white">Priority pages</h2>
+            <p className="mt-1 text-sm text-white/56">These are the lowest-scoring recent pages. Use the full report to inspect issue-level evidence.</p>
           </div>
         </div>
 
@@ -112,7 +173,7 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
-                {audits.slice(0, 12).map((audit) => (
+                {(priorityPages.length > 0 ? priorityPages : sortedAudits.slice(0, 12)).map((audit) => (
                   <tr key={audit._id || audit.url} className="bg-transparent text-white/76">
                     <td className="px-4 py-4">
                       <div className="max-w-[26rem] truncate font-medium text-white">{audit.url || "Untitled audit"}</div>

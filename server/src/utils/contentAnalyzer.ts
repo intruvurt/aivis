@@ -14,7 +14,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
     hasAbout: false,
     hasPricing: false,
     hasContact: false,
-    entitySignals: []
+    entitySignals: [] as string[]
   };
 
   try {
@@ -123,7 +123,7 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
 
     // Extract entity signals from JSON-LD
     if (extractedData.jsonLd.length > 0) {
-      extractedData.jsonLd.forEach(ld => {
+      extractedData.jsonLd.forEach((ld: any) => {
         if (ld["@type"]) {
           contentData.entitySignals.push(ld["@type"]);
         }
@@ -141,10 +141,11 @@ export const analyzeContentClarity = (extractedData: any, url: string) => {
     }
 
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     evidence.push(buildEvidence({
       proof: null,
       source: url,
-      description: `Content analysis error: ${error.message}`
+      description: `Content analysis error: ${message}`
     }));
   }
 

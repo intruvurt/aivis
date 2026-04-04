@@ -6,12 +6,14 @@ This document defines the minimum non-negotiable wiring checks for core product 
 - audit/citation/competitor feature routes
 - GSC + IndexNow + MCP integration routes
 
+On this workspace, use `npm.cmd` instead of bare `npm` when running commands from PowerShell.
+
 ## Commands
 
 ### Static wiring (no auth required)
 
 ```bash
-npm run smoke:wiring:static
+npm.cmd run smoke:wiring:static
 ```
 
 Checks:
@@ -23,7 +25,7 @@ Checks:
 ### Feature status smoke
 
 ```bash
-npm run smoke:features
+npm.cmd run smoke:features
 ```
 
 Validates feature status contract and cards/hooks wiring.
@@ -31,7 +33,7 @@ Validates feature status contract and cards/hooks wiring.
 ### Analyze integrity smoke (auth required)
 
 ```bash
-npm run smoke:analyze
+npm.cmd run smoke:analyze
 ```
 
 Requires one of:
@@ -48,7 +50,7 @@ Optional:
 ### Visibility gate smoke (auth required)
 
 ```bash
-npm run smoke:visibility:gate
+npm.cmd run smoke:visibility:gate
 ```
 
 Requires a scorefix token via:
@@ -65,6 +67,19 @@ This is to prevent drift between:
 - integration surfaces
 
 If one breaks, release confidence is invalid.
+
+## What this does not prove yet
+
+These smoke scripts improve release confidence, but they do not yet prove full end-to-end coverage for every major surface.
+
+Still missing as clearly documented comprehensive smoke coverage:
+
+- public report share creation and resolution
+- all citation verification engines under live conditions
+- Python deep-analysis endpoint coverage
+- complete cross-tier journey verification
+
+There is also an opt-in E2E auth test guarded by `RUN_E2E_TESTS=true`, which is useful but not the same as always-on smoke enforcement.
 
 ## Queue worker performance contract
 
@@ -112,4 +127,4 @@ New backend endpoints:
 - `POST /api/growth/outreach/preview` — generate personalized outreach copy using report link context.
 - `GET /api/growth/digest/daily` — “biggest drops / biggest wins” digest payload for content loops.
 - `POST /api/growth/referrals/redeem` — apply +5 credit referral bonus on conversion events.
-- `POST /api/growth/viral/snippet` — generate report-embedded competitor curiosity snippet.
+- `POST /api/growth/viral/snippet` — generate report-embedded competitor curiosity snippet.

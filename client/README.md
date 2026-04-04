@@ -1,262 +1,182 @@
-# AiVIS
+# AiVIS Client
 
-AiVIS is the AI visibility Evidence-backed Intelligence and Auto Fix PR-Remediation platform for aivis.biz
+This package is the frontend for the AiVIS product flow.
 
-It scans a site shows what AI systems misunderstand proves the problem with evidence and helps move the site toward being understood trusted and cited
+It is not a generic SEO dashboard. The client is built to help users scan a public site, understand what AI systems miss, review evidence, trigger remediation, and measure what changes after another scan.
 
-## What this app is
+## Product role
 
-This client is the frontend for the AiVIS product flow
+The client presents the operational loop used across the platform:
 
-Scan a public URL
+1. Launch or review an audit.
+2. Inspect evidence-backed findings.
+3. Compare history, competitors, citations, and mentions.
+4. Start remediation flows.
+5. Re-scan and validate movement.
 
-Expose the blockers with evidence
+If a screen does not support that loop or strengthen collaboration around it, it is not a core surface.
 
-Launch fixes or remediation steps
+## Current frontend surfaces
 
-Re scan and measure what changed
+The current app is already wired to real backend flows for:
 
-This is not a generic SEO dashboard and it is not just a surface for reports. The product is built around finding what breaks AI understanding and turning that into usable next actions
-
-## What it does right now
-
-The current frontend is wired to the backend and includes real working product surfaces for
-
-AI visibility audits with live progress streaming
-
-Evidence backed reports linked to BRAG style findings
-
-Report history exports public share pages and score comparison
-
-Citation tracking answer presence competitor tracking keyword intelligence and reverse engineering tools
-
-Score Fix remediation flows including GitHub and auto fix related interfaces
-
-Workspaces billing referrals notifications agency tools and admin surfaces
-
-This README reflects the real codebase and not marketing copy
+- audit launch and live progress streaming
+- comprehensive analysis and recommendation rendering
+- report history, exports, and comparison
+- public report sharing via `/reports/public/:shareId`
+- citation tracking and answer presence workflows
+- competitor tracking and reverse engineering tools
+- Score Fix and AutoPR-related remediation surfaces
+- billing, notifications, workspaces, agency flows, and admin tools
 
 ## Stack
 
-React 19
-
-Vite
-
-TypeScript
-
-Tailwind CSS
-
-Zustand
-
-React Router
-
-Framer Motion
-
-Axios and fetch based API helpers
-
-jsPDF export flows
+- React 19
+- Vite
+- TypeScript
+- Tailwind CSS
+- Zustand
+- React Router
+- Framer Motion
+- Axios and fetch helpers
+- jsPDF export flows
 
 ## Run locally
 
-On Windows use `npm.cmd` in this workspace
+On this Windows workspace, always use `npm.cmd`.
 
 ```bash
 npm.cmd install
 npm.cmd run dev
 ```
 
-Vite usually runs on <http://localhost:5173> unless changed by config or environment
+Vite usually runs on `http://localhost:5173`.
+
+## Route model
+
+Public routes include:
+
+- `/`
+- `/pricing`
+- `/auth`
+- `/guide`
+- `/methodology`
+- `/workflow`
+- `/compare/*`
+- `/reports/public/:shareId`
+- `/report/public/:shareId` for legacy link compatibility
+
+Authenticated product routes live under `/app/*` and include:
+
+- `/app/dashboard`
+- `/app/analyze`
+- `/app/reports`
+- `/app/score-fix`
+- `/app/analytics`
+- `/app/citations`
+- `/app/competitors`
+- `/app/keywords`
+- `/app/prompt-intelligence`
+- `/app/answer-presence`
+- `/app/reverse-engineer`
+- `/app/brand-integrity`
+- `/app/niche-discovery`
+- `/app/benchmarks`
+- `/app/schema-validator`
+- `/app/server-headers`
+- `/app/robots-checker`
+- `/app/indexing`
+- `/app/mcp`
+- `/app/gsc`
+- `/app/profile`
+- `/app/settings`
+- `/app/billing`
+- `/app/notifications`
+- `/app/team`
+- `/app/agency`
+- `/app/admin`
+
+## Tier truth
+
+Tier logic does not belong in this README. It comes from `../shared/types.ts` and the server remains authoritative.
+
+Current canonical tiers in the shared contract:
+
+- `observer`
+- `alignment`
+- `signal`
+- `scorefix`
+- `agency`
+- `enterprise`
+
+Simple framing:
+
+- Observer shows what AI gets wrong.
+- Alignment explains the structural reason.
+- Signal measures citation and visibility progress over time.
+- Score Fix moves from diagnosis into remediation.
+- Agency and Enterprise extend this into team and portfolio operations.
+
+## Audit flow in the client
+
+The main client audit sequence is already wired to the backend:
+
+1. Submit a target to `POST /api/analyze`.
+2. Read the created audit request id.
+3. Open the SSE progress stream at `/api/audit/progress/:requestId`.
+4. Render the finished analysis.
+5. Offer reports, exports, sharing, comparison, and remediation next steps.
+
+Important implementation files:
+
+- `src/views/AnalyzePage.tsx`
+- `src/components/AuditProgressOverlay.tsx`
+- `src/components/ComprehensiveAnalysis.tsx`
+- `src/components/RecommendationList.tsx`
+- `src/components/AutoScoreFixModal.tsx`
+- `src/pages/PublicReportPage.tsx`
+
+## Evidence-first rule
+
+AiVIS uses an evidence-first product model.
+
+- Findings should connect back to real evidence.
+- Recommendations should stay grounded in the analyzed page.
+- Public reports should preserve the actual audit payload, not a marketing summary.
+
+## Team workspace importance
+
+The workspace layer is strategically important. As search click volume becomes less dependable, teams need a shared operational layer for audits, historical movement, remediation decisions, and stakeholder-visible public reports.
+
+That is one of the clearest product differentiators in this codebase.
+
+## Project structure
 
-Product flow
-
-Everything in AiVIS follows this loop
-
-Scan the site
-
-Expose the evidence
-
-Fix the issues
-
-Re scan and compare movement
-
-If a feature does not support that loop it should not be treated as a core surface
-
-Routes
-Public routes
-
-/ landing page and audit launcher
-
-/pricing pricing
-
-/auth sign in sign up and reset
-
-/guide /methodology /workflow /compare/* support and educational pages
-
-/report/public/:token public shared audit view
-
-Authenticated routes
-
-All main product routes live under /app/*
-
-/app dashboard
-
-/app/analyze audit runner
-
-/app/reports report history and comparison
-
-/app/score-fix remediation and auto fix surface
-
-Supporting intelligence routes include
-
-/app/analytics
-
-/app/citations
-
-/app/competitors
-
-/app/keywords
-
-/app/prompt-intelligence
-
-/app/answer-presence
-
-/app/reverse-engineer
-
-/app/brand-integrity
-
-/app/niche-discovery
-
-/app/benchmarks
-
-Platform and utility routes include
-
-/app/schema-validator
-
-/app/server-headers
-
-/app/robots-checker
-
-/app/indexing
-
-/app/mcp
-
-/app/gsc
-
-/app/profile
-
-/app/settings
-
-/app/billing
-
-/app/notifications
-
-/app/team
-
-/app/agency
-
-/app/admin
-
-Tier truth
-
-Tier truth comes from shared contracts in ../shared/types.ts and not from this README
-
-The current canonical tiers in code are
-
-observer
-
-alignment
-
-signal
-
-scorefix
-
-agency
-
-enterprise
-
-The simple model is this
-
-Observer lets users see what AI gets wrong
-
-Alignment shows why it is happening
-
-Signal tracks and proves visibility over time
-
-ScoreFix is the remediation layer
-
-Agency and Enterprise expand that for larger teams and heavier usage
-
-Prices and checkout data should stay backend controlled and should not be hardcoded here
-
-Audit flow in the client
-
-The client audit flow is already wired around the current backend
-
-Submit URL to POST /api/analyze
-
-Read the audit request id
-
-Open the SSE progress stream at /api/audit/progress/:requestId
-
-Render the analysis result when the response completes
-
-Offer reports exports comparison and remediation next steps
-
-Important implementation files include
-
-src/views/AnalyzePage.tsx
-
-src/components/AuditProgressOverlay.tsx
-
-src/components/ComprehensiveAnalysis.tsx
-
-src/components/RecommendationList.tsx
-
-src/components/AutoScoreFixModal.tsx
-
-Evidence system
-
-AiVIS uses an evidence first approach
-
-Each issue should tie back to traceable evidence ids and grounded findings
-
-The point is not to generate fluffy insight. The point is to show what was found why it matters and what should happen next
-
-Score Fix
-
-Score Fix is the execution layer
-
-It exists to move the product beyond reporting
-
-Find the issue
-
-Generate the fix path
-
-Apply the change through GitHub or remediation flow
-
-Re scan and validate the result
-
-That is where the product becomes operational and not just informative
-
-Project structure
-
-This reflects the real repo structure today
-
+```text
 src/
-├── components/
-├── views/
-├── pages/
-├── hooks/
-├── stores/
-├── services/
-├── utils/
-├── lib/
-├── constants/
-└── auth/
+|- auth/
+|- components/
+|- constants/
+|- hooks/
+|- lib/
+|- pages/
+|- services/
+|- stores/
+|- utils/
+`- views/
+```
 
-In plain terms
+In practical terms:
 
-components holds shared UI report panels navigation and remediation modals
+- `components/` holds shared UI, report blocks, navigation, and remediation modals
+- `views/` holds larger product screens
+- `pages/` holds route-level surfaces
+- `services/` and `utils/` handle API and transformation logic
+- `stores/` coordinates frontend state
+
+## Documentation note
+
+This README is meant to reflect the working product, not aspirational copy. If the client and server disagree, the server wins.
 
 views holds authenticated product views
 

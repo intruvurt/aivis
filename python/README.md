@@ -28,6 +28,19 @@ The Python service runs alongside the Node.js backend as an **optional** microse
 | `POST /fingerprint/generate` | SimHash content fingerprint for dedup |
 | `POST /fingerprint/compare` | Compare fingerprints (Hamming distance) |
 
+## Current state
+
+This service is a real implementation and not a placeholder stub. The main modules currently provide:
+
+- spaCy and textstat based NLP analysis
+- SHA-256 evidence ledger recording
+- PDF, DOCX, HTML, Markdown, and text parsing
+- SimHash-style content fingerprinting
+
+Current limitation: the default NLP setup is English-first because the documented spaCy model is `en_core_web_sm`. The broader platform already supports locale-aware citation verification, but the deep NLP layer is not yet equally multilingual.
+
+Another important nuance: evidence verification is real, but it is currently recomputation-based. It is not yet the same as a fully externalized persisted chain audit with independent historical proof.
+
 ## Setup
 
 ```bash
@@ -76,6 +89,10 @@ The Node server calls Python via `server/src/services/deepAnalysisClient.ts`:
 - Document parsing for upload flow
 
 If Python is unavailable, all calls return `null` and the audit proceeds normally.
+
+## Smoke coverage reality
+
+This repository has real platform smoke scripts, but there is not yet a clearly documented full smoke path for all Python endpoints. Treat this service as production-capable but not yet covered by comprehensive end-to-end smoke automation.
 
 ## Production Deployment
 

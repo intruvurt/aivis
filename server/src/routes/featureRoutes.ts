@@ -38,6 +38,7 @@ import {
   revokeApiKey,
   toggleApiKey,
 } from '../services/apiKeyService.js';
+import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 import {
   createWebhook,
   listWebhooks,
@@ -677,6 +678,10 @@ router.post('/scheduled-rescans', enforceFeature('rescan'), async (req: Request,
   try {
     const { url, frequency } = req.body;
     if (!url) return res.status(400).json({ success: false, error: 'URL is required' });
+    const normalizedUrl = normalizePublicHttpUrl(String(url));
+    if (!normalizedUrl.ok) {
+      return res.status(400).json({ success: false, error: normalizedUrl.error });
+    }
 
     const tier = uiTierFromCanonical((req.user?.tier as any) || 'observer');
     const limits = TIER_LIMITS[tier];
@@ -693,7 +698,7 @@ router.post('/scheduled-rescans', enforceFeature('rescan'), async (req: Request,
       return res.status(400).json({ success: false, error: `Maximum ${limits.maxScheduledRescans} scheduled rescans on your plan` });
     }
 
-    const rescan = await createScheduledRescan(req.user!.id, req.workspace!.id, url, effectiveFreq);
+    const rescan = await createScheduledRescan(req.user!.id, req.workspace!.id, normalizedUrl.url, effectiveFreq);
     res.status(201).json({ success: true, data: rescan });
   } catch (err: any) {
     internalServerError(res, 'Failed to create scheduled rescan');

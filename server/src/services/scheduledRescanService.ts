@@ -7,6 +7,7 @@ import { getPool } from './postgresql.js';
 import { hasFeatureAccess } from '../middleware/featureGate.js';
 import { getUserById } from '../models/User.js';
 import { buildScoreChangeReason, detectSubstantialChange } from './changeDetectionService.js';
+import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,7 +15,7 @@ export interface ScheduledRescan {
   id: string;
   user_id: string;
   url: string;
-  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'once';
   next_run_at: string;
   last_run_at: string | null;
   last_checked_at: string | null;
@@ -68,6 +69,10 @@ export async function createScheduledRescan(
   frequency: string = 'weekly'
 ): Promise<ScheduledRescan> {
   const pool = getPool();
+  const normalized = normalizePublicHttpUrl(url);
+  if (!normalized.ok) {
+    throw new Error(normalized.error);
+  }
   const nextRun = new Date(Date.now() + (FREQUENCY_MS[frequency] || FREQUENCY_MS.weekly));
 
   const { rows } = await pool.query(
@@ -75,7 +80,7 @@ export async function createScheduledRescan(
      VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (user_id, COALESCE(workspace_id, '00000000-0000-0000-0000-000000000000'::uuid), url) DO UPDATE SET frequency = $4, next_run_at = $5, enabled = TRUE, updated_at = NOW()
      RETURNING *`,
-    [userId, workspaceId, url.toLowerCase().trim(), frequency, nextRun.toISOString()]
+    [userId, workspaceId, normalized.url, frequency, nextRun.toISOString()]
   );
   return rows[0];
 }
@@ -179,8 +184,28 @@ export async function processDueRescans(
       }
 
       try {
+        const normalizedTarget = normalizePublicHttpUrl(String(row.url || ''));
+        if (!normalizedTarget.ok) {
+          await pool.query(
+            `UPDATE scheduled_rescans SET enabled = FALSE, updated_at = NOW() WHERE id = $1`,
+            [row.id]
+          );
+
+          if (hooks?.onFailed) {
+            await hooks.onFailed({
+              userId: row.user_id,
+              workspaceId: row.workspace_id,
+              url: row.url,
+              scheduleId: row.id,
+              reason: `Invalid scheduled URL: ${normalizedTarget.error}`,
+            });
+          }
+          continue;
+        }
+
+        const effectiveUrl = normalizedTarget.url;
         const changeCheck = await detectSubstantialChange(
-          row.url,
+          effectiveUrl,
           row.last_change_fingerprint || null,
           row.last_change_snapshot || null,
         );
@@ -231,7 +256,7 @@ export async function processDueRescans(
             await hooks.onSkipped({
               userId: row.user_id,
               workspaceId: row.workspace_id,
-              url: row.url,
+              url: effectiveUrl,
               scheduleId: row.id,
               reason: String(changeCheck.evidence.reason || 'no_material_change'),
             });
@@ -250,20 +275,23 @@ export async function processDueRescans(
             previousAuditScore = parsed;
           }
         }
-        const auditId = await analyzeInternally(row.user_id, row.workspace_id, row.url);
+        const auditId = await analyzeInternally(row.user_id, row.workspace_id, effectiveUrl);
+        if (!auditId) {
+          throw new Error('Internal scheduled rescan did not produce an audit record');
+        }
         const isOnce = row.frequency === 'once';
-        const nextRun = isOnce ? null : new Date(Date.now() + (FREQUENCY_MS[row.frequency] || FREQUENCY_MS.weekly));
+        const nextRunAt = isOnce
+          ? new Date().toISOString()
+          : new Date(Date.now() + (FREQUENCY_MS[row.frequency] || FREQUENCY_MS.weekly)).toISOString();
 
         let nextScore: number | null = null;
-        if (auditId) {
-          const { rows: scoreRows } = await pool.query(
-            `SELECT visibility_score FROM audits WHERE id = $1 LIMIT 1`,
-            [auditId]
-          );
-          const parsed = Number(scoreRows[0]?.visibility_score);
-          if (Number.isFinite(parsed)) {
-            nextScore = parsed;
-          }
+        const { rows: scoreRows } = await pool.query(
+          `SELECT visibility_score FROM audits WHERE id = $1 LIMIT 1`,
+          [auditId]
+        );
+        const parsed = Number(scoreRows[0]?.visibility_score);
+        if (Number.isFinite(parsed)) {
+          nextScore = parsed;
         }
 
         const scoreReason = buildScoreChangeReason(
@@ -289,7 +317,7 @@ export async function processDueRescans(
            WHERE id = $7`,
           [
             auditId,
-            nextRun ? nextRun.toISOString() : null,
+            nextRunAt,
             changeCheck.fingerprint,
             JSON.stringify(changeCheck.snapshot),
             JSON.stringify(changeCheck.evidence),
@@ -303,14 +331,14 @@ export async function processDueRescans(
           await hooks.onCompleted({
             userId: row.user_id,
             workspaceId: row.workspace_id,
-            url: row.url,
+            url: effectiveUrl,
             scheduleId: row.id,
-            auditId: auditId || null,
+            auditId,
           });
         }
 
         processed++;
-        console.log(`[rescan] Completed scheduled rescan for ${row.url} (user ${row.user_id})`);
+        console.log(`[rescan] Completed scheduled rescan for ${effectiveUrl} (user ${row.user_id})`);
       } catch (err: any) {
         console.error(`[rescan] Failed rescan for ${row.url}: ${err.message}`);
         // Push next_run_at forward so we don't retry immediately

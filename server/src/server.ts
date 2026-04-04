@@ -10247,7 +10247,13 @@ process.on('unhandledRejection', (reason) => {
   // Returns the audit ID on success, null on failure.
   const analyzeInternally = async (userId: string, workspaceId: string, url: string): Promise<string | null> => {
     try {
-      const sd = await scrapeWebsite(url);
+      const normalized = normalizePublicHttpUrl(url);
+      if (!normalized.ok) {
+        throw new Error(normalized.error);
+      }
+
+      const targetUrl = normalized.url;
+      const sd = await scrapeWebsite(targetUrl);
       if (!sd) return null;
       const user = await getUserById(userId);
       if (!user) return null;
@@ -10262,7 +10268,7 @@ process.on('unhandledRejection', (reason) => {
 
       // Minimal single-model analysis for scheduled rescans
       const provider = providers[0];
-      const prompt = `Analyze this website for AI visibility. URL: ${url}\nScraped data: ${JSON.stringify(sd).slice(0, 4000)}\nReturn JSON with visibility_score (0-100), recommendations array, and summary string.`;
+      const prompt = `Analyze this website for AI visibility. URL: ${targetUrl}\nScraped data: ${JSON.stringify(sd).slice(0, 4000)}\nReturn JSON with visibility_score (0-100), recommendations array, and summary string.`;
       const aiResult = await callAIProvider({
         provider: provider.provider,
         model: provider.model,
@@ -10288,7 +10294,7 @@ process.on('unhandledRejection', (reason) => {
       const auditId = await persistAuditRecord({
         userId,
         workspaceId,
-        url,
+        url: targetUrl,
         visibilityScore: score,
         result: data as Record<string, unknown>,
         tierAtAnalysis: tier,
@@ -10301,7 +10307,7 @@ process.on('unhandledRejection', (reason) => {
         // Fire webhook
         dispatchWebhooks(userId, workspaceId, 'audit.completed', {
           audit_id: auditId,
-          url,
+          url: targetUrl,
           visibility_score: score,
           source: 'scheduled_rescan',
         }).catch(() => {});
@@ -10310,7 +10316,7 @@ process.on('unhandledRejection', (reason) => {
           userId,
           workspaceId,
           auditId,
-          url,
+          url: targetUrl,
           result: { ...data, visibility_score: score },
           ownerTier: 'signal',
         }).catch(() => {});

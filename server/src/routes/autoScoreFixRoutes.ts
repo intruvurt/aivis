@@ -37,7 +37,7 @@ const VALID_PROVIDERS: VcsProvider[] = ['github', 'gitlab', 'bitbucket'];
 
 // ── Feature lock ─────────────────────────────────────────────────────────────
 // Set to false to re-enable Auto Score Fix once the GitHub remediation flow is ready.
-const AUTO_SCORE_FIX_LOCKED = false;
+const AUTO_SCORE_FIX_LOCKED = true;
 
 router.use(authRequired);
 

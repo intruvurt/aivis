@@ -1264,7 +1264,7 @@ async function updateUserTier(userId: string, tierKey: string, subscriptionId: s
 export const getPricingInfo = async (req: Request, res: Response) => {
   try {
     // Only expose active consumer tiers
-    const ACTIVE_TIERS = ['observer', 'alignment', 'signal', 'scorefix'] as const;
+    const ACTIVE_TIERS = ['observer', 'alignment', 'signal'] as const;
     const uploadFilesByTier: Record<CanonicalTier, number> = {
       observer: 0,
       alignment: 5,

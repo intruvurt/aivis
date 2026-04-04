@@ -346,19 +346,19 @@ router.get('/github/connect', authRequired, async (req, res) => {
   const clientSecret = String(process.env.GITHUB_CLIENT_SECRET || '').trim();
 
   if (!clientId || !clientSecret) {
-    const fallback = new URL('/score-fix', getFrontendBase(req));
+    const fallback = new URL('/app', getFrontendBase(req));
     fallback.searchParams.set('oauth_error', 'GitHub OAuth is not configured on server');
     return res.redirect(fallback.toString());
   }
 
   const userId = String((req as any).user?.id || '').trim();
   if (!userId) {
-    const fallback = new URL('/score-fix', getFrontendBase(req));
+    const fallback = new URL('/app', getFrontendBase(req));
     fallback.searchParams.set('oauth_error', 'You must be signed in to connect GitHub');
     return res.redirect(fallback.toString());
   }
 
-  const redirect = String(req.query.redirect || '/score-fix').trim() || '/score-fix';
+  const redirect = String(req.query.redirect || '/app').trim() || '/app';
   const state = encodeOAuthState({
     mode: 'connect_github',
     redirect,
@@ -412,7 +412,7 @@ router.get('/github/callback', async (req, res) => {
     const accessToken = String(tokenJson?.access_token || '').trim();
     if (!tokenRes.ok || !accessToken) {
       if (state.mode === 'connect_github') {
-        const fallback = new URL(state.redirect || '/score-fix', getFrontendBase(req));
+        const fallback = new URL(state.redirect || '/app', getFrontendBase(req));
         fallback.searchParams.set('oauth_error', 'Unable to complete GitHub connection');
         return res.redirect(fallback.toString());
       }
@@ -425,14 +425,14 @@ router.get('/github/callback', async (req, res) => {
 
     if (state.mode === 'connect_github') {
       if (!state.userId) {
-        const fallback = new URL(state.redirect || '/score-fix', getFrontendBase(req));
+        const fallback = new URL(state.redirect || '/app', getFrontendBase(req));
         fallback.searchParams.set('oauth_error', 'GitHub connection state is invalid');
         return res.redirect(fallback.toString());
       }
 
       await saveVcsToken(state.userId, 'github', accessToken);
 
-      const connected = new URL(state.redirect || '/score-fix', getFrontendBase(req));
+      const connected = new URL(state.redirect || '/app', getFrontendBase(req));
       connected.searchParams.set('github_connected', '1');
       return res.redirect(connected.toString());
     }

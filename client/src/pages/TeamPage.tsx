@@ -48,6 +48,44 @@ interface TeamAudit {
   author_name: string | null;
 }
 
+interface WorkspaceActivityEntry {
+  id: string;
+  type: string;
+  metadata: Record<string, any>;
+  created_at: string;
+  actor: {
+    user_id: string;
+    email: string;
+    name: string | null;
+    role: WorkspaceRole;
+  } | null;
+}
+
+function activityLabel(entry: WorkspaceActivityEntry): string {
+  switch (entry.type) {
+    case 'audit.completed':
+      return `Completed audit on ${entry.metadata?.url || 'tracked URL'}`;
+    case 'workspace.member_added':
+      return `Added ${entry.metadata?.targetEmail || 'a member'} to the workspace`;
+    case 'workspace.member_role_updated':
+      return `Updated member role to ${entry.metadata?.role || 'member'}`;
+    case 'workspace.member_removed':
+      return 'Removed a member from the workspace';
+    case 'workspace.invite_created':
+      return `Sent invite to ${entry.metadata?.email || 'a teammate'}`;
+    case 'workspace.invite_revoked':
+      return 'Revoked a pending invite';
+    case 'workspace.renamed':
+      return `Renamed workspace to ${entry.metadata?.name || 'new name'}`;
+    case 'integration.github.connected':
+      return `Connected GitHub App${entry.metadata?.accountLogin ? ` for ${entry.metadata.accountLogin}` : ''}`;
+    case 'integration.github.disconnected':
+      return 'Disconnected GitHub App';
+    default:
+      return entry.type.replace(/[._]/g, ' ');
+  }
+}
+
 /* ── Main page ─────────────────────────────────── */
 export default function TeamPage() {
   const user = useAuthStore((s) => s.user);
@@ -56,8 +94,10 @@ export default function TeamPage() {
   const [members, setMembers] = useState<WorkspaceMember[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [teamAudits, setTeamAudits] = useState<TeamAudit[]>([]);
+  const [activity, setActivity] = useState<WorkspaceActivityEntry[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [loadingAudits, setLoadingAudits] = useState(false);
+  const [loadingActivity, setLoadingActivity] = useState(false);
 
   // Create workspace form
   const [showCreate, setShowCreate] = useState(false);
@@ -138,11 +178,27 @@ export default function TeamPage() {
     setLoadingAudits(false);
   }, [activeWorkspaceId]);
 
+  const loadActivity = useCallback(async () => {
+    if (!activeWorkspaceId) return;
+    setLoadingActivity(true);
+    try {
+      const resp = await apiFetch(`${API_URL}/api/workspaces/${activeWorkspaceId}/activity?limit=20`, { headers: wsHeaders(activeWorkspaceId) });
+      if (resp.ok) {
+        const j = await resp.json();
+        setActivity(j.data || []);
+      }
+    } catch {
+      // ignore
+    }
+    setLoadingActivity(false);
+  }, [activeWorkspaceId]);
+
   useEffect(() => {
     loadMembers();
     loadInvites();
     loadTeamAudits();
-  }, [loadMembers, loadInvites, loadTeamAudits]);
+    loadActivity();
+  }, [loadMembers, loadInvites, loadTeamAudits, loadActivity]);
 
   /* ── Actions ────────────────────────────── */
   async function handleCreateWorkspace(e: React.FormEvent) {
@@ -632,6 +688,50 @@ export default function TeamPage() {
               </div>
             </div>
           )}
+
+          <div className="rounded-xl border border-white/10 bg-charcoal-light/30 overflow-hidden">
+            <div className="p-4 border-b border-white/8">
+              <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+                <Activity className="w-4 h-4 text-cyan-400" /> Workspace Activity Ledger
+              </h2>
+              <p className="text-xs text-white/40 mt-0.5">
+                Shared action history across invites, audits, role changes, and integrations.
+              </p>
+            </div>
+            {loadingActivity ? (
+              <div className="p-6 text-center text-white/30 text-sm">Loading activity…</div>
+            ) : activity.length === 0 ? (
+              <div className="p-8 text-center">
+                <Activity className="w-8 h-8 text-white/15 mx-auto mb-2" />
+                <p className="text-sm text-white/40">No shared activity yet</p>
+                <p className="text-xs text-white/25 mt-1">Audits, invites, role changes, and integrations will appear here.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {activity.map((entry) => (
+                  <div key={entry.id} className="flex items-start justify-between gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-white/85">{activityLabel(entry)}</p>
+                      <p className="text-[11px] text-white/35 mt-0.5">
+                        {entry.actor?.name || entry.actor?.email || 'System'} · {new Date(entry.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    {entry.type === 'audit.completed' && typeof entry.metadata?.visibilityScore === 'number' && (
+                      <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${
+                        entry.metadata.visibilityScore >= 70
+                          ? 'bg-emerald-500/15 text-emerald-300'
+                          : entry.metadata.visibilityScore >= 40
+                          ? 'bg-amber-500/15 text-amber-300'
+                          : 'bg-red-500/15 text-red-300'
+                      }`}>
+                        {Math.round(entry.metadata.visibilityScore)}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Team audit feed */}
           <div className="rounded-xl border border-white/10 bg-charcoal-light/30 overflow-hidden">

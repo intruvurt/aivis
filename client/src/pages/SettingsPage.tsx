@@ -5,7 +5,6 @@ import { useSettingsStore } from "../stores/settingsStore";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import AdvancedFeaturesPanel from "../components/AdvancedFeaturesPanel";
 import { hasConsent, revokeConsent, setConsentValue } from "../components/CookieConsent";
-import { resetOnboarding } from "../components/OnboardingModal";
 import { API_URL } from "../config";
 import { apiFetch } from "../utils/api";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -37,6 +36,13 @@ import {
   Gift,
   type LucideIcon,
 } from "lucide-react";
+
+/* ================================================================== */
+/*  Onboarding helper (inlined — OnboardingModal removed)              */
+/* ================================================================== */
+function resetOnboarding() {
+  localStorage.removeItem("aivis_onboarding_v2");
+}
 
 /* ================================================================== */
 /*  Toggle switch                                                      */

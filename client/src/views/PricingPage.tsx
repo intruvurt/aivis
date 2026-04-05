@@ -652,11 +652,17 @@ export default function PricingPage() {
   const [canStartTrial, setCanStartTrial] = useState(false);
   const [isStartingTrial, setIsStartingTrial] = useState(false);
   const [totalAudits, setTotalAudits] = useState<number | null>(null);
+  const [avgScore, setAvgScore] = useState<number | null>(null);
 
   useEffect(() => {
     apiFetch('/api/public/benchmarks')
       .then((r) => r.json())
-      .then((d) => { if (d?.success && d.benchmarks?.total_audits) setTotalAudits(d.benchmarks.total_audits); })
+      .then((d) => {
+        if (d?.success && d.benchmarks) {
+          if (d.benchmarks.total_audits) setTotalAudits(d.benchmarks.total_audits);
+          if (d.benchmarks.avg_score) setAvgScore(d.benchmarks.avg_score);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -1055,12 +1061,12 @@ export default function PricingPage() {
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-cyan-400/70" />
-            6.5s avg audit time
+            {avgScore ? `${avgScore}/100` : '…'} avg visibility score
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-400/70" />
-            SOC 2 ready
+            256-bit encrypted
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">

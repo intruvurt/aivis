@@ -630,10 +630,6 @@ function ActionableInsights({ data, pipeline }: { data: AnalyticsData; pipeline:
 
   return (
     <div className="rounded-2xl p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(249,115,22,0.15)' }}>
-      <div className="flex items-center gap-1.5 mb-3">
-        <Lightbulb className="w-4 h-4 text-amber-400" />
-        <span className="text-sm font-semibold text-white">Actionable Insights</span>
-      </div>
       <div className="space-y-2">
         {insights.map((insight, i) => {
           const s = toneStyles[insight.tone] || toneStyles.amber;
@@ -1104,6 +1100,7 @@ export default function AnalyticsPage() {
                       <ChartExplainer tone="emerald" text="SEO health summarizes pass/warn/fail pressure so teams can prioritize fixes with the highest structural impact." />
                     </div>
                   </div>
+                  </>
                 )}
 
                 {/* ── Visibility Rubric Radar ──────────────────────────── */}
@@ -1120,6 +1117,7 @@ export default function AnalyticsPage() {
                   </div>
                 )}
 
+                <SectionTitle title="Score Summary" tone="orange" sub="Best, average, latest & worst visibility scores" />
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { label: 'Best Score',    value: data.bestScore,    color: '#34d399' },
@@ -1142,7 +1140,10 @@ export default function AnalyticsPage() {
 
                 {/* ── Actionable Insights ──────────────────────────────── */}
                 {hasData && (
-                  <ActionableInsights data={data} pipeline={data.deterministicPipeline} />
+                  <>
+                    <SectionTitle title="Actionable Insights" tone="amber" sub="AI-generated recommendations based on your audit data" />
+                    <ActionableInsights data={data} pipeline={data.deterministicPipeline} />
+                  </>
                 )}
 
                 {!hasData && (
@@ -1162,6 +1163,7 @@ export default function AnalyticsPage() {
             {/* ══════════════════ TRENDS TAB ════════════════════════════════ */}
             {activeTab === 'trends' && (
               <div className="space-y-6">
+                <SectionTitle title="Score & Volume Trends" tone="amber" sub="Track how your visibility scores and audit cadence evolve over time" />
 
                 {data.recentTrend.length > 0 && (
                   <div className="rounded-2xl p-6" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(249,115,22,0.15)' }}>
@@ -1326,6 +1328,7 @@ export default function AnalyticsPage() {
             {/* ══════════════════ DOMAINS TAB ═══════════════════════════════ */}
             {activeTab === 'domains' && (
               <div className="space-y-4">
+                <SectionTitle title="Domain Performance" tone="orange" sub="Per-domain audit history, scores & improvement deltas" />
                 {data.improvementDeltas?.length > 0 && (
                   <div className="rounded-2xl p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(251,191,36,0.15)' }}>
                     <ImprovementLeaderboard items={data.improvementDeltas} />
@@ -1397,6 +1400,7 @@ export default function AnalyticsPage() {
             {/* ══════════════════ SEO HEALTH TAB ════════════════════════════ */}
             {activeTab === 'seo' && (
               <div className="space-y-6">
+                <SectionTitle title="SEO Diagnostic Checks" tone="emerald" sub="Pass/warn/fail breakdown, compliance posture & rule-level analytics" />
                 {Object.keys(data.seoDiagnosticsSummary || {}).length > 0 ? (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1526,6 +1530,7 @@ export default function AnalyticsPage() {
             {/* ══════════════════ INSIGHTS TAB ══════════════════════════════ */}
             {activeTab === 'insights' && (
               <div className="space-y-6">
+                <SectionTitle title="Deep Insights" tone="rose" sub="Recommendations, schema adoption, content signals & score volatility" />
                 {/* Recommendation Insights */}
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                   <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-4">

@@ -160,9 +160,19 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive',
       'X-Accel-Buffering': 'no',
+      'Access-Control-Allow-Origin': String(req.headers.origin || '*'),
+      'Vary': 'Origin',
     });
 
+    req.socket.setTimeout(0);
+    req.socket.setNoDelay(true);
+    req.socket.setKeepAlive(true);
+    if (typeof res.flushHeaders === 'function') {
+      res.flushHeaders();
+    }
+
     res.write(`event: connected\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
+    res.write(`retry: 10000\n\n`);
 
     const removeClient = addClient(user.id, res);
     req.on('close', removeClient);

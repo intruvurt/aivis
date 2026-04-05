@@ -236,7 +236,7 @@ export default function ProfilePage() {
           {/* Tier summary card */}
           <div className={`rounded-2xl border ${tc.border} bg-gradient-to-br ${tc.bg} p-5 flex flex-col justify-between`}>
             <div>
-              <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${tc.text}`}>Current Plan</p>
+              <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${tc.text}`}>Running Plan</p>
               <p className="mt-1 text-lg font-bold">{tierDisplay}</p>
               <p className="mt-1.5 text-xs text-white/55 leading-relaxed">{tierAudience}</p>
             </div>
@@ -272,7 +272,7 @@ export default function ProfilePage() {
         <div className="rounded-2xl border border-white/12 bg-charcoal-deep/50 p-5">
           <div className="flex items-center justify-between gap-2 mb-4">
             <h2 className="text-base font-semibold flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-violet-400" /> Automation & API
+              <Terminal className="h-4 w-4 text-violet-400" /> Platform Automation & API
             </h2>
             <Link
               to="/app/settings?section=advanced"
@@ -285,7 +285,7 @@ export default function ProfilePage() {
           <div className="rounded-xl border border-violet-300/20 bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-500/10 p-4 mb-4">
             <p className="text-[11px] uppercase tracking-[0.16em] text-violet-200/90">Executive automation layer</p>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              API keys, scheduled rescans, delivery workflows, and developer-ready docs for production integrations.
+              API keys, scheduled rescans, delivery workflows and developer ready docs for production integrations.
             </p>
             <div className="mt-3 grid gap-2 sm:grid-cols-3">
               <Link to="/api-docs" className="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-cyan-100 transition hover:border-cyan-200/40 text-center">

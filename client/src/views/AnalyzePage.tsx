@@ -24,8 +24,9 @@ import {
 } from "../components/icons";
 import { useAuthStore } from "../stores/authStore";
 import ComprehensiveAnalysis from "../components/ComprehensiveAnalysis";
+import TextSummaryView from "../components/TextSummaryView";
 import { API_URL } from "../config";
-import type { AnalysisResponse } from "@shared/types";
+import type { AnalysisResponse, TextSummary } from "@shared/types";
 import apiFetch from "../utils/api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { PLATFORM_NARRATIVE } from "../constants/platformNarrative";
@@ -71,6 +72,7 @@ type ProgressEventPayload = {
 };
 
 type ApiFetchOptions = Parameters<typeof apiFetch>[1];
+type AnalysisResultWithTextSummary = AnalysisResponse & { text_summary?: TextSummary };
 
 type AuditExpectation = {
   icon: React.ElementType;
@@ -209,8 +211,10 @@ const AnalyzePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [resultView, setResultView] = useState<"summary" | "technical">("summary");
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
+  const resultTextSummary = result ? (result as AnalysisResultWithTextSummary).text_summary : undefined;
 
   usePageMeta({
     title: "Analyze",
@@ -428,6 +432,7 @@ const AnalyzePage: React.FC = () => {
       setLoading(true);
       setError(null);
       setResult(null);
+      setResultView("summary");
       setProgress({ requestId: null, step: "starting", percent: 0 });
 
       const endpoint = `${API_URL}/api/analyze`;
@@ -497,6 +502,7 @@ const AnalyzePage: React.FC = () => {
       }
 
       setResult(data);
+      setResultView((data as AnalysisResultWithTextSummary).text_summary ? "summary" : "technical");
       setProgress((p) => ({ ...p, step: "complete", percent: 100 }));
       setLastAnalyzedUrl(data.url || normalizedUrl);
 
@@ -954,6 +960,32 @@ const AnalyzePage: React.FC = () => {
                   <p className="mt-2 text-sm leading-7 text-white/60">
                     AI can extract your content, but it does not trust it enough to use it in answers.
                   </p>
+                  {resultTextSummary && (
+                    <div className="mt-4 inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
+                      <button
+                        type="button"
+                        onClick={() => setResultView("summary")}
+                        className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                          resultView === "summary"
+                            ? "bg-cyan-400/15 text-cyan-100"
+                            : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        Simple Summary
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setResultView("technical")}
+                        className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                          resultView === "technical"
+                            ? "bg-cyan-400/15 text-cyan-100"
+                            : "text-white/60 hover:text-white"
+                        }`}
+                      >
+                        Technical View
+                      </button>
+                    </div>
+                  )}
                   {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
                     <div className="mt-3">
                       <p className="text-xs uppercase tracking-wide text-white/50">Top 3 blockers</p>
@@ -1077,7 +1109,18 @@ const AnalyzePage: React.FC = () => {
               </div>
             </div>
 
-            <ComprehensiveAnalysis result={result} tier={(user?.tier as any) || "observer"} />
+            {resultTextSummary && resultView === "summary" ? (
+              <TextSummaryView
+                summary={resultTextSummary}
+                score={result.visibility_score}
+                url={result.url}
+                tier={((user?.tier as any) || "observer")}
+                onSwitchTechnical={() => setResultView("technical")}
+                onUpgrade={() => navigate("/pricing?source=analyze-summary")}
+              />
+            ) : (
+              <ComprehensiveAnalysis result={result} tier={(user?.tier as any) || "observer"} />
+            )}
           </section>
         )}
 

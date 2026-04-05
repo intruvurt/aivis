@@ -80,6 +80,9 @@ export default function useNotifications() {
 
   const initializedRef = useRef(false);
   const latestSeenMsRef = useRef(0);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const [streamConnected, setStreamConnected] = useState(false);
 
   const playNotificationDing = useCallback(() => {
     try {
@@ -233,48 +236,86 @@ export default function useNotifications() {
   }, [fetchNotifications]);
 
   const pageVisible = usePageVisible();
-  const sseConnectedRef = useRef(false);
+
+  const clearReconnectTimer = useCallback(() => {
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
+    }
+  }, []);
+
+  const closeStream = useCallback(() => {
+    clearReconnectTimer();
+    setStreamConnected(false);
+    try {
+      eventSourceRef.current?.close();
+    } catch {
+      // ignore close errors
+    }
+    eventSourceRef.current = null;
+  }, [clearReconnectTimer]);
 
   // SSE real-time connection — pushes from server when notifications are created
   useEffect(() => {
     if (!isAuthenticated || !pageVisible) {
-      sseConnectedRef.current = false;
+      closeStream();
       return;
     }
 
     const token = useAuthStore.getState().token;
-    if (!token) return;
-
-    const base = (API_URL || "").replace(/\/+$/, "");
-    // EventSource doesn't support custom headers, so pass token as query param
-    const url = `${base}/api/features/notifications/stream?token=${encodeURIComponent(token)}`;
-
-    let es: EventSource;
-    try {
-      es = new EventSource(url);
-    } catch {
+    if (!token) {
+      closeStream();
       return;
     }
 
-    es.addEventListener("connected", () => {
-      sseConnectedRef.current = true;
-    });
+    const base = (API_URL || "").replace(/\/+$/, "");
+    let disposed = false;
 
-    es.addEventListener("notification", () => {
-      // A new notification was pushed — fetch full list to get IDs and metadata
-      void fetchNotifications();
-    });
+    const connect = () => {
+      if (disposed) return;
+      closeStream();
+      const url = `${base}/api/features/notifications/stream?token=${encodeURIComponent(token)}`;
 
-    es.onerror = () => {
-      sseConnectedRef.current = false;
-      // EventSource auto-reconnects, so we just mark as disconnected
+      let es: EventSource;
+      try {
+        es = new EventSource(url);
+      } catch {
+        reconnectTimerRef.current = setTimeout(connect, 15000);
+        return;
+      }
+
+      eventSourceRef.current = es;
+
+      es.addEventListener("connected", () => {
+        setStreamConnected(true);
+        clearReconnectTimer();
+      });
+
+      es.addEventListener("notification", () => {
+        void fetchNotifications();
+      });
+
+      es.onerror = () => {
+        setStreamConnected(false);
+        try {
+          es.close();
+        } catch {
+          // ignore close errors
+        }
+        if (!disposed) {
+          clearReconnectTimer();
+          reconnectTimerRef.current = setTimeout(connect, 15000);
+        }
+      };
     };
+
+    connect();
 
     return () => {
-      sseConnectedRef.current = false;
-      es.close();
+      disposed = true;
+      closeStream();
     };
-  }, [isAuthenticated, pageVisible, fetchNotifications]);
+  }, [isAuthenticated, pageVisible, fetchNotifications, closeStream, clearReconnectTimer]);
 
   // Fallback polling — only runs when SSE is NOT connected (avoids duplicate traffic)
   useEffect(() => {
@@ -282,7 +323,7 @@ export default function useNotifications() {
     if (!pageVisible) return;
 
     // SSE handles real-time when connected — skip polling entirely
-    if (sseConnectedRef.current) return;
+    if (streamConnected) return;
 
     const basePollMs = 120_000; // 120s when SSE is down
     let pollMs = basePollMs;
@@ -294,7 +335,7 @@ export default function useNotifications() {
     const schedulePoll = () => {
       timerId = setTimeout(async () => {
         // Re-check: if SSE reconnected, stop polling
-        if (sseConnectedRef.current) return;
+        if (streamConnected) return;
         try {
           await fetchNotifications();
           pollMs = 120_000;
@@ -309,7 +350,7 @@ export default function useNotifications() {
     return () => {
       if (timerId) clearTimeout(timerId);
     };
-  }, [fetchNotifications, isAuthenticated, pageVisible]);
+  }, [fetchNotifications, isAuthenticated, pageVisible, streamConnected]);
 
   const recent = useMemo(() => notifications.slice(0, 6), [notifications]);
 

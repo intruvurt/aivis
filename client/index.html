@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) — config deferred to body -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4WM53183L"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "G-B4WM53183L");
-    </script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}</script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -77,15 +72,13 @@
 
     <link rel="preconnect" href="https://www.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.google.com" />
+    <!-- Google Fonts (non-render-blocking, replaces CSS @import) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
 
-    <script>
-      window.__AIVIS_RECAPTCHA_SITE_KEY = "6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8";
-    </script>
-    <script
-      src="https://www.google.com/recaptcha/api.js?render=6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8"
-      async
-      defer
-    ></script>
+    <!-- reCAPTCHA deferred to body -->
 
     <style>
       .sr-seed {
@@ -96,6 +89,42 @@
       }
     </style>
 
+
+
+  </head>
+
+  <body>
+    <div id="root">
+      <!-- Minimal loading skeleton — React replaces this on mount -->
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0f1a;font-family:system-ui,sans-serif">
+        <div style="text-align:center">
+          <img src="/aivis-logo.png" alt="AiVIS" width="48" height="48" style="margin:0 auto 16px;display:block;border-radius:10px" />
+          <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
+        </div>
+      </div>
+      <!-- SEO fallback for crawlers (hidden when JS runs) -->
+      <noscript>
+      <main style="max-width:800px;margin:0 auto;padding:40px 20px;color:#e2e8f0;font-family:system-ui,sans-serif">
+        <h1 style="font-size:28px;margin:0 0 12px">AiVIS &mdash; AI Evidence-backed Visibility Intelligence Audits</h1>
+        <p style="color:#94a3b8;line-height:1.6">
+          AiVIS audits how ChatGPT, Perplexity, Claude and Google AI interpret your website.
+          It returns a visibility score with evidence-backed findings and prioritized implementation ready fixes. Not just a dashboard, AiVIS is an AI visibility optimization workflow that helps you get your content parsed, trusted and cited by answer engines.
+        </p>
+        <nav aria-label="Primary navigation" style="margin-top:24px">
+          <a href="/" style="color:#06b6d4;margin-right:16px">Home</a>
+          <a href="/pricing" style="color:#06b6d4;margin-right:16px">Upgrade</a>
+          <a href="/guide" style="color:#06b6d4;margin-right:16px">Guide</a>
+          <a href="/methodology" style="color:#06b6d4;margin-right:16px">Methodology</a>
+          <a href="/faq" style="color:#06b6d4">FAQ</a>
+        </nav>
+      </main>
+      </noscript>
+    </div>
+
+    <script>if(window.gtag){gtag("js",new Date());gtag("config","G-B4WM53183L")}</script>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Structured data (JSON-LD) — moved to body for faster first contentful paint -->
     <!-- Core entities: Organization, Person, SoftwareApplication, Article, WebSite -->
     <script type="application/ld+json">
       {
@@ -459,38 +488,8 @@
         }
       }
     </script>
-
-  </head>
-
-  <body>
-    <div id="root">
-      <!-- Minimal loading skeleton — React replaces this on mount -->
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0f1a;font-family:system-ui,sans-serif">
-        <div style="text-align:center">
-          <img src="/aivis-logo.png" alt="AiVIS" width="48" height="48" style="margin:0 auto 16px;display:block;border-radius:10px" />
-          <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
-        </div>
-      </div>
-      <!-- SEO fallback for crawlers (hidden when JS runs) -->
-      <noscript>
-      <main style="max-width:800px;margin:0 auto;padding:40px 20px;color:#e2e8f0;font-family:system-ui,sans-serif">
-        <h1 style="font-size:28px;margin:0 0 12px">AiVIS &mdash; AI Evidence-backed Visibility Intelligence Audits</h1>
-        <p style="color:#94a3b8;line-height:1.6">
-          AiVIS audits how ChatGPT, Perplexity, Claude and Google AI interpret your website.
-          It returns a visibility score with evidence-backed findings and prioritized implementation ready fixes. Not just a dashboard, AiVIS is an AI visibility optimization workflow that helps you get your content parsed, trusted and cited by answer engines.
-        </p>
-        <nav aria-label="Primary navigation" style="margin-top:24px">
-          <a href="/" style="color:#06b6d4;margin-right:16px">Home</a>
-          <a href="/pricing" style="color:#06b6d4;margin-right:16px">Upgrade</a>
-          <a href="/guide" style="color:#06b6d4;margin-right:16px">Guide</a>
-          <a href="/methodology" style="color:#06b6d4;margin-right:16px">Methodology</a>
-          <a href="/faq" style="color:#06b6d4">FAQ</a>
-        </nav>
-      </main>
-      </noscript>
-    </div>
-
-    <script type="module" src="/src/main.tsx"></script>
+    <script>window.__AIVIS_RECAPTCHA_SITE_KEY="6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8"</script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8" async defer></script>
   </body>
 </html>
 

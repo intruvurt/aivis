@@ -101,11 +101,11 @@ const CHECK_LABELS: Record<string, string> = {
 
 function checkFocusHint(check: string): string {
   const hints: Record<string, string> = {
-    entity_clarity: "Clarify who you are, what you do, and who it's for in the first screen.",
+    entity_clarity: "Clarify who you are, what you do and who it's for in the first screen.",
     h1: "Use one explicit H1 with clear topic intent on each page.",
-    schema: "Add/repair JSON-LD for Organization, FAQ and page-specific entities.",
-    meta_description: "Tighten title/meta for intent match and answer ready wording.",
-    title: "Tighten title/meta for intent match and answer ready wording.",
+    schema: "Add/repair JSON-LD for Organization, FAQ and page specific entities.",
+    meta_description: "Tighten title/meta for intent match and answer ready wording. (154 chars max.)",
+    title: "Tighten title/meta for immediate intent match and answer ready wording.",
     internal_link_health: "Improve internal linking between related intent pages.",
   };
   return hints[check] ?? "Prioritize this check in your next optimization sprint.";

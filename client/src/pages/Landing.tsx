@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, FileCheck2, Gauge, Search, Shield } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileCheck2, Gauge, Search, Shield, Layers, Bot, LinkIcon, BarChart3 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { usePageMeta } from "../hooks/usePageMeta";
 
@@ -16,20 +16,53 @@ const proofItems = [
 const steps = [
   {
     title: "Scan",
-    description: "We crawl the page and extract the signals answer engines actually use: structure, schema, metadata, headings, and proof.",
+    description: "AiVIS crawls the page and extracts the signals answer engines use: structure, schema, metadata, headings and proof.",
     icon: Search,
   },
   {
     title: "Expose",
-    description: "The report shows the blockers, the evidence behind them, and the exact trust gaps stopping citation readiness.",
+    description: "The report shows the blockers with the evidence behind them and the exact trust gaps stopping citation readiness.",
     icon: Shield,
   },
   {
     title: "Fix and re-scan",
-    description: "Turn the audit into execution, ship the change, and run the same URL again to measure whether visibility moved.",
+    description: "Turn the audit into execution. Ship the change and run the same URL again to measure whether visibility moved.",
     icon: FileCheck2,
   },
 ] as const;
+
+const measureItems = [
+  { title: "Content depth", desc: "Whether your page has enough substance to support extraction, summarization and reuse." },
+  { title: "Heading hierarchy", desc: "Whether your structure helps or blocks understanding across sections." },
+  { title: "Entity clarity and authority", desc: "Whether your site clearly defines what it is and how it should be trusted and understood by machines." },
+  { title: "Structured data", desc: "Whether your schema supports your content or conflicts with it." },
+  { title: "Technical foundation", desc: "Whether performance, crawlability, robots, SPA and accessibility are blocking interpretation." },
+  { title: "Citation readiness", desc: "Whether your content can be safely used inside AI generated answers." },
+];
+
+const answerBlocks: { q: string; a: string }[] = [
+  { q: "What is AiVIS", a: "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website using BRAG (Based Retrieval and Auditable Grading) tied to real page evidence." },
+  { q: "What is AI visibility", a: "AI visibility is the ability of a site to be understood, trusted and reused by systems that generate answers instead of returning links." },
+  { q: "Why Google search engine ranking is not enough", a: "Ranking shows relevance. Citation requires clarity, trust and structure that supports extraction. Ranking is now a minor signal for visibility, not the full flow." },
+  { q: "What causes low visibility", a: "Thin content, weak structure (under 800 platform-specific words) and unclear meaning reduce the chance of being used by AI systems." },
+  { q: "How AiVIS finds issues", a: "It scans real page elements and maps them to how AI systems interpret content and trust signals. Every finding is tied to BRAG evidence IDs." },
+  { q: "What makes content usable", a: "Content must be clear, structured and supported by signals that reduce ambiguity for machine interpretation." },
+  { q: "What is citation readiness", a: "Citation readiness is how safe and reliable a page is for reuse inside future generated answers." },
+  { q: "Why structure matters", a: "Structure allows models to break content into context-citable copy without losing meaning." },
+  { q: "Does schema solve everything", a: "No. Schema supports meaning but cannot fix weak content or poor structure." },
+  { q: "How AiVIS improves site visibility", a: "It identifies gaps then provides direct evidence-backed fixes that improve clarity, trust and extractability." },
+  { q: "Who should use AiVIS", a: "Founders, marketers, developers and agencies who need to understand why their site is not being used by AI." },
+  { q: "What is entity clarity confusion", a: "Entity clarity is how clearly a site defines what it is and how it relates to known concepts. Without it AI models can pull incorrect entity associations." },
+  { q: "What happens after an audit", a: "You apply the fixes then rescan to confirm improved visibility and structure." },
+  { q: "How often should audits run", a: "Regular audits help track changes and ensure your site stays aligned with evolving AI behavior." },
+  { q: "Can an AI model misread a page", a: "Yes. Poor structure or unclear signals can cause incorrect interpretation. AiVIS uses a systematic-first pipeline tied to BRAG evidence-backed summaries." },
+  { q: "What is extraction", a: "Extraction is when AI pulls usable and citable information from a page to form an answer." },
+  { q: "What improves extraction", a: "Clear sections, concise explanations and consistent signals increase extraction quality." },
+  { q: "What is the AiVIS scoring rubric", a: "The score reflects how well your site supports interpretation, trust and citation by AI systems using BRAG-verified evidence." },
+  { q: "What is BRAG in AiVIS", a: "BRAG is a system that ties every audit result to real page evidence so findings can be verified instead of assumed." },
+  { q: "Why BRAG matters for AI visibility", a: "AI systems rely on trust and clarity. BRAG ensures your site is evaluated using evidence that supports reliable interpretation and citation." },
+  { q: "How BRAG improves accuracy", a: "By removing unsupported claims and linking findings to real data, BRAG reduces noise and increases confidence in results." },
+];
 
 export default function Landing() {
   const [url, setUrl] = useState("");
@@ -51,9 +84,9 @@ export default function Landing() {
   }, []);
 
   usePageMeta({
-    title: "AiVIS — AI Visibility Audit for ChatGPT, Perplexity, Claude",
+    title: "AiVIS — AI Visibility Audit for ChatGPT, Perplexity, Claude and Google AI",
     description:
-      "Measure whether AI can find and cite your site. One audit returns a 0-100 visibility score, six category grades, and evidence-backed fixes.",
+      "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website using BRAG (Based Retrieval and Auditable Grading) tied to real page evidence.",
   });
 
   const handleAudit = () => {
@@ -68,15 +101,17 @@ export default function Landing() {
 
   return (
     <div className="text-white">
+
+      {/* ── Hero ── */}
       <section className="relative overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_38%),linear-gradient(180deg,#09111e_0%,#060a14_100%)] pt-24 pb-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_28rem] lg:px-8">
           <div className="max-w-3xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">AI visibility audit</p>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Your site ranks. AI ignores it.
+              Your site can rank #1 and still be invisible to AI
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/68">
-              See your visibility in one pass: what AI can read, what it cannot trust, and what you need to change before the next scan.
+              AiVIS shows how answer engines read your site, what they trust and what they ignore. You see the exact gaps with proof so you can fix them before they cost you reach, citations and conversions.
             </p>
             <div className="mt-8 flex flex-wrap gap-2.5">
               {proofItems.map((item) => (
@@ -94,7 +129,7 @@ export default function Landing() {
               See your visibility
             </div>
             <p className="mt-2 text-sm leading-6 text-white/58">
-              Start with any public homepage, feature page, blog post, or documentation URL.
+              Start with any public homepage, feature page, blog post or documentation URL.
             </p>
             <div className="mt-5 space-y-3">
               <input
@@ -110,14 +145,14 @@ export default function Landing() {
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
               >
                 <Search className="h-4 w-4" />
-                See Your Visibility
+                See Visibility
               </button>
             </div>
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/46">What you get</p>
               <ul className="mt-3 space-y-2 text-sm text-white/66">
-                <li>0-100 visibility score with category breakdown</li>
-                <li>Evidence-linked blockers tied to the crawl</li>
+                <li>0-100 visibility score with six category grades</li>
+                <li>Evidence-backed findings tied to real page data</li>
                 <li>Fix path you can validate on the next scan</li>
               </ul>
             </div>
@@ -129,6 +164,7 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── Trust bar ── */}
       <section className="border-y border-white/8 bg-[#08101d] py-5">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 text-sm text-white/58 sm:px-6 lg:px-8">
           <span className="inline-flex items-center gap-2"><Shield className="h-4 w-4 text-cyan-300" /> No data resale</span>
@@ -137,6 +173,7 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── Benchmark bar ── */}
       {totalAudits > 0 && (
         <section className="border-b border-white/8 bg-gradient-to-r from-[#0b1422] to-[#0d1a2e] py-5">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 text-sm sm:px-6 lg:px-8">
@@ -149,12 +186,137 @@ export default function Landing() {
         </section>
       )}
 
-      <section className="py-16">
+      {/* ── Positioning ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Not another SEO report</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">This is not another SEO report</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
+            AiVIS focuses on how AI systems interpret a site. It looks at structure, meaning and trust signals that affect whether your content is found and used inside generated answers. Ranking alone is not enough anymore. AiVIS does not perform UI design or visual appearance audits.
+          </p>
+        </div>
+      </section>
+
+      {/* ── What you get ── */}
+      <section className="py-16 border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How it works</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">One product loop: scan, expose, fix, re-scan.</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">What you actually get</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Evidence-backed visibility intelligence</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {[
+              { title: "Full page interpretation", desc: "AiVIS reads your page the way an answer engine does and shows where meaning breaks or becomes unclear." },
+              { title: "Evidence-backed findings", desc: "Every issue is tied to a real part of your page so you can see what caused it and how to fix it." },
+              { title: "Clear consistent scoring logic", desc: "You get a visibility score based on structure, content and trust signals that affect citation readiness. No AI guessing, hallucinations or opinions. Every finding must be validated with BRAG evidence IDs." },
+              { title: "Actionable fixes", desc: "Each result includes direct changes that improve how your site is read and reused by AI systems." },
+            ].map((item) => (
+              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
+              </article>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── How AI reads ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How AI reads your site</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">How AI and LLMs read your site</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {[
+              { title: "Structure comes first", desc: "Clean headings and logical sections help models understand what each part of the page means without guessing." },
+              { title: "Clarity beats volume", desc: "A long page does not help if the meaning is unclear. AI prefers content that is easy to break into usable parts." },
+              { title: "Trust is earned through signals", desc: "Consistent naming, schema and supporting details increase confidence in what the page is saying." },
+              { title: "Alignment with real user questions", desc: "Content must match how users actually ask questions or it will not be retrieved." },
+            ].map((item) => (
+              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── What AiVIS measures ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Core value</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What AiVIS measures</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {measureItems.map((item) => (
+              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── BRAG ── */}
+      <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#0b1422] to-[#060a14]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-orange-300/80">BRAG</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Based Retrieval and Auditable Grading</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-white/68">
+            AiVIS uses BRAG which stands for Based Retrieval and Auditable Grading. Every finding is tied to real page evidence. Each element is assigned a stable identifier so results can be traced, verified and rechecked.
+          </p>
+          <p className="mt-3 max-w-3xl text-base leading-7 text-white/60">
+            If something cannot be proven it is not included. If something is missing it is shown as missing. There are no assumptions and no filler insights.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
+              <h3 className="text-lg font-semibold text-orange-300">Evidence first</h3>
+              <p className="mt-3 text-sm leading-6 text-white/64">Titles, headings, schema and content are extracted directly from your page and stored as evidence units.</p>
+            </article>
+            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
+              <h3 className="text-lg font-semibold text-orange-300">Traceable findings</h3>
+              <p className="mt-3 text-sm leading-6 text-white/64">Each issue links back to the exact part of your page that caused it so fixes are clear and direct.</p>
+            </article>
+            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
+              <h3 className="text-lg font-semibold text-orange-300">Consistent scoring</h3>
+              <p className="mt-3 text-sm leading-6 text-white/64">Scores are based on verified signals not generated summaries so results stay stable across scans.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Agentic layer ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Agentic surface</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Built for agents, tools and AI workflows</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
+            AiVIS is not just a report. It is a structured surface that agents can use to evaluate and improve visibility across sites, products and content systems.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {[
+              { icon: Layers, title: "WebMCP ready surface", desc: "Audit outputs can be consumed by tools that require clean structured data for decision making and automation." },
+              { icon: Bot, title: "Context driven analysis", desc: "Results adapt to niche intent and page type so recommendations stay relevant to your domain." },
+              { icon: LinkIcon, title: "Integration friendly outputs", desc: "Data can be used across internal tools, dashboards and automation pipelines without reprocessing." },
+              { icon: BarChart3, title: "Agent usable scoring", desc: "Scores are consistent and explainable so agents can act on them without guesswork." },
+            ].map((item) => (
+              <article key={item.title} className="flex gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/64">{item.desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── How it works ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How it works</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Scan. Expose. Fix. Re-scan.</h2>
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {steps.map((step, index) => (
               <article key={step.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
@@ -172,20 +334,37 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="border-t border-white/8 py-16">
+      {/* ── Answer blocks ── */}
+      <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#060a14] to-[#0b1422]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Answer-level clarity</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Answer-level clarity built into the page</h2>
+          <div className="mt-8 space-y-4">
+            {answerBlocks.map((block) => (
+              <article key={block.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <h3 className="text-base font-semibold text-white">{block.q}</h3>
+                <p className="mt-2 text-sm leading-6 text-white/64">{block.a}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-16">
         <div className="mx-auto flex max-w-4xl flex-col items-start gap-5 px-4 sm:px-6 lg:px-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Start small</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">See your visibility. Then fix what AI cannot trust.</h2>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Start now</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Find what AI gets wrong about your site</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/62">
-              The first screen should get you to the verdict fast. The deeper tools stay available after the audit, not before it.
+              Run an evidence-backed audit and see where your site visibility breaks before the answer engine decides without you.
             </p>
           </div>
           <Link
             to={isAuthenticated ? "/app/analyze" : "/auth?mode=signup"}
             className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
           >
-            See Your Visibility
+            Start Visibility Audit
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

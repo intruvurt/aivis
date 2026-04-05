@@ -21,6 +21,7 @@ export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const entry = slug ? getBlogBySlug(slug) : undefined;
   const relatedPosts = entry ? getRelatedPosts(entry) : [];
+  const hasMirroredContent = Boolean(entry?.content?.trim());
 
   if (!entry) return <Navigate to="/blogs" replace />;
 
@@ -75,7 +76,7 @@ export default function BlogPostPage() {
           <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">{entry.title}</h1>
           <p className="mb-6 text-lg leading-relaxed text-white/75">{entry.description}</p>
 
-          {entry.content ? (
+          {hasMirroredContent ? (
             <div className="mb-8 space-y-4 text-white/80 leading-relaxed">
               {entry.content
                 .split(/\n\s*\n/)
@@ -122,7 +123,22 @@ export default function BlogPostPage() {
                   return <p key={`paragraph-${index}`} className="text-white/75">{block}</p>;
                 })}
             </div>
-          ) : null}
+          ) : (
+            <div className="mb-8 rounded-3xl border border-amber-400/20 bg-amber-500/10 p-5 text-sm text-white/78">
+              <p className="font-semibold text-amber-200">Full article body not mirrored on AiVIS yet.</p>
+              <p className="mt-2 leading-7 text-white/72">
+                This post currently includes the canonical summary, author context, and key points here on AiVIS. The complete article is still hosted at the original publication source.
+              </p>
+              <a
+                href={entry.sourceMediumUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-amber-100 transition-colors hover:text-white"
+              >
+                Read full article at source <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          )}
 
           <div className="mb-7 rounded-3xl border border-orange-900/40 bg-orange-950/18 p-5">
             <div className="flex items-start gap-4">
@@ -173,7 +189,9 @@ export default function BlogPostPage() {
 
           <div className="mb-7 rounded-3xl border border-white/10 bg-white/[0.02] p-4">
             <p className="text-sm text-white/70">
-              This article is originally published on Medium and canonically mirrored on AiVIS for ownership clarity and schema consistency.
+              {hasMirroredContent
+                ? 'This article is originally published on Medium and canonically mirrored on AiVIS for ownership clarity and schema consistency.'
+                : 'This article is originally published at the source below. AiVIS currently mirrors the metadata and key takeaways, with the full body still hosted on the original publication.'}
             </p>
             <a href={entry.sourceMediumUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white">
               View source on Medium <ExternalLink className="h-4 w-4" />

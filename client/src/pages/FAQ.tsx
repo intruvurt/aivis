@@ -123,14 +123,20 @@ const categories: FAQCategory[] = [
   },
 ];
 
-function AccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: boolean; onToggle: () => void }) {
+function AccordionItem({ item, isOpen, onToggle, panelId }: { item: FAQItem; isOpen: boolean; onToggle: () => void; panelId: string }) {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-      <button onClick={onToggle} className="flex w-full items-center justify-between gap-4 text-left" type="button">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-4 text-left"
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+      >
         <span className="text-base font-semibold text-white">{item.question}</span>
         <ChevronDown className={`h-4 w-4 shrink-0 text-white/45 transition ${isOpen ? "rotate-180" : ""}`} />
       </button>
-      {isOpen ? <p className="mt-4 text-sm leading-7 text-white/64">{item.answer}</p> : null}
+      {isOpen ? <p id={panelId} className="mt-4 text-sm leading-7 text-white/64">{item.answer}</p> : null}
     </div>
   );
 }
@@ -202,6 +208,7 @@ export default function FAQ() {
                   <AccordionItem
                     key={key}
                     item={item}
+                    panelId={`faq-panel-${category.id}-${item.question.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                     isOpen={Boolean(openMap[key])}
                     onToggle={() => setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }))}
                   />

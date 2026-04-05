@@ -288,8 +288,6 @@ const Admin: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, adminKey]);
 
-  if (!isAdmin) return null;
-
   const healthColor =
     stats.systemHealth === "healthy"
       ? "text-white/80"

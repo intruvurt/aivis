@@ -14,7 +14,7 @@ export const PLATFORM_NARRATIVE = {
   competitiveWedge:
     "Visibility dashboards show you a chart. AiVIS shows you the broken schema, the missing FAQ block, and the PR that fixes it.",
   categoryContrast:
-    "Tracking platforms tell you IF AI sees your brand. AiVIS tells you WHY it doesn't — and fixes it automatically.",
+    "Tracking platforms tell you IF AI sees your brand. AiVIS tells you WHY it doesn't - and fixes it automatically.",
   pillars: [
     "Readable by answer engines",
     "Trustworthy enough to reuse",

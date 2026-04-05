@@ -1,6 +1,6 @@
 """Content fingerprinting using SimHash for near-duplicate detection.
 
-SimHash produces a fixed-size fingerprint that preserves locality —
+SimHash produces a fixed-size fingerprint that preserves locality -
 similar content produces similar hashes, enabling efficient
 similarity comparison across audits.
 """

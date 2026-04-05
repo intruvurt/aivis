@@ -175,7 +175,7 @@ async function fetchRobotsForOrigin(origin: string): Promise<RobotsInfo> {
 }
 
 /**
- * Fetch /llms.txt — the emerging standard for AI crawler guidance.
+ * Fetch /llms.txt - the emerging standard for AI crawler guidance.
  * Returns presence + raw content (first 4000 chars).
  * 4-second timeout; never throws.
  */
@@ -199,7 +199,7 @@ async function fetchLlmsTxt(origin: string): Promise<{ fetched: boolean; present
 }
 
 /**
- * Fetch /sitemap.xml — check presence and approximate URL count.
+ * Fetch /sitemap.xml - check presence and approximate URL count.
  * 4-second timeout; never throws.
  */
 async function fetchSitemap(origin: string): Promise<{ fetched: boolean; present: boolean; urlCount?: number }> {
@@ -336,7 +336,7 @@ async function getBrowser(): Promise<Browser> {
 
   browserLaunchPromise = (async () => {
     try {
-      // Re-check after acquiring the "lock" — another caller may have resolved
+      // Re-check after acquiring the "lock" - another caller may have resolved
       if (browserInstance && browserInstance.connected) return browserInstance;
 
       console.log('[Scraper] Launching Puppeteer browser...');
@@ -361,9 +361,9 @@ async function getBrowser(): Promise<Browser> {
         'Puppeteer launch'
       );
 
-      // Handle unexpected browser disconnection (crash, OOM) — clear stale ref
+      // Handle unexpected browser disconnection (crash, OOM) - clear stale ref
       browser.on('disconnected', () => {
-        console.warn('[Scraper] Browser disconnected unexpectedly — clearing instance');
+        console.warn('[Scraper] Browser disconnected unexpectedly - clearing instance');
         if (browserInstance === browser) browserInstance = null;
       });
 
@@ -670,9 +670,9 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
     }
 
     fetchResult = result;
-    console.log(`[Scraper] HTTP fetch returned thin content (${wc} words) — trying Puppeteer`);
+    console.log(`[Scraper] HTTP fetch returned thin content (${wc} words) - trying Puppeteer`);
   } catch (fetchErr: any) {
-    console.log(`[Scraper] HTTP fetch failed (${fetchErr.message}) — trying Puppeteer`);
+    console.log(`[Scraper] HTTP fetch failed (${fetchErr.message}) - trying Puppeteer`);
   }
 
   // 2) If there’s no time left, return the thin fetch result (or fail)

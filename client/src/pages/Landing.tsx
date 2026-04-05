@@ -1,423 +1,509 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, FileCheck2, Gauge, Search, Shield, Layers, Bot, LinkIcon, BarChart3 } from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import { usePageMeta } from "../hooks/usePageMeta";
+// Landing - AiVIS
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+import { useAuthStore } from '../stores/authStore';
+import { API_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { MARKETING_CLAIMS } from '../constants/marketingClaims';
+import {
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+  buildWebPageSchema,
+  buildBreadcrumbSchema,
+  buildItemListSchema,
+  buildSoftwareApplicationSchema,
+} from '../lib/seoSchema';
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+interface PlatformStats {
+  status: string; db: string; uptime: number;
+  totalUsers?: number; completedAudits?: number; averageScore?: number;
+}
 
-const proofItems = [
-  "What AI sees",
-  "What it cannot verify",
-  "What to fix next",
-  "How to prove the lift",
+async function getPlatformStats(): Promise<PlatformStats | null> {
+  try { const r = await fetch(`${API_URL}/api/health`); if (!r.ok) return null; return r.json(); } catch { return null; }
+}
+
+const paymentService = {
+  createStripeCheckout: async (tier: string): Promise<string> => {
+    const token = useAuthStore.getState().token;
+    const r = await fetch(`${API_URL}/api/payment/stripe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ tier: tier.toLowerCase() }),
+    });
+    const data = await r.json();
+    if (!data.success) throw new Error(data.error || 'Checkout failed');
+    return data.data;
+  },
+};
+
+const LANDING_STRUCTURED_DATA = [
+  buildOrganizationSchema(),
+  buildWebSiteSchema(),
+  buildWebPageSchema({
+    path: '/',
+    name: 'AiVIS – AI Visibility Intelligence Platform',
+    description: 'AiVIS audits how answer engines read, trust, and cite your website. Evidence-backed scoring with BRAG identifiers.',
+  }),
+  buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
+  buildItemListSchema([
+    { name: 'Observer (Free) – 3 audits/month', path: '/pricing' },
+    { name: 'Alignment (Core) – 60 audits/month – $9/mo', path: '/pricing' },
+    { name: 'Signal (Pro) – 110 audits/month – $29/mo', path: '/pricing' },
+  ]),
+  buildSoftwareApplicationSchema({
+    name: 'AiVIS - AI Visibility Intelligence Platform',
+    description: 'AI visibility intelligence platform - ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
+    offers: [
+      { name: 'Observer (Free)', price: '0' },
+      { name: 'Alignment (Core)', price: '9' },
+      { name: 'Signal (Pro)', price: '29' },
+    ],
+  }),
 ];
 
-const steps = [
+const FAQ_ITEMS = [
+  { q: 'What is AiVIS and what does it audit?', a: 'AiVIS measures AI visibility - how well AI answer engines like ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
+  { q: 'How is AI visibility different from traditional SEO?', a: 'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content - thin structure, missing schema, or poor heading hierarchy means you get skipped, regardless of domain authority.' },
+  { q: 'What is BRAG and why does AiVIS use it?', a: 'BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives a BRAG evidence identifier that can be traced, verified and rechecked across scan cycles.' },
+  { q: 'Does AiVIS work across all AI platforms?', a: 'Yes. AiVIS scores visibility for ChatGPT, Perplexity AI, Google AI Overviews, and Claude individually (0–100). Signal subscribers run a 3-model triple-check pipeline for higher accuracy.' },
+  { q: 'What happens to unused monthly audits?', a: 'Monthly audit credits reset at billing cycle start and do not roll over.' },
+  { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors.' },
+  { q: 'Who should use AiVIS?', a: 'AiVIS is built for founders, marketers, developers and agencies who need to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what changes will fix it.' },
+] as const;
+
+// ─── Futuristic urban neural SVG ────────────────────────────────────────────
+function NeuralCityIllustration() {
+  return (
+    <svg viewBox="0 0 520 390" xmlns="http://www.w3.org/2000/svg" aria-label="Futuristic urban AI neural network visualization" className="w-full h-auto max-h-[380px] select-none" role="img">
+      <defs>
+        <linearGradient id="ng-skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0a0e1a" /><stop offset="100%" stopColor="#060607" /></linearGradient>
+        <linearGradient id="ng-buildingA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="rgba(34,211,238,0.55)" /><stop offset="100%" stopColor="rgba(34,211,238,0.06)" /></linearGradient>
+        <linearGradient id="ng-buildingB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="rgba(139,92,246,0.45)" /><stop offset="100%" stopColor="rgba(139,92,246,0.05)" /></linearGradient>
+        <linearGradient id="ng-buildingC" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="rgba(251,191,36,0.50)" /><stop offset="100%" stopColor="rgba(251,191,36,0.05)" /></linearGradient>
+        <filter id="ng-glow"><feGaussianBlur stdDeviation="2.5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        <filter id="ng-softglow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        <radialGradient id="ng-horizonGlow" cx="50%" cy="80%" r="55%"><stop offset="0%" stopColor="rgba(34,211,238,0.16)" /><stop offset="60%" stopColor="rgba(139,92,246,0.07)" /><stop offset="100%" stopColor="transparent" /></radialGradient>
+      </defs>
+      <rect width="520" height="390" fill="url(#ng-skyGrad)" />
+      <rect width="520" height="390" fill="url(#ng-horizonGlow)" />
+      <rect x="24" y="185" width="16" height="185" fill="url(#ng-buildingB)" stroke="rgba(139,92,246,0.35)" strokeWidth="0.6" />
+      <rect x="87" y="110" width="22" height="260" fill="url(#ng-buildingA)" stroke="rgba(34,211,238,0.4)" strokeWidth="0.7" />
+      <line x1="98" y1="98" x2="98" y2="72" stroke="rgba(34,211,238,0.7)" strokeWidth="0.7" />
+      <circle cx="98" cy="70" r="2.5" fill="rgba(34,211,238,0.9)" filter="url(#ng-glow)" />
+      <rect x="198" y="55" width="32" height="315" fill="url(#ng-buildingA)" stroke="rgba(34,211,238,0.5)" strokeWidth="0.8" />
+      <line x1="214" y1="42" x2="214" y2="18" stroke="rgba(34,211,238,0.8)" strokeWidth="0.8" />
+      <circle cx="214" cy="16" r="3" fill="rgba(34,211,238,1)" filter="url(#ng-softglow)" />
+      <rect x="318" y="108" width="24" height="262" fill="url(#ng-buildingC)" stroke="rgba(251,191,36,0.4)" strokeWidth="0.7" />
+      <line x1="330" y1="108" x2="330" y2="82" stroke="rgba(251,191,36,0.7)" strokeWidth="0.7" />
+      <circle cx="330" cy="80" r="2.5" fill="rgba(251,191,36,0.9)" filter="url(#ng-glow)" />
+      <rect x="407" y="148" width="18" height="222" fill="url(#ng-buildingB)" stroke="rgba(139,92,246,0.38)" strokeWidth="0.6" />
+      <rect x="468" y="178" width="24" height="192" fill="url(#ng-buildingB)" stroke="rgba(139,92,246,0.28)" strokeWidth="0.5" />
+      <line x1="0" y1="370" x2="520" y2="370" stroke="rgba(34,211,238,0.22)" strokeWidth="0.8" />
+      <circle cx="55" cy="95" r="3.5" fill="rgba(139,92,246,0.28)" stroke="rgba(139,92,246,0.7)" strokeWidth="0.8" filter="url(#ng-glow)" />
+      <circle cx="162" cy="52" r="3" fill="rgba(34,211,238,0.18)" stroke="rgba(34,211,238,0.55)" strokeWidth="0.8" />
+      <circle cx="270" cy="35" r="4" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.45)" strokeWidth="0.8" />
+      <circle cx="380" cy="60" r="3.5" fill="rgba(251,191,36,0.18)" stroke="rgba(251,191,36,0.55)" strokeWidth="0.8" />
+      <circle cx="455" cy="100" r="3" fill="rgba(139,92,246,0.18)" stroke="rgba(139,92,246,0.5)" strokeWidth="0.7" />
+      <line x1="214" y1="16" x2="98" y2="70" stroke="rgba(34,211,238,0.25)" strokeWidth="0.7" strokeDasharray="4,3" />
+      <line x1="214" y1="16" x2="330" y2="80" stroke="rgba(34,211,238,0.2)" strokeWidth="0.7" strokeDasharray="4,3" />
+      <line x1="214" y1="16" x2="162" y2="52" stroke="rgba(34,211,238,0.32)" strokeWidth="0.6" />
+      <line x1="214" y1="16" x2="270" y2="35" stroke="rgba(34,211,238,0.28)" strokeWidth="0.6" />
+      <line x1="98" y1="70" x2="55" y2="95" stroke="rgba(139,92,246,0.28)" strokeWidth="0.6" strokeDasharray="3,4" />
+      <line x1="330" y1="80" x2="270" y2="35" stroke="rgba(251,191,36,0.25)" strokeWidth="0.6" />
+      <line x1="330" y1="80" x2="380" y2="60" stroke="rgba(251,191,36,0.28)" strokeWidth="0.6" />
+      <line x1="380" y1="60" x2="455" y2="100" stroke="rgba(139,92,246,0.22)" strokeWidth="0.6" strokeDasharray="4,3" />
+      <text x="200" y="10" fontSize="6" fill="rgba(34,211,238,0.65)" fontFamily="monospace" letterSpacing="1">AIVIS.BIZ</text>
+      <text x="170" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">AI VISIBILITY INTELLIGENCE PLATFORM</text>
+    </svg>
+  );
+}
+
+const TIERS = [
   {
-    title: "Scan",
-    description: "AiVIS crawls the page and extracts the signals answer engines use: structure, schema, metadata, headings and proof.",
-    icon: Search,
+    key: 'observer', name: 'Observer', subtitle: 'Free', monthlyPrice: 0, annualMonthlyPrice: 0, scans: 3,
+    color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null,
+    features: ['3 audits / month', 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis', 'Public share links'],
   },
   {
-    title: "Expose",
-    description: "The report shows the blockers with the evidence behind them and the exact trust gaps stopping citation readiness.",
-    icon: Shield,
+    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 9, annualMonthlyPrice: 7, scans: 60,
+    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular',
+    features: ['60 audits / month', 'Competitor tracking', 'Citation workflows', 'CSV & PDF exports', 'Force-refresh audits', 'Shareable report links', 'Report history'],
   },
   {
-    title: "Fix and re-scan",
-    description: "Turn the audit into execution. Ship the change and run the same URL again to measure whether visibility moved.",
-    icon: FileCheck2,
+    key: 'signal', name: 'Signal', subtitle: 'Pro', monthlyPrice: 29, annualMonthlyPrice: 23, scans: 110,
+    color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Full power',
+    features: ['110 audits / month', 'Triple-Check AI Pipeline (3 models)', 'Expanded competitor tracking', 'Advanced citation testing', 'AI Citation Tracker', 'API access + white-label reports', 'Scheduled rescans'],
   },
 ] as const;
 
-const measureItems = [
-  { title: "Content depth", desc: "Whether your page has enough substance to support extraction, summarization and reuse." },
-  { title: "Heading hierarchy", desc: "Whether your structure helps or blocks understanding across sections." },
-  { title: "Entity clarity and authority", desc: "Whether your site clearly defines what it is and how it should be trusted and understood by machines." },
-  { title: "Structured data", desc: "Whether your schema supports your content or conflicts with it." },
-  { title: "Technical foundation", desc: "Whether performance, crawlability, robots, SPA and accessibility are blocking interpretation." },
-  { title: "Citation readiness", desc: "Whether your content can be safely used inside AI generated answers." },
-];
-
-const answerBlocks: { q: string; a: string }[] = [
-  { q: "What is AiVIS", a: "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. It crawls your page, extracts structural signals and maps them to a 0-100 visibility score across six weighted categories. Every finding is tied to real page evidence through BRAG evidence identifiers so results can be verified and traced, not assumed." },
-  { q: "What is AI visibility", a: "AI visibility is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links. It depends on content depth, heading clarity, schema coverage, metadata quality and machine-readable formatting. A page can rank first in traditional search and still be invisible to answer engines if these signals are missing." },
-  { q: "What causes low AI visibility scores", a: "Common causes include thin content with fewer than 800 words, missing or conflicting structured data, unclear heading hierarchy, absent metadata, weak entity signals and poor technical foundations like blocked crawlers or slow load times. AiVIS identifies each gap with evidence so you know exactly what to fix and in what order of impact." },
-  { q: "How does AiVIS find visibility issues", a: "AiVIS crawls the target URL with a real browser, extracts structural signals including headings, schema, meta tags, body content and links, then runs them through a multi-model AI pipeline that scores each category. On higher tiers a second model critiques findings and a third validates the result. Every issue references specific page evidence through BRAG identifiers." },
-  { q: "What is citation readiness", a: "Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or factual misrepresentation." },
-  { q: "What is BRAG in AiVIS", a: "BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives a BRAG evidence identifier that can be traced, verified and rechecked across scan cycles so no finding is left unsupported." },
-  { q: "Why does structure matter for AI systems", a: "Structure allows AI models to break content into context-appropriate sections without losing meaning. Clean headings, logical section flow, consistent naming and proper schema help answer engines determine what each part of a page means, how it relates to the broader topic and whether it can be safely extracted and cited as a source." },
-  { q: "Who should use AiVIS", a: "AiVIS is built for founders, marketers, developers and agencies who need to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what changes will fix it." },
-];
-
-export default function Landing() {
-  const [url, setUrl] = useState("");
-  const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [totalAudits, setTotalAudits] = useState<number>(0);
-  const [avgScore, setAvgScore] = useState<number>(0);
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/public/benchmarks`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d?.benchmarks) {
-          setTotalAudits(d.benchmarks.total_audits || 0);
-          setAvgScore(d.benchmarks.avg_score || 0);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
+// ─── Landing ─────────────────────────────────────────────────────────────────
+const Landing = () => {
   usePageMeta({
-    fullTitle: "AiVIS — AI Evidence-backed Visibility Audits",
-    title: "AI Evidence-backed Visibility Audits for ChatGPT, Perplexity, Claude and Google AI",
-    description:
-      "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.",
-    path: "/",
-    structuredData: {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: answerBlocks.map((block) => ({
-        "@type": "Question",
-        name: block.q,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: block.a,
-        },
-      })),
-    },
+    title: 'AI Visibility Platform | AiVIS',
+    description: 'AiVIS audits how answer engines read, trust, and cite your website. See what AI understands, what it cannot verify, and what to fix first.',
+    path: '/',
+    ogTitle: 'AiVIS – Your Site Can Rank and Still Get Skipped by AI',
+    structuredData: LANDING_STRUCTURED_DATA,
   });
 
-  const handleAudit = () => {
-    if (!url.trim()) return;
-    const normalized = url.trim();
-    if (!isAuthenticated) {
-      navigate(`/auth?mode=signup&redirect=/app/analyze?url=${encodeURIComponent(normalized)}`);
-      return;
+  const { isAuthenticated } = useAuthStore();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+
+  useEffect(() => {
+    let cancelled = false;
+    getPlatformStats().then((d) => { if (!cancelled) setPlatformStats(d); });
+    const iv = setInterval(() => { getPlatformStats().then((d) => { if (!cancelled) setPlatformStats(d); }); }, 30_000);
+    return () => { cancelled = true; clearInterval(iv); };
+  }, []);
+
+  const handlePayment = async (tier: string) => {
+    if (!isAuthenticated) { toast.error('Please sign in to upgrade'); return; }
+    if (!tier || loadingTier) return;
+    setLoadingTier(tier);
+    try {
+      const url = await paymentService.createStripeCheckout(tier);
+      window.location.href = url;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Payment failed');
+      setLoadingTier(null);
     }
-    navigate(`/app/analyze?url=${encodeURIComponent(normalized)}`);
   };
 
   return (
-    <div className="text-white">
+    <div className="min-h-screen bg-[#060607]">
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_38%),linear-gradient(180deg,#09111e_0%,#060a14_100%)] pt-24 pb-20">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_28rem] lg:px-8">
-          <div className="max-w-3xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">AI visibility audit</p>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              AI Evidence-backed Visibility Audits
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-white/68">
-              AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. It interprets your site's structure, trust signals and citation readiness based on real page evidence — not inferred summaries.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-2.5">
-              {proofItems.map((item) => (
-                <span key={item} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs text-white/72">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-cyan-300" />
-                  {item}
+      {/* ── HERO ── */}
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#060607]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.07),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_60%,rgba(139,92,246,0.06),transparent)]" />
+        <div className="hero-flow-overlay" aria-hidden="true" />
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-28">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Free Starter Tier
                 </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-xs font-semibold tracking-wide">Evidence-backed · No black box</span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6 tracking-tight">
+                Your site can{' '}
+                <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">rank</span>
+                <br />and still get{' '}
+                <span className="bg-gradient-to-r from-amber-300 to-white bg-clip-text text-transparent">skipped by AI</span>
+              </h1>
+              <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
+                See what AI understands about your page, what it cannot verify, and what to fix first. AiVIS gives you a visibility snapshot in under a minute - tied to real evidence from your live page, not guesses.
+              </p>
+              <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
+                Every finding is backed by BRAG evidence IDs - Based Retrieval and Auditable Grading. No assumptions, no filler. Just real page data and fixes ranked by likely lift.
+              </p>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
+                  <span className="text-5xl font-black text-white tabular-nums leading-none">3</span>
+                  <div>
+                    <p className="text-white font-bold text-lg leading-tight">FREE Audits</p>
+                    <p className="text-white/50 text-xs">every month · no credit card</p>
+                  </div>
+                </div>
+                {platformStats?.completedAudits && (
+                  <div className="hidden sm:flex flex-col items-start px-4 py-3 rounded-2xl border border-white/8 bg-[#111827]/40">
+                    <span className="text-2xl font-bold text-cyan-300">{Number(platformStats.completedAudits).toLocaleString()}+</span>
+                    <span className="text-xs text-white/45">audits completed</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+                  See your visibility snapshot
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </Link>
+                <Link to="/pricing" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
+                  View plans &amp; pricing
+                </Link>
+              </div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden lg:block">
+              <div className="relative rounded-2xl border border-cyan-400/15 bg-[#060c14]/60 p-4 shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-violet-500/5" />
+                <NeuralCityIllustration />
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <span className="px-2 py-0.5 rounded bg-cyan-400/15 border border-cyan-400/25 text-cyan-300 text-[9px] font-mono tracking-wider">SCAN ACTIVE</span>
+                  <span className="px-2 py-0.5 rounded bg-violet-400/15 border border-violet-400/25 text-violet-300 text-[9px] font-mono tracking-wider">AI LAYER</span>
+                </div>
+                <div className="absolute bottom-4 right-4">
+                  <span className="px-2 py-0.5 rounded bg-amber-400/15 border border-amber-400/25 text-amber-300 text-[9px] font-mono tracking-wider">AIVIS.BIZ</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SOCIAL PROOF BAR ── */}
+      <section className="py-8 border-y border-white/8 bg-[#0a0a0f]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
+            {[
+              { label: 'AI Platforms Scored', value: '4', accent: 'text-cyan-300' },
+              { label: 'Audit categories', value: '6', accent: 'text-violet-300' },
+              { label: 'Avg score improvement', value: '31%', accent: 'text-emerald-300' },
+              { label: 'Scans completed', value: platformStats?.completedAudits ? `${Number(platformStats.completedAudits).toLocaleString()}+` : '-', accent: 'text-amber-300' },
+            ].map(({ label, value, accent }) => (
+              <div key={label} className="text-center">
+                <div className={`text-3xl sm:text-4xl font-black ${accent} tabular-nums`}>{value}</div>
+                <div className="text-xs text-white/45 mt-1 font-medium tracking-wide">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS (bridge) ── */}
+      <section className="py-20 bg-gradient-to-b from-[#0a0a0f] to-[#060607]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">How it works</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Three steps to your first result</h2>
+            <p className="text-white/50 text-base max-w-2xl mx-auto">Every audit uses BRAG - Based Retrieval and Auditable Grading - so every finding traces back to a real element on your page.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {([
+              { n: '01', color: 'text-cyan-300', borderColor: 'border-cyan-400/20 bg-cyan-400/5', title: 'Run a live audit', desc: 'Enter any public URL. AiVIS scans your page, extracts structure, schema, headings, meta tags and content, then runs them through an AI pipeline.' },
+              { n: '02', color: 'text-violet-300', borderColor: 'border-violet-400/20 bg-violet-400/5', title: 'See your visibility snapshot', desc: 'In under a minute you get a 0–100 score with a six-part visibility breakdown: what AI understands, what it cannot verify, and what to fix first.' },
+              { n: '03', color: 'text-amber-300', borderColor: 'border-amber-400/20 bg-amber-400/5', title: 'Open the full system', desc: 'Go deeper with competitor tracking, citation testing, score trends and fixes ranked by likely lift. Re-scan after each change to measure the difference.' },
+            ] as const).map((step) => (
+              <motion.div key={step.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+                className={`rounded-2xl border ${step.borderColor} p-6`}>
+                <span className={`${step.color} font-mono text-xs font-bold`}>{step.n}</span>
+                <h3 className={`text-lg font-bold ${step.color} mt-3 mb-2`}>{step.title}</h3>
+                <p className="text-white/55 text-sm leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PROBLEM STATEMENT ── */}
+      <section className="py-24 bg-[#060607] border-t border-white/8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">The problem</span>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">AI models skip sites they cannot extract</span>
+            </h2>
+            <p className="text-white/55 text-lg max-w-2xl mx-auto">58.5% of Google searches now end in zero clicks. AI answer engines extract, compress, and cite structured content. If your page is not structured for extraction, you do not get cited - regardless of your domain authority.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {([
+              { accentClass: 'border-cyan-400/20 bg-cyan-400/10', titleClass: 'text-cyan-300', title: 'Live page audit', desc: 'Every finding is tied to a specific scraped element from your actual page - not inferred from your domain name or authority score.' },
+              { accentClass: 'border-violet-400/20 bg-violet-400/10', titleClass: 'text-violet-300', title: 'Six-part visibility score', desc: 'Content depth, heading structure, schema completeness, meta tags, technical SEO, and AI readability. Each grade traces to real evidence.' },
+              { accentClass: 'border-amber-400/20 bg-amber-400/10', titleClass: 'text-amber-300', title: 'Fixes ranked by likely lift', desc: 'Every recommendation cites the exact evidence ID - heading, meta tag, schema block, or content gap - that triggered it. Filter by effort level.' },
+            ] as const).map((card) => (
+              <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+                className={`rounded-2xl border ${card.accentClass} p-6`}>
+                <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
+                <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── VISIBILITY SNAPSHOT PREVIEW ── */}
+      <section className="py-20 bg-gradient-to-b from-[#060607] to-[#0a0a0f] border-t border-white/8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Visibility snapshot</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">What your first audit reveals</h2>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">Within a minute, AiVIS returns a structured snapshot of your page's AI readiness - every point backed by BRAG evidence.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {([
+              { accentClass: 'border-cyan-400/20 bg-cyan-400/8', titleClass: 'text-cyan-300', title: 'What AI understands', desc: 'Headings, entities, schema and content your page already provides that AI models can extract and use in generated answers.' },
+              { accentClass: 'border-amber-400/20 bg-amber-400/8', titleClass: 'text-amber-300', title: 'What AI cannot verify', desc: 'Missing signals, conflicting schema, thin content and unclear entity definitions that stop AI from trusting your page enough to cite it.' },
+              { accentClass: 'border-emerald-400/20 bg-emerald-400/8', titleClass: 'text-emerald-300', title: 'What to fix first', desc: 'The highest-impact issue on your page right now - with the evidence ID, a fix description, and the expected score lift if you resolve it.' },
+            ] as const).map((card) => (
+              <motion.div key={card.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }}
+                className={`rounded-2xl border ${card.accentClass} p-6`}>
+                <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
+                <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+              Run your first audit free
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SCORE FIX PREVIEW ── */}
+      <section className="py-20 bg-[#060607] border-t border-white/8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">Real paid output</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Score Fix Pack - what you actually receive</h2>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">This is not a mockup. Score Fix subscribers receive an evidence-linked JSON-LD patch, H1 rewrite, and FAQ block in one exportable output - generated from their live audit findings.</p>
+          </div>
+          <div className="rounded-2xl border border-white/12 bg-[#323a4c]/40 p-3 sm:p-4 shadow-2xl">
+            <img src="/images/fix-pack-preview.svg" alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block" className="w-full h-auto rounded-xl" loading="lazy" />
+          </div>
+          <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output: JSON-LD patch + H1 rewrite + FAQ block · Generated from live audit evidence</p>
+          <div className="mt-5 flex justify-center">
+            <Link to="/score-fix" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
+              See Score Fix details
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── METHODOLOGY ── */}
+      <section className="py-20 bg-[#0a0a0f] border-t border-white/8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Method</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent">What happens when you submit a URL</span>
+            </h2>
+            <p className="text-white/45 text-sm mt-2 font-mono">No black box. <Link to="/methodology" className="text-cyan-300/70 hover:text-cyan-300 underline">Canonical methodology page</Link></p>
+          </div>
+          <ol className="space-y-6">
+            {([
+              { n: '01', color: 'text-cyan-300', title: 'Scan the page', desc: 'Fetch your live page: title, headings, schema, meta tags, body text, links, image count.' },
+              { n: '02', color: 'text-violet-300', title: 'Label evidence', desc: 'Each scraped field gets an evidence ID so every finding traces back to an observed page element.' },
+              { n: '03', color: 'text-amber-300', title: 'Analyze with AI models', desc: 'Model allocation is tier-based and enforced server-side. Outputs are required in structured JSON.' },
+              { n: '04', color: 'text-emerald-300', title: 'Check score integrity', desc: 'Responses are validated for score shape, category integrity, and evidence linkage before persistence.' },
+              { n: '05', color: 'text-cyan-300', title: 'Show what to fix next', desc: 'Recommendations are ranked high / medium / low and cite the specific evidence ID that triggered each one.' },
+            ] as const).map((s) => (
+              <li key={s.n} className="flex gap-5">
+                <span className={`${s.color} font-mono text-xs pt-1 flex-shrink-0 w-6 tabular-nums font-bold`}>{s.n}</span>
+                <div className="border-l border-white/10 pl-5">
+                  <p className={`${s.color} font-semibold text-sm mb-1`}>{s.title}</p>
+                  <p className="text-white/55 text-sm leading-relaxed">{s.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-10 pt-8 border-t border-white/10">
+            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4">AiVIS does NOT measure</h3>
+            <ul className="space-y-2">
+              {['Live ChatGPT or Perplexity traffic to your site', 'Google SERP rankings or traditional SEO authority signals', 'Backlinks, domain age, or historical content performance'].map((i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-white/50"><span className="text-red-400 mt-0.5">✕</span><span>{i}</span></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING ── */}
+      <section id="pricing" className="py-24 bg-gradient-to-b from-[#060607] to-[#0a0a0f] border-t border-white/8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">Transparent pricing</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Simple, transparent pricing</h2>
+            <p className="text-white/50 text-lg mb-6">All pricing verified server-side at checkout - no client-side overrides</p>
+            <div className="inline-flex items-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1">
+              {(['monthly', 'annual'] as const).map((cycle) => (
+                <button key={cycle} type="button" onClick={() => setBillingCycle(cycle)} className={`px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 ${billingCycle === cycle ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/75'}`}>
+                  {cycle === 'monthly' ? 'Monthly' : <><span>Annual</span><span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold">Save ~20%</span></>}
+                </button>
               ))}
             </div>
           </div>
-
-          <div className="rounded-[28px] border border-white/10 bg-[#0b1422]/92 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur">
-            <div className="flex items-center gap-2 text-sm font-medium text-white/84">
-              <Gauge className="h-4 w-4 text-cyan-300" />
-              See your visibility
-            </div>
-            <p className="mt-2 text-sm leading-6 text-white/58">
-              Start with any public homepage, feature page, blog post or documentation URL.
-            </p>
-            <div className="mt-5 space-y-3">
-              <input
-                type="url"
-                value={url}
-                onChange={(event) => setUrl(event.target.value)}
-                onKeyDown={(event) => event.key === "Enter" && handleAudit()}
-                placeholder="https://yoursite.com"
-                className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/32 focus:outline-none focus:ring-2 focus:ring-orange-400/70"
-              />
-              <button
-                onClick={handleAudit}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
-              >
-                <Search className="h-4 w-4" />
-                See Visibility
-              </button>
-            </div>
-            <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/46">What you get</p>
-              <ul className="mt-3 space-y-2 text-sm text-white/66">
-                <li>0-100 visibility score with six category grades</li>
-                <li>Evidence-backed findings tied to real page data</li>
-                <li>Fix path you can validate on the next scan</li>
-              </ul>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/54">
-              <span>No credit card for Observer</span>
-              <span>Works on public URLs</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Trust bar ── */}
-      <section className="border-y border-white/8 bg-[#08101d] py-5">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 text-sm text-white/58 sm:px-6 lg:px-8">
-          <span className="inline-flex items-center gap-2"><Shield className="h-4 w-4 text-cyan-300" /> No data resale</span>
-          <span className="inline-flex items-center gap-2"><FileCheck2 className="h-4 w-4 text-cyan-300" /> Export-ready proof</span>
-          <span className="inline-flex items-center gap-2"><Gauge className="h-4 w-4 text-cyan-300" /> Six weighted score dimensions</span>
-        </div>
-      </section>
-
-      {/* ── Benchmark bar ── */}
-      {totalAudits > 0 && (
-        <section className="border-b border-white/8 bg-gradient-to-r from-[#0b1422] to-[#0d1a2e] py-5">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 text-sm sm:px-6 lg:px-8">
-            <span className="font-semibold text-orange-300">{totalAudits.toLocaleString()}+ audits completed</span>
-            <span className="hidden sm:block h-4 w-px bg-white/12" />
-            <span className="text-white/58">Platform avg score: <span className="font-medium text-white/80">{avgScore}/100</span></span>
-            <span className="hidden sm:block h-4 w-px bg-white/12" />
-            <span className="text-white/58">Real-time benchmark data</span>
-          </div>
-        </section>
-      )}
-
-      {/* ── Positioning ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Understanding AI visibility</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What is AI visibility</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            AI visibility is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links. Ranking alone does not earn citation. AiVIS measures the extractability, trust-signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer. Learn more about the <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link> behind the scoring.
-          </p>
-        </div>
-      </section>
-
-      {/* ── What you get ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">What you actually get</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Evidence-backed visibility intelligence</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              { title: "Full page interpretation", desc: "AiVIS reads your page the way an answer engine does and shows where meaning breaks or becomes unclear." },
-              { title: "Evidence-backed findings", desc: "Every issue is tied to a real part of your page so you can see what caused it and how to fix it." },
-              { title: "Clear consistent scoring logic", desc: "You get a visibility score based on structure, content and trust signals that affect citation readiness. No AI guessing, hallucinations or opinions. Every finding must be validated with BRAG evidence IDs." },
-              { title: "Actionable fixes", desc: "Each result includes direct changes that improve how your site is read and reused by AI systems." },
-            ].map((item) => (
-              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How AI reads ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How AI reads your site</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">How AI systems evaluate websites</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              { title: "Structure comes first", desc: "Clean headings and logical sections help models understand what each part of the page means without guessing." },
-              { title: "Clarity beats volume", desc: "A long page does not help if the meaning is unclear. AI prefers content that is easy to break into usable parts." },
-              { title: "Trust is earned through signals", desc: "Consistent naming, schema and supporting details increase confidence in what the page is saying." },
-              { title: "Alignment with real user questions", desc: "Content must match how users actually ask questions or it will not be retrieved." },
-            ].map((item) => (
-              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── What AiVIS measures ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Core audit dimensions</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What AiVIS actually audits</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {measureItems.map((item) => (
-              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Who benefits ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Who benefits</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Who benefits from AI visibility audits</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            AI visibility audits help anyone whose content needs to appear inside generated answers. If your site depends on being found, trusted and reused by AI systems, this audit shows you exactly where visibility breaks and how to repair it.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              { title: "Founders and product teams", desc: "Understand whether your product pages, documentation and landing pages are readable by AI systems that potential customers use to evaluate solutions before they ever visit your site." },
-              { title: "Marketing and content teams", desc: "See which content assets are eligible for citation, which are being ignored, and what structural changes unlock retrieval across ChatGPT, Perplexity, Claude and Gemini." },
-              { title: "Developers and technical leads", desc: "Audit schema markup, heading hierarchy, canonical tags and structured data against the signals AI models use to build trust, resolve entities and extract usable content." },
-              { title: "Agencies and consultants", desc: "Offer clients measurable proof of AI visibility health with a structured report that connects every finding to real page evidence through BRAG evidence identifiers." },
-            ].map((item) => (
-              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
-              </article>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-white/52">
-            <Link to="/pricing" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">Compare audit plans</Link> to find the visibility intelligence level that matches your needs, or read the <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link> to see how scoring works.
-          </p>
-        </div>
-      </section>
-
-      {/* ── BRAG ── */}
-      <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#0b1422] to-[#060a14]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-orange-300/80">BRAG</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Based Retrieval and Auditable Grading</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-white/68">
-            AiVIS uses BRAG which stands for Based Retrieval and Auditable Grading. Every finding is tied to real page evidence using stable evidence identifiers. Each element of your page is assigned a BRAG evidence ID so results can be traced, verified and rechecked across scan cycles. This means you can validate any finding against your actual page data instead of relying on generic advice.
-          </p>
-          <p className="mt-3 max-w-3xl text-base leading-7 text-white/60">
-            If something cannot be proven it is not included. If something is missing it is shown as missing. There are no assumptions, no AI-generated opinions and no filler insights. Every issue links back to a concrete part of your page.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
-              <h3 className="text-lg font-semibold text-orange-300">Evidence first</h3>
-              <p className="mt-3 text-sm leading-6 text-white/64">Titles, headings, schema and content are extracted directly from your page and stored as evidence units.</p>
-            </article>
-            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
-              <h3 className="text-lg font-semibold text-orange-300">Traceable findings</h3>
-              <p className="mt-3 text-sm leading-6 text-white/64">Each issue links back to the exact part of your page that caused it so fixes are clear and direct.</p>
-            </article>
-            <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
-              <h3 className="text-lg font-semibold text-orange-300">Consistent scoring</h3>
-              <p className="mt-3 text-sm leading-6 text-white/64">Scores are based on verified signals not generated summaries so results stay stable across scans.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* ── From audit to citation ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Beyond the audit</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">From audit to citation</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            An audit is the starting point. AiVIS also supports{" "}
-            <Link to="/citations" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">how AI citation testing works</Link>{" "}
-            to verify whether AI models reference your brand in live answers. You can run{" "}
-            <Link to="/competitors" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">competitor visibility tracking</Link>{" "}
-            to benchmark your visibility against rival sites and identify structural gaps they have not addressed. Score trend{" "}
-            <Link to="/analytics" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">analytics</Link>{" "}
-            show how your visibility changes as you apply fixes across scan cycles. Review the{" "}
-            <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link>{" "}
-            to understand how each category is scored or use the{" "}
-            <Link to="/tools/schema-validator" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">structured data impact validator</Link>{" "}
-            to check your schema coverage before the next scan.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Agentic layer ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Agentic surface</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Built for agents, tools and AI workflows</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            AiVIS is not just a report. It is a structured surface that agents can use to evaluate and improve visibility across sites, products and content systems.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              { icon: Layers, title: "WebMCP ready surface", desc: "Audit outputs can be consumed by tools that require clean structured data for decision making and automation." },
-              { icon: Bot, title: "Context driven analysis", desc: "Results adapt to niche intent and page type so recommendations stay relevant to your domain." },
-              { icon: LinkIcon, title: "Integration friendly outputs", desc: "Data can be used across internal tools, dashboards and automation pipelines without reprocessing." },
-              { icon: BarChart3, title: "Agent usable scoring", desc: "Scores are consistent and explainable so agents can act on them without guesswork." },
-            ].map((item) => (
-              <article key={item.title} className="flex gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-white/64">{item.desc}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How it works ── */}
-      <section className="py-16 border-b border-white/8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How it works</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Scan. Expose. Fix. Re-scan.</h2>
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            {steps.map((step, index) => (
-              <article key={step.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-400/14 text-orange-300">
-                    <step.icon className="h-5 w-5" />
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {TIERS.map((plan) => {
+              const displayPrice = billingCycle === 'annual' ? plan.annualMonthlyPrice : plan.monthlyPrice;
+              return (
+                <motion.div key={plan.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`rounded-2xl border p-6 flex flex-col ${plan.color}`}>
+                  {plan.badge && <div className={`inline-block px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider mb-3 ${plan.accentClass} border-current opacity-80`}>{plan.badge}</div>}
+                  <h3 className="text-xl font-bold text-white mb-0.5">{plan.name}</h3>
+                  <p className={`text-xs uppercase tracking-widest ${plan.accentClass} mb-4 font-semibold`}>{plan.subtitle}</p>
+                  <div className="mb-2">
+                    {plan.monthlyPrice === 0 ? <span className="text-4xl font-black text-white">Free</span> : (
+                      <div>
+                        <span className="text-4xl font-black text-white">${displayPrice}</span>
+                        <span className="text-white/45 text-sm">/mo</span>
+                        {billingCycle === 'annual' && <span className="ml-2 text-white/30 text-xs line-through">${plan.monthlyPrice}/mo</span>}
+                      </div>
+                    )}
+                    <p className="text-xs text-white/40 mt-1">{plan.scans} audits / month</p>
                   </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">Step {index + 1}</span>
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/64">{step.description}</p>
-              </article>
-            ))}
+                  <ul className="space-y-2.5 mb-6 flex-1">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-sm">
+                        <svg className={`w-4 h-4 shrink-0 mt-0.5 ${plan.accentClass}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        <span className="text-white/60">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button type="button" disabled={plan.monthlyPrice === 0 || loadingTier !== null} onClick={() => handlePayment(plan.key)}
+                    className={`w-full py-3 px-5 rounded-xl font-semibold text-sm transition ${
+                      plan.monthlyPrice === 0 ? 'bg-white/5 text-white/30 cursor-default border border-white/10' :
+                      loadingTier === plan.key ? 'opacity-60 cursor-wait bg-white/10 text-white border border-white/15' :
+                      `border ${plan.accentClass} border-current bg-current/10 hover:bg-current/20 text-white`
+                    }`}>
+                    {plan.monthlyPrice === 0 ? 'Start Free' : loadingTier === plan.key ? 'Processing…' : billingCycle === 'annual' ? `Get ${plan.name} (Annual)` : `Get ${plan.name}`}
+                  </button>
+                </motion.div>
+              );
+            })}
           </div>
+          <p className="text-center text-xs text-white/30 mt-8">Live pricing verified at checkout. <Link to="/pricing" className="text-cyan-300/60 hover:text-cyan-300 underline">Full pricing page →</Link></p>
         </div>
       </section>
 
-      {/* ── Answer blocks ── */}
-      <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#060a14] to-[#0b1422]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Frequently asked questions</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Frequently asked questions about AI visibility</h2>
-          <div className="mt-8 space-y-4">
-            {answerBlocks.map((block) => (
-              <article key={block.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <h3 className="text-base font-semibold text-white">{block.q}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/64">{block.a}</p>
-              </article>
-            ))}
+      {/* ── FAQ ── */}
+      <section className="py-20 bg-[#0a0a0f] border-t border-white/8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">FAQ</span>
+            <h2 className="text-3xl font-bold text-white">Frequently asked questions</h2>
           </div>
+          <dl className="space-y-5">
+            {FAQ_ITEMS.map(({ q, a }) => (
+              <div key={q} className="border border-white/10 bg-[#111827]/50 rounded-2xl p-6 hover:border-white/18 transition-colors">
+                <dt className="text-base font-semibold text-white mb-2">{q}</dt>
+                <dd className="text-white/55 text-sm leading-relaxed">{a}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-16">
-        <div className="mx-auto flex max-w-4xl flex-col items-start gap-5 px-4 sm:px-6 lg:px-8 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Start now</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Find what AI gets wrong about your site</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/62">
-              Run an evidence-backed audit and see where your site visibility breaks before the answer engine decides without you.
-            </p>
+      {/* ── FINAL CTA ── */}
+      <section className="py-24 relative overflow-hidden bg-gradient-to-br from-[#060607] via-[#0a0e1a] to-[#060607] border-t border-white/8">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(34,211,238,0.06),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_30%,rgba(139,92,246,0.07),transparent)]" />
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
+            See what AI{' '}
+            <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">gets wrong</span>
+            <br />about your site
+          </h2>
+          <p className="text-lg text-white/50 mb-10">Free tier · No credit card · Your visibility snapshot in under a minute</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25">
+              See your visibility snapshot
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Link>
+            <Link to="/pricing" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
+              View all plans
+            </Link>
           </div>
-          <Link
-            to={isAuthenticated ? "/app/analyze" : "/auth?mode=signup"}
-            className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
-          >
-            Start Visibility Audit
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <p className="mt-8 text-xs text-white/30">{MARKETING_CLAIMS.modelAllocation}</p>
         </div>
       </section>
     </div>
   );
-}
+};
+
+export default Landing;

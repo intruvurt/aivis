@@ -1,5 +1,5 @@
 /**
- * dbCleanup.ts — Periodic database maintenance.
+ * dbCleanup.ts - Periodic database maintenance.
  *
  * Runs on a configurable interval (default: every 6 hours) and:
  *  1. Prunes expired user sessions
@@ -146,7 +146,7 @@ async function runCleanup(): Promise<void> {
 
     if (total > 0) {
       console.log(
-        `[DB Cleanup] Pruned ${total} rows in ${elapsed}ms —`,
+        `[DB Cleanup] Pruned ${total} rows in ${elapsed}ms -`,
         `sessions=${stats.sessions} audits=${stats.audits} cache=${stats.cache}`,
         `rateLimits=${stats.rateLimits} notifications=${stats.notifications} usageDaily=${stats.usageDaily}`,
         `agentTasks=${stats.agentTasks} rescans=${stats.rescans} mentions=${stats.mentions} nicheJobs=${stats.nicheJobs}`
@@ -175,5 +175,5 @@ export function startDbCleanupLoop(): void {
   console.log('[DB Cleanup] Scheduled every 6h (sessions, audits, cache, rate_limit_events, notifications, agent_tasks, rescans, mentions)');
 }
 
-/** Run cleanup immediately — used by admin endpoint */
+/** Run cleanup immediately - used by admin endpoint */
 export { runCleanup as runDbCleanupNow };

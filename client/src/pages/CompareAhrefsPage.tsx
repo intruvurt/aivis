@@ -39,7 +39,7 @@ export default function CompareAhrefsPage() {
             name: "Does Ahrefs measure AI visibility?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Ahrefs tracks traditional search metrics — backlinks, referring domains, keyword rankings, and SERP features. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, score entity clarity, or measure answer block density.",
+              text: "Ahrefs tracks traditional search metrics - backlinks, referring domains, keyword rankings, and SERP features. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, score entity clarity, or measure answer block density.",
             },
           },
           {
@@ -86,7 +86,7 @@ export default function CompareAhrefsPage() {
               Ahrefs maintains one of the largest backlink indices on the web. It tracks referring domains, link velocity, anchor text distribution, and domain authority metrics. Its keyword research covers 12+ search engines including Google, YouTube, and Amazon. Site Explorer shows organic traffic estimates, ranking keywords, and SERP position history.
             </p>
             <p className="text-white/70 leading-relaxed">
-              For traditional SEO competitive intelligence, Ahrefs provides unmatched depth in link analysis and keyword gap discovery. Its content explorer surfaces pages by topic and engagement metrics. These are powerful tools for search engine optimization — but they measure search engine signals, not AI answer engine signals.
+              For traditional SEO competitive intelligence, Ahrefs provides unmatched depth in link analysis and keyword gap discovery. Its content explorer surfaces pages by topic and engagement metrics. These are powerful tools for search engine optimization - but they measure search engine signals, not AI answer engine signals.
             </p>
           </section>
 
@@ -200,7 +200,7 @@ export default function CompareAhrefsPage() {
                 },
                 {
                   q: "Does Ahrefs measure AI visibility?",
-                  a: "Ahrefs tracks traditional search metrics — backlinks, referring domains, keyword rankings, and SERP features. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, or measure entity clarity for machine consumption.",
+                  a: "Ahrefs tracks traditional search metrics - backlinks, referring domains, keyword rankings, and SERP features. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, or measure entity clarity for machine consumption.",
                 },
                 {
                   q: "Can I use both Ahrefs and AiVIS?",
@@ -223,7 +223,7 @@ export default function CompareAhrefsPage() {
           <section className="rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/[0.08] to-violet-500/[0.08] p-8 text-center">
             <h3 className="text-2xl font-bold mb-3 text-white">See What Ahrefs Cannot Show You</h3>
             <p className="text-white/65 mb-5 max-w-xl mx-auto">
-              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini evaluate your content — with evidence-linked findings and prioritized fixes.
+              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini evaluate your content - with evidence-linked findings and prioritized fixes.
             </p>
             <Link
               to="/"
@@ -231,6 +231,17 @@ export default function CompareAhrefsPage() {
             >
               Run Free AI Visibility Audit <ArrowRight className="h-4 w-4" />
             </Link>
+          </section>
+
+          <section className="mt-10">
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/compare/semrush" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Semrush</Link>
+              <Link to="/compare/rankscale" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs RankScale</Link>
+              <Link to="/compare/otterly" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Otterly</Link>
+              <Link to="/compare/profound" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Profound</Link>
+              <Link to="/compare/reaudit" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Reaudit</Link>
+            </div>
           </section>
 
           <p className="text-xs text-white/40 mt-6">

@@ -29,7 +29,7 @@ def _get_spacy():
         try:
             _nlp_model = spacy.load("en_core_web_sm")
         except OSError:
-            # Model not installed — download it
+            # Model not installed - download it
             from spacy.cli import download
             download("en_core_web_sm")
             _nlp_model = spacy.load("en_core_web_sm")
@@ -222,7 +222,7 @@ class NLPAnalyzer:
         content_words = [w for w in words if w not in stop_words]
         content_ratio = len(content_words) / total
 
-        # Type-token ratio (TTR) — normalized for text length
+        # Type-token ratio (TTR) - normalized for text length
         # Use root TTR to reduce length sensitivity
         root_ttr = unique / math.sqrt(total) if total > 0 else 0
 

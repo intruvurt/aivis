@@ -1,5 +1,5 @@
 /**
- * migrate-data.mjs — Copy all row data from old Neon DB to new Neon DB.
+ * migrate-data.mjs - Copy all row data from old Neon DB to new Neon DB.
  *
  * Usage:
  *   node scripts/migrate-data.mjs
@@ -104,12 +104,12 @@ async function main() {
 
   for (const table of TABLES) {
     if (!oldTableSet.has(table)) {
-      console.log(`  ⊘ ${table} — not in old DB, skipping`);
+      console.log(`  ⊘ ${table} - not in old DB, skipping`);
       skippedTables++;
       continue;
     }
     if (!newTableSet.has(table)) {
-      console.log(`  ⊘ ${table} — not in new DB, skipping`);
+      console.log(`  ⊘ ${table} - not in new DB, skipping`);
       skippedTables++;
       continue;
     }
@@ -120,7 +120,7 @@ async function main() {
       const rowCount = parseInt(oldCount, 10);
 
       if (rowCount === 0) {
-        console.log(`  ○ ${table} — 0 rows, skipping`);
+        console.log(`  ○ ${table} - 0 rows, skipping`);
         skippedTables++;
         continue;
       }
@@ -130,7 +130,7 @@ async function main() {
       const existingRows = parseInt(newCount, 10);
 
       if (existingRows > 0) {
-        console.log(`  ⚠ ${table} — new DB already has ${existingRows} rows, clearing first...`);
+        console.log(`  ⚠ ${table} - new DB already has ${existingRows} rows, clearing first...`);
         // Disable FK checks temporarily and truncate
         await newClient.query(`TRUNCATE TABLE "${table}" CASCADE`);
       }
@@ -153,7 +153,7 @@ async function main() {
       const sharedCols = colNames.filter(c => newColSet.has(c));
 
       if (sharedCols.length === 0) {
-        console.log(`  ⊘ ${table} — no shared columns, skipping`);
+        console.log(`  ⊘ ${table} - no shared columns, skipping`);
         skippedTables++;
         continue;
       }
@@ -181,10 +181,10 @@ async function main() {
 
       totalRows += rowCount;
       migratedTables++;
-      console.log(`  ✓ ${table} — ${rowCount} rows copied`);
+      console.log(`  ✓ ${table} - ${rowCount} rows copied`);
 
     } catch (err) {
-      console.error(`  ✗ ${table} — ERROR: ${err.message}`);
+      console.error(`  ✗ ${table} - ERROR: ${err.message}`);
       errors.push({ table, error: err.message });
     }
   }
@@ -206,7 +206,7 @@ async function main() {
         await newClient.query(`SELECT setval('${seq}', COALESCE((SELECT MAX("${column_name}") FROM "${table}"), 1))`);
       }
     } catch (_) {
-      // Not all tables have serials — that's fine
+      // Not all tables have serials - that's fine
     }
   }
 

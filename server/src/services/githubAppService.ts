@@ -8,11 +8,11 @@
  * Uses RS256 JWT signed with the app's private key to obtain short-lived installation tokens.
  *
  * Env vars:
- *   GITHUB_APP_ID              — numeric App ID
- *   GITHUB_APP_PRIVATE_KEY     — PEM-encoded RSA private key (newlines as \n)
- *   GITHUB_APP_WEBHOOK_SECRET  — webhook signature secret
- *   GITHUB_APP_CLIENT_ID       — OAuth client ID for the GitHub App (install flow)
- *   GITHUB_APP_SLUG            — e.g. "aivis-autofix-engine" (for install URL)
+ *   GITHUB_APP_ID              - numeric App ID
+ *   GITHUB_APP_PRIVATE_KEY     - PEM-encoded RSA private key (newlines as \n)
+ *   GITHUB_APP_WEBHOOK_SECRET  - webhook signature secret
+ *   GITHUB_APP_CLIENT_ID       - OAuth client ID for the GitHub App (install flow)
+ *   GITHUB_APP_SLUG            - e.g. "aivis-autofix-engine" (for install URL)
  */
 
 import crypto from 'crypto';
@@ -349,7 +349,7 @@ export async function listInstallationBranches(
 export function verifyWebhookSignature(payload: string | Buffer, signatureHeader: string): boolean {
   const secret = (process.env.GITHUB_APP_WEBHOOK_SECRET || '').trim();
   if (!secret) {
-    console.warn('[GitHubApp] GITHUB_APP_WEBHOOK_SECRET not set — cannot verify webhook');
+    console.warn('[GitHubApp] GITHUB_APP_WEBHOOK_SECRET not set - cannot verify webhook');
     return false;
   }
 
@@ -382,7 +382,7 @@ export interface GitHubPRInput {
 
 /**
  * Create a branch, commit files, and open a PR using a GitHub App installation token.
- * This is the GitHub App equivalent of the OAuth-based createGitHubPR in autoScoreFixService.
+ * This is the GitHub App equivalent of the OAuth-based createGitHubPR in AutoScoreFixService.
  */
 export async function createPRViaApp(input: GitHubPRInput): Promise<{ pr_number: number; pr_url: string; branch: string }> {
   const token = await getInstallationToken(input.installationId);
@@ -429,7 +429,7 @@ export async function createPRViaApp(input: GitHubPRInput): Promise<{ pr_number:
         existingSha = existData.sha;
       }
     } catch {
-      // file doesn't exist — will create
+      // file doesn't exist - will create
     }
 
     const body: Record<string, unknown> = {

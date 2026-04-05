@@ -38,17 +38,17 @@ export interface CitationTestResult {
   query: string;
   results: AICitationResult[];
   tested_at: string;
-  /** Real web search verification (DDG HTML search), always runs — free, no key */
+  /** Real web search verification (DDG HTML search), always runs - free, no key */
   web_search?: WebSearchPresenceResult;
-  /** Bing web search verification, always runs — free, no key */
+  /** Bing web search verification, always runs - free, no key */
   bing_search?: WebSearchPresenceResult;
-  /** DuckDuckGo Instant Answer presence check — always runs (free, no key) */
+  /** DuckDuckGo Instant Answer presence check - always runs (free, no key) */
   ddg_search?: WebSearchPresenceResult;
-  /** Brave web search verification — always runs, free, no key */
+  /** Brave web search verification - always runs, free, no key */
   brave_search?: WebSearchPresenceResult;
-  /** Wikipedia presence verification — always runs, free, no key */
+  /** Wikipedia presence verification - always runs, free, no key */
   wikipedia_search?: WebSearchPresenceResult;
-  /** Yahoo web search verification — always runs, free, no key */
+  /** Yahoo web search verification - always runs, free, no key */
   yahoo_search?: WebSearchPresenceResult;
 }
 

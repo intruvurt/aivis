@@ -1,4 +1,4 @@
-# ChatGPT Citation Rail — Evidence-First Audit Engine
+# ChatGPT Citation Rail - Evidence-First Audit Engine
 
 This is an **evidence-first audit engine**, not just pattern matching. No guessing, no silent assumptions. Every score must trace back to something observable.
 

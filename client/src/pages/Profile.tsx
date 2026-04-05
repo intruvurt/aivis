@@ -75,7 +75,7 @@ export default function ProfilePage() {
     try {
       await navigator.clipboard.writeText(inviteLink);
       setInviteCopied(true);
-      setInviteCopyMessage('Invite link copied — thanks for sharing AiVIS.');
+      setInviteCopyMessage('Invite link copied - thanks for sharing AiVIS.');
       window.setTimeout(() => setInviteCopied(false), 2000);
     } catch {
       setInviteCopied(false);
@@ -340,7 +340,7 @@ export default function ProfilePage() {
               <div className="rounded-xl border border-cyan-300/20 bg-gradient-to-br from-cyan-500/10 via-transparent to-violet-500/10 p-4 mb-4">
                 <p className="text-[11px] uppercase tracking-[0.16em] text-cyan-200/90">Referral growth engine</p>
                 <p className="mt-2 text-sm text-white/70 leading-relaxed">
-                  Your code is <span className="font-semibold text-white">{referralSummary.code}</span> — you get +{referralSummary.constants.creditsToReferrer} credits and they get +{referralSummary.constants.creditsToReferred} once referral eligibility is met ({referralSummary.constants.requiredAuditsForReward || 5}+ audits), with {referralSummary.constants.paidRewardMultiplier || 3}x rewards if they upgrade.
+                  Your code is <span className="font-semibold text-white">{referralSummary.code}</span> - you get +{referralSummary.constants.creditsToReferrer} credits and they get +{referralSummary.constants.creditsToReferred} once referral eligibility is met ({referralSummary.constants.requiredAuditsForReward || 5}+ audits), with {referralSummary.constants.paidRewardMultiplier || 3}x rewards if they upgrade.
                 </p>
                 <div className="mt-3 rounded-xl border border-white/10 bg-[#101726] px-3 py-2 text-xs break-all text-cyan-200 font-mono">
                   {buildReferralInviteLink(referralSummary.code)}

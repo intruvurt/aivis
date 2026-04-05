@@ -1,11 +1,11 @@
 /**
- * Partnership agreement routes — signing, verification, PDF export, email delivery.
+ * Partnership agreement routes - signing, verification, PDF export, email delivery.
  *
- * Public endpoints (no auth required — parties sign via slug + exact name match):
- *   GET  /api/agreements/:slug          — view agreement status + terms
- *   POST /api/agreements/:slug/sign     — sign as party a or b
- *   GET  /api/agreements/:slug/verify   — tamper-proof integrity check
- *   GET  /api/agreements/:slug/export   — download signed HTML copy
+ * Public endpoints (no auth required - parties sign via slug + exact name match):
+ *   GET  /api/agreements/:slug          - view agreement status + terms
+ *   POST /api/agreements/:slug/sign     - sign as party a or b
+ *   GET  /api/agreements/:slug/verify   - tamper-proof integrity check
+ *   GET  /api/agreements/:slug/export   - download signed HTML copy
  */
 
 import { Router, Request, Response } from 'express';
@@ -20,7 +20,7 @@ import {
 
 const router = Router();
 
-/* ── GET /:slug — view agreement ───────────────────────────────────────────── */
+/* ── GET /:slug - view agreement ───────────────────────────────────────────── */
 router.get('/:slug', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug);
@@ -58,7 +58,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
   }
 });
 
-/* ── POST /:slug/sign — sign the agreement ─────────────────────────────────── */
+/* ── POST /:slug/sign - sign the agreement ─────────────────────────────────── */
 const signSchema = z.object({
   party: z.enum(['a', 'b']),
   signature: z.string().min(2).max(200),
@@ -102,7 +102,7 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
   }
 });
 
-/* ── GET /:slug/verify — integrity check ───────────────────────────────────── */
+/* ── GET /:slug/verify - integrity check ───────────────────────────────────── */
 router.get('/:slug/verify', async (req: Request, res: Response) => {
   try {
     const result = await verifyIntegrity(req.params.slug);
@@ -113,7 +113,7 @@ router.get('/:slug/verify', async (req: Request, res: Response) => {
   }
 });
 
-/* ── GET /:slug/export — download signed HTML ──────────────────────────────── */
+/* ── GET /:slug/export - download signed HTML ──────────────────────────────── */
 router.get('/:slug/export', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug);
@@ -140,7 +140,7 @@ async function sendSignedCopies(slug: string): Promise<void> {
   await sendAgreementSignedEmail(slug);
 }
 
-/* ── POST /seed — create the AiVIS × Zeeniith agreement (admin only) ──────── */
+/* ── POST /seed - create the AiVIS × Zeeniith agreement (admin only) ──────── */
 router.post('/seed', async (req: Request, res: Response) => {
   const adminKey = req.headers['x-admin-key'] as string | undefined;
   if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
@@ -150,7 +150,7 @@ router.post('/seed', async (req: Request, res: Response) => {
   try {
     const agreement = await createAgreement({
       slug: 'aivis-zeeniith-referral-delivery-2026',
-      title: 'Referral and Delivery Partnership Terms — AiVIS × Zeeniith',
+      title: 'Referral and Delivery Partnership Terms - AiVIS × Zeeniith',
       termsHtml: AIVIS_ZEENIITH_TERMS_HTML,
       partyA: {
         name: 'Ryan Mason',
@@ -241,7 +241,7 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>The parties are independent contractors. Nothing in these terms creates an employer relationship, equity relationship, or general partnership beyond the limited commercial structure described here.</p>
 
 <h2>15. Governing law</h2>
-<p>These terms shall be governed by the laws of <strong>United States — Georgia, Hall Co.</strong>, unless replaced by a later written agreement signed by both parties.</p>
+<p>These terms shall be governed by the laws of <strong>United States - Georgia, Hall Co.</strong>, unless replaced by a later written agreement signed by both parties.</p>
 
 <h2>16. Platform consistency and accountability</h2>
 <p>Both parties commit to maintaining their respective platforms (AiVIS and Zeeniith) in a functional, professional, and accessible state for clients referred under this agreement. If a referred client reports platform outages, broken functionality, misleading information, or unprofessional presentation on either party's platform, the responsible party must address the issue within 48 hours of notice. Repeated platform neglect (3 or more substantiated complaints within 90 days) constitutes a material breach.</p>

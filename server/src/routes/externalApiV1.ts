@@ -186,7 +186,7 @@ async function runPageValidation(targetUrl: string) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/usage — External API meter snapshot (current month)
+// GET /api/v1/usage - External API meter snapshot (current month)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/usage', async (req: Request, res: Response) => {
@@ -229,8 +229,8 @@ router.get('/usage', async (req: Request, res: Response) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// POST /api/v1/page-validation — Validate one page and persist result
-// GET /api/v1/page-validation/:id — Fetch persisted validation result
+// POST /api/v1/page-validation - Validate one page and persist result
+// GET /api/v1/page-validation/:id - Fetch persisted validation result
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.post('/page-validation', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -282,7 +282,7 @@ router.get('/page-validation/:id', requireScope('read:audits'), async (req: Requ
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/audits — List user audits
+// GET /api/v1/audits - List user audits
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/audits', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -323,7 +323,7 @@ router.get('/audits', requireScope('read:audits'), async (req: Request, res: Res
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/audits/:id — Get single audit with full result
+// GET /api/v1/audits/:id - Get single audit with full result
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/audits/:id', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -350,7 +350,7 @@ router.get('/audits/:id', requireScope('read:audits'), async (req: Request, res:
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/analytics — Score history
+// GET /api/v1/analytics - Score history
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/analytics', requireScope('read:analytics'), async (req: Request, res: Response) => {
@@ -437,7 +437,7 @@ router.get('/analytics', requireScope('read:analytics'), async (req: Request, re
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/competitors — Competitor tracking data
+// GET /api/v1/competitors - Competitor tracking data
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/competitors', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -461,7 +461,7 @@ router.get('/competitors', requireScope('read:audits'), async (req: Request, res
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/evidence/:auditId — Evidence ledger for an audit
+// GET /api/v1/evidence/:auditId - Evidence ledger for an audit
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/evidence/:auditId', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -508,9 +508,9 @@ router.get('/evidence/:auditId', requireScope('read:audits'), async (req: Reques
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/benchmarks — Industry visibility benchmarks
-// GET /api/v1/benchmarks/:category — Single category benchmark
-// GET /api/v1/benchmarks/compare — Compare a score to benchmarks
+// GET /api/v1/benchmarks - Industry visibility benchmarks
+// GET /api/v1/benchmarks/:category - Single category benchmark
+// GET /api/v1/benchmarks/compare - Compare a score to benchmarks
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/benchmarks', async (req: Request, res: Response) => {
@@ -556,7 +556,7 @@ router.get('/benchmarks/compare', async (req: Request, res: Response) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// GET /api/v1/project/:projectId/timeline — Score timeline for a portfolio project
+// GET /api/v1/project/:projectId/timeline - Score timeline for a portfolio project
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/project/:projectId/timeline', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -585,8 +585,8 @@ router.get('/project/:projectId/timeline', requireScope('read:audits'), async (r
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// POST /api/v1/audit — Enqueue an audit via API
-// GET  /api/v1/audit/:auditId — Poll audit status
+// POST /api/v1/audit - Enqueue an audit via API
+// GET  /api/v1/audit/:auditId - Poll audit status
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.post('/audit', requireScope('write:audits'), async (req: Request, res: Response) => {
@@ -662,8 +662,8 @@ router.get('/audit/:taskId', requireScope('read:audits'), async (req: Request, r
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Widget tokens — GET/POST/DELETE /api/v1/widgets
-// GET /api/v1/widget/:token — Public (no api key) widget data
+// Widget tokens - GET/POST/DELETE /api/v1/widgets
+// GET /api/v1/widget/:token - Public (no api key) widget data
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.get('/widgets', requireScope('read:audits'), async (req: Request, res: Response) => {
@@ -711,7 +711,7 @@ router.delete('/widgets/:id', requireScope('write:audits'), async (req: Request,
 export default router;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Public (no auth) widget endpoint — served separately by server.ts
+// Public (no auth) widget endpoint - served separately by server.ts
 // GET /api/widget/:token
 // ═══════════════════════════════════════════════════════════════════════════════
 

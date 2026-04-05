@@ -20,7 +20,7 @@
   },
   "hero": {
     "title": "KI-Sichtbarkeits-Engine",
-    "signedOutSubtitle": "Die meisten KI-Sichtbarkeitstools enden beim Dashboard. AiVIS diagnostiziert, warum KI Ihre Website überspringt, verfolgt es bis zu spezifischen Seitenfehlern und liefert den Fix — bis zum Pull Request.",
+    "signedOutSubtitle": "Die meisten KI-Sichtbarkeitstools enden beim Dashboard. AiVIS diagnostiziert, warum KI Ihre Website überspringt, verfolgt es bis zu spezifischen Seitenfehlern und liefert den Fix - bis zum Pull Request.",
     "cta": "Audit starten",
     "ctaSecondary": "Methodik ansehen"
   },
@@ -106,7 +106,7 @@
     "overview": "Übersicht",
     "seeVisibility": "Sichtbarkeit Prüfen",
     "reports": "Berichte",
-    "scoreFix": "Score-Korrektur",
+    "scorefix": "Score-Korrektur",
     "analytics": "Analytik",
     "citations": "Zitierungen",
     "competitors": "Wettbewerber",

@@ -90,7 +90,7 @@ export default function AuditDetails() {
     <AppPageFrame
       icon={<FileText className="h-5 w-5 text-orange-300" />}
       title={audit.url || "Audit detail"}
-      subtitle="ScoreFix command center view for the selected audit run."
+      subtitle="scorefix command center view for the selected audit run."
       actions={
         <div className="flex flex-wrap items-center gap-2">
           {id ? (
@@ -116,15 +116,15 @@ export default function AuditDetails() {
             </div>
             <div>
               <p className="text-xs text-white/44">Score</p>
-              <p className="mt-1 text-lg font-semibold text-white">{typeof audit.overallScore === "number" ? audit.overallScore : "—"}</p>
+              <p className="mt-1 text-lg font-semibold text-white">{typeof audit.overallScore === "number" ? audit.overallScore : "-"}</p>
             </div>
             <div>
               <p className="text-xs text-white/44">Provider</p>
-              <p className="mt-1 text-lg font-semibold text-white">{audit.aiProvider || "—"}</p>
+              <p className="mt-1 text-lg font-semibold text-white">{audit.aiProvider || "-"}</p>
             </div>
             <div>
               <p className="text-xs text-white/44">Run date</p>
-              <p className="mt-1 text-lg font-semibold text-white">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "—"}</p>
+              <p className="mt-1 text-lg font-semibold text-white">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "-"}</p>
             </div>
           </div>
           {audit.summary ? <p className="mt-5 text-sm leading-7 text-white/64">{audit.summary}</p> : null}
@@ -159,7 +159,7 @@ export default function AuditDetails() {
               {categoryCards.length > 0 ? categoryCards.map((card) => (
                 <div key={card.key} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <p className="text-xs uppercase tracking-[0.14em] text-white/42">{card.label}</p>
-                  <p className="mt-3 text-2xl font-semibold text-white">{typeof card.value === "number" ? card.value : "—"}</p>
+                  <p className="mt-3 text-2xl font-semibold text-white">{typeof card.value === "number" ? card.value : "-"}</p>
                 </div>
               )) : <p className="text-sm text-white/56">No category scores available for this audit.</p>}
             </div>

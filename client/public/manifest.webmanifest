@@ -55,13 +55,13 @@
       "type": "image/png",
       "sizes": "1200x630",
       "form_factor": "wide",
-      "label": "AiVIS AI Visibility Audit — Desktop"
+      "label": "AiVIS AI Visibility Audit - Desktop"
     },
     {
       "src": "/analyze.png",
       "type": "image/png",
       "sizes": "1024x1024",
-      "label": "AiVIS AI Visibility Audit — Mobile"
+      "label": "AiVIS AI Visibility Audit - Mobile"
     }
   ]
 }

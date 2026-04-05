@@ -1,5 +1,5 @@
 /**
- * ssfrVerificationService.ts — Verification pipeline for SSFR fixpacks.
+ * ssfrVerificationService.ts - Verification pipeline for SSFR fixpacks.
  *
  * After a fixpack is applied (or a re-audit is run), this service
  * re-evaluates specific evidence and rules to determine if the

@@ -91,7 +91,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, error: 'AI provider key not configured' });
   }
 
-  // Build base schemas deterministically — no AI needed
+  // Build base schemas deterministically - no AI needed
   let hostname = '';
   try {
     hostname = new URL(url).hostname;
@@ -164,7 +164,7 @@ Rules:
       );
       faqPageSchema = parseJsonResponse<object>(rawFaq);
     } catch (err: any) {
-      // FAQ generation is best-effort — don't fail the whole request
+      // FAQ generation is best-effort - don't fail the whole request
       console.warn('[SchemaGenerator] FAQ generation failed (non-fatal):', err?.message);
     }
   }

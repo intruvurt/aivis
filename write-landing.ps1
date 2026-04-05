@@ -63,7 +63,7 @@ const LANDING_STRUCTURED_DATA = [
       { name: 'Observer [Free]', price: '0' },
       { name: 'Alignment [Core]', price: '49' },
       { name: 'Signal [Premium]', price: '149' },
-      { name: 'Scorefix [Legacy]', price: '299' },
+      { name: 'AutoFix PR [Legacy]', price: '299' },
     ],
   }),
 ];
@@ -132,7 +132,7 @@ const TIERS = [
     features: ['110 audits / month','Triple-Check AI Pipeline (3 models)','Expanded competitor tracking','Advanced citation testing','AI Citation Tracker','API access + white-label reports','Scheduled rescans'],
   },
   {
-    key: 'scorefix', name: 'Score Fix', subtitle: 'Remediation', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 250,
+    key: 'AutoFix PR', name: 'Score Fix', subtitle: 'Remediation', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 250,
     color: 'border-amber-400/30 bg-[#1a1200]/60 ring-1 ring-amber-400/20', accentClass: 'text-amber-300', badge: 'Annual earns credits', creditHint: 'Yearly subscribers earn credits redeemable within Score Fix feature set',
     features: ['250 audits / month','Triple-Check AI Pipeline','Thorough evidence audit mode','Actual Fix Plan (evidence-linked)','Issue-level validation checklist','API access + white-label','Priority support'],
   },

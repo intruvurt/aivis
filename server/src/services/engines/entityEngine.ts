@@ -89,11 +89,11 @@ function extractEntityMentions(html: string, domain: string): {
   if (ogSiteName) mentions.add(ogSiteName);
 
   // Extract company name patterns
-  const companyPattern = /(?:©|Copyright|\(c\))\s*(?:\d{4})?\s*([A-Z][A-Za-z0-9\s&,.-]+?)(?:\.|—|$|Inc|Ltd|LLC|Corp)/g;
+  const companyPattern = /(?:©|Copyright|\(c\))\s*(?:\d{4})?\s*([A-Z][A-Za-z0-9\s&,.-]+?)(?:\.|-|$|Inc|Ltd|LLC|Corp)/g;
   const companyMatches = text.match(companyPattern) || [];
   companyMatches.forEach((match) => {
     const name = match
-      .replace(/©|Copyright|\(c\)|Inc|Ltd|LLC|Corp|—|\.$/g, '')
+      .replace(/©|Copyright|\(c\)|Inc|Ltd|LLC|Corp|-|\.$/g, '')
       .trim();
     if (name && name.length > 2) mentions.add(name);
   });

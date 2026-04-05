@@ -171,7 +171,7 @@ export class AnalysisCacheService {
   }
 }
 
-// Cleanup on process exit — shared connection is managed by infra/redis
+// Cleanup on process exit - shared connection is managed by infra/redis
 process.on('SIGTERM', async () => {
   const r = getRedis();
   if (r) await r.quit();

@@ -18,7 +18,7 @@ export default function PlatformProofLoopCard({
   subtitle = "Use the platform as an operating loop: baseline, fix, validate, and share.",
 }: PlatformProofLoopCardProps) {
   const encodedUrl = url ? encodeURIComponent(url) : "";
-  const needsScoreFix = typeof score === "number" && score < 75;
+  const needsscorefix = typeof score === "number" && score < 75;
 
   return (
     <div className="rounded-2xl border border-cyan-300/20 bg-cyan-500/10 p-4">
@@ -46,7 +46,7 @@ export default function PlatformProofLoopCard({
           </Link>
         )}
 
-        {url && needsScoreFix && (
+        {url && needsscorefix && (
           <Link
             to={`/score-fix?url=${encodedUrl}&source=proof-loop`}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-black/20 px-3 py-2 text-xs font-semibold text-white/85 hover:bg-black/30"

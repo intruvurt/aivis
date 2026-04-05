@@ -3,7 +3,7 @@ import { getRedis } from '../redis.js';
 
 function redis() {
   const r = getRedis();
-  if (!r) throw new Error('Redis is not configured — audit queue requires REDIS_URL or REDIS_HOST');
+  if (!r) throw new Error('Redis is not configured - audit queue requires REDIS_URL or REDIS_HOST');
   return r;
 }
 

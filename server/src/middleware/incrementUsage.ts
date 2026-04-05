@@ -8,7 +8,7 @@ function getUserId(req: Request): string | null {
 
 /**
  * Increment usage synchronously before the handler runs.
- * This ensures usage is always counted — never lost in fire-and-forget.
+ * This ensures usage is always counted - never lost in fire-and-forget.
  * If the DB write fails we still allow the request through but log loudly.
  */
 export async function incrementUsage(req: Request, res: Response, next: NextFunction) {

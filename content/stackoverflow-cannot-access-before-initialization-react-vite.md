@@ -1,4 +1,4 @@
-# SO Post: "Cannot access 'lt' before initialization" — React + Vite Production Build
+# SO Post: "Cannot access 'lt' before initialization" - React + Vite Production Build
 
 **Platform:** Stack Overflow  
 **Author:** intruvurt  
@@ -11,9 +11,9 @@
 ---
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- QUESTION — paste this into the SO question body                    -->
+<!-- QUESTION - paste this into the SO question body                    -->
 <!-- Title: React app crashes in production build with "Cannot access   -->
-<!--         'lt' before initialization" — works perfectly in dev       -->
+<!--         'lt' before initialization" - works perfectly in dev       -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 
 ## QUESTION
@@ -63,7 +63,7 @@ Environment: React 19.1, Vite 7.3.1, esbuild minification, roughly 60 eagerly im
 This is a production outage. How do I trace a minified variable name like "lt" back to the original source variable that is causing the crash?
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ANSWER — post this as your answer after the question is live       -->
+<!-- ANSWER - post this as your answer after the question is live       -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 
 ## ANSWER
@@ -85,7 +85,7 @@ Open `http://localhost:4173`. If you see the crash, you've confirmed it's a buil
 
 The key insight: **`lt` is a minified name.** You need to find what it maps to in your source.
 
-**Option A — Disable minification (fastest)**
+**Option A - Disable minification (fastest)**
 
 In `vite.config.ts`, temporarily set:
 
@@ -104,7 +104,7 @@ Rebuild and serve. The error message will now show the **real variable name**:
 
 Now you know exactly which variable and can grep for it.
 
-**Option B — Use sourcemaps (if you can't disable minification)**
+**Option B - Use sourcemaps (if you can't disable minification)**
 
 ```js
 // vite.config.ts
@@ -157,7 +157,7 @@ In my case, the real error was:
 The code looked like this inside a large React component (~3500 lines):
 
 ```tsx
-// Line ~2256 — declared FIRST
+// Line ~2256 - declared FIRST
 const handleClearAuditView = useCallback(() => {
   setData(null);
   setAuditUrl("");
@@ -168,7 +168,7 @@ const handleClearAuditView = useCallback(() => {
 
 // ... ~150 lines of other hooks, effects, memos ...
 
-// Line ~2400 — declared SECOND
+// Line ~2400 - declared SECOND
 const refreshServerHistory = useCallback(async () => {
   if (!isAuthenticated) return;
   try {
@@ -201,7 +201,7 @@ This is the part that confuses everyone.
 
 **In dev mode:** Vite uses native ESM and serves each module individually. The dependency array `[refreshServerHistory]` is evaluated during render, but Vite's dev server doesn't do the same module concatenation as Rollup, so the TDZ isn't triggered.
 
-**In production:** Rollup concatenates modules into chunks and esbuild minifies them. The variable declarations get hoisted into a single scope. Now `const refreshServerHistory` (minified to `lt`) has real TDZ semantics enforced — accessing it before its declaration in the concatenated output throws a `ReferenceError`.
+**In production:** Rollup concatenates modules into chunks and esbuild minifies them. The variable declarations get hoisted into a single scope. Now `const refreshServerHistory` (minified to `lt`) has real TDZ semantics enforced - accessing it before its declaration in the concatenated output throws a `ReferenceError`.
 
 The key misconception: **`useCallback` dependency arrays evaluate eagerly during render, not lazily when called.** So even though the _body_ of `handleClearAuditView` would only run on click (by which time `refreshServerHistory` exists), the dependency array `[refreshServerHistory]` evaluates **immediately** during the component render pass.
 
@@ -238,7 +238,7 @@ useEffect(() => {
   void refreshServerHistory();
 }, [refreshServerHistory]);
 
-// handleClearAuditView declared AFTER — safe to reference refreshServerHistory
+// handleClearAuditView declared AFTER - safe to reference refreshServerHistory
 const handleClearAuditView = useCallback(() => {
   setData(null);
   setAuditUrl("");
@@ -283,13 +283,13 @@ This catches `const` references before declaration at lint time.
 
 | Symptom | Root cause |
 | --- | --- |
-| `Cannot access 'lt' before initialization` | TDZ violation — `const` callback referenced before its declaration |
+| `Cannot access 'lt' before initialization` | TDZ violation - `const` callback referenced before its declaration |
 | Only crashes in production build | Rollup module concatenation enforces TDZ; dev ESM serving does not |
 | `madge --circular` finds nothing | Bug is declaration order within one file, not circular imports |
 | `tsc --noEmit` passes | TypeScript does not validate runtime evaluation order of `const` in same scope |
 
 The minified variable name is a red herring. Disable minification, read the real error, fix the declaration order.
 
-This class of bug is increasingly common in large React components. `useCallback` and `useMemo` dependency arrays evaluate synchronously during render — they are subject to TDZ just like any other expression. In 2000+ line component files, these ordering bugs can be 150+ lines apart, making them nearly impossible to spot in review. The combination of "works in dev" + "passes typecheck" + "no circular deps" makes this an extremely frustrating class of production-only crash.
+This class of bug is increasingly common in large React components. `useCallback` and `useMemo` dependency arrays evaluate synchronously during render - they are subject to TDZ just like any other expression. In 2000+ line component files, these ordering bugs can be 150+ lines apart, making them nearly impossible to spot in review. The combination of "works in dev" + "passes typecheck" + "no circular deps" makes this an extremely frustrating class of production-only crash.
 
 **The `minify: false` technique is your fastest path to diagnosis.** It turns a cryptic minified symbol into a clear variable name in under 30 seconds.

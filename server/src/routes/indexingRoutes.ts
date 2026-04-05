@@ -150,7 +150,7 @@ router.get('/history', async (req: Request, res: Response) => {
       })),
     });
   } catch (err: any) {
-    // Table may not exist yet — return empty
+    // Table may not exist yet - return empty
     if (err?.code === '42P01') {
       return res.json({ submissions: [] });
     }

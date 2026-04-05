@@ -153,14 +153,14 @@ export default function McpConsolePage() {
         setConnectionNote(`Server reachable · ${(Array.isArray(data) ? data : data.tools || []).length} tools available`);
       } else if (toolsRes.status === 401 || toolsRes.status === 403) {
         setConnectionStatus("failed");
-        setConnectionNote("Authentication required — add your API key to connect");
+        setConnectionNote("Authentication required - add your API key to connect");
       } else {
         setConnectionStatus("failed");
         setConnectionNote(`Server returned ${toolsRes.status}`);
       }
     } catch {
       setConnectionStatus("failed");
-      setConnectionNote("Cannot reach MCP server — check network or API URL");
+      setConnectionNote("Cannot reach MCP server - check network or API URL");
     }
   }, [hasAccess]);
 
@@ -181,7 +181,7 @@ export default function McpConsolePage() {
       const data = await res.json();
       setToolCallResult(data);
     } catch {
-      setToolCallResult({ error: "Network error — could not reach MCP server" });
+      setToolCallResult({ error: "Network error - could not reach MCP server" });
     } finally {
       setToolCallLoading(false);
     }
@@ -233,7 +233,7 @@ export default function McpConsolePage() {
         <div className="px-4 py-16">
           <UpgradeWall
             feature="MCP Server Console"
-            description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports — all from your agent's toolbox."
+            description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports - all from your agent's toolbox."
             requiredTier="alignment"
             icon={<Bot className="h-6 w-6" />}
           />
@@ -260,7 +260,7 @@ export default function McpConsolePage() {
           </h1>
           <p className="mt-1.5 text-sm text-white/50 max-w-2xl">
             Connect AI agents to AiVIS via Model Context Protocol. Run audits, query analytics,
-            access evidence — all through your agent's native tool interface.
+            access evidence - all through your agent's native tool interface.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -282,7 +282,7 @@ export default function McpConsolePage() {
           <Bot className="h-5 w-5 text-violet-400" /> What is MCP?
         </h2>
         <p className="text-sm text-white/55 mb-4 max-w-3xl leading-relaxed">
-          <strong className="text-white/80">Model Context Protocol (MCP)</strong> lets AI coding agents — like Claude Desktop, Cursor, and Windsurf — call AiVIS tools directly.
+          <strong className="text-white/80">Model Context Protocol (MCP)</strong> lets AI coding agents - like Claude Desktop, Cursor, and Windsurf - call AiVIS tools directly.
           Instead of switching between your IDE and the AiVIS dashboard, your agent can run audits, pull scores, and query analytics on your behalf.
         </p>
         <div className="grid sm:grid-cols-3 gap-3">
@@ -292,7 +292,7 @@ export default function McpConsolePage() {
               <span className="text-xs font-semibold text-white/90">In your IDE</span>
             </div>
             <p className="text-[11px] text-white/45 leading-relaxed">
-              Ask your agent: <em className="text-cyan-300/80">"Run an AiVIS audit on example.com"</em> — it handles the rest.
+              Ask your agent: <em className="text-cyan-300/80">"Run an AiVIS audit on example.com"</em> - it handles the rest.
             </p>
           </div>
           <div className="rounded-xl border border-white/8 bg-charcoal-light/30 p-3.5">
@@ -310,7 +310,7 @@ export default function McpConsolePage() {
               <span className="text-xs font-semibold text-white/90">Secure & scoped</span>
             </div>
             <p className="text-[11px] text-white/45 leading-relaxed">
-              All calls use your API key with configurable scopes — your agent only sees what you allow.
+              All calls use your API key with configurable scopes - your agent only sees what you allow.
             </p>
           </div>
         </div>
@@ -497,7 +497,7 @@ export default function McpConsolePage() {
                   <span className="text-xs font-semibold text-white">Start Using Tools</span>
                 </div>
                 <p className="text-[11px] text-white/40 leading-relaxed">
-                  Ask your agent to "run an AiVIS audit on example.com" — it will auto-discover and invoke the right tool.
+                  Ask your agent to "run an AiVIS audit on example.com" - it will auto-discover and invoke the right tool.
                 </p>
               </div>
             </div>
@@ -647,7 +647,7 @@ export default function McpConsolePage() {
                           {toolCallLoading && activeToolCall === "get_usage" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
                           Try it now
                         </button>
-                        <span className="text-[11px] text-white/25">Read-only — shows your current usage</span>
+                        <span className="text-[11px] text-white/25">Read-only - shows your current usage</span>
                       </div>
                     )}
 

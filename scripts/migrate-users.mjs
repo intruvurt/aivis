@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * migrate-users.mjs — Copy users from the old Neon DB to the new one.
+ * migrate-users.mjs - Copy users from the old Neon DB to the new one.
  *
  * Usage (from repo root):
  *   node scripts/migrate-users.mjs
@@ -14,10 +14,10 @@
  *   - For each user, upserts into the new DB by email (dedup-safe)
  *   - Also migrates: usage_daily, payments, audits, user_notification_preferences
  *   - Preserves original UUIDs where possible (avoids FK breakage)
- *   - Dry-run mode by default — pass --execute to actually write
+ *   - Dry-run mode by default - pass --execute to actually write
  *
  * Safety:
- *   - Uses ON CONFLICT (email) DO NOTHING for users — never overwrites existing
+ *   - Uses ON CONFLICT (email) DO NOTHING for users - never overwrites existing
  *   - Skips child rows whose user already exists in target (avoids dupes)
  *   - Runs inside a transaction so it's all-or-nothing
  */
@@ -72,7 +72,7 @@ async function run() {
   const oldOk = await testConnection(oldPool, 'Old DB');
   const newOk = await testConnection(newPool, 'New DB');
   if (!oldOk || !newOk) {
-    console.error('\nCannot proceed — fix connection issues above.');
+    console.error('\nCannot proceed - fix connection issues above.');
     process.exit(1);
   }
 
@@ -108,7 +108,7 @@ async function run() {
   }
 
   if (toMigrate.length === 0) {
-    console.log('\n✓ No new users to migrate — all already in new DB.');
+    console.log('\n✓ No new users to migrate - all already in new DB.');
     await cleanup();
     return;
   }
@@ -232,7 +232,7 @@ async function run() {
           console.warn(`    ⚠ prefs skip: ${e.message}`);
         }
       } else {
-        console.log(`  ⏭ ${u.email} (conflict — already exists)`);
+        console.log(`  ⏭ ${u.email} (conflict - already exists)`);
       }
     }
 

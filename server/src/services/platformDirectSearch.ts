@@ -77,7 +77,7 @@ async function searchReddit(query: string, limit = 12): Promise<PlatformRow[]> {
   return data.data.children.map((child) => {
     const d = child.data;
     const snippet = truncate(
-      [d.subreddit_name_prefixed, d.selftext?.replace(/\s+/g, ' ')].filter(Boolean).join(' — '),
+      [d.subreddit_name_prefixed, d.selftext?.replace(/\s+/g, ' ')].filter(Boolean).join(' - '),
       300,
     );
     return {
@@ -146,7 +146,7 @@ async function searchGitHub(query: string, limit = 10): Promise<PlatformRow[]> {
     ].filter(Boolean).join(' · ');
     return {
       title: item.full_name,
-      snippet: truncate([item.description, meta].filter(Boolean).join(' — '), 300),
+      snippet: truncate([item.description, meta].filter(Boolean).join(' - '), 300),
       href: item.html_url,
     };
   });
@@ -308,7 +308,7 @@ async function searchMedium(query: string, limit = 10): Promise<PlatformRow[]> {
     }
   } catch { /* skip */ }
 
-  // Path 2: Google RSS fallback — "site:medium.com query" via Google News RSS
+  // Path 2: Google RSS fallback - "site:medium.com query" via Google News RSS
   if (results.length === 0) {
     try {
       const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(`site:medium.com ${query}`)}&hl=en-US&gl=US&ceid=US:en`;

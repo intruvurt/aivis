@@ -189,7 +189,7 @@ export default function IndexingPage() {
         if (errMsg.includes("INDEXNOW_KEY")) {
           toast.error("IndexNow key not configured on server. Contact admin.");
         } else if (errMsg.includes("HTTP 403") || errMsg.includes("422")) {
-          toast.error("IndexNow verification failed — the key file may not be deployed yet. Redeploy the site and retry.");
+          toast.error("IndexNow verification failed - the key file may not be deployed yet. Redeploy the site and retry.");
         } else if (errMsg.includes("No submitted URLs match")) {
           toast.error(errMsg);
         } else {
@@ -269,7 +269,7 @@ export default function IndexingPage() {
         </div>
         <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
           <div className="text-2xl font-bold text-emerald-300 tabular-nums">
-            {totalSubmitted > 0 ? `${Math.round((totalSubmitted / (totalSubmitted + history.reduce((s, h) => s + h.skippedCount, 0))) * 100)}%` : '—'}
+            {totalSubmitted > 0 ? `${Math.round((totalSubmitted / (totalSubmitted + history.reduce((s, h) => s + h.skippedCount, 0))) * 100)}%` : '-'}
           </div>
           <div className="text-[11px] text-white/40 mt-0.5">Success Rate</div>
         </div>
@@ -631,7 +631,7 @@ export default function IndexingPage() {
                   {setupStatus.configured ? (
                     <span className="text-emerald-400">✓ IndexNow is configured on this server (key: {setupStatus.keyHint})</span>
                   ) : (
-                    <span className="text-amber-400">⚠ INDEXNOW_KEY is not set — submissions will be skipped</span>
+                    <span className="text-amber-400">⚠ INDEXNOW_KEY is not set - submissions will be skipped</span>
                   )}
                 </p>
               )}
@@ -672,9 +672,9 @@ export default function IndexingPage() {
               </h4>
               <ul className="text-xs text-white/60 space-y-1.5 list-disc list-inside">
                 <li>Instantly notifies search engines (Bing, Yandex, Seznam, Naver) about new or updated URLs</li>
-                <li>Supported by Bing, Yandex, Seznam.cz, and Naver — one API call reaches all participating engines</li>
-                <li>Google does <strong className="text-white/80">not</strong> support IndexNow — use Google Search Console for URL inspection</li>
-                <li>Does not guarantee indexing — it signals crawl priority to engines that support the protocol</li>
+                <li>Supported by Bing, Yandex, Seznam.cz, and Naver - one API call reaches all participating engines</li>
+                <li>Google does <strong className="text-white/80">not</strong> support IndexNow - use Google Search Console for URL inspection</li>
+                <li>Does not guarantee indexing - it signals crawl priority to engines that support the protocol</li>
                 <li>Free to use with no rate limits (beyond search engine provider limits)</li>
               </ul>
             </div>

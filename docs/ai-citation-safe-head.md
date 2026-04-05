@@ -75,7 +75,7 @@ Rules:
 ### 2. Page Title
 
 ```html
-<title>ProductName — Clear Functional Descriptor</title>
+<title>ProductName - Clear Functional Descriptor</title>
 ```
 
 Rules:
@@ -119,13 +119,13 @@ Rules:
 ```html
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="ProductName" />
-<meta property="og:title" content="ProductName — Clear Functional Descriptor" />
+<meta property="og:title" content="ProductName - Clear Functional Descriptor" />
 <meta property="og:description" content="Concise explanation of the product or page." />
 <meta property="og:url" content="https://example.com/" />
 <meta property="og:image" content="https://example.com/og-image.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="ProductName — Clear Functional Descriptor" />
+<meta property="og:image:alt" content="ProductName - Clear Functional Descriptor" />
 ```
 
 Rules:
@@ -141,10 +141,10 @@ Rules:
 
 ```html
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="ProductName — Clear Functional Descriptor" />
+<meta name="twitter:title" content="ProductName - Clear Functional Descriptor" />
 <meta name="twitter:description" content="Concise explanation of the product or page." />
 <meta name="twitter:image" content="https://example.com/og-image.jpg" />
-<meta name="twitter:image:alt" content="ProductName — Clear Functional Descriptor" />
+<meta name="twitter:image:alt" content="ProductName - Clear Functional Descriptor" />
 ```
 
 Rules:

@@ -207,7 +207,7 @@ export default function CompareRankScalePage() {
           <section className="rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/[0.08] to-violet-500/[0.08] p-8 text-center">
             <h3 className="text-2xl font-bold mb-3 text-white">See What Content Optimization Tools Miss</h3>
             <p className="text-white/65 mb-5 max-w-xl mx-auto">
-              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini evaluate your content — beyond keyword rankings.
+              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini evaluate your content - beyond keyword rankings.
             </p>
             <Link
               to="/"
@@ -215,6 +215,17 @@ export default function CompareRankScalePage() {
             >
               Run Free AI Visibility Audit <ArrowRight className="h-4 w-4" />
             </Link>
+          </section>
+
+          <section className="mt-10">
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/compare/ahrefs" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Ahrefs</Link>
+              <Link to="/compare/semrush" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Semrush</Link>
+              <Link to="/compare/otterly" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Otterly</Link>
+              <Link to="/compare/profound" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Profound</Link>
+              <Link to="/compare/reaudit" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Reaudit</Link>
+            </div>
           </section>
 
           <p className="text-xs text-white/40 mt-6">

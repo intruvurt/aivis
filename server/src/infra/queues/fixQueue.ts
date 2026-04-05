@@ -1,5 +1,5 @@
 /**
- * BullMQ Fix Queue — processes automated fix generation for audit issues.
+ * BullMQ Fix Queue - processes automated fix generation for audit issues.
  * Fix → Generate Patch → Enqueue PR → GitHub service → PR created.
  */
 import { Queue } from 'bullmq';
@@ -33,7 +33,7 @@ export function getFixQueue(): Queue<FixJobData> | null {
 
 export async function enqueueFixJob(data: FixJobData): Promise<string> {
   const queue = getFixQueue();
-  if (!queue) throw new Error('Fix queue unavailable — Redis not configured');
+  if (!queue) throw new Error('Fix queue unavailable - Redis not configured');
   const job = await queue.add('generate-fix', data, { priority: 2 });
   return job.id!;
 }

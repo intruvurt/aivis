@@ -1,5 +1,5 @@
 /**
- * fixpackGenerator.ts — Generates concrete, actionable fixpacks from
+ * fixpackGenerator.ts - Generates concrete, actionable fixpacks from
  * failed SSFR rule results and evidence items.
  *
  * Each fixpack contains real, ready-to-use assets (JSON-LD patches,
@@ -135,7 +135,7 @@ const TEMPLATES: FixpackTemplate[] = [
     rule_id: 'source_robots_txt',
     type: 'content_block',
     title: 'Create or fix robots.txt',
-    summary: 'robots.txt is missing or inaccessible. Hard blocker — search engines and AI crawlers cannot verify access permissions.',
+    summary: 'robots.txt is missing or inaccessible. Hard blocker - search engines and AI crawlers cannot verify access permissions.',
     auto_generatable: true,
     generate(_, targetUrl) {
       const domain = extractDomain(targetUrl);
@@ -151,7 +151,7 @@ const TEMPLATES: FixpackTemplate[] = [
     rule_id: 'source_ai_crawler_access',
     type: 'content_block',
     title: 'Unblock AI crawlers in robots.txt',
-    summary: 'One or more AI crawlers are explicitly blocked. Critical hard blocker — blocked crawlers cannot index or cite your content.',
+    summary: 'One or more AI crawlers are explicitly blocked. Critical hard blocker - blocked crawlers cannot index or cite your content.',
     auto_generatable: true,
     generate(evidence) {
       const item = findEvidence(evidence, 'ai_crawler_access');
@@ -235,7 +235,7 @@ const TEMPLATES: FixpackTemplate[] = [
     rule_id: 'signal_json_ld',
     type: 'schema_fix',
     title: 'Add JSON-LD structured data',
-    summary: 'No JSON-LD schema blocks found. Hard blocker — structured data is essential for AI entity extraction.',
+    summary: 'No JSON-LD schema blocks found. Hard blocker - structured data is essential for AI entity extraction.',
     auto_generatable: true,
     generate(_, targetUrl) {
       const schema = {
@@ -325,7 +325,7 @@ const TEMPLATES: FixpackTemplate[] = [
     rule_id: 'fact_word_count',
     type: 'insight',
     title: 'Increase content depth',
-    summary: 'Content is below 800 words. Hard blocker — thin content is rarely cited by AI models.',
+    summary: 'Content is below 800 words. Hard blocker - thin content is rarely cited by AI models.',
     auto_generatable: false,
     generate(evidence) {
       const item = findEvidence(evidence, 'word_count');
@@ -383,7 +383,7 @@ const TEMPLATES: FixpackTemplate[] = [
       return [{
         type: 'markdown' as const,
         label: 'Alt text audit guide',
-        content: `## Improve Image Alt Text\n\nCurrent coverage: ${Math.round((val?.coverage ?? 0) * 100)}%\nTotal images: ${val?.total ?? 'unknown'}\nWith alt: ${val?.with_alt ?? 'unknown'}\n\nEvery meaningful image needs descriptive alt text. Use specific, factual descriptions — not keyword stuffing.`,
+        content: `## Improve Image Alt Text\n\nCurrent coverage: ${Math.round((val?.coverage ?? 0) * 100)}%\nTotal images: ${val?.total ?? 'unknown'}\nWith alt: ${val?.with_alt ?? 'unknown'}\n\nEvery meaningful image needs descriptive alt text. Use specific, factual descriptions - not keyword stuffing.`,
       }];
     },
   },

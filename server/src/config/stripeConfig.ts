@@ -74,7 +74,7 @@ export const STRIPE_PRICING = {
     priceId: process.env.STRIPE_SIGNAL_MONTHLY_PRICE_ID,
     amountCents: 14900, // $149/month
     yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
-    yearlyAmountCents: 106800, // $1,068/year ($89/mo, saves $720 — 40% off)
+    yearlyAmountCents: 106800, // $1,068/year ($89/mo, saves $720 - 40% off)
     mode: 'subscription',
     metadata: {
       tier_key: 'signal',

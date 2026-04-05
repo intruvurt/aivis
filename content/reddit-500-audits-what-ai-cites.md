@@ -2,13 +2,13 @@
 
 **Platform:** Reddit  
 **Target subs:** r/SEO, r/ChatGPT, r/artificial, r/webdev, r/marketing, r/juststart, r/Entrepreneur  
-**Format:** Long self-post (no link in title — link AiVIS in body text naturally)  
+**Format:** Long self-post (no link in title - link AiVIS in body text naturally)  
 **Tone:** First-person builder, data-driven findings, helpful not promotional  
 **Estimated read time:** 12 min  
 
 ---
 
-I've been building a tool called [AiVIS](https://aivis.biz) for the past year and a half. It audits websites for AI citation readiness — meaning: can ChatGPT, Perplexity, Claude, and Google AI Overview actually parse, trust, and cite your content when someone asks a question your site should answer?
+I've been building a tool called [AiVIS](https://aivis.biz) for the past year and a half. It audits websites for AI citation readiness - meaning: can ChatGPT, Perplexity, Claude, and Google AI Overview actually parse, trust, and cite your content when someone asks a question your site should answer?
 
 Over that time I've run somewhere north of 500 audits across SaaS products, e-commerce sites, local businesses, personal brands, news outlets, and B2B service pages. I've seen average scores as low as 12 (a well-known DTC brand with a fast, beautiful site that blocks every AI crawler) and as high as 94 (a boring-looking B2B consulting firm with pristine schema, 1,400-word service pages, and every FAQ formatted in Q&A heading pairs).
 
@@ -20,7 +20,7 @@ Here's what I've actually learned from all of it. No theory. Just patterns from 
 
 I did not expect this going in. I thought the biggest problem would be schema markup or content thinness.
 
-Nope. The most prevalent hard blocker — meaning a structural problem that caps your score at 60 regardless of everything else — is blocking AI crawlers in your robots.txt.
+Nope. The most prevalent hard blocker - meaning a structural problem that caps your score at 60 regardless of everything else - is blocking AI crawlers in your robots.txt.
 
 About 34% of sites I've audited are actively blocking at least one major AI crawler. GPTBot (OpenAI's crawler), ClaudeBot (Anthropic), PerplexityBot, or CCBot (Common Crawl, which feeds many AI training pipelines). Sometimes all of them.
 
@@ -31,7 +31,7 @@ The reason this happens is usually one of two things:
 
 Check your own robots.txt right now. Go to yourdomain.com/robots.txt and look for `User-agent: GPTBot`, `User-agent: ClaudeBot`, `User-agent: PerplexityBot`. If they have a `Disallow: /` under them, you are invisible to those models. Period. Those models will never voluntarily crawl you, which means your content is not in their real-time index and won't get cited in time-sensitive answers.
 
-You can check this free using the [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) — it returns a letter grade (A through F) for each crawler separately. No account needed.
+You can check this free using the [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) - it returns a letter grade (A through F) for each crawler separately. No account needed.
 
 ---
 
@@ -39,7 +39,7 @@ You can check this free using the [AiVIS Robots Checker](https://aivis.biz/tools
 
 The second most common hard blocker (caps your score at 75) is not having Organization or LocalBusiness JSON-LD on your page.
 
-This is how AI models identify what kind of entity you are. Without it, they're guessing from context. And when AI models guess about entity type, the default behavior is conservatism — they skip you if there's any uncertainty.
+This is how AI models identify what kind of entity you are. Without it, they're guessing from context. And when AI models guess about entity type, the default behavior is conservatism - they skip you if there's any uncertainty.
 
 Here's the exact minimum schema that satisfies the check:
 
@@ -70,15 +70,15 @@ Put this in a `<script type="application/ld+json">` tag in your `<head>`. Deploy
 
 This one is underappreciated and I keep seeing it on React and Next.js sites that don't have proper SSR or SSG configured.
 
-Claude processes HTML. It does not execute JavaScript. If your page content is rendered client-side — meaning the HTML delivery from your server is essentially empty and the content appears after JavaScript runs — Claude literally sees no content.
+Claude processes HTML. It does not execute JavaScript. If your page content is rendered client-side - meaning the HTML delivery from your server is essentially empty and the content appears after JavaScript runs - Claude literally sees no content.
 
 Perplexity crawls with Chromium-based rendering (it does execute JS), but its parser still favors static, well-structured HTML because dynamic render timing introduces variability.
 
 ChatGPT's Bing-index dependency means you're relying on Bingbot's crawl, and while Bingbot can execute JS, it defers JavaScript rendering and may not fully capture content in deeply async-loaded components.
 
-The pattern I see repeatedly: a Next.js site with `getStaticProps` is fine. A React SPA where content loads from an API call after mount — the main text, the H1, the FAQs — is invisible to Claude and partially invisible to GPT.
+The pattern I see repeatedly: a Next.js site with `getStaticProps` is fine. A React SPA where content loads from an API call after mount - the main text, the H1, the FAQs - is invisible to Claude and partially invisible to GPT.
 
-Quick test: In Chrome DevTools, disable JavaScript (Settings > Debugger > Disable JavaScript) and reload your page. Whatever text is visible to you now is what Claude sees. If your value proposition, your main content, and your headings are all gone — you have a problem.
+Quick test: In Chrome DevTools, disable JavaScript (Settings > Debugger > Disable JavaScript) and reload your page. Whatever text is visible to you now is what Claude sees. If your value proposition, your main content, and your headings are all gone - you have a problem.
 
 ---
 
@@ -98,7 +98,7 @@ One pattern I've seen work very well: add an FAQ section at the bottom of every 
 
 ## Finding 5: Sites With High Google Scores Have No Correlation With AI Visibility Scores
 
-This is the one that surprises people most when I tell them. I've run the numbers. Domain Authority, Core Web Vitals, Google organic traffic — none of these have meaningful correlation with AI visibility scores in my dataset.
+This is the one that surprises people most when I tell them. I've run the numbers. Domain Authority, Core Web Vitals, Google organic traffic - none of these have meaningful correlation with AI visibility scores in my dataset.
 
 I've audited sites with DA 70+ that score 38 on AI visibility. I've audited DA 12 blogs that score 81 because the author obsesses over structured data and semantic clarity.
 
@@ -114,7 +114,7 @@ This is the underlying reason I built AiVIS. People were trying to solve an AI v
 
 When I look at which pages on a domain are actually cited in AI answers, it's almost never the homepage. It's the most information-dense, question-answering page they have.
 
-For SaaS tools it's usually a comparison page, a features breakdown, or a use-case page. For B2B services it's a methodology or approach page. For local businesses it's sometimes the About page — if it actually has substantial information about the team, credentials, and process rather than 3 sentences and a stock photo.
+For SaaS tools it's usually a comparison page, a features breakdown, or a use-case page. For B2B services it's a methodology or approach page. For local businesses it's sometimes the About page - if it actually has substantial information about the team, credentials, and process rather than 3 sentences and a stock photo.
 
 The highest-scoring pages I've seen follow the same template:
 - **Title tag** between 20-70 characters, clearly states topic + entity
@@ -137,7 +137,7 @@ I've seen people panic about Core Web Vitals in the context of AI visibility. Th
 
 AI models don't score your LCP or CLS. They fetch your page and parse the HTML. Below about a 5-second response time, I've seen no pattern suggesting faster pages score higher on AI visibility.
 
-Above 5 seconds (or sites that sometimes timeout at 10-15s because of heavy server processing), the crawlers give up and move on. That creates incomplete data and scores drop. But the difference between a 0.8s page and a 2.5s page — irrelevant to AI visibility scores in my dataset.
+Above 5 seconds (or sites that sometimes timeout at 10-15s because of heavy server processing), the crawlers give up and move on. That creates incomplete data and scores drop. But the difference between a 0.8s page and a 2.5s page - irrelevant to AI visibility scores in my dataset.
 
 Stop worrying about Core Web Vitals for AI citation purposes. Worry about whether your content is actually on the page when the crawler arrives.
 
@@ -147,11 +147,11 @@ Stop worrying about Core Web Vitals for AI citation purposes. Worry about whethe
 
 If you can only do 3 things, here's what moves the needle fastest based on actual audit data:
 
-**1. Fix your robots.txt** — Allow GPTBot, ClaudeBot, PerplexityBot. If they're currently blocked, this one change can move your score by 20-30 points immediately because it removes a hard cap.
+**1. Fix your robots.txt** - Allow GPTBot, ClaudeBot, PerplexityBot. If they're currently blocked, this one change can move your score by 20-30 points immediately because it removes a hard cap.
 
-**2. Add Organization JSON-LD with sameAs** — 20-30 minutes of work. Moves your score 10-15 points if it was missing.
+**2. Add Organization JSON-LD with sameAs** - 20-30 minutes of work. Moves your score 10-15 points if it was missing.
 
-**3. Add FAQ headings to your most important page** — Write 5-8 real questions your customers ask, formatted as H2 or H3 headings with answers in the paragraphs below. This improves your content structure score and creates citation-ready answer fragments.
+**3. Add FAQ headings to your most important page** - Write 5-8 real questions your customers ask, formatted as H2 or H3 headings with answers in the paragraphs below. This improves your content structure score and creates citation-ready answer fragments.
 
 None of this requires a developer. All three can be done with whatever CMS you're using.
 
@@ -161,10 +161,10 @@ None of this requires a developer. All three can be done with whatever CMS you'r
 
 All of these are on AiVIS and require no account:
 
-- **Robots Checker** — [aivis.biz/tools/robots-checker](https://aivis.biz/tools/robots-checker) — graded A through F for each major AI crawler
-- **Schema Validator** — [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) — checks JSON-LD, Open Graph, Twitter Cards, Microdata
-- **Content Extractability** — [aivis.biz/tools/content-extractability](https://aivis.biz/tools/content-extractability) — heading hierarchy, list usage, content density
+- **Robots Checker** - [aivis.biz/tools/robots-checker](https://aivis.biz/tools/robots-checker) - graded A through F for each major AI crawler
+- **Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - checks JSON-LD, Open Graph, Twitter Cards, Microdata
+- **Content Extractability** - [aivis.biz/tools/content-extractability](https://aivis.biz/tools/content-extractability) - heading hierarchy, list usage, content density
 
-Full audit with visibility score: [aivis.biz/analyze](https://aivis.biz/analyze) — 10 free scans on the Observer tier, no credit card.
+Full audit with visibility score: [aivis.biz/analyze](https://aivis.biz/analyze) - 10 free scans on the Observer tier, no credit card.
 
 Happy to answer specific questions about results if you run an audit and share it here.

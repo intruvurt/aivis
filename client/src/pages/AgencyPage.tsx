@@ -1,5 +1,5 @@
 /**
- * AgencyPage — Portfolio Command Center (Agency + Enterprise tier)
+ * AgencyPage - Portfolio Command Center (Agency + Enterprise tier)
  *
  * Provides:
  * - Portfolio overview metrics (total projects, avg score, critical/warning counts)
@@ -86,7 +86,7 @@ async function apiFetch(path: string, opts?: RequestInit) {
 }
 
 function scoreBadge(score: number | null | undefined) {
-  if (score == null) return <span className="text-white/30 text-xs">—</span>;
+  if (score == null) return <span className="text-white/30 text-xs">-</span>;
   const color =
     score >= 70 ? "text-emerald-400" : score >= 45 ? "text-amber-400" : "text-rose-400";
   return <span className={`font-mono font-bold text-sm ${color}`}>{score}</span>;
@@ -151,7 +151,7 @@ function StatCard({
       <div>
         <p className="text-white/50 text-xs">{label}</p>
         <p className="text-white font-bold text-xl leading-tight">
-          {value ?? "—"}
+          {value ?? "-"}
         </p>
       </div>
     </div>
@@ -282,7 +282,7 @@ function BulkFixProgressBar({ job, onDone }: { job: BulkFixJob; onDone: () => vo
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-white/80 text-sm">
           <Zap className="w-4 h-4 text-indigo-400" />
-          <span>Bulk Fix — {job.fix_type}</span>
+          <span>Bulk Fix - {job.fix_type}</span>
           <span className="text-white/40 text-xs">{new Date(job.created_at).toLocaleTimeString()}</span>
         </div>
         <span className="text-white/50 text-xs">
@@ -681,7 +681,7 @@ export default function AgencyPage() {
                     <td className="p-3 hidden md:table-cell">
                       <div className="flex items-center gap-1.5">
                         {statusDot(project.status)}
-                        <span className="text-white/50 text-xs capitalize">{project.status ?? "—"}</span>
+                        <span className="text-white/50 text-xs capitalize">{project.status ?? "-"}</span>
                       </div>
                     </td>
                     <td className="p-3 text-white/30 text-xs hidden lg:table-cell">

@@ -49,7 +49,7 @@ const QUICK_STATS = [
 ];
 
 const WORKFLOW_STEPS = [
-  { step: 1, label: "Enter URL", detail: "Paste any URL — queries are generated from page content, entities, and keywords." },
+  { step: 1, label: "Enter URL", detail: "Paste any URL - queries are generated from page content, entities, and keywords." },
   { step: 2, label: "AI generates queries", detail: "Realistic prompts are built from your audited entity profile and topic signals." },
   { step: 3, label: "Multi-platform test", detail: "Each query runs across 4 AI platforms + 3 web search engines simultaneously." },
   { step: 4, label: "Review & act", detail: "See mention rates, excerpts, competitor presence, and diagnostic fixes." },
@@ -83,7 +83,7 @@ export default function CitationsPage() {
   const hasAccess = meetsMinimumTier(userTier, "alignment");
   const hasSignal = meetsMinimumTier(userTier, "signal");
 
-  /* URL input state — defaults to latest audited URL if available */
+  /* URL input state - defaults to latest audited URL if available */
   const defaultUrl = latestResult?.url || "";
   const [urlInput, setUrlInput] = useState(defaultUrl);
   const [activeUrl, setActiveUrl] = useState(defaultUrl);
@@ -144,7 +144,7 @@ export default function CitationsPage() {
                 Enter any URL to generate citation queries
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/55">
-                Queries are generated from the page's actual content, entities, keywords, and structure — not generic templates. Each URL produces a unique set of realistic AI-answer prompts.
+                Queries are generated from the page's actual content, entities, keywords, and structure - not generic templates. Each URL produces a unique set of realistic AI-answer prompts.
               </p>
 
               <form onSubmit={handleUrlSubmit} className="mt-5">
@@ -201,7 +201,7 @@ export default function CitationsPage() {
             </div>
           </div>
 
-          {/* Workflow steps — collapsed on mobile */}
+          {/* Workflow steps - collapsed on mobile */}
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {WORKFLOW_STEPS.map((item) => (
               <div key={item.step} className="flex items-start gap-2 rounded-xl border border-white/6 bg-charcoal/40 p-3">
@@ -339,7 +339,7 @@ export default function CitationsPage() {
                   </div>
                 </section>
 
-                {/* Niche ranking — the main automation tool */}
+                {/* Niche ranking - the main automation tool */}
                 <NicheRankingPanel targetUrl={activeUrl} showScheduler={true} />
               </div>
             )}

@@ -44,7 +44,7 @@ interface TierPricing {
   key: string;
   name: string;
   displayName: string;
-  billingModel: "free" | "subscription" | "one_time";
+  billingModel: "core" | "subscription" | "one_time";
   pricing: {
     monthly: TierPrice | null;
     yearly: TierPrice | null;
@@ -87,7 +87,7 @@ const TIER_ICONS: Record<string, ReactNode> = {
   scorefix: (
     <img
       src="/images/tier-scorefix-sm.png"
-      alt="Score Fix"
+      alt="AutoFix PR"
       className="w-8 h-8 object-contain tier-icon-brand"
     />
   ),
@@ -99,7 +99,7 @@ const TIER_COLORS: Record<
 > = TIER_BRAND_PALETTE;
 
 const TIER_POSITIONING: Record<string, string> = {
-  observer: "find out what AI models can actually read on your site — free",
+  observer: "find out what AI models can actually read on your site - free",
   alignment: "turn audit findings into fixes you can export and implement",
   signal: "run audit workflows across multiple sites and team members",
   scorefix: "ship fixes automatically as GitHub pull requests via MCP",
@@ -122,9 +122,9 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "top 3 proven blockers",
       "limited evidence preview",
       "1 competitor gap snapshot",
-      "shareable report",
+      "shareable reports",
     ],
-    cta: "Run free audit",
+    cta: "See your AI blockers",
   },
   alignment: {
     headline: "Turn findings into fixes",
@@ -133,34 +133,39 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "full report",
       "full evidence",
       "prioritized fix plan",
+      "team collaboration",
       "exportable reports",
       "limited competitor intelligence",
-      "40–60 audits/month",
+      "60 audits/month",
     ],
     cta: "Fix what’s blocking you",
-    priceLabel: "$29–49/mo",
+    priceLabel: "$49/mo",
   },
   signal: {
     headline: "Track who is beating you and why",
-    body: "Monitor citations, competitors, and visibility shifts over time and see what changes after every fix.",
+    body: "Monitor citations, competitors and visibility shifts over time and see what changes after every fix.",
     includes: [
       "citation tracking",
       "competitor intelligence",
       "source gap detection",
       "scheduled rescans",
+      "white-label exports",
       "historical deltas",
-      "alerts",
+      "workflow alerts",
       "full evidence ledger",
     ],
     cta: "Track your visibility",
+    priceLabel: "$149/mo",
   },
   scorefix: {
     headline: "Ship fixes, not guesses",
-    body: "Get exact remediation mapped to code, pages, or structure and verify what improved after deployment.",
+    body: "Get exact remediation mapped to code, pages or structure and verify what improved after deployment.",
     includes: [
       "exact remediation",
       "PR-ready outputs",
       "verification after fix",
+      "MCP integration",
+      "600-1000 code lines max - varies by issue complexity",
     ],
     cta: "Get the fix pack",
     priceLabel: "$299",
@@ -172,13 +177,13 @@ const VALUE_RAIL = [
     icon: ShieldCheck,
     title: "Diagnose, not just track",
     detail:
-      "Visibility dashboards show you a chart. AiVIS shows you the broken schema, the missing FAQ block, and the exact line that needs to change.",
+      "Visibility dashboards show you a chart. AiVIS shows you the broken schema, the missing FAQ block and the exact line that needs to change.",
   },
   {
     icon: Zap,
-    title: "Evidence-linked fixes, not generic advice",
+    title: "Evidence-backed fixes, not generic advice",
     detail:
-      "Every recommendation traces to a specific crawled element on your page — not a vague suggestion to 'improve your content.'",
+      "Every recommendation traces to a specific crawled element on your page - not a vague suggestion to 'improve your content.'",
   },
   {
     icon: Rocket,
@@ -192,12 +197,12 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "Is AiVIS free to use?",
     answer:
-      "Yes. Observer is free and includes 3 audits per month, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
+      "Yes. Observer is free and includes 3 audits per month, up to 3 pages per audit, top blockers and a limited evidence preview. No credit card is required to start.",
   },
   {
     question: "How is AiVIS different from AI visibility dashboards like Semrush?",
     answer:
-      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and — with Score Fix — opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
+      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and - with AutoFix PR - opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
   },
   {
     question: "What is the difference between Observer, Alignment, and Signal?",
@@ -207,7 +212,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "What does multi-model AI validation mean?",
     answer:
-      "Multi-model validation runs a triple-check AI pipeline: three independent models score, critique, and validate each audit. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Signal and Score Fix plans. Score Fix also adds automated GitHub PR generation via MCP, costing 10-25 credits per fix.",
+      "Multi-model validation runs a triple-check AI pipeline: three independent models score, critique, and validate each audit. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Signal and Score Fix plans. Score Fix also adds automated GitHub PR generation via MCP, credit usage based on the complexity of the fix.",
   },
   {
     question: "How does annual billing work?",
@@ -227,7 +232,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "What payment methods are accepted?",
     answer:
-      "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers — contact sales@aivis.biz. Crypto payment options are available by contacting support.",
+      "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.",
   },
 ] as const;
 
@@ -1163,7 +1168,7 @@ export default function PricingPage() {
         <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
           <div className="p-5 border-b border-white/8">
             <h2 className="text-base font-semibold text-white">Compare plans at a glance</h2>
-            <p className="text-xs text-white/50 mt-1">Key capabilities by tier — check marks show included features</p>
+            <p className="text-xs text-white/50 mt-1">Key capabilities by tier - check marks show included features</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -1201,7 +1206,7 @@ export default function PricingPage() {
                         {v === true ? (
                           <Check className="h-3.5 w-3.5 text-emerald-400 mx-auto" />
                         ) : v === false ? (
-                          <span className="text-white/20">—</span>
+                          <span className="text-white/20">-</span>
                         ) : (
                           <span className="text-white/70 font-medium">{v}</span>
                         )}
@@ -1391,6 +1396,16 @@ export default function PricingPage() {
 
         <div className="mt-6 text-center text-sm text-white/55">
           Enterprise or volume pricing? <a href="mailto:sales@aivis.biz" className="text-white/80 hover:text-white underline underline-offset-2 transition-colors">sales@aivis.biz</a>
+        </div>
+
+        <div className="mt-10">
+          <h3 className="text-lg font-semibold text-white/80 mb-4 text-center">Learn More About AiVIS</h3>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/methodology" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Methodology</Link>
+            <Link to="/compliance" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Compliance</Link>
+            <Link to="/guide" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Implementation Guide</Link>
+            <Link to="/why-ai-visibility" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Why AI Visibility?</Link>
+          </div>
         </div>
 
         <div className="mt-4 text-center">

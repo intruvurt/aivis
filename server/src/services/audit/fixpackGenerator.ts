@@ -1,12 +1,12 @@
 /**
- * Fixpack Generator — produces 5 fixpack classes from rule results + evidence.
+ * Fixpack Generator - produces 5 fixpack classes from rule results + evidence.
  *
  * Fixpack classes:
- *   1. Foundation — crawlability, indexability, renderability fixes
- *   2. Schema — JSON-LD / structured data additions
- *   3. AI Readability — metadata, entity, content improvements
- *   4. Public Proof — citation + trust layer fixes
- *   5. Content Depth — long-form content + FAQ expansion
+ *   1. Foundation - crawlability, indexability, renderability fixes
+ *   2. Schema - JSON-LD / structured data additions
+ *   3. AI Readability - metadata, entity, content improvements
+ *   4. Public Proof - citation + trust layer fixes
+ *   5. Content Depth - long-form content + FAQ expansion
  *
  * Every fixpack asset is real, actionable content (code snippets, text).
  * Never generates empty shells.
@@ -353,11 +353,11 @@ function generateSchemaAssets(
       label: 'Schema diversification',
       content: [
         'Add additional schema types relevant to your content:',
-        '• Organization — for company pages',
-        '• LocalBusiness — for service area pages',
-        '• Article — for blog posts and news',
-        '• Product — for product pages',
-        '• BreadcrumbList — for navigation hierarchy',
+        '• Organization - for company pages',
+        '• LocalBusiness - for service area pages',
+        '• Article - for blog posts and news',
+        '• Product - for product pages',
+        '• BreadcrumbList - for navigation hierarchy',
         '',
         'Use Google\'s Rich Results Test to validate: https://search.google.com/test/rich-results',
       ].join('\n'),
@@ -378,7 +378,7 @@ function generateReadabilityAssets(
     assets.push({
       assetType: 'html_snippet',
       label: 'Add a descriptive title tag',
-      content: '<title>Your Page Title — Brand Name</title>',
+      content: '<title>Your Page Title - Brand Name</title>',
     });
   }
 
@@ -454,7 +454,7 @@ function generateProofAssets(
     assets.push({
       assetType: 'guidance',
       label: 'Optimize meta description length',
-      content: `Your meta description is ${current.length} characters. Target 50–160 characters for optimal citation snippet extraction.${current.length < 50 ? ' Current text is too short — expand with key details.' : ' Consider trimming to stay under 160 characters.'}`,
+      content: `Your meta description is ${current.length} characters. Target 50–160 characters for optimal citation snippet extraction.${current.length < 50 ? ' Current text is too short - expand with key details.' : ' Consider trimming to stay under 160 characters.'}`,
     });
   }
 

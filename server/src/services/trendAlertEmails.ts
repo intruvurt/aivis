@@ -1,5 +1,5 @@
 /**
- * Trend Alert Emails — sends score drop notifications to users
+ * Trend Alert Emails - sends score drop notifications to users
  * after scheduled rescans detect a significant visibility decrease.
  */
 
@@ -12,7 +12,7 @@ const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL 
 
 async function resendSend(payload: { to: string; subject: string; html: string; text: string }): Promise<void> {
   if (!RESEND_API_KEY) {
-    console.log(`[TrendAlert] No RESEND_API_KEY — console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
+    console.log(`[TrendAlert] No RESEND_API_KEY - console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
     return;
   }
 
@@ -37,7 +37,7 @@ async function resendSend(payload: { to: string; subject: string; html: string; 
   }
 
   const result = (await res.json()) as Record<string, unknown>;
-  console.log(`[TrendAlert] Sent — id: ${result?.id} | to: ${payload.to}`);
+  console.log(`[TrendAlert] Sent - id: ${result?.id} | to: ${payload.to}`);
 }
 
 interface ScoreDropAlertPayload {

@@ -32,7 +32,7 @@ html = html.replace(
   '\n    <!-- Structured data (JSON-LD) \u2014 moved to body for faster first contentful paint -->\n' + jsonLdSection + '\n  </body>'
 );
 
-// 2. Minify gtag inline — keep dataLayer + gtag function def in head (tiny, needed early)
+// 2. Minify gtag inline - keep dataLayer + gtag function def in head (tiny, needed early)
 // Move the config call to body
 html = html.replace(
   `    <script>

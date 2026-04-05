@@ -172,7 +172,7 @@ function ChartExplainer({ text, tone = "cyan" }: { text: string; tone?: "cyan" |
   return <p className={`mt-1 text-xs ${toneClass[tone] || toneClass.cyan}`}>{text}</p>;
 }
 
-/* ── SectionTitle — labelled divider with color accent stripe ─────────── */
+/* ── SectionTitle - labelled divider with color accent stripe ─────────── */
 const SECTION_COLORS: Record<string, { border: string; dot: string; text: string }> = {
   orange:  { border: 'rgba(249,115,22,0.35)', dot: 'bg-orange-400',  text: 'text-orange-300' },
   cyan:    { border: 'rgba(34,211,238,0.35)',  dot: 'bg-cyan-400',    text: 'text-cyan-300' },
@@ -438,7 +438,7 @@ function VisibilityRubricRadar({ familyScores }: { familyScores: Record<string, 
           </div>
         </div>
       </div>
-      <ChartExplainer tone="indigo" text="The radar maps 9 deterministic rubric dimensions that drive your overall visibility score — address the flattest axis first." />
+      <ChartExplainer tone="indigo" text="The radar maps 9 deterministic rubric dimensions that drive your overall visibility score - address the flattest axis first." />
     </div>
   );
 }
@@ -457,7 +457,7 @@ function HardBlockerAlert({ stats }: { stats: DeterministicPipeline['hardBlocker
         </p>
         <p className="text-xs text-white/55 mt-1">
           Averaging {stats.avgBlockersPerAudit} blocker{stats.avgBlockersPerAudit !== 1 ? 's' : ''} per audit. Hard blockers prevent AI
-          models from extracting or citing your content — they should be resolved before optimizing other dimensions.
+          models from extracting or citing your content - they should be resolved before optimizing other dimensions.
         </p>
       </div>
     </div>
@@ -590,7 +590,7 @@ function ActionableInsights({ data, pipeline }: { data: AnalyticsData; pipeline:
   const insights: Array<{ text: string; icon: React.ReactNode; tone: string }> = [];
 
   if (data.averageScore > 0 && data.averageScore < 50) {
-    insights.push({ text: `Average score is ${data.averageScore.toFixed(0)}% — most audits are in the weak band. Focus on hard blockers first.`, icon: <AlertTriangle className="w-4 h-4" />, tone: 'rose' });
+    insights.push({ text: `Average score is ${data.averageScore.toFixed(0)}% - most audits are in the weak band. Focus on hard blockers first.`, icon: <AlertTriangle className="w-4 h-4" />, tone: 'rose' });
   }
   if (data.averageScore >= 70) {
     insights.push({ text: `Average score of ${data.averageScore.toFixed(0)}% puts you in the strong range. Optimize individual low-performing pages.`, icon: <CheckCircle2 className="w-4 h-4" />, tone: 'emerald' });
@@ -608,13 +608,13 @@ function ActionableInsights({ data, pipeline }: { data: AnalyticsData; pipeline:
       ? (pipeline.hardBlockerStats.auditsWithBlockers / pipeline.hardBlockerStats.totalAudits) * 100
       : 0;
     if (blockerPct > 30) {
-      insights.push({ text: `${blockerPct.toFixed(0)}% of audits have hard blockers — these prevent AI citation entirely.`, icon: <ShieldAlert className="w-4 h-4" />, tone: 'rose' });
+      insights.push({ text: `${blockerPct.toFixed(0)}% of audits have hard blockers - these prevent AI citation entirely.`, icon: <ShieldAlert className="w-4 h-4" />, tone: 'rose' });
     }
   }
 
   const worstDelta = data.improvementDeltas.find((d) => (d.delta ?? 0) < -10);
   if (worstDelta) {
-    insights.push({ text: `${worstDelta.domain} regressed by ${Math.abs(worstDelta.delta ?? 0).toFixed(0)} points — investigate recent changes.`, icon: <TrendingDown className="w-4 h-4" />, tone: 'amber' });
+    insights.push({ text: `${worstDelta.domain} regressed by ${Math.abs(worstDelta.delta ?? 0).toFixed(0)} points - investigate recent changes.`, icon: <TrendingDown className="w-4 h-4" />, tone: 'amber' });
   }
 
   if (data.streakDays >= 7) {
@@ -739,7 +739,7 @@ export default function AnalyticsPage() {
           const json = await res.json();
           if (!cancelled && json.success) setCommunityBenchmarks(json.benchmarks);
         }
-      } catch { /* silent — community stats are non-critical */ }
+      } catch { /* silent - community stats are non-critical */ }
     })();
     return () => { cancelled = true; };
   }, [token]);
@@ -945,13 +945,13 @@ export default function AnalyticsPage() {
               <StatCard icon={Target}   label="Avg Score"     value={data.averageScore ? `${data.averageScore.toFixed(1)}%` : "–"} accent={P.cyan} trend={trendDir} />
               <StatCard icon={Globe}    label="Sites Tracked" value={data.urlsAudited} accent={P.indigo} />
               <StatCard icon={Award}    label="Best Score"    value={data.bestScore ? `${data.bestScore}%` : "–"} accent={P.amber} />
-              <StatCard icon={Flame}    label="Streak"        value={data.streakDays > 0 ? `${data.streakDays}d` : "—"} sub={data.streakDays > 0 ? "consecutive days" : "No streak yet"} accent={P.orange} />
+              <StatCard icon={Flame}    label="Streak"        value={data.streakDays > 0 ? `${data.streakDays}d` : "-"} sub={data.streakDays > 0 ? "consecutive days" : "No streak yet"} accent={P.orange} />
               <StatCard icon={TrendingUp} label="Latest Score" value={data.latestScore ? `${data.latestScore}%` : "–"}
                 accent={data.latestScore >= 70 ? '#34d399' : data.latestScore >= 50 ? P.cyan : P.orange} />
             </div>
 
 
-            {/* Platform metrics — admin only */}
+            {/* Platform metrics - admin only */}
             {String(user?.role || "").toLowerCase() === "admin" && platformMetrics.timeframeMetrics.length > 0 && (
               <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
@@ -984,10 +984,10 @@ export default function AnalyticsPage() {
               </div>
             )}
 
-            {/* ── Community Benchmarks — visible to all authenticated users ── */}
+            {/* ── Community Benchmarks - visible to all authenticated users ── */}
             {communityBenchmarks && communityBenchmarks.total_audits > 0 && (
               <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(129,140,248,0.18)' }}>
-                <SectionTitle title="Community Benchmarks" tone="indigo" sub={`Aggregate stats across all ${communityBenchmarks.total_audits.toLocaleString()} platform audits — no individual data exposed`} />
+                <SectionTitle title="Community Benchmarks" tone="indigo" sub={`Aggregate stats across all ${communityBenchmarks.total_audits.toLocaleString()} platform audits - no individual data exposed`} />
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
                   <StatCard icon={Activity} label="Total Audits" value={communityBenchmarks.total_audits.toLocaleString()} accent={P.indigo} />
@@ -1454,13 +1454,13 @@ export default function AnalyticsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
                           <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                             <p className="text-xs text-white/50">Organization</p>
-                            <p className="text-white/85 font-medium mt-1">{complianceStatus.organization?.name || '—'}</p>
+                            <p className="text-white/85 font-medium mt-1">{complianceStatus.organization?.name || '-'}</p>
                             <p className="text-xs text-white/55 mt-1">{complianceStatus.organization?.registration_status || 'Status unavailable'}</p>
                           </div>
                           <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                             <p className="text-xs text-white/50">SOC2 Type 1</p>
                             <p className="text-white/85 font-medium mt-1 capitalize">{complianceStatus.compliance?.soc2_type1?.status || 'unknown'}</p>
-                            <p className="text-xs text-white/55 mt-1">Last audit: {complianceStatus.compliance?.soc2_type1?.last_audit || '—'}</p>
+                            <p className="text-xs text-white/55 mt-1">Last audit: {complianceStatus.compliance?.soc2_type1?.last_audit || '-'}</p>
                           </div>
                           <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                             <p className="text-xs text-white/50">VANTA</p>
@@ -1614,7 +1614,7 @@ export default function AnalyticsPage() {
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
                       <p className="text-sm text-white/60">Word Count Range</p>
-                      <p className="text-xs text-white/40">{data.contentAndTech.minWordCount.toLocaleString()} — {data.contentAndTech.maxWordCount.toLocaleString()}</p>
+                      <p className="text-xs text-white/40">{data.contentAndTech.minWordCount.toLocaleString()} - {data.contentAndTech.maxWordCount.toLocaleString()}</p>
                     </div>
                     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
                       <p className="text-sm text-white/60">Fastest Response</p>

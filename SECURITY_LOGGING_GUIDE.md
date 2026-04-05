@@ -11,7 +11,7 @@
 
 AiVIS now features comprehensive, zero-secret-leakage security event logging designed for operators managing multiple client audits, competitive tracking, and citation analysis workflows.
 
-All logging is **automatically redacted** — secrets, API keys, tokens, and sensitive data cannot accidentally expose in logs.
+All logging is **automatically redacted** - secrets, API keys, tokens, and sensitive data cannot accidentally expose in logs.
 
 ## Compliance Reality & Limits
 
@@ -28,15 +28,15 @@ This logging layer materially reduces accidental secret leakage risk, but it is 
 
 ### Automatic Redaction Coverage
 
-✅ **Bearer tokens** — JWTs and OAuth tokens  
-✅ **API keys** — All `*_key`, `*_secret`, `*_token` variations  
-✅ **Payment data** — Stripe keys, webhook secrets  
-✅ **Cloud credentials** — AWS, Google Cloud, Azure keys  
-✅ **Email addresses** — Masked as `a****z@domain.com`  
-✅ **Passwords** — URLs with password parameter  
-✅ **Environment variables** — `OPENROUTER_API_KEY=***`, etc.  
-✅ **Basic auth** — `Basic [REDACTED]`  
-✅ **Custom patterns** — User, workspace, and internal identifiers  
+✅ **Bearer tokens** - JWTs and OAuth tokens  
+✅ **API keys** - All `*_key`, `*_secret`, `*_token` variations  
+✅ **Payment data** - Stripe keys, webhook secrets  
+✅ **Cloud credentials** - AWS, Google Cloud, Azure keys  
+✅ **Email addresses** - Masked as `a****z@domain.com`  
+✅ **Passwords** - URLs with password parameter  
+✅ **Environment variables** - `OPENROUTER_API_KEY=***`, etc.  
+✅ **Basic auth** - `Basic [REDACTED]`  
+✅ **Custom patterns** - User, workspace, and internal identifiers  
 
 ### Coverage by Route
 
@@ -66,7 +66,7 @@ This logging layer materially reduces accidental secret leakage risk, but it is 
 All `console.*()` calls are wrapped automatically. No special logging syntax needed.
 
 ```ts
-// ✅ Safe — all args redacted automatically
+// ✅ Safe - all args redacted automatically
 console.log('User login:', { email: 'user@example.com', token: req.headers.authorization });
 // Outputs: User login: { email: 'u***r@example.com', token: 'Bearer [REDACTED]' }
 ```
@@ -252,7 +252,7 @@ Events logged:
 - ✅ Triple-check override requests
 - ✅ Webhook signature failures (API integration)
 
-### Scorefix (Legacy)
+### scorefix (Legacy)
 
 Events logged:
 - ✅ All Signal events

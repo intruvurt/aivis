@@ -1,5 +1,5 @@
 // server/src/services/entityClarity.ts
-// Heuristic-based entity clarity scoring — NO AI calls.
+// Heuristic-based entity clarity scoring - NO AI calls.
 // Prevents the primary GPT-4o Mini model from being rate-limited or put into
 // backoff before the main AI1 analysis pipeline runs.
 
@@ -45,7 +45,7 @@ export async function assessEntityClarity(
   }
 
   const text = pageText.substring(0, 5000);
-  let score = 10; // baseline — page exists
+  let score = 10; // baseline - page exists
   let bestExcerpt = '';
 
   // Check about-style signals
@@ -72,7 +72,7 @@ export async function assessEntityClarity(
   }
   score += Math.min(structHits, 3) * 8;
 
-  // Word count factor — longer pages with entity signals are typically clearer
+  // Word count factor - longer pages with entity signals are typically clearer
   const words = text.split(/\s+/).length;
   if (words > 200) score += 5;
   if (words > 500) score += 5;

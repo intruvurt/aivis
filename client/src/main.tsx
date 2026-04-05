@@ -14,7 +14,7 @@ import { useAuthStore } from "./stores/authStore";
 
 initSentryIfConsented();
 
-// Handle stale chunk errors after deployments — auto-reload once
+// Handle stale chunk errors after deployments - auto-reload once
 window.addEventListener('vite:preloadError', () => {
   const reloaded = sessionStorage.getItem('chunk-reload');
   if (!reloaded) {

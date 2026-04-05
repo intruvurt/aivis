@@ -1,7 +1,7 @@
 /**
  * OpenAPI 3.0 Specification Endpoint
  * Serves the machine-readable API spec at GET /api/v1/openapi.json
- * Public endpoint — no auth required — for third-party tool discovery.
+ * Public endpoint - no auth required - for third-party tool discovery.
  */
 import { Router, Request, Response } from 'express';
 
@@ -473,7 +473,7 @@ const OPENAPI_SPEC = {
   },
 } as const;
 
-// Public endpoint — no auth required
+// Public endpoint - no auth required
 router.get('/openapi.json', (_req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'public, max-age=3600');

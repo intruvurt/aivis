@@ -16,7 +16,7 @@ computing gzip size...
 [2mdist/[22m[36massets/ResetAuth-i8obCgMT.js                            [39m[1m[2m  0.71 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
 [2mdist/[22m[36massets/ContentBlueprintIcon-Cm7y94w1.js                 [39m[1m[2m  0.74 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
 [2mdist/[22m[36massets/platformNarrative-BKnK6cYX.js                    [39m[1m[2m  0.77 kB[22m[1m[22m[2m Γöé gzip:   0.49 kB[22m
-[2mdist/[22m[36massets/ScoreFixIcon-UbqsCo9i.js                         [39m[1m[2m  0.81 kB[22m[1m[22m[2m Γöé gzip:   0.41 kB[22m
+[2mdist/[22m[36massets/AutoFix PRIcon-UbqsCo9i.js                         [39m[1m[2m  0.81 kB[22m[1m[22m[2m Γöé gzip:   0.41 kB[22m
 [2mdist/[22m[36massets/referralShare-RoYwv195.js                        [39m[1m[2m  0.97 kB[22m[1m[22m[2m Γöé gzip:   0.56 kB[22m
 [2mdist/[22m[36massets/AppPageFrame-DcAVhqAf.js                         [39m[1m[2m  1.16 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
 [2mdist/[22m[36massets/PaymentCanceledPage-DupTA4jK.js                  [39m[1m[2m  1.18 kB[22m[1m[22m[2m Γöé gzip:   0.55 kB[22m
@@ -97,7 +97,7 @@ computing gzip size...
 [2mdist/[22m[36massets/DisclosuresPage-yTHY1neO.js                      [39m[1m[2m 26.59 kB[22m[1m[22m[2m Γöé gzip:   7.86 kB[22m
 [2mdist/[22m[36massets/Admin-1_JWYsRX.js                                [39m[1m[2m 27.28 kB[22m[1m[22m[2m Γöé gzip:   6.13 kB[22m
 [2mdist/[22m[36massets/TeamPage-zvQrwhx6.js                             [39m[1m[2m 28.33 kB[22m[1m[22m[2m Γöé gzip:   6.08 kB[22m
-[2mdist/[22m[36massets/ScoreFixPage-Dk7LkoOK.js                         [39m[1m[2m 29.35 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
+[2mdist/[22m[36massets/AutoFix PRPage-Dk7LkoOK.js                         [39m[1m[2m 29.35 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
 [2mdist/[22m[36massets/McpConsolePage-AQesgMCg.js                       [39m[1m[2m 30.70 kB[22m[1m[22m[2m Γöé gzip:   6.64 kB[22m
 [2mdist/[22m[36massets/PlatformWorkflowPage-CiZFJzMv.js                 [39m[1m[2m 32.52 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
 [2mdist/[22m[36massets/BillingPage-xh7G65lR.js                          [39m[1m[2m 36.43 kB[22m[1m[22m[2m Γöé gzip:   8.87 kB[22m

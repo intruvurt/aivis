@@ -1,9 +1,9 @@
-"""AiVIS Deep Analysis Engine — FastAPI microservice.
+"""AiVIS Deep Analysis Engine - FastAPI microservice.
 
 Provides NLP-powered content analysis, cryptographic evidence ledger,
 enhanced document parsing, and content fingerprinting.
 
-Called from the Node.js backend via HTTP. Optional — Node degrades
+Called from the Node.js backend via HTTP. Optional - Node degrades
 gracefully if this service is unavailable.
 """
 
@@ -57,7 +57,7 @@ fingerprinter = ContentFingerprinter()
 
 
 # ---------------------------------------------------------------------------
-# Auth — simple shared-secret between Node and Python
+# Auth - simple shared-secret between Node and Python
 # ---------------------------------------------------------------------------
 
 INTERNAL_KEY = os.getenv("PYTHON_INTERNAL_KEY", "")
@@ -121,7 +121,7 @@ class FingerprintCompareRequest(BaseModel):
 
 @app.get("/health")
 async def health():
-    """Health check — Node backend polls this to know if Python is up."""
+    """Health check - Node backend polls this to know if Python is up."""
     return {
         "status": "ok",
         "service": "aivis-deep-analysis",

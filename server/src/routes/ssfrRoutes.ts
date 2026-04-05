@@ -12,7 +12,7 @@ const router = Router();
 // All SSFR routes require authentication
 router.use(authRequired);
 
-// ─── GET /api/ssfr/:auditId — Full SSFR results for an audit ───────────────
+// ─── GET /api/ssfr/:auditId - Full SSFR results for an audit ───────────────
 
 router.get('/:auditId', async (req: Request, res: Response) => {
   try {
@@ -49,7 +49,7 @@ router.get('/:auditId', async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /api/ssfr/:auditId/fixpacks — Fixpacks only ───────────────────────
+// ─── GET /api/ssfr/:auditId/fixpacks - Fixpacks only ───────────────────────
 
 router.get('/:auditId/fixpacks', async (req: Request, res: Response) => {
   try {
@@ -80,7 +80,7 @@ router.get('/:auditId/fixpacks', async (req: Request, res: Response) => {
   }
 });
 
-// ─── POST /api/ssfr/:auditId/fixpacks/:fixpackId/verify — Verify one fixpack
+// ─── POST /api/ssfr/:auditId/fixpacks/:fixpackId/verify - Verify one fixpack
 
 router.post('/:auditId/fixpacks/:fixpackId/verify', async (req: Request, res: Response) => {
   try {
@@ -113,7 +113,7 @@ router.post('/:auditId/fixpacks/:fixpackId/verify', async (req: Request, res: Re
   }
 });
 
-// ─── POST /api/ssfr/:auditId/reverify — Re-verify all fixpacks ─────────────
+// ─── POST /api/ssfr/:auditId/reverify - Re-verify all fixpacks ─────────────
 
 router.post('/:auditId/reverify', async (req: Request, res: Response) => {
   try {
@@ -143,7 +143,7 @@ router.post('/:auditId/reverify', async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /api/ssfr/:auditId/summary — Summary stats only ───────────────────
+// ─── GET /api/ssfr/:auditId/summary - Summary stats only ───────────────────
 
 router.get('/:auditId/summary', async (req: Request, res: Response) => {
   try {

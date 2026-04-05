@@ -181,8 +181,8 @@ router.get(
   <h1>AI Visibility Report</h1>
   <div class="meta">
     <div><strong>URL:</strong> ${String(payload.url || "").replaceAll("<", "&lt;")}</div>
-    <div><strong>Analyzed:</strong> ${payload.analyzed_at ? String(payload.analyzed_at) : "—"}</div>
-    <div><strong>Score:</strong> ${payload.visibility_score ?? "—"}</div>
+    <div><strong>Analyzed:</strong> ${payload.analyzed_at ? String(payload.analyzed_at) : "-"}</div>
+    <div><strong>Score:</strong> ${payload.visibility_score ?? "-"}</div>
   </div>
 
   ${

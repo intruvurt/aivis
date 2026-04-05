@@ -859,7 +859,7 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`,
             `CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`,
-            // ── Audit score timeline (added post-launch — visibility timeline) ──
+            // ── Audit score timeline (added post-launch - visibility timeline) ──
             `CREATE TABLE IF NOT EXISTS audit_score_timeline (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
               user_id VARCHAR(255) NOT NULL,
@@ -972,7 +972,7 @@ export async function runMigrations(): Promise<void> {
       `CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token)`
     );
 
-    // ─── Organizations / Workspaces (must be created early — many tables reference workspaces) ───
+    // ─── Organizations / Workspaces (must be created early - many tables reference workspaces) ───
     _q(`
       CREATE TABLE IF NOT EXISTS organizations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1224,7 +1224,7 @@ export async function runMigrations(): Promise<void> {
       CHECK (share_link_expiration_days IN (0, 7, 14, 30, 90))
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_user_notification_email ON user_notification_preferences(email_notifications)`);
-    // Granular notification preferences — per-category and channel toggles (2026-03-29)
+    // Granular notification preferences - per-category and channel toggles (2026-03-29)
     _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
     _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS sound_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
     _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS browser_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
@@ -2213,7 +2213,7 @@ export async function runMigrations(): Promise<void> {
         UPDATE users SET tier = 'observer' WHERE tier IN ('free', 'Free');
         UPDATE users SET tier = 'alignment' WHERE tier IN ('core', 'Core', 'Jump Start');
         UPDATE users SET tier = 'signal' WHERE tier IN ('premium', 'Premium', 'pro', 'Pro', 'enterprise', 'Enterprise', 'Agency');
-        UPDATE users SET tier = 'scorefix' WHERE tier IN ('scorefix', 'ScoreFix', 'Score Fix', 'blockbuster', 'Blockbuster');
+        UPDATE users SET tier = 'scorefix' WHERE tier IN ('scorefix', 'scorefix', 'Score Fix', 'blockbuster', 'Blockbuster');
 
         IF EXISTS (
           SELECT 1 FROM pg_constraint
@@ -2873,7 +2873,7 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`);
 
-    // ── Level 5: VaaS — Industry benchmarks ───────────────────────────────────
+    // ── Level 5: VaaS - Industry benchmarks ───────────────────────────────────
     _q(`
       CREATE TABLE IF NOT EXISTS industry_benchmarks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -2891,7 +2891,7 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_category ON industry_benchmarks(category)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_computed ON industry_benchmarks(computed_at DESC)`);
 
-    // ── Level 5: VaaS — Embeddable widget tokens ──────────────────────────────
+    // ── Level 5: VaaS - Embeddable widget tokens ──────────────────────────────
     _q(`
       CREATE TABLE IF NOT EXISTS widget_embed_tokens (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -2910,7 +2910,7 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_widget_tokens_user ON widget_embed_tokens(user_id)`);
     _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_widget_tokens_token ON widget_embed_tokens(token)`);
 
-    // ── Level 5: VaaS — Bulk fix jobs ─────────────────────────────────────────
+    // ── Level 5: VaaS - Bulk fix jobs ─────────────────────────────────────────
     _q(`
       CREATE TABLE IF NOT EXISTS bulk_fix_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -3141,7 +3141,7 @@ export async function healthCheck(): Promise<boolean> {
     if (elapsed < DB_UNAVAILABLE_RETRY_MS) {
       return false;
     }
-    // TTL expired — attempt a real connection check
+    // TTL expired - attempt a real connection check
   }
   try {
     await getPool().query('SELECT 1');

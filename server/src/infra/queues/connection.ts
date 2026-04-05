@@ -14,6 +14,6 @@ export function getBullMQConnection(): ConnectionOptions | null {
 
 export function requireBullMQConnection(): ConnectionOptions {
   const conn = getBullMQConnection();
-  if (!conn) throw new Error('Redis is not configured — BullMQ queues require REDIS_URL or REDIS_HOST');
+  if (!conn) throw new Error('Redis is not configured - BullMQ queues require REDIS_URL or REDIS_HOST');
   return conn;
 }

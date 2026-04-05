@@ -80,7 +80,7 @@ They are losing visibility because machines can’t read them cleanly.
 
 That changes everything.
 
-AI systems now summarize, compare, and filter before many clicks happen. If your site is structurally blurry—thin service pages, weak schema, buried proof, confused headings—you get skipped quietly.
+AI systems now summarize, compare, and filter before many clicks happen. If your site is structurally blurry-thin service pages, weak schema, buried proof, confused headings-you get skipped quietly.
 
 I wrote this after building AiVIS and watching this pattern repeat across real businesses:
 https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web

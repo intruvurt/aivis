@@ -5,7 +5,7 @@ class PerplexityURLAnalyzer:
         # 1. Real-time web crawl via their own spider
         page = self.crawler.fetch(url)  # Executes JS via headless browser
         
-        # 2. Retrieval scoring — NOT traditional BM25
+        # 2. Retrieval scoring - NOT traditional BM25
         # Uses semantic similarity between query and page chunks
         chunks = self.chunk_content(page, size=512)
         relevance_scores = [
@@ -58,6 +58,6 @@ TRAINING TIME (happened before you talk to me):
 
 INFERENCE TIME (what happens now when you talk to me):
   - If web_fetch tool is available: live fetch, markdown extraction, in-context analysis
-  - If no tool: I rely entirely on training data — I have no memory of aivis.biz
+  - If no tool: I rely entirely on training data - I have no memory of aivis.biz
     unless it appeared in my training corpus before August 2025
   - This is why schema + external citations before training cutoffs matter enormously

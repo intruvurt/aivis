@@ -25,7 +25,7 @@ if (OLLAMA_BASE_URL.trim()) {
 //   AI1 primary (GPT-4o Mini): up to 25 s  → 40 s elapsed
 //   AI1 fallback chain:     up to 14 s  → 54 s elapsed
 //   Response + buffer:       3 s
-// Free-tier models (:free variants) are rate-limited and slower — the
+// Free-tier models (:free variants) are rate-limited and slower - the
 // fallback floor is 8 s per model. The pipeline-level deadline in server.ts
 // still enforces the 57 s ceiling so total elapsed never exceeds 60 s.
 // Deadline timers are cleared after each Promise.race to prevent ghost
@@ -96,7 +96,7 @@ export const openrouterPrompt = async (
         // CRITICAL: Use 'text' so axios does NOT auto-parse the response as JSON.
         // With the default 'json', if the HTTP body is truncated mid-stream
         // (connection drop, timeout, large response), axios runs JSON.parse()
-        // on the partial body and throws "Unexpected end of JSON input" —
+        // on the partial body and throws "Unexpected end of JSON input" -
         // which means our safeJsonParse/repairTruncatedJson never see the raw data.
         // By getting raw text, WE parse OpenRouter's JSON envelope ourselves,
         // and if that fails, we can still extract the AI content from the partial body.
@@ -109,14 +109,14 @@ export const openrouterPrompt = async (
     try {
       parsedResponse = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
     } catch (envelopeErr: any) {
-      // OpenRouter response body was truncated mid-stream — try to extract content
-      console.warn(`[OpenRouter] Response envelope truncated — attempting to extract AI content from partial body (${(response.data || '').length} chars)`);
+      // OpenRouter response body was truncated mid-stream - try to extract content
+      console.warn(`[OpenRouter] Response envelope truncated - attempting to extract AI content from partial body (${(response.data || '').length} chars)`);
       const rawBody = String(response.data || '');
       // Try to find the AI's content field in the partial response
       // OpenRouter format: {"choices":[{"message":{"content":"...AI OUTPUT HERE..."}}]}
       const contentMatch = rawBody.match(/"content"\s*:\s*"([\s\S]+)/);
       if (contentMatch) {
-        // Extract everything after "content":" — this is the AI's raw output (may be truncated)
+        // Extract everything after "content":" - this is the AI's raw output (may be truncated)
         let extracted = contentMatch[1];
         // The content is JSON-escaped inside the envelope, so unescape it
         // Remove trailing incomplete envelope: ..."},...]} etc
@@ -151,40 +151,40 @@ export const openrouterPrompt = async (
     const content = parsedResponse.choices?.[0]?.message?.content;
     if (!content) {
       console.error('[OpenRouter] No content in response:', JSON.stringify(parsedResponse).substring(0, 500));
-      throw new Error('OpenRouter returned empty content — model may be unavailable');
+      throw new Error('OpenRouter returned empty content - model may be unavailable');
     }
 
     const finishReason = parsedResponse.choices?.[0]?.finish_reason;
     if (finishReason === null) {
       // finish_reason=null means generation was interrupted before completion
       // (rate limit, server-side error, connection drop on OpenRouter's end).
-      // The content is almost always a tiny fragment — throw so the caller
+      // The content is almost always a tiny fragment - throw so the caller
       // can try the next fallback model instead of returning garbage.
-      console.warn(`[OpenRouter]  Model ${model} returned finish_reason=null — generation interrupted after ${content.length} chars. Throwing to trigger fallback.`);
+      console.warn(`[OpenRouter]  Model ${model} returned finish_reason=null - generation interrupted after ${content.length} chars. Throwing to trigger fallback.`);
       throw new Error(`Model generation interrupted (finish_reason=null): only ${content.length} chars returned. Model may be rate-limited or unavailable on OpenRouter.`);
     }
     if (finishReason === 'length') {
-      console.warn(`[OpenRouter]  Model ${model} hit max_tokens (${maxTokens}) — output truncated. Consider increasing max_tokens.`);
+      console.warn(`[OpenRouter]  Model ${model} hit max_tokens (${maxTokens}) - output truncated. Consider increasing max_tokens.`);
     }
 
     // Strip markdown code fences (```json ... ```) and <think> blocks.
-    // Return as STRING — let safeJsonParse() in server.ts handle parsing + truncation repair.
+    // Return as STRING - let safeJsonParse() in server.ts handle parsing + truncation repair.
     // Previously this function tried JSON.parse() internally and returned objects, causing
-    // callAIProvider to JSON.stringify() them, then safeJsonParse to re-parse — a triple-parse
+    // callAIProvider to JSON.stringify() them, then safeJsonParse to re-parse - a triple-parse
     // that broke truncation repair because the raw output was already lost.
     let cleaned = content.trim();
-    // Handle <think> blocks — reasoning models prepend chain-of-thought before JSON.
+    // Handle <think> blocks - reasoning models prepend chain-of-thought before JSON.
     // First try to strip a complete <think>...</think> block:
     cleaned = cleaned.replace(/^<think>[\s\S]*?<\/think>\s*/i, '');
-    // If that didn't match (unclosed <think> — model spent all tokens on reasoning):
+    // If that didn't match (unclosed <think> - model spent all tokens on reasoning):
     if (/^<think>/i.test(cleaned)) {
-      console.warn(`[OpenRouter] Unclosed <think> block detected (model spent all tokens on reasoning) — stripping to find JSON`);
+      console.warn(`[OpenRouter] Unclosed <think> block detected (model spent all tokens on reasoning) - stripping to find JSON`);
       // Try to find JSON after the think block (some models mix thinking + JSON)
       const jsonStart = cleaned.search(/\{[\s\S]*"visibility_score"/);
       if (jsonStart >= 0) {
         cleaned = cleaned.substring(jsonStart);
       } else {
-        // No JSON found at all — the model wasted all tokens on thinking
+        // No JSON found at all - the model wasted all tokens on thinking
         cleaned = '';
       }
     }

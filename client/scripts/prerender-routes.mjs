@@ -59,9 +59,9 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS — AI Evidence-backed Visibility Audits',
+		title: 'AiVIS - AI Evidence-backed Visibility Audits',
 		description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
-		ogTitle: 'AiVIS — AI Evidence-backed Visibility Audits',
+		ogTitle: 'AiVIS - AI Evidence-backed Visibility Audits',
 		ogDescription: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
@@ -127,7 +127,7 @@ const routes = [
 	},
 	{
 		path: '/blogs/answer-engine-optimization-2026-why-citation-readiness-matters',
-		title: 'Answer Engine Optimization in 2026 — Why Citation Readiness Matters More Than Ranking | AiVIS Blogs',
+		title: 'Answer Engine Optimization in 2026 - Why Citation Readiness Matters More Than Ranking | AiVIS Blogs',
 		description: 'Ranking position is irrelevant if your content cannot be extracted, attributed, or cited. Here\'s why citation readiness is the core AEO metric.',
 		ogType: 'article',
 	},
@@ -139,25 +139,25 @@ const routes = [
 	},
 	{
 		path: '/blogs/building-author-authority-for-citations-e-e-a-t-in-ai-era',
-		title: 'Building Author Authority for Citation Workflows — E-E-A-T in the AI Era | AiVIS Blogs',
+		title: 'Building Author Authority for Citation Workflows - E-E-A-T in the AI Era | AiVIS Blogs',
 		description: 'E-E-A-T is no longer just a Google ranking signal. It\'s now a citation eligibility filter that determines whether LLMs will list your source.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/how-llms-parse-your-content-technical-breakdown',
-		title: 'How LLMs Parse Your Content — Technical Breakdown of ChatGPT, Claude, and Perplexity Extraction | AiVIS Blogs',
+		title: 'How LLMs Parse Your Content - Technical Breakdown of ChatGPT, Claude, and Perplexity Extraction | AiVIS Blogs',
 		description: 'A deep dive into the content signals and structural requirements that answer engines use to extract, rank, and attribute your content.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/geo-adaptive-ai-ranking-location-intelligence-shapes-answers',
-		title: 'Geo-Adaptive AI Ranking — How Location Intelligence Shapes AI Answer Quality | AiVIS Blogs',
+		title: 'Geo-Adaptive AI Ranking - How Location Intelligence Shapes AI Answer Quality | AiVIS Blogs',
 		description: 'Answer engines now factor regional availability, jurisdiction, and localized entity resolution into citation eligibility.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/from-invisible-to-cited-case-study-brand-citation-growth',
-		title: 'From Invisible to Cited — Real Case Study: How Brands Move from 0 to 87% Citation Rate | AiVIS Blogs',
+		title: 'From Invisible to Cited - Real Case Study: How Brands Move from 0 to 87% Citation Rate | AiVIS Blogs',
 		description: 'An in-depth case study showing how a B2B SaaS company restructured their content schema, FAQ depth, and author credibility signals to achieve industry-leading AI citation rates.',
 		ogType: 'article',
 	},
@@ -200,7 +200,7 @@ const routes = [
 	{
 		path: '/blogs/aivis-platform-source-of-truth-every-feature-and-tool-explained',
 		title: 'AiVIS Platform Source of Truth: Every Feature and Tool Explained | AiVIS Blogs',
-		description: 'The definitive reference for everything AiVIS does — every tier, every tool, every pipeline, every integration — explained in operational detail.',
+		description: 'The definitive reference for everything AiVIS does - every tier, every tool, every pipeline, every integration - explained in operational detail.',
 		ogType: 'article',
 	},
 	{
@@ -212,13 +212,13 @@ const routes = [
 	{
 		path: '/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure',
 		title: 'AI Visibility Tools in 2026: What Semrush, Ahrefs, and Moz Cannot Measure | AiVIS Blogs',
-		description: 'Semrush, Ahrefs, Moz, and traditional SEO platforms were built to optimize rankings on a blue-link results page. AI answer engines bypass that page entirely. Here is what falls through the cracks — and the new measurement layer that fills the gap.',
+		description: 'Semrush, Ahrefs, Moz, and traditional SEO platforms were built to optimize rankings on a blue-link results page. AI answer engines bypass that page entirely. Here is what falls through the cracks - and the new measurement layer that fills the gap.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide',
 		title: 'How to Get Cited by ChatGPT, Perplexity, and Gemini: The Structural Blueprint for AI Citations | AiVIS Blogs',
-		description: 'A technical guide to the structural signals ChatGPT, Perplexity, Gemini, and Claude evaluate when selecting sources to cite. Not theory — measurable page-level changes that increase citation probability.',
+		description: 'A technical guide to the structural signals ChatGPT, Perplexity, Gemini, and Claude evaluate when selecting sources to cite. Not theory - measurable page-level changes that increase citation probability.',
 		ogType: 'article',
 	},
 	{
@@ -289,7 +289,7 @@ const routes = [
 	},
 	{
 		path: '/blogs/bix-boundaries-in-excess-how-guidebot-redefines-ai-platform-assistants',
-		title: 'BIX: Boundaries in Excess — How GuideBot Redefines AI Platform Assistants | AiVIS Blogs',
+		title: 'BIX: Boundaries in Excess - How GuideBot Redefines AI Platform Assistants | AiVIS Blogs',
 		description: 'GuideBot is not a chatbot. It is a bounded intelligence system built around page-aware context, tier-gated recommendations, and a closed knowledge graph. Here is why that matters.',
 		ogType: 'article',
 	},
@@ -359,7 +359,7 @@ const routes = [
 	},
 	{
 		path: '/glossary',
-		title: 'AI Visibility & AEO Glossary — Key Terms Defined | AiVIS',
+		title: 'AI Visibility & AEO Glossary - Key Terms Defined | AiVIS',
 		description: 'Comprehensive glossary of AI visibility, answer engine optimization (AEO), and AI citation readiness terms. Definitions for AI Visibility Score, content extractability, entity clarity, Triple-Check validation, and more.',
 	},
 	{
@@ -459,17 +459,17 @@ const routes = [
 	},
 	{
 		path: '/tools/schema-validator',
-		title: 'Schema Markup Validator — AI Citation Readiness Check | AiVIS',
+		title: 'Schema Markup Validator - AI Citation Readiness Check | AiVIS',
 		description: 'Free tool to validate structured data (JSON-LD, OpenGraph, Twitter Cards) for AI citation readiness. See what AI models can extract from your page.',
 	},
 	{
 		path: '/tools/robots-checker',
-		title: 'AI Crawler Access Checker — Robots.txt Audit for AI Bots | AiVIS',
+		title: 'AI Crawler Access Checker - Robots.txt Audit for AI Bots | AiVIS',
 		description: 'Free tool to check if GPTBot, ClaudeBot, Googlebot, and 12 other AI crawlers can access your site. Audit robots.txt, meta robots, and X-Robots-Tag.',
 	},
 	{
 		path: '/tools/content-extractability',
-		title: 'Content Extractability Grader — AI Answer Block Analysis | AiVIS',
+		title: 'Content Extractability Grader - AI Answer Block Analysis | AiVIS',
 		description: 'Free tool to grade how well AI models can extract answers from your page. Analyzes heading hierarchy, FAQ patterns, and content structure.',
 	},
 	{
@@ -479,22 +479,22 @@ const routes = [
 	},
 	{
 		path: '/prompt-intelligence',
-		title: 'Prompt Intelligence — AI Query Analysis | AiVIS',
+		title: 'Prompt Intelligence - AI Query Analysis | AiVIS',
 		description: 'Understand how AI models interpret queries about your brand. Map prompt patterns to inclusion, exclusion, and competitor displacement outcomes.',
 	},
 	{
 		path: '/answer-presence',
-		title: 'Answer Presence Engine — AI Platform Visibility | AiVIS',
+		title: 'Answer Presence Engine - AI Platform Visibility | AiVIS',
 		description: 'Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI. Evidence-based presence detection.',
 	},
 	{
 		path: '/brand-integrity',
-		title: 'Brand Integrity Monitor — AI Accuracy Tracking | AiVIS',
+		title: 'Brand Integrity Monitor - AI Accuracy Tracking | AiVIS',
 		description: 'Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time, and protect brand integrity.',
 	},
 	{
 		path: '/blogs/cannot-access-before-initialization-react-vite-production-tdz-fix',
-		title: 'Cannot Access Before Initialization — React + Vite Production TDZ Fix | AiVIS Blogs',
+		title: 'Cannot Access Before Initialization - React + Vite Production TDZ Fix | AiVIS Blogs',
 		description: 'How to diagnose and fix the ReferenceError: Cannot access variable before initialization in React + Vite production builds caused by temporal dead zone issues.',
 		ogType: 'article',
 	},
@@ -518,7 +518,7 @@ const routes = [
 	},
 	{
 		path: '/blogs/answer-engine-optimization-is-not-the-new-seoits-the-big-brother',
-		title: 'Answer Engine Optimization Is Not the New SEO — It Is the Big Brother | AiVIS Blogs',
+		title: 'Answer Engine Optimization Is Not the New SEO - It Is the Big Brother | AiVIS Blogs',
 		description: 'Why AEO supersedes traditional SEO and how AI answer engines evaluate content differently from search engine crawlers.',
 		ogType: 'article',
 	},

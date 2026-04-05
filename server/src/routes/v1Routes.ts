@@ -1,14 +1,14 @@
 /**
- * V1 Internal API Routes — production-grade REST endpoints.
+ * V1 Internal API Routes - production-grade REST endpoints.
  *
- * POST   /v1/audit            — Enqueue a new audit
- * GET    /v1/audit/:id        — Get audit result
- * POST   /v1/fix              — Trigger fix for an issue
- * POST   /v1/pr               — Manually trigger PR creation
- * GET    /v1/projects         — List org projects
- * POST   /v1/projects         — Create a project
- * GET    /v1/timeline/:projectId — Score timeline
- * GET    /v1/audit/progress/:id  — SSE progress stream
+ * POST   /v1/audit            - Enqueue a new audit
+ * GET    /v1/audit/:id        - Get audit result
+ * POST   /v1/fix              - Trigger fix for an issue
+ * POST   /v1/pr               - Manually trigger PR creation
+ * GET    /v1/projects         - List org projects
+ * POST   /v1/projects         - Create a project
+ * GET    /v1/timeline/:projectId - Score timeline
+ * GET    /v1/audit/progress/:id  - SSE progress stream
  */
 import { Router, Request, Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
@@ -47,7 +47,7 @@ function requireOrgId(req: Request, res: Response): string | null {
   return orgId;
 }
 
-// ── POST /v1/audit — Enqueue a new audit ─────────────────────────────────────
+// ── POST /v1/audit - Enqueue a new audit ─────────────────────────────────────
 
 router.post('/audit', tieredRateLimit('analyze'), async (req: Request, res: Response) => {
   const userId = getUserId(req);
@@ -90,7 +90,7 @@ router.post('/audit', tieredRateLimit('analyze'), async (req: Request, res: Resp
   return res.json({ success: true, jobId });
 });
 
-// ── GET /v1/audit/:id — Get audit result ─────────────────────────────────────
+// ── GET /v1/audit/:id - Get audit result ─────────────────────────────────────
 
 router.get('/audit/:id', async (req: Request, res: Response) => {
   const userId = getUserId(req);
@@ -131,7 +131,7 @@ router.get('/audit/:id', async (req: Request, res: Response) => {
   });
 });
 
-// ── GET /v1/audit/progress/:id — SSE progress stream ─────────────────────────
+// ── GET /v1/audit/progress/:id - SSE progress stream ─────────────────────────
 
 router.get('/audit/progress/:id', async (req: Request, res: Response) => {
   const jobId = String(req.params.id || '');
@@ -179,7 +179,7 @@ router.get('/audit/progress/:id', async (req: Request, res: Response) => {
   });
 });
 
-// ── POST /v1/fix — Trigger fix for an issue ──────────────────────────────────
+// ── POST /v1/fix - Trigger fix for an issue ──────────────────────────────────
 
 router.post('/fix', async (req: Request, res: Response) => {
   const userId = getUserId(req);
@@ -224,7 +224,7 @@ router.post('/fix', async (req: Request, res: Response) => {
   return res.json({ success: true, jobId });
 });
 
-// ── POST /v1/pr — Manually trigger PR creation ──────────────────────────────
+// ── POST /v1/pr - Manually trigger PR creation ──────────────────────────────
 
 router.post('/pr', async (req: Request, res: Response) => {
   const userId = getUserId(req);
@@ -275,13 +275,13 @@ router.post('/pr', async (req: Request, res: Response) => {
     baseBranch: String(req.body?.base_branch || 'main'),
     files: Array.isArray(req.body?.files) ? req.body.files : [],
     title: `fix(aivis): ${fix.issue_title?.slice(0, 60) || 'AI visibility fix'}`,
-    body: `AiVIS AutoFix — severity: ${fix.severity || 'medium'}`,
+    body: `AiVIS AutoFix - severity: ${fix.severity || 'medium'}`,
   });
 
   return res.json({ success: true, jobId });
 });
 
-// ── GET /v1/projects — List org projects ─────────────────────────────────────
+// ── GET /v1/projects - List org projects ─────────────────────────────────────
 
 router.get('/projects', async (req: Request, res: Response) => {
   const orgId = requireOrgId(req, res);
@@ -297,7 +297,7 @@ router.get('/projects', async (req: Request, res: Response) => {
   return res.json({ projects: rows });
 });
 
-// ── POST /v1/projects — Create a project ─────────────────────────────────────
+// ── POST /v1/projects - Create a project ─────────────────────────────────────
 
 router.post('/projects', async (req: Request, res: Response) => {
   const orgId = requireOrgId(req, res);
@@ -333,7 +333,7 @@ router.post('/projects', async (req: Request, res: Response) => {
   return res.status(201).json({ project: rows[0] });
 });
 
-// ── GET /v1/timeline/:projectId — Score timeline ─────────────────────────────
+// ── GET /v1/timeline/:projectId - Score timeline ─────────────────────────────
 
 router.get('/timeline/:projectId', async (req: Request, res: Response) => {
   const orgId = requireOrgId(req, res);

@@ -97,7 +97,7 @@ export function safeJsonParse<T>(raw: string): { ok: true; value: T } | { ok: fa
       const cleaned = stripMarkdownCodeFences(raw);
       const repaired = repairTruncatedJson(cleaned);
       if (repaired !== null) {
-        console.warn('[safeJsonParse] JSON was truncated — repaired successfully');
+        console.warn('[safeJsonParse] JSON was truncated - repaired successfully');
         return { ok: true, value: repaired as T };
       }
     } catch { }

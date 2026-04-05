@@ -1,8 +1,8 @@
 /**
- * Deterministic Pipeline Orchestrator — ties evidence → rules → score → fixpacks.
+ * Deterministic Pipeline Orchestrator - ties evidence → rules → score → fixpacks.
  *
  * This layer runs AFTER the AI analysis pipeline completes.
- * It never throws — if any step fails, it degrades gracefully.
+ * It never throws - if any step fails, it degrades gracefully.
  *
  * Entry point: runDeterministicAuditLayer()
  *

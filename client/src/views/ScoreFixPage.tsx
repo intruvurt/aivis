@@ -132,7 +132,7 @@ const SITE_URL = "https://aivis.biz";
 const PAGE_URL = `${SITE_URL}/score-fix`;
 const PAGE_TITLE = "AI Visibility Score Fix AutoPR | AiVIS - Ai Visibility Intelligence Audits";
 const PAGE_DESCRIPTION =
-  "AI Visibility Score Fix AutoPR from AiVIS connects to your GitHub repo via MCP and generates automated pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes — 10-25 credits per automated remediation PR.";
+  "AI Visibility Score Fix AutoPR from AiVIS connects to your GitHub repo via MCP and generates automated pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per automated remediation PR.";
 const OG_IMAGE = `${SITE_URL}/og/aivis-score-fix.jpg`;
 
 const scoreFixFaqEntities = faq.map((item) => ({
@@ -425,7 +425,7 @@ export default function ScoreFixPage() {
           <Sparkles className="h-5 w-5 text-amber-400" />
           Score Fix
         </h1>
-        <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP — 10-25 credits per fix</p>
+        <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP - 10-25 credits per fix</p>
       </div>
       {!hasAccess ? (
         <div className="w-full py-16">
@@ -437,7 +437,7 @@ export default function ScoreFixPage() {
             featurePreview={[
               "Auto-generate GitHub PRs containing schema patches and content fixes",
               "Each PR references the exact audit finding that triggered it",
-              "Review and merge — no manual editing required",
+              "Review and merge - no manual editing required",
             ]}
           />
         </div>
@@ -456,10 +456,10 @@ export default function ScoreFixPage() {
                 SCORE FIX
               </div>
               <h1 className="mt-3 max-w-4xl text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl lg:leading-[1.08]">
-                Score Fix AutoPR — Automated GitHub Remediation for AI Visibility
+                Score Fix AutoPR - Automated GitHub Remediation for AI Visibility
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300 sm:text-[15px]">
-                Score Fix connects to your GitHub repo via MCP and generates pull requests with real fixes — schema patches, H1 rewrites, FAQ blocks, and structural improvements. Each automated PR costs 10-25 credits depending on complexity. No manual content editing required.
+                Score Fix connects to your GitHub repo via MCP and generates pull requests with real fixes - schema patches, H1 rewrites, FAQ blocks, and structural improvements. Each automated PR costs 10-25 credits depending on complexity. No manual content editing required.
               </p>
 
               {packCreditsBalance > 0 && (
@@ -554,7 +554,7 @@ export default function ScoreFixPage() {
                 <h2 className="text-2xl brand-title">What Score Fix AutoPR does</h2>
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
-                Score Fix AutoPR connects to your GitHub repo via MCP. It translates audit findings into automated pull requests containing schema patches, content rewrites, and structural fixes. Each PR references evidence IDs so you can verify exactly which audit signal drove each change. No manual editing — just review and merge.
+                Score Fix AutoPR connects to your GitHub repo via MCP. It translates audit findings into automated pull requests containing schema patches, content rewrites, and structural fixes. Each PR references evidence IDs so you can verify exactly which audit signal drove each change. No manual editing - just review and merge.
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">

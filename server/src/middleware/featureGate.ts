@@ -45,9 +45,9 @@ export type GatedFeature =
   | 'alertIntegrations' // Signal-exclusive: Slack + Discord alert connections
   | 'automationWorkflows' // Signal-exclusive: Zapier/automation workflow connections
   | 'priorityQueue'     // Signal-exclusive: priority analysis queue
-  | 'autoPR'            // ScoreFix-exclusive: automated GitHub PR generation via MCP
-  | 'batchRemediation'  // ScoreFix-exclusive: batch remediation across multiple URLs
-  | 'evidenceLinkedPRs'; // ScoreFix-exclusive: evidence-linked PR commits
+  | 'autoPR'            // scorefix-exclusive: automated GitHub PR generation via MCP
+  | 'batchRemediation'  // scorefix-exclusive: batch remediation across multiple URLs
+  | 'evidenceLinkedPRs'; // scorefix-exclusive: evidence-linked PR commits
 
 /**
  * Map feature keys to TierLimits properties

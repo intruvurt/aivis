@@ -54,9 +54,9 @@ export default function CompliancePage() {
             Every audit includes a real-time, three-layer threat intelligence scan that runs in parallel with the visibility analysis:
           </p>
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">
-            <li><strong className="text-white">URLhaus</strong> — checks the target URL against the abuse.ch malicious URL database (known malware distribution, phishing, and botnet C2 endpoints).</li>
-            <li><strong className="text-white">Google Safe Browsing API v4</strong> — checks for social engineering, malware, unwanted software, and potentially harmful applications (requires server-configured API key).</li>
-            <li><strong className="text-white">Hostname heuristics</strong> — detects punycode/IDN homograph attacks, raw IP hosting, suspicious URL patterns, and risky top-level domains (.tk, .ml, .cf, .gq).</li>
+            <li><strong className="text-white">URLhaus</strong> - checks the target URL against the abuse.ch malicious URL database (known malware distribution, phishing, and botnet C2 endpoints).</li>
+            <li><strong className="text-white">Google Safe Browsing API v4</strong> - checks for social engineering, malware, unwanted software, and potentially harmful applications (requires server-configured API key).</li>
+            <li><strong className="text-white">Hostname heuristics</strong> - detects punycode/IDN homograph attacks, raw IP hosting, suspicious URL patterns, and risky top-level domains (.tk, .ml, .cf, .gq).</li>
           </ul>
           <p className="text-sm text-white/70 mt-3">
             Results are surfaced in a Threat Intel banner on the audit report with risk levels from Low to Critical.

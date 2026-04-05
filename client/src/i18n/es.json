@@ -20,7 +20,7 @@
   },
   "hero": {
     "title": "Motor de Visibilidad IA",
-    "signedOutSubtitle": "La mayoría de herramientas de visibilidad IA se quedan en un panel. AiVIS diagnostica por qué la IA omite tu sitio, lo rastrea hasta fallos específicos y envía la corrección — hasta el pull request.",
+    "signedOutSubtitle": "La mayoría de herramientas de visibilidad IA se quedan en un panel. AiVIS diagnostica por qué la IA omite tu sitio, lo rastrea hasta fallos específicos y envía la corrección - hasta el pull request.",
     "cta": "Iniciar Auditoría",
     "ctaSecondary": "Ver Metodología"
   },
@@ -106,7 +106,7 @@
     "overview": "Resumen",
     "seeVisibility": "Ver Visibilidad",
     "reports": "Informes",
-    "scoreFix": "Corregir Puntuación",
+    "scorefix": "Corregir Puntuación",
     "analytics": "Analíticas",
     "citations": "Citaciones",
     "competitors": "Competidores",

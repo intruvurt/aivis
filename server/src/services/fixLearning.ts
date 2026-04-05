@@ -1,5 +1,5 @@
 /**
- * Fix Learning Service — Level 4 Self-Healing System
+ * Fix Learning Service - Level 4 Self-Healing System
  * Tracks the ROI of every fix type by recording expected vs actual score delta.
  * Provides a ranked list of fix types sorted by real-world effectiveness.
  *
@@ -29,7 +29,7 @@ export interface FixRanking {
   avg_expected_delta: number;
   avg_actual_delta: number;
   avg_roi_ratio: number;
-  /** avg_actual_delta / avg_expected_delta — measures prediction accuracy */
+  /** avg_actual_delta / avg_expected_delta - measures prediction accuracy */
   accuracy_ratio: number;
 }
 
@@ -102,7 +102,7 @@ export async function getFixRankings(userId: string): Promise<FixRanking[]> {
 }
 
 /**
- * Global fix rankings across all users — used for bootstrap recommendations
+ * Global fix rankings across all users - used for bootstrap recommendations
  * before per-user data accumulates.
  */
 export async function getGlobalFixRankings(): Promise<FixRanking[]> {

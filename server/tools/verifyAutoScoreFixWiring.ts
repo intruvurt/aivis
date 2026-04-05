@@ -18,15 +18,15 @@ function hasPattern(source: string, pattern: RegExp): boolean {
 
 async function checkAutoScoreFixWiring(): Promise<CheckResult[]> {
   const serverTs = await readRepoFile('server', 'src', 'server.ts');
-  const routes = await readRepoFile('server', 'src', 'routes', 'autoScoreFixRoutes.ts');
-  const service = await readRepoFile('server', 'src', 'services', 'autoScoreFixService.ts');
+  const routes = await readRepoFile('server', 'src', 'routes', 'AutoScoreFixRoutes.ts');
+  const service = await readRepoFile('server', 'src', 'services', 'AutoScoreFixService.ts');
   const modal = await readRepoFile('client', 'src', 'components', 'AutoScoreFixModal.tsx');
   const widget = await readRepoFile('client', 'src', 'components', 'AutoScoreFixWidget.tsx');
 
   return [
     {
       name: 'route mounted: /api/auto-score-fix',
-      ok: hasPattern(serverTs, /app\.use\('\/api\/auto-score-fix',\s*autoScoreFixRoutes\)/),
+      ok: hasPattern(serverTs, /app\.use\('\/api\/auto-score-fix',\s*AutoScoreFixRoutes\)/),
     },
     {
       name: 'worker loop started on server boot',
@@ -97,7 +97,7 @@ async function main() {
     if (check.ok) {
       console.log(`✅ ${check.name}`);
     } else {
-      console.error(`❌ ${check.name}${check.details ? ` — ${check.details}` : ''}`);
+      console.error(`❌ ${check.name}${check.details ? ` - ${check.details}` : ''}`);
     }
   }
 

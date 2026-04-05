@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * AiVIS MCP Server — Clean Standalone Implementation
+ * AiVIS MCP Server - Clean Standalone Implementation
  *
  * Runs as a standalone Node process exposing AiVIS tools via Model Context Protocol.
  * Uses McpServer + registerTool() pattern with Zod input schemas and stable

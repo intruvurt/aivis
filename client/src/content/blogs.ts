@@ -1,4 +1,4 @@
-﻿import { BLOG_READY_GENERATED_ENTRIES } from './blogReady.generated';
+import { BLOG_READY_GENERATED_ENTRIES } from './blogReady.generated';
 
 export type BlogCategory = 'aeo' | 'seo' | 'geo' | 'eeat' | 'technology' | 'strategy' | 'case-study' | 'implementation';
 export type BlogTag = 'AEO' | 'SEO' | 'GEO' | 'EEAT' | 'AI-Tech' | 'Citations' | 'Visibility' | 'Schema' | 'Extraction' | 'Foundational' | 'Advanced' | 'Case Study' | 'Strategy' | 'Technical' | 'Implementation';
@@ -1085,7 +1085,7 @@ Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-p
 
 Signal is the premium tier at $149 per month, or $89 per month billed annually at $1,068 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
 
-Score Fix is the AutoPR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three ScoreFix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
+Score Fix is the AutoPR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
 
 **The Visibility Audit Engine**
 
@@ -1155,7 +1155,7 @@ Signal-exclusive. Audit requests from Signal users get processed ahead of free a
 
 **Automated PR Generation (Score Fix)**
 
-ScoreFix-exclusive. The headline capability. After an audit identifies structural issues - missing schema, broken heading hierarchies, absent FAQ blocks, suboptimal meta tags - Score Fix generates real GitHub pull requests with the actual code fixes.
+scorefix-exclusive. The headline capability. After an audit identifies structural issues - missing schema, broken heading hierarchies, absent FAQ blocks, suboptimal meta tags - Score Fix generates real GitHub pull requests with the actual code fixes.
 
 Each PR is evidence-linked: the PR description references the specific audit finding, the score impact, and the recommendation that generated the fix. You see exactly why each change is being proposed.
 

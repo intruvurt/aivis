@@ -6,7 +6,7 @@
  * deduplicates against existing scheduled rescans & competitor tracking, then
  * optionally adds them to the scheduled rescan list.
  *
- * AI is used only to label/describe results — never to generate URLs.
+ * AI is used only to label/describe results - never to generate URLs.
  */
 import { getPool } from './postgresql.js';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
@@ -62,7 +62,7 @@ CREATE INDEX IF NOT EXISTS idx_niche_discovery_user ON niche_discovery_jobs(user
 
 // ── Web-search-powered URL discovery ─────────────────────────────────────────
 
-/** Domains that are directories/aggregators — not actual businesses */
+/** Domains that are directories/aggregators - not actual businesses */
 const DIRECTORY_HOSTS = new Set([
   'yelp.com', 'yellowpages.com', 'bbb.org', 'angi.com', 'angieslist.com',
   'thumbtack.com', 'homeadvisor.com', 'nextdoor.com', 'mapquest.com',
@@ -139,7 +139,7 @@ async function discoverUrlsViaWebSearch(
       seenDomains.add(rootDomain);
 
       results.push({
-        name: r.title.replace(/\s*[-|–—].*$/, '').trim() || rootDomain,
+        name: r.title.replace(/\s*[-|–-].*$/, '').trim() || rootDomain,
         url: r.href,
         reason: r.snippet || `Found in search results for "${query}"`,
       });
@@ -165,7 +165,7 @@ async function discoverUrlsViaWebSearch(
         seenDomains.add(rootDomain);
 
         results.push({
-          name: r.title.replace(/\s*[-|–—].*$/, '').trim() || rootDomain,
+          name: r.title.replace(/\s*[-|–-].*$/, '').trim() || rootDomain,
           url: r.href,
           reason: r.snippet || `Found in search results for "${query}"`,
         });
@@ -302,7 +302,7 @@ export async function listJobs(userId: string, workspaceId: string, limit = 20):
  *   4) Results are persisted to the job record
  *
  * Returns the job with enriched discovered_urls.
- * Does NOT auto-schedule — the caller must explicitly add URLs via addDiscoveredToSchedule().
+ * Does NOT auto-schedule - the caller must explicitly add URLs via addDiscoveredToSchedule().
  */
 export async function runDiscovery(
   userId: string,

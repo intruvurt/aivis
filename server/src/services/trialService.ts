@@ -1,5 +1,5 @@
 /**
- * Trial Service — manages 14-day Signal trial lifecycle.
+ * Trial Service - manages 14-day Signal trial lifecycle.
  *
  * Responsibilities:
  *   • start trial (guard: one per account, observer-only)
@@ -84,7 +84,7 @@ export async function startTrial(userId: string, email: string): Promise<StartTr
     [userId, 'trial_started'],
   ).catch(() => {});
 
-  console.log(`[TrialService] Trial started for user ${userId} — ends ${trialEndsAt.toISOString()}`);
+  console.log(`[TrialService] Trial started for user ${userId} - ends ${trialEndsAt.toISOString()}`);
 
   createUserNotification({
     userId,

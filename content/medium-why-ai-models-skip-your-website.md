@@ -111,11 +111,11 @@ On Signal and Score Fix tiers, the content analysis runs through a [triple-check
 
 Before you spend a dollar, AiVIS gives you three completely free tools. No login. No API keys. No trial period.
 
-**[Schema Validator](https://aivis.biz/tools/schema-validator)** — Paste any URL and get a full JSON-LD, Open Graph, Twitter Card, and Microdata validation with a letter grade.
+**[Schema Validator](https://aivis.biz/tools/schema-validator)** - Paste any URL and get a full JSON-LD, Open Graph, Twitter Card, and Microdata validation with a letter grade.
 
-**[Robots Checker](https://aivis.biz/tools/robots-checker)** — See exactly which AI crawlers your robots.txt allows or blocks. Detects GPTBot, ClaudeBot, PerplexityBot, and more.
+**[Robots Checker](https://aivis.biz/tools/robots-checker)** - See exactly which AI crawlers your robots.txt allows or blocks. Detects GPTBot, ClaudeBot, PerplexityBot, and more.
 
-**[Content Extractability](https://aivis.biz/tools/content-extractability)** — Grades how easily AI models can extract structured answers from your page content.
+**[Content Extractability](https://aivis.biz/tools/content-extractability)** - Grades how easily AI models can extract structured answers from your page content.
 
 These cover the highest-impact SSFR failures I see. Most sites lose 15-25 points on schema and robots issues alone. Fix those first.
 

@@ -54,7 +54,7 @@ export default function DropAlertBanner({ url }: Props) {
               Citation mention rate dropped {alert.drop_magnitude.toFixed(0)} points
             </p>
             <p className="text-xs text-slate-400 mt-0.5 truncate">
-              {alert.url} — {alert.previous_mention_rate.toFixed(0)}% → {alert.current_mention_rate.toFixed(0)}%
+              {alert.url} - {alert.previous_mention_rate.toFixed(0)}% → {alert.current_mention_rate.toFixed(0)}%
             </p>
             {alert.created_at && (
               <p className="text-[11px] text-slate-500 mt-0.5">

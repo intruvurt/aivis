@@ -86,7 +86,7 @@ const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
 
 /**
  * Valid tier strings accepted at runtime (includes legacy + canonical).
- * 'enterprise' and 'pro' are intentionally excluded — they have no defined
+ * 'enterprise' and 'pro' are intentionally excluded - they have no defined
  * mapping and will be rejected by isAuthUser() rather than silently
  * falling through to 'observer'.
  */
@@ -104,7 +104,7 @@ const VALID_TIER_STRINGS: ReadonlySet<string> = new Set<CanonicalTier | LegacyTi
 
 /**
  * Converts canonical or legacy tier string to the corresponding UiTier.
- * Falls back to 'observer' for unrecognized values — log a warning in callers
+ * Falls back to 'observer' for unrecognized values - log a warning in callers
  * if this fallback is reached unexpectedly.
  */
 export function uiTierFromCanonical(tier: CanonicalTier | LegacyTier): UiTier {
@@ -513,11 +513,11 @@ export interface CryptoIntelligence {
   sentiment: 'positive' | 'neutral' | 'negative';
   risk_notes: string[];
   chain_networks?: string[];
-  /** Live on-chain enrichment — only present when API keys are configured */
+  /** Live on-chain enrichment - only present when API keys are configured */
   onchain_data?: CryptoAddressInfo[];
   /** Whether live on-chain data was successfully fetched */
   onchain_enriched?: boolean;
-  /** Feature is experimental — UI must show appropriate disclaimer */
+  /** Feature is experimental - UI must show appropriate disclaimer */
   experimental?: true;
 }
 
@@ -603,7 +603,7 @@ export interface AnalysisResponse {
   visibility_score: number;
 
   /**
-   * Legacy/UI aliases — retained for backwards compatibility with older
+   * Legacy/UI aliases - retained for backwards compatibility with older
    * components. Prefer visibility_score and typed fields above in new code.
    */
   overallScore?: number;

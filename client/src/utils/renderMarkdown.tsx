@@ -48,12 +48,12 @@ export default function renderMarkdown(text: string): React.ReactNode {
     .replace(/<br\s*\/?\s*>/gi, '\n')
     .replace(/\\r\\n/g, '\n')
     .replace(/\\n/g, '\n')
-    // Strip code fences (```lang ... ```) — flatten to plain text
+    // Strip code fences (```lang ... ```) - flatten to plain text
     .replace(/```[\s\S]*?```/g, (match) => {
       const inner = match.replace(/^```[^\n]*\n?/, '').replace(/\n?```$/, '');
       return inner;
     })
-    // Strip inline backtick code (`text`) — keep inner text
+    // Strip inline backtick code (`text`) - keep inner text
     .replace(/`([^`]+)`/g, '$1');
 
   const lines = normalized.split('\n');
@@ -100,7 +100,7 @@ export default function renderMarkdown(text: string): React.ReactNode {
         </li>
       );
     } else if (/^#{1,4}\s/.test(line.trim())) {
-      // Markdown headings — render as bold paragraph
+      // Markdown headings - render as bold paragraph
       const headingText = line.trim().replace(/^#{1,4}\s+/, '');
       const headingContent = processLinks(headingText, `${i}-heading`);
       elements.push(

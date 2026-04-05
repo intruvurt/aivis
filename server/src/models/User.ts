@@ -159,7 +159,7 @@ export async function resendVerificationEmail(email: string): Promise<{ token: s
   };
 }
 
-// Columns stored as JSONB in PostgreSQL — values must be JSON.stringify'd before binding
+// Columns stored as JSONB in PostgreSQL - values must be JSON.stringify'd before binding
 const JSONB_COLUMNS = new Set(['org_verification_reasons']);
 
 export async function updateUserById(

@@ -3,7 +3,7 @@
  *
  * Generates evidence-backed code fixes from audit data using LLM analysis,
  * then creates real pull requests on GitHub, GitLab, or Bitbucket via REST API.
- * No git binary required — all PR operations use provider REST APIs.
+ * No git binary required - all PR operations use provider REST APIs.
  *
  * Credit model:
  *   - Cost: AUTO_SCORE_FIX_CREDIT_COST credits per job
@@ -142,7 +142,7 @@ async function refundFailureCredits(userId: string, jobId: string, amount: numbe
         refundAmount,
         balanceAfter,
         'auto_score_fix_refund_failure',
-        JSON.stringify({ jobId, reason: 'Job failed — full refund' }),
+        JSON.stringify({ jobId, reason: 'Job failed - full refund' }),
       ]
     );
   });
@@ -282,7 +282,7 @@ Produce a JSON response with this exact structure:
   "score_before": ${input.auditEvidence.visibility_score},
   "projected_score_lift": "e.g. +12 to +18 points",
   "evidence_count": <number of recommendations addressed>,
-  "pr_title": "fix: AiVIS Score Fix — evidence-backed visibility improvements for ${input.targetUrl}",
+  "pr_title": "fix: AiVIS Score Fix - evidence-backed visibility improvements for ${input.targetUrl}",
   "pr_body": "<full PR description in markdown with evidence citations, before/after summary, and implementation notes>",
   "file_changes": [
     {
@@ -297,7 +297,7 @@ Produce a JSON response with this exact structure:
 Requirements:
 - Target schema.org JSON-LD files, meta tag files, robots.txt, sitemap hints, or structured HTML sections
 - If private_exposure_scan findings exist, prioritize concrete fixes for secret leakage, route protection, session hardening, and header hardening.
-- Each file_change must be complete and self-contained (not a diff — full replacement content for the relevant file)
+- Each file_change must be complete and self-contained (not a diff - full replacement content for the relevant file)
 - path must be relative to repo root (e.g. "public/schema/organization.json", "public/robots.txt", "src/seo/structured-data.ts")
 - Limit to 5 most impactful file changes
 - PR body must include: Score context, Evidence summary, Per-file change rationale, Implementation verification steps`;
@@ -385,7 +385,7 @@ async function createGitHubPR(
         existingSha = existData.sha;
       }
     } catch {
-      // file doesn't exist — create
+      // file doesn't exist - create
     }
 
     const body: Record<string, unknown> = {
@@ -469,7 +469,7 @@ async function createGitLabMR(
     headers,
     body: JSON.stringify({
       branch: fixBranch,
-      commit_message: `fix(aivis): Auto Score Fix — evidence-backed visibility improvements\n\n${plan.summary}`,
+      commit_message: `fix(aivis): Auto Score Fix - evidence-backed visibility improvements\n\n${plan.summary}`,
       actions,
     }),
   });
@@ -518,7 +518,7 @@ async function createBitbucketPR(
   // Bitbucket: create branch + files via /src with form-data
   const formData = new FormData();
   formData.append('branch', fixBranch);
-  formData.append('message', `fix(aivis): Auto Score Fix — ${plan.summary}`);
+  formData.append('message', `fix(aivis): Auto Score Fix - ${plan.summary}`);
   formData.append('parents', baseBranch);
 
   for (const change of plan.file_changes) {
@@ -787,7 +787,7 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
       [prResult.pr_number, prResult.pr_url, jobId]
     );
 
-    console.log(`[AutoScoreFix] Job ${jobId}: PR created — ${prResult.pr_url}`);
+    console.log(`[AutoScoreFix] Job ${jobId}: PR created - ${prResult.pr_url}`);
   } catch (err: any) {
     const msg = String(err?.message || 'Unknown error');
     console.error(`[AutoScoreFix] Job ${jobId} failed:`, msg);
@@ -1316,7 +1316,7 @@ export function startAutoScoreFixExpiryLoop(): void {
               ]
             );
           });
-          console.log(`[AutoScoreFix] Job ${job.id} expired — ${refundAmount} credits refunded (80%)`);
+          console.log(`[AutoScoreFix] Job ${job.id} expired - ${refundAmount} credits refunded (80%)`);
         } catch (err: any) {
           console.error(`[AutoScoreFix] Expiry refund failed for job ${job.id}:`, err?.message);
         }

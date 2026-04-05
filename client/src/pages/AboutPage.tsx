@@ -61,7 +61,7 @@ export default function AboutPage() {
     <PublicPageFrame
       icon={Info}
       title="About AiVIS"
-      subtitle="Enterprise-grade AI visibility Evidence-backed auditing and Auto Scorefix PR platform built for agencies, teams, and operators."
+      subtitle="Enterprise-grade AI visibility Evidence-backed auditing and Auto scorefix PR platform built for agencies, teams, and operators."
       backTo="/"
       maxWidthClass="max-w-6xl"
     >

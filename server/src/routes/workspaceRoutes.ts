@@ -323,7 +323,7 @@ router.post(
         metadata: { email, role, inviteId: invite.id },
       });
 
-      // Send invite email (best-effort — don't fail the request if email fails)
+      // Send invite email (best-effort - don't fail the request if email fails)
       try {
         const pool = getPool();
         const wsRow = await pool.query<{ name: string }>(

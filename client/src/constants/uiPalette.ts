@@ -1,5 +1,5 @@
 export const CHART_PALETTE = {
-  /* Core brand — now warm-aligned to match logo:
+  /* Core brand - now warm-aligned to match logo:
      Deep navy bg + White text + Warm orange/amber primary + Cyan secondary + Indigo accent */
   orange: '#f97316',
   orangeDeep: '#ea6305',

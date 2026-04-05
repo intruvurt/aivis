@@ -1,7 +1,7 @@
-// Step 1: web_fetch tool — HTTP GET via Anthropic's proxy
+// Step 1: web_fetch tool - HTTP GET via Anthropic's proxy
 // Returns: HTML stripped to markdown, title, meta, content blocks
 // Limit: ~8,000-16,000 tokens of extracted text
-// Does NOT execute JS — you get server-rendered HTML only
+// Does NOT execute JS - you get server-rendered HTML only
 
 // Step 2: In-context analysis against training priors
 // I cross-reference fetched content against:

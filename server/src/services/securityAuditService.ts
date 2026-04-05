@@ -1,5 +1,5 @@
 /**
- * Security Audit Service — SOC1 Type 1 Compliance
+ * Security Audit Service - SOC1 Type 1 Compliance
  *
  * Persists privileged actions to the security_audit_log table for
  * tamper-evident audit trail. Covers:
@@ -44,7 +44,7 @@ export interface AuditLogEntry {
 
 /**
  * Persist a security audit log entry.
- * Non-blocking — failures are logged but never crash the request.
+ * Non-blocking - failures are logged but never crash the request.
  */
 export async function recordAuditEvent(entry: AuditLogEntry): Promise<void> {
   if (!isDatabaseAvailable()) return;

@@ -670,7 +670,7 @@ export default function ReportsPage() {
       positiveSignals.push("Score stayed flat with no material SEO diagnostic movement detected.");
     }
 
-    // Gate-level delta — only populated when both audits have strict_rubric loaded
+    // Gate-level delta - only populated when both audits have strict_rubric loaded
     const baselineResult = baselineReport.auditId ? auditResultsByAuditId[baselineReport.auditId] : null;
     const comparisonResult = comparisonReport.auditId ? auditResultsByAuditId[comparisonReport.auditId] : null;
     type GateDiffRow = {
@@ -1217,7 +1217,7 @@ export default function ReportsPage() {
     if (!share.open) return;
     const report = share.report;
 
-    // Always regenerate a fresh share token on every copy — previous link is
+    // Always regenerate a fresh share token on every copy - previous link is
     // superseded and will expire per the user's configured expiration policy.
     let freshLink = share.link;
     let freshExpiresAt = share.expiresAt;
@@ -1521,9 +1521,9 @@ export default function ReportsPage() {
                     <Briefcase className="w-3.5 h-3.5" />
                     Agency + Executive delivery hub
                   </div>
-                  <h2 className="mt-3 text-2xl sm:text-3xl brand-title">Your audit archive, remediation queue, and proof-of-work layer — in one place.</h2>
+                  <h2 className="mt-3 text-2xl sm:text-3xl brand-title">Your audit archive, remediation queue, and proof-of-work layer - in one place.</h2>
                   <p className="mt-3 text-sm leading-7 text-white/60">
-                    Manage active client audits, build review-ready snapshots, track score movement across accounts, and route weak audits directly into Score Fix. Each report is evidence — not just a number.
+                    Manage active client audits, build review-ready snapshots, track score movement across accounts, and route weak audits directly into Score Fix. Each report is evidence - not just a number.
                   </p>
                 </div>
 

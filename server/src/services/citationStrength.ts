@@ -1,5 +1,5 @@
 // server/src/services/citationStrength.ts
-// Heuristic-based citation strength — NO AI calls.
+// Heuristic-based citation strength - NO AI calls.
 // This avoids competing with the main AI1 pipeline for OpenRouter rate limits
 // and eliminates provider-backoff poisoning that was causing deterministic fallbacks.
 import type { CitationStrength } from '../../../shared/types.js';
@@ -57,7 +57,7 @@ function classifyDomain(domain: string): Strength {
 
 /**
  * Classify citation strength for external domains using heuristics.
- * Zero-latency, zero-cost, no AI calls — prevents rate-limit interference.
+ * Zero-latency, zero-cost, no AI calls - prevents rate-limit interference.
  */
 export async function assessCitationStrength(
   domains: string[],

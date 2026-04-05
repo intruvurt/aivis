@@ -85,7 +85,7 @@ export default function AiVisibilityBenchmark() {
           <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mb-10 flex justify-center">
             <img
               src="/images/ad-aivis.png"
-              alt="AiVIS AI visibility benchmark promo — your website can rank number one and still be invisible"
+              alt="AiVIS AI visibility benchmark promo - your website can rank number one and still be invisible"
               className="max-w-full h-auto max-h-[400px] object-contain rounded-2xl border border-white/10 shadow-2xl shadow-cyan-500/5"
             />
           </motion.div>

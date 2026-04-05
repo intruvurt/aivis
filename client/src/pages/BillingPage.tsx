@@ -625,7 +625,7 @@ export default function BillingPage() {
               <Clock className={`w-5 h-5 ${(subscription.trial.daysRemaining ?? 0) <= 3 ? "text-amber-400" : "text-emerald-400"}`} />
               <div>
                 <p className="text-sm font-semibold text-white">
-                  Signal Trial — {subscription.trial.daysRemaining} day{subscription.trial.daysRemaining !== 1 ? "s" : ""} remaining
+                  Signal Trial - {subscription.trial.daysRemaining} day{subscription.trial.daysRemaining !== 1 ? "s" : ""} remaining
                 </p>
                 <p className="text-xs text-white/55">
                   {subscription.trial.endsAt
@@ -1074,7 +1074,7 @@ export default function BillingPage() {
             <ShieldCheck className="w-4 h-4 text-cyan-400" />
             How AiVIS Compares
           </h2>
-          <p className="text-xs text-white/50 mb-5">Estimated monthly cost for comparable AI visibility capabilities on other platforms — if they even offer them.</p>
+          <p className="text-xs text-white/50 mb-5">Estimated monthly cost for comparable AI visibility capabilities on other platforms - if they even offer them.</p>
 
           {/* Comparison Table */}
           <div className="overflow-x-auto -mx-1">
@@ -1091,17 +1091,17 @@ export default function BillingPage() {
               <tbody className="text-white/65">
                 {[
                   { cap: "AI visibility audits", aivis: true, aivisCost: "Included", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$14+/mo", reaudit: true, reauditCost: "$79+/mo" },
-                  { cap: "Multi-model AI pipeline", aivis: true, aivisCost: "Included", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Triple-check validation", aivis: true, aivisCost: "Signal+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Citation testing (4 AI engines)", aivis: true, aivisCost: "Signal+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Brand mention tracking (15 sources)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Competitor tracking", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$14+/mo", reaudit: false, reauditCost: "—" },
-                  { cap: "Reverse engineer AI answers", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "MCP protocol (AI agent access)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Niche URL discovery", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Scheduled rescans & webhooks", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "—", reaudit: true, reauditCost: "$79+/mo" },
-                  { cap: "REST API + OAuth 2.0", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Automated PR generation (AutoPR)", aivis: true, aivisCost: "Score Fix", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
+                  { cap: "Multi-model AI pipeline", aivis: true, aivisCost: "Included", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Triple-check validation", aivis: true, aivisCost: "Signal+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Citation testing (4 AI engines)", aivis: true, aivisCost: "Signal+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Brand mention tracking (15 sources)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Competitor tracking", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$14+/mo", reaudit: false, reauditCost: "-" },
+                  { cap: "Reverse engineer AI answers", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "MCP protocol (AI agent access)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Niche URL discovery", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Scheduled rescans & webhooks", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "-", reaudit: true, reauditCost: "$79+/mo" },
+                  { cap: "REST API + OAuth 2.0", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Automated PR generation (AutoPR)", aivis: true, aivisCost: "Score Fix", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
                 ].map((row) => (
                   <tr key={row.cap} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="py-2 pr-3 text-white/75 font-medium">{row.cap}</td>
@@ -1145,7 +1145,7 @@ export default function BillingPage() {
           <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-3">
             <p className="text-[11px] text-white/55 leading-relaxed">
               <strong className="text-white/70">Bottom line:</strong>{" "}
-              To match what AiVIS Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo — and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
+              To match what AiVIS Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
             </p>
           </div>
 
@@ -1168,7 +1168,7 @@ export default function BillingPage() {
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             Secure Payment Connection
           </h2>
-          <p className="text-xs text-white/50 mb-3">Your billing is handled entirely through Stripe — AiVIS never sees or stores your card details.</p>
+          <p className="text-xs text-white/50 mb-3">Your billing is handled entirely through Stripe - AiVIS never sees or stores your card details.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-start gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] p-3">

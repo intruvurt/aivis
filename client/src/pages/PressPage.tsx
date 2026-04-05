@@ -21,7 +21,7 @@ const PRESS_STRUCTURED_DATA = [
 const MILESTONES = [
   {
     date: "2026",
-    title: "TechCrunch Startup Battlefield — Top 200 Nominee",
+    title: "TechCrunch Startup Battlefield - Top 200 Nominee",
     description:
       "AiVIS selected as a Top 200 nominee for TechCrunch Startup Battlefield 2026, competing in the AI/ML category for AI visibility intelligence and citation-readiness auditing.",
   },
@@ -35,7 +35,7 @@ const MILESTONES = [
 
 const MEDIA_KIT = [
   { label: "Company Name", value: "Intruvurt Labs" },
-  { label: "Product", value: "AiVIS — AI Visibility Intelligence Audits" },
+  { label: "Product", value: "AiVIS - AI Visibility Intelligence Audits" },
   { label: "Founded", value: "December 2025" },
   { label: "Headquarters", value: "United States" },
   { label: "Category", value: "AI Visibility, AEO, Citation Readiness" },
@@ -71,7 +71,7 @@ export default function PressPage() {
             AiVIS in the Press
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            The first evidence-backed AI visibility auditing platform — built
+            The first evidence-backed AI visibility auditing platform - built
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>

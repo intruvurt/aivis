@@ -1,9 +1,9 @@
 /**
- * Widget Embed Service (Level 5 — VaaS)
+ * Widget Embed Service (Level 5 - VaaS)
  *
  * Generates short-lived or permanent embed tokens that power the
  * public embeddable score-badge widget.  Tokens are tied to a specific
- * URL and workspace — the public endpoint serves the latest cached audit
+ * URL and workspace - the public endpoint serves the latest cached audit
  * score without requiring any authentication.
  */
 import { randomBytes } from 'crypto';

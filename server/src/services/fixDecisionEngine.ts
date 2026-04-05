@@ -1,5 +1,5 @@
 /**
- * Fix Decision Engine — Level 4 Self-Healing System
+ * Fix Decision Engine - Level 4 Self-Healing System
  *
  * Given a set of detected issues and the user's healing mode preference,
  * determines whether to: notify only | generate a PR | auto-merge the fix.
@@ -80,7 +80,7 @@ export function decide(
   if (mode === 'manual') {
     return {
       action: 'notify',
-      reason: 'Mode is set to manual — notifying only, no automatic fix applied.',
+      reason: 'Mode is set to manual - notifying only, no automatic fix applied.',
       confidence,
       priority_score,
       issue,
@@ -92,7 +92,7 @@ export function decide(
   if (issue.auto_fixable === false) {
     return {
       action: 'notify',
-      reason: `Issue "${issue.issue}" is not automatically fixable — manual review required.`,
+      reason: `Issue "${issue.issue}" is not automatically fixable - manual review required.`,
       confidence,
       priority_score,
       issue,
@@ -104,7 +104,7 @@ export function decide(
   if (mode === 'assisted') {
     return {
       action: 'generate_pr',
-      reason: 'Mode is assisted — a PR will be opened for your review.',
+      reason: 'Mode is assisted - a PR will be opened for your review.',
       confidence,
       priority_score,
       issue,
@@ -118,7 +118,7 @@ export function decide(
   if (!AUTO_MERGE_SAFE_TYPES.has(fixType)) {
     return {
       action: 'generate_pr',
-      reason: `Fix type "${fixType}" is not in the auto-merge safe list — opening a PR for review.`,
+      reason: `Fix type "${fixType}" is not in the auto-merge safe list - opening a PR for review.`,
       confidence,
       priority_score,
       issue,
@@ -129,7 +129,7 @@ export function decide(
   if (confidence < MIN_AUTO_CONFIDENCE) {
     return {
       action: 'generate_pr',
-      reason: `Confidence ${(confidence * 100).toFixed(0)}% is below threshold ${(MIN_AUTO_CONFIDENCE * 100).toFixed(0)}% — opening a PR for review.`,
+      reason: `Confidence ${(confidence * 100).toFixed(0)}% is below threshold ${(MIN_AUTO_CONFIDENCE * 100).toFixed(0)}% - opening a PR for review.`,
       confidence,
       priority_score,
       issue,
@@ -140,7 +140,7 @@ export function decide(
   if (issue.severity !== 'high') {
     return {
       action: 'generate_pr',
-      reason: `Issue severity is "${issue.severity}" — auto-merge reserved for high-severity issues only.`,
+      reason: `Issue severity is "${issue.severity}" - auto-merge reserved for high-severity issues only.`,
       confidence,
       priority_score,
       issue,
@@ -151,7 +151,7 @@ export function decide(
   if (impact < 5) {
     return {
       action: 'generate_pr',
-      reason: `Impact score ${impact} is below 5 — not worth auto-merging at this time.`,
+      reason: `Impact score ${impact} is below 5 - not worth auto-merging at this time.`,
       confidence,
       priority_score,
       issue,
@@ -159,7 +159,7 @@ export function decide(
     };
   }
 
-  // All gates passed — safe to auto-merge
+  // All gates passed - safe to auto-merge
   return {
     action: 'auto_merge',
     reason: `Auto-merge approved: ${fixType} fix, severity=${issue.severity}, impact=${impact}, confidence=${(confidence * 100).toFixed(0)}%.`,
@@ -193,7 +193,7 @@ function impactDefault(severity: 'low' | 'medium' | 'high'): number {
   }
 }
 
-/** Approximate effort (1 = easy, 10 = hard) — higher effort = lower priority when impact is equal */
+/** Approximate effort (1 = easy, 10 = hard) - higher effort = lower priority when impact is equal */
 function effortScore(fixType: FixType): number {
   const map: Record<FixType, number> = {
     meta: 1,

@@ -1,5 +1,5 @@
 // server/src/services/duckDuckGoSearch.ts
-// DuckDuckGo Instant Answer API — completely free, no API key required.
+// DuckDuckGo Instant Answer API - completely free, no API key required.
 // Used to verify web presence via DuckDuckGo's knowledge graph and instant answers.
 
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
@@ -39,7 +39,7 @@ function extractHost(url: string): string {
 
 /**
  * Query DuckDuckGo Instant Answer API and check if a brand/URL appears.
- * Completely free — no API key, no signup, no rate limit published.
+ * Completely free - no API key, no signup, no rate limit published.
  * Returns a WebSearchPresenceResult with source: 'ddg_instant'.
  */
 export async function checkDDGPresence(

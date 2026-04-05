@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Search, BookOpen } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema } from "../lib/seoSchema";
@@ -19,7 +20,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Answer Engine Optimization (AEO)",
     definition:
-      "The practice of structuring website content so that AI answer engines can extract, trust, and cite it when generating responses. AEO differs from SEO because AI systems evaluate content extractability and entity coherence rather than backlink authority and keyword density. AEO is not a replacement for SEO — it is an additional optimization layer for AI-driven discovery channels.",
+      "The practice of structuring website content so that AI answer engines can extract, trust, and cite it when generating responses. AEO differs from SEO because AI systems evaluate content extractability and entity coherence rather than backlink authority and keyword density. AEO is not a replacement for SEO - it is an additional optimization layer for AI-driven discovery channels.",
     related: ["AI Visibility Score", "Content Extractability", "GEO"],
   },
   {
@@ -67,7 +68,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)",
     definition:
-      "Google's quality evaluation framework that assesses content credibility. In the AI visibility context, E-E-A-T signals — author credentials, organizational authority, verifiable claims, and transparent sourcing — influence whether AI answer engines consider content trustworthy enough to cite. AiVIS audits structural E-E-A-T signals including author schema, organization schema, and policy page presence.",
+      "Google's quality evaluation framework that assesses content credibility. In the AI visibility context, E-E-A-T signals - author credentials, organizational authority, verifiable claims, and transparent sourcing - influence whether AI answer engines consider content trustworthy enough to cite. AiVIS audits structural E-E-A-T signals including author schema, organization schema, and policy page presence.",
     related: ["Entity Clarity", "Trust Signals"],
   },
   {
@@ -79,7 +80,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "GEO (Generative Engine Optimization)",
     definition:
-      "A research-backed framework for optimizing content to appear in AI-generated answers. GEO encompasses techniques like adding authoritative citations, using statistical evidence, including quotation-ready passages, and structuring content with clear entity definitions. GEO and AEO are closely related — GEO focuses on content characteristics, AEO focuses on structural readiness.",
+      "A research-backed framework for optimizing content to appear in AI-generated answers. GEO encompasses techniques like adding authoritative citations, using statistical evidence, including quotation-ready passages, and structuring content with clear entity definitions. GEO and AEO are closely related - GEO focuses on content characteristics, AEO focuses on structural readiness.",
     related: ["Answer Engine Optimization", "Citation Surface", "Answer Block Density"],
   },
   {
@@ -145,7 +146,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Automated Remediation",
     definition:
-      "The process of automatically implementing fixes for structural issues identified during an AI visibility audit. Rather than only listing recommendations, automated remediation generates code changes — schema additions, heading restructures, entity annotations — and delivers them as pull requests. AiVIS's Score Fix tier provides this capability via GitHub MCP integration.",
+      "The process of automatically implementing fixes for structural issues identified during an AI visibility audit. Rather than only listing recommendations, automated remediation generates code changes - schema additions, heading restructures, entity annotations - and delivers them as pull requests. AiVIS's Score Fix tier provides this capability via GitHub MCP integration.",
     related: ["Score Fix", "MCP", "Evidence Layer"],
   },
   {
@@ -196,7 +197,7 @@ export default function GlossaryPage() {
   }));
 
   usePageMeta({
-    title: "AI Visibility & AEO Glossary — Key Terms Defined | AiVIS",
+    title: "AI Visibility & AEO Glossary - Key Terms Defined | AiVIS",
     description:
       "Comprehensive glossary of AI visibility, answer engine optimization (AEO), and AI citation readiness terms. Definitions for AI Visibility Score, content extractability, entity clarity, Triple-Check validation, and more.",
     path: "/glossary",
@@ -300,6 +301,17 @@ export default function GlossaryPage() {
             <p className="text-sm text-white/65 leading-relaxed">
               <strong className="text-white">AiVIS</strong> is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. The terms in this glossary describe the structural signals and measurement methods that define the AI visibility category.
             </p>
+          </div>
+
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Related Pages</h3>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/methodology" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Methodology</Link>
+              <Link to="/why-ai-visibility" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Why AI Visibility?</Link>
+              <Link to="/blogs" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Blog</Link>
+              <Link to="/guide" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Implementation Guide</Link>
+              <Link to="/compliance" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Compliance</Link>
+            </div>
           </div>
         </div>
       </section>

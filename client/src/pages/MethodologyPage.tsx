@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown, FlaskConical, ShieldCheck, Sparkles } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
@@ -47,31 +48,31 @@ const dimensions = [
 
 const scoreBands = [
   {
-    badge: "A — Excellent",
+    badge: "A - Excellent",
     range: "80–100",
     tone: "bg-emerald-500/15 text-emerald-300 border-emerald-400/20",
     description: "Consistently citable, structurally strong, and readable across answer engines.",
   },
   {
-    badge: "B — Good",
+    badge: "B - Good",
     range: "60–79",
     tone: "bg-green-500/15 text-green-300 border-green-400/20",
     description: "Generally citation-ready with a small number of structural or trust gaps left to close.",
   },
   {
-    badge: "C — Fair",
+    badge: "C - Fair",
     range: "40–59",
     tone: "bg-amber-500/15 text-amber-300 border-amber-400/20",
     description: "Parseable but often deprioritized against stronger competitors or clearer sources.",
   },
   {
-    badge: "D — Poor",
+    badge: "D - Poor",
     range: "20–39",
     tone: "bg-orange-500/15 text-orange-300 border-orange-400/20",
     description: "Significant structural barriers reduce answer-engine trust and extraction quality.",
   },
   {
-    badge: "F — Critical",
+    badge: "F - Critical",
     range: "0–19",
     tone: "bg-red-500/15 text-red-300 border-red-400/20",
     description: "The page is not practically citable in its current state.",
@@ -266,6 +267,17 @@ export default function MethodologyPage() {
               <p className="mt-4 text-sm leading-7 text-white/64">{item.answer}</p>
             </details>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-lg font-semibold text-white/80 mb-4">Related Resources</h2>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/compliance" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Compliance</Link>
+          <Link to="/glossary" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Glossary</Link>
+          <Link to="/pricing" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Pricing</Link>
+          <Link to="/why-ai-visibility" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Why AI Visibility?</Link>
+          <Link to="/guide" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Implementation Guide</Link>
         </div>
       </section>
     </PublicPageFrame>

@@ -17,7 +17,7 @@ import { gateToolAction } from '../services/toolCreditGate.js';
 
 const router = express.Router();
 
-/** Route-level safety deadline (ms) — kills request if handler runs too long */
+/** Route-level safety deadline (ms) - kills request if handler runs too long */
 const ROUTE_DEADLINE_MS = 45_000;
 
 // All reverse-engineer routes require authentication + usage gate
@@ -39,7 +39,7 @@ router.use((req: Request, res: Response, next) => {
   next();
 });
 
-// Tool credit gate — deducts credits after free monthly allowance
+// Tool credit gate - deducts credits after free monthly allowance
 router.use(async (req: Request, res: Response, next) => {
   const user = (req as any).user;
   if (!user?.id) return next();
@@ -56,7 +56,7 @@ router.use(async (req: Request, res: Response, next) => {
     }
     (req as any).creditInfo = gate;
   } catch (gateErr: any) {
-    // Credit gate DB error — fail-open so users aren't blocked from using a paid feature
+    // Credit gate DB error - fail-open so users aren't blocked from using a paid feature
     console.error('[ReverseEngineer] Credit gate error (fail-open):', gateErr?.message);
   }
   next();

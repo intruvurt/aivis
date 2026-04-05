@@ -206,8 +206,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Trigger Render deploy — API
+      - name: Trigger Render deploy - API
         run: curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_API }}"
 
-      - name: Trigger Render deploy — Web
+      - name: Trigger Render deploy - Web
         run: curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_WEB }}"

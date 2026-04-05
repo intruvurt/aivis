@@ -86,7 +86,7 @@ export default function UpgradeWall({ feature, description, requiredTier, icon, 
 
       {canStartTrial && requiredTier !== "scorefix" && (
         <p className="text-emerald-400/70 text-sm mb-4 max-w-sm mx-auto">
-          Signal includes a real 14-day trial — full triple-check pipeline, competitor tracking,
+          Signal includes a real 14-day trial - full triple-check pipeline, competitor tracking,
           citation testing, and every premium feature. No credit card required.
         </p>
       )}

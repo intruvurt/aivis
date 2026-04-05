@@ -19,7 +19,7 @@ import { getPool } from '../services/postgresql.js';
 import { createUser, getUserByEmail, updateUserById } from '../models/User.js';
 import { signUserToken } from '../lib/utils/jwt.js';
 import { attachReferralAtSignup, normalizeReferralCodeInput, validateReferralCode } from '../services/referralCredits.js';
-import { saveVcsToken } from '../services/autoScoreFixService.js';
+import { saveVcsToken } from '../services/AutoScoreFixService.js';
 import { sendVerificationEmail } from '../services/emailService.js';
 
 const router = express.Router();
@@ -100,7 +100,7 @@ function buildFrontendAuthRedirect(req: express.Request, params: Record<string, 
   for (const [key, value] of Object.entries(params)) {
     if (value) authUrl.searchParams.set(key, value);
   }
-  // Ensure redirect always goes to our frontend — never allow open redirects
+  // Ensure redirect always goes to our frontend - never allow open redirects
   if (authUrl.origin !== new URL(frontendBase).origin) {
     return new URL('/auth', frontendBase).toString();
   }
@@ -750,17 +750,17 @@ router.delete('/account', authRequired, async (req: any, res) => {
   try {
     await client.query('BEGIN');
 
-    // ── Phase 1: RESTRICT tables — must clear before user row ─────────────
+    // ── Phase 1: RESTRICT tables - must clear before user row ─────────────
     await client.query('DELETE FROM scheduled_platform_notifications WHERE created_by_user_id = $1', [userId]);
 
     // ── Phase 2: Tables with bare user_id (no FK constraint) ──────────────
     await client.query('DELETE FROM trial_email_log WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM rate_limit_events WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM verification_runs WHERE user_id = $1', [userId]);
-    // github_app_installations uses VARCHAR user_id — no FK cascade
+    // github_app_installations uses VARCHAR user_id - no FK cascade
     await client.query('DELETE FROM github_app_installations WHERE user_id = $1', [userId]);
 
-    // ── Phase 3: Audit chain — audits uses ON DELETE SET NULL, so child rows orphan ──
+    // ── Phase 3: Audit chain - audits uses ON DELETE SET NULL, so child rows orphan ──
     // Clean audit-linked tables that would survive due to SET NULL on audits.user_id
     const auditIds = `SELECT id FROM audits WHERE user_id = $1`;
     await client.query(`DELETE FROM brag_trail WHERE audit_run_id IN (${auditIds})`, [userId]);
@@ -772,9 +772,9 @@ router.delete('/account', authRequired, async (req: any, res) => {
     await client.query(`DELETE FROM audits WHERE user_id = $1`, [userId]);
 
     // ── Phase 3b: SET NULL tables that orphan user data ───────────────────
-    // citation_niche_rankings uses ON DELETE SET NULL — must explicitly delete
+    // citation_niche_rankings uses ON DELETE SET NULL - must explicitly delete
     await client.query('DELETE FROM citation_niche_rankings WHERE user_id = $1', [userId]);
-    // security_audit_log uses ON DELETE SET NULL — scrub actor identity but keep audit trail
+    // security_audit_log uses ON DELETE SET NULL - scrub actor identity but keep audit trail
     await client.query(`UPDATE security_audit_log SET actor_email = NULL, details = details - 'email' WHERE actor_id = $1`, [userId]);
 
     // ── Phase 4: License chain (no user FK) ───────────────────────────────
@@ -782,7 +782,7 @@ router.delete('/account', authRequired, async (req: any, res) => {
     await client.query(`DELETE FROM license_activations WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
     await client.query(`DELETE FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1)`, [userId]);
 
-    // ── Phase 5: Delete user row — ON DELETE CASCADE handles remaining 60+ tables ──
+    // ── Phase 5: Delete user row - ON DELETE CASCADE handles remaining 60+ tables ──
     await client.query('DELETE FROM users WHERE id = $1', [userId]);
 
     await client.query('COMMIT');

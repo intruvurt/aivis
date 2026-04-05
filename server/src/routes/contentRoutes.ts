@@ -128,7 +128,7 @@ Format as plain text with clear labels for each setting. Include the exact synta
   } else {
     outputFormat = 'markdown';
     formatInstruction = `Provide a ready-to-publish content block in Markdown format.
-This could be a paragraph, a FAQ section, a structured list, or a heading + supporting text — whatever best addresses the recommendation.
+This could be a paragraph, a FAQ section, a structured list, or a heading + supporting text - whatever best addresses the recommendation.
 Write it as actual publishable content, not a description of what to write. Use real, specific language.`;
   }
 

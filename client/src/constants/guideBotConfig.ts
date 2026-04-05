@@ -77,7 +77,7 @@ const GREETINGS: Record<string, string> = {
 };
 
 const DEFAULT_GREETING =
-  " Hi! I'm AiVIS Guide. Send me a URL to audit, or tell me what you need — audit, track a competitor, test citations, scan mentions, fetch robots.txt/llms.txt/sitemap.xml, or just ask a question!";
+  " Hi! I'm AiVIS Guide. Send me a URL to audit, or tell me what you need - audit, track a competitor, test citations, scan mentions, fetch robots.txt/llms.txt/sitemap.xml, or just ask a question!";
 
 export function getGreeting(path: string): string {
   return GREETINGS[path] || DEFAULT_GREETING;

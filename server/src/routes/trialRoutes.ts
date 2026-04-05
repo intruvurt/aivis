@@ -1,5 +1,5 @@
 /**
- * Trial Routes — POST /api/trial/start, GET /api/trial/status
+ * Trial Routes - POST /api/trial/start, GET /api/trial/status
  */
 import { Router, Request, Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';

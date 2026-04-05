@@ -113,7 +113,7 @@ export function validateUrl(input: string): ValidateUrlResult {
   const raw = (input ?? "").trim();
   if (!raw) return { valid: false, error: "URL is required" };
 
-  // Lowercase the scheme before passing to new URL() — handles Https://, HTTP://, etc.
+  // Lowercase the scheme before passing to new URL() - handles Https://, HTTP://, etc.
   const schemeLowered = raw.replace(
     /^([A-Za-z][A-Za-z0-9+\-.]*):\/\//,
     (_: string, scheme: string) => scheme.toLowerCase() + "://"

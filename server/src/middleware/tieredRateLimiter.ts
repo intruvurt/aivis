@@ -1,12 +1,12 @@
 /**
- * Tiered Rate Limiter — per-tier rate limiting with in-memory fallback.
+ * Tiered Rate Limiter - per-tier rate limiting with in-memory fallback.
  *
  * Uses an in-memory token bucket per key (userId or IP).
  * If Redis is configured (REDIS_URL env), uses Redis for distributed state.
  *
  * Exports:
- *   tieredRateLimit(route) — middleware factory for auth'd requests (keyed by userId)
- *   ipRateLimit(opts)      — middleware factory for anon requests (keyed by IP)
+ *   tieredRateLimit(route) - middleware factory for auth'd requests (keyed by userId)
+ *   ipRateLimit(opts)      - middleware factory for anon requests (keyed by IP)
  */
 
 import type { Request, Response, NextFunction } from 'express';
@@ -99,7 +99,7 @@ function consumeToken(key: string, maxRequests: number, windowMs: number): { all
     return { allowed: true, remaining: Math.floor(entry.tokens), retryAfterMs: 0 };
   }
 
-  // Not enough tokens — compute retry delay
+  // Not enough tokens - compute retry delay
   const deficit = 1 - entry.tokens;
   const retryAfterMs = Math.ceil(deficit / refillRate);
   return { allowed: false, remaining: 0, retryAfterMs };
@@ -122,7 +122,7 @@ async function logRateLimitEvent(
       [userId, ip, endpoint, tier, blocked],
     );
   } catch {
-    // Best-effort — don't break request flow
+    // Best-effort - don't break request flow
   }
 }
 

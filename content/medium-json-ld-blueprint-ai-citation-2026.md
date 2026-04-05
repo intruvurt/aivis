@@ -26,11 +26,11 @@ Let me be direct: this is not about SEO. This is about making your website legib
 
 To understand why this matters, you need to understand how AI models retrieve and evaluate sources.
 
-**Claude** processes HTML documents. It converts them to a markdown-like internal representation. It cannot execute JavaScript and it cannot see content that's loaded dynamically. What it *can* parse — reliably, consistently — is the raw content of `<script type="application/ld+json">` tags, because these are static strings embedded directly in the HTML source.
+**Claude** processes HTML documents. It converts them to a markdown-like internal representation. It cannot execute JavaScript and it cannot see content that's loaded dynamically. What it *can* parse - reliably, consistently - is the raw content of `<script type="application/ld+json">` tags, because these are static strings embedded directly in the HTML source.
 
-**ChatGPT** relies heavily on Bing's index for real-time web content. Bing's structured data parser extracts JSON-LD from pages and stores it in knowledge graph entries alongside the page content. When an entity or page is queried, Bing returns both the prose content and the structured data. ChatGPT has access to both. The schema data helps resolve entity ambiguity — meaning it helps the model confirm that "Acme Corp the accounting firm" and "Acme Corp" in a Reddit thread are the same entity.
+**ChatGPT** relies heavily on Bing's index for real-time web content. Bing's structured data parser extracts JSON-LD from pages and stores it in knowledge graph entries alongside the page content. When an entity or page is queried, Bing returns both the prose content and the structured data. ChatGPT has access to both. The schema data helps resolve entity ambiguity - meaning it helps the model confirm that "Acme Corp the accounting firm" and "Acme Corp" in a Reddit thread are the same entity.
 
-**Perplexity** crawls with a Chromium-based renderer but prioritizes static HTML for speed. It uses structured data to classify source types. A page with `@type: FAQPage` gets treated differently by Perplexity's synthesis pipeline than a page with no schema — the former is flagged as a structured Q&A source and its question-answer pairs are candidates for direct answer extraction.
+**Perplexity** crawls with a Chromium-based renderer but prioritizes static HTML for speed. It uses structured data to classify source types. A page with `@type: FAQPage` gets treated differently by Perplexity's synthesis pipeline than a page with no schema - the former is flagged as a structured Q&A source and its question-answer pairs are candidates for direct answer extraction.
 
 **Google AI Overview** has the most sophisticated schema processing of the four, inheriting years of Google's structured data investment. Schema in Google's context is almost a direct signal into AI answer construction. Pages with valid, complete structured data are more likely to be selected as sources because the model has high confidence about what kind of content it's dealing with.
 
@@ -82,13 +82,13 @@ Every page on your site that you want cited should have an Organization or Perso
 
 **Why each property matters:**
 
-`alternateName` — Helps models resolve abbreviated references. If people refer to you as "YCN" anywhere on the web, this property connects the abbreviation to the full entity.
+`alternateName` - Helps models resolve abbreviated references. If people refer to you as "YCN" anywhere on the web, this property connects the abbreviation to the full entity.
 
-`sameAs` array — This is identity verification across the open web. Every entry is a cross-reference point that AI models use to confirm your entity is real and active. Minimum 2. Optimally 4-5. Include platforms where you're actually active—a dead Twitter with no posts since 2020 is noise.
+`sameAs` array - This is identity verification across the open web. Every entry is a cross-reference point that AI models use to confirm your entity is real and active. Minimum 2. Optimally 4-5. Include platforms where you're actually active-a dead Twitter with no posts since 2020 is noise.
 
-`knowsAbout` — Declares your topical authority explicitly. Models use this to determine relevance during query matching. If your `knowsAbout` array includes the same terminology a user's query uses, your entity gets scored higher for relevance.
+`knowsAbout` - Declares your topical authority explicitly. Models use this to determine relevance during query matching. If your `knowsAbout` array includes the same terminology a user's query uses, your entity gets scored higher for relevance.
 
-`foundingDate` — Signals entity age. AI models weight established entities more than recently-created ones for trust scoring. A company founded in 2019 has more implicit trust than one founded in 2026, especially for financial or health topics.
+`foundingDate` - Signals entity age. AI models weight established entities more than recently-created ones for trust scoring. A company founded in 2019 has more implicit trust than one founded in 2026, especially for financial or health topics.
 
 ---
 
@@ -140,13 +140,13 @@ Every blog post, guide, or editorial piece you want cited needs Article or BlogP
 
 **Critical properties for AI citation specifically:**
 
-`dateModified` — Never omit this. AI models weight content freshness. A `datePublished` without a `dateModified` signals that the content has never been updated since it was originally posted. For fast-moving topics, this tanks your citation probability. Even minor content updates should trigger a `dateModified` update.
+`dateModified` - Never omit this. AI models weight content freshness. A `datePublished` without a `dateModified` signals that the content has never been updated since it was originally posted. For fast-moving topics, this tanks your citation probability. Even minor content updates should trigger a `dateModified` update.
 
-`author.sameAs` — Author identity verification is how AI models score expertise claims. Claude specifically uses author entity data to evaluate whether a source is trustworthy for YMYL (Your Money or Your Life) topics — health, finance, legal, major decisions. A named author linked to a verifiable LinkedIn profile carries significantly more trust weight than an anonymous post.
+`author.sameAs` - Author identity verification is how AI models score expertise claims. Claude specifically uses author entity data to evaluate whether a source is trustworthy for YMYL (Your Money or Your Life) topics - health, finance, legal, major decisions. A named author linked to a verifiable LinkedIn profile carries significantly more trust weight than an anonymous post.
 
-`wordCount` — Yes, declare it explicitly. AI models checking content depth use this as a quick sufficiency signal. A declared `wordCount: 350` tells the model upfront that this is a thin piece. A declared `wordCount: 2100` signals depth without requiring the model to count.
+`wordCount` - Yes, declare it explicitly. AI models checking content depth use this as a quick sufficiency signal. A declared `wordCount: 350` tells the model upfront that this is a thin piece. A declared `wordCount: 2100` signals depth without requiring the model to count.
 
-`articleSection` — Maps your content to a topical category. Helps models file your content correctly in their internal relevance ranking.
+`articleSection` - Maps your content to a topical category. Helps models file your content correctly in their internal relevance ranking.
 
 ---
 
@@ -194,7 +194,7 @@ When Perplexity processes a query, its answer synthesis pipeline specifically lo
 - Keep answers between 40-160 words. Long enough to be substantive. Short enough that the full answer can be extracted as a snippet.
 - Write answers as complete, standalone statements. The answer to "How do I X?" should be fully comprehensible without reading the question.
 - Use 5-10 Q&A pairs per page minimum. Under 5 is sparse. Over 15 starts adding noise.
-- The questions you include should be real questions your audience actually asks — pull from customer support emails, sales call notes, Reddit threads, and "People also ask" boxes.
+- The questions you include should be real questions your audience actually asks - pull from customer support emails, sales call notes, Reddit threads, and "People also ask" boxes.
 
 ---
 
@@ -240,7 +240,7 @@ If you're running a SaaS product or a B2B service, your pricing and features pag
 }
 ```
 
-The `aggregateRating` property is especially important if you have genuine reviews anywhere. AI models use rating data as a proxy trust signal — a product with 128 verified reviews is more legitimate than one with none, even if the product quality is identical. Pull your Trustpilot, G2, or Product Hunt aggregate rating and declare it here. Keep it current — stale or inaccurate review data that contradicts what's on third-party review platforms will damage trust rather than build it.
+The `aggregateRating` property is especially important if you have genuine reviews anywhere. AI models use rating data as a proxy trust signal - a product with 128 verified reviews is more legitimate than one with none, even if the product quality is identical. Pull your Trustpilot, G2, or Product Hunt aggregate rating and declare it here. Keep it current - stale or inaccurate review data that contradicts what's on third-party review platforms will damage trust rather than build it.
 
 ---
 
@@ -280,15 +280,15 @@ Implementation: Create the file, host it at the root of your domain, and declare
 
 ## Validating What You've Built
 
-Never assume your schema is working correctly after implementation. Schema bugs are silent — they don't throw errors or break anything. They just fail to be parsed.
+Never assume your schema is working correctly after implementation. Schema bugs are silent - they don't throw errors or break anything. They just fail to be parsed.
 
-**Google Rich Results Test** — the canonical validator. Paste your URL or raw JSON-LD and it will flag invalid properties, missing required fields, and deprecation warnings. Use this for every schema type except FAQPage, where Google has reduced their rich result surface.
+**Google Rich Results Test** - the canonical validator. Paste your URL or raw JSON-LD and it will flag invalid properties, missing required fields, and deprecation warnings. Use this for every schema type except FAQPage, where Google has reduced their rich result surface.
 
-**Schema.org Validator** — schema.org/validator — validates against the full Schema.org vocabulary, which is broader than what Google enforces. Catches issues that Google's tool misses.
+**Schema.org Validator** - schema.org/validator - validates against the full Schema.org vocabulary, which is broader than what Google enforces. Catches issues that Google's tool misses.
 
-**AiVIS Schema Validator** — [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) — validates JSON-LD but also checks Open Graph, Twitter Card, and Microdata simultaneously in one pass. Specifically tests for the properties AI citation pipelines care about, not just what Google surfaces. Free, no account.
+**AiVIS Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - validates JSON-LD but also checks Open Graph, Twitter Card, and Microdata simultaneously in one pass. Specifically tests for the properties AI citation pipelines care about, not just what Google surfaces. Free, no account.
 
-**Browser DevTools quick check** — In Chrome, go to your page, open DevTools, go to Elements, and search for `application/ld+json`. You should see your JSON-LD blocks as static script tags. If you don't see them — if your schema is being injected by JavaScript after page load — Claude and other non-JS-executing scrapers cannot see it. Inline it in your server-rendered HTML.
+**Browser DevTools quick check** - In Chrome, go to your page, open DevTools, go to Elements, and search for `application/ld+json`. You should see your JSON-LD blocks as static script tags. If you don't see them - if your schema is being injected by JavaScript after page load - Claude and other non-JS-executing scrapers cannot see it. Inline it in your server-rendered HTML.
 
 ---
 

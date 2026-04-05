@@ -1,6 +1,6 @@
 /**
  * Domain age lookup via IANA RDAP bootstrap.
- * Uses the public RDAP protocol (RFC 7483) — no API key required.
+ * Uses the public RDAP protocol (RFC 7483) - no API key required.
  * Falls back to 0 on any error, timeout, or unsupported TLD so the
  * rest of the audit pipeline is never blocked.
  */

@@ -246,7 +246,7 @@ function WebSearchCard({ data }: { data: WebSearchPresenceResult }) {
                     rel="noopener noreferrer"
                     className="text-[11px] text-blue-400/80 hover:text-blue-300 block truncate"
                   >
-                    #{r.position} — {r.title}
+                    #{r.position} - {r.title}
                   </a>
                   <p className="text-[10px] text-white/50 line-clamp-2">{r.description}</p>
                 </div>
@@ -1017,7 +1017,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
           <div>
             <h3 className="text-lg font-semibold text-white">Brand Mention Tracker</h3>
             <p className="text-xs text-white/55">
-              Scan Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks for live brand mentions — no API keys required.
+              Scan Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks for live brand mentions - no API keys required.
             </p>
           </div>
         </div>
@@ -1067,7 +1067,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
                 {/* Timeline mini-bar */}
                 {mentionTimeline && mentionTimeline.length > 0 && (
                   <div className="rounded-xl border border-white/10 bg-charcoal p-3">
-                    <p className="text-[10px] uppercase tracking-wide text-white/45 mb-2">Mentions — Last 30 days</p>
+                    <p className="text-[10px] uppercase tracking-wide text-white/45 mb-2">Mentions - Last 30 days</p>
                     <div className="flex items-end gap-[2px] h-12">
                       {mentionTimeline.map((pt) => {
                         const maxCount = Math.max(...mentionTimeline.map(p => p.count), 1);
@@ -1171,13 +1171,13 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
           <p className="text-[11px] font-semibold uppercase tracking-wide text-cyan-200/80 mb-1.5">How citation testing works</p>
           <div className="space-y-1.5 text-xs text-white/65 leading-relaxed">
             <p>
-              <span className="text-white/80 font-medium">AI platform simulation</span> — Each query is routed through proxy LLMs (via OpenRouter) configured to mimic ChatGPT, Perplexity, Claude, and Google AI response patterns. These are behavioral simulations, not direct API calls to those platforms.
+              <span className="text-white/80 font-medium">AI platform simulation</span> - Each query is routed through proxy LLMs (via OpenRouter) configured to mimic ChatGPT, Perplexity, Claude, and Google AI response patterns. These are behavioral simulations, not direct API calls to those platforms.
             </p>
             <p>
-              <span className="text-white/80 font-medium">Web search verification</span> — Brand presence is cross-checked against real search results using DuckDuckGo HTML, Bing, Brave, Yahoo, DuckDuckGo Instant, and locale-aware Wikipedia for ground-truth validation.
+              <span className="text-white/80 font-medium">Web search verification</span> - Brand presence is cross-checked against real search results using DuckDuckGo HTML, Bing, Brave, Yahoo, DuckDuckGo Instant, and locale-aware Wikipedia for ground-truth validation.
             </p>
             <p>
-              <span className="text-white/80 font-medium">Google Gemini direct</span> — When available, Google AI tests use the Gemini API directly for higher-fidelity results.
+              <span className="text-white/80 font-medium">Google Gemini direct</span> - When available, Google AI tests use the Gemini API directly for higher-fidelity results.
             </p>
           </div>
         </div>

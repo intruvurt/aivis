@@ -1,5 +1,5 @@
 /**
- * AutoScoreFixWidget — inline launcher card for Auto Score Fix.
+ * AutoScoreFixWidget - inline launcher card for Auto Score Fix.
  *
  * Supports both GitHub App installation flow and legacy OAuth token flow.
  */
@@ -109,7 +109,7 @@ export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditRes
       )}
       {!isInstalled && (
         <p className="mt-2 text-[11px] leading-5 text-white/35">
-          The GitHub App uses fine-grained permissions — no personal access tokens needed.
+          The GitHub App uses fine-grained permissions - no personal access tokens needed.
         </p>
       )}
     </div>

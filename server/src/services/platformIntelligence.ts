@@ -55,29 +55,29 @@ function clamp(n: number): number {
 // ── Claude citation scoring ─────────────────────────────────────────────────
 // Claude uses web_fetch → markdown extraction → multi-pass evaluation.
 // Key: Entity clarity, answer block density, schema relationships, trust signals.
-// Does NOT execute JS — server-rendered HTML only. Clean structure wins.
+// Does NOT execute JS - server-rendered HTML only. Clean structure wins.
 
 function scoreClaude(s: PlatformSignals): PlatformScore {
   const reasons: string[] = [];
   let score = 0;
 
-  // Entity clarity (H1 + OG + name consistency) — weight: 20%
+  // Entity clarity (H1 + OG + name consistency) - weight: 20%
   let entityClarity = 0;
-  if (s.h1Count === 1) { entityClarity += 40; reasons.push('Single H1 — clear entity signal'); }
+  if (s.h1Count === 1) { entityClarity += 40; reasons.push('Single H1 - clear entity signal'); }
   if (s.hasOgTags) { entityClarity += 30; reasons.push('OG tags reinforce entity identity'); }
   if (s.namedEntityCount >= 3) { entityClarity += 30; }
   else if (s.namedEntityCount >= 1) { entityClarity += 15; }
   score += clamp(entityClarity) * 0.20;
 
-  // Answer block density (FAQ blocks + direct answer patterns) — weight: 18%
+  // Answer block density (FAQ blocks + direct answer patterns) - weight: 18%
   let answerDensity = 0;
-  if (s.hasFaqSchema) { answerDensity += 40; reasons.push('FAQPage schema — direct extraction for Claude'); }
+  if (s.hasFaqSchema) { answerDensity += 40; reasons.push('FAQPage schema - direct extraction for Claude'); }
   if (s.directAnswerDensity >= 5) { answerDensity += 35; }
   else if (s.directAnswerDensity >= 2) { answerDensity += 20; }
   if (s.h2Count >= 4 && s.h3Count >= 2) { answerDensity += 25; reasons.push('Deep heading hierarchy aids answer extraction'); }
   score += clamp(answerDensity) * 0.18;
 
-  // Schema markup (JSON-LD completeness + relationships) — weight: 18%
+  // Schema markup (JSON-LD completeness + relationships) - weight: 18%
   let schemaScore = 0;
   if (s.jsonLdCount >= 3 && s.hasOrgSchema) { schemaScore += 60; reasons.push('Rich JSON-LD graph with Organization'); }
   else if (s.jsonLdCount >= 1) { schemaScore += 25; }
@@ -85,7 +85,7 @@ function scoreClaude(s: PlatformSignals): PlatformScore {
   if (s.schemaTypeCount >= 5) { schemaScore += 20; reasons.push('Broad schema type coverage'); }
   score += clamp(schemaScore) * 0.18;
 
-  // Trust signals (author entity, privacy, external mentions) — weight: 15%
+  // Trust signals (author entity, privacy, external mentions) - weight: 15%
   let trustScore = 0;
   if (s.isHttps) { trustScore += 30; }
   if (s.hasOrgSchema) { trustScore += 30; }
@@ -93,22 +93,22 @@ function scoreClaude(s: PlatformSignals): PlatformScore {
   if (s.hasCanonical) { trustScore += 20; }
   score += clamp(trustScore) * 0.15;
 
-  // Content-query alignment (heading-to-intent match, topical coverage) — weight: 15%
+  // Content-query alignment (heading-to-intent match, topical coverage) - weight: 15%
   let contentAlign = 0;
   if (s.wordCount >= 1200) { contentAlign += 40; }
   else if (s.wordCount >= 600) { contentAlign += 25; }
   else if (s.wordCount >= 300) { contentAlign += 10; }
   if (s.h2Count >= 4) { contentAlign += 30; }
-  if (s.lexicalDiversity >= 0.40) { contentAlign += 30; reasons.push('High lexical diversity — broad topical coverage'); }
+  if (s.lexicalDiversity >= 0.40) { contentAlign += 30; reasons.push('High lexical diversity - broad topical coverage'); }
   score += clamp(contentAlign) * 0.15;
 
-  // Noise-to-signal ratio (facts vs fluff) — weight: 7%
+  // Noise-to-signal ratio (facts vs fluff) - weight: 7%
   let noiseSignal = 50; // baseline
   if (s.wordCount > 0 && s.lexicalDiversity >= 0.35) { noiseSignal += 25; }
   if (s.directAnswerDensity >= 3) { noiseSignal += 25; }
   score += clamp(noiseSignal) * 0.07;
 
-  // Citation surface (external links in, named entity density, claim density) — weight: 7%
+  // Citation surface (external links in, named entity density, claim density) - weight: 7%
   let citationSurface = 0;
   if (s.namedEntityCount >= 5) { citationSurface += 40; }
   else if (s.namedEntityCount >= 2) { citationSurface += 20; }
@@ -123,13 +123,13 @@ function scoreClaude(s: PlatformSignals): PlatformScore {
 // Google AIO selects 3-5 diverse sources that together cover a query with minimum overlap.
 // Key: Passage relevance, E-E-A-T, schema completeness, direct answer blocks, breadcrumbs,
 // freshness, internal link graph, query-to-title match.
-// Specialization wins — owning a concept gets cited even over higher-DA sites.
+// Specialization wins - owning a concept gets cited even over higher-DA sites.
 
 function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   const reasons: string[] = [];
   let score = 0;
 
-  // E-E-A-T page quality — weight: 25%
+  // E-E-A-T page quality - weight: 25%
   let eeat = 0;
   if (s.hasOrgSchema) { eeat += 35; reasons.push('Organization schema signals E-E-A-T'); }
   if (s.isHttps) { eeat += 15; }
@@ -138,7 +138,7 @@ function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   if (s.namedEntityCount >= 3) { eeat += 20; reasons.push('Named entities reinforce expertise signal'); }
   score += clamp(eeat) * 0.25;
 
-  // Schema / structured data completeness — weight: 20%
+  // Schema / structured data completeness - weight: 20%
   let schemaScore = 0;
   if (s.jsonLdCount >= 3 && s.hasOrgSchema && s.hasFaqSchema) { schemaScore += 70; reasons.push('Comprehensive JSON-LD for AIO extraction'); }
   else if (s.jsonLdCount >= 2 && s.hasOrgSchema) { schemaScore += 45; }
@@ -147,7 +147,7 @@ function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   if (s.schemaTypeCount >= 6) { schemaScore += 15; }
   score += clamp(schemaScore) * 0.20;
 
-  // Direct answer blocks — weight: 18%
+  // Direct answer blocks - weight: 18%
   let directAnswer = 0;
   if (s.hasFaqSchema) { directAnswer += 40; reasons.push('FAQ schema enables rich result + AIO Q&A extraction'); }
   if (s.directAnswerDensity >= 5) { directAnswer += 35; }
@@ -155,7 +155,7 @@ function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   if (s.wordCount >= 800 && s.h2Count >= 3) { directAnswer += 25; reasons.push('Section-based answers match AIO passage extraction'); }
   score += clamp(directAnswer) * 0.18;
 
-  // Query-to-title/heading match + internal link graph — weight: 15%
+  // Query-to-title/heading match + internal link graph - weight: 15%
   let relevanceSignal = 0;
   if (s.titleLength >= 30 && s.titleLength <= 60) { relevanceSignal += 35; }
   else if (s.titleLength > 0) { relevanceSignal += 15; }
@@ -164,7 +164,7 @@ function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   if (s.h1Count === 1 && s.h2Count >= 3) { relevanceSignal += 30; }
   score += clamp(relevanceSignal) * 0.15;
 
-  // Content extractability (clean headings, answer-style sentences) — weight: 12%
+  // Content extractability (clean headings, answer-style sentences) - weight: 12%
   let extractability = 0;
   if (s.h2Count >= 4 && s.h3Count >= 2) { extractability += 50; }
   else if (s.h2Count >= 2) { extractability += 25; }
@@ -172,7 +172,7 @@ function scoreGoogleAI(s: PlatformSignals): PlatformScore {
   if (s.lexicalDiversity >= 0.38) { extractability += 25; }
   score += clamp(extractability) * 0.12;
 
-  // Freshness / crawlability — weight: 10%
+  // Freshness / crawlability - weight: 10%
   let freshness = 0;
   if (s.isHttps) { freshness += 30; }
   if (s.hasCanonical) { freshness += 20; }
@@ -194,7 +194,7 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
   const reasons: string[] = [];
   let score = 0;
 
-  // Content extractability (clean structure + answer sentences) — weight: 25%
+  // Content extractability (clean structure + answer sentences) - weight: 25%
   let extractability = 0;
   if (s.h2Count >= 4 && s.h3Count >= 2) { extractability += 40; reasons.push('Clean H2/H3 hierarchy aids Sonar chunk extraction'); }
   else if (s.h2Count >= 2) { extractability += 20; }
@@ -203,7 +203,7 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
   if (s.wordCount >= 800) { extractability += 25; }
   score += clamp(extractability) * 0.25;
 
-  // Source authority (domain trust, backlink signals) — weight: 20%
+  // Source authority (domain trust, backlink signals) - weight: 20%
   let authority = 0;
   if (s.hasOrgSchema) { authority += 35; reasons.push('Organization schema signals domain trust for Sonar'); }
   if (s.isHttps) { authority += 20; }
@@ -211,7 +211,7 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
   if (s.namedEntityCount >= 3) { authority += 20; }
   score += clamp(authority) * 0.20;
 
-  // Semantic relevance (content depth + topical focus) — weight: 20%
+  // Semantic relevance (content depth + topical focus) - weight: 20%
   let relevance = 0;
   if (s.wordCount >= 1200) { relevance += 40; }
   else if (s.wordCount >= 600) { relevance += 25; }
@@ -219,15 +219,15 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
   if (s.h1Count === 1 && s.titleLength >= 30) { relevance += 30; }
   score += clamp(relevance) * 0.20;
 
-  // Factual claim density over fluff — weight: 15%
+  // Factual claim density over fluff - weight: 15%
   let claimDensity = 0;
-  if (s.namedEntityCount >= 5) { claimDensity += 40; reasons.push('High named entity density — fact-rich for Perplexity'); }
+  if (s.namedEntityCount >= 5) { claimDensity += 40; reasons.push('High named entity density - fact-rich for Perplexity'); }
   else if (s.namedEntityCount >= 2) { claimDensity += 20; }
   if (s.directAnswerDensity >= 3) { claimDensity += 30; }
   if (s.jsonLdCount >= 2) { claimDensity += 30; }
   score += clamp(claimDensity) * 0.15;
 
-  // Freshness + crawlability — weight: 12%
+  // Freshness + crawlability - weight: 12%
   let freshness = 0;
   if (s.responseTimeMs > 0 && s.responseTimeMs <= 2000) { freshness += 40; reasons.push('Fast load improves Sonar crawl freshness weighting'); }
   else if (s.responseTimeMs > 0 && s.responseTimeMs <= 4000) { freshness += 20; }
@@ -235,7 +235,7 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
   if (s.hasLlmsTxt) { freshness += 30; }
   score += clamp(freshness) * 0.12;
 
-  // Schema structured context — weight: 8%
+  // Schema structured context - weight: 8%
   let schemaScore = 0;
   if (s.jsonLdCount >= 3) { schemaScore += 50; }
   else if (s.jsonLdCount >= 1) { schemaScore += 25; }
@@ -249,9 +249,9 @@ function scorePerplexity(s: PlatformSignals): PlatformScore {
 // ── ChatGPT citation scoring ────────────────────────────────────────────────
 // ChatGPT (with browsing) uses Bing index + direct fetch. Evidence-first audit:
 // 1. Deterministic fetch (raw HTML, no JS illusions) → grade what AI actually sees
-// 2. Entity graph reconstruction — name consistency across title/h1/og:title
-// 3. Query simulation — answerability: directness, completeness, extractability
-// 4. Citation probability — sigmoid(claim_density, entity_density, structural_clarity)
+// 2. Entity graph reconstruction - name consistency across title/h1/og:title
+// 3. Query simulation - answerability: directness, completeness, extractability
+// 4. Citation probability - sigmoid(claim_density, entity_density, structural_clarity)
 // 5. Hard score caps: missing H1 → cap ≤60, no entity → cap ≤50, no answers → cap ≤65
 // 6. Noise-to-signal compression test: facts+claims+numbers vs total sentences
 
@@ -259,18 +259,18 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   const reasons: string[] = [];
   let score = 0;
 
-  // 1. Entity resolution & consistency — weight: 18%
+  // 1. Entity resolution & consistency - weight: 18%
   //    From chatgpt-rail: rebuild what AI thinks the entity is.
   //    If name shifts across tags → penalty. No clear entity → major penalty.
   let entityScore = 0;
   if (s.entityNameConsistency >= 0.9) { entityScore += 45; reasons.push('Strong entity consistency across title/H1/OG'); }
-  else if (s.entityNameConsistency >= 0.5) { entityScore += 20; reasons.push('Partial entity name consistency — disambiguation risk'); }
-  else { reasons.push('Entity name inconsistent across title/H1/OG — ChatGPT confusion risk'); }
+  else if (s.entityNameConsistency >= 0.5) { entityScore += 20; reasons.push('Partial entity name consistency - disambiguation risk'); }
+  else { reasons.push('Entity name inconsistent across title/H1/OG - ChatGPT confusion risk'); }
   if (s.hasOrgSchema) { entityScore += 30; }
   if (s.namedEntityCount >= 3) { entityScore += 25; }
   score += clamp(entityScore) * 0.18;
 
-  // 2. Answerability — weight: 18%
+  // 2. Answerability - weight: 18%
   //    Direct answer blocks + extractable Q&A structure
   let answerability = 0;
   if (s.directAnswerDensity >= 5) { answerability += 40; reasons.push('High answer extractability for ChatGPT browsing'); }
@@ -281,7 +281,7 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.wordCount >= 800) { answerability += 15; }
   score += clamp(answerability) * 0.18;
 
-  // 3. Schema & structured data — weight: 18%
+  // 3. Schema & structured data - weight: 18%
   let schemaScore = 0;
   if (s.jsonLdCount >= 3 && s.hasOrgSchema) { schemaScore += 60; reasons.push('Rich JSON-LD aids ChatGPT entity extraction'); }
   else if (s.jsonLdCount >= 1) { schemaScore += 25; }
@@ -289,11 +289,11 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.schemaTypeCount >= 5) { schemaScore += 20; }
   score += clamp(schemaScore) * 0.18;
 
-  // 4. Citation probability — weight: 15%
+  // 4. Citation probability - weight: 15%
   //    sigmoid(claim_density + entity_density + structural_clarity + uniqueness)
   let citationProb = 0;
   const noiseToSignal = s.totalSentences > 0 ? s.claimCount / s.totalSentences : 0;
-  if (noiseToSignal >= 0.4) { citationProb += 35; reasons.push('High fact-to-fluff ratio — strong citation candidate'); }
+  if (noiseToSignal >= 0.4) { citationProb += 35; reasons.push('High fact-to-fluff ratio - strong citation candidate'); }
   else if (noiseToSignal >= 0.2) { citationProb += 20; }
   if (s.namedEntityCount >= 5) { citationProb += 25; }
   else if (s.namedEntityCount >= 2) { citationProb += 15; }
@@ -301,7 +301,7 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.externalLinkCount >= 2) { citationProb += 20; }
   score += clamp(citationProb) * 0.15;
 
-  // 5. Meta & OG completeness — weight: 13%
+  // 5. Meta & OG completeness - weight: 13%
   let meta = 0;
   if (s.titleLength >= 30 && s.titleLength <= 60) { meta += 35; }
   else if (s.titleLength > 0) { meta += 15; }
@@ -310,7 +310,7 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.hasOgTags) { meta += 30; }
   score += clamp(meta) * 0.13;
 
-  // 6. Technical + AI-friendliness — weight: 10%
+  // 6. Technical + AI-friendliness - weight: 10%
   let technical = 0;
   if (s.isHttps) { technical += 25; }
   if (s.hasCanonical) { technical += 15; }
@@ -319,7 +319,7 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.hasLlmsTxt) { technical += 20; reasons.push('llms.txt signals explicit AI consumption readiness'); }
   score += clamp(technical) * 0.10;
 
-  // 7. Noise-to-signal compression test — weight: 8%
+  // 7. Noise-to-signal compression test - weight: 8%
   let signalDensity = 0;
   if (noiseToSignal >= 0.5) { signalDensity += 50; }
   else if (noiseToSignal >= 0.3) { signalDensity += 30; }
@@ -328,20 +328,20 @@ function scoreChatGPT(s: PlatformSignals): PlatformScore {
   if (s.lexicalDiversity >= 0.40) { signalDensity += 25; }
   score += clamp(signalDensity) * 0.08;
 
-  // ── HARD SCORE CAPS (gated — from chatgpt-rail) ──
+  // ── HARD SCORE CAPS (gated - from chatgpt-rail) ──
   // These are non-negotiable: missing fundamentals = hard ceiling.
   let cap = 100;
   if (s.h1Count === 0) {
     cap = Math.min(cap, 60);
-    reasons.push('HARD CAP: Missing H1 — score capped at 60');
+    reasons.push('HARD CAP: Missing H1 - score capped at 60');
   }
   if (s.entityNameConsistency < 0.3) {
     cap = Math.min(cap, 50);
-    reasons.push('HARD CAP: No resolvable entity — score capped at 50');
+    reasons.push('HARD CAP: No resolvable entity - score capped at 50');
   }
   if (s.directAnswerDensity === 0) {
     cap = Math.min(cap, 65);
-    reasons.push('HARD CAP: No answer blocks — score capped at 65');
+    reasons.push('HARD CAP: No answer blocks - score capped at 65');
   }
 
   return { score: Math.min(clamp(score), cap), reasoning: reasons };
@@ -410,7 +410,7 @@ export function extractPlatformSignals(
     }
     entityNameConsistency = pairs > 0 ? matches / pairs : 0;
   } else if (nameCandidates.length === 1) {
-    entityNameConsistency = 0.5; // only one name source — partial confidence
+    entityNameConsistency = 0.5; // only one name source - partial confidence
   }
 
   // Claim / factual assertion density (chatgpt-rail Steps 2 & 7)
@@ -466,7 +466,7 @@ export function buildPlatformIntelligencePromptBlock(scores: PlatformScores): st
     {
       key: 'chatgpt',
       label: 'ChatGPT',
-      notes: 'Evidence-first: grades visibility based on what AI actually fetches (raw HTML, no JS). Entity graph reconstruction required — name must be consistent across title/H1/OG or it penalizes. Hard caps: no H1 → max 60, no entity → max 50, no answer blocks → max 65. Citation probability driven by claim density and signal-to-noise ratio, not just structure.',
+      notes: 'Evidence-first: grades visibility based on what AI actually fetches (raw HTML, no JS). Entity graph reconstruction required - name must be consistent across title/H1/OG or it penalizes. Hard caps: no H1 → max 60, no entity → max 50, no answer blocks → max 65. Citation probability driven by claim density and signal-to-noise ratio, not just structure.',
     },
     {
       key: 'perplexity',

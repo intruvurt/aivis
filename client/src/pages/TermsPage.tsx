@@ -117,7 +117,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">8. Intellectual Property</h2>
             <p><strong className="text-white">Your content:</strong> Analysis results, exported reports, and any data generated from your submitted URLs belong to you. You may use them within your organization, share them with clients, or publish them at your discretion.</p>
-            <p className="mt-2"><strong className="text-white">Our property:</strong> The Service — including its source code, algorithms, scoring rubrics, BRAG evidence framework, user interface design, branding, documentation, and all related intellectual property — is and remains the exclusive property of Intruvurt Labs. You receive a limited, non-exclusive, non-transferable, revocable license to access and use the Service in accordance with these Terms.</p>
+            <p className="mt-2"><strong className="text-white">Our property:</strong> The Service - including its source code, algorithms, scoring rubrics, BRAG evidence framework, user interface design, branding, documentation, and all related intellectual property - is and remains the exclusive property of Intruvurt Labs. You receive a limited, non-exclusive, non-transferable, revocable license to access and use the Service in accordance with these Terms.</p>
             <p className="mt-2"><strong className="text-white">Feedback:</strong> If you submit suggestions, enhancement requests, or other feedback about the Service, you grant Intruvurt Labs an irrevocable, royalty-free, worldwide license to use that feedback for any purpose.</p>
           </section>
 
@@ -126,13 +126,13 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-white mb-3">9. Third-Party Services</h2>
             <p>The Service integrates with third-party providers. Each has its own terms and privacy practices:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">OpenRouter</strong> — routes analysis requests to AI language models.</li>
-              <li><strong className="text-white">Stripe</strong> — processes payments and manages subscriptions (PCI DSS compliant).</li>
-              <li><strong className="text-white">Render</strong> — application hosting infrastructure.</li>
-              <li><strong className="text-white">Neon</strong> — managed PostgreSQL database.</li>
-              <li><strong className="text-white">Sentry</strong> — error tracking and performance monitoring (consent-based).</li>
-              <li><strong className="text-white">Resend</strong> — transactional and notification email delivery.</li>
-              <li><strong className="text-white">URLhaus / Google Safe Browsing</strong> — threat intelligence feeds.</li>
+              <li><strong className="text-white">OpenRouter</strong> - routes analysis requests to AI language models.</li>
+              <li><strong className="text-white">Stripe</strong> - processes payments and manages subscriptions (PCI DSS compliant).</li>
+              <li><strong className="text-white">Render</strong> - application hosting infrastructure.</li>
+              <li><strong className="text-white">Neon</strong> - managed PostgreSQL database.</li>
+              <li><strong className="text-white">Sentry</strong> - error tracking and performance monitoring (consent-based).</li>
+              <li><strong className="text-white">Resend</strong> - transactional and notification email delivery.</li>
+              <li><strong className="text-white">URLhaus / Google Safe Browsing</strong> - threat intelligence feeds.</li>
             </ul>
             <p className="mt-2">Intruvurt Labs is not responsible for the availability, accuracy, or practices of these third-party services. Outages, data processing changes, or policy updates by these providers may affect Service functionality without prior notice from us.</p>
           </section>

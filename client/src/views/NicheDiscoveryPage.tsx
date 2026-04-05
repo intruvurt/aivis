@@ -52,7 +52,7 @@ interface DiscoveryJob {
 
 /* ── Helpers ──────────────────────────────────────────────────────── */
 
-/** Safely normalise discovered_urls — handles double-stringified JSONB records */
+/** Safely normalise discovered_urls - handles double-stringified JSONB records */
 function parseDiscoveredUrls(raw: unknown): DiscoveredUrl[] {
   if (Array.isArray(raw)) return raw;
   if (typeof raw === 'string') {
@@ -268,7 +268,7 @@ export default function NicheDiscoveryPage() {
       <div className="px-4 py-16">
         <UpgradeWall
           feature="Niche URL Discovery"
-          description="Discover real business URLs by niche and location, validate them, and add to your scheduled audit list — all powered by web search."
+          description="Discover real business URLs by niche and location, validate them, and add to your scheduled audit list - all powered by web search."
           requiredTier="alignment"
           icon={<Search className="h-6 w-6" />}
           featurePreview={[
@@ -307,7 +307,7 @@ export default function NicheDiscoveryPage() {
         </span>
       </div>
 
-      {/* Stats overview — only show if history exists */}
+      {/* Stats overview - only show if history exists */}
       {historyLoaded && historyStats.totalJobs > 0 && (
         <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
@@ -585,7 +585,7 @@ export default function NicheDiscoveryPage() {
         </div>
       )}
 
-      {/* Empty state — no history, no active job */}
+      {/* Empty state - no history, no active job */}
       {historyLoaded && pastJobs.length === 0 && !job && !loading && (
         <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-10 text-center mb-6">
           <Target className="h-10 w-10 text-white/15 mx-auto mb-4" />

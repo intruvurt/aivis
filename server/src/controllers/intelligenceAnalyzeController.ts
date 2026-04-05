@@ -73,7 +73,7 @@ export async function intelligenceAnalyzeHandler(req: Request, res: Response): P
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
 
-    // Use usage_daily — same table as featureRoutes /status so counts stay in sync
+    // Use usage_daily - same table as featureRoutes /status so counts stay in sync
     const usageResult = await getPool().query(
       `SELECT COALESCE(SUM(requests), 0) AS total_requests
        FROM usage_daily
@@ -121,7 +121,7 @@ export async function intelligenceAnalyzeHandler(req: Request, res: Response): P
 
     console.log(`[${requestId}] Running intelligence engines for tier: ${tier}...`);
 
-    // Real domain age via RDAP (non-blocking — falls back to 0 on timeout/failure)
+    // Real domain age via RDAP (non-blocking - falls back to 0 on timeout/failure)
     const domainAgeYears = await lookupDomainAgeYears(analysisUrl.hostname);
 
     const analysis = await runAnalysisEngines({
@@ -134,7 +134,7 @@ export async function intelligenceAnalyzeHandler(req: Request, res: Response): P
     });
 
     // ====================================================================
-    // SAVE AUDIT RECORD — workspace_id required for share-link lookup
+    // SAVE AUDIT RECORD - workspace_id required for share-link lookup
     // ====================================================================
 
     let savedAuditId: string | null = null;
@@ -150,7 +150,7 @@ export async function intelligenceAnalyzeHandler(req: Request, res: Response): P
       });
     } catch (err) {
       console.warn(`[${requestId}] Failed to save audit record:`, err);
-      // Non-critical — analysis still returned to client
+      // Non-critical - analysis still returned to client
     }
 
     // ====================================================================

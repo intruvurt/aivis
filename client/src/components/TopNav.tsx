@@ -36,7 +36,7 @@ type ToolGroup = {
   links: ToolLink[];
 };
 
-/** Research & Analysis tools — data/insights gathering */
+/** Research & Analysis tools - data/insights gathering */
 const RESEARCH_GROUPS: ToolGroup[] = [
   {
     heading: "Analysis",
@@ -58,7 +58,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
   },
 ];
 
-/** AI Intelligence & Technical tools — action/optimization */
+/** AI Intelligence & Technical tools - action/optimization */
 const AI_TOOL_GROUPS: ToolGroup[] = [
   {
     heading: "AI Intelligence",
@@ -344,7 +344,7 @@ export default function TopNav() {
           </span>
         </div>
 
-        {/* Center nav — desktop */}
+        {/* Center nav - desktop */}
         <div className="hidden lg:flex flex-1 min-w-0 items-center justify-center px-2 xl:px-4">
           <div className="flex min-w-0 max-w-full items-center gap-1 text-sm font-medium whitespace-nowrap overflow-visible">
           {/* Home */}
@@ -621,7 +621,7 @@ export default function TopNav() {
                 )}
               </div>
 
-              {/* Workspace switcher — compact */}
+              {/* Workspace switcher - compact */}
               <WorkspaceSwitcher />
 
               <div className="relative" ref={dropdownRef}>
@@ -689,7 +689,7 @@ export default function TopNav() {
                         <Users className="w-4 h-4 text-cyan-400" /> Team &amp; Workspaces
                       </button>
                     </div>
-                    {/* Admin section — role-gated */}
+                    {/* Admin section - role-gated */}
                     {String(user?.role || "").toLowerCase() === "admin" && (
                       <div className="p-1.5 border-t border-white/10">
                         <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Admin</p>
@@ -787,7 +787,7 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Research — collapsible group */}
+            {/* Research - collapsible group */}
             <div>
               <button
                 type="button"
@@ -832,7 +832,7 @@ export default function TopNav() {
               )}
             </div>
 
-            {/* AI Tools — collapsible group */}
+            {/* AI Tools - collapsible group */}
             <div>
               <button
                 type="button"
@@ -877,7 +877,7 @@ export default function TopNav() {
               )}
             </div>
 
-            {/* Docs — collapsible group */}
+            {/* Docs - collapsible group */}
             <div>
               <button
                 type="button"

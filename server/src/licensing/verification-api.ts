@@ -464,7 +464,7 @@ export class LicenseVerificationService {
     });
 
     if (!resend) {
-      console.log('[License] RESEND_API_KEY not set — license email logged only:');
+      console.log('[License] RESEND_API_KEY not set - license email logged only:');
       console.log(`  To:      ${license.email}`);
       console.log(`  Product: ${license.productName}`);
       console.log(`  Key:     ${license.licenseKey}`);
@@ -513,7 +513,7 @@ function licenseEmailHtml(license: License, verifyUrl: string, purchaseDateStr: 
             <td style="padding:40px;">
               <p style="margin:0 0 24px;color:#cbd5e1;font-size:15px;line-height:1.6;">
                 Thank you for purchasing <strong style="color:#fff;">${license.productName}</strong>.
-                Your license key is below — keep it somewhere safe.
+                Your license key is below - keep it somewhere safe.
               </p>
 
               <!-- License key box -->
@@ -591,7 +591,7 @@ Activations:  Up to ${license.maxActivations} machines
 
 Verify your license at: ${verifyUrl}
 
-Keep this email — it is the only record of your license key.
+Keep this email - it is the only record of your license key.
 
 Questions? Contact support@intruurt.space
 Intruvurt Labs`;

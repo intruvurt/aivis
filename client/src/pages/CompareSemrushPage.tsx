@@ -31,7 +31,7 @@ export default function CompareSemrushPage() {
             name: "Is AiVIS a Semrush alternative?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness — whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
+              text: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
             },
           },
           {
@@ -39,7 +39,7 @@ export default function CompareSemrushPage() {
             name: "Can AiVIS replace Semrush for SEO?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. Semrush excels at traditional SEO — keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification across AI answer engines. Use both for complete coverage.",
+              text: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification across AI answer engines. Use both for complete coverage.",
             },
           },
           {
@@ -190,7 +190,7 @@ export default function CompareSemrushPage() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3 text-white">The Measurement Gap</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              Semrush was built for a world where users click blue links. AI answer engines bypass that model entirely — they synthesize answers from extracted content. The signals they evaluate to select sources are fundamentally different from Google ranking factors.
+              Semrush was built for a world where users click blue links. AI answer engines bypass that model entirely - they synthesize answers from extracted content. The signals they evaluate to select sources are fundamentally different from Google ranking factors.
             </p>
             <p className="text-white/70 leading-relaxed">
               Content extractability, answer block density, entity graph coherence, and cross-platform citation presence have no equivalent in traditional SEO metrics. This is not a criticism of Semrush. It was not designed to measure what AI systems evaluate because AI answer engines did not exist when it was built. AiVIS was built specifically for this measurement layer.
@@ -204,11 +204,11 @@ export default function CompareSemrushPage() {
               {[
                 {
                   q: "Is AiVIS a Semrush alternative?",
-                  a: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness — whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
+                  a: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
                 },
                 {
                   q: "Can AiVIS replace Semrush for SEO?",
-                  a: "No. Semrush excels at traditional SEO — keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification. Use both for complete coverage.",
+                  a: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification. Use both for complete coverage.",
                 },
                 {
                   q: "Does Semrush measure AI visibility?",
@@ -231,7 +231,7 @@ export default function CompareSemrushPage() {
           <section className="rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/[0.08] to-violet-500/[0.08] p-8 text-center">
             <h3 className="text-2xl font-bold mb-3 text-white">See What Semrush Cannot Show You</h3>
             <p className="text-white/65 mb-5 max-w-xl mx-auto">
-              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini read your site — with evidence-linked findings and prioritized fixes.
+              Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and Gemini read your site - with evidence-linked findings and prioritized fixes.
             </p>
             <Link
               to="/"
@@ -239,6 +239,17 @@ export default function CompareSemrushPage() {
             >
               Run Free AI Visibility Audit <ArrowRight className="h-4 w-4" />
             </Link>
+          </section>
+
+          <section className="mt-10">
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/compare/ahrefs" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Ahrefs</Link>
+              <Link to="/compare/rankscale" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs RankScale</Link>
+              <Link to="/compare/otterly" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Otterly</Link>
+              <Link to="/compare/profound" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Profound</Link>
+              <Link to="/compare/reaudit" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Reaudit</Link>
+            </div>
           </section>
 
           <p className="text-xs text-white/40 mt-6">

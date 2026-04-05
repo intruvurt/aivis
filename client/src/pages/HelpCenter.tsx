@@ -200,7 +200,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How does brand mention tracking work?',
-        a: 'AiVIS scans 9 free sources — Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, and Product Hunt — to find mentions of your brand. Each mention is timestamped and linked. View mention history and timeline on the Mentions page. Requires Alignment or higher.',
+        a: 'AiVIS scans 9 free sources - Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, and Product Hunt - to find mentions of your brand. Each mention is timestamped and linked. View mention history and timeline on the Mentions page. Requires Alignment or higher.',
         tags: ['mentions', 'brand', 'tracking', 'reddit', 'hacker news', 'mastodon'],
       },
       {
@@ -1081,7 +1081,7 @@ export default function HelpCenter() {
                     {/* Intro */}
                     <div className="space-y-3">
                       <p>
-                        AEO stands for Answer Engine Optimization — the practice of shaping your page so an AI engine can
+                        AEO stands for Answer Engine Optimization - the practice of shaping your page so an AI engine can
                         grab the answer fast and use it directly in a generated response.
                       </p>
                       <p>
@@ -1100,11 +1100,11 @@ export default function HelpCenter() {
                       <h3 className="text-base font-semibold text-white">What AEO looks like on a real page</h3>
                       <div className="space-y-4">
                         <GuideBlock number={1} heading="A clear question is answered immediately">
-                          A heading asks the question, and the very next element — a sentence or a short paragraph — delivers
+                          A heading asks the question, and the very next element - a sentence or a short paragraph - delivers
                           the answer directly. No preamble, no filler, no &ldquo;in today&rsquo;s world&rdquo; warm-up. The answer comes first.
                         </GuideBlock>
                         <GuideBlock number={2} heading="The answer is machine-extractable">
-                          The answer lives in clean, semantic HTML — a paragraph, a list, or a definition block — not buried
+                          The answer lives in clean, semantic HTML - a paragraph, a list, or a definition block - not buried
                           inside an image, a JavaScript widget, or a collapsed accordion that never renders for crawlers.
                         </GuideBlock>
                         <GuideBlock number={3} heading="Supporting detail follows logically">
@@ -1112,7 +1112,7 @@ export default function HelpCenter() {
                           how an AI model structures a response: lead with the answer, then explain.
                         </GuideBlock>
                         <GuideBlock number={4} heading="Structured data backs it up">
-                          Schema markup — FAQ, HowTo, Article, Product — tells the engine exactly what the content is and how
+                          Schema markup - FAQ, HowTo, Article, Product - tells the engine exactly what the content is and how
                           to extract it. This is not decoration; this is the machine-readable contract.
                         </GuideBlock>
                         <GuideBlock number={5} heading="The entity is named, not assumed">
@@ -1134,7 +1134,7 @@ export default function HelpCenter() {
                       <p>
                         AEO and SEO are not enemies. Most of what makes a page good for search engines also makes it good
                         for answer engines. Clear headings, fast load times, mobile-friendliness, internal links, HTTPS,
-                        structured data — all of that matters for both.
+                        structured data - all of that matters for both.
                       </p>
                       <p>
                         The difference is emphasis. AEO shifts the priority from &ldquo;get this page into the top 10 blue links&rdquo;
@@ -1150,8 +1150,8 @@ export default function HelpCenter() {
 
                       <GuideStep num={1} title="Answer placement becomes critical">
                         <p>
-                          In SEO, you might open an article with a story or context. In AEO, the answer needs to come early — ideally
-                          in the first paragraph under the heading — because the extraction window is short. If the answer is buried
+                          In SEO, you might open an article with a story or context. In AEO, the answer needs to come early - ideally
+                          in the first paragraph under the heading - because the extraction window is short. If the answer is buried
                           on paragraph six, it probably will not get picked.
                         </p>
                       </GuideStep>
@@ -1160,13 +1160,13 @@ export default function HelpCenter() {
                         <p>
                           Schema markup has always helped SEO, but for AEO it is closer to required. FAQ schema, HowTo schema,
                           Product schema, and Article schema give the engine a clean contract to pull from. Without it, the engine
-                          is guessing — and it will often guess someone else&rsquo;s page instead.
+                          is guessing - and it will often guess someone else&rsquo;s page instead.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={3} title="Entity clarity matters more than keyword density">
                         <p>
-                          SEO traditionally focused on keywords. AEO focuses on entities — who you are, what you offer, where you
+                          SEO traditionally focused on keywords. AEO focuses on entities - who you are, what you offer, where you
                           operate, and what category you belong to. An AI model is trying to build a knowledge graph entry for your
                           brand. Give it the facts explicitly: name, description, location, offerings, differentiators.
                         </p>
@@ -1175,7 +1175,7 @@ export default function HelpCenter() {
                       <GuideStep num={4} title="Citations become the new backlinks">
                         <p>
                           In traditional SEO, backlinks are votes of trust. In AEO, citations are votes of authority. When your content
-                          gets cited by an AI model — with a source link or an inline reference — that is the AEO equivalent of a
+                          gets cited by an AI model - with a source link or an inline reference - that is the AEO equivalent of a
                           high-authority backlink. To earn citations, your content must be specific, factual, and directly answerable.
                         </p>
                       </GuideStep>
@@ -1227,7 +1227,7 @@ export default function HelpCenter() {
                         AEO helps your page get used as the answer.
                       </p>
                       <p className="text-white/50 text-xs mt-2">
-                        The best pages do both — they rank in search results <em>and</em> they get cited by AI models.
+                        The best pages do both - they rank in search results <em>and</em> they get cited by AI models.
                         That is the full visibility stack.
                       </p>
                     </div>
@@ -1241,7 +1241,7 @@ export default function HelpCenter() {
                           'Locking key content inside JavaScript-rendered tabs or accordions',
                           'Using images or infographics as the primary content (not crawlable)',
                           'Leaving out structured data entirely',
-                          'Not naming the entity — assuming the reader (or model) already knows',
+                          'Not naming the entity - assuming the reader (or model) already knows',
                           'No publish or update date anywhere on the page',
                           'Writing for keyword density instead of answering the actual question',
                           'Treating AEO as a replacement for SEO instead of a complement',

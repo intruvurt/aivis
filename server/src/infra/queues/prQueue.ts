@@ -1,5 +1,5 @@
 /**
- * BullMQ PR Queue — creates GitHub pull requests from generated fixes.
+ * BullMQ PR Queue - creates GitHub pull requests from generated fixes.
  * Runs after the fix worker produces a patch.
  */
 import { Queue } from 'bullmq';
@@ -39,7 +39,7 @@ export function getPRQueue(): Queue<PRJobData> | null {
 
 export async function enqueuePRJob(data: PRJobData): Promise<string> {
   const queue = getPRQueue();
-  if (!queue) throw new Error('PR queue unavailable — Redis not configured');
+  if (!queue) throw new Error('PR queue unavailable - Redis not configured');
   const job = await queue.add('create-pr', data, { priority: 1 });
   return job.id!;
 }

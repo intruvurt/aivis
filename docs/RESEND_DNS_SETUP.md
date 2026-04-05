@@ -21,7 +21,7 @@ AiVis uses **Resend SMTP** (not REST API) for better deliverability:
 | User | `resend` |
 | Password | Your `RESEND_API_KEY` |
 
-The same API key works for both SMTP and REST—we just send via SMTP.
+The same API key works for both SMTP and REST-we just send via SMTP.
 
 ---
 

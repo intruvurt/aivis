@@ -16,7 +16,7 @@ function safeJson(text: string): any {
 }
 
 // Refresh: re-validates the current token and updates user info in the store.
-// The server does not issue new JWTs on refresh — if the token is expired, this fails
+// The server does not issue new JWTs on refresh - if the token is expired, this fails
 // and the caller should clear auth state.
 async function tryRefreshTokenOnce(): Promise<boolean> {
   try {

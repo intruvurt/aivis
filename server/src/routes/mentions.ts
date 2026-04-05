@@ -28,13 +28,13 @@ const requireAlignmentOrHigher = (req: Request, res: Response, next: NextFunctio
   next();
 };
 
-// POST /api/mentions/scan — run a live mention scan
+// POST /api/mentions/scan - run a live mention scan
 router.post('/scan', requireAlignmentOrHigher, runMentionScan);
 
-// GET /api/mentions/history — get stored mentions for current user
+// GET /api/mentions/history - get stored mentions for current user
 router.get('/history', requireAlignmentOrHigher, getMentionHistoryHandler);
 
-// GET /api/mentions/timeline — daily mention counts over past N days
+// GET /api/mentions/timeline - daily mention counts over past N days
 router.get('/timeline', requireAlignmentOrHigher, getMentionTimelineHandler);
 
 export default router;

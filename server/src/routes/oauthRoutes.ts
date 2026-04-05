@@ -5,13 +5,13 @@
  * Implements RFC 6749 Authorization Code Grant.
  *
  * Routes:
- *   POST /api/oauth/clients           — Register a new OAuth client (auth required)
- *   GET  /api/oauth/clients           — List user's OAuth clients (auth required)
- *   DELETE /api/oauth/clients/:id     — Revoke an OAuth client (auth required)
- *   GET  /api/oauth/authorize         — Authorization endpoint (renders consent)
- *   POST /api/oauth/authorize         — User grants/denies consent
- *   POST /api/oauth/token             — Token exchange (public, client-authenticated)
- *   POST /api/oauth/revoke            — Revoke a token
+ *   POST /api/oauth/clients           - Register a new OAuth client (auth required)
+ *   GET  /api/oauth/clients           - List user's OAuth clients (auth required)
+ *   DELETE /api/oauth/clients/:id     - Revoke an OAuth client (auth required)
+ *   GET  /api/oauth/authorize         - Authorization endpoint (renders consent)
+ *   POST /api/oauth/authorize         - User grants/denies consent
+ *   POST /api/oauth/token             - Token exchange (public, client-authenticated)
+ *   POST /api/oauth/revoke            - Revoke a token
  */
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';

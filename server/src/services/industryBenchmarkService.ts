@@ -1,12 +1,12 @@
 /**
- * Industry Benchmark Service (Level 5 — VaaS)
+ * Industry Benchmark Service (Level 5 - VaaS)
  *
  * Aggregates anonymised visibility scores from the audits table to build
  * industry/sector averages and percentile bands.  Data is recomputed on
  * demand and cached for 24 hours in the industry_benchmarks table.
  *
  * Categories are inferred from the domain TLD + audit metadata.
- * All aggregation is non-identifying — no user_id or URL is exposed.
+ * All aggregation is non-identifying - no user_id or URL is exposed.
  */
 import { getPool } from './postgresql.js';
 
@@ -70,7 +70,7 @@ function inferCategory(url: string): string {
 /**
  * Recomputes percentile bands from the audits table.
  * Runs at most once per 24 hours (enforced by the computed_at check).
- * Safe to call from any background loop — idempotent.
+ * Safe to call from any background loop - idempotent.
  */
 export async function recomputeBenchmarks(): Promise<void> {
   const pool = getPool();
@@ -81,7 +81,7 @@ export async function recomputeBenchmarks(): Promise<void> {
   );
   if (recent.length > 0) return;
 
-  // Pull completed audits from the last 90 days (anonymised — no user_id)
+  // Pull completed audits from the last 90 days (anonymised - no user_id)
   const { rows: audits } = await pool.query<{ url: string; score: number }>(
     `SELECT url, visibility_score::NUMERIC AS score
        FROM audits

@@ -46,7 +46,7 @@ const VALUE_CARDS = [
   {
     icon: ShieldCheck,
     title: "Monitor brand accuracy across AI",
-    detail: "Track what AI platforms and public sources actually say about your business — and whether it is factually correct.",
+    detail: "Track what AI platforms and public sources actually say about your business - and whether it is factually correct.",
   },
   {
     icon: Eye,
@@ -56,7 +56,7 @@ const VALUE_CARDS = [
   {
     icon: Search,
     title: "Scan 15 public sources",
-    detail: "Brand mentions are tracked across Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters — no API keys needed.",
+    detail: "Brand mentions are tracked across Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters - no API keys needed.",
   },
   {
     icon: TrendingUp,
@@ -66,7 +66,7 @@ const VALUE_CARDS = [
 ];
 
 const WORKFLOW_STEPS = [
-  { step: 1, label: "Enter your brand URL", detail: "Paste your business URL — brand name, domain, and entity signals are extracted automatically." },
+  { step: 1, label: "Enter your brand URL", detail: "Paste your business URL - brand name, domain, and entity signals are extracted automatically." },
   { step: 2, label: "Multi-source scan", detail: "15 public sources are queried simultaneously for recent brand mentions and references." },
   { step: 3, label: "Integrity analysis", detail: "Each mention is classified: accurate, potentially inaccurate, absent, or displaced by a competitor." },
   { step: 4, label: "Timeline tracking", detail: "View mention history, detect emerging issues, and verify that corrections are propagating." },
@@ -86,7 +86,7 @@ const TIER_PATH = [
   {
     tier: "Score Fix",
     title: "Automated integrity remediation",
-    detail: "Generate schema corrections, entity disambiguation patches, and factual claim updates — pushed as evidence-linked PRs.",
+    detail: "Generate schema corrections, entity disambiguation patches, and factual claim updates - pushed as evidence-linked PRs.",
   },
 ];
 
@@ -96,7 +96,7 @@ export default function BrandIntegrityPage() {
   const latestResult = useAnalysisStore((s) => s.result);
 
   usePageMeta({
-    title: "Brand Integrity Monitor — AI Accuracy Tracking",
+    title: "Brand Integrity Monitor - AI Accuracy Tracking",
     description: "Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time, and protect brand integrity.",
     path: "/brand-integrity",
   });
@@ -223,7 +223,7 @@ export default function BrandIntegrityPage() {
                     {i + 1}
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{t.tier} — {t.title}</p>
+                    <p className="text-white font-semibold">{t.tier} - {t.title}</p>
                     <p className="text-white/50 text-sm">{t.detail}</p>
                   </div>
                 </div>
@@ -321,7 +321,7 @@ export default function BrandIntegrityPage() {
               </div>
               <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Brand Name</p>
-                <p className="text-emerald-300 text-lg font-bold truncate">{scanResult.brand || "—"}</p>
+                <p className="text-emerald-300 text-lg font-bold truncate">{scanResult.brand || "-"}</p>
               </div>
               <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Scan Status</p>

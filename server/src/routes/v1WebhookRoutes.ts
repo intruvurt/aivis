@@ -1,8 +1,8 @@
 /**
- * V1 Webhook Routes — handles inbound webhooks from GitHub and deploy platforms.
+ * V1 Webhook Routes - handles inbound webhooks from GitHub and deploy platforms.
  *
- * POST /v1/webhooks/github   — GitHub App webhook events
- * POST /v1/webhooks/deploy   — Deploy hook (Vercel/Render)
+ * POST /v1/webhooks/github   - GitHub App webhook events
+ * POST /v1/webhooks/deploy   - Deploy hook (Vercel/Render)
  */
 import { Router, Request, Response } from 'express';
 import { verifyWebhookSignature } from '../services/githubAppService.js';

@@ -31,23 +31,23 @@ The workspace owner's Windows path contains `$e` (`Ma$e`). PowerShell expands `$
 
 ## Critical backend files
 
-- `src/server.ts` — route wiring and middleware chain
-- `src/middleware/securityMiddleware.ts` — Helmet, CSP nonce, DOMPurify sanitizer, Zod schemas, URL validator
-- `src/services/aiProviders.ts` — provider selection, fallback, token budgets
-- `src/services/webSearch.ts` — DuckDuckGo HTML + Bing web search scrapers (free, no API keys)
-- `src/services/duckDuckGoSearch.ts` — DDG Instant Answer API (knowledge graph)
-- `src/services/citationTester.ts` — citation test orchestration (all 3 search engines in parallel)
-- `src/services/mentionTracker.ts` — brand mention scanner (15 free public sources, no API keys)
-- `src/controllers/mentions.controllers.ts` — mention scan, history, timeline handlers
-- `src/routes/mentions.ts` — `/api/mentions` routes (Alignment+ tier gate)
-- `src/controllers/competitors.controllers.ts` — competitor CRUD, comparison logic, opportunity detection
-- `src/services/postgresql.ts` — migrations and DB bootstrap
+- `src/server.ts` - route wiring and middleware chain
+- `src/middleware/securityMiddleware.ts` - Helmet, CSP nonce, DOMPurify sanitizer, Zod schemas, URL validator
+- `src/services/aiProviders.ts` - provider selection, fallback, token budgets
+- `src/services/webSearch.ts` - DuckDuckGo HTML + Bing web search scrapers (free, no API keys)
+- `src/services/duckDuckGoSearch.ts` - DDG Instant Answer API (knowledge graph)
+- `src/services/citationTester.ts` - citation test orchestration (all 3 search engines in parallel)
+- `src/services/mentionTracker.ts` - brand mention scanner (15 free public sources, no API keys)
+- `src/controllers/mentions.controllers.ts` - mention scan, history, timeline handlers
+- `src/routes/mentions.ts` - `/api/mentions` routes (Alignment+ tier gate)
+- `src/controllers/competitors.controllers.ts` - competitor CRUD, comparison logic, opportunity detection
+- `src/services/postgresql.ts` - migrations and DB bootstrap
 
 ---
 
 ## Web search verification engines
 
-Citation testing uses 3 free web search engines — no API keys required:
+Citation testing uses 3 free web search engines - no API keys required:
 
 | Engine | Source key | Module | Method |
 | --- | --- | --- | --- |
@@ -60,10 +60,10 @@ All 3 run in parallel per citation query via `Promise.all` in `citationTester.ts
 Source union type in `shared/types.ts`: `'ddg_web' | 'bing_web' | 'ddg_instant'`
 
 No paid search APIs. No API keys. Bing and DDG HTML are scraped with rotating browser user agents.
-- `src/services/scraper.ts` — crawl/extraction
-- `src/services/AnalysisCacheService*` — cache strategy
-- `src/services/emailService.ts` — all transactional + broadcast email (Resend API)
-- `../shared/types.ts` — canonical cross-layer contract
+- `src/services/scraper.ts` - crawl/extraction
+- `src/services/AnalysisCacheService*` - cache strategy
+- `src/services/emailService.ts` - all transactional + broadcast email (Resend API)
+- `../shared/types.ts` - canonical cross-layer contract
 
 ---
 
@@ -71,12 +71,12 @@ No paid search APIs. No API keys. Bing and DDG HTML are scraped with rotating br
 
 `src/middleware/securityMiddleware.ts` provides:
 
-- **Helmet** — hardened HTTP headers applied to all responses
-- **CSP nonce** — per-request nonce injected into Content-Security-Policy for inline scripts
-- **DOMPurify sanitizer** — `sanitizeInput()` strips XSS from user-supplied strings
-- **Zod schemas** — `loginSchema`, `registerSchema`, `supportTicketSchema` for request validation
-- **URL validator** — `isSafeExternalUrl()` rejects private/loopback/internal targets
-- **Bootstrap escaper** — `escapeBootstrapState()` prevents JSON injection in SSR payloads
+- **Helmet** - hardened HTTP headers applied to all responses
+- **CSP nonce** - per-request nonce injected into Content-Security-Policy for inline scripts
+- **DOMPurify sanitizer** - `sanitizeInput()` strips XSS from user-supplied strings
+- **Zod schemas** - `loginSchema`, `registerSchema`, `supportTicketSchema` for request validation
+- **URL validator** - `isSafeExternalUrl()` rejects private/loopback/internal targets
+- **Bootstrap escaper** - `escapeBootstrapState()` prevents JSON injection in SSR payloads
 
 Wired into `server.ts` (global Helmet + CSP), `authControllerFixed.ts` (Zod + sanitize on login/register), and `supportTicketController.ts` (Zod + sanitize on ticket creation).
 
@@ -94,7 +94,7 @@ All user-facing string inputs on protected routes must pass through `sanitizeInp
 - Auto-discovery from audit history
 - Monitoring toggle and frequency config
 
-Opportunity detection loops all `schema_types[]` dynamically — do not hardcode individual schema checks.
+Opportunity detection loops all `schema_types[]` dynamically - do not hardcode individual schema checks.
 
 ---
 
@@ -114,19 +114,19 @@ All admin routes require `x-admin-key` header validated via `requireAdminKey()` 
 
 Key admin endpoints:
 
-- `POST /api/admin/cache/clear` — clear analysis cache
-- `POST /api/admin/indexnow/ping` — submit URLs to IndexNow
-- `POST /api/admin/verify-user` — force-verify a user
-- `POST /api/admin/set-tier` — manually set canonical tier
-- `POST /api/admin/newsletter/preview` — preview/test newsletter email
-- `GET/POST /api/admin/newsletter/settings` — newsletter config
-- `POST /api/admin/newsletter/dispatch` — trigger newsletter send
-- `GET /api/admin/newsletter/editions` — list newsletter editions
-- `POST /api/admin/newsletter/editions` — create/upsert newsletter edition
-- `POST /api/admin/broadcast/preview` — preview/test broadcast email
-- `POST /api/admin/broadcast/send` — send broadcast to eligible users
-- `GET /api/admin/db/stats` — database table sizes and row counts
-- `POST /api/admin/db/cleanup` — trigger immediate DB cleanup
-- `GET /api/admin/health-deep` — deep health check (DB, memory, uptime)
+- `POST /api/admin/cache/clear` - clear analysis cache
+- `POST /api/admin/indexnow/ping` - submit URLs to IndexNow
+- `POST /api/admin/verify-user` - force-verify a user
+- `POST /api/admin/set-tier` - manually set canonical tier
+- `POST /api/admin/newsletter/preview` - preview/test newsletter email
+- `GET/POST /api/admin/newsletter/settings` - newsletter config
+- `POST /api/admin/newsletter/dispatch` - trigger newsletter send
+- `GET /api/admin/newsletter/editions` - list newsletter editions
+- `POST /api/admin/newsletter/editions` - create/upsert newsletter edition
+- `POST /api/admin/broadcast/preview` - preview/test broadcast email
+- `POST /api/admin/broadcast/send` - send broadcast to eligible users
+- `GET /api/admin/db/stats` - database table sizes and row counts
+- `POST /api/admin/db/cleanup` - trigger immediate DB cleanup
+- `GET /api/admin/health-deep` - deep health check (DB, memory, uptime)
 
 Full documentation: `docs/ADMIN_PORTAL.md`

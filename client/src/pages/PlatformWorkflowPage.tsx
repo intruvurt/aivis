@@ -14,7 +14,7 @@ import { buildBreadcrumbSchema, buildOrganizationRef, buildWebPageSchema } from 
 const steps = [
   { icon: Target, title: "Define the business goal", text: "Pick one objective per cycle: citations, score lift, competitor gap closure, or client-proof reporting.", color: "cyan" },
   { icon: Search, title: "Run baseline audits", text: "Audit homepage, key service pages, and conversion pages before changing anything. Establish the measurable starting point.", color: "blue" },
-  { icon: Zap, title: "Ship evidence-backed fixes", text: "Implement the highest-impact recommendations first — technical, schema, entity, or content authority fixes in focused 3–7 day sprints.", color: "amber" },
+  { icon: Zap, title: "Ship evidence-backed fixes", text: "Implement the highest-impact recommendations first - technical, schema, entity, or content authority fixes in focused 3–7 day sprints.", color: "amber" },
   { icon: RefreshCw, title: "Re-audit and measure deltas", text: "Re-scan the same URLs. Track score movement, category shifts, and recommendation burn-down after every sprint.", color: "emerald" },
   { icon: Radar, title: "Run competitor + citation loops", text: "Benchmark against competitors. Run citation tests across AI platforms. Feed unresolved gaps into the next sprint backlog.", color: "violet" },
   { icon: TrendingUp, title: "Scale and automate", text: "Schedule recurring rescans, wire webhooks for alerts, connect via API or MCP for programmatic access. Repeat the loop continuously.", color: "rose" },
@@ -35,7 +35,7 @@ const platformTools = [
   { icon: BarChart3, title: "Score Analytics", desc: "Track visibility score trends over time. Spot regressions, measure sprint impact, and export progress.", to: "/analytics", tier: "Alignment+" },
   { icon: Users, title: "Competitor Tracking", desc: "Track up to 3 competitors (Alignment), 8 (Signal), or 10 (Score Fix). Auto-detect gaps, run side-by-side comparisons, and find ranking opportunities.", to: "/competitors", tier: "Alignment+" },
   { icon: Globe, title: "Citation Testing", desc: "Test whether AI platforms cite your brand. Verify presence across ChatGPT, Perplexity, Claude, and Gemini queries via DuckDuckGo, Bing, and DDG Instant Answer.", to: "/citations", tier: "Signal+" },
-  { icon: MessageSquare, title: "Brand Mention Tracking", desc: "Scan 9 free sources — Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks — for live brand mentions.", to: "/citations", tier: "Alignment+" },
+  { icon: MessageSquare, title: "Brand Mention Tracking", desc: "Scan 9 free sources - Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks - for live brand mentions.", to: "/citations", tier: "Alignment+" },
   { icon: FileText, title: "Reports & Exports", desc: "Generate shareable reports with public links. Export full audit data as JSON, PDF, or CSV for client delivery.", to: "/reports", tier: "Alignment+" },
   { icon: Radar, title: "Reverse Engineer Suite", desc: "4 tools: Decompile AI answers, Ghost-draft optimized content, Diff competing pages, and Simulate AI query responses.", to: "/reverse-engineer", tier: "Alignment+" },
   { icon: Compass, title: "Niche Discovery", desc: "Discover overlooked URLs in your niche that AI models reference. Schedule automatic discovery scans.", to: "/niche-discovery", tier: "Alignment+" },
@@ -50,7 +50,7 @@ const integrations = [
   { icon: KeyRound, title: "API Keys", desc: "Programmatic access to audits, citations, competitor tracking, and scheduled rescans. Full REST API with scoped permissions.", to: "/api-docs" },
   { icon: Bot, title: "MCP Protocol", desc: "Connect AI coding agents directly to AiVIS. 12 tools available via Model Context Protocol for automated workflows.", to: "/mcp" },
   { icon: Send, title: "Webhooks", desc: "Push audit results to Slack, Discord, Zapier, Teams, Google Chat, Notion, or any custom endpoint. HMAC-signed payloads.", to: "/integrations" },
-  { icon: Clock, title: "Scheduled Rescans", desc: "Automate recurring audits — daily, weekly, biweekly, or monthly. Get notified on score changes automatically.", to: "/settings" },
+  { icon: Clock, title: "Scheduled Rescans", desc: "Automate recurring audits - daily, weekly, biweekly, or monthly. Get notified on score changes automatically.", to: "/settings" },
 ];
 
 /* ─── Execution tracks ─── */
@@ -132,7 +132,7 @@ const faqs = [
   { q: "How do scheduled rescans work?", a: "Set a frequency (daily, weekly, biweekly, monthly) for any URL. AiVIS automatically re-audits and notifies you via webhook if the score changes." },
   { q: "What's the difference between competitor tracking and citation testing?", a: "Competitor tracking benchmarks your visibility score against other sites. Citation testing checks whether AI platforms like ChatGPT and Perplexity actually mention your brand in their answers." },
   { q: "What are the 4 Reverse Engineer tools?", a: "Decompile breaks down AI answers to see what content produced them. Ghost Draft generates AI-optimized content. Diff compares two pages side-by-side. Simulate runs hypothetical AI queries." },
-  { q: "How does brand mention tracking work?", a: "AiVIS scans 9 free sources — Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks — for live mentions of your brand. No API keys required." },
+  { q: "How does brand mention tracking work?", a: "AiVIS scans 9 free sources - Reddit, Hacker News, Mastodon, GitHub, Product Hunt, Quora, Google News, and search engine dorks - for live mentions of your brand. No API keys required." },
   { q: "What is MCP and how do I use it?", a: "Model Context Protocol lets AI coding agents (Cursor, Windsurf, etc.) connect directly to AiVIS. Your agent can trigger audits, read results, and fix issues programmatically using 12 available MCP tools." },
   { q: "Can other platforms do what AiVIS does?", a: "Most AI visibility tools only offer basic auditing or citation tracking. AiVIS uniquely combines multi-model AI pipelines, reverse engineering, brand mention scanning, niche discovery, MCP integration, and automated PR generation in one platform." },
 ];
@@ -147,7 +147,7 @@ export default function PlatformWorkflowPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   usePageMeta({
-    title: "Workflow — AI Visibility Operating System",
+    title: "Workflow - AI Visibility Operating System",
     description: "The end-to-end execution workflow for founders, agencies, and growth teams. Baseline, fix, re-audit, automate, and scale AI visibility.",
     path: "/workflow",
     structuredData: [
@@ -255,7 +255,7 @@ export default function PlatformWorkflowPage() {
         <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Every tool you need</h2>
-            <p className="text-white/55 max-w-xl mx-auto">Not a single-trick auditor. A complete toolkit for AI visibility — from diagnostics to competitive intelligence.</p>
+            <p className="text-white/55 max-w-xl mx-auto">Not a single-trick auditor. A complete toolkit for AI visibility - from diagnostics to competitive intelligence.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {platformTools.map((tool, i) => {
@@ -448,7 +448,7 @@ export default function PlatformWorkflowPage() {
                   { tool: "Brand Mention Tracking", path: "/citations", desc: "Scan 15 sources for existing brand mentions" },
                   { tool: "Citation Testing", path: "/citations", desc: "Verify AI platforms cite your brand" },
                   { tool: "Keyword Intelligence", path: "/keywords", desc: "Map entity associations AI models hold about you" },
-                  { tool: "Niche Discovery", path: "/niche-discovery", desc: "Find niche URLs AI references — join that conversation" },
+                  { tool: "Niche Discovery", path: "/niche-discovery", desc: "Find niche URLs AI references - join that conversation" },
                   { tool: "Score Analytics", path: "/analytics", desc: "Track authority growth over time" },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center gap-3 rounded-xl bg-white/[0.03] px-3 py-2">
@@ -470,7 +470,7 @@ export default function PlatformWorkflowPage() {
         <div>
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Built for how you work</h2>
-            <p className="text-white/55 max-w-xl mx-auto">Whether you're a solo founder, an agency running 20 clients, or a growth team — there's a workflow for you.</p>
+            <p className="text-white/55 max-w-xl mx-auto">Whether you're a solo founder, an agency running 20 clients, or a growth team - there's a workflow for you.</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {executionTracks.map((track, i) => {

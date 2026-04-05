@@ -40,7 +40,7 @@ export async function persistAuditRecord(args: {
   const contradictionReport = extractContradictionReport(args.result);
   const projectId = args.workspaceId ? await ensureWorkspaceProjectForUrl(args.workspaceId, args.url) : null;
 
-  // --- Step 1: Insert the audit row with content hash (CRITICAL — must not be blocked by snapshot logic) ---
+  // --- Step 1: Insert the audit row with content hash (CRITICAL - must not be blocked by snapshot logic) ---
   const contentHash = computeContentHash(args.result);
   let auditInsertRows: Array<{ id: string }>;
   try {
@@ -81,7 +81,7 @@ export async function persistAuditRecord(args: {
     throw new Error('Audit insert did not return an id');
   }
 
-  // --- Step 2: Insert snapshot (non-critical — must not prevent audit_id from being returned) ---
+  // --- Step 2: Insert snapshot (non-critical - must not prevent audit_id from being returned) ---
   try {
     let priorRunId: string | null = null;
     try {

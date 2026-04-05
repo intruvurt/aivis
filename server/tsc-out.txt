@@ -12,9 +12,9 @@ src/controllers/aiOrchestratorController.ts(1,48): error TS2835: Relative import
 src/controllers/aiOrchestratorController.ts(2,47): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../constants/promptTemplates.js'?
 src/controllers/aiOrchestratorController.ts(3,39): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/AnalysisAuditLog.js'?
 src/controllers/aiOrchestratorController.ts(4,31): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/Evidence.js'?
-src/controllers/assistantController.ts(23,3): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, number>'.
-src/controllers/assistantController.ts(148,3): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, string>'.
-src/controllers/assistantController.ts(289,47): error TS2339: Property 'scorefix' does not exist on type 'Readonly<Record<CanonicalTier, TierLimits>>'.
+src/controllers/assistantController.ts(23,3): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, number>'.
+src/controllers/assistantController.ts(148,3): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, string>'.
+src/controllers/assistantController.ts(289,47): error TS2339: Property 'AutoFix PR' does not exist on type 'Readonly<Record<CanonicalTier, TierLimits>>'.
 src/controllers/auditController.ts(1,19): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/Audit.js'?
 src/controllers/auditController.ts(2,21): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/Website.js'?
 src/controllers/auditController.ts(3,18): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../models/User.js'?
@@ -94,10 +94,10 @@ src/controllers/citations.controllers.ts(47,3): error TS2305: Module '"../../../
 src/controllers/citations.controllers.ts(48,3): error TS2305: Module '"../../../shared/types.js"' has no exported member 'ConsistencyMatrixCell'.
 src/controllers/citations.controllers.ts(1655,26): error TS2339: Property 'model_used' does not exist on type 'AICitationResult'.
 src/controllers/citations.controllers.ts(1656,26): error TS2339: Property 'model_role' does not exist on type 'AICitationResult'.
-src/controllers/paymentController.ts(1202,7): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, number>'.
-src/controllers/paymentController.ts(1210,9): error TS2367: This comparison appears to be unintentional because the types 'CanonicalTier' and '"scorefix"' have no overlap.
-src/controllers/paymentController.ts(1250,32): error TS2367: This comparison appears to be unintentional because the types '"alignment"' and '"scorefix"' have no overlap.
-src/controllers/paymentController.ts(1254,11): error TS2367: This comparison appears to be unintentional because the types '"alignment" | "signal"' and '"scorefix"' have no overlap.
+src/controllers/paymentController.ts(1202,7): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, number>'.
+src/controllers/paymentController.ts(1210,9): error TS2367: This comparison appears to be unintentional because the types 'CanonicalTier' and '"AutoFix PR"' have no overlap.
+src/controllers/paymentController.ts(1250,32): error TS2367: This comparison appears to be unintentional because the types '"alignment"' and '"AutoFix PR"' have no overlap.
+src/controllers/paymentController.ts(1254,11): error TS2367: This comparison appears to be unintentional because the types '"alignment" | "signal"' and '"AutoFix PR"' have no overlap.
 src/controllers/statusController.ts(2,18): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
 src/controllers/statusController.ts(4,36): error TS7006: Parameter 'req' implicitly has an 'any' type.
 src/controllers/statusController.ts(4,41): error TS7006: Parameter 'res' implicitly has an 'any' type.
@@ -122,9 +122,9 @@ src/middleware/featureGate.ts(70,3): error TS2322: Type '"hasPriorityQueue"' is 
 src/middleware/featureGate.ts(71,3): error TS2322: Type '"hasAutoPR"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(72,3): error TS2322: Type '"hasBatchRemediation"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(73,3): error TS2322: Type '"hasEvidenceLinkedPRs"' is not assignable to type 'keyof TierLimits | undefined'.
-src/middleware/featureGate.ts(279,80): error TS2322: Type '"scorefix"' is not assignable to type 'CanonicalTier'.
-src/middleware/tieredRateLimiter.ts(25,5): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, { maxRequests: number; windowMs: number; }>'.
-src/middleware/tieredRateLimiter.ts(31,5): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, { maxRequests: number; windowMs: number; }>'.
+src/middleware/featureGate.ts(279,80): error TS2322: Type '"AutoFix PR"' is not assignable to type 'CanonicalTier'.
+src/middleware/tieredRateLimiter.ts(25,5): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, { maxRequests: number; windowMs: number; }>'.
+src/middleware/tieredRateLimiter.ts(31,5): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, { maxRequests: number; windowMs: number; }>'.
 src/models/AiAuditRun.ts(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
 src/models/AnalysisAuditLog.ts(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
 src/models/BuildSpecBlueprint.ts(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
@@ -182,7 +182,7 @@ src/routes/workspaceRoutes.ts(272,31): error TS2339: Property 'maxTeamMembers' d
 src/server.ts(44,42): error TS2305: Module '"../../shared/types.js"' has no exported member 'StrictRubricSystem'.
 src/server.ts(687,68): error TS2345: Argument of type '"minimal"' is not assignable to parameter of type 'TextSummaryDepth'.
 src/server.ts(2760,20): error TS2339: Property 'schema_score' does not exist on type 'SchemaMarkup'.
-src/server.ts(3016,25): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
+src/server.ts(3016,25): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
 src/server.ts(5310,19): error TS7006: Parameter 'sum' implicitly has an 'any' type.
 src/server.ts(5310,24): error TS7006: Parameter 'gate' implicitly has an 'any' type.
 src/server.ts(5314,14): error TS7006: Parameter 'gate' implicitly has an 'any' type.
@@ -193,21 +193,21 @@ src/server.ts(5394,35): error TS7006: Parameter 'gate' implicitly has an 'any' t
 src/server.ts(5396,50): error TS7006: Parameter 'sum' implicitly has an 'any' type.
 src/server.ts(5396,55): error TS7006: Parameter 'pack' implicitly has an 'any' type.
 src/server.ts(5405,40): error TS7006: Parameter 'gate' implicitly has an 'any' type.
-src/server.ts(6755,58): error TS2367: This comparison appears to be unintentional because the types '"observer" | "alignment"' and '"scorefix"' have no overlap.
-src/server.ts(6756,28): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
+src/server.ts(6755,58): error TS2367: This comparison appears to be unintentional because the types '"observer" | "alignment"' and '"AutoFix PR"' have no overlap.
+src/server.ts(6756,28): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
 src/server.ts(7009,20): error TS2339: Property 'schema_score' does not exist on type 'SchemaMarkup'.
-src/server.ts(7069,9): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
+src/server.ts(7069,9): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
 src/server.ts(7324,22): error TS2339: Property 'schema_score' does not exist on type 'SchemaMarkup'.
 src/server.ts(7325,31): error TS2339: Property 'schema_score' does not exist on type 'SchemaMarkup'.
-src/server.ts(8170,7): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(8672,22): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(8677,29): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(8678,27): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(8725,49): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(8865,23): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(9073,7): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"scorefix"' have no overlap.
-src/server.ts(10083,47): error TS2367: This comparison appears to be unintentional because the types '"observer" | "alignment"' and '"scorefix"' have no overlap.
-src/services/agentTaskService.ts(38,3): error TS2353: Object literal may only specify known properties, and 'scorefix' does not exist in type 'Record<CanonicalTier, number>'.
+src/server.ts(8170,7): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(8672,22): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(8677,29): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(8678,27): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(8725,49): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(8865,23): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(9073,7): error TS2367: This comparison appears to be unintentional because the types 'UiTier' and '"AutoFix PR"' have no overlap.
+src/server.ts(10083,47): error TS2367: This comparison appears to be unintentional because the types '"observer" | "alignment"' and '"AutoFix PR"' have no overlap.
+src/services/agentTaskService.ts(38,3): error TS2353: Object literal may only specify known properties, and 'AutoFix PR' does not exist in type 'Record<CanonicalTier, number>'.
 src/services/apiKeyService.ts(96,37): error TS2339: Property 'maxApiKeys' does not exist on type 'TierLimits'.
 src/services/audit/auditOrchestrator.ts(10,15): error TS2305: Module '"../../../../shared/types/audit.js"' has no exported member 'AuditEvidence'.
 src/services/audit/auditOrchestrator.ts(10,30): error TS2305: Module '"../../../../shared/types/audit.js"' has no exported member 'AuditFinding'.
@@ -263,7 +263,7 @@ src/services/engines/engineComposer.ts(11,3): error TS2305: Module '"../../../..
 src/services/engines/engineComposer.ts(12,3): error TS2305: Module '"../../../../shared/types.js"' has no exported member 'TrustLayerOutput'.
 src/services/engines/engineComposer.ts(13,3): error TS2305: Module '"../../../../shared/types.js"' has no exported member 'EntityGraphOutput'.
 src/services/engines/engineComposer.ts(15,10): error TS2305: Module '"../../../../shared/types.js"' has no exported member 'getEnginesForTier'.
-src/services/engines/engineComposer.ts(76,10): error TS2678: Type '"scorefix"' is not comparable to type 'CanonicalTier'.
+src/services/engines/engineComposer.ts(76,10): error TS2678: Type '"AutoFix PR"' is not comparable to type 'CanonicalTier'.
 src/services/engines/entityEngine.ts(9,15): error TS2305: Module '"../../../../shared/types.js"' has no exported member 'EntityGraphOutput'.
 src/services/engines/trustEngine.ts(10,15): error TS2305: Module '"../../../../shared/types.js"' has no exported member 'TrustLayerOutput'.
 src/services/evidenceExtractor.ts(10,33): error TS2305: Module '"../../../shared/types.js"' has no exported member 'SSFREvidenceItem'.
@@ -278,8 +278,8 @@ src/services/fixpackGenerator.ts(12,3): error TS2305: Module '"../../../shared/t
 src/services/fixpackGenerator.ts(13,3): error TS2305: Module '"../../../shared/types.js"' has no exported member 'SSFRFixpackAsset'.
 src/services/fixpackGenerator.ts(14,3): error TS2305: Module '"../../../shared/types.js"' has no exported member 'SSFRFixpackType'.
 src/services/fixpackGenerator.ts(15,3): error TS2305: Module '"../../../shared/types.js"' has no exported member 'SSFRRuleSeverity'.
-src/services/newsletterService.ts(181,18): error TS7053: Element implicitly has an 'any' type because expression of type '"observer" | "alignment" | "signal" | "scorefix"' can't be used to index type 'Readonly<Record<CanonicalTier, TierLimits>>'.
-  Property 'scorefix' does not exist on type 'Readonly<Record<CanonicalTier, TierLimits>>'.
+src/services/newsletterService.ts(181,18): error TS7053: Element implicitly has an 'any' type because expression of type '"observer" | "alignment" | "signal" | "AutoFix PR"' can't be used to index type 'Readonly<Record<CanonicalTier, TierLimits>>'.
+  Property 'AutoFix PR' does not exist on type 'Readonly<Record<CanonicalTier, TierLimits>>'.
 src/services/nicheDiscoveryService.ts(392,31): error TS2339: Property 'allowedRescanFrequencies' does not exist on type 'TierLimits'.
 src/services/nicheDiscoveryService.ts(401,29): error TS2551: Property 'maxScheduledRescans' does not exist on type 'TierLimits'. Did you mean 'hasScheduledRescans'?
 src/services/platformDirectSearch.ts(6,15): error TS2305: Module '"../../../shared/types.js"' has no exported member 'AuthorityPlatform'.

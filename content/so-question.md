@@ -1,6 +1,6 @@
 Here is the corrected post ready to paste directly into SO:
 
-Title: React 19 + Vite 7 production build crashes with "Cannot access 'lt' before initialization" — how to trace minified variable back to source
+Title: React 19 + Vite 7 production build crashes with "Cannot access 'lt' before initialization" - how to trace minified variable back to source
 
 Body:
 
@@ -34,13 +34,13 @@ esbuild minification
 
 What I have already ruled out
 
-Circular dependencies — running madge --circular across 300+ files shows zero cycles. All Zustand store files import cleanly. Barrel re-exports are simple pass-throughs with no logic.
+Circular dependencies - running madge --circular across 300+ files shows zero cycles. All Zustand store files import cleanly. Barrel re-exports are simple pass-throughs with no logic.
 
-TypeScript errors — tsc --noEmit passes with zero errors.
+TypeScript errors - tsc --noEmit passes with zero errors.
 
-Build errors — the Vite build completes successfully. The only warnings are chunk size notices.
+Build errors - the Vite build completes successfully. The only warnings are chunk size notices.
 
-Dev mode — the app runs perfectly with HMR. The crash is production-only.
+Dev mode - the app runs perfectly with HMR. The crash is production-only.
 
 Vite config
 
@@ -72,4 +72,4 @@ How do I use the Vite or Rollup source map to identify which original variable l
 
 Is there a way to build with minification disabled but chunking preserved so the error message becomes readable?
 
-Can the manualChunks configuration cause a temporal dead zone violation by splitting a module from its dependencies across chunk boundaries — and if so what is the correct fix?
+Can the manualChunks configuration cause a temporal dead zone violation by splitting a module from its dependencies across chunk boundaries - and if so what is the correct fix?

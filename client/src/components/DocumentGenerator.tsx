@@ -770,7 +770,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
     apiFetch(`/api/features/branding`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d?.data) setBranding(d.data); })
-      .catch(() => { console.warn("Branding fetch failed — export will be unbranded"); });
+      .catch(() => { console.warn("Branding fetch failed - export will be unbranded"); });
   }, [token, user?.tier]);
 
   const requestExportSession = async (branded: boolean) => {
@@ -846,7 +846,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
         includeEnterpriseAivisBranding: canUseBrandedExport,
       });
 
-      // POST to server — Puppeteer renders a real .pdf file
+      // POST to server - Puppeteer renders a real .pdf file
       const pdfRes = await fetch(`${base}/api/features/exports/generate-pdf`, {
         method: "POST",
         headers: {
@@ -877,7 +877,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
 
       setSuccess(
         canUseBrandedExport
-          ? `Branded PDF downloaded — ${BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit used`
+          ? `Branded PDF downloaded - ${BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit used`
           : "PDF report downloaded"
       );
       setTimeout(() => setSuccess(null), 4000);

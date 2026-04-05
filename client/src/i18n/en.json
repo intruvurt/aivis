@@ -20,7 +20,7 @@
   },
   "hero": {
     "title": "AI Visibility Engine",
-    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.",
+    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix - down to the pull request.",
     "cta": "Start Audit",
     "ctaSecondary": "View Methodology"
   },
@@ -106,7 +106,7 @@
     "overview": "Overview",
     "seeVisibility": "See Visibility",
     "reports": "Reports",
-    "scoreFix": "Score Fix",
+    "scorefix": "Score Fix",
     "analytics": "Analytics",
     "citations": "Citations",
     "competitors": "Competitors",

@@ -35,7 +35,7 @@ import { createLicenseAPI } from './licensing/verification-api.js';
 import competitorRoutes from './routes/competitors.js';
 import citationRoutes from './routes/citations.js';
 import mentionRoutes from './routes/mentions.js';
-import autoScoreFixRoutes from './routes/autoScoreFixRoutes.js';
+import AutoScoreFixRoutes from './routes/AutoScoreFixRoutes.js';
 import reverseEngineerApi from './routes/reverseEngineerApi.js';
 import schemaGeneratorRoutes from './routes/schemaGeneratorRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';
@@ -96,7 +96,7 @@ import {
   getNewsletterDispatchSettings,
   upsertNewsletterDispatchSettings,
 } from './services/newsletterService.js';
-import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop } from './services/autoScoreFixService.js';
+import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop } from './services/AutoScoreFixService.js';
 import { startScheduledPlatformNotificationLoop } from './services/scheduledPlatformNotifications.js';
 import { renderPlatformNewsletterEmail, sendPlatformNewsletterEmail, renderBroadcastEmail, sendBroadcastEmail } from './services/emailService.js';
 import { isGoogleMeasurementConfigured, sendMeasurementEvent } from './services/googleMeasurement.js';
@@ -580,7 +580,7 @@ function buildAuditCreditPlan(args: {
   }
 
   if (args.scanMockData || args.hasFindabilityGoals) {
-    // Mock data scan is pure regex (zero AI cost) — only charge for findability goals
+    // Mock data scan is pure regex (zero AI cost) - only charge for findability goals
     if (args.hasFindabilityGoals) {
       total += 1.33;
       reasons.push('Findability goal validation');
@@ -692,7 +692,7 @@ function stripObserverResult(result: any): any {
 
 /**
  * Alignment tier: full recommendations with implementation, keyword intelligence,
- * content highlights — but no deep evidence artifacts (those are Signal/ScoreFix only).
+ * content highlights - but no deep evidence artifacts (those are Signal/scorefix only).
  */
 function stripAlignmentResult(result: any): any {
   if (!result || typeof result !== 'object') return result;
@@ -714,7 +714,7 @@ function stripAlignmentResult(result: any): any {
  * Apply tier-appropriate result stripping.
  * Observer: minimal (top 3 recs, no implementation, no deep artifacts)
  * Alignment: standard (all recs + implementation, no evidence artifacts)
- * Signal/ScoreFix: full (everything returned)
+ * Signal/scorefix: full (everything returned)
  */
 function applyTierResultStripping(result: any, tier: string): any {
   const canonicalTier = uiTierFromCanonical((tier || 'observer') as CanonicalTier | LegacyTier);
@@ -747,7 +747,7 @@ function assertCriticalEnvForProduction(): void {
 assertCriticalEnvForProduction();
 
 if (!process.env.STRIPE_WEBHOOK_SECRET?.trim()) {
-  console.warn('[Startup] STRIPE_WEBHOOK_SECRET not configured — Stripe checkout may open, but webhook fulfillment (tier upgrades) will fail.');
+  console.warn('[Startup] STRIPE_WEBHOOK_SECRET not configured - Stripe checkout may open, but webhook fulfillment (tier upgrades) will fail.');
 }
 
 const normalizeOrigin = (origin: string): string => {
@@ -779,7 +779,7 @@ const NORMALIZED_ALLOWED_ORIGINS = [...new Set(ALLOWED_ORIGINS.map(normalizeOrig
 console.log('[CORS] Allowed origins (normalized):', NORMALIZED_ALLOWED_ORIGINS);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sentry — init is handled by instrument.ts via --import flag.
+// Sentry - init is handled by instrument.ts via --import flag.
 // If running without --import (e.g. dev), fall back to inline init.
 // ─────────────────────────────────────────────────────────────────────────────
 if (process.env.SENTRY_DSN) {
@@ -798,7 +798,7 @@ if (process.env.SENTRY_DSN) {
   console.warn('[Sentry] SENTRY_DSN not configured - error tracking disabled');
 }
 
-// Trust proxy (Render / Vercel / etc) — use 1 to trust only the first hop
+// Trust proxy (Render / Vercel / etc) - use 1 to trust only the first hop
 app.set('trust proxy', 1);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -908,7 +908,7 @@ const licenseLimiter = rateLimit({
   },
 });
 
-// Auth route limiter — prevents credential stuffing, account enumeration, email bombing
+// Auth route limiter - prevents credential stuffing, account enumeration, email bombing
 const authLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: IS_PRODUCTION ? 10 : 200,
@@ -920,7 +920,7 @@ const authLimiter = rateLimit({
   },
 });
 
-// Public tools limiter — prevents abuse of outbound-fetching endpoints
+// Public tools limiter - prevents abuse of outbound-fetching endpoints
 const publicToolLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: IS_PRODUCTION ? 10 : 100,
@@ -993,7 +993,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Security headers — handled by applySecurityMiddleware() (Helmet + nonce CSP)
+// Security headers - handled by applySecurityMiddleware() (Helmet + nonce CSP)
 // HSTS for production
 if (IS_PRODUCTION) {
   app.use((_req, res, next) => {
@@ -1023,7 +1023,7 @@ app.get('/api/pricing', getPricingInfo);
 app.use('/api/competitors', competitorRoutes);
 app.use('/api/citations', citationRoutes);
 app.use('/api/mentions', mentionRoutes);
-app.use('/api/auto-score-fix', autoScoreFixRoutes);
+app.use('/api/auto-score-fix', AutoScoreFixRoutes);
 app.use('/api/github-app', githubAppRoutes);
 app.use('/api/reverse-engineer', reverseEngineerApi);
 app.use('/api/schema-generator', schemaGeneratorRoutes);
@@ -1052,12 +1052,12 @@ app.use('/v1', v1Routes);
 app.use('/v1/webhooks', v1WebhookRoutes);
 app.use('/widget', widgetPublicRouter);
 
-// WebMCP discovery — unauthenticated
+// WebMCP discovery - unauthenticated
 app.get('/.well-known/webmcp.json', (_req, res) => {
   res.json({
     schema_version: '0.1.0',
     name: 'aivis',
-    display_name: 'AiVIS — AI Visibility Engine',
+    display_name: 'AiVIS - AI Visibility Engine',
     description: 'Audit, measure, and improve how AI answer engines see your website.',
     tools_endpoint: '/api/webmcp/tools',
     invoke_endpoint: '/api/webmcp/tools/{tool_name}',
@@ -1195,14 +1195,14 @@ app.get('/api/analytics', authRequired, async (req: Request, res: Response) => {
     );
     const lifetimeScans = Number(usageResult.rows[0]?.lifetime_scans || 0);
 
-    // All-time audit count (unfiltered by date range — for display)
+    // All-time audit count (unfiltered by date range - for display)
     const lifetimeAuditResult = await pool.query(
       `SELECT COUNT(*)::int AS total FROM audits WHERE user_id = $1`,
       [userId]
     );
     const lifetimeAuditCount = Number(lifetimeAuditResult.rows[0]?.total || 0);
 
-    // All-time scan count (unfiltered — for lifetime display)
+    // All-time scan count (unfiltered - for lifetime display)
     const lifetimeScanResult = await pool.query(
       `SELECT COALESCE(SUM(requests), 0)::int AS total FROM usage_daily WHERE user_id = $1`,
       [userId]
@@ -1741,7 +1741,7 @@ app.get('/api/analytics', authRequired, async (req: Request, res: Response) => {
   }
 });
 
-// ── Mini analytics — requires alignment+ tier ─────────────────────
+// ── Mini analytics - requires alignment+ tier ─────────────────────
 app.get('/api/analytics/mini', authRequired, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id || (req as any).userId;
@@ -2114,7 +2114,7 @@ app.get('/api/contacts', authRequired, async (req: Request, res: Response) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// IndexNow key file — serve from API server so IndexNow bot can verify
+// IndexNow key file - serve from API server so IndexNow bot can verify
 // ─────────────────────────────────────────────────────────────────────────────
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY || '';
 if (INDEXNOW_KEY) {
@@ -2298,7 +2298,7 @@ app.post('/api/keywords/enrich', authRequired, async (req: Request, res: Respons
 });
 
 app.get('/llms.txt', (_req, res) => {
-  res.type('text/plain').send(`AiVIS — AI Visibility Audit Platform
+  res.type('text/plain').send(`AiVIS - AI Visibility Audit Platform
 https://aivis.biz/
 
 AiVIS scores whether answer engines can parse, trust, and cite a page.
@@ -2339,7 +2339,7 @@ Trust documents
 - Terms: https://aivis.biz/terms
 
 Team updates
-- New member: Sadiq Khan — Marketing Specialist (UTC+5:30)
+- New member: Sadiq Khan - Marketing Specialist (UTC+5:30)
 - Team profile: https://aivis.biz/about#leadership
 
 Private partnership notice
@@ -2466,7 +2466,7 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       result = await fetchHeaders('GET');
     }
 
-    // HEAD returns no body — if content is HTML, do a supplementary GET for body analysis
+    // HEAD returns no body - if content is HTML, do a supplementary GET for body analysis
     if (result.method === 'HEAD' && /text\/html|application\/xhtml\+xml/i.test(result.responseHeaders['content-type'] || '')) {
       try {
         const bodyResult = await fetchHeaders('GET');
@@ -2517,33 +2517,33 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
     if (!security.hsts && targetUrl.startsWith('https://')) {
       insights.push('Strict-Transport-Security header missing on HTTPS response.');
     } else if (security.hsts) {
-      if (hstsMaxAge < 31536000) insights.push(`HSTS max-age is ${hstsMaxAge}s — recommend at least 31536000 (1 year).`);
+      if (hstsMaxAge < 31536000) insights.push(`HSTS max-age is ${hstsMaxAge}s - recommend at least 31536000 (1 year).`);
       if (!hstsIncludesSubs) insights.push('HSTS missing includeSubDomains directive.');
-      if (!hstsPreload) insights.push('HSTS missing preload directive — not eligible for browser preload list.');
+      if (!hstsPreload) insights.push('HSTS missing preload directive - not eligible for browser preload list.');
     }
     if (!security.csp) {
       insights.push('Content-Security-Policy header missing.');
     } else {
-      if (!cspHasDefaultSrc) insights.push('CSP missing default-src directive — incomplete fallback policy.');
-      if (!cspHasScriptSrc) insights.push('CSP missing script-src directive — scripts unrestricted.');
-      if (cspHasUnsafeInline) insights.push('CSP contains unsafe-inline — weakens XSS protection significantly.');
+      if (!cspHasDefaultSrc) insights.push('CSP missing default-src directive - incomplete fallback policy.');
+      if (!cspHasScriptSrc) insights.push('CSP missing script-src directive - scripts unrestricted.');
+      if (cspHasUnsafeInline) insights.push('CSP contains unsafe-inline - weakens XSS protection significantly.');
     }
     if (!security.xFrameOptions) {
       insights.push('X-Frame-Options header missing.');
     } else if (!xfoValid) {
-      insights.push(`X-Frame-Options value "${xfoRaw.trim()}" is non-standard — use DENY or SAMEORIGIN.`);
+      insights.push(`X-Frame-Options value "${xfoRaw.trim()}" is non-standard - use DENY or SAMEORIGIN.`);
     }
     if (!security.xContentTypeOptions) {
       insights.push('X-Content-Type-Options header missing.');
     } else if (!xctValid) {
-      insights.push(`X-Content-Type-Options value "${xctRaw.trim()}" is incorrect — must be "nosniff".`);
+      insights.push(`X-Content-Type-Options value "${xctRaw.trim()}" is incorrect - must be "nosniff".`);
     }
     if (!security.referrerPolicy) {
-      insights.push('Referrer-Policy header missing — browser may leak full URL on cross-origin navigations.');
+      insights.push('Referrer-Policy header missing - browser may leak full URL on cross-origin navigations.');
     } else if (!rpStrict) {
-      insights.push(`Referrer-Policy "${rpRaw.trim()}" is permissive — consider strict-origin-when-cross-origin or no-referrer.`);
+      insights.push(`Referrer-Policy "${rpRaw.trim()}" is permissive - consider strict-origin-when-cross-origin or no-referrer.`);
     }
-    if (!security.permissionsPolicy) insights.push('Permissions-Policy header missing — browser features unrestricted by default.');
+    if (!security.permissionsPolicy) insights.push('Permissions-Policy header missing - browser features unrestricted by default.');
     if (!cacheControl && !expires) insights.push('No cache lifetime headers detected.');
     else if (typeof maxAgeSeconds === 'number' && maxAgeSeconds <= 0) insights.push('Cache-Control max-age is zero or negative.');
     if (!headers['server']) insights.push('Server header hidden or stripped.');
@@ -3039,21 +3039,21 @@ function extractSchemaSignalsFromHtml(html: string): SchemaMarkup {
     if (/review/i.test(typeStr) && entity.itemReviewed) {
       const ir = entity.itemReviewed;
       if (ir && typeof ir === 'object' && !ir['@type']) {
-        schemaMarkup.validation_errors.push('Review.itemReviewed missing @type — Google requires explicit type, not just @id reference');
+        schemaMarkup.validation_errors.push('Review.itemReviewed missing @type - Google requires explicit type, not just @id reference');
       }
     }
 
     // Product: check for required Merchant Listing fields if offers present
     if (/^product$/i.test(typeStr) && entity.offers) {
       if (!entity.image) {
-        schemaMarkup.validation_errors.push('Product missing image — required for Google Product snippets');
+        schemaMarkup.validation_errors.push('Product missing image - required for Google Product snippets');
       }
     }
 
     // Article: author should have @type
     if (/article|blogposting|newsarticle/i.test(typeStr)) {
       if (entity.author && typeof entity.author === 'object' && !entity.author['@type'] && !entity.author['@id']) {
-        schemaMarkup.validation_errors.push(`${typeStr} author missing @type or @id — required for article rich results`);
+        schemaMarkup.validation_errors.push(`${typeStr} author missing @type or @id - required for article rich results`);
       }
     }
 
@@ -3080,7 +3080,7 @@ function extractSchemaSignalsFromHtml(html: string): SchemaMarkup {
   const typeCounts = topLevelTypes.reduce((acc, t) => { acc[t] = (acc[t] || 0) + 1; return acc; }, {} as Record<string, number>);
   for (const [t, count] of Object.entries(typeCounts)) {
     if (count > 1) {
-      schemaMarkup.validation_errors.push(`Duplicate standalone ${t} schema blocks (${count}) — may confuse structured data interpretation`);
+      schemaMarkup.validation_errors.push(`Duplicate standalone ${t} schema blocks (${count}) - may confuse structured data interpretation`);
     }
   }
 
@@ -3886,7 +3886,7 @@ function detectUploadAnalysisMode(parsedFiles: ParsedUploadFile[], sd: UploadExt
 }
 
 function stripEmDashes(value: string): string {
-  return String(value || '').replace(/[—–]/g, '-');
+  return String(value || '').replace(/[-–]/g, '-');
 }
 
 function normalizeWritingAudit(raw: any, contentType: WritingContentType) {
@@ -3971,7 +3971,7 @@ function normalizeWritingAudit(raw: any, contentType: WritingContentType) {
     chunking_issues: chunkingIssues,
     rewrite: {
       rewritten_text: rewrittenText,
-      no_emdash_passed: !/[—–]/.test(rewrittenText),
+      no_emdash_passed: !/[-–]/.test(rewrittenText),
       logged_fixes_count: diff.length,
       diff,
     },
@@ -4348,7 +4348,7 @@ function computeWeightedCategoryScore(
   );
 }
 
-/** Legacy fallback — used only when platform signals are unavailable. */
+/** Legacy fallback - used only when platform signals are unavailable. */
 function derivePlatformScoresLegacy(baseScore: number): { chatgpt: number; perplexity: number; google_ai: number; claude: number } {
   return {
     chatgpt: clampScore(baseScore * 0.95),
@@ -4666,12 +4666,12 @@ function computeEvidenceScores(
     ? schema.schema_types.map((t: unknown) => String(t).toLowerCase())
     : [];
   let cF = 0, cC = 100;
-  if (wc < 100) { cF = 0; cC = 15; cR.push(`${wc} words — critically thin`); }
-  else if (wc < 300) { cF = 5; cC = 35; cR.push(`${wc} words — insufficient for AI citation`); }
-  else if (wc < 600) { cF = 15; cC = 55; cR.push(`${wc} words — sparse`); }
-  else if (wc < 1000) { cF = 30; cC = 75; cR.push(`${wc} words — adequate`); }
-  else if (wc < 1200) { cF = 45; cC = 88; cR.push(`${wc} words — good depth`); }
-  else { cF = 55; cC = 100; cR.push(`${wc} words — strong depth`); }
+  if (wc < 100) { cF = 0; cC = 15; cR.push(`${wc} words - critically thin`); }
+  else if (wc < 300) { cF = 5; cC = 35; cR.push(`${wc} words - insufficient for AI citation`); }
+  else if (wc < 600) { cF = 15; cC = 55; cR.push(`${wc} words - sparse`); }
+  else if (wc < 1000) { cF = 30; cC = 75; cR.push(`${wc} words - adequate`); }
+  else if (wc < 1200) { cF = 45; cC = 88; cR.push(`${wc} words - good depth`); }
+  else { cF = 55; cC = 100; cR.push(`${wc} words - strong depth`); }
   if (wc >= 2200 && lexicalDiversity >= 0.42 && schemaTypes.length >= 6) {
     cF = Math.max(cF, 82);
     cR.push('Exceptional depth, lexical diversity, and rich structured context');
@@ -4696,8 +4696,8 @@ function computeEvidenceScores(
   const h3 = sd.headings?.h3?.length || 0;
   const hR: string[] = [];
   let hF = 0, hC = 100;
-  if (h1 === 0) { hF = 0; hC = 20; hR.push('No H1 — critical'); }
-  else if (h1 > 1) { hF = 5; hC = 45; hR.push(`${h1} H1 tags — should be 1`); }
+  if (h1 === 0) { hF = 0; hC = 20; hR.push('No H1 - critical'); }
+  else if (h1 > 1) { hF = 5; hC = 45; hR.push(`${h1} H1 tags - should be 1`); }
   else { hF = 40; hR.push('Single H1'); }
   if (h2 === 0 && h3 === 0) { hC = Math.min(hC, 55); hR.push('No subheadings'); }
   else if (h2 > 0 && h3 > 0) { hF = Math.max(hF, 50); hR.push('H2+H3 hierarchy'); }
@@ -4725,7 +4725,7 @@ function computeEvidenceScores(
   let sF = 0, sC = 100;
   const hasWebsite = schemaTypes.includes('website');
   const hasSoftwareApp = schemaTypes.includes('softwareapplication');
-  if (sc === 0) { sF = 0; sC = 12; sR.push('No JSON-LD — critical gap'); }
+  if (sc === 0) { sF = 0; sC = 12; sR.push('No JSON-LD - critical gap'); }
   else if (sc === 1 && !hasOrg) { sF = 8; sC = 40; sR.push('1 schema, no Organization'); }
   else if (hasOrg && hasFaq && sc >= 2) { sF = 55; sC = 100; sR.push(`${sc} schemas w/ Org+FAQ`); }
   else if (hasOrg) { sF = 30; sC = 75; sR.push(`${sc} schemas w/ Organization`); }
@@ -4753,18 +4753,18 @@ function computeEvidenceScores(
     const sq = schemaScore.total;
     if (sq >= 85) {
       sF = Math.max(sF, 88);
-      sR.push(`Schema quality ${sq}/100 — exceptional (entity graph, properties, vocabulary)`);
+      sR.push(`Schema quality ${sq}/100 - exceptional (entity graph, properties, vocabulary)`);
     } else if (sq >= 70) {
       sF = Math.max(sF, 75);
-      sR.push(`Schema quality ${sq}/100 — strong implementation`);
+      sR.push(`Schema quality ${sq}/100 - strong implementation`);
     } else if (sq >= 50) {
       sF = Math.max(sF, 55);
-      sR.push(`Schema quality ${sq}/100 — moderate implementation`);
+      sR.push(`Schema quality ${sq}/100 - moderate implementation`);
     } else if (sq >= 30) {
       sF = Math.max(sF, 30);
-      sR.push(`Schema quality ${sq}/100 — basic implementation`);
+      sR.push(`Schema quality ${sq}/100 - basic implementation`);
     } else if (sq > 0) {
-      sR.push(`Schema quality ${sq}/100 — minimal schema presence`);
+      sR.push(`Schema quality ${sq}/100 - minimal schema presence`);
     }
     // Entity graph bonus
     if (schemaScore.entityGraph && schemaScore.entityGraph.score >= 12) {
@@ -5989,7 +5989,7 @@ app.get('/api/audits', authRequired, async (req: Request, res: Response) => {
     const limit = Math.min(Number(req.query.limit) || 50, 100);
     const offset = Math.max(Number(req.query.offset) || 0, 0);
 
-    // Inline workspace resolution for team view — workspaceRequired is not on this route
+    // Inline workspace resolution for team view - workspaceRequired is not on this route
     const rawWsHeader = String(req.headers['x-workspace-id'] || '').trim() || null;
     let workspaceId: string | null = req.workspace?.id ?? null;
     if (!workspaceId && rawWsHeader && req.query.team === 'true') {
@@ -6775,7 +6775,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     const normalizedRequestTier = uiTierFromCanonical((userTier || 'observer') as CanonicalTier | LegacyTier);
     const forceRefreshRequested = Boolean((req.body as any)?.forceRefresh) || req.query.force === '1';
     const requireLiveAi = Boolean((req.body as any)?.requireLiveAi);
-    // Observer tier silently falls back to cache — paid tiers get fresh results
+    // Observer tier silently falls back to cache - paid tiers get fresh results
     const forceRefresh = forceRefreshRequested && TIER_LIMITS[normalizedRequestTier].hasForceRefresh;
     const retryRequested = Boolean((req.body as any)?.retryRequested) || forceRefresh;
     const scanMockData = Boolean((req.body as any)?.scanMockData);
@@ -6913,11 +6913,11 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         return res.json(applyTierResultStripping(cachedPayload, normalizedRequestTier));
       }
       console.log(
-        `[${requestId}] Skipping cached result for ${cacheKey} (score: ${cachedScore}, tier_matches: ${tierMatches}, thin: ${hasThinWarning}, scrape_warning: ${hasScrapeWarning}, fallback: ${hasFallbackMode}) — will re-analyze`
+        `[${requestId}] Skipping cached result for ${cacheKey} (score: ${cachedScore}, tier_matches: ${tierMatches}, thin: ${hasThinWarning}, scrape_warning: ${hasScrapeWarning}, fallback: ${hasFallbackMode}) - will re-analyze`
       );
     }
 
-    // Increment usage AFTER cache check — only fresh analysis costs a credit.
+    // Increment usage AFTER cache check - only fresh analysis costs a credit.
     // Cache hits return above without consuming a scan.
     if (!req.usageSkipIncrement && !req.usingPackCredits) {
       try {
@@ -6945,7 +6945,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     const parsedTargetUrl = new URL(targetUrl);
     emitProgress(requestId, 'dns', 5);
-    // Real DNS resolution — lookup A/AAAA records for the target host before crawling
+    // Real DNS resolution - lookup A/AAAA records for the target host before crawling
     try {
       const dnsHostname = parsedTargetUrl.hostname;
       await Promise.race([
@@ -6954,7 +6954,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       ]);
       console.log(`[${requestId}] DNS resolved: ${dnsHostname}`);
     } catch (dnsErr: any) {
-      // Non-fatal — Puppeteer will surface a proper error if the host is truly unreachable
+      // Non-fatal - Puppeteer will surface a proper error if the host is truly unreachable
       console.warn(`[${requestId}] DNS pre-check failed (non-fatal): ${dnsErr.message}`);
     }
     emitProgress(requestId, 'crawl', 15);
@@ -6974,7 +6974,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         }
         console.warn(`[${requestId}] Strict live mode soft-fail: crawl failed, returning degraded domain-only output`);
       }
-      console.warn(`[${requestId}] Scrape failed — using domain-only fallback: ${scrapeErr.message}`);
+      console.warn(`[${requestId}] Scrape failed - using domain-only fallback: ${scrapeErr.message}`);
       scrapeWarning = requireLiveAi
         ? 'Strict live mode fallback applied: crawl could not be completed, so a degraded domain-intelligence result was returned for continuity.'
         : 'Website could not be scraped directly (bot protection / IP block). Analysis is based on domain intelligence only.';
@@ -7001,17 +7001,17 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     const normalizedTier = normalizedRequestTier;
     const isTripleCheck = normalizedTier === 'signal' || normalizedTier === 'scorefix';
-    const isScoreFixTier = normalizedTier === 'scorefix';
+    const isscorefixTier = normalizedTier === 'scorefix';
     const isFree = userTier === 'observer';
 
     // ── Tier-based model allocation (updated 2026-03-24) ──
-    // Observer [Free]:     Gemini 2.5 Flash :free (primary) — $0.00/scan
-    // Alignment [Core]:    GPT-4.1 Mini (primary) — ~$0.001/scan
-    // Signal [Premium]:    GPT-4.1 Mini (AI1) → Claude 4 Sonnet (AI2) → Grok 3 Mini (AI3) — ~$0.004/scan
-    // Scorefix [AutoPR]:   GPT-4.1 (AI1) → Claude 4 Sonnet (AI2) → Grok 3 (AI3) — premium 3-family pipeline
+    // Observer [Free]:     Gemini 2.5 Flash :free (primary) - $0.00/scan
+    // Alignment [Core]:    GPT-4.1 Mini (primary) - ~$0.001/scan
+    // Signal [Premium]:    GPT-4.1 Mini (AI1) → Claude 4 Sonnet (AI2) → Grok 3 Mini (AI3) - ~$0.004/scan
+    // scorefix [AutoPR]:   GPT-4.1 (AI1) → Claude 4 Sonnet (AI2) → Grok 3 (AI3) - premium 3-family pipeline
     let providers: typeof PROVIDERS;
     if (isTripleCheck) {
-      const ai1 = isScoreFixTier ? SCOREFIX_AI1 : SIGNAL_AI1;
+      const ai1 = isscorefixTier ? SCOREFIX_AI1 : SIGNAL_AI1;
       providers = [ai1];
     } else if (isFree) {
       providers = [...FREE_PROVIDERS];
@@ -7034,36 +7034,36 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     const _metaDescLen = _metaDesc.length;
     const _metaDescGrade =
-      _metaDescLen === 0 ? 'MISSING — CRITICAL'
-      : _metaDescLen < 70 ? `${_metaDescLen} chars — TOO SHORT (target 120–160)`
-      : _metaDescLen > 165 ? `${_metaDescLen} chars — TOO LONG (will truncate in SERPs/AI previews)`
-      : `${_metaDescLen} chars — OK`;
+      _metaDescLen === 0 ? 'MISSING - CRITICAL'
+      : _metaDescLen < 70 ? `${_metaDescLen} chars - TOO SHORT (target 120–160)`
+      : _metaDescLen > 165 ? `${_metaDescLen} chars - TOO LONG (will truncate in SERPs/AI previews)`
+      : `${_metaDescLen} chars - OK`;
 
     const _titleLen = _title.length;
     const _titleGrade =
-      _titleLen === 0 ? 'MISSING — CRITICAL'
-      : _titleLen < 30 ? `${_titleLen} chars — TOO SHORT (target 50–60)`
-      : _titleLen > 65 ? `${_titleLen} chars — TOO LONG (may truncate in SERPs)`
-      : `${_titleLen} chars — OK`;
+      _titleLen === 0 ? 'MISSING - CRITICAL'
+      : _titleLen < 30 ? `${_titleLen} chars - TOO SHORT (target 50–60)`
+      : _titleLen > 65 ? `${_titleLen} chars - TOO LONG (may truncate in SERPs)`
+      : `${_titleLen} chars - OK`;
 
     const _h1Grade =
-      _h1s.length === 0 ? 'MISSING — CRITICAL (AI models need a primary heading to anchor citations)'
-      : _h1s.length === 1 ? `1 H1: "${_h1s[0].substring(0, 80)}" — OK`
-      : `${_h1s.length} H1 tags — WARNING (only 1 recommended)`;
+      _h1s.length === 0 ? 'MISSING - CRITICAL (AI models need a primary heading to anchor citations)'
+      : _h1s.length === 1 ? `1 H1: "${_h1s[0].substring(0, 80)}" - OK`
+      : `${_h1s.length} H1 tags - WARNING (only 1 recommended)`;
 
     const _lcpGrade =
       _lcpMs <= 0 ? 'Not measured'
-      : _lcpMs < 1200 ? `${_lcpMs}ms — FAST`
-      : _lcpMs < 2500 ? `${_lcpMs}ms — NEEDS IMPROVEMENT (target <2.5s)`
-      : `${_lcpMs}ms — POOR (target <2.5s, currently ${(_lcpMs / 1000).toFixed(1)}s)`;
+      : _lcpMs < 1200 ? `${_lcpMs}ms - FAST`
+      : _lcpMs < 2500 ? `${_lcpMs}ms - NEEDS IMPROVEMENT (target <2.5s)`
+      : `${_lcpMs}ms - POOR (target <2.5s, currently ${(_lcpMs / 1000).toFixed(1)}s)`;
 
     const _htmlRaw = sd.html || '';
     const _imgTags = _htmlRaw.match(/<img[^>]*>/gi) || [];
     const _imgsNoAlt = _imgTags.filter((t) => !/alt\s*=/i.test(t)).length;
     const _imgAltGrade =
       _imgTags.length === 0 ? 'No images detected'
-      : _imgsNoAlt === 0 ? `${_imgTags.length} images — all have alt text — OK`
-      : `${_imgsNoAlt}/${_imgTags.length} images MISSING alt text — affects AI context extraction and accessibility`;
+      : _imgsNoAlt === 0 ? `${_imgTags.length} images - all have alt text - OK`
+      : `${_imgsNoAlt}/${_imgTags.length} images MISSING alt text - affects AI context extraction and accessibility`;
 
     const _robotsAllowsGpt =
       sd.robots?.fetched === false ? null
@@ -7072,40 +7072,40 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         : sd.robots?.fetched ? true : null;
     const _robotsAiGrade = (() => {
       const robotsPart =
-        _robotsAllowsGpt === false ? 'GPTBot/AI crawlers BLOCKED in robots.txt — CRITICAL: AI indexing prevented'
-        : _robotsAllowsGpt === true ? 'No AI crawler blocks in robots.txt — OK'
+        _robotsAllowsGpt === false ? 'GPTBot/AI crawlers BLOCKED in robots.txt - CRITICAL: AI indexing prevented'
+        : _robotsAllowsGpt === true ? 'No AI crawler blocks in robots.txt - OK'
         : 'robots.txt not fetched or unknown';
       const lt = (sd as any).llmsTxt;
       const llmsPart = !lt?.fetched ? '' :
-        lt.present ? ' | llms.txt PRESENT — AI guidance file found' :
-        ' | llms.txt MISSING — no /llms.txt AI guidance file';
+        lt.present ? ' | llms.txt PRESENT - AI guidance file found' :
+        ' | llms.txt MISSING - no /llms.txt AI guidance file';
       return robotsPart + llmsPart;
     })();
 
     const _qH2s = sd.questionH2s || [];
     const _qH2Grade =
       _qH2s.length === 0
-        ? '0 question-format H2s — add W/H question headings to qualify for FAQ/AEO extraction'
+        ? '0 question-format H2s - add W/H question headings to qualify for FAQ/AEO extraction'
         : `${_qH2s.length} question-format H2s: ${_qH2s.slice(0, 3).map((q) => `"${q.substring(0, 55)}"`).join(', ')}`;
 
     const _ogComplete =
-      sd.meta?.ogTitle && sd.meta?.ogDescription ? 'og:title + og:description present — OK'
-      : !sd.meta?.ogTitle && !sd.meta?.ogDescription ? 'og:title MISSING, og:description MISSING — no social/AI preview coverage'
+      sd.meta?.ogTitle && sd.meta?.ogDescription ? 'og:title + og:description present - OK'
+      : !sd.meta?.ogTitle && !sd.meta?.ogDescription ? 'og:title MISSING, og:description MISSING - no social/AI preview coverage'
       : !sd.meta?.ogTitle ? 'og:title MISSING'
       : 'og:description MISSING';
 
     const _wordCountGrade =
-      (sd.wordCount || 0) < 200 ? `${sd.wordCount || 0} words — CRITICAL (below 200 — insufficient for AI citation eligibility)`
-      : (sd.wordCount || 0) < 500 ? `${sd.wordCount || 0} words — LOW (target 800+ for knowledge-base eligibility)`
-      : (sd.wordCount || 0) < 800 ? `${sd.wordCount || 0} words — MODERATE (target 800+ preferred)`
-      : `${sd.wordCount || 0} words — adequate`;
+      (sd.wordCount || 0) < 200 ? `${sd.wordCount || 0} words - CRITICAL (below 200 - insufficient for AI citation eligibility)`
+      : (sd.wordCount || 0) < 500 ? `${sd.wordCount || 0} words - LOW (target 800+ for knowledge-base eligibility)`
+      : (sd.wordCount || 0) < 800 ? `${sd.wordCount || 0} words - MODERATE (target 800+ preferred)`
+      : `${sd.wordCount || 0} words - adequate`;
 
     const _intLinkGrade =
-      (sd.links?.internal || 0) < 3 ? `${sd.links?.internal || 0} internal links — SPARSE (hinders AI crawler graph navigation)`
-      : `${sd.links?.internal || 0} internal links — OK`;
+      (sd.links?.internal || 0) < 3 ? `${sd.links?.internal || 0} internal links - SPARSE (hinders AI crawler graph navigation)`
+      : `${sd.links?.internal || 0} internal links - OK`;
 
     const _canonicalGrade =
-      sd.canonical ? `present: ${sd.canonical}` : 'MISSING — duplicate content not resolved, canonical tag absent';
+      sd.canonical ? `present: ${sd.canonical}` : 'MISSING - duplicate content not resolved, canonical tag absent';
 
     const diagnosticFlags: string[] = [
       `Title: ${_titleGrade}`,
@@ -7119,8 +7119,8 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       `LCP / page load: ${_lcpGrade}`,
       `Internal links: ${_intLinkGrade}`,
       `Canonical tag: ${_canonicalGrade}`,
-      `HTTPS: ${targetUrl.startsWith('https') ? 'enabled — OK' : 'NOT HTTPS — CRITICAL trust signal missing'}`,
-      `TLDR / summary block: ${sd.hasTldr ? `detected — "${(sd.tldrText || '').substring(0, 80)}"` : 'not detected — consider adding a key-takeaways or TL;DR section'}`,
+      `HTTPS: ${targetUrl.startsWith('https') ? 'enabled - OK' : 'NOT HTTPS - CRITICAL trust signal missing'}`,
+      `TLDR / summary block: ${sd.hasTldr ? `detected - "${(sd.tldrText || '').substring(0, 80)}"` : 'not detected - consider adding a key-takeaways or TL;DR section'}`,
     ];
     // ────────────────────────────────────────────────────────────────────────
 
@@ -7137,7 +7137,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       ev_h3: `${(sd.headings?.h3 || []).length} H3 headings`,
       ev_question_h2s: _qH2Grade,
       ev_canonical: _canonicalGrade,
-      ev_https: targetUrl.startsWith('https') ? 'HTTPS enabled — OK' : 'NOT HTTPS — CRITICAL',
+      ev_https: targetUrl.startsWith('https') ? 'HTTPS enabled - OK' : 'NOT HTTPS - CRITICAL',
       ev_word_count: _wordCountGrade,
       ev_links_int: _intLinkGrade,
       ev_links_ext: `${sd.links?.external || 0} external links`,
@@ -7147,9 +7147,9 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       ev_llms_txt: (() => {
         const lt = (sd as any).llmsTxt;
         if (!lt?.fetched) return 'llms.txt: not fetched (timeout or not attempted)';
-        if (!lt.present) return 'llms.txt: NOT PRESENT — add /llms.txt to guide AI crawlers on what to index and cite';
+        if (!lt.present) return 'llms.txt: NOT PRESENT - add /llms.txt to guide AI crawlers on what to index and cite';
         const preview = (lt.raw || '').substring(0, 120).replace(/\n/g, ' ');
-        return `llms.txt: PRESENT — "${preview}${lt.raw?.length > 120 ? '…' : ''}"`;
+        return `llms.txt: PRESENT - "${preview}${lt.raw?.length > 120 ? '…' : ''}"`;
       })(),
       ev_lcp_ms: _lcpGrade,
       ev_tldr: sd.hasTldr ? `TLDR/summary detected: "${(sd.tldrText || '').substring(0, 100)}"` : 'No TLDR/summary block detected',
@@ -7198,7 +7198,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       review_sentiment: undefined as any,
     };
 
-    // Enrichment calls are now heuristic-based (no AI calls) — instant, free,
+    // Enrichment calls are now heuristic-based (no AI calls) - instant, free,
     // and cannot poison provider backoff or consume rate limits.
     const [citationStrengths, clarity, sentiment] = await Promise.all([
       assessCitationStrength(externalDomains, sd.body || '', apiKey).catch((e: any) => { console.warn(`[${requestId}] citation strength heuristic failed (non-fatal):`, e?.message); return null; }),
@@ -7304,7 +7304,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         }
         scrapeWarning = `Strict live mode fallback applied: target had only ${bodyWordCount} crawl-accessible words, so a degraded scrape-only result was returned.`;
       }
-      console.warn(`[${requestId}] Extremely thin content detected (${bodyWordCount} words, no crawl signals) — building scrape-only result`);
+      console.warn(`[${requestId}] Extremely thin content detected (${bodyWordCount} words, no crawl signals) - building scrape-only result`);
       emitProgress(requestId, 'complete', 100);
 
       const thinBaseScore = Math.min(15, bodyWordCount * 2);
@@ -7378,7 +7378,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         key_takeaways: [
           `Only ${bodyWordCount} crawl-accessible word(s) detected at audit time`,
           ...(likelySpa ? [
-            'This appears to be a JavaScript-rendered (SPA) page — content is not in the initial HTML',
+            'This appears to be a JavaScript-rendered (SPA) page - content is not in the initial HTML',
             'AI answer engines (ChatGPT, Perplexity, Gemini) cannot read client-side-only content',
             'Implement SSR (server-side rendering), SSG (static site generation), or prerendering to make content crawlable',
           ] : [
@@ -7397,7 +7397,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
         recommendations: [],
         crypto_intelligence: {
           has_crypto_signals: false,
-          summary: 'No analysis performed — insufficient content',
+          summary: 'No analysis performed - insufficient content',
           detected_assets: [],
           keywords: [],
           wallet_addresses: [],
@@ -7563,17 +7563,17 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     }
 
     evidenceManifest['ev_schema'] = schemaMarkup.json_ld_count === 0
-      ? `0 JSON-LD blocks — CRITICAL: no structured data found; AI models rely on schema for entity disambiguation`
+      ? `0 JSON-LD blocks - CRITICAL: no structured data found; AI models rely on schema for entity disambiguation`
       : `${schemaMarkup.json_ld_count} JSON-LD block(s), types: ${JSON.stringify(schemaMarkup.schema_types)}`;
     evidenceManifest['ev_faq_schema'] = schemaMarkup.has_faq_schema
-      ? 'FAQPage schema PRESENT — eligible for FAQ rich results and AI Q&A extraction'
-      : 'FAQPage schema MISSING — add FAQPage JSON-LD to enable AI Q&A extraction';
+      ? 'FAQPage schema PRESENT - eligible for FAQ rich results and AI Q&A extraction'
+      : 'FAQPage schema MISSING - add FAQPage JSON-LD to enable AI Q&A extraction';
     // ── Schema quality evidence (comprehensive scorer) ──
     if (schemaMarkup.schema_score) {
       const ss = schemaMarkup.schema_score;
-      evidenceManifest['ev_schema_quality'] = `Schema quality score: ${ss.total}/100 — Validity: ${ss.validity.score}/${ss.validity.max}, Types: ${ss.typeCoverage.score}/${ss.typeCoverage.max}, Properties: ${ss.propertyCompleteness.score}/${ss.propertyCompleteness.max}, Graph: ${ss.entityGraph.score}/${ss.entityGraph.max}, Alignment: ${ss.contentAlignment.score}/${ss.contentAlignment.max}, Vocabulary: ${ss.advancedVocabulary.score}/${ss.advancedVocabulary.max}, Relationships: ${ss.relationshipDepth.score}/${ss.relationshipDepth.max}, Practices: ${ss.bestPractices.score}/${ss.bestPractices.max}`;
+      evidenceManifest['ev_schema_quality'] = `Schema quality score: ${ss.total}/100 - Validity: ${ss.validity.score}/${ss.validity.max}, Types: ${ss.typeCoverage.score}/${ss.typeCoverage.max}, Properties: ${ss.propertyCompleteness.score}/${ss.propertyCompleteness.max}, Graph: ${ss.entityGraph.score}/${ss.entityGraph.max}, Alignment: ${ss.contentAlignment.score}/${ss.contentAlignment.max}, Vocabulary: ${ss.advancedVocabulary.score}/${ss.advancedVocabulary.max}, Relationships: ${ss.relationshipDepth.score}/${ss.relationshipDepth.max}, Practices: ${ss.bestPractices.score}/${ss.bestPractices.max}`;
       if (ss.declaredIds.length > 0) {
-        evidenceManifest['ev_schema_graph'] = `Entity @id graph: ${ss.declaredIds.length} declared, ${ss.crossReferences.length} cross-references${ss.crossReferences.length > 0 ? ' — coherent entity graph' : ' — isolated entities (no cross-refs)'}`;
+        evidenceManifest['ev_schema_graph'] = `Entity @id graph: ${ss.declaredIds.length} declared, ${ss.crossReferences.length} cross-references${ss.crossReferences.length > 0 ? ' - coherent entity graph' : ' - isolated entities (no cross-refs)'}`;
       }
       if (ss.issues.length > 0) {
         evidenceManifest['ev_schema_issues'] = `Schema issues (${ss.issues.length}): ${ss.issues.slice(0, 5).join('; ')}`;
@@ -7634,33 +7634,33 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       console.warn(`[${requestId}] Platform intelligence prompt block failed (non-fatal):`, platErr?.message);
     }
 
-    // ── Tier-specific prompt prefix (ScoreFix gets fix-focused instructions) ──
-    const tierPromptPrefix = isScoreFixTier
-      ? `SCORE FIX MODE — This analysis is for an automated remediation pipeline.
+    // ── Tier-specific prompt prefix (scorefix gets fix-focused instructions) ──
+    const tierPromptPrefix = isscorefixTier
+      ? `SCORE FIX MODE - This analysis is for an automated remediation pipeline.
 Your PRIMARY objective is to identify the fastest, highest-impact fixes that will raise this site's AI visibility score.
 For each recommendation:
 - Prioritize fixes by estimated score lift (highest first).
 - Include complete, copy-pasteable code/markup/config that can be applied directly.
 - Tag each fix with a scorefix_category so it can be routed to the correct PR file path.
 - Focus on what is BROKEN or MISSING vs. what is already working.
-- Skip praise — go straight to actionable fixes with measured values and specific targets.
+- Skip praise - go straight to actionable fixes with measured values and specific targets.
 
 `
       : '';
 
     const prompt1 = `${tierPromptPrefix}Ai Visibility Intelligence Audits for ${targetUrl} (${parsedTargetUrl.hostname}).
-Base ALL findings on the evidence below. Be honest — most sites score C/D. Cite [ev_*] IDs.
+Base ALL findings on the evidence below. Be honest - most sites score C/D. Cite [ev_*] IDs.
 
 WRITING STYLE (mandatory for all text fields):
 - Write in a direct, technical, human-edited voice. No filler. No marketing fluff.
-- Never use a comma before "and", "or", "but", or "etc." — use the serial-comma-free style throughout.
+- Never use a comma before "and", "or", "but", or "etc." - use the serial-comma-free style throughout.
 - Avoid comma-heavy AI patterns. Prefer short declarative sentences over long compound ones.
 - Do not start sentences with "Additionally", "Furthermore", "Moreover", or "In conclusion".
 
 EVIDENCE:
 ${evidenceBlock}
 
-DIAGNOSTIC SNAPSHOT (pre-computed from live scraped data — treat as confirmed facts):
+DIAGNOSTIC SNAPSHOT (pre-computed from live scraped data - treat as confirmed facts):
 ${diagnosticFlags.map((f) => `  • ${f}`).join('\n')}
 
 BODY (first 2000 chars):
@@ -7669,12 +7669,12 @@ ${platformIntelBlock}
 ${findabilityGoalsBlock}
 ${mockDataScanBlock}
 
-MANDATORY SCORING BOUNDS (enforced server-side — scores outside these ranges will be overridden):
+MANDATORY SCORING BOUNDS (enforced server-side - scores outside these ranges will be overridden):
 ${boundsBlock}
 Score according to evidence quality: weak evidence lands in the lower half; strong evidence lands upper half. Most sites earn C/D.
 
-RECOMMENDATION CONTRACT — every recommendation MUST follow this contract:
-1. description must START with "Measured: <actual value from evidence>. Target: <required/recommended value>." — no exceptions.
+RECOMMENDATION CONTRACT - every recommendation MUST follow this contract:
+1. description must START with "Measured: <actual value from evidence>. Target: <required/recommended value>." - no exceptions.
 2. implementation must include at least one concrete code, markup, or config example relevant to the specific finding.
 3. evidence_ids must cite only real [ev_*] IDs listed above that confirm the problem.
 4. scorefix_category must be one of: "schema_structured_data" | "meta_tags" | "heading_structure" | "content_depth" | "technical_seo" | "ai_readability" | "image_accessibility" | "internal_linking" | "robots_access"
@@ -7698,7 +7698,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
     let activeDeadlineTimer: ReturnType<typeof setTimeout> | null = null;
     const makeDeadlinePromise = (label: string, budgetMs: number) =>
       new Promise<never>((_, reject) => {
-        activeDeadlineTimer = setTimeout(() => reject(new Error(`Pipeline deadline (${label}) — ${budgetMs}ms budget exhausted`)), budgetMs);
+        activeDeadlineTimer = setTimeout(() => reject(new Error(`Pipeline deadline (${label}) - ${budgetMs}ms budget exhausted`)), budgetMs);
       });
 
     let aiAnalysis: any;
@@ -7725,7 +7725,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
               prompt: prompt1,
               apiKey,
               endpoint: prov.endpoint,
-              opts: { max_tokens: isScoreFixTier ? 5000 : 3000, temperature: 0.1, timeoutMs: aiBudgetMs },
+              opts: { max_tokens: isscorefixTier ? 5000 : 3000, temperature: 0.1, timeoutMs: aiBudgetMs },
             }),
             makeDeadlinePromise('primary', aiBudgetMs),
           ]);
@@ -7737,7 +7737,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
             const parsed = safeJsonParse<any>(ai1Raw);
             if (parsed.ok && isUsableAiAnalysisPayload(parsed.value)) {
               ai1ParseResult = parsed;
-              break; // success — stop iterating
+              break; // success - stop iterating
             } else if (parsed.ok) {
               lastErr = new Error(`AI1 ${prov.model} payload incomplete (missing summary/categories/recommendations)`);
             } else {
@@ -7789,7 +7789,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
         throw aiErr;
       }
 
-      console.error(`[${requestId}] *** AI1 FAILED — falling back to deterministic ***`, {
+      console.error(`[${requestId}] *** AI1 FAILED - falling back to deterministic ***`, {
         reason: isPipelineDeadline ? 'pipeline-deadline' : 'provider-failure',
         error: msg.substring(0, 300),
         elapsedMs: Date.now() - startTime,
@@ -7833,7 +7833,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
     // Triple-Check Pipeline (Signal + Score Fix tiers)
     //   AI2 = Claude 3.5 Haiku peer critique   (score adjustment −15 to +10)
     //   AI3 = GPT-4o Mini validation gate (confirms or overrides)
-    // STRICT MODE: for Signal/ScoreFix, both AI2 and AI3 must succeed.
+    // STRICT MODE: for Signal/scorefix, both AI2 and AI3 must succeed.
     // If either stage fails, the request fails with a hard error.
     // ─────────────────────────────────────────────────────────────────────
     let tripleCheckResult: {
@@ -7877,8 +7877,8 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
         Math.min(MIN_AI_BUDGET_MS, tcRemainingMs),
         tcRemainingMs - PIPELINE_FLUSH_BUFFER_MS
       );
-      const ai2Provider = isScoreFixTier ? SCOREFIX_AI2 : SIGNAL_AI2;
-      const ai3Provider = isScoreFixTier ? SCOREFIX_AI3 : SIGNAL_AI3;
+      const ai2Provider = isscorefixTier ? SCOREFIX_AI2 : SIGNAL_AI2;
+      const ai3Provider = isscorefixTier ? SCOREFIX_AI3 : SIGNAL_AI3;
 
       // ── AI2: Peer Critique ──
       emitProgress(requestId, 'ai2', 60);
@@ -8100,11 +8100,11 @@ Return ONLY valid JSON:
               tripleCheckResult.enabled = true;
 
               if (ai3Parsed.value.validated) {
-                // AI3 agrees — use proposed score
+                // AI3 agrees - use proposed score
                 tripleCheckResult.final_score = proposedScore;
                 tripleCheckResult.confidence = ai3Parsed.value.confidence || tripleCheckResult.confidence;
               } else {
-                // AI3 overrides — use AI3's final_score
+                // AI3 overrides - use AI3's final_score
                 const ai3Final = typeof ai3Parsed.value.final_score === 'number'
                   ? Math.round(Math.max(0, Math.min(100, ai3Parsed.value.final_score)))
                   : proposedScore;
@@ -8131,13 +8131,13 @@ Return ONLY valid JSON:
         if (strictTripleCheck) {
           throw new Error(`TRIPLE_CHECK_AI3_SKIPPED_INSUFFICIENT_BUDGET: ${ai3BudgetMs}ms`);
         }
-        console.warn(`[${requestId}] Skipping AI3 — insufficient budget (${ai3BudgetMs}ms)`);
+        console.warn(`[${requestId}] Skipping AI3 - insufficient budget (${ai3BudgetMs}ms)`);
         tripleCheckResult.final_score = Math.max(0, Math.min(100, ai1Score + tripleCheckResult.ai2_adjustment));
         tripleCheckResult.enabled = !!tripleCheckResult.ai2_model;
       }
 
       if (strictTripleCheck && (!ai2StageCompleted || !ai3StageCompleted || !tripleCheckResult.enabled)) {
-        throw new Error('TRIPLE_CHECK_INCOMPLETE: Required Signal/ScoreFix 3-model pipeline did not complete successfully');
+        throw new Error('TRIPLE_CHECK_INCOMPLETE: Required Signal/scorefix 3-model pipeline did not complete successfully');
       }
     }
 
@@ -8612,7 +8612,7 @@ Return ONLY valid JSON:
         });
       }
     } catch (preInsertErr: any) {
-      console.error(`[${requestId}] AUDIT PERSIST FAILED — audit will not be shareable:`, preInsertErr?.message, preInsertErr?.stack?.split('\n').slice(0, 3).join(' | '));
+      console.error(`[${requestId}] AUDIT PERSIST FAILED - audit will not be shareable:`, preInsertErr?.message, preInsertErr?.stack?.split('\n').slice(0, 3).join(' | '));
     }
 
     // ── Auto-competitor detection ────────────────────────────────────────────
@@ -8698,7 +8698,7 @@ Return ONLY valid JSON:
             }
           }
         } else if (!profileComplete && analyzedDomain) {
-          // User has no website in profile — nudge them
+          // User has no website in profile - nudge them
           competitorHint = {
             is_potential_competitor: false,
             match_reasons: [],
@@ -8711,7 +8711,7 @@ Return ONLY valid JSON:
         }
       }
     } catch (hintErr: any) {
-      // Non-fatal — competitor hint is a nice-to-have
+      // Non-fatal - competitor hint is a nice-to-have
       console.warn(`[${requestId}] Competitor hint detection failed (non-fatal):`, hintErr?.message);
     }
 
@@ -8746,7 +8746,7 @@ Return ONLY valid JSON:
         };
       }
     } catch (benchErr: any) {
-      // Non-fatal — benchmark is a nice-to-have
+      // Non-fatal - benchmark is a nice-to-have
       console.warn(`[${requestId}] Platform benchmark query failed (non-fatal):`, benchErr?.message);
     }
 
@@ -9212,7 +9212,7 @@ app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspac
 
     const uploadRouting = detectUploadAnalysisMode(parsedFiles, sd);
 
-    let prompt = `AI Visibility Intelligence Audits — Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : 'batch'}.
+    let prompt = `AI Visibility Intelligence Audits - Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : 'batch'}.
   Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
   Treat this as uploaded source code or template content (not a live URL crawl).
   The upload includes ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(', ')}.
@@ -9248,54 +9248,54 @@ app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspac
   {"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"brand_entities":["<entities>"],"primary_topics":["<3-5>"],"recommendations":[{"priority":"high|medium|low","category":"<cat>","title":"<short>","description":"<detail>","impact":"<impact>","difficulty":"easy|medium|hard","implementation":"<steps>","evidence_ids":["up_*"]}],"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta-tags|schema|content|technical|readability","found":"<quote>","status":"good|warning|critical|missing","note":"<why>","source_id":"up_*"}]}`;
 
     if (uploadRouting.mode === 'writing_audit') {
-      prompt = `AI Visibility Intelligence Audits — Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
+      prompt = `AI Visibility Intelligence Audits - Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
 This is a WRITING and EDITORIAL analysis, not a live website crawl.
 Upload: ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(', ')}.
 
 EVIDENCE:\n${Object.entries(evidenceManifest).map(([id, value]) => `[${id}] ${value}`).join('\n')}
 
 ═══════════════════════════════════════════════════════════════
-AUDIT METHODOLOGY — 7-PASS CONTENT INTELLIGENCE FRAMEWORK
+AUDIT METHODOLOGY - 7-PASS CONTENT INTELLIGENCE FRAMEWORK
 ═══════════════════════════════════════════════════════════════
 
-PASS 1 — INTENT & RELEVANCE
+PASS 1 - INTENT & RELEVANCE
 - What query or need does this content answer?
 - Is the audience clearly identified? What awareness level (unaware / problem-aware / solution-aware)?
 - Does the content fulfill a clear search intent (informational / navigational / transactional)?
 
-PASS 2 — CONTENT QUALITY & INFORMATION GAIN
+PASS 2 - CONTENT QUALITY & INFORMATION GAIN
 - Assess originality: does this add unique value beyond what already exists on this topic?
 - Score information gain (0-100): new insights, unique data, original frameworks vs. rehashed generics.
 - Check for AI-generic phrasing, robotic repetition, em-dash overuse. Score de-AI quality.
 - Evaluate freshness: are claims, stats, and references current?
-- Word count and depth — is it thorough enough for the topic?
+- Word count and depth - is it thorough enough for the topic?
 
-PASS 3 — FACTUAL INTEGRITY
+PASS 3 - FACTUAL INTEGRITY
 - Identify every factual claim. For each: classify as verified / unverified / disputed / missing_source.
 - Check if claims are within ~200 words of a trust anchor (citation, data point, named source).
 - Flag unsupported statistics, vague attributions ("studies show"), and outdated data.
 
-PASS 4 — STRUCTURE & EXTRACTABILITY
+PASS 4 - STRUCTURE & EXTRACTABILITY
 - Heading hierarchy: proper H1 → H2 → H3 flow?
 - Vector chunking integrity: flag any paragraph >150 words without a structural break.
 - Are there Q&A-style headings that match People Also Ask patterns?
 - Does content include 40-60 word direct-answer blocks AI models can extract as citations?
 - Readability level assessment (estimate grade level).
 
-PASS 5 — SEO SURFACE & ENTITY CLARITY
+PASS 5 - SEO SURFACE & ENTITY CLARITY
 - Title tag quality: keyword-front, <60 chars, compelling.
-- Entity clarity 4-element check: (1) NAME — what is the subject? (2) WHAT — what does it do/cover? (3) WHO — who created/authored it? (4) WHY — why does it matter?
+- Entity clarity 4-element check: (1) NAME - what is the subject? (2) WHAT - what does it do/cover? (3) WHO - who created/authored it? (4) WHY - why does it matter?
 - Internal/external link quality. Schema opportunities. Image alt text.
 - Title-to-text parity: does the title promise match what the body delivers?
 
-PASS 6 — AEO & CITATION READINESS
+PASS 6 - AEO & CITATION READINESS
 - How likely are AI models (ChatGPT, Perplexity, Claude, Google AI) to cite/quote this?
 - Does it contain self-contained, quotable passages?
 - FAQ or Q&A structure present?
 - Schema markup recommendations (FAQ, HowTo, Article, etc.).
-- Would this content survive RAG extraction — is it chunk-friendly?
+- Would this content survive RAG extraction - is it chunk-friendly?
 
-PASS 7 — BUSINESS & EDITORIAL VERDICT
+PASS 7 - BUSINESS & EDITORIAL VERDICT
 - Does this serve a clear business goal (lead gen, authority, conversion)?
 - Final verdict: KEEP (publish as-is), REFRESH (update sections), REBUILD (rewrite from scratch), MERGE (combine with another piece), or KILL (archive/delete).
 
@@ -9617,7 +9617,7 @@ const adminLimiter = rateLimit({ windowMs: 30_000, max: 5, standardHeaders: true
 
 function requireAdminKey(req: Request, res: Response): boolean {
   if (!process.env.ADMIN_KEY) {
-    res.status(503).json({ error: 'Admin endpoint disabled — ADMIN_KEY not configured', code: 'ADMIN_DISABLED' });
+    res.status(503).json({ error: 'Admin endpoint disabled - ADMIN_KEY not configured', code: 'ADMIN_DISABLED' });
     return false;
   }
   const adminKey = req.headers['x-admin-key'];
@@ -9652,7 +9652,7 @@ app.post('/api/admin/cache/clear', adminLimiter, async (req, res) => {
   }
 });
 
-// ─── Admin: IndexNow — submit URL list to search engines ───────────────────────
+// ─── Admin: IndexNow - submit URL list to search engines ───────────────────────
 app.post('/api/admin/indexnow/ping', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
 
@@ -9892,7 +9892,7 @@ app.post('/api/admin/newsletter/editions', adminLimiter, async (req, res) => {
   }
 });
 
-// ─── Admin: Broadcast — send custom one-off announcement to users ────────────
+// ─── Admin: Broadcast - send custom one-off announcement to users ────────────
 
 app.post('/api/admin/broadcast/preview', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
@@ -10017,7 +10017,7 @@ app.post('/api/admin/broadcast/send', adminLimiter, async (req, res) => {
   }
 });
 
-// ─── Admin: DB stats — table sizes, row counts, total DB size ────────────────
+// ─── Admin: DB stats - table sizes, row counts, total DB size ────────────────
 app.get('/api/admin/db/stats', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
   try {
@@ -10172,7 +10172,7 @@ app.get('/api/admin/payments', adminLimiter, async (req, res) => {
   }
 });
 
-// ─── Admin: deep health check — runtime + db status ───────────────────────────
+// ─── Admin: deep health check - runtime + db status ───────────────────────────
 app.get('/api/admin/health-deep', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
   const startedAt = Date.now();
@@ -10394,7 +10394,7 @@ app.get('/sitemap.xml', (_req, res) => {
 // Sentry error handler (v10)
 if (process.env.SENTRY_DSN) Sentry.setupExpressErrorHandler(app);
 
-// ── Global error handler — catches unhandled errors from all routes ──────────
+// ── Global error handler - catches unhandled errors from all routes ──────────
 app.use((err: any, _req: any, res: any, _next: any) => {
   console.error('[GlobalErrorHandler]', err);
   if (process.env.SENTRY_DSN) Sentry.captureException(err);
@@ -10413,7 +10413,7 @@ if (existsSync(clientDist)) {
   app.use(express.static(clientDist, { maxAge: '1h', index: false }));
 }
 
-// SPA fallback — serves HTML with CSP nonce injected into <script> tags
+// SPA fallback - serves HTML with CSP nonce injected into <script> tags
 app.use((req, res) => {
   if (req.path.startsWith('/api/') || req.path.startsWith('/licenses')) {
     return res.status(404).json({ error: 'Endpoint not found', code: 'NOT_FOUND', path: req.path, method: req.method });
@@ -10444,7 +10444,7 @@ process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGINT', () => shutdown('SIGINT'));
 
 process.on('uncaughtException', (e) => {
-  console.error('[uncaughtException] Fatal — shutting down:', e);
+  console.error('[uncaughtException] Fatal - shutting down:', e);
   if (process.env.SENTRY_DSN) Sentry.captureException(e);
   shutdown('EXCEPTION');
 });
@@ -10484,7 +10484,7 @@ process.on('unhandledRejection', (reason) => {
     console.warn('[Startup] Citation scheduler bootstrap skipped because database is unavailable');
   }
 
-  // ── IndexNow startup ping — submit canonical AiVIS insight URLs ────────────
+  // ── IndexNow startup ping - submit canonical AiVIS insight URLs ────────────
   // Guarded by INDEXNOW_STARTUP_PING=true because the static CDN may block
   // IndexNow's verification bot, causing 403 noise on every deploy.
   // Use the admin endpoint POST /api/admin/indexnow/ping for on-demand pings.

@@ -56,7 +56,7 @@ export function useAgentTasks(enabled: boolean) {
         setTasks(data.tasks || []);
       }
     } catch {
-      /* network error — silent */
+      /* network error - silent */
     } finally {
       setIsLoading(false);
     }

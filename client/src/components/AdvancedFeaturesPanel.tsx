@@ -193,7 +193,7 @@ const INTEGRATION_PRESETS: IntegrationPreset[] = [
   {
     key: "notion",
     label: "Notion",
-    hint: "Notion automation webhook URL — no API key needed",
+    hint: "Notion automation webhook URL - no API key needed",
     placeholder: "https://api.notion.com/...",
     docsUrl: "https://www.notion.so/help/automations",
     validator: (url) => /^https:\/\/(api\.notion\.com|[\w-]+\.notion\.site)\//i.test(url),
@@ -659,7 +659,7 @@ function ThirdPartyIntegrationsPanel() {
     setTestingId(id);
     try {
       await integrationFetch(`/api/features/webhooks/${id}/test`, { method: "POST" });
-      toast.success("Test event sent — check your destination!");
+      toast.success("Test event sent - check your destination!");
       load();
     } catch (err: any) {
       toast.error(err.message || "Failed to send test event");
@@ -676,7 +676,7 @@ function ThirdPartyIntegrationsPanel() {
 
   return (
     <div className="space-y-4">
-      {/* Workspace selector — compact, only shown if user has multiple */}
+      {/* Workspace selector - compact, only shown if user has multiple */}
       {workspaces.length > 1 && (
         <div>
           <label className="text-xs text-white/50 mb-1 block">Workspace</label>
@@ -798,7 +798,7 @@ function ThirdPartyIntegrationsPanel() {
             </div>
           </div>
 
-          {/* Step 2: Setup instructions — shown when a provider is selected */}
+          {/* Step 2: Setup instructions - shown when a provider is selected */}
           {selected && setupSteps.length > 0 && (
             <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
               <p className="text-xs font-medium text-white/70 mb-2">
@@ -825,7 +825,7 @@ function ThirdPartyIntegrationsPanel() {
             </div>
           )}
 
-          {/* Step 3: Paste URL — shown when a provider is selected */}
+          {/* Step 3: Paste URL - shown when a provider is selected */}
           {selected && (
             <div>
               <p className="text-xs font-medium text-white/70 mb-2">
@@ -864,7 +864,7 @@ function ThirdPartyIntegrationsPanel() {
             </div>
           )}
 
-          {/* Empty state — no provider selected and no hooks */}
+          {/* Empty state - no provider selected and no hooks */}
           {!selected && hooks.length === 0 && (
             <div className="text-center py-4 px-3 rounded-lg border border-dashed border-white/10">
               <MessageSquare className="w-5 h-5 text-white/30 mx-auto mb-2" />

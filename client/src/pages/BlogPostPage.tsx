@@ -84,7 +84,7 @@ export default function BlogPostPage() {
                 .filter(Boolean)
                 .map((block, index) => {
                   const looksLikeHeading = /^\d+\./.test(block) || (/^[A-Z][^\n]{0,100}$/.test(block) && block.split(' ').length <= 14);
-                  const looksLikeDivider = /^(---|\*\*\*|———)$/.test(block);
+                  const looksLikeDivider = /^(---|\*\*\*|---)$/.test(block);
                   const looksLikeList = block.includes('\n- ') || block.startsWith('- ');
                   const looksLikeQuote = block.startsWith('> ') || (/^[“"].+[”"]$/.test(block) && block.length < 260);
 

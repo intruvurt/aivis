@@ -47,9 +47,9 @@ function normalizeAssistantReply(input: string): string {
       const parsed = JSON.parse(text) as Record<string, unknown>;
       if (typeof parsed.reply === 'string') text = parsed.reply;
       else if (typeof parsed.message === 'string') text = parsed.message;
-      else return ''; // Unknown JSON object (e.g. {"criteria":...}) — not a valid reply
+      else return ''; // Unknown JSON object (e.g. {"criteria":...}) - not a valid reply
     } catch {
-      // Malformed JSON-looking text — leave as-is, it's probably natural language
+      // Malformed JSON-looking text - leave as-is, it's probably natural language
     }
   }
 

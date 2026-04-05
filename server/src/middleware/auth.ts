@@ -1,5 +1,5 @@
 /**
- * @deprecated — All routes now use `authRequired` from `./authRequired.ts`.
+ * @deprecated - All routes now use `authRequired` from `./authRequired.ts`.
  * This file is kept only for reference; nothing should import from it.
  * Safe to delete once you confirm no legacy imports remain.
  */
@@ -41,7 +41,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     }
 
     try {
-      // Verify and decode token — accept both {id} and {userId} payloads
+      // Verify and decode token - accept both {id} and {userId} payloads
       const decoded = jwt.verify(token, JWT_SECRET) as { id?: string; userId?: string };
       const uid = decoded.userId || decoded.id;
 

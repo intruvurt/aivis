@@ -1,10 +1,10 @@
 /**
- * AutoScoreFixModal — full-screen (max-width) modal for Auto Score Fix.
+ * AutoScoreFixModal - full-screen (max-width) modal for Auto Score Fix.
  *
  * Tabs:
- *  1. Connect   — choose VCS provider, save token, set repo details
- *  2. Submit    — review + submit job (deducts 10 credits)
- *  3. Jobs      — list jobs, approve / reject with refund info
+ *  1. Connect   - choose VCS provider, save token, set repo details
+ *  2. Submit    - review + submit job (deducts 10 credits)
+ *  3. Jobs      - list jobs, approve / reject with refund info
  */
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -396,7 +396,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
     const d = await r.json();
     setActionMsg((m) => ({
       ...m,
-      [jobId]: r.ok ? `Rejected — ${d.refund_credits} credits refunded` : (d.error || "Error"),
+      [jobId]: r.ok ? `Rejected - ${d.refund_credits} credits refunded` : (d.error || "Error"),
     }));
     fetchJobs();
   }
@@ -406,7 +406,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
     const d = await r.json();
     setActionMsg((m) => ({
       ...m,
-      [jobId]: r.ok ? `Cancelled — ${d.refund_credits} credits refunded` : (d.error || "Error"),
+      [jobId]: r.ok ? `Cancelled - ${d.refund_credits} credits refunded` : (d.error || "Error"),
     }));
     fetchJobs();
   }
@@ -544,7 +544,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
                         onClick={() => setTab("submit")}
                         className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                       >
-                        ✓ GitHub App Installed — Continue to Submit
+                        ✓ GitHub App Installed - Continue to Submit
                       </button>
                     ) : githubAppInstallUrl ? (
                       <a
@@ -626,11 +626,11 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
               <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400">Target URL</span>
-                  <span className="text-sm text-white font-mono truncate max-w-[260px]">{auditResult.url || "—"}</span>
+                  <span className="text-sm text-white font-mono truncate max-w-[260px]">{auditResult.url || "-"}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400">Visibility Score</span>
-                  <span className="text-sm font-bold text-amber-400">{auditResult.visibility_score ?? "—"}/100</span>
+                  <span className="text-sm font-bold text-amber-400">{auditResult.visibility_score ?? "-"}/100</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400">Credit Cost</span>

@@ -47,7 +47,7 @@ export async function getNextMilestones(
 
 /**
  * Try to award a specific milestone. Returns true if newly awarded.
- * Idempotent — will not double-award.
+ * Idempotent - will not double-award.
  */
 export async function awardMilestone(
   userId: string,
@@ -115,7 +115,7 @@ export async function awardMilestone(
       userId,
       eventType: 'milestone_unlocked',
       title: `${def.icon} Milestone: ${def.label}`,
-      message: `${def.description} — ${def.creditReward} credits rewarded!`,
+      message: `${def.description} - ${def.creditReward} credits rewarded!`,
       metadata: { milestoneKey, creditReward: def.creditReward },
     }).catch(() => {});
 

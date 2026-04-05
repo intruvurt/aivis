@@ -1,11 +1,11 @@
 /**
- * IndexNow utility — submit URL sets to IndexNow-compatible search engines
+ * IndexNow utility - submit URL sets to IndexNow-compatible search engines
  * automatically when AiVIS insight content or public share pages are published.
  *
  * Env:
- *   INDEXNOW_KEY   — 32-128 char hex key. Generate once and place the key
+ *   INDEXNOW_KEY   - 32-128 char hex key. Generate once and place the key
  *                    file at /public/<key>.txt on the domain.
- *   FRONTEND_URL   — canonical origin e.g. https://aivis.biz
+ *   FRONTEND_URL   - canonical origin e.g. https://aivis.biz
  */
 
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/IndexNow';
@@ -17,7 +17,7 @@ export interface IndexNowResult {
 }
 
 /**
- * pingIndexNow — fire-and-forget safe. Never throws; returns a result object.
+ * pingIndexNow - fire-and-forget safe. Never throws; returns a result object.
  * Automatically de-dupes and filters to the host defined in FRONTEND_URL.
  */
 export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
@@ -30,7 +30,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
     }
   })();
 
-  // Derive API host for key file verification — the API server at api.{domain}
+  // Derive API host for key file verification - the API server at api.{domain}
   // already serves /{key}.txt. Using the API host avoids static-CDN bot-protection
   // issues that cause IndexNow 403 (UserForbiddedToAccessSite).
   const apiHost = (() => {
@@ -43,7 +43,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
   })();
 
   if (!key) {
-    console.warn('[IndexNow] INDEXNOW_KEY not set — ping skipped');
+    console.warn('[IndexNow] INDEXNOW_KEY not set - ping skipped');
     return { submitted: 0, skipped: urls.length, error: 'INDEXNOW_KEY not configured' };
   }
 
@@ -61,7 +61,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
   }
 
   // Self-check: verify key file is accessible before submitting.
-  // Hard gate — if the key file can't be verified, bail out. IndexNow will
+  // Hard gate - if the key file can't be verified, bail out. IndexNow will
   // reject the submission anyway (403 UserForbiddedToAccessSite).
   try {
     const probe = await fetch(keyLocation, {
@@ -112,7 +112,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
 }
 
 /**
- * pingIndexNowOnce — convenience wrapper for pinging a single URL.
+ * pingIndexNowOnce - convenience wrapper for pinging a single URL.
  */
 export function pingIndexNowOnce(url: string): Promise<IndexNowResult> {
   return pingIndexNow([url]);

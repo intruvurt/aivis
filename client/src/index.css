@@ -16,10 +16,10 @@
   --app-corner-radius: 0.75rem;
 
   /* ── Modern dark palette ──────────────────────── */
-  --charcoal-1: 11 15 26;    /* #0b0f1a — deep base */
-  --charcoal-2: 17 24 39;    /* #111827 — raised surface */
-  --charcoal-3: 26 34 52;    /* #1a2234 — overlay */
-  --charcoal-4: 30 41 59;    /* #1e293b — hover */
+  --charcoal-1: 11 15 26;    /* #0b0f1a - deep base */
+  --charcoal-2: 17 24 39;    /* #111827 - raised surface */
+  --charcoal-3: 26 34 52;    /* #1a2234 - overlay */
+  --charcoal-4: 30 41 59;    /* #1e293b - hover */
 
   /* Shell (body gradient) */
   --shell-0: 20 28 46;
@@ -517,7 +517,7 @@
     filter: none;
   }
 
-  /* ── Nav logo bleed — disabled ───── */
+  /* ── Nav logo bleed - disabled ───── */
   .nav-logo-bleed {
     display: none;
   }
@@ -525,7 +525,7 @@
   /* ── Footer geometric pattern blend ──────────────────────────────────── */
 
   /*
-   * Abstract asymmetric polygon mesh — SVG tiles encoded inline.
+   * Abstract asymmetric polygon mesh - SVG tiles encoded inline.
    * Intentionally un-even: cells vary in angle, vertices are shifted 5-12%.
    */
   .footer-geo-pattern {
@@ -635,7 +635,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   /* ── Body shell ────────────────────────────────── */
   .premium-shell {
     background:
-      /* Corner vignette — smoked edges */
+      /* Corner vignette - smoked edges */
       radial-gradient(ellipse 120% 120% at 50% 50%, transparent 45%, rgba(0,0,0,0.15) 100%),
       repeating-linear-gradient(-45deg, transparent, transparent 22px, rgba(255,255,255,0.01) 22px, rgba(255,255,255,0.01) 23px),
       radial-gradient(1500px 780px at 8% -8%, rgba(6,182,212,0.10), transparent 60%),
@@ -657,7 +657,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
 
   /* ── MODERN CARD SYSTEM ──────────────────────────── */
 
-  /* Primary card — clean dark surface with subtle border */
+  /* Primary card - clean dark surface with subtle border */
   .card-charcoal {
     position: relative;
     background: linear-gradient(145deg, #141c2e 0%, #111827 100%);
@@ -688,7 +688,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
       0 8px 24px rgba(0,0,0,0.25);
   }
 
-  /* Section wrapper — deeper surface */
+  /* Section wrapper - deeper surface */
   .card-charcoal-section {
     background: linear-gradient(160deg, #0d1320 0%, #111827 100%);
     border: 1px solid rgba(255,255,255,0.06);
@@ -699,7 +699,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     color: white;
   }
 
-  /* Inner / nested card — lighter for hierarchy within a card */
+  /* Inner / nested card - lighter for hierarchy within a card */
   .card-charcoal-inner {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
@@ -707,7 +707,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     color: white;
   }
 
-  /* Ghost / subtle fill — for inputs, badges, pills */
+  /* Ghost / subtle fill - for inputs, badges, pills */
   .fill-charcoal {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.06);
@@ -773,7 +773,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     border: 2px solid rgba(220, 228, 245, 0.14);
   }
 
-  /* ── Brand gradient bar — top accent for sections ── */
+  /* ── Brand gradient bar - top accent for sections ── */
   .brand-bar-top {
     position: relative;
   }
@@ -789,7 +789,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     pointer-events: none;
   }
 
-  /* ── Brand gradient dot — small color accent ── */
+  /* ── Brand gradient dot - small color accent ── */
   .brand-dot-cyan::before {
     content: '';
     display: inline-block;
@@ -883,7 +883,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     color: rgba(255, 255, 255, 0.9) !important;
   }
 
-  /* ── Glass panel (legacy — now clean) ────────── */
+  /* ── Glass panel (legacy - now clean) ────────── */
   .panel-crisp {
     background: linear-gradient(145deg, #141c2e, #111827);
     border: 1px solid rgba(255,255,255,0.08);
@@ -930,7 +930,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     SCORE CHIP SYSTEM — color-coded visibility score badges
+     SCORE CHIP SYSTEM - color-coded visibility score badges
   ════════════════════════════════════════════════════ */
   .score-chip-excellent {
     background: linear-gradient(135deg, rgba(16,185,129,0.22), rgba(5,150,105,0.15));
@@ -974,7 +974,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     DASHBOARD SCORE CARD SYSTEM — visibility score grid
+     DASHBOARD SCORE CARD SYSTEM - visibility score grid
   ════════════════════════════════════════════════════ */
   .score-card {
     background: linear-gradient(145deg, #141c2e 0%, #111827 100%);
@@ -1022,7 +1022,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   .score-badge-moderate { background: rgba(245,158,11,0.15); color: #fbbf24; }
   .score-badge-weak { background: rgba(239,68,68,0.15); color: #f87171; }
 
-  /* Score ring — conic gradient progress ring */
+  /* Score ring - conic gradient progress ring */
   .score-ring {
     position: relative;
     width: 140px;
@@ -1142,7 +1142,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     SECTION ACCENT BORDERS — colored left-border per section type
+     SECTION ACCENT BORDERS - colored left-border per section type
   ════════════════════════════════════════════════════ */
   .section-accent-orange {
     border-left: 3px solid rgba(249,115,22,0.75) !important;
@@ -1170,7 +1170,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     AGENCY STAT CARDS — colored top-border variants
+     AGENCY STAT CARDS - colored top-border variants
   ════════════════════════════════════════════════════ */
   .agency-stat-orange {
     border-top: 2px solid rgba(249,115,22,0.70) !important;
@@ -1199,7 +1199,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     PRIMARY CTA BUTTON — vibrant orange-to-amber
+     PRIMARY CTA BUTTON - vibrant orange-to-amber
   ════════════════════════════════════════════════════ */
   .btn-cta-primary {
     background: linear-gradient(135deg, #ea580c 0%, #f97316 45%, #fbbf24 100%);
@@ -1465,7 +1465,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
     }
   }
 
-  /* Secondary CTA — cyan outline */
+  /* Secondary CTA - cyan outline */
   .btn-cta-secondary {
     background: rgba(34,211,238,0.10);
     color: #67e8f9 !important;
@@ -1480,7 +1480,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   /* ═══════════════════════════════════════════════════
-     SECTION HEADER ROW — horizontal rule with brand color
+     SECTION HEADER ROW - horizontal rule with brand color
   ════════════════════════════════════════════════════ */
   .section-header-row {
     display: flex;
@@ -1607,19 +1607,19 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 }
 
-/* ── reCAPTCHA badge — move to left side of viewport ─── */
+/* ── reCAPTCHA badge - move to left side of viewport ─── */
 .grecaptcha-badge {
   left: 14px !important;
   right: auto !important;
 }
 
 /* ═══════════════════════════════════════════════════════
-   AURORA APP SHELL — mobile-first, responsive sidebar grid
+   AURORA APP SHELL - mobile-first, responsive sidebar grid
    Used by AppLayout for all /app/* routes
    ═══════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────
-   App shell — CSS-grid based layout
+   App shell - CSS-grid based layout
    Mobile: single column (sidebar hidden)
    Desktop ≥1024: sidebar(240) + workspace(1fr)
    ───────────────────────────────────────────── */
@@ -1635,7 +1635,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   color: #fff;
 }
 
-/* Sidebar — hidden mobile, fixed left on desktop */
+/* Sidebar - hidden mobile, fixed left on desktop */
 .aurora-sidebar {
   display: none;
   position: fixed;
@@ -1657,7 +1657,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 }
 
-/* Main area — fills remaining space next to sidebar */
+/* Main area - fills remaining space next to sidebar */
 .aurora-main {
   flex: 1;
   min-width: 0;
@@ -1672,7 +1672,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 }
 
-/* Content frame — scrollable workspace area, no centering */
+/* Content frame - scrollable workspace area, no centering */
 .aurora-content {
   flex: 1;
   padding: 1.25rem 1.5rem;

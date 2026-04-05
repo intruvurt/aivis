@@ -69,6 +69,17 @@ export default function CompareProfoundPage() {
           Start your audit now <ArrowRight className="ml-1 w-4 h-4" />
         </Link>
       </section>
+
+      <section className="mt-8">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/80 mb-4">Compare AiVIS with other tools</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/compare/ahrefs" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Ahrefs</Link>
+          <Link to="/compare/semrush" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Semrush</Link>
+          <Link to="/compare/rankscale" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs RankScale</Link>
+          <Link to="/compare/otterly" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Otterly</Link>
+          <Link to="/compare/reaudit" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Reaudit</Link>
+        </div>
+      </section>
     </div>
   );
 }

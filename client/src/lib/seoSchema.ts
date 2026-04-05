@@ -61,7 +61,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
   };
 }
 
-/** Canonical organization reference — always use this instead of bare { name: 'AiVIS' } */
+/** Canonical organization reference - always use this instead of bare { name: 'AiVIS' } */
 export function buildOrganizationRef(): Record<string, unknown> {
   return {
     '@id': ORGANIZATION_ID,

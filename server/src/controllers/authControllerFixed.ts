@@ -290,7 +290,7 @@ export const register = async (req: Request, res: Response) => {
 
     await upsertNotificationPreferences(user.id, { emailNotifications: marketingOptInBool });
 
-    // Send verification email — await so we can tell the user if it failed
+    // Send verification email - await so we can tell the user if it failed
     let emailSent = false;
     if (user.verification_token) {
       try {
@@ -321,7 +321,7 @@ export const register = async (req: Request, res: Response) => {
       success: true,
       message: emailSent
         ? 'Registration successful! Please check your email to verify your account.'
-        : 'Registration successful! We could not send the verification email — please use "Resend verification" on the login page.',
+        : 'Registration successful! We could not send the verification email - please use "Resend verification" on the login page.',
       data: {
         user: pickSafeUser(user),
         requiresVerification: true,
@@ -336,7 +336,7 @@ export const register = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    // Postgres unique_violation (23505) — race condition where two concurrent
+    // Postgres unique_violation (23505) - race condition where two concurrent
     // signups pass the getUserByEmail check before either INSERT completes.
     if (error?.code === '23505' && error?.constraint?.includes('email')) {
       return res.status(409).json({

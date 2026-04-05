@@ -70,7 +70,7 @@ async function enqueueAllProjectsForAudit(): Promise<void> {
 }
 
 /**
- * Handle GitHub PR merged event — triggers re-audit for the project.
+ * Handle GitHub PR merged event - triggers re-audit for the project.
  */
 export async function handlePRMerged(payload: {
   projectId: string;
@@ -105,7 +105,7 @@ export async function handlePRMerged(payload: {
   );
   if (!members.length) return;
 
-  console.log(`[Scheduler] PR merged for project ${project.id} — triggering re-audit`);
+  console.log(`[Scheduler] PR merged for project ${project.id} - triggering re-audit`);
 
   await enqueueAuditJob({
     url: project.domain.startsWith('http') ? project.domain : `https://${project.domain}`,
@@ -115,7 +115,7 @@ export async function handlePRMerged(payload: {
 }
 
 /**
- * Handle deploy hook — triggered by Vercel/Render deploy webhooks.
+ * Handle deploy hook - triggered by Vercel/Render deploy webhooks.
  */
 export async function handleDeployHook(payload: {
   domain: string;
@@ -141,7 +141,7 @@ export async function handleDeployHook(payload: {
     );
     if (!members.length) continue;
 
-    console.log(`[Scheduler] Deploy hook (${payload.source}) for ${project.domain} — triggering re-scan`);
+    console.log(`[Scheduler] Deploy hook (${payload.source}) for ${project.domain} - triggering re-scan`);
 
     await enqueueAuditJob({
       url: project.domain.startsWith('http') ? project.domain : `https://${project.domain}`,
@@ -152,7 +152,7 @@ export async function handleDeployHook(payload: {
 }
 
 /**
- * Start the scheduler — all cron jobs.
+ * Start the scheduler - all cron jobs.
  * Respects DISABLE_BACKGROUND_JOBS env var like all other loops.
  */
 export function startScheduler(): void {

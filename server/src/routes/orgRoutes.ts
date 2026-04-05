@@ -1,5 +1,5 @@
 /**
- * Organization Routes (Level 5 — VaaS)
+ * Organization Routes (Level 5 - VaaS)
  *
  * Org management, org-level branding config, widget token management,
  * and industry benchmark access.  All routes require authentication.
@@ -56,7 +56,7 @@ function requireSignal(req: Request, res: Response): boolean {
   return true;
 }
 
-// ── GET /api/orgs — List orgs the user belongs to ────────────────────────────
+// ── GET /api/orgs - List orgs the user belongs to ────────────────────────────
 
 router.get('/', async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -81,7 +81,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// ── GET /api/orgs/:orgId — Org details ───────────────────────────────────────
+// ── GET /api/orgs/:orgId - Org details ───────────────────────────────────────
 
 router.get('/:orgId', async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -108,7 +108,7 @@ router.get('/:orgId', async (req: Request, res: Response) => {
   }
 });
 
-// ── GET/PUT /api/orgs/:orgId/branding — Org-level white-label config ─────────
+// ── GET/PUT /api/orgs/:orgId/branding - Org-level white-label config ─────────
 
 router.get('/:orgId/branding', workspaceRequired, async (req: Request, res: Response) => {
   if (!requireSignal(req, res)) return;
@@ -147,7 +147,7 @@ router.put('/:orgId/branding', workspaceRequired, async (req: Request, res: Resp
   }
 });
 
-// ── GET /api/orgs/:orgId/members — List org members ──────────────────────────
+// ── GET /api/orgs/:orgId/members - List org members ──────────────────────────
 
 router.get('/:orgId/members', async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -173,7 +173,7 @@ router.get('/:orgId/members', async (req: Request, res: Response) => {
   }
 });
 
-// ── Widget tokens — Agency + ──────────────────────────────────────────────────
+// ── Widget tokens - Agency + ──────────────────────────────────────────────────
 
 router.get('/:orgId/widgets', workspaceRequired, async (req: Request, res: Response) => {
   if (!requireAgency(req, res)) return;
@@ -221,7 +221,7 @@ router.delete('/:orgId/widgets/:tokenId', workspaceRequired, async (req: Request
   }
 });
 
-// ── Industry benchmarks — Signal+ ────────────────────────────────────────────
+// ── Industry benchmarks - Signal+ ────────────────────────────────────────────
 
 router.get('/benchmarks', async (req: Request, res: Response) => {
   if (!requireSignal(req, res)) return;

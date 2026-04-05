@@ -1,5 +1,5 @@
 /**
- * migrateOldToNew.ts — OLD_DATABASE_URL → DATABASE_URL
+ * migrateOldToNew.ts - OLD_DATABASE_URL → DATABASE_URL
  *
  * Strategy: drop FK constraints on target tables → bulk insert → re-add FKs.
  * Neon pooled connections don't allow session_replication_role or DISABLE TRIGGER.
@@ -98,7 +98,7 @@ async function migrateTable(table: string): Promise<{ ins: number; skip: number 
     try {
       await newPool.query(`ALTER TABLE "${table}" ADD CONSTRAINT "${fk.name}" FOREIGN KEY ("${fk.column}") REFERENCES "${fk.ref_table}"("${fk.ref_column}") ON DELETE CASCADE`);
     } catch (err: any) {
-      // May fail if referenced rows don't exist — that's OK, we'll note it
+      // May fail if referenced rows don't exist - that's OK, we'll note it
       console.warn(`    fk-restore ${fk.name}: ${err.message.substring(0, 60)}`);
     }
   }

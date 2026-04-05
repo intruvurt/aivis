@@ -19,7 +19,7 @@ const VALID_TASK_TYPES: AgentTaskType[] = [
 
 const router = Router();
 
-// GET /api/agent/tasks — list user's tasks
+// GET /api/agent/tasks - list user's tasks
 router.get('/tasks', authRequired, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -33,7 +33,7 @@ router.get('/tasks', authRequired, async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/agent/tasks — create a new task
+// POST /api/agent/tasks - create a new task
 router.post('/tasks', authRequired, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -53,7 +53,7 @@ router.post('/tasks', authRequired, async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /api/agent/tasks/:id — cancel a pending task
+// DELETE /api/agent/tasks/:id - cancel a pending task
 router.delete('/tasks/:id', authRequired, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;

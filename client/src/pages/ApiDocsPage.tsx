@@ -231,7 +231,7 @@ export default function ApiDocsPage() {
 {`GET /api/v1/openapi.json`}
             </pre>
             <ul className="mt-3 space-y-1.5 text-xs text-white/60">
-              <li>• Public — no auth required</li>
+              <li>• Public - no auth required</li>
               <li>• Full request/response schemas for all v1 endpoints</li>
               <li>• Security scheme documents Bearer avis_* auth</li>
               <li>• Cache-friendly with 1-hour max-age</li>
@@ -245,7 +245,7 @@ export default function ApiDocsPage() {
               <h3 className="text-base font-semibold">OAuth 2.0</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Authorization Code flow lets third-party apps request user consent and receive scoped access tokens — no API key sharing required.
+              Authorization Code flow lets third-party apps request user consent and receive scoped access tokens - no API key sharing required.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
 {`POST /api/oauth/clients      # Register app
@@ -268,7 +268,7 @@ POST /api/oauth/revoke       # Revoke token`}
               <h3 className="text-base font-semibold">MCP Server</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS tools natively — audit, analytics, evidence, and validation.
+              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS tools natively - audit, analytics, evidence, and validation.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
 {`GET  /api/mcp            # Server info

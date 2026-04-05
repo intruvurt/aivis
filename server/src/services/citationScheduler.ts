@@ -52,7 +52,7 @@ function inferBrandFromUrl(targetUrl: string): string {
 async function executeJob(job: ScheduledCitationJob): Promise<void> {
   const apiKey = getServerApiKey();
   if (!apiKey) {
-    console.warn(`[CitationScheduler] No API key — skipping job ${job.id}`);
+    console.warn(`[CitationScheduler] No API key - skipping job ${job.id}`);
     return;
   }
 

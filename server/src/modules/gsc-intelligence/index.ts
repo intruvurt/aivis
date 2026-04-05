@@ -1,4 +1,4 @@
-// GSC Intelligence Console — barrel export
+// GSC Intelligence Console - barrel export
 export * from './gsc.types.js';
 export * from './gsc.dates.js';
 export * from './gsc.crypto.js';

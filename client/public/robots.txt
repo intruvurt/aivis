@@ -1,4 +1,4 @@
-# AiVIS — AI Visibility Intelligence Systems
+# AiVIS - AI Visibility Intelligence Systems
 # https://aivis.biz
 
 User-agent: *
@@ -58,7 +58,7 @@ Crawl-delay: 1
 
 Sitemap: https://aivis.biz/sitemap.xml
 
-# AI-specific bots — full public access
+# AI-specific bots - full public access
 User-agent: GPTBot
 Allow: /
 

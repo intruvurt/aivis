@@ -1,4 +1,4 @@
-The competitor tracking + market trend loop — actual implementation
+The competitor tracking + market trend loop - actual implementation
 Here's the real repeatable system, not the generic "use tools" advice:
 typescript// WEEKLY CITATION TRACKING LOOP
 // Run this as a scheduled job (e.g. cron, serverless function) every week to track your citation velocity in Perplexity, Gemini, ChatGPT, Anthropic and identify which competitors are winning citations for your target queries.
@@ -41,7 +41,7 @@ async function weeklyAudit() {
       })
     }
     
-    // 4. Check if aivis.biz appears — and if not, which competitor did
+    // 4. Check if aivis.biz appears - and if not, which competitor did
     const aivisCited = citations.some(c => c.url.includes('aivis.biz'))
     const competitorWinner = citations.find(c => 
       TRACKED_COMPETITORS.some(comp => c.url.includes(comp))

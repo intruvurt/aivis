@@ -90,7 +90,7 @@ function buildFindingsFromRecommendations(
       return { title, explanation, fix };
     }
 
-    // Full (Signal/ScoreFix): complete explanation + full implementation detail
+    // Full (Signal/scorefix): complete explanation + full implementation detail
     const explanation = rec.description || '';
     const fix = rec.implementation || rec.description || '';
     return { title, explanation, fix };
@@ -130,7 +130,7 @@ function buildIntro(result: AnalysisResponse, depth: TextSummaryDepth): string {
     } else if (band === 'needs_improvement') {
       opener = `Your page at ${domain} scored ${score} out of 100. AI platforms can partially read it, but there are gaps that prevent your content from being confidently cited in AI-generated answers.`;
     } else if (band === 'good') {
-      opener = `Your page at ${domain} scored ${score} out of 100 — that is a solid foundation. AI platforms can read and reference your content, though a few improvements would strengthen your citation potential.`;
+      opener = `Your page at ${domain} scored ${score} out of 100 - that is a solid foundation. AI platforms can read and reference your content, though a few improvements would strengthen your citation potential.`;
     } else {
       opener = `Your page at ${domain} scored ${score} out of 100, which is excellent. AI systems can easily read, trust, and cite your content. There are a few small refinements that could push your visibility even higher.`;
     }
@@ -156,7 +156,7 @@ function buildIntro(result: AnalysisResponse, depth: TextSummaryDepth): string {
     }
 
     const techNote = strongAreas.length > 0
-      ? ` The technical base looks ${strongAreas.length >= 2 ? 'solid' : 'partially solid'} — ${strongAreas.join(', ')} ${strongAreas.length === 1 ? 'is' : 'are'} in place.`
+      ? ` The technical base looks ${strongAreas.length >= 2 ? 'solid' : 'partially solid'} - ${strongAreas.join(', ')} ${strongAreas.length === 1 ? 'is' : 'are'} in place.`
       : '';
 
     const gapNote = weakGrades.length > 0
@@ -166,7 +166,7 @@ function buildIntro(result: AnalysisResponse, depth: TextSummaryDepth): string {
     return opener + techNote + gapNote;
   }
 
-  // ── Full (Signal/ScoreFix): evidence-rich narrative ──
+  // ── Full (Signal/scorefix): evidence-rich narrative ──
   let opener: string;
   if (band === 'critical') {
     opener = `The deep audit of ${domain} returned a score of ${score}/100, placing it in the critical range for AI visibility. AI platforms including ChatGPT, Perplexity, Claude, and Google AI Overviews currently lack enough structured signal from this page to cite it reliably.`;
@@ -175,7 +175,7 @@ function buildIntro(result: AnalysisResponse, depth: TextSummaryDepth): string {
   } else if (band === 'good') {
     opener = `The audit of ${domain} scored ${score}/100, reflecting strong fundamentals. The page is readable by major AI models and has a solid foundation for citation, with targeted improvements available to push into the top tier.`;
   } else {
-    opener = `The audit of ${domain} scored ${score}/100 — an excellent result. The page demonstrates strong structure, rich content, and high machine-readability across all major AI platforms.`;
+    opener = `The audit of ${domain} scored ${score}/100 - an excellent result. The page demonstrates strong structure, rich content, and high machine-readability across all major AI platforms.`;
   }
 
   // Evidence details
@@ -234,7 +234,7 @@ function buildClosing(result: AnalysisResponse, depth: TextSummaryDepth): string
 
   if (depth === 'standard') {
     if (band === 'critical' || band === 'needs_improvement') {
-      return 'This is not a rebuild problem. It is a clarity problem. The foundation is there — it just needs a stronger explanation layer so both humans and machines can read it properly. Follow the fix order above for maximum impact.';
+      return 'This is not a rebuild problem. It is a clarity problem. The foundation is there - it just needs a stronger explanation layer so both humans and machines can read it properly. Follow the fix order above for maximum impact.';
     }
     if (band === 'good') {
       return 'The foundation is solid. These refinements should push the page into a stronger position across AI-generated answers and citations. Work through the priority list to get the most value per change.';
@@ -244,12 +244,12 @@ function buildClosing(result: AnalysisResponse, depth: TextSummaryDepth): string
 
   // Full
   if (band === 'critical' || band === 'needs_improvement') {
-    return 'The issues above are fixable and well-defined. This is not an architecture problem — it is a clarity and structure gap. Each fix listed includes the specific implementation steps needed. Follow the priority order for the fastest score improvement, and re-run the audit after each batch of changes to measure progress.';
+    return 'The issues above are fixable and well-defined. This is not an architecture problem - it is a clarity and structure gap. Each fix listed includes the specific implementation steps needed. Follow the priority order for the fastest score improvement, and re-run the audit after each batch of changes to measure progress.';
   }
   if (band === 'good') {
-    return 'Your foundation is strong and the path to excellent visibility is clear. The findings above are sorted by impact — tackle them in order and re-audit after each round of changes. The platform-level scores show which AI systems benefit most from each improvement.';
+    return 'Your foundation is strong and the path to excellent visibility is clear. The findings above are sorted by impact - tackle them in order and re-audit after each round of changes. The platform-level scores show which AI systems benefit most from each improvement.';
   }
-  return 'Excellent overall performance. The remaining improvements are refinement-level — each one listed above includes full implementation context. These changes will help maintain your ranking as AI platforms update their extraction and citation models.';
+  return 'Excellent overall performance. The remaining improvements are refinement-level - each one listed above includes full implementation context. These changes will help maintain your ranking as AI platforms update their extraction and citation models.';
 }
 
 // ── Main generator ───────────────────────────────────────────────────────────

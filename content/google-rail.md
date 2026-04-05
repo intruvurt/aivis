@@ -17,7 +17,7 @@ def score_for_aio_citation(page, query):
     }
     
     # AIO selects the 3-5 sources that together cover the query
-    # with minimum overlap — it prefers DIVERSE citations over
+    # with minimum overlap - it prefers DIVERSE citations over
     # one great source repeated. This means specialization wins.
     # If aivis.biz owns "AI visibility scoring" as a concept,
     # it gets cited even over higher-DA sites for that specific query.

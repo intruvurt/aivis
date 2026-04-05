@@ -11,7 +11,7 @@ interface AuthResponse {
 
 class AuthService {
   async register(name: string, email: string, password: string): Promise<AuthResponse> {
-    // Validation — name is optional, but if provided must be at least 2 chars
+    // Validation - name is optional, but if provided must be at least 2 chars
     if (name && name.trim().length > 0 && name.trim().length < 2) {
       const error: any = new Error('Name must be at least 2 characters');
       error.code = 'VALIDATION';

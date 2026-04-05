@@ -9,11 +9,11 @@ import { PLATFORM_NARRATIVE } from '../constants/platformNarrative';
  * Why AI Visibility Matters - Educational page explaining the shift from traditional search to AI search
  * 
  * Key data points (sourced):
- * - ChatGPT reached 100M users in 2 months (fastest ever) — Reuters, Feb 2023
- * - 58.5% of Google searches result in zero clicks — SparkToro/Datos, 2026
- * - Perplexity serves 100M+ queries/week — Company statements, 2026
- * - Google's AI Overviews appeared on 47% of searches at peak — BrightEdge, 2026
- * - AI search market projected to hit $100B+ by 2027 — Multiple analyst reports
+ * - ChatGPT reached 100M users in 2 months (fastest ever) - Reuters, Feb 2023
+ * - 58.5% of Google searches result in zero clicks - SparkToro/Datos, 2026
+ * - Perplexity serves 100M+ queries/week - Company statements, 2026
+ * - Google's AI Overviews appeared on 47% of searches at peak - BrightEdge, 2026
+ * - AI search market projected to hit $100B+ by 2027 - Multiple analyst reports
  */
 
 const WhyAIVisibility = () => {
@@ -374,7 +374,7 @@ const WhyAIVisibility = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white/80 underline"
                 >
-                  Reuters — "ChatGPT sets record for fastest-growing user base" (Feb 2023)
+                  Reuters - "ChatGPT sets record for fastest-growing user base" (Feb 2023)
                 </a>
               </li>
               <li>
@@ -385,7 +385,7 @@ const WhyAIVisibility = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white/80 underline"
                 >
-                  SparkToro — "2026 Zero-Click Search Study" (2026)
+                  SparkToro - "2026 Zero-Click Search Study" (2026)
                 </a>
               </li>
               <li>
@@ -396,7 +396,7 @@ const WhyAIVisibility = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white/80 underline"
                 >
-                  BrightEdge Research — AI Overviews in Search Results (2026)
+                  BrightEdge Research - AI Overviews in Search Results (2026)
                 </a>
               </li>
               <li>
@@ -407,7 +407,7 @@ const WhyAIVisibility = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white/80 underline"
                 >
-                  Perplexity AI Blog — Company announcements and metrics
+                  Perplexity AI Blog - Company announcements and metrics
                 </a>
               </li>
               <li>
@@ -418,7 +418,7 @@ const WhyAIVisibility = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white/80 underline"
                 >
-                  Alphabet Investor Relations — Quarterly earnings reports
+                  Alphabet Investor Relations - Quarterly earnings reports
                 </a>
               </li>
             </ul>
@@ -471,6 +471,17 @@ const WhyAIVisibility = () => {
           >
             Start Your Free Audit →
           </Link>
+        </div>
+      </section>
+
+      <section className="max-w-3xl mx-auto mt-12 px-6">
+        <h3 className="text-lg font-semibold text-white/80 mb-4">Learn More</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/methodology" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Methodology</Link>
+          <Link to="/glossary" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Glossary</Link>
+          <Link to="/pricing" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Pricing</Link>
+          <Link to="/guide" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Implementation Guide</Link>
+          <Link to="/insights" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Playbooks & Insights</Link>
         </div>
       </section>
     </div>

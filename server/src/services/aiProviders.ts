@@ -9,7 +9,7 @@ export type AiProvider = {
   label?: string;
 };
 
-// ── Paid model providers — ordered by cost-effectiveness ──
+// ── Paid model providers - ordered by cost-effectiveness ──
 // Used as fallback chain for all paid tiers.
 // Updated 2026-03-29: GPT-4.1 mini primary, Claude 3.5 Haiku/Sonnet, Grok 3 mini, Gemini 2.5 Flash
 export const PROVIDERS: AiProvider[] = [
@@ -73,9 +73,9 @@ export const PROVIDERS: AiProvider[] = [
 
 // ── Signal tier: dedicated triple-check pipeline models ──
 // Updated 2026-03-29: GPT-4.1 mini primary, Claude 3.5 Sonnet peer critique, Grok 3 mini validation
-// AI1: GPT-4.1 Mini (primary analysis — fast, cheap, strong JSON)
-// AI2: Claude 3.5 Sonnet (peer critique — different model family for diversity)
-// AI3: Grok 3 Mini (validation gate — third model family for true independence)
+// AI1: GPT-4.1 Mini (primary analysis - fast, cheap, strong JSON)
+// AI2: Claude 3.5 Sonnet (peer critique - different model family for diversity)
+// AI3: Grok 3 Mini (validation gate - third model family for true independence)
 export const SIGNAL_AI1: AiProvider = {
   provider: 'openrouter',
   model: 'openai/gpt-4.1-mini',
@@ -98,12 +98,12 @@ export const SIGNAL_AI3: AiProvider = {
   label: 'Grok 3 Mini',
 };
 
-// ── Scorefix tier: premium triple-check models ──
+// ── scorefix tier: premium triple-check models ──
 // Updated 2026-03-29: GPT-4.1 primary, Claude 3.5 Sonnet critique, Grok 3 validation
 // Three independent model families for maximum scoring diversity.
-// AI1: GPT-4.1 (deep primary — strongest reasoning)
-// AI2: Claude 3.5 Sonnet (peer critique — independent model family)
-// AI3: Grok 3 (validation gate — third independent family)
+// AI1: GPT-4.1 (deep primary - strongest reasoning)
+// AI2: Claude 3.5 Sonnet (peer critique - independent model family)
+// AI3: Grok 3 (validation gate - third independent family)
 export const SCOREFIX_AI1: AiProvider = {
   provider: 'openrouter',
   model: 'openai/gpt-4.1',
@@ -127,7 +127,7 @@ export const SCOREFIX_AI3: AiProvider = {
 };
 
 // ── Alignment tier: best affordable primary model ──
-// Updated 2026-03-24: GPT-4.1 mini — stronger JSON output, same price class
+// Updated 2026-03-24: GPT-4.1 mini - stronger JSON output, same price class
 export const ALIGNMENT_PRIMARY: AiProvider = {
   provider: 'openrouter',
   model: 'openai/gpt-4.1-mini',
@@ -136,9 +136,9 @@ export const ALIGNMENT_PRIMARY: AiProvider = {
   label: 'GPT-4.1 Mini',
 };
 
-// ── Free model providers (Observer tier — $0.00 per scan) ──
+// ── Free model providers (Observer tier - $0.00 per scan) ──
 // Ordered by JSON-output reliability. Large instruct models first.
-// These must be widely-available OpenRouter :free models — avoid niche/unstable ones.
+// These must be widely-available OpenRouter :free models - avoid niche/unstable ones.
 export const FREE_PROVIDERS: AiProvider[] = [
   {
     provider: 'openrouter',
@@ -241,7 +241,7 @@ export function isProviderInBackoff(providerName: string, model: string): boolea
 
 export function clearProviderBackoff(providerName?: string, model?: string) {
   if (!providerName) {
-    // Only clear expired entries — don't nuke active backoffs
+    // Only clear expired entries - don't nuke active backoffs
     const now = Date.now();
     for (const [k, until] of providerFailureBackoff.entries()) {
       if (until <= now) providerFailureBackoff.delete(k);

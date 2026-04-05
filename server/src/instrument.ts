@@ -1,5 +1,5 @@
 /**
- * Sentry ESM instrumentation — must be loaded via --import BEFORE the app.
+ * Sentry ESM instrumentation - must be loaded via --import BEFORE the app.
  * This ensures Sentry can monkey-patch http/express before they're imported.
  *
  * Usage:

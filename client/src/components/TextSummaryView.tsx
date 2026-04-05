@@ -98,7 +98,7 @@ export default function TextSummaryView({
               {finding.explanation}
             </p>
 
-            {/* Fix section — tier-differentiated */}
+            {/* Fix section - tier-differentiated */}
             {finding.fix ? (
               <div className={`ml-10 rounded-xl border p-4 ${
                 isFull

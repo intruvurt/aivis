@@ -163,7 +163,7 @@ A 3 means usable but leaking value.
 A 1 means weak, risky, or unclear.
 A 0 means missing or actively harmful.
 
-Content / topical quality — Weight: 25
+Content / topical quality - Weight: 25
 
 1. Clear thesis and purpose
    0: No clear point
@@ -195,7 +195,7 @@ Content / topical quality — Weight: 25
    3: Moderately useful
    5: Actionable, memorable, solves the reader’s problem
 
-Fact integrity — Weight: 20
+Fact integrity - Weight: 20
 
 6. Verifiable claims
    0: Claims are unsupported or false-sounding
@@ -221,7 +221,7 @@ Fact integrity — Weight: 20
    3: Some hype but manageable
    5: Comparisons are careful, defensible, and credible
 
-Structure / extractability — Weight: 15
+Structure / extractability - Weight: 15
 
 10. Heading hierarchy
     0: No logical structure
@@ -253,7 +253,7 @@ Structure / extractability — Weight: 15
     3: Acceptable flow
     5: Tight, clean, easy to scan, easy to follow
 
-SEO fundamentals — Weight: 15
+SEO fundamentals - Weight: 15
 
 15. Title / H1 alignment
     0: Misleading or disconnected
@@ -285,7 +285,7 @@ SEO fundamentals — Weight: 15
     3: Some long-tail support
     5: Covers core query plus adjacent sub-questions naturally
 
-AEO / citation readiness — Weight: 15
+AEO / citation readiness - Weight: 15
 
 20. Definition clarity
     0: Terms are vague
@@ -317,7 +317,7 @@ AEO / citation readiness — Weight: 15
     3: Some credibility elements
     5: Strong author identity, dates, sources, examples, and transparent framing
 
-Business relevance — Weight: 10
+Business relevance - Weight: 10
 
 25. Audience fit
     0: Wrong audience
@@ -422,25 +422,25 @@ Top 3 priorities:
 2.
 3.
 
-2. Content / Topical Quality — 25 points
+2. Content / Topical Quality - 25 points
 
-A. Clear thesis and purpose — ___ / 5
+A. Clear thesis and purpose - ___ / 5
 Notes:
 [Is the point sharp or muddy]
 
-B. Search/query intent match — ___ / 5
+B. Search/query intent match - ___ / 5
 Notes:
 [Does it actually answer what the likely searcher wants]
 
-C. Specificity and insight — ___ / 5
+C. Specificity and insight - ___ / 5
 Notes:
 [Generic or distinct]
 
-D. Information density — ___ / 5
+D. Information density - ___ / 5
 Notes:
 [Fluff vs useful signal]
 
-E. Reader usefulness — ___ / 5
+E. Reader usefulness - ___ / 5
 Notes:
 [Does the reader leave with something usable]
 
@@ -448,21 +448,21 @@ Content subtotal:
 Average = ___
 Weighted score = ___ / 25
 
-3. Fact Integrity — 20 points
+3. Fact Integrity - 20 points
 
-F. Verifiable claims — ___ / 5
+F. Verifiable claims - ___ / 5
 Notes:
 [Which claims need proof]
 
-G. Accuracy / freshness risk — ___ / 5
+G. Accuracy / freshness risk - ___ / 5
 Notes:
 [Any stale facts, trends, changing platform behavior, dates, stats]
 
-H. Product / feature truthfulness — ___ / 5
+H. Product / feature truthfulness - ___ / 5
 Notes:
 [Do the claims match what the product or service really does]
 
-I. Competitive / absolute claims discipline — ___ / 5
+I. Competitive / absolute claims discipline - ___ / 5
 Notes:
 [Watch for “best,” “only,” “nobody else,” “guaranteed,” “all models”]
 
@@ -470,25 +470,25 @@ Fact subtotal:
 Average = ___
 Weighted score = ___ / 20
 
-4. Structure / Extractability — 15 points
+4. Structure / Extractability - 15 points
 
-J. Heading hierarchy — ___ / 5
+J. Heading hierarchy - ___ / 5
 Notes:
 [One clean H1, useful H2/H3 flow]
 
-K. Section clarity — ___ / 5
+K. Section clarity - ___ / 5
 Notes:
 [Does each section answer a distinct sub-question]
 
-L. Chunk extractability — ___ / 5
+L. Chunk extractability - ___ / 5
 Notes:
 [Can sections stand alone as citation-worthy blocks]
 
-M. Direct answer presence — ___ / 5
+M. Direct answer presence - ___ / 5
 Notes:
 [Are answers early and explicit or buried]
 
-N. Readability / flow — ___ / 5
+N. Readability / flow - ___ / 5
 Notes:
 [Scanning ease, pacing, paragraph length, transitions]
 
@@ -496,25 +496,25 @@ Structure subtotal:
 Average = ___
 Weighted score = ___ / 15
 
-5. SEO Fundamentals — 15 points
+5. SEO Fundamentals - 15 points
 
-O. Title / H1 alignment — ___ / 5
+O. Title / H1 alignment - ___ / 5
 Notes:
 [Relevant, clear, not disconnected from page intent]
 
-P. Keyword / entity targeting — ___ / 5
+P. Keyword / entity targeting - ___ / 5
 Notes:
 [Does the article clearly reinforce the topic and related entities]
 
-Q. Internal linking — ___ / 5
+Q. Internal linking - ___ / 5
 Notes:
 [Links to supporting pages, related articles, conversion pages]
 
-R. Metadata / URL / presentation — ___ / 5
+R. Metadata / URL / presentation - ___ / 5
 Notes:
 [Title tag, meta description, slug, snippet appeal]
 
-S. Search surface breadth — ___ / 5
+S. Search surface breadth - ___ / 5
 Notes:
 [Does it cover just one phrase or a useful cluster of related questions]
 
@@ -522,25 +522,25 @@ SEO subtotal:
 Average = ___
 Weighted score = ___ / 15
 
-6. AEO / Citation Readiness — 15 points
+6. AEO / Citation Readiness - 15 points
 
-T. Definition clarity — ___ / 5
+T. Definition clarity - ___ / 5
 Notes:
 [Are key concepts defined clearly and early]
 
-U. Citation-worthiness — ___ / 5
+U. Citation-worthiness - ___ / 5
 Notes:
 [Would an AI system feel safe quoting sections of this]
 
-V. Evidence-backed framing — ___ / 5
+V. Evidence-backed framing - ___ / 5
 Notes:
 [Screenshots, references, examples, artifacts, case proof]
 
-W. Entity clarity and co-occurrence — ___ / 5
+W. Entity clarity and co-occurrence - ___ / 5
 Notes:
 [Does the brand/topic relationship stay clear throughout]
 
-X. Trust signals — ___ / 5
+X. Trust signals - ___ / 5
 Notes:
 [Author, date, examples, sources, transparent framing]
 
@@ -548,21 +548,21 @@ AEO subtotal:
 Average = ___
 Weighted score = ___ / 15
 
-7. Business Relevance — 10 points
+7. Business Relevance - 10 points
 
-Y. Audience fit — ___ / 5
+Y. Audience fit - ___ / 5
 Notes:
 [Is this for the right person at the right awareness stage]
 
-Z. Problem-to-solution bridge — ___ / 5
+Z. Problem-to-solution bridge - ___ / 5
 Notes:
 [Does the article move naturally from pain to offer]
 
-AA. CTA quality — ___ / 5
+AA. CTA quality - ___ / 5
 Notes:
 [Clear next step or dead end]
 
-AB. Strategic value to the business — ___ / 5
+AB. Strategic value to the business - ___ / 5
 Notes:
 [Authority, trust, lead-gen, product relevance]
 
@@ -687,13 +687,13 @@ Save these as browser bookmarks and rerun at least weekly.
 
 Free alert systems (no API keys)
 
-Google Alerts — set up alerts for your brand name, domain, founder name, product names, and key competitors. Covers news, blogs, and general web. Unlimited alerts, delivered by email.
+Google Alerts - set up alerts for your brand name, domain, founder name, product names, and key competitors. Covers news, blogs, and general web. Unlimited alerts, delivered by email.
 
-Talkwalker Alerts — functions like Google Alerts but uses a different index. Good as a second opinion or backup layer.
+Talkwalker Alerts - functions like Google Alerts but uses a different index. Good as a second opinion or backup layer.
 
-F5Bot — free email alerts for keyword mentions on Reddit, Hacker News, and Lobsters. Extremely useful for catching discussions you would otherwise miss entirely.
+F5Bot - free email alerts for keyword mentions on Reddit, Hacker News, and Lobsters. Extremely useful for catching discussions you would otherwise miss entirely.
 
-ForumScout — free tier with 3 keyword alerts and roughly 100 mentions per month across forums, social, blogs, and news. Updates every 6 hours. 14-day retention on the free plan.
+ForumScout - free tier with 3 keyword alerts and roughly 100 mentions per month across forums, social, blogs, and news. Updates every 6 hours. 14-day retention on the free plan.
 
 None of these require API keys. They just need an email address.
 

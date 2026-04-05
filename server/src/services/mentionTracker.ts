@@ -1,5 +1,5 @@
 // server/src/services/mentionTracker.ts
-// Brand mention tracker — scans free public sources for brand/domain mentions.
+// Brand mention tracker - scans free public sources for brand/domain mentions.
 // No API keys required from the user. All sources are free public endpoints.
 
 import { getPool } from './postgresql.js';

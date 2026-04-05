@@ -45,7 +45,7 @@ export default function IntegrationsHubPage() {
   const uiTier = uiTierFromCanonical((user?.tier || 'observer') as any);
   const tierLimits = TIER_LIMITS[uiTier];
 
-  // Observer tier gate — integrations are Alignment+ only
+  // Observer tier gate - integrations are Alignment+ only
   if (!tierLimits.hasApiAccess) {
     return (
       <div className="text-white px-4 py-8 sm:px-6 lg:px-8">
@@ -145,7 +145,7 @@ export default function IntegrationsHubPage() {
               ...item,
               status: "warn" as const,
               httpStatus: res.status,
-              note: body?.error || "Endpoint reachable — requires parameters",
+              note: body?.error || "Endpoint reachable - requires parameters",
             };
           }
 
@@ -154,7 +154,7 @@ export default function IntegrationsHubPage() {
               ...item,
               status: "warn" as const,
               httpStatus: res.status,
-              note: body?.error || "Endpoint reachable — feature temporarily locked",
+              note: body?.error || "Endpoint reachable - feature temporarily locked",
             };
           }
 
@@ -294,7 +294,7 @@ export default function IntegrationsHubPage() {
               <div>
                 <h2 className="text-lg font-bold text-white">MCP Console</h2>
                 <p className="text-sm text-white/50 max-w-lg">
-                  Connect AI agents like Claude Desktop and Cursor to your AiVIS account. 8 tools for auditing, analytics, and competitor tracking — all via Model Context Protocol.
+                  Connect AI agents like Claude Desktop and Cursor to your AiVIS account. 8 tools for auditing, analytics, and competitor tracking - all via Model Context Protocol.
                 </p>
               </div>
             </div>

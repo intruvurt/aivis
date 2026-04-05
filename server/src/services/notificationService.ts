@@ -157,7 +157,7 @@ export async function createUserNotification(args: {
   message: string;
   metadata?: Record<string, unknown>;
 }): Promise<void> {
-  // Check user preferences — skip if in-app disabled or category muted
+  // Check user preferences - skip if in-app disabled or category muted
   const allowed = await shouldCreateNotification(args.userId, args.eventType);
   if (!allowed) return;
 

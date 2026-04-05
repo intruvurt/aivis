@@ -1,6 +1,6 @@
 // AI Visibility Intelligence Audits: tier and usage guard utilities
 
-export const TierName = ['Observer', 'Alignment', 'Signal', 'Scorefix'] as const;
+export const TierName = ['Observer', 'Alignment', 'Signal', 'scorefix'] as const;
 
 export const TIER_LIMITS = {
   Observer: {
@@ -42,7 +42,7 @@ export const TIER_LIMITS = {
     teamSeats: 5,
     maxProjects: 8,
   },
-  Scorefix: {
+  scorefix: {
     scansPerMonth: 250,
     allowExport: true,
     allowShare: true,
@@ -89,9 +89,9 @@ export function getUserTierLimits(tier: string | undefined | null) {
     core: 'Alignment',
     signal: 'Signal',
     premium: 'Signal',
-    scorefix: 'Scorefix',
-    elite: 'Scorefix',
-    enterprise: 'Scorefix',
+    scorefix: 'scorefix',
+    elite: 'scorefix',
+    enterprise: 'scorefix',
     pro: 'Signal',
   };
 

@@ -348,11 +348,11 @@ function summarizeResult(tool: Tool, result: any): {
 
     cards.push(
       { label: "Verdict", value: verdict.label, tone: verdict.tone, icon: ShieldCheck },
-      { label: "Current", value: current !== null ? `${clampPercent(current)}%` : "—", icon: Gauge },
-      { label: "Projected", value: projected !== null ? `${clampPercent(projected)}%` : "—", tone: projected && projected >= 0.7 ? "good" : "neutral", icon: TrendingUp },
+      { label: "Current", value: current !== null ? `${clampPercent(current)}%` : "-", icon: Gauge },
+      { label: "Projected", value: projected !== null ? `${clampPercent(projected)}%` : "-", tone: projected && projected >= 0.7 ? "good" : "neutral", icon: TrendingUp },
       {
         label: "Uplift",
-        value: uplift !== null ? `${uplift >= 0 ? "+" : ""}${Math.round(uplift * 100)}%` : "—",
+        value: uplift !== null ? `${uplift >= 0 ? "+" : ""}${Math.round(uplift * 100)}%` : "-",
         tone: uplift !== null && uplift > 0.15 ? "good" : uplift !== null && uplift < 0.05 ? "warn" : "neutral",
         icon: Sparkles,
       },
@@ -378,9 +378,9 @@ function summarizeResult(tool: Tool, result: any): {
 
     cards.push(
       { label: "Verdict", value: verdict.label, tone: verdict.tone, icon: ShieldCheck },
-      { label: "Inclusion", value: probability !== null ? `${clampPercent(probability)}%` : "—", icon: Gauge },
-      { label: "Schema", value: result.schemaRecommendations ? `${collectStrings(result.schemaRecommendations, 8).length} signals` : "—", icon: Link2 },
-      { label: "Trust", value: result.trustSignals ? `${collectStrings(result.trustSignals, 8).length} layers` : "—", icon: Brain },
+      { label: "Inclusion", value: probability !== null ? `${clampPercent(probability)}%` : "-", icon: Gauge },
+      { label: "Schema", value: result.schemaRecommendations ? `${collectStrings(result.schemaRecommendations, 8).length} signals` : "-", icon: Link2 },
+      { label: "Trust", value: result.trustSignals ? `${collectStrings(result.trustSignals, 8).length} layers` : "-", icon: Brain },
     );
 
     insights.push(
@@ -999,7 +999,7 @@ function ExecutiveSummary({ tool, input, result }: { tool: Tool; input: string; 
     if (tool === "decompile") {
       const bp = result?.reconstructionBlueprint;
       return bp
-        ? `The AI answer you pasted follows a predictable structure. Below is the blueprint to replicate that structure on your own content — plus the specific patterns, clusters, and citation cues the model leaned on.`
+        ? `The AI answer you pasted follows a predictable structure. Below is the blueprint to replicate that structure on your own content - plus the specific patterns, clusters, and citation cues the model leaned on.`
         : `The answer was decomposed into its structural building blocks. Scroll down to see which patterns, topic clusters, and citation cues the model preferred.`;
     }
     if (tool === "ghost") {
@@ -1020,8 +1020,8 @@ function ExecutiveSummary({ tool, input, result }: { tool: Tool; input: string; 
       if (current !== null && projected !== null) {
         const diff = projected - current;
         return diff > 0
-          ? `Your page currently has a ${current}% inclusion probability. By implementing the changes below, you could reach ${projected}% — a ${diff}-point improvement. Start with the highest-impact change.`
-          : `Your page sits at ${current}% inclusion probability. The simulation suggests limited uplift — review the specific changes to find the highest-leverage moves.`;
+          ? `Your page currently has a ${current}% inclusion probability. By implementing the changes below, you could reach ${projected}% - a ${diff}-point improvement. Start with the highest-impact change.`
+          : `Your page sits at ${current}% inclusion probability. The simulation suggests limited uplift - review the specific changes to find the highest-leverage moves.`;
       }
       return `The simulation analyzed your page and projected changes that could shift AI inclusion probability. See the detailed breakdown below.`;
     }
@@ -1055,7 +1055,7 @@ function ExecutiveSummary({ tool, input, result }: { tool: Tool; input: string; 
           </div>
         </div>
 
-        {/* Stat cards — keep them compact */}
+        {/* Stat cards - keep them compact */}
         {summary.cards.length > 0 && (
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {summary.cards.map((card) => {
@@ -1082,12 +1082,12 @@ function ExecutiveSummary({ tool, input, result }: { tool: Tool; input: string; 
         )}
       </div>
 
-      {/* Quick start guide — top 3 actions only */}
+      {/* Quick start guide - top 3 actions only */}
       {summary.actions.length > 0 && (
         <div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/5 p-5">
           <div className="flex items-center gap-2 mb-4">
             <Zap className="h-4 w-4 text-emerald-300" />
-            <h4 className="text-sm font-semibold text-emerald-100">Start Here — Your Top {Math.min(3, summary.actions.length)} Moves</h4>
+            <h4 className="text-sm font-semibold text-emerald-100">Start Here - Your Top {Math.min(3, summary.actions.length)} Moves</h4>
           </div>
           <div className="space-y-3">
             {summary.actions.slice(0, 3).map((action, index) => (
@@ -1190,15 +1190,15 @@ function SimulateRichResults({ data }: { data: any }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-white/10 bg-charcoal p-4 text-center">
           <p className="mb-1 text-xs uppercase tracking-wide text-white/50">Current</p>
-          <p className="text-3xl font-bold text-white/80">{current !== null ? `${clampPercent(current)}%` : "—"}</p>
+          <p className="text-3xl font-bold text-white/80">{current !== null ? `${clampPercent(current)}%` : "-"}</p>
         </div>
         <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-center">
           <p className="mb-1 text-xs uppercase tracking-wide text-emerald-200/80">Projected</p>
-          <p className="text-3xl font-bold text-emerald-200">{projected !== null ? `${clampPercent(projected)}%` : "—"}</p>
+          <p className="text-3xl font-bold text-emerald-200">{projected !== null ? `${clampPercent(projected)}%` : "-"}</p>
         </div>
         <div className="rounded-xl border border-white/10 bg-charcoal p-4 text-center">
           <p className="mb-1 text-xs uppercase tracking-wide text-white/50">Uplift</p>
-          <p className="text-3xl font-bold text-white/80">{uplift !== null ? `${uplift >= 0 ? "+" : ""}${Math.round(uplift * 100)}%` : "—"}</p>
+          <p className="text-3xl font-bold text-white/80">{uplift !== null ? `${uplift >= 0 ? "+" : ""}${Math.round(uplift * 100)}%` : "-"}</p>
         </div>
       </div>
 
@@ -1242,7 +1242,7 @@ function DecompileResult({ data }: { data: any }) {
 
   return (
     <div className="space-y-5">
-      {/* ── Step 1: Reconstruction Blueprint — the single most actionable output ── */}
+      {/* ── Step 1: Reconstruction Blueprint - the single most actionable output ── */}
       {blueprint && (
         <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-400/5 to-transparent p-5 sm:p-6">
           <div className="flex items-center gap-2 mb-3">
@@ -1256,14 +1256,14 @@ function DecompileResult({ data }: { data: any }) {
         </div>
       )}
 
-      {/* ── Step 2: Answer Shape — the structural fingerprint ── */}
+      {/* ── Step 2: Answer Shape - the structural fingerprint ── */}
       {shape && (
         <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
           <div className="flex items-center gap-2 mb-1">
             <Brain className="h-4 w-4 text-white/80" />
             <h4 className="text-sm font-semibold text-white">Answer Shape</h4>
           </div>
-          <p className="text-xs text-white/50 mb-4">The structural fingerprint of this answer — how the model organized density, facts, and trust signals.</p>
+          <p className="text-xs text-white/50 mb-4">The structural fingerprint of this answer - how the model organized density, facts, and trust signals.</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {typeof shape.entityDensity === "number" && (
               <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3.5">
@@ -1313,7 +1313,7 @@ function DecompileResult({ data }: { data: any }) {
         </div>
       )}
 
-      {/* ── Step 3: Structural Patterns — what format the model preferred ── */}
+      {/* ── Step 3: Structural Patterns - what format the model preferred ── */}
       {patterns.length > 0 && (
         <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -1354,7 +1354,7 @@ function DecompileResult({ data }: { data: any }) {
         </div>
       )}
 
-      {/* ── Step 4: Semantic Clusters — topic groupings ── */}
+      {/* ── Step 4: Semantic Clusters - topic groupings ── */}
       {clusters.length > 0 && (
         <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -1406,7 +1406,7 @@ function DecompileResult({ data }: { data: any }) {
         </div>
       )}
 
-      {/* ── Step 5: Citation Vectors — what makes content quotable ── */}
+      {/* ── Step 5: Citation Vectors - what makes content quotable ── */}
       {citations.length > 0 && (
         <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -1461,7 +1461,7 @@ function DecompileResult({ data }: { data: any }) {
         </div>
       )}
 
-      {/* ── Step 6: Source Types — what kind of source the model leaned on ── */}
+      {/* ── Step 6: Source Types - what kind of source the model leaned on ── */}
       {sources.length > 0 && (
         <div className="rounded-2xl border border-white/10 bg-charcoal p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -1572,13 +1572,13 @@ function GhostResult({ data }: { data: any }) {
                 ? "Strong probability. A page built to this blueprint would likely be cited by AI models."
                 : prob >= 0.4
                 ? "Moderate probability. The blueprint below will show you how to close the gap."
-                : "Low probability. Follow the blueprint carefully — every section matters."}
+                : "Low probability. Follow the blueprint carefully - every section matters."}
             </p>
           </div>
         </div>
       )}
 
-      {/* ── Page Blueprint — the core deliverable ── */}
+      {/* ── Page Blueprint - the core deliverable ── */}
       {bp && typeof bp === "object" && (
         <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-400/5 to-transparent p-5 sm:p-6">
           <div className="flex items-center gap-2 mb-1">
@@ -1812,7 +1812,7 @@ function GhostResult({ data }: { data: any }) {
                   {linkPattern.externalAuthority.map((link: any, i: number) => (
                     <div key={i} className="rounded-lg border border-white/10 bg-charcoal-deep p-3 text-xs">
                       <span className="font-medium text-white/80">{link.domain || "Domain"}</span>
-                      {link.purpose && <span className="text-white/45"> — {link.purpose}</span>}
+                      {link.purpose && <span className="text-white/45"> - {link.purpose}</span>}
                     </div>
                   ))}
                 </div>
@@ -1872,7 +1872,7 @@ function ModelDiffResult({ data }: { data: any }) {
 
   return (
     <div className="space-y-5">
-      {/* ── Recommendations hero — actionable first ── */}
+      {/* ── Recommendations hero - actionable first ── */}
       {recs.length > 0 && (
         <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-400/5 to-transparent p-5 sm:p-6">
           <div className="flex items-center gap-2 mb-1">

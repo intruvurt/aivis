@@ -26,7 +26,7 @@ export interface ApiKey {
 }
 
 export interface ApiKeyWithPlaintext extends ApiKey {
-  /** The full key — only available immediately after creation */
+  /** The full key - only available immediately after creation */
   plaintext_key: string;
 }
 

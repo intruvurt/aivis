@@ -320,7 +320,7 @@ export default function AuthPage() {
           msg.includes("not exist");
         if (isUserMissing) {
           setError(
-            "We recently migrated our infrastructure. If you had an existing account, please re-register with the same email — your Stripe subscription will automatically re-link. Contact support@aivis.biz if you need assistance."
+            "We recently migrated our infrastructure. If you had an existing account, please re-register with the same email - your Stripe subscription will automatically re-link. Contact support@aivis.biz if you need assistance."
           );
         } else if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("load failed")) {
           setError("Could not reach the AiVIS API. This is usually a temporary network issue or a frontend API URL mismatch.");
@@ -712,7 +712,7 @@ export default function AuthPage() {
                           />
                         ))}
                       </div>
-                      <p className="text-xs text-white/50">{pwStrength.label}{password.length < 10 ? " — min 10 characters" : ""}</p>
+                      <p className="text-xs text-white/50">{pwStrength.label}{password.length < 10 ? " - min 10 characters" : ""}</p>
                     </div>
                   )}
                 </div>

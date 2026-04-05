@@ -1,6 +1,6 @@
 // server/src/services/keywordEnrichment.ts
 // Enriches AI-extracted keywords with real search suggestion data from
-// DuckDuckGo autocomplete and Bing — completely free, no API keys.
+// DuckDuckGo autocomplete and Bing - completely free, no API keys.
 
 const BROWSER_UAS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',

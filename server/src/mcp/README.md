@@ -37,7 +37,7 @@ Set these environment variables:
 
 | Variable | Required | Example | Default |
 | --- | --- | --- | --- |
-| `AIVIS_API_KEY` | Yes | `avis_sk_live_abc123` | — |
+| `AIVIS_API_KEY` | Yes | `avis_sk_live_abc123` | - |
 | `AIVIS_BASE_URL` | No | `https://api.aivis.biz` | `https://api.aivis.biz` |
 | `AIVIS_LOG_LEVEL` | No | `debug` | `info` |
 
@@ -79,32 +79,32 @@ curl -X POST \
 ## Available Tools
 
 **Read-Only (Alignment+):**
-- `list_audits` — List your audit history
-- `get_audit` — Fetch a completed audit by ID
-- `get_audit_status` — Poll audit progress
-- `get_analytics` — Score trends over time
-- `get_evidence` — Extract evidence from audit
-- `run_page_validation` — Quick technical check
-- `list_competitors` — Track competitor scores
-- `get_usage` — Check remaining scans
+- `list_audits` - List your audit history
+- `get_audit` - Fetch a completed audit by ID
+- `get_audit_status` - Poll audit progress
+- `get_analytics` - Score trends over time
+- `get_evidence` - Extract evidence from audit
+- `run_page_validation` - Quick technical check
+- `list_competitors` - Track competitor scores
+- `get_usage` - Check remaining scans
 
 **Write (Alignment+):**
-- `run_audit` — Queue new audit
+- `run_audit` - Queue new audit
 
 **Premium (Signal+):**
-- `run_citation_test` — Test AI platform citations
-- `compare_competitors` — Side-by-side comparison
+- `run_citation_test` - Test AI platform citations
+- `compare_competitors` - Side-by-side comparison
 
 **Enterprise (Score Fix+):**
-- `get_scorefix_tasks` — Implementation code & tasks
-- `get_remediation_template` — Playbooks for fixes
+- `get_scorefix_tasks` - Implementation code & tasks
+- `get_remediation_template` - Playbooks for fixes
 
 ## Available Resources
 
-- `aivis://audit/{id}` — Full audit snapshot
-- `aivis://domain/{host}/history` — Domain audit history
-- `aivis://methodology/weights` — Scoring formula
-- `aivis://tier-limits` — Feature matrix
+- `aivis://audit/{id}` - Full audit snapshot
+- `aivis://domain/{host}/history` - Domain audit history
+- `aivis://methodology/weights` - Scoring formula
+- `aivis://tier-limits` - Feature matrix
 
 ## Development
 

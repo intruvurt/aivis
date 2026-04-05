@@ -21,17 +21,17 @@ const BRAND = {
   year: new Date().getFullYear(),
 } as const;
 
-// Only treat as dev mode if explicitly running locally — default to production behavior
+// Only treat as dev mode if explicitly running locally - default to production behavior
 const IS_DEV_MODE =
   FRONTEND_URL.includes('localhost') || process.env.NODE_ENV === 'development';
 
 console.log(`[Email] FROM: ${FROM_EMAIL} | FRONTEND_URL: ${FRONTEND_URL} | DEV_MODE: ${IS_DEV_MODE} | API_KEY_SET: ${RESEND_KEY_VALID}`);
 if (!RESEND_KEY_VALID) {
-  console.warn('[Email] ⚠️  RESEND_API_KEY is missing or invalid — all emails will be logged to console only. Set a valid Resend API key (starts with re_) for production email delivery.');
+  console.warn('[Email] ⚠️  RESEND_API_KEY is missing or invalid - all emails will be logged to console only. Set a valid Resend API key (starts with re_) for production email delivery.');
 }
 
 // ─── Resend REST API helper ───────────────────────────────────────────────────
-// Uses fetch (Node 18+) — no SMTP, no nodemailer, no port issues.
+// Uses fetch (Node 18+) - no SMTP, no nodemailer, no port issues.
 
 async function resendSend(payload: {
   to: string;
@@ -44,7 +44,7 @@ async function resendSend(payload: {
   }>;
 }): Promise<void> {
   if (!RESEND_KEY_VALID) {
-    console.log(`[Email] No valid RESEND_API_KEY — console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
+    console.log(`[Email] No valid RESEND_API_KEY - console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
     return;
   }
 
@@ -70,7 +70,7 @@ async function resendSend(payload: {
   }
 
   const result = await res.json() as any;
-  console.log(`[Email] Sent via Resend API — id: ${result?.id} | to: ${payload.to}`);
+  console.log(`[Email] Sent via Resend API - id: ${result?.id} | to: ${payload.to}`);
 }
 
 export async function sendAuditReportDeliveryEmail(args: {
@@ -119,7 +119,7 @@ export async function sendAuditReportDeliveryEmail(args: {
           <p style="margin:18px 0 0;color:#cbd5e1;font-size:14px;line-height:1.7;">${escapeEmailHtml(summary)}</p>
           ${shareBlock}
           ${topRecommendations.length ? `<div style="margin-top:18px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;">Top fixes</div><div style="margin-top:8px;color:#e5e7eb;font-size:14px;line-height:1.8;">${topRecommendations.map((item: string) => escapeEmailHtml(item)).join('<br/>')}</div></div>` : ''}
-          ${failedGates.length ? `<div style="margin-top:18px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#ef4444;">Failed rubric gates</div><div style="margin-top:8px;color:#fca5a5;font-size:14px;line-height:1.8;">${failedGates.map((g) => escapeEmailHtml(`• ${String(g.label || '')} — score ${Number(g.score_0_100 ?? 0)}/100`)).join('<br/>')}</div></div>` : ''}
+          ${failedGates.length ? `<div style="margin-top:18px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#ef4444;">Failed rubric gates</div><div style="margin-top:8px;color:#fca5a5;font-size:14px;line-height:1.8;">${failedGates.map((g) => escapeEmailHtml(`• ${String(g.label || '')} - score ${Number(g.score_0_100 ?? 0)}/100`)).join('<br/>')}</div></div>` : ''}
           ${requiredFixpacks.length ? `<div style="margin-top:18px;"><div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#f59e0b;">Required fixpacks</div><div style="margin-top:8px;color:#fde68a;font-size:14px;line-height:1.8;">${requiredFixpacks.map((fp) => escapeEmailHtml(`• ${String(fp.label || '')} (+${Number(fp.estimated_score_lift_min ?? 0)}–+${Number(fp.estimated_score_lift_max ?? 0)} projected)`)).join('<br/>')}</div></div>` : ''}
           <p style="margin:18px 0 0;color:#94a3b8;font-size:12px;line-height:1.7;">Analyzed ${analyzedAt || 'recently'}. ${args.pdfBuffer ? 'The PDF report is attached to this email.' : 'No PDF attachment was included for this destination.'}</p>
         </div>
@@ -198,7 +198,7 @@ export async function sendVerificationEmail(email: string, token: string, option
         `Terms: ${BRAND.siteUrl}/terms`,
         `Compliance: ${BRAND.siteUrl}/compliance`,
         ``,
-        `${BRAND.name} — ${BRAND.tagline}`,
+        `${BRAND.name} - ${BRAND.tagline}`,
         `${BRAND.company} • ${BRAND.location}`,
         `${BRAND.supportEmail}`,
       ].join('\n'),
@@ -206,7 +206,7 @@ export async function sendVerificationEmail(email: string, token: string, option
   } catch (err: any) {
     console.error('[Email] Failed to send verification email:', err?.message);
     if (IS_DEV_MODE) {
-      console.log(`[Email] Dev fallback — URL: ${verificationUrl}`);
+      console.log(`[Email] Dev fallback - URL: ${verificationUrl}`);
       return;
     }
     throw err;
@@ -230,12 +230,12 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
       to: email,
       subject: `Reset your ${BRAND.name} password`,
       html: resetHtml(resetUrl, email),
-      text: `Password Reset Request\n\nReset your password by visiting: ${resetUrl}\n\nThis link expires in 1 hour. If you did not request a reset, ignore this email and your password stays the same.\n\n${BRAND.name} — ${BRAND.tagline}\n${BRAND.company} • ${BRAND.location}\n${BRAND.supportEmail}`,
+      text: `Password Reset Request\n\nReset your password by visiting: ${resetUrl}\n\nThis link expires in 1 hour. If you did not request a reset, ignore this email and your password stays the same.\n\n${BRAND.name} - ${BRAND.tagline}\n${BRAND.company} • ${BRAND.location}\n${BRAND.supportEmail}`,
     });
   } catch (err: any) {
     console.error('[Email] Failed to send password reset email:', err?.message);
     if (IS_DEV_MODE) {
-      console.log(`[Email] Dev fallback — URL: ${resetUrl}`);
+      console.log(`[Email] Dev fallback - URL: ${resetUrl}`);
       return;
     }
     throw err;
@@ -257,12 +257,12 @@ export async function sendMagicLinkEmail(email: string, magicLink: string): Prom
       to: email,
       subject: `Your ${BRAND.name} sign-in link`,
       html: magicLinkHtml(magicLink, email),
-      text: `Sign in to ${BRAND.name}\n\nClick this link to sign in: ${magicLink}\n\nThis link expires in 15 minutes.\n\nIf you didn't request this, just ignore this email.\n\n${BRAND.name} — ${BRAND.tagline}\n${BRAND.company} • ${BRAND.location}\n${BRAND.supportEmail}`,
+      text: `Sign in to ${BRAND.name}\n\nClick this link to sign in: ${magicLink}\n\nThis link expires in 15 minutes.\n\nIf you didn't request this, just ignore this email.\n\n${BRAND.name} - ${BRAND.tagline}\n${BRAND.company} • ${BRAND.location}\n${BRAND.supportEmail}`,
     });
   } catch (err: any) {
     console.error('[Email] Failed to send magic link email:', err?.message);
     if (IS_DEV_MODE) {
-      console.log(`[Email] Dev fallback — URL: ${magicLink}`);
+      console.log(`[Email] Dev fallback - URL: ${magicLink}`);
       return;
     }
     throw err;
@@ -280,7 +280,7 @@ export async function sendWelcomeOnboardingEmail(email: string, userName: string
   try {
     await resendSend({
       to: email,
-      subject: `Welcome to AiVIS — Your AI Visibility Audit Guide`,
+      subject: `Welcome to AiVIS - Your AI Visibility Audit Guide`,
       html: welcomeOnboardingHtml(email, userName),
       text: [
         `Welcome to AiVIS, ${userName || 'there'}!`,
@@ -288,7 +288,7 @@ export async function sendWelcomeOnboardingEmail(email: string, userName: string
         `Your account is verified and ready to go. AiVIS measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude can understand, extract, and cite your website.`,
         ``,
         `HOW TO USE AiVIS:`,
-        `1. Run your first audit — paste any URL at ${FRONTEND_URL}/ and click Analyze`,
+        `1. Run your first audit - paste any URL at ${FRONTEND_URL}/ and click Analyze`,
         `2. Understand your AI Visibility Score (0-100) across 6 categories`,
         `3. Follow the 8-12 AI-generated recommendations ranked by priority`,
         `4. Track your progress over time on the Analytics page`,
@@ -313,7 +313,7 @@ export async function sendWelcomeOnboardingEmail(email: string, userName: string
         ``,
         `Questions? Reply to this email or reach us at ${BRAND.supportEmail}.`,
         ``,
-        `${BRAND.name} — ${BRAND.tagline}`,
+        `${BRAND.name} - ${BRAND.tagline}`,
         `${BRAND.company} • ${BRAND.location}`,
       ].join('\n'),
     });
@@ -364,7 +364,7 @@ export async function sendWorkspaceInviteEmail(args: {
       to: args.to,
       subject: `${args.senderName} invited you to ${args.workspaceName} on ${BRAND.name}`,
       html: emailWrap(
-        `Workspace Invitation — ${BRAND.name}`,
+        `Workspace Invitation - ${BRAND.name}`,
         emailHeader() + body + emailFooter(args.to),
         `You received this email because you were invited to a workspace on aivis.biz`,
       ),
@@ -397,7 +397,7 @@ export async function sendUsageCapEmail(
   try {
     await resendSend({
       to: email,
-      subject: `You've used all ${limit} ${BRAND.name} scans this month — here's what's next`,
+      subject: `You've used all ${limit} ${BRAND.name} scans this month - here's what's next`,
       html: usageCapHtml(email, userName, tierName, limit, resetsAt),
       text: [
         `You've used all ${limit} scans this month, ${userName || 'there'}.`,
@@ -405,15 +405,15 @@ export async function sendUsageCapEmail(
         ``,
         `WHY UPGRADING CHANGES THE GAME:`,
         ``,
-        `1. AI search is replacing traditional search — ChatGPT, Perplexity, and Google AI Overviews are answering queries that used to drive organic clicks.`,
+        `1. AI search is replacing traditional search - ChatGPT, Perplexity, and Google AI Overviews are answering queries that used to drive organic clicks.`,
         `2. Competitor tracking shows you exactly who's winning in AI visibility.`,
         `3. Citation testing proves whether AI actually mentions your brand.`,
         `4. Reverse engineering reveals how AI models build their answers.`,
         `5. Triple-Check AI (Signal tier) validates every scan with 3 independent models.`,
         ``,
         `YOUR OPTIONS:`,
-        `- Alignment: $49/month — 60 scans, competitor tracking, reverse engineering, exports`,
-        `- Signal: $149/month — 110 scans, Triple-Check AI, citation testing, API, white-label`,
+        `- Alignment: $49/month - 60 scans, competitor tracking, reverse engineering, exports`,
+        `- Signal: $149/month - 110 scans, Triple-Check AI, citation testing, API, white-label`,
         ``,
         `View plans: ${FRONTEND_URL}/pricing`,
         ``,
@@ -423,7 +423,7 @@ export async function sendUsageCapEmail(
         `- Why AI Visibility Matters: ${FRONTEND_URL}/why-ai-visibility`,
         `- FAQ: ${FRONTEND_URL}/faq`,
         ``,
-        `${BRAND.name} — ${BRAND.tagline}`,
+        `${BRAND.name} - ${BRAND.tagline}`,
         `${BRAND.company} • ${BRAND.location}`,
       ].join('\n'),
     });
@@ -456,7 +456,7 @@ export function renderPlatformNewsletterEmail(args: PlatformNewsletterEmailArgs)
 
   const html = newsletterHtml(args);
   const text = [
-    `AiVIS Weekly Newsletter — ${args.editionLabel}`,
+    `AiVIS Weekly Newsletter - ${args.editionLabel}`,
     `Hi ${firstName},`,
     '',
     `Your tier: ${args.tierLabel}`,
@@ -477,12 +477,12 @@ export function renderPlatformNewsletterEmail(args: PlatformNewsletterEmailArgs)
     `FAQ: ${FRONTEND_URL}/faq`,
     `Billing & referrals: ${FRONTEND_URL}/billing#referrals`,
     '',
-    `${BRAND.name} — ${BRAND.tagline}`,
+    `${BRAND.name} - ${BRAND.tagline}`,
     `${BRAND.company} • ${BRAND.location}`,
   ].join('\n');
 
   return {
-    subject: `${BRAND.name} Weekly — ${args.editionLabel} | Pricing, referrals, and tool deep-dives`,
+    subject: `${BRAND.name} Weekly - ${args.editionLabel} | Pricing, referrals, and tool deep-dives`,
     html,
     text,
   };
@@ -525,7 +525,7 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
           <tr>
             <td style="padding:28px 36px 10px;background:#111827;color:#e5e7eb;">
               <p style="margin:0 0 8px;font-size:14px;">Hi ${safeFirstName},</p>
-              <h1 style="margin:0 0 10px;font-size:22px;line-height:1.25;color:#ffffff;">${BRAND.name} Weekly — ${args.editionLabel}</h1>
+              <h1 style="margin:0 0 10px;font-size:22px;line-height:1.25;color:#ffffff;">${BRAND.name} Weekly - ${args.editionLabel}</h1>
               <p style="margin:0 0 8px;font-size:14px;color:#cbd5e1;">Tier: <strong>${args.tierLabel}</strong> • Audits completed: <strong>${args.snapshot.auditCount}</strong></p>
               <p style="margin:0 0 8px;font-size:14px;color:#cbd5e1;">${scoreLine}</p>
             </td>
@@ -567,7 +567,7 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
 
 // ─── Shared email building blocks ─────────────────────────────────────────────
 
-/** Branded header with logo — reused across all emails */
+/** Branded header with logo - reused across all emails */
 function emailHeader(accentGradient: string = 'linear-gradient(135deg,#06b6d4,#8b5cf6)'): string {
   return `
           <!-- Header with logo -->
@@ -599,7 +599,7 @@ function emailHeader(accentGradient: string = 'linear-gradient(135deg,#06b6d4,#8
           </tr>`;
 }
 
-/** Branded footer — reused across all emails */
+/** Branded footer - reused across all emails */
 function emailFooter(recipientEmail: string): string {
   return `
           <!-- Footer -->
@@ -631,7 +631,7 @@ function emailFooter(recipientEmail: string): string {
           </tr>`;
 }
 
-/** Outer email wrapper — dark bg, centered card */
+/** Outer email wrapper - dark bg, centered card */
 function emailWrap(title: string, innerRows: string, antiSpamText: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -824,9 +824,9 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your account is verified and ready to go.</p>
 
               <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                AiVIS is the <strong style="color:#22d3ee;">Ai Visibility Intelligence Audits</strong> — the only platform
+                AiVIS is the <strong style="color:#22d3ee;">Ai Visibility Intelligence Audits</strong> - the only platform
                 that measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude
-                can understand, cite, and recommend your website. This is not traditional SEO. This is the citation layer —
+                can understand, cite, and recommend your website. This is not traditional SEO. This is the citation layer -
                 whether your content is structured, deep, and trustworthy enough for AI systems to confidently include in
                 their generated answers.
               </p>
@@ -836,7 +836,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                 <tr><td style="border-top:1px solid #334155;"></td></tr>
               </table>
 
-              <h2 style="margin:0 0 20px;font-size:18px;font-weight:700;color:#ffffff;">How to use AiVIS — Step by step</h2>
+              <h2 style="margin:0 0 20px;font-size:18px;font-weight:700;color:#ffffff;">How to use AiVIS - Step by step</h2>
 
               <!-- Step 1 -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
@@ -869,7 +869,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                       across six categories: <strong style="color:#cbd5e1;">Content Depth</strong>, <strong style="color:#cbd5e1;">Heading Structure</strong>,
                       <strong style="color:#cbd5e1;">Schema &amp; Structured Data</strong>, <strong style="color:#cbd5e1;">Meta Tags</strong>,
                       <strong style="color:#cbd5e1;">Technical SEO</strong>, and <strong style="color:#cbd5e1;">AI Readability &amp; Citability</strong>.
-                      Most websites score C or D on their first audit — that's normal and exactly why you're here.
+                      Most websites score C or D on their first audit - that's normal and exactly why you're here.
                     </p>
                   </td>
                 </tr>
@@ -885,7 +885,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                     <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Follow the AI-generated recommendations</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Every audit generates 8–12 actionable, evidence-linked recommendations ranked by priority and estimated impact.
-                      These are not generic tips — they're specific to the page you scanned, referencing the actual content,
+                      These are not generic tips - they're specific to the page you scanned, referencing the actual content,
                       headings, schema, and markup found on your site. Implement the top 3 and re-scan to see your score climb.
                     </p>
                   </td>
@@ -918,7 +918,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                   <td>
                     <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Export PDF &amp; CSV reports</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
-                      Every audit can be downloaded as a full PDF report or CSV data export — perfect for sharing with
+                      Every audit can be downloaded as a full PDF report or CSV data export - perfect for sharing with
                       your team, clients, or stakeholders. The report includes your score, category grades, evidence, and
                       all recommendations with implementation steps.
                     </p>
@@ -938,12 +938,12 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                 <tr>
                   <td style="padding:20px 24px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Content Depth &amp; Quality</strong> — word count, topical coverage, authority signals</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Heading Structure</strong> — H1 presence, H2/H3 hierarchy, keyword alignment</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Schema &amp; Structured Data</strong> — JSON-LD markup types and completeness</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Meta Tags &amp; Open Graph</strong> — title, description, OG/Twitter cards</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Technical SEO</strong> — HTTPS, canonical tags, internal/external links</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">AI Readability &amp; Citability</strong> — FAQ structure, definitions, extractability</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Content Depth &amp; Quality</strong> - word count, topical coverage, authority signals</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Heading Structure</strong> - H1 presence, H2/H3 hierarchy, keyword alignment</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Schema &amp; Structured Data</strong> - JSON-LD markup types and completeness</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Meta Tags &amp; Open Graph</strong> - title, description, OG/Twitter cards</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Technical SEO</strong> - HTTPS, canonical tags, internal/external links</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">AI Readability &amp; Citability</strong> - FAQ structure, definitions, extractability</td></tr>
                     </table>
                   </td>
                 </tr>
@@ -953,7 +953,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#ffffff;">What you can unlock next</h2>
 
               <p style="margin:0 0 16px;color:#94a3b8;font-size:14px;line-height:1.6;">
-                Your free Observer plan gets you started — but the real competitive advantage comes from the full platform.
+                Your free Observer plan gets you started - but the real competitive advantage comes from the full platform.
                 Here's what Alignment ($49/mo) and Signal ($149/mo) subscribers get access to:
               </p>
 
@@ -961,11 +961,11 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                 <tr>
                   <td style="padding:20px 24px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Competitor Tracking</strong> — benchmark your AI visibility against any competitor in real time</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Citation Testing</strong> — run live queries against ChatGPT, Perplexity, and Claude to see if they mention your brand</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Reverse Engineering</strong> — deconstruct how AI models build answers, then engineer your content to match</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Triple-Check AI</strong> — Signal tier scans are validated by 3 independent AI models, eliminating single-model bias</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">100–200-400+ scans/month</strong> — enough to audit your entire site, track changes weekly, and monitor competitors</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Competitor Tracking</strong> - benchmark your AI visibility against any competitor in real time</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Citation Testing</strong> - run live queries against ChatGPT, Perplexity, and Claude to see if they mention your brand</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Reverse Engineering</strong> - deconstruct how AI models build answers, then engineer your content to match</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Triple-Check AI</strong> - Signal tier scans are validated by 3 independent AI models, eliminating single-model bias</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">100–200-400+ scans/month</strong> - enough to audit your entire site, track changes weekly, and monitor competitors</td></tr>
                     </table>
                   </td>
                 </tr>
@@ -991,13 +991,13 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <h2 style="margin:0 0 16px;font-size:16px;font-weight:700;color:#ffffff;">Helpful resources</h2>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${guideUrl}" style="color:#22d3ee;text-decoration:underline;">Getting Started Guide</a> <span style="color:#64748b;">— 8-step walkthrough of every feature</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${faqUrl}" style="color:#22d3ee;text-decoration:underline;">FAQ (27 answers)</a> <span style="color:#64748b;">— scoring methodology, grading, and platform details</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why AI Visibility Matters</a> <span style="color:#64748b;">— the case for optimizing for AI search engines</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${aeoUrl}" style="color:#22d3ee;text-decoration:underline;">AEO Playbook 2026</a> <span style="color:#64748b;">— answer engine optimization strategies and tactics</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${geoUrl}" style="color:#22d3ee;text-decoration:underline;">GEO &amp; AI Ranking 2026</a> <span style="color:#64748b;">— how generative AI ranking works</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${insightsUrl}" style="color:#22d3ee;text-decoration:underline;">Insights Hub</a> <span style="color:#64748b;">— deep dives, research, and analysis</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${pricingUrl}" style="color:#22d3ee;text-decoration:underline;">Plans &amp; Pricing</a> <span style="color:#64748b;">— see what each tier unlocks</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${guideUrl}" style="color:#22d3ee;text-decoration:underline;">Getting Started Guide</a> <span style="color:#64748b;">- 8-step walkthrough of every feature</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${faqUrl}" style="color:#22d3ee;text-decoration:underline;">FAQ (27 answers)</a> <span style="color:#64748b;">- scoring methodology, grading, and platform details</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why AI Visibility Matters</a> <span style="color:#64748b;">- the case for optimizing for AI search engines</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${aeoUrl}" style="color:#22d3ee;text-decoration:underline;">AEO Playbook 2026</a> <span style="color:#64748b;">- answer engine optimization strategies and tactics</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${geoUrl}" style="color:#22d3ee;text-decoration:underline;">GEO &amp; AI Ranking 2026</a> <span style="color:#64748b;">- how generative AI ranking works</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${insightsUrl}" style="color:#22d3ee;text-decoration:underline;">Insights Hub</a> <span style="color:#64748b;">- deep dives, research, and analysis</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${pricingUrl}" style="color:#22d3ee;text-decoration:underline;">Plans &amp; Pricing</a> <span style="color:#64748b;">- see what each tier unlocks</span></td></tr>
               </table>
 
               <p style="margin:24px 0 0;color:#64748b;font-size:13px;line-height:1.6;">
@@ -1009,7 +1009,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
           </tr>`;
 
   return emailWrap(
-    `Welcome to ${BRAND.name} — How to Use the Ai Visibility Intelligence Audits`,
+    `Welcome to ${BRAND.name} - How to Use the Ai Visibility Intelligence Audits`,
     emailHeader() + body + emailFooter(email),
     `You received this because you verified your email at aivis.biz`
   );
@@ -1056,7 +1056,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                     <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#f59e0b,#ef4444);text-align:center;line-height:32px;font-size:16px;"></div>
                   </td>
                   <td>
-                    <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">AI search is replacing traditional search — right now</p>
+                    <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">AI search is replacing traditional search - right now</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       ChatGPT, Perplexity, Google AI Overviews, and Claude are answering questions that used to drive organic clicks.
                       If your content isn't structured for AI citation, you're becoming invisible to the fastest-growing discovery channel.
@@ -1075,7 +1075,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                   <td>
                     <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">Competitor tracking shows you exactly who's winning</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
-                      Alignment and Signal tiers unlock <strong style="color:#cbd5e1;">Competitor Tracking</strong> — benchmark your AI visibility
+                      Alignment and Signal tiers unlock <strong style="color:#cbd5e1;">Competitor Tracking</strong> - benchmark your AI visibility
                       score against any competitor's page, side by side, across all six categories. You see exactly where they're ahead
                       and what specific content changes would close the gap. This feature alone has helped early users identify
                       schema gaps and content opportunities they'd completely missed.
@@ -1093,7 +1093,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                   <td>
                     <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">Citation testing proves whether AI actually mentions you</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
-                      Signal tier includes <strong style="color:#cbd5e1;">Citation Testing</strong> — you submit real queries and AiVIS checks
+                      Signal tier includes <strong style="color:#cbd5e1;">Citation Testing</strong> - you submit real queries and AiVIS checks
                       whether ChatGPT, Perplexity, and Claude mention your brand, link to your site, or recommend you in their answers.
                       This is the ultimate validation: not just "is my content AI-ready" but "is AI actually citing me?"
                     </p>
@@ -1152,7 +1152,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                       <tr>
                         <td>
                           <span style="font-size:16px;font-weight:700;color:#22d3ee;">Alignment</span>
-                          <span style="color:#94a3b8;font-size:14px;"> — $49/month</span>
+                          <span style="color:#94a3b8;font-size:14px;"> - $49/month</span>
                         </td>
                       </tr>
                       <tr><td style="padding:6px 0 0;color:#cbd5e1;font-size:13px;line-height:1.6;">60 scans/month &bull; Competitor tracking &bull; Reverse engineering tools &bull; PDF &amp; CSV exports</td></tr>
@@ -1169,7 +1169,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                       <tr>
                         <td>
                           <span style="font-size:16px;font-weight:700;color:#f59e0b;">Signal</span>
-                          <span style="color:#94a3b8;font-size:14px;"> — $149/month</span>
+                          <span style="color:#94a3b8;font-size:14px;"> - $149/month</span>
                           <span style="display:inline-block;background:#f59e0b;color:#0f172a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;">MOST POPULAR</span>
                         </td>
                       </tr>
@@ -1199,28 +1199,28 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
               <h2 style="margin:0 0 16px;font-size:16px;font-weight:700;color:#ffffff;">While you wait for your scans to reset</h2>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${guideUrl}" style="color:#22d3ee;text-decoration:underline;">Getting Started Guide</a> <span style="color:#64748b;">— review the 8-step walkthrough to maximize your next scans</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${aeoUrl}" style="color:#22d3ee;text-decoration:underline;">AEO Playbook 2026</a> <span style="color:#64748b;">— answer engine optimization strategies to implement today</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why AI Visibility Matters</a> <span style="color:#64748b;">— share with your team to build the case internally</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${insightsUrl}" style="color:#22d3ee;text-decoration:underline;">Insights Hub</a> <span style="color:#64748b;">— research and deep dives on AI search optimization</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${faqUrl}" style="color:#22d3ee;text-decoration:underline;">FAQ</a> <span style="color:#64748b;">— 27 answers about scoring, methodology, and platform features</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${guideUrl}" style="color:#22d3ee;text-decoration:underline;">Getting Started Guide</a> <span style="color:#64748b;">- review the 8-step walkthrough to maximize your next scans</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${aeoUrl}" style="color:#22d3ee;text-decoration:underline;">AEO Playbook 2026</a> <span style="color:#64748b;">- answer engine optimization strategies to implement today</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why AI Visibility Matters</a> <span style="color:#64748b;">- share with your team to build the case internally</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${insightsUrl}" style="color:#22d3ee;text-decoration:underline;">Insights Hub</a> <span style="color:#64748b;">- research and deep dives on AI search optimization</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${faqUrl}" style="color:#22d3ee;text-decoration:underline;">FAQ</a> <span style="color:#64748b;">- 27 answers about scoring, methodology, and platform features</span></td></tr>
               </table>
 
               <p style="margin:24px 0 0;color:#64748b;font-size:13px;line-height:1.6;">
                 Your scans reset automatically on <strong style="color:#94a3b8;">${resetFormatted}</strong>.
-                If you have questions about which plan fits your workflow, just reply to this email — we'll help you figure it out.
+                If you have questions about which plan fits your workflow, just reply to this email - we'll help you figure it out.
               </p>
             </td>
           </tr>`;
 
   return emailWrap(
-    `You've hit your scan limit — here's what's next`,
+    `You've hit your scan limit - here's what's next`,
     emailHeader('linear-gradient(135deg,#f59e0b,#ef4444)') + body + emailFooter(email),
     `You received this because your ${tierName} plan reached its monthly scan limit at aivis.biz`
   );
 }
 
-// ─── Admin broadcast email — custom one-off announcements ─────────────────────
+// ─── Admin broadcast email - custom one-off announcements ─────────────────────
 
 export interface BroadcastEmailArgs {
   subject: string;
@@ -1266,7 +1266,7 @@ export function renderBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: s
     ...paragraphs,
     '',
     ...(args.ctaLabel && args.ctaUrl ? [`${args.ctaLabel}: ${args.ctaUrl}`, ''] : []),
-    `${BRAND.name} — ${BRAND.tagline}`,
+    `${BRAND.name} - ${BRAND.tagline}`,
     `${BRAND.company} • ${BRAND.location}`,
   ];
 

@@ -421,11 +421,11 @@ function parseJsonResponse<T>(response: string): T {
 }
 
 /**
- * Brand Voice Rewrite — rewrites a content excerpt to match a selected AI citation pattern.
+ * Brand Voice Rewrite - rewrites a content excerpt to match a selected AI citation pattern.
  *
  * voicePreset: "authoritative" | "conversational" | "data_driven" | "how_to" | "faq"
  * content: existing content to rewrite (max 4000 chars)
- * targetQuery: optional — the user query this content should rank for
+ * targetQuery: optional - the user query this content should rank for
  */
 export async function rewriteContentVoice(
   content: string,
@@ -462,7 +462,7 @@ Return a JSON object (no markdown):
 }
 
 Rules:
-- Preserve all factual claims from the original — do not invent data
+- Preserve all factual claims from the original - do not invent data
 - Improve structure and voice, not the accuracy of claims
 - rewritten should be the complete rewrite, ready to paste into a CMS
 - changes should be 3-5 bullet points explaining what was changed and why it improves AI citability`;

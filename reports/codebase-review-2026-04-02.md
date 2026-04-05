@@ -1,4 +1,4 @@
-# Full Codebase Review — 2026-04-02
+# Full Codebase Review - 2026-04-02
 
 ## Scope and methodology
 

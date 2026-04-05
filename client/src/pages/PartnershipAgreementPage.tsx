@@ -182,7 +182,7 @@ export default function PartnershipAgreementPage() {
                 <div className={`rounded-xl border p-4 ${agreement.party_a_signed_at ? "border-emerald-500/40 bg-emerald-500/5" : "border-[#2a2f3a] bg-[#171722]"}`}>
                   <span className="block text-[#a6adbb] text-[0.85rem] uppercase tracking-wider mb-1.5">Party A</span>
                   <p className="font-semibold mb-1">{agreement.party_a_name}</p>
-                  <p className="text-sm text-white/50 mb-3">{agreement.party_a_org} — {agreement.party_a_phone}</p>
+                  <p className="text-sm text-white/50 mb-3">{agreement.party_a_org} - {agreement.party_a_phone}</p>
                   {agreement.party_a_signed_at ? (
                     <div className="flex items-center gap-2 text-emerald-400 text-sm">
                       <Check size={16} />
@@ -198,7 +198,7 @@ export default function PartnershipAgreementPage() {
                 <div className={`rounded-xl border p-4 ${agreement.party_b_signed_at ? "border-emerald-500/40 bg-emerald-500/5" : "border-[#2a2f3a] bg-[#171722]"}`}>
                   <span className="block text-[#a6adbb] text-[0.85rem] uppercase tracking-wider mb-1.5">Party B</span>
                   <p className="font-semibold mb-1">{agreement.party_b_name}</p>
-                  <p className="text-sm text-white/50 mb-3">{agreement.party_b_org} — {agreement.party_b_phone}</p>
+                  <p className="text-sm text-white/50 mb-3">{agreement.party_b_org} - {agreement.party_b_phone}</p>
                   {agreement.party_b_signed_at ? (
                     <div className="flex items-center gap-2 text-emerald-400 text-sm">
                       <Check size={16} />
@@ -252,7 +252,7 @@ export default function PartnershipAgreementPage() {
                               : "bg-white/5 text-white/70 hover:bg-white/10"
                         }`}
                       >
-                        Party A — {agreement.party_a_name}
+                        Party A - {agreement.party_a_name}
                         {agreement.party_a_signed_at && " ✓"}
                       </button>
                       <button
@@ -267,7 +267,7 @@ export default function PartnershipAgreementPage() {
                               : "bg-white/5 text-white/70 hover:bg-white/10"
                         }`}
                       >
-                        Party B — {agreement.party_b_name}
+                        Party B - {agreement.party_b_name}
                         {agreement.party_b_signed_at && " ✓"}
                       </button>
                     </div>
@@ -430,7 +430,7 @@ function StatusBanner({ agreement, isExpired }: { agreement: AgreementData; isEx
       <Clock className="text-amber-400 shrink-0" size={28} />
       <div>
         <p className="text-amber-300 font-semibold">
-          {agreement.status === "partially_signed" ? "Partially Signed — Awaiting Second Signature" : "Awaiting Signatures"}
+          {agreement.status === "partially_signed" ? "Partially Signed - Awaiting Second Signature" : "Awaiting Signatures"}
         </p>
         <p className="text-white/50 text-sm">
           {agreement.signing_deadline

@@ -43,7 +43,7 @@ const VALUE_CARDS = [
   {
     icon: Target,
     title: "Find presence gaps",
-    detail: "Identify the queries where competitors appear in AI answers but you do not — and understand why.",
+    detail: "Identify the queries where competitors appear in AI answers but you do not - and understand why.",
   },
   {
     icon: TrendingUp,
@@ -53,10 +53,10 @@ const VALUE_CARDS = [
 ];
 
 const WORKFLOW_STEPS = [
-  { step: 1, label: "Enter your URL", detail: "Paste your page URL — AI generates realistic queries from your content, entities, and keywords." },
+  { step: 1, label: "Enter your URL", detail: "Paste your page URL - AI generates realistic queries from your content, entities, and keywords." },
   { step: 2, label: "Multi-platform scan", detail: "Queries run across 4 AI platforms and 3 web search engines simultaneously to map your answer presence." },
   { step: 3, label: "Presence detection", detail: "Each response is analyzed for direct mentions, citations, contextual references, and competitor displacement." },
-  { step: 4, label: "Gap analysis", detail: "See exactly where you are present, absent, or displaced — with actionable evidence for each finding." },
+  { step: 4, label: "Gap analysis", detail: "See exactly where you are present, absent, or displaced - with actionable evidence for each finding." },
 ];
 
 const TIER_PATH = [
@@ -73,7 +73,7 @@ const TIER_PATH = [
   {
     tier: "Score Fix",
     title: "Automated presence remediation",
-    detail: "Generate and push content patches that address presence gaps — schema claims, FAQ blocks, entity disambiguation — as evidence-linked PRs.",
+    detail: "Generate and push content patches that address presence gaps - schema claims, FAQ blocks, entity disambiguation - as evidence-linked PRs.",
   },
 ];
 
@@ -83,7 +83,7 @@ export default function AnswerPresencePage() {
   const latestResult = useAnalysisStore((s) => s.result);
 
   usePageMeta({
-    title: "Answer Presence Engine — AI Platform Visibility",
+    title: "Answer Presence Engine - AI Platform Visibility",
     description: "Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI. Evidence-based presence detection.",
     path: "/answer-presence",
   });
@@ -117,7 +117,7 @@ export default function AnswerPresencePage() {
             Answer Presence Engine
           </h1>
           <p className="text-white/60 text-lg mb-8 max-w-2xl">
-            Track whether AI-generated answers include your brand, cite your domain, or hand the answer to a competitor — across ChatGPT, Perplexity, Claude, and Google AI.
+            Track whether AI-generated answers include your brand, cite your domain, or hand the answer to a competitor - across ChatGPT, Perplexity, Claude, and Google AI.
           </p>
           <UpgradeWall
             feature="Answer Presence Engine"
@@ -175,7 +175,7 @@ export default function AnswerPresencePage() {
                     {i + 1}
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{t.tier} — {t.title}</p>
+                    <p className="text-white font-semibold">{t.tier} - {t.title}</p>
                     <p className="text-white/50 text-sm">{t.detail}</p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function AnswerPresencePage() {
           </span>
         </div>
         <p className="text-white/50 text-sm mb-8 max-w-2xl">
-          Track whether AI answers include your brand, cite your domain, or displace you with a competitor — across all major AI platforms.
+          Track whether AI answers include your brand, cite your domain, or displace you with a competitor - across all major AI platforms.
         </p>
 
         {/* Platform overview */}

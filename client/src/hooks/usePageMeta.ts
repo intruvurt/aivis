@@ -1,16 +1,16 @@
 // client/src/hooks/usePageMeta.ts
-// Lightweight per-page SEO hook — sets document.title, meta description,
+// Lightweight per-page SEO hook - sets document.title, meta description,
 // canonical URL, Open Graph tags, and optional JSON-LD structured data.
 // No external dependency required (replaces react-helmet for our needs).
 
 import { useEffect } from 'react';
 
 interface PageMeta {
-  /** Page title — will be suffixed with " | Ai Visibility Intelligence Audits & monitoring" */
+  /** Page title - will be suffixed with " | Ai Visibility Intelligence Audits & monitoring" */
   title: string;
   /** Meta description for search engines and AI crawlers */
   description: string;
-  /** Canonical path (e.g. "/pricing") — will be prefixed with https://aivis.biz */
+  /** Canonical path (e.g. "/pricing") - will be prefixed with https://aivis.biz */
   path?: string;
   /** Optional JSON-LD structured data object(s) */
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
@@ -20,7 +20,7 @@ interface PageMeta {
   ogDescription?: string;
   /** Override OG type (defaults to website) */
   ogType?: string;
-  /** Full document.title override — bypasses the "SITE_NAME ~title" format. Use for homepage where title length (30-60 chars) matters for scoring. */
+  /** Full document.title override - bypasses the "SITE_NAME ~title" format. Use for homepage where title length (30-60 chars) matters for scoring. */
   fullTitle?: string;
 }
 
@@ -168,7 +168,7 @@ function setStructuredData(data: Record<string, unknown> | Record<string, unknow
  */
 export function usePageMeta({ title, description, path, structuredData, ogTitle, ogDescription, ogType, fullTitle }: PageMeta): void {
   useEffect(() => {
-    // Document title — use fullTitle if provided (for homepage with strict 30-60 char requirement)
+    // Document title - use fullTitle if provided (for homepage with strict 30-60 char requirement)
     document.title = fullTitle || `${SITE_NAME} ~${title}`;
 
     // Meta description
@@ -197,7 +197,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     // Per-page structured data
     setStructuredData(structuredData);
 
-    // Cleanup on unmount — restore defaults
+    // Cleanup on unmount - restore defaults
     return () => {
       document.title = `${SITE_NAME}: AI Visibility Audit Platform | See How AI Sees Your Website`;
       setStructuredData(undefined);

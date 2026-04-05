@@ -1,4 +1,4 @@
-# Free Article Posting Platforms — AiVIS Distribution Guide
+# Free Article Posting Platforms - AiVIS Distribution Guide
 
 **Purpose:** Where to post these 3 articles (and future content) for maximum exposure and citation authority.  
 **Tier:** Free or freemium only. No paid placements listed.  
@@ -6,30 +6,30 @@
 
 ---
 
-## TIER 1 — Highest Citation Authority (Do These First)
+## TIER 1 - Highest Citation Authority (Do These First)
 
 ### Reddit
 **Why:** Reddit is probably the single most powerful third-party signal for AI citation. ChatGPT's training includes massive Reddit archives. Perplexity actively scrapes Reddit in real time for live answers.  
 **Best subs for our content:**
-- r/SEO — ai visibility / structured data / auditing topics
-- r/ChatGPT — "how to get cited by ChatGPT" angle
-- r/artificial — technical/tool discussions
-- r/webdev — JSON-LD, schema, crawler access (technical article 3)
-- r/marketing — brand visibility, citation strategy
-- r/juststart — founders building their first sites
-- r/Entrepreneur — platform-level strategy pieces
-- r/SideProject — launching AiVIS, product discussions
+- r/SEO - ai visibility / structured data / auditing topics
+- r/ChatGPT - "how to get cited by ChatGPT" angle
+- r/artificial - technical/tool discussions
+- r/webdev - JSON-LD, schema, crawler access (technical article 3)
+- r/marketing - brand visibility, citation strategy
+- r/juststart - founders building their first sites
+- r/Entrepreneur - platform-level strategy pieces
+- r/SideProject - launching AiVIS, product discussions
 
-**Format rules:** No links in title. Paste full article as long self-post. Link your tool naturally in body text. Engage every comment in the first 2-3 hours — Reddit algorithm is time-velocity sensitive.
+**Format rules:** No links in title. Paste full article as long self-post. Link your tool naturally in body text. Engage every comment in the first 2-3 hours - Reddit algorithm is time-velocity sensitive.
 
 ---
 
 ### Hacker News
 **Why:** HN is small but disproportionately indexed by AI models because of technical credibility. A front-page HN story generates persistent training signal. Even a "Show HN" that reaches 30 upvotes matters.  
 **Best submission types:**
-- **Show HN** — for product launches, feature reveals, new audit tools
-- **Long self-post** — for the technical JSON-LD article (reframe as "Ask HN: how do you structure JSON-LD for AI crawlers in 2026?")
-- **Link post** — once articles are published elsewhere (Medium/Substack)
+- **Show HN** - for product launches, feature reveals, new audit tools
+- **Long self-post** - for the technical JSON-LD article (reframe as "Ask HN: how do you structure JSON-LD for AI crawlers in 2026?")
+- **Link post** - once articles are published elsewhere (Medium/Substack)
 
 **Note:** HN is aggressive about detecting promotional content. Lead with something technically interesting, not the product pitch. The JSON-LD article is the best fit because the code templates are genuinely useful independent of AiVIS.
 
@@ -38,11 +38,11 @@
 ### Medium
 **Why:** Medium content gets indexed well by Google and is included in several AI training datasets. Publishing in popular publications dramatically increases reach.  
 **Target publications (submit via publication submission queue):**
-- **The Startup** — largest Medium publication, 750k followers, accepts AI/tech/product content
-- **Towards Data Science** — if you can frame the AI model behavior piece technically
-- **Better Programming** — for the JSON-LD / schema article
-- **UX Collective** — for content discoverability / machine legibility angle
-- **Level Up Coding** — developer audience, strong for the technical article
+- **The Startup** - largest Medium publication, 750k followers, accepts AI/tech/product content
+- **Towards Data Science** - if you can frame the AI model behavior piece technically
+- **Better Programming** - for the JSON-LD / schema article
+- **UX Collective** - for content discoverability / machine legibility angle
+- **Level Up Coding** - developer audience, strong for the technical article
 
 **Cross-posting rule:** If you publish on your own Substack first, you can republish on Medium with a canonical tag pointing to the Substack. This gets you Medium distribution without losing Substack SEO credit.
 
@@ -65,13 +65,13 @@
 
 ---
 
-## TIER 2 — Strong Secondary Distribution
+## TIER 2 - Strong Secondary Distribution
 
 ### Substack
 **Your own Substack newsletter** is the home base. Every article should live here first.  
 **Cross-promotion tactics:**
 - Post as Notes on Substack (microblog feature) with a hook quote from each article
-- Recommend in other newsletters — find 3-5 Substack newsletters about AI/SEO/web development and reach out for cross-recommendations
+- Recommend in other newsletters - find 3-5 Substack newsletters about AI/SEO/web development and reach out for cross-recommendations
 - Submit to Substack's recommendation algorithm by getting readers to "recommend" your newsletter from their own subscriptions
 
 ### LinkedIn Articles
@@ -89,13 +89,13 @@
 
 ---
 
-## TIER 3 — Niche but High-Intent Communities
+## TIER 3 - Niche but High-Intent Communities
 
 ### Product Hunt Discussions
-**Not** a product launch submission (save that). The Discussions section lets you post questions and articles. Post something like "I've been studying how AI models decide who to cite. Here's what the data shows." Product Hunt's audience is product builders — exactly the audience AiVIS serves.
+**Not** a product launch submission (save that). The Discussions section lets you post questions and articles. Post something like "I've been studying how AI models decide who to cite. Here's what the data shows." Product Hunt's audience is product builders - exactly the audience AiVIS serves.
 
 ### IndieHackers
-Indie Hackers has a large audience of bootstrapped founders. Post full articles in the "Products" or "Growth" sections. The "I built X because Y" format works extremely well here. The "I've run 500+ AI visibility audits" Reddit article is the best fit — it has the founder-data-sharing format that IH readers respond to.
+Indie Hackers has a large audience of bootstrapped founders. Post full articles in the "Products" or "Growth" sections. The "I built X because Y" format works extremely well here. The "I've run 500+ AI visibility audits" Reddit article is the best fit - it has the founder-data-sharing format that IH readers respond to.
 
 **Platform:** indiehackers.com/post (free to submit)
 
@@ -115,7 +115,7 @@ If running a new feature launch (Scheduled Rescans, MCP Server, Citation Testing
 
 ---
 
-## TIER 4 — Archive and Training Corpus Inclusion
+## TIER 4 - Archive and Training Corpus Inclusion
 
 These platforms don't drive much direct traffic but contribute to AI training data and long-term citation authority.
 

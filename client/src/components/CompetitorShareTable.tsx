@@ -2,7 +2,7 @@
  * CompetitorShareTable
  *
  * Shows how often competitors are mentioned alongside the target URL
- * in AI responses — the "citation share" view.
+ * in AI responses - the "citation share" view.
  */
 import { useEffect, useState, useCallback } from 'react';
 import { apiFetch } from '../utils/api';

@@ -19,7 +19,7 @@ function formatScanLabel(scanCount?: number): string {
 }
 
 /**
- * Branded social share strip — Twitter / LinkedIn / Facebook / Copy Link.
+ * Branded social share strip - Twitter / LinkedIn / Facebook / Copy Link.
  * Generates a share URL that opens the app with the audited URL pre-filled.
  */
 
@@ -27,7 +27,7 @@ function formatScanLabel(scanCount?: number): string {
  * 3-layer clipboard write.
  * Layer 1: Async Clipboard API (modern, secure context required)
  * Layer 2: execCommand fallback (deprecated but broadly supported)
- * Layer 3: Returns false — caller shows window.prompt fallback
+ * Layer 3: Returns false - caller shows window.prompt fallback
  */
 async function writeToClipboard(text: string): Promise<boolean> {
   if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
@@ -66,13 +66,13 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
 
   const shareLabel = resolvedScanLabel || formatScanLabel(scanCount);
 
-  // Score-based unique share messages — authentic, not AI-formatted
+  // Score-based unique share messages - authentic, not AI-formatted
   const shareText = (() => {
-    if (score >= 90) return `Visibility benchmark for ${displayDomain}: ${score}/100 — citation-ready across ChatGPT, Perplexity, Claude, and Google AI.`;
-    if (score >= 75) return `Visibility benchmark for ${displayDomain}: ${score}/100 — strong AI visibility with room to tighten structured data and citation signals.`;
-    if (score >= 60) return `Visibility benchmark for ${displayDomain}: ${score}/100 — decent foundation but missing key signals that AI models look for.`;
-    if (score >= 40) return `Visibility benchmark for ${displayDomain}: ${score}/100 — most answer engines are overlooking this site. Fixable with structured markup.`;
-    return `Visibility benchmark for ${displayDomain}: ${score}/100 — answer engines can barely read this site. Real fixes needed.`;
+    if (score >= 90) return `Visibility benchmark for ${displayDomain}: ${score}/100 - citation-ready across ChatGPT, Perplexity, Claude, and Google AI.`;
+    if (score >= 75) return `Visibility benchmark for ${displayDomain}: ${score}/100 - strong AI visibility with room to tighten structured data and citation signals.`;
+    if (score >= 60) return `Visibility benchmark for ${displayDomain}: ${score}/100 - decent foundation but missing key signals that AI models look for.`;
+    if (score >= 40) return `Visibility benchmark for ${displayDomain}: ${score}/100 - most answer engines are overlooking this site. Fixable with structured markup.`;
+    return `Visibility benchmark for ${displayDomain}: ${score}/100 - answer engines can barely read this site. Real fixes needed.`;
   })();
 
   function formatShareExpiryLabel(expiresAt?: string): string {

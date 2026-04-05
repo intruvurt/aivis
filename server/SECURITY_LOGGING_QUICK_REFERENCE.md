@@ -1,5 +1,5 @@
 /**
- * SECURITY EVENT LOGGING — DEVELOPER QUICK REFERENCE
+ * SECURITY EVENT LOGGING - DEVELOPER QUICK REFERENCE
  * 
  * How to use the security event logger in routes and middleware
  */
@@ -138,7 +138,7 @@ You don't need to sanitize data before passing it to security event logger.
 All of these are automatically protected:
 
 ```ts
-// ✅ These are all safe — redaction happens automatically
+// ✅ These are all safe - redaction happens automatically
 logMalformedPayload(req, userId, 'Invalid body', {
   body: req.body,                      // Full body (API keys redacted)
   email: user.email,                   // Masked
@@ -234,7 +234,7 @@ console.log('Request:', req.body);  // Might leak API keys before redaction
 
 ✅ **DO:** Let redaction layer handle it
 ```ts
-// Good — redaction applied automatically
+// Good - redaction applied automatically
 logMalformedPayload(req, userId, 'Invalid', { received: req.body });
 ```
 

@@ -1,6 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 
-/** Lightweight shared visibility tracker — avoids duplicate listeners across hooks. */
+/** Lightweight shared visibility tracker - avoids duplicate listeners across hooks. */
 let visible = typeof document !== 'undefined' ? document.visibilityState === 'visible' : true;
 const listeners = new Set<() => void>();
 

@@ -244,9 +244,9 @@ function scoreValidity(blocks: any[], parseErrors: string[], entities: any[]): S
   // Proper @context
   if (hasContext(blocks)) {
     score += 3;
-    details.push('@context declared — proper JSON-LD structure');
+    details.push('@context declared - proper JSON-LD structure');
   } else if (blocks.length > 0) {
-    details.push('Missing @context — JSON-LD should declare vocabulary context');
+    details.push('Missing @context - JSON-LD should declare vocabulary context');
   }
 
   // All entities have @type
@@ -256,7 +256,7 @@ function scoreValidity(blocks: any[], parseErrors: string[], entities: any[]): S
     details.push('All entities have explicit @type');
   } else if (missingType.length > 0) {
     score += 1;
-    details.push(`${missingType.length} entity(ies) missing @type — every entity should declare a type`);
+    details.push(`${missingType.length} entity(ies) missing @type - every entity should declare a type`);
   }
 
   return { score: Math.min(score, 15), max: 15, details };
@@ -273,11 +273,11 @@ function scoreTypeCoverage(uniqueTypes: string[]): SchemaScoreBreakdown['typeCov
   }
 
   // Breadth scoring (scale: 0-13)
-  if (count >= 10) { score += 13; details.push(`${count} unique types — exceptional breadth`); }
-  else if (count >= 7) { score += 10; details.push(`${count} unique types — strong breadth`); }
-  else if (count >= 4) { score += 7; details.push(`${count} unique types — moderate breadth`); }
-  else if (count >= 2) { score += 4; details.push(`${count} unique types — basic coverage`); }
-  else { score += 2; details.push(`${count} unique type — minimal coverage`); }
+  if (count >= 10) { score += 13; details.push(`${count} unique types - exceptional breadth`); }
+  else if (count >= 7) { score += 10; details.push(`${count} unique types - strong breadth`); }
+  else if (count >= 4) { score += 7; details.push(`${count} unique types - moderate breadth`); }
+  else if (count >= 2) { score += 4; details.push(`${count} unique types - basic coverage`); }
+  else { score += 2; details.push(`${count} unique type - minimal coverage`); }
 
   // Bonus for core types (Organization, WebSite, WebPage)
   const coreFound = uniqueTypes.filter(t => CORE_TYPES.has(t));
@@ -361,7 +361,7 @@ function scoreEntityGraph(entities: any[]): SchemaScoreBreakdown['entityGraph'] 
   const idCount = declaredIds.size;
 
   if (idCount === 0) {
-    details.push('No @id declarations — entity graph cannot be constructed');
+    details.push('No @id declarations - entity graph cannot be constructed');
     return { score: 0, max: 15, details };
   }
 
@@ -383,12 +383,12 @@ function scoreEntityGraph(entities: any[]): SchemaScoreBreakdown['entityGraph'] 
   const crossRefs = collectAllIdReferences(entities, declaredIds);
   if (crossRefs.size >= 3) {
     score += 5;
-    details.push(`${crossRefs.size} cross-reference(s) — strong entity graph coherence`);
+    details.push(`${crossRefs.size} cross-reference(s) - strong entity graph coherence`);
   } else if (crossRefs.size >= 1) {
     score += 3;
     details.push(`${crossRefs.size} cross-reference(s) between entities`);
   } else {
-    details.push('@id declared but no cross-references — entities are isolated');
+    details.push('@id declared but no cross-references - entities are isolated');
   }
 
   // Graph coherence: all referenced @ids resolve to declared entities
@@ -680,11 +680,11 @@ export function scoreSchema(
     if (/review/i.test(typeStr) && entity.itemReviewed) {
       const ir = entity.itemReviewed;
       if (ir && typeof ir === 'object' && !ir['@type'] && !ir['@id']) {
-        validationErrors.push('Review.itemReviewed missing @type — requires explicit type or @id reference');
+        validationErrors.push('Review.itemReviewed missing @type - requires explicit type or @id reference');
       }
     }
     if (/^product$/i.test(typeStr) && entity.offers && !entity.image) {
-      validationErrors.push('Product missing image — required for Google Product snippets');
+      validationErrors.push('Product missing image - required for Google Product snippets');
     }
     if (/article|blogposting|newsarticle/i.test(typeStr)) {
       if (entity.author && typeof entity.author === 'object' && !entity.author['@type'] && !entity.author['@id']) {
@@ -735,7 +735,7 @@ export function scoreSchema(
     `Cross-references: ${crossRefs.length}`,
     `Validation issues: ${validationErrors.length}`,
     ...(validationErrors.length > 0 ? validationErrors.slice(0, 5).map(e => `  ⚠ ${e}`) : []),
-    `Dimensions — Validity: ${validity.score}/${validity.max}, Types: ${typeCoverage.score}/${typeCoverage.max}, Properties: ${propertyCompleteness.score}/${propertyCompleteness.max}, Graph: ${entityGraph.score}/${entityGraph.max}, Alignment: ${contentAlignment.score}/${contentAlignment.max}, Vocabulary: ${advancedVocabulary.score}/${advancedVocabulary.max}, Relationships: ${relationshipDepth.score}/${relationshipDepth.max}, Practices: ${bestPractices.score}/${bestPractices.max}`,
+    `Dimensions - Validity: ${validity.score}/${validity.max}, Types: ${typeCoverage.score}/${typeCoverage.max}, Properties: ${propertyCompleteness.score}/${propertyCompleteness.max}, Graph: ${entityGraph.score}/${entityGraph.max}, Alignment: ${contentAlignment.score}/${contentAlignment.max}, Vocabulary: ${advancedVocabulary.score}/${advancedVocabulary.max}, Relationships: ${relationshipDepth.score}/${relationshipDepth.max}, Practices: ${bestPractices.score}/${bestPractices.max}`,
   ];
 
   return {

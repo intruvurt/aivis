@@ -30,7 +30,7 @@ export default function CompareOtterlyPage() {
       </h1>
       <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
         Otterly helped popularize the concept of "AI Search Optimization" (AEO) by tracking brand 
-        mentions using standard RAG models. However, <strong>AiVIS</strong> goes beyond tracking—it gives you 
+        mentions using standard RAG models. However, <strong>AiVIS</strong> goes beyond tracking-it gives you 
         the exact architectural fixes, JSON-LD schemas, and content structures required to rank 
         in AI Overviews, Perplexity, and ChatGPT. 
       </p>
@@ -82,6 +82,17 @@ export default function CompareOtterlyPage() {
         <Link to="/" className="inline-flex items-center font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700">
           Run your free audit now <ArrowRight className="ml-1 w-4 h-4" />
         </Link>
+      </section>
+
+      <section className="mt-8">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/80 mb-4">Compare AiVIS with other tools</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/compare/ahrefs" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Ahrefs</Link>
+          <Link to="/compare/semrush" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Semrush</Link>
+          <Link to="/compare/rankscale" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs RankScale</Link>
+          <Link to="/compare/profound" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Profound</Link>
+          <Link to="/compare/reaudit" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Reaudit</Link>
+        </div>
       </section>
     </div>
   );

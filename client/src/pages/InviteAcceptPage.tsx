@@ -11,7 +11,7 @@ export default function InviteAcceptPage() {
   const navigate = useNavigate();
   const { user, token: accessToken } = useAuthStore();
 
-  // Derive initial state synchronously — avoids setState inside effect
+  // Derive initial state synchronously - avoids setState inside effect
   const initialState = useMemo<'loading' | 'error' | 'auth_required'>(() => {
     if (!token) return 'error';
     if (!user || !accessToken) return 'auth_required';
@@ -46,7 +46,7 @@ export default function InviteAcceptPage() {
         }
       } catch {
         setState('error');
-        setErrorMsg('Network error — please try again');
+        setErrorMsg('Network error - please try again');
       }
     };
 

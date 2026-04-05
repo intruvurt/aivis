@@ -1,5 +1,5 @@
 // server/src/services/webSearch.ts
-// DuckDuckGo HTML + Bing web search — completely free, no API keys required.
+// DuckDuckGo HTML + Bing web search - completely free, no API keys required.
 // Scrapes DDG HTML lite and Bing search with realistic browser headers.
 
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
@@ -114,7 +114,7 @@ function parseDDGHtmlResults(html: string): Array<{ title: string; snippet: stri
 
 /**
  * Query DuckDuckGo HTML search and check if a brand/URL appears in results.
- * Completely free — no API key, no signup.
+ * Completely free - no API key, no signup.
  * Drop-in replacement for the old checkBraveSearchPresence().
  */
 export async function checkWebSearchPresence(
@@ -282,7 +282,7 @@ function parseBingHtmlResults(html: string): Array<{ title: string; snippet: str
 
 /**
  * Query Bing web search and check if a brand/URL appears in results.
- * Completely free — no API key, scrapes bing.com/search HTML.
+ * Completely free - no API key, scrapes bing.com/search HTML.
  */
 export async function checkBingSearchPresence(
   query: string,
@@ -399,7 +399,7 @@ function emptyBingResult(): WebSearchPresenceResult {
 }
 
 /**
- * Raw Bing HTML scrape — returns parsed {title, snippet, href}[] without
+ * Raw Bing HTML scrape - returns parsed {title, snippet, href}[] without
  * any brand-matching logic. Used as fallback for authority checks when DDG
  * is rate-limited.
  */
@@ -435,7 +435,7 @@ export async function scrapeBingRaw(
 }
 
 /**
- * Raw DuckDuckGo HTML scrape — returns parsed {title, snippet, href}[] without
+ * Raw DuckDuckGo HTML scrape - returns parsed {title, snippet, href}[] without
  * any brand-matching logic. Mirrors scrapeBingRaw() interface.
  */
 export async function scrapeDDGRaw(
@@ -518,7 +518,7 @@ function parseBraveHtmlResults(html: string): Array<{ title: string; snippet: st
 
 /**
  * Query Brave Search and check if a brand/URL appears in results.
- * Completely free — no API key, scrapes search.brave.com HTML.
+ * Completely free - no API key, scrapes search.brave.com HTML.
  */
 export async function checkBraveSearchPresence(
   query: string,

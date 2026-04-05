@@ -114,7 +114,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   // Category grades (max 6)
   const categories = (result.category_grades || []).slice(0, 6);
 
-  // Build issue rows — prefer evidence_fix_plan, fall back to recommendations
+  // Build issue rows - prefer evidence_fix_plan, fall back to recommendations
   const issueRows: Array<{
     id: string;
     severity: string;
@@ -152,7 +152,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   // Metrics row
   const metricCards = [
     { label: "Schema Types", value: String(schemaCount), hint: schemaCount > 0 ? "detected" : "none found" },
-    { label: "Word Count", value: contentWordCount > 0 ? contentWordCount.toLocaleString() : "—", hint: contentWordCount >= 800 ? "sufficient depth" : contentWordCount > 0 ? "thin content" : "not measured" },
+    { label: "Word Count", value: contentWordCount > 0 ? contentWordCount.toLocaleString() : "-", hint: contentWordCount >= 800 ? "sufficient depth" : contentWordCount > 0 ? "thin content" : "not measured" },
     { label: "Issues Found", value: String(issueRows.length), hint: "visibility blockers" },
     { label: "HTTPS / Canonical", value: hasHttps ? "Enabled" : "Missing", hint: hasCanonical ? "Canonical ✓" : "No canonical" },
   ];
@@ -183,7 +183,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
       {/* ═══════ MAIN CONTENT ═══════ */}
       <main className="min-w-0 overflow-y-auto space-y-6 pb-8">
 
-        {/* 1. HEADER STRIP — not a card */}
+        {/* 1. HEADER STRIP - not a card */}
         <section className="flex items-start justify-between gap-6">
           <div className="min-w-0">
             <div className="mb-1 flex items-center gap-2">
@@ -225,7 +225,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
         </section>
 
-        {/* 2. SCORE BLOCK — one big card, left-aligned */}
+        {/* 2. SCORE BLOCK - one big card, left-aligned */}
         <section className="rounded-[22px] border border-white/10 bg-white/[0.04] p-6">
           <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-6">
             <div className="flex flex-col justify-center">
@@ -250,7 +250,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
         </section>
 
-        {/* 3. METRICS ROW — 4 cards inline */}
+        {/* 3. METRICS ROW - 4 cards inline */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {metricCards.map((card) => (
             <div key={card.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
@@ -261,7 +261,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           ))}
         </section>
 
-        {/* 4. CATEGORY GRID — up to 6 cards, 3 cols */}
+        {/* 4. CATEGORY GRID - up to 6 cards, 3 cols */}
         {categories.length > 0 && (
           <section>
             <div className="mb-4 flex items-center justify-between">
@@ -294,7 +294,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {/* Threat intelligence banner */}
         {result.threat_intel && <ThreatIntelBanner data={result.threat_intel} />}
 
-        {/* 5. PRIORITY ISSUES — TABLE rows */}
+        {/* 5. PRIORITY ISSUES - TABLE rows */}
         <section className="rounded-[22px] border border-white/10 bg-white/[0.04]">
           <div className="border-b border-white/10 px-5 py-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight text-white">Priority Issues</h2>
@@ -445,7 +445,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         </CollapsibleSection>
       </main>
 
-      {/* ═══════ RIGHT PANEL — fix/context rail ═══════ */}
+      {/* ═══════ RIGHT PANEL - fix/context rail ═══════ */}
       <aside className="hidden xl:flex h-full flex-col border-l border-white/10 bg-[#0a1220] px-5 py-6 sticky top-0 self-start max-h-screen overflow-y-auto">
 
         {result.audit_id && hasAlignment && (
@@ -457,11 +457,11 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {/* 1. Fix impact */}
         <div className="mb-6">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/30">Fix Opportunity</div>
-          <div className="mt-2 text-3xl font-semibold text-emerald-300">{totalLift > 0 ? `+${totalLift} pts` : "—"}</div>
+          <div className="mt-2 text-3xl font-semibold text-emerald-300">{totalLift > 0 ? `+${totalLift} pts` : "-"}</div>
           <div className="mt-1 text-sm text-white/42">{totalLift > 0 ? `Available from ${Math.min(issueRows.length, 5)} safe changes` : "No estimated lift data"}</div>
         </div>
 
-        {/* 2. Fix flow — detect → plan → PR → verify */}
+        {/* 2. Fix flow - detect → plan → PR → verify */}
         <div className="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs">
           <div className="flex flex-col items-center gap-1 text-cyan-300"><CheckCircle2 className="h-4 w-4" /><span>Scan</span></div>
           <div className="h-px flex-1 bg-white/10" />
@@ -472,7 +472,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           <div className="flex flex-col items-center gap-1 text-white/40"><CheckCircle2 className="h-4 w-4" /><span>Re-scan</span></div>
         </div>
 
-        {/* 3. Active fix card — top priority */}
+        {/* 3. Active fix card - top priority */}
         {topFix && (
           <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 mb-5">
             <div className="mb-2 flex items-center gap-2">
@@ -531,7 +531,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                           <p className="text-cyan-100/80">{fix.fix}</p>
                         </>
                       ) : (
-                        <p>{fix.description || "No auto-fix available — manual review recommended."}</p>
+                        <p>{fix.description || "No auto-fix available - manual review recommended."}</p>
                       )}
                     </div>
                   )}
@@ -575,7 +575,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
           <div className="mb-3 text-sm font-semibold text-white">Verdict</div>
           <p className="text-sm text-white/65 mb-3">
-            Score <strong className="text-white">{result.visibility_score}/100</strong> — {level.label}.{" "}
+            Score <strong className="text-white">{result.visibility_score}/100</strong> - {level.label}.{" "}
             Citation readiness: <strong className="text-white">{result.visibility_score >= 70 ? "Moderate" : "Weak"}</strong>.
           </p>
           {issueRows.length > 0 && (

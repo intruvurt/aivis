@@ -1,5 +1,5 @@
 /**
- * Rule Engine — 30 deterministic rules across 9 scoring families.
+ * Rule Engine - 30 deterministic rules across 9 scoring families.
  *
  * Each rule inspects evidence items from the ledger and emits:
  *   passed, severity, score_impact, hard_blocker, evidence_ids, remediation_key
@@ -608,7 +608,7 @@ const RULES: RuleDef[] = [
     weight: 3,
     remediationKey: 'resolve_contradictions',
     evaluate: () => {
-      // This rule is evaluated specially — passed = no contradictions found
+      // This rule is evaluated specially - passed = no contradictions found
       // The pipeline will override this based on the contradiction count
       return { passed: true, keys: [] };
     },
@@ -664,7 +664,7 @@ export function computeScore(ruleResults: RuleResult[]): ScoreSnapshot {
     trust: 0,
   };
 
-  // Compute per-family scores — start at max weight, subtract failures
+  // Compute per-family scores - start at max weight, subtract failures
   const families = Object.keys(FAMILY_WEIGHT) as RuleFamily[];
   for (const family of families) {
     const maxWeight = FAMILY_WEIGHT[family];

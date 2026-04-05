@@ -108,7 +108,7 @@ export const authService = {
   resetPassword(token: string, newPassword: string) {
     return request<any>('/api/auth/reset-password/confirm', {
       method: 'POST',
-      // Server expects { token, password } — map correctly
+      // Server expects { token, password } - map correctly
       body: JSON.stringify({ token, password: newPassword }),
     });
   },
@@ -128,7 +128,7 @@ export const authService = {
       if (res.status === 404) return { valid: true }; // endpoint not deployed yet
       return { valid: false };
     } catch {
-      // Network error — let user try submitting the form anyway
+      // Network error - let user try submitting the form anyway
       return { valid: true };
     }
   },

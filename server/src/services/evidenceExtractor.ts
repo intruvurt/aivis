@@ -1,5 +1,5 @@
 /**
- * evidenceExtractor.ts — Extracts structured SSFR evidence items from
+ * evidenceExtractor.ts - Extracts structured SSFR evidence items from
  * scraper output + AI analysis result.
  *
  * Maps raw crawl data to Source/Signal/Fact/Relationship evidence items
@@ -222,7 +222,7 @@ export function extractEvidenceFromScrape(scrape: ScrapeResult): SSFREvidenceIte
 }
 
 /**
- * Enrich evidence with AI analysis output — adds fact/relationship items
+ * Enrich evidence with AI analysis output - adds fact/relationship items
  * that can only be determined after the AI pipeline runs.
  */
 export function enrichEvidenceFromAnalysis(

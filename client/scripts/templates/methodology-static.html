@@ -203,7 +203,7 @@
     <p class="page-label">Methodology</p>
     <h1>How AiVIS scores AI visibility</h1>
     <p class="page-summary">
-      AiVIS measures whether answer engines — ChatGPT, Perplexity, Gemini, and Claude — can
+      AiVIS measures whether answer engines - ChatGPT, Perplexity, Gemini, and Claude - can
       parse, trust, and cite a page with confidence. Every score is grounded in observable page
       evidence, not heuristics or black-box models. This document explains the full scoring
       framework, dimension weights, validation pipeline, and the BRAG trail protocol that
@@ -234,7 +234,7 @@
 
   <p>
     Each dimension score is computed independently before weighting. A page that scores 90 on
-    content depth but 0 on schema still achieves only a composite of roughly 52 — illustrating
+    content depth but 0 on schema still achieves only a composite of roughly 52 - illustrating
     why one-dimensional optimization consistently underperforms balanced improvements.
   </p>
 
@@ -289,34 +289,34 @@
   <h2>Score tiers and citation readiness</h2>
   <p>
     AiVIS maps composite scores to five citation readiness tiers. These thresholds reflect
-    observed behavior across Perplexity, ChatGPT Browse, and Google AI Overviews — not
+    observed behavior across Perplexity, ChatGPT Browse, and Google AI Overviews - not
     theoretical ideals. Pages below 50 face structural extraction barriers that content
     improvements alone cannot resolve.
   </p>
 
   <div style="margin: 1.5rem 0 2rem;">
     <div class="tier-row">
-      <span class="tier-badge tier-a">A — Elite</span>
+      <span class="tier-badge tier-a">A - Elite</span>
       <span class="tier-desc">Consistently cited across answer engines. Strong entity clarity, complete schema, extractable answer blocks.</span>
       <span class="tier-range">85–100</span>
     </div>
     <div class="tier-row">
-      <span class="tier-badge tier-b">B — Ready</span>
+      <span class="tier-badge tier-b">B - Ready</span>
       <span class="tier-desc">Citation-ready for most queries. Minor gaps in schema relationships or content depth. Competes well.</span>
       <span class="tier-range">70–84</span>
     </div>
     <div class="tier-row">
-      <span class="tier-badge tier-c">C — Partial</span>
+      <span class="tier-badge tier-c">C - Partial</span>
       <span class="tier-desc">Parseable but deprioritized. Cited only on low-competition queries or when competitors are weaker.</span>
       <span class="tier-range">50–69</span>
     </div>
     <div class="tier-row">
-      <span class="tier-badge tier-d">D — Blocked</span>
+      <span class="tier-badge tier-d">D - Blocked</span>
       <span class="tier-desc">Structural barriers present. Answer engines can reach the page but extraction confidence is low.</span>
       <span class="tier-range">30–49</span>
     </div>
     <div class="tier-row">
-      <span class="tier-badge tier-f">F — Invisible</span>
+      <span class="tier-badge tier-f">F - Invisible</span>
       <span class="tier-desc">Critical failures across multiple dimensions. Not practically citable in current state.</span>
       <span class="tier-range">0–29</span>
     </div>
@@ -326,7 +326,7 @@
   <p>
     BRAG is AiVIS's internal evidence chain standard. Every finding in an AiVIS audit report
     must pass a four-step BRAG verification before it is surfaced as a recommendation. This
-    prevents generic advice — the kind that applies to every site and helps none of them — from
+    prevents generic advice - the kind that applies to every site and helps none of them - from
     appearing alongside evidence-grounded findings.
   </p>
 
@@ -364,8 +364,8 @@
   <h2>Validation pipeline</h2>
   <p>
     AiVIS audits run through a multi-stage validation pipeline before scores are finalized.
-    The pipeline is designed to distinguish high-confidence findings — those grounded in
-    directly observable page structure — from advisory findings that reflect best practice
+    The pipeline is designed to distinguish high-confidence findings - those grounded in
+    directly observable page structure - from advisory findings that reflect best practice
     patterns but cannot be verified by crawl alone.
   </p>
 
@@ -373,8 +373,8 @@
     <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>Crawl and extraction</strong><span>The target URL is fetched and rendered. HTML structure, JSON-LD blocks, meta fields, heading hierarchy, internal link topology, and raw text content are extracted and stored as the crawl baseline for this scan.</span></div></div>
     <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>Dimension scoring</strong><span>Each of the six dimensions is scored independently against the extracted fields. Scoring is deterministic: the same page input produces the same dimension scores across re-runs, enabling reliable before/after comparison.</span></div></div>
     <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>Evidence mapping</strong><span>Low-scoring dimension items are mapped to specific crawl evidence. A heading structure score of 30 references the exact H1 and H2 fields observed, not a generic statement about heading importance.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>AI model validation (paid tiers)</strong><span>Eligible tiers include a secondary pass where an AI critique model reviews content against the observed dimension scores. This surfaces advisory findings — issues the crawl can detect but cannot fully evaluate, such as whether a FAQ answer is factually complete or merely present.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">5</div><div class="step-content"><strong>Confidence classification</strong><span>Each finding is classified as high-confidence (directly crawl-observable), medium-confidence (pattern-based), or advisory (model-evaluated). Teams should prioritize high-confidence findings first — these have the most predictable score impact.</span></div></div>
+    <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>AI model validation (paid tiers)</strong><span>Eligible tiers include a secondary pass where an AI critique model reviews content against the observed dimension scores. This surfaces advisory findings - issues the crawl can detect but cannot fully evaluate, such as whether a FAQ answer is factually complete or merely present.</span></div></div>
+    <div class="pipeline-step"><div class="step-num">5</div><div class="step-content"><strong>Confidence classification</strong><span>Each finding is classified as high-confidence (directly crawl-observable), medium-confidence (pattern-based), or advisory (model-evaluated). Teams should prioritize high-confidence findings first - these have the most predictable score impact.</span></div></div>
     <div class="pipeline-step"><div class="step-num">6</div><div class="step-content"><strong>Score storage and baseline commit</strong><span>The composite score, dimension scores, and finding set are committed to the report history store. All future audits on the same URL compare delta against this committed baseline.</span></div></div>
   </div>
 
@@ -383,7 +383,7 @@
     A single audit is a diagnostic, not a solution. AiVIS is designed for iterative improvement
     cycles where teams fix a cluster of related findings, re-audit, and measure category-level
     delta rather than overall score movement alone. Overall score can mask improvement in one
-    dimension while another degrades — category tracking prevents this.
+    dimension while another degrades - category tracking prevents this.
   </p>
 
   <div class="loop-block">
@@ -426,7 +426,7 @@
 
   <p>
     <strong>Passage extraction second.</strong> The model scans for short, self-contained
-    answer units — sentences or paragraphs that fully answer a question without requiring
+    answer units - sentences or paragraphs that fully answer a question without requiring
     surrounding context. This is why direct answer blocks and FAQ-style sections outperform
     long narrative content in citation selection even when the narrative is higher quality.
   </p>

@@ -155,7 +155,7 @@ export default function ReferralsPage() {
 
   const handleEmailInvite = () => {
     if (!inviteLink || !summary) return;
-    const subject = encodeURIComponent('Try AiVIS — AI Evidence-backed Visibility Audit Platform');
+    const subject = encodeURIComponent('Try AiVIS - AI Evidence-backed Visibility Audit Platform');
     const body = encodeURIComponent(
       `I've been using AiVIS to audit how AI sees websites.\n\nSign up with my referral link and we both earn ${summary.constants.creditsToReferred} bonus scan credits:\n${inviteLink}\n\nIt scores your site for machine readability, structured data, and citation readiness across ChatGPT, Perplexity, Claude and Google AI.`
     );
@@ -292,7 +292,7 @@ export default function ReferralsPage() {
                           <m.icon className="h-3.5 w-3.5" />
                           <span className="text-[11px] font-bold">{m.label}</span>
                         </div>
-                        <p className="text-[10px] mt-1 opacity-75">{m.threshold} referrals — {m.reward}</p>
+                        <p className="text-[10px] mt-1 opacity-75">{m.threshold} referrals - {m.reward}</p>
                       </div>
                     );
                   })}

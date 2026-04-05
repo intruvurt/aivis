@@ -9,9 +9,9 @@ AI Visibility Engine is a monorepo with a React client, an Express API server, a
 
 ### Repository structure
 
-- `client/` — Vite + React 19 + Tailwind frontend
-- `server/` — Express 5 + TypeScript backend
-- `shared/` — shared types, enums, tier definitions, helper contracts
+- `client/` - Vite + React 19 + Tailwind frontend
+- `server/` - Express 5 + TypeScript backend
+- `shared/` - shared types, enums, tier definitions, helper contracts
 
 ### Core request flow
 
@@ -30,8 +30,8 @@ POST /api/analyze
 
 ### Primary entry points
 
-* `client/src/main.tsx` — app bootstrap and router mounting
-* `server/src/server.ts` — Express app bootstrap and route registration
+* `client/src/main.tsx` - app bootstrap and router mounting
+* `server/src/server.ts` - Express app bootstrap and route registration
 
 ---
 
@@ -147,8 +147,8 @@ AI provider orchestration lives in:
 
 This module exports:
 
-* `PROVIDERS` — paid fallback chain
-* `FREE_PROVIDERS` — free-tier fallback chain
+* `PROVIDERS` - paid fallback chain
+* `FREE_PROVIDERS` - free-tier fallback chain
 * `SIGNAL_AI1`
 * `SIGNAL_AI2`
 * `SIGNAL_AI3`
@@ -218,9 +218,9 @@ Target cost:
 
 Pipeline:
 
-1. **AI1** — primary analysis
-2. **AI2** — peer critique
-3. **AI3** — validation gate
+1. **AI1** - primary analysis
+2. **AI2** - peer critique
+3. **AI3** - validation gate
 
 Current intended routing:
 
@@ -243,7 +243,7 @@ Signal-exclusive requirements:
 
 ### Score Fix [AutoPR]
 
-Automated GitHub PR remediation tier via MCP. Not a subscription — users pay $299 per 250-credit pack and must repurchase when credits are exhausted. Each automated PR costs 10-25 credits depending on fix complexity.
+Automated GitHub PR remediation tier via MCP. Not a subscription - users pay $299 per 250-credit pack and must repurchase when credits are exhausted. Each automated PR costs 10-25 credits depending on fix complexity.
 
 Target cost:
 
@@ -418,9 +418,9 @@ Never expose private report internals by simply sharing internal audit IDs.
 
 ### Required server environment variables
 
-* `DATABASE_URL` — Postgres connection string
-* `JWT_SECRET` — JWT signing secret
-* `OPENROUTER_API_KEY` or `OPEN_ROUTER_API_KEY` — provider auth
+* `DATABASE_URL` - Postgres connection string
+* `JWT_SECRET` - JWT signing secret
+* `OPENROUTER_API_KEY` or `OPEN_ROUTER_API_KEY` - provider auth
 
 ### Optional server environment variables
 
@@ -433,8 +433,8 @@ Never expose private report internals by simply sharing internal audit IDs.
 
 Inside `client/.env`
 
-* `VITE_API_URL` — backend base URL
-* `VITE_SENTRY_DSN` — frontend error reporting
+* `VITE_API_URL` - backend base URL
+* `VITE_SENTRY_DSN` - frontend error reporting
 
 ---
 

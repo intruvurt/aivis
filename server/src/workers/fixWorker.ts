@@ -1,5 +1,5 @@
 /**
- * Fix Worker — BullMQ worker that generates patches for audit issues.
+ * Fix Worker - BullMQ worker that generates patches for audit issues.
  * Reads the issue from DB, generates a fix plan, then enqueues a PR job.
  */
 import { Worker } from 'bullmq';
@@ -35,7 +35,7 @@ async function processFixJob(data: FixJobData): Promise<void> {
   const project = projectRows[0];
 
   if (!project.repo_owner || !project.repo_name || !project.repo_installation_id) {
-    // Mark fix as failed — no repo connected
+    // Mark fix as failed - no repo connected
     await pool.query(
       `UPDATE v1_fixes SET status = 'failed', updated_at = NOW() WHERE id = (
          SELECT id FROM v1_fixes WHERE issue_id = $1 ORDER BY created_at DESC LIMIT 1
@@ -141,7 +141,7 @@ ${issue.evidence_message || 'See audit report for details.'}
 export function startFixWorker(): void {
   const connection = getBullMQConnection();
   if (!connection) {
-    console.log('[FixWorker] Redis not configured — fix worker disabled');
+    console.log('[FixWorker] Redis not configured - fix worker disabled');
     return;
   }
   if (workerInstance) return;

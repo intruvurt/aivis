@@ -121,7 +121,7 @@ export default function RobotsCheckerPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/8 via-transparent to-transparent" />
           <div className="relative text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-4 py-1.5 text-sm text-cyan-300 mb-6">
-              Free Tool — No Account Required
+              Free Tool - No Account Required
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               AI Crawler<br />

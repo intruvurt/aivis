@@ -266,7 +266,7 @@ export default function Dashboard() {
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-white">{priorityPages[0].url || "Untitled"}</p>
-              <p className="mt-1 text-sm text-white/60">Score: {priorityPages[0].overallScore ?? "—"} — lowest in your recent audits</p>
+              <p className="mt-1 text-sm text-white/60">Score: {priorityPages[0].overallScore ?? "-"} - lowest in your recent audits</p>
             </div>
             <div className="flex flex-wrap gap-3">
               {priorityPages[0]._id && (
@@ -314,7 +314,7 @@ export default function Dashboard() {
             {recentScans.map((audit) => {
               const id = audit._id || audit.id || "";
               const color = audit.url ? domainColor(audit.url) : DOMAIN_COLORS[0];
-              const host = audit.url ? domainLabel(audit.url) : "—";
+              const host = audit.url ? domainLabel(audit.url) : "-";
               const reportUrl = id ? `${window.location.origin}/audit/${id}` : "";
               const score = audit.overallScore;
 
@@ -428,8 +428,8 @@ export default function Dashboard() {
                         {audit.status || "pending"}
                       </span>
                     </td>
-                    <td className="px-4 py-4">{typeof audit.overallScore === "number" ? audit.overallScore : "—"}</td>
-                    <td className="px-4 py-4 text-white/58">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "—"}</td>
+                    <td className="px-4 py-4">{typeof audit.overallScore === "number" ? audit.overallScore : "-"}</td>
+                    <td className="px-4 py-4 text-white/58">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "-"}</td>
                     <td className="px-4 py-4">
                       {audit._id ? (
                         <Link to={`/audit/${audit._id}`} className="inline-flex items-center gap-1 text-sm font-medium text-cyan-200 transition hover:text-white">

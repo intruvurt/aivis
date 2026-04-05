@@ -1,5 +1,5 @@
 /**
- * Visibility Timeline Service — Level 4 Self-Healing System
+ * Visibility Timeline Service - Level 4 Self-Healing System
  * Stores and retrieves the audit score time series with fix-event overlays.
  *
  * Table: audit_score_timeline

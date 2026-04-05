@@ -40,7 +40,7 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
       });
     }
 
-    // Enforce email verification — Resend is now wired up.
+    // Enforce email verification - Resend is now wired up.
     if (!user.is_verified) {
       logEmailUnverified(req, user.id, user.email);
       return res.status(403).json({

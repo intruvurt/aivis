@@ -66,13 +66,13 @@ async function hasConfirmedStripePayment(userId: string): Promise<boolean> {
 async function recoverTierFromPayments(userId: string): Promise<CanonicalTier | null> {
   const pool = getPool();
 
-  // Check if the user row has a stripe_subscription_id — look up the tier stored on the user
+  // Check if the user row has a stripe_subscription_id - look up the tier stored on the user
   const userRow = await pool.query(
     `SELECT tier, stripe_subscription_id FROM users WHERE id = $1`,
     [userId]
   );
   if (userRow.rows[0]?.stripe_subscription_id) {
-    // The user has a subscription id but their tier was set to observer — something went wrong.
+    // The user has a subscription id but their tier was set to observer - something went wrong.
     // Look up the most recent completed payment to find the actual tier.
   }
 
@@ -101,14 +101,14 @@ async function recoverTierFromPayments(userId: string): Promise<CanonicalTier | 
 export async function resolveEffectiveTier(user: UserLike): Promise<CanonicalTier> {
   const normalizedTier = normalizeTier(user.tier);
 
-  // Allowlist bypass — always trust elevated accounts
+  // Allowlist bypass - always trust elevated accounts
   const email = normalizeEmail(user.email);
   const allowlistedEmails = getAllowlistedElevatedEmails();
   if (email && allowlistedEmails.has(email)) {
     return normalizedTier;
   }
 
-  // Check active trial — if user has a trial_ends_at in the future, honour the tier
+  // Check active trial - if user has a trial_ends_at in the future, honour the tier
   const trialTier = await getActiveTrialTier(String(user.id));
   if (trialTier) {
     return trialTier;
@@ -141,17 +141,17 @@ async function getActiveTrialTier(userId: string): Promise<CanonicalTier | null>
 
   const trialEnd = new Date(row.trial_ends_at);
   if (trialEnd > new Date()) {
-    // Trial is still active — return the tier the user has
+    // Trial is still active - return the tier the user has
     const tier = normalizeTier(row.tier);
     return tier !== OBSERVER_TIER ? tier : null;
   }
 
-  // Trial has expired — check if they've since made a real payment
+  // Trial has expired - check if they've since made a real payment
   const paid = await hasConfirmedStripePayment(userId);
   if (paid) return null; // Let the normal paid-tier path handle it
 
   // No payment after trial expired → downgrade to observer
-  console.log(`[EntitlementGuard] Trial expired for user ${userId} — downgrading to observer`);
+  console.log(`[EntitlementGuard] Trial expired for user ${userId} - downgrading to observer`);
   await pool.query(
     `UPDATE users
      SET tier = 'observer', trial_ends_at = NULL, updated_at = NOW()

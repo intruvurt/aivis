@@ -26,7 +26,7 @@ function generateTicketNumber(): string {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* POST /api/support/tickets — Create a new ticket                           */
+/* POST /api/support/tickets - Create a new ticket                           */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function createTicket(req: Request, res: Response) {
   try {
@@ -92,7 +92,7 @@ export async function createTicket(req: Request, res: Response) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* GET /api/support/tickets — List user's tickets                            */
+/* GET /api/support/tickets - List user's tickets                            */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function listTickets(req: Request, res: Response) {
   try {
@@ -134,7 +134,7 @@ export async function listTickets(req: Request, res: Response) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* GET /api/support/tickets/:id — Get single ticket with messages            */
+/* GET /api/support/tickets/:id - Get single ticket with messages            */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function getTicket(req: Request, res: Response) {
   try {
@@ -168,7 +168,7 @@ export async function getTicket(req: Request, res: Response) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* POST /api/support/tickets/:id/reply — Add message to ticket               */
+/* POST /api/support/tickets/:id/reply - Add message to ticket               */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function replyToTicket(req: Request, res: Response) {
   try {
@@ -221,7 +221,7 @@ export async function replyToTicket(req: Request, res: Response) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* PATCH /api/support/tickets/:id/close — Close a ticket                     */
+/* PATCH /api/support/tickets/:id/close - Close a ticket                     */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function closeTicket(req: Request, res: Response) {
   try {

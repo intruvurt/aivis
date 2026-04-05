@@ -6,9 +6,9 @@
  * OAuth avist_* access token.
  *
  * Routes:
- *   GET  /api/mcp           — Server metadata and capabilities
- *   GET  /api/mcp/tools     — List available tools
- *   POST /api/mcp/call      — Execute a tool
+ *   GET  /api/mcp           - Server metadata and capabilities
+ *   GET  /api/mcp/tools     - List available tools
+ *   POST /api/mcp/call      - Execute a tool
  */
 import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
@@ -42,7 +42,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
       const isTierBlocked = result.reason === 'tier_blocked';
       return res.status(isTierBlocked ? 403 : 401).json({ error: isTierBlocked ? 'MCP Server requires Signal or higher plan.' : 'Invalid API key', code: result.reason });
     }
-    // Signal+ gate — MCP tooling is a Signal-tier capability
+    // Signal+ gate - MCP tooling is a Signal-tier capability
     const { rows: tierRows } = await pool.query(`SELECT tier FROM users WHERE id = $1`, [result.userId]);
     if (!meetsMinimumTier((tierRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier, 'signal')) {
       return res.status(403).json({ error: 'MCP Server requires Signal or higher plan.' });
@@ -63,7 +63,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
     if (!rows.length || rows[0].revoked || new Date(rows[0].expires_at) < new Date()) {
       return res.status(401).json({ error: 'Invalid or expired OAuth token' });
     }
-    // Enforce tier gate on OAuth token path — same check as API key validation
+    // Enforce tier gate on OAuth token path - same check as API key validation
     const { rows: userRows } = await pool.query(
       `SELECT tier FROM users WHERE id = $1`, [rows[0].user_id]
     );
@@ -87,7 +87,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
     return next();
   }
 
-  // JWT path — allows the in-app MCP Console (which sends the session JWT)
+  // JWT path - allows the in-app MCP Console (which sends the session JWT)
   try {
     const decoded = verifyUserToken(token);
     const user = await getUserById(decoded.userId);
@@ -250,7 +250,7 @@ const executors: Record<string, ToolExecutor> = {
       [auditId, userId, workspaceId, normalized.url, 'queued', goal || null, JSON.stringify(platform_focus || [])],
     );
 
-    // Fire off background processing (don't await — return immediately)
+    // Fire off background processing (don't await - return immediately)
     processQueuedAudit(auditId, userId, workspaceId, normalized.url).catch((err) => {
       console.error(`[mcp] Background audit ${auditId} failed:`, err?.message);
     });
@@ -431,7 +431,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'aivis',
     version: '1.0.0',
-    description: 'AiVIS AI Visibility Engine — audit, evidence, analytics, and competitor tools for AI agents.',
+    description: 'AiVIS AI Visibility Engine - audit, evidence, analytics, and competitor tools for AI agents.',
     protocol: 'mcp-http-v1',
     auth: ['Bearer avis_* (API key)', 'Bearer avist_* (OAuth token)'],
     endpoints: {
@@ -1047,11 +1047,11 @@ router.get('/methodology', async (_req: Request, res: Response) => {
     },
     score_range: { min: 0, max: 100 },
     interpretation: {
-      '0-30': 'Poor — unlikely to be extracted or cited by AI engines',
-      '31-55': 'Below average — missing key structural elements',
-      '56-75': 'Average — meets basic requirements but has optimization opportunities',
-      '76-90': 'Good — well-structured for AI extraction',
-      '91-100': 'Excellent — fully optimized for AI visibility and citation',
+      '0-30': 'Poor - unlikely to be extracted or cited by AI engines',
+      '31-55': 'Below average - missing key structural elements',
+      '56-75': 'Average - meets basic requirements but has optimization opportunities',
+      '76-90': 'Good - well-structured for AI extraction',
+      '91-100': 'Excellent - fully optimized for AI visibility and citation',
     },
   }));
 });

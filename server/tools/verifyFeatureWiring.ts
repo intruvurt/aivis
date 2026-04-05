@@ -105,7 +105,7 @@ async function main() {
     if (check.ok) {
       console.log(`✅ ${check.name}`);
     } else {
-      console.error(`❌ ${check.name}${check.details ? ` — ${check.details}` : ''}`);
+      console.error(`❌ ${check.name}${check.details ? ` - ${check.details}` : ''}`);
     }
   }
 

@@ -80,7 +80,7 @@ function normalizeAuditTargetKey(input: string): string {
 function shortenSiteTitle(input: string): string {
   const raw = String(input || '').replace(/\s+/g, ' ').trim();
   if (!raw) return '';
-  const [short] = raw.split(/\s[|\-–—•]\s|\| | - | – | — | • /).filter(Boolean);
+  const [short] = raw.split(/\s[|\-–-•]\s|\| | - | – | - | • /).filter(Boolean);
   return String(short || raw).trim().slice(0, 80);
 }
 
@@ -126,7 +126,7 @@ async function fetchPageBrandSignals(targetUrl: string): Promise<PageBrandSignal
 
     const title = stripHtml(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] || '').trim();
 
-    // og:site_name — attribute order may vary
+    // og:site_name - attribute order may vary
     const ogSiteName = (
       html.match(/<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
       html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:site_name["']/i)?.[1] ||
@@ -345,7 +345,7 @@ function deriveSearchPhrases(input: {
   const candidates = [input.target, title, headline, description, ...headings]
     .map((item) => String(item || '').replace(/\s+/g, ' ').trim())
     .filter(Boolean)
-    .map((item) => item.replace(/[|•·–—]+/g, ' ').trim());
+    .map((item) => item.replace(/[|•·–-]+/g, ' ').trim());
 
   const phrases: string[] = [];
   const seen = new Set<string>();
@@ -558,7 +558,7 @@ interface BrandContext {
   domainLabel: string | null;
   /** All valid name forms: exact, uppercase, full expansion, title segments */
   nameVariants: string[];
-  /** Niche/context keywords extracted from title, description, schema — what the brand DOES */
+  /** Niche/context keywords extracted from title, description, schema - what the brand DOES */
   nicheKeywords: string[];
   /** Whether the brand name requires strict (case-sensitive) matching */
   strictMatch: boolean;
@@ -576,7 +576,7 @@ function buildBrandContext(
   if (mode === 'url' && domain) {
     primaryName = brandSignals.schemaOrgName || brandSignals.ogSiteName || '';
     if (!primaryName) {
-      const titleBrand = brandSignals.title.split(/[-|–—·•:]/)[0].trim();
+      const titleBrand = brandSignals.title.split(/[-|–-·•:]/)[0].trim();
       if (titleBrand && titleBrand.length >= 2 && titleBrand.length < 50) {
         primaryName = titleBrand;
       } else {
@@ -606,7 +606,7 @@ function buildBrandContext(
   }
   // Title segments (e.g. "AI Visibility Intelligence Audits" from "AiVIS - AI Visibility Intelligence Audits")
   if (brandSignals.title) {
-    const parts = brandSignals.title.split(/[-|–—·•:]/).map(p => p.trim()).filter(Boolean);
+    const parts = brandSignals.title.split(/[-|–-·•:]/).map(p => p.trim()).filter(Boolean);
     for (const part of parts) {
       if (part.length >= 10 && part.length <= 80) nameVariants.push(part);
     }
@@ -687,7 +687,7 @@ function scoreBrandRelevance(
   const hrefLower = result.href.toLowerCase();
   let score = 0;
 
-  // ─── Signal 1: Domain in URL or text (strong — confirms identity) ──
+  // ─── Signal 1: Domain in URL or text (strong - confirms identity) ──
   if (ctx.domain) {
     if (hrefLower.includes(ctx.domain)) score += 5;
     else if (blobLower.includes(ctx.domain)) score += 4;
@@ -730,7 +730,7 @@ function scoreBrandRelevance(
 
   // ─── Signal 5: Niche keyword overlap ───────────────────────────────
   // If the result mentions terms related to what the brand actually does,
-  // it's more likely about the right entity — critical for disambiguation.
+  // it's more likely about the right entity - critical for disambiguation.
   if (ctx.nicheKeywords.length > 0) {
     let nicheHits = 0;
     for (const kw of ctx.nicheKeywords) {
@@ -745,7 +745,7 @@ function scoreBrandRelevance(
   // ─── Signal 6: Person-name heuristic (negative) ────────────────────
   // If a result title looks like "Firstname Lastname - Platform", it's
   // likely a personal profile, not a product mention.
-  const personProfilePattern = /^#?\d*\s*[A-Z][a-zāčēģīķļņšūž]+\s+[A-Z][a-zāčēģīķļņšūž]+\s*[-–—]\s*(Facebook|LinkedIn|Twitter|Instagram)/i;
+  const personProfilePattern = /^#?\d*\s*[A-Z][a-zāčēģīķļņšūž]+\s+[A-Z][a-zāčēģīķļņšūž]+\s*[-–-]\s*(Facebook|LinkedIn|Twitter|Instagram)/i;
   if (personProfilePattern.test(result.title.trim())) score -= 2;
 
   return score;
@@ -760,7 +760,7 @@ function isBrandRelevantResult(
   const isOnOwnDomain = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
   if (isOnOwnDomain) return score >= 2;
   // Third-party sites with ambiguous/short brand names need stronger evidence:
-  // name-letter matching alone isn't enough — need niche context or domain proof
+  // name-letter matching alone isn't enough - need niche context or domain proof
   const threshold = ctx.strictMatch ? 4 : BRAND_RELEVANCE_THRESHOLD;
   return score >= threshold;
 }
@@ -1346,7 +1346,7 @@ export async function startCitationTest(req: Request, res: Response) {
       });
     }
 
-    // Tool credit gate — deducts credits if free monthly allowance exhausted
+    // Tool credit gate - deducts credits if free monthly allowance exhausted
     const gate = await gateToolAction(userId, 'citation_query', user.tier || 'observer');
     if (!gate.allowed) {
       return res.status(402).json({
@@ -2412,7 +2412,7 @@ export async function runNicheRankingHandler(req: Request, res: Response) {
   });
 
   if (!result) {
-    return res.status(503).json({ error: 'Niche ranking failed — all AI models unavailable' });
+    return res.status(503).json({ error: 'Niche ranking failed - all AI models unavailable' });
   }
 
   return res.json({ ranking: result });
@@ -2550,7 +2550,7 @@ export async function updateScheduledJobIntervalHandler(req: Request, res: Respo
 
 // ─── Citation Intelligence Handlers ──────────────────────────────────────────
 
-/** GET /citations/trend?url= — mention-rate sparkline history (alignment+) */
+/** GET /citations/trend?url= - mention-rate sparkline history (alignment+) */
 export async function getMentionTrendHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2564,7 +2564,7 @@ export async function getMentionTrendHandler(req: Request, res: Response) {
   return res.json({ trends });
 }
 
-/** GET /citations/competitor-share?url= — competitor citation share table (alignment+) */
+/** GET /citations/competitor-share?url= - competitor citation share table (alignment+) */
 export async function getCompetitorShareHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2578,7 +2578,7 @@ export async function getCompetitorShareHandler(req: Request, res: Response) {
   return res.json({ share });
 }
 
-/** GET /citations/consistency-matrix?url= — per-platform × per-query matrix (alignment+) */
+/** GET /citations/consistency-matrix?url= - per-platform × per-query matrix (alignment+) */
 export async function getConsistencyMatrixHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2591,7 +2591,7 @@ export async function getConsistencyMatrixHandler(req: Request, res: Response) {
   return res.json({ matrix });
 }
 
-/** GET /citations/drop-alerts?url= — citation drop alerts (signal) */
+/** GET /citations/drop-alerts?url= - citation drop alerts (signal) */
 export async function getDropAlertsHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2612,7 +2612,7 @@ export async function getDropAlertsHandler(req: Request, res: Response) {
   return res.json({ alerts: rows });
 }
 
-/** POST /citations/drop-alerts/:id/dismiss — dismiss an alert (signal) */
+/** POST /citations/drop-alerts/:id/dismiss - dismiss an alert (signal) */
 export async function dismissDropAlertHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2630,7 +2630,7 @@ export async function dismissDropAlertHandler(req: Request, res: Response) {
   return res.json({ ok: true });
 }
 
-/** GET /citations/co-occurrences?url= — stored unlinked brand mentions (signal) */
+/** GET /citations/co-occurrences?url= - stored unlinked brand mentions (signal) */
 export async function getCoOccurrencesHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
@@ -2643,7 +2643,7 @@ export async function getCoOccurrencesHandler(req: Request, res: Response) {
   return res.json({ occurrences });
 }
 
-/** POST /citations/co-occurrences — run a fresh co-occurrence scan (signal) */
+/** POST /citations/co-occurrences - run a fresh co-occurrence scan (signal) */
 export async function runCoOccurrenceCheckHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });

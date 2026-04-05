@@ -332,7 +332,7 @@ export default function TeamPage() {
 
   /* ── Render ─────────────────────────────── */
 
-  // Observer tier gate — personal workspace only
+  // Observer tier gate - personal workspace only
   if (!hasTeamAccess) {
     return (
       <div className="px-4 py-8">
@@ -442,7 +442,7 @@ export default function TeamPage() {
       {/* Active workspace details */}
       {ws && (
         <>
-          {/* Getting started — team purpose & onboarding */}
+          {/* Getting started - team purpose & onboarding */}
           {members.length <= 1 && (
             <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/8 to-violet-500/5 p-6">
               <h2 className="text-base font-semibold text-white mb-1">Get started with your team workspace</h2>
@@ -454,7 +454,7 @@ export default function TeamPage() {
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 text-sm font-bold flex-shrink-0">1</div>
                   <div>
                     <p className="text-sm font-medium text-white/90">Invite your team</p>
-                    <p className="text-xs text-white/45 mt-0.5">Add colleagues below — owners, admins, members, or viewers.</p>
+                    <p className="text-xs text-white/45 mt-0.5">Add colleagues below - owners, admins, members, or viewers.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-3 rounded-xl border border-white/8 bg-charcoal-light/30">
@@ -485,7 +485,7 @@ export default function TeamPage() {
             <div className="rounded-xl border border-white/8 bg-charcoal-light/30 p-4 flex flex-col gap-1">
               <span className="text-[11px] text-white/40 uppercase tracking-wider">Avg Score</span>
               <span className={`text-2xl font-bold ${teamStats.avgScore == null ? 'text-white/30' : teamStats.avgScore >= 70 ? 'text-emerald-300' : teamStats.avgScore >= 40 ? 'text-amber-300' : 'text-red-300'}`}>
-                {teamStats.avgScore != null ? teamStats.avgScore : '—'}
+                {teamStats.avgScore != null ? teamStats.avgScore : '-'}
               </span>
               <span className="text-[11px] text-white/30">visibility score</span>
             </div>
@@ -553,7 +553,7 @@ export default function TeamPage() {
             <div className="p-4 border-b border-white/8 flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-violet-400" /> Members — {ws.workspaceName}
+                  <Shield className="w-4 h-4 text-violet-400" /> Members - {ws.workspaceName}
                 </h2>
                 <p className="text-xs text-white/40 mt-0.5">
                   {members.length}
@@ -758,7 +758,7 @@ export default function TeamPage() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-white truncate">{a.url}</p>
                       <p className="text-[11px] text-white/35 mt-0.5">
-                        by {a.author_name || a.author_email || "—"} · {new Date(a.created_at).toLocaleDateString()}
+                        by {a.author_name || a.author_email || "-"} · {new Date(a.created_at).toLocaleDateString()}
                       </p>
                     </div>
                     {a.visibility_score != null && (

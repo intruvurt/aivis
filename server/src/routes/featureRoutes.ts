@@ -138,7 +138,7 @@ function ensureNotificationAdmin(req: Request, res: Response): boolean {
   return false;
 }
 
-// SSE stream — must be before router.use(authRequired) because EventSource
+// SSE stream - must be before router.use(authRequired) because EventSource
 // cannot send custom headers.  Auth is validated inline from query param.
 router.get('/notifications/stream', async (req: Request, res: Response) => {
   const token = String(req.query.token || '').trim();
@@ -358,7 +358,7 @@ router.post('/private-exposure-scan', async (req: Request, res: Response) => {
     if (!meetsMinimumTier(userTier, 'alignment')) {
       return res.status(403).json({
         success: false,
-        error: 'Private Exposure Scan requires an Alignment, Signal, or ScoreFix plan.',
+        error: 'Private Exposure Scan requires an Alignment, Signal, or scorefix plan.',
         code: 'TIER_INSUFFICIENT',
         requiredTier: 'alignment',
       });
@@ -1237,7 +1237,7 @@ router.post('/exports/report-pdf-session', enforceFeature('export'), async (req:
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PDF EXPORT — server-side Puppeteer rendering (real .pdf file download)
+// PDF EXPORT - server-side Puppeteer rendering (real .pdf file download)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 router.post('/exports/generate-pdf', enforceFeature('export'), async (req: Request, res: Response) => {
@@ -1247,7 +1247,7 @@ router.post('/exports/generate-pdf', enforceFeature('export'), async (req: Reque
     return res.status(400).json({ success: false, error: 'html is required' });
   }
 
-  // Gate branded exports to Signal/Scorefix and deduct credit (same as pdf-session)
+  // Gate branded exports to Signal/scorefix and deduct credit (same as pdf-session)
   if (branded) {
     const tier = uiTierFromCanonical((req.user?.tier as any) || 'observer');
     if (!TIER_LIMITS[tier].hasWhiteLabel) {

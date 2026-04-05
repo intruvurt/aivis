@@ -1,5 +1,5 @@
 /**
- * PR Worker — BullMQ worker that creates GitHub pull requests from generated fixes.
+ * PR Worker - BullMQ worker that creates GitHub pull requests from generated fixes.
  * Uses the GitHub App service for authenticated PR creation.
  */
 import { Worker } from 'bullmq';
@@ -51,7 +51,7 @@ async function processPRJob(data: PRJobData): Promise<void> {
 export function startPRWorker(): void {
   const connection = getBullMQConnection();
   if (!connection) {
-    console.log('[PRWorker] Redis not configured — PR worker disabled');
+    console.log('[PRWorker] Redis not configured - PR worker disabled');
     return;
   }
   if (workerInstance) return;

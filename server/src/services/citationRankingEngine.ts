@@ -90,9 +90,9 @@ function buildTop50Prompt(niche: string, keywords: string[]): string {
 
 RULES:
 - Rank from #1 to #${TOP_LIST_LIMIT}
-- Use only the real brand or product name — no descriptions
+- Use only the real brand or product name - no descriptions
 - Format: one per line as "RANK. BRAND_NAME"
-- Include real SaaS, companies, tools, and platforms only — no placeholders
+- Include real SaaS, companies, tools, and platforms only - no placeholders
 - If the niche has fewer than ${TOP_LIST_LIMIT} notable entities, list all you can find
 - Do not include commentary before or after the list
 
@@ -510,7 +510,7 @@ export async function runNicheRanking(input: RankingEngineInput): Promise<NicheR
   const { targetUrl, brandName, niche, nicheKeywords, apiKey, userId, scheduledJobId } = input;
 
   if (!brandName || !niche) {
-    console.warn('[NicheRanking] Missing brandName or niche — skipping');
+    console.warn('[NicheRanking] Missing brandName or niche - skipping');
     return null;
   }
 

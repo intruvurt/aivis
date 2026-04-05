@@ -1,5 +1,5 @@
 /**
- * BrandingProvider — White-label CSS variable injection for Agency / Enterprise.
+ * BrandingProvider - White-label CSS variable injection for Agency / Enterprise.
  *
  * Fetches the active workspace's branding on mount and injects CSS custom
  * properties onto `document.documentElement` so any component can consume
@@ -97,7 +97,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
       setBranding(b);
       injectBrandVars(b);
     } catch {
-      // silent — branding is cosmetic, never block the app
+      // silent - branding is cosmetic, never block the app
     } finally {
       setIsLoading(false);
     }

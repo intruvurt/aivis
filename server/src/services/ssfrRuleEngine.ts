@@ -1,5 +1,5 @@
 /**
- * ssfrRuleEngine.ts — Deterministic rule evaluation engine for
+ * ssfrRuleEngine.ts - Deterministic rule evaluation engine for
  * Source-Signal-Fact-Relationship audit dimensions.
  *
  * Rules are evaluated against extracted evidence items.

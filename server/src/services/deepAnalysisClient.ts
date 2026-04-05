@@ -1,5 +1,5 @@
 /**
- * Deep Analysis Client — calls the Python FastAPI microservice.
+ * Deep Analysis Client - calls the Python FastAPI microservice.
  *
  * The Python service provides NLP-powered content analysis,
  * cryptographic evidence ledger, enhanced document parsing,

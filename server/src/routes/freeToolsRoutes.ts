@@ -2,11 +2,11 @@
  * Free Tools API Routes
  *
  * Public endpoints (no auth required) for AI visibility tools.
- * Zero AI-model cost — all analysis is deterministic HTML/header parsing.
+ * Zero AI-model cost - all analysis is deterministic HTML/header parsing.
  *
- * POST /api/tools/schema-validator       — Structured data check for AI citation-readiness
- * POST /api/tools/robots-checker         — AI crawler access audit (GPTBot, ClaudeBot, etc.)
- * POST /api/tools/content-extractability  — Content structure grading for AI answer extraction
+ * POST /api/tools/schema-validator       - Structured data check for AI citation-readiness
+ * POST /api/tools/robots-checker         - AI crawler access audit (GPTBot, ClaudeBot, etc.)
+ * POST /api/tools/content-extractability  - Content structure grading for AI answer extraction
  */
 import { Router, Request, Response } from 'express';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
@@ -143,16 +143,16 @@ router.post('/schema-validator', async (req: Request, res: Response) => {
 
     const issues: string[] = [];
     const validationErrors: string[] = [];
-    if (jsonLdBlocks.length === 0) issues.push('No JSON-LD structured data found — AI models cannot extract rich entities');
-    if (!ogTags['og:title']) issues.push('Missing og:title — social and AI previews will lack a headline');
-    if (!ogTags['og:description']) issues.push('Missing og:description — AI may generate inaccurate summaries');
-    if (!ogTags['og:image']) issues.push('Missing og:image — no visual preview for shared content');
-    if (!metaDescription) issues.push('No meta description — AI models use this as primary summary source');
-    if (!canonical) issues.push('Missing canonical URL — can fragment cache identity across AI models');
-    if (!hasFAQ && !hasHowTo) issues.push('No FAQ or HowTo schema — missing direct answer extraction signals');
-    if (!hasArticle && !hasWebPage) issues.push('No Article/WebPage schema — authorship and date signals absent');
-    if (!hasOrg && !hasPerson) issues.push('No Organization/Person schema — entity resolution signals missing');
-    if (!hasBreadcrumb) issues.push('No BreadcrumbList schema — navigation context missing for AI');
+    if (jsonLdBlocks.length === 0) issues.push('No JSON-LD structured data found - AI models cannot extract rich entities');
+    if (!ogTags['og:title']) issues.push('Missing og:title - social and AI previews will lack a headline');
+    if (!ogTags['og:description']) issues.push('Missing og:description - AI may generate inaccurate summaries');
+    if (!ogTags['og:image']) issues.push('Missing og:image - no visual preview for shared content');
+    if (!metaDescription) issues.push('No meta description - AI models use this as primary summary source');
+    if (!canonical) issues.push('Missing canonical URL - can fragment cache identity across AI models');
+    if (!hasFAQ && !hasHowTo) issues.push('No FAQ or HowTo schema - missing direct answer extraction signals');
+    if (!hasArticle && !hasWebPage) issues.push('No Article/WebPage schema - authorship and date signals absent');
+    if (!hasOrg && !hasPerson) issues.push('No Organization/Person schema - entity resolution signals missing');
+    if (!hasBreadcrumb) issues.push('No BreadcrumbList schema - navigation context missing for AI');
 
     // Schema validation errors (things Google Search Console flags)
     for (const s of schemas) {
@@ -160,7 +160,7 @@ router.post('/schema-validator', async (req: Request, res: Response) => {
       // Review: itemReviewed must have explicit @type
       if (/review/i.test(sType) && s.itemReviewed) {
         if (typeof s.itemReviewed === 'object' && !s.itemReviewed['@type']) {
-          validationErrors.push('Review.itemReviewed missing @type — Google requires explicit type, not just @id reference');
+          validationErrors.push('Review.itemReviewed missing @type - Google requires explicit type, not just @id reference');
         }
       }
       // Article: author should have @type or @id
@@ -351,16 +351,16 @@ router.post('/robots-checker', async (req: Request, res: Response) => {
     score = Math.max(0, Math.min(100, score));
 
     const issues: string[] = [];
-    if (!robotsFound) issues.push('No robots.txt found — crawlers may make aggressive assumptions');
+    if (!robotsFound) issues.push('No robots.txt found - crawlers may make aggressive assumptions');
     for (const bot of botResults) {
       if (bot.status === 'blocked' && bot.critical) {
-        issues.push(`${bot.name} (${bot.owner}) is BLOCKED — this AI platform cannot access your content`);
+        issues.push(`${bot.name} (${bot.owner}) is BLOCKED - this AI platform cannot access your content`);
       }
     }
-    if (metaNoindex) issues.push('Meta robots contains "noindex" — search engines and AI will skip this page');
-    if (headerNoindex) issues.push('X-Robots-Tag contains "noindex" — HTTP header blocks indexing');
-    if (metaNofollow) issues.push('Meta robots contains "nofollow" — link signals are being suppressed');
-    if (headerNofollow) issues.push('X-Robots-Tag contains "nofollow" — link following blocked via header');
+    if (metaNoindex) issues.push('Meta robots contains "noindex" - search engines and AI will skip this page');
+    if (headerNoindex) issues.push('X-Robots-Tag contains "noindex" - HTTP header blocks indexing');
+    if (metaNofollow) issues.push('Meta robots contains "nofollow" - link signals are being suppressed');
+    if (headerNofollow) issues.push('X-Robots-Tag contains "nofollow" - link following blocked via header');
 
     return res.json({
       success: true,
@@ -479,15 +479,15 @@ router.post('/content-extractability', async (req: Request, res: Response) => {
     const totalScore = Math.min(100, hierarchyScore + contentScore);
 
     const issues: string[] = [];
-    if (h1s.length === 0) issues.push('No H1 heading — AI models rely on this as the primary topic signal');
-    if (h1s.length > 1) issues.push(`Multiple H1 headings (${h1s.length}) — dilutes primary topic signal for AI models`);
-    if (h2s.length === 0) issues.push('No H2 headings — page lacks section structure for AI extraction');
-    if (wordCount < 300) issues.push(`Low word count (${wordCount}) — insufficient content depth for AI answer extraction`);
-    if (paragraphs.length < 3) issues.push('Few substantive paragraphs — AI needs clear text blocks to extract answers');
-    if (totalLists === 0) issues.push('No lists found — structured lists improve AI extraction accuracy');
-    if (answerBlocks === 0) issues.push('No answer-sized content blocks — AI prefers 25-200 word self-contained passages');
-    if (faqPatterns === 0) issues.push('No FAQ/question patterns detected — missing direct answer extraction opportunities');
-    if (avgSentenceWords > 30) issues.push(`Long average sentence length (${avgSentenceWords} words) — shorter sentences improve AI comprehension`);
+    if (h1s.length === 0) issues.push('No H1 heading - AI models rely on this as the primary topic signal');
+    if (h1s.length > 1) issues.push(`Multiple H1 headings (${h1s.length}) - dilutes primary topic signal for AI models`);
+    if (h2s.length === 0) issues.push('No H2 headings - page lacks section structure for AI extraction');
+    if (wordCount < 300) issues.push(`Low word count (${wordCount}) - insufficient content depth for AI answer extraction`);
+    if (paragraphs.length < 3) issues.push('Few substantive paragraphs - AI needs clear text blocks to extract answers');
+    if (totalLists === 0) issues.push('No lists found - structured lists improve AI extraction accuracy');
+    if (answerBlocks === 0) issues.push('No answer-sized content blocks - AI prefers 25-200 word self-contained passages');
+    if (faqPatterns === 0) issues.push('No FAQ/question patterns detected - missing direct answer extraction opportunities');
+    if (avgSentenceWords > 30) issues.push(`Long average sentence length (${avgSentenceWords} words) - shorter sentences improve AI comprehension`);
 
     return res.json({
       success: true,

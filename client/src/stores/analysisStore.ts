@@ -19,7 +19,7 @@ interface AnalysisState {
    * Local-only client history (persisted to localStorage).
    *
    * Use for: instant trend preview, re-run convenience, local exports, recent audit UX.
-   * NOT canonical server truth — persistent/account-scoped history comes from
+   * NOT canonical server truth - persistent/account-scoped history comes from
    * /api/audits and /api/analytics. When merging with server data, server snapshots
    * win on collision (dedupe by normalized target + timestamp).
    */

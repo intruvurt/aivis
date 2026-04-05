@@ -115,7 +115,7 @@ export default function ContentExtractabilityPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-amber-600/8 via-transparent to-transparent" />
           <div className="relative text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-4 py-1.5 text-sm text-amber-300 mb-6">
-              Free Tool — No Account Required
+              Free Tool - No Account Required
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Content<br />

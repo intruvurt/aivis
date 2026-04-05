@@ -1,5 +1,5 @@
 /**
- * Partnership Agreement Service — dual-party signing, tamper-lock, PDF generation, email delivery.
+ * Partnership Agreement Service - dual-party signing, tamper-lock, PDF generation, email delivery.
  *
  * Flow:
  *   1. Agreement created with terms + party info → SHA-256 content hash stored
@@ -7,7 +7,7 @@
  *   3. After both sign → agreement locked (locked_hash = SHA-256 of all fields)
  *   4. PDF generated server-side and emailed to both parties via Resend
  *   5. Agreement valid for 1 year after lock
- *   6. No edits allowed after lock — any tampering breaks the hash
+ *   6. No edits allowed after lock - any tampering breaks the hash
  */
 
 import crypto from 'crypto';
@@ -206,12 +206,12 @@ export async function verifyIntegrity(slug: string): Promise<{ valid: boolean; r
 
   const expectedHash = hashContent(buildLockPayload(agreement));
   if (expectedHash !== agreement.locked_hash) {
-    return { valid: false, reason: 'TAMPER DETECTED — lock hash does not match stored fields.' };
+    return { valid: false, reason: 'TAMPER DETECTED - lock hash does not match stored fields.' };
   }
 
   const termsHash = hashContent(agreement.terms_html);
   if (termsHash !== agreement.terms_hash) {
-    return { valid: false, reason: 'TAMPER DETECTED — terms content has been modified after creation.' };
+    return { valid: false, reason: 'TAMPER DETECTED - terms content has been modified after creation.' };
   }
 
   if (agreement.valid_until && new Date(agreement.valid_until) < new Date()) {
@@ -259,8 +259,8 @@ export function generateAgreementHtml(agreement: AgreementRow): string {
   <p><strong>Agreement ID:</strong> ${escapeHtml(agreement.id)}</p>
   <p><strong>Executed:</strong> ${lockDate}</p>
   <p><strong>Valid until:</strong> ${validUntil}</p>
-  <p><strong>Party A:</strong> ${escapeHtml(agreement.party_a_name)} (${escapeHtml(agreement.party_a_org ?? '')}) — ${escapeHtml(agreement.party_a_email)}</p>
-  <p><strong>Party B:</strong> ${escapeHtml(agreement.party_b_name)} (${escapeHtml(agreement.party_b_org ?? '')}) — ${escapeHtml(agreement.party_b_email)}</p>
+  <p><strong>Party A:</strong> ${escapeHtml(agreement.party_a_name)} (${escapeHtml(agreement.party_a_org ?? '')}) - ${escapeHtml(agreement.party_a_email)}</p>
+  <p><strong>Party B:</strong> ${escapeHtml(agreement.party_b_name)} (${escapeHtml(agreement.party_b_org ?? '')}) - ${escapeHtml(agreement.party_b_email)}</p>
 </div>
 
 ${agreement.terms_html}
@@ -288,7 +288,7 @@ ${agreement.terms_html}
 </div>
 
 <div class="footer">
-  <p>AiVIS Partnership Agreement — Generated ${new Date().toISOString()}</p>
+  <p>AiVIS Partnership Agreement - Generated ${new Date().toISOString()}</p>
   <p>This document is a machine-verifiable signed copy. Verify integrity at https://aivis.biz/partnership-terms/${escapeHtml(agreement.slug)}</p>
 </div>
 </body>

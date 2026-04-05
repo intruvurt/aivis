@@ -16,11 +16,11 @@ services:
       - key: PUPPETEER_SKIP_DOWNLOAD
         value: "true"
       # REQUIRED: Set to your deployed frontend URL (e.g. https://aivis.biz)
-      # Used for CORS — server exits(1) in production without this.
+      # Used for CORS - server exits(1) in production without this.
       - key: FRONTEND_URL
         sync: false
       # ── Crypto Intelligence (blockchain scanning) ──────────────────────────
-      # Set these in the Render dashboard — never hardcode secrets in this file.
+      # Set these in the Render dashboard - never hardcode secrets in this file.
       - key: INFURA_API_KEY
         sync: false
       - key: ALCHEMY_API_KEY

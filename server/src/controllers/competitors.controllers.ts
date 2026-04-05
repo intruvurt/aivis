@@ -192,7 +192,7 @@ export async function createCompetitor(req: Request, res: Response) {
     }
 
     // Insert competitor
-    // Insert competitor — monitoring defaults to OFF; user must explicitly enable it.
+    // Insert competitor - monitoring defaults to OFF; user must explicitly enable it.
     const { rows: created } = await pool.query(
       `INSERT INTO competitor_tracking (user_id, competitor_url, nickname, monitoring_enabled)
        VALUES ($1, $2, $3, FALSE)
@@ -385,7 +385,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
           const label = st.replace(/([a-z])([A-Z])/g, '$1 $2'); // camelCase → spaced
           pushOpportunity(
             `Add ${label} Schema`,
-            `Competitor uses ${label} structured data — helps AI platforms parse your content`,
+            `Competitor uses ${label} structured data - helps AI platforms parse your content`,
             '+3-8 points estimated',
             nick,
           );
@@ -419,7 +419,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (compH2 > yourH2Count && compH2 - yourH2Count >= 3) {
         pushOpportunity(
           'Improve Heading Structure',
-          `Competitor uses ${compH2} H2 sections vs your ${yourH2Count} — helps AI extract key topics`,
+          `Competitor uses ${compH2} H2 sections vs your ${yourH2Count} - helps AI extract key topics`,
           '+3-6 points estimated',
           nick,
         );
@@ -430,7 +430,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (compFaq > yourFaqCount && yourFaqCount < 3) {
         pushOpportunity(
           'Add FAQ Content Blocks',
-          `Competitor has ${compFaq} FAQ entries — FAQ content improves direct-answer eligibility`,
+          `Competitor has ${compFaq} FAQ entries - FAQ content improves direct-answer eligibility`,
           '+4-8 points estimated',
           nick,
         );
@@ -440,7 +440,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (ca.content_analysis?.has_meta_description && !yourHasMetaDesc) {
         pushOpportunity(
           'Add Meta Description',
-          'Competitor has a meta description — crucial for AI snippet selection',
+          'Competitor has a meta description - crucial for AI snippet selection',
           '+2-5 points estimated',
           nick,
         );
@@ -450,7 +450,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (ca.technical_signals?.has_canonical && !yourHasCanonical) {
         pushOpportunity(
           'Add Canonical Tag',
-          'Competitor uses canonical URLs — prevents duplicate content confusion for AI crawlers',
+          'Competitor uses canonical URLs - prevents duplicate content confusion for AI crawlers',
           '+2-4 points estimated',
           nick,
         );
@@ -460,7 +460,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (ca.technical_signals?.has_viewport_meta && !yourHasViewport) {
         pushOpportunity(
           'Add Viewport Meta Tag',
-          'Competitor is mobile-optimized — mobile-friendliness signals improve AI trust',
+          'Competitor is mobile-optimized - mobile-friendliness signals improve AI trust',
           '+1-3 points estimated',
           nick,
         );
@@ -472,7 +472,7 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       if (yourRT > 0 && compRT > 0 && yourRT > compRT * 2 && yourRT - compRT > 500) {
         pushOpportunity(
           'Improve Page Speed',
-          `Competitor loads in ~${compRT}ms vs your ~${yourRT}ms — faster sites rank higher in AI responses`,
+          `Competitor loads in ~${compRT}ms vs your ~${yourRT}ms - faster sites rank higher in AI responses`,
           '+2-5 points estimated',
           nick,
         );

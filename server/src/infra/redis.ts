@@ -41,7 +41,7 @@ if (redisInstance) {
   });
   redisInstance.on('end', () => {
     if (errorCount > 0) {
-      console.warn(`[Redis] gave up after ${errorCount} failed attempt(s) — running without Redis`);
+      console.warn(`[Redis] gave up after ${errorCount} failed attempt(s) - running without Redis`);
       redisInstance = null;
     }
   });
@@ -51,7 +51,7 @@ if (redisInstance) {
   });
   redisInstance.on('ready', () => {
     // BullMQ requires noeviction to prevent silent job loss under memory pressure.
-    // Only warn once — managed providers (Render, etc.) block CONFIG SET.
+    // Only warn once - managed providers (Render, etc.) block CONFIG SET.
     if (evictionCheckStarted || evictionWarned) return;
     evictionCheckStarted = true;
     redisInstance?.config('GET', 'maxmemory-policy').then((res) => {
@@ -59,19 +59,19 @@ if (redisInstance) {
       if (policy && policy !== 'noeviction' && !evictionWarned) {
         evictionWarned = true;
         console.warn(
-          `[Redis] Eviction policy is "${policy}" — should be "noeviction" for BullMQ safety. ` +
+          `[Redis] Eviction policy is "${policy}" - should be "noeviction" for BullMQ safety. ` +
           `Change it in your Redis provider dashboard (CONFIG SET is blocked on managed instances).`
         );
       }
     }).catch(() => { /* CONFIG command may be disabled on managed Redis */ });
   });
 } else {
-  console.log('[Redis] no REDIS_URL or REDIS_HOST configured — running without Redis');
+  console.log('[Redis] no REDIS_URL or REDIS_HOST configured - running without Redis');
 }
 
 /**
  * Backwards-compatible export. Consumers that import `redisConnection` directly
- * and call methods on it will get errors if Redis is unavailable — prefer `getRedis()`.
+ * and call methods on it will get errors if Redis is unavailable - prefer `getRedis()`.
  */
 export const redisConnection = redisInstance as Redis;
 

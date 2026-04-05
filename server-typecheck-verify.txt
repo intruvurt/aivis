@@ -108,7 +108,7 @@ src/server.ts(6521,71): error TS2339: Property 'error' does not exist on type '{
   Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
 src/server.ts(10271,36): error TS2339: Property 'error' does not exist on type 'NormalizePublicUrlResult'.
   Property 'error' does not exist on type '{ ok: true; url: string; hostname: string; }'.
-src/services/agentTaskService.ts(34,14): error TS2739: Type '{ observer: number; alignment: number; signal: number; scorefix: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
+src/services/agentTaskService.ts(34,14): error TS2739: Type '{ observer: number; alignment: number; signal: number; AutoFix PR: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
 src/services/audit/contentAnalysis.ts(93,77): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
 src/services/audit/contentAnalysis.ts(95,5): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
 src/services/audit/contentAnalysis.ts(98,5): error TS2353: Object literal may only specify known properties, and 'locator' does not exist in type 'Partial<AuditEvidence>'.
@@ -137,7 +137,7 @@ src/services/citationTester.ts(759,5): error TS2353: Object literal may only spe
 src/services/engines/citationEngine.ts(226,7): error TS2322: Type '"success"' is not assignable to type '"ok" | "failed"'.
 src/services/engines/citationEngine.ts(231,9): error TS2322: Type 'CitableSection[]' is not assignable to type 'string[]'.
   Type 'CitableSection' is not assignable to type 'string'.
-src/services/engines/engineComposer.ts(53,9): error TS2739: Type '{ observer: number; alignment: number; signal: number; scorefix: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
+src/services/engines/engineComposer.ts(53,9): error TS2739: Type '{ observer: number; alignment: number; signal: number; AutoFix PR: number; }' is missing the following properties from type 'Record<CanonicalTier, number>': agency, enterprise
 src/services/engines/engineComposer.ts(240,63): error TS2339: Property 'variance_issues' does not exist on type 'unknown'.
 src/services/engines/engineComposer.ts(245,65): error TS2339: Property 'consistency_ratio' does not exist on type 'unknown'.
 src/services/engines/engineComposer.ts(469,26): error TS2339: Property 'interpretability' does not exist on type 'Partial<AuditScoreBreakdown>'.

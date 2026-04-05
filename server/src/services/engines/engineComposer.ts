@@ -426,7 +426,7 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
   );
 
   // ========================================================================
-  // PHASE: Repair Intelligence (Scorefix)
+  // PHASE: Repair Intelligence (scorefix)
   // ========================================================================
   if (engineAccess.hasRepair) {
     const allRecommendations = dedupeStrings([

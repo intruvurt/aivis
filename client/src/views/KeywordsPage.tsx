@@ -784,7 +784,7 @@ export default function KeywordsPage() {
                                 </span>
                               )
                             ) : (
-                              <span className="text-xs text-white/25">—</span>
+                              <span className="text-xs text-white/25">-</span>
                             )}
                           </td>
                         )}

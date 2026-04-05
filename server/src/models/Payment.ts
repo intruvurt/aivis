@@ -172,7 +172,7 @@ const PaymentModel = {
   create: createPayment,
   findOne: findLatestCompletedPaymentByUser,         // context-specific, see controller
   findOneAndUpdate: (filter: any, update: any) => {
-    // Dispatches based on filter shape — covers all cases in paymentController
+    // Dispatches based on filter shape - covers all cases in paymentController
     if (filter.stripeSessionId) {
       return updatePaymentBySessionId(filter.stripeSessionId, _mapCamelToSnake(update));
     }

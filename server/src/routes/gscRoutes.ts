@@ -31,9 +31,9 @@ import {
 
 const router = Router();
 
-// ── OAuth routes (no tier gate — user must auth first to connect) ──
+// ── OAuth routes (no tier gate - user must auth first to connect) ──
 
-// GET /api/integrations/gsc/oauth/start — redirect user to Google consent
+// GET /api/integrations/gsc/oauth/start - redirect user to Google consent
 router.get('/oauth/start', authRequired, (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -46,7 +46,7 @@ router.get('/oauth/start', authRequired, (req: Request, res: Response) => {
   }
 });
 
-// GET /api/integrations/gsc/oauth/callback — Google redirects here with code
+// GET /api/integrations/gsc/oauth/callback - Google redirects here with code
 router.get('/oauth/callback', async (req: Request, res: Response) => {
   try {
     const { code, state, error } = req.query as Record<string, string | undefined>;
@@ -78,7 +78,7 @@ router.get('/oauth/callback', async (req: Request, res: Response) => {
     });
     console.log('[gsc-oauth] Connection upserted for user %s', userId);
 
-    // Sync properties — non-fatal: connection is already saved
+    // Sync properties - non-fatal: connection is already saved
     try {
       await syncPropertiesFromGoogle(userId);
       console.log('[gsc-oauth] Property sync complete');
@@ -112,11 +112,11 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 // ── Property management ──
 
-// GET /properties — list user's connected GSC properties
+// GET /properties - list user's connected GSC properties
 router.get('/properties', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
-    // Check for an active GSC connection first — return 404 if not connected
+    // Check for an active GSC connection first - return 404 if not connected
     const connection = await getActiveConnectionByUser(userId);
     if (!connection) {
       return res.status(404).json({ error: 'No GSC connection found', code: 'NOT_CONNECTED' });
@@ -129,7 +129,7 @@ router.get('/properties', async (req: Request, res: Response) => {
   }
 });
 
-// POST /properties/sync — re-sync properties from Google
+// POST /properties/sync - re-sync properties from Google
 router.post('/properties/sync', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -141,7 +141,7 @@ router.post('/properties/sync', async (req: Request, res: Response) => {
   }
 });
 
-// POST /properties/:id/select — set active property
+// POST /properties/:id/select - set active property
 router.post('/properties/:id/select', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -154,7 +154,7 @@ router.post('/properties/:id/select', async (req: Request, res: Response) => {
   }
 });
 
-// GET /properties/selected — get currently selected property
+// GET /properties/selected - get currently selected property
 router.get('/properties/selected', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -168,7 +168,7 @@ router.get('/properties/selected', async (req: Request, res: Response) => {
 
 // ── Snapshot management ──
 
-// POST /snapshot — capture current GSC data as a snapshot
+// POST /snapshot - capture current GSC data as a snapshot
 router.post('/snapshot', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -184,7 +184,7 @@ router.post('/snapshot', async (req: Request, res: Response) => {
   }
 });
 
-// GET /snapshot/status — get latest snapshot job status
+// GET /snapshot/status - get latest snapshot job status
 router.get('/snapshot/status', async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id as string;
@@ -202,7 +202,7 @@ router.get('/snapshot/status', async (req: Request, res: Response) => {
 
 // ── AI planner ──
 
-// POST /plan — natural language → tool selection
+// POST /plan - natural language → tool selection
 router.post('/plan', (req: Request, res: Response) => {
   try {
     const parsed = planInputSchema.safeParse(req.body);
@@ -219,7 +219,7 @@ router.post('/plan', (req: Request, res: Response) => {
 
 // ── Tool execution ──
 
-// POST /execute — run a specific GSC tool
+// POST /execute - run a specific GSC tool
 router.post('/execute', async (req: Request, res: Response) => {
   try {
     const parsed = executeInputSchema.safeParse(req.body);

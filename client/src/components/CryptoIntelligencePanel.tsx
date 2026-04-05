@@ -65,7 +65,7 @@ function FeedbackNote() {
       <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
       <span>
         This feature is experimental and may see <strong>frequent updates</strong>. Your feedback is
-        welcome — results may vary, especially for on-chain enrichment, which depends on API availability.
+        welcome - results may vary, especially for on-chain enrichment, which depends on API availability.
       </span>
     </div>
   );
@@ -146,7 +146,7 @@ function OnchainCard({ item }: { item: NonNullable<CryptoIntelligence["onchain_d
 const CryptoIntelligencePanel: React.FC<CryptoIntelligencePanelProps> = ({ data }) => {
   const [expanded, setExpanded] = useState(false);
 
-  // Always render — even if no signals, show the "not detected" summary
+  // Always render - even if no signals, show the "not detected" summary
   const hasCrypto  = data.has_crypto_signals;
   const hasOnchain = data.onchain_enriched && Array.isArray(data.onchain_data) && data.onchain_data.length > 0;
 
@@ -348,7 +348,7 @@ const CryptoIntelligencePanel: React.FC<CryptoIntelligencePanelProps> = ({ data 
           )}
         </>
       ) : (
-        /* No crypto signals — minimal view */
+        /* No crypto signals - minimal view */
         <div className="text-center py-4">
           <p className="text-sm text-white/60">
             No blockchain or cryptocurrency content was detected on this page.

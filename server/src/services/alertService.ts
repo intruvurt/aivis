@@ -1,11 +1,11 @@
 /**
- * Alert Service — Level 4 Self-Healing System
+ * Alert Service - Level 4 Self-Healing System
  * Fans alert notifications out to all channels configured by the user:
  *   email, slack, discord, webhook, in_app
  *
  * Tables:
- *   alert_subscriptions  — per-user channel configuration
- *   alert_notifications  — in-app notification log
+ *   alert_subscriptions  - per-user channel configuration
+ *   alert_notifications  - in-app notification log
  */
 
 import { getPool } from './postgresql.js';
@@ -134,7 +134,7 @@ async function dispatchEmail(toEmail: string, payload: AlertPayload): Promise<vo
   const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
 
   if (!RESEND_API_KEY.startsWith('re_')) {
-    console.log(`[AlertService] email fallback (no key): ${toEmail} — ${payload.title}`);
+    console.log(`[AlertService] email fallback (no key): ${toEmail} - ${payload.title}`);
     return;
   }
 
@@ -144,7 +144,7 @@ async function dispatchEmail(toEmail: string, payload: AlertPayload): Promise<vo
       <p style="color:#374151;line-height:1.6">${escapeHtml(payload.body)}</p>
       ${payload.metadata?.url ? `<p style="margin-top:16px"><a href="${escapeHtml(String(payload.metadata.url))}" style="color:#4f46e5">View Audit</a></p>` : ''}
       <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb">
-      <p style="color:#9ca3af;font-size:12px">AI Visibility Engine — disable or manage alerts from your dashboard settings.</p>
+      <p style="color:#9ca3af;font-size:12px">AI Visibility Engine - disable or manage alerts from your dashboard settings.</p>
     </div>
   `;
   const text = `${payload.title}\n\n${payload.body}`;
@@ -300,7 +300,7 @@ export async function sendAlert(userId: string, payload: AlertPayload): Promise<
 export async function sendTestAlert(channel: AlertChannel, channelConfig: Record<string, string>): Promise<void> {
   const payload: AlertPayload = {
     type: 'score_improvement',
-    title: 'AI Visibility Engine — Test Alert',
+    title: 'AI Visibility Engine - Test Alert',
     body: 'This is a test notification from AiVIS. Your alert channel is configured correctly.',
   };
 

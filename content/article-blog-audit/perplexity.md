@@ -39,7 +39,7 @@ This pass checks whether the article and the brand behind it are actually being 
 ### Entity clarity
 
 - Verify the primary entity (brand, product, person) is named clearly in the first paragraph with: its name, what it does, who it serves, and why it matters. [cxl](https://cxl.com/blog/answer-engine-optimization-aeo-the-comprehensive-guide/)
-- Confirm the entity name is used consistently throughout — no mid-article abbreviation switches, no ambiguous pronouns replacing the brand name.
+- Confirm the entity name is used consistently throughout - no mid-article abbreviation switches, no ambiguous pronouns replacing the brand name.
 - Check for strong co-occurrence: brand name, core topic, and supporting entities (platforms, competitors, concepts) should appear in proximity with clear semantic relationships.
 
 ### Authority signal inventory
@@ -84,10 +84,10 @@ Save these as browser bookmarks. Rerun weekly minimum. [ahrefs](https://ahrefs.c
 
 ### Free alert systems (no API keys needed)
 
-- **Google Alerts** — unlimited alerts for brand, domain, founder, product names, and competitors across news, blogs, and web. Email delivery. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
-- **Talkwalker Alerts** — similar coverage with a different index. Good as a backup source. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
-- **F5Bot** — free email alerts for keywords on Reddit, Hacker News, and Lobsters. [serpstat](https://serpstat.com/blog/top-5-tools-to-track-your-brand-mentions/)
-- **ForumScout** — free tier: 3 keyword alerts, ~100 mentions/month across forums, social, blogs, and news. 6-hourly updates, 14-day retention. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
+- **Google Alerts** - unlimited alerts for brand, domain, founder, product names, and competitors across news, blogs, and web. Email delivery. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
+- **Talkwalker Alerts** - similar coverage with a different index. Good as a backup source. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
+- **F5Bot** - free email alerts for keywords on Reddit, Hacker News, and Lobsters. [serpstat](https://serpstat.com/blog/top-5-tools-to-track-your-brand-mentions/)
+- **ForumScout** - free tier: 3 keyword alerts, ~100 mentions/month across forums, social, blogs, and news. 6-hourly updates, 14-day retention. [forumscout](https://forumscout.app/blog/free-social-listening-tools-for-your-brand-in-2024)
 
 ### Manual native platform searches
 

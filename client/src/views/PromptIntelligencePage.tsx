@@ -47,7 +47,7 @@ const VALUE_CARDS = [
 ];
 
 const WORKFLOW_STEPS = [
-  { step: 1, label: "Enter your URL", detail: "Paste any page URL — entities and keywords are extracted from your actual content." },
+  { step: 1, label: "Enter your URL", detail: "Paste any page URL - entities and keywords are extracted from your actual content." },
   { step: 2, label: "AI generates prompt variants", detail: "Prompt Intelligence builds realistic queries across informational, transactional, comparison, and problem-solving categories." },
   { step: 3, label: "Multi-platform execution", detail: "Each prompt variant runs across AI platforms to see which phrasing triggers your brand mention." },
   { step: 4, label: "Pattern analysis", detail: "See which prompt types surface you, which skip you, and which hand wins to competitors." },
@@ -77,7 +77,7 @@ export default function PromptIntelligencePage() {
   const latestResult = useAnalysisStore((s) => s.result);
 
   usePageMeta({
-    title: "Prompt Intelligence — AI Query Analysis",
+    title: "Prompt Intelligence - AI Query Analysis",
     description: "Understand how AI models interpret queries about your brand. Map prompt patterns to inclusion, exclusion, and competitor displacement outcomes.",
     path: "/prompt-intelligence",
   });
@@ -155,7 +155,7 @@ export default function PromptIntelligencePage() {
                     {i + 1}
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{t.tier} — {t.title}</p>
+                    <p className="text-white font-semibold">{t.tier} - {t.title}</p>
                     <p className="text-white/50 text-sm">{t.detail}</p>
                   </div>
                 </div>

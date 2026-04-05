@@ -1,4 +1,4 @@
-# AI Visibility Engine — Full Codebase Review (2026-04-02)
+# AI Visibility Engine - Full Codebase Review (2026-04-02)
 
 ## Scope and method
 
@@ -55,7 +55,7 @@ The codebase is feature-rich and clearly oriented around a strong server-authori
 
 ### 4) AI provider abstraction is practical
 
-`server/src/services/aiProviders.ts` separates free vs paid provider chains and models tier-specific triples (`SIGNAL_*`, `SCOREFIX_*`), including provider backoff memory to improve resilience.
+`server/src/services/aiProviders.ts` separates free vs paid provider chains and models tier-specific triples (`SIGNAL_*`, `scorefix_*`), including provider backoff memory to improve resilience.
 
 ### 5) Citation testing workflow is ambitious and modular
 
@@ -65,7 +65,7 @@ The codebase is feature-rich and clearly oriented around a strong server-authori
 
 ## Critical findings (priority ordered)
 
-## P0 — CI quality gate is effectively broken by lint volume
+## P0 - CI quality gate is effectively broken by lint volume
 
 `npm run lint` currently reports **741 issues (284 errors, 457 warnings)**. This means lint cannot serve as a practical protection layer and developers are incentivized to ignore it. High-volume categories include:
 
@@ -84,7 +84,7 @@ The codebase is feature-rich and clearly oriented around a strong server-authori
 
 ---
 
-## P1 — `server.ts` concentration risk
+## P1 - `server.ts` concentration risk
 
 `server/src/server.ts` has become a highly concentrated orchestration surface with broad imports and mixed concerns. While functionally central, its current size and responsibility density increase blast radius for edits.
 
@@ -98,7 +98,7 @@ The codebase is feature-rich and clearly oriented around a strong server-authori
 
 ---
 
-## P1 — URL safety logic split across modules may drift
+## P1 - URL safety logic split across modules may drift
 
 There is URL/private-host safety logic in `securityMiddleware.ts` and additional URL normalization/safety helpers referenced from `server.ts` (`lib/urlSafety`). The architecture is valid, but duplicated policy surfaces can diverge over time.
 
@@ -111,7 +111,7 @@ There is URL/private-host safety logic in `securityMiddleware.ts` and additional
 
 ---
 
-## P2 — AI model comments vs configuration may drift quickly
+## P2 - AI model comments vs configuration may drift quickly
 
 `aiProviders.ts` contains time-stamped model strategy comments and fixed model identifiers. This is good for intent tracking but can become stale quickly as providers deprecate or retag models.
 
@@ -125,7 +125,7 @@ There is URL/private-host safety logic in `securityMiddleware.ts` and additional
 
 ---
 
-## P2 — Citation simulation complexity requires contract tests
+## P2 - Citation simulation complexity requires contract tests
 
 `citationTester.ts` includes extensive prompt/system behavior and multiple candidate chains. This can regress quietly without focused contract tests for response shape and degraded-mode behavior.
 

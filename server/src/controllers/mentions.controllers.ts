@@ -40,7 +40,7 @@ export async function runMentionScan(req: Request, res: Response) {
 
     const result = await trackBrandMentions(cleanBrand, cleanDomain);
 
-    // Persist results (non-fatal — scan data is still returned even if persistence fails)
+    // Persist results (non-fatal - scan data is still returned even if persistence fails)
     let persisted = 0;
     if (result.mentions.length > 0) {
       try {

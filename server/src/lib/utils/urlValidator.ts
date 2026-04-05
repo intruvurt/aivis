@@ -30,7 +30,7 @@ export function validateAndNormalizeUrl(rawUrl: string): Stage1Result {
 
   let url;
   try {
-    // Normalize scheme to lowercase before parsing — handles Https://, HTTP://, etc.
+    // Normalize scheme to lowercase before parsing - handles Https://, HTTP://, etc.
     const schemeLowered = rawUrl.replace(
       /^([A-Za-z][A-Za-z0-9+.-]*):[\/]{2}/,
       (_: string, scheme: string) => scheme.toLowerCase() + '://'

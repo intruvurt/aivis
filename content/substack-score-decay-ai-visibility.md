@@ -3,7 +3,7 @@
 **Platform:** Substack  
 **Newsletter:** dobleduche / intruvurt  
 **Tags:** AI Visibility, Content Strategy, Site Monitoring, AEO, Citation Readiness  
-**Subtitle/Hook:** Your AI visibility score from 3 months ago means nothing today. Here's why scores decay — and how to stay ahead of it automatically.  
+**Subtitle/Hook:** Your AI visibility score from 3 months ago means nothing today. Here's why scores decay - and how to stay ahead of it automatically.  
 **Estimated read time:** 11 min  
 
 ---
@@ -12,7 +12,7 @@ There's a pattern I keep seeing that nobody talks about.
 
 A founder or marketing lead runs an AI visibility audit on their site. Score comes back at 74. Good score. They're satisfied. They send the report to their dev team, address a few of the flagged issues, and move on.
 
-Three months later, their brand stops appearing in AI-generated answers about their category. Their competitor — who launched 6 months ago with a worse site — is getting cited instead.
+Three months later, their brand stops appearing in AI-generated answers about their category. Their competitor - who launched 6 months ago with a worse site - is getting cited instead.
 
 They run the audit again. Score is now 51.
 
@@ -24,7 +24,7 @@ This is score decay. And it's one of the structural dynamics of AI visibility th
 
 ## What AI Visibility Actually Depends On (And Why It Changes)
 
-Your AI visibility score is not a static property of your website. It's a measure of your site's relationship with an external ecosystem that changes constantly — AI model behavior, competitor positioning, crawler access policies, schema validity, content freshness, and platform crawl frequency.
+Your AI visibility score is not a static property of your website. It's a measure of your site's relationship with an external ecosystem that changes constantly - AI model behavior, competitor positioning, crawler access policies, schema validity, content freshness, and platform crawl frequency.
 
 When that ecosystem shifts and your site doesn't, your effective visibility score degrades even if you change nothing.
 
@@ -34,7 +34,7 @@ Let me walk through the four main decay vectors.
 
 ## Decay Vector 1: Competitor Improvement
 
-Your score is partially relative. When AI models decide who to cite in a given answer, they're selecting from a pool of candidate sources. If your score is 74 and your closest competitor's score was 60 when you last checked — you were ahead. If that competitor's team spent the last quarter rebuilding their schema, fixing their heading hierarchy, adding FAQ sections, and unblocking AI crawlers — their score might now be 82.
+Your score is partially relative. When AI models decide who to cite in a given answer, they're selecting from a pool of candidate sources. If your score is 74 and your closest competitor's score was 60 when you last checked - you were ahead. If that competitor's team spent the last quarter rebuilding their schema, fixing their heading hierarchy, adding FAQ sections, and unblocking AI crawlers - their score might now be 82.
 
 You didn't get worse. They got better. But the citation outcome changed.
 
@@ -42,25 +42,25 @@ AI models don't cite based on absolute quality thresholds. They cite based on re
 
 This is why [AiVIS Competitor Tracking](https://aivis.biz/competitors) exists on Alignment tier and above. You need to know when your competitors' scores are changing, not just your own. Tracking your own score in isolation gives you half the picture.
 
-The feature runs automatic rescans on competitor URLs and alerts you when their visibility signals improve beyond a threshold. It detects new schema types they've added, content depth increases, crawler access changes, and structural improvements. If your competitor just added FAQPage schema to their top 3 landing pages, you want to know that this week — not in six months when you notice you've stopped showing up in answers.
+The feature runs automatic rescans on competitor URLs and alerts you when their visibility signals improve beyond a threshold. It detects new schema types they've added, content depth increases, crawler access changes, and structural improvements. If your competitor just added FAQPage schema to their top 3 landing pages, you want to know that this week - not in six months when you notice you've stopped showing up in answers.
 
 ---
 
 ## Decay Vector 2: Content Staleness
 
-AI models — particularly Perplexity, which does real-time web crawls — weight content freshness. A page with a publish date from 2021 and no significant updates is going to score lower on freshness signals than a page last modified two months ago, even if the content is otherwise identical.
+AI models - particularly Perplexity, which does real-time web crawls - weight content freshness. A page with a publish date from 2021 and no significant updates is going to score lower on freshness signals than a page last modified two months ago, even if the content is otherwise identical.
 
 This affects more than just publication dates. Crawler logs track how frequently your page changes. Sites that update regularly get crawled more frequently, which means their content is more likely to be in the real-time index when a query is processed.
 
 There are specific types of staleness that trigger score decay:
 
-**Statistical staleness** — If your page cites statistics ("X% of companies do Y") and those stats are from sources more than 2 years old, AI models doing source verification will flag the information as potentially outdated. This is especially damaging for YMYL categories (health, finance, legal, tech).
+**Statistical staleness** - If your page cites statistics ("X% of companies do Y") and those stats are from sources more than 2 years old, AI models doing source verification will flag the information as potentially outdated. This is especially damaging for YMYL categories (health, finance, legal, tech).
 
-**Competitive price/feature staleness** — Pages that compare product features or pricing are scored on citation frequency. If competitors have updated their feature sets and your comparison page wasn't updated, AI models will start preferring fresher competitor analysis pages over yours.
+**Competitive price/feature staleness** - Pages that compare product features or pricing are scored on citation frequency. If competitors have updated their feature sets and your comparison page wasn't updated, AI models will start preferring fresher competitor analysis pages over yours.
 
-**Author entity staleness** — If your author schema points to a LinkedIn profile or Twitter account that hasn't been active in a year, entity verification signals weaken. AI models trying to verify expertise will find a stale signal chain.
+**Author entity staleness** - If your author schema points to a LinkedIn profile or Twitter account that hasn't been active in a year, entity verification signals weaken. AI models trying to verify expertise will find a stale signal chain.
 
-**Internal link rot** — Every 404 or broken internal link on your site degrades your structural integrity score. Sites accumulate broken links gradually as pages get removed, URLs change, or subdomains get retired. An audit that showed 0 broken links a year ago might show 12 today.
+**Internal link rot** - Every 404 or broken internal link on your site degrades your structural integrity score. Sites accumulate broken links gradually as pages get removed, URLs change, or subdomains get retired. An audit that showed 0 broken links a year ago might show 12 today.
 
 ---
 
@@ -70,13 +70,13 @@ This one is invisible and surprisingly common.
 
 CDN providers, security tools, and hosting panels push automatic updates. Some of those updates include bot mitigation rules. Some of those bot mitigation rules catch AI crawlers as collateral damage.
 
-I've talked to founders who had GPTBot explicitly allowed in their robots.txt — and then Cloudflare pushed a new security ruleset that included a challenge page for unknown bot patterns. GPTBot hits the challenge page. Can't complete it. Returns an error. Gets marked as a site that returns 5xx errors on crawl. Disappears from OpenAI's index.
+I've talked to founders who had GPTBot explicitly allowed in their robots.txt - and then Cloudflare pushed a new security ruleset that included a challenge page for unknown bot patterns. GPTBot hits the challenge page. Can't complete it. Returns an error. Gets marked as a site that returns 5xx errors on crawl. Disappears from OpenAI's index.
 
 Their robots.txt still said allow. But the effective access changed under them without anyone touching their robots.txt.
 
-I've also seen Vercel deployments where a middleware rule added `noIndex` headers in production that shouldn't have been there — a config mistake from a staging environment that bled into production. Their sitemap showed hundreds of pages. Their crawlable index had 3.
+I've also seen Vercel deployments where a middleware rule added `noIndex` headers in production that shouldn't have been there - a config mistake from a staging environment that bled into production. Their sitemap showed hundreds of pages. Their crawlable index had 3.
 
-The only way to know your current effective crawler access — not what your robots.txt says, but what a crawler actually sees when it hits your domain — is to test it. [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) pings your domain as each AI crawler and reports on the actual response chain, including redirect behavior, challenge detection, and security header conflicts.
+The only way to know your current effective crawler access - not what your robots.txt says, but what a crawler actually sees when it hits your domain - is to test it. [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) pings your domain as each AI crawler and reports on the actual response chain, including redirect behavior, challenge detection, and security header conflicts.
 
 ---
 
@@ -86,13 +86,13 @@ Schema markup can become invalid as vocabularies evolve. deprecated JSON-LD prop
 
 The most commonly invalidated patterns I see:
 
-**WebSite with sitelinks searchbox** — Google deprecated the Sitelinks Searchbox feature in September 2026. Sites with `potentialAction: SearchAction` in their WebSite schema are now running deprecated markup that structured data parsers flag.
+**WebSite with sitelinks searchbox** - Google deprecated the Sitelinks Searchbox feature in September 2026. Sites with `potentialAction: SearchAction` in their WebSite schema are now running deprecated markup that structured data parsers flag.
 
-**Product schema without required 2026+ fields** — Google updated Product schema requirements in late 2026 to require `hasMerchantReturnPolicy` and `shippingDetails` for e-commerce pages. Sites with older Product schema now have incomplete markup.
+**Product schema without required 2026+ fields** - Google updated Product schema requirements in late 2026 to require `hasMerchantReturnPolicy` and `shippingDetails` for e-commerce pages. Sites with older Product schema now have incomplete markup.
 
-**FAQ schema with more than 10 Q&A pairs** — Technically valid, but since Google stopped showing FAQPage rich results for most queries, AI models have updated their weighting of FAQ schema. Sites that built 20-entry FAQ blocks specifically to chase rich results now have bloated schema that contributes noise.
+**FAQ schema with more than 10 Q&A pairs** - Technically valid, but since Google stopped showing FAQPage rich results for most queries, AI models have updated their weighting of FAQ schema. Sites that built 20-entry FAQ blocks specifically to chase rich results now have bloated schema that contributes noise.
 
-**Organization schema missing contactPoint** — Not required, but increasingly expected. Organization schema without any contact method is scored as lower-confidence entity declaration.
+**Organization schema missing contactPoint** - Not required, but increasingly expected. Organization schema without any contact method is scored as lower-confidence entity declaration.
 
 Schema standards aren't static. They evolve, deprecate, and add new required fields on roughly a 12-18 month cycle. An audit from a year ago may show valid schema. Run the same validator today and you might have 3 deprecation warnings.
 
@@ -122,9 +122,9 @@ One-off audits are a starting point. They tell you where you are on the day you 
 
 What actually prevents score decay is continuous monitoring with automated re-auditing that catches drift early.
 
-This is what [AiVIS Scheduled Rescans](https://aivis.biz/settings?section=advanced) does on Alignment tier and above. You configure which URLs to monitor — your homepage, your top 5 service pages, your most-cited blog posts — and set a rescan frequency (weekly, biweekly, or monthly depending on your tier). The system re-runs the full 28-point audit on each URL on your configured schedule and sends alerts when something meaningful changes.
+This is what [AiVIS Scheduled Rescans](https://aivis.biz/settings?section=advanced) does on Alignment tier and above. You configure which URLs to monitor - your homepage, your top 5 service pages, your most-cited blog posts - and set a rescan frequency (weekly, biweekly, or monthly depending on your tier). The system re-runs the full 28-point audit on each URL on your configured schedule and sends alerts when something meaningful changes.
 
-"Meaningful" is calibrated. Minor fluctuations below a threshold don't trigger alerts. But when your score for a specific URL drops by more than 8 points, or when a new hard blocker appears, or when your structured data goes from valid to invalid — you hear about it in time to do something.
+"Meaningful" is calibrated. Minor fluctuations below a threshold don't trigger alerts. But when your score for a specific URL drops by more than 8 points, or when a new hard blocker appears, or when your structured data goes from valid to invalid - you hear about it in time to do something.
 
 Combined with [Competitor Tracking](https://aivis.biz/competitors), you get a two-sided view: your own decay trend, and your competitors' improvement trend. The gap between those two lines is your effective citation advantage or disadvantage.
 

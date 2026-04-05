@@ -165,7 +165,7 @@ export default function GscConsolePage() {
         setSelectedPropertyState(selected);
         setConnectionStatus({ connected: true, email: data.email, properties_count: props.length });
       } else {
-        // 404 = not connected, 401 = unauthorized — both mean "not connected"
+        // 404 = not connected, 401 = unauthorized - both mean "not connected"
         setConnectionStatus({ connected: false });
       }
     } catch {
@@ -720,7 +720,7 @@ export default function GscConsolePage() {
                             <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition">
                               {keys.map((k) => {
                                 const val = row[k];
-                                const display = typeof val === 'object' ? JSON.stringify(val) : String(val ?? '—');
+                                const display = typeof val === 'object' ? JSON.stringify(val) : String(val ?? '-');
                                 const isNegative = typeof val === 'number' && val < 0;
                                 const isUrl = typeof val === 'string' && val.startsWith('http');
                                 return (

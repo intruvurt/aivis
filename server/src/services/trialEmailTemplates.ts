@@ -1,5 +1,5 @@
 /**
- * Trial Email Templates — branded email payloads for the trial lifecycle.
+ * Trial Email Templates - branded email payloads for the trial lifecycle.
  * Uses the existing resendSend() pattern from emailService.ts.
  */
 
@@ -29,7 +29,7 @@ interface TrialEmailContext {
 
 async function resendSend(payload: { to: string; subject: string; html: string; text: string }): Promise<void> {
   if (!RESEND_API_KEY) {
-    console.log(`[TrialEmail] No RESEND_API_KEY — console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
+    console.log(`[TrialEmail] No RESEND_API_KEY - console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
     return;
   }
 
@@ -54,7 +54,7 @@ async function resendSend(payload: { to: string; subject: string; html: string; 
   }
 
   const result = (await res.json()) as Record<string, unknown>;
-  console.log(`[TrialEmail] Sent — id: ${result?.id} | to: ${payload.to}`);
+  console.log(`[TrialEmail] Sent - id: ${result?.id} | to: ${payload.to}`);
 }
 
 // ─── Template builder ─────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ function buildTrialEmailPayload(
 
     case 'trial_warning_day10':
       return {
-        subject: `AiVIS Signal trial — ${ctx.daysLeft ?? 4} days remaining`,
+        subject: `AiVIS Signal trial - ${ctx.daysLeft ?? 4} days remaining`,
         text: `Your AiVIS Signal trial has ${ctx.daysLeft ?? 4} days left. Upgrade to keep your features: ${FRONTEND_URL}/billing`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#ffffff;">${ctx.daysLeft ?? 4} days left on your Signal trial</h1>
@@ -132,13 +132,13 @@ function buildTrialEmailPayload(
 
     case 'trial_converted':
       return {
-        subject: 'Welcome to AiVIS — subscription confirmed',
+        subject: 'Welcome to AiVIS - subscription confirmed',
         text: `Congratulations! You've upgraded to the ${ctx.newTier || 'paid'} plan. Log in at ${FRONTEND_URL}/dashboard to continue.`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#22d3ee;">You're all set</h1>
           <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
             Your subscription to <strong style="color:#67e8f9;">${escapeHtml(ctx.newTier || 'a paid plan')}</strong> is confirmed.
-            Your trial has been marked as converted — no interruption to your audits.
+            Your trial has been marked as converted - no interruption to your audits.
           </p>
           ${ctaButton('Go to dashboard', `${FRONTEND_URL}/dashboard`)}
         `),
@@ -186,7 +186,7 @@ function wrap(body: string): string {
   return `
     <div style="background:#0f172a;color:#e5e7eb;padding:24px;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:600px;margin:0 auto;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;background:#111827;">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS — AI Visibility Engine</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS - AI Visibility Engine</div>
         ${body}
         <div style="margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);color:#64748b;font-size:11px;line-height:1.6;">
           <p style="margin:0;">AiVIS by Intruvurt Labs · Georgia, USA</p>

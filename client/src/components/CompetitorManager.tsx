@@ -723,7 +723,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                     <button
                       onClick={() => void setMonitoringEnabled(competitor.id, !competitor.monitoring_enabled, competitor.monitor_frequency || 'daily')}
                       className={`p-2 rounded-lg transition-all ${competitor.monitoring_enabled ? 'bg-charcoal-light text-emerald-400' : 'bg-charcoal-light text-white/30 hover:text-white/60'}`}
-                      title={competitor.monitoring_enabled ? `Auto-monitoring on (${competitor.monitor_frequency || 'daily'}) — click to disable` : 'Enable auto-monitoring'}
+                      title={competitor.monitoring_enabled ? `Auto-monitoring on (${competitor.monitor_frequency || 'daily'}) - click to disable` : 'Enable auto-monitoring'}
                     >
                       {competitor.monitoring_enabled
                         ? <ToggleRight className="w-4 h-4" />

@@ -21,12 +21,12 @@ const window = new JSDOM('').window;
 const purify = DOMPurify(window as any);
 
 /* ────────────────────────────────────────────────────────────────────────────
- * applySecurityMiddleware — call once before any route registration
+ * applySecurityMiddleware - call once before any route registration
  * ──────────────────────────────────────────────────────────────────────────── */
 export function applySecurityMiddleware(app: Express): void {
-  /* ── Body-size limits — handled by server.ts route-specific parsers ──── */
+  /* ── Body-size limits - handled by server.ts route-specific parsers ──── */
 
-  /* ── Helmet (CSP disabled here — set manually below) ─────────────────── */
+  /* ── Helmet (CSP disabled here - set manually below) ─────────────────── */
   app.use(
     helmet({
       contentSecurityPolicy: false,
@@ -75,7 +75,7 @@ export function applySecurityMiddleware(app: Express): void {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * sendHtmlWithNonce — read an HTML file, inject the per-request CSP nonce into
+ * sendHtmlWithNonce - read an HTML file, inject the per-request CSP nonce into
  * every <script> tag, and send it.  This is what makes the nonce-based CSP work
  * in practice: without this, <script> tags in the static build never carry the
  * nonce and inline scripts are blocked by CSP2+ browsers.
@@ -85,7 +85,7 @@ import { readFile } from 'fs/promises';
 export async function sendHtmlWithNonce(res: Response, htmlPath: string): Promise<void> {
   const nonce = (res.locals.nonce as string) ?? '';
   let html = await readFile(htmlPath, 'utf-8');
-  // Inject nonce="..." into every <script …> opener (incl. ld+json — harmless)
+  // Inject nonce="..." into every <script …> opener (incl. ld+json - harmless)
   html = html.replace(/<script(?=[\s>])/gi, `<script nonce="${nonce}"`);
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache');
@@ -93,7 +93,7 @@ export async function sendHtmlWithNonce(res: Response, htmlPath: string): Promis
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * sanitizeHtmlServer — strip dangerous tags/attributes from user-supplied HTML
+ * sanitizeHtmlServer - strip dangerous tags/attributes from user-supplied HTML
  * ──────────────────────────────────────────────────────────────────────────── */
 export function sanitizeHtmlServer(input: string): string {
   return purify.sanitize(input, {
@@ -104,14 +104,14 @@ export function sanitizeHtmlServer(input: string): string {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * escapeBootstrapState — safe JSON for embedding in <script> tags
+ * escapeBootstrapState - safe JSON for embedding in <script> tags
  * ──────────────────────────────────────────────────────────────────────────── */
 export function escapeBootstrapState(state: unknown): string {
   return JSON.stringify(state).replace(/</g, '\\u003c');
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * isSafeExternalUrl — protocol allowlist + SSRF protection for user-supplied URLs
+ * isSafeExternalUrl - protocol allowlist + SSRF protection for user-supplied URLs
  * ──────────────────────────────────────────────────────────────────────────── */
 export function isSafeExternalUrl(value: string): boolean {
   try {

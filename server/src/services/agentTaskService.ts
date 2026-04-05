@@ -1,5 +1,5 @@
 // server/src/services/agentTaskService.ts
-// Agent task queue — processes GuideBot-initiated actions sequentially
+// Agent task queue - processes GuideBot-initiated actions sequentially
 import { getPool } from './postgresql.js';
 import { createUserNotification } from './notificationService.js';
 import { trackBrandMentions, persistMentionScan } from './mentionTracker.js';
@@ -94,7 +94,7 @@ export async function cancelTask(userId: string, taskId: string): Promise<boolea
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * Task Executor — runs the actual work for each task type
+ * Task Executor - runs the actual work for each task type
  * ──────────────────────────────────────────────────────────────────────────── */
 const TASK_TIMEOUT_MS = 60_000; // 60s per task
 
@@ -229,7 +229,7 @@ async function executeRunCitationTest(task: AgentTask): Promise<Record<string, u
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * Background Worker — sequential task processor
+ * Background Worker - sequential task processor
  * ──────────────────────────────────────────────────────────────────────────── */
 let workerInterval: ReturnType<typeof setInterval> | null = null;
 let isProcessing = false;

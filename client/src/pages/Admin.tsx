@@ -151,7 +151,7 @@ const Admin: React.FC = () => {
     maximumFractionDigits: 2,
   }), []);
 
-  // No redirect — show lock screen instead when not admin
+  // No redirect - show lock screen instead when not admin
 
   // Fetch admin stats
   const fetchStats = async () => {
@@ -393,7 +393,7 @@ const Admin: React.FC = () => {
       ? "Down"
       : "Unknown";
 
-  // Admin key lock screen — show when user has no role or stored key
+  // Admin key lock screen - show when user has no role or stored key
   if (!isAdmin) {
     return (
       <div id="src_pages_Admin_lock" className="flex items-center justify-center py-12">
@@ -883,7 +883,7 @@ const Admin: React.FC = () => {
                   value={broadcastSubject}
                   onChange={(e) => setBroadcastSubject(e.target.value)}
                   className="w-full bg-[#323a4c] text-white px-3 py-2 rounded-md text-sm"
-                  placeholder="e.g. Score Fix is now AutoPR — here's what changed"
+                  placeholder="e.g. Score Fix is now AutoPR - here's what changed"
                 />
               </div>
               <div>
@@ -904,7 +904,7 @@ const Admin: React.FC = () => {
                 onChange={(e) => setBroadcastBody(e.target.value)}
                 rows={6}
                 className="w-full bg-[#323a4c] text-white px-3 py-2 rounded-md text-sm resize-y"
-                placeholder={"We just shipped a major platform update.\n\nScore Fix is now AutoPR — credit-based automated GitHub PR remediation..."}
+                placeholder={"We just shipped a major platform update.\n\nScore Fix is now AutoPR - credit-based automated GitHub PR remediation..."}
               />
             </div>
 
@@ -1024,7 +1024,7 @@ const Admin: React.FC = () => {
                     if (!res.ok) { const t = await res.text().catch(() => ""); throw new Error(t || `Dry run failed (${res.status})`); }
                     const data = await res.json();
                     setBroadcastResult(data?.result ?? data ?? null);
-                    toast.success(`Dry run complete — ${data?.attempted || 0} users would receive this`);
+                    toast.success(`Dry run complete - ${data?.attempted || 0} users would receive this`);
                   } catch (err: any) {
                     toast.error(err?.message || "Broadcast dry run failed");
                   } finally {
@@ -1061,7 +1061,7 @@ const Admin: React.FC = () => {
                     if (!res.ok) { const t = await res.text().catch(() => ""); throw new Error(t || `Broadcast failed (${res.status})`); }
                     const data = await res.json();
                     setBroadcastResult(data ?? null);
-                    toast.success(`Broadcast sent — ${data?.sent || 0} delivered, ${data?.failed || 0} failed`);
+                    toast.success(`Broadcast sent - ${data?.sent || 0} delivered, ${data?.failed || 0} failed`);
                   } catch (err: any) {
                     toast.error(err?.message || "Broadcast send failed");
                   } finally {

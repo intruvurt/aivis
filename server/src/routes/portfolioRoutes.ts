@@ -125,7 +125,7 @@ router.post('/bulk-fix', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/portfolio/bulk-fix/:jobId — Poll bulk-fix job progress
+ * GET /api/portfolio/bulk-fix/:jobId - Poll bulk-fix job progress
  */
 router.get('/bulk-fix/:jobId', async (req: Request, res: Response) => {
   if (!requireAgencyTier(req, res)) return;

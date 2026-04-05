@@ -24,7 +24,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
 
   return (
     <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0c1221]/95 backdrop-blur-md border-b border-white/[0.08]" role="banner" aria-label="App toolbar">
-      {/* Left — hamburger (mobile) + search */}
+      {/* Left - hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Mobile menu button */}
         <button
@@ -49,7 +49,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         </div>
       </div>
 
-      {/* Right — actions */}
+      {/* Right - actions */}
       <div className="flex items-center gap-1.5">
         {/* Quick audit */}
         <button

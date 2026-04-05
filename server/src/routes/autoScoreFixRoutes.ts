@@ -5,7 +5,7 @@
  * All routes require authentication.
  * Job submission additionally requires: alignment+ tier AND ≥10 pack credits.
  *
- * FEATURE LOCKED — GitHub remediation mechanism is being redesigned.
+ * FEATURE LOCKED - GitHub remediation mechanism is being redesigned.
  * All endpoints return 503 until the lock is lifted.
  */
 
@@ -30,7 +30,7 @@ import {
   approveJob,
   rejectJob,
   cancelJob,
-} from '../services/autoScoreFixService.js';
+} from '../services/AutoScoreFixService.js';
 
 const router = Router();
 const VALID_PROVIDERS: VcsProvider[] = ['github', 'gitlab', 'bitbucket'];
@@ -74,7 +74,7 @@ async function fetchGitHubApi(path: string, token: string) {
 
 // ─── VCS Token Management ─────────────────────────────────────────────────────
 
-/** POST /api/auto-score-fix/tokens — save or update a VCS token (alignment+) */
+/** POST /api/auto-score-fix/tokens - save or update a VCS token (alignment+) */
 router.post('/tokens', async (req: Request, res: Response) => {
   const user = (req as any).user;
   const userId = String(user?.id || '');
@@ -105,7 +105,7 @@ router.post('/tokens', async (req: Request, res: Response) => {
   }
 });
 
-/** GET /api/auto-score-fix/tokens — list connected providers (hints only) */
+/** GET /api/auto-score-fix/tokens - list connected providers (hints only) */
 router.get('/tokens', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   try {
@@ -116,7 +116,7 @@ router.get('/tokens', async (req: Request, res: Response) => {
   }
 });
 
-/** DELETE /api/auto-score-fix/tokens/:provider — remove a VCS token */
+/** DELETE /api/auto-score-fix/tokens/:provider - remove a VCS token */
 router.delete('/tokens/:provider', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const provider = req.params.provider as VcsProvider;
@@ -131,7 +131,7 @@ router.delete('/tokens/:provider', async (req: Request, res: Response) => {
   }
 });
 
-/** GET /api/auto-score-fix/github/repos — list GitHub repos for connected token */
+/** GET /api/auto-score-fix/github/repos - list GitHub repos for connected token */
 router.get('/github/repos', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const perPage = Math.min(100, Math.max(10, Number(req.query.per_page || 50)));
@@ -206,7 +206,7 @@ router.get('/github/branches', async (req: Request, res: Response) => {
 
 // ─── Job Submission ───────────────────────────────────────────────────────────
 
-/** POST /api/auto-score-fix/jobs — submit an Auto Score Fix job */
+/** POST /api/auto-score-fix/jobs - submit an Auto Score Fix job */
 router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
   const user = (req as any).user;
   const userId = String(user?.id || '');
@@ -299,7 +299,7 @@ router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
 
 // ─── Job Retrieval ────────────────────────────────────────────────────────────
 
-/** GET /api/auto-score-fix/jobs — list user's jobs */
+/** GET /api/auto-score-fix/jobs - list user's jobs */
 router.get('/jobs', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const workspaceId = String((req as any).workspace?.id || '');
@@ -312,7 +312,7 @@ router.get('/jobs', workspaceRequired, async (req: Request, res: Response) => {
   }
 });
 
-/** GET /api/auto-score-fix/jobs/:id — get a specific job */
+/** GET /api/auto-score-fix/jobs/:id - get a specific job */
 router.get('/jobs/:id', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const workspaceId = String((req as any).workspace?.id || '');
@@ -344,7 +344,7 @@ router.post('/jobs/:id/approve', workspaceRequired, async (req: Request, res: Re
   }
 });
 
-/** POST /api/auto-score-fix/jobs/:id/reject — 80% credit refund */
+/** POST /api/auto-score-fix/jobs/:id/reject - 80% credit refund */
 router.post('/jobs/:id/reject', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const workspaceId = String((req as any).workspace?.id || '');
@@ -364,7 +364,7 @@ router.post('/jobs/:id/reject', workspaceRequired, async (req: Request, res: Res
   }
 });
 
-/** POST /api/auto-score-fix/jobs/:id/cancel — cancel job with policy-based refund */
+/** POST /api/auto-score-fix/jobs/:id/cancel - cancel job with policy-based refund */
 router.post('/jobs/:id/cancel', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const workspaceId = String((req as any).workspace?.id || '');
@@ -376,8 +376,8 @@ router.post('/jobs/:id/cancel', workspaceRequired, async (req: Request, res: Res
     }
 
     const policy = result.status === 'cancelled'
-      ? 'Cancelled before PR approval — full refund applied.'
-      : 'PR was pending approval — 80% rejection refund applied.';
+      ? 'Cancelled before PR approval - full refund applied.'
+      : 'PR was pending approval - 80% rejection refund applied.';
 
     return res.json({
       ok: true,
@@ -393,7 +393,7 @@ router.post('/jobs/:id/cancel', workspaceRequired, async (req: Request, res: Res
 export default router;
 // ─── Status / Eligibility Check ──────────────────────────────────────────────
 
-/** GET /api/auto-score-fix/status — credit balance + tier eligibility (no workspace required) */
+/** GET /api/auto-score-fix/status - credit balance + tier eligibility (no workspace required) */
 router.get('/status', async (req: Request, res: Response) => {
   const user = (req as any).user;
   const userId = String(user?.id || '');

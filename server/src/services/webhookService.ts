@@ -528,7 +528,7 @@ function buildSignatureHeader(payload: string, secret: string, timestamp: number
 
 /**
  * Fire all enabled webhooks for a user that subscribe to the given event.
- * Non-blocking — errors are logged but do not throw.
+ * Non-blocking - errors are logged but do not throw.
  */
 export async function dispatchWebhooks(
   userId: string,

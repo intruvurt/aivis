@@ -282,7 +282,7 @@
           "source": 1113297,
           "name": "systeminformation",
           "dependency": "systeminformation",
-          "title": "Command Injection via Unsanitized `locate` Output in `versions()` — systeminformation",
+          "title": "Command Injection via Unsanitized `locate` Output in `versions()` - systeminformation",
           "url": "https://github.com/advisories/GHSA-5vv4-hvf7-2h46",
           "severity": "high",
           "cwe": [

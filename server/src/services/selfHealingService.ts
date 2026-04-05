@@ -165,7 +165,7 @@ async function evaluateCandidate(candidate: CandidateRow): Promise<void> {
   // ── Alert dispatch ───────────────────────────────────────────────────────────
   sendAlert(candidate.user_id, {
     type: 'score_regression',
-    title: `Visibility score dropped by ${scoreDrop.toFixed(0)} points — ${domain}`,
+    title: `Visibility score dropped by ${scoreDrop.toFixed(0)} points - ${domain}`,
     body: `Your AI visibility score fell from ${Number(candidate.previous_score).toFixed(0)} to ${Number(candidate.latest_score).toFixed(0)}. ${decisions[0]?.reason ?? ''}`,
     metadata: { url: candidate.url, domain, scoreDrop, beforeScore: Number(candidate.previous_score), afterScore: Number(candidate.latest_score) },
   }).catch((err: any) => console.warn('[SelfHealing] alert dispatch failed:', err?.message));

@@ -40,7 +40,7 @@ export function detectCryptoKeywords(text: string): string[] {
 export function isCryptoHeavy(bodyText: string, hits: string[]): boolean {
   // Need ≥4 distinct keywords OR at least one address/hash pattern
   if (hits.length >= 4) return true;
-  // Quick pattern sniff — if an address-like string is in the text it's very likely crypto
+  // Quick pattern sniff - if an address-like string is in the text it's very likely crypto
   if (/0x[a-fA-F0-9]{40}/.test(bodyText)) return true;           // ETH address
   if (/[1-9A-HJ-NP-Za-km-z]{32,44}/.test(bodyText)) return true; // Solana / BTC address (rough)
   return false;
@@ -58,14 +58,14 @@ export interface ExtractedAddresses {
 export function extractAddresses(text: string): ExtractedAddresses {
   // Ethereum: 0x followed by 40 hex chars
   const ethRegex = /\b(0x[a-fA-F0-9]{40})\b/g;
-  // Bitcoin: P2PKH (1...), P2SH (3...), Bech32 (bc1...) — simplified
+  // Bitcoin: P2PKH (1...), P2SH (3...), Bech32 (bc1...) - simplified
   const btcRegex = /\b([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[a-zA-HJ-NP-Z0-9]{25,62})\b/g;
   // Solana: base58, 32-44 chars, excludes common false positives
   const solRegex = /\b([1-9A-HJ-NP-Za-km-z]{32,44})\b/g;
 
   const ethereum = [...new Set([...(text.match(ethRegex) || [])])];
   const bitcoin  = [...new Set([...(text.match(btcRegex) || [])])];
-  // Solana needs extra filtering — dedupe and remove obvious non-addresses
+  // Solana needs extra filtering - dedupe and remove obvious non-addresses
   const solRaw   = [...new Set([...(text.match(solRegex) || [])])];
   const solana   = solRaw.filter(
     (s) => s.length >= 32 && !s.match(/^[a-z]+$/) && !s.match(/^\d+$/)
@@ -93,7 +93,7 @@ export interface AddressInfo {
   error?: string;
 }
 
-const TIMEOUT = 8000; // ms — don't block main analysis pipeline
+const TIMEOUT = 8000; // ms - don't block main analysis pipeline
 
 /** Fetch Ethereum address data via Infura + Etherscan */
 async function enrichEthAddress(address: string): Promise<AddressInfo> {
@@ -279,8 +279,8 @@ function buildRiskNotes(text: string, addresses: ExtractedAddresses): string[] {
   const notes: string[] = [];
   if (lc.includes('rug pull') || lc.includes('exit scam')) notes.push(' Rug pull / exit scam language detected');
   if (lc.includes('pump and dump')) notes.push(' Pump-and-dump language detected');
-  if (lc.includes('guaranteed return') || lc.includes('guaranteed profit')) notes.push(' Guaranteed returns claims detected — regulatory red flag');
-  if (lc.includes('presale') || lc.includes('pre-sale')) notes.push('ℹ Token presale mentioned — verify legitimacy');
+  if (lc.includes('guaranteed return') || lc.includes('guaranteed profit')) notes.push(' Guaranteed returns claims detected - regulatory red flag');
+  if (lc.includes('presale') || lc.includes('pre-sale')) notes.push('ℹ Token presale mentioned - verify legitimacy');
   if (lc.includes('unaudited')) notes.push(' Unaudited contract mentioned');
   if (addresses.ethereum.length > 3) notes.push(`ℹ ${addresses.ethereum.length} Ethereum addresses found on page`);
   if (addresses.solana.length > 3) notes.push(`ℹ ${addresses.solana.length} Solana addresses found on page`);
@@ -289,7 +289,7 @@ function buildRiskNotes(text: string, addresses: ExtractedAddresses): string[] {
 
 /**
  * Run a full crypto scan on scraped page content.
- * Always returns a result — on-chain enrichment is best-effort and won't throw.
+ * Always returns a result - on-chain enrichment is best-effort and won't throw.
  */
 export async function runCryptoScan(
   bodyText: string,
@@ -328,7 +328,7 @@ export async function runCryptoScan(
         return base;
       });
       const solJobs = addresses.solana.slice(0, 3).map((addr) => enrichSolanaAddress(addr));
-      // Bitcoin enrichment is read-only via public APIs — skip for now to avoid noise
+      // Bitcoin enrichment is read-only via public APIs - skip for now to avoid noise
 
       const results = await Promise.allSettled([...ethJobs, ...solJobs]);
       onchainData = results

@@ -17,7 +17,7 @@ async function resendSend(payload: {
   attachments?: Array<{ filename: string; content: string }>;
 }): Promise<void> {
   if (!RESEND_KEY_VALID) {
-    console.log(`[AgreementEmail] No valid RESEND_API_KEY — console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
+    console.log(`[AgreementEmail] No valid RESEND_API_KEY - console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
     return;
   }
 
@@ -43,7 +43,7 @@ async function resendSend(payload: {
   }
 
   const result = await res.json() as any;
-  console.log(`[AgreementEmail] Sent — id: ${result?.id} | to: ${payload.to}`);
+  console.log(`[AgreementEmail] Sent - id: ${result?.id} | to: ${payload.to}`);
 }
 
 /**
@@ -53,7 +53,7 @@ async function resendSend(payload: {
 export async function sendAgreementSignedEmail(slug: string): Promise<void> {
   const agreement = await getAgreementBySlug(slug);
   if (!agreement || agreement.status !== 'fully_signed') {
-    console.warn(`[AgreementEmail] Cannot send — agreement "${slug}" not fully signed.`);
+    console.warn(`[AgreementEmail] Cannot send - agreement "${slug}" not fully signed.`);
     return;
   }
 
@@ -76,7 +76,7 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     '',
     'A signed HTML copy is attached to this email.',
     '',
-    '— AiVIS / Intruvurt Labs',
+    '- AiVIS / Intruvurt Labs',
   ].join('\n');
 
   const emailHtml = `
@@ -89,9 +89,9 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     <p style="font-size:15px;color:#555;margin:0 0 24px">The partnership agreement below has been signed by both parties and tamper-locked.</p>
     <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
       <tr><td style="padding:8px 0;color:#888;width:120px">Agreement</td><td style="padding:8px 0;font-weight:600">${escapeHtml(agreement.title)}</td></tr>
-      <tr><td style="padding:8px 0;color:#888">Party A</td><td style="padding:8px 0">${escapeHtml(agreement.party_a_name)} — ${escapeHtml(agreement.party_a_org)}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Party A</td><td style="padding:8px 0">${escapeHtml(agreement.party_a_name)} - ${escapeHtml(agreement.party_a_org)}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Signed</td><td style="padding:8px 0">${agreement.party_a_signed_at}</td></tr>
-      <tr><td style="padding:8px 0;color:#888">Party B</td><td style="padding:8px 0">${escapeHtml(agreement.party_b_name)} — ${escapeHtml(agreement.party_b_org)}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Party B</td><td style="padding:8px 0">${escapeHtml(agreement.party_b_name)} - ${escapeHtml(agreement.party_b_org)}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Signed</td><td style="padding:8px 0">${agreement.party_b_signed_at}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Locked</td><td style="padding:8px 0">${agreement.locked_at}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Valid Until</td><td style="padding:8px 0">${agreement.valid_until}</td></tr>
@@ -99,7 +99,7 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     </table>
     <p style="font-size:14px;color:#555">A signed HTML copy is attached. You can verify integrity at any time by visiting the agreement verification page.</p>
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-    <p style="font-size:12px;color:#999;margin:0">AiVIS / Intruvurt Labs — Georgia, USA</p>
+    <p style="font-size:12px;color:#999;margin:0">AiVIS / Intruvurt Labs - Georgia, USA</p>
   </div>
 </body>
 </html>`.trim();

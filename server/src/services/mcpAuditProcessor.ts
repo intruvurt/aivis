@@ -49,7 +49,7 @@ export async function processQueuedAudit(auditId: string, userId: string, worksp
     const resultAuditId = await _analyzeFn(userId, workspaceId, url);
 
     if (resultAuditId) {
-      // analyzeInternally persists a NEW audit row — copy its result back to the queued row
+      // analyzeInternally persists a NEW audit row - copy its result back to the queued row
       const { rows } = await pool.query(
         `SELECT visibility_score, result, tier_at_analysis FROM audits WHERE id = $1`,
         [resultAuditId],

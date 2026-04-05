@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 
 /* ================================================================== */
-/*  Onboarding helper (inlined — OnboardingModal removed)              */
+/*  Onboarding helper (inlined - OnboardingModal removed)              */
 /* ================================================================== */
 function resetOnboarding() {
   localStorage.removeItem("aivis_onboarding_v2");
@@ -150,7 +150,7 @@ const SteelSelect: React.FC<
 );
 
 /* ================================================================== */
-/*  Sections — only what actually works                                */
+/*  Sections - only what actually works                                */
 /* ================================================================== */
 const sections = [
   { id: "profile", label: "Profile", icon: User },
@@ -184,7 +184,7 @@ const SettingsPage: React.FC = () => {
   const [clearAvatar, setClearAvatar] = useState(false);
   const [clearOrgLogo, setClearOrgLogo] = useState(false);
 
-  // Local draft for profile fields — only committed on explicit Save
+  // Local draft for profile fields - only committed on explicit Save
   const [profileDraft, setProfileDraft] = useState(() => ({ ...s.profile }));
   const updateDraft = (patch: Partial<typeof s.profile>) =>
     setProfileDraft((prev) => ({ ...prev, ...patch }));
@@ -369,7 +369,7 @@ const SettingsPage: React.FC = () => {
     }, 700);
   }, []);
 
-  /* Export / Import — only real settings */
+  /* Export / Import - only real settings */
   const exportSettings = (): void => {
     const state = useSettingsStore.getState();
     const exportData = {
@@ -515,7 +515,7 @@ const SettingsPage: React.FC = () => {
       if (!response.ok) {
         if (response.status === 429) {
           const retryAfter = response.headers.get('retry-after') || '60';
-          throw new Error(`Rate limited — please wait ${retryAfter}s and try again`);
+          throw new Error(`Rate limited - please wait ${retryAfter}s and try again`);
         }
         throw new Error(payload?.error || "Failed to save profile");
       }
@@ -784,7 +784,7 @@ const SettingsPage: React.FC = () => {
                       <p className="text-sm font-semibold text-white">
                         {featureStatus?.usage?.usedThisMonth ?? 0}
                         <span className="text-white/45 font-normal">
-                          /{featureStatus?.usage?.monthlyLimit ?? "—"}
+                          /{featureStatus?.usage?.monthlyLimit ?? "-"}
                         </span>
                       </p>
                     </div>
@@ -799,7 +799,7 @@ const SettingsPage: React.FC = () => {
                       />
                     </div>
                     <p className="mt-2 text-xs text-white/45">
-                      {featureStatus?.usage?.remainingThisMonth ?? "—"} scans remaining this month
+                      {featureStatus?.usage?.remainingThisMonth ?? "-"} scans remaining this month
                     </p>
                   </div>
 
@@ -810,7 +810,7 @@ const SettingsPage: React.FC = () => {
                       <p className="text-2xl font-bold text-white">
                         {featureStatus?.credits?.packCreditsRemaining ?? 0}
                       </p>
-                      <p className="text-xs text-white/45 mt-0.5">Roll over — never expire</p>
+                      <p className="text-xs text-white/45 mt-0.5">Roll over - never expire</p>
                     </div>
                     <Link
                       to="/pricing?intent=credits"
@@ -1559,7 +1559,7 @@ const SettingsPage: React.FC = () => {
                 <button
                   onClick={() => {
                     resetOnboarding();
-                    toast.success("Tour reset — navigate to the Dashboard to start it");
+                    toast.success("Tour reset - navigate to the Dashboard to start it");
                     navigate("/");
                   }}
                   className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-white/12 bg-charcoal hover:bg-charcoal-light text-sm text-white/80 hover:text-white transition-all"

@@ -606,8 +606,8 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
   if (!webhookSecret) {
-    console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET is not set — all webhook events will be rejected. Configure this env var in your deployment.');
-    return res.status(500).json({ success: false, error: 'Webhook endpoint misconfigured — missing secret' });
+    console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET is not set - all webhook events will be rejected. Configure this env var in your deployment.');
+    return res.status(500).json({ success: false, error: 'Webhook endpoint misconfigured - missing secret' });
   }
 
   if (!sig) {
@@ -619,7 +619,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
 
   // Verify webhook signature
   // The global express.json() skips /api/payment/webhook, so express.raw() on the route
-  // delivers the raw Buffer as req.body — exactly what Stripe needs.
+  // delivers the raw Buffer as req.body - exactly what Stripe needs.
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
   } catch (err: any) {
@@ -1449,7 +1449,7 @@ export const getScanPackStatus = async (req: Request, res: Response) => {
  * Start a 14-day Signal trial without requiring a credit card.
  * - Only allowed once per user (trial_used flag).
  * - Sets tier to 'signal', trial_ends_at to NOW() + 14 days, trial_used = true.
- * - Allowlisted users don't need trials — they already have permanent access.
+ * - Allowlisted users don't need trials - they already have permanent access.
  */
 export const startFreeTrial = async (req: Request, res: Response) => {
   try {

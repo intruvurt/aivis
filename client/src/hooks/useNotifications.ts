@@ -255,7 +255,7 @@ export default function useNotifications() {
     eventSourceRef.current = null;
   }, [clearReconnectTimer]);
 
-  // SSE real-time connection — pushes from server when notifications are created
+  // SSE real-time connection - pushes from server when notifications are created
   useEffect(() => {
     if (!isAuthenticated || !pageVisible) {
       closeStream();
@@ -317,12 +317,12 @@ export default function useNotifications() {
     };
   }, [isAuthenticated, pageVisible, fetchNotifications, closeStream, clearReconnectTimer]);
 
-  // Fallback polling — only runs when SSE is NOT connected (avoids duplicate traffic)
+  // Fallback polling - only runs when SSE is NOT connected (avoids duplicate traffic)
   useEffect(() => {
     if (!isAuthenticated) return;
     if (!pageVisible) return;
 
-    // SSE handles real-time when connected — skip polling entirely
+    // SSE handles real-time when connected - skip polling entirely
     if (streamConnected) return;
 
     const basePollMs = 120_000; // 120s when SSE is down

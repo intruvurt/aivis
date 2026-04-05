@@ -5,7 +5,7 @@ import { getPool } from './postgresql.js';
 
 function redis() {
   const r = getRedis();
-  if (!r) throw new Error('Redis is not configured — realtime visibility engine requires REDIS_URL or REDIS_HOST');
+  if (!r) throw new Error('Redis is not configured - realtime visibility engine requires REDIS_URL or REDIS_HOST');
   return r;
 }
 

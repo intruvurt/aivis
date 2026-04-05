@@ -1,5 +1,5 @@
 /**
- * WebMCP — Browser-native agent tool surface for AiVIS
+ * WebMCP - Browser-native agent tool surface for AiVIS
  *
  * Exposes structured, typed tools so AI browser agents can discover and
  * invoke AiVIS workflows without relying on DOM scraping.
@@ -219,7 +219,7 @@ const TOOLS: WebMcpTool[] = [
         competitor_urls: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Specific competitor URLs to compare (optional — defaults to all tracked competitors)',
+          description: 'Specific competitor URLs to compare (optional - defaults to all tracked competitors)',
         },
       },
       required: ['primary_url'],
@@ -664,7 +664,7 @@ const executors: Record<string, ToolExecutor> = {
 
     const pool = getPool();
 
-    // If no queries provided, caller should generate them first — but we still accept empty
+    // If no queries provided, caller should generate them first - but we still accept empty
     // to allow the async test infrastructure to handle query generation
     const { rows: created } = await pool.query(
       `INSERT INTO citation_tests (user_id, url, queries, status)
@@ -770,7 +770,7 @@ const executors: Record<string, ToolExecutor> = {
     const METHODOLOGY = {
       version: '2.0',
       description:
-        'AiVIS scores websites on AI visibility — how readable, extractable, and citation-ready they are for AI answer engines.',
+        'AiVIS scores websites on AI visibility - how readable, extractable, and citation-ready they are for AI answer engines.',
       scoring_range: { min: 0, max: 100 },
       categories: [
         {
@@ -815,11 +815,11 @@ const executors: Record<string, ToolExecutor> = {
         },
       ],
       interpretation: {
-        '90-100': 'Excellent — highly visible and citation-ready across AI platforms.',
-        '75-89': 'Good — solid foundation with specific improvement opportunities.',
-        '60-74': 'Fair — visible but missing key structured data or authority signals.',
-        '40-59': 'Poor — significant gaps in AI readability and extractability.',
-        '0-39': 'Critical — largely invisible to AI answer engines.',
+        '90-100': 'Excellent - highly visible and citation-ready across AI platforms.',
+        '75-89': 'Good - solid foundation with specific improvement opportunities.',
+        '60-74': 'Fair - visible but missing key structured data or authority signals.',
+        '40-59': 'Poor - significant gaps in AI readability and extractability.',
+        '0-39': 'Critical - largely invisible to AI answer engines.',
       },
     };
 
@@ -863,7 +863,7 @@ router.get('/manifest', (_req: Request, res: Response) => {
   res.json({
     schema_version: '0.1.0',
     name: 'aivis',
-    display_name: 'AiVIS — AI Visibility Engine',
+    display_name: 'AiVIS - AI Visibility Engine',
     description:
       'Audit, measure, and improve how AI answer engines see your website. Structured tools for visibility scoring, citation testing, competitor comparison, and remediation planning.',
     logo_url: 'https://aivis.biz/icon-512.png',

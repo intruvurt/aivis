@@ -67,7 +67,7 @@ function decodeAppState(raw: string): GitHubAppState | null {
   try {
     const parsed = JSON.parse(Buffer.from(base, 'base64url').toString('utf8')) as GitHubAppState;
     if (!parsed?.userId || !parsed?.nonce || typeof parsed?.ts !== 'number') return null;
-    // 15 min expiry — GitHub App installation flow can take a while
+    // 15 min expiry - GitHub App installation flow can take a while
     if (Date.now() - parsed.ts > 15 * 60 * 1000) return null;
     return parsed;
   } catch {
@@ -77,7 +77,7 @@ function decodeAppState(raw: string): GitHubAppState | null {
 
 const router = Router();
 
-// ─── Webhook (unauthenticated — signature-verified) ──────────────────────────
+// ─── Webhook (unauthenticated - signature-verified) ──────────────────────────
 
 /**
  * POST /api/github-app/webhook
@@ -131,7 +131,7 @@ router.post(
           // user_id that gets updated on callback. For webhook-first flows,
           // we save with the GitHub sender ID as a lookup key.
           await saveInstallation(
-            senderId, // temporary — updated when user hits /callback
+            senderId, // temporary - updated when user hits /callback
             null,
             installationId,
             accountLogin,
@@ -152,11 +152,11 @@ router.post(
         }
       }
 
-      // PR merge events — trigger post-merge verification rescan
+      // PR merge events - trigger post-merge verification rescan
       if (event === 'pull_request' && action === 'closed' && payload.pull_request?.merged) {
         const prNumber = payload.pull_request?.number;
         const repoFullName = payload.repository?.full_name || '';
-        console.log(`[GitHubApp] PR #${prNumber} merged in ${repoFullName} — post-merge rescan will pick this up`);
+        console.log(`[GitHubApp] PR #${prNumber} merged in ${repoFullName} - post-merge rescan will pick this up`);
         // The existing startAutoScoreFixPostMergeLoop() polls for merged PRs,
         // so we don't need to trigger anything extra here. This log confirms delivery.
       }
@@ -171,7 +171,7 @@ router.post(
 
 // ─── Authenticated routes ────────────────────────────────────────────────────
 
-// Callback MUST be before authRequired — it's a browser redirect from GitHub
+// Callback MUST be before authRequired - it's a browser redirect from GitHub
 // with no Bearer token. User identity comes from the HMAC-signed state param.
 
 /**

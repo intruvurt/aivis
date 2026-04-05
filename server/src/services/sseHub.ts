@@ -29,7 +29,7 @@ const heartbeatTimer = setInterval(() => {
         client.res.write(comment);
         alive.push(client);
       } catch {
-        // connection dead — drop silently
+        // connection dead - drop silently
       }
     }
     if (alive.length === 0) {

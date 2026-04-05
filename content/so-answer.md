@@ -6,7 +6,7 @@ npx vite preview --port 4173
 If the crash reproduces locally this rules out CDN caching, environment variables, and server config.
 
 Step 2: Find the real variable name behind lt
-Option A — Disable minification (fastest)
+Option A - Disable minification (fastest)
 Add this to vite.config.ts temporarily:
 tsbuild: {
   minify: false,
@@ -16,7 +16,7 @@ tsbuild: {
 Rebuild and serve. The error now shows the real variable name:
 ```
 Cannot access 'refreshServerHistory' before initialization
-Option B — Use source maps
+Option B - Use source maps
 tsbuild: {
   sourcemap: true,
 }
@@ -44,14 +44,14 @@ trace();
 
 Step 3: The root cause
 Once you disable minification the real error becomes clear. The pattern looks like this inside a large component:
-tsx// Declared FIRST — line ~2256
+tsx// Declared FIRST - line ~2256
 const handleClearAuditView = useCallback(() => {
   void refreshServerHistory(); // references refreshServerHistory
 }, [refreshServerHistory]);    // dependency array evaluates EAGERLY during render
 
 // ... 150 lines of other hooks ...
 
-// Declared SECOND — line ~2400
+// Declared SECOND - line ~2400
 const refreshServerHistory = useCallback(async () => {
   // ...
 }, [isAuthenticated, token]);
@@ -63,7 +63,7 @@ In production Rollup concatenates modules into chunks and esbuild minifies them.
 The critical misconception: useCallback dependency arrays evaluate eagerly during render, not lazily when the callback is called. Even though the body of handleClearAuditView only runs on click, the dependency array [refreshServerHistory] evaluates immediately during the component render pass.
 
 Step 5: The fix
-Move the referenced callback above the callback that references it. Declaration order change only — no logic changes, no new dependencies, no Rollup config changes:
+Move the referenced callback above the callback that references it. Declaration order change only - no logic changes, no new dependencies, no Rollup config changes:
 tsx// refreshServerHistory declared FIRST
 const refreshServerHistory = useCallback(async () => {
   if (!isAuthenticated) return;
@@ -90,7 +90,7 @@ const refreshServerHistory = useCallback(async () => {
   }
 }, [isAuthenticated, token]);
 
-// handleClearAuditView declared AFTER — safe to reference refreshServerHistory
+// handleClearAuditView declared AFTER - safe to reference refreshServerHistory
 const handleClearAuditView = useCallback(() => {
   setData(null);
   setAuditUrl('');

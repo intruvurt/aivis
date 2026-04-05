@@ -79,7 +79,7 @@ function PageRow({ page, defaultOpen }: { page: SiteCrawlPage; defaultOpen?: boo
                   {statusBadge(check.status)}
                   <div className="min-w-0">
                     <span className="text-white/70">{check.label || key}</span>
-                    {check.detail && <span className="text-white/40 ml-1">— {check.detail}</span>}
+                    {check.detail && <span className="text-white/40 ml-1">- {check.detail}</span>}
                   </div>
                 </div>
               ))}
@@ -254,7 +254,7 @@ export default function SiteCrawlPage() {
           icon={<Globe className="h-12 w-12 text-white/80" />}
           featurePreview={[
             "BFS crawl discovers pages via internal links",
-            "Per-page SEO diagnostics — schema, canonical, indexability",
+            "Per-page SEO diagnostics - schema, canonical, indexability",
             "Tier-based page caps: 3 (Alignment), 10 (Signal), 25+ (Enterprise)",
             "Crawl history with pass/warn/fail breakdowns",
           ]}

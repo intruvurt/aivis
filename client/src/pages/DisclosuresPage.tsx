@@ -85,9 +85,9 @@ export default function DisclosuresPage() {
             <h2 className="text-xl font-semibold text-white mb-3">4. Threat Detection Scope and Limitations</h2>
             <p>AiVIS performs automated threat scanning on submitted URLs using:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">URLhaus</strong> (abuse.ch) — community-maintained malware URL database.</li>
-              <li><strong className="text-white">Google Safe Browsing API v4</strong> — Google's phishing and malware feed.</li>
-              <li><strong className="text-white">Hostname heuristics</strong> — punycode detection, raw IP detection, risky TLD flagging.</li>
+              <li><strong className="text-white">URLhaus</strong> (abuse.ch) - community-maintained malware URL database.</li>
+              <li><strong className="text-white">Google Safe Browsing API v4</strong> - Google's phishing and malware feed.</li>
+              <li><strong className="text-white">Hostname heuristics</strong> - punycode detection, raw IP detection, risky TLD flagging.</li>
             </ul>
             <p className="mt-2"><strong className="text-white">What threat detection does not cover:</strong></p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
@@ -144,12 +144,12 @@ export default function DisclosuresPage() {
             <h2 className="text-xl font-semibold text-white mb-3">8. Third-Party Service Dependencies</h2>
             <p>AiVIS depends on external services to operate. Outages, policy changes, or disruptions at any of these providers may affect Service availability or functionality:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">OpenRouter</strong> — AI model routing. If OpenRouter or upstream model providers experience downtime, analyses may fail or fall back to alternative models.</li>
-              <li><strong className="text-white">Stripe</strong> — Payment processing. Stripe outages may prevent subscription changes, upgrades, or checkout completion.</li>
-              <li><strong className="text-white">Render</strong> — Infrastructure hosting. Hosting outages will make the Service unavailable.</li>
-              <li><strong className="text-white">Neon</strong> — PostgreSQL database. Database outages will prevent data persistence and retrieval.</li>
-              <li><strong className="text-white">Sentry</strong> — Error monitoring. Sentry outages do not affect Service functionality but may delay our awareness of issues.</li>
-              <li><strong className="text-white">Resend</strong> — Email delivery. Resend outages may delay transactional emails (verification, reports, notifications).</li>
+              <li><strong className="text-white">OpenRouter</strong> - AI model routing. If OpenRouter or upstream model providers experience downtime, analyses may fail or fall back to alternative models.</li>
+              <li><strong className="text-white">Stripe</strong> - Payment processing. Stripe outages may prevent subscription changes, upgrades, or checkout completion.</li>
+              <li><strong className="text-white">Render</strong> - Infrastructure hosting. Hosting outages will make the Service unavailable.</li>
+              <li><strong className="text-white">Neon</strong> - PostgreSQL database. Database outages will prevent data persistence and retrieval.</li>
+              <li><strong className="text-white">Sentry</strong> - Error monitoring. Sentry outages do not affect Service functionality but may delay our awareness of issues.</li>
+              <li><strong className="text-white">Resend</strong> - Email delivery. Resend outages may delay transactional emails (verification, reports, notifications).</li>
             </ul>
             <p className="mt-2">Intruvurt Labs does not guarantee the uptime or performance of third-party providers. We monitor these dependencies and implement fallback chains where feasible (e.g., the AI provider fallback chain includes up to 6 models for free-tier analyses).</p>
           </section>

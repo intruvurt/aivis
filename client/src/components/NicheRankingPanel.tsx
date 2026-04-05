@@ -106,12 +106,12 @@ function getRankClass(rank: number | null): string {
 }
 
 function getRankLabel(rank: number | null, brandName: string): string {
-  if (!rank) return `${brandName} — not ranked in top 100`;
+  if (!rank) return `${brandName} - not ranked in top 100`;
   return `#${rank} in niche`;
 }
 
 function formatDate(iso?: string): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
   return d.toLocaleDateString("en-US", {
     month: "short",
@@ -374,7 +374,7 @@ export default function NicheRankingPanel({
       }
       if (data.ranking) setRanking(data.ranking);
     } catch (err: any) {
-      setError("Network error — check connection");
+      setError("Network error - check connection");
     } finally {
       setRunning(false);
     }
@@ -490,7 +490,7 @@ export default function NicheRankingPanel({
                 className={`text-center px-3 py-2 rounded-lg min-w-[72px] ${getRankClass(ranking.target_rank)}`}
               >
                 <div className="text-2xl font-bold font-mono">
-                  {ranking.target_rank ? `#${ranking.target_rank}` : "—"}
+                  {ranking.target_rank ? `#${ranking.target_rank}` : "-"}
                 </div>
                 <div className="text-[10px] mt-0.5 opacity-80">
                   {ranking.target_rank

@@ -1,5 +1,5 @@
 // server/src/services/reviewSentiment.ts
-// Heuristic-based review sentiment — NO AI calls.
+// Heuristic-based review sentiment - NO AI calls.
 // The old implementation used invalid model ID 'gpt-3.5-turbo' (not a valid
 // OpenRouter model) which failed on every call and poisoned the provider backoff
 // table. This heuristic version is instant, free, and reliable.

@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildTechArticleSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
 
-const TITLE = "Competitive Landscape — Where AiVIS Fits";
+const TITLE = "Competitive Landscape - Where AiVIS Fits";
 const DESCRIPTION =
-  "How AiVIS compares to Otterly.ai, Reaudit, Profound, SE Visible, and LLMClicks — with a focus on intent, citation readiness, and structural authority.";
+  "How AiVIS compares to Otterly.ai, Reaudit, Profound, SE Visible, and LLMClicks - with a focus on intent, citation readiness, and structural authority.";
 const PATH = "/competitive-landscape";
 
 export default function CompetitiveLandscapePage() {
@@ -70,7 +70,7 @@ export default function CompetitiveLandscapePage() {
               <li>
                 <strong className="text-white">Authority continuity:</strong> does your content,
                 schema, and technical surface give the model enough evidence to trust you across
-                hundreds of adjacent queries — not just one keyword?
+                hundreds of adjacent queries - not just one keyword?
               </li>
             </ol>
             <p className="text-white/75 leading-relaxed">
@@ -190,7 +190,7 @@ export default function CompetitiveLandscapePage() {
           <p className="text-white/75 leading-relaxed">
             The easiest mistake in this category is to chase breadth: add yet another keyword
             explorer, half-finished rank tracker, or generic content brief generator. AiVIS takes the
-            opposite path. It narrows in on <span className="font-semibold">structural readiness</span> — the
+            opposite path. It narrows in on <span className="font-semibold">structural readiness</span> - the
             combination of crawlability, extractability, and trust cues that cause an AI system to
             either surface your URL or quietly skip you.
           </p>
@@ -259,12 +259,12 @@ export default function CompetitiveLandscapePage() {
           <h2 className="text-2xl brand-title text-emerald-200">Positioning summary</h2>
           <p className="text-white/80 leading-relaxed">
             AiVIS's clearest positioning: the only tool that audits why your page fails at the
-            structural level — not just whether you appear, but exactly what structural and content
+            structural level - not just whether you appear, but exactly what structural and content
             failures prevent AI systems from trusting and citing you. That is the anchor for
             everything else: pricing, features, and roadmap.
           </p>
           <p className="text-white/80 leading-relaxed">
-            If you want that lens on your own site, start with a single high-intent URL — your main
+            If you want that lens on your own site, start with a single high-intent URL - your main
             product page, pricing page, or flagship resource. Run an audit, apply the top 3
             structural fixes, and then watch how often that page shows up as a cited source in
             AI-generated answers over the next quarter.

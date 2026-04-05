@@ -56,9 +56,9 @@ const FIX_GUIDES: Record<string, { label: string; snippet: string }> = {
   meta_tags: {
     label: 'Add complete meta & Open Graph tags',
     snippet: `<head>
-  <title>Primary Keyword — Brand Name</title>
+  <title>Primary Keyword - Brand Name</title>
   <meta name="description" content="150-160 char description with primary keyword near the start." />
-  <meta property="og:title" content="Primary Keyword — Brand Name" />
+  <meta property="og:title" content="Primary Keyword - Brand Name" />
   <meta property="og:description" content="Same or similar to meta description." />
   <meta property="og:image" content="https://yoursite.com/og-image.png" />
   <meta property="og:url" content="https://yoursite.com/page" />
@@ -112,7 +112,7 @@ const FIX_GUIDES: Record<string, { label: string; snippet: string }> = {
   },
   robots_access: {
     label: 'Allow AI crawler access in robots.txt',
-    snippet: `# robots.txt — allow major AI crawlers
+    snippet: `# robots.txt - allow major AI crawlers
 User-agent: GPTBot
 Allow: /
 

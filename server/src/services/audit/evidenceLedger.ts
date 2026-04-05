@@ -1,5 +1,5 @@
 /**
- * Evidence Ledger — extracts ~15 evidence categories from ScrapeResult.
+ * Evidence Ledger - extracts ~15 evidence categories from ScrapeResult.
  *
  * Every evidence item has:
  *   category, key, label, value_json, status, confidence, notes[]
@@ -91,7 +91,7 @@ export function extractEvidenceFromScrapedData(
   // 14. TL;DR block
   items.push(tldrEvidence(d.hasTldr, d.tldrText, d.tldrPosition));
 
-  // 15. Performance — LCP
+  // 15. Performance - LCP
   items.push(numericEvidence('performance', 'lcp_ms', 'Largest Contentful Paint (ms)', d.lcpMs));
 
   // 16. Page load time
@@ -151,7 +151,7 @@ export function detectContradictions(items: EvidenceItem[]): Contradiction[] {
     contradictions.push({
       a: 'title',
       b: 'og_title',
-      description: 'Page title and OG title differ — AI crawlers may see inconsistent brand signals.',
+      description: 'Page title and OG title differ - AI crawlers may see inconsistent brand signals.',
     });
   }
 
@@ -166,14 +166,14 @@ export function detectContradictions(items: EvidenceItem[]): Contradiction[] {
     contradictions.push({
       a: 'meta_description',
       b: 'og_description',
-      description: 'Meta description and OG description differ — citation extracts may be inconsistent.',
+      description: 'Meta description and OG description differ - citation extracts may be inconsistent.',
     });
   }
 
   // Canonical URL points elsewhere
   const canonical = byKey.get('canonical');
   if (canonical?.status === 'present' && typeof canonical.value === 'string') {
-    // This is noted if present — rule engine will evaluate further
+    // This is noted if present - rule engine will evaluate further
     // (no automatic contradiction here without knowing the audited URL)
   }
 
@@ -188,7 +188,7 @@ export function detectContradictions(items: EvidenceItem[]): Contradiction[] {
     contradictions.push({
       a: 'robots_ai_crawlers',
       b: 'structured_data',
-      description: 'AI crawlers are blocked via robots.txt but structured data is present — content won\'t reach AI platforms despite being well-structured.',
+      description: 'AI crawlers are blocked via robots.txt but structured data is present - content won\'t reach AI platforms despite being well-structured.',
     });
   }
 
@@ -206,8 +206,8 @@ function textEvidence(
 ): EvidenceItem {
   const present = typeof value === 'string' && value.trim().length > 0;
   const notes: string[] = [];
-  if (present && value!.length < 10) notes.push('Very short — may be too brief for AI extraction.');
-  if (present && value!.length > 300) notes.push('Unusually long — may be truncated by AI crawlers.');
+  if (present && value!.length < 10) notes.push('Very short - may be too brief for AI extraction.');
+  if (present && value!.length > 300) notes.push('Unusually long - may be truncated by AI crawlers.');
   return {
     category,
     key,
@@ -246,9 +246,9 @@ function headingsEvidence(headings?: { h1: string[]; h2: string[]; h3: string[] 
   const h1Count = headings?.h1?.length ?? 0;
   const h2Count = headings?.h2?.length ?? 0;
 
-  if (h1Count === 0) notes.push('Missing H1 — primary heading is absent.');
-  if (h1Count > 1) notes.push(`Multiple H1 tags (${h1Count}) — should be exactly one.`);
-  if (h2Count === 0) notes.push('No H2 headings — content lacks section structure.');
+  if (h1Count === 0) notes.push('Missing H1 - primary heading is absent.');
+  if (h1Count > 1) notes.push(`Multiple H1 tags (${h1Count}) - should be exactly one.`);
+  if (h2Count === 0) notes.push('No H2 headings - content lacks section structure.');
 
   return {
     category: 'content',
@@ -320,7 +320,7 @@ function llmsTxtEvidence(llms?: { fetched: boolean; present: boolean; raw?: stri
   const notes: string[] = [];
   const present = llms?.present ?? false;
 
-  if (!present) notes.push('No llms.txt file found — AI-specific instructions file is missing.');
+  if (!present) notes.push('No llms.txt file found - AI-specific instructions file is missing.');
   if (present && llms?.raw && llms.raw.length < 50) notes.push('llms.txt exists but is very short.');
 
   return {
@@ -339,8 +339,8 @@ function linksEvidence(links?: { internal: number; external: number }): Evidence
   const internal = links?.internal ?? 0;
   const external = links?.external ?? 0;
 
-  if (internal === 0) notes.push('No internal links found — crawlability is limited.');
-  if (external === 0) notes.push('No external links — may appear isolated to AI crawlers.');
+  if (internal === 0) notes.push('No internal links found - crawlability is limited.');
+  if (external === 0) notes.push('No external links - may appear isolated to AI crawlers.');
 
   return {
     category: 'content',
@@ -357,7 +357,7 @@ function questionH2Evidence(count?: number, h2s?: string[]): EvidenceItem {
   const notes: string[] = [];
   const present = typeof count === 'number' && count > 0;
 
-  if (!present) notes.push('No question-style H2 headings — FAQ-style content is absent.');
+  if (!present) notes.push('No question-style H2 headings - FAQ-style content is absent.');
   if (present && count! >= 3) notes.push('Good FAQ coverage with multiple question headings.');
 
   return {
@@ -380,8 +380,8 @@ function tldrEvidence(
   const present = hasTldr === true;
 
   if (!present) notes.push('No TL;DR / summary block detected.');
-  if (present && position === 'top') notes.push('TL;DR is near the top — optimal for snippet extraction.');
-  if (present && position !== 'top') notes.push(`TL;DR position is "${position || 'unknown'}" — top is recommended.`);
+  if (present && position === 'top') notes.push('TL;DR is near the top - optimal for snippet extraction.');
+  if (present && position !== 'top') notes.push(`TL;DR position is "${position || 'unknown'}" - top is recommended.`);
 
   return {
     category: 'content',
@@ -400,7 +400,7 @@ function sitemapEvidence(sitemap?: { fetched: boolean; present: boolean; urlCoun
   const notes: string[] = [];
   const present = sitemap?.present ?? false;
 
-  if (!present) notes.push('No sitemap.xml found — search engines and AI crawlers cannot discover pages efficiently.');
+  if (!present) notes.push('No sitemap.xml found - search engines and AI crawlers cannot discover pages efficiently.');
   if (present && (sitemap?.urlCount ?? 0) === 0) notes.push('Sitemap exists but contains no URL entries.');
   if (present && (sitemap?.urlCount ?? 0) > 0) notes.push(`Sitemap contains ${sitemap!.urlCount} URLs.`);
 
@@ -424,7 +424,7 @@ function imageAltEvidence(totalImages?: number, withAlt?: number): EvidenceItem 
   if (total === 0) notes.push('No images found on the page.');
   else if (ratio >= 0.9) notes.push(`Excellent alt text coverage: ${alt}/${total} images (${Math.round(ratio * 100)}%).`);
   else if (ratio >= 0.5) notes.push(`Partial alt text coverage: ${alt}/${total} images (${Math.round(ratio * 100)}%).`);
-  else notes.push(`Poor alt text coverage: ${alt}/${total} images (${Math.round(ratio * 100)}%) — AI crawlers cannot interpret untagged images.`);
+  else notes.push(`Poor alt text coverage: ${alt}/${total} images (${Math.round(ratio * 100)}%) - AI crawlers cannot interpret untagged images.`);
 
   return {
     category: 'content',
@@ -443,7 +443,7 @@ function hreflangEvidence(hreflangs?: string[]): EvidenceItem {
   const present = tags.length > 0;
 
   if (present) notes.push(`${tags.length} hreflang alternate(s) declared: ${tags.slice(0, 5).join(', ')}${tags.length > 5 ? '...' : ''}`);
-  // hreflang is not required — absence is informational, not a failure
+  // hreflang is not required - absence is informational, not a failure
 
   return {
     category: 'indexability',
@@ -466,7 +466,7 @@ function aiCrawlerAccessEvidence(access?: Record<string, boolean>): EvidenceItem
       value: null,
       status: 'absent',
       confidence: 0.3,
-      notes: ['Could not determine per-crawler access — robots.txt may be missing.'],
+      notes: ['Could not determine per-crawler access - robots.txt may be missing.'],
     };
   }
 
@@ -474,7 +474,7 @@ function aiCrawlerAccessEvidence(access?: Record<string, boolean>): EvidenceItem
   const blocked = Object.entries(access).filter(([, v]) => !v).map(([k]) => k);
 
   if (blocked.length === 0) notes.push('All major AI crawlers are allowed.');
-  else if (allowed.length === 0) notes.push('All major AI crawlers are blocked — site is invisible to AI platforms.');
+  else if (allowed.length === 0) notes.push('All major AI crawlers are blocked - site is invisible to AI platforms.');
   else notes.push(`Blocked: ${blocked.join(', ')}. Allowed: ${allowed.join(', ')}.`);
 
   return {

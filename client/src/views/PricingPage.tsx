@@ -651,6 +651,14 @@ export default function PricingPage() {
   const [error, setError] = useState<string | null>(null);
   const [canStartTrial, setCanStartTrial] = useState(false);
   const [isStartingTrial, setIsStartingTrial] = useState(false);
+  const [totalAudits, setTotalAudits] = useState<number | null>(null);
+
+  useEffect(() => {
+    apiFetch('/api/public/benchmarks')
+      .then((r) => r.json())
+      .then((d) => { if (d?.success && d.benchmarks?.total_audits) setTotalAudits(d.benchmarks.total_audits); })
+      .catch(() => {});
+  }, []);
 
   const currentTier = String(user?.tier || "observer").toLowerCase();
 
@@ -1042,7 +1050,7 @@ export default function PricingPage() {
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-white/50 mb-8">
           <span className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-emerald-400/70" />
-            <strong className="text-white/70">500+</strong> audits completed
+            <strong className="text-white/70">{totalAudits ? `${totalAudits.toLocaleString()}+` : '…'}</strong> audits completed
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">

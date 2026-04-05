@@ -113,6 +113,7 @@ import openApiSpec from './routes/openApiSpec.js';
 import oauthRoutes from './routes/oauthRoutes.js';
 import mcpServer from './routes/mcpServer.js';
 import webMcpRouter from './routes/webMcp.js';
+import { enrichKeywords } from './services/keywordEnrichment.js';
 import supportRoutes from './routes/supportRoutes.js';
 import agentRoutes from './routes/agentRoutes.js';
 import ssfrRoutes from './routes/ssfrRoutes.js';
@@ -2210,6 +2211,28 @@ app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[benchmarks] Public benchmark query failed:', err?.message);
     res.status(500).json({ success: false, error: 'Benchmark data unavailable' });
+  }
+});
+
+// ── Keyword enrichment (real search suggestion verification) ──────────────
+app.post('/api/keywords/enrich', authRequired, async (req: Request, res: Response) => {
+  try {
+    const { keywords } = req.body || {};
+    if (!Array.isArray(keywords) || keywords.length === 0) {
+      return res.status(400).json({ success: false, error: 'keywords array is required' });
+    }
+    const sanitized = keywords
+      .filter((k: unknown) => typeof k === 'string' && k.trim().length > 0)
+      .map((k: string) => k.trim().slice(0, 200))
+      .slice(0, 20);
+    if (sanitized.length === 0) {
+      return res.status(400).json({ success: false, error: 'No valid keywords provided' });
+    }
+    const enriched = await enrichKeywords(sanitized);
+    return res.json({ success: true, enriched });
+  } catch (err: any) {
+    console.error('[keywords/enrich] Error:', err?.message);
+    return res.status(500).json({ success: false, error: 'Keyword enrichment failed' });
   }
 });
 
@@ -5844,6 +5867,45 @@ app.get('/api/audit/progress/:requestId', async (req: Request, res: Response) =>
       }, 60_000);
     }
   });
+});
+
+// ── Keyword intelligence from server-persisted audits ─────────────────────
+app.get('/api/keywords/from-audits', authRequired, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ success: false, error: 'Unauthorized' });
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT url, result->'keyword_intelligence' AS keywords, created_at
+       FROM audits
+       WHERE user_id = $1
+         AND result->'keyword_intelligence' IS NOT NULL
+         AND jsonb_array_length(result->'keyword_intelligence') > 0
+       ORDER BY created_at DESC
+       LIMIT 50`,
+      [userId]
+    );
+    const hosts: Record<string, { keywords: any[]; auditCount: number; latestUrl: string }> = {};
+    for (const row of rows) {
+      let host: string;
+      try { host = new URL(row.url).hostname; } catch { continue; }
+      if (!hosts[host]) hosts[host] = { keywords: [], auditCount: 0, latestUrl: row.url };
+      hosts[host].auditCount++;
+      if (!hosts[host].latestUrl) hosts[host].latestUrl = row.url;
+      const kws = Array.isArray(row.keywords) ? row.keywords : [];
+      const seen = new Set(hosts[host].keywords.map((k: any) => k.keyword));
+      for (const kw of kws) {
+        if (!seen.has(kw.keyword)) {
+          hosts[host].keywords.push(kw);
+          seen.add(kw.keyword);
+        }
+      }
+    }
+    return res.json({ success: true, hosts });
+  } catch (err: any) {
+    console.error('[keywords/from-audits] Error:', err?.message);
+    return res.status(500).json({ success: false, error: 'Failed to load keyword data' });
+  }
 });
 
 // Audit history endpoints

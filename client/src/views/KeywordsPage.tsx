@@ -16,9 +16,15 @@ import {
   ChevronDown,
   Sparkles,
   Globe,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  RefreshCw,
+  ChevronRight,
 } from "lucide-react";
 import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import { usePageMeta } from "../hooks/usePageMeta";
+import apiFetch from "../utils/api";
 
 // ─── UI config ────────────────────────────────────────────────────────────────
 
@@ -74,6 +80,13 @@ interface KeywordPlan {
 const VOLUME_ORDER   = { low: 0, medium: 1, high: 2, very_high: 3 } as const;
 const COMP_ORDER     = { low: 0, medium: 1, high: 2 } as const;
 
+interface EnrichedKeyword {
+  keyword: string;
+  search_verified: boolean;
+  real_suggestions: string[];
+  related_queries: string[];
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function KeywordsPage() {
@@ -94,7 +107,18 @@ export default function KeywordsPage() {
     }
   }, [isAuthenticated, navigate]);
 
-  // ─── Build per-host keyword map from ALL history ──────────────────────────
+  // ─── Fetch keywords from server audits ────────────────────────────────────
+  const [serverHosts, setServerHosts] = useState<Record<string, { keywords: any[]; auditCount: number; latestUrl: string }>>({});
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    apiFetch('/api/keywords/from-audits')
+      .then(r => r.json())
+      .then(d => { if (d.success && d.hosts) setServerHosts(d.hosts); })
+      .catch(() => {});
+  }, [isAuthenticated]);
+
+  // ─── Build per-host keyword map from local history + server audits ────────
   const hostMap = useMemo(() => {
     const map = new Map<string, { keywords: Map<string, KeywordIntelligence>; latestUrl: string; auditCount: number; latestTimestamp: number }>();
     for (const entry of history) {
@@ -107,14 +131,26 @@ export default function KeywordsPage() {
       const ts = entry.timestamp || 0;
       if (ts > record.latestTimestamp) { record.latestTimestamp = ts; record.latestUrl = entry.result.url; }
       for (const kw of entry.result.keyword_intelligence) {
-        // Latest data wins (don't overwrite newer with older)
         if (!record.keywords.has(kw.keyword) || ts > record.latestTimestamp) {
           record.keywords.set(kw.keyword, kw);
         }
       }
     }
+    // Merge server-side keywords (fills gaps for audits not in localStorage)
+    for (const [host, data] of Object.entries(serverHosts)) {
+      if (!map.has(host)) {
+        map.set(host, { keywords: new Map(), latestUrl: data.latestUrl, auditCount: data.auditCount, latestTimestamp: 0 });
+      }
+      const record = map.get(host)!;
+      record.auditCount = Math.max(record.auditCount, data.auditCount);
+      for (const kw of data.keywords) {
+        if (!record.keywords.has(kw.keyword)) {
+          record.keywords.set(kw.keyword, kw);
+        }
+      }
+    }
     return map;
-  }, [history]);
+  }, [history, serverHosts]);
 
   const availableHosts = useMemo(() => [...hostMap.keys()].sort(), [hostMap]);
   const [selectedHost, setSelectedHost] = useState<string>("");
@@ -209,6 +245,43 @@ export default function KeywordsPage() {
       // no-op
     }
   }, [planStorageKey, keywordPlans]);
+
+  // ─── Keyword enrichment (real search verification) ────────────────────────
+  const [enrichmentMap, setEnrichmentMap] = useState<Map<string, EnrichedKeyword>>(new Map());
+  const [isEnriching, setIsEnriching] = useState(false);
+  const [enrichError, setEnrichError] = useState<string | null>(null);
+  const [expandedEnrich, setExpandedEnrich] = useState<string | null>(null);
+
+  const enrichKeywords = async () => {
+    if (!keywords.length || isEnriching) return;
+    setIsEnriching(true);
+    setEnrichError(null);
+    try {
+      const kwStrings = keywords.map(k => k.keyword).slice(0, 20);
+      const res = await apiFetch('/api/keywords/enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords: kwStrings }),
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.enriched)) {
+        const map = new Map<string, EnrichedKeyword>();
+        for (const ek of data.enriched) {
+          map.set(ek.keyword.toLowerCase(), ek);
+        }
+        setEnrichmentMap(map);
+      } else {
+        setEnrichError(data.error || 'Enrichment failed');
+      }
+    } catch {
+      setEnrichError('Failed to verify keywords');
+    } finally {
+      setIsEnriching(false);
+    }
+  };
+
+  const hasEnrichment = enrichmentMap.size > 0;
+  const verifiedCount = hasEnrichment ? [...enrichmentMap.values()].filter(e => e.search_verified).length : 0;
 
   const toggleStar = (kw: string) =>
     setStarred((prev) => {
@@ -457,7 +530,7 @@ export default function KeywordsPage() {
                 { label: "Keywords", value: keywords.length, color: "text-white" },
                 { label: "Avg Opportunity", value: avgOpportunity, color: avgOpportunity >= 60 ? "text-emerald-300" : avgOpportunity >= 40 ? "text-amber-300" : "text-rose-300" },
                 { label: "Rising Trends", value: risingCount, color: risingCount > 0 ? "text-emerald-300" : "text-white/50" },
-                { label: "High Volume", value: highVolumeCount, color: highVolumeCount > 0 ? "text-amber-300" : "text-white/50" },
+                { label: hasEnrichment ? "Search Verified" : "High Volume", value: hasEnrichment ? verifiedCount : highVolumeCount, color: hasEnrichment ? (verifiedCount > 0 ? "text-cyan-300" : "text-white/50") : (highVolumeCount > 0 ? "text-amber-300" : "text-white/50") },
                 { label: "Starred", value: starredCount, color: starredCount > 0 ? "text-yellow-300" : "text-white/50" },
               ].map(({ label, value, color }) => (
                 <div key={label} className="card-charcoal/50 rounded-xl p-4">
@@ -465,6 +538,40 @@ export default function KeywordsPage() {
                   <p className={`text-2xl font-bold ${color}`}>{value}</p>
                 </div>
               ))}
+            </div>
+
+            {/* Keyword enrichment / verification */}
+            <div className="rounded-2xl border border-white/10 bg-charcoal-deep/60 p-4">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                    <Search className="w-4 h-4 text-cyan-400" />
+                    Real Search Verification
+                  </h3>
+                  <p className="text-xs text-white/55 mt-1">
+                    {hasEnrichment
+                      ? `${verifiedCount} of ${enrichmentMap.size} keywords match real search engine suggestions`
+                      : "Verify audit keywords against DuckDuckGo & Bing autocomplete to confirm real search demand"}
+                  </p>
+                </div>
+                <button
+                  onClick={enrichKeywords}
+                  disabled={isEnriching || !keywords.length}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 text-cyan-300 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  type="button"
+                >
+                  {isEnriching ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Verifying…</>
+                  ) : hasEnrichment ? (
+                    <><RefreshCw className="w-4 h-4" /> Re-verify</>
+                  ) : (
+                    <><CheckCircle className="w-4 h-4" /> Verify Keywords</>
+                  )}
+                </button>
+              </div>
+              {enrichError && (
+                <p className="text-xs text-rose-400 mt-2">{enrichError}</p>
+              )}
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-5">
@@ -620,6 +727,9 @@ export default function KeywordsPage() {
                     <th className="text-left px-4 py-3"><SortHeader label="Competition" col="competition" /></th>
                     <th className="text-left px-4 py-3 w-40"><SortHeader label="Opportunity" col="opportunity" /></th>
                     <th className="text-left px-4 py-3"><span className="text-xs font-medium uppercase tracking-wide text-white/60">Trend</span></th>
+                    {hasEnrichment && (
+                      <th className="text-left px-4 py-3"><span className="text-xs font-medium uppercase tracking-wide text-white/60">Verified</span></th>
+                    )}
                     <th className="px-4 py-3 w-8" />
                   </tr>
                 </thead>
@@ -629,9 +739,26 @@ export default function KeywordsPage() {
                     const vc = VOLUME_CONFIG[kw.volume_tier];
                     const cc = COMPETITION_CONFIG[kw.competition];
                     const isStarred = starred.has(kw.keyword);
+                    const enrichData = enrichmentMap.get(kw.keyword.toLowerCase());
+                    const isExpanded = expandedEnrich === kw.keyword;
                     return (
-                      <tr key={kw.keyword} className="hover:bg-charcoal transition-colors">
-                        <td className="px-5 py-3.5 text-sm font-medium text-white">{kw.keyword}</td>
+                      <React.Fragment key={kw.keyword}>
+                      <tr className="hover:bg-charcoal transition-colors">
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-2">
+                            {hasEnrichment && enrichData?.real_suggestions?.length ? (
+                              <button
+                                onClick={() => setExpandedEnrich(isExpanded ? null : kw.keyword)}
+                                className="text-white/40 hover:text-white/70 transition-colors"
+                                type="button"
+                                title="Show real search suggestions"
+                              >
+                                <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                              </button>
+                            ) : null}
+                            <span className="text-sm font-medium text-white">{kw.keyword}</span>
+                          </div>
+                        </td>
                         <td className="px-4 py-3.5">
                           <span className={`text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${ic.color}`}>{ic.label}</span>
                         </td>
@@ -644,6 +771,23 @@ export default function KeywordsPage() {
                         </td>
                         <td className="px-4 py-3.5"><OpportunityBar score={kw.opportunity} /></td>
                         <td className="px-4 py-3.5"><TrendIcon trend={kw.trend} /></td>
+                        {hasEnrichment && (
+                          <td className="px-4 py-3.5">
+                            {enrichData ? (
+                              enrichData.search_verified ? (
+                                <span className="flex items-center gap-1 text-xs text-emerald-300" title="Matches real search engine autocomplete">
+                                  <CheckCircle className="w-3.5 h-3.5" /> Real
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-xs text-white/35" title="Not found in search autocomplete">
+                                  <XCircle className="w-3.5 h-3.5" /> Unverified
+                                </span>
+                              )
+                            ) : (
+                              <span className="text-xs text-white/25">—</span>
+                            )}
+                          </td>
+                        )}
                         <td className="px-4 py-3.5 text-center">
                           <button
                             onClick={() => toggleStar(kw.keyword)}
@@ -655,11 +799,40 @@ export default function KeywordsPage() {
                           </button>
                         </td>
                       </tr>
+                      {isExpanded && enrichData && (enrichData.real_suggestions.length > 0 || enrichData.related_queries.length > 0) && (
+                        <tr className="bg-charcoal-deep/40">
+                          <td colSpan={hasEnrichment ? 8 : 7} className="px-5 py-3">
+                            <div className="space-y-2 pl-5">
+                              {enrichData.related_queries.length > 0 && (
+                                <div>
+                                  <p className="text-[10px] uppercase tracking-wide text-cyan-400/70 mb-1">Real multi-word searches people use</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {enrichData.related_queries.map(q => (
+                                      <span key={q} className="px-2 py-0.5 rounded-full border border-cyan-500/20 bg-cyan-500/8 text-xs text-cyan-200">{q}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {enrichData.real_suggestions.filter(s => !enrichData.related_queries.includes(s)).length > 0 && (
+                                <div>
+                                  <p className="text-[10px] uppercase tracking-wide text-white/40 mb-1">Other autocomplete suggestions</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {enrichData.real_suggestions.filter(s => !enrichData.related_queries.includes(s)).slice(0, 8).map(s => (
+                                      <span key={s} className="px-2 py-0.5 rounded-full border border-white/10 bg-white/4 text-xs text-white/55">{s}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </React.Fragment>
                     );
                   })}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="text-center py-12 text-white/60 text-sm">
+                      <td colSpan={hasEnrichment ? 8 : 7} className="text-center py-12 text-white/60 text-sm">
                         No keywords match your current filters.
                       </td>
                     </tr>
@@ -676,6 +849,10 @@ export default function KeywordsPage() {
               <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-emerald-400" />Rising</span>
               <span className="flex items-center gap-1.5"><Minus className="w-3 h-3 text-white/40" />Stable</span>
               <span className="flex items-center gap-1.5"><TrendingDown className="w-3 h-3 text-rose-400" />Declining</span>
+              {hasEnrichment && <>
+                <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-emerald-400" />Real search term</span>
+                <span className="flex items-center gap-1.5"><XCircle className="w-3 h-3 text-white/35" />Not in autocomplete</span>
+              </>}
               <span>Opportunity 0–100: higher = better ROI potential</span>
             </div>
             </>

@@ -23,7 +23,7 @@ const router = Router();
 /* ── GET /:slug - view agreement ───────────────────────────────────────────── */
 router.get('/:slug', async (req: Request, res: Response) => {
   try {
-    const agreement = await getAgreementBySlug(req.params.slug);
+    const agreement = await getAgreementBySlug(req.params.slug as string);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
 
     // Never expose IP/UA forensics to the public
@@ -75,7 +75,7 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
     const ua = (req.headers['user-agent'] as string) || 'unknown';
 
-    const result = await signAgreement(req.params.slug, party, signature, ip, ua);
+    const result = await signAgreement(req.params.slug as string, party, signature, ip, ua);
 
     if (!result.ok) {
       return res.status(400).json({ error: result.error });
@@ -84,7 +84,7 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
     // If fully locked, send confirmation emails to both parties
     if (result.fullyLocked) {
       // Fire-and-forget email delivery
-      sendSignedCopies(req.params.slug).catch((err) =>
+      sendSignedCopies(req.params.slug as string).catch((err) =>
         console.error('[Agreements] Email delivery error:', err),
       );
     }
@@ -105,7 +105,7 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
 /* ── GET /:slug/verify - integrity check ───────────────────────────────────── */
 router.get('/:slug/verify', async (req: Request, res: Response) => {
   try {
-    const result = await verifyIntegrity(req.params.slug);
+    const result = await verifyIntegrity(req.params.slug as string);
     return res.json(result);
   } catch (err) {
     console.error('[Agreements] Verify error:', err);
@@ -116,7 +116,7 @@ router.get('/:slug/verify', async (req: Request, res: Response) => {
 /* ── GET /:slug/export - download signed HTML ──────────────────────────────── */
 router.get('/:slug/export', async (req: Request, res: Response) => {
   try {
-    const agreement = await getAgreementBySlug(req.params.slug);
+    const agreement = await getAgreementBySlug(req.params.slug as string);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
     if (agreement.status !== 'fully_signed') {
       return res.status(400).json({ error: 'Agreement must be fully signed before export.' });

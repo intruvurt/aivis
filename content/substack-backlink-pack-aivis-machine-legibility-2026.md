@@ -1,10 +1,12 @@
 # AiVIS Substack Backlink Pack (2026)
 
 ## Primary targets
+
 - Article A: `https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web`
 - Article B: `https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web`
 
 ## Secondary support links (AiVIS)
+
 - `https://aivis.biz/`
 - `https://aivis.biz/guide`
 - `https://aivis.biz/methodology`

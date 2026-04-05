@@ -1,3 +1,5 @@
+# Competitor Tracking + Market Trend Loop
+
 The competitor tracking + market trend loop - actual implementation
 Here's the real repeatable system, not the generic "use tools" advice:
 typescript// WEEKLY CITATION TRACKING LOOP
@@ -26,7 +28,7 @@ async function weeklyAudit() {
       model: "sonar-pro",
       messages: [{ role: "user", content: query }]
     })
-    
+
     // 2. Extract citations from response
     const citations = result.citations // Perplexity returns these directly
     
@@ -60,4 +62,4 @@ async function weeklyAudit() {
 ## Published references
 
 - Medium: Before You Build Another SaaS, Run This 30-Second Reality Check
-  https://intruvurt.medium.com/before-you-build-another-saas-run-this-30-second-reality-check-af7b1bb30bcc
+  <https://intruvurt.medium.com/before-you-build-another-saas-run-this-30-second-reality-check-af7b1bb30bcc>

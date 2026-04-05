@@ -1,8 +1,6 @@
-/**
- * SECURITY EVENT LOGGING - DEVELOPER QUICK REFERENCE
- * 
- * How to use the security event logger in routes and middleware
- */
+# Security Event Logging - Developer Quick Reference
+
+How to use the security event logger in routes and middleware.
 
 -- IMPORT STATEMENT
 
@@ -227,12 +225,14 @@ describe('Security Event Logger', () => {
 ## COMMON GOTCHAS
 
 ❌ **DON'T:** Pass `req.body` directly if it might contain secrets
+
 ```ts
 // Bad
 console.log('Request:', req.body);  // Might leak API keys before redaction
 ```
 
 ✅ **DO:** Let redaction layer handle it
+
 ```ts
 // Good - redaction applied automatically
 logMalformedPayload(req, userId, 'Invalid', { received: req.body });
@@ -241,12 +241,14 @@ logMalformedPayload(req, userId, 'Invalid', { received: req.body });
 ---
 
 ❌ **DON'T:** Catch errors and rethrow without logging
+
 ```ts
 // Bad
 try { ... } catch (e) { throw e; }  // Error lost, no audit trail
 ```
 
 ✅ **DO:** Log then rethrow or handle
+
 ```ts
 // Good
 try { ... } catch (e) { 
@@ -258,12 +260,14 @@ try { ... } catch (e) {
 ---
 
 ❌ **DON'T:** Log full JWT tokens or Bearer headers
+
 ```ts
 // Bad  
 console.log('Auth header:', req.headers.authorization);
 ```
 
 ✅ **DO:** Let security logger handle it
+
 ```ts
 // Good
 logInvalidToken(req, userId);  // No need to pass token, it's redacted

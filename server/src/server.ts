@@ -35,7 +35,7 @@ import { createLicenseAPI } from './licensing/verification-api.js';
 import competitorRoutes from './routes/competitors.js';
 import citationRoutes from './routes/citations.js';
 import mentionRoutes from './routes/mentions.js';
-import AutoScoreFixRoutes from './routes/AutoScoreFixRoutes.js';
+import AutoScoreFixRoutes from './routes/autoScoreFixRoutes.js';
 import reverseEngineerApi from './routes/reverseEngineerApi.js';
 import schemaGeneratorRoutes from './routes/schemaGeneratorRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';

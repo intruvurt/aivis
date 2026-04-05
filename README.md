@@ -69,7 +69,7 @@ This means the platform is not limited to US-only authority assumptions. It stil
 Canonical tier truth lives in `shared/types.ts`.
 
 | Canonical tier | Display name | Billing |
-|---|---|---|
+| --- | --- | --- |
 | `observer` | Observer (Free) | Free |
 | `alignment` | Alignment (Core) | $9/mo |
 | `signal` | Signal (Pro) | $29/mo |
@@ -80,7 +80,7 @@ Canonical tier truth lives in `shared/types.ts`.
 Selected entitlement highlights from the shared contract:
 
 | Tier | Scans/month | Team workspaces | Share links | Triple-check | AutoPR |
-|---|---:|---|---|---|---|
+| --- | ---: | --- | --- | --- | --- |
 | `observer` | 3 | no | no | no | no |
 | `alignment` | 25 | no | yes | no | no |
 | `signal` | 100 | yes | yes | yes | yes |

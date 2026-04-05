@@ -89,9 +89,9 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     <p style="font-size:15px;color:#555;margin:0 0 24px">The partnership agreement below has been signed by both parties and tamper-locked.</p>
     <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
       <tr><td style="padding:8px 0;color:#888;width:120px">Agreement</td><td style="padding:8px 0;font-weight:600">${escapeHtml(agreement.title)}</td></tr>
-      <tr><td style="padding:8px 0;color:#888">Party A</td><td style="padding:8px 0">${escapeHtml(agreement.party_a_name)} - ${escapeHtml(agreement.party_a_org)}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Party A</td><td style="padding:8px 0">${escapeHtml(agreement.party_a_name)} - ${escapeHtml(agreement.party_a_org ?? '')}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Signed</td><td style="padding:8px 0">${agreement.party_a_signed_at}</td></tr>
-      <tr><td style="padding:8px 0;color:#888">Party B</td><td style="padding:8px 0">${escapeHtml(agreement.party_b_name)} - ${escapeHtml(agreement.party_b_org)}</td></tr>
+      <tr><td style="padding:8px 0;color:#888">Party B</td><td style="padding:8px 0">${escapeHtml(agreement.party_b_name)} - ${escapeHtml(agreement.party_b_org ?? '')}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Signed</td><td style="padding:8px 0">${agreement.party_b_signed_at}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Locked</td><td style="padding:8px 0">${agreement.locked_at}</td></tr>
       <tr><td style="padding:8px 0;color:#888">Valid Until</td><td style="padding:8px 0">${agreement.valid_until}</td></tr>

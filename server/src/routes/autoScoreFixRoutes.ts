@@ -30,7 +30,7 @@ import {
   approveJob,
   rejectJob,
   cancelJob,
-} from '../services/AutoScoreFixService.js';
+} from '../services/autoScoreFixService.js';
 
 const router = Router();
 const VALID_PROVIDERS: VcsProvider[] = ['github', 'gitlab', 'bitbucket'];

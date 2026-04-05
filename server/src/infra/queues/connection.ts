@@ -1,3 +1,4 @@
+
 /**
  * Shared BullMQ connection using the existing Redis instance.
  * Falls back gracefully when Redis is not configured.

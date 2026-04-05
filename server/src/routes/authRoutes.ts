@@ -19,7 +19,7 @@ import { getPool } from '../services/postgresql.js';
 import { createUser, getUserByEmail, updateUserById } from '../models/User.js';
 import { signUserToken } from '../lib/utils/jwt.js';
 import { attachReferralAtSignup, normalizeReferralCodeInput, validateReferralCode } from '../services/referralCredits.js';
-import { saveVcsToken } from '../services/AutoScoreFixService.js';
+import { saveVcsToken } from '../services/autoScoreFixService.js';
 import { sendVerificationEmail } from '../services/emailService.js';
 
 const router = express.Router();

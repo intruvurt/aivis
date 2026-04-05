@@ -96,7 +96,7 @@ import {
   getNewsletterDispatchSettings,
   upsertNewsletterDispatchSettings,
 } from './services/newsletterService.js';
-import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop } from './services/AutoScoreFixService.js';
+import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop } from './services/autoScoreFixService.js';
 import { startScheduledPlatformNotificationLoop } from './services/scheduledPlatformNotifications.js';
 import { renderPlatformNewsletterEmail, sendPlatformNewsletterEmail, renderBroadcastEmail, sendBroadcastEmail } from './services/emailService.js';
 import { isGoogleMeasurementConfigured, sendMeasurementEvent } from './services/googleMeasurement.js';

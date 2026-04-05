@@ -21,8 +21,6 @@ const DAILY_LIMITS: Record<CanonicalTier, number> = {
   alignment: 10,
   signal: 15, // Signal tier gets 15 messages/day to accommodate triple-check pipeline
   scorefix: 25,
-  agency: 50,
-  enterprise: -1, // unlimited
 };
 
 function uniqueProviders(providers: AiProvider[]): AiProvider[] {
@@ -148,8 +146,6 @@ const TIER_DISPLAY: Record<CanonicalTier, string> = {
   alignment: 'Alignment [Core]',
   signal: 'Signal [Premium]',
   scorefix: 'Score Fix [AutoPR]',
-  agency: 'Agency [Portfolio]',
-  enterprise: 'Enterprise [Custom]',
 };
 
 function detectActionIntent(message: string): DetectedAction | null {

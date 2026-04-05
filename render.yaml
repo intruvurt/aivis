@@ -96,7 +96,7 @@ services:
           form-action 'self';
           upgrade-insecure-requests
     routes:
-      # SPA fallback — all non-asset routes serve index.html
+      # SPA fallback; all non-asset routes serve index.html
       - type: rewrite
         source: /*
         destination: /index.html

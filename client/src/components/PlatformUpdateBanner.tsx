@@ -31,21 +31,21 @@ export default function PlatformUpdateBanner() {
         <div className="inline-flex items-center gap-2 text-sm sm:text-[15px]">
           <Sparkles className="h-4 w-4 shrink-0 text-indigo-200" />
           <span className="text-white/95">
-            We had brief server downtime while rolling out Team Workspaces + WebMCP. It&apos;s now live — take a look.
+            We had brief server downtime while upgrading our user interfaces and dynamic experience for our platform. All services are back online and running smoothly. We appreciate your understanding and are here to help if you have any questions!
           </span>
         </div>
         <div className="flex items-center gap-2 sm:ml-auto">
           <Link
-            to="/app/team"
+            to="/app/citations"
             className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-colors"
           >
-            Open Team Workspace
+            Open Citations
           </Link>
           <Link
-            to="/app/mcp"
+            to="/app/competitors"
             className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-colors"
           >
-            Open WebMCP
+            Open Competitors
           </Link>
           <button
             type="button"

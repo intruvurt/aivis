@@ -459,7 +459,7 @@ export function isAuthUser(obj: unknown): obj is AuthUser {
     typeof user.id === 'string' &&
     typeof user.email === 'string' &&
     typeof user.tier === 'string' &&
-    ['free', 'core', 'premium', 'enterprise'].includes(user.tier as string)
+    ['free', 'core', 'premium', 'observer', 'alignment', 'signal', 'scorefix'].includes(user.tier as string)
   );
 }
 

@@ -27,7 +27,7 @@ export const STRIPE_PRICING = {
     mode: null,
     metadata: {
       tier_key: 'free',
-      audits_per_month: 10,
+      audits_per_month: 3,
       projects_max: 1,
     },
   },
@@ -41,7 +41,7 @@ export const STRIPE_PRICING = {
     mode: 'freemium',
     metadata: {
       tier_key: 'observer',
-      audits_per_month: 10,
+      audits_per_month: 3,
       competitors: 0,
       citation_queries: 10,
     },
@@ -99,7 +99,7 @@ export const STRIPE_PRICING = {
     mode: 'payment',
     metadata: {
       tier_key: 'scorefix',
-      audits_per_month: 250,
+      audits_per_month: 15,
       competitors: 10,
       citation_queries: 400,
       api_access: true,
@@ -138,20 +138,7 @@ export const STRIPE_PRICING = {
       projects_max: 20,
     },
   },
-// ENTERPRISE TIER - custom pricing
-  enterprise: {
-    name: 'Ai Visibility Intelligence Audits – Enterprise',
-    lookupKey: 'enterprise_monthly',
-    priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID,
-    amountCents: 29900, // Custom pricing
-    mode: 'subscription',
-    metadata: {
-      tier_key: 'enterprise',
-      audits_per_month: 1000,
-      projects_max: 100,
-      includes_sla: true,
-      white_label: true,},
-  },
+// ENTERPRISE TIER - removed (not an active tier)
 };
 
 // ============================================================================
@@ -337,7 +324,7 @@ export function getTierLimits(tierKey: string) {
   if (!config || !canonicalLimits) {
     // Default to free tier limits
     return {
-      auditsPerMonth: 10,
+      auditsPerMonth: 3,
       projectsMax: 1,
       includesSla: false,
       whiteLabel: false,

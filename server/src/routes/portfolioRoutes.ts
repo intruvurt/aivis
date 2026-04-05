@@ -33,11 +33,11 @@ function requirePortfolioTier(req: Request, res: Response): boolean {
 
 function requireAgencyTier(req: Request, res: Response): boolean {
   const userTier = ((req as any).user?.tier || 'observer') as CanonicalTier | LegacyTier;
-  if (!meetsMinimumTier(userTier, 'agency')) {
+  if (!meetsMinimumTier(userTier, 'signal')) {
     res.status(403).json({
       success: false,
-      error: 'Bulk fix and agency features require Agency tier or higher.',
-      requiredTier: 'agency',
+      error: 'Bulk fix and agency features require Signal tier or higher.',
+      requiredTier: 'signal',
     });
     return false;
   }

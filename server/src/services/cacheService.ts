@@ -35,7 +35,7 @@ export class AnalysisCacheService {
     try {
       const pool = getPool();
       const result = await pool.query(
-        `SELECT result, analyzed_at FROM analysis_cache WHERE url = $1`,
+        `SELECT result, analyzed_at FROM analysis_cache WHERE url = $1 AND analyzed_at > NOW() - interval '7 days'`,
         [normalizedUrl]
       );
 

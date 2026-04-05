@@ -33,11 +33,11 @@ function userTier(req: Request): CanonicalTier | LegacyTier {
 }
 
 function requireAgency(req: Request, res: Response): boolean {
-  if (!meetsMinimumTier(userTier(req), 'agency')) {
+  if (!meetsMinimumTier(userTier(req), 'signal')) {
     res.status(403).json({
       success: false,
-      error: 'This feature requires Agency tier or higher.',
-      requiredTier: 'agency',
+      error: 'This feature requires Signal tier or higher.',
+      requiredTier: 'signal',
     });
     return false;
   }

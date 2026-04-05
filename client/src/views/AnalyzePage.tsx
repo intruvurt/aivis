@@ -25,6 +25,7 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import ComprehensiveAnalysis from "../components/ComprehensiveAnalysis";
 import TextSummaryView from "../components/TextSummaryView";
+import ShareButtons from "../components/ShareButtons";
 import { API_URL } from "../config";
 import type { AnalysisResponse, TextSummary } from "@shared/types";
 import apiFetch from "../utils/api";
@@ -938,56 +939,92 @@ const AnalyzePage: React.FC = () => {
 
         {result && (
           <section id="analysis-report" className="mt-8 space-y-4">
-            <div className="rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Audit Complete
-                  </div>
-                  <h2 className="mt-3 text-2xl font-semibold text-white">See your visibility. Then fix what AI cannot trust.</h2>
-                  <p className="mt-2 text-sm leading-7 text-white/60">
-                    AI can extract your content, but it does not trust it enough to use it in answers.
-                  </p>
-                  {resultTextSummary && (
-                    <div className="mt-4 inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
-                      <button
-                        type="button"
-                        onClick={() => setResultView("summary")}
-                        className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
-                          resultView === "summary"
-                            ? "bg-cyan-400/15 text-cyan-100"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        Simple Summary
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setResultView("technical")}
-                        className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
-                          resultView === "technical"
-                            ? "bg-cyan-400/15 text-cyan-100"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        Technical View
-                      </button>
-                    </div>
-                  )}
-                  {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-xs uppercase tracking-wide text-white/50">Top 3 blockers</p>
-                      <ul className="mt-1 list-disc pl-5 text-xs text-white/75 space-y-0.5">
-                        {result.recommendations.slice(0, 3).map((r, index) => (
-                          <li key={`${r.id || r.title}-${index}`}>{r.title}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+            <div className="rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6 space-y-5">
+              {/* Row 1: badge + share strip */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Audit Complete
                 </div>
+                <ShareButtons
+                  url={result.url}
+                  score={result.visibility_score}
+                  analyzedAt={result.analyzed_at}
+                  auditId={result.audit_id}
+                />
+              </div>
 
-                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4 lg:min-w-[320px]">
+              {/* Row 2: headline + view toggle */}
+              <div>
+                <h2 className="text-2xl font-semibold text-white">See your visibility. Then fix what AI cannot trust.</h2>
+                <p className="mt-2 text-sm leading-7 text-white/60">
+                  AI can extract your content, but it does not trust it enough to use it in answers.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {resultTextSummary && (
+                  <div className="inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
+                    <button
+                      type="button"
+                      onClick={() => setResultView("summary")}
+                      className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                        resultView === "summary"
+                          ? "bg-cyan-400/15 text-cyan-100"
+                          : "text-white/60 hover:text-white"
+                      }`}
+                    >
+                      Simple Summary
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setResultView("technical")}
+                      className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                        resultView === "technical"
+                          ? "bg-cyan-400/15 text-cyan-100"
+                          : "text-white/60 hover:text-white"
+                      }`}
+                    >
+                      Technical View
+                    </button>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    to="/app/score-fix"
+                    className="rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2 text-xs font-semibold text-white/75 transition-colors hover:text-white"
+                  >
+                    Score Fix
+                  </Link>
+                  <Link
+                    to="/app/reverse-engineer"
+                    className="rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2 text-xs font-semibold text-white/75 transition-colors hover:text-white"
+                  >
+                    Reverse Engineer
+                  </Link>
+                  <Link
+                    to="/pricing?source=analyze-result"
+                    className="rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2 text-xs font-semibold text-white/75 transition-colors hover:text-white"
+                  >
+                    Compare Tiers
+                  </Link>
+                </div>
+              </div>
+
+              {/* Row 3: top blockers + before/after proof (side by side on lg) */}
+              <div className="grid gap-4 lg:grid-cols-2">
+                {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-white/50">Top 3 blockers</p>
+                    <ul className="mt-1 list-disc pl-5 text-xs text-white/75 space-y-0.5">
+                      {result.recommendations.slice(0, 3).map((r, index) => (
+                        <li key={`${r.id || r.title}-${index}`}>{r.title}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
                   <div className="text-[11px] uppercase tracking-wide text-cyan-200">Before / After proof mode</div>
 
                   {!demoBaseline && (
@@ -1073,27 +1110,6 @@ const AnalyzePage: React.FC = () => {
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <Link
-                    to="/app/score-fix"
-                    className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
-                  >
-                    Score Fix
-                  </Link>
-                  <Link
-                    to="/app/reverse-engineer"
-                    className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
-                  >
-                    Reverse Engineer
-                  </Link>
-                  <Link
-                    to="/pricing?source=analyze-result"
-                    className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
-                  >
-                    Compare Tiers
-                  </Link>
                 </div>
               </div>
             </div>

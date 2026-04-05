@@ -95,8 +95,6 @@ const VALID_TIER_STRINGS: ReadonlySet<string> = new Set<CanonicalTier | LegacyTi
   'alignment',
   'signal',
   'scorefix',
-  'agency',
-  'enterprise',
   'free',
   'core',
   'premium',
@@ -213,7 +211,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },
   alignment: {
-    scansPerMonth: 25, pagesPerScan: 3, competitors: 2, cacheDays: 30,
+    scansPerMonth: 60, pagesPerScan: 3, competitors: 2, cacheDays: 30,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
@@ -226,7 +224,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
   signal: {
-    scansPerMonth: 100, pagesPerScan: 10, competitors: 5, cacheDays: 90,
+    scansPerMonth: 110, pagesPerScan: 10, competitors: 5, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -250,32 +248,6 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 1, maxStoredAudits: 200,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
-  },
-  agency: {
-    scansPerMonth: 500, pagesPerScan: 10, competitors: 25, cacheDays: 180,
-    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
-    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
-    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
-    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
-    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
-    hasTeamWorkspaces: true,
-    maxScheduledRescans: 100, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
-    maxApiKeys: 25, maxWebhooks: 50, maxReportDeliveries: 200, maxTeamMembers: 50, maxStoredAudits: 5000,
-    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
-    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: true, maxProjects: 200,
-  },
-  enterprise: {
-    scansPerMonth: -1, pagesPerScan: 25, competitors: 100, cacheDays: 365,
-    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
-    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
-    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
-    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
-    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
-    hasTeamWorkspaces: true,
-    maxScheduledRescans: -1, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
-    maxApiKeys: 100, maxWebhooks: 200, maxReportDeliveries: -1, maxTeamMembers: -1, maxStoredAudits: 50000,
-    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
-    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: true, maxProjects: -1,
   },
 } as const;
 
@@ -304,8 +276,6 @@ export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>
   alignment:  { monthlyUsd: 9,   yearlyUsd: 84,    oneTimeUsd: 0,   billingModel: 'subscription' },
   signal:     { monthlyUsd: 29,  yearlyUsd: 276,   oneTimeUsd: 0,   billingModel: 'subscription' },
   scorefix:   { monthlyUsd: 0,   yearlyUsd: 0,     oneTimeUsd: 299, billingModel: 'one_time' },
-  agency:     { monthlyUsd: 199, yearlyUsd: 1908,  oneTimeUsd: 0,   billingModel: 'subscription' },
-  enterprise: { monthlyUsd: 999, yearlyUsd: 9588,  oneTimeUsd: 0,   billingModel: 'subscription' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */
@@ -337,10 +307,10 @@ export interface ToolCreditRule {
 }
 
 export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
-  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20, scorefix: 10, agency: 100, enterprise: -1 }, creditCost: 1 },
-  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5,  agency: 50,  enterprise: -1 }, creditCost: 2 },
-  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5,  agency: 50,  enterprise: -1 }, creditCost: 1 },
-  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5,  scorefix: 3,  agency: 25,  enterprise: -1 }, creditCost: 2 },
+  citation_query:   { freeMonthly: { observer: 0, alignment: 5,  signal: 20, scorefix: 10 }, creditCost: 1 },
+  reverse_engineer: { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 2 },
+  mention_scan:     { freeMonthly: { observer: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 1 },
+  competitor_scan:  { freeMonthly: { observer: 0, alignment: 2,  signal: 5,  scorefix: 3  }, creditCost: 2 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */

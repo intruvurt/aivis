@@ -17,7 +17,7 @@ interface NavItem {
   to: string;
   labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
-  minTier?: "observer" | "alignment" | "signal" | "scorefix" | "agency" | "enterprise";
+  minTier?: "observer" | "alignment" | "signal";
 }
 
 interface AppSidebarProps {
@@ -57,9 +57,8 @@ const toolsNav: NavItem[] = [
 ];
 
 const agencyNav: NavItem[] = [
-  { to: "/app/agency", labelKey: "sidebar.agencyDashboard", icon: Building2, minTier: "agency" },
-  { to: "/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "agency" },
-  { to: "/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "agency" },
+  { to: "/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
+  { to: "/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
 ];
 
 const accountNav: NavItem[] = [
@@ -70,7 +69,7 @@ const accountNav: NavItem[] = [
 
 function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
-  const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal" | "agency" | "enterprise";
+  const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
   const { t } = useTranslation();
 
   return (
@@ -122,7 +121,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
           <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
           <div className="min-w-0">
             <p className="aurora-sidebar-title">AiVIS</p>
-            <p className="aurora-sidebar-subtitle">AI Visibility Engine</p>
+            <p className="aurora-sidebar-subtitle">AI Evidence-backed Visibility Engine</p>
           </div>
         </NavLink>
         {/* Mobile close button */}

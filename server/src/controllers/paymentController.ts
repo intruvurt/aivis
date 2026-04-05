@@ -20,6 +20,8 @@ import {
   getEffectivePackScans,
   getPackBonusPercentForTier,
   getScanPackByKey,
+  getScanPacksForTier,
+  isTierEligibleForPack,
   grantPackCreditsFromCheckoutSession,
 } from '../services/scanPackCredits.js';
 import { settleReferralCreditsIfEligible } from '../services/referralCredits.js';
@@ -400,6 +402,15 @@ export const createScanPackCheckout = async (req: Request, res: Response) => {
     if (!pack) {
       return res.status(400).json({ success: false, error: 'Invalid scan pack', statusCode: 400 });
     }
+
+    if (!isTierEligibleForPack(normalizedTier, packKey)) {
+      return res.status(403).json({
+        success: false,
+        error: `The ${pack.key} pack is not available for your current tier. Upgrade to access this pack.`,
+        code: 'SCAN_PACK_TIER_INELIGIBLE',
+        statusCode: 403,
+      });
+    }
     if (!pack.priceId) {
       return res.status(500).json({ success: false, error: `Stripe price ID not configured for ${pack.key}`, statusCode: 500 });
     }
@@ -505,7 +516,7 @@ export const getCurrentSubscription = async (req: Request, res: Response) => {
       : 0;
 
     const scanPacksWithBoost = canBuyScanPacks
-      ? Object.values(SCAN_PACKS).map((pack) => ({
+      ? getScanPacksForTier(normalizedTier).map((pack) => ({
           key: pack.key,
           scans: pack.scans,
           amountCents: pack.amountCents,
@@ -1412,10 +1423,11 @@ export const getScanPackStatus = async (req: Request, res: Response) => {
 
     const remaining = await getAvailablePackCredits(userId);
     const bonusPercent = getPackBonusPercentForTier(userTier);
+    const tierPacks = getScanPacksForTier(userTier);
     return res.json({
       success: true,
       packCreditsRemaining: remaining,
-      scanPacks: Object.values(SCAN_PACKS).map((pack) => ({
+      scanPacks: tierPacks.map((pack) => ({
         key: pack.key,
         scans: pack.scans,
         amountCents: pack.amountCents,

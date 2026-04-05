@@ -117,7 +117,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     headline: "See what AI gets wrong",
     body: "Run your first audits and expose the blockers stopping AI from trusting and citing your site.",
     includes: [
-      "3 lifetime audits (NOT 10/month)",
+      "3 audits/month",
       "up to 3 pages per audit",
       "top 3 proven blockers",
       "limited evidence preview",
@@ -192,7 +192,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "Is AiVIS free to use?",
     answer:
-      "Yes. Observer is free and includes 3 lifetime audits, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
+      "Yes. Observer is free and includes 3 audits per month, up to 3 pages per audit, top blockers, and a limited evidence preview. No credit card is required to start.",
   },
   {
     question: "How is AiVIS different from AI visibility dashboards like Semrush?",
@@ -1028,7 +1028,7 @@ export default function PricingPage() {
                 Live plan data
               </span>
               <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                3 lifetime audits
+                3 audits/month
               </span>
               <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
                 Exports on Alignment+
@@ -1135,7 +1135,7 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3 lifetime", "40–60/mo", "110/mo", "250 credits"],
+                  ["Audit allowance", "3/mo", "25/mo", "100/mo", "15/mo + 250 PR credits"],
                   ["Visibility score + recs", true, true, true, true],
                   ["Citation gap diagnosis", true, true, true, true],
                   ["Shareable report links", true, true, true, true],

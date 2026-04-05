@@ -443,7 +443,7 @@ const AnalyzePage: React.FC = () => {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ url: normalizedUrl }),
+        body: JSON.stringify({ url: normalizedUrl, forceRefresh: true }),
         timeoutMs: HARD_TIMEOUT_MS,
         signal: abortSignal,
       }, 0);

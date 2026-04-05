@@ -3287,7 +3287,7 @@ BIX solves this with three architectural decisions:
 
 BIX has a curated \`PLATFORM_KNOWLEDGE\` object that contains verified, structured information about every tier, feature, limit, and capability on the platform. This is not a vector database of documentation - it is a hand-maintained contract of truth.
 
-When BIX tells you that Signal tier includes 110 monthly scans and triple-check AI validation, that comes from the same source of truth that the server uses for enforcement. It cannot drift from reality because both systems read from the same canonical definitions.
+When BIX tells you that Signal tier includes 100 monthly scans and triple-check AI validation, that comes from the same source of truth that the server uses for enforcement. It cannot drift from reality because both systems read from the same canonical definitions.
 
 ### 2. Page-Aware Context Injection
 

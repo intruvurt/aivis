@@ -69,7 +69,7 @@ import { usageGate } from './middleware/usageGate.js';
 import { incrementUsage } from './middleware/incrementUsage.js';
 import { handleAssistantMessage } from './controllers/assistantController.js';
 import { intelligenceAnalyzeHandler } from './controllers/intelligenceAnalyzeController.js';
-import { closePool, runMigrations, getPool, healthCheck, getDatabaseStatus } from './services/postgresql.js';
+import { closePool, runMigrations, getPool, healthCheck, getDatabaseStatus, executeTransaction } from './services/postgresql.js';
 import { resolveWorkspaceForUser } from './services/tenantService.js';
 import { persistAuditRecord } from './services/auditPersistenceService.js';
 import { extractContactsFromHtml } from './lib/contactUtils.js';
@@ -6701,7 +6701,7 @@ app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Analyze endpoint
 // ─────────────────────────────────────────────────────────────────────────────
-app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
+app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, async (req: Request, res: Response) => {
   const startTime = Date.now();
   let analyzeLockKey = '';
 
@@ -6760,18 +6760,10 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     const userTier = (req as any).user?.tier || 'observer';
     const normalizedRequestTier = uiTierFromCanonical((userTier || 'observer') as CanonicalTier | LegacyTier);
-    const forceRefresh = Boolean((req.body as any)?.forceRefresh) || req.query.force === '1';
+    const forceRefreshRequested = Boolean((req.body as any)?.forceRefresh) || req.query.force === '1';
     const requireLiveAi = Boolean((req.body as any)?.requireLiveAi);
-    if (forceRefresh && !TIER_LIMITS[normalizedRequestTier].hasForceRefresh) {
-      return res.status(403).json({
-        error: 'Force-refresh requires an upgraded plan.',
-        code: 'FEATURE_LOCKED',
-        feature: 'force_refresh',
-        currentTier: normalizedRequestTier,
-        requiredTier: 'alignment',
-        request_id: requestId,
-      });
-    }
+    // Observer tier silently falls back to cache — paid tiers get fresh results
+    const forceRefresh = forceRefreshRequested && TIER_LIMITS[normalizedRequestTier].hasForceRefresh;
     const retryRequested = Boolean((req.body as any)?.retryRequested) || forceRefresh;
     const scanMockData = Boolean((req.body as any)?.scanMockData);
     const findabilityGoals = parseFindabilityGoals(rawFindabilityGoals);
@@ -6910,6 +6902,29 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       console.log(
         `[${requestId}] Skipping cached result for ${cacheKey} (score: ${cachedScore}, tier_matches: ${tierMatches}, thin: ${hasThinWarning}, scrape_warning: ${hasScrapeWarning}, fallback: ${hasFallbackMode}) — will re-analyze`
       );
+    }
+
+    // Increment usage AFTER cache check — only fresh analysis costs a credit.
+    // Cache hits return above without consuming a scan.
+    if (!req.usageSkipIncrement && !req.usingPackCredits) {
+      try {
+        await executeTransaction(async (client: any) => {
+          await client.query(
+            `INSERT INTO usage_daily (user_id, date, requests)
+             VALUES ($1, CURRENT_DATE, 1)
+             ON CONFLICT (user_id, date)
+             DO UPDATE SET requests = usage_daily.requests + 1`,
+            [ownerUserId]
+          );
+        });
+      } catch (meterErr: any) {
+        console.error(`[${requestId}] CRITICAL: Metering write failed:`, meterErr?.message || meterErr);
+        return res.status(503).json({
+          error: 'Usage metering temporarily unavailable. Please try again.',
+          code: 'METERING_UNAVAILABLE',
+          request_id: requestId,
+        });
+      }
     }
 
     const apiKey = getServerApiKey();

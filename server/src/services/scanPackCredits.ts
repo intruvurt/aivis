@@ -16,24 +16,27 @@ function toReadableReason(input: string): string {
 
 export type ScanPackKey = 'scan_pack_75' | 'scan_pack_200';
 
-export const SCAN_PACKS: Record<ScanPackKey, { key: ScanPackKey; scans: number; amountCents: number; priceId?: string }> = {
+export const SCAN_PACKS: Record<ScanPackKey, { key: ScanPackKey; scans: number; amountCents: number; priceId?: string; allowedTiers: readonly string[] }> = {
   scan_pack_75: {
     key: 'scan_pack_75',
     scans: 75,
     amountCents: 2900,
     priceId: process.env.STRIPE_SCAN_PACK_75_PRICE_ID || process.env.STRIPE_SCAN_PACK_70_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',
+    allowedTiers: ['alignment', 'signal', 'scorefix', 'agency', 'enterprise'],
   },
   scan_pack_200: {
     key: 'scan_pack_200',
     scans: 200,
     amountCents: 8900,
     priceId: process.env.STRIPE_SCAN_PACK_200_PRICE_ID || process.env.STRIPE_SCAN_PACK_175_PRICE_ID || process.env.STRIPE_SCAN_PACK_100_PRICE_ID || 'price_1T8RotRYzQALwOPqzBrektqy',
+    allowedTiers: ['signal', 'scorefix', 'agency', 'enterprise'],
   },
 };
 
 const PACK_BONUS_PERCENT_BY_TIER: Record<string, number> = {
-  signal: 10,
+  signal: 20,
   alignment: 15,
+  scorefix: 40,
 };
 
 export function getPackBonusPercentForTier(tier: string | null | undefined): number {
@@ -51,8 +54,20 @@ export function getEffectivePackScans(baseScans: number, bonusPercent: number): 
 
 export function getScanPackByKey(key: string): (typeof SCAN_PACKS)[ScanPackKey] | null {
   const raw = String(key || '').trim().toLowerCase();
-  const normalized = (raw === 'scan_pack_25' ? 'scan_pack_100' : raw === 'scan_pack_75' ? 'scan_pack_200' : raw) as ScanPackKey;
+  const normalized = (raw === 'scan_pack_25' ? 'scan_pack_75' : raw) as ScanPackKey;
   return SCAN_PACKS[normalized] || null;
+}
+
+export function getScanPacksForTier(tier: string): (typeof SCAN_PACKS)[ScanPackKey][] {
+  const normalized = String(tier || '').trim().toLowerCase();
+  return Object.values(SCAN_PACKS).filter(pack => pack.allowedTiers.includes(normalized));
+}
+
+export function isTierEligibleForPack(tier: string, packKey: string): boolean {
+  const pack = getScanPackByKey(packKey);
+  if (!pack) return false;
+  const normalized = String(tier || '').trim().toLowerCase();
+  return pack.allowedTiers.includes(normalized);
 }
 
 export function getScanPackByPriceId(priceId?: string | null): (typeof SCAN_PACKS)[ScanPackKey] | null {

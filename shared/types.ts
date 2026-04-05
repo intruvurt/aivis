@@ -20,7 +20,7 @@
 
 /* ========================= Canonical tier system ========================= */
 
-export type CanonicalTier = 'observer' | 'alignment' | 'signal' | 'scorefix' | 'agency' | 'enterprise';
+export type CanonicalTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -33,7 +33,7 @@ export type LegacyTier = 'free' | 'core' | 'premium';
  * If UI naming ever diverges from canonical naming, update the
  * LEGACY_TO_UI_TIER map and canonicalTierFromUi() accordingly.
  */
-export type UiTier = 'observer' | 'alignment' | 'signal' | 'scorefix' | 'agency' | 'enterprise';
+export type UiTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
 
 /** Convenience re-aliases for external consumers */
 export type Tier = CanonicalTier;
@@ -47,8 +47,6 @@ const LEGACY_TO_UI_TIER: Readonly<Record<CanonicalTier | LegacyTier, UiTier>> = 
   alignment: 'alignment',
   signal: 'signal',
   scorefix: 'scorefix',
-  agency: 'agency',
-  enterprise: 'enterprise',
   // legacy aliases
   free: 'observer',
   core: 'alignment',
@@ -60,35 +58,27 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
   scorefix: 'Score Fix [AutoPR]',
-  agency: 'Agency',
-  enterprise: 'Enterprise',
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
-  observer: 'see how AI systems parse and interpret your site — free forever',
-  alignment: 'turn structural gaps into extractable evidence with single-model production audits',
-  signal: 'full visibility into how AI crawlers trust your content — triple-check pipeline included',
-  scorefix: 'automated score remediation — AI-generated PRs to fix visibility issues',
-  agency: 'manage, automate, and resell AI visibility audits at portfolio scale',
-  enterprise: 'unlimited API-first infrastructure — the visibility layer your platform plugs into',
+  observer: 'see how AI systems parse and interpret your site; free forever',
+  alignment: 'turn structural gaps into extractable evidence with single model production audits',
+  signal: 'full visibility into how AI crawlers trust your content, triple-check pipeline included',
+  scorefix: 'automated score remediation; AI generated PRs to fix visibility issues',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   observer: 'curious builders • founders testing the mirror • free forever',
-  alignment: 'solo builders • early founders • no-code creators • production-ready audits',
+  alignment: 'solo builders • early founders • no-code creators • production ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
   scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
-  agency: 'agencies • studios • white-label resellers • 100+ site portfolios',
-  enterprise: 'platforms • dev tooling • SaaS integrations • custom SLAs',
-};
+  };
 
 const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
   observer: 0,
   alignment: 1,
   signal: 2,
   scorefix: 3,
-  agency: 4,
-  enterprise: 5,
   free: 0,
   core: 1,
   premium: 2,
@@ -396,8 +386,6 @@ export const PRIVATE_EXPOSURE_SCAN_PACKAGING: Readonly<Record<CanonicalTier, Pri
   alignment:  { available: true,  label: 'Standard',      maxTargetsPerScan: 3,  description: 'Run private exposure scans on up to 3 targets per request.' },
   signal:     { available: true,  label: 'Advanced',      maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
   scorefix:   { available: true,  label: 'Premium',       maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
-  agency:     { available: true,  label: 'Agency',        maxTargetsPerScan: 50, description: 'Bulk private exposure scanning for portfolio-scale operations.' },
-  enterprise: { available: true,  label: 'Unlimited',     maxTargetsPerScan: -1, description: 'Unrestricted private exposure scanning across all targets.' },
 };
 
 /* ========================= AI Platform scores ========================= */
@@ -464,7 +452,7 @@ export interface ContentAnalysis {
   /**
    * Keyword density map populated by AI pipeline output.
    * Keys are keyword strings; values are 0–1 density ratios.
-   * Validated at ingestion before storage — do not trust raw AI output without check.
+   * Validated at ingestion before storage; do not trust raw AI output without check.
    */
   keyword_density?: Record<string, number>;
 }
@@ -535,7 +523,7 @@ export interface TechnicalSignals {
 
 export interface CryptoAddressInfo {
   address: string;
-  chain: 'ethereum' | 'bitcoin' | 'solana';
+  chain: 'ethereum' | 'bitcoin' | 'solana' | string;
   balance?: string;
   balanceUsd?: string;
   txCount?: number;
@@ -1396,7 +1384,7 @@ export interface CitationEvidenceArtifact {
   dimension: CitationDimensionKey;
   score_0_10: number;
   finding: string;
-  evidence_type: 'metadata' | 'dom' | 'schema' | 'link' | 'http' | 'search';
+  evidence_type: 'metadata' | 'dom' | 'schema' | 'link' | 'http' | 'search' | 'other';
   evidence_id: string;
   source_url: string;
   selector_or_locator: string;
@@ -1714,6 +1702,7 @@ export interface PrivateExposureScanReport {
     prior_scan_id: string | null;
     regressions: unknown[];
     resolved_evidence_ids: string[];
+
   };
 }
 
@@ -1726,4 +1715,6 @@ export interface EvidenceDrivenFixIssue {
   evidence_ids: string[];
   actual_fix: string;
   evidence_excerpt?: string;
+  evidence_type: 'metadata' | 'dom' | 'schema' | 'link' | 'http' | 'search' | 'other';
+
 }

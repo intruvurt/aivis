@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Activity, ArrowRight, BarChart3, ClipboardList, Clock3, Gauge, Loader2 } from "lucide-react";
+import { Activity, ArrowRight, BarChart3, Check, ClipboardList, Clock3, Copy, Gauge, Globe, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
 import { useAuthStore } from "../stores/authStore";
@@ -49,6 +49,31 @@ function normalizeAudits(payload: any): AuditRecord[] {
           : undefined,
     visibilityStatus: item?.visibilityStatus || item?.summary,
   }));
+}
+
+const DOMAIN_COLORS = [
+  "bg-orange-400", "bg-cyan-400", "bg-violet-400", "bg-emerald-400",
+  "bg-rose-400", "bg-amber-400", "bg-sky-400", "bg-fuchsia-400",
+  "bg-lime-400", "bg-indigo-400", "bg-teal-400", "bg-pink-400",
+];
+
+function domainColor(url: string): string {
+  try {
+    const host = new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "");
+    let hash = 0;
+    for (let i = 0; i < host.length; i++) hash = ((hash << 5) - hash + host.charCodeAt(i)) | 0;
+    return DOMAIN_COLORS[Math.abs(hash) % DOMAIN_COLORS.length];
+  } catch {
+    return DOMAIN_COLORS[0];
+  }
+}
+
+function domainLabel(url: string): string {
+  try {
+    return new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
 
 export default function Dashboard() {
@@ -142,6 +167,10 @@ export default function Dashboard() {
     return "Critical visibility blockers detected";
   }, [primaryAudit]);
 
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const recentScans = useMemo(() => sortedAudits.slice(0, 8), [sortedAudits]);
+
   return (
     <AppPageFrame
       icon={<Gauge className="h-5 w-5 text-orange-300" />}
@@ -218,6 +247,84 @@ export default function Dashboard() {
           </article>
         ))}
       </section>
+
+      {/* ── Recent scans ──────────────────────────────────────────────── */}
+      {canLoadHistory && recentScans.length > 0 && (
+        <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+          <h2 className="text-lg font-semibold text-white">Recent scans</h2>
+          <p className="mt-1 text-sm text-white/56">Your latest audited URLs. Copy the report link or open the full analysis.</p>
+
+          <div className="mt-5 space-y-2">
+            {recentScans.map((audit) => {
+              const id = audit._id || audit.id || "";
+              const color = audit.url ? domainColor(audit.url) : DOMAIN_COLORS[0];
+              const host = audit.url ? domainLabel(audit.url) : "—";
+              const reportUrl = id ? `${window.location.origin}/audit/${id}` : "";
+              const score = audit.overallScore;
+
+              return (
+                <div
+                  key={id || audit.url}
+                  className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3 transition hover:bg-white/[0.04]"
+                >
+                  {/* color dot */}
+                  <span className={`h-3 w-3 shrink-0 rounded-full ${color}`} />
+
+                  {/* url + host */}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-white">{audit.url || "Untitled"}</p>
+                    <p className="truncate text-xs text-white/46">{host}</p>
+                  </div>
+
+                  {/* score pill */}
+                  {typeof score === "number" && (
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        score >= 80
+                          ? "bg-emerald-400/15 text-emerald-300"
+                          : score >= 50
+                            ? "bg-amber-400/15 text-amber-300"
+                            : "bg-rose-400/15 text-rose-300"
+                      }`}
+                    >
+                      {score}
+                    </span>
+                  )}
+
+                  {/* copy link */}
+                  {reportUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(reportUrl);
+                        setCopiedId(id);
+                        setTimeout(() => setCopiedId((prev) => (prev === id ? null : prev)), 1500);
+                      }}
+                      className="shrink-0 rounded-lg p-1.5 text-white/40 transition hover:bg-white/8 hover:text-white/70"
+                      title="Copy report link"
+                    >
+                      {copiedId === id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                    </button>
+                  )}
+
+                  {/* open */}
+                  {id ? (
+                    <Link
+                      to={`/audit/${id}`}
+                      className="shrink-0 rounded-lg p-1.5 text-cyan-200 transition hover:bg-white/8 hover:text-white"
+                      title="Open report"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  ) : (
+                    <span className="h-3.5 w-3.5 shrink-0" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">

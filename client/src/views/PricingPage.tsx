@@ -1116,6 +1116,43 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* ── Pricing Cards ──────────────────────────────── */}
+        {isLoadingPricing ? (
+          <PricingPageSkeleton />
+        ) : error && tiers.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-white/60 text-sm">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 rounded-full text-sm bg-charcoal-light border border-white/10 text-white/80 hover:text-white transition-colors"
+              type="button"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8 mb-4">
+            {tiers.map((tier) => (
+              <PricingCard
+                key={tier.key}
+                tier={tier}
+                billingPeriod={billingPeriod}
+                onSelect={handleSelectTier}
+                onStartTrial={handleStartTrial}
+                currentTier={currentTier}
+                isLoading={isCheckingOutTier === tier.key}
+                isHighlighted={tier.key === "signal"}
+                canStartTrial={canStartTrial}
+                isStartingTrial={isStartingTrial}
+              />
+            ))}
+          </div>
+        )}
+
+        {error && tiers.length > 0 && (
+          <p className="text-center text-amber-300/80 text-xs mb-4">{error}</p>
+        )}
+
         {/* ── Quick comparison table ──────────────────────── */}
         <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
           <div className="p-5 border-b border-white/8">

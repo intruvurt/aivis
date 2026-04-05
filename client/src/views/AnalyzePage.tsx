@@ -851,7 +851,7 @@ const AnalyzePage: React.FC = () => {
                   <button
                     onClick={handleAnalyze}
                     disabled={!canAnalyze}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-white/28 to-white/14 px-6 py-4 text-sm font-semibold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-400 px-6 py-4 text-sm font-semibold text-slate-950 transition-all hover:bg-orange-300 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                   >
                     {loading ? (
                       <>

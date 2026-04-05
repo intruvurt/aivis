@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import AppTopBar from "./AppTopBar";
 import GlobalCommandPalette from "./GlobalCommandPalette";
 import TrialBanner from "./TrialBanner";
+
+const GuideBot = React.lazy(() => import("./GuideBot"));
 
 export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,6 +41,9 @@ export default function AppShell() {
       </div>
 
       <GlobalCommandPalette />
+      <Suspense fallback={null}>
+        <GuideBot />
+      </Suspense>
     </div>
   );
 }

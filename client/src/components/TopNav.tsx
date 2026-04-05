@@ -719,7 +719,7 @@ export default function TopNav() {
               <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full border border-emerald-300/35 bg-emerald-500/12 text-emerald-200 text-[10px] font-black tracking-[0.1em] uppercase">
                 {t('nav.free')}
               </span>
-                  <Link to="/auth?mode=signup" className="text-sm px-4 py-1.5 bg-gradient-to-r from-white/20 to-white/12 dark:from-white/28 dark:to-white/14 rounded-lg text-white font-medium hover:opacity-90 transition-opacity">
+                  <Link to="/auth?mode=signup" className="text-sm px-4 py-2 rounded-2xl bg-orange-400 text-slate-950 font-semibold hover:bg-orange-300 transition">
                 See Your Visibility
               </Link>
             </>

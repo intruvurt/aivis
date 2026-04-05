@@ -6447,7 +6447,7 @@ app.post('/api/audits/share-link', authRequired, workspaceRequired, heavyActionL
   try {
     const userId = (req as any).user?.id;
     const workspaceId = req.workspace?.id;
-    const { url: rawUrl, analyzedAt, auditId } = (req.body || {}) as { url?: string; analyzedAt?: string; auditId?: string };
+    const { url: rawUrl, analyzedAt, auditId, expiration_days: rawExpirationDays } = (req.body || {}) as { url?: string; analyzedAt?: string; auditId?: string; expiration_days?: number };
 
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
     if (!workspaceId) return res.status(400).json({ error: 'Workspace context missing' });
@@ -6579,6 +6579,7 @@ app.post('/api/audits/share-link', authRequired, workspaceRequired, heavyActionL
       workspaceId: workspaceId || null,
       targetUrl: rawUrl.trim(),
       scanOrdinal,
+      shareLinkExpirationDays: [0, 7, 14, 30, 90].includes(Number(rawExpirationDays)) ? Number(rawExpirationDays) : undefined,
     });
 
     fireMeasurementEvent('share_link_created', req, {

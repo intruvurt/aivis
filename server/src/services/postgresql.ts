@@ -874,6 +874,32 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_ast_user_url ON audit_score_timeline(user_id, url)`,
             `CREATE INDEX IF NOT EXISTS idx_ast_captured_at ON audit_score_timeline(captured_at DESC)`,
+            // ── IndexNow Submissions (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS indexnow_submissions (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              urls JSONB NOT NULL DEFAULT '[]',
+              submitted_count INTEGER NOT NULL DEFAULT 0,
+              skipped_count INTEGER NOT NULL DEFAULT 0,
+              error TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_indexnow_submissions_user ON indexnow_submissions(user_id)`,
+            // ── Agent Tasks (added post-launch) ──
+            `CREATE TABLE IF NOT EXISTS agent_tasks (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              task_type VARCHAR(60) NOT NULL,
+              payload JSONB NOT NULL DEFAULT '{}',
+              status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'completed', 'failed', 'cancelled')),
+              result JSONB,
+              error TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              started_at TIMESTAMPTZ,
+              completed_at TIMESTAMPTZ
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_agent_tasks_user_status ON agent_tasks(user_id, status)`,
+            `CREATE INDEX IF NOT EXISTS idx_agent_tasks_pending ON agent_tasks(status, created_at) WHERE status = 'pending'`,
           ];
           let patchOk = 0;
           let patchFail = 0;

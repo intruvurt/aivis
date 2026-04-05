@@ -106,6 +106,7 @@ type ShareState =
       redacted?: boolean;
       scanLabel?: string;
       expiresAt?: string;
+      expirationDays?: number;
     };
 
 function resolvePublicShareUrl(sharePath?: string, token?: string): string {
@@ -225,6 +226,7 @@ export default function ReportsPage() {
   const [scoreRange, setScoreRange] = useState<"all" | "critical" | "low" | "medium" | "high">("all");
   const [consolidateByUrl, setConsolidateByUrl] = useState(true);
   const [share, setShare] = useState<ShareState>({ open: false });
+  const [shareExpiryDays, setShareExpiryDays] = useState<number>(30);
   const [apiAudits, setApiAudits] = useState<ApiAudit[]>([]);
   const [apiAuditsTotal, setApiAuditsTotal] = useState<number | null>(null);
   const [auditResultsByAuditId, setAuditResultsByAuditId] = useState<Record<string, AnalysisResponse | null>>({});
@@ -1146,6 +1148,7 @@ export default function ReportsPage() {
             url: report.url,
             analyzedAt: report.createdAt,
             auditId: report.auditId,
+            expiration_days: shareExpiryDays,
           }),
         });
 
@@ -1195,6 +1198,7 @@ export default function ReportsPage() {
         copyError: false,
         redacted: Boolean(payload.public_view?.redacted),
         expiresAt: payload.expires_at,
+        expirationDays: shareExpiryDays,
         scanLabel:
           payload.scan_label ||
           formatScanLabel(Math.max(1, payload.scan_ordinal || scanOrdinalByReportId[report.id] || 1)),
@@ -1242,6 +1246,7 @@ export default function ReportsPage() {
             url: report.url,
             analyzedAt: report.createdAt,
             auditId: report.auditId,
+            expiration_days: share.open ? (share.expirationDays ?? shareExpiryDays) : shareExpiryDays,
           }),
         });
         if (!response.ok) continue;

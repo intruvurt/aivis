@@ -30,13 +30,25 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult> {
     }
   })();
 
+  // Derive API host for key file verification — the API server at api.{domain}
+  // already serves /{key}.txt. Using the API host avoids static-CDN bot-protection
+  // issues that cause IndexNow 403 (UserForbiddedToAccessSite).
+  const apiHost = (() => {
+    try {
+      const u = new URL(process.env.API_URL || '');
+      return u.host;
+    } catch { /* fall through */ }
+    // Derive from FRONTEND_URL: aivis.biz → api.aivis.biz
+    return host.startsWith('api.') ? host : `api.${host}`;
+  })();
+
   if (!key) {
     console.warn('[IndexNow] INDEXNOW_KEY not set — ping skipped');
     return { submitted: 0, skipped: urls.length, error: 'INDEXNOW_KEY not configured' };
   }
 
   // De-dupe and restrict to own host
-  const keyLocation = `https://${host}/${key}.txt`;
+  const keyLocation = `https://${apiHost}/${key}.txt`;
   const ownUrls = [...new Set(
     urls
       .filter((u) => {

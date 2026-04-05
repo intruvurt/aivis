@@ -38,13 +38,22 @@ type OAuthStatePayload = {
 function getApiBase(req: express.Request): string {
   const explicit = String(process.env.API_URL || process.env.VITE_API_URL || '').trim();
   if (explicit) return explicit.replace(/\/+$/, '');
-  return `${req.protocol}://${req.get('host')}`.replace(/\/+$/, '');
+  // Derive from FRONTEND_URL when API_URL isn't set (e.g. Render production)
+  const frontend = String(process.env.FRONTEND_URL || '').trim();
+  if (frontend) {
+    try {
+      const u = new URL(frontend);
+      return `${u.protocol}//api.${u.hostname}`;
+    } catch { /* fall through */ }
+  }
+  // req.hostname respects trust proxy (reads X-Forwarded-Host)
+  return `${req.protocol}://${req.hostname}`.replace(/\/+$/, '');
 }
 
 function getFrontendBase(req: express.Request): string {
   const explicit = String(process.env.FRONTEND_URL || process.env.CLIENT_URL || '').trim();
   if (explicit) return explicit.replace(/\/+$/, '');
-  const host = req.get('host') || '';
+  const host = req.hostname || req.get('host') || '';
   if (/localhost:3001/i.test(host)) return 'http://localhost:5173';
   return `${req.protocol}://${host}`.replace(/\/+$/, '');
 }

@@ -156,8 +156,15 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="aurora-user-name">{displayName}</p>
-              <p className="aurora-user-tier">{user.tier || "observer"}</p>
+              <p className="aurora-user-name">{user.company || displayName}</p>
+              <p className="aurora-user-tier truncate">
+                {user.website
+                  ? user.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
+                  : (user.tier || "observer")}
+                {user.website && (
+                  <span className="ml-1.5 opacity-60">· {user.tier || "observer"}</span>
+                )}
+              </p>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, Bell, LogOut, User, BookOpen, ChevronDown, Menu } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import useNotifications from "../hooks/useNotifications";
-import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils\userIdentity";
+import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
 
 interface AppTopBarProps {
   onMenuClick?: () => void;

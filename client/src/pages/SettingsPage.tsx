@@ -8,6 +8,7 @@ import { hasConsent, revokeConsent, setConsentValue } from "../components/Cookie
 import { resetOnboarding } from "../components/OnboardingModal";
 import { API_URL } from "../config";
 import { apiFetch } from "../utils/api";
+import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
 import NotificationPreferencesPanel from "../components/NotificationPreferencesPanel";
 import AppPageFrame from "../components/AppPageFrame";
 import toast from "react-hot-toast";
@@ -155,6 +156,8 @@ const sections = [
 
 type SectionId = (typeof sections)[number]["id"];
 
+const MAX_PROFILE_IMAGE_BYTES = 400 * 1024;
+
 /* ================================================================== */
 /*  MAIN COMPONENT                                                     */
 /* ================================================================== */
@@ -164,17 +167,84 @@ const SettingsPage: React.FC = () => {
   const { status: featureStatus, loading: featureStatusLoading } = useFeatureStatus();
   const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const settingsImportInputRef = useRef<HTMLInputElement>(null);
+  const avatarUploadInputRef = useRef<HTMLInputElement>(null);
+  const orgLogoUploadInputRef = useRef<HTMLInputElement>(null);
   const [gdprLoading, setGdprLoading] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [analyticsConsent, setAnalyticsConsent] = useState<boolean>(hasConsent());
+  const [clearAvatar, setClearAvatar] = useState(false);
+  const [clearOrgLogo, setClearOrgLogo] = useState(false);
 
   // Local draft for profile fields — only committed on explicit Save
   const [profileDraft, setProfileDraft] = useState(() => ({ ...s.profile }));
   const updateDraft = (patch: Partial<typeof s.profile>) =>
     setProfileDraft((prev) => ({ ...prev, ...patch }));
+
+  const profileIdentity = {
+    display_name: profileDraft.displayName,
+    email: user?.email,
+    avatarUrl: profileDraft.avatarUrl,
+    orgLogoUrl: profileDraft.orgLogoUrl,
+    orgFaviconUrl: profileDraft.orgFaviconUrl,
+  };
+  const settingsIdentity = {
+    display_name: s.profile.displayName,
+    email: user?.email,
+    avatarUrl: s.profile.avatarUrl,
+    orgLogoUrl: s.profile.orgLogoUrl,
+    orgFaviconUrl: s.profile.orgFaviconUrl,
+  };
+  const profileDisplayAvatar = getDisplayAvatarUrl(profileIdentity);
+  const settingsDisplayAvatar = getDisplayAvatarUrl(settingsIdentity);
+  const profileInitials = getIdentityInitials(profileIdentity);
+  const settingsDisplayName = getDisplayName(settingsIdentity);
+
+  const isUploadedImageDataUrl = (value: string | null | undefined): boolean =>
+    typeof value === "string" && /^data:image\/(png|jpe?g|webp);base64,/i.test(value.trim());
+
+  const readFileAsDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Failed to read image file"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleProfileImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    target: "avatar" | "orgLogo",
+  ): Promise<void> => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
+      toast.error("Use a PNG, JPG, or WebP image");
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_IMAGE_BYTES) {
+      toast.error("Images must be 400KB or smaller");
+      return;
+    }
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      if (target === "avatar") {
+        setClearAvatar(false);
+        updateDraft({ avatarUrl: dataUrl });
+      } else {
+        setClearOrgLogo(false);
+        updateDraft({ orgLogoUrl: dataUrl });
+      }
+      toast.success(target === "avatar" ? "Avatar ready to save" : "Organization logo ready to save");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to read image file");
+    }
+  };
 
   // Re-sync draft when store profile changes from external source (e.g. server load)
   const storeProfileRef = useRef(s.profile);
@@ -246,16 +316,21 @@ const SettingsPage: React.FC = () => {
           nextProfile.language = profile.language;
         }
 
-        if (typeof profile.avatar_url === "string" && profile.avatar_url.trim()) {
-          nextProfile.avatarUrl = profile.avatar_url;
-        } else if (typeof profile.org_logo_url === "string" && profile.org_logo_url.trim()) {
-          nextProfile.avatarUrl = profile.org_logo_url;
-        } else if (typeof profile.org_favicon_url === "string" && profile.org_favicon_url.trim()) {
-          nextProfile.avatarUrl = profile.org_favicon_url;
-        }
+        nextProfile.avatarUrl = typeof profile.avatar_url === "string" && profile.avatar_url.trim()
+          ? profile.avatar_url
+          : null;
+        nextProfile.orgLogoUrl = typeof profile.org_logo_url === "string" && profile.org_logo_url.trim()
+          ? profile.org_logo_url
+          : null;
+        nextProfile.orgFaviconUrl = typeof profile.org_favicon_url === "string" && profile.org_favicon_url.trim()
+          ? profile.org_favicon_url
+          : null;
 
         if (Object.keys(nextProfile).length > 0) {
           s.updateProfile(nextProfile);
+          setProfileDraft((prev) => ({ ...prev, ...nextProfile }));
+          setClearAvatar(false);
+          setClearOrgLogo(false);
         }
 
         if (typeof profile.email_notifications === "boolean") {
@@ -409,7 +484,20 @@ const SettingsPage: React.FC = () => {
           company: (profileDraft.company || "").trim() || null,
           website: (profileDraft.website || "").trim() || null,
           bio: (profileDraft.bio || "").trim() || null,
-          avatar_url: (profileDraft.avatarUrl || "").trim() || null,
+          avatar_url: isUploadedImageDataUrl(profileDraft.avatarUrl)
+            ? null
+            : ((profileDraft.avatarUrl || "").trim() || null),
+          avatar_data_url: isUploadedImageDataUrl(profileDraft.avatarUrl)
+            ? profileDraft.avatarUrl
+            : null,
+          org_logo_url: isUploadedImageDataUrl(profileDraft.orgLogoUrl)
+            ? null
+            : ((profileDraft.orgLogoUrl || "").trim() || null),
+          org_logo_data_url: isUploadedImageDataUrl(profileDraft.orgLogoUrl)
+            ? profileDraft.orgLogoUrl
+            : null,
+          clear_avatar: clearAvatar,
+          clear_org_logo: clearOrgLogo,
           timezone: (profileDraft.timezone || "").trim() || null,
           language: (profileDraft.language || "").trim() || null,
           auto_enrich: true,
@@ -435,30 +523,30 @@ const SettingsPage: React.FC = () => {
         bio: typeof updatedProfile?.bio === "string" ? updatedProfile.bio : s.profile.bio,
         timezone: typeof updatedProfile?.timezone === "string" ? updatedProfile.timezone : s.profile.timezone,
         language: typeof updatedProfile?.language === "string" ? updatedProfile.language : s.profile.language,
-      };
-
-      const resolvedAvatar =
-        (typeof updatedProfile?.avatar_url === "string" && updatedProfile.avatar_url.trim()
+        avatarUrl: typeof updatedProfile?.avatar_url === "string" && updatedProfile.avatar_url.trim()
           ? updatedProfile.avatar_url
-          : null) ||
-        (typeof updatedProfile?.org_logo_url === "string" && updatedProfile.org_logo_url.trim()
+          : null,
+        orgLogoUrl: typeof updatedProfile?.org_logo_url === "string" && updatedProfile.org_logo_url.trim()
           ? updatedProfile.org_logo_url
-          : null) ||
-        (typeof updatedProfile?.org_favicon_url === "string" && updatedProfile.org_favicon_url.trim()
+          : null,
+        orgFaviconUrl: typeof updatedProfile?.org_favicon_url === "string" && updatedProfile.org_favicon_url.trim()
           ? updatedProfile.org_favicon_url
-          : null) ||
-        s.profile.avatarUrl;
-
-      mergedProfile.avatarUrl = resolvedAvatar;
+          : null,
+      };
       s.updateProfile(mergedProfile);
       setProfileDraft((prev) => ({ ...prev, ...mergedProfile }));
+      setClearAvatar(false);
+      setClearOrgLogo(false);
 
       if (user) {
         setUser({
           ...user,
+          name: updatedName,
           full_name: updatedName,
           display_name: updatedName,
-          avatar_url: resolvedAvatar || undefined,
+          avatar_url: mergedProfile.avatarUrl || undefined,
+          org_logo_url: mergedProfile.orgLogoUrl || undefined,
+          org_favicon_url: mergedProfile.orgFaviconUrl || undefined,
           company: typeof updatedProfile?.company === "string" ? updatedProfile.company : user.company,
           website: typeof updatedProfile?.website === "string" ? updatedProfile.website : user.website,
         });
@@ -579,19 +667,19 @@ const SettingsPage: React.FC = () => {
               {/* User mini-card */}
               <div className="mb-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white text-sm font-bold">
-                  {s.profile.avatarUrl ? (
+                  {settingsDisplayAvatar ? (
                     <img
-                      src={s.profile.avatarUrl}
+                      src={settingsDisplayAvatar}
                       alt="Profile photo"
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
-                    (s.profile.displayName || user?.email || "U").charAt(0).toUpperCase()
+                    getIdentityInitials(settingsIdentity)
                   )}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-white truncate">
-                    {s.profile.displayName || user?.full_name || "User"}
+                    {settingsDisplayName}
                   </p>
                   <p className="text-xs text-white/55 truncate">{user?.email}</p>
                 </div>
@@ -627,12 +715,12 @@ const SettingsPage: React.FC = () => {
                   <Download className="w-4 h-4" /> Export Settings
                 </button>
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => settingsImportInputRef.current?.click()}
                   className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
                 >
                   <Upload className="w-4 h-4" /> Import Settings
                   <input
-                    ref={fileInputRef}
+                    ref={settingsImportInputRef}
                     type="file"
                     accept=".json"
                     onChange={importSettings}
@@ -891,17 +979,81 @@ const SettingsPage: React.FC = () => {
                     {/* Avatar */}
                     <div className="flex flex-col items-center gap-2">
                       <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-white/28 to-white/15 text-white text-2xl font-bold shadow-xl shadow-white/20 ring-2 ring-white/10 overflow-hidden">
-                        {profileDraft.avatarUrl ? (
+                        {profileDisplayAvatar ? (
                           <img
-                            src={profileDraft.avatarUrl}
+                            src={profileDisplayAvatar}
                             alt="Avatar"
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          (profileDraft.displayName || user?.email || "U")
-                            .charAt(0)
-                            .toUpperCase()
+                          profileInitials
                         )}
+                      </div>
+                      <div className="mt-3 grid w-full gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-white/10 bg-charcoal-deep/70 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/45">Personal Avatar</p>
+                          <p className="mt-1 text-xs text-white/55">Used first. PNG, JPG, or WebP. Max 400KB.</p>
+                          <div className="mt-3 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => avatarUploadInputRef.current?.click()}
+                              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                            >
+                              <Upload className="h-3.5 w-3.5" /> Upload Avatar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateDraft({ avatarUrl: null });
+                                setClearAvatar(true);
+                              }}
+                              className="rounded-full border border-white/10 px-3 py-2 text-xs font-medium text-white/55 hover:text-white transition-colors"
+                            >
+                              Use Org Logo
+                            </button>
+                          </div>
+                          <input
+                            ref={avatarUploadInputRef}
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            onChange={(event) => {
+                              void handleProfileImageUpload(event, "avatar");
+                            }}
+                          />
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-charcoal-deep/70 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/45">Organization Logo</p>
+                          <p className="mt-1 text-xs text-white/55">Used whenever no personal avatar exists. Separate from workspace branding.</p>
+                          <div className="mt-3 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => orgLogoUploadInputRef.current?.click()}
+                              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                            >
+                              <Upload className="h-3.5 w-3.5" /> Upload Logo
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateDraft({ orgLogoUrl: null });
+                                setClearOrgLogo(true);
+                              }}
+                              className="rounded-full border border-white/10 px-3 py-2 text-xs font-medium text-white/55 hover:text-white transition-colors"
+                            >
+                              Clear Logo
+                            </button>
+                          </div>
+                          <input
+                            ref={orgLogoUploadInputRef}
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            onChange={(event) => {
+                              void handleProfileImageUpload(event, "orgLogo");
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -943,14 +1095,12 @@ const SettingsPage: React.FC = () => {
                         value={profileDraft.website}
                         onChange={(e) => updateDraft({ website: e.target.value })}
                       />
-                      <SteelInput
-                        label="Avatar URL"
-                        placeholder="https://example.com/avatar.jpg"
-                        type="url"
-                        hint="Direct link to your profile image"
-                        value={profileDraft.avatarUrl || ""}
-                        onChange={(e) => updateDraft({ avatarUrl: e.target.value || null })}
-                      />
+                      <div className="rounded-2xl border border-white/10 bg-charcoal-deep/60 px-4 py-3">
+                        <p className="text-sm font-medium text-white">Display Image Routing</p>
+                        <p className="mt-1 text-xs text-white/55">
+                          The app now resolves identity as personal avatar, then organization logo, then site favicon, then initials. Billing confirmation is tracked separately from team and workspace administration.
+                        </p>
+                      </div>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">

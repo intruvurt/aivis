@@ -130,6 +130,8 @@ export default function ProfilePage() {
     alignment: { bg: "from-indigo-500/15 to-indigo-700/5", border: "border-indigo-400/25", text: "text-indigo-300", badge: "bg-indigo-500/20 text-indigo-200 border-indigo-400/30", ring: "text-indigo-400" },
     signal: { bg: "from-cyan-500/15 to-cyan-700/5", border: "border-cyan-400/25", text: "text-cyan-300", badge: "bg-cyan-500/20 text-cyan-200 border-cyan-400/30", ring: "text-cyan-400" },
     scorefix: { bg: "from-amber-500/15 to-amber-700/5", border: "border-amber-400/25", text: "text-amber-300", badge: "bg-amber-500/20 text-amber-200 border-amber-400/30", ring: "text-amber-400" },
+    agency: { bg: "from-violet-500/15 to-violet-700/5", border: "border-violet-400/25", text: "text-violet-300", badge: "bg-violet-500/20 text-violet-200 border-violet-400/30", ring: "text-violet-400" },
+    enterprise: { bg: "from-rose-500/15 to-rose-700/5", border: "border-rose-400/25", text: "text-rose-300", badge: "bg-rose-500/20 text-rose-200 border-rose-400/30", ring: "text-rose-400" },
   };
   const tc = TIER_COLORS[tierKey];
 

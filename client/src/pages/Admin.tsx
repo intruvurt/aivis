@@ -34,6 +34,44 @@ interface NewsletterDispatchResult {
   tierFilter: NewsletterTier[];
 }
 
+interface AdminPaymentSummary {
+  completedCount: number;
+  pendingCount: number;
+  failedCount: number;
+  activeSubscriptionCount: number;
+  confirmedRevenueCents: number;
+  activeSignalTrials: number;
+  totalTrialsStarted: number;
+}
+
+interface AdminPaymentRow {
+  id: string;
+  userId: string;
+  email: string;
+  name: string | null;
+  currentTier: string;
+  purchasedTier: string;
+  status: string;
+  subscriptionStatus: string | null;
+  amountCents: number | null;
+  currency: string | null;
+  completedAt: string | null;
+  lastPaymentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  stripeSessionId: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  stripePriceId: string | null;
+  lastInvoiceId: string | null;
+  failedInvoiceId: string | null;
+  metadata: Record<string, unknown> | null;
+  trialEndsAt: string | null;
+  trialUsed: boolean;
+}
+
 type LoadState = "idle" | "loading" | "ready" | "error";
 
 const DEFAULT_STATS: AdminStats = {
@@ -50,6 +88,16 @@ const DEFAULT_NEWSLETTER_SETTINGS: NewsletterSettings = {
   batchSize: 200,
   delayMs: 550,
   tierFilter: [],
+};
+
+const DEFAULT_PAYMENT_SUMMARY: AdminPaymentSummary = {
+  completedCount: 0,
+  pendingCount: 0,
+  failedCount: 0,
+  activeSubscriptionCount: 0,
+  confirmedRevenueCents: 0,
+  activeSignalTrials: 0,
+  totalTrialsStarted: 0,
 };
 
 const NEWSLETTER_TIERS: NewsletterTier[] = ["observer", "alignment", "signal", "scorefix"];
@@ -71,6 +119,9 @@ const Admin: React.FC = () => {
   const [dispatchResult, setDispatchResult] = useState<NewsletterDispatchResult | null>(null);
   const [editionTitle, setEditionTitle] = useState<string>("");
   const [editionSummary, setEditionSummary] = useState<string>("");
+  const [paymentSummary, setPaymentSummary] = useState<AdminPaymentSummary>(DEFAULT_PAYMENT_SUMMARY);
+  const [payments, setPayments] = useState<AdminPaymentRow[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
 
   // Broadcast state
   const [broadcastSubject, setBroadcastSubject] = useState<string>("");
@@ -93,6 +144,12 @@ const Admin: React.FC = () => {
     if (adminKey.trim()) headers["x-admin-key"] = adminKey.trim();
     return headers;
   }, [adminKey]);
+
+  const currencyFormatter = useMemo(() => new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  }), []);
 
   // No redirect — show lock screen instead when not admin
 
@@ -143,9 +200,39 @@ const Admin: React.FC = () => {
     }
   };
 
+  const fetchPayments = async () => {
+    if (!isAdmin || !adminKey.trim()) return;
+
+    setPaymentsLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/payments?limit=20`, {
+        method: "GET",
+        headers: { ...adminHeaders },
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Failed to load payment ledger (${res.status})`);
+      }
+
+      const data = await res.json();
+      setPaymentSummary({
+        ...DEFAULT_PAYMENT_SUMMARY,
+        ...(data?.summary || {}),
+      });
+      setPayments(Array.isArray(data?.payments) ? data.payments : []);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to load payment ledger");
+    } finally {
+      setPaymentsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isAdmin || !adminKey.trim()) return;
     fetchStats();
+    fetchPayments();
 
     return () => {
       abortRef.current?.abort();
@@ -388,7 +475,10 @@ const Admin: React.FC = () => {
             />
             <button
               type="button"
-              onClick={fetchStats}
+              onClick={() => {
+                void fetchStats();
+                void fetchPayments();
+              }}
               disabled={state === "loading" || !adminKey.trim()}
               className="bg-[#323a4c] text-white px-4 py-2 rounded-md text-sm font-semibold disabled:opacity-50"
             >
@@ -502,6 +592,131 @@ const Admin: React.FC = () => {
               <p className="text-xs text-white/60 mt-3">
                 Next: health probes + latency snapshots
               </p>
+            </div>
+          </div>
+
+          <div className="border border-white/14 rounded-lg p-5 mt-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <p className="font-semibold text-white">Billing Confirmation</p>
+                <p className="text-sm text-white/70 mt-2">
+                  Stripe-backed payment receipts and Signal trial state. Separate from team and workspace administration.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { void fetchPayments(); }}
+                disabled={paymentsLoading}
+                className="bg-[#323a4c] text-white px-3 py-2 rounded-md text-sm disabled:opacity-50"
+              >
+                {paymentsLoading ? "Loading..." : "Refresh Ledger"}
+              </button>
+            </div>
+
+            <div className="grid md:grid-cols-3 xl:grid-cols-6 gap-3 mt-4">
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Confirmed</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{paymentSummary.completedCount}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Pending</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{paymentSummary.pendingCount}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Failed</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{paymentSummary.failedCount}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Active Subs</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{paymentSummary.activeSubscriptionCount}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Signal Trials</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{paymentSummary.activeSignalTrials}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3">
+                <p className="text-xs text-white/55 uppercase tracking-[0.14em]">Confirmed Revenue</p>
+                <p className="mt-2 text-2xl font-semibold text-white">
+                  {currencyFormatter.format((paymentSummary.confirmedRevenueCents || 0) / 100)}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 overflow-x-auto rounded-lg border border-white/10">
+              <table className="min-w-full text-sm text-white/85">
+                <thead className="bg-white/5 text-left text-xs uppercase tracking-[0.12em] text-white/50">
+                  <tr>
+                    <th className="px-4 py-3">User</th>
+                    <th className="px-4 py-3">Payment</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Subscription</th>
+                    <th className="px-4 py-3">Stripe</th>
+                    <th className="px-4 py-3">Trial</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.map((payment) => (
+                    <tr key={payment.id} className="border-t border-white/10 align-top">
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-white">{payment.name || payment.email}</p>
+                        <p className="text-xs text-white/55 mt-1">{payment.email}</p>
+                        <p className="text-xs text-white/45 mt-1">current {payment.currentTier} / purchased {payment.purchasedTier}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-white">
+                          {payment.amountCents != null
+                            ? currencyFormatter.format(payment.amountCents / 100)
+                            : "Custom"}
+                        </p>
+                        <p className="text-xs text-white/55 mt-1">
+                          created {new Date(payment.createdAt).toLocaleString()}
+                        </p>
+                        {payment.completedAt && (
+                          <p className="text-xs text-emerald-300 mt-1">
+                            confirmed {new Date(payment.completedAt).toLocaleString()}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-white">{payment.status}</p>
+                        {payment.lastInvoiceId && (
+                          <p className="text-xs text-white/55 mt-1">invoice {payment.lastInvoiceId}</p>
+                        )}
+                        {payment.failedInvoiceId && (
+                          <p className="text-xs text-rose-300 mt-1">failed {payment.failedInvoiceId}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-white">{payment.subscriptionStatus || "one-time"}</p>
+                        {payment.currentPeriodEnd && (
+                          <p className="text-xs text-white/55 mt-1">period ends {new Date(payment.currentPeriodEnd).toLocaleDateString()}</p>
+                        )}
+                        {payment.cancelAtPeriodEnd && (
+                          <p className="text-xs text-amber-300 mt-1">cancel at period end</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="text-xs text-white/55">session {payment.stripeSessionId || "-"}</p>
+                        <p className="text-xs text-white/55 mt-1">subscription {payment.stripeSubscriptionId || "-"}</p>
+                        <p className="text-xs text-white/55 mt-1">customer {payment.stripeCustomerId || "-"}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-white">{payment.trialUsed ? "Started" : "Not used"}</p>
+                        {payment.trialEndsAt && (
+                          <p className="text-xs text-white/55 mt-1">ends {new Date(payment.trialEndsAt).toLocaleDateString()}</p>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {!paymentsLoading && payments.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-sm text-white/55">
+                        No payment rows returned.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 

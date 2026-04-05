@@ -105,7 +105,7 @@ import { normalizePublicHttpUrl, isPrivateOrLocalHost } from './lib/urlSafety.js
 import { installConsoleRedaction, redactSensitive } from './lib/safeLogging.js';
 import { logInvalidApiKey, logInvalidUpload, logInsufficientTier, logMalformedPayload, logPrivateHostAttempt } from './lib/securityEventLogger.js';
 import { enforceEffectiveTier, getAllowlistedElevatedEmails } from './services/entitlementGuard.js';
-import { applySecurityMiddleware, analyzeRequestSchema } from './middleware/securityMiddleware.js';
+import { applySecurityMiddleware, analyzeRequestSchema, sendHtmlWithNonce } from './middleware/securityMiddleware.js';
 import { createOrRefreshPublicReportLink, resolvePublicReportReference } from './services/publicReportLinks.js';
 import trialRoutes from './routes/trialRoutes.js';
 import indexingRoutes from './routes/indexingRoutes.js';
@@ -10408,10 +10408,10 @@ const clientDist = path.resolve(process.cwd(), 'dist/client');
 if (existsSync(clientDist)) {
   // Hashed assets get immutable cache; everything else gets short cache with revalidation
   app.use('/assets', express.static(path.join(clientDist, 'assets'), { maxAge: '365d', immutable: true }));
-  app.use(express.static(clientDist, { maxAge: '1h' }));
+  app.use(express.static(clientDist, { maxAge: '1h', index: false }));
 }
 
-// SPA fallback
+// SPA fallback — serves HTML with CSP nonce injected into <script> tags
 app.use((req, res) => {
   if (req.path.startsWith('/api/') || req.path.startsWith('/licenses')) {
     return res.status(404).json({ error: 'Endpoint not found', code: 'NOT_FOUND', path: req.path, method: req.method });
@@ -10422,12 +10422,13 @@ app.use((req, res) => {
     if (normalizedPath) {
       const routeIndexPath = path.resolve(clientDist, normalizedPath, 'index.html');
       if (routeIndexPath.startsWith(path.resolve(clientDist)) && existsSync(routeIndexPath)) {
-        return res.sendFile(routeIndexPath);
+        return sendHtmlWithNonce(res, routeIndexPath);
       }
     }
   }
 
-  if (existsSync(path.join(clientDist, 'index.html'))) return res.sendFile(path.join(clientDist, 'index.html'));
+  const rootIndex = path.join(clientDist, 'index.html');
+  if (existsSync(rootIndex)) return sendHtmlWithNonce(res, rootIndex);
   return res.status(404).json({ error: 'Not found', code: 'NOT_FOUND' });
 });
 

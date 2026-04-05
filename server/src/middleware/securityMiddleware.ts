@@ -35,17 +35,19 @@ export function applySecurityMiddleware(app: Express): void {
   );
 
   /* ── Per-request CSP nonce + Content-Security-Policy header ──────────── */
-  /* Note: nonce-based CSP requires injecting the nonce into served HTML.
-     Since the SPA fallback uses sendFile (static HTML), we allow 'unsafe-inline'
-     for the known inline scripts (gtag, recaptcha config) alongside the nonce
-     so the page works regardless of the serving path. */
+  /* Strict nonce-based CSP per Chrome Lighthouse best practices:
+     - 'nonce-{random}' is the primary defence (CSP2+)
+     - 'strict-dynamic' allows scripts loaded by nonced scripts (CSP3)
+     - 'unsafe-inline' is a backward-compat fallback (ignored by CSP2+ when nonce present)
+     - https: is a backward-compat scheme fallback (ignored by CSP3 with strict-dynamic)
+     The SPA fallback injects the nonce into every <script> tag via sendHtmlWithNonce(). */
   app.use((_req: Request, res: Response, next: NextFunction) => {
     const nonce = crypto.randomUUID();
     res.locals.nonce = nonce;
 
     const directives = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com`,
+      `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https:`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
@@ -70,6 +72,24 @@ export function applySecurityMiddleware(app: Express): void {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     next();
   });
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * sendHtmlWithNonce — read an HTML file, inject the per-request CSP nonce into
+ * every <script> tag, and send it.  This is what makes the nonce-based CSP work
+ * in practice: without this, <script> tags in the static build never carry the
+ * nonce and inline scripts are blocked by CSP2+ browsers.
+ * ──────────────────────────────────────────────────────────────────────────── */
+import { readFile } from 'fs/promises';
+
+export async function sendHtmlWithNonce(res: Response, htmlPath: string): Promise<void> {
+  const nonce = (res.locals.nonce as string) ?? '';
+  let html = await readFile(htmlPath, 'utf-8');
+  // Inject nonce="..." into every <script …> opener (incl. ld+json — harmless)
+  html = html.replace(/<script(?=[\s>])/gi, `<script nonce="${nonce}"`);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.send(html);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

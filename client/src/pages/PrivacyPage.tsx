@@ -1,5 +1,6 @@
 import React from "react";
 import { Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";
 import PublicPageFrame from "../components/PublicPageFrame";
@@ -7,7 +8,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 export default function PrivacyPage() {
   usePageMeta({
     title: 'Privacy Policy | AiVIS AI Visibility Platform',
-    description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data. Read our full privacy policy.',
+    description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
     path: '/privacy',
     structuredData: [
       buildWebPageSchema({ path: '/privacy', name: 'AiVIS Privacy Policy', description: 'Data collection, usage, and protection practices for the AiVIS platform.' }),
@@ -15,128 +16,251 @@ export default function PrivacyPage() {
     ],
   });
 
+  const linkCls = "text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200";
+  const emailCls = "text-white/85 hover:text-white";
+
   return (
     <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How Intruvurt Labs collects, uses, and protects your data on the AiVIS platform" maxWidthClass="max-w-4xl">
-      <p className="text-white/55 text-sm mb-10">Last updated: February 17, 2026</p>
+      <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
+
+          {/* ── Summary ── */}
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">The Short Version</h2>
-            <p>Your data is yours. We collect what we need to run the Service, we don't sell it to anyone, and we give you control over what's stored. If you want something deleted, just ask. That's the vibe.</p>
-            <p className="mt-2">Aivis.biz is operated by Intruvurt Labs, a company based in Georgia, USA. We're the data controller for any personal information collected through this Service.</p>
+            <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
+            <p>AiVIS is operated by <strong className="text-white">Intruvurt Labs</strong>, a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
+            <p className="mt-2">We collect only the data necessary to operate a multi-model AI visibility platform. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
+            <p className="mt-2">This Privacy Policy should be read alongside our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/disclosures" className={linkCls}>Consumer Disclosures</Link>.</p>
           </section>
 
+          {/* ── 1 What We Collect ── */}
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">1. What We Collect</h2>
-            <p>When you use Ai Visibility Intelligence Audits & Monitoring, the system collects a few categories of information:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Account stuff:</strong> Your email address and a hashed version of your password. We never store passwords in plain text.</li>
-              <li><strong className="text-white">Usage data:</strong> The URLs you submit for analysis, your analysis results, and how you interact with features. This helps us improve the product.</li>
-              <li><strong className="text-white">Device info:</strong> Browser type, IP address, and approximate location. We use this for security (detecting suspicious login attempts) and basic analytics.</li>
-              <li><strong className="text-white">Payment info:</strong> If you upgrade to a paid tier, Stripe handles all payment processing. We never see or store your full card number. We only keep a record of your subscription status.</li>
-            </ul>
-          </section>
+            <h2 className="text-xl font-semibold text-white mb-3">1. Information We Collect</h2>
 
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">2. How We Use Your Info</h2>
-            <p>Pretty straightforward stuff:</p>
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.1 Account Information</h3>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>To run the Service and process your analysis requests</li>
-              <li>To manage your account, verify your email, and provide support</li>
-              <li>To send you important updates about the Service (security alerts, billing issues, major changes)</li>
-              <li>To detect and prevent abuse, fraud, and security threats</li>
-              <li>To improve AiVIS based on aggregate usage patterns</li>
+              <li><strong className="text-white">Email address</strong> — required for registration and email verification.</li>
+              <li><strong className="text-white">Password</strong> — hashed with bcrypt before storage. We never store or log plaintext passwords.</li>
+              <li><strong className="text-white">Display name</strong> — optional, used in team workspaces and shared reports.</li>
+              <li><strong className="text-white">Google OAuth profile</strong> — if you sign in with Google, we receive your email, display name, and profile photo URL. We do not receive or store your Google password.</li>
             </ul>
-            <p className="mt-2">We don't use your data for targeted advertising. We don't build profiles to sell to third parties. That business model isn't ours.</p>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.2 Analysis and Audit Data</h3>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><strong className="text-white">Submitted URLs</strong> — the web addresses you provide for analysis.</li>
+              <li><strong className="text-white">Scraped page data</strong> — HTML structure, meta tags, Schema.org markup, headings, links, images, robots.txt, llms.txt, sitemap references, word count, and language extracted by our headless browser. This data is processed server-side and not shared with other users.</li>
+              <li><strong className="text-white">AI analysis results</strong> — visibility scores, BRAG evidence breakdowns, recommendations, and execution class metadata generated by the AI pipeline.</li>
+              <li><strong className="text-white">Competitor tracking data</strong> — URLs and analysis results for competitor sites you configure (Alignment+ tiers).</li>
+              <li><strong className="text-white">Citation test results</strong> — queries, model responses, and citation verdicts from live AI citation tests (Signal tier).</li>
+              <li><strong className="text-white">Brand mention results</strong> — publicly available mentions discovered across Reddit, Hacker News, Mastodon, DuckDuckGo, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.</li>
+            </ul>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
+            <p>Payments are processed entirely by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant). Intruvurt Labs never receives, processes, or stores full payment card numbers. We retain only: Stripe customer ID, subscription status, plan tier, billing period, and invoice history.</p>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.4 Device and Technical Data</h3>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>Browser type and version (User-Agent header)</li>
+              <li>IP address (used for rate limiting, abuse detection, and approximate geolocation)</li>
+              <li>Referring domain and page navigation patterns</li>
+              <li>Screen resolution and viewport size (when analytics consent is given)</li>
+            </ul>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.5 API and Webhook Data</h3>
+            <p>If you create API keys, we store a SHA-256 hash of each key alongside its scoped permissions. Plaintext keys are displayed once at creation and never stored. Webhook endpoint URLs and HMAC signing secrets you configure are stored server-side to enable delivery.</p>
           </section>
 
+          {/* ── 2 How We Use ── */}
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">3. Who We Share With</h2>
-            <p>We don't sell your personal data. Full stop. But we do work with some partners to keep the Service running:</p>
+            <h2 className="text-xl font-semibold text-white mb-3">2. How We Use Your Information</h2>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><strong className="text-white">Service operation:</strong> Process analysis requests, execute the AI pipeline, deliver reports, manage subscriptions, enforce tier limits.</li>
+              <li><strong className="text-white">Account management:</strong> Email verification, password resets, session management, team workspace administration.</li>
+              <li><strong className="text-white">Transactional communications:</strong> Analysis completion notifications, billing receipts, security alerts, verification emails, report delivery. Sent via Resend.</li>
+              <li><strong className="text-white">Security and abuse prevention:</strong> Rate limiting, threat detection on submitted URLs (URLhaus, Google Safe Browsing), SSRF protection, bot detection, session anomaly detection.</li>
+              <li><strong className="text-white">Product improvement:</strong> Aggregate, anonymized usage analytics to improve scoring accuracy, pipeline reliability, and user experience.</li>
+              <li><strong className="text-white">Newsletter and product updates:</strong> Optional marketing emails (you can unsubscribe at any time). We never send marketing emails without your opt-in consent.</li>
+            </ul>
+            <p className="mt-2">We do <strong className="text-white">not</strong> use your data for targeted advertising, behavioral profiling, or sale to data brokers.</p>
+          </section>
+
+          {/* ── 3 AI Pipeline ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">3. AI Analysis Pipeline and Data Processing</h2>
+            <p>When you submit a URL for analysis, the following data processing chain occurs:</p>
+            <ol className="list-decimal list-inside space-y-1 ml-2 mt-2">
+              <li><strong className="text-white">Scraping:</strong> A headless browser (Puppeteer) loads the public page and extracts structural signals (HTML, meta tags, Schema.org, headings, links, images, word count, language).</li>
+              <li><strong className="text-white">Threat scan:</strong> The URL is checked against URLhaus and Google Safe Browsing feeds. Hostname heuristics (punycode, raw IP, risky TLDs) are also evaluated.</li>
+              <li><strong className="text-white">AI analysis:</strong> Extracted page data (not your personal information) is sent to large language models via <strong className="text-white">OpenRouter</strong>. The specific models used depend on your tier — free tiers use zero-cost model variants; paid tiers use higher-capability models.</li>
+              <li><strong className="text-white">Triple-check (Signal tier):</strong> Three sequential models independently analyze, critique, and validate results before producing a final score.</li>
+              <li><strong className="text-white">Caching:</strong> Results are cached in our PostgreSQL database (Neon) for performance. Cache duration varies by tier.</li>
+            </ol>
+            <p className="mt-2"><strong className="text-white">What is sent to AI models:</strong> Page content and structural data only. Your email address, password, payment information, and account details are never transmitted to AI model providers.</p>
+            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. Intruvurt Labs holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
+          </section>
+
+          {/* ── 4 Third-Party Services ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">4. Third-Party Service Providers</h2>
+            <p>We share data with these service providers solely to operate the platform:</p>
+            <table className="w-full text-sm mt-2 border-collapse">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-2 text-white/90">Provider</th>
+                  <th className="text-left py-2 text-white/90">Purpose</th>
+                  <th className="text-left py-2 text-white/90">Data Shared</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr><td className="py-2">OpenRouter</td><td className="py-2">AI model routing</td><td className="py-2">Page content, structural signals</td></tr>
+                <tr><td className="py-2">Stripe</td><td className="py-2">Payment processing</td><td className="py-2">Email, subscription tier</td></tr>
+                <tr><td className="py-2">Render</td><td className="py-2">Application hosting</td><td className="py-2">Application logs, request metadata</td></tr>
+                <tr><td className="py-2">Neon</td><td className="py-2">PostgreSQL database</td><td className="py-2">All persisted application data</td></tr>
+                <tr><td className="py-2">Sentry</td><td className="py-2">Error tracking, performance</td><td className="py-2">Error context, anonymized replays (consent-based)</td></tr>
+                <tr><td className="py-2">Resend</td><td className="py-2">Email delivery</td><td className="py-2">Email address, message content</td></tr>
+                <tr><td className="py-2">Google Safe Browsing</td><td className="py-2">URL threat detection</td><td className="py-2">SHA-256 URL hash prefixes</td></tr>
+                <tr><td className="py-2">URLhaus (abuse.ch)</td><td className="py-2">Malware URL database</td><td className="py-2">URL lookups against public feed</td></tr>
+              </tbody>
+            </table>
+            <p className="mt-3">We do not sell, rent, or trade personal information to any third party. Data shared with service providers is limited to what is necessary for the stated purpose.</p>
+          </section>
+
+          {/* ── 5 Brand Mention Scanning ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">5. Brand Mention Scanning</h2>
+            <p>The brand mention feature scans publicly available content across 15 external sources to find references to your brand, domain, or configured keywords. These sources include Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.</p>
+            <p className="mt-2">Mention scanning queries public APIs and public web pages. We do not create accounts on, log into, or scrape private content from any of these platforms. Results are cached locally and associated with your account.</p>
+          </section>
+
+          {/* ── 6 Data Retention ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">6. Data Retention</h2>
+            <table className="w-full text-sm mt-2 border-collapse">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-2 text-white/90">Data Type</th>
+                  <th className="text-left py-2 text-white/90">Retention Period</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr><td className="py-2">Analysis cache</td><td className="py-2">7 days (Observer) / up to 30 days (paid tiers)</td></tr>
+                <tr><td className="py-2">Audit history</td><td className="py-2">Retained while account is active</td></tr>
+                <tr><td className="py-2">Account data</td><td className="py-2">Retained until deletion request (processed within 30 days)</td></tr>
+                <tr><td className="py-2">Security and access logs</td><td className="py-2">90 days, then automatically purged</td></tr>
+                <tr><td className="py-2">Stripe billing records</td><td className="py-2">As required by tax and financial regulations</td></tr>
+                <tr><td className="py-2">Email delivery logs</td><td className="py-2">30 days (via Resend)</td></tr>
+                <tr><td className="py-2">Brand mention results</td><td className="py-2">Retained while account is active</td></tr>
+                <tr><td className="py-2">API key hashes</td><td className="py-2">Until key is revoked or account is deleted</td></tr>
+              </tbody>
+            </table>
+            <p className="mt-3">After account deletion, we remove personal information within 30 calendar days. Anonymized, aggregate usage statistics may be retained indefinitely for product improvement.</p>
+          </section>
+
+          {/* ── 7 Browser Storage ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">7. Browser Storage and Cookies</h2>
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Essential (no consent required)</h3>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><strong className="text-white">sessionStorage:</strong> Authentication JWT, cleared when the browser tab closes. Not a cookie; never sent to third parties.</li>
+              <li><strong className="text-white">localStorage:</strong> Cookie-consent preference, UI settings, theme preference. No personal data.</li>
+            </ul>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Analytics (consent required)</h3>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><strong className="text-white">Sentry:</strong> When you accept the consent banner, we enable Sentry error tracking, performance monitoring, and anonymized session replays. Replays mask all text and block media. Sentry sets its own cookies for replay session correlation. None of this is activated without your consent.</li>
+            </ul>
+
+            <p className="mt-3">We do <strong className="text-white">not</strong> use tracking cookies, advertising pixels, Facebook/Meta pixels, Google remarketing tags, or any retargeting technology. You can withdraw analytics consent at any time from Settings.</p>
+          </section>
+
+          {/* ── 8 Security ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">8. Security Measures</h2>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>All data in transit encrypted via TLS 1.2+</li>
+              <li>Passwords hashed using bcrypt with per-user salts</li>
+              <li>API keys stored as SHA-256 hashes (plaintext shown once at creation)</li>
+              <li>Webhook payloads signed with HMAC-SHA256</li>
+              <li>SSRF protection: private/localhost/reserved IP ranges blocked server-side</li>
+              <li>Content Security Policy (CSP) with per-request nonce</li>
+              <li>Helmet middleware for HTTP security headers</li>
+              <li>Rate limiting on authentication and analysis endpoints</li>
+              <li>Email verification required for full account access</li>
+              <li>Input sanitization via DOMPurify and Zod schema validation</li>
+              <li>JWT tokens with time-limited expiration windows</li>
+            </ul>
+            <p className="mt-2">No system is impervious to all threats. If you discover a security vulnerability, please report it to <a href="mailto:security@aivis.biz" className={emailCls}>security@aivis.biz</a>. We commit to acknowledging reports within 72 hours.</p>
+          </section>
+
+          {/* ── 9 Your Rights ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">9. Your Rights</h2>
+            <p>Regardless of where you are located, we extend the following rights to all users:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">AI analysis providers:</strong> When you submit a URL, that URL (not your personal info) gets sent to our AI pipeline via OpenRouter. They process the page content and return analysis.</li>
-              <li><strong className="text-white">Infrastructure:</strong> We use Render for hosting, Neon for our PostgreSQL database, and Sentry for error tracking and performance monitoring. When you consent to analytics, Sentry may also capture anonymised session replays (with all text masked and media blocked) to help us diagnose issues. These services process data on our behalf under strict agreements.</li>
-              <li><strong className="text-white">Payments:</strong> Stripe handles subscription billing. They have their own privacy policy and are PCI compliant.</li>
+              <li><strong className="text-white">Access:</strong> Request a copy of the personal data we hold about you.</li>
+              <li><strong className="text-white">Correction:</strong> Request correction of inaccurate personal data.</li>
+              <li><strong className="text-white">Deletion:</strong> Request deletion of your account and associated personal data.</li>
+              <li><strong className="text-white">Data portability:</strong> Request an export of your data in a machine-readable format (JSON). Available via the GDPR export feature in account settings or by request.</li>
+              <li><strong className="text-white">Opt-out:</strong> Withdraw analytics consent, unsubscribe from marketing emails, or disable specific integrations at any time.</li>
+              <li><strong className="text-white">Restriction:</strong> Request that we limit processing of your data under certain circumstances.</li>
             </ul>
-            <p className="mt-2">If we're ever legally required to disclose information (like a valid court order), we'll comply with applicable law. But we'll push back on overly broad requests and notify you when legally permitted.</p>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">California Residents (CCPA/CPRA)</h3>
+            <p>You have the right to know what personal information we collect, request its deletion, and opt out of its "sale." We do not sell personal information. You will not be discriminated against for exercising these rights.</p>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">European Economic Area (GDPR)</h3>
+            <p>Our lawful basis for processing is: (a) contract performance (to deliver the Service you signed up for), (b) legitimate interest (security, abuse prevention, product improvement), and (c) consent (analytics, marketing emails). You may withdraw consent at any time without affecting the lawfulness of prior processing.</p>
+
+            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Georgia Residents</h3>
+            <p>Georgia does not currently have a comprehensive consumer privacy statute. We voluntarily extend the same rights described above to all Georgia and US-based users.</p>
+
+            <p className="mt-3">To exercise any right, email <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a>. We respond within 30 days.</p>
           </section>
 
+          {/* ── 10 Children ── */}
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">4. Data Retention</h2>
-            <p>We keep different types of data for different periods:</p>
+            <h2 className="text-xl font-semibold text-white mb-3">10. Children's Privacy</h2>
+            <p>AiVIS is not intended for users under 16 years of age. We do not knowingly collect personal information from children. If you believe a child has created an account, contact us at <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a> and we will delete the account and associated data promptly.</p>
+          </section>
+
+          {/* ── 11 International ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">11. International Data Transfers</h2>
+            <p>AiVIS is operated from the United States. If you access the Service from outside the US, your personal data will be transferred to and processed in the United States.</p>
+            <p className="mt-2">For transfers from the European Economic Area, we rely on Standard Contractual Clauses (SCCs) or equivalent safeguards as required by applicable law. Our sub-processors (Render, Neon, Sentry, Stripe, Resend) maintain their own data transfer mechanisms.</p>
+          </section>
+
+          {/* ── 12 Legal Disclosure ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">12. Legal Disclosure</h2>
+            <p>We may disclose personal information if required by law, regulation, legal process, or enforceable governmental request. In such cases, we will:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Analysis cache:</strong> Results are cached for up to 7 days for Observer tier, longer for paid tiers. Cached results are returned faster but may differ from a fresh live run. When you force a refresh (paid tiers), we bypass cache and execute a new analysis. Each analysis report indicates whether it was cached or fresh via the execution class badge.</li>
-              <li><strong className="text-white">Account data:</strong> Kept as long as your account exists. When you delete your account, we remove your personal information within 30 days.</li>
-              <li><strong className="text-white">Usage logs:</strong> Security and access logs are retained for up to 90 days, then automatically purged.</li>
+              <li>Evaluate the validity and scope of the request.</li>
+              <li>Challenge overly broad or improper requests where legally permissible.</li>
+              <li>Notify the affected user before disclosure unless prohibited by law or court order.</li>
+              <li>Limit disclosure to the minimum data necessary to comply.</li>
             </ul>
           </section>
 
+          {/* ── 13 Changes ── */}
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">5. Cookies and Similar Tech</h2>
-            <p>We keep browser storage minimal:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Essential (sessionStorage):</strong> Authentication tokens are stored in your browser's sessionStorage and are automatically cleared when you close the browser. Your cookie-consent preference is stored in localStorage. These are not browser cookies and are never sent to third parties.</li>
-              <li><strong className="text-white">Analytics (consent required):</strong> If you click "Got it" on the consent banner, we enable Sentry error tracking, performance monitoring, and anonymised session replays. Sentry helps us detect bugs and improve reliability. If you dismiss the banner, none of this is activated.</li>
+            <h2 className="text-xl font-semibold text-white mb-3">13. Changes to This Policy</h2>
+            <p>Material changes to this Privacy Policy will be communicated via email or in-app notification at least 30 days before taking effect. Non-material clarifications may be applied without advance notice. The "Last updated" date at the top reflects the most recent revision.</p>
+            <p className="mt-2">Continued use of the Service after the effective date of updated terms constitutes acceptance.</p>
+          </section>
+
+          {/* ── 14 Contact ── */}
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">14. Contact Us</h2>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>Privacy inquiries: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
+              <li>Data access / deletion requests: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
+              <li>Security vulnerabilities: <a href="mailto:security@aivis.biz" className={emailCls}>security@aivis.biz</a></li>
+              <li>General support: <a href="mailto:support@aivis.biz" className={emailCls}>support@aivis.biz</a></li>
+              <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
             </ul>
-            <p className="mt-2">We don't use tracking cookies for advertising. No Facebook pixels, no Google remarketing tags, none of that. You can withdraw your analytics consent at any time from Settings.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">6. Security Measures</h2>
-            <p>We take security seriously. Here's what we do:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li>All connections encrypted via TLS (that padlock in your browser)</li>
-              <li>Passwords hashed using bcrypt before storage</li>
-              <li>Rate limiting to prevent brute force attacks</li>
-              <li>SSRF protection to prevent malicious URL submissions</li>
-              <li>Email verification required before account access</li>
-              <li>JWT tokens with expiration for session management</li>
-            </ul>
-            <p className="mt-2">That said, no system is 100% bulletproof. If you discover a security vulnerability, email us at <a href="mailto:security@aivis.biz" className="text-white/85 hover:text-white/85">security@aivis.biz</a> and we'll address it promptly.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">7. Your Rights</h2>
-            <p>Depending on where you live, you have certain rights regarding your personal data:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Access:</strong> You can request a copy of the personal data we hold about you.</li>
-              <li><strong className="text-white">Correction:</strong> If something's wrong, let us know and we'll fix it.</li>
-              <li><strong className="text-white">Deletion:</strong> You can request deletion of your account and associated data.</li>
-              <li><strong className="text-white">Export:</strong> We can provide your data in a portable format upon request.</li>
-              <li><strong className="text-white">Opt out:</strong> You can opt out of analytics and non-essential cookies.</li>
-            </ul>
-            <p className="mt-2"><strong className="text-white">For California residents (CCPA):</strong> You have the right to know what personal information we collect, request deletion, and opt out of any "sale" of personal info. We don't sell personal information, but you can still exercise your rights by contacting us.</p>
-            <p className="mt-2"><strong className="text-white">For Georgia residents:</strong> Georgia doesn't currently have a comprehensive consumer privacy law like California, but we extend the same rights to all users regardless of location.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">8. Children's Privacy</h2>
-            <p>Ai Visibility Intelligence Audits & Monitoring is not intended for anyone under 16 years old. We don't knowingly collect personal information from children. If you believe a child has provided us with personal data, contact us immediately and we'll delete it.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">9. International Users</h2>
-            <p>Ai Visibility Intelligence Audits & Monitoring is operated from the United States. If you're accessing the Service from outside the US, your data will be transferred to and processed in the United States. By using Ai Visibility Intelligence Audits & Monitoring, you consent to this transfer.</p>
-            <p className="mt-2">We implement appropriate safeguards for international data transfers where required by applicable law.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">10. Changes to This Policy</h2>
-            <p>Privacy practices evolve, and so does this policy. When we make material changes, we'll notify you via email or through the Service at least 30 days before they take effect. We'll also update the "Last updated" date at the top.</p>
-            <p className="mt-2">Minor changes (typos, clarifications) might happen without notice, but anything that affects your rights gets communicated properly.</p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">11. Contact Us</h2>
-            <p>Got questions about privacy? Want to exercise your rights? Just want to know more about how we handle data? Hit us up:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li>Privacy inquiries: <a href="mailto:privacy@aivis.biz" className="text-white/85 hover:text-white/85">privacy@aivis.biz</a></li>
-              <li>Security reports: <a href="mailto:security@aivis.biz" className="text-white/85 hover:text-white/85">security@aivis.biz</a></li>
-              <li>General support: <a href="mailto:support@aivis.biz" className="text-white/85 hover:text-white/85">support@aivis.biz</a></li>
-              <li>Phone: <a href="tel:+17069075299" className="text-white/85 hover:text-white/85">(706) 907-5299</a></li>
-            </ul>
-            <p className="mt-4">We respond to privacy inquiries within 30 days, usually faster.</p>
-            <p className="mt-4 text-white/60 text-sm">Intruvurt Labs • Georgia, USA</p>
+            <p className="mt-3">We respond to privacy inquiries within 30 calendar days.</p>
+            <p className="mt-4 text-white/60 text-sm">Intruvurt Labs · Georgia, USA</p>
           </section>
         </div>
     </PublicPageFrame>

@@ -28,6 +28,7 @@ const linkGroups = [
       { label: "Press", to: "/press" },
       { label: "Privacy", to: "/privacy" },
       { label: "Terms", to: "/terms" },
+      { label: "Disclosures", to: "/disclosures" },
     ],
   },
 ] as const;

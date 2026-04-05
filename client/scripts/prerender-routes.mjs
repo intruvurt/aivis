@@ -59,10 +59,10 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude',
-		description: 'AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.',
-		ogTitle: 'AiVIS — AI Visibility Audit for Answer Engines',
-		ogDescription: 'Audit how ChatGPT, Perplexity, Claude, and Google AI interpret your site with evidence-linked findings and prioritized fixes.',
+		title: 'AiVIS — AI Evidence-backed Visibility Audits',
+		description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
+		ogTitle: 'AiVIS — AI Evidence-backed Visibility Audits',
+		ogDescription: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
 	{
@@ -381,6 +381,21 @@ const routes = [
 		path: '/compliance',
 		title: 'Compliance & Security | AiVIS',
 		description: 'AiVIS compliance and security posture, including GDPR operations, controls, and SOC roadmap status.',
+	},
+	{
+		path: '/terms',
+		title: 'Terms of Service | AiVIS AI Visibility Platform',
+		description: 'AiVIS terms of service governing use of the AI visibility auditing platform, including acceptable use, billing, IP rights, and disclaimers.',
+	},
+	{
+		path: '/privacy',
+		title: 'Privacy Policy | AiVIS AI Visibility Platform',
+		description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+	},
+	{
+		path: '/disclosures',
+		title: 'Consumer Disclosures | AiVIS AI Visibility Platform',
+		description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies, and platform disclaimers.',
 	},
 	{
 		path: '/integrations',

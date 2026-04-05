@@ -41,27 +41,14 @@ const measureItems = [
 ];
 
 const answerBlocks: { q: string; a: string }[] = [
-  { q: "What is AiVIS", a: "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website using BRAG (Based Retrieval and Auditable Grading) tied to real page evidence." },
-  { q: "What is AI visibility", a: "AI visibility is the ability of a site to be understood, trusted and reused by systems that generate answers instead of returning links." },
-  { q: "Why Google search engine ranking is not enough", a: "Ranking shows relevance. Citation requires clarity, trust and structure that supports extraction. Ranking is now a minor signal for visibility, not the full flow." },
-  { q: "What causes low visibility", a: "Thin content, weak structure (under 800 platform-specific words) and unclear meaning reduce the chance of being used by AI systems." },
-  { q: "How AiVIS finds issues", a: "It scans real page elements and maps them to how AI systems interpret content and trust signals. Every finding is tied to BRAG evidence IDs." },
-  { q: "What makes content usable", a: "Content must be clear, structured and supported by signals that reduce ambiguity for machine interpretation." },
-  { q: "What is citation readiness", a: "Citation readiness is how safe and reliable a page is for reuse inside future generated answers." },
-  { q: "Why structure matters", a: "Structure allows models to break content into context-citable copy without losing meaning." },
-  { q: "Does schema solve everything", a: "No. Schema supports meaning but cannot fix weak content or poor structure." },
-  { q: "How AiVIS improves site visibility", a: "It identifies gaps then provides direct evidence-backed fixes that improve clarity, trust and extractability." },
-  { q: "Who should use AiVIS", a: "Founders, marketers, developers and agencies who need to understand why their site is not being used by AI." },
-  { q: "What is entity clarity confusion", a: "Entity clarity is how clearly a site defines what it is and how it relates to known concepts. Without it AI models can pull incorrect entity associations." },
-  { q: "What happens after an audit", a: "You apply the fixes then rescan to confirm improved visibility and structure." },
-  { q: "How often should audits run", a: "Regular audits help track changes and ensure your site stays aligned with evolving AI behavior." },
-  { q: "Can an AI model misread a page", a: "Yes. Poor structure or unclear signals can cause incorrect interpretation. AiVIS uses a systematic-first pipeline tied to BRAG evidence-backed summaries." },
-  { q: "What is extraction", a: "Extraction is when AI pulls usable and citable information from a page to form an answer." },
-  { q: "What improves extraction", a: "Clear sections, concise explanations and consistent signals increase extraction quality." },
-  { q: "What is the AiVIS scoring rubric", a: "The score reflects how well your site supports interpretation, trust and citation by AI systems using BRAG-verified evidence." },
-  { q: "What is BRAG in AiVIS", a: "BRAG is a system that ties every audit result to real page evidence so findings can be verified instead of assumed." },
-  { q: "Why BRAG matters for AI visibility", a: "AI systems rely on trust and clarity. BRAG ensures your site is evaluated using evidence that supports reliable interpretation and citation." },
-  { q: "How BRAG improves accuracy", a: "By removing unsupported claims and linking findings to real data, BRAG reduces noise and increases confidence in results." },
+  { q: "What is AiVIS", a: "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. It crawls your page, extracts structural signals and maps them to a 0-100 visibility score across six weighted categories. Every finding is tied to real page evidence through BRAG evidence identifiers so results can be verified and traced, not assumed." },
+  { q: "What is AI visibility", a: "AI visibility is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links. It depends on content depth, heading clarity, schema coverage, metadata quality and machine-readable formatting. A page can rank first in traditional search and still be invisible to answer engines if these signals are missing." },
+  { q: "What causes low AI visibility scores", a: "Common causes include thin content with fewer than 800 words, missing or conflicting structured data, unclear heading hierarchy, absent metadata, weak entity signals and poor technical foundations like blocked crawlers or slow load times. AiVIS identifies each gap with evidence so you know exactly what to fix and in what order of impact." },
+  { q: "How does AiVIS find visibility issues", a: "AiVIS crawls the target URL with a real browser, extracts structural signals including headings, schema, meta tags, body content and links, then runs them through a multi-model AI pipeline that scores each category. On higher tiers a second model critiques findings and a third validates the result. Every issue references specific page evidence through BRAG identifiers." },
+  { q: "What is citation readiness", a: "Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or factual misrepresentation." },
+  { q: "What is BRAG in AiVIS", a: "BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives a BRAG evidence identifier that can be traced, verified and rechecked across scan cycles so no finding is left unsupported." },
+  { q: "Why does structure matter for AI systems", a: "Structure allows AI models to break content into context-appropriate sections without losing meaning. Clean headings, logical section flow, consistent naming and proper schema help answer engines determine what each part of a page means, how it relates to the broader topic and whether it can be safely extracted and cited as a source." },
+  { q: "Who should use AiVIS", a: "AiVIS is built for founders, marketers, developers and agencies who need to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what changes will fix it." },
 ];
 
 export default function Landing() {
@@ -84,10 +71,10 @@ export default function Landing() {
   }, []);
 
   usePageMeta({
-    fullTitle: "AiVIS — AI Visibility Audit Platform",
-    title: "AI Visibility Audit for ChatGPT, Perplexity, Claude and Google AI",
+    fullTitle: "AiVIS — AI Evidence-backed Visibility Audits",
+    title: "AI Evidence-backed Visibility Audits for ChatGPT, Perplexity, Claude and Google AI",
     description:
-      "AiVIS audits how answer engines read and cite your website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.",
+      "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.",
     path: "/",
     structuredData: {
       "@context": "https://schema.org",
@@ -122,10 +109,10 @@ export default function Landing() {
           <div className="max-w-3xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">AI visibility audit</p>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Your site can rank #1 and still be invisible to AI
+              AI Evidence-backed Visibility Audits
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/68">
-              AiVIS shows how answer engines read your site, what they trust and what they ignore. You see the exact gaps with proof so you can fix them before they cost you reach, citations and conversions.
+              AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. It interprets your site's structure, trust signals and citation readiness based on real page evidence — not inferred summaries.
             </p>
             <div className="mt-8 flex flex-wrap gap-2.5">
               {proofItems.map((item) => (
@@ -203,10 +190,10 @@ export default function Landing() {
       {/* ── Positioning ── */}
       <section className="py-16 border-b border-white/8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Not another SEO report</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">This is not another SEO report</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Understanding AI visibility</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What is AI visibility</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            AiVIS focuses on how AI systems interpret a site. It looks at structure, meaning and trust signals that affect whether your content is found and used inside generated answers. Ranking alone is not enough to get cited. AiVIS does not perform UI design or visual appearance audits. It measures the extractability, trust-signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer.
+            AI visibility is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links. Ranking alone does not earn citation. AiVIS measures the extractability, trust-signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer. Learn more about the <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link> behind the scoring.
           </p>
         </div>
       </section>
@@ -236,7 +223,7 @@ export default function Landing() {
       <section className="py-16 border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">How AI reads your site</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">How AI and LLMs read your site</h2>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">How AI systems evaluate websites</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {[
               { title: "Structure comes first", desc: "Clean headings and logical sections help models understand what each part of the page means without guessing." },
@@ -256,8 +243,8 @@ export default function Landing() {
       {/* ── What AiVIS measures ── */}
       <section className="py-16 border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Core value</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What AiVIS measures</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Core audit dimensions</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">What AiVIS actually audits</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {measureItems.map((item) => (
               <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
@@ -291,7 +278,7 @@ export default function Landing() {
             ))}
           </div>
           <p className="mt-6 text-sm text-white/52">
-            <Link to="/pricing" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">Compare plans</Link> to find the visibility intelligence level that matches your needs.
+            <Link to="/pricing" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">Compare audit plans</Link> to find the visibility intelligence level that matches your needs, or read the <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link> to see how scoring works.
           </p>
         </div>
       </section>
@@ -331,12 +318,16 @@ export default function Landing() {
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">From audit to citation</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
             An audit is the starting point. AiVIS also supports{" "}
-            <Link to="/citations" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">citation testing</Link>{" "}
+            <Link to="/citations" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">how AI citation testing works</Link>{" "}
             to verify whether AI models reference your brand in live answers. You can run{" "}
-            <Link to="/competitors" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">competitor tracking</Link>{" "}
+            <Link to="/competitors" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">competitor visibility tracking</Link>{" "}
             to benchmark your visibility against rival sites and identify structural gaps they have not addressed. Score trend{" "}
             <Link to="/analytics" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">analytics</Link>{" "}
-            show how your visibility changes as you apply fixes across scan cycles. Each tool builds on the audit foundation so improvements compound with every iteration.
+            show how your visibility changes as you apply fixes across scan cycles. Review the{" "}
+            <Link to="/methodology" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">audit methodology</Link>{" "}
+            to understand how each category is scored or use the{" "}
+            <Link to="/tools/schema-validator" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">structured data impact validator</Link>{" "}
+            to check your schema coverage before the next scan.
           </p>
         </div>
       </section>
@@ -395,8 +386,8 @@ export default function Landing() {
       {/* ── Answer blocks ── */}
       <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#060a14] to-[#0b1422]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Answer-level clarity</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Answer-level clarity built into the page</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Frequently asked questions</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Frequently asked questions about AI visibility</h2>
           <div className="mt-8 space-y-4">
             {answerBlocks.map((block) => (
               <article key={block.q} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">

@@ -42,6 +42,7 @@ const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
 const PrivacyPage = React.lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = React.lazy(() => import("./pages/TermsPage"));
+const DisclosuresPage = React.lazy(() => import("./pages/DisclosuresPage"));
 const VerifyEmailPage = React.lazy(() => import("./pages/VerifyEmailPage"));
 const VerifyLicensePage = React.lazy(() => import("./pages/VerifyLicensePage"));
 const PaymentSuccessPage = React.lazy(() => import("./pages/PaymentSuccessPage"));
@@ -193,6 +194,7 @@ export default function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/compliance" element={<CompliancePage />} />
+            <Route path="/disclosures" element={<DisclosuresPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
             <Route path="/changelog" element={<ChangelogPage />} />

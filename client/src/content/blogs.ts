@@ -1079,7 +1079,7 @@ If you want to know exactly what you are paying for, or exactly what you are mis
 
 AiVIS runs on four canonical tiers. Every entitlement, every feature gate, every model allocation flows from these four keys.
 
-Observer is the free tier. Ten audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
+Observer is the free tier. Three audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
 
 Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
 
@@ -2024,7 +2024,7 @@ These tools are not locked behind a paywall. They are part of how we demonstrate
 
 ## The Pricing Reality
 
-Observer is free. Ten scans per month. Zero cost. Full audit pipeline with a zero-cost model chain. This is not a crippled trial. It is the real engine running on free models.
+Observer is free. Three scans per month. Zero cost. Full audit pipeline with a zero-cost model chain. This is not a crippled trial. It is the real engine running on free models.
 
 Alignment is 49 dollars per month. Sixty scans. Paid models with better consistency. Competitor tracking. Brand mention scanning. Scheduled rescans. This is the agency tier for teams managing a handful of clients.
 

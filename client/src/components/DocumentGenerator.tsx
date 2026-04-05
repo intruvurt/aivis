@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getAnalysisExecutionClass, type AnalysisExecutionClass, type AnalysisResponse, TIER_LIMITS, type CanonicalTier } from "@shared/types";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
+import { apiFetch } from "../utils/api";
 
 interface DocumentGeneratorProps {
   result: AnalysisResponse;
@@ -766,28 +767,20 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
   useEffect(() => {
     const canUseBranding = TIER_LIMITS[(user?.tier as CanonicalTier) || 'observer']?.hasWhiteLabel === true;
     if (!canUseBranding || !token) return;
-    const base = (API_URL || "").replace(/\/+$/, "");
-    fetch(`${base}/api/features/branding`, {
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: "include",
-    })
+    apiFetch(`/api/features/branding`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d?.data) setBranding(d.data); })
-      .catch(() => {});
+      .catch(() => { console.warn("Branding fetch failed — export will be unbranded"); });
   }, [token, user?.tier]);
 
   const requestExportSession = async (branded: boolean) => {
-    const base = (API_URL || "").replace(/\/+$/, "");
     if (!token) {
       throw new Error("Sign in required before exporting reports");
     }
 
-    const response = await fetch(`${base}/api/features/exports/report-pdf-session`, {
+    const response = await apiFetch(`/api/features/exports/report-pdf-session`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ branded }),
     });
@@ -822,7 +815,11 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       console.error("CSV generation error:", error);
-      setSuccess(error instanceof Error ? error.message : "CSV generation failed");
+      setSuccess(null);
+      // Use toast if available, otherwise show inline (don't route through success state)
+      const msg = error instanceof Error ? error.message : "CSV generation failed";
+      if (typeof window !== 'undefined' && (window as any).__toast_error) (window as any).__toast_error(msg);
+      else setSuccess(`⚠ ${msg}`);
     } finally {
       setGenerating(null);
     }

@@ -84,9 +84,23 @@ export default function Landing() {
   }, []);
 
   usePageMeta({
-    title: "AiVIS — AI Visibility Audit for ChatGPT, Perplexity, Claude and Google AI",
+    fullTitle: "AiVIS — AI Visibility Audit Platform",
+    title: "AI Visibility Audit for ChatGPT, Perplexity, Claude and Google AI",
     description:
-      "AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website using BRAG (Based Retrieval and Auditable Grading) tied to real page evidence.",
+      "AiVIS audits how answer engines read and cite your website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.",
+    path: "/",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: answerBlocks.map((block) => ({
+        "@type": "Question",
+        name: block.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: block.a,
+        },
+      })),
+    },
   });
 
   const handleAudit = () => {
@@ -192,7 +206,7 @@ export default function Landing() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Not another SEO report</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">This is not another SEO report</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
-            AiVIS focuses on how AI systems interpret a site. It looks at structure, meaning and trust signals that affect whether your content is found and used inside generated answers. Ranking alone is not enough anymore. AiVIS does not perform UI design or visual appearance audits.
+            AiVIS focuses on how AI systems interpret a site. It looks at structure, meaning and trust signals that affect whether your content is found and used inside generated answers. Ranking alone is not enough to get cited. AiVIS does not perform UI design or visual appearance audits. It measures the extractability, trust-signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer.
           </p>
         </div>
       </section>
@@ -255,16 +269,43 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── Who benefits ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Who benefits</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Who benefits from AI visibility audits</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
+            AI visibility audits help anyone whose content needs to appear inside generated answers. If your site depends on being found, trusted and reused by AI systems, this audit shows you exactly where visibility breaks and how to repair it.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {[
+              { title: "Founders and product teams", desc: "Understand whether your product pages, documentation and landing pages are readable by AI systems that potential customers use to evaluate solutions before they ever visit your site." },
+              { title: "Marketing and content teams", desc: "See which content assets are eligible for citation, which are being ignored, and what structural changes unlock retrieval across ChatGPT, Perplexity, Claude and Gemini." },
+              { title: "Developers and technical leads", desc: "Audit schema markup, heading hierarchy, canonical tags and structured data against the signals AI models use to build trust, resolve entities and extract usable content." },
+              { title: "Agencies and consultants", desc: "Offer clients measurable proof of AI visibility health with a structured report that connects every finding to real page evidence through BRAG evidence identifiers." },
+            ].map((item) => (
+              <article key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/64">{item.desc}</p>
+              </article>
+            ))}
+          </div>
+          <p className="mt-6 text-sm text-white/52">
+            <Link to="/pricing" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">Compare plans</Link> to find the visibility intelligence level that matches your needs.
+          </p>
+        </div>
+      </section>
+
       {/* ── BRAG ── */}
       <section className="py-16 border-b border-white/8 bg-gradient-to-b from-[#0b1422] to-[#060a14]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-orange-300/80">BRAG</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">Based Retrieval and Auditable Grading</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-white/68">
-            AiVIS uses BRAG which stands for Based Retrieval and Auditable Grading. Every finding is tied to real page evidence. Each element is assigned a stable identifier so results can be traced, verified and rechecked.
+            AiVIS uses BRAG which stands for Based Retrieval and Auditable Grading. Every finding is tied to real page evidence using stable evidence identifiers. Each element of your page is assigned a BRAG evidence ID so results can be traced, verified and rechecked across scan cycles. This means you can validate any finding against your actual page data instead of relying on generic advice.
           </p>
           <p className="mt-3 max-w-3xl text-base leading-7 text-white/60">
-            If something cannot be proven it is not included. If something is missing it is shown as missing. There are no assumptions and no filler insights.
+            If something cannot be proven it is not included. If something is missing it is shown as missing. There are no assumptions, no AI-generated opinions and no filler insights. Every issue links back to a concrete part of your page.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <article className="rounded-3xl border border-orange-400/20 bg-orange-400/[0.04] p-6">
@@ -280,6 +321,23 @@ export default function Landing() {
               <p className="mt-3 text-sm leading-6 text-white/64">Scores are based on verified signals not generated summaries so results stay stable across scans.</p>
             </article>
           </div>
+        </div>
+      </section>
+
+      {/* ── From audit to citation ── */}
+      <section className="py-16 border-b border-white/8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/70">Beyond the audit</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">From audit to citation</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-white/64">
+            An audit is the starting point. AiVIS also supports{" "}
+            <Link to="/citations" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">citation testing</Link>{" "}
+            to verify whether AI models reference your brand in live answers. You can run{" "}
+            <Link to="/competitors" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">competitor tracking</Link>{" "}
+            to benchmark your visibility against rival sites and identify structural gaps they have not addressed. Score trend{" "}
+            <Link to="/analytics" className="text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200">analytics</Link>{" "}
+            show how your visibility changes as you apply fixes across scan cycles. Each tool builds on the audit foundation so improvements compound with every iteration.
+          </p>
         </div>
       </section>
 

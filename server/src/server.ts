@@ -2178,8 +2178,19 @@ app.get('/api/ready', async (_req, res) => {
 app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
   try {
     const pool = getPool();
+    // UNION audits + historical analysis_cache entries not yet in audits
+    const allScoresCte = `
+      WITH all_audits AS (
+        SELECT visibility_score, result FROM audits WHERE visibility_score IS NOT NULL
+        UNION ALL
+        SELECT (result->>'visibility_score')::int AS visibility_score, result
+        FROM analysis_cache
+        WHERE result->>'visibility_score' IS NOT NULL
+          AND url NOT IN (SELECT DISTINCT url FROM audits WHERE visibility_score IS NOT NULL)
+      )`;
     const [scoreResult, categoryResult] = await Promise.all([
       pool.query(`
+        ${allScoresCte}
         SELECT
           COUNT(*)::int                            AS total_audits,
           ROUND(AVG(visibility_score))::int        AS avg_score,
@@ -2190,18 +2201,17 @@ app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
           COUNT(*) FILTER (WHERE visibility_score >= 30 AND visibility_score < 50)::int AS bucket_30_49,
           COUNT(*) FILTER (WHERE visibility_score >= 50 AND visibility_score < 70)::int AS bucket_50_69,
           COUNT(*) FILTER (WHERE visibility_score >= 70)::int AS bucket_70_plus
-        FROM audits
-        WHERE visibility_score IS NOT NULL
+        FROM all_audits
       `),
       pool.query(`
+        ${allScoresCte}
         SELECT
           g->>'label'                          AS label,
           ROUND(AVG((g->>'score')::numeric))::int AS avg_score,
           COUNT(*)::int                        AS sample_count
-        FROM audits,
+        FROM all_audits,
              jsonb_array_elements(result->'category_grades') AS g
-        WHERE visibility_score IS NOT NULL
-          AND jsonb_typeof(result->'category_grades') = 'array'
+        WHERE jsonb_typeof(result->'category_grades') = 'array'
           AND g->>'label' IS NOT NULL
           AND g->>'score' IS NOT NULL
         GROUP BY g->>'label'
@@ -8706,13 +8716,21 @@ Return ONLY valid JSON:
     let platformBenchmark: { global_avg: number; total_audits: number; percentile: number } | null = null;
     try {
       const pool = getPool();
+      // UNION audits + historical analysis_cache to include all platform data
       const { rows: benchRows } = await pool.query(
-        `SELECT
+        `WITH all_audits AS (
+           SELECT visibility_score FROM audits WHERE visibility_score IS NOT NULL
+           UNION ALL
+           SELECT (result->>'visibility_score')::int AS visibility_score
+           FROM analysis_cache
+           WHERE result->>'visibility_score' IS NOT NULL
+             AND url NOT IN (SELECT DISTINCT url FROM audits WHERE visibility_score IS NOT NULL)
+         )
+         SELECT
            COUNT(*)::int AS total_audits,
            ROUND(AVG(visibility_score))::int AS global_avg,
-           (SELECT COUNT(*)::int FROM audits WHERE visibility_score <= $1) AS below_count
-         FROM audits
-         WHERE visibility_score IS NOT NULL`,
+           (SELECT COUNT(*)::int FROM all_audits WHERE visibility_score <= $1) AS below_count
+         FROM all_audits`,
         [finalVisibilityScore]
       );
       if (benchRows[0] && benchRows[0].total_audits > 0) {

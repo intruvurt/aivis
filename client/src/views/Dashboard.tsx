@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Activity, ArrowRight, ClipboardList, Clock3, Gauge, Loader2 } from "lucide-react";
+import { Activity, ArrowRight, BarChart3, ClipboardList, Clock3, Gauge, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
 import { useAuthStore } from "../stores/authStore";
@@ -54,6 +54,7 @@ function normalizeAudits(payload: any): AuditRecord[] {
 export default function Dashboard() {
   const [audits, setAudits] = useState<AuditRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [platformStats, setPlatformStats] = useState<{ total_audits: number; avg_score: number } | null>(null);
   const userTier = useAuthStore((state) => state.user?.tier || "observer");
   const uiTier = uiTierFromCanonical(userTier as any);
   const canLoadHistory = TIER_LIMITS[uiTier].hasReportHistory;
@@ -89,6 +90,15 @@ export default function Dashboard() {
 
     void run();
   }, [canLoadHistory]);
+
+  useEffect(() => {
+    apiFetch("/api/public/benchmarks")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.benchmarks) setPlatformStats({ total_audits: d.benchmarks.total_audits || 0, avg_score: d.benchmarks.avg_score || 0 });
+      })
+      .catch(() => {});
+  }, []);
 
   const sortedAudits = useMemo(() => {
     return [...audits].sort((left, right) => {
@@ -147,6 +157,21 @@ export default function Dashboard() {
         </Link>
       }
     >
+      {platformStats && platformStats.total_audits > 0 && (
+        <section className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.03] to-white/[0.05] p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-orange-300" />
+              <span className="font-semibold text-orange-300">{platformStats.total_audits.toLocaleString()}+ platform audits</span>
+            </div>
+            <span className="hidden sm:block h-4 w-px bg-white/12" />
+            <span className="text-white/58">Avg score: <span className="font-medium text-white/80">{platformStats.avg_score}/100</span></span>
+            <span className="hidden sm:block h-4 w-px bg-white/12" />
+            <Link to="/app/analytics" className="text-cyan-200 hover:text-white transition text-sm font-medium">View benchmarks →</Link>
+          </div>
+        </section>
+      )}
+
       {primaryAudit && typeof primaryAudit.overallScore === "number" && (
         <section className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

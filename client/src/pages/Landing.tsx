@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileCheck2, Gauge, Search, Shield } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { usePageMeta } from "../hooks/usePageMeta";
+
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 const proofItems = [
   "What AI sees",
@@ -33,6 +35,20 @@ export default function Landing() {
   const [url, setUrl] = useState("");
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [totalAudits, setTotalAudits] = useState<number>(0);
+  const [avgScore, setAvgScore] = useState<number>(0);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/public/benchmarks`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.benchmarks) {
+          setTotalAudits(d.benchmarks.total_audits || 0);
+          setAvgScore(d.benchmarks.avg_score || 0);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   usePageMeta({
     title: "AiVIS — AI Visibility Audit for ChatGPT, Perplexity, Claude",
@@ -120,6 +136,18 @@ export default function Landing() {
           <span className="inline-flex items-center gap-2"><Gauge className="h-4 w-4 text-cyan-300" /> Six weighted score dimensions</span>
         </div>
       </section>
+
+      {totalAudits > 0 && (
+        <section className="border-b border-white/8 bg-gradient-to-r from-[#0b1422] to-[#0d1a2e] py-5">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 text-sm sm:px-6 lg:px-8">
+            <span className="font-semibold text-orange-300">{totalAudits.toLocaleString()}+ audits completed</span>
+            <span className="hidden sm:block h-4 w-px bg-white/12" />
+            <span className="text-white/58">Platform avg score: <span className="font-medium text-white/80">{avgScore}/100</span></span>
+            <span className="hidden sm:block h-4 w-px bg-white/12" />
+            <span className="text-white/58">Real-time benchmark data</span>
+          </div>
+        </section>
+      )}
 
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

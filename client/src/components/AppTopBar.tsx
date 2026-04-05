@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, Bell, LogOut, User, BookOpen, ChevronDown, Menu } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../stores/authStore";
 import useNotifications from "../hooks/useNotifications";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -15,6 +16,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { unreadCount } = useNotifications();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const avatarUrl = getDisplayAvatarUrl(user);
   const displayName = getDisplayName(user);
@@ -28,7 +30,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         <button
           className="aurora-menu-btn"
           onClick={onMenuClick}
-          aria-label="Open navigation menu"
+          aria-label={t('topbar.openMenu', 'Open navigation menu')}
         >
           <Menu className="w-4 h-4" />
         </button>
@@ -40,8 +42,8 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search audits..."
-            aria-label="Search audits"
+            placeholder={t('topbar.searchAudits', 'Search audits...')}
+            aria-label={t('topbar.searchAudits', 'Search audits')}
             className="w-full h-8 pl-9 pr-3 rounded-lg bg-white/[0.06] border border-white/[0.09] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/40 focus:bg-white/[0.08] transition-all"
           />
         </div>
@@ -65,15 +67,15 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
           className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-700/30 border border-blue-400/20"
         >
           <Search className="w-3.5 h-3.5" />
-          Run Audit
+          {t('topbar.runAudit', 'Run Audit')}
         </button>
 
         {/* Documentation */}
         <Link
           to="/api-docs"
           className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-          title="Documentation"
-          aria-label="Documentation"
+          title={t('topbar.documentation', 'Documentation')}
+          aria-label={t('topbar.documentation', 'Documentation')}
         >
           <BookOpen className="w-4 h-4" aria-hidden="true" />
         </Link>
@@ -82,7 +84,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         <Link
           to="/app/notifications"
           className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-          aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
+          aria-label={unreadCount > 0 ? t('topbar.notificationsUnread', 'Notifications ({{count}} unread)', { count: unreadCount }) : t('topbar.notifications', 'Notifications')}
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
           {unreadCount > 0 && (
@@ -97,6 +99,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         <Link
           to="/app/settings"
           className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          aria-label={t('settings.title', 'User settings')}
         >
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600/30 to-indigo-600/20 border border-blue-500/25 flex items-center justify-center text-[11px] font-bold text-blue-300">
             {avatarUrl ? (
@@ -112,8 +115,8 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         <button
           onClick={() => { logout(); navigate("/"); }}
           className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.06] transition-colors"
-          title="Sign out"
-          aria-label="Sign out"
+          title={t('topbar.signOut', 'Sign out')}
+          aria-label={t('topbar.signOut', 'Sign out')}
         >
           <LogOut className="w-4 h-4" aria-hidden="true" />
         </button>

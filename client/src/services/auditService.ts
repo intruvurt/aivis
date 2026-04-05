@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config";
+import { useAuthStore } from "../stores/authStore";
 
 /**
  * Base URL strategy:
@@ -16,6 +17,15 @@ const http = axios.create({
   baseURL: API_BASE,
   withCredentials: true, // keep if you use cookies/sessions; safe to leave on
   timeout: 60_000,
+});
+
+// Attach auth token from authStore (sessionStorage-backed) to every request
+http.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token || sessionStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 function normalizeError(err) {

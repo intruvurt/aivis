@@ -112,6 +112,9 @@ function ScrollToTop() {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    // Move focus to main content for screen readers (WCAG 2.4.3)
+    const main = document.getElementById("main-content");
+    if (main) { main.setAttribute("tabindex", "-1"); main.focus({ preventScroll: true }); }
   }, [pathname, hash, search]);
   return null;
 }

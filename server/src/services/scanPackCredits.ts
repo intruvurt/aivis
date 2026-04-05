@@ -14,26 +14,26 @@ function toReadableReason(input: string): string {
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
-export type ScanPackKey = 'scan_pack_100' | 'scan_pack_300';
+export type ScanPackKey = 'scan_pack_75' | 'scan_pack_200';
 
 export const SCAN_PACKS: Record<ScanPackKey, { key: ScanPackKey; scans: number; amountCents: number; priceId?: string }> = {
-  scan_pack_100: {
-    key: 'scan_pack_100',
-    scans: 120,
-    amountCents: 1900,
-    priceId: process.env.STRIPE_SCAN_PACK_120_PRICE_ID || process.env.STRIPE_SCAN_PACK_115_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',
+  scan_pack_75: {
+    key: 'scan_pack_75',
+    scans: 75,
+    amountCents: 2900,
+    priceId: process.env.STRIPE_SCAN_PACK_75_PRICE_ID || process.env.STRIPE_SCAN_PACK_70_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',
   },
-  scan_pack_300: {
-    key: 'scan_pack_300',
-    scans: 400,
-    amountCents: 6900,
-    priceId: process.env.STRIPE_SCAN_PACK_400_PRICE_ID || process.env.STRIPE_SCAN_PACK_275_PRICE_ID || process.env.STRIPE_SCAN_PACK_100_PRICE_ID || 'price_1T8RotRYzQALwOPqzBrektqy',
+  scan_pack_200: {
+    key: 'scan_pack_200',
+    scans: 200,
+    amountCents: 8900,
+    priceId: process.env.STRIPE_SCAN_PACK_200_PRICE_ID || process.env.STRIPE_SCAN_PACK_175_PRICE_ID || process.env.STRIPE_SCAN_PACK_100_PRICE_ID || 'price_1T8RotRYzQALwOPqzBrektqy',
   },
 };
 
 const PACK_BONUS_PERCENT_BY_TIER: Record<string, number> = {
-  signal: 20,
-  scorefix: 40,
+  signal: 10,
+  alignment: 15,
 };
 
 export function getPackBonusPercentForTier(tier: string | null | undefined): number {
@@ -51,7 +51,7 @@ export function getEffectivePackScans(baseScans: number, bonusPercent: number): 
 
 export function getScanPackByKey(key: string): (typeof SCAN_PACKS)[ScanPackKey] | null {
   const raw = String(key || '').trim().toLowerCase();
-  const normalized = (raw === 'scan_pack_25' ? 'scan_pack_100' : raw === 'scan_pack_75' ? 'scan_pack_300' : raw) as ScanPackKey;
+  const normalized = (raw === 'scan_pack_25' ? 'scan_pack_100' : raw === 'scan_pack_75' ? 'scan_pack_200' : raw) as ScanPackKey;
   return SCAN_PACKS[normalized] || null;
 }
 

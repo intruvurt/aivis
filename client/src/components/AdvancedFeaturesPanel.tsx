@@ -54,8 +54,12 @@ function LimitBadge({ used, max }: { used: number; max: number }) {
   );
 }
 
-function authHeaders(token: string | null) {
-  return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+function authHeaders(token: string | null): Record<string, string> {
+  const h: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) h.Authorization = `Bearer ${token}`;
+  const wsId = window.localStorage.getItem("aivis_active_workspace_id");
+  if (wsId) h["X-Workspace-Id"] = wsId;
+  return h;
 }
 
 function apiUrl(path: string) {

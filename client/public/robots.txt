@@ -6,6 +6,7 @@ Allow: /
 
 # Public routes to prioritize
 Allow: /about
+Allow: /analyze
 Allow: /blogs
 Allow: /blogs/*
 Allow: /compare
@@ -20,6 +21,17 @@ Allow: /pricing
 Allow: /press
 Allow: /workflow
 Allow: /why-ai-visibility
+Allow: /landing
+Allow: /ai-search-visibility-2026
+Allow: /aeo-playbook-2026
+Allow: /geo-ai-ranking-2026
+Allow: /benchmarks
+Allow: /changelog
+Allow: /glossary
+Allow: /server-headers
+Allow: /verify-license
+Allow: /competitive-landscape
+Allow: /compliance
 Allow: /tools/schema-validator
 Allow: /tools/robots-checker
 Allow: /tools/content-extractability
@@ -42,4 +54,25 @@ Disallow: /team
 Disallow: /verify-email
 Disallow: /partnership-terms
 
+Crawl-delay: 1
+
 Sitemap: https://aivis.biz/sitemap.xml
+
+# AI-specific bots — full public access
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /

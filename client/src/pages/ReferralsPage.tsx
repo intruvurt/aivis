@@ -155,16 +155,16 @@ export default function ReferralsPage() {
 
   const handleEmailInvite = () => {
     if (!inviteLink || !summary) return;
-    const subject = encodeURIComponent('Try AiVIS — AI Visibility Audit Platform');
+    const subject = encodeURIComponent('Try AiVIS — AI Evidence-backed Visibility Audit Platform');
     const body = encodeURIComponent(
-      `I've been using AiVIS to audit how AI sees websites.\n\nSign up with my referral link and we both earn ${summary.constants.creditsToReferred} bonus scan credits:\n${inviteLink}\n\nIt scores your site for machine readability, structured data, and citation readiness across ChatGPT, Perplexity, Claude, and Google AI.`
+      `I've been using AiVIS to audit how AI sees websites.\n\nSign up with my referral link and we both earn ${summary.constants.creditsToReferred} bonus scan credits:\n${inviteLink}\n\nIt scores your site for machine readability, structured data, and citation readiness across ChatGPT, Perplexity, Claude and Google AI.`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`, '_self');
   };
 
   const handleTwitterShare = () => {
     if (!inviteLink) return;
-    const text = encodeURIComponent(`I'm using AiVIS to audit how AI sees my website. Check it out — we both earn bonus credits:\n${inviteLink}`);
+    const text = encodeURIComponent(`I'm using AiVIS to audit how AI sees my website. Check it out; we both earn bonus credits:\n${inviteLink}`);
     window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener');
   };
 
@@ -187,11 +187,11 @@ export default function ReferralsPage() {
               </span>
               <h1 className="text-3xl sm:text-4xl font-black leading-tight">
                 <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                  Turn users into high-intent growth channels
+                  Turn users into high intent growth channels
                 </span>
               </h1>
               <p className="mt-3 text-sm sm:text-base text-white/78 max-w-2xl">
-                A conversion-first referral workspace with instant sharing, transparent reward mechanics, and clear attribution outcomes.
+                A conversion first referral workspace with instant sharing, transparent reward mechanics and clear attribution outcomes.
               </p>
             </div>
             <Link
@@ -307,7 +307,7 @@ export default function ReferralsPage() {
               {/* ── Share section ── */}
               <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_0.6fr]">
                 <div className="rounded-2xl border border-cyan-300/20 bg-gradient-to-br from-cyan-500/10 via-transparent to-violet-500/10 p-4">
-                  <p className="text-xs uppercase tracking-[0.14em] text-cyan-200/85 mb-2">Share-ready referral link</p>
+                  <p className="text-xs uppercase tracking-[0.14em] text-cyan-200/85 mb-2">Share referral link</p>
                   <p className="mt-3 break-all rounded-xl border border-cyan-300/20 bg-[#0b1220]/85 px-3 py-2 text-xs text-cyan-200">{inviteLink}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button type="button" onClick={handleCopyInvite} className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-400/25 bg-cyan-500/15 px-3 py-2 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-500/25 active:scale-[0.97]">

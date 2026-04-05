@@ -775,6 +775,7 @@ const AnalyzePage: React.FC = () => {
                           disabled={loading}
                           className="rounded-lg p-1.5 text-white/40 transition hover:bg-white/10 hover:text-white/80 disabled:opacity-40"
                           title="Clear"
+                          aria-label="Clear URL"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -790,6 +791,7 @@ const AnalyzePage: React.FC = () => {
                         disabled={loading}
                         className="rounded-lg p-1.5 text-white/40 transition hover:bg-white/10 hover:text-white/80 disabled:opacity-40"
                         title="Paste from clipboard"
+                        aria-label="Paste from clipboard"
                       >
                         <ClipboardPaste className="h-4 w-4" />
                       </button>
@@ -804,14 +806,14 @@ const AnalyzePage: React.FC = () => {
                   )}
 
                   {validationError && (
-                    <div className="mt-3 flex items-start gap-2 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-200">
+                    <div role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-200">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <span>{validationError}</span>
                     </div>
                   )}
 
                   {error && (
-                    <div className="mt-3 flex items-start gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-3 py-2 text-sm text-red-200">
+                    <div role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-3 py-2 text-sm text-red-200">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <span>{error}</span>
                     </div>
@@ -1112,7 +1114,7 @@ const AnalyzePage: React.FC = () => {
         )}
 
         {loading && !result && (
-          <section className="mt-8 space-y-4" aria-live="polite" aria-busy="true">
+          <section className="mt-8 space-y-4" aria-live="polite" aria-busy={loading}>
             <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
               <div className="h-4 w-40 rounded bg-white/10" />
               <div className="mt-3 h-8 w-2/3 rounded bg-white/10" />

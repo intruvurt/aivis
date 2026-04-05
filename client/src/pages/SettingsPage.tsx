@@ -975,9 +975,9 @@ const SettingsPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row items-start gap-6 mb-6">
+                  <div className="flex flex-col items-start gap-6 mb-6">
                     {/* Avatar */}
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-2 w-full">
                       <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-white/28 to-white/15 text-white text-2xl font-bold shadow-xl shadow-white/20 ring-2 ring-white/10 overflow-hidden">
                         {profileDisplayAvatar ? (
                           <img
@@ -1057,7 +1057,7 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex-1 grid gap-4 sm:grid-cols-2 w-full">
+                    <div className="grid gap-4 sm:grid-cols-2 w-full">
                       <SteelInput
                         label="Display Name"
                         placeholder="Your name"

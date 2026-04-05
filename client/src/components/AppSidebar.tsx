@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
@@ -14,7 +15,7 @@ const LOGO_URL = "/aivis-logo.png";
 
 interface NavItem {
   to: string;
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
   minTier?: "observer" | "alignment" | "signal" | "scorefix" | "agency" | "enterprise";
 }
@@ -25,52 +26,52 @@ interface AppSidebarProps {
 }
 
 const mainNav: NavItem[] = [
-  { to: "/app", label: "Overview", icon: LayoutDashboard },
-  { to: "/app/analyze", label: "See Visibility", icon: Search },
-  { to: "/app/reports", label: "Reports", icon: FileText },
-  { to: "/app/score-fix", label: "Score Fix", icon: Zap, minTier: "signal" },
+  { to: "/app", labelKey: "sidebar.overview", icon: LayoutDashboard },
+  { to: "/app/analyze", labelKey: "sidebar.seeVisibility", icon: Search },
+  { to: "/app/reports", labelKey: "sidebar.reports", icon: FileText },
+  { to: "/app/score-fix", labelKey: "sidebar.scoreFix", icon: Zap, minTier: "signal" },
 ];
 
 const evidenceNav: NavItem[] = [
-  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/app/citations", label: "Citations", icon: FlaskConical, minTier: "alignment" },
-  { to: "/app/competitors", label: "Competitors", icon: Users, minTier: "alignment" },
-  { to: "/app/benchmarks", label: "Benchmarks", icon: Layers },
+  { to: "/app/analytics", labelKey: "sidebar.analytics", icon: BarChart3 },
+  { to: "/app/citations", labelKey: "sidebar.citations", icon: FlaskConical, minTier: "alignment" },
+  { to: "/app/competitors", labelKey: "sidebar.competitors", icon: Users, minTier: "alignment" },
+  { to: "/app/benchmarks", labelKey: "sidebar.benchmarks", icon: Layers },
 ];
 
 const extensionNav: NavItem[] = [
-  { to: "/app/benchmarks", label: "Benchmarks", icon: Layers },
-  { to: "/app/keywords", label: "Keywords", icon: Target },
-  { to: "/app/prompt-intelligence", label: "Query Gaps", icon: Brain, minTier: "alignment" },
-  { to: "/app/answer-presence", label: "Answer Presence", icon: Eye, minTier: "alignment" },
-  { to: "/app/reverse-engineer", label: "Reverse Engineer", icon: ArrowLeftRight, minTier: "alignment" },
-  { to: "/app/brand-integrity", label: "Brand Integrity", icon: Shield, minTier: "alignment" },
-  { to: "/app/niche-discovery", label: "Niche Discovery", icon: Globe },
+  { to: "/app/keywords", labelKey: "sidebar.keywords", icon: Target },
+  { to: "/app/prompt-intelligence", labelKey: "sidebar.queryGaps", icon: Brain, minTier: "alignment" },
+  { to: "/app/answer-presence", labelKey: "sidebar.answerPresence", icon: Eye, minTier: "alignment" },
+  { to: "/app/reverse-engineer", labelKey: "sidebar.reverseEngineer", icon: ArrowLeftRight, minTier: "alignment" },
+  { to: "/app/brand-integrity", labelKey: "sidebar.brandIntegrity", icon: Shield, minTier: "alignment" },
+  { to: "/app/niche-discovery", labelKey: "sidebar.nicheDiscovery", icon: Globe },
 ];
 
 const toolsNav: NavItem[] = [
-  { to: "/app/schema-validator", label: "Schema Validator", icon: Shield },
-  { to: "/app/server-headers", label: "Server Headers", icon: Globe },
-  { to: "/app/robots-checker", label: "AI Crawlers", icon: Cpu },
-  { to: "/app/indexing", label: "Indexing", icon: BookOpen },
-  { to: "/app/mcp", label: "MCP Console", icon: Wrench, minTier: "alignment" },
+  { to: "/app/schema-validator", labelKey: "sidebar.schemaValidator", icon: Shield },
+  { to: "/app/server-headers", labelKey: "sidebar.serverHeaders", icon: Globe },
+  { to: "/app/robots-checker", labelKey: "sidebar.aiCrawlers", icon: Cpu },
+  { to: "/app/indexing", labelKey: "sidebar.indexing", icon: BookOpen },
+  { to: "/app/mcp", labelKey: "sidebar.mcpConsole", icon: Wrench, minTier: "alignment" },
 ];
 
 const agencyNav: NavItem[] = [
-  { to: "/app/agency", label: "Agency Dashboard", icon: Building2, minTier: "agency" },
-  { to: "/api-docs", label: "API Docs", icon: Code2, minTier: "agency" },
-  { to: "/integrations", label: "Integrations", icon: Network, minTier: "agency" },
+  { to: "/app/agency", labelKey: "sidebar.agencyDashboard", icon: Building2, minTier: "agency" },
+  { to: "/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "agency" },
+  { to: "/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "agency" },
 ];
 
 const accountNav: NavItem[] = [
-  { to: "/app/billing", label: "Billing", icon: CreditCard },
-  { to: "/app/settings", label: "Settings", icon: Settings },
-  { to: "/help", label: "Help", icon: HelpCircle },
+  { to: "/app/billing", labelKey: "sidebar.billing", icon: CreditCard },
+  { to: "/app/settings", labelKey: "sidebar.settings", icon: Settings },
+  { to: "/help", labelKey: "sidebar.help", icon: HelpCircle },
 ];
 
 function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal" | "agency" | "enterprise";
+  const { t } = useTranslation();
 
   return (
     <div className="aurora-sidebar-section">
@@ -81,9 +82,11 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
         return (
           <NavLink
             key={item.to}
-            to={item.to}
+            to={locked ? "#" : item.to}
             end={item.to === "/app"}
-            onClick={onClose}
+            onClick={(e) => { if (locked) { e.preventDefault(); return; } onClose?.(); }}
+            aria-disabled={locked || undefined}
+            tabIndex={locked ? -1 : undefined}
             className={({ isActive }) =>
               `aurora-sidebar-link ${isActive ? "is-active" : ""} ${locked ? "pointer-events-none opacity-40" : ""}`
             }
@@ -91,7 +94,7 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
             <span className={`inline-flex items-center justify-center w-[22px] h-[22px] rounded-md shrink-0 ${iconBg}`}>
               <Icon className={`w-[13px] h-[13px] ${iconClass}`} />
             </span>
-            <span className="truncate">{item.label}</span>
+            <span className="truncate">{t(item.labelKey)}</span>
             {locked && <span className="aurora-sidebar-lock">{item.minTier}</span>}
           </NavLink>
         );
@@ -102,6 +105,7 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
 
 export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps) {
   const user = useAuthStore((s) => s.user);
+  const { t } = useTranslation();
   const avatarUrl = getDisplayAvatarUrl(user);
   const displayName = getDisplayName(user);
   const initials = getIdentityInitials(user);
@@ -109,8 +113,8 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
   return (
     <aside
       className={`aurora-sidebar ${isOpen ? "is-open" : ""}`}
-      role="navigation"
       aria-label="Main navigation"
+      onKeyDown={(e) => { if (e.key === "Escape" && isOpen) onClose?.(); }}
     >
       {/* Brand */}
       <div className="aurora-sidebar-brand">
@@ -133,12 +137,12 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
       {/* Navigation */}
       <nav className="aurora-sidebar-nav">
-        <NavSection title="Core" items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
-        <NavSection title="Evidence" items={evidenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
-        <NavSection title="Extensions" items={extensionNav} onClose={onClose} iconClass="text-emerald-400" iconBg="bg-emerald-500/10" />
-        <NavSection title="Platform" items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
-        <NavSection title="Agency" items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
-        <NavSection title="Account" items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
+        <NavSection title={t("sidebar.core")} items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
+        <NavSection title={t("sidebar.evidence")} items={evidenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
+        <NavSection title={t("sidebar.extensions")} items={extensionNav} onClose={onClose} iconClass="text-emerald-400" iconBg="bg-emerald-500/10" />
+        <NavSection title={t("sidebar.platform")} items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
+        <NavSection title={t("sidebar.agency")} items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
+        <NavSection title={t("sidebar.account")} items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>
 
       {/* User pill */}

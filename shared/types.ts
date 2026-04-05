@@ -683,6 +683,19 @@ export interface AnalysisResponse {
   contradiction_report?: ContradictionReport;
   /** Threat intelligence from security scan */
   threat_intel?: { risk_level?: string; [key: string]: unknown };
+  /** SEO diagnostics computed from scrape data */
+  seo_diagnostics?: SeoDiagnostics;
+  /** Strict rubric scoring system with gates and fixpacks */
+  strict_rubric?: StrictRubricSystem;
+  /** User-supplied findability goal strings */
+  findability_goals?: string[];
+  /** Goal alignment result comparing content against findability goals */
+  goal_alignment?: {
+    coverage: number;
+    matched_goals: string[];
+    missing_goals: string[];
+    score_adjustment: number;
+  };
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {

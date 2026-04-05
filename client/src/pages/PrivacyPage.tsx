@@ -75,7 +75,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-white mb-3">5. Cookies and Similar Tech</h2>
             <p>We keep browser storage minimal:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Essential (localStorage):</strong> Authentication tokens and your cookie-consent preference are stored in your browser's localStorage. Without these, the app doesn't work. These are not browser cookies and are never sent to third parties.</li>
+              <li><strong className="text-white">Essential (sessionStorage):</strong> Authentication tokens are stored in your browser's sessionStorage and are automatically cleared when you close the browser. Your cookie-consent preference is stored in localStorage. These are not browser cookies and are never sent to third parties.</li>
               <li><strong className="text-white">Analytics (consent required):</strong> If you click "Got it" on the consent banner, we enable Sentry error tracking, performance monitoring, and anonymised session replays. Sentry helps us detect bugs and improve reliability. If you dismiss the banner, none of this is activated.</li>
             </ul>
             <p className="mt-2">We don't use tracking cookies for advertising. No Facebook pixels, no Google remarketing tags, none of that. You can withdraw your analytics consent at any time from Settings.</p>

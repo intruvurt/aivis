@@ -4,6 +4,10 @@ import { useAuthStore } from "../stores/authStore";
 export default function ResetAuth() {
   useEffect(() => {
     try {
+      sessionStorage.removeItem("auth-storage");
+      sessionStorage.removeItem("aivis_auth_v1");
+      sessionStorage.removeItem("aivis_auth_v2");
+      // Also clear legacy localStorage keys
       localStorage.removeItem("auth-storage");
       localStorage.removeItem("aivis_auth_v1");
       localStorage.removeItem("aivis_auth_v2");

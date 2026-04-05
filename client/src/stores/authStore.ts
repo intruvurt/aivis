@@ -49,7 +49,7 @@ const KEY_V2 = "aivis_auth_v2";
 const OLD_KEYS = ["auth-storage", "aivis_auth_v1"];
 
 function canUseStorage() {
-  return typeof window !== "undefined" && !!window.localStorage;
+  return typeof window !== "undefined" && !!window.sessionStorage;
 }
 
 function safeParse<T>(raw: string | null): T | null {
@@ -64,7 +64,7 @@ function safeParse<T>(raw: string | null): T | null {
 function writeV2(payload: { user: AuthUser | null; token: string | null }) {
   if (!canUseStorage()) return;
   try {
-    window.localStorage.setItem(KEY_V2, JSON.stringify(payload));
+    window.sessionStorage.setItem(KEY_V2, JSON.stringify(payload));
   } catch {
     // ignore
   }
@@ -73,9 +73,14 @@ function writeV2(payload: { user: AuthUser | null; token: string | null }) {
 function clearAllAuthKeys() {
   if (!canUseStorage()) return;
   try {
-    window.localStorage.removeItem(KEY_V2);
-    for (const k of OLD_KEYS) window.localStorage.removeItem(k);
+    window.sessionStorage.removeItem(KEY_V2);
+    // Clear old keys from both storages (migration cleanup)
+    for (const k of OLD_KEYS) {
+      window.sessionStorage.removeItem(k);
+      window.localStorage.removeItem(k);
+    }
     // Clear persisted analysis data so a new session never sees a previous user's results
+    window.sessionStorage.removeItem('aivis-analysis');
     window.localStorage.removeItem('aivis-analysis');
   } catch {
     // ignore
@@ -159,7 +164,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const normalizedToken = normalizeAuthToken(token);
     // Clear any persisted analysis belonging to a previous user before setting the new session
     if (canUseStorage()) {
-      try { window.localStorage.removeItem('aivis-analysis'); } catch { /* ignore */ }
+      try {
+        window.sessionStorage.removeItem('aivis-analysis');
+        window.localStorage.removeItem('aivis-analysis');
+      } catch { /* ignore */ }
     }
     set({ user, token: normalizedToken, isAuthenticated: !!normalizedToken });
     writeV2({ user, token: normalizedToken });
@@ -212,9 +220,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     // 1) Prefer v2
+    // Check sessionStorage first, then migrate from localStorage if needed
     const v2 = safeParse<{ user: AuthUser | null; token: string | null }>(
-      window.localStorage.getItem(KEY_V2)
+      window.sessionStorage.getItem(KEY_V2) ?? window.localStorage.getItem(KEY_V2)
     );
+    // If found in localStorage, migrate to sessionStorage and remove from localStorage
+    if (!window.sessionStorage.getItem(KEY_V2) && window.localStorage.getItem(KEY_V2)) {
+      try {
+        window.sessionStorage.setItem(KEY_V2, window.localStorage.getItem(KEY_V2)!);
+        window.localStorage.removeItem(KEY_V2);
+      } catch { /* ignore */ }
+    }
 
     if (v2 && (v2.token || v2.user)) {
       const user = v2.user ?? null;
@@ -234,7 +250,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     // 2) Attempt migrate old keys
     for (const k of OLD_KEYS) {
-      const old = safeParse<OldShape>(window.localStorage.getItem(k));
+      const old = safeParse<OldShape>(window.sessionStorage.getItem(k) ?? window.localStorage.getItem(k));
       const extracted = extractFromAny(old);
       if (extracted.user || extracted.token) {
         writeV2({ user: extracted.user, token: extracted.token });

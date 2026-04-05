@@ -874,7 +874,6 @@ const apiLimiter = rateLimit({
     if (req.method === 'GET' && (matchesRateLimitPath(req, '/api/features/status') || matchesRateLimitPath(req, '/features/status'))) return true;
     if (req.method === 'GET' && (startsWithRateLimitPath(req, '/api/features/notifications') || startsWithRateLimitPath(req, '/features/notifications'))) return true;
     if (req.method === 'GET' && (matchesRateLimitPath(req, '/api/auth/profile') || matchesRateLimitPath(req, '/auth/profile'))) return true;
-    if (req.method === 'POST' && (matchesRateLimitPath(req, '/api/user/refresh') || matchesRateLimitPath(req, '/user/refresh'))) return true;
     return false;
   },
   handler: (_req, res) => {
@@ -905,6 +904,30 @@ const licenseLimiter = rateLimit({
   keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
   handler: (_req, res) => {
     res.status(429).json({ error: 'Too many license requests', code: 'LICENSE_RATE_LIMIT', retryAfter: 60 });
+  },
+});
+
+// Auth route limiter — prevents credential stuffing, account enumeration, email bombing
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: IS_PRODUCTION ? 10 : 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'Too many auth requests, please try again later', code: 'AUTH_RATE_LIMIT', retryAfter: 60 });
+  },
+});
+
+// Public tools limiter — prevents abuse of outbound-fetching endpoints
+const publicToolLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: IS_PRODUCTION ? 10 : 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'Too many tool requests, please try again later', code: 'TOOL_RATE_LIMIT', retryAfter: 60 });
   },
 });
 
@@ -990,7 +1013,7 @@ if (!IS_PRODUCTION) {
 }
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/billing', paymentRoutes);
 app.use('/api/stripe', paymentRoutes);
@@ -1004,7 +1027,7 @@ app.use('/api/github-app', githubAppRoutes);
 app.use('/api/reverse-engineer', reverseEngineerApi);
 app.use('/api/schema-generator', schemaGeneratorRoutes);
 app.use('/api/content', contentRoutes);
-app.post('/api/assistant', authRequired, handleAssistantMessage);
+app.post('/api/assistant', authRequired, heavyActionLimiter, handleAssistantMessage);
 app.use('/api/features', featureRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/v1', externalApiV1);
@@ -1015,7 +1038,7 @@ app.use('/api/webmcp', webMcpRouter);
 app.use('/api/support', supportRoutes);
 app.use('/api/agent', agentRoutes);
 app.use('/api/ssfr', ssfrRoutes);
-app.use('/api/tools', freeToolsRoutes);
+app.use('/api/tools', publicToolLimiter, freeToolsRoutes);
 app.use('/api/integrations/gsc', gscRoutes);
 app.use('/api/visibility', realtimeVisibilityRoutes);
 app.use('/api/fix-engine', autoVisibilityFixRoutes);
@@ -2215,6 +2238,10 @@ app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
 });
 
 // ── Keyword enrichment (real search suggestion verification) ──────────────
+// ── Keyword enrichment cache (24h TTL, per-keyword) ──
+const keywordEnrichCache = new Map<string, { result: any; expiresAt: number }>();
+const KEYWORD_CACHE_TTL = 24 * 60 * 60 * 1000;
+
 app.post('/api/keywords/enrich', authRequired, async (req: Request, res: Response) => {
   try {
     const { keywords } = req.body || {};
@@ -2223,13 +2250,35 @@ app.post('/api/keywords/enrich', authRequired, async (req: Request, res: Respons
     }
     const sanitized = keywords
       .filter((k: unknown) => typeof k === 'string' && k.trim().length > 0)
-      .map((k: string) => k.trim().slice(0, 200))
+      .map((k: string) => k.trim().slice(0, 200).toLowerCase())
       .slice(0, 20);
     if (sanitized.length === 0) {
       return res.status(400).json({ success: false, error: 'No valid keywords provided' });
     }
-    const enriched = await enrichKeywords(sanitized);
-    return res.json({ success: true, enriched });
+
+    const now = Date.now();
+    const cached: any[] = [];
+    const toFetch: string[] = [];
+
+    for (const kw of sanitized) {
+      const entry = keywordEnrichCache.get(kw);
+      if (entry && entry.expiresAt > now) {
+        cached.push(entry.result);
+      } else {
+        toFetch.push(kw);
+      }
+    }
+
+    let freshResults: any[] = [];
+    if (toFetch.length > 0) {
+      freshResults = await enrichKeywords(toFetch);
+      for (const r of freshResults) {
+        const key = (r.keyword || '').toLowerCase();
+        if (key) keywordEnrichCache.set(key, { result: r, expiresAt: now + KEYWORD_CACHE_TTL });
+      }
+    }
+
+    return res.json({ success: true, enriched: [...cached, ...freshResults] });
   } catch (err: any) {
     console.error('[keywords/enrich] Error:', err?.message);
     return res.status(500).json({ success: false, error: 'Keyword enrichment failed' });
@@ -2793,7 +2842,7 @@ app.post('/api/security/url-risk', authRequired, async (req: Request, res: Respo
   }
 });
 
-app.post('/api/seo/audit/onpage', authRequired, usageGate, incrementUsage, async (req: Request, res: Response) => {
+app.post('/api/seo/audit/onpage', authRequired, heavyActionLimiter, usageGate, incrementUsage, async (req: Request, res: Response) => {
   try {
     const { url: rawUrl } = (req.body || {}) as { url?: string };
     const { valid, url: targetUrl, error } = validateUrl(rawUrl || '');
@@ -3073,7 +3122,7 @@ function collectSeoIssueLabels(diagnostics: ReturnType<typeof computeSeoDiagnost
   return issues;
 }
 
-app.post('/api/seo/crawl', authRequired, async (req: Request, res: Response) => {
+app.post('/api/seo/crawl', authRequired, heavyActionLimiter, async (req: Request, res: Response) => {
   const pool = getPool();
   const client = await pool.connect();
 
@@ -7574,6 +7623,12 @@ For each recommendation:
     const prompt1 = `${tierPromptPrefix}Ai Visibility Intelligence Audits for ${targetUrl} (${parsedTargetUrl.hostname}).
 Base ALL findings on the evidence below. Be honest — most sites score C/D. Cite [ev_*] IDs.
 
+WRITING STYLE (mandatory for all text fields):
+- Write in a direct, technical, human-edited voice. No filler. No marketing fluff.
+- Never use a comma before "and", "or", "but", or "etc." — use the serial-comma-free style throughout.
+- Avoid comma-heavy AI patterns. Prefer short declarative sentences over long compound ones.
+- Do not start sentences with "Additionally", "Furthermore", "Moreover", or "In conclusion".
+
 EVIDENCE:
 ${evidenceBlock}
 
@@ -7805,6 +7860,7 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
       ); // 55% of TC budget to AI2
 
       const ai2Prompt = `You are a PEER REVIEWER for an AI visibility audit. Your job is to CRITIQUE the primary analysis below and adjust the score.
+Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
 
 ORIGINAL URL: ${targetUrl}
 PRIMARY AI SCORE: ${ai1Score}/100
@@ -7969,6 +8025,7 @@ Return ONLY valid JSON:
         const proposedScore = Math.max(0, Math.min(100, ai1Score + tripleCheckResult.ai2_adjustment));
 
         const ai3Prompt = `You are a VALIDATION GATE for an AI visibility audit. Two prior models have already analyzed this website. Your job is to confirm or override the proposed final score.
+Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
 
 URL: ${targetUrl}
 AI1 PRIMARY SCORE: ${ai1Score}/100 (model: ${providers[0].model})
@@ -9120,6 +9177,7 @@ app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspac
     const uploadRouting = detectUploadAnalysisMode(parsedFiles, sd);
 
     let prompt = `AI Visibility Intelligence Audits — Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : 'batch'}.
+  Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
   Treat this as uploaded source code or template content (not a live URL crawl).
   The upload includes ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(', ')}.
 

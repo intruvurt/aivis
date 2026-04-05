@@ -238,7 +238,6 @@ export function saveSessionToken(token: string): void {
 
   try {
     sessionStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, token);
-    localStorage.setItem(STORAGE_KEYS.SESSION_TOKEN, token);
     console.log('[Auth] Session token saved');
   } catch (error) {
     console.error('[Auth] Failed to save session token:', error);
@@ -252,6 +251,7 @@ export function saveSessionToken(token: string): void {
 export function clearSessionToken(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEYS.SESSION_TOKEN);
+    // Also clear any legacy localStorage token
     localStorage.removeItem(STORAGE_KEYS.SESSION_TOKEN);
     console.log('[Auth] Session token cleared');
   } catch (error) {

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const faqData = [
   {
@@ -44,27 +45,45 @@ const faqData = [
 ];
 
 export default function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (idx: number) => setOpenIndex(prev => prev === idx ? null : idx);
+
   return (
     <section id="src_components_FAQSection_main" className="py-20 bg-gradient-to-b from-[#0a0a0f] to-[#060607]">
       <div id="src_components_FAQSection_container" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 id="src_components_FAQSection_title" className="text-4xl font-bold text-white mb-12 text-center">
           Frequently Asked Questions
         </h2>
-        <dl id="src_components_FAQSection_list" className="space-y-8">
-          {faqData.map((faq, idx) => (
-            <div 
-              key={idx} 
-              id={`src_components_FAQSection_item_${idx}`}
-              className="bg-[#323a4c]/50 border border-white/10 rounded-lg p-6 hover:border-white/10 transition-all"
-            >
-              <dt id={`src_components_FAQSection_q_${idx}`} className="text-xl font-semibold text-white mb-3">
-                {faq.question}
-              </dt>
-              <dd id={`src_components_FAQSection_a_${idx}`} className="text-white/55 leading-relaxed">
-                {faq.answer}
-              </dd>
-            </div>
-          ))}
+        <dl id="src_components_FAQSection_list" className="space-y-4">
+          {faqData.map((faq, idx) => {
+            const isOpen = openIndex === idx;
+            return (
+              <div 
+                key={idx} 
+                id={`src_components_FAQSection_item_${idx}`}
+                className="bg-[#323a4c]/50 border border-white/10 rounded-lg overflow-hidden hover:border-white/10 transition-all"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggle(idx)}
+                  className="flex w-full items-center justify-between gap-4 p-6 text-left"
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-panel-${idx}`}
+                >
+                  <dt id={`src_components_FAQSection_q_${idx}`} className="text-xl font-semibold text-white">
+                    {faq.question}
+                  </dt>
+                  <ChevronDown className={`h-5 w-5 shrink-0 text-white/45 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                </button>
+                {isOpen && (
+                  <dd id={`src_components_FAQSection_a_${idx}`} className="px-6 pb-6 text-white/55 leading-relaxed" role="region" aria-labelledby={`src_components_FAQSection_q_${idx}`}>
+                    {faq.answer}
+                  </dd>
+                )}
+              </div>
+            );
+          })}
         </dl>
       </div>
     </section>

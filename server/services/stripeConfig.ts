@@ -60,15 +60,15 @@ export const STRIPE_PRICING = {
     ],
   },
 
-  // TIER 2: ALIGNMENT (Core) - $65/year or $9/month
+  // TIER 2: ALIGNMENT (Core) - $348/year or $49/month
   // "turn unknowns into structure and proof"
   alignment: {
     name: 'Alignment',
     displayName: 'Alignment (Core)',
     priceId: process.env.STRIPE_ALIGNMENT_MONTHLY_PRICE_ID,
     yearlyPriceId: process.env.STRIPE_ALIGNMENT_YEARLY_PRICE_ID,
-    amountCents: 900,           // $9/month
-    yearlyAmountCents: 6500,    // $65/year
+    amountCents: 4900,           // $49/month
+    yearlyamountCents: 34800,    // $348/year
     mode: 'subscription' as const,
     limits: {
       scans_per_month: 30,
@@ -97,8 +97,8 @@ export const STRIPE_PRICING = {
     displayName: 'Signal (Pro)',
     priceId: process.env.STRIPE_SIGNAL_MONTHLY_PRICE_ID,
     yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
-    amountCents: 2900,          // $29/month
-    yearlyAmountCents: 29000,   // $290/year
+    amountCents: 14900,          // $29/month
+    yearlyamountCents: 106800,   // $290/year
     mode: 'subscription' as const,
     limits: {
       scans_per_month: 150,

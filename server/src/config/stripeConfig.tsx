@@ -35,7 +35,7 @@ export const STRIPE_PRICING = {
     name: 'AI Visibility Engine – Pro',
     lookupKey: 'pro_monthly',
     priceId: process.env.STRIPE_PRO_PRICE_ID,
-    amountCents: 2900,
+    amountCents: 10680,
     mode: 'subscription',
     metadata: {
       tier_key: 'pro',

@@ -71,7 +71,7 @@ Canonical tier truth lives in `shared/types.ts`.
 | Canonical tier | Display name | Billing |
 | --- | --- | --- |
 | `observer` | Observer (Free) | Free |
-| `alignment` | Alignment (Core) | $9/mo |
+| `alignment` | Alignment (Core) | $49/mo |
 | `signal` | Signal (Pro) | $29/mo |
 | `scorefix` | Score Fix [AutoPR] | $299 one-time |
 | `agency` | Agency | $199/mo |

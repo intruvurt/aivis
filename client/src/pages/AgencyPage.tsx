@@ -245,7 +245,7 @@ function AddProjectModal({
               onChange={(e) => setPlan(e.target.value)}
             >
               <option value="observer">Observer (Free)</option>
-              <option value="alignment">Alignment ($9/mo)</option>
+              <option value="alignment">Alignment ($49/mo)</option>
               <option value="signal">Signal ($29/mo)</option>
             </select>
           </div>

@@ -186,7 +186,7 @@ export default function DisclosuresPage() {
             <p>The AI models used in your analysis depend on your subscription tier:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to Intruvurt Labs.</li>
-              <li><strong className="text-white">Alignment ($9/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to Intruvurt Labs.</li>
+              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to Intruvurt Labs.</li>
               <li><strong className="text-white">Signal ($29/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to Intruvurt Labs.</li>
             </ul>
             <p className="mt-2">Model names, providers, and routing are subject to change as model availability and pricing evolves on upstream platforms. The analysis response includes model attribution metadata so you can verify which models processed your request.</p>

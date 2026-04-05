@@ -20,7 +20,7 @@ export const SCAN_PACKS: Record<ScanPackKey, { key: ScanPackKey; scans: number; 
   scan_pack_75: {
     key: 'scan_pack_75',
     scans: 75,
-    amountCents: 2900,
+    amountCents: 10680,
     priceId: process.env.STRIPE_SCAN_PACK_75_PRICE_ID || process.env.STRIPE_SCAN_PACK_70_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',
     allowedTiers: ['alignment', 'signal', 'scorefix'],
   },

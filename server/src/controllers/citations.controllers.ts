@@ -576,7 +576,7 @@ function buildBrandContext(
   if (mode === 'url' && domain) {
     primaryName = brandSignals.schemaOrgName || brandSignals.ogSiteName || '';
     if (!primaryName) {
-      const titleBrand = brandSignals.title.split(/[-|–-·•:]/)[0].trim();
+      const titleBrand = brandSignals.title.split(/[\-|–·•:]/)[0].trim();
       if (titleBrand && titleBrand.length >= 2 && titleBrand.length < 50) {
         primaryName = titleBrand;
       } else {
@@ -606,7 +606,7 @@ function buildBrandContext(
   }
   // Title segments (e.g. "AI Visibility Intelligence Audits" from "AiVIS - AI Visibility Intelligence Audits")
   if (brandSignals.title) {
-    const parts = brandSignals.title.split(/[-|–-·•:]/).map(p => p.trim()).filter(Boolean);
+    const parts = brandSignals.title.split(/[\-|–·•:]/).map(p => p.trim()).filter(Boolean);
     for (const part of parts) {
       if (part.length >= 10 && part.length <= 80) nameVariants.push(part);
     }

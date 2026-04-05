@@ -8,6 +8,7 @@ export type AuthTier = "observer" | "alignment" | "signal" | "scorefix";
 export type AuthUser = {
   id: string;
   email: string;
+  name?: string;
   role?: string;
   full_name?: string;
   display_name?: string;
@@ -17,6 +18,8 @@ export type AuthUser = {
   trial_used?: boolean;
   created_at?: string;
   avatar_url?: string;
+  org_logo_url?: string;
+  org_favicon_url?: string;
   company?: string;
   website?: string;
 };
@@ -83,6 +86,32 @@ type OldShape =
   | { user?: any; token?: any; isAuthenticated?: any; entitlements?: any }
   | { user?: any; session?: { access_token?: any } | any };
 
+function normalizeAuthUser(raw: any): AuthUser | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const user: AuthUser = {
+    id: String(raw.id ?? ""),
+    email: String(raw.email ?? ""),
+    name: typeof raw.name === "string" ? raw.name : undefined,
+    role: typeof raw.role === "string" ? raw.role : undefined,
+    tier: (raw.tier as AuthTier) ?? "observer",
+    trial_ends_at: raw.trial_ends_at ?? null,
+    trial_active: raw.trial_active === true,
+    trial_used: raw.trial_used === true,
+    full_name: raw.full_name ?? raw.name ?? undefined,
+    display_name: raw.display_name ?? raw.name ?? undefined,
+    created_at: raw.created_at ?? undefined,
+    avatar_url: raw.avatar_url ?? undefined,
+    org_logo_url: raw.org_logo_url ?? undefined,
+    org_favicon_url: raw.org_favicon_url ?? undefined,
+    company: raw.company ?? undefined,
+    website: raw.website ?? undefined,
+  };
+
+  if (!user.id || !user.email) return null;
+  return user;
+}
+
 function extractFromAny(raw: any): { user: AuthUser | null; token: string | null } {
   if (!raw || typeof raw !== "object") return { user: null, token: null };
 
@@ -101,24 +130,7 @@ function extractFromAny(raw: any): { user: AuthUser | null; token: string | null
   const normalizedToken = normalizeAuthToken(token);
 
   const u = state.user && typeof state.user === "object" ? state.user : null;
-
-  const user: AuthUser | null = u
-    ? {
-        id: String(u.id ?? ""),
-        email: String(u.email ?? ""),
-        role: typeof u.role === "string" ? u.role : undefined,
-        tier: (u.tier as AuthTier) ?? "observer",
-        trial_ends_at: u.trial_ends_at ?? null,
-        trial_active: u.trial_active === true,
-        trial_used: u.trial_used === true,
-        full_name: u.full_name ?? u.name ?? undefined,
-        display_name: u.display_name ?? undefined,
-        created_at: u.created_at ?? undefined,
-        avatar_url: u.avatar_url ?? undefined,
-        company: u.company ?? undefined,
-        website: u.website ?? undefined,
-      }
-    : null;
+  const user = normalizeAuthUser(u);
 
   // minimal validity: must have id+email to count
   if (!user?.id || !user?.email) return { user: null, token: normalizedToken };
@@ -179,7 +191,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       const data = await response.json().catch(() => null);
-      const nextUser = data?.user ?? data?.data?.user ?? null;
+      const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
 
       set({
         user: nextUser,

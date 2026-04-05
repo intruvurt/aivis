@@ -19,6 +19,7 @@ import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import { buildReferralInviteLink, shareReferralInvite } from "../utils/referralShare";
+import { getDisplayAvatarUrl, getIdentityInitials } from "../utils/userIdentity";
 import { getTierDisplayName, getTierPositioning, getTierAudience, TIER_LIMITS } from "../../../shared/types";
 import type { CanonicalTier } from "../../../shared/types";
 
@@ -144,13 +145,9 @@ export default function ProfilePage() {
   }, [user.created_at]);
 
   const initials = useMemo(() => {
-    const name = user.full_name || user.display_name || user.email;
-    return name
-      .split(/[\s@]+/)
-      .slice(0, 2)
-      .map((s) => s[0]?.toUpperCase() || "")
-      .join("");
-  }, [user.full_name, user.display_name, user.email]);
+    return getIdentityInitials(user);
+  }, [user]);
+  const avatarUrl = useMemo(() => getDisplayAvatarUrl(user), [user]);
 
   return (
     <div className="space-y-6 text-white">
@@ -161,9 +158,9 @@ export default function ProfilePage() {
           <div className="flex items-start gap-5">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
-              {user.avatar_url ? (
+              {avatarUrl ? (
                 <img
-                  src={user.avatar_url}
+                  src={avatarUrl}
                   alt=""
                   className={`h-20 w-20 rounded-2xl object-cover ring-2 ${tc.ring} ring-offset-2 ring-offset-charcoal-deep`}
                 />

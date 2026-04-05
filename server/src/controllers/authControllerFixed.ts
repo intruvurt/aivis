@@ -37,6 +37,33 @@ import { discoverCompetitorsFromHistory } from './competitors.controllers.js';
 import { meetsMinimumTier, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
 import { profileUpdateSchema, sanitizeHtmlServer } from '../middleware/securityMiddleware.js';
 
+const MAX_PROFILE_IMAGE_BYTES = 400 * 1024;
+
+function normalizeUploadedImageDataUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const match = /^data:image\/(png|jpe?g|webp);base64,([A-Za-z0-9+/=]+)$/i.exec(trimmed);
+  if (!match) {
+    throw new Error('Uploaded image must be a PNG, JPG, or WebP file');
+  }
+
+  const mimeSubtype = match[1].toLowerCase() === 'jpg' ? 'jpeg' : match[1].toLowerCase();
+  const base64Payload = match[2];
+  const byteLength = Buffer.from(base64Payload, 'base64').length;
+
+  if (!Number.isFinite(byteLength) || byteLength <= 0) {
+    throw new Error('Uploaded image is invalid');
+  }
+
+  if (byteLength > MAX_PROFILE_IMAGE_BYTES) {
+    throw new Error('Uploaded image must be 400KB or smaller');
+  }
+
+  return `data:image/${mimeSubtype};base64,${base64Payload}`;
+}
+
 const pickSafeUser = (user: User) => ({
   id: user.id,
   email: user.email,
@@ -46,6 +73,7 @@ const pickSafeUser = (user: User) => ({
   tier: user.tier,
   trial_ends_at: (user as any).trial_ends_at || null,
   trial_active: Boolean((user as any).trial_ends_at && new Date((user as any).trial_ends_at) > new Date()),
+  trial_used: Boolean((user as any).trial_used),
   created_at: user.created_at,
   company: user.company || null,
   website: user.website || null,
@@ -668,9 +696,14 @@ export const updateProfile = async (req: Request, res: Response) => {
     const requestedWebsite = textOrNull(req.body?.website, 2048);
     const rawBio = textOrNull(req.body?.bio, 5000);
     const requestedBio = rawBio ? sanitizeHtmlServer(rawBio) : null;
+    const clearAvatar = req.body?.clear_avatar === true;
+    const clearOrgLogo = req.body?.clear_org_logo === true;
     const rawAvatar = textOrNull(req.body?.avatar_url, 2048) || textOrNull(req.body?.avatarUrl, 2048);
-    // Only allow https URLs for avatar to prevent stored XSS / data: URI abuse
-    const requestedAvatar = rawAvatar && /^https:\/\/.+/i.test(rawAvatar) ? rawAvatar : null;
+    const uploadedAvatar = normalizeUploadedImageDataUrl(req.body?.avatar_data_url);
+    const requestedAvatar = uploadedAvatar || (rawAvatar && /^https:\/\/.+/i.test(rawAvatar) ? rawAvatar : null);
+    const rawOrgLogo = textOrNull(req.body?.org_logo_url, 2048) || textOrNull(req.body?.orgLogoUrl, 2048);
+    const uploadedOrgLogo = normalizeUploadedImageDataUrl(req.body?.org_logo_data_url);
+    const requestedOrgLogo = uploadedOrgLogo || (rawOrgLogo && /^https:\/\/.+/i.test(rawOrgLogo) ? rawOrgLogo : null);
     const requestedTimezone = textOrNull(req.body?.timezone, 80);
     const requestedLanguage = textOrNull(req.body?.language, 32);
 
@@ -697,7 +730,12 @@ export const updateProfile = async (req: Request, res: Response) => {
     const resolvedCompany = requestedCompany || existingUser.company || null;
     const resolvedWebsite = (enrichment?.website || requestedWebsite || existingUser.website || null);
     const resolvedBio = requestedBio || existingUser.bio || enrichment?.org_description || null;
-    const resolvedAvatar = requestedAvatar || existingUser.avatar_url || enrichment?.org_logo_url || enrichment?.org_favicon_url || null;
+    const resolvedAvatar = clearAvatar
+      ? null
+      : (requestedAvatar || existingUser.avatar_url || null);
+    const resolvedOrgLogo = clearOrgLogo
+      ? null
+      : (requestedOrgLogo || enrichment?.org_logo_url || existingUser.org_logo_url || null);
 
     const updates: Partial<User> = {
       name: requestedName,
@@ -708,7 +746,7 @@ export const updateProfile = async (req: Request, res: Response) => {
       timezone: requestedTimezone || existingUser.timezone || null,
       language: requestedLanguage || existingUser.language || null,
       org_description: enrichment?.org_description || existingUser.org_description || null,
-      org_logo_url: enrichment?.org_logo_url || existingUser.org_logo_url || null,
+      org_logo_url: resolvedOrgLogo,
       org_favicon_url: enrichment?.org_favicon_url || existingUser.org_favicon_url || null,
       org_phone: enrichment?.org_phone || existingUser.org_phone || null,
       org_address: enrichment?.org_address || existingUser.org_address || null,

@@ -128,9 +128,14 @@ export const profileUpdateSchema = z.object({
   timezone: z.string().max(100).optional().nullable(),
   language: z.string().max(32).optional().nullable(),
   avatar_url: z.string().url().max(2048).optional().nullable(),
+  avatar_data_url: z.string().max(800000).optional().nullable(),
+  org_logo_url: z.string().url().max(2048).optional().nullable(),
+  org_logo_data_url: z.string().max(800000).optional().nullable(),
+  clear_avatar: z.boolean().optional(),
+  clear_org_logo: z.boolean().optional(),
   auto_enrich: z.boolean().optional(),
   email_notifications: z.boolean().optional(),
-  share_link_expiration_days: z.number().int().min(1).max(365).optional(),
+  share_link_expiration_days: z.number().int().min(0).max(365).optional(),
 });
 
 export const analyzeRequestSchema = z.object({

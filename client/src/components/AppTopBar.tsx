@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, Bell, LogOut, User, BookOpen, ChevronDown, Menu } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import useNotifications from "../hooks/useNotifications";
+import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils\userIdentity";
 
 interface AppTopBarProps {
   onMenuClick?: () => void;
@@ -14,6 +15,9 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   const navigate = useNavigate();
   const { unreadCount } = useNotifications();
   const [searchQuery, setSearchQuery] = useState("");
+  const avatarUrl = getDisplayAvatarUrl(user);
+  const displayName = getDisplayName(user);
+  const initials = getIdentityInitials(user);
 
   return (
     <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0c1221]/95 backdrop-blur-md border-b border-white/[0.08]" role="banner" aria-label="App toolbar">
@@ -84,9 +88,13 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
           className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
         >
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600/30 to-indigo-600/20 border border-blue-500/25 flex items-center justify-center text-[11px] font-bold text-blue-300">
-            {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="" className="h-full w-full rounded-lg object-cover" />
+            ) : (
+              initials
+            )}
           </div>
-          <span className="hidden md:inline text-xs font-medium truncate max-w-[100px]">{user?.name || user?.email}</span>
+          <span className="hidden md:inline text-xs font-medium truncate max-w-[100px]">{displayName}</span>
         </Link>
 
         {/* Logout */}

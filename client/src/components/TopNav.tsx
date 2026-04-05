@@ -15,6 +15,7 @@ import WhatsNewPanel from "./WhatsNewPanel";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { CompetitorRadarIcon, AnswerDecompilerIcon } from "./icons";
 import { useTranslation } from "react-i18next";
+import { getDisplayAvatarUrl, getIdentityInitials } from "../utils/userIdentity";
 
 const LOGO_URL = "/aivis-logo.png";
 const LOCKED_FEATURE_IMAGE_URL = "/feature-locked.png";
@@ -51,7 +52,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
     links: [
       { to: "/keywords", label: "Keywords", icon: Search, desc: "AI keyword research", minTier: "observer", color: "text-emerald-400" },
       { to: "/niche-discovery", label: "Niche Discovery", icon: Globe, desc: "Top 100 niche rankings", minTier: "observer", color: "text-emerald-300" },
-      { to: "/competitors", label: "Competitors", icon: CompetitorRadarIcon, desc: "Side-by-side benchmarks", minTier: "alignment", color: "text-emerald-500" },
+      { to: "/competitors", label: "Competitors", icon: CompetitorRadarIcon, desc: "Side by side benchmarks", minTier: "alignment", color: "text-emerald-500" },
     ],
   },
 ];
@@ -243,7 +244,8 @@ export default function TopNav() {
     setNotificationsOpen(false);
   }, [location.pathname]);
 
-  const initials = user?.email ? user.email.substring(0, 2).toUpperCase() : "U";
+  const avatarUrl = getDisplayAvatarUrl(user);
+  const initials = getIdentityInitials(user);
   const hasSession = isAuthenticated || !!token;
   const tierKey = (user?.tier === 'alignment' || user?.tier === 'signal' || user?.tier === 'scorefix' || user?.tier === 'observer')
     ? user.tier
@@ -622,7 +624,11 @@ export default function TopNav() {
               <div className="relative" ref={dropdownRef}>
                 <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors">
                   <div className="w-7 h-7 social-icon-chip bg-gradient-to-br from-white/28 to-white/14 flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-white">{initials}</span>
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="" className="h-full w-full rounded-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] font-bold text-white">{initials}</span>
+                    )}
                   </div>
                   <ChevronDown className={`w-3.5 h-3.5 text-white/65 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
                 </button>

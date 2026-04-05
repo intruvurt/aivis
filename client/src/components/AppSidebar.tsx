@@ -7,6 +7,7 @@ import {
   Eye, Layers, HelpCircle, X, Building2, Network, Code2,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
+import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
 import { meetsMinimumTier } from "@shared/types";
 
 const LOGO_URL = "/aivis-logo.png";
@@ -101,6 +102,9 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
 
 export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps) {
   const user = useAuthStore((s) => s.user);
+  const avatarUrl = getDisplayAvatarUrl(user);
+  const displayName = getDisplayName(user);
+  const initials = getIdentityInitials(user);
 
   return (
     <aside
@@ -142,10 +146,14 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
         <div className="aurora-user-pill">
           <div className="aurora-user-pill-inner">
             <div className="aurora-user-avatar">
-              {(user.name || user.email || "U").charAt(0).toUpperCase()}
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                initials
+              )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="aurora-user-name">{user.name || user.email}</p>
+              <p className="aurora-user-name">{displayName}</p>
               <p className="aurora-user-tier">{user.tier || "observer"}</p>
             </div>
           </div>

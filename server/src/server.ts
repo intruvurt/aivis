@@ -1104,11 +1104,18 @@ app.post('/api/user/refresh', async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         tier: effectiveTier,
+        name: user.name,
         full_name: user.name,
+        display_name: user.name,
         role: effectiveRole,
         trial_ends_at: (user as any).trial_ends_at || null,
         trial_active: Boolean((user as any).trial_ends_at && new Date((user as any).trial_ends_at) > new Date()),
         trial_used: Boolean((user as any).trial_used),
+        avatar_url: user.avatar_url || null,
+        company: user.company || null,
+        website: user.website || null,
+        org_logo_url: user.org_logo_url || null,
+        org_favicon_url: user.org_favicon_url || null,
       },
       entitlements: {
         tier,
@@ -9863,6 +9870,113 @@ app.get('/api/admin/db/stats', adminLimiter, async (req, res) => {
   } catch (e: any) {
     console.error('[Admin] DB stats failed:', e);
     return res.status(500).json({ error: 'Failed to fetch DB stats' });
+  }
+});
+
+app.get('/api/admin/payments', adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+
+  const limitRaw = Number(req.query.limit || 25);
+  const limit = Math.min(100, Math.max(1, Number.isFinite(limitRaw) ? Math.floor(limitRaw) : 25));
+
+  try {
+    const pool = getPool();
+    const [summaryResult, trialResult, rowsResult] = await Promise.all([
+      pool.query(
+        `SELECT
+           COUNT(*) FILTER (WHERE status = 'completed') AS completed_count,
+           COUNT(*) FILTER (WHERE status = 'pending') AS pending_count,
+           COUNT(*) FILTER (WHERE status = 'failed') AS failed_count,
+           COUNT(*) FILTER (WHERE subscription_status = 'active') AS active_subscription_count,
+           COALESCE(SUM(amount_cents) FILTER (WHERE status = 'completed'), 0) AS confirmed_revenue_cents
+         FROM payments`
+      ),
+      pool.query(
+        `SELECT
+           COUNT(*) FILTER (WHERE trial_ends_at IS NOT NULL AND trial_ends_at > NOW()) AS active_signal_trials,
+           COUNT(*) FILTER (WHERE trial_used = TRUE) AS total_trials_started
+         FROM users`
+      ),
+      pool.query(
+        `SELECT
+           p.id,
+           p.user_id,
+           u.email,
+           u.name,
+           COALESCE(u.tier, 'observer') AS current_tier,
+           p.tier AS purchased_tier,
+           p.status,
+           p.subscription_status,
+           p.amount_cents,
+           p.currency,
+           p.completed_at,
+           p.last_payment_at,
+           p.created_at,
+           p.updated_at,
+           p.current_period_end,
+           p.cancel_at_period_end,
+           p.stripe_session_id,
+           p.stripe_customer_id,
+           p.stripe_subscription_id,
+           p.stripe_price_id,
+           p.last_invoice_id,
+           p.failed_invoice_id,
+           p.metadata,
+           u.trial_ends_at,
+           u.trial_used
+         FROM payments p
+         INNER JOIN users u ON u.id = p.user_id
+         ORDER BY COALESCE(p.completed_at, p.last_payment_at, p.created_at) DESC
+         LIMIT $1`,
+        [limit]
+      ),
+    ]);
+
+    const summaryRow = summaryResult.rows[0] || {};
+    const trialRow = trialResult.rows[0] || {};
+
+    return res.json({
+      success: true,
+      summary: {
+        completedCount: Number(summaryRow.completed_count || 0),
+        pendingCount: Number(summaryRow.pending_count || 0),
+        failedCount: Number(summaryRow.failed_count || 0),
+        activeSubscriptionCount: Number(summaryRow.active_subscription_count || 0),
+        confirmedRevenueCents: Number(summaryRow.confirmed_revenue_cents || 0),
+        activeSignalTrials: Number(trialRow.active_signal_trials || 0),
+        totalTrialsStarted: Number(trialRow.total_trials_started || 0),
+      },
+      payments: rowsResult.rows.map((row: any) => ({
+        id: row.id,
+        userId: row.user_id,
+        email: row.email,
+        name: row.name,
+        currentTier: row.current_tier,
+        purchasedTier: row.purchased_tier,
+        status: row.status,
+        subscriptionStatus: row.subscription_status,
+        amountCents: row.amount_cents,
+        currency: row.currency,
+        completedAt: row.completed_at,
+        lastPaymentAt: row.last_payment_at,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        currentPeriodEnd: row.current_period_end,
+        cancelAtPeriodEnd: row.cancel_at_period_end,
+        stripeSessionId: row.stripe_session_id,
+        stripeCustomerId: row.stripe_customer_id,
+        stripeSubscriptionId: row.stripe_subscription_id,
+        stripePriceId: row.stripe_price_id,
+        lastInvoiceId: row.last_invoice_id,
+        failedInvoiceId: row.failed_invoice_id,
+        metadata: row.metadata || null,
+        trialEndsAt: row.trial_ends_at,
+        trialUsed: row.trial_used === true,
+      })),
+    });
+  } catch (e: any) {
+    console.error('[Admin] Payments list failed:', e);
+    return res.status(500).json({ error: e?.message || 'Failed to fetch payment ledger' });
   }
 });
 

@@ -12,6 +12,8 @@ export type FontSize = 'small' | 'medium' | 'large';
 interface UserProfile {
   displayName: string;
   avatarUrl: string | null;
+  orgLogoUrl: string | null;
+  orgFaviconUrl: string | null;
   bio: string;
   company: string;
   website: string;
@@ -122,6 +124,8 @@ const defaultPreferences: UserPreferences = {
 const defaultProfile: UserProfile = {
   displayName: '',
   avatarUrl: null,
+  orgLogoUrl: null,
+  orgFaviconUrl: null,
   bio: '',
   company: '',
   website: '',

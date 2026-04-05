@@ -168,6 +168,7 @@ export default function Dashboard() {
   }, [primaryAudit]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [tab, setTab] = useState<"overview" | "activity">("overview");
 
   const recentScans = useMemo(() => sortedAudits.slice(0, 8), [sortedAudits]);
 
@@ -186,6 +187,28 @@ export default function Dashboard() {
         </Link>
       }
     >
+      {/* ── Tab bar ─────────────────────────────────────────────────── */}
+      <div className="inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
+        <button
+          type="button"
+          onClick={() => setTab("overview")}
+          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
+            tab === "overview" ? "bg-cyan-400/15 text-cyan-100" : "text-white/60 hover:text-white"
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("activity")}
+          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
+            tab === "activity" ? "bg-cyan-400/15 text-cyan-100" : "text-white/60 hover:text-white"
+          }`}
+        >
+          Activity
+        </button>
+      </div>
+
       {platformStats && platformStats.total_audits > 0 && (
         <section className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.03] to-white/[0.05] p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
@@ -236,6 +259,38 @@ export default function Dashboard() {
         </section>
       )}
 
+      {/* ── Next fix (overview tab) ──────────────────────────────────── */}
+      {tab === "overview" && priorityPages.length > 0 && (
+        <section className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.06] p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200/75">Next fix</p>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-white">{priorityPages[0].url || "Untitled"}</p>
+              <p className="mt-1 text-sm text-white/60">Score: {priorityPages[0].overallScore ?? "—"} — lowest in your recent audits</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {priorityPages[0]._id && (
+                <Link
+                  to={`/audit/${priorityPages[0]._id}`}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
+                >
+                  Open report
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+              <Link
+                to="/app/score-fix"
+                className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
+              >
+                Fix this
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {tab === "activity" && (
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
           <article key={metric.label} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
@@ -247,9 +302,10 @@ export default function Dashboard() {
           </article>
         ))}
       </section>
+      )}
 
       {/* ── Recent scans ──────────────────────────────────────────────── */}
-      {canLoadHistory && recentScans.length > 0 && (
+      {tab === "activity" && canLoadHistory && recentScans.length > 0 && (
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
           <h2 className="text-lg font-semibold text-white">Recent scans</h2>
           <p className="mt-1 text-sm text-white/56">Your latest audited URLs. Copy the report link or open the full analysis.</p>
@@ -326,6 +382,7 @@ export default function Dashboard() {
         </section>
       )}
 
+      {tab === "activity" && (
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -390,6 +447,7 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+      )}
     </AppPageFrame>
   );
 }

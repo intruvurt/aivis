@@ -91,6 +91,7 @@ const ChangelogPage = React.lazy(() => import("./pages/ChangelogPage"));
 const PressPage = React.lazy(() => import("./pages/PressPage"));
 const InviteAcceptPage = React.lazy(() => import("./pages/InviteAcceptPage"));
 const AgencyPage = React.lazy(() => import("./pages/AgencyPage"));
+const SnapshotPage = React.lazy(() => import("./pages/SnapshotPage"));
 
 /* ── Scroll to top on route change ─────────────────────── */
 function ScrollToTop() {
@@ -230,6 +231,7 @@ export default function App() {
           <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="analyze" element={<AnalyzePage />} />
+            <Route path="snapshot" element={<SnapshotPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="keywords" element={<KeywordsPage />} />
             <Route path="competitors" element={<CompetitorsPage />} />

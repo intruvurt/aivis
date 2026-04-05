@@ -523,10 +523,8 @@ const AnalyzePage: React.FC = () => {
         });
       }
 
-      window.setTimeout(() => {
-        const reportElement = document.getElementById("analysis-report");
-        if (reportElement) reportElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
+      // Navigate to Snapshot (intermediate result page) instead of showing inline
+      navigate("/app/snapshot", { state: { result: data } });
     } catch (err: any) {
       closeProgressStream();
       console.error("[AnalyzePage] Audit API call failed", err);

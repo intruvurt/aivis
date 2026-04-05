@@ -19,7 +19,7 @@ const HOME_EXTRA_HEAD = `
 				"@type": "HowTo",
 				"@id": "https://aivis.biz/#howto-audit",
 				"name": "How to run an AI visibility audit with AiVIS",
-				"description": "A step-by-step guide for running an AI visibility audit, reading category scores, and shipping evidence-backed fixes.",
+				"description": "A step by step guide for running an AI visibility audit, reading category scores and shipping evidence-backed fixes.",
 				"totalTime": "PT10M",
 				"step": [
 					{
@@ -32,25 +32,25 @@ const HOME_EXTRA_HEAD = `
 						"@type": "HowToStep",
 						"position": 2,
 						"name": "Review the visibility score",
-						"text": "Read the overall score and category grades for content depth, schema, metadata, headings, technical hygiene, and AI readability."
+						"text": "Read the overall score and category grades for content depth, schema, metadata, headings, technical hygiene and AI readability."
 					},
 					{
 						"@type": "HowToStep",
 						"position": 3,
-						"name": "Inspect linked evidence",
+						"name": "Inspect linked evidence IDs",
 						"text": "Each finding references specific evidence from the crawl. Check which evidence items are tied to low-scoring categories."
 					},
 					{
 						"@type": "HowToStep",
 						"position": 4,
 						"name": "Prioritize and implement fixes",
-						"text": "Sort recommendations by impact tier. Implement high-confidence fixes first: schema, content depth, and answer-style blocks usually move scores fastest."
+						"text": "Sort recommendations by impact tier. Implement high confidence fixes first: schema, content depth, and answer style blocks usually move scores fastest."
 					},
 					{
 						"@type": "HowToStep",
 						"position": 5,
 						"name": "Re-audit and compare",
-						"text": "After shipping changes, re-run the audit and compare category deltas. Track score movement over time using the report history view."
+						"text": "After shipping changes, rerun the audit and compare category deltas. Track score movement over time using the report history view."
 					}
 				]
 			}
@@ -68,50 +68,50 @@ const routes = [
 	{
 		path: '/landing',
 		title: 'AiVIS Landing | AI Visibility Intelligence Audits',
-		description: 'Measure whether AI can read, trust, and cite your site with a live evidence-backed AiVIS audit.',
+		description: 'Measure whether AI can read, trust and cite your site with a live evidence-backed AiVIS audit.',
 	},
 	{
 		path: '/pricing',
 		title: 'AiVIS Pricing | AI Visibility Audit Plans',
-		description: 'AiVIS plans: Observer free tier plus Alignment, Signal, and legacy Score Fix options with multi-model validation and team reporting.',
+		description: 'AiVIS plans: Observer free tier plus Alignment, Signal, and legacy Score Fix options with multi-model validation and team reporting webhooks: Notion, Slack, Google Sheets, Zapier and more.',
 	},
 	{
 		path: '/analyze',
 		title: 'Run AI Visibility Audit | AiVIS',
-		description: 'Run a live AI visibility audit to measure parseability, trust, and citation readiness with evidence-backed scoring.',
+		description: 'Run a live AI visibility audit to measure parseability, trust and citation readiness with evidence-backed scoring.',
 	},
 	{
 		path: '/faq',
 		title: 'AiVIS FAQ | AI Visibility Audit Questions',
-		description: 'Answers about AI visibility scoring, structured findings, answer-engine readiness, and how AiVIS audits websites.',
+		description: 'Answers about AI visibility scoring, structured findings, answer engine readiness and how AiVIS audits websites.',
 	},
 	{
 		path: '/guide',
 		title: 'AiVIS Guide | AI Visibility Workflow',
-		description: 'Learn how to run audits, read evidence-backed findings, and ship fixes that improve AI visibility.',
+		description: 'Learn how to run audits, read evidence-backed findings and ship fixes that improve AI visibility.',
 	},
 	{
 		path: '/workflow',
 		title: 'AiVIS Workflow | End-to-End Visibility Operations',
-		description: 'Turn AiVIS from a one-off audit into a repeatable AI visibility workflow with baseline, fixes, and re-audit loops.',
+		description: 'Turn AiVIS from a one-off audit into a repeatable AI visibility workflow with baseline, fixes and re-audit loops.',
 	},
 	{
 		path: '/methodology',
 		title: 'AiVIS Methodology | How AI Visibility Scoring Works',
-		description: 'How AiVIS scores AI visibility: 6-category evidence model covering content, schema, headings, metadata, and technical SEO with BRAG trail docs.',
+		description: 'How AiVIS scores AI visibility: 6-category evidence model covering content, schema, headings, metadata and technical SEO with BRAG trail docs.',
 		ogTitle: 'AiVIS Methodology - Evidence Grounded AI Visibility Scoring',
-		ogDescription: 'The complete scoring framework behind AiVIS audits: dimension weights, validation logic, BRAG trail protocol, and how scores translate to real citation improvements.',
+		ogDescription: 'The complete scoring framework behind AiVIS audits: dimension weights, validation logic, BRAG trail protocol and how scores translate to real citation improvements.',
 		ogType: 'article',
 	},
 	{
 		path: '/insights',
 		title: 'AiVIS Insights Hub | AI Visibility Playbooks',
-		description: 'Strategic AI search playbooks covering AI visibility, AEO implementation, and geo-adaptive ranking in 2026.',
+		description: 'Strategic AI search playbooks covering AI visibility, AEO implementation and geo-adaptive ranking in 2026.',
 	},
 	{
 		path: '/blogs',
 		title: 'AiVIS Blogs | Founder Notes and AI Visibility Essays',
-		description: 'Canonical AiVIS blog posts sourced from Intruvurt writing, hosted on aivis.biz/blogs for clean ownership and schema consistency.',
+		description: 'Canonical AiVIS blog posts sourced from Intruvurt.medium.com writing, hosted on aivis.biz/blogs for clean ownership and schema consistency.',
 	},
 	{
 		path: '/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai',

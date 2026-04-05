@@ -80,17 +80,17 @@ interface FixpackQueueItem {
 const PAGE_USE_CASES = [
   {
     icon: Briefcase,
-    title: "Agency delivery hub",
+    title: "Manage audits",
     detail: "Use this page to manage active client audits, export evidence, and prep review-ready snapshots before strategy calls.",
   },
   {
     icon: Building2,
-    title: "Executive reporting layer",
+    title: "Track performance",
     detail: "Use report history to show leadership score movement, operational proof, and where remediation is still required.",
   },
   {
     icon: TrendingUp,
-    title: "Portfolio trend review",
+    title: "Progress",
     detail: "Consolidate repeated scans by URL to see whether the account is improving over time instead of reading isolated audits.",
   },
 ];

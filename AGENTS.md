@@ -78,7 +78,7 @@ The platform runs on these canonical tiers:
 - `observer`
 - `alignment`
 - `signal`
-- `scorefix`
+- `scorefix'### Not a tier
 
 Legacy aliases must map into canonical keys through shared helpers.
 

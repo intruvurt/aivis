@@ -1,5 +1,5 @@
 $content = @'
-// Enterprise Landing — AiVIS
+// Landing — AiVIS
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,8 +46,8 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS – AI Visibility Audit Platform | ChatGPT, Perplexity, Google AI',
-    description: 'Enterprise AI visibility auditing. Evidence-backed scoring with implementation-ready fixes.',
+    name: 'AiVIS – AI Visibility Intelligence Platform | ChatGPT, Perplexity, Google AI',
+    description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
@@ -57,12 +57,12 @@ const LANDING_STRUCTURED_DATA = [
     { name: 'Score Fix [Blockbuster] – 250 audits per pack – $299 one-time', path: '/pricing' },
   ]),
   buildSoftwareApplicationSchema({
-    name: 'AiVIS',
-    description: 'AI visibility audit platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
+    name: 'AiVIS - AI Visibility Intelligence Platform',
+    description: 'AI visibility intelligence platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer [Free]', price: '0' },
       { name: 'Alignment [Core]', price: '49' },
-      { name: 'Signal [Premium]', price: '99' },
+      { name: 'Signal [Premium]', price: '149' },
       { name: 'Scorefix [Legacy]', price: '299' },
     ],
   }),
@@ -110,20 +110,20 @@ function NeuralCityIllustration() {
       <line x1="330" y1="80" x2="380" y2="60" stroke="rgba(251,191,36,0.28)" strokeWidth="0.6" />
       <line x1="380" y1="60" x2="455" y2="100" stroke="rgba(139,92,246,0.22)" strokeWidth="0.6" strokeDasharray="4,3" />
       <text x="200" y="10" fontSize="6" fill="rgba(34,211,238,0.65)" fontFamily="monospace" letterSpacing="1">AIVIS.BIZ</text>
-      <text x="170" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">AI VISIBILITY INTELLIGENCE AUDITS</text>
+      <text x="170" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">AI VISIBILITY INTELLIGENCE PLATFORM</text>
     </svg>
   );
 }
 
 const TIERS = [
   {
-    key: 'observer', name: 'Observer', subtitle: 'Free', monthlyPrice: 0, annualMonthlyPrice: 0, scans: 10,
+    key: 'observer', name: 'Observer', subtitle: 'Free', monthlyPrice: 0, annualMonthlyPrice: 0, scans: 3,
     color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null, creditHint: null,
-    features: ['10 audits / month','AI visibility score (0–100)','Keyword intelligence','Schema markup audit','Heading & meta tag analysis','Core recommendations','Public share links (redacted)'],
+    features: ['3 audits / month','AI visibility score (0–100)','Keyword intelligence','Schema markup audit','Heading & meta tag analysis','Auto','Public share links (redacted)'],
   },
   {
     key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 49, annualMonthlyPrice: 39, scans: 60,
-    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular', creditHint: 'Annual plan: earn credits toward API add-ons',
+    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular for Solo/F', creditHint: 'Annual plan: earn credits toward API add-ons',
     features: ['60 audits / month','Competitor tracking','Citation workflows','CSV & PDF exports','Force-refresh audits','Shareable report links','Report history'],
   },
   {
@@ -132,7 +132,7 @@ const TIERS = [
     features: ['110 audits / month','Triple-Check AI Pipeline (3 models)','Expanded competitor tracking','Advanced citation testing','AI Citation Tracker','API access + white-label reports','Scheduled rescans'],
   },
   {
-    key: 'scorefix', name: 'Score Fix', subtitle: 'Blockbuster', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 250,
+    key: 'scorefix', name: 'Score Fix', subtitle: 'Remediation', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 250,
     color: 'border-amber-400/30 bg-[#1a1200]/60 ring-1 ring-amber-400/20', accentClass: 'text-amber-300', badge: 'Annual earns credits', creditHint: 'Yearly subscribers earn credits redeemable within Score Fix feature set',
     features: ['250 audits / month','Triple-Check AI Pipeline','Thorough evidence audit mode','Actual Fix Plan (evidence-linked)','Issue-level validation checklist','API access + white-label','Priority support'],
   },
@@ -150,7 +150,7 @@ const CREDIT_COSTS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AI Visibility Audit Platform | AiVIS',
+    title: 'AI Visibility  Platform | AiVIS',
     description: 'Enterprise AI visibility auditing for ChatGPT, Perplexity, Google AI, and Claude. Evidence-backed scoring with implementation-ready fixes.',
     path: '/landing',
     ogTitle: 'AiVIS – Measure How AI Sees Your Site',

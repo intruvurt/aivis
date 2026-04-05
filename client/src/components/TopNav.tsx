@@ -160,6 +160,8 @@ function WorkspaceSwitcher() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 px-2.5 py-1.5 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors text-xs"
         title="Switch workspace"
+        aria-label="Switch workspace"
+        aria-expanded={open}
       >
         <Layers className="w-3.5 h-3.5 text-cyan-400/70" />
         <span className="text-white/70 truncate max-w-[100px]">{active?.workspaceName || "Workspace"}</span>
@@ -323,7 +325,7 @@ export default function TopNav() {
   const closeDocs = useCallback(() => { docsTimeout.current = setTimeout(() => setDocsOpen(false), 150); }, []);
 
   return (
-    <nav className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
+    <nav aria-label="Main navigation" className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center gap-2 shrink-0">
@@ -622,7 +624,7 @@ export default function TopNav() {
               <WorkspaceSwitcher />
 
               <div className="relative" ref={dropdownRef}>
-                <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors">
+                <button type="button" aria-label="User menu" aria-expanded={menuOpen} aria-haspopup="menu" onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors">
                   <div className="w-7 h-7 social-icon-chip bg-gradient-to-br from-white/28 to-white/14 flex items-center justify-center">
                     {avatarUrl ? (
                       <img src={avatarUrl} alt="" className="h-full w-full rounded-full object-cover" />

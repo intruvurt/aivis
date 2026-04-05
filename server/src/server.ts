@@ -10215,7 +10215,11 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 // Serve compiled frontend (single-service)
 const clientDist = path.resolve(process.cwd(), 'dist/client');
-if (existsSync(clientDist)) app.use(express.static(clientDist));
+if (existsSync(clientDist)) {
+  // Hashed assets get immutable cache; everything else gets short cache with revalidation
+  app.use('/assets', express.static(path.join(clientDist, 'assets'), { maxAge: '365d', immutable: true }));
+  app.use(express.static(clientDist, { maxAge: '1h' }));
+}
 
 // SPA fallback
 app.use((req, res) => {

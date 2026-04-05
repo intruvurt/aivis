@@ -568,7 +568,7 @@ Always verify exact current pricing from live pricing context and /pricing.
 
 ## Credit System
 Scan pack credits are available for purchase to extend usage beyond tier limits:
-- **Starter Pack:** 120 credits for $19 (Signal gets +20% bonus, ScoreFix gets +40%)
+- **Starter Pack:** 120 credits for $19 (Signal gets +20% bonus, ScoreFix gets +10%)
 - **Pro Pack:** 400 credits for $69 (same tier bonuses)
 
 Tool actions have monthly free allowances per tier. After the free allowance is used, credits are deducted:

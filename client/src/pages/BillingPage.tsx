@@ -863,7 +863,7 @@ export default function BillingPage() {
                   <>
                     <p className="text-xs text-white/60 mb-3">
                       Credit packs and bonus multipliers are shown live at checkout.
-                      Signal gets +20% pack credits, Score Fix gets +40% pack credits automatically.
+                      Signal gets +20% pack credits, Score Fix gets +10% pack credits automatically.
                     </p>
                     {subscription.creditBonusPolicy?.initialTierBonus ? (
                       <p className="text-xs text-white/55 mb-3">

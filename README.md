@@ -75,7 +75,7 @@ Canonical tier truth lives in `shared/types.ts`.
 | `signal` | Signal (Pro) | $29/mo |
 | `scorefix` | Score Fix [AutoPR] | $299 one-time |
 | `agency` | Agency | $199/mo |
-| `enterprise` | Enterprise | $999/mo |
+| `enterprise` | Enterprise | $149/mo |
 
 Selected entitlement highlights from the shared contract:
 

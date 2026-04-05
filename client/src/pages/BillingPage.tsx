@@ -1090,12 +1090,12 @@ export default function BillingPage() {
               </thead>
               <tbody className="text-white/65">
                 {[
-                  { cap: "AI visibility audits", aivis: true, aivisCost: "Included", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$99+/mo", reaudit: true, reauditCost: "$79+/mo" },
+                  { cap: "AI visibility audits", aivis: true, aivisCost: "Included", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$14+/mo", reaudit: true, reauditCost: "$79+/mo" },
                   { cap: "Multi-model AI pipeline", aivis: true, aivisCost: "Included", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
                   { cap: "Triple-check validation", aivis: true, aivisCost: "Signal+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
                   { cap: "Citation testing (4 AI engines)", aivis: true, aivisCost: "Signal+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
                   { cap: "Brand mention tracking (15 sources)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
-                  { cap: "Competitor tracking", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$99+/mo", reaudit: false, reauditCost: "—" },
+                  { cap: "Competitor tracking", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: true, profoundCost: "$14+/mo", reaudit: false, reauditCost: "—" },
                   { cap: "Reverse engineer AI answers", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
                   { cap: "MCP protocol (AI agent access)", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },
                   { cap: "Niche URL discovery", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "—", profound: false, profoundCost: "—", reaudit: false, reauditCost: "—" },

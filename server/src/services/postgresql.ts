@@ -3025,6 +3025,43 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`);
 
+    // ── Partnership agreements (dual-party signing + tamper-lock) ──────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS partnership_agreements (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        slug VARCHAR(120) UNIQUE NOT NULL,
+        title VARCHAR(300) NOT NULL,
+        terms_html TEXT NOT NULL,
+        terms_hash VARCHAR(128) NOT NULL,
+        party_a_name VARCHAR(200) NOT NULL,
+        party_a_email VARCHAR(320) NOT NULL,
+        party_a_phone VARCHAR(40),
+        party_a_org VARCHAR(200),
+        party_b_name VARCHAR(200) NOT NULL,
+        party_b_email VARCHAR(320) NOT NULL,
+        party_b_phone VARCHAR(40),
+        party_b_org VARCHAR(200),
+        status VARCHAR(30) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','partially_signed','fully_signed','expired','revoked')),
+        valid_until TIMESTAMPTZ,
+        signing_deadline TIMESTAMPTZ NOT NULL,
+        party_a_signed_at TIMESTAMPTZ,
+        party_a_signature VARCHAR(200),
+        party_a_ip INET,
+        party_a_ua TEXT,
+        party_b_signed_at TIMESTAMPTZ,
+        party_b_signature VARCHAR(200),
+        party_b_ip INET,
+        party_b_ua TEXT,
+        locked_at TIMESTAMPTZ,
+        locked_hash VARCHAR(128),
+        pdf_url TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agreements_slug ON partnership_agreements(slug)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_agreements_status ON partnership_agreements(status)`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

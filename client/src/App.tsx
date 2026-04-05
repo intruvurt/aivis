@@ -17,7 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
 const AnalyzePage = React.lazy(() => import("./views/AnalyzePage"));
 const PricingPage = React.lazy(() => import("./views/PricingPage"));
-const PartnershipTermsPage = React.lazy(() => import("./pages/PartnershipTermsPage"));
+const PartnershipTermsPage = React.lazy(() => import("./pages/PartnershipAgreementPage"));
 const AuthPage = React.lazy(() => import("./views/AuthPage"));
 const AnalyticsPage = React.lazy(() => import("./views/AnalyticsPage"));
 const KeywordsPage = React.lazy(() => import("./views/KeywordsPage"));

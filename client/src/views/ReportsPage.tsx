@@ -1267,7 +1267,7 @@ export default function ReportsPage() {
       // Non-fatal: fall back to existing link
     }
 
-    const message = `${report.url} scored ${report.score}/100 for AI Visibility — here's the full breakdown of how ChatGPT, Perplexity, and other AI platforms interpret this site.`;
+    const message = `${report.url} scored ${report.score}/100 for AI Visibility. Here is the evidence-backed breakdown of how ChatGPT and Perplexity interpret this site.`;
     const copyPayload = `${message}\n${freshLink}`;
     try {
       const didCopy = await writeClipboardWithFallback(copyPayload);
@@ -1289,7 +1289,7 @@ export default function ReportsPage() {
     if (!navShare) return;
 
     try {
-      const message = `${share.report.url} scored ${share.report.score}/100 for AI Visibility — here's the full breakdown of how ChatGPT, Perplexity, and other AI platforms interpret this site.`;
+      const message = `${share.report.url} scored ${share.report.score}/100 for AI Visibility. Here is the evidence-backed breakdown of how ChatGPT and Perplexity interpret this site.`;
       await navShare({
         title: `AI Visibility Report: ${share.report.name}`,
         text: message,

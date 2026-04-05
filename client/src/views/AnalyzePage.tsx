@@ -930,19 +930,6 @@ const AnalyzePage: React.FC = () => {
                   ))}
                 </div>
               </div>
-
-              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-5">
-                <div className="text-xs uppercase tracking-wide text-cyan-200">Battlefield demo flow</div>
-                <div className="mt-2 text-sm leading-7 text-cyan-100/85">
-                  Show the same site before and after one remediation change. Keep the URL fixed so the audience sees measurable machine-readability lift, not a different target.
-                </div>
-                <div className="mt-3 space-y-1 text-xs text-cyan-100/75">
-                  <div>1) Run baseline audit on a real business site</div>
-                  <div>2) Save baseline in proof mode</div>
-                  <div>3) Apply one structural fix from evidence</div>
-                  <div>4) Re-audit and present score/category deltas</div>
-                </div>
-              </div>
             </div>
           </div>
         </section>

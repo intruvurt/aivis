@@ -85,6 +85,7 @@ function humanizeGateId(id: string): string {
 const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, tier = "observer" }) => {
   const [showAllIssues, setShowAllIssues] = React.useState(false);
   const [autoFixOpen, setAutoFixOpen] = React.useState(false);
+  const [expandedFixId, setExpandedFixId] = React.useState<string | null>(null);
 
   // Tier
   const normalizedTier: CanonicalTier | LegacyTier =
@@ -506,18 +507,35 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             <div className="mb-3 text-sm font-semibold text-white">Next Highest ROI Fixes</div>
             <div className="space-y-3">
               {secondaryFixes.map((fix) => (
-                <button key={fix.id} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.025] px-3 py-3 text-left transition hover:bg-white/[0.05]">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5">
-                      <AlertTriangle className="h-4 w-4 text-white/55" />
+                <div key={fix.id}>
+                  <button
+                    onClick={() => setExpandedFixId(expandedFixId === fix.id ? null : fix.id)}
+                    className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.025] px-3 py-3 text-left transition hover:bg-white/[0.05]"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5">
+                        <AlertTriangle className="h-4 w-4 text-white/55" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-white/84">{fix.title}</div>
+                        {fix.lift && <div className="mt-0.5 text-xs text-emerald-300">{fix.lift} pts</div>}
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-white/84">{fix.title}</div>
-                      {fix.lift && <div className="mt-0.5 text-xs text-emerald-300">{fix.lift} pts</div>}
+                    <ChevronRight className={`h-4 w-4 shrink-0 text-white/30 transition-transform ${expandedFixId === fix.id ? "rotate-90" : ""}`} />
+                  </button>
+                  {expandedFixId === fix.id && (
+                    <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-xs leading-5 text-white/65">
+                      {fix.fix ? (
+                        <>
+                          <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-300/70">Fix</div>
+                          <p className="text-cyan-100/80">{fix.fix}</p>
+                        </>
+                      ) : (
+                        <p>{fix.description || "No auto-fix available — manual review recommended."}</p>
+                      )}
                     </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-white/30" />
-                </button>
+                  )}
+                </div>
               ))}
             </div>
           </div>

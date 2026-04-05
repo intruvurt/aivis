@@ -132,6 +132,61 @@ export function analyzeSite(payload: { url: string; [k: string]: any }) {
   });
 }
 
+// Site Crawl API
+export function startSiteCrawl(payload: { url: string; maxPages?: number; maxDepth?: number }) {
+  return apiFetch<{ success: boolean; data: SiteCrawlResult }>("/api/seo/crawl", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listSiteCrawls() {
+  return apiFetch<{ success: boolean; data: SiteCrawlSummary[] }>("/api/seo/crawls");
+}
+
+export function getSiteCrawl(id: string) {
+  return apiFetch<{ success: boolean; data: SiteCrawlResult }>(`/api/seo/crawl/${encodeURIComponent(id)}`);
+}
+
+export interface SiteCrawlPage {
+  url: string;
+  depth: number;
+  status: string;
+  seo_diagnostics: Record<string, { status: string; label?: string; detail?: string }>;
+  issues: string[];
+  links_discovered: number;
+  canonical_url?: string;
+  word_count?: number;
+  title?: string;
+  error?: string;
+}
+
+export interface SiteCrawlResult {
+  crawl_id: string;
+  root_url: string;
+  total_pages_crawled: number;
+  max_pages: number;
+  pages_with_errors: number;
+  average_word_count: number;
+  issue_counts: { pass: number; warn: number; fail: number };
+  started_at: string;
+  completed_at: string;
+  pages: SiteCrawlPage[];
+}
+
+export interface SiteCrawlSummary {
+  crawl_id: string;
+  root_url: string;
+  total_pages_crawled: number;
+  max_pages: number;
+  pages_with_errors: number;
+  average_word_count: number;
+  issue_counts: { pass: number; warn: number; fail: number };
+  started_at: string;
+  completed_at: string;
+  created_at: string;
+}
+
 // NEW: citations API
 export function generateCitationQueries(payload: { url: string }) {
   return apiFetch("/api/citations/generate-queries", {

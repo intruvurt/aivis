@@ -44,6 +44,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
     links: [
       { to: "/analytics", label: "Analytics", icon: BarChart3, desc: "Score history & trends", minTier: "observer", color: "text-cyan-400" },
       { to: "/reports", label: "Reports", icon: FileText, desc: "Saved audit reports", minTier: "observer", color: "text-cyan-300" },
+      { to: "/site-crawl", label: "Site Crawl", icon: Layers, desc: "Multi-page SEO crawl", minTier: "alignment", color: "text-cyan-500" },
     ],
   },
   {

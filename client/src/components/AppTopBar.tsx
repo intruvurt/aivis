@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, Bell, LogOut, User, BookOpen, ChevronDown, Menu } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import useNotifications from "../hooks/useNotifications";
@@ -13,6 +13,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
+  const location = useLocation();
   const { unreadCount } = useNotifications();
   const [searchQuery, setSearchQuery] = useState("");
   const avatarUrl = getDisplayAvatarUrl(user);
@@ -50,7 +51,17 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
       <div className="flex items-center gap-1.5">
         {/* Quick audit */}
         <button
-          onClick={() => navigate("/app/analyze")}
+          onClick={() => {
+            if (location.pathname === "/app/analyze") {
+              const urlInput = document.getElementById("url-input");
+              if (urlInput) {
+                urlInput.scrollIntoView({ behavior: "smooth", block: "center" });
+                urlInput.focus();
+              }
+            } else {
+              navigate("/app/analyze");
+            }
+          }}
           className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-700/30 border border-blue-400/20"
         >
           <Search className="w-3.5 h-3.5" />

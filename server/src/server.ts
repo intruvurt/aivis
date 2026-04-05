@@ -1127,7 +1127,7 @@ app.post('/api/user/refresh', async (req: Request, res: Response) => {
           scheduledRescans: limits.hasScheduledRescans,
           reportHistory: limits.hasReportHistory,
           shareableLink: limits.hasShareableLink,
-          multiPageCrawl: false,
+          multiPageCrawl: limits.pagesPerScan > 1,
           competitorDiff: limits.competitors > 0,
         },
         limits: {
@@ -3248,6 +3248,42 @@ app.post('/api/seo/crawl', authRequired, async (req: Request, res: Response) => 
     return res.status(500).json({ success: false, error: err?.message || 'Failed to run SEO crawl', code: 'SEO_CRAWL_FAILED' });
   } finally {
     client.release();
+  }
+});
+
+app.get('/api/seo/crawls', authRequired, async (req: Request, res: Response) => {
+  try {
+    const userId = (req.user as any)?.id;
+    if (!userId) return res.status(401).json({ success: false, error: 'Authentication required', code: 'NO_USER' });
+
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, root_url, max_pages, pages_crawled, pages_with_errors, average_word_count, summary, started_at, completed_at, created_at
+       FROM seo_crawls
+       WHERE user_id = $1
+       ORDER BY created_at DESC
+       LIMIT 50`,
+      [userId]
+    );
+
+    return res.json({
+      success: true,
+      data: result.rows.map((row) => ({
+        crawl_id: row.id,
+        root_url: row.root_url,
+        total_pages_crawled: row.pages_crawled,
+        max_pages: row.max_pages,
+        pages_with_errors: row.pages_with_errors,
+        average_word_count: row.average_word_count,
+        issue_counts: (row.summary || {}).issue_counts || { pass: 0, warn: 0, fail: 0 },
+        started_at: row.started_at,
+        completed_at: row.completed_at,
+        created_at: row.created_at,
+      })),
+    });
+  } catch (err: any) {
+    console.error('[SEO crawl list] error:', err);
+    return res.status(500).json({ success: false, error: 'Failed to load crawl history', code: 'SEO_CRAWL_LIST_FAILED' });
   }
 });
 

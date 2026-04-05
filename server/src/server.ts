@@ -973,7 +973,11 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        // Allow server-to-server requests (cURL, health checks) but block null origin in production
+        if (process.env.NODE_ENV === 'production') return callback(null, false);
+        return callback(null, true);
+      }
       const normalizedOrigin = normalizeOrigin(origin);
       if (NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) return callback(null, true);
       console.warn(`[CORS] Rejected origin: ${origin}`);

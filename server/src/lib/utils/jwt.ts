@@ -40,7 +40,7 @@ export function signUserToken(payload: Pick<UserTokenPayload, "userId" | "tier">
 }
 
 export function verifyUserToken(token: string): UserTokenPayload {
-  const decoded: JwtVerifyResult = jwt.verify(token, JWT_SECRET);
+  const decoded: JwtVerifyResult = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   if (typeof decoded === "string") throw new Error("Invalid JWT payload");
   return asUserTokenPayload(decoded);
 }

@@ -116,7 +116,7 @@ export function escapeBootstrapState(state: unknown): string {
 export function isSafeExternalUrl(value: string): boolean {
   try {
     const parsed = new URL(value);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:' && parsed.protocol !== 'mailto:') {
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
       return false;
     }
     // Block SSRF: reject private/loopback/internal hostnames
@@ -131,7 +131,11 @@ export function isSafeExternalUrl(value: string): boolean {
       /^10\./.test(hostname) ||
       /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
       /^192\.168\./.test(hostname) ||
-      /^169\.254\./.test(hostname)
+      /^169\.254\./.test(hostname) ||
+      /^0[0-7]+\./.test(hostname) ||
+      /^0x[0-9a-f]+$/i.test(hostname) ||
+      hostname.startsWith('::ffff:') ||
+      /^\[.*\]$/.test(hostname)
     ) {
       return false;
     }

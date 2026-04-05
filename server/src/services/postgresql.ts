@@ -792,6 +792,7 @@ export async function runMigrations(): Promise<void> {
               repo_owner TEXT,
               repo_name TEXT,
               repo_installation_id TEXT,
+              auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE,
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
               updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
@@ -2936,12 +2937,14 @@ export async function runMigrations(): Promise<void> {
         repo_owner TEXT,
         repo_name TEXT,
         repo_installation_id TEXT,
+        auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`);
     _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`);
+    _q(`ALTER TABLE v1_projects ADD COLUMN IF NOT EXISTS auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
 
     _q(`
       CREATE TABLE IF NOT EXISTS v1_audits (

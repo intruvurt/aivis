@@ -1,8 +1,13 @@
 /**
  * Scheduler + Event Engine
  *
- * Cron-based audit scheduling for all active projects.
+ * Cron-based audit scheduling for active projects with auto-scan enabled.
  * Webhook event handlers for GitHub PR merged → re-audit, deploy hooks → re-scan.
+ *
+ * The 6-hour sweep only processes projects that:
+ *  1. Belong to an Alignment+ tier owner
+ *  2. Have auto_scan_enabled = TRUE on the project row
+ * This prevents surprise rescans for users who never opted in.
  */
 import cron from 'node-cron';
 import { getPool } from '../services/postgresql.js';
@@ -11,21 +16,27 @@ import { enqueueAuditJob } from '../infra/queues/auditQueue.js';
 let schedulerStarted = false;
 
 /**
- * Enqueue audits for all active projects that haven't been audited recently.
- * Runs every 6 hours by default.
+ * Enqueue audits for projects that opted in AND whose owner meets the tier gate.
  */
 async function enqueueAllProjectsForAudit(): Promise<void> {
   const pool = getPool();
 
-  // Find projects that haven't been audited in the last 6 hours
+  // Only process projects where:
+  //   - auto_scan_enabled is explicitly true
+  //   - the project owner is on alignment/signal/scorefix tier (not observer)
+  //   - the project hasn't been audited in the last 6 hours
   const { rows: projects } = await pool.query(`
     SELECT p.id, p.domain, p.org_id
     FROM v1_projects p
-    WHERE NOT EXISTS (
-      SELECT 1 FROM v1_audits a
-      WHERE a.project_id = p.id
-        AND a.created_at > NOW() - INTERVAL '6 hours'
-    )
+    JOIN organizations o ON o.id = p.org_id
+    JOIN users u ON u.id = o.owner_user_id
+    WHERE COALESCE(p.auto_scan_enabled, FALSE) = TRUE
+      AND COALESCE(u.tier, 'observer') IN ('alignment', 'signal', 'scorefix')
+      AND NOT EXISTS (
+        SELECT 1 FROM v1_audits a
+        WHERE a.project_id = p.id
+          AND a.created_at > NOW() - INTERVAL '6 hours'
+      )
     ORDER BY p.created_at ASC
     LIMIT 50
   `);
@@ -142,9 +153,14 @@ export async function handleDeployHook(payload: {
 
 /**
  * Start the scheduler — all cron jobs.
+ * Respects DISABLE_BACKGROUND_JOBS env var like all other loops.
  */
 export function startScheduler(): void {
   if (schedulerStarted) return;
+  if (process.env.DISABLE_BACKGROUND_JOBS === '1') {
+    console.log('[Scheduler] Background jobs disabled via DISABLE_BACKGROUND_JOBS');
+    return;
+  }
   schedulerStarted = true;
 
   // Run full project audit sweep every 6 hours

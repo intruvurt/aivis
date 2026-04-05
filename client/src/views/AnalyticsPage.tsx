@@ -159,15 +159,38 @@ const ChartTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-function ChartExplainer({ text, tone = "cyan" }: { text: string; tone?: "cyan" | "amber" | "rose" | "indigo" | "emerald" }) {
+function ChartExplainer({ text, tone = "cyan" }: { text: string; tone?: "cyan" | "amber" | "rose" | "indigo" | "emerald" | "orange" }) {
   const toneClass: Record<string, string> = {
     cyan: "text-cyan-300/90",
     amber: "text-amber-300/90",
     rose: "text-rose-300/90",
     indigo: "text-indigo-300/90",
     emerald: "text-emerald-300/90",
+    orange: "text-orange-300/90",
   };
   return <p className={`mt-1 text-xs ${toneClass[tone] || toneClass.cyan}`}>{text}</p>;
+}
+
+/* ── SectionTitle — labelled divider with color accent stripe ─────────── */
+const SECTION_COLORS: Record<string, { border: string; dot: string; text: string }> = {
+  orange:  { border: 'rgba(249,115,22,0.35)', dot: 'bg-orange-400',  text: 'text-orange-300' },
+  cyan:    { border: 'rgba(34,211,238,0.35)',  dot: 'bg-cyan-400',    text: 'text-cyan-300' },
+  indigo:  { border: 'rgba(129,140,248,0.35)', dot: 'bg-indigo-400',  text: 'text-indigo-300' },
+  amber:   { border: 'rgba(251,191,36,0.35)',  dot: 'bg-amber-400',   text: 'text-amber-300' },
+  emerald: { border: 'rgba(52,211,153,0.35)',  dot: 'bg-emerald-400', text: 'text-emerald-300' },
+  rose:    { border: 'rgba(251,113,133,0.35)', dot: 'bg-rose-400',    text: 'text-rose-300' },
+};
+function SectionTitle({ title, tone = "orange", sub }: { title: string; tone?: keyof typeof SECTION_COLORS; sub?: string }) {
+  const c = SECTION_COLORS[tone] || SECTION_COLORS.orange;
+  return (
+    <div className="flex items-center gap-3 mb-4 pb-2" style={{ borderBottom: `2px solid ${c.border}` }}>
+      <span className={`w-2.5 h-2.5 rounded-full ${c.dot} shrink-0`} aria-hidden="true" />
+      <div>
+        <h3 className={`text-sm font-bold tracking-wide uppercase ${c.text}`}>{title}</h3>
+        {sub && <p className="text-[11px] text-white/40 mt-0.5">{sub}</p>}
+      </div>
+    </div>
+  );
 }
 
 /* ── StatCard ────────────────────────────────────────────────────────────── */
@@ -919,6 +942,7 @@ export default function AnalyticsPage() {
         {token && hasAccess && !loading && !error && (
           <>
             {/* ── Key Metric Cards ───────────────────────────────────────── */}
+            <SectionTitle title="Key Metrics" tone="orange" sub="Your personal audit performance at a glance" />
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
               <StatCard icon={Activity} label="Total Scans"   value={data.totalAnalyses} accent={P.orange} />
               <StatCard icon={Target}   label="Avg Score"     value={data.averageScore ? `${data.averageScore.toFixed(1)}%` : "–"} accent={P.cyan} trend={trendDir} />
@@ -935,15 +959,7 @@ export default function AnalyticsPage() {
               <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
                   <div>
-                    <p className="text-sm font-semibold text-white">Platform Metrics (Traffic, Membership, Analyses)</p>
-                    <p className="text-xs text-white/45">
-                      Membership: {platformMetrics.membershipTotals.totalMembers} registered
-                      &nbsp;·&nbsp;{platformMetrics.membershipTotals.freeMembers} free
-                      &nbsp;·&nbsp;{platformMetrics.membershipTotals.stripePaidMembers} stripe-verified paid
-                      {platformMetrics.membershipTotals.elevatedMembers > platformMetrics.membershipTotals.stripePaidMembers && (
-                        <span className="text-amber-400/70"> ({platformMetrics.membershipTotals.elevatedMembers - platformMetrics.membershipTotals.stripePaidMembers} non-Stripe elevated)</span>
-                      )}
-                    </p>
+                    <SectionTitle title="Platform Metrics" tone="cyan" sub={`${platformMetrics.membershipTotals.totalMembers} registered members · Traffic, Membership, Analyses`} />
                   </div>
                   <div className="flex rounded-xl p-1 gap-0.5" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     {(["1h", "24h", "7d", "30d", "90d", "180d", "365d"] as PlatformRangeKey[]).map((key) => (
@@ -959,19 +975,12 @@ export default function AnalyticsPage() {
                 </div>
 
                 {selectedPlatformMetrics && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                     <StatCard icon={Activity} label="Analyses" value={selectedPlatformMetrics.analysesRan} accent={P.orange} />
                     <StatCard icon={Users} label="Active Members" value={selectedPlatformMetrics.activeMembers} accent={P.cyan} />
-                    <StatCard
-                      icon={Users}
-                      label="Registered Users"
-                      value={platformMetrics.membershipTotals.totalMembers}
-                      sub={`${platformMetrics.membershipTotals.freeMembers} free · ${platformMetrics.membershipTotals.stripePaidMembers} stripe-paid${platformMetrics.membershipTotals.elevatedMembers > platformMetrics.membershipTotals.stripePaidMembers ? ` · ${platformMetrics.membershipTotals.elevatedMembers - platformMetrics.membershipTotals.stripePaidMembers} non-Stripe elevated` : ''}`}
-                      accent={P.indigo}
-                    />
+                    <StatCard icon={Users} label="Total Members" value={platformMetrics.membershipTotals.totalMembers} accent={P.indigo} />
                     <StatCard icon={Globe} label="Traffic Proxy" value={selectedPlatformMetrics.sessionTraffic} sub="sessions" accent={P.indigo} />
                     <StatCard icon={Layers} label="Free Analyses" value={selectedPlatformMetrics.freeMemberAnalyses} accent={P.amber} />
-                    <StatCard icon={Layers} label="Paid Analyses" value={selectedPlatformMetrics.paidMemberAnalyses} accent={P.orange} />
                     <StatCard icon={Gauge} label="Avg Visibility" value={`${selectedPlatformMetrics.avgVisibilityScore.toFixed(1)}%`} accent={P.cyan} />
                   </div>
                 )}
@@ -981,12 +990,7 @@ export default function AnalyticsPage() {
             {/* ── Community Benchmarks — visible to all authenticated users ── */}
             {communityBenchmarks && communityBenchmarks.total_audits > 0 && (
               <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(129,140,248,0.18)' }}>
-                <p className="text-sm font-semibold text-white flex items-center gap-2 mb-1">
-                  <Globe className="w-4 h-4 text-indigo-400" /> Community Benchmarks
-                </p>
-                <p className="text-xs text-white/45 mb-4">
-                  Aggregate stats across all {communityBenchmarks.total_audits.toLocaleString()} platform audits — no individual data exposed
-                </p>
+                <SectionTitle title="Community Benchmarks" tone="indigo" sub={`Aggregate stats across all ${communityBenchmarks.total_audits.toLocaleString()} platform audits — no individual data exposed`} />
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
                   <StatCard icon={Activity} label="Total Audits" value={communityBenchmarks.total_audits.toLocaleString()} accent={P.indigo} />
@@ -1032,6 +1036,8 @@ export default function AnalyticsPage() {
 
             {/* SEO totals bar */}
             {(data.totalPasses > 0 || data.totalFails > 0) && (
+              <>
+              <SectionTitle title="SEO Health Summary" tone="emerald" sub="Pass / Warning / Fail totals across all audited checks" />
               <div className="rounded-2xl mb-6 px-5 py-4 flex flex-wrap items-center gap-6"
                 style={{ background: 'rgba(10,14,28,0.70)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div className="flex items-center gap-2">
@@ -1054,6 +1060,7 @@ export default function AnalyticsPage() {
                   {range === 'all' ? 'All time' : `Last ${range}`}
                 </span>
               </div>
+              </>
             )}
 
             {/* ── Hard Blocker Alert ─────────────────────────────────── */}
@@ -1081,6 +1088,8 @@ export default function AnalyticsPage() {
             {(activeTab === 'overview' || !hasData) && (
               <div className="space-y-6">
                 {hasData && (
+                  <>
+                  <SectionTitle title="Audit Overview" tone="cyan" sub="Score distribution, activity cadence & SEO health at a glance" />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="rounded-2xl p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
                       <ScoreDistributionChart data={data.scoreDistribution ?? []} />
@@ -1091,9 +1100,6 @@ export default function AnalyticsPage() {
                       <ChartExplainer tone="indigo" text="Activity tracks operational cadence; consistent audit frequency usually precedes stable score gains." />
                     </div>
                     <div className="rounded-2xl p-5 flex flex-col items-center justify-center" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                      <p className="text-sm font-semibold text-white mb-3 w-full flex items-center gap-1.5">
-                        <Layers className="w-4 h-4 text-cyan-400" /> SEO Health
-                      </p>
                       <SeoHealthRadial passes={data.totalPasses} warns={data.totalWarns} fails={data.totalFails} />
                       <ChartExplainer tone="emerald" text="SEO health summarizes pass/warn/fail pressure so teams can prioritize fixes with the highest structural impact." />
                     </div>

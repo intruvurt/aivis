@@ -1,0 +1,76 @@
+
+========================================================
+  AiVIS DB Migration: OLD -> NEW
+  Mode: EXECUTING
+========================================================
+
+(node:20352) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Connected to OLD database
+Connected to NEW database
+Old DB: 65 tables | New DB: 96 tables
+Not in new: ai_platform_stats, category_scores, scan_history, traffic_daily
+
+Migrating 61 tables...
+
+  exist users: all 31 already present
+  exist payments: all 3 already present
+  exist organizations: all 31 already present
+  exist workspaces: all 31 already present
+  exist workspace_members: all 31 already present
+  exist analysis_cache: all 152 already present
+  exist api_keys: all 1 already present
+  exist assistant_usage: all 10 already present
+  done  audits: 162 inserted, 100 skipped
+    warn citation_niche_rankings: invalid input syntax for type json
+    warn citation_niche_rankings: invalid input syntax for type json
+  exist citation_niche_rankings: all 101 already present
+    warn citation_results: invalid input syntax for type json
+    warn citation_results: invalid input syntax for type json
+    fk-restore citation_results_citation_test_id_fkey: insert or update on table "citation_results" violates foreig
+  done  citation_results: 106 inserted, 4 skipped
+    warn citation_tests: invalid input syntax for type json
+    warn citation_tests: invalid input syntax for type json
+  exist citation_tests: all 3 already present
+    fk-restore competitor_tracking_user_id_fkey: insert or update on table "competitor_tracking" violates for
+  done  competitor_tracking: 1 inserted, 0 skipped
+  done  credit_usage_ledger: 10 inserted, 0 skipped
+    fk-restore credit_usage_ledger_user_id_fkey: insert or update on table "credit_usage_ledger" violates for
+    fk-restore newsletter_dispatches_user_id_fkey: insert or update on table "newsletter_dispatches" violates f
+  done  newsletter_dispatches: 30 inserted, 0 skipped
+  done  notifications: 9 inserted, 0 skipped
+    fk-restore notifications_user_id_fkey: insert or update on table "notifications" violates foreign k
+    fk-restore referral_attributions_referrer_user_id_fkey: insert or update on table "referral_attributions" violates f
+    fk-restore referral_attributions_referred_user_id_fkey: insert or update on table "referral_attributions" violates f
+  done  referral_attributions: 3 inserted, 0 skipped
+    fk-restore referral_codes_user_id_fkey: insert or update on table "referral_codes" violates foreign 
+  done  referral_codes: 3 inserted, 0 skipped
+    fk-restore referral_credit_ledger_user_id_fkey: insert or update on table "referral_credit_ledger" violates 
+    fk-restore referral_credit_ledger_counterparty_user_id_fkey: insert or update on table "referral_credit_ledger" violates 
+  done  referral_credit_ledger: 2 inserted, 0 skipped
+    fk-restore scan_pack_credits_user_id_fkey: insert or update on table "scan_pack_credits" violates forei
+  done  scan_pack_credits: 2 inserted, 0 skipped
+    warn seo_crawl_pages: invalid input syntax for type json
+  exist seo_crawl_pages: all 1 already present
+    fk-restore seo_crawls_user_id_fkey: insert or update on table "seo_crawls" violates foreign key 
+  done  seo_crawls: 1 inserted, 0 skipped
+    fk-restore usage_daily_user_id_fkey: insert or update on table "usage_daily" violates foreign key
+  done  usage_daily: 34 inserted, 0 skipped
+    fk-restore user_branding_user_id_fkey: insert or update on table "user_branding" violates foreign k
+  done  user_branding: 1 inserted, 0 skipped
+    fk-restore user_consents_user_id_fkey: insert or update on table "user_consents" violates foreign k
+  done  user_consents: 3 inserted, 0 skipped
+    fk-restore user_notification_preferences_user_id_fkey: insert or update on table "user_notification_preferences" vi
+  done  user_notification_preferences: 2 inserted, 0 skipped
+
+========================================================
+  Total: 369 inserted, 499 skipped
+========================================================
+

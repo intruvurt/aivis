@@ -35,22 +35,26 @@ export function applySecurityMiddleware(app: Express): void {
   );
 
   /* ── Per-request CSP nonce + Content-Security-Policy header ──────────── */
+  /* Note: nonce-based CSP requires injecting the nonce into served HTML.
+     Since the SPA fallback uses sendFile (static HTML), we allow 'unsafe-inline'
+     for the known inline scripts (gtag, recaptcha config) alongside the nonce
+     so the page works regardless of the serving path. */
   app.use((_req: Request, res: Response, next: NextFunction) => {
     const nonce = crypto.randomUUID();
     res.locals.nonce = nonce;
 
     const directives = [
       "default-src 'self'",
-      `script-src 'self' 'nonce-${nonce}'`,
+      `script-src 'self' 'unsafe-inline' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "img-src 'self' data: https:",
-      "style-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "connect-src 'self' https:",
-      "font-src 'self' data: https:",
+      "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
-      "frame-src 'self' https:",
+      "frame-src 'self' https: https://www.google.com https://js.stripe.com",
       'upgrade-insecure-requests',
     ];
 
@@ -63,6 +67,7 @@ export function applySecurityMiddleware(app: Express): void {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     next();
   });
 }

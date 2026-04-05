@@ -44,7 +44,7 @@ interface TierPricing {
   key: string;
   name: string;
   displayName: string;
-  billingModel: "core" | "subscription" | "one_time";
+  billingModel: "core" | "subscription" | "one_time" | "free";
   pricing: {
     monthly: TierPrice | null;
     yearly: TierPrice | null;

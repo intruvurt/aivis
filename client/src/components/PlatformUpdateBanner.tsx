@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Sparkles, X } from "lucide-react";
 
 const BANNER_DISMISS_KEY = "aivis_platform_update_banner_dismissed_v1";
-const BANNER_EXPIRES_AT = new Date("2026-04-01T23:59:59Z").getTime();
+const BANNER_EXPIRES_AT = new Date("2026-04-10T23:59:59Z").getTime();
 
 export default function PlatformUpdateBanner() {
   const [dismissed, setDismissed] = useState(() => {

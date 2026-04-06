@@ -1303,13 +1303,39 @@ export default function ReportsPage() {
   async function copyExecutiveSummary(report: Report) {
     const entry = history.find((item) => item.timestamp === report.timestamp);
     const summary = report.summary || entry?.result?.summary || "No summary available";
-    const payload = [
+
+    // Resolve share link (non-expiring) so the copied text includes a public URL
+    let shareUrl = "";
+    try {
+      const endpointPath = "/api/audits/share-link";
+      const response = await apiFetch(`${API_URL}${endpointPath}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: report.url,
+          analyzedAt: report.createdAt,
+          auditId: report.auditId,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        if (data?.share_path || data?.token) {
+          shareUrl = resolvePublicShareUrl(data.share_path, data.token);
+        }
+      }
+    } catch {
+      // share link generation failed — copy without it
+    }
+
+    const lines = [
       `Report: ${report.name}`,
       `URL: ${report.url}`,
-      `Score: ${report.score}`,
+      `Score: ${report.score}/100`,
       `Date: ${formatDate(report.createdAt)} ${formatTime(report.createdAt)}`,
       `Summary: ${summary}`,
-    ].join("\n");
+    ];
+    if (shareUrl) lines.push(`Full report: ${shareUrl}`);
+    const payload = lines.join("\n");
 
     try {
       await navigator.clipboard.writeText(payload);

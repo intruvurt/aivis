@@ -122,8 +122,6 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "up to 3 pages per audit",
       "top 3 proven blockers",
       "limited evidence preview",
-      "1 competitor gap snapshot",
-      "shareable reports",
     ],
     cta: "See your AI blockers",
   },
@@ -323,8 +321,6 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
 
     if (tier.key === "observer") {
       ensureFeature("Citation gap diagnosis", /citation gap|keyword intelligence/i);
-      ensureFeature("Shareable public report links", /shareable|public report/i);
-      ensureFeature("Team-ready baseline audits", /team-ready baseline audits/i);
     }
 
     if (tier.key === "alignment") {
@@ -333,13 +329,13 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
       ensureFeature("Private exposure scan", /private exposure/i);
       ensureFeature("Competitor advantage signals", /competitor advantage|niche url/i);
       ensureFeature("MCP Server access", /mcp server/i);
+    }
+
+    if (tier.key === "signal") {
       ensureFeature(
         "OpenAPI spec + OAuth 2.0 developer access",
         /openapi|oauth/i
       );
-    }
-
-    if (tier.key === "signal") {
       ensureFeature(
         "Slack + Discord alerts, Zapier workflow automation",
         /slack|zapier|discord|integrations/i

@@ -1,6 +1,6 @@
 // Landing - AiVIS
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
@@ -128,7 +128,7 @@ const TIERS = [
     monthlyPrice: PRICING.observer.billing.monthly, annualMonthlyPrice: PRICING.observer.billing.monthly,
     scans: PRICING.observer.limits.scans,
     color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null as string | null,
-    features: [`${PRICING.observer.limits.scans} audits / month`, 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis', 'Public share links'],
+    features: [`${PRICING.observer.limits.scans} audits / month`, 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis'],
   },
   {
     key: 'alignment' as const, name: PRICING.alignment.name, subtitle: 'Core',
@@ -156,6 +156,7 @@ const Landing = () => {
     structuredData: LANDING_STRUCTURED_DATA,
   });
 
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
@@ -169,7 +170,7 @@ const Landing = () => {
   }, []);
 
   const handlePayment = async (tier: string) => {
-    if (!isAuthenticated) { toast.error('Please sign in to upgrade'); return; }
+    if (!isAuthenticated) { navigate('/auth?mode=signin&redirect=/landing'); return; }
     if (!tier || loadingTier) return;
     setLoadingTier(tier);
     try {

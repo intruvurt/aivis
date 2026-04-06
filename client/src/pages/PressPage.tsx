@@ -8,7 +8,7 @@ import { buildWebPageSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
 const PRESS_STRUCTURED_DATA = [
   buildWebPageSchema({
     path: "/press",
-    name: "Press – AiVIS AI Visibility Platform",
+    name: "Press – AiVIS AI Visibility Intelligence Platform",
     description:
       "Press resources, media coverage, and public milestones for AiVIS by Intruvurt Labs.",
   }),
@@ -29,7 +29,7 @@ const MILESTONES = [
     date: "Dec 2025",
     title: "Platform Launch",
     description:
-      "AiVIS launched as the first evidence-backed AI visibility auditing platform with real crawl data, evidence ledger, and multi-model triple-check scoring.",
+      "AiVIS launched as the first evidence-backed AI visibility intelligence auditing platform with real crawl data, evidence ledger, and multi-model triple-check scoring.",
   },
 ];
 
@@ -37,6 +37,7 @@ const MEDIA_KIT = [
   { label: "Company Name", value: "Intruvurt Labs" },
   { label: "Product", value: "AiVIS - AI Visibility Intelligence Audits" },
   { label: "Founded", value: "December 2025" },
+  { label: "Founder", value: "Intruvurt Labs" },
   { label: "Headquarters", value: "United States" },
   { label: "Category", value: "AI Visibility, AEO, Citation Readiness" },
   { label: "Press Contact", value: "hello@aivis.biz" },
@@ -48,9 +49,9 @@ export default function PressPage() {
     description:
       "Press resources, media coverage, and public milestones for AiVIS by Intruvurt Labs. TechCrunch Startup Battlefield Top 200 nominee.",
     path: "/press",
-    ogTitle: "Press – AiVIS by Intruvurt Labs",
+    ogTitle: "Press - AiVIS AI Visibility Intelligence Platform by Intruvurt Labs",
     ogDescription:
-      "Press resources and public milestones for AiVIS, the AI visibility auditing platform. TechCrunch Startup Battlefield Top 200 nominee.",
+      "Press resources and public milestones for AiVIS, the AI visibility intelligence auditing platform. TechCrunch Startup Battlefield Top 200 nominee.",
     structuredData: PRESS_STRUCTURED_DATA,
   });
 
@@ -71,7 +72,7 @@ export default function PressPage() {
             AiVIS in the Press
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            The first evidence-backed AI visibility auditing platform - built
+            The first evidence-backed AI visibility intelligence auditing platform - built
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>

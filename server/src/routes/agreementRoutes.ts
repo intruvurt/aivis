@@ -447,4 +447,220 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>These terms become effective when both parties sign electronically. Each party must enter their full legal name exactly as specified in the agreement. Signatures are timestamped, IP-logged, and the full agreement is SHA-256 tamper-locked upon both signatures. The agreement is valid for <strong>1 year</strong> from the date of the final signature.</p>
 `.trim();
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Partnership Invoice / Payment routes (private PayPal portal)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const PAYPAL_BASE = process.env.NODE_ENV === 'production'
+  ? 'https://api-m.paypal.com'
+  : 'https://api-m.sandbox.paypal.com';
+
+const invoiceCreateSchema = z.object({
+  description: z.string().min(3).max(500),
+  amount_usd: z.number().positive().max(100_000),
+});
+
+/** Helper: validate token + email access for an agreement, return agreement row or null */
+async function gateInvoiceAccess(
+  slug: string,
+  token: string | undefined,
+  email: string | undefined,
+): Promise<{ agreement: any; email: string } | null> {
+  const agreement = await getAgreementBySlug(slug);
+  if (!agreement) return null;
+  if (agreement.access_token && token !== agreement.access_token) return null;
+  const e = email?.trim().toLowerCase();
+  if (!e) return null;
+  const pa = agreement.party_a_email?.toLowerCase();
+  const pb = agreement.party_b_email?.toLowerCase();
+  if (e !== pa && e !== pb) return null;
+  return { agreement, email: e };
+}
+
+/* ── POST /:slug/invoices - create invoice (admin only) ───────────────────── */
+router.post('/:slug/invoices', async (req: Request, res: Response) => {
+  const adminKey = req.headers['x-admin-key'] as string | undefined;
+  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ error: 'Forbidden.' });
+  }
+
+  const parsed = invoiceCreateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: 'Provide description (3-500 chars) and amount_usd (positive number).' });
+  }
+
+  try {
+    const agreement = await getAgreementBySlug(req.params.slug as string);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
+
+    const pool = getPool();
+    const result = await pool.query(
+      `INSERT INTO partnership_invoices (agreement_slug, description, amount_usd, created_by, status)
+       VALUES ($1, $2, $3, $4, 'pending')
+       RETURNING id, agreement_slug, description, amount_usd, status, created_at`,
+      [req.params.slug, parsed.data.description, parsed.data.amount_usd, agreement.party_a_email || 'admin'],
+    );
+
+    return res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('[Invoices] Create error:', err);
+    return res.status(500).json({ error: 'Failed to create invoice.' });
+  }
+});
+
+/* ── GET /:slug/invoices - list invoices (gated by token + email) ─────────── */
+router.get('/:slug/invoices', async (req: Request, res: Response) => {
+  try {
+    const gate = await gateInvoiceAccess(
+      req.params.slug as string,
+      req.query.token as string | undefined,
+      req.query.email as string | undefined,
+    );
+    if (!gate) return res.status(403).json({ error: 'Access denied.' });
+
+    const pool = getPool();
+    const result = await pool.query(
+      `SELECT id, agreement_slug, description, amount_usd, status, paypal_order_id, paid_by_email, paid_at, created_at, updated_at
+       FROM partnership_invoices
+       WHERE agreement_slug = $1
+       ORDER BY created_at DESC`,
+      [req.params.slug],
+    );
+
+    return res.json({ invoices: result.rows });
+  } catch (err) {
+    console.error('[Invoices] List error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+/* ── POST /:slug/invoices/:invoiceId/pay - create PayPal order for invoice ── */
+router.post('/:slug/invoices/:invoiceId/pay', async (req: Request, res: Response) => {
+  try {
+    const gate = await gateInvoiceAccess(
+      req.params.slug as string,
+      req.query.token as string | undefined,
+      (req.body as any)?.email || req.query.email as string | undefined,
+    );
+    if (!gate) return res.status(403).json({ error: 'Access denied.' });
+
+    const pool = getPool();
+    const inv = await pool.query(
+      `SELECT id, amount_usd, description, status FROM partnership_invoices WHERE id = $1 AND agreement_slug = $2`,
+      [req.params.invoiceId, req.params.slug],
+    );
+    if (!inv.rows[0]) return res.status(404).json({ error: 'Invoice not found.' });
+    if (inv.rows[0].status === 'paid') return res.status(400).json({ error: 'Invoice already paid.' });
+
+    const invoice = inv.rows[0];
+    const returnUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(req.params.slug)}&invoice=${encodeURIComponent(invoice.id)}&capture=true`;
+    const cancelUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(req.params.slug)}&cancelled=true`;
+
+    // Create PayPal order with custom amount
+    const token = await getPayPalAccessToken();
+    const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: Number(invoice.amount_usd).toFixed(2),
+            },
+            description: `Partnership Invoice: ${invoice.description}`.slice(0, 127),
+            custom_id: `partnership|${invoice.id}`,
+            invoice_id: invoice.id,
+          },
+        ],
+        application_context: {
+          brand_name: 'AiVIS Partnership',
+          landing_page: 'LOGIN',
+          user_action: 'PAY_NOW',
+          return_url: returnUrl,
+          cancel_url: cancelUrl,
+        },
+      }),
+    });
+
+    if (!orderRes.ok) {
+      const text = await orderRes.text();
+      throw new Error(`PayPal create order failed (${orderRes.status}): ${text}`);
+    }
+
+    const order = (await orderRes.json()) as { id: string; links: Array<{ href: string; rel: string }> };
+    const approvalLink = order.links?.find((l) => l.rel === 'approve');
+    if (!approvalLink) throw new Error('PayPal order missing approval URL.');
+
+    // Store PayPal order ID on the invoice
+    await pool.query(
+      `UPDATE partnership_invoices SET paypal_order_id = $1, updated_at = NOW() WHERE id = $2`,
+      [order.id, invoice.id],
+    );
+
+    return res.json({ orderId: order.id, approvalUrl: approvalLink.href });
+  } catch (err) {
+    console.error('[Invoices] Pay error:', err);
+    return res.status(500).json({ error: 'Failed to create payment.' });
+  }
+});
+
+/* ── POST /:slug/invoices/:invoiceId/capture - capture PayPal payment ─────── */
+router.post('/:slug/invoices/:invoiceId/capture', async (req: Request, res: Response) => {
+  try {
+    const gate = await gateInvoiceAccess(
+      req.params.slug as string,
+      req.query.token as string | undefined,
+      (req.body as any)?.email || req.query.email as string | undefined,
+    );
+    if (!gate) return res.status(403).json({ error: 'Access denied.' });
+
+    const pool = getPool();
+    const inv = await pool.query(
+      `SELECT id, paypal_order_id, status FROM partnership_invoices WHERE id = $1 AND agreement_slug = $2`,
+      [req.params.invoiceId, req.params.slug],
+    );
+    if (!inv.rows[0]) return res.status(404).json({ error: 'Invoice not found.' });
+    if (inv.rows[0].status === 'paid') return res.json({ captured: true, already_paid: true });
+
+    const paypalOrderId = inv.rows[0].paypal_order_id;
+    if (!paypalOrderId) return res.status(400).json({ error: 'No PayPal order associated with this invoice.' });
+
+    // Capture the order
+    const token = await getPayPalAccessToken();
+    const captureRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}/capture`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!captureRes.ok) {
+      const text = await captureRes.text();
+      throw new Error(`PayPal capture failed (${captureRes.status}): ${text}`);
+    }
+
+    const capture = (await captureRes.json()) as { status: string };
+    if (capture.status === 'COMPLETED') {
+      await pool.query(
+        `UPDATE partnership_invoices
+         SET status = 'paid', paid_by_email = $1, paid_at = NOW(), updated_at = NOW()
+         WHERE id = $2`,
+        [gate.email, inv.rows[0].id],
+      );
+      return res.json({ captured: true });
+    }
+
+    return res.json({ captured: false, paypal_status: capture.status });
+  } catch (err) {
+    console.error('[Invoices] Capture error:', err);
+    return res.status(500).json({ error: 'Failed to capture payment.' });
+  }
+});
+
 export default router;

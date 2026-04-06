@@ -1607,6 +1607,17 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ── reCAPTCHA badge - move to left side of viewport ─── */
 .grecaptcha-badge {
   left: 14px !important;

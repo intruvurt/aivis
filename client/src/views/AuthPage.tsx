@@ -406,7 +406,8 @@ export default function AuthPage() {
             payload.token
           );
           setSuccess("Account created successfully!");
-          window.setTimeout(() => navigate("/"), 350);
+          const redirect = safeRedirect(searchParams.get("redirect"));
+          window.setTimeout(() => navigate(redirect), 350);
           return;
         }
 
@@ -418,7 +419,7 @@ export default function AuthPage() {
         setIsLoading(false);
       }
     },
-    [apiBase, email, password, confirmPassword, name, login, navigate, acceptedTerms, acceptedPrivacy, marketingOptIn, referralCode, getCaptchaToken]
+    [apiBase, email, password, confirmPassword, name, login, navigate, searchParams, acceptedTerms, acceptedPrivacy, marketingOptIn, referralCode, getCaptchaToken]
   );
 
   const handleResetPassword = useCallback(

@@ -21,7 +21,7 @@ export type NotificationItem = {
 export function getNotificationDestination(item: NotificationItem): string | null {
   const m = item.metadata ?? {};
   const auditId = typeof m.auditId === "string" ? m.auditId : undefined;
-  const reportsPath = auditId ? `/reports?audit=${encodeURIComponent(auditId)}` : "/reports";
+  const reportsPath = auditId ? `/app/reports?audit=${encodeURIComponent(auditId)}` : "/app/reports";
 
   switch (item.event_type) {
     case "audit_completed":
@@ -34,20 +34,20 @@ export function getNotificationDestination(item: NotificationItem): string | nul
     case "scheduled_rescan_skipped":
     case "auto_score_fix_rescan_failed":
     case "deploy_verification_failed":
-      return "/settings";
+      return "/app/settings";
     case "auto_score_fix_rescan_scheduled":
       return reportsPath;
     case "plan_upgraded":
     case "plan_downgraded":
     case "plan_canceled":
-      return "/settings";
+      return "/app/settings";
     case "trial_started":
     case "trial_converted":
     case "trial_expired":
       return "/pricing";
     case "credit_added":
     case "credit_spent":
-      return "/settings";
+      return "/app/settings";
     default:
       return null;
   }

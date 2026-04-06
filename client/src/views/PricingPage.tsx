@@ -1002,28 +1002,13 @@ export default function PricingPage() {
 
           <div className="lonely-text">
             <h1 className="text-4xl md:text-5xl brand-title-lg mb-4">
-              Stop guessing why AI ignores your site.
+              AI can read your site.<br />It just won't cite it.
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              Most sites don’t have an AI visibility problem.
-            </p>
-            <p className="text-sm text-white/55 mt-3 max-w-3xl mx-auto leading-relaxed">
-              They have a citation problem.
+              AiVIS shows what AI can't verify, why competitors get cited instead, and what to fix first.
             </p>
 
-            <div className="mt-6 max-w-3xl mx-auto text-left rounded-2xl border border-cyan-300/25 bg-cyan-500/10 px-5 py-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-cyan-100">Most sites don’t have an AI visibility problem.</h2>
-              <p className="mt-2 text-sm leading-7 text-cyan-50/90">They have a citation problem.</p>
-              <p className="text-sm leading-7 text-cyan-50/90">AI can read your site. But it won’t trust it. And it won’t cite it.</p>
-              <p className="text-sm leading-7 text-cyan-50/90">AiVIS shows:</p>
-              <ul className="list-disc pl-5 text-sm leading-7 text-cyan-50/90">
-                <li>what AI can’t verify</li>
-                <li>why competitors get chosen instead</li>
-                <li>what to fix first to change that</li>
-              </ul>
-            </div>
-
-            <div className="mt-5 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
+            <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
               <span className="px-2.5 py-1 rounded-full border border-emerald-300/35 bg-emerald-500/12 text-emerald-200 font-black tracking-[0.1em] uppercase">
                 Free tier live now
               </span>
@@ -1032,21 +1017,6 @@ export default function PricingPage() {
                   14-day Signal trial available
                 </span>
               )}
-              <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                Live plan data
-              </span>
-              <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                3 audits/month
-              </span>
-              <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                Exports on Alignment+
-              </span>
-              <span className="px-2.5 py-1 rounded-full border border-white/12 bg-charcoal-light">
-                API + OAuth + MCP on Signal+
-              </span>
-              <span className="px-2.5 py-1 rounded-full border border-amber-300/25 bg-amber-500/10 text-amber-200">
-                Score Fix uses 10-25 credits per automated PR
-              </span>
               <span className="px-2.5 py-1 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-300/90">
                 Top 200 · TechCrunch Startup Battlefield 2026
               </span>
@@ -1180,20 +1150,20 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3/mo", "25/mo", "100/mo", "15/mo + 250 PR credits"],
+                  ["Audit allowance", "3/mo", "60/mo", "110/mo", "15 + 250 PR credits"],
                   ["Visibility score + recs", true, true, true, true],
                   ["Citation gap diagnosis", true, true, true, true],
-                  ["Shareable report links", true, true, true, true],
+                  ["Shareable report links", false, true, true, true],
                   ["Export (PDF / JSON)", false, true, true, true],
                   ["Competitor advantage signals", false, true, true, true],
                   ["Brand mention tracking", false, true, true, true],
                   ["Decision query gap analysis", false, true, true, true],
-                  ["API + OAuth access", false, true, true, true],
+                  ["API + OAuth access", false, false, true, true],
                   ["Triple-check AI validation", false, false, true, true],
-                  ["Citation testing", false, false, true, true],
+                  ["Citation testing", false, true, true, true],
                   ["MCP Server (AI agents)", false, false, true, true],
-                  ["Team seats", "1", "3", "10", "10"],
-                  ["White-label reports", false, false, true, true],
+                  ["Team seats", "1", "1", "10", "1"],
+                  ["White-label reports", false, false, true, false],
                   ["Auto GitHub PRs via MCP", false, false, false, true],
                 ].map(([label, ...vals], idx) => (
                   <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">

@@ -3171,6 +3171,26 @@ export async function runMigrations(): Promise<void> {
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`);
 
+    /* ── Score-improvement benchmarks (public proof) ───────────── */
+    _q(`
+      CREATE TABLE IF NOT EXISTS score_improvements (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        url_hash VARCHAR(64) NOT NULL,
+        first_audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        latest_audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+        score_before INTEGER NOT NULL,
+        score_after INTEGER NOT NULL,
+        delta INTEGER NOT NULL,
+        audit_count INTEGER NOT NULL DEFAULT 2,
+        domain_category VARCHAR(100),
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_score_improvements_user_url ON score_improvements(user_id, url_hash)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_score_improvements_delta ON score_improvements(delta DESC)`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

@@ -162,6 +162,14 @@ const Landing = () => {
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
+  // Visibility fallback: if whileInView animations fail (e.g. Capacitor WebView),
+  // force all animated elements visible after 1.5 s
+  const [forceVisible, setForceVisible] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setForceVisible(true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     getPlatformStats().then((d) => { if (!cancelled) setPlatformStats(d); });
@@ -227,7 +235,7 @@ const Landing = () => {
                 )}
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+                <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
                   See your visibility snapshot
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </Link>
@@ -286,7 +294,7 @@ const Landing = () => {
               { n: '02', color: 'text-violet-300', borderColor: 'border-violet-400/20 bg-violet-400/5', title: 'See your visibility snapshot', desc: 'In under a minute you get a 0–100 score with a six-part visibility breakdown: what AI understands, what it cannot verify, and what to fix first.' },
               { n: '03', color: 'text-amber-300', borderColor: 'border-amber-400/20 bg-amber-400/5', title: 'Open the full system', desc: 'Go deeper with competitor tracking, citation testing, score trends and fixes ranked by likely lift. Re-scan after each change to measure the difference.' },
             ] as const).map((step) => (
-              <motion.div key={step.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+              <motion.div key={step.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
                 className={`rounded-2xl border ${step.borderColor} p-6`}>
                 <span className={`${step.color} font-mono text-xs font-bold`}>{step.n}</span>
                 <h3 className={`text-lg font-bold ${step.color} mt-3 mb-2`}>{step.title}</h3>
@@ -313,7 +321,7 @@ const Landing = () => {
               { accentClass: 'border-violet-400/20 bg-violet-400/10', titleClass: 'text-violet-300', title: 'Six-part visibility score', desc: 'Content depth, heading structure, schema completeness, meta tags, technical SEO, and AI readability. Each grade traces to real evidence.' },
               { accentClass: 'border-amber-400/20 bg-amber-400/10', titleClass: 'text-amber-300', title: 'Fixes ranked by likely lift', desc: 'Every recommendation cites the exact evidence ID - heading, meta tag, schema block, or content gap - that triggered it. Filter by effort level.' },
             ] as const).map((card) => (
-              <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+              <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
                 className={`rounded-2xl border ${card.accentClass} p-6`}>
                 <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
                 <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
@@ -337,7 +345,7 @@ const Landing = () => {
               { accentClass: 'border-amber-400/20 bg-amber-400/8', titleClass: 'text-amber-300', title: 'What AI cannot verify', desc: 'Missing signals, conflicting schema, thin content and unclear entity definitions that stop AI from trusting your page enough to cite it.' },
               { accentClass: 'border-emerald-400/20 bg-emerald-400/8', titleClass: 'text-emerald-300', title: 'What to fix first', desc: 'The highest-impact issue on your page right now - with the evidence ID, a fix description, and the expected score lift if you resolve it.' },
             ] as const).map((card) => (
-              <motion.div key={card.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }}
+              <motion.div key={card.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
                 className={`rounded-2xl border ${card.accentClass} p-6`}>
                 <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
                 <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
@@ -345,7 +353,7 @@ const Landing = () => {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
               Run your first audit free
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
@@ -361,7 +369,7 @@ const Landing = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">From invisible to extractable in two audits</h2>
             <p className="text-white/50 text-sm max-w-xl mx-auto">A real user ran their first audit, applied the recommended fixes, and re-scanned. The result: a jump from 15/100 to 52/100 — with clear evidence of what changed.</p>
           </div>
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
             className="relative rounded-2xl border border-white/12 bg-[#0d1117]/60 p-3 sm:p-4 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 60px 30px rgba(6,6,7,0.85)' }} />
             <img src="/images/case-study-score-lift.png" alt="Real AiVIS audit showing score improvement from 15 to 52 after applying recommended fixes" className="w-full h-auto rounded-xl" loading="lazy" />
@@ -462,7 +470,7 @@ const Landing = () => {
             {TIERS.map((plan) => {
               const displayPrice = billingCycle === 'annual' ? plan.annualMonthlyPrice : plan.monthlyPrice;
               return (
-                <motion.div key={plan.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`rounded-2xl border p-6 flex flex-col ${plan.color}`}>
+                <motion.div key={plan.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })} className={`rounded-2xl border p-6 flex flex-col ${plan.color}`}>
                   {plan.badge && <div className={`inline-block px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider mb-3 ${plan.accentClass} border-current opacity-80`}>{plan.badge}</div>}
                   <h3 className="text-xl font-bold text-white mb-0.5">{plan.name}</h3>
                   <p className={`text-xs uppercase tracking-widest ${plan.accentClass} mb-4 font-semibold`}>{plan.subtitle}</p>
@@ -530,7 +538,7 @@ const Landing = () => {
           </h2>
           <p className="text-lg text-white/50 mb-10">Free tier · No credit card · Your visibility snapshot in under a minute</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to={isAuthenticated ? '/app/analyze' : '/auth?intent=first-audit'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25">
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25">
               See your visibility snapshot
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>

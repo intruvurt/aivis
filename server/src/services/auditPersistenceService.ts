@@ -5,6 +5,7 @@ import { checkAuditMilestones, checkScoreImprovementMilestone } from './mileston
 import { ensureWorkspaceProjectForUrl } from './workspaceProjectService.js';
 import { logWorkspaceActivity } from './workspaceActivityService.js';
 import type { ContradictionReport, GeoSignalProfile } from '../../../shared/types.js';
+import { trackScoreImprovement } from './benchmarkService.js';
 
 function extractExecutionClass(result: Record<string, unknown>): string | null {
   const integrity = result.analysis_integrity;
@@ -154,6 +155,9 @@ export async function persistAuditRecord(args: {
       const prevScore = Number(priorScoreRes.rows[0].visibility_score || 0);
       checkScoreImprovementMilestone(args.userId, prevScore, args.visibilityScore).catch(() => {});
     }
+
+    // Track benchmark score improvements (public proof data)
+    trackScoreImprovement(args.userId, args.url, auditId, args.visibilityScore).catch(() => {});
   } catch {
     // Milestones are non-critical
   }

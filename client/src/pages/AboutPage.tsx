@@ -98,6 +98,55 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Hook — human layer */}
+      <section className="mx-auto max-w-3xl px-4 py-14 text-center">
+        <p className="text-xl md:text-2xl text-white/85 font-medium leading-relaxed mb-3">
+          Most websites are not broken.
+        </p>
+        <p className="text-xl md:text-2xl text-white/85 font-medium leading-relaxed mb-6">
+          They just aren&apos;t understood.
+        </p>
+        <p className="text-lg text-white/60 leading-relaxed mb-3">
+          AI reads them, hesitates, and moves on.
+        </p>
+        <p className="text-lg text-white/60 leading-relaxed mb-3">
+          No error. No warning. Just silence.
+        </p>
+        <p className="text-lg text-white/55 leading-relaxed">
+          That silence is where visibility is lost now.
+        </p>
+      </section>
+
+      {/* Why AiVIS exists */}
+      <section className="mx-auto max-w-3xl px-4 py-10 text-center">
+        <p className="text-xl text-white/80 font-semibold leading-relaxed mb-4">
+          AiVIS exists for one reason.
+        </p>
+        <p className="text-lg text-white/70 leading-relaxed mb-6">
+          To show what AI can actually read, trust, and cite from your site.
+        </p>
+        <p className="text-base text-white/55 leading-relaxed">
+          Not what you think it says.<br />
+          Not what your SEO tool says.<br />
+          What the machine actually uses.
+        </p>
+      </section>
+
+      {/* Founder signal — trust anchor */}
+      <section className="mx-auto max-w-3xl px-4 py-10 text-center border-b border-white/10 mb-4">
+        <p className="text-lg text-white/75 leading-relaxed mb-4">
+          Built by a solo operator who kept seeing the same problem.
+        </p>
+        <p className="text-base text-white/60 leading-relaxed mb-4">
+          Real businesses. Real services.<br />
+          Invisible in AI answers.
+        </p>
+        <p className="text-base text-white/55 leading-relaxed">
+          Not because they were bad.<br />
+          Because they were unclear to machines.
+        </p>
+      </section>
+
       {/* Company mission */}
       <section className="-mx-4 border-y border-white/10 bg-white/5 px-4 py-16 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div>
@@ -355,7 +404,7 @@ export default function AboutPage() {
       {/* Platform focus */}
       <section className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl brand-title mb-12 text-center">What We Build</h2>
+          <h2 className="text-3xl brand-title mb-12 text-center">What the system actually evaluates</h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div>
@@ -403,18 +452,37 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA section */}
+      {/* Proof block */}
+      <section className="mx-auto max-w-3xl px-4 py-14 text-center">
+        <p className="text-xl text-white/80 font-medium leading-relaxed mb-4">
+          Most first scans land between C and D.
+        </p>
+        <p className="text-base text-white/60 leading-relaxed mb-4">
+          Not because the business is weak.<br />
+          Because structure, schema, and clarity are misaligned.
+        </p>
+        <p className="text-base text-white/55 leading-relaxed">
+          The system exists to move that score with real fixes, not opinions.
+        </p>
+      </section>
+
+      {/* Closing — urgency + clarity */}
       <section className="px-4 py-16 bg-white/5 border-t border-white/10">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl brand-title mb-4">Work With Us</h2>
-          <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-            Are you building with AI visibility, citation engineering or need enterprise auditing for your agency? Let's talk.
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-xl md:text-2xl text-white/85 font-semibold leading-relaxed mb-4">
+            If your site isn&apos;t being cited, it&apos;s already being replaced.
+          </p>
+          <p className="text-lg text-white/70 leading-relaxed mb-4">
+            AiVIS shows why.
+          </p>
+          <p className="text-lg text-white/60 leading-relaxed mb-8">
+            And gives you a way to fix it.
           </p>
           <a
-            href="/pricing"
+            href="/analyze"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 transition-colors"
           >
-            Explore Tiers
+            Run your first audit
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>

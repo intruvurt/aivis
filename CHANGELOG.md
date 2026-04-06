@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2025-07-11
+
+### ✨ Added
+
+#### Audit Progress UX
+- **Smooth progress bar animation** — added CSS transitions (`duration-700 ease-out`) so the bar animates fluidly between SSE progress ticks instead of jumping
+- **Enhanced pipeline step indicators** — active step now shows cyan glow border, subtle scale, staggered entry delays, and a "running" label with pulse animation
+- **Soft browsing prompt** — floating notification appears during audits ("Feel free to continue browsing — you'll be notified when it's complete"), auto-dismisses after 10 seconds or on click outside, uses slide-in animation
+
+#### Notifications
+- **`audit_completed` event type** — formally added to notification type system and category map for proper preference filtering
+- **Notification destination routing** — all notification links now navigate directly to the correct `/app/*` routes, preventing query-param loss through redirect chains
+- **Audit context linking** — clicking an audit-completed notification (dropdown or notifications page) navigates directly to the specific audit report
+
+### 🐛 Fixed
+- Progress bar had no CSS transition, causing it to snap between percentage values
+- Notification destinations used relative paths (`/reports`) instead of full app paths (`/app/reports`), causing query parameters like `?audit=<id>` to be dropped during redirect
+
+---
+
 ## [1.0.0] - 2025-12-17
 
 ### 🎉 Initial Production Release

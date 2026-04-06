@@ -15,6 +15,7 @@ import {
   Lock,
   X,
   ClipboardPaste,
+  Info,
 } from "lucide-react";
 import {
   AiVisibilityIcon,
@@ -231,6 +232,8 @@ const AnalyzePage: React.FC = () => {
   const [resultView, setResultView] = useState<"summary" | "technical">("summary");
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
+  const [browsingPromptVisible, setBrowsingPromptVisible] = useState(false);
+  const browsingPromptRef = useRef<HTMLDivElement>(null);
   const resultTextSummary = result ? (result as AnalysisResultWithTextSummary).text_summary : undefined;
 
   usePageMeta({
@@ -332,6 +335,26 @@ const AnalyzePage: React.FC = () => {
     }, 1400);
     return () => window.clearInterval(tick);
   }, [loading]);
+
+  // Show "continue browsing" prompt 2s after audit starts, auto-dismiss after 8s
+  useEffect(() => {
+    if (!loading) { setBrowsingPromptVisible(false); return; }
+    const showTimer = window.setTimeout(() => setBrowsingPromptVisible(true), 2000);
+    const hideTimer = window.setTimeout(() => setBrowsingPromptVisible(false), 10000);
+    return () => { window.clearTimeout(showTimer); window.clearTimeout(hideTimer); };
+  }, [loading]);
+
+  // Dismiss browsing prompt on click outside
+  useEffect(() => {
+    if (!browsingPromptVisible) return;
+    function handleClick(e: MouseEvent) {
+      if (browsingPromptRef.current && !browsingPromptRef.current.contains(e.target as Node)) {
+        setBrowsingPromptVisible(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [browsingPromptVisible]);
 
   function closeProgressStream() {
     try {
@@ -660,6 +683,33 @@ const AnalyzePage: React.FC = () => {
   return (
     <div className="space-y-6 text-white">
 
+      {/* ── Soft browsing prompt (auto-dismiss) ─────────────── */}
+      {browsingPromptVisible && (
+        <div
+          ref={browsingPromptRef}
+          className="fixed bottom-6 right-6 z-[300] max-w-xs animate-[slideInRight_0.35s_ease-out] rounded-xl border border-cyan-400/20 bg-[#1e2536]/95 px-4 py-3 shadow-xl shadow-black/40 backdrop-blur-sm"
+          style={{ animation: "slideInRight 0.35s ease-out" }}
+        >
+          <div className="flex items-start gap-3">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-white/90">Your audit is running</p>
+              <p className="mt-1 text-xs leading-relaxed text-white/60">
+                Feel free to continue browsing — you'll be notified when it's complete.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setBrowsingPromptVisible(false)}
+              className="shrink-0 rounded-md p-1 text-white/40 hover:bg-white/10 hover:text-white/70 transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Page heading ─────────────────────────────────────── */}
       <div>
         <h1 className="text-xl font-semibold text-white flex items-center gap-2">
@@ -914,7 +964,7 @@ const AnalyzePage: React.FC = () => {
                 </div>
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-charcoal">
                   <div
-                    className={`h-2 ${getProgressTone(progress.percent) === "good" ? "bg-gradient-to-r from-emerald-300/80 to-emerald-200/60" : "bg-gradient-to-r from-white/28 to-white/14"}`}
+                    className={`h-2 transition-all duration-700 ease-out ${getProgressTone(progress.percent) === "good" ? "bg-gradient-to-r from-emerald-300/80 to-emerald-200/60" : "bg-gradient-to-r from-cyan-400/40 to-white/18"}`}
                     style={{ width: `${progress.percent}%` }}
                   />
                 </div>
@@ -930,35 +980,42 @@ const AnalyzePage: React.FC = () => {
 
                 {loading && pipelineStatuses && (
                   <div className="mt-4 space-y-1">
-                    {pipelineStatuses.map((step) => (
+                    {pipelineStatuses.map((step, i) => (
                       <div
                         key={step.key}
-                        className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-all duration-300 ${
+                        className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-all duration-500 ease-out ${
                           step.status === "active"
-                            ? "border border-white/15 bg-charcoal"
+                            ? "border border-cyan-400/20 bg-charcoal scale-[1.01] shadow-sm shadow-cyan-500/5"
                             : step.status === "completed"
                               ? "opacity-70"
-                              : "opacity-35"
+                              : "opacity-30"
                         }`}
+                        style={{
+                          transitionDelay: `${i * 30}ms`,
+                          transform: step.status === "active" ? "translateX(2px)" : "translateX(0)",
+                        }}
                       >
                         {step.status === "completed" ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                          <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400 transition-transform duration-300" />
                         ) : step.status === "active" ? (
-                          <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-cyan-400" />
+                          <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.4)]" />
                         ) : (
-                          <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/20" />
+                          <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/15" />
                         )}
                         <span
-                          className={`text-xs ${
+                          className={`text-xs transition-colors duration-300 ${
                             step.status === "active"
                               ? "text-white/90 font-medium"
                               : step.status === "completed"
                                 ? "text-white/60"
-                                : "text-white/40"
+                                : "text-white/35"
                           }`}
                         >
                           {step.label}
                         </span>
+                        {step.status === "active" && (
+                          <span className="ml-auto text-[10px] text-cyan-300/60 animate-pulse">running</span>
+                        )}
                       </div>
                     ))}
                   </div>

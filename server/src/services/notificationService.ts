@@ -4,6 +4,7 @@ import { pushToUser, pushToAll } from './sseHub.js';
 type NotificationScope = 'user' | 'platform';
 
 export type NotificationEventType =
+  | 'audit_completed'
   | 'scheduled_rescan_completed'
   | 'scheduled_rescan_failed'
   | 'scheduled_rescan_skipped'
@@ -19,6 +20,7 @@ export type NotificationCategory =
 
 /** Maps event_type strings to notification categories for preference filtering. */
 const EVENT_CATEGORY_MAP: Record<string, NotificationCategory> = {
+  audit_completed: 'scan_results',
   scheduled_rescan_completed: 'scan_results',
   scheduled_rescan_failed: 'scan_results',
   scheduled_rescan_skipped: 'scan_results',

@@ -37,7 +37,10 @@ const MEDIA_KIT = [
   { label: "Company Name", value: "Intruvurt Labs" },
   { label: "Product", value: "AiVIS - AI Visibility Intelligence Audits" },
   { label: "Founded", value: "December 2025" },
-  { label: "Founder", value: "Intruvurt Labs" },
+  { 
+    label: "Founder", 
+    value: <Link to="/about" className="text-cyan-400 hover:underline">Ryan Mason</Link> 
+  },
   { label: "Headquarters", value: "United States" },
   { label: "Category", value: "AI Visibility, AEO, Citation Readiness" },
   { label: "Press Contact", value: "hello@aivis.biz" },

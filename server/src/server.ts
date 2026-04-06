@@ -72,6 +72,7 @@ import { intelligenceAnalyzeHandler } from './controllers/intelligenceAnalyzeCon
 import { closePool, runMigrations, getPool, healthCheck, getDatabaseStatus, executeTransaction } from './services/postgresql.js';
 import { resolveWorkspaceForUser } from './services/tenantService.js';
 import { persistAuditRecord } from './services/auditPersistenceService.js';
+import { getPublicBenchmarkData } from './services/benchmarkService.js';
 import { extractContactsFromHtml } from './lib/contactUtils.js';
 import { pingIndexNow } from './utils/indexNow.js';
 import featureRoutes from './routes/featureRoutes.js';
@@ -2259,6 +2260,17 @@ app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[benchmarks] Public benchmark query failed:', err?.message);
     res.status(500).json({ success: false, error: 'Benchmark data unavailable' });
+  }
+});
+
+// ── Public proof data (anonymised score improvements) ──────────────
+app.get('/api/public/proof', async (_req: Request, res: Response) => {
+  try {
+    const proof = await getPublicBenchmarkData();
+    res.json({ success: true, proof });
+  } catch (err: any) {
+    console.error('[proof] Public proof query failed:', err?.message);
+    res.status(500).json({ success: false, error: 'Proof data unavailable' });
   }
 });
 

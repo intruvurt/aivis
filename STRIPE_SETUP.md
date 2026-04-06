@@ -28,7 +28,7 @@
 ### **Signal Tier:**
 - **Monthly:** $149/month
 - **Yearly:** $1300/year ($110/month billed annually)
-- **Savings:** $72/year (~21% off)
+- **Savings:** $393/year (~22% off)
 - **Features:**
   - 110 scans/month
   - Track 5 competitors

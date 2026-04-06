@@ -16,6 +16,7 @@ import {
   verifyIntegrity,
   generateAgreementHtml,
   createAgreement,
+  hashContent,
 } from '../services/agreementService.js';
 
 const router = Router();
@@ -105,8 +106,34 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
 /* ── GET /:slug/verify - integrity check ───────────────────────────────────── */
 router.get('/:slug/verify', async (req: Request, res: Response) => {
   try {
-    const result = await verifyIntegrity(req.params.slug as string);
-    return res.json(result);
+    const agreement = await getAgreementBySlug(req.params.slug as string);
+    if (!agreement) {
+      return res.json({
+        found: false, locked: false, terms_intact: false, lock_intact: false,
+        status: 'not_found',
+      });
+    }
+
+    // Check terms hash integrity
+    const termsIntact = hashContent(agreement.terms_html) === agreement.terms_hash;
+
+    // Check lock hash integrity (only meaningful when fully signed)
+    const locked = !!agreement.locked_hash;
+    let lockIntact = false;
+    if (locked) {
+      const fullResult = await verifyIntegrity(agreement.slug);
+      lockIntact = fullResult.valid;
+    }
+
+    return res.json({
+      found: true,
+      locked,
+      terms_intact: termsIntact,
+      lock_intact: lockIntact,
+      status: agreement.status,
+      locked_at: agreement.locked_at ?? undefined,
+      locked_hash: agreement.locked_hash ?? undefined,
+    });
   } catch (err) {
     console.error('[Agreements] Verify error:', err);
     return res.status(500).json({ error: 'Internal server error.' });

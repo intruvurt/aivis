@@ -962,6 +962,23 @@ export async function runMigrations(): Promise<void> {
               visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
             `CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`,
+
+            // Partnership invoices – private PayPal payment tracking for partnership agreements
+            `CREATE TABLE IF NOT EXISTS partnership_invoices (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              agreement_slug VARCHAR(120) NOT NULL,
+              description TEXT NOT NULL,
+              amount_usd DECIMAL(10,2) NOT NULL CHECK (amount_usd > 0),
+              status VARCHAR(30) NOT NULL DEFAULT 'pending',
+              paypal_order_id VARCHAR(64),
+              created_by VARCHAR(320) NOT NULL,
+              paid_by_email VARCHAR(320),
+              paid_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_partnership_invoices_slug ON partnership_invoices(agreement_slug)`,
+            `CREATE INDEX IF NOT EXISTS idx_partnership_invoices_status ON partnership_invoices(status)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

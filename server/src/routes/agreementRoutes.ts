@@ -10,6 +10,10 @@
 
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
+import { getPool } from '../services/postgresql.js';
+import {
+  getPayPalAccessToken,
+} from '../services/paypalService.js';
 import {
   getAgreementBySlug,
   signAgreement,

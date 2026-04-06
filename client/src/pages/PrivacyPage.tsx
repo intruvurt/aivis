@@ -56,7 +56,7 @@ export default function PrivacyPage() {
             </ul>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
-            <p>Payments are processed entirely by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant). Intruvurt Labs never receives, processes, or stores full payment card numbers. We retain only: Stripe customer ID, subscription status, plan tier, billing period, and invoice history.</p>
+            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. Intruvurt Labs never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.4 Device and Technical Data</h3>
             <ul className="list-disc list-inside space-y-1 ml-2">
@@ -114,6 +114,7 @@ export default function PrivacyPage() {
               <tbody className="divide-y divide-white/5">
                 <tr><td className="py-2">OpenRouter</td><td className="py-2">AI model routing</td><td className="py-2">Page content, structural signals</td></tr>
                 <tr><td className="py-2">Stripe</td><td className="py-2">Payment processing</td><td className="py-2">Email, subscription tier</td></tr>
+                <tr><td className="py-2">PayPal</td><td className="py-2">Payment processing</td><td className="py-2">Email, subscription tier</td></tr>
                 <tr><td className="py-2">Render</td><td className="py-2">Application hosting</td><td className="py-2">Application logs, request metadata</td></tr>
                 <tr><td className="py-2">Neon</td><td className="py-2">PostgreSQL database</td><td className="py-2">All persisted application data</td></tr>
                 <tr><td className="py-2">Sentry</td><td className="py-2">Error tracking, performance</td><td className="py-2">Error context, anonymized replays (consent-based)</td></tr>

@@ -21,6 +21,7 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useTranslation } from "react-i18next";
 import { TIER_BRAND_PALETTE } from "../constants/uiPalette";
 import { SOFTWARE_APPLICATION_ID, buildFaqSchema, buildOrganizationRef, buildOrganizationSchema, buildWebPageSchema } from "../lib/seoSchema";
+import { PRICING } from "../../../shared/types";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -117,7 +118,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     headline: "See what AI gets wrong",
     body: "Run your first audits and expose the blockers stopping AI from trusting and citing your site.",
     includes: [
-      "3 audits/month",
+      `${PRICING.observer.limits.scans} audits/month`,
       "up to 3 pages per audit",
       "top 3 proven blockers",
       "limited evidence preview",
@@ -136,10 +137,10 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "team collaboration",
       "exportable reports",
       "limited competitor intelligence",
-      "60 audits/month",
+      `${PRICING.alignment.limits.scans} audits/month`,
     ],
     cta: "Fix what’s blocking you",
-    priceLabel: "$49/mo",
+    priceLabel: `$${PRICING.alignment.billing.monthly}/mo`,
   },
   signal: {
     headline: "Track who is beating you and why",
@@ -155,20 +156,20 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "full evidence ledger",
     ],
     cta: "Track your visibility",
-    priceLabel: "$149/mo",
+    priceLabel: `$${PRICING.signal.billing.monthly}/mo`,
   },
   scorefix: {
     headline: "Ship fixes, not guesses",
-    body: "Get exact remediation mapped to code, pages or structure and verify what improved after deployment.",
+    body: "Automated GitHub fix deployment. Scope scales based on complexity.",
     includes: [
       "exact remediation",
       "PR-ready outputs",
       "verification after fix",
       "MCP integration",
-      "600-1008 code lines max - varies by issue complexity",
+      "scope scales with issue complexity",
     ],
     cta: "Get the fix pack",
-    priceLabel: "$1499",
+    priceLabel: `$${PRICING.scorefix.billing.oneTime}`,
   },
 };
 
@@ -356,7 +357,7 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
     if (tier.key === "scorefix") {
       ensureFeature("Everything in Signal, plus:", /everything in signal/i);
       ensureFeature(
-        "Automated GitHub PR remediation via MCP (600-1008 code lines)",
+        "Automated GitHub PR remediation via MCP",
         /automated.*pr|github.*mcp|autopr/i
       );
     }
@@ -788,7 +789,7 @@ export default function PricingPage() {
           {
             "@type": "Offer",
             name: "Alignment [Core]",
-            price: "49",
+            price: String(PRICING.alignment.billing.monthly),
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing",
             availability: "https://schema.org/InStock",
@@ -799,7 +800,7 @@ export default function PricingPage() {
           {
             "@type": "Offer",
             name: "Signal [Pro]",
-            price: "29",
+            price: String(PRICING.signal.billing.monthly),
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing",
             availability: "https://schema.org/InStock",
@@ -810,13 +811,13 @@ export default function PricingPage() {
           {
             "@type": "Offer",
             name: "Score Fix [AutoFix PR]",
-            price: "299",
+            price: String(PRICING.scorefix.billing.oneTime),
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Automated GitHub PR remediation via MCP connections: 250-credit pack at 600-1008 code lines with evidence-linked implementation",
+              "Automated GitHub PR remediation via MCP. Scope scales based on issue complexity.",
           },
         ],
       },

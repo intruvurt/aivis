@@ -7,16 +7,12 @@
  * - Checkout session helpers
  */
 
-import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
+import { PRICING, TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
 
 // ============================================================================
-// STRIPE PRICE CONFIGURATION
+// STRIPE PRICE CONFIGURATION  (all amounts derived from PRICING contract)
 // ============================================================================
 
-/**
- * All available pricing tiers with their Stripe configuration.
- * Amounts are in cents (USD).
- */
 export const STRIPE_PRICING = {
   // FREE TIER (no Stripe involvement)
   free: {
@@ -27,60 +23,60 @@ export const STRIPE_PRICING = {
     mode: null,
     metadata: {
       tier_key: 'free',
-      audits_per_month: 3,
+      audits_per_month: PRICING.observer.limits.scans,
       projects_max: 1,
     },
   },
 
-  // OBSERVER TIER (Free - new naming)
+  // OBSERVER TIER (Free)
   observer: {
-    name: 'Observer',
+    name: PRICING.observer.name,
     lookupKey: null,
     priceId: null,
     amountCents: 0,
     mode: 'freemium',
     metadata: {
       tier_key: 'observer',
-      audits_per_month: 3,
-      competitors: 0,
-      citation_queries: 10,
+      audits_per_month: PRICING.observer.limits.scans,
+      competitors: PRICING.observer.limits.competitors,
+      citation_queries: PRICING.observer.limits.citations,
     },
   },
 
-  // ALIGNMENT TIER - $49/month or $348/year (~22% off)
+  // ALIGNMENT TIER — $49/month or $458/year (22% off)
   alignment: {
-    name: 'Alignment',
+    name: PRICING.alignment.name,
     lookupKey: 'alignment_monthly',
     priceId: process.env.STRIPE_ALIGNMENT_MONTHLY_PRICE_ID,
-    amountCents: 900, // $49/month
+    amountCents: PRICING.alignment.billing.monthly * 100,
     yearlyPriceId: process.env.STRIPE_ALIGNMENT_YEARLY_PRICE_ID,
-    yearlyAmountCents: 8400, // $348/year ($7/mo billed annually)
+    yearlyAmountCents: PRICING.alignment.billing.yearly * 100,
     mode: 'subscription',
     metadata: {
       tier_key: 'alignment',
-      audits_per_month: 60,
-      competitors: 2,
-      citation_queries: 100,
+      audits_per_month: PRICING.alignment.limits.scans,
+      competitors: PRICING.alignment.limits.competitors,
+      citation_queries: PRICING.alignment.limits.citations,
       mention_digests: true,
       reverse_engineer: true,
       niche_discovery: true,
     },
   },
 
-  // SIGNAL TIER - $149/month or $1300/year (~21% off)
+  // SIGNAL TIER — $149/month or $1394/year (22% off)
   signal: {
-    name: 'Signal',
+    name: PRICING.signal.name,
     lookupKey: 'signal_monthly',
     priceId: process.env.STRIPE_SIGNAL_MONTHLY_PRICE_ID,
-    amountCents: 2900, // $149/month
+    amountCents: PRICING.signal.billing.monthly * 100,
     yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
-    yearlyAmountCents: 11000, // $1300/year ($110/mo billed annually)
+    yearlyAmountCents: PRICING.signal.billing.yearly * 100,
     mode: 'subscription',
     metadata: {
       tier_key: 'signal',
-      audits_per_month: 110,
-      competitors: 5,
-      citation_queries: 200,
+      audits_per_month: PRICING.signal.limits.scans,
+      competitors: PRICING.signal.limits.competitors,
+      citation_queries: PRICING.signal.limits.citations,
       api_access: true,
       white_label: true,
       triple_check: true,
@@ -90,18 +86,18 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SCORE FIX TIER - one-time $1499 remediation purchase
+  // SCOREFIX — one-time $299 remediation purchase
   scorefix: {
-    name: 'Score Fix',
-    lookupKey: 'scorefix_monthly',
+    name: PRICING.scorefix.name,
+    lookupKey: 'scorefix_onetime',
     priceId: process.env.STRIPE_SCOREFIX_PRICE_ID || process.env.STRIPE_SCOREFIX_MONTHLY_PRICE_ID,
-    amountCents: 29900,
+    amountCents: PRICING.scorefix.billing.oneTime * 100,
     mode: 'payment',
     metadata: {
       tier_key: 'scorefix',
-      audits_per_month: 15,
-      competitors: 10,
-      citation_queries: 400,
+      audits_per_month: PRICING.scorefix.limits.scans,
+      competitors: PRICING.scorefix.limits.competitors,
+      citation_queries: PRICING.scorefix.limits.citations,
       api_access: true,
       white_label: true,
       scorefix_mode: true,

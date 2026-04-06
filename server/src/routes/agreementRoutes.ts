@@ -31,7 +31,7 @@ const router = Router();
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0].trim().replace(/\/+$/, '');
 
-/* ── GET /:slug - view agreement (gated by access token) ───────────────────── */
+/* ── GET /:slug - view agreement (gated by access token + party email) ──────── */
 router.get('/:slug', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug as string);
@@ -41,6 +41,18 @@ router.get('/:slug', async (req: Request, res: Response) => {
     const token = req.query.token as string | undefined;
     if (agreement.access_token && token !== agreement.access_token) {
       return res.status(403).json({ error: 'Access denied. A valid access token is required.' });
+    }
+
+    // Email gating: require ?email= matching one of the party emails
+    const email = (req.query.email as string | undefined)?.trim().toLowerCase();
+    const partyAEmail = agreement.party_a_email?.toLowerCase();
+    const partyBEmail = agreement.party_b_email?.toLowerCase();
+
+    if (!email || (email !== partyAEmail && email !== partyBEmail)) {
+      return res.status(403).json({
+        error: 'Access denied. A valid party email is required.',
+        email_required: true,
+      });
     }
 
     // Lazy expiry reminder check (fire-and-forget)
@@ -299,7 +311,7 @@ router.get('/r/:code', async (req: Request, res: Response) => {
     const result = await trackReferralVisit(req.params.code as string, ip, ua, referrer);
     if (!result) return res.status(404).json({ error: 'Invite link not found or expired.' });
 
-    const redirectUrl = `${FRONTEND_URL}/partnership-terms?token=${encodeURIComponent(result.access_token ?? '')}&ref=${encodeURIComponent(req.params.code)}`;
+    const redirectUrl = `${FRONTEND_URL}/partnership-terms?token=${encodeURIComponent(result.access_token ?? '')}&ref=${encodeURIComponent(String(req.params.code))}`;
 
     // If request accepts JSON (client fetch), return JSON. Otherwise 302 redirect (direct browser navigation).
     if (req.headers.accept?.includes('application/json')) {

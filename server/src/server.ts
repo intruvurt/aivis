@@ -41,7 +41,7 @@ import schemaGeneratorRoutes from './routes/schemaGeneratorRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';
 import { getPricingInfo } from './controllers/paymentController.js';
 import { getUserById } from './models/User.js';
-import { BRAG_TRAIL_LABEL, TIER_LIMITS, uiTierFromCanonical, meetsMinimumTier, getTextSummaryDepth, getTierDisplayName } from '../../shared/types.js';
+import { BRAG_TRAIL_LABEL, TIER_LIMITS, PRICING, uiTierFromCanonical, meetsMinimumTier, getTextSummaryDepth, getTierDisplayName } from '../../shared/types.js';
 import type { CanonicalTier, LegacyTier, StrictRubricSystem, SchemaMarkup } from '../../shared/types.js';
 import { verifyUserToken } from './lib/utils/jwt.js';
 import { assessCitationStrength } from './services/citationStrength.js';
@@ -129,6 +129,7 @@ import orgRoutes from './routes/orgRoutes.js';
 import v1Routes from './routes/v1Routes.js';
 import v1WebhookRoutes from './routes/v1WebhookRoutes.js';
 import agreementRoutes from './routes/agreementRoutes.js';
+import paypalRoutes from './routes/paypalRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
@@ -939,7 +940,7 @@ const publicToolLimiter = rateLimit({
 // IMPORTANT: Stripe webhook must NOT pass through express.json/urlencoded.
 // The webhook route itself (in paymentRoutes.ts) uses express.raw().
 // ─────────────────────────────────────────────────────────────────────────────
-const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook', '/api/github-app/webhook']);
+const STRIPE_WEBHOOK_PATHS = new Set(['/api/payment/webhook', '/api/billing/webhook', '/api/stripe/webhook', '/api/github-app/webhook', '/api/paypal/webhook']);
 
 const JSON_MW = express.json({
   limit: '2mb',
@@ -1024,6 +1025,7 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/billing', paymentRoutes);
 app.use('/api/stripe', paymentRoutes);
+app.use('/api/paypal', paypalRoutes);
 app.use('/api/queue', auditQueueRoutes);
 app.get('/api/pricing', getPricingInfo);
 app.use('/api/competitors', competitorRoutes);
@@ -7036,6 +7038,14 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     // ── Dynamic OCR fallback: if scrape captured <60% and Python cross-check ≥85%, ──
     // ── augment body with OCR-extracted content so AI models get the full picture. ──
+    // NOTE: ocrValidationResult is populated later by the OCR validation block (~line 7600).
+    // It must be declared here (before first read) with a safe default to avoid TDZ errors.
+    let ocrValidationResult: {
+      ocrData: OcrPageResult | null;
+      crossCheck: Awaited<ReturnType<typeof ocrCrossCheck>> | null;
+      usePythonPayload: boolean;
+    } = { ocrData: null, crossCheck: null, usePythonPayload: false };
+
     let bodySnippet: string;
     let ocrFallbackApplied = false;
     if (ocrValidationResult.usePythonPayload && sd.ocrData) {
@@ -7590,11 +7600,6 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     // ── Signal+ OCR parallel validation ─────────────────────────────────
     // For Signal/scorefix tiers: run OCR content validation in parallel,
     // cross-check with Python, and inject OCR evidence for AI model mapping.
-    let ocrValidationResult: {
-      ocrData: OcrPageResult | null;
-      crossCheck: Awaited<ReturnType<typeof ocrCrossCheck>> | null;
-      usePythonPayload: boolean;
-    } = { ocrData: null, crossCheck: null, usePythonPayload: false };
 
     if (isTripleCheck && sd.ocrData && sd.ocrData.images.length > 0) {
       try {
@@ -10616,6 +10621,26 @@ process.on('unhandledRejection', (reason) => {
 
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
+
+    // Dev-only: validate pricing contract consistency
+    if (NODE_ENV === 'development') {
+      import('./config/stripeConfig.js').then(({ default: STRIPE_PRICING }) => {
+        const driftErrors: string[] = [];
+        const check = (label: string, actual: number, expected: number) => {
+          if (actual !== expected) driftErrors.push(`${label}: got ${actual}, expected ${expected}`);
+        };
+        check('alignment monthly cents', STRIPE_PRICING.alignment?.amountCents, PRICING.alignment.billing.monthly * 100);
+        check('alignment yearly cents', STRIPE_PRICING.alignment?.yearlyAmountCents, PRICING.alignment.billing.yearly * 100);
+        check('signal monthly cents', STRIPE_PRICING.signal?.amountCents, PRICING.signal.billing.monthly * 100);
+        check('signal yearly cents', STRIPE_PRICING.signal?.yearlyAmountCents, PRICING.signal.billing.yearly * 100);
+        check('scorefix one-time cents', STRIPE_PRICING.scorefix?.amountCents, PRICING.scorefix.billing.oneTime * 100);
+        if (driftErrors.length) {
+          console.error('[Pricing Drift] Stripe config does not match PRICING contract:\n  ' + driftErrors.join('\n  '));
+        } else {
+          console.log('[Pricing] All Stripe amounts match PRICING contract ✓');
+        }
+      });
+    }
   });
 
   // Bootstrap scheduled citation ranking jobs from DB (non-blocking)

@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
+import { PRICING, annualMonthlyPrice } from '../../../shared/types';
 import {
   buildOrganizationSchema,
   buildWebSiteSchema,
@@ -49,17 +50,17 @@ const LANDING_STRUCTURED_DATA = [
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
-    { name: 'Observer (Free) – 3 audits/month', path: '/pricing' },
-    { name: 'Alignment (Core) – 60 audits/month – $49/mo', path: '/pricing' },
-    { name: 'Signal (Pro) – 110 audits/month – $149/mo', path: '/pricing' },
+    { name: `Observer (Free) – ${PRICING.observer.limits.scans} audits/month`, path: '/pricing' },
+    { name: `Alignment (Core) – ${PRICING.alignment.limits.scans} audits/month – $${PRICING.alignment.billing.monthly}/mo`, path: '/pricing' },
+    { name: `Signal (Pro) – ${PRICING.signal.limits.scans} audits/month – $${PRICING.signal.billing.monthly}/mo`, path: '/pricing' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',
     description: 'AI visibility intelligence platform - ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer (Free)', price: '0' },
-      { name: 'Alignment (Core)', price: '9' },
-      { name: 'Signal (Pro)', price: '29' },
+      { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly) },
+      { name: 'Signal (Pro)', price: String(PRICING.signal.billing.monthly) },
     ],
   }),
 ];
@@ -123,21 +124,27 @@ function NeuralCityIllustration() {
 
 const TIERS = [
   {
-    key: 'observer', name: 'Observer', subtitle: 'Free', monthlyPrice: 0, annualMonthlyPrice: 0, scans: 3,
-    color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null,
-    features: ['3 audits / month', 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis', 'Public share links'],
+    key: 'observer' as const, name: PRICING.observer.name, subtitle: 'Free',
+    monthlyPrice: PRICING.observer.billing.monthly, annualMonthlyPrice: PRICING.observer.billing.monthly,
+    scans: PRICING.observer.limits.scans,
+    color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null as string | null,
+    features: [`${PRICING.observer.limits.scans} audits / month`, 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis', 'Public share links'],
   },
   {
-    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 9, annualMonthlyPrice: 7, scans: 60,
-    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular',
-    features: ['60 audits / month', 'Competitor tracking', 'Citation workflows', 'CSV & PDF exports', 'Force-refresh audits', 'Shareable report links', 'Report history'],
+    key: 'alignment' as const, name: PRICING.alignment.name, subtitle: 'Core',
+    monthlyPrice: PRICING.alignment.billing.monthly, annualMonthlyPrice: annualMonthlyPrice('alignment'),
+    scans: PRICING.alignment.limits.scans,
+    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular' as string | null,
+    features: [`${PRICING.alignment.limits.scans} audits / month`, 'Competitor tracking', 'Citation workflows', 'CSV & PDF exports', 'Force-refresh audits', 'Shareable report links', 'Report history'],
   },
   {
-    key: 'signal', name: 'Signal', subtitle: 'Pro', monthlyPrice: 29, annualMonthlyPrice: 23, scans: 110,
-    color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Full power',
-    features: ['110 audits / month', 'Triple-Check AI Pipeline (3 models)', 'Expanded competitor tracking', 'Advanced citation testing', 'AI Citation Tracker', 'API access + white-label reports', 'Scheduled rescans'],
+    key: 'signal' as const, name: PRICING.signal.name, subtitle: 'Pro',
+    monthlyPrice: PRICING.signal.billing.monthly, annualMonthlyPrice: annualMonthlyPrice('signal'),
+    scans: PRICING.signal.limits.scans,
+    color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Full power' as string | null,
+    features: [`${PRICING.signal.limits.scans} audits / month`, 'Triple-Check AI Pipeline (3 models)', 'Expanded competitor tracking', 'Advanced citation testing', 'AI Citation Tracker', 'API access + white-label reports', 'Scheduled rescans'],
   },
-] as const;
+];
 
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {

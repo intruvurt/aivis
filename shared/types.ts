@@ -196,9 +196,49 @@ export interface TierLimits {
   maxProjects: number;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+ * PRICING CONTRACT — SINGLE SOURCE OF TRUTH
+ * ──────────────────────────────────────────────────────────────────────────
+ * Every number that appears in UI, checkout, Stripe, PayPal, or limit
+ * enforcement MUST be derived from this object. If a price or limit exists
+ * anywhere else in the codebase, it is a bug.
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+export const PRICING = {
+  observer: {
+    name: 'Observer',
+    billing: { monthly: 0, yearly: 0 },
+    limits: { scans: 3, competitors: 0, citations: 0 },
+  },
+  alignment: {
+    name: 'Alignment',
+    billing: { monthly: 49, yearly: 458, yearlyDiscount: 0.22 },
+    limits: { scans: 60, competitors: 1, citations: 50 },
+  },
+  signal: {
+    name: 'Signal',
+    billing: { monthly: 149, yearly: 1394, yearlyDiscount: 0.22 },
+    limits: { scans: 110, competitors: 5, citations: 100 },
+  },
+  scorefix: {
+    name: 'ScoreFix AutoFix PR',
+    billing: { oneTime: 299 },
+    credits: 250,
+    /** Output range (code lines) varies by issue complexity — internal only */
+    output: { low: 1000, medium: 700, high: 400 },
+    limits: { scans: 15, competitors: 5, citations: 100 },
+  },
+} as const;
+
+/** Effective monthly price when billed annually (derived from PRICING) */
+export function annualMonthlyPrice(tier: 'alignment' | 'signal'): number {
+  const p = PRICING[tier].billing;
+  return Math.round((p.yearly / 12) * 100) / 100;
+}
+
 export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
   observer: {
-    scansPerMonth: 3, pagesPerScan: 3, competitors: 0, cacheDays: 7,
+    scansPerMonth: PRICING.observer.limits.scans, pagesPerScan: 3, competitors: PRICING.observer.limits.competitors, cacheDays: 7,
     hasExports: false, hasForceRefresh: false, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: false, hasReportHistory: false, hasShareableLink: false,
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
@@ -211,7 +251,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },
   alignment: {
-    scansPerMonth: 60, pagesPerScan: 3, competitors: 2, cacheDays: 30,
+    scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 3, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
@@ -224,7 +264,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
   signal: {
-    scansPerMonth: 110, pagesPerScan: 10, competitors: 5, cacheDays: 90,
+    scansPerMonth: PRICING.signal.limits.scans, pagesPerScan: 10, competitors: PRICING.signal.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -237,7 +277,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 10,
   },
   scorefix: {
-    scansPerMonth: 15, pagesPerScan: 10, competitors: 5, cacheDays: 90,
+    scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 10, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -261,7 +301,7 @@ export function getTierLimitsForUser(tier: CanonicalTier | LegacyTier): TierLimi
 /** Alias for getTierLimitsForUser */
 export const getTierLimits = getTierLimitsForUser;
 
-/* ── Tier pricing ───────────────────────────────────────────────────────── */
+/* ── Tier pricing (derived from PRICING) ────────────────────────────────── */
 export type TierBillingModel = 'free' | 'subscription' | 'one_time';
 
 export interface TierPricing {
@@ -272,10 +312,10 @@ export interface TierPricing {
 }
 
 export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>> = {
-  observer:   { monthlyUsd: 0,   yearlyUsd: 0,     oneTimeUsd: 0,   billingModel: 'free' },
-  alignment:  { monthlyUsd: 9,   yearlyUsd: 84,    oneTimeUsd: 0,   billingModel: 'subscription' },
-  signal:     { monthlyUsd: 29,  yearlyUsd: 276,   oneTimeUsd: 0,   billingModel: 'subscription' },
-  scorefix:   { monthlyUsd: 0,   yearlyUsd: 0,     oneTimeUsd: 299, billingModel: 'one_time' },
+  observer:   { monthlyUsd: PRICING.observer.billing.monthly,    yearlyUsd: PRICING.observer.billing.yearly,    oneTimeUsd: 0,                        billingModel: 'free' },
+  alignment:  { monthlyUsd: PRICING.alignment.billing.monthly,   yearlyUsd: PRICING.alignment.billing.yearly,   oneTimeUsd: 0,                        billingModel: 'subscription' },
+  signal:     { monthlyUsd: PRICING.signal.billing.monthly,      yearlyUsd: PRICING.signal.billing.yearly,      oneTimeUsd: 0,                        billingModel: 'subscription' },
+  scorefix:   { monthlyUsd: 0,                                   yearlyUsd: 0,                                  oneTimeUsd: PRICING.scorefix.billing.oneTime, billingModel: 'one_time' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */

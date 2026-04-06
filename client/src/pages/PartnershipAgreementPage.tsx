@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck, Clock, Lock, Mail, KeyRound } from "lucide-react";
+import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck, Clock, Lock, Mail, KeyRound, UserCheck } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { API_URL } from "../config";
@@ -60,6 +60,11 @@ export default function PartnershipAgreementPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [emailRequired, setEmailRequired] = useState(false);
+  const [gateEmail, setGateEmail] = useState("");
+  const [gateEmailError, setGateEmailError] = useState<string | null>(null);
+  const [gateEmailLoading, setGateEmailLoading] = useState(false);
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
   const [signingParty, setSigningParty] = useState<"a" | "b" | null>(null);
   const [signatureName, setSignatureName] = useState("");
   const [signError, setSignError] = useState<string | null>(null);
@@ -77,12 +82,26 @@ export default function PartnershipAgreementPage() {
 
   const { token } = getUrlParams();
 
-  const fetchAgreement = useCallback(async () => {
+  const fetchAgreement = useCallback(async (emailOverride?: string) => {
+    const emailParam = emailOverride || verifiedEmail;
     try {
-      const tokenParam = token ? `?token=${encodeURIComponent(token)}` : "";
-      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}${tokenParam}`);
+      let url = `${API_URL}/api/agreements/${AGREEMENT_SLUG}`;
+      const params = new URLSearchParams();
+      if (token) params.set("token", token);
+      if (emailParam) params.set("email", emailParam);
+      const qs = params.toString();
+      if (qs) url += `?${qs}`;
+
+      const res = await fetch(url);
       if (res.status === 403) {
-        setAccessDenied(true);
+        const data = await res.json().catch(() => ({}));
+        if (data.email_required) {
+          setEmailRequired(true);
+          setAccessDenied(false);
+        } else {
+          setAccessDenied(true);
+          setEmailRequired(false);
+        }
         return;
       }
       if (res.status === 404) {
@@ -93,14 +112,38 @@ export default function PartnershipAgreementPage() {
       const data: AgreementData = await res.json();
       setAgreement(data);
       setError(null);
+      setAccessDenied(false);
+      setEmailRequired(false);
     } catch (err: any) {
       setError(err.message || "Failed to load agreement.");
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, verifiedEmail]);
 
   useEffect(() => { fetchAgreement(); }, [fetchAgreement]);
+
+  const handleEmailGate = async () => {
+    const email = gateEmail.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      setGateEmailError("Enter a valid email address.");
+      return;
+    }
+    setGateEmailLoading(true);
+    setGateEmailError(null);
+    setVerifiedEmail(email);
+    await fetchAgreement(email);
+    setGateEmailLoading(false);
+    // If still emailRequired, the email didn't match
+    // Check state after fetchAgreement completes
+  };
+
+  // After fetchAgreement with email, if still emailRequired → wrong email
+  useEffect(() => {
+    if (verifiedEmail && emailRequired && !loading) {
+      setGateEmailError("This email is not associated with this agreement.");
+    }
+  }, [verifiedEmail, emailRequired, loading]);
 
   const handleRequestOtp = async () => {
     if (!signingParty) return;
@@ -184,12 +227,49 @@ export default function PartnershipAgreementPage() {
           </div>
         )}
 
-        {accessDenied && !loading && (
+        {accessDenied && !loading && !emailRequired && (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-8 text-center">
             <Lock className="inline-block mb-3 text-red-400" size={32} />
             <h2 className="text-xl font-semibold text-red-300 mb-2">Access Denied</h2>
             <p className="text-white/50 text-sm">This agreement page is private. A valid access token is required.</p>
             <p className="text-white/40 text-xs mt-3">If you received an invite link, use the full URL provided. Otherwise, contact partners@aivis.biz.</p>
+          </div>
+        )}
+
+        {emailRequired && !loading && !agreement && (
+          <div className="rounded-2xl border border-[#7c5cff]/30 bg-[rgba(18,18,26,0.96)] p-8 max-w-md mx-auto">
+            <div className="text-center mb-6">
+              <UserCheck className="inline-block mb-3 text-[#7c5cff]" size={36} />
+              <h2 className="text-xl font-semibold text-white mb-2">Verify Your Identity</h2>
+              <p className="text-white/50 text-sm">
+                This agreement is restricted to the named parties. Enter the email address associated with your role in this contract.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <input
+                type="email"
+                value={gateEmail}
+                onChange={(e) => { setGateEmail(e.target.value); setGateEmailError(null); }}
+                onKeyDown={(e) => { if (e.key === "Enter") handleEmailGate(); }}
+                placeholder="your@email.com"
+                className="w-full bg-[#171722] border border-[#2a2f3a] rounded-lg px-4 py-3 text-white placeholder:text-white/25 focus:border-[#7c5cff] focus:outline-none transition-colors"
+                autoFocus
+              />
+              {gateEmailError && (
+                <p className="text-red-400 text-xs">{gateEmailError}</p>
+              )}
+              <button
+                onClick={handleEmailGate}
+                disabled={gateEmailLoading || !gateEmail.trim()}
+                className="w-full px-5 py-3 rounded-lg bg-[#7c5cff] text-white font-medium text-sm hover:bg-[#6a4ce0] disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              >
+                {gateEmailLoading ? <Loader2 className="animate-spin" size={16} /> : <Mail size={16} />}
+                {gateEmailLoading ? "Verifying..." : "Access Agreement"}
+              </button>
+              <p className="text-white/30 text-xs text-center mt-2">
+                Only emails registered as Party A or Party B in this contract are accepted.
+              </p>
+            </div>
           </div>
         )}
 

@@ -988,7 +988,7 @@ const SettingsPage: React.FC = () => {
                         {profileDisplayAvatar ? (
                           <img
                             src={profileDisplayAvatar}
-                            alt="Avatar"
+                            alt="Profile avatar"
                             className="h-full w-full object-cover"
                           />
                         ) : (

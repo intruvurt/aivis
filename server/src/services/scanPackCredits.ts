@@ -20,23 +20,23 @@ export const SCAN_PACKS: Record<ScanPackKey, { key: ScanPackKey; scans: number; 
   scan_pack_75: {
     key: 'scan_pack_75',
     scans: 75,
-    amountCents: 10680,
+    amountCents: 2900,
     priceId: process.env.STRIPE_SCAN_PACK_75_PRICE_ID || process.env.STRIPE_SCAN_PACK_70_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',
-    allowedTiers: ['alignment', 'signal', 'scorefix'],
+    allowedTiers: ['alignment', 'signal', 'autofix pr'],
   },
   scan_pack_200: {
     key: 'scan_pack_200',
     scans: 200,
     amountCents: 8900,
     priceId: process.env.STRIPE_SCAN_PACK_200_PRICE_ID || process.env.STRIPE_SCAN_PACK_175_PRICE_ID || process.env.STRIPE_SCAN_PACK_100_PRICE_ID || 'price_1T8RotRYzQALwOPqzBrektqy',
-    allowedTiers: ['signal', 'scorefix'],
+    allowedTiers: ['signal', 'autofix pr'],
   },
 };
 
 const PACK_BONUS_PERCENT_BY_TIER: Record<string, number> = {
-  signal: 20,
+  signal: 10,
   alignment: 15,
-  scorefix: 40,
+  'autofix pr': 10,
 };
 
 export function getPackBonusPercentForTier(tier: string | null | undefined): number {

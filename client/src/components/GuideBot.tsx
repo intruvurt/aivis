@@ -208,7 +208,7 @@ export default function GuideBot() {
             className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
             aria-label="Open BIX"
           >
-            <img src="/bix-agent.png" alt="BIX" className="w-full h-full object-cover" />
+            <img src="/bix-agent.png" alt="BIX guide agent" className="w-full h-full object-cover" />
             <div className="absolute bottom-0 inset-x-0 bg-black/70 py-0.5">
               <span className="block text-center text-[9px] font-bold tracking-[0.15em] text-cyan-300">BIX</span>
             </div>
@@ -233,7 +233,7 @@ export default function GuideBot() {
             <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-white/20 to-white/12 border-b border-white/12 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-white/15 shrink-0">
-                  <img src="/bix-agent.png" alt="BIX" className="w-full h-full object-cover" />
+                  <img src="/bix-agent.png" alt="BIX guide agent" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white flex items-center gap-1.5">

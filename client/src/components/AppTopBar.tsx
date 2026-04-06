@@ -103,7 +103,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         >
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600/30 to-indigo-600/20 border border-blue-500/25 flex items-center justify-center text-[11px] font-bold text-blue-300">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="" className="h-full w-full rounded-lg object-cover" />
+              <img src={avatarUrl} alt="User avatar" className="h-full w-full rounded-lg object-cover" />
             ) : (
               initials
             )}

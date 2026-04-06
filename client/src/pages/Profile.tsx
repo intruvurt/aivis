@@ -161,7 +161,7 @@ export default function ProfilePage() {
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
-                  alt=""
+                  alt="Profile photo"
                   className={`h-20 w-20 rounded-2xl object-cover ring-2 ${tc.ring} ring-offset-2 ring-offset-charcoal-deep`}
                 />
               ) : (

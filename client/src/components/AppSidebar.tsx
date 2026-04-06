@@ -150,7 +150,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
           <div className="aurora-user-pill-inner">
             <div className="aurora-user-avatar">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                <img src={avatarUrl} alt="User avatar" className="h-full w-full object-cover" />
               ) : (
                 initials
               )}

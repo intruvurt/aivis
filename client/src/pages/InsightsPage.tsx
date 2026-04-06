@@ -35,7 +35,7 @@ export default function InsightsPage() {
       maxWidthClass="max-w-5xl"
     >
         <div className="mb-10 w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative">
-          <img src="/images/abstract-art-bg-image.png" alt="Abstract Art Background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+          <img src="/images/abstract-art-bg-image.png" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
           <div className="relative p-8 px-6 sm:px-12 flex flex-col items-center justify-center bg-gradient-to-r from-blue-900/40 to-indigo-900/40 z-10">
              <img src="/images/ad-creative.png" alt="AiVIS strategy and insights creative promo" className="max-w-full h-auto max-h-[300px] object-contain mb-4" />
              <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-blue-300 to-indigo-400 bg-clip-text text-transparent mb-2">Strategy &amp; Insights</h1>

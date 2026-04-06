@@ -1451,7 +1451,7 @@ function BrandingPanel() {
         <label className="block text-xs text-white/60 mb-1.5">Company Logo</label>
         <div className="flex items-center gap-4">
           {logoPreview ? (
-            <img src={logoPreview} alt="Logo" className="h-12 w-auto rounded-lg border border-white/10 object-contain bg-white/5 px-2" />
+            <img src={logoPreview} alt="Company logo preview" className="h-12 w-auto rounded-lg border border-white/10 object-contain bg-white/5 px-2" />
           ) : (
             <div className="h-12 w-12 rounded-lg border border-white/10 bg-charcoal-deep flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white/30" />

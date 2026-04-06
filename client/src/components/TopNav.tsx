@@ -628,7 +628,7 @@ export default function TopNav() {
                 <button type="button" aria-label="User menu" aria-expanded={menuOpen} aria-haspopup="menu" onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors">
                   <div className="w-7 h-7 social-icon-chip bg-gradient-to-br from-white/28 to-white/14 flex items-center justify-center">
                     {avatarUrl ? (
-                      <img src={avatarUrl} alt="" className="h-full w-full rounded-full object-cover" />
+                      <img src={avatarUrl} alt="User avatar" className="h-full w-full rounded-full object-cover" />
                     ) : (
                       <span className="text-[10px] font-bold text-white">{initials}</span>
                     )}

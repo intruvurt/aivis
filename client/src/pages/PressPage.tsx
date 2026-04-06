@@ -184,6 +184,25 @@ export default function PressPage() {
           </div>
         </section>
 
+        {/* Listed On */}
+        <section className="mx-auto max-w-4xl py-12">
+          <h3 className="text-2xl brand-title mb-8">Listed On</h3>
+          <div className="flex flex-wrap gap-6 items-center">
+            <a
+              href="https://codetrendy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="https://codetrendy.com/api/badge?style=dark"
+                alt="Listed on codetrendy.com"
+                height={54}
+                loading="lazy"
+              />
+            </a>
+          </div>
+        </section>
+
         {/* Contact */}
         <section className="mx-auto max-w-4xl py-12 text-center">
           <p className="text-white/55 text-sm">

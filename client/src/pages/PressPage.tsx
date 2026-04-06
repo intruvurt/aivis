@@ -21,6 +21,22 @@ const PRESS_STRUCTURED_DATA = [
 const FEATURED_POSTS = [
   {
     date: "Apr 2026",
+    platform: "Substack",
+    title: "Best Startup Launch Platforms for AI Visibility and Authority in 2026",
+    description:
+      "The 10 platforms that still convert founder work into real visibility — and why AI readability now matters as much as human attention.",
+    url: "https://dobleduche.substack.com/p/best-startup-launch-platforms-for",
+  },
+  {
+    date: "Apr 2026",
+    platform: "Blogger",
+    title: "The 10 Platforms That Still Move Builders in the TechCrunch Lane",
+    description:
+      "Full deep-dive into TechCrunch, Product Hunt, Hacker News, Y Combinator, and the media surfaces that still shape startup perception in the age of AI answers.",
+    url: "https://intruvurt.blogspot.com/2026/04/platforms-that-move-builders-ai-visibility.html",
+  },
+  {
+    date: "Apr 2026",
     platform: "LinkedIn",
     title: "AiVIS audits how AI systems read a website",
     description:

@@ -92,9 +92,9 @@ export default function TermsPage() {
             <p>The Service offers four tiers:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Limited monthly scans with core audit capabilities.</li>
-              <li><strong className="text-white">Alignment ($49/mo or $348/yr):</strong> Expanded scan allowance, exports, force refresh, competitor tracking, mention digests.</li>
-              <li><strong className="text-white">Signal ($149/mo or $1300/yr):</strong> Full platform access including triple-check workflows, citation testing, team workspaces, API, webhooks, and scheduled rescans.</li>
-              <li><strong className="text-white">Score Fix ($1499 one-time):</strong> Scan pack with automated remediation, evidence-linked pull request generation, and batch operations.</li>
+              <li><strong className="text-white">Alignment ($49/mo or $458/yr):</strong> Expanded scan allowance, exports, force refresh, competitor tracking, mention digests.</li>
+              <li><strong className="text-white">Signal ($149/mo or $1,394/yr):</strong> Full platform access including triple-check workflows, citation testing, team workspaces, API, webhooks, and scheduled rescans.</li>
+              <li><strong className="text-white">Score Fix ($299 one-time):</strong> 250-credit pack with automated remediation, evidence-linked pull request generation, and batch operations.</li>
             </ul>
             <p className="mt-2">Subscription payments are processed by <strong className="text-white">Stripe, Inc.</strong> Intruvurt Labs never receives or stores full payment card numbers. Subscriptions auto-renew at the end of each billing period unless canceled before the renewal date.</p>
             <p className="mt-2"><strong className="text-white">Refund policy:</strong> Refund requests are evaluated on a case-by-case basis if submitted within 14 calendar days of the initial charge. After this period, all charges are final. Score Fix purchases are non-refundable once any scan credits have been consumed.</p>

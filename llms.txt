@@ -86,9 +86,9 @@ Scoring dimensions:
 ## Pricing (as of 2026)
 
 Observer (Free): $0/month, 3 scans/month, single-page audit, AI visibility score
-Alignment (Core): $49/month ($348/year), 60 scans/month, multi-page crawl (50 pages), competitor tracking, keyword intelligence, brand mention scanning
-Signal (Pro): $149/month ($1300/year), 110 scans/month, triple-check AI pipeline (3 models), multi-page crawl (250 pages), citation testing, all Alignment features
-Score Fix (AutoFix PR): $1499 one-time, 15 scans, automated GitHub pull requests with code patches, self-healing fix pipeline
+Alignment (Core): $49/month ($458/year), 60 scans/month, multi-page crawl (50 pages), competitor tracking, keyword intelligence, brand mention scanning
+Signal (Pro): $149/month ($1,394/year), 110 scans/month, triple-check AI pipeline (3 models), multi-page crawl (250 pages), citation testing, all Alignment features
+Score Fix (AutoFix PR): $299 one-time, 250 credits, automated GitHub pull requests with code patches, self-healing fix pipeline
 
 ## Frequently asked questions
 

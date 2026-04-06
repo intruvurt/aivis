@@ -218,7 +218,7 @@ export default function DisclosuresPage() {
           {/* ── 14 Score Fix ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">14. Score Fix and Automated Remediation</h2>
-            <p>Score Fix ($1499 one-time) includes automated code-level remediation that can generate pull requests with evidence-linked fixes.</p>
+            <p>Score Fix ($299 one-time) includes automated code-level remediation that can generate pull requests with evidence-linked fixes.</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Generated code changes are <strong className="text-white">suggestions</strong>, not guaranteed fixes. Always review auto-generated pull requests before merging.</li>
               <li>Automated remediation targets structural issues (missing markup, heading fixes, metadata additions). It does not rewrite content, redesign pages, or refactor application logic.</li>

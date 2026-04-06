@@ -1,0 +1,24 @@
+# Query: amountCents: 10680
+# ContextLines: 1
+
+4 results - 4 files
+
+server\services\stripeConfig.ts:
+  100      amountCents: 14900,          // $149/month
+  101:     yearlyamountCents: 106800,   // $1,068/year
+  102      mode: 'subscription' as const,
+
+server\src\config\stripeConfig.ts:
+  76      yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
+  77:     yearlyamountCents: 106800, // $1,068/year ($89/mo, saves $720 - 40% off)
+  78      mode: 'subscription',
+
+server\src\config\stripeConfig.tsx:
+  37      priceId: process.env.STRIPE_PRO_PRICE_ID,
+  38:     amountCents: 14900,
+  39      mode: 'subscription',
+
+server\src\services\scanPackCredits.ts:
+  22      scans: 75,
+  23:     amountCents: 2900,
+  24      priceId: process.env.STRIPE_SCAN_PACK_75_PRICE_ID || process.env.STRIPE_SCAN_PACK_70_PRICE_ID || process.env.STRIPE_SCAN_PACK_25_PRICE_ID || 'price_1T8RiVRYzQALwOPq3NPWHQrQ',

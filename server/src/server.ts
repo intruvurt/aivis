@@ -147,7 +147,9 @@ import { extractEvidenceFromScrape, enrichEvidenceFromAnalysis } from './service
 import { evaluateSSFRRules, buildSSFRSummary } from './services/ssfrRuleEngine.js';
 import { generateFixpacks } from './services/fixpackGenerator.js';
 import { persistSSFRResults } from './services/ssfrVerificationService.js';
-import { isPythonServiceAvailable, analyzeContentDeep, recordEvidenceLedger, generateFingerprint } from './services/deepAnalysisClient.js';
+import { isPythonServiceAvailable, analyzeContentDeep, recordEvidenceLedger, generateFingerprint, ocrCrossCheck } from './services/deepAnalysisClient.js';
+import { buildOcrEvidenceBlock, computeOcrCoverage } from './services/ocrService.js';
+import type { OcrPageResult } from './services/ocrService.js';
 
 installConsoleRedaction();
 
@@ -2158,6 +2160,11 @@ app.get('/api/health', async (_req, res) => {
     db: dbOk ? 'connected' : 'unreachable',
     db_error: dbOk ? null : dbError,
     python_deep_analysis: pythonOk ? 'connected' : 'unavailable',
+    api_keys: {
+      openrouter: !!(process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY),
+      deepseek: !!process.env.DEEPSEEK_API_KEY,
+      urlscan: !!process.env.URLSCAN_API_KEY,
+    },
     memory: {
       used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
       total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
@@ -7027,7 +7034,21 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     const providerCount = isTripleCheck ? 3 : providers.length;
 
-    const bodySnippet = (sd.body || '').substring(0, 2000);
+    // ── Dynamic OCR fallback: if scrape captured <60% and Python cross-check ≥85%, ──
+    // ── augment body with OCR-extracted content so AI models get the full picture. ──
+    let bodySnippet: string;
+    let ocrFallbackApplied = false;
+    if (ocrValidationResult.usePythonPayload && sd.ocrData) {
+      const ocrTextBlock = sd.ocrData.images
+        .map((img) => img.ocrText)
+        .join('\n\n')
+        .substring(0, 3000);
+      bodySnippet = `${(sd.body || '').substring(0, 1200)}\n\n[OCR-EXTRACTED IMAGE CONTENT — validated by Python cross-check at ${ocrValidationResult.crossCheck?.evidence_quality ?? 0}% quality]:\n${ocrTextBlock}`;
+      ocrFallbackApplied = true;
+      console.log(`[${requestId}] Dynamic OCR fallback ACTIVE: body augmented with ${sd.ocrData.totalOcrWords} OCR words`);
+    } else {
+      bodySnippet = (sd.body || '').substring(0, 2000);
+    }
 
     // ── Diagnostic pre-compute (deterministic, runs before AI) ──────────────
     const _metaDesc = (sd.meta?.description || '').trim();
@@ -7564,6 +7585,49 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       threatIntelResult = threatRes;
     } catch (parallelErr: any) {
       console.warn(`[${requestId}] Security scans skipped (non-fatal):`, parallelErr.message);
+    }
+
+    // ── Signal+ OCR parallel validation ─────────────────────────────────
+    // For Signal/scorefix tiers: run OCR content validation in parallel,
+    // cross-check with Python, and inject OCR evidence for AI model mapping.
+    let ocrValidationResult: {
+      ocrData: OcrPageResult | null;
+      crossCheck: Awaited<ReturnType<typeof ocrCrossCheck>> | null;
+      usePythonPayload: boolean;
+    } = { ocrData: null, crossCheck: null, usePythonPayload: false };
+
+    if (isTripleCheck && sd.ocrData && sd.ocrData.images.length > 0) {
+      try {
+        const ocrData = sd.ocrData;
+        const ocrTexts = ocrData.images.map((img) => img.ocrText);
+        const coverage = computeOcrCoverage(ocrData.images, sd.body || '');
+
+        // Run Python cross-check (if Python is available)
+        const crossCheck = await ocrCrossCheck({
+          url: targetUrl,
+          scraped_text: (sd.body || '').substring(0, 10000),
+          ocr_texts: ocrTexts,
+          scraped_word_count: sd.wordCount || 0,
+          ocr_word_count: ocrData.totalOcrWords,
+        });
+
+        // Dynamic fallback: only affect score if scrape < 60% AND Python ≥ 85%
+        const scrapeCoverage = crossCheck?.scrape_coverage_ratio ?? coverage.overlapRatio;
+        const pythonEvidenceQuality = crossCheck?.evidence_quality ?? 0;
+        const usePythonPayload = scrapeCoverage < 0.6 && pythonEvidenceQuality >= 85;
+
+        ocrValidationResult = { ocrData, crossCheck, usePythonPayload };
+
+        console.log(`[${requestId}] OCR validation: ${ocrData.images.length} images, coverage=${(scrapeCoverage * 100).toFixed(1)}%, python_quality=${pythonEvidenceQuality}, fallback=${usePythonPayload ? 'PYTHON' : 'SCRAPE'}`);
+      } catch (ocrValErr: any) {
+        console.warn(`[${requestId}] OCR validation failed (non-fatal):`, ocrValErr?.message);
+      }
+    }
+
+    // Inject OCR evidence into evidence manifest (for all tiers that have OCR data)
+    if (sd.ocrData && sd.ocrData.images.length > 0) {
+      const ocrEvidence = buildOcrEvidenceBlock(sd.ocrData);
+      Object.assign(evidenceManifest, ocrEvidence);
     }
 
     evidenceManifest['ev_schema'] = schemaMarkup.json_ld_count === 0
@@ -8589,6 +8653,23 @@ Return ONLY valid JSON:
       cache_tier: normalizedRequestTier,
       pipeline_mode: 'live_ai',
       ...(llmReadabilityResult ? { llm_readability: llmReadabilityResult } : {}),
+      ...(sd.ocrData && sd.ocrData.images.length > 0 ? {
+        ocr_validation: {
+          images_processed: sd.ocrData.images.length,
+          total_ocr_words: sd.ocrData.totalOcrWords,
+          processing_time_ms: sd.ocrData.processingTimeMs,
+          cross_check: ocrValidationResult.crossCheck ? {
+            evidence_quality: ocrValidationResult.crossCheck.evidence_quality,
+            scrape_coverage_ratio: ocrValidationResult.crossCheck.scrape_coverage_ratio,
+            recommendation: ocrValidationResult.crossCheck.recommendation,
+          } : null,
+          fallback_applied: ocrFallbackApplied,
+          context_alts: sd.ocrData.images
+            .filter((img) => !img.alt && img.contextAlt)
+            .map((img) => ({ src: img.src, suggested_alt: img.contextAlt }))
+            .slice(0, 10),
+        },
+      } : {}),
     });
 
     const liveCreditCharge = await consumeAuditCreditsOrThrow();
@@ -10222,6 +10303,64 @@ app.get('/api/admin/health-deep', adminLimiter, async (req, res) => {
       latency_ms: Date.now() - startedAt,
     });
   }
+});
+
+// ─── Admin: validate API keys (DeepSeek, urlscan.io) ───────────────────────
+app.get('/api/admin/validate-keys', adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const results: Record<string, { configured: boolean; valid?: boolean; error?: string; latencyMs?: number }> = {};
+
+  // DeepSeek
+  const dsKey = process.env.DEEPSEEK_API_KEY || '';
+  results.deepseek = { configured: !!dsKey };
+  if (dsKey) {
+    const t0 = Date.now();
+    try {
+      const r = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${dsKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: 'Reply with exactly: ok' }],
+          max_tokens: 5,
+          temperature: 0,
+        }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      const body = await r.json() as any;
+      results.deepseek.valid = r.ok && !!body?.choices?.[0]?.message?.content;
+      results.deepseek.latencyMs = Date.now() - t0;
+      if (!r.ok) results.deepseek.error = body?.error?.message || `HTTP ${r.status}`;
+    } catch (e: any) {
+      results.deepseek.valid = false;
+      results.deepseek.error = e?.message || 'Request failed';
+      results.deepseek.latencyMs = Date.now() - t0;
+    }
+  }
+
+  // urlscan.io
+  const usKey = process.env.URLSCAN_API_KEY || '';
+  results.urlscan = { configured: !!usKey };
+  if (usKey) {
+    const t0 = Date.now();
+    try {
+      // Lightweight test: search for a known domain (doesn't consume scan quota)
+      const r = await fetch('https://urlscan.io/api/v1/search/?q=domain:example.com&size=1', {
+        headers: { 'API-Key': usKey },
+        signal: AbortSignal.timeout(10_000),
+      });
+      const body = await r.json() as any;
+      results.urlscan.valid = r.ok && Array.isArray(body?.results);
+      results.urlscan.latencyMs = Date.now() - t0;
+      if (!r.ok) results.urlscan.error = body?.message || `HTTP ${r.status}`;
+    } catch (e: any) {
+      results.urlscan.valid = false;
+      results.urlscan.error = e?.message || 'Request failed';
+      results.urlscan.latencyMs = Date.now() - t0;
+    }
+  }
+
+  return res.json({ success: true, keys: results, timestamp: new Date().toISOString() });
 });
 
 // ─── Admin: trigger DB cleanup immediately ──────────────────────────────────

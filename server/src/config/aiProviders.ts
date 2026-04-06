@@ -2,6 +2,7 @@ import axios from 'axios';
 
 // Uses env vars already loaded by server.ts (import 'dotenv/config')
 const OPEN_ROUTER_API_KEY = process.env.OPEN_ROUTER_API_KEY || process.env.OPENROUTER_API_KEY || '';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || '';
 
 if (OPEN_ROUTER_API_KEY) {
@@ -10,6 +11,12 @@ if (OPEN_ROUTER_API_KEY) {
   console.warn(
     '[AI Providers]  OpenRouter API key not configured - OpenRouter features will be unavailable'
   );
+}
+
+if (DEEPSEEK_API_KEY) {
+  console.log('[AI Providers]  DeepSeek native API key configured');
+} else {
+  console.log('[AI Providers]  DeepSeek native API key not configured (using OpenRouter fallback)');
 }
 
 if (OLLAMA_BASE_URL.trim()) {
@@ -232,6 +239,159 @@ export const openrouterPrompt = async (
       console.log(`Retrying OpenRouter (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
       await new Promise((resolve) => setTimeout(resolve, 1000 * (retryCount + 1)));
       return openrouterPrompt(promptTemplate, input, retryCount + 1, model);
+    }
+
+    throw new Error(msg);
+  }
+};
+
+// ── DeepSeek native API (OpenAI-compatible) ──
+// Bypasses OpenRouter for cheaper direct calls when DEEPSEEK_API_KEY is set.
+// DeepSeek model names: 'deepseek-chat' (V3), 'deepseek-reasoner' (R1)
+const DEEPSEEK_ENDPOINT = 'https://api.deepseek.com/chat/completions';
+
+export const deepseekPrompt = async (
+  promptTemplate: string | any,
+  input: any,
+  retryCount = 0,
+  model = 'deepseek-chat',
+  maxTokens = 1500,
+  systemPrompt?: string,
+  temperature?: number,
+  responseFormat: 'json_object' | 'text' = 'json_object',
+): Promise<any> => {
+  if (!DEEPSEEK_API_KEY) {
+    throw new Error(
+      'DeepSeek API key not configured. Please add DEEPSEEK_API_KEY to environment variables.'
+    );
+  }
+
+  try {
+    const promptText = typeof promptTemplate === 'string' ? promptTemplate : promptTemplate;
+
+    console.log(
+      `[DeepSeek] Calling model: ${model}, max_tokens: ${maxTokens}, response_format: ${responseFormat}`
+    );
+
+    const requestBody: Record<string, unknown> = {
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt ||
+            'You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real',
+        },
+        { role: 'user', content: promptText },
+      ],
+      temperature: temperature ?? 0.3,
+      max_tokens: maxTokens,
+      stream: false,
+    };
+
+    if (responseFormat === 'json_object') {
+      requestBody.response_format = { type: 'json_object' };
+    }
+
+    const response = await axios.post(DEEPSEEK_ENDPOINT, requestBody, {
+      headers: {
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      timeout: TIMEOUT_MS,
+      responseType: 'text',
+    });
+
+    let parsedResponse: any;
+    try {
+      parsedResponse = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+    } catch (envelopeErr: any) {
+      console.warn(`[DeepSeek] Response envelope truncated (${(response.data || '').length} chars)`);
+      const rawBody = String(response.data || '');
+      const contentMatch = rawBody.match(/"content"\s*:\s*"([\s\S]+)/);
+      if (contentMatch) {
+        let result = '';
+        let esc = false;
+        for (let i = 0; i < contentMatch[1].length; i++) {
+          const ch = contentMatch[1][i];
+          if (esc) { result += ch; esc = false; continue; }
+          if (ch === '\\') { esc = true; continue; }
+          if (ch === '"') break;
+          result += ch;
+        }
+        if (result.length > 50) {
+          console.log(`[DeepSeek] Extracted ${result.length} chars from truncated envelope`);
+          return result;
+        }
+      }
+      throw new Error(`DeepSeek response truncated (${rawBody.length} chars): ${envelopeErr.message}`);
+    }
+
+    console.log(
+      `[DeepSeek] Response: HTTP ${response.status} | finish_reason=${parsedResponse?.choices?.[0]?.finish_reason} | content length=${(parsedResponse?.choices?.[0]?.message?.content || '').length}`
+    );
+
+    if (parsedResponse.error) {
+      const errMsg = typeof parsedResponse.error === 'string'
+        ? parsedResponse.error
+        : parsedResponse.error.message || JSON.stringify(parsedResponse.error);
+      throw new Error(`DeepSeek error: ${errMsg}`);
+    }
+
+    const content = parsedResponse.choices?.[0]?.message?.content;
+    if (!content) {
+      throw new Error('DeepSeek returned empty content');
+    }
+
+    const finishReason = parsedResponse.choices?.[0]?.finish_reason;
+    if (finishReason === null) {
+      console.warn(`[DeepSeek] Model ${model} finish_reason=null after ${content.length} chars`);
+      throw new Error(`DeepSeek generation interrupted (finish_reason=null): ${content.length} chars`);
+    }
+    if (finishReason === 'length') {
+      console.warn(`[DeepSeek] Model ${model} hit max_tokens (${maxTokens}) - output truncated`);
+    }
+
+    let cleaned = content.trim();
+    cleaned = cleaned.replace(/^<think>[\s\S]*?<\/think>\s*/i, '');
+    if (/^<think>/i.test(cleaned)) {
+      console.warn(`[DeepSeek] Unclosed <think> block - stripping to find JSON`);
+      const jsonStart = cleaned.search(/\{[\s\S]*"visibility_score"/);
+      if (jsonStart >= 0) {
+        cleaned = cleaned.substring(jsonStart);
+      } else {
+        cleaned = '';
+      }
+    }
+    cleaned = cleaned.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    cleaned = cleaned.trim();
+    if (!cleaned) {
+      throw new Error('DeepSeek returned only reasoning tokens (empty after stripping <think>)');
+    }
+    console.log(`[DeepSeek] Returning cleaned: length=${cleaned.length} | starts_with_brace=${cleaned.startsWith('{')}`);
+    return cleaned;
+  } catch (error: any) {
+    let rawMsg: string;
+    if (error.response?.data) {
+      try {
+        const errBody = typeof error.response.data === 'string'
+          ? JSON.parse(error.response.data) : error.response.data;
+        rawMsg = errBody?.error?.message || errBody?.error || errBody?.message || error.message;
+      } catch {
+        rawMsg = typeof error.response.data === 'string'
+          ? error.response.data.substring(0, 200) : error.message;
+      }
+    } else {
+      rawMsg = error.message || 'Unknown error';
+    }
+    const msg = typeof rawMsg === 'string' ? rawMsg : JSON.stringify(rawMsg);
+    const status = error.response?.status;
+    console.error('[DeepSeek Error]', msg, '| Status:', status);
+
+    if (status === 401) {
+      throw new Error('DeepSeek authentication failed (401). Verify DEEPSEEK_API_KEY.');
+    }
+    if (status === 429) {
+      throw new Error('DeepSeek rate limit exceeded (429).');
     }
 
     throw new Error(msg);

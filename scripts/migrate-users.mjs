@@ -145,7 +145,7 @@ async function run() {
           trial_ends_at, trial_used, trial_tier, trial_started_at, trial_converted
         ) VALUES (
           $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
-          $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36
+          $21,$22,$23,$24,$25,$26,$27,$28,$149,$30,$31,$32,$33,$34,$35,$36
         )
         ON CONFLICT (email) DO NOTHING
         RETURNING id

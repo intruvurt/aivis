@@ -412,8 +412,8 @@ export async function sendUsageCapEmail(
         `5. Triple-Check AI (Signal tier) validates every scan with 3 independent models.`,
         ``,
         `YOUR OPTIONS:`,
-        `- Alignment: $9/month - 60 scans, competitor tracking, reverse engineering, exports`,
-        `- Signal: $29/month - 110 scans, Triple-Check AI, citation testing, API, white-label`,
+        `- Alignment: $49/month - 60 scans, competitor tracking, reverse engineering, exports`,
+        `- Signal: $149/month - 110 scans, Triple-Check AI, citation testing, API, white-label`,
         ``,
         `View plans: ${FRONTEND_URL}/pricing`,
         ``,
@@ -954,7 +954,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
 
               <p style="margin:0 0 16px;color:#94a3b8;font-size:14px;line-height:1.6;">
                 Your free Observer plan gets you started - but the real competitive advantage comes from the full platform.
-                Here's what Alignment ($9/mo) and Signal ($29/mo) subscribers get access to:
+                Here's what Alignment ($49/mo) and Signal ($149/mo) subscribers get access to:
               </p>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #334155;border-radius:12px;margin-bottom:28px;">
@@ -1169,7 +1169,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                       <tr>
                         <td>
                           <span style="font-size:16px;font-weight:700;color:#f59e0b;">Signal</span>
-                          <span style="color:#94a3b8;font-size:14px;"> - $29/month</span>
+                          <span style="color:#94a3b8;font-size:14px;"> - $149/month</span>
                           <span style="display:inline-block;background:#f59e0b;color:#0f172a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;">MOST POPULAR</span>
                         </td>
                       </tr>

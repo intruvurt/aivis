@@ -119,7 +119,7 @@ export default function CompetitiveLandscapePage() {
                 <tr>
                   <td className="px-4 py-3 font-semibold">Otterly.ai</td>
                   <td className="px-4 py-3">Brand mention monitoring across AI engines</td>
-                  <td className="px-4 py-3 whitespace-nowrap">$29/mo</td>
+                  <td className="px-4 py-3 whitespace-nowrap">$149/mo</td>
                   <td className="px-4 py-3">
                     AiVIS does page-level structural auditing, not just mention tracking.
                     It tells you <span className="font-semibold">why</span> you are not being cited.
@@ -131,7 +131,7 @@ export default function CompetitiveLandscapePage() {
                 <tr>
                   <td className="px-4 py-3 font-semibold">Reaudit</td>
                   <td className="px-4 py-3">GEO scoring + 11-engine tracking</td>
-                  <td className="px-4 py-3 whitespace-nowrap">$29/mo</td>
+                  <td className="px-4 py-3 whitespace-nowrap">$149/mo</td>
                   <td className="px-4 py-3">
                     AiVIS has deeper per-page, evidence-backed findings instead of a
                     score-only output. You get <span className="font-semibold">specific blocks to fix</span>,

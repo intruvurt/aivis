@@ -549,7 +549,7 @@ Scores use an A-F grading scale. Most sites score C or D on their first audit.
 - All models accessed through OpenRouter API. Server-side key only - users never provide API keys.
 
 ## Triple-Check Pipeline (Signal Only)
-Signal tier subscribers ($29/mo) get every analysis reviewed by 3 independent AI models:
+Signal tier subscribers ($149/mo) get every analysis reviewed by 3 independent AI models:
 1. **AI1 - GPT-4.1 Mini:** Primary analysis with full scoring
 2. **AI2 - Claude 4 Sonnet:** Peer critique that challenges inflated scores, identifies generic recommendations, verifies evidence grounding. Can adjust score -15 to +10 points.
 3. **AI3 - Grok 3 Mini:** Validation gate that confirms or overrides the final result.
@@ -559,9 +559,9 @@ This eliminates single-model bias. Observer and Alignment get a single-model ana
 | Tier | Price | Scans/Month | Key Features |
 |------|-------|-------------|--------------|
 | Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
-| Alignment [Core] | $9/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
-| Signal [Pro] | $29/mo | 110 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 8 competitors |
-| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
+| Alignment [Core] | $49/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
+| Signal [Pro] | $149/mo | 110 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 8 competitors |
+| Score Fix [AutoFix PR] | $1499 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
 
 Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (600-1008 code lines).
 Always verify exact current pricing from live pricing context and /pricing.

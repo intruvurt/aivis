@@ -1,5 +1,5 @@
 // server/src/services/aiProviders.ts
-import { openrouterPrompt, ollamaPrompt } from '../config/aiProviders.js';
+import { openrouterPrompt, deepseekPrompt, ollamaPrompt } from '../config/aiProviders.js';
 
 export type AiProvider = {
   provider: string;
@@ -47,6 +47,14 @@ export const PROVIDERS: AiProvider[] = [
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
     displayName: 'DeepSeek V3',
     label: 'DeepSeek V3',
+  },
+  // DeepSeek native (preferred when DEEPSEEK_API_KEY is set - bypasses OpenRouter markup)
+  {
+    provider: 'deepseek',
+    model: 'deepseek-chat',
+    endpoint: 'https://api.deepseek.com/chat/completions',
+    displayName: 'DeepSeek V3 (Native)',
+    label: 'DeepSeek V3 Native',
   },
   {
     provider: 'openrouter',
@@ -315,6 +323,32 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
       return result;
     }
 
+    if (provider === 'deepseek') {
+      if (!process.env.DEEPSEEK_API_KEY) {
+        throw new Error('DeepSeek provider not configured (DEEPSEEK_API_KEY not set)');
+      }
+      console.log(
+        `[AI Provider] DeepSeek native model=${args.model}, max_tokens=${maxTokens}, timeoutMs=${timeoutMs}`
+      );
+
+      const result = await withTimeout(
+        deepseekPrompt(
+          prompt,
+          {},
+          0,
+          args.model,
+          maxTokens,
+          enforcedSystemPrompt,
+          args.opts?.temperature,
+          args.opts?.responseFormat
+        ),
+        timeoutMs,
+        `DeepSeek(${args.model})`
+      );
+
+      return result;
+    }
+
     if (provider === 'ollama') {
       if (!process.env.OLLAMA_BASE_URL) {
         throw new Error('Ollama provider not configured (OLLAMA_BASE_URL not set)');
@@ -358,6 +392,10 @@ export function getAvailableProviders(): AiProvider[] {
 
   if (process.env.OPEN_ROUTER_API_KEY || process.env.OPENROUTER_API_KEY) {
     available.push(...PROVIDERS.filter((p) => p.provider === 'openrouter'));
+  }
+
+  if (process.env.DEEPSEEK_API_KEY) {
+    available.push(...PROVIDERS.filter((p) => p.provider === 'deepseek'));
   }
 
   if (process.env.OLLAMA_BASE_URL) {

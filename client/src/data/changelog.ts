@@ -138,7 +138,7 @@ const changelog: ChangelogEntry[] = [
     title: "Alignment Tier Premium Upgrade",
     description:
       "Alignment plan now includes API key access, webhook integrations, scheduled rescans, and expanded page/competitor limits - making it a real productivity tier for solo founders and small teams.",
-    why: "Alignment was too thin compared to Signal. Now it delivers meaningful automation without jumping to a $29/mo plan.",
+    why: "Alignment was too thin compared to Signal. Now it delivers meaningful automation without jumping to a $149/mo plan.",
     audience: "alignment",
     action: "Check Settings to configure your new API keys and webhook endpoints.",
     category: "feature",

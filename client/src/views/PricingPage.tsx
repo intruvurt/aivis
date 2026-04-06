@@ -139,7 +139,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "60 audits/month",
     ],
     cta: "Fix what’s blocking you",
-    priceLabel: "$9/mo",
+    priceLabel: "$49/mo",
   },
   signal: {
     headline: "Track who is beating you and why",
@@ -155,7 +155,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "full evidence ledger",
     ],
     cta: "Track your visibility",
-    priceLabel: "$29/mo",
+    priceLabel: "$149/mo",
   },
   scorefix: {
     headline: "Ship fixes, not guesses",
@@ -168,7 +168,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "600-1008 code lines max - varies by issue complexity",
     ],
     cta: "Get the fix pack",
-    priceLabel: "$299",
+    priceLabel: "$1499",
   },
 };
 

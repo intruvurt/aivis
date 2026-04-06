@@ -29,8 +29,8 @@ npm.cmd run build                      # Compile to dist/
 | Canonical | Display name | Monthly scans | Price |
 |-----------|-------------|---------------|-------|
 | `observer` | Observer (Free) | 3 | Free |
-| `alignment` | Alignment (Core) | 60 | $9/mo |
-| `signal` | Signal (Pro) | 110 | $29/mo |
+| `alignment` | Alignment (Core) | 60 | $49/mo |
+| `signal` | Signal (Pro) | 110 | $149/mo |
 
 Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiTierFromCanonical()`.
 
@@ -39,8 +39,8 @@ Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiT
 
 **Tier-based model allocation (cost-optimised):**
 - **Observer (free):** `FREE_PROVIDERS.slice(0, 2)` - **$0.00/scan**. Uses OpenRouter `:free` model variants (Llama 3.3 70B Instruct free primary, Google Gemma 3 27B free fallback). Both are non-reasoning models chosen specifically because they reliably produce JSON without wasting tokens on `<think>` chain-of-thought blocks. Rate-limited by OpenRouter but zero cost. Extended fallback chain (6 models total): Llama 3.3 70B → Gemma 3 27B → Mistral Small 3.1 24B → Gemma 3 12B → Hermes 3 405B → Nemotron 3 Nano 30B. All verified against OpenRouter `/api/v1/models` on 2026-02-25.
-- **Alignment ($9/mo):** `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. DeepSeek V3 (primary), Gemma 3 27B paid (fallback only).
-- **Signal ($29/mo):** `PROVIDERS.slice(0, 3)` - **~$0.004/scan**. **Triple-Check Pipeline** (3 models). DeepSeek V3 deep analysis → Gemma 3 27B peer critique (score adjustment −15 to +10, extra recommendations) → Llama 3.3 70B validation gate (confirms or overrides final score). Triple-check is Signal-exclusive; the progress overlay adapts dynamically.
+- **Alignment ($49/mo):** `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. DeepSeek V3 (primary), Gemma 3 27B paid (fallback only).
+- **Signal ($149/mo):** `PROVIDERS.slice(0, 3)` - **~$0.004/scan**. **Triple-Check Pipeline** (3 models). DeepSeek V3 deep analysis → Gemma 3 27B peer critique (score adjustment −15 to +10, extra recommendations) → Llama 3.3 70B validation gate (confirms or overrides final score). Triple-check is Signal-exclusive; the progress overlay adapts dynamically.
 
 `callAIProvider` forwards `opts.max_tokens` through to `openrouterPrompt()`. Right-sized per stage: AI1=5000, AI2=600, AI3=400. AI2 and AI3 run sequentially after AI1. Each has a deadline-based timeout derived from the remaining pipeline budget (57 s total). The per-call HTTP timeout is 30 s. The primary AI deadline is capped at 25 s to guarantee the fallback chain gets ≥ 14 s. The fallback floor is 8 s per model (raised from 5 s). Deadline timers are cleared via `clearTimeout` after each `Promise.race` settles to prevent ghost responses from leaked timers. The response includes `triple_check_enabled` (boolean) and `model_count` (1, 2, or 3). Truncated JSON from models hitting max_tokens is auto-repaired by `repairTruncatedJson()` in `safeJsonParse`.
 

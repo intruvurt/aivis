@@ -47,14 +47,14 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // ALIGNMENT TIER - $9/month or $84/year (~22% off)
+  // ALIGNMENT TIER - $49/month or $348/year (~22% off)
   alignment: {
     name: 'Alignment',
     lookupKey: 'alignment_monthly',
     priceId: process.env.STRIPE_ALIGNMENT_MONTHLY_PRICE_ID,
-    amountCents: 900, // $9/month
+    amountCents: 900, // $49/month
     yearlyPriceId: process.env.STRIPE_ALIGNMENT_YEARLY_PRICE_ID,
-    yearlyAmountCents: 8400, // $84/year ($7/mo billed annually)
+    yearlyAmountCents: 8400, // $348/year ($7/mo billed annually)
     mode: 'subscription',
     metadata: {
       tier_key: 'alignment',
@@ -67,14 +67,14 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SIGNAL TIER - $29/month or $276/year (~21% off)
+  // SIGNAL TIER - $149/month or $1300/year (~21% off)
   signal: {
     name: 'Signal',
     lookupKey: 'signal_monthly',
     priceId: process.env.STRIPE_SIGNAL_MONTHLY_PRICE_ID,
-    amountCents: 2900, // $29/month
+    amountCents: 2900, // $149/month
     yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
-    yearlyAmountCents: 27600, // $276/year ($23/mo billed annually)
+    yearlyAmountCents: 11000, // $1300/year ($110/mo billed annually)
     mode: 'subscription',
     metadata: {
       tier_key: 'signal',
@@ -90,7 +90,7 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SCORE FIX TIER - one-time $299 remediation purchase
+  // SCORE FIX TIER - one-time $1499 remediation purchase
   scorefix: {
     name: 'Score Fix',
     lookupKey: 'scorefix_monthly',
@@ -125,7 +125,7 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // BUSINESS TIER - $29/month (Signal)
+  // BUSINESS TIER - $149/month (Signal)
   business: {
     name: 'Ai Visibility Intelligence Audits – Business',
     lookupKey: 'business_monthly',

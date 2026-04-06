@@ -236,3 +236,31 @@ export async function analyzeDocument(params: {
 }): Promise<DocumentAnalysis | null> {
   return pyPost<DocumentAnalysis>('/analyze/document', params);
 }
+
+// ---------------------------------------------------------------------------
+// OCR Cross-Check
+// ---------------------------------------------------------------------------
+
+export interface OcrCrossCheckResult {
+  url: string;
+  evidence_quality: number;       // 0–100
+  overlap_ratio: number;          // 0–1
+  unique_ocr_terms: number;
+  scrape_coverage_ratio: number;  // 0–1
+  recommendation: 'use_scrape' | 'use_python_payload' | 'augment_with_ocr' | 'no_ocr_content';
+  processing_time_ms: number;
+}
+
+/**
+ * Cross-check OCR-extracted image text against scraped body content.
+ * Used by Signal+ tiers for dynamic fallback decisions.
+ */
+export async function ocrCrossCheck(params: {
+  url: string;
+  scraped_text: string;
+  ocr_texts: string[];
+  scraped_word_count: number;
+  ocr_word_count: number;
+}): Promise<OcrCrossCheckResult | null> {
+  return pyPost<OcrCrossCheckResult>('/analyze/ocr-crosscheck', params);
+}

@@ -50,8 +50,8 @@ const LANDING_STRUCTURED_DATA = [
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
     { name: 'Observer (Free) – 3 audits/month', path: '/pricing' },
-    { name: 'Alignment (Core) – 60 audits/month – $9/mo', path: '/pricing' },
-    { name: 'Signal (Pro) – 110 audits/month – $29/mo', path: '/pricing' },
+    { name: 'Alignment (Core) – 60 audits/month – $49/mo', path: '/pricing' },
+    { name: 'Signal (Pro) – 110 audits/month – $149/mo', path: '/pricing' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',

@@ -991,11 +991,11 @@ Not every tier unlocks every surface.
 
 Observer (free) has no API access. The free tier is dashboard only.
 
-Alignment ($9/mo) unlocks WebMCP tools for core analysis (Phases 1 and 2) and API key generation. This is where programmatic access starts. You can connect AI agents and trigger audits through WebMCP. REST API endpoints are not available at this tier.
+Alignment ($49/mo) unlocks WebMCP tools for core analysis (Phases 1 and 2) and API key generation. This is where programmatic access starts. You can connect AI agents and trigger audits through WebMCP. REST API endpoints are not available at this tier.
 
-Signal ($29/mo) unlocks everything. Full WebMCP toolset including citation testing and remediation. Full REST API access. This is the tier for teams running automated monitoring pipelines and AI agent integrations simultaneously.
+Signal ($149/mo) unlocks everything. Full WebMCP toolset including citation testing and remediation. Full REST API access. This is the tier for teams running automated monitoring pipelines and AI agent integrations simultaneously.
 
-Score Fix ($299 per 250-scan pack) includes the same full access as Signal plus deeper remediation tooling and higher rate limits.
+Score Fix ($1499 per 250-scan pack) includes the same full access as Signal plus deeper remediation tooling and higher rate limits.
 
 Rate limits scale with tier. Alignment gets 60 requests per minute with 2 concurrent audits. Signal gets 120 per minute with 5 concurrent. Score Fix gets 300 per minute with 10 concurrent.
 
@@ -1081,11 +1081,11 @@ AiVIS runs on four canonical tiers. Every entitlement, every feature gate, every
 
 Observer is the free tier. Three audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
 
-Alignment is the core paid tier at $9 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
+Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
 
-Signal is the premium tier at $29 per month, or $23 per month billed annually at $276 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
+Signal is the premium tier at $149 per month, or $110 per month billed annually at $1300 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
 
-Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
+Score Fix is the AutoFix PR remediation tier. Not a subscription - a $1499 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
 
 **The Visibility Audit Engine**
 
@@ -1161,7 +1161,7 @@ Each PR is evidence-linked: the PR description references the specific audit fin
 
 Batch Remediation handles multiple issues across multiple pages in a single operation. Evidence-Linked PRs ensure every automated change has a traceable audit trail.
 
-Credits are consumed per PR based on complexity. Simple schema patches cost 10 credits. Complex multi-file heading rewrites can cost 25. The 250-credit pack at $299 gives most teams 10 to 25 automated fixes.
+Credits are consumed per PR based on complexity. Simple schema patches cost 10 credits. Complex multi-file heading rewrites can cost 25. The 250-credit pack at $1499 gives most teams 10 to 25 automated fixes.
 
 **Scheduled Rescans**
 
@@ -1347,11 +1347,11 @@ Batch Remediation handles multiple issues across multiple pages in a single oper
 
 Observer is free. Ten audits per month. Full audit fidelity. No credit card required. You see exactly what the platform does before spending anything.
 
-Alignment is $9 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
+Alignment is $49 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
 
-Signal is $29 per month, or $23 per month billed annually. One hundred ten audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
+Signal is $149 per month, or $110 per month billed annually. One hundred ten audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
 
-Score Fix is $299 per 250-credit pack. Not a subscription. You buy credits, use them for automated PR generation at 10 to 25 credits per fix, and repurchase when exhausted.
+Score Fix is $1499 per 250-credit pack. Not a subscription. You buy credits, use them for automated PR generation at 10 to 25 credits per fix, and repurchase when exhausted.
 
 Every tier has explicit, documented feature gates. No vague "contact sales for pricing." No features hidden behind undocumented paywalls. You know exactly what each tier includes because the canonical definitions are published in the shared type system.
 
@@ -2616,7 +2616,7 @@ The AI model chain for Score Fix runs on more expensive models with looser timeo
 
 ## The Credit System
 
-Score Fix uses a credit-based system. You purchase 250-credit packs for $299. Each automated PR costs between 10 and 25 credits depending on the complexity of the fix.
+Score Fix uses a credit-based system. You purchase 250-credit packs for $1499. Each automated PR costs between 10 and 25 credits depending on the complexity of the fix.
 
 A simple fix like adding a missing JSON-LD Organization block costs around 10 credits. A complex fix like restructuring heading hierarchy across multiple page components might cost 20 to 25 credits.
 
@@ -2661,7 +2661,7 @@ For agencies managing multiple clients, this is transformative. Instead of writi
 Score Fix is available as a 250-credit pack at [aivis.ing/pricing](https://aivis.ing/pricing).`,
     keyPoints: [
       'Score Fix generates actual code changes and opens GitHub PRs with audit-based fixes instead of just producing recommendations.',
-      'Credit-based pricing: $299 per 250-credit pack, 10-25 credits per PR depending on fix complexity.',
+      'Credit-based pricing: $1499 per 250-credit pack, 10-25 credits per PR depending on fix complexity.',
       'Common automated fixes: schema markup, meta tags, heading restructuring, alt text generation, structured data repair.',
       'PRs are never auto-merged. Teams review, comment, approve, or reject with 80% credit refund on rejection.',
       'Post-merge monitoring tracks score delta and creates direct attribution: audit finding to code fix to visibility improvement.',

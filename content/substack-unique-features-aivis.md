@@ -128,7 +128,7 @@ I built [AiVIS](https://aivis.biz/pricing) because the AI visibility problem is 
 
 The free Observer tier gives you 3 scans a month. No credit card. Just go see where you actually stand.
 
-And if you want the triple-check pipeline, the reverse engineering tools, the 18-platform authority check, and the competitor tracking with real opportunity detection, the paid tiers start at $9/month.
+And if you want the triple-check pipeline, the reverse engineering tools, the 18-platform authority check, and the competitor tracking with real opportunity detection, the paid tiers start at $49/month.
 
 Stop guessing. Start seeing what AI actually sees.
 

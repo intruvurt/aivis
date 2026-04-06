@@ -85,7 +85,7 @@ When you run a brand mention scan on [AiVIS](https://aivis.biz/mentions), all 9 
 - **Deduplication** - the same mention found on DuckDuckGo and Bing only counts once
 - **Timeline view** - when mentions happened, not just that they exist
 
-This runs on the Alignment tier and above ($9/month). If you're on Alignment, you also get weekly email digests summarizing new mentions. You don't have to check the dashboard every day. The system watches for you and sends a report.
+This runs on the Alignment tier and above ($49/month). If you're on Alignment, you also get weekly email digests summarizing new mentions. You don't have to check the dashboard every day. The system watches for you and sends a report.
 
 ---
 

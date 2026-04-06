@@ -71,9 +71,9 @@ Canonical tier truth lives in `shared/types.ts`.
 | Canonical tier | Display name | Billing |
 | --- | --- | --- |
 | `observer` | Observer (Free) | Free |
-| `alignment` | Alignment (Core) | $9/mo ($84/yr) |
-| `signal` | Signal (Pro) | $29/mo ($276/yr) |
-| `scorefix` | Score Fix [AutoFix PR] | $299 one-time |
+| `alignment` | Alignment (Core) | $49/mo ($348/yr) |
+| `signal` | Signal (Pro) | $149/mo ($1300/yr) |
+| `scorefix` | Score Fix [AutoFix PR] | $1499 one-time |
 
 Selected entitlement highlights from the shared contract:
 

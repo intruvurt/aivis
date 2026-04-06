@@ -115,6 +115,16 @@ class FingerprintCompareRequest(BaseModel):
     internal_key: str | None = None
 
 
+class OcrCrossCheckRequest(BaseModel):
+    """Cross-check OCR-extracted text against scraped body content."""
+    url: str
+    scraped_text: str = ""
+    ocr_texts: list[str] = Field(default_factory=list)
+    scraped_word_count: int = 0
+    ocr_word_count: int = 0
+    internal_key: str | None = None
+
+
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
@@ -247,3 +257,131 @@ async def compare_fingerprints(req: FingerprintCompareRequest):
 
     result = fingerprinter.compare(req.fingerprint_a, req.fingerprint_b)
     return result
+
+
+# ---------------------------------------------------------------------------
+# OCR Cross-Check — validates OCR-extracted image text against scraped body
+# ---------------------------------------------------------------------------
+
+@app.post("/analyze/ocr-crosscheck")
+async def ocr_crosscheck(req: OcrCrossCheckRequest):
+    """Cross-check OCR text against scraped body content.
+
+    Returns evidence quality score (0–100) indicating how well
+    the OCR data corroborates and extends the scraped content.
+    Used by Signal+ tiers for dynamic fallback decisions.
+    """
+    _check_key(req.internal_key)
+
+    start = time.monotonic()
+
+    scraped_words = set(
+        w.lower()
+        for w in re.split(r"\s+", req.scraped_text)
+        if len(w) > 2
+    )
+    scraped_count = len(scraped_words)
+
+    # Combine all OCR text fragments
+    combined_ocr = " ".join(req.ocr_texts)
+    ocr_words = set(
+        w.lower()
+        for w in re.split(r"\s+", combined_ocr)
+        if len(w) > 2
+    )
+    ocr_count = len(ocr_words)
+
+    if ocr_count == 0:
+        return {
+            "url": req.url,
+            "evidence_quality": 0,
+            "overlap_ratio": 0.0,
+            "unique_ocr_terms": 0,
+            "scrape_coverage_ratio": 1.0,
+            "recommendation": "no_ocr_content",
+            "processing_time_ms": int((time.monotonic() - start) * 1000),
+        }
+
+    # How many OCR words overlap with scraped body
+    overlap = scraped_words & ocr_words
+    overlap_ratio = len(overlap) / ocr_count if ocr_count > 0 else 0.0
+
+    # Unique content from OCR not in scrape
+    unique_ocr = ocr_words - scraped_words
+    unique_ocr_count = len(unique_ocr)
+
+    # Scrape coverage: what fraction of expected content did the scrape capture?
+    # If OCR found substantial unique content, scrape coverage is lower
+    total_content_words = scraped_count + unique_ocr_count
+    scrape_coverage_ratio = (
+        scraped_count / total_content_words
+        if total_content_words > 0
+        else 1.0
+    )
+
+    # Evidence quality: how trustworthy is the OCR data?
+    # High overlap = OCR confirms scraped content (good corroboration)
+    # Meaningful unique words = OCR found content scrape missed
+    evidence_quality = 0
+
+    # Base: overlap quality (OCR confirms what scrape found)
+    if overlap_ratio > 0.3:
+        evidence_quality += 40  # Good corroboration
+    elif overlap_ratio > 0.1:
+        evidence_quality += 25
+    else:
+        evidence_quality += 10  # Low overlap — OCR may be noise
+
+    # Bonus: unique meaningful content found by OCR
+    if unique_ocr_count > 20:
+        evidence_quality += 30
+    elif unique_ocr_count > 10:
+        evidence_quality += 20
+    elif unique_ocr_count > 5:
+        evidence_quality += 10
+
+    # Bonus: OCR word volume relative to scrape
+    if req.ocr_word_count > 50:
+        evidence_quality += 15
+    elif req.ocr_word_count > 20:
+        evidence_quality += 10
+
+    # Bonus: NLP quality check on OCR text (if substantial)
+    if len(combined_ocr.strip()) >= 100 and nlp.is_ready():
+        try:
+            mini_analysis = nlp.analyze(
+                text=combined_ocr[:5000],
+                url=req.url,
+                title="",
+                meta_description="",
+                headings=[],
+                json_ld_blocks=[],
+            )
+            # Readability and entity signals boost quality
+            if mini_analysis.get("readability", {}).get("flesch_reading_ease", 0) > 30:
+                evidence_quality += 10
+            if mini_analysis.get("entities", {}).get("total_entity_count", 0) > 0:
+                evidence_quality += 5
+        except Exception:
+            pass  # NLP failure is non-fatal
+
+    evidence_quality = min(100, evidence_quality)
+
+    # Recommendation for dynamic fallback
+    recommendation = "use_scrape"  # default
+    if scrape_coverage_ratio < 0.6 and evidence_quality >= 85:
+        recommendation = "use_python_payload"
+    elif scrape_coverage_ratio < 0.6 and evidence_quality >= 60:
+        recommendation = "augment_with_ocr"
+
+    elapsed_ms = int((time.monotonic() - start) * 1000)
+
+    return {
+        "url": req.url,
+        "evidence_quality": evidence_quality,
+        "overlap_ratio": round(overlap_ratio, 3),
+        "unique_ocr_terms": unique_ocr_count,
+        "scrape_coverage_ratio": round(scrape_coverage_ratio, 3),
+        "recommendation": recommendation,
+        "processing_time_ms": elapsed_ms,
+    }

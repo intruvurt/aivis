@@ -95,6 +95,8 @@ export interface ScrapeResult {
     };
     images?: number;
     imagesWithAlt?: number;
+    /** Extracted image src + alt for OCR processing */
+    imageDetails?: Array<{ src: string; alt: string }>;
     wordCount?: number;
     lang?: string;
     hreflang?: string[];
@@ -103,6 +105,9 @@ export interface ScrapeResult {
 
     lcpMs?: number;
     pageLoadMs?: number;
+
+    /** OCR results from page images (populated post-scrape) */
+    ocrData?: import('./ocrService.js').OcrPageResult;
   };
 }
 
@@ -135,6 +140,7 @@ type EvalData = {
   };
   images: number;
   imagesWithAlt: number;
+  imageDetails: Array<{ src: string; alt: string }>;
   wordCount: number;
   lang: string;
   hreflang: string[];
@@ -1040,6 +1046,15 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
           const alt = img.getAttribute('alt');
           return alt !== null && alt.trim().length > 0;
         }).length;
+
+        // Extract image src + alt for OCR processing (first 15 meaningful images)
+        const imageDetails = allImages
+          .map((img) => ({
+            src: img.getAttribute('src') || img.getAttribute('data-src') || '',
+            alt: (img.getAttribute('alt') || '').trim(),
+          }))
+          .filter((img) => img.src.length > 0)
+          .slice(0, 15);
         const wordCount = body.split(/\s+/).filter((w) => w.length > 0).length;
         const html = document.documentElement.outerHTML.substring(0, 100000);
         const ld = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
@@ -1064,6 +1079,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
           links: { internal, external, internalAnchors, descriptiveAnchorRatio },
           images,
           imagesWithAlt,
+          imageDetails,
           wordCount,
           lang,
           hreflang: hreflang.length > 0 ? hreflang : undefined,
@@ -1161,6 +1177,20 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
 
     console.log(`[Scraper]  Puppeteer scraped in ${Date.now() - startTime}ms`);
 
+    // ── OCR: extract text from page images (non-blocking, best-effort) ──
+    let ocrData: import('./ocrService.js').OcrPageResult | undefined;
+    if (data.imageDetails && data.imageDetails.length > 0) {
+      try {
+        const { ocrPageImages } = await import('./ocrService.js');
+        ocrData = await ocrPageImages(data.imageDetails, parsedUrl.href);
+        if (ocrData.images.length > 0) {
+          console.log(`[Scraper]  OCR: ${ocrData.images.length}/${data.imageDetails.length} images yielded text (${ocrData.totalOcrWords} words, ${ocrData.processingTimeMs}ms)`);
+        }
+      } catch (ocrErr: any) {
+        console.warn(`[Scraper] OCR failed (non-fatal):`, ocrErr?.message);
+      }
+    }
+
     const { ldJson: _ldJson, ...rest } = data;
     const pageLoadMs = Date.now() - startTime;
     return {
@@ -1168,6 +1198,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
       data: {
         ...(rest as unknown as ScrapeResult['data']),
         pageLoadMs,
+        ...(ocrData ? { ocrData } : {}),
       },
     };
   } catch (error: any) {

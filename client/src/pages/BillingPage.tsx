@@ -1145,7 +1145,7 @@ export default function BillingPage() {
           <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-3">
             <p className="text-[11px] text-white/55 leading-relaxed">
               <strong className="text-white/70">Bottom line:</strong>{" "}
-              To match what AiVIS Signal offers at $29/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
+              To match what AiVIS Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
             </p>
           </div>
 

@@ -119,7 +119,7 @@ src/middleware/featureGate.ts(67,3): error TS2322: Type '"hasTripleCheck"' is no
 src/middleware/featureGate.ts(68,3): error TS2322: Type '"hasAlertIntegrations"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(69,3): error TS2322: Type '"hasAutomationWorkflows"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(70,3): error TS2322: Type '"hasPriorityQueue"' is not assignable to type 'keyof TierLimits | undefined'.
-src/middleware/featureGate.ts(71,3): error TS2322: Type '"hasAutoPR"' is not assignable to type 'keyof TierLimits | undefined'.
+src/middleware/featureGate.ts(71,3): error TS2322: Type '"hasAutoFix PR"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(72,3): error TS2322: Type '"hasBatchRemediation"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(73,3): error TS2322: Type '"hasEvidenceLinkedPRs"' is not assignable to type 'keyof TierLimits | undefined'.
 src/middleware/featureGate.ts(279,80): error TS2322: Type '"AutoFix PR"' is not assignable to type 'CanonicalTier'.

@@ -8,7 +8,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 export default function DisclosuresPage() {
   usePageMeta({
     title: 'Consumer Disclosures | AiVIS AI Visibility Platform',
-    description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies, and platform disclaimers.',
+    description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies and platform disclaimers.',
     path: '/disclosures',
     structuredData: [
       buildWebPageSchema({ path: '/disclosures', name: 'AiVIS Consumer Disclosures', description: 'Consumer-facing disclosures and disclaimers for the AiVIS AI visibility auditing platform.' }),
@@ -35,7 +35,7 @@ export default function DisclosuresPage() {
           {/* ── 1 AI Accuracy ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">1. AI Analysis Accuracy and Limitations</h2>
-            <p>AiVIS uses large language models (LLMs) to evaluate web page structure, content, and machine-readability signals. These models are provided by third-party organizations through an intermediary routing service (OpenRouter).</p>
+            <p>AiVIS uses large language models (LLMs) to evaluate web page structure, content and machine-readability signals. These models are provided by third-party organizations through an intermediary routing service (OpenRouter).</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">What AI gets right</h3>
             <p>The AI pipeline excels at identifying structural signals: missing Schema.org markup, absent meta descriptions, broken heading hierarchies, poor FAQ formatting, missing structured data, and content extractability issues. These findings are grounded in deterministic page signals that can be independently verified.</p>
@@ -64,7 +64,7 @@ export default function DisclosuresPage() {
               <li>Competitor analysis outputs are <strong className="text-white">not market research</strong>. They compare structural signals, not business competitive positioning.</li>
               <li>Citation test results are <strong className="text-white">not legal evidence</strong>. They capture a point-in-time AI model response that may differ on subsequent queries.</li>
             </ul>
-            <p className="mt-2">Always consult qualified professionals for SEO strategy, cybersecurity, legal, or business decisions.</p>
+            <p className="mt-2">Always consult qualified professionals for SEO/AEO strategy, cybersecurity, legal, or business decisions.</p>
           </section>
 
           {/* ── 3 Competitive Intelligence ── */}
@@ -72,9 +72,9 @@ export default function DisclosuresPage() {
             <h2 className="text-xl font-semibold text-white mb-3">3. Competitive Intelligence Boundaries</h2>
             <p>AiVIS competitor tracking analyzes the publicly accessible version of competitor web pages. It does not:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li>Access password-protected, login-gated, or otherwise private content.</li>
-              <li>Circumvent access controls, CAPTCHAs, or IP-based restrictions.</li>
-              <li>Monitor real-time competitor traffic, revenue, or internal analytics.</li>
+              <li>Access password-protected, login gated, or otherwise private content.</li>
+              <li>Circumvent access controls, CAPTCHAs or IP-based restrictions.</li>
+              <li>Monitor real time competitor traffic, revenue or internal analytics.</li>
               <li>Intercept, decode, or reverse-engineer proprietary competitor systems.</li>
             </ul>
             <p className="mt-2">Users are responsible for ensuring that their use of competitor analysis features complies with all applicable laws, including the Computer Fraud and Abuse Act (CFAA) and applicable state computer trespass statutes. Do not submit competitor URLs that you are legally prohibited from analyzing.</p>
@@ -107,7 +107,7 @@ export default function DisclosuresPage() {
             <p className="mt-2"><strong className="text-white">Limitations:</strong></p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Results depend on each source's public API availability and search index coverage.</li>
-              <li>Sources may rate-limit, temporarily block, or change their APIs without notice, causing incomplete results.</li>
+              <li>Sources may rate-limit, temporarily block or change their APIs without notice, causing incomplete results.</li>
               <li>Mentions in private groups, direct messages, paywalled articles, or non-indexed content will not be discovered.</li>
               <li>False positives may occur when common words or phrases overlap with your brand name.</li>
               <li>AiVIS does not guarantee comprehensive coverage of all online mentions.</li>
@@ -165,7 +165,7 @@ export default function DisclosuresPage() {
               <li>Delivery order is not guaranteed. Events may arrive out of sequence.</li>
               <li>Webhook endpoints must respond within 10 seconds or the delivery is considered failed.</li>
             </ul>
-            <p className="mt-2">Do not build mission-critical workflows that depend solely on webhook delivery without independent verification.</p>
+            <p className="mt-2">Do not build mission critical workflows that depend solely on webhook delivery without independent verification.</p>
           </section>
 
           {/* ── 10 Caching ── */}
@@ -174,7 +174,7 @@ export default function DisclosuresPage() {
             <p>Analysis results are cached server-side for performance. Cache behavior varies by tier:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Results cached for up to 7 days. No force-refresh option.</li>
-              <li><strong className="text-white">Alignment / Signal / Score Fix:</strong> Results cached for up to 30 days. Force-refresh bypasses cache and executes a fresh analysis (consumes a scan credit).</li>
+              <li><strong className="text-white">Alignment / Signal / AutoFix PR:</strong> Results cached for up to 30 days. Force-refresh bypasses cache and executes a fresh analysis (consumes a scan credit).</li>
             </ul>
             <p className="mt-2">Cached results reflect the state of the page at the time of the original analysis, not the current state. If you make changes to your site, use force-refresh (paid tiers) to generate updated results.</p>
             <p className="mt-2">Each analysis report displays an <strong className="text-white">execution class badge</strong> (LIVE, DETERMINISTIC_FALLBACK, SCRAPE_ONLY, or UPLOAD) indicating the conditions under which the analysis was performed.</p>
@@ -186,7 +186,7 @@ export default function DisclosuresPage() {
             <p>The AI models used in your analysis depend on your subscription tier:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to Intruvurt Labs.</li>
-              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to Intruvurt Labs.</li>
+              <li><strong className="text-white">Alignment ($9/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to Intruvurt Labs.</li>
               <li><strong className="text-white">Signal ($29/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to Intruvurt Labs.</li>
             </ul>
             <p className="mt-2">Model names, providers, and routing are subject to change as model availability and pricing evolves on upstream platforms. The analysis response includes model attribution metadata so you can verify which models processed your request.</p>

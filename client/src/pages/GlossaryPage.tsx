@@ -120,7 +120,7 @@ const GLOSSARY_TERMS: Term[] = [
     related: ["JSON-LD", "Entity Clarity", "Machine Readability"],
   },
   {
-    term: "Score Fix (AutoPR)",
+    term: "Score Fix (AutoFix PR)",
     definition:
       "AiVIS's automated remediation tier that converts audit findings into executable GitHub pull requests. Score Fix analyzes the structural gaps identified during an audit, generates code changes (schema additions, heading corrections, content restructuring), and opens PRs with evidence-linked explanations. This closes the loop between diagnosis and implementation.",
     related: ["Evidence Layer", "MCP", "Automated Remediation"],

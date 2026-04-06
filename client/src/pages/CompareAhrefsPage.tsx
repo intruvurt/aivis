@@ -196,7 +196,7 @@ export default function CompareAhrefsPage() {
               {[
                 {
                   q: "Is AiVIS an Ahrefs alternative?",
-                  a: "No. Ahrefs is a backlink and keyword research platform. AiVIS is an AI visibility audit platform. They measure different things. Use Ahrefs for link intelligence. Use AiVIS for AI citation readiness.",
+                  a: "No. Ahrefs is a backlink and keyword research platform. AiVIS is an AI visibility intelligence platform. They measure different things. Use Ahrefs for link intelligence. Use AiVIS for AI citation readiness.",
                 },
                 {
                   q: "Does Ahrefs measure AI visibility?",

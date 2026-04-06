@@ -51,19 +51,19 @@ const LANDING_STRUCTURED_DATA = [
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
-    { name: 'Observer [Free] – 10 audits/month', path: '/pricing' },
-    { name: 'Alignment [Core] – 60 audits/month – $49/mo', path: '/pricing' },
-    { name: 'Signal [Premium] – 110 audits/month – $149/mo', path: '/pricing' },
-    { name: 'Score Fix [Blockbuster] – 250 audits per pack – $299 one-time', path: '/pricing' },
+    { name: 'Observer [Free] – 3 audits/month', path: '/pricing' },
+    { name: 'Alignment [Core] – 60 audits/month – $9/mo', path: '/pricing' },
+    { name: 'Signal [Pro] – 110 audits/month – $29/mo', path: '/pricing' },
+    { name: 'Score Fix [AutoFix PR] – 15 audits per pack – $299 one-time', path: '/pricing' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',
     description: 'AI visibility intelligence platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer [Free]', price: '0' },
-      { name: 'Alignment [Core]', price: '49' },
-      { name: 'Signal [Premium]', price: '149' },
-      { name: 'AutoFix PR [Legacy]', price: '299' },
+      { name: 'Alignment [Core]', price: '9' },
+      { name: 'Signal [Pro]', price: '29' },
+      { name: 'Score Fix [AutoFix PR]', price: '299' },
     ],
   }),
 ];
@@ -122,17 +122,17 @@ const TIERS = [
     features: ['3 audits / month','AI visibility score (0–100)','Keyword intelligence','Schema markup audit','Heading & meta tag analysis','Auto','Public share links (redacted)'],
   },
   {
-    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 49, annualMonthlyPrice: 39, scans: 60,
+    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 9, annualMonthlyPrice: 7, scans: 60,
     color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular for Solo/F', creditHint: 'Annual plan: earn credits toward API add-ons',
     features: ['60 audits / month','Competitor tracking','Citation workflows','CSV & PDF exports','Force-refresh audits','Shareable report links','Report history'],
   },
   {
-    key: 'signal', name: 'Signal', subtitle: 'Premium', monthlyPrice: 149, annualMonthlyPrice: 89, scans: 110,
+    key: 'signal', name: 'Signal', subtitle: 'Pro', monthlyPrice: 29, annualMonthlyPrice: 23, scans: 110,
     color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Annual earns credits', creditHint: 'Yearly subscribers earn tier credits redeemable within Signal features',
     features: ['110 audits / month','Triple-Check AI Pipeline (3 models)','Expanded competitor tracking','Advanced citation testing','AI Citation Tracker','API access + white-label reports','Scheduled rescans'],
   },
   {
-    key: 'AutoFix PR', name: 'Score Fix', subtitle: 'Remediation', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 250,
+    key: 'scorefix', name: 'Score Fix', subtitle: 'AutoFix PR', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 15,
     color: 'border-amber-400/30 bg-[#1a1200]/60 ring-1 ring-amber-400/20', accentClass: 'text-amber-300', badge: 'Annual earns credits', creditHint: 'Yearly subscribers earn credits redeemable within Score Fix feature set',
     features: ['250 audits / month','Triple-Check AI Pipeline','Thorough evidence audit mode','Actual Fix Plan (evidence-linked)','Issue-level validation checklist','API access + white-label','Priority support'],
   },
@@ -218,7 +218,7 @@ const Landing = () => {
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
-                  <span className="text-5xl font-black text-white tabular-nums leading-none">10</span>
+                  <span className="text-5xl font-black text-white tabular-nums leading-none">3</span>
                   <div>
                     <p className="text-white font-bold text-lg leading-tight">FREE Audits</p>
                     <p className="text-white/50 text-xs">every month · no credit card</p>

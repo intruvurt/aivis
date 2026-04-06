@@ -71,22 +71,18 @@ Canonical tier truth lives in `shared/types.ts`.
 | Canonical tier | Display name | Billing |
 | --- | --- | --- |
 | `observer` | Observer (Free) | Free |
-| `alignment` | Alignment (Core) | $49/mo |
-| `signal` | Signal (Pro) | $29/mo |
-| `scorefix` | Score Fix [AutoPR] | $299 one-time |
-| `agency` | Agency | $199/mo |
-| `enterprise` | Enterprise | $149/mo |
+| `alignment` | Alignment (Core) | $9/mo ($84/yr) |
+| `signal` | Signal (Pro) | $29/mo ($276/yr) |
+| `scorefix` | Score Fix [AutoFix PR] | $299 one-time |
 
 Selected entitlement highlights from the shared contract:
 
-| Tier | Scans/month | Team workspaces | Share links | Triple-check | AutoPR |
+| Tier | Scans/month | Team workspaces | Share links | Triple-check | AutoFix PR |
 | --- | ---: | --- | --- | --- | --- |
 | `observer` | 3 | no | no | no | no |
-| `alignment` | 25 | no | yes | no | no |
-| `signal` | 100 | yes | yes | yes | yes |
+| `alignment` | 60 | no | yes | no | no |
+| `signal` | 110 | yes | yes | yes | yes |
 | `scorefix` | 15 | no | yes | yes | yes |
-| `agency` | 500 | yes | yes | yes | yes |
-| `enterprise` | unlimited | yes | yes | yes | yes |
 
 ## Key routes
 

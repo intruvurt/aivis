@@ -15,22 +15,22 @@
 ## 📊 Correct Pricing Structure
 
 ### **Alignment Tier:**
-- **Monthly:** $49/month
-- **Yearly:** $348/year ($29/month billed annually)
-- **Savings:** $240/year (40% off)
+- **Monthly:** $9/month
+- **Yearly:** $84/year ($7/month billed annually)
+- **Savings:** $24/year (~22% off)
 - **Features:**
-  - 50 scans/month
+  - 60 scans/month
   - Track 1 competitor
   - 50 citation queries/test
   - CSV & PDF exports
   - Force-refresh, report history
 
 ### **Signal Tier:**
-- **Monthly:** $149/month
-- **Yearly:** $1,068/year ($89/month billed annually)
-- **Savings:** $720/year (40% off)
+- **Monthly:** $29/month
+- **Yearly:** $276/year ($23/month billed annually)
+- **Savings:** $72/year (~21% off)
 - **Features:**
-  - Unlimited scans
+  - 110 scans/month
   - Track 5 competitors
   - 100 citation queries/test
   - AI Citation Tracker access
@@ -48,26 +48,26 @@ Log into https://dashboard.stripe.com and create products:
 #### **Alignment - Monthly**
 1. Go to Products → Create product
 2. Name: `Alignment - Monthly`
-3. Price: `$49.00 USD` recurring monthly
+3. Price: `$9.00 USD` recurring monthly
 4. Copy the Price ID (starts with `price_`)
 5. Save as: `STRIPE_ALIGNMENT_MONTHLY_PRICE_ID`
 
 #### **Alignment - Yearly**
 1. Products → Find Alignment product
-2. Add another price: `$348.00 USD` recurring yearly
+2. Add another price: `$84.00 USD` recurring yearly
 3. Copy the Price ID
 4. Save as: `STRIPE_ALIGNMENT_YEARLY_PRICE_ID`
 
 #### **Signal - Monthly**
 1. Products → Create product
 2. Name: `Signal - Monthly`
-3. Price: `$149.00 USD` recurring monthly
+3. Price: `$29.00 USD` recurring monthly
 4. Copy the Price ID
 5. Save as: `STRIPE_SIGNAL_MONTHLY_PRICE_ID`
 
 #### **Signal - Yearly**
 1. Products → Find Signal product
-2. Add another price: `$1,068.00 USD` recurring yearly
+2. Add another price: `$276.00 USD` recurring yearly
 3. Copy the Price ID
 4. Save as: `STRIPE_SIGNAL_YEARLY_PRICE_ID`
 
@@ -153,7 +153,7 @@ stripe listen --forward-to https://api.aivis.biz/api/payment/webhook
 4. Click "Upgrade" on Alignment tier
 
 5. Verify Stripe checkout shows:
-   - Price: $49.00/month
+   - Price: $9.00/month
    - Description: "Alignment - Monthly"
 
 6. Use test card: `4242 4242 4242 4242`
@@ -174,15 +174,15 @@ stripe listen --forward-to https://api.aivis.biz/api/payment/webhook
 2. Select "Yearly" billing period
 
 3. Verify pricing shows:
-   - Alignment: $29/month (Billed annually at $348/year)
-   - Savings: 💰 Save $240/year
-   - Signal: $89/month (Billed annually at $1,068/year)
-   - Savings: 💰 Save $720/year
+   - Alignment: $7/month (Billed annually at $84/year)
+   - Savings: 💰 Save $24/year
+   - Signal: $23/month (Billed annually at $276/year)
+   - Savings: 💰 Save $72/year
 
 4. Click "Upgrade" on Signal tier
 
 5. Verify Stripe checkout shows:
-   - Price: $1,068.00/year
+   - Price: $276.00/year
    - Description: "Signal - Yearly"
 
 6. Complete checkout with test card

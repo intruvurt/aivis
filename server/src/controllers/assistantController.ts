@@ -53,7 +53,7 @@ function getDeterministicFallbackReply(message: string): string {
   if (/free tier|observer|what can i do on the free|free plan/.test(normalized)) {
     return [
       'Observer (Free) includes:',
-      '- 10 scans/month',
+      '- 3 scans/month',
       '- AI visibility score + category grades',
       '- Key takeaways + top 3 recommendations',
       '- Schema and technical signal checks',
@@ -66,7 +66,7 @@ function getDeterministicFallbackReply(message: string): string {
   if (/alignment|signal|pricing|plan|tiers?/.test(normalized)) {
     return [
       'Quick tier breakdown:',
-      '- Observer: 10 scans/mo + score + grades + top 3 recommendations + history',
+      '- Observer: 3 scans/mo + score + grades + top 3 recommendations + history',
       '- Alignment: 60 scans/mo + all recommendations with implementation fixes + exports + competitors + reverse engineer + mentions',
       '- Signal: 110 scans/mo + triple-check AI (3 models) + citation testing + API + white-label + scheduled rescans',
       '- Score Fix: 250 credits/pack + automated GitHub PR remediation via MCP (10-25 credits per fix)',
@@ -144,8 +144,8 @@ const ACTION_TIER_GATES: Record<AgentTaskType, CanonicalTier> = {
 const TIER_DISPLAY: Record<CanonicalTier, string> = {
   observer: 'Observer [Free]',
   alignment: 'Alignment [Core]',
-  signal: 'Signal [Premium]',
-  scorefix: 'Score Fix [AutoPR]',
+  signal: 'Signal [Pro]',
+  scorefix: 'Score Fix [AutoFix PR]',
 };
 
 function detectActionIntent(message: string): DetectedAction | null {
@@ -511,7 +511,7 @@ async function buildSiteFileContext(intent: FileFetchIntent): Promise<string | n
  * ──────────────────────────────────────────────────────────────────────────── */
 const PLATFORM_KNOWLEDGE = `
 ## What is AiVIS?
-AiVIS (Ai Visibility Intelligence Audits) is a real-time AI visibility audit platform. It measures how well AI search engines ~ ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot - can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
+AiVIS (Ai Visibility Intelligence Audits) is a real-time AI visibility intelligence platform. It measures how well AI search engines ~ ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot - can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
 
 Website: https://aivis.biz
 Company: Intruvurt Labs - registration pending, B2B service provider in Georgia (Atlanta).
@@ -545,11 +545,11 @@ Scores use an A-F grading scale. Most sites score C or D on their first audit.
 - **Free Observer tier:** Gemini 2.0 Flash free (primary), Llama 3.3 70B Instruct free, Qwen3 32B free, Mistral Small 3.1 24B free, DeepSeek V3 free, Gemma 3 27B free. All via OpenRouter :free variants, $0.00/scan.
 - **Alignment tier:** GPT-4.1 Mini (primary analysis), Claude 4 Sonnet (fallback)
 - **Signal triple-check pipeline:** GPT-4.1 Mini → Claude 4 Sonnet peer critique (adjusts score -15 to +10) → Grok 3 Mini validation gate (confirms or overrides final score)
-- **Score Fix AutoPR:** GPT-4.1 → Claude 4 Sonnet → Grok 3 (higher-capacity models)
+- **Score Fix AutoFix PR:** GPT-4.1 → Claude 4 Sonnet → Grok 3 (higher-capacity models)
 - All models accessed through OpenRouter API. Server-side key only - users never provide API keys.
 
 ## Triple-Check Pipeline (Signal Only)
-Signal tier subscribers ($149/mo) get every analysis reviewed by 3 independent AI models:
+Signal tier subscribers ($29/mo) get every analysis reviewed by 3 independent AI models:
 1. **AI1 - GPT-4.1 Mini:** Primary analysis with full scoring
 2. **AI2 - Claude 4 Sonnet:** Peer critique that challenges inflated scores, identifies generic recommendations, verifies evidence grounding. Can adjust score -15 to +10 points.
 3. **AI3 - Grok 3 Mini:** Validation gate that confirms or overrides the final result.
@@ -558,12 +558,12 @@ This eliminates single-model bias. Observer and Alignment get a single-model ana
 ## Pricing Tiers
 | Tier | Price | Scans/Month | Key Features |
 |------|-------|-------------|--------------|
-| Observer [Free] | $0 | 10 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
-| Alignment [Core] | $49/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
-| Signal [Premium] | $149/mo | 110 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 8 competitors |
-| Score Fix [AutoPR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 10-25 credits per fix, issue-level validation, 10 competitors |
+| Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
+| Alignment [Core] | $9/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
+| Signal [Pro] | $29/mo | 110 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 8 competitors |
+| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 10-25 credits per fix, issue-level validation, 10 competitors |
 
-Alignment and Signal are recurring subscriptions. Score Fix AutoPR is a one-time 250-credit pack purchase for automated GitHub PR remediation (10-25 credits per fix).
+Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (10-25 credits per fix).
 Always verify exact current pricing from live pricing context and /pricing.
 
 ## Credit System

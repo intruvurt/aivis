@@ -199,7 +199,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
 
     // Cleanup on unmount - restore defaults
     return () => {
-      document.title = `${SITE_NAME}: AI Visibility Audit Platform | See How AI Sees Your Website`;
+      document.title = `${SITE_NAME}: AI visibility intelligence platform | See How AI Sees Your Website`;
       setStructuredData(undefined);
     };
   }, [title, description, path, ogTitle, ogDescription, ogType, structuredData, fullTitle]);

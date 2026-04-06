@@ -68,7 +68,7 @@ const featureToLimitKey: Partial<Record<GatedFeature, keyof TierLimits>> = {
   alertIntegrations: 'hasAlertIntegrations',
   automationWorkflows: 'hasAutomationWorkflows',
   priorityQueue: 'hasPriorityQueue',
-  autoPR: 'hasAutoPR',
+  autoPR: 'hasAutoFixPR',
   batchRemediation: 'hasBatchRemediation',
   evidenceLinkedPRs: 'hasEvidenceLinkedPRs',
 };

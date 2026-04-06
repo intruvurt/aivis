@@ -2,7 +2,7 @@
   "id": "/",
   "name": "AiVIS",
   "short_name": "AiVIS",
-  "description": "AI Visibility Audit platform for ChatGPT, Perplexity, Google AI and Claude. Sign in with Google or GitHub.",
+  "description": "AI visibility intelligence platform for ChatGPT, Perplexity, Google AI and Claude. Sign in with Google or GitHub.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#2e3646",

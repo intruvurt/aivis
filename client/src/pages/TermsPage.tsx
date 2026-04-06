@@ -92,7 +92,7 @@ export default function TermsPage() {
             <p>The Service offers four tiers:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Limited monthly scans with core audit capabilities.</li>
-              <li><strong className="text-white">Alignment ($49/mo or $348/yr):</strong> Expanded scan allowance, exports, force refresh, competitor tracking, mention digests.</li>
+              <li><strong className="text-white">Alignment ($9/mo or $84/yr):</strong> Expanded scan allowance, exports, force refresh, competitor tracking, mention digests.</li>
               <li><strong className="text-white">Signal ($29/mo or $276/yr):</strong> Full platform access including triple-check workflows, citation testing, team workspaces, API, webhooks, and scheduled rescans.</li>
               <li><strong className="text-white">Score Fix ($299 one-time):</strong> Scan pack with automated remediation, evidence-linked pull request generation, and batch operations.</li>
             </ul>

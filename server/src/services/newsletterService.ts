@@ -141,8 +141,8 @@ export function getCurrentNewsletterEditionKey(): string {
 function toTierLabel(tier: string): string {
   const normalized = String(tier || 'observer').toLowerCase();
   if (normalized === 'alignment') return 'Alignment [Core]';
-  if (normalized === 'signal') return 'Signal [Premium]';
-  if (normalized === 'scorefix') return 'Score Fix [AutoPR]';
+  if (normalized === 'signal') return 'Signal [Pro]';
+  if (normalized === 'scorefix') return 'Score Fix [AutoFix PR]';
   return 'Observer [Free]';
 }
 

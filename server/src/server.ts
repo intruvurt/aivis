@@ -2302,7 +2302,7 @@ app.post('/api/keywords/enrich', authRequired, async (req: Request, res: Respons
 });
 
 app.get('/llms.txt', (_req, res) => {
-  res.type('text/plain').send(`AiVIS - AI Visibility Audit Platform
+  res.type('text/plain').send(`AiVIS - AI visibility intelligence platform
 https://aivis.biz/
 
 AiVIS scores whether answer engines can parse, trust, and cite a page.
@@ -7012,7 +7012,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     // Observer [Free]:     Gemini 2.5 Flash :free (primary) - $0.00/scan
     // Alignment [Core]:    GPT-4.1 Mini (primary) - ~$0.001/scan
     // Signal [Premium]:    GPT-4.1 Mini (AI1) → Claude 4 Sonnet (AI2) → Grok 3 Mini (AI3) - ~$0.004/scan
-    // scorefix [AutoPR]:   GPT-4.1 (AI1) → Claude 4 Sonnet (AI2) → Grok 3 (AI3) - premium 3-family pipeline
+    // scorefix [AutoFix PR]:   GPT-4.1 (AI1) → Claude 4 Sonnet (AI2) → Grok 3 (AI3) - premium 3-family pipeline
     let providers: typeof PROVIDERS;
     if (isTripleCheck) {
       const ai1 = isscorefixTier ? SCOREFIX_AI1 : SIGNAL_AI1;

@@ -87,10 +87,10 @@ The platform runs on a 4-tier canonical system.
 
 | Canonical key | Display name      | Monthly scans |   Price |
 | ------------- | ----------------- | ------------: | ------: |
-| `observer`    | Observer [Free]   |            10 |    Free |
-| `alignment`   | Alignment [Core]  |            60 |  $49/mo |
-| `signal`      | Signal [Premium]  |           110 | $149/mo |
-| `scorefix`    | Score Fix [AutoPR] |           250 | $299 per 250-credit pack |
+| `observer`    | Observer [Free]   |             3 |    Free |
+| `alignment`   | Alignment [Core]  |            60 |   $9/mo |
+| `signal`      | Signal [Pro]      |           110 |  $29/mo |
+| `scorefix`    | Score Fix [AutoFix PR] |           15 | $299 one-time |
 
 Legacy aliases must resolve through canonical helpers, never through ad hoc string checks.
 
@@ -241,7 +241,7 @@ Signal-exclusive requirements:
 * response must expose `triple_check_enabled`
 * response must expose `model_count`
 
-### Score Fix [AutoPR]
+### Score Fix [AutoFix PR]
 
 Automated GitHub PR remediation tier via MCP. Not a subscription - users pay $299 per 250-credit pack and must repurchase when credits are exhausted. Each automated PR costs 10-25 credits depending on fix complexity.
 

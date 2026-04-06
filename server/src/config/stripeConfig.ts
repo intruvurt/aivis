@@ -47,14 +47,14 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // ALIGNMENT TIER - $49/month or $348/year (40% off)
+  // ALIGNMENT TIER - $9/month or $84/year (~22% off)
   alignment: {
     name: 'Alignment',
     lookupKey: 'alignment_monthly',
     priceId: process.env.STRIPE_ALIGNMENT_MONTHLY_PRICE_ID,
-    amountCents: 4900, // $49/month
+    amountCents: 900, // $9/month
     yearlyPriceId: process.env.STRIPE_ALIGNMENT_YEARLY_PRICE_ID,
-    yearlyAmountCents: 34800, // $348/year (40% off annual billing)
+    yearlyAmountCents: 8400, // $84/year ($7/mo billed annually)
     mode: 'subscription',
     metadata: {
       tier_key: 'alignment',
@@ -67,14 +67,14 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SIGNAL TIER - $149/month or $1,068/year (40% off)
+  // SIGNAL TIER - $29/month or $276/year (~21% off)
   signal: {
     name: 'Signal',
     lookupKey: 'signal_monthly',
     priceId: process.env.STRIPE_SIGNAL_MONTHLY_PRICE_ID,
-    amountCents: 14900, // $149/month
+    amountCents: 2900, // $29/month
     yearlyPriceId: process.env.STRIPE_SIGNAL_YEARLY_PRICE_ID,
-    yearlyamountCents: 10680, // $1,068/year ($89/mo, saves $720 - 40% off)
+    yearlyAmountCents: 27600, // $276/year ($23/mo billed annually)
     mode: 'subscription',
     metadata: {
       tier_key: 'signal',
@@ -125,12 +125,12 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // BUSINESS TIER - $149/month
+  // BUSINESS TIER - $29/month (Signal)
   business: {
     name: 'Ai Visibility Intelligence Audits – Business',
     lookupKey: 'business_monthly',
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
-    amountCents: 14900,
+    amountCents: 2900,
     mode: 'subscription',
     metadata: {
       tier_key: 'business',

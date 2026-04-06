@@ -26,7 +26,7 @@ The current app is already wired to real backend flows for:
 - public report sharing via `/reports/public/:shareId`
 - citation tracking and answer presence workflows
 - competitor tracking and reverse engineering tools
-- Score Fix and AutoPR-related remediation surfaces
+- Score Fix and AutoFix PR-related remediation surfaces
 - billing, notifications, workspaces, agency flows, and admin tools
 
 ## Stack

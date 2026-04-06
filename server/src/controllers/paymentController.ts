@@ -473,8 +473,8 @@ export const getCurrentSubscription = async (req: Request, res: Response) => {
     const planNameMap: Record<string, string> = {
       observer: 'Observer [Free]',
       alignment: 'Alignment [Core]',
-      signal: 'Signal [Premium]',
-      scorefix: 'Score Fix [AutoPR]',
+      signal: 'Signal [Pro]',
+      scorefix: 'Score Fix [AutoFix PR]',
     };
 
     const normalizedTier = String(userTier).toLowerCase();
@@ -1204,7 +1204,7 @@ async function updateUserTier(userId: string, tierKey: string, subscriptionId: s
   // 'observer' / 'free' → free tier
   // 'alignment' / 'pro' → alignment (paid, entry)
   // 'signal' / 'business' / 'enterprise' / 'whitelabel' / 'buyout' → signal
-  // 'scorefix' → scorefix (AutoPR remediation tier)
+  // 'scorefix' → scorefix (AutoFix PR remediation tier)
   const tierMap: Record<string, string> = {
     free: 'observer',
     observer: 'observer',

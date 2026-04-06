@@ -83,7 +83,7 @@ Retention rationale:
 
 - shared systems are harder to replace than single-user tools
 
-### 5. Remediation depth and AutoPR trust
+### 5. Remediation depth and AutoFix PR trust
 
 Objective: make evidence-backed fixing the strongest reason to keep paying.
 

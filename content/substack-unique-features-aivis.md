@@ -126,9 +126,9 @@ No other audit tool shows you the receipts like this.
 
 I built [AiVIS](https://aivis.biz/pricing) because the AI visibility problem is real and nobody was solving it properly. Traditional SEO tools measure search engine rankings. That's great for 2019. But in 2026, AI models are answering questions directly and choosing which brands to cite. If you're not optimized for that, you're invisible.
 
-The free Observer tier gives you 10 scans a month. No credit card. Just go see where you actually stand.
+The free Observer tier gives you 3 scans a month. No credit card. Just go see where you actually stand.
 
-And if you want the triple-check pipeline, the reverse engineering tools, the 18-platform authority check, and the competitor tracking with real opportunity detection, the paid tiers start at $49/month.
+And if you want the triple-check pipeline, the reverse engineering tools, the 18-platform authority check, and the competitor tracking with real opportunity detection, the paid tiers start at $9/month.
 
 Stop guessing. Start seeing what AI actually sees.
 

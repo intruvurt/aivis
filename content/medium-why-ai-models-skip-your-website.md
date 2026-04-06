@@ -91,7 +91,7 @@ Each rule also has a weight. Some rules are hard blockers, meaning if you fail t
 
 Final scores map to letter grades: 80-100 is A (excellent AI visibility), 60-79 is B (good with gaps), 40-59 is C (fair but at risk), 20-39 is D (poor), 0-19 is F (effectively invisible).
 
-The full scoring runs on every audit at [AiVIS](https://aivis.biz/analyze), across all tiers including the free Observer plan (10 scans per month, no credit card).
+The full scoring runs on every audit at [AiVIS](https://aivis.biz/analyze), across all tiers including the free Observer plan (3 scans per month, no credit card).
 
 ---
 
@@ -123,11 +123,11 @@ These cover the highest-impact SSFR failures I see. Most sites lose 15-25 points
 
 ## When Free Tools Aren't Enough
 
-If you want the full 28-rule SSFR audit with recommendations, the free Observer tier at [AiVIS](https://aivis.biz/pricing) gives you 10 scans a month.
+If you want the full 28-rule SSFR audit with recommendations, the free Observer tier at [AiVIS](https://aivis.biz/pricing) gives you 3 scans a month.
 
-Need more depth? The Alignment tier ($49/month, 60 scans) adds [competitor tracking](https://aivis.biz/competitors) with head-to-head comparisons across schema coverage, content depth, and page speed. It also adds [brand mention tracking](https://aivis.biz/mentions) across 9 free sources (Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt) and [reverse engineering tools](https://aivis.biz/reverse-engineer) that decompose how AI models think about content in your niche.
+Need more depth? The Alignment tier ($9/month, 60 scans) adds [competitor tracking](https://aivis.biz/competitors) with head-to-head comparisons across schema coverage, content depth, and page speed. It also adds [brand mention tracking](https://aivis.biz/mentions) across 9 free sources (Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt) and [reverse engineering tools](https://aivis.biz/reverse-engineer) that decompose how AI models think about content in your niche.
 
-Signal tier ($149/month, 110 scans) unlocks the triple-check pipeline, [citation testing](https://aivis.biz/citations) across 3 search engines with AI platform simulation, and API access for programmatic audits.
+Signal tier ($29/month, 110 scans) unlocks the triple-check pipeline, [citation testing](https://aivis.biz/citations) across 3 search engines with AI platform simulation, and API access for programmatic audits.
 
 The point isn't to upsell you. The point is that AI visibility is measurable, and the measurements are structural, not magical. Whether you use the free tools or the full platform, start by understanding what AI models actually see when they look at your site.
 

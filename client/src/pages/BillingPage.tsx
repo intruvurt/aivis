@@ -1101,7 +1101,7 @@ export default function BillingPage() {
                   { cap: "Niche URL discovery", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
                   { cap: "Scheduled rescans & webhooks", aivis: true, aivisCost: "Alignment+", otterly: true, otterlyCost: "$149+/mo", profound: false, profoundCost: "-", reaudit: true, reauditCost: "$79+/mo" },
                   { cap: "REST API + OAuth 2.0", aivis: true, aivisCost: "Alignment+", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
-                  { cap: "Automated PR generation (AutoPR)", aivis: true, aivisCost: "Score Fix", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
+                  { cap: "Automated PR generation (AutoFix PR)", aivis: true, aivisCost: "Score Fix", otterly: false, otterlyCost: "-", profound: false, profoundCost: "-", reaudit: false, reauditCost: "-" },
                 ].map((row) => (
                   <tr key={row.cap} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="py-2 pr-3 text-white/75 font-medium">{row.cap}</td>
@@ -1145,7 +1145,7 @@ export default function BillingPage() {
           <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-3">
             <p className="text-[11px] text-white/55 leading-relaxed">
               <strong className="text-white/70">Bottom line:</strong>{" "}
-              To match what AiVIS Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
+              To match what AiVIS Signal offers at $29/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
             </p>
           </div>
 

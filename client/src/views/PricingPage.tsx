@@ -139,7 +139,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "60 audits/month",
     ],
     cta: "Fix what’s blocking you",
-    priceLabel: "$49/mo",
+    priceLabel: "$9/mo",
   },
   signal: {
     headline: "Track who is beating you and why",
@@ -155,7 +155,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "full evidence ledger",
     ],
     cta: "Track your visibility",
-    priceLabel: "$149/mo",
+    priceLabel: "$29/mo",
   },
   scorefix: {
     headline: "Ship fixes, not guesses",
@@ -798,18 +798,18 @@ export default function PricingPage() {
           },
           {
             "@type": "Offer",
-            name: "Signal [Premium]",
-            price: "149",
+            name: "Signal [Pro]",
+            price: "29",
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Premium allowance with triple-check AI, citation tools, API access, and white-label reporting",
+              "Pro allowance with triple-check AI, citation tools, API access, and white-label reporting",
           },
           {
             "@type": "Offer",
-            name: "Score Fix [AutoPR]",
+            name: "Score Fix [AutoFix PR]",
             price: "299",
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing",
@@ -824,7 +824,7 @@ export default function PricingPage() {
         path: "/pricing",
         name: "AI Visibility Audit Pricing Plans",
         description:
-          "AiVIS plans: Observer free tier plus Alignment, Signal, and Score Fix AutoPR options with multi-model validation and team reporting.",
+          "AiVIS plans: Observer free tier plus Alignment, Signal, and Score Fix AutoFix PR options with multi-model validation and team reporting.",
         mainEntityId: SOFTWARE_APPLICATION_ID,
       }),
       {

@@ -121,7 +121,7 @@ export default function CompareRankScalePage() {
                     ["Schema completeness audit", "JSON-LD validation for machine consumption", "Not measured", true, false],
                     ["Brand mention tracking", "9 free sources: Reddit, HN, Mastodon, GitHub, etc.", "Not available", true, false],
                     ["SERP ranking focus", "Not a focus (measures citation readiness, not ranking position)", "Primary focus on improving search rankings", false, true],
-                    ["Free tier", "Observer: 10 audits/mo, full fidelity", "Free trial, paid plans for ongoing use", true, false],
+                    ["Free tier", "Observer: 3 audits/mo, full fidelity", "Free trial, paid plans for ongoing use", true, false],
                   ].map(([feature, aivis, rankscale, aivisYes, rankscaleYes], i) => (
                     <tr key={i} className="border-b border-white/5 last:border-b-0">
                       <td className="p-3 border-r border-r-white/10 font-medium text-white/80">{feature as string}</td>

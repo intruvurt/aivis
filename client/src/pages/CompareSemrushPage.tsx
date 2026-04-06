@@ -137,7 +137,7 @@ export default function CompareSemrushPage() {
                     ["MCP protocol", "AI agents can invoke tools programmatically", "Not available", true, false],
                     ["Schema completeness audit", "JSON-LD validation for machine consumption", "Basic technical SEO audit", true, false],
                     ["Trust signal evaluation", "Author E-E-A-T, policy pages, claim consistency", "Domain Authority metrics", true, true],
-                    ["Free tier", "Observer: 10 audits/mo, full fidelity", "Limited free tools, most features require paid plan", true, false],
+                    ["Free tier", "Observer: 3 audits/mo, full fidelity", "Limited free tools, most features require paid plan", true, false],
                   ].map(([feature, aivis, semrush, aivisYes, semrushYes], i) => (
                     <tr key={i} className="border-b border-white/5 last:border-b-0">
                       <td className="p-3 border-r border-r-white/10 font-medium text-white/80">{feature as string}</td>

@@ -59,9 +59,9 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS - AI Evidence-backed Visibility Audits',
+		title: 'AiVIS - AI visibility intelligence platform',
 		description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
-		ogTitle: 'AiVIS - AI Evidence-backed Visibility Audits',
+		ogTitle: 'AiVIS - AI visibility intelligence platform',
 		ogDescription: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
@@ -265,7 +265,7 @@ const routes = [
 	},
 	{
 		path: '/blogs/score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility',
-		title: 'Score Fix AutoPR: How AI Opens Pull Requests to Fix Your Visibility | AiVIS Blogs',
+		title: 'Score Fix AutoFix PR: How AI Opens Pull Requests to Fix Your Visibility | AiVIS Blogs',
 		description: 'Most audit tools tell you what to fix. AiVIS Score Fix generates the actual code changes and opens a GitHub PR. Here is how automated remediation works.',
 		ogType: 'article',
 	},
@@ -370,7 +370,7 @@ const routes = [
 	{
 		path: '/about',
 		title: 'About AiVIS | Intruvurt Labs',
-		description: 'About AiVIS and Intruvurt Labs: the AI visibility audit platform focused on answer-engine readiness and evidence-backed fixes.',
+		description: 'About AiVIS and Intruvurt Labs: the AI visibility intelligence platform focused on answer-engine readiness and evidence-backed fixes.',
 	},
 	{
 		path: '/press',

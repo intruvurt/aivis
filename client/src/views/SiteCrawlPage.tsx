@@ -255,7 +255,7 @@ export default function SiteCrawlPage() {
           featurePreview={[
             "BFS crawl discovers pages via internal links",
             "Per-page SEO diagnostics - schema, canonical, indexability",
-            "Tier-based page caps: 3 (Alignment), 10 (Signal), 25+ (Enterprise)",
+            "Tier-based page caps: 3 (Alignment), 10 (Signal)",
             "Crawl history with pass/warn/fail breakdowns",
           ]}
         />

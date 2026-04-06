@@ -883,7 +883,7 @@ const Admin: React.FC = () => {
                   value={broadcastSubject}
                   onChange={(e) => setBroadcastSubject(e.target.value)}
                   className="w-full bg-[#323a4c] text-white px-3 py-2 rounded-md text-sm"
-                  placeholder="e.g. Score Fix is now AutoPR - here's what changed"
+                  placeholder="e.g. Score Fix is now AutoFix PR - here's what changed"
                 />
               </div>
               <div>
@@ -904,7 +904,7 @@ const Admin: React.FC = () => {
                 onChange={(e) => setBroadcastBody(e.target.value)}
                 rows={6}
                 className="w-full bg-[#323a4c] text-white px-3 py-2 rounded-md text-sm resize-y"
-                placeholder={"We just shipped a major platform update.\n\nScore Fix is now AutoPR - credit-based automated GitHub PR remediation..."}
+                placeholder={"We just shipped a major platform update.\n\nScore Fix is now AutoFix PR - credit-based automated GitHub PR remediation..."}
               />
             </div>
 

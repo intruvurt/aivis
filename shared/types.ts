@@ -57,7 +57,7 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   observer: 'Observer (Free)',
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
-  scorefix: 'Score Fix [AutoPR]',
+  scorefix: 'Score Fix [AutoFix PR]',
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
@@ -174,7 +174,7 @@ export interface TierLimits {
   hasAlertIntegrations: boolean;
   hasAutomationWorkflows: boolean;
   hasPriorityQueue: boolean;
-  hasAutoPR: boolean;
+  hasAutoFixPR: boolean;
   hasBatchRemediation: boolean;
   hasEvidenceLinkedPRs: boolean;
   hasTeamWorkspaces: boolean;
@@ -203,7 +203,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasScheduledRescans: false, hasReportHistory: false, hasShareableLink: false,
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
-    hasAutoPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasAutoFixPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
     maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 1, maxStoredAudits: 10,
@@ -216,7 +216,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
-    hasAutoPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasAutoFixPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 2, allowedRescanFrequencies: ['weekly', 'monthly'] as readonly string[],
     maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 1, maxStoredAudits: 50,
@@ -229,7 +229,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
     hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
-    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: true,
     maxScheduledRescans: 10, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
     maxApiKeys: 5, maxWebhooks: 10, maxReportDeliveries: 25, maxTeamMembers: 10, maxStoredAudits: 500,
@@ -242,7 +242,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
     hasAlertIntegrations: false, hasAutomationWorkflows: true, hasPriorityQueue: true,
-    hasAutoPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
     maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 1, maxStoredAudits: 200,

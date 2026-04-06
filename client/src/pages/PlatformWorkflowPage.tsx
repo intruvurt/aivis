@@ -421,7 +421,7 @@ export default function PlatformWorkflowPage() {
                   { tool: "API Key Setup", path: "/api-docs", desc: "Generate scoped API keys for programmatic audit triggers" },
                   { tool: "Scheduled Rescans", path: "/settings", desc: "Set daily/weekly auto-rescans on priority URLs" },
                   { tool: "Webhooks", path: "/integrations", desc: "Push audit results to Slack, Discord, Teams, or custom endpoint" },
-                  { tool: "Score Fix AutoPR", path: "/analyze", desc: "Score Fix tier: auto-generate GitHub PRs to fix issues" },
+                  { tool: "Score Fix AutoFix PR", path: "/analyze", desc: "Score Fix tier: auto-generate GitHub PRs to fix issues" },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center gap-3 rounded-xl bg-white/[0.03] px-3 py-2">
                     <span className="flex-shrink-0 w-6 h-6 rounded-lg bg-rose-500/15 text-rose-400 text-[10px] font-bold flex items-center justify-center">{i + 1}</span>

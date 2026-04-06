@@ -168,7 +168,7 @@ AI visibility auditing requires measuring what AI models actually check. That's 
 
 Score decay is not a Google problem. It's an AI pipeline problem. Solve it with tools designed for the actual measurement surface.
 
-If you want to run a fresh baseline, the full audit is at [aivis.biz/analyze](https://aivis.biz/analyze). Observer tier is free, 10 scans. Scheduled rescans start on Alignment at $49/mo. Reply if you want to talk through what to prioritize based on your score.
+If you want to run a fresh baseline, the full audit is at [aivis.biz/analyze](https://aivis.biz/analyze). Observer tier is free, 3 scans. Scheduled rescans start on Alignment at $9/mo. Reply if you want to talk through what to prioritize based on your score.
 
 ---
 

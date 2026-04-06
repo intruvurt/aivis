@@ -37,7 +37,7 @@ src/middleware/featureGate.ts(67,3): error TS2322: Type '"hasTripleCheck"' is no
 src/middleware/featureGate.ts(68,3): error TS2322: Type '"hasAlertIntegrations"' is not assignable to type 'keyof TierLimits'.
 src/middleware/featureGate.ts(69,3): error TS2322: Type '"hasAutomationWorkflows"' is not assignable to type 'keyof TierLimits'.
 src/middleware/featureGate.ts(70,3): error TS2322: Type '"hasPriorityQueue"' is not assignable to type 'keyof TierLimits'.
-src/middleware/featureGate.ts(71,3): error TS2322: Type '"hasAutoPR"' is not assignable to type 'keyof TierLimits'.
+src/middleware/featureGate.ts(71,3): error TS2322: Type '"hasAutoFix PR"' is not assignable to type 'keyof TierLimits'.
 src/middleware/featureGate.ts(72,3): error TS2322: Type '"hasBatchRemediation"' is not assignable to type 'keyof TierLimits'.
 src/middleware/featureGate.ts(73,3): error TS2322: Type '"hasEvidenceLinkedPRs"' is not assignable to type 'keyof TierLimits'.
 src/routes/exportRoutes.ts(5,19): error TS6142: Module '../models/Audit.ts' was resolved to 'C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit.tsx', but '--jsx' is not set.

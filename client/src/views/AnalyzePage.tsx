@@ -134,6 +134,22 @@ const PROGRESS_LABELS: Record<string, string> = {
   timeout: "Timed out",
 };
 
+const PIPELINE_STEPS = [
+  { key: "dns", label: "Resolving domain" },
+  { key: "crawl", label: "Fetching page" },
+  { key: "extract", label: "Extracting signals" },
+  { key: "schema", label: "Schema & entities" },
+  { key: "technical", label: "Technical trust" },
+  { key: "security", label: "Security scan" },
+  { key: "ai1", label: "Primary AI analysis" },
+  { key: "ai2", label: "Peer critique" },
+  { key: "ai3", label: "Validation gate" },
+  { key: "compile", label: "Compiling score" },
+  { key: "finalize", label: "Building report" },
+] as const;
+
+const PIPELINE_KEYS = PIPELINE_STEPS.map((s) => s.key);
+
 function toProgressLabel(step: string): string {
   return PROGRESS_LABELS[step] || step.replace(/_/g, " ");
 }
@@ -561,6 +577,16 @@ const AnalyzePage: React.FC = () => {
 
   const canAnalyze = !!url.trim() && !validationError && !loading;
   const stageMicrocopy = useMemo(() => getStageMicrocopy(progress.step), [progress.step]);
+
+  const pipelineStatuses = useMemo(() => {
+    if (!loading) return null;
+    const activeIndex = PIPELINE_KEYS.indexOf(progress.step);
+    return PIPELINE_STEPS.map((s, i) => ({
+      ...s,
+      status: activeIndex < 0 ? ("pending" as const) : i < activeIndex ? ("completed" as const) : i === activeIndex ? ("active" as const) : ("pending" as const),
+    }));
+  }, [loading, progress.step]);
+
   const normalizedPreview = useMemo(() => {
     if (!url.trim() || validationError) return null;
     return normalizeUrl(url.trim());
@@ -896,16 +922,43 @@ const AnalyzePage: React.FC = () => {
 
                 <div className="mt-4 rounded-xl border border-white/10 bg-charcoal p-4 text-xs leading-6 text-white/60">
                   {loading
-                    ? "Resolving the domain • extracting evidence • scoring trust and citation readiness • building the report."
-                    : "No audits yet. Run your first audit and see what AI cannot verify, what is blocking trust, and what to fix first."}
+                    ? "Resolving the domain \u00b7 extracting evidence \u00b7 scoring trust and citation readiness \u00b7 building the report."
+                    : lastAnalyzedUrl
+                      ? <>Last audited: <span className="text-white/80 font-medium">{lastAnalyzedUrl}</span>. Enter a URL above to start a new audit.</>
+                      : "No audits yet. Run your first audit and see what AI cannot verify, what is blocking trust, and what to fix first."}
                 </div>
 
-                {loading && (
-                  <div className="mt-4 space-y-2">
-                    {stageMicrocopy.map((line) => (
-                      <div key={line} className="flex items-center gap-2 rounded-lg border border-white/10 bg-charcoal p-2">
-                        <span className="h-2 w-2 animate-pulse rounded-full bg-white/60" />
-                        <span className="text-xs text-white/75">{line}</span>
+                {loading && pipelineStatuses && (
+                  <div className="mt-4 space-y-1">
+                    {pipelineStatuses.map((step) => (
+                      <div
+                        key={step.key}
+                        className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-all duration-300 ${
+                          step.status === "active"
+                            ? "border border-white/15 bg-charcoal"
+                            : step.status === "completed"
+                              ? "opacity-70"
+                              : "opacity-35"
+                        }`}
+                      >
+                        {step.status === "completed" ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                        ) : step.status === "active" ? (
+                          <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-cyan-400" />
+                        ) : (
+                          <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/20" />
+                        )}
+                        <span
+                          className={`text-xs ${
+                            step.status === "active"
+                              ? "text-white/90 font-medium"
+                              : step.status === "completed"
+                                ? "text-white/60"
+                                : "text-white/40"
+                          }`}
+                        >
+                          {step.label}
+                        </span>
                       </div>
                     ))}
                   </div>

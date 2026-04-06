@@ -50,7 +50,7 @@ const LANDING_STRUCTURED_DATA = [
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
     { name: 'Observer (Free) – 3 audits/month', path: '/pricing' },
-    { name: 'Alignment (Core) – 60 audits/month – $49/mo', path: '/pricing' },
+    { name: 'Alignment (Core) – 60 audits/month – $9/mo', path: '/pricing' },
     { name: 'Signal (Pro) – 110 audits/month – $29/mo', path: '/pricing' },
   ]),
   buildSoftwareApplicationSchema({
@@ -342,6 +342,37 @@ const Landing = () => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── CASE STUDY (Social Proof) ── */}
+      <section className="py-20 bg-[#060607] border-t border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">Real result</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">From invisible to extractable in two audits</h2>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">A real user ran their first audit, applied the recommended fixes, and re-scanned. The result: a jump from 15/100 to 52/100 — with clear evidence of what changed.</p>
+          </div>
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+            className="relative rounded-2xl border border-white/12 bg-[#0d1117]/60 p-3 sm:p-4 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 60px 30px rgba(6,6,7,0.85)' }} />
+            <img src="/images/case-study-score-lift.png" alt="Real AiVIS audit showing score improvement from 15 to 52 after applying recommended fixes" className="w-full h-auto rounded-xl" loading="lazy" />
+          </motion.div>
+          <div className="mt-8 grid sm:grid-cols-3 gap-4 text-center">
+            <div className="rounded-2xl border border-red-400/20 bg-red-400/8 p-4">
+              <div className="text-3xl font-black text-red-300">15</div>
+              <div className="text-xs text-white/50 mt-1">Before (first audit)</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/8 p-4">
+              <div className="text-3xl font-black text-emerald-300">52</div>
+              <div className="text-xs text-white/50 mt-1">After (second audit)</div>
+            </div>
+            <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/8 p-4">
+              <div className="text-3xl font-black text-cyan-300">+37</div>
+              <div className="text-xs text-white/50 mt-1">Points gained</div>
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-white/35 text-center">Real user data. Score improvement varies by starting conditions and fix implementation quality.</p>
         </div>
       </section>
 

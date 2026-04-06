@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Shield, Clock3, Database, Search, Globe, Copy, Download, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePageMeta } from "../hooks/usePageMeta";
-import { checkServerHeaders } from "../api";
+import { checkServerHeaders } from "../services/api";
 import type { ServerHeadersCheckResult } from "../../../shared/types";
 
 const SAMPLE_URLS = [

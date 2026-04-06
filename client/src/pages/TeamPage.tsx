@@ -344,7 +344,7 @@ export default function TeamPage() {
           <Lock className="w-10 h-10 text-violet-400 mx-auto mb-3" />
           <h2 className="text-lg font-semibold text-white mb-2">Team workspaces start with Alignment</h2>
           <p className="text-sm text-white/50 max-w-md mx-auto mb-5">
-            Upgrade to Alignment [$49/mo] for up to 3 team seats, or Signal [$149/mo] for up to 10 seats with invite management and shared audit feeds.
+            Upgrade to Alignment [$9/mo] for up to 3 team seats, or Signal [$29/mo] for up to 10 seats with invite management and shared audit feeds.
           </p>
           <a
             href="/pricing"
@@ -800,7 +800,7 @@ export default function TeamPage() {
                 <p className="text-[11px] text-white/40">Automated PR generation via Score Fix</p>
               </div>
             </div>
-            {tierLimits.hasAutoPR ? (
+            {tierLimits.hasAutoFixPR ? (
               <a
                 href="/integrations"
                 className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/8 border border-white/12 text-white/70 hover:bg-white/12 transition-all"

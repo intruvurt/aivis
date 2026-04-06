@@ -991,9 +991,9 @@ Not every tier unlocks every surface.
 
 Observer (free) has no API access. The free tier is dashboard only.
 
-Alignment ($49/mo) unlocks WebMCP tools for core analysis (Phases 1 and 2) and API key generation. This is where programmatic access starts. You can connect AI agents and trigger audits through WebMCP. REST API endpoints are not available at this tier.
+Alignment ($9/mo) unlocks WebMCP tools for core analysis (Phases 1 and 2) and API key generation. This is where programmatic access starts. You can connect AI agents and trigger audits through WebMCP. REST API endpoints are not available at this tier.
 
-Signal ($149/mo) unlocks everything. Full WebMCP toolset including citation testing and remediation. Full REST API access. This is the tier for teams running automated monitoring pipelines and AI agent integrations simultaneously.
+Signal ($29/mo) unlocks everything. Full WebMCP toolset including citation testing and remediation. Full REST API access. This is the tier for teams running automated monitoring pipelines and AI agent integrations simultaneously.
 
 Score Fix ($299 per 250-scan pack) includes the same full access as Signal plus deeper remediation tooling and higher rate limits.
 
@@ -1081,11 +1081,11 @@ AiVIS runs on four canonical tiers. Every entitlement, every feature gate, every
 
 Observer is the free tier. Three audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
 
-Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
+Alignment is the core paid tier at $9 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
 
-Signal is the premium tier at $149 per month, or $89 per month billed annually at $1,068 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
+Signal is the premium tier at $29 per month, or $23 per month billed annually at $276 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
 
-Score Fix is the AutoPR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
+Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
 
 **The Visibility Audit Engine**
 
@@ -1347,9 +1347,9 @@ Batch Remediation handles multiple issues across multiple pages in a single oper
 
 Observer is free. Ten audits per month. Full audit fidelity. No credit card required. You see exactly what the platform does before spending anything.
 
-Alignment is $49 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
+Alignment is $9 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
 
-Signal is $149 per month, or $89 per month billed annually. One hundred ten audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
+Signal is $29 per month, or $23 per month billed annually. One hundred ten audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
 
 Score Fix is $299 per 250-credit pack. Not a subscription. You buy credits, use them for automated PR generation at 10 to 25 credits per fix, and repurchase when exhausted.
 
@@ -1859,7 +1859,7 @@ AI1 generates the primary analysis with the full prompt. AI2 receives the AI1 ou
 
 This is not just running the same thing three times. Each stage has a different role, different prompt, and different token budget. AI2 can shift the score within a bounded range. AI3 can override if the first two disagree. The system degrades gracefully if AI2 or AI3 fail. You always get at least the AI1 result.
 
-**Score Fix (AutoPR tier)** runs the same triple-check architecture but with more expensive models and looser timeout budgets. GPT-4o primary instead of Mini. This tier also powers automated GitHub PR generation where the AI analysis feeds directly into code-level fixes.
+**Score Fix (AutoFix PR tier)** runs the same triple-check architecture but with more expensive models and looser timeout budgets. GPT-4o primary instead of Mini. This tier also powers automated GitHub PR generation where the AI analysis feeds directly into code-level fixes.
 
 ## Step 4: Platform-Specific Scoring
 
@@ -2026,9 +2026,9 @@ These tools are not locked behind a paywall. They are part of how we demonstrate
 
 Observer is free. Three scans per month. Zero cost. Full audit pipeline with a zero-cost model chain. This is not a crippled trial. It is the real engine running on free models.
 
-Alignment is 49 dollars per month. Sixty scans. Paid models with better consistency. Competitor tracking. Brand mention scanning. Scheduled rescans. This is the agency tier for teams managing a handful of clients.
+Alignment is 9 dollars per month. Sixty scans. Paid models with better consistency. Competitor tracking. Brand mention scanning. Scheduled rescans. This is the agency tier for teams managing a handful of clients.
 
-Signal is 149 dollars per month. One hundred ten scans. Triple-check AI pipeline. Citation testing. Citation intelligence with drop alerts. Notification system. This is for agencies and businesses that need verification, not just scoring.
+Signal is 29 dollars per month. One hundred ten scans. Triple-check AI pipeline. Citation testing. Citation intelligence with drop alerts. Notification system. This is for agencies and businesses that need verification, not just scoring.
 
 Score Fix is 299 dollars per 250-credit pack. Automated GitHub PR generation via MCP. The AI does not just tell you what to fix. It opens a pull request with the actual code changes. Ten to twenty-five credits per PR depending on complexity.
 
@@ -2575,7 +2575,7 @@ See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit 
   {
     slug: 'score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility',
     path: '/blogs/score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility',
-    title: 'Score Fix AutoPR: How AI Opens Pull Requests to Fix Your Visibility',
+    title: 'Score Fix AutoFix PR: How AI Opens Pull Requests to Fix Your Visibility',
     description:
       'Most audit tools tell you what to fix. AiVIS Score Fix generates the actual code changes and opens a GitHub PR. Here is how automated remediation works.',
     excerpt:
@@ -2596,7 +2596,7 @@ See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit 
 
 Then it becomes your problem. You take the recommendations to your dev team. They look at it. They add it to the backlog. It sits for six weeks. Maybe it gets done. Maybe it does not. Meanwhile your competitors are getting cited and you are not.
 
-Score Fix AutoPR changes this entire dynamic. Instead of telling you what is wrong, it generates the actual code changes and opens a pull request on your GitHub repository. The fix is ready for review and merge. Not a suggestion. The actual code.
+Score Fix AutoFix PR changes this entire dynamic. Instead of telling you what is wrong, it generates the actual code changes and opens a pull request on your GitHub repository. The fix is ready for review and merge. Not a suggestion. The actual code.
 
 ## How It Works
 

@@ -39,7 +39,7 @@ const ABOUT_STRUCTURED_DATA = [
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About AiVIS; AI Evidence-Backed Visibility Audits & Remediation Platform',
+    name: 'About AiVIS; AI visibility intelligence platform & Remediation Platform',
     description: 'Enterprise citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
   }),
   buildBreadcrumbSchema([

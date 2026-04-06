@@ -10,7 +10,8 @@ const GUIDE_SECTIONS = [
   { id: 'read-results-correctly', label: 'Read Results' },
   { id: 'execute-fixes', label: 'Execute Fixes' },
   { id: 'retest-and-prove', label: 'Retest + Proof' },
-  { id: 'tool-routing', label: 'Tool Routing Map' },
+  { id: 'tool-routing', label: 'Full Tool Map' },
+  { id: 'free-tools', label: 'Free Tools' },
   { id: 'battle-tested-rules', label: 'Battle-Tested Rules' },
   { id: 'common-failures', label: 'Common Failures' },
   { id: 'operating-cadence', label: 'Operating Cadence' },
@@ -112,7 +113,7 @@ export default function GuidePage() {
           <li>Choose one target URL with business value (service page, product page, or conversion page).</li>
           <li>Keep the URL stable during the first cycle so score changes are attributable.</li>
           <li>Write one success metric: score lift, category grade lift, or citation visibility lift.</li>
-          <li>Open these pages in advance: Analyze, Reports, and either Competitors or Citations.</li>
+          <li>Open these pages in advance: Analyze, Reports, and optionally Competitors, Citations, or Niche Discovery.</li>
         </ul>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link to="/app/analyze" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
@@ -235,16 +236,15 @@ export default function GuidePage() {
       </section>
 
       <section id="tool-routing" className="section-anchor section-accent-rose mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">6) Tool routing map: which page to use and when</h2>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {[
-            { to: '/app/analyze', title: 'Analyze', detail: 'Run baseline and post-fix audits.' },
-            { to: '/app/keywords', title: 'Keywords', detail: 'Prioritize execution queue by opportunity.' },
-            { to: '/app/competitors', title: 'Competitors', detail: 'Find where rivals are being surfaced instead of you.' },
-            { to: '/app/citations', title: 'Citations', detail: 'Test mention and source visibility in AI responses.' },
-            { to: '/app/analytics', title: 'Analytics', detail: 'Track trend stability and category movement over time.' },
-            { to: '/app/reports', title: 'Reports', detail: 'Create proof trail for clients, leadership, and retrospectives.' },
-          ].map((item) => (
+        <h2 className="text-xl brand-title">6) Full tool map: every page and when to use it</h2>
+
+        <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-blue-300/80">Core</h3>
+        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {([
+            { to: '/app/analyze', title: 'Analyze', detail: 'Run baseline and post-fix audits on any URL.' },
+            { to: '/app/reports', title: 'Reports', detail: 'Export, compare, and share timestamped audit snapshots.' },
+            { to: '/app/score-fix', title: 'Score Fix', detail: 'Auto-generate GitHub PRs with evidence-linked code changes.', tier: 'Signal' },
+          ] as const).map((item) => (
             <Link
               key={item.to}
               to={item.to}
@@ -252,6 +252,79 @@ export default function GuidePage() {
             >
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-sm brand-title-muted">{item.title}</h3>
+                {'tier' in item && <span className="text-[10px] uppercase tracking-wider text-white/35">{item.tier}+</span>}
+                <ArrowRight className="h-3.5 w-3.5 text-white/60" />
+              </div>
+              <p className="mt-1 text-xs text-white/70">{item.detail}</p>
+            </Link>
+          ))}
+        </div>
+
+        <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-violet-300/80">Evidence &amp; Intelligence</h3>
+        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {([
+            { to: '/app/analytics', title: 'Analytics', detail: 'Track score trends, category movement, and deltas over time.' },
+            { to: '/app/citations', title: 'Citations', detail: 'Test mention and source visibility across search/AI engines.', tier: 'Alignment' },
+            { to: '/app/competitors', title: 'Competitors', detail: 'Head-to-head AI visibility comparison with opportunity scoring.', tier: 'Alignment' },
+            { to: '/app/benchmarks', title: 'Benchmarks', detail: 'Compare your score to industry and category averages.' },
+          ] as const).map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="rounded-xl border border-white/10 bg-charcoal-deep p-4 transition-colors hover:border-white/20"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-sm brand-title-muted">{item.title}</h3>
+                {'tier' in item && <span className="text-[10px] uppercase tracking-wider text-white/35">{item.tier}+</span>}
+                <ArrowRight className="h-3.5 w-3.5 text-white/60" />
+              </div>
+              <p className="mt-1 text-xs text-white/70">{item.detail}</p>
+            </Link>
+          ))}
+        </div>
+
+        <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-emerald-300/80">Extensions</h3>
+        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {([
+            { to: '/app/keywords', title: 'Keywords', detail: 'Prioritize execution queue by keyword opportunity.' },
+            { to: '/app/prompt-intelligence', title: 'Prompt Intelligence', detail: 'Discover query gaps AI models use to evaluate your niche.', tier: 'Alignment' },
+            { to: '/app/answer-presence', title: 'Answer Presence', detail: 'Monitor where your brand appears in AI-generated answers.', tier: 'Alignment' },
+            { to: '/app/reverse-engineer', title: 'Reverse Engineer', detail: 'Decompose how AI models think about content in your niche.', tier: 'Alignment' },
+            { to: '/app/brand-integrity', title: 'Brand Integrity', detail: 'Detect misrepresentation and fact accuracy in AI outputs.', tier: 'Alignment' },
+            { to: '/app/niche-discovery', title: 'Niche Discovery', detail: 'Top 100 niche rankings and competitive landscape mapping.' },
+          ] as const).map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="rounded-xl border border-white/10 bg-charcoal-deep p-4 transition-colors hover:border-white/20"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-sm brand-title-muted">{item.title}</h3>
+                {'tier' in item && <span className="text-[10px] uppercase tracking-wider text-white/35">{item.tier}+</span>}
+                <ArrowRight className="h-3.5 w-3.5 text-white/60" />
+              </div>
+              <p className="mt-1 text-xs text-white/70">{item.detail}</p>
+            </Link>
+          ))}
+        </div>
+
+        <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-amber-300/80">Platform Tools</h3>
+        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {([
+            { to: '/app/schema-validator', title: 'Schema Validator', detail: 'Validate JSON-LD, Open Graph, Twitter Cards, and Microdata.' },
+            { to: '/app/server-headers', title: 'Server Headers', detail: 'Inspect HTTP response headers and security configuration.' },
+            { to: '/app/robots-checker', title: 'AI Crawlers', detail: 'Graded A–F for each major AI crawler in your robots.txt.' },
+            { to: '/app/indexing', title: 'Indexing', detail: 'Check sitemap presence, robots directives, and crawl signals.' },
+            { to: '/app/mcp', title: 'MCP Console', detail: 'AI agents invoke audit tools programmatically via MCP.', tier: 'Alignment' },
+          ] as const).map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="rounded-xl border border-white/10 bg-charcoal-deep p-4 transition-colors hover:border-white/20"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-sm brand-title-muted">{item.title}</h3>
+                {'tier' in item && <span className="text-[10px] uppercase tracking-wider text-white/35">{item.tier}+</span>}
                 <ArrowRight className="h-3.5 w-3.5 text-white/60" />
               </div>
               <p className="mt-1 text-xs text-white/70">{item.detail}</p>
@@ -260,8 +333,31 @@ export default function GuidePage() {
         </div>
       </section>
 
+      <section id="free-tools" className="section-anchor section-accent-cyan mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">7) Free tools you can use without an account</h2>
+        <p className="mt-3 text-sm text-white/75">
+          These standalone tools require no login and demonstrate the structural checks that drive AI visibility. If any show gaps, the full audit pipeline tells you everything else.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {[
+            { to: '/app/robots-checker', title: 'AI Crawlers', detail: 'Robots.txt grade for GPTBot, ClaudeBot, PerplexityBot, and more.' },
+            { to: '/app/schema-validator', title: 'Schema Validator', detail: 'JSON-LD, Open Graph, Twitter Cards, and Microdata in one check.' },
+            { to: '/app/server-headers', title: 'Server Headers', detail: 'HTTP headers, security configuration, and caching audit.' },
+          ].map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="rounded-xl border border-white/10 bg-charcoal-deep p-4 transition-colors hover:border-white/20"
+            >
+              <h3 className="text-sm brand-title-muted">{item.title}</h3>
+              <p className="mt-1 text-xs text-white/70">{item.detail}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section id="battle-tested-rules" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">7) Battle-tested rules that keep teams from wasting cycles</h2>
+        <h2 className="text-xl brand-title">8) Battle-tested rules that keep teams from wasting cycles</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {[
             'One URL, one cycle, one objective.',
@@ -280,7 +376,7 @@ export default function GuidePage() {
       </section>
 
       <section id="common-failures" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">8) Common failure patterns (and fast corrections)</h2>
+        <h2 className="text-xl brand-title">9) Common failure patterns (and fast corrections)</h2>
         <div className="mt-4 space-y-3">
           {[
             {
@@ -307,7 +403,7 @@ export default function GuidePage() {
       </section>
 
       <section id="operating-cadence" className="section-anchor rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">9) 14-day operating cadence you can actually run</h2>
+        <h2 className="text-xl brand-title">10) 14-day operating cadence you can actually run</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
             <h3 className="text-sm brand-title-muted">
@@ -316,7 +412,7 @@ export default function GuidePage() {
             <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
               <li>Baseline audit + report snapshot</li>
               <li>Close top 3 blockers</li>
-              <li>Run Competitors or Citations once for context</li>
+              <li>Run Competitors, Citations, or Niche Discovery for context</li>
             </ul>
           </div>
           <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
@@ -341,9 +437,9 @@ export default function GuidePage() {
       </section>
 
       <section id="integration-workflows" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">10) Integration workflows: Slack, Discord, Zapier, Notion</h2>
+        <h2 className="text-xl brand-title">11) Integration workflows: Slack, Discord, Zapier, MCP</h2>
         <p className="mt-3 text-sm text-white/75">
-          Signal and Score Fix can auto-deliver completed audits. Use Slack/Discord for alerts, and Zapier when you need system-to-system automation such as Notion, Airtable, or CRM updates.
+          Signal and Score Fix can auto-deliver completed audits. Use Slack/Discord for alerts, Zapier for system-to-system automation, and MCP Console for AI agent integrations.
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">

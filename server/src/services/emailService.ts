@@ -850,7 +850,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                       Head to your <a href="${dashboardUrl}" style="color:#22d3ee;text-decoration:underline;">Dashboard</a>
                       and paste any URL into the analyzer. AiVIS will crawl the live page in real time and score it across
                       six AI-visibility categories using frontier AI models. Your first scan takes about 15–25 seconds.
-                      You get 10 free scans per month on the Observer plan.
+                      You get 3 free scans per month on the Observer plan.
                     </p>
                   </td>
                 </tr>

@@ -1,23 +1,57 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Download, FileText, Gauge, Loader2, ShieldAlert, Wrench } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
+import ShareButtons from "../components/ShareButtons";
 import { auditService } from "../services/auditService";
+import type { AnalysisResponse } from "@shared/types";
 
-type AuditPayload = Record<string, any>;
+/** Normalise both "passed via location.state" and "fetched from GET /audits/:id" into a usable AnalysisResponse-shaped object. */
+function normaliseAudit(raw: Record<string, any>): Record<string, any> {
+  // If the API row wraps the real payload inside `result` JSONB, unwrap it
+  const inner = raw.result && typeof raw.result === "object" ? raw.result : {};
+  return {
+    ...inner,
+    ...raw,
+    // Prefer inner (AnalysisResponse) fields, fall back to row-level columns
+    url: inner.url || raw.url,
+    visibility_score: inner.visibility_score ?? raw.visibility_score ?? null,
+    summary: inner.summary || raw.summary || null,
+    analyzed_at: inner.analyzed_at || raw.created_at || null,
+    category_grades: inner.category_grades || raw.category_grades || [],
+    recommendations: inner.recommendations || raw.recommendations || [],
+    brag_evidence: inner.brag_evidence || raw.brag_evidence || [],
+    key_takeaways: inner.key_takeaways || raw.key_takeaways || [],
+    model_provider: inner.model_provider || raw.model_provider || null,
+    audit_id: raw.id || raw.audit_id || inner.audit_id || null,
+  };
+}
+
+function scoreColor(score: number) {
+  if (score >= 80) return "text-emerald-300";
+  if (score >= 50) return "text-amber-300";
+  return "text-rose-300";
+}
 
 export default function AuditDetails() {
   const { id } = useParams();
-  const [audit, setAudit] = useState<AuditPayload | null>(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const passedResult = (location.state as any)?.result as AnalysisResponse | undefined;
+
+  const [audit, setAudit] = useState<Record<string, any> | null>(passedResult ? normaliseAudit(passedResult as any) : null);
+  const [loading, setLoading] = useState(!passedResult);
 
   useEffect(() => {
+    // If we have result from navigation state, skip the fetch
+    if (passedResult) return;
+    if (!id) return;
+
     const run = async () => {
-      if (!id) return;
       try {
         const response = await auditService.getAudit(id);
-        setAudit(response?.audit || response?.data || response);
+        const raw = response?.audit || response?.data || response;
+        setAudit(normaliseAudit(raw));
       } catch {
         toast.error("Failed to load audit details");
       } finally {
@@ -26,42 +60,28 @@ export default function AuditDetails() {
     };
 
     void run();
-  }, [id]);
+  }, [id, passedResult]);
 
   const categoryCards = useMemo(() => {
-    if (!audit?.categoryScores || typeof audit.categoryScores !== "object") return [];
-    return Object.entries(audit.categoryScores).map(([key, value]) => ({
-      key,
-      label: key.replace(/([A-Z])/g, " $1").trim(),
-      value,
+    if (!Array.isArray(audit?.category_grades)) return [];
+    return audit.category_grades.map((grade: any) => ({
+      key: grade.category || grade.label,
+      label: grade.label || grade.category || "Category",
+      score: typeof grade.score === "number" ? grade.score : null,
+      summary: grade.summary || null,
+      strengths: grade.strengths || [],
+      improvements: grade.improvements || [],
     }));
   }, [audit]);
 
-  const issueRows = useMemo(() => {
-    if (Array.isArray(audit?.risks) && audit.risks.length > 0) {
-      return audit.risks.map((item: any, index: number) => ({
-        id: `risk-${index}`,
-        category: item.category || "Risk",
-        title: item.description || item.finding || "Issue",
-        severity: item.severity || item.impact || "medium",
-        recommendation: item.recommendation || item.action || "No recommendation provided",
-      }));
-    }
-    if (Array.isArray(audit?.recommendations) && audit.recommendations.length > 0) {
-      return audit.recommendations.map((item: any, index: number) => ({
-        id: `rec-${index}`,
-        category: item.category || "Recommendation",
-        title: item.action || item.title || "Recommendation",
-        severity: item.priority || "medium",
-        recommendation: item.impact || item.recommendation || "No impact detail provided",
-      }));
-    }
-    return [];
+  const recommendations = useMemo(() => {
+    if (!Array.isArray(audit?.recommendations)) return [];
+    return audit.recommendations;
   }, [audit]);
 
-  const topRecommendations = useMemo(() => {
-    if (!Array.isArray(audit?.recommendations)) return [];
-    return audit.recommendations.slice(0, 5);
+  const bragEvidence = useMemo(() => {
+    if (!Array.isArray(audit?.brag_evidence)) return [];
+    return audit.brag_evidence;
   }, [audit]);
 
   if (loading) {
@@ -86,11 +106,13 @@ export default function AuditDetails() {
     );
   }
 
+  const score = typeof audit.visibility_score === "number" ? audit.visibility_score : 0;
+
   return (
     <AppPageFrame
       icon={<FileText className="h-5 w-5 text-orange-300" />}
       title={audit.url || "Audit detail"}
-      subtitle="scorefix command center view for the selected audit run."
+      subtitle="Full AI visibility report for the selected audit run."
       actions={
         <div className="flex flex-wrap items-center gap-2">
           {id ? (
@@ -106,106 +128,138 @@ export default function AuditDetails() {
         </div>
       }
     >
+      {/* ── Summary strip ─────────────────────────────────────── */}
       <section className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
         <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/44">Summary strip</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/44">Summary</p>
           <div className="mt-4 grid gap-4 md:grid-cols-4">
             <div>
-              <p className="text-xs text-white/44">Visibility</p>
-              <p className="mt-1 text-lg font-semibold capitalize text-white">{audit.visibilityStatus || audit.status || "unknown"}</p>
-            </div>
-            <div>
               <p className="text-xs text-white/44">Score</p>
-              <p className="mt-1 text-lg font-semibold text-white">{typeof audit.overallScore === "number" ? audit.overallScore : "-"}</p>
+              <p className={`mt-1 text-3xl font-bold ${scoreColor(score)}`}>{score}<span className="text-lg text-white/40">/100</span></p>
             </div>
             <div>
-              <p className="text-xs text-white/44">Provider</p>
-              <p className="mt-1 text-lg font-semibold text-white">{audit.aiProvider || "-"}</p>
+              <p className="text-xs text-white/44">Categories</p>
+              <p className="mt-1 text-lg font-semibold text-white">{categoryCards.length}</p>
+            </div>
+            <div>
+              <p className="text-xs text-white/44">Model</p>
+              <p className="mt-1 text-lg font-semibold text-white truncate">{audit.model_provider || "-"}</p>
             </div>
             <div>
               <p className="text-xs text-white/44">Run date</p>
-              <p className="mt-1 text-lg font-semibold text-white">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "-"}</p>
+              <p className="mt-1 text-lg font-semibold text-white">{audit.analyzed_at ? new Date(audit.analyzed_at).toLocaleDateString() : "-"}</p>
             </div>
           </div>
           {audit.summary ? <p className="mt-5 text-sm leading-7 text-white/64">{audit.summary}</p> : null}
         </article>
 
+        {/* ── Fix panel (top recommendations) ──────────────────── */}
         <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/44">Fix panel</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/44">Top fixes</p>
           <div className="mt-4 space-y-3">
-            {topRecommendations.length > 0 ? topRecommendations.map((item: any, index: number) => (
-              <div key={`fix-${index}`} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            {recommendations.slice(0, 5).length > 0 ? recommendations.slice(0, 5).map((item: any, index: number) => (
+              <div key={item.id || `fix-${index}`} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <div className="flex items-start gap-3">
                   <Wrench className="mt-0.5 h-4 w-4 text-orange-300" />
                   <div>
-                    <p className="text-sm font-semibold text-white">{item.action || item.title || item.category || "Recommendation"}</p>
-                    <p className="mt-2 text-xs leading-6 text-white/60">{item.impact || item.recommendation || "No detail available."}</p>
+                    <p className="text-sm font-semibold text-white">{item.title || item.action || "Recommendation"}</p>
+                    <p className="mt-2 text-xs leading-6 text-white/60">{item.impact || "No detail available."}</p>
                   </div>
                 </div>
               </div>
-            )) : <p className="text-sm text-white/56">No prioritized fix recommendations were returned for this run.</p>}
+            )) : <p className="text-sm text-white/56">No fix recommendations were returned for this run.</p>}
           </div>
         </article>
       </section>
 
+      {/* ── Share / Copy ──────────────────────────────────────── */}
+      <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        <ShareButtons
+          url={audit.url}
+          score={score}
+          analyzedAt={audit.analyzed_at}
+          auditId={id || audit.audit_id}
+        />
+      </section>
+
+      {/* ── Category grades ───────────────────────────────────── */}
       <section className="grid gap-4 xl:grid-cols-[1fr_20rem]">
         <div className="space-y-4">
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-center gap-2">
               <Gauge className="h-4 w-4 text-cyan-200" />
-              <h2 className="text-lg font-semibold text-white">Category cards</h2>
+              <h2 className="text-lg font-semibold text-white">Category grades</h2>
             </div>
-            <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {categoryCards.length > 0 ? categoryCards.map((card) => (
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {categoryCards.length > 0 ? categoryCards.map((card: any) => (
                 <div key={card.key} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <p className="text-xs uppercase tracking-[0.14em] text-white/42">{card.label}</p>
-                  <p className="mt-3 text-2xl font-semibold text-white">{typeof card.value === "number" ? card.value : "-"}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-[0.14em] text-white/42">{card.label}</p>
+                    <p className={`text-xl font-bold ${scoreColor(card.score ?? 0)}`}>{card.score ?? "-"}</p>
+                  </div>
+                  {card.summary && <p className="mt-2 text-xs leading-relaxed text-white/55">{card.summary}</p>}
+                  {card.strengths.length > 0 && (
+                    <div className="mt-2">
+                      {card.strengths.slice(0, 2).map((s: string, i: number) => (
+                        <p key={i} className="text-xs text-emerald-300/70">+ {s}</p>
+                      ))}
+                    </div>
+                  )}
+                  {card.improvements.length > 0 && (
+                    <div className="mt-1">
+                      {card.improvements.slice(0, 2).map((s: string, i: number) => (
+                        <p key={i} className="text-xs text-rose-300/70">- {s}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )) : <p className="text-sm text-white/56">No category scores available for this audit.</p>}
             </div>
           </article>
 
+          {/* ── All recommendations table ─────────────────────── */}
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-orange-300" />
-              <h2 className="text-lg font-semibold text-white">Issue table</h2>
+              <h2 className="text-lg font-semibold text-white">All recommendations</h2>
             </div>
-            {issueRows.length > 0 ? (
+            {recommendations.length > 0 ? (
               <div className="mt-5 overflow-hidden rounded-3xl border border-white/10">
                 <table className="min-w-full divide-y divide-white/10 text-left text-sm">
                   <thead className="bg-white/[0.03] text-white/46">
                     <tr>
                       <th className="px-4 py-3 font-semibold">Category</th>
-                      <th className="px-4 py-3 font-semibold">Issue</th>
-                      <th className="px-4 py-3 font-semibold">Severity</th>
-                      <th className="px-4 py-3 font-semibold">Recommended next move</th>
+                      <th className="px-4 py-3 font-semibold">Recommendation</th>
+                      <th className="px-4 py-3 font-semibold">Priority</th>
+                      <th className="px-4 py-3 font-semibold">Impact</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/10">
-                    {issueRows.map((row) => (
-                      <tr key={row.id} className="align-top text-white/74">
-                        <td className="px-4 py-4 font-medium text-white">{row.category}</td>
-                        <td className="px-4 py-4">{row.title}</td>
-                        <td className="px-4 py-4 capitalize text-white/60">{row.severity}</td>
-                        <td className="px-4 py-4 text-white/60">{row.recommendation}</td>
+                    {recommendations.map((rec: any, i: number) => (
+                      <tr key={rec.id || i} className="align-top text-white/74">
+                        <td className="px-4 py-4 font-medium text-white">{rec.category || "-"}</td>
+                        <td className="px-4 py-4">{rec.title || rec.action || "-"}</td>
+                        <td className="px-4 py-4 capitalize text-white/60">{rec.priority || "-"}</td>
+                        <td className="px-4 py-4 text-white/60">{rec.impact || "-"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <p className="mt-5 text-sm text-white/56">No issue table data is available for this audit.</p>
+              <p className="mt-5 text-sm text-white/56">No recommendation data is available for this audit.</p>
             )}
           </article>
         </div>
 
+        {/* ── BRAG evidence drawer ────────────────────────────── */}
         <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-cyan-200" />
-            <h2 className="text-lg font-semibold text-white">Evidence drawer</h2>
+            <h2 className="text-lg font-semibold text-white">BRAG evidence</h2>
           </div>
           <div className="mt-4 space-y-3">
-            {Array.isArray(audit.evidence) && audit.evidence.length > 0 ? audit.evidence.slice(0, 8).map((item: any, index: number) => (
+            {bragEvidence.length > 0 ? bragEvidence.map((item: any, index: number) => (
               <details key={`evidence-${index}`} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-left text-sm font-semibold text-white">
                   <span>{item.finding || item.category || `Evidence ${index + 1}`}</span>
@@ -217,7 +271,7 @@ export default function AuditDetails() {
                   {item.recommendation ? <p>Recommendation: {item.recommendation}</p> : null}
                 </div>
               </details>
-            )) : <p className="text-sm text-white/56">No evidence trail was returned for this run.</p>}
+            )) : <p className="text-sm text-white/56">No BRAG evidence trail was returned for this run.</p>}
           </div>
         </article>
       </section>

@@ -10,6 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { AnalysisResponse } from "@shared/types";
+import ShareButtons from "../components/ShareButtons";
 
 function scoreColor(score: number) {
   if (score >= 80) return { ring: "border-emerald-400", text: "text-emerald-300", bg: "bg-emerald-400/10" };
@@ -173,17 +174,26 @@ export default function SnapshotPage() {
         </section>
       )}
 
+      {/* ── Share / Copy ────────────────────────────────────────── */}
+      <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+        <ShareButtons
+          url={result.url}
+          score={score}
+          analyzedAt={result.analyzed_at}
+          auditId={auditId}
+        />
+      </section>
+
       {/* ── CTAs ─────────────────────────────────────────────────── */}
       <section className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-        {auditId && (
-          <Link
-            to={`/audit/${auditId}`}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.1]"
-          >
-            View full report
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        )}
+        <Link
+          to={auditId ? `/audit/${auditId}` : "/app/analyze"}
+          state={{ result }}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.1]"
+        >
+          View full report
+          <ArrowRight className="h-4 w-4" />
+        </Link>
         <Link
           to="/app/score-fix"
           className="inline-flex items-center justify-center gap-2 rounded-2xl bg-orange-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"

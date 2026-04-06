@@ -45,8 +45,8 @@ export const BrandProvider = ({ children }: { children: ReactNode }) => {
         if (response.data.success) {
           setBrand(response.data.brand);
         }
-      } catch (error) {
-        console.log("Using default brand configuration");
+      } catch {
+        // Default brand configuration used
       } finally {
         setLoading(false);
       }

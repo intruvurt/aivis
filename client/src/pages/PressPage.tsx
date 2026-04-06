@@ -18,6 +18,17 @@ const PRESS_STRUCTURED_DATA = [
   ]),
 ];
 
+const FEATURED_POSTS = [
+  {
+    date: "Apr 2026",
+    platform: "LinkedIn",
+    title: "AiVIS audits how AI systems read a website",
+    description:
+      "Founder post walking through the origin story — why most websites are invisible to AI answer engines and how AiVIS was built to surface the structural gaps they miss.",
+    url: "https://www.linkedin.com/posts/web4aidev_aivis-audits-how-ai-systems-read-a-website-share-7447000684455071745-tDOK",
+  },
+];
+
 const MILESTONES = [
   {
     date: "2026",
@@ -79,6 +90,37 @@ export default function PressPage() {
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>
+        </section>
+
+        {/* Featured Posts */}
+        <section className="mx-auto max-w-4xl py-12">
+          <h3 className="text-2xl brand-title mb-8">Featured</h3>
+          <div className="space-y-4">
+            {FEATURED_POSTS.map((post) => (
+              <a
+                key={post.url}
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-xl border border-white/10 bg-white/5 p-6 hover:border-white/20 hover:bg-white/[0.07] transition-colors group"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-cyan-300/80">
+                    {post.platform}
+                  </span>
+                  <span className="text-white/30">·</span>
+                  <span className="text-xs text-white/50">{post.date}</span>
+                </div>
+                <h4 className="text-lg font-bold text-white/90 mb-2 group-hover:text-white transition-colors">
+                  {post.title}
+                  <ExternalLink className="inline w-3.5 h-3.5 ml-1.5 text-white/40 group-hover:text-white/60" />
+                </h4>
+                <p className="text-white/60 leading-relaxed text-sm">
+                  {post.description}
+                </p>
+              </a>
+            ))}
+          </div>
         </section>
 
         {/* Milestones */}

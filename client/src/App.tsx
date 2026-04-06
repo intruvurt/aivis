@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 
@@ -140,6 +140,11 @@ function AuthRouteGate() {
   return <AuthPage />;
 }
 
+function LegacyAuditRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/app/audits/${id}`} replace />;
+}
+
 export default function App() {
   useInitializeSettings();
   const isHydrated = useAuthStore((s) => s.isHydrated);
@@ -268,9 +273,7 @@ export default function App() {
             <Route path="audits/:id" element={<AuditDetails />} />
           </Route>
 
-          <Route path="/audit/:id" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-            <Route index element={<AuditDetails />} />
-          </Route>
+          <Route path="/audit/:id" element={<LegacyAuditRedirect />} />
 
           {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
           <Route path="/analyze" element={<Navigate to="/app/analyze" replace />} />

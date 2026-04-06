@@ -187,7 +187,7 @@ export default function SnapshotPage() {
       {/* ── CTAs ─────────────────────────────────────────────────── */}
       <section className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <Link
-          to={auditId ? `/audit/${auditId}` : "/app/analyze"}
+          to={auditId ? `/app/audits/${auditId}` : "/app/analyze"}
           state={{ result }}
           className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.1]"
         >

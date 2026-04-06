@@ -443,7 +443,79 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <h2>19. Cross-referral protocol</h2>
 <p>The parties agree to a reciprocal, non-competing referral relationship. AiVIS specializes in AI visibility auditing, AI search optimization, and machine-legibility consulting. Zeeniith specializes in web development, IT troubleshooting, and technical consulting. When a referred client's needs fall outside the referring party's core competency, the referring party shall route the client to the other party through the agreed lead introduction process, and the standard commission terms apply. Neither party shall compete with the other in their designated specialization for referred clients.</p>
 
-<h2>20. Acceptance</h2>
+<h2>20. Traffic referral model (not lead generation)</h2>
+<p>AiVIS operates as a traffic and exposure platform. It does not act as a broker, sales agent, or lead generator on behalf of Party B.</p>
+<p>All inquiries originate from user-initiated interactions within the AiVIS platform, including but not limited to banners, embedded content, or outbound links. AiVIS does not guarantee lead quality, intent, or conversion outcomes.</p>
+<p>Party B acknowledges that all traffic is provided on a non-exclusive, pass-through basis and is responsible for its own sales process, qualification, and conversion.</p>
+
+<h2>21. Attribution and tracking</h2>
+<p>All referral activity must be tracked using AiVIS-controlled mechanisms, including but not limited to:</p>
+<ul>
+  <li>Unique tracking links</li>
+  <li>Query parameters (UTM or equivalent)</li>
+  <li>Redirect logging</li>
+  <li>Timestamped click events</li>
+</ul>
+<p>AiVIS will maintain internal logs of:</p>
+<ul>
+  <li>Click events</li>
+  <li>Referral source</li>
+  <li>Timestamp</li>
+  <li>Destination endpoint</li>
+</ul>
+<p>These logs constitute the <strong>primary source of truth</strong> for referral delivery.</p>
+<p>Party B is responsible for maintaining accurate internal records of:</p>
+<ul>
+  <li>Inquiries received</li>
+  <li>Response status</li>
+  <li>Deal progression</li>
+  <li>Closed transactions</li>
+</ul>
+
+<h2>22. Verification and reporting</h2>
+<p>Party B agrees to provide transparent reporting for all referred inquiries upon request, including:</p>
+<ul>
+  <li>Confirmation of receipt</li>
+  <li>Status (unresponsive, active, closed, rejected)</li>
+  <li>Timestamps of engagement</li>
+</ul>
+<p>If Party B fails to provide verifiable reporting or denies conversion activity without supporting evidence, AiVIS reserves the right to treat such claims as unverified and non-binding.</p>
+<p>AiVIS is not required to rely on Party B-reported outcomes where discrepancies exist between tracking data and Party B disclosures.</p>
+
+<h2>23. Performance threshold and termination</h2>
+<p>If AiVIS delivers a minimum of <strong>5 to 10</strong> tracked referral inquiries within a reasonable timeframe and:</p>
+<ul>
+  <li>Party B fails to convert any of them, or</li>
+  <li>Party B cannot provide verifiable status for those inquiries, or</li>
+  <li>Reporting is inconsistent, delayed, or disputed</li>
+</ul>
+<p>then AiVIS may determine, at its sole discretion, that the partnership is commercially unviable.</p>
+<p>Upon such determination:</p>
+<ul>
+  <li>The agreement may be terminated immediately</li>
+  <li>All Party B links, banners, and content will be removed from the AiVIS platform</li>
+  <li>No further obligations will remain on either party</li>
+</ul>
+<p>This termination is non-negotiable and carries no liability to AiVIS.</p>
+
+<h2>24. No guarantee of conversion</h2>
+<p>AiVIS makes no guarantees regarding:</p>
+<ul>
+  <li>Lead quality</li>
+  <li>Conversion rate</li>
+  <li>Revenue outcomes</li>
+</ul>
+<p>Party B accepts full responsibility for its ability to convert incoming traffic into customers. Failure to convert referred traffic does not constitute failure on the part of AiVIS.</p>
+
+<h2>25. Anti-dispute clause</h2>
+<p>In the event of a dispute regarding referral outcomes:</p>
+<ul>
+  <li>AiVIS tracking logs will be considered authoritative for traffic delivery</li>
+  <li>Party B must provide verifiable evidence for any claim of non-receipt or non-conversion</li>
+  <li>Absence of verifiable Party B-side data defaults in favor of AiVIS records</li>
+</ul>
+
+<h2>26. Acceptance</h2>
 <p>These terms become effective when both parties sign electronically. Each party must enter their full legal name exactly as specified in the agreement. Signatures are timestamped, IP-logged, and the full agreement is SHA-256 tamper-locked upon both signatures. The agreement is valid for <strong>1 year</strong> from the date of the final signature.</p>
 `.trim();
 
@@ -553,8 +625,9 @@ router.post('/:slug/invoices/:invoiceId/pay', async (req: Request, res: Response
     if (inv.rows[0].status === 'paid') return res.status(400).json({ error: 'Invoice already paid.' });
 
     const invoice = inv.rows[0];
-    const returnUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(req.params.slug)}&invoice=${encodeURIComponent(invoice.id)}&capture=true`;
-    const cancelUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(req.params.slug)}&cancelled=true`;
+    const slug = String(req.params.slug);
+    const returnUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(slug)}&invoice=${encodeURIComponent(invoice.id)}&capture=true`;
+    const cancelUrl = `${FRONTEND_URL}/partnership-payments?slug=${encodeURIComponent(slug)}&cancelled=true`;
 
     // Create PayPal order with custom amount
     const token = await getPayPalAccessToken();

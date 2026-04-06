@@ -240,7 +240,7 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-3">
               {primaryAudit._id && (
                 <Link
-                  to={`/audit/${primaryAudit._id}`}
+                  to={`/app/audits/${primaryAudit._id}`}
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
                 >
                   Open latest report
@@ -271,7 +271,7 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-3">
               {priorityPages[0]._id && (
                 <Link
-                  to={`/audit/${priorityPages[0]._id}`}
+                  to={`/app/audits/${priorityPages[0]._id}`}
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
                 >
                   Open report
@@ -315,7 +315,7 @@ export default function Dashboard() {
               const id = audit._id || audit.id || "";
               const color = audit.url ? domainColor(audit.url) : DOMAIN_COLORS[0];
               const host = audit.url ? domainLabel(audit.url) : "-";
-              const reportUrl = id ? `${window.location.origin}/audit/${id}` : "";
+              const reportUrl = id ? `${window.location.origin}/app/audits/${id}` : "";
               const score = audit.overallScore;
 
               return (
@@ -366,7 +366,7 @@ export default function Dashboard() {
                   {/* open */}
                   {id ? (
                     <Link
-                      to={`/audit/${id}`}
+                      to={`/app/audits/${id}`}
                       className="shrink-0 rounded-lg p-1.5 text-cyan-200 transition hover:bg-white/8 hover:text-white"
                       title="Open report"
                     >
@@ -432,7 +432,7 @@ export default function Dashboard() {
                     <td className="px-4 py-4 text-white/58">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "-"}</td>
                     <td className="px-4 py-4">
                       {audit._id ? (
-                        <Link to={`/audit/${audit._id}`} className="inline-flex items-center gap-1 text-sm font-medium text-cyan-200 transition hover:text-white">
+                        <Link to={`/app/audits/${audit._id}`} className="inline-flex items-center gap-1 text-sm font-medium text-cyan-200 transition hover:text-white">
                           View
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Link>

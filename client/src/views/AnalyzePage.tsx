@@ -393,6 +393,11 @@ const AnalyzePage: React.FC = () => {
 
     es.onerror = () => {
       closeProgressStream();
+      // SSE dropped but the POST is still pending — update step text so the user
+      // knows progress tracking was lost, not the analysis itself.
+      setProgress((prev) =>
+        prev.step === "complete" ? prev : { ...prev, step: "processing" }
+      );
     };
   }
 

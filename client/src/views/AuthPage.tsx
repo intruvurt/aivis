@@ -575,26 +575,6 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="signin-referral-code" className="block text-sm font-medium text-white/85 mb-2">
-                    Referral Code (optional)
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="signin-referral-code"
-                      name="referralCode"
-                      type="text"
-                      value={referralCode}
-                      onChange={(e) => setReferralCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-                      placeholder="ABC12345"
-                      autoComplete="off"
-                      className={`${vividFieldClass} px-4 py-3`}
-                      style={globalFieldStyle}
-                      maxLength={24}
-                    />
-                  </div>
-                </div>
-
                 <button
                   type="submit"
                   disabled={isLoading}

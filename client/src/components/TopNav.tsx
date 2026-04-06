@@ -378,9 +378,9 @@ export default function TopNav() {
                         const isActive = location.pathname === link.to;
                         return (
                           <Link key={link.to} to={link.to}
-                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
+                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
                             title={isGated ? `${link.label}: Upgrade required` : undefined}>
-                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
+                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
                               <Icon className="w-8 h-8" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -421,9 +421,9 @@ export default function TopNav() {
                         const isActive = location.pathname === link.to;
                         return (
                           <Link key={link.to} to={link.to}
-                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
+                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
                             title={isGated ? `${link.label}: Upgrade required` : undefined}>
-                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
+                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
                               <Icon className="w-8 h-8" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -527,7 +527,11 @@ export default function TopNav() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => {
+              const next = !mobileOpen;
+              setMobileOpen(next);
+              if (!next) { setMobileResearchOpen(false); setMobileAiToolsOpen(false); setMobileDocsOpen(false); }
+            }}
             className="lg:hidden p-2 text-white/65 hover:text-white transition-colors"
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}

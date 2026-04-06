@@ -103,7 +103,7 @@ export default function ApiDocsPage() {
               Production ready Reference
             </span>
             <Link
-              to="/pricing#signal-plan"
+              to="/pricing#signal"
               className="inline-flex items-center px-4 py-2 rounded-lg border border-white/15 bg-charcoal-light/65 text-white/90 font-medium hover:text-white hover:border-white/25 transition-colors"
             >
               View Tier Access

@@ -17,8 +17,14 @@ function isTokenExpired(token: string): boolean {
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = useAuthStore((s) => s.token);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
   const logout = useAuthStore((s) => s.logout);
   const location = useLocation();
+
+  // Wait for auth store to rehydrate from localStorage before deciding
+  if (!isHydrated) {
+    return null;
+  }
 
   if (!token || isTokenExpired(token)) {
     // Clear stale auth state if token is expired

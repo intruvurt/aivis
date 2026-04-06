@@ -420,7 +420,7 @@ function PricingCard({
 
   return (
     <div
-      id={tier.key === "signal" ? "signal-plan" : undefined}
+      id={tier.key}
       className="relative group h-full"
     >
       <div
@@ -776,7 +776,7 @@ export default function PricingPage() {
             name: "Observer [Free]",
             price: "0",
             priceCurrency: "USD",
-            url: "https://aivis.biz/pricing",
+            url: "https://aivis.biz/pricing#observer",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
@@ -787,7 +787,7 @@ export default function PricingPage() {
             name: "Alignment [Core]",
             price: String(PRICING.alignment.billing.monthly),
             priceCurrency: "USD",
-            url: "https://aivis.biz/pricing",
+            url: "https://aivis.biz/pricing#alignment",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
@@ -798,7 +798,7 @@ export default function PricingPage() {
             name: "Signal [Pro]",
             price: String(PRICING.signal.billing.monthly),
             priceCurrency: "USD",
-            url: "https://aivis.biz/pricing",
+            url: "https://aivis.biz/pricing#signal",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
@@ -809,7 +809,7 @@ export default function PricingPage() {
             name: "Score Fix [AutoFix PR]",
             price: String(PRICING.scorefix.billing.oneTime),
             priceCurrency: "USD",
-            url: "https://aivis.biz/pricing",
+            url: "https://aivis.biz/pricing#scorefix",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:

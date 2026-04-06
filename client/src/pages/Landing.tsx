@@ -34,6 +34,10 @@ const paymentService = {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ tier: tier.toLowerCase() }),
     });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({ error: 'Checkout request failed' }));
+      throw new Error(err.error || `Checkout failed (${r.status})`);
+    }
     const data = await r.json();
     if (!data.success) throw new Error(data.error || 'Checkout failed');
     return data.data;
@@ -50,9 +54,9 @@ const LANDING_STRUCTURED_DATA = [
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
-    { name: `Observer (Free) – ${PRICING.observer.limits.scans} audits/month`, path: '/pricing' },
-    { name: `Alignment (Core) – ${PRICING.alignment.limits.scans} audits/month – $${PRICING.alignment.billing.monthly}/mo`, path: '/pricing' },
-    { name: `Signal (Pro) – ${PRICING.signal.limits.scans} audits/month – $${PRICING.signal.billing.monthly}/mo`, path: '/pricing' },
+    { name: `Observer (Free) – ${PRICING.observer.limits.scans} audits/month`, path: '/pricing#observer' },
+    { name: `Alignment (Core) – ${PRICING.alignment.limits.scans} audits/month – $${PRICING.alignment.billing.monthly}/mo`, path: '/pricing#alignment' },
+    { name: `Signal (Pro) – ${PRICING.signal.limits.scans} audits/month – $${PRICING.signal.billing.monthly}/mo`, path: '/pricing#signal' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',

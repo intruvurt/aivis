@@ -211,7 +211,7 @@ const Landing = () => {
                 <span className="bg-gradient-to-r from-amber-300 to-white bg-clip-text text-transparent">your site</span>
               </h1>
               <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
-                AiVIS audits your live page against the signals that determine whether ChatGPT, Perplexity, Google AI, and Claude include you in their answers. Every finding is tied to evidence scraped from your real page — not inferred from your domain.
+                AiVIS audits your live page against the signals that determine whether ChatGPT, Perplexity, Google AI and Claude include you in their answers. Every finding is tied to evidence scraped from your real page — not inferred from your domain.
               </p>
               <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
                 Pages with FAQPage schema are cited in AI Overviews 3.2× more than unstructured equivalents. Pages with correct H1–H3 hierarchy score 28 points higher on average. Start with structure.

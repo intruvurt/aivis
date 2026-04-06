@@ -1,3 +1,4 @@
+# How to Audit a Blog Article for AI Visibility
 I would audit it in layers, not as one blurry “is this good” check.
 
 A strong article can still fail because the wrong layer is broken. Sometimes the writing is good but the page is structurally mute. Sometimes the page is clean but the facts are soft. Sometimes the facts are fine but the article does not deserve retrieval for any real query. So I split the audit into seven passes.

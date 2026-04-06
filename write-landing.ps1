@@ -214,7 +214,7 @@ const Landing = () => {
                 AiVIS audits your live page against the signals that determine whether ChatGPT, Perplexity, Google AI and Claude include you in their answers. Every finding is tied to evidence scraped from your real page — not inferred from your domain.
               </p>
               <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
-                Pages with FAQPage schema are cited in AI Overviews 3.2× more than unstructured equivalents. Pages with correct H1–H3 hierarchy score 28 points higher on average. Start with structure.
+                Pages with FAQPage schema are cited in AI Overviews 3.2× more than unstructured equivalents. Pages with correct H1-H3, H4-H6 hierarchy score 28 points higher on average. Start with structure.
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
@@ -290,8 +290,8 @@ const Landing = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {([
               { accentClass:'border-cyan-400/20 bg-cyan-400/10', titleClass:'text-cyan-300', title:'Live page audit', desc:'Every finding is tied to a specific scraped element from your actual page — not inferred from your domain name or Alexa rank.' },
-              { accentClass:'border-violet-400/20 bg-violet-400/10', titleClass:'text-violet-300', title:'Six-category grading', desc:'Content depth, heading structure, schema completeness, meta tags, technical SEO, and AI readability. Each grade traces to real evidence.' },
-              { accentClass:'border-amber-400/20 bg-amber-400/10', titleClass:'text-amber-300', title:'Impact-ranked fixes', desc:'Every recommendation cites the exact evidence ID — heading, meta tag, schema block, or content gap — that triggered it. Filter by effort level.' },
+              { accentClass:'border-violet-400/20 bg-violet-400/10', titleClass:'text-violet-300', title:'Six-category grading', desc:'Content depth, heading structure, schema completeness, meta tags, technical SEO and AI readability. Each grade traces to real evidence.' },
+              { accentClass:'border-amber-400/20 bg-amber-400/10', titleClass:'text-amber-300', title:'Impact-ranked fixes', desc:'Every recommendation cites the exact evidence ID — heading, meta tag, schema block, or content gap; that triggered it. Filter by effort level.' },
             ] as const).map((card) => (
               <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
                 className={`rounded-2xl border ${card.accentClass} p-6`}>
@@ -309,7 +309,7 @@ const Landing = () => {
           <div className="text-center mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">✓ Real paid output</span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Score Fix Pack — what you actually receive</h2>
-            <p className="text-white/50 text-sm max-w-xl mx-auto">This is not a mockup. Score Fix subscribers receive an evidence-linked JSON-LD patch, H1 rewrite, and FAQ block in one exportable output — generated from their live audit findings.</p>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">This is not a mockup. Score Fix subscribers receive an evidence-linked JSON-LD patch, H1 rewrite, and FAQ block in one exportable output; generated from their live audit findings.</p>
           </div>
           <div className="rounded-2xl border border-white/12 bg-[#323a4c]/40 p-3 sm:p-4 shadow-2xl">
             <img src="/images/fix-pack-preview.svg" alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block" className="w-full h-auto rounded-xl" loading="lazy" />
@@ -400,7 +400,7 @@ const Landing = () => {
           <div className="mt-10 pt-8 border-t border-white/10">
             <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4">AiVIS does NOT measure</h3>
             <ul className="space-y-2">
-              {['Live ChatGPT or Perplexity traffic to your site','Google SERP rankings or traditional SEO authority signals','Backlinks, domain age, or historical content performance'].map((i) => (
+              {['Live ChatGPT or Perplexity traffic to your site','Google SERP rankings or traditional SEO authority signals','Backlinks, domain age or historical content performance'].map((i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-white/50"><span className="text-red-400 mt-0.5">✕</span><span>{i}</span></li>
               ))}
             </ul>

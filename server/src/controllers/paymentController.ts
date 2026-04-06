@@ -1334,7 +1334,7 @@ export const getPricingInfo = async (req: Request, res: Response) => {
 
       if (tier === 'scorefix') {
         features.push('Everything in Signal, plus:');
-        features.push('Automated GitHub PR remediation via MCP (10-25 credits per fix)');
+        features.push('Automated GitHub PR remediation via MCP (600-1008 code lines)');
         features.push('Thorough evidence audit mode');
         features.push('Actual Fix Plan (evidence-linked)');
         features.push('Issue-level validation checklist');

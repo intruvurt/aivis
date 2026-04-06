@@ -526,6 +526,59 @@ for (const t of TEMPLATES) {
   templateByRuleId.set(t.rule_id, t);
 }
 
+/** Look up a single template by its rule_id. Used by fixWorker. */
+export function getTemplateByRuleId(ruleId: string): FixpackTemplate | undefined {
+  return templateByRuleId.get(ruleId);
+}
+
+/** All known rule_ids for iteration */
+export function getAllRuleIds(): string[] {
+  return Array.from(templateByRuleId.keys());
+}
+
+/**
+ * Match an issue title (from v1_issues) to a fixpack template rule_id.
+ * Uses keyword patterns derived from the SSFR rule engine titles and
+ * common issue descriptions created during audit processing.
+ */
+export function matchRuleIdFromTitle(title: string): string | null {
+  const t = title.toLowerCase();
+  const patterns: Array<[RegExp, string]> = [
+    [/\borganization\b.*\bschema\b|\blocal\s*business\b.*\bschema\b|\borg\b.*\bjson-?ld\b/, 'source_org_schema'],
+    [/\bsame\s*as\b.*\blink|\bsocial\b.*\bverif|\bsame\s*as\b.*\bmissing/, 'source_same_as'],
+    [/\bauthor\b.*\bentity\b|\bauthor\b.*\bschema\b|\bperson\b.*\bschema\b/, 'source_author_entity'],
+    [/\bcanonical\b.*\burl\b|\bcanonical\b.*\btag\b|\bcanonical\b.*\bmissing\b/, 'source_canonical'],
+    [/\brobots\.txt\b.*\bmissing\b|\bcreate\b.*\brobots\b|\brobots\.txt\b.*\binaccessible\b/, 'source_robots_txt'],
+    [/\bai\s*crawler\b.*\bblock|\bunblock\b.*\bcrawler|\bcrawler\b.*\baccess/, 'source_ai_crawler_access'],
+    [/\bllms\.txt\b|\bllms\s+txt\b/, 'source_llms_txt'],
+    [/\btitle\b.*\btag\b.*\b(missing|length|quality|fix)\b|\btitle\b.*\b(too short|too long|empty)\b/, 'signal_title_quality'],
+    [/\bmeta\s*description\b/, 'signal_meta_description'],
+    [/\bopen\s*graph\b|\bog\s*tag|\bog:title\b/, 'signal_og_tags'],
+    [/\bjson-?ld\b|\bstructured\s*data\b.*\bmissing\b|\bno\b.*\bjson-?ld\b|\bschema\b.*\bmissing\b/, 'signal_json_ld'],
+    [/\bh1\b.*\bheading\b|\bh1\b.*\bmissing\b|\bmultiple\b.*\bh1\b/, 'signal_h1_heading'],
+    [/\bheading\b.*\bhierarchy\b|\bheading\b.*\bstructure\b|\bnested\b.*\bheading\b/, 'signal_heading_hierarchy'],
+    [/\bsitemap\b.*\bmissing\b|\bcreate\b.*\bsitemap\b|\bsitemap\.xml\b/, 'signal_sitemap'],
+    [/\blang\b.*\battribute\b|\bhtml\b.*\blang\b|\blanguage\b.*\bmissing\b/, 'signal_lang'],
+    [/\bword\s*count\b|\bcontent\b.*\bdepth\b|\bthin\s*content\b/, 'fact_word_count'],
+    [/\bquestion\b.*\bheading|\bfaq\b.*\bheading|\bq&a\b.*\bheading/, 'fact_question_headings'],
+    [/\btl;?dr\b|\bsummary\b.*\bblock\b|\bsummary\b.*\bmissing\b/, 'fact_tldr'],
+    [/\bimage\b.*\balt\b|\balt\s*text\b|\balt\b.*\bcoverage\b/, 'fact_image_alt'],
+    [/\binternal\b.*\blink/, 'fact_internal_links'],
+    [/\bexternal\b.*\blink|\breference\b.*\blink/, 'fact_external_links'],
+    [/\bschema\b.*\bdepth\b|\bschema\b.*\btype.*\b(few|count|richer)\b|\bentity\s*graph\b/, 'rel_schema_depth'],
+    [/\blink\b.*\bdiversity\b|\blink\b.*\bbalance\b|\blink\b.*\bratio\b/, 'rel_link_diversity'],
+    [/\bperformance\b|\blcp\b|\bpage\s*load\b|\bpage\s*speed\b/, 'rel_performance'],
+    [/\bcontradiction\b/, 'rel_contradiction_clean'],
+    [/\bgeo\b.*\bsource\b|\bsource\b.*\bverif/, 'rel_geo_source'],
+  ];
+
+  for (const [pattern, ruleId] of patterns) {
+    if (pattern.test(t)) return ruleId;
+  }
+
+  return null;
+}
+
 // ─── Main generation function ───────────────────────────────────────────────
 
 export function generateFixpacks(

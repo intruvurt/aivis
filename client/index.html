@@ -423,7 +423,7 @@
             "name": "How does AiVIS calculate a search visibility score?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "AiVIS runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. Score Fix also generates automated GitHub PRs via MCP at 10-25 credits per fix. The 0–100 search visibility score is a weighted composite across six categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%). Each finding is tied back to real page evidence."
+              "text": "AiVIS runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. Score Fix also generates automated GitHub PRs via MCP at 600-1008 code lines. The 0–100 search visibility score is a weighted composite across six categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%). Each finding is tied back to real page evidence."
             }
           },
           {
@@ -520,9 +520,9 @@
         "numberOfItems": 4,
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "Observer -> 3 free scans per month with open weight models" },
-          { "@type": "ListItem", "position": 2, "name": "Alignment -> 60 scans per month with paid AI models at $9/month" },
-          { "@type": "ListItem", "position": 3, "name": "Signal -> 110 scans per month with triple-check pipeline at $29/month" },
-          { "@type": "ListItem", "position": 4, "name": "Score Fix AutoFix PR -> 250 credits per pack with automated GitHub PR remediation via MCP at $299 per pack (10-25 credits per fix)" }
+          { "@type": "ListItem", "position": 2, "name": "Alignment -> 60 scans per month with paid AI models at $49/month" },
+          { "@type": "ListItem", "position": 3, "name": "Signal -> 110 scans per month with triple-check pipeline at $149/month" },
+          { "@type": "ListItem", "position": 4, "name": "Score Fix = AutoFix PR -> automated GitHub PR and affected file remediation via WebMCP is temporarily discounted at $299($499 12-31-2027) per 250 credits(600-1008 code lines; very difficult refactoring or high complexity = up to 37-125 max complexity code - consumes 100% credits at 693 lines & 8-62 max complexity code = 434 lines)" }
         ]
       }
     </script>

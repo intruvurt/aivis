@@ -28,6 +28,7 @@ export type RobotsInfo = {
   raw?: string;
   allows?: Record<string, boolean>;
   rules?: Record<string, { allow: string[]; disallow: string[] }>;
+  sitemapDirectives?: string[];
 };
 
 export interface ScrapeResult {
@@ -38,8 +39,31 @@ export interface ScrapeResult {
     html: string;
     structuredData?: StructuredData;
     robots?: RobotsInfo;
-    llmsTxt?: { fetched: boolean; present: boolean; raw?: string };
-    sitemap?: { fetched: boolean; present: boolean; urlCount?: number };
+    llmsTxt?: {
+      fetched: boolean;
+      present: boolean;
+      raw?: string;
+      parsed?: {
+        title?: string;
+        description?: string;
+        sectionCount: number;
+        linkCount: number;
+        hasEntityInfo: boolean;
+        hasCanonicalPages: boolean;
+        hasQA: boolean;
+        sections: string[];
+      };
+    };
+    sitemap?: {
+      fetched: boolean;
+      present: boolean;
+      urlCount?: number;
+      isIndex?: boolean;
+      indexCount?: number;
+      hasLastmod?: boolean;
+      freshestMod?: string;
+      sitemapUrls?: string[];
+    };
 
     questionH2Count?: number;
     questionH2s?: string[];
@@ -66,6 +90,8 @@ export interface ScrapeResult {
     links?: {
       internal: number;
       external: number;
+      internalAnchors?: Array<{ href: string; text: string; context: 'nav' | 'content' | 'footer' | 'header' | 'sidebar' }>;
+      descriptiveAnchorRatio?: number;
     };
     images?: number;
     imagesWithAlt?: number;
@@ -101,7 +127,12 @@ type EvalData = {
     h3: string[];
   };
   canonical: string;
-  links: { internal: number; external: number };
+  links: {
+    internal: number;
+    external: number;
+    internalAnchors?: Array<{ href: string; text: string; context: 'nav' | 'content' | 'footer' | 'header' | 'sidebar' }>;
+    descriptiveAnchorRatio?: number;
+  };
   images: number;
   imagesWithAlt: number;
   wordCount: number;
@@ -118,8 +149,31 @@ type EvalData = {
   tldrPosition: 'top' | 'mid' | 'bottom' | 'none';
 
   lcpMs?: number;
-  llmsTxt?: { fetched: boolean; present: boolean; raw?: string };
-  sitemap?: { fetched: boolean; present: boolean; urlCount?: number };
+  llmsTxt?: {
+    fetched: boolean;
+    present: boolean;
+    raw?: string;
+    parsed?: {
+      title?: string;
+      description?: string;
+      sectionCount: number;
+      linkCount: number;
+      hasEntityInfo: boolean;
+      hasCanonicalPages: boolean;
+      hasQA: boolean;
+      sections: string[];
+    };
+  };
+  sitemap?: {
+    fetched: boolean;
+    present: boolean;
+    urlCount?: number;
+    isIndex?: boolean;
+    indexCount?: number;
+    hasLastmod?: boolean;
+    freshestMod?: string;
+    sitemapUrls?: string[];
+  };
   aiCrawlerAccess?: Record<string, boolean>;
 };
 
@@ -153,20 +207,37 @@ async function fetchRobotsForOrigin(origin: string): Promise<RobotsInfo> {
     const txt = await res.text();
     const parsed = parseRobotsTxt(txt);
 
+    // Comprehensive AI crawler list covering 30+ answer engines
     const agentsOfInterest = [
-      'gptbot',
-      'GPTBot',
-      'OpenAI',
-      'openai',
-      'BingPreview',
-      'bingbot',
-      'Googlebot-Image',
-      '*',
+      'GPTBot', 'ChatGPT-User', 'OpenAI',             // OpenAI (ChatGPT, SearchGPT)
+      'Google-Extended', 'Googlebot',                    // Google (Gemini, AI Overviews)
+      'ClaudeBot', 'Anthropic-ai',                       // Anthropic (Claude)
+      'PerplexityBot',                                   // Perplexity
+      'Applebot-Extended',                               // Apple Intelligence
+      'Bytespider',                                      // ByteDance (Doubao)
+      'CCBot',                                           // Common Crawl (training data)
+      'Amazonbot',                                       // Amazon (Alexa, Rufus)
+      'FacebookBot', 'Meta-ExternalAgent',               // Meta AI
+      'Cohere-ai',                                       // Cohere (Command)
+      'YouBot',                                          // You.com
+      'BingPreview', 'bingbot',                          // Microsoft (Copilot)
+      'Googlebot-Image',                                 // Google image
+      'OAI-SearchBot',                                   // OpenAI search
+      'DuckAssistBot',                                   // DuckDuckGo AI Chat
+      'PhindBot',                                        // Phind
+      '*',                                               // Default wildcard
     ];
     const allows: Record<string, boolean> = {};
     for (const a of agentsOfInterest) allows[a] = evaluateAgentAllowed(parsed, a);
 
-    return { fetched: true, raw: txt, allows, rules: parsed };
+    // Extract Sitemap: directives
+    const sitemapDirectives: string[] = [];
+    for (const line of txt.split(/\r?\n/)) {
+      const sm = line.match(/^sitemap:\s*(\S+)/i);
+      if (sm) sitemapDirectives.push(sm[1].trim());
+    }
+
+    return { fetched: true, raw: txt, allows, rules: parsed, sitemapDirectives };
   } catch {
     return { fetched: false };
   } finally {
@@ -176,10 +247,24 @@ async function fetchRobotsForOrigin(origin: string): Promise<RobotsInfo> {
 
 /**
  * Fetch /llms.txt - the emerging standard for AI crawler guidance.
- * Returns presence + raw content (first 4000 chars).
+ * Parses title, description, sections, link count, entity info, Q&A blocks.
  * 4-second timeout; never throws.
  */
-async function fetchLlmsTxt(origin: string): Promise<{ fetched: boolean; present: boolean; raw?: string }> {
+async function fetchLlmsTxt(origin: string): Promise<{
+  fetched: boolean;
+  present: boolean;
+  raw?: string;
+  parsed?: {
+    title?: string;
+    description?: string;
+    sectionCount: number;
+    linkCount: number;
+    hasEntityInfo: boolean;
+    hasCanonicalPages: boolean;
+    hasQA: boolean;
+    sections: string[];
+  };
+}> {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), 4000);
   const target = `${origin.replace(/\/$/, '')}/llms.txt`;
@@ -189,8 +274,61 @@ async function fetchLlmsTxt(origin: string): Promise<{ fetched: boolean; present
       headers: { 'User-Agent': 'ai-visible-engine-bot/1.0' },
     });
     if (!res.ok) return { fetched: true, present: false };
-    const raw = (await res.text()).slice(0, 4000);
-    return { fetched: true, present: true, raw };
+    const raw = (await res.text()).slice(0, 8000);
+
+    // Parse llms.txt structure
+    const lines = raw.split(/\r?\n/);
+    const titleMatch = lines[0]?.match(/^#\s+(.+)/);
+    const title = titleMatch ? titleMatch[1].trim() : undefined;
+
+    // Description: lines starting with > after title
+    const descLines: string[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const l = lines[i].trim();
+      if (l.startsWith('>')) descLines.push(l.replace(/^>\s*/, ''));
+      else if (l === '') continue;
+      else break;
+    }
+    const description = descLines.length > 0 ? descLines.join(' ').trim() : undefined;
+
+    // Sections: ## headings
+    const sectionHeadings: string[] = [];
+    for (const line of lines) {
+      const sm = line.match(/^##\s+(.+)/);
+      if (sm) sectionHeadings.push(sm[1].trim());
+    }
+
+    // Count links (markdown link syntax or bare URLs)
+    const linkMatches = raw.match(/https?:\/\/[^\s)>\]]+/g) || [];
+    const linkCount = linkMatches.length;
+
+    // Entity signals: look for identity/entity/name/type/creator/sameAs patterns
+    const entityRe = /\b(entity|identity|type:|creator:|founded:|headquarters:|sameAs|organization|company)\b/i;
+    const hasEntityInfo = entityRe.test(raw);
+
+    // Canonical page signals
+    const canonicalRe = /\b(canonical|preferred|homepage|pricing|methodology|about|faq)\b/i;
+    const hasCanonicalPages = canonicalRe.test(raw) && linkCount >= 3;
+
+    // Q&A signals
+    const qaRe = /\bQ:\s|^Q:\s|FAQ|frequently asked|question/im;
+    const hasQA = qaRe.test(raw);
+
+    return {
+      fetched: true,
+      present: true,
+      raw,
+      parsed: {
+        title,
+        description,
+        sectionCount: sectionHeadings.length,
+        linkCount,
+        hasEntityInfo,
+        hasCanonicalPages,
+        hasQA,
+        sections: sectionHeadings,
+      },
+    };
   } catch {
     return { fetched: false, present: false };
   } finally {
@@ -199,10 +337,20 @@ async function fetchLlmsTxt(origin: string): Promise<{ fetched: boolean; present
 }
 
 /**
- * Fetch /sitemap.xml - check presence and approximate URL count.
+ * Fetch /sitemap.xml - check presence, extract URLs, detect sitemap index,
+ * extract lastmod dates, and return first 100 URLs for crawl seeding.
  * 4-second timeout; never throws.
  */
-async function fetchSitemap(origin: string): Promise<{ fetched: boolean; present: boolean; urlCount?: number }> {
+async function fetchSitemap(origin: string): Promise<{
+  fetched: boolean;
+  present: boolean;
+  urlCount?: number;
+  isIndex?: boolean;
+  indexCount?: number;
+  hasLastmod?: boolean;
+  freshestMod?: string;
+  sitemapUrls?: string[];
+}> {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), 4000);
   const target = `${origin.replace(/\/$/, '')}/sitemap.xml`;
@@ -213,8 +361,63 @@ async function fetchSitemap(origin: string): Promise<{ fetched: boolean; present
     });
     if (!res.ok) return { fetched: true, present: false };
     const raw = (await res.text()).slice(0, MAX_SITEMAP_CHARS);
-    const urlCount = (raw.match(/<loc>/gi) || []).length;
-    return { fetched: true, present: true, urlCount };
+
+    // Detect sitemap index vs urlset
+    const isIndex = /<sitemapindex/i.test(raw);
+
+    if (isIndex) {
+      // Extract child sitemap <loc> URLs
+      const indexLocs: string[] = [];
+      const locRe = /<loc>\s*(.*?)\s*<\/loc>/gi;
+      let m: RegExpExecArray | null;
+      while ((m = locRe.exec(raw)) !== null) {
+        indexLocs.push(m[1].trim());
+      }
+      return {
+        fetched: true,
+        present: true,
+        urlCount: 0,
+        isIndex: true,
+        indexCount: indexLocs.length,
+        sitemapUrls: indexLocs.slice(0, 20),
+      };
+    }
+
+    // Standard urlset: extract <loc> URLs and <lastmod> dates
+    const urls: string[] = [];
+    const lastmods: string[] = [];
+
+    // Extract all <url> entries or just <loc> tags
+    const locRe = /<loc>\s*(.*?)\s*<\/loc>/gi;
+    let m: RegExpExecArray | null;
+    while ((m = locRe.exec(raw)) !== null) {
+      urls.push(m[1].trim());
+    }
+
+    const lastmodRe = /<lastmod>\s*(.*?)\s*<\/lastmod>/gi;
+    while ((m = lastmodRe.exec(raw)) !== null) {
+      lastmods.push(m[1].trim());
+    }
+
+    const hasLastmod = lastmods.length > 0;
+    let freshestMod: string | undefined;
+    if (hasLastmod) {
+      // Sort by date descending to find freshest
+      const sorted = lastmods
+        .filter((d) => /^\d{4}/.test(d))
+        .sort((a, b) => b.localeCompare(a));
+      freshestMod = sorted[0];
+    }
+
+    return {
+      fetched: true,
+      present: true,
+      urlCount: urls.length,
+      isIndex: false,
+      hasLastmod,
+      freshestMod,
+      sitemapUrls: urls.slice(0, 100),
+    };
   } catch {
     return { fetched: false, present: false };
   } finally {
@@ -430,16 +633,28 @@ function parseHtml(html: string, baseUrl: string): ScrapeResult['data'] {
   const h3 = extractHeadings('h3').slice(0, 30);
 
   const hostname = new URL(baseUrl).hostname;
-  const linkRe = /href=["']([^"']+)["']/gi;
+  // Enhanced link extraction: collect anchor text and classify context
+  const anchorRe = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
   let internal = 0;
   let external = 0;
+  const internalAnchors: Array<{ href: string; text: string; context: 'nav' | 'content' | 'footer' | 'header' | 'sidebar' }> = [];
   let lm: RegExpExecArray | null;
 
-  while ((lm = linkRe.exec(html)) !== null) {
+  while ((lm = anchorRe.exec(html)) !== null) {
     const href = lm[1];
-    if (href.startsWith('/') || href.includes(hostname)) internal++;
-    else if (href.startsWith('http')) external++;
+    const anchorText = lm[2].replace(/<[^>]+>/g, '').trim();
+    if (href.startsWith('/') || href.includes(hostname)) {
+      internal++;
+      if (internalAnchors.length < 50) {
+        internalAnchors.push({ href, text: anchorText.slice(0, 120), context: 'content' });
+      }
+    } else if (href.startsWith('http')) external++;
   }
+
+  // Descriptive anchor ratio: non-generic anchors / total internal
+  const genericAnchors = /^(click here|here|read more|learn more|link|more|this|go|see more|view|details)$/i;
+  const descriptiveCount = internalAnchors.filter((a) => a.text.length > 2 && !genericAnchors.test(a.text)).length;
+  const descriptiveAnchorRatio = internalAnchors.length > 0 ? descriptiveCount / internalAnchors.length : 0;
 
   const images = (html.match(/<img[\s\S]*?>/gi) || []).length;
   const imagesWithAlt = (html.match(/<img[^>]+alt=["'][^"']+["'][^>]*>/gi) || []).length;
@@ -504,7 +719,7 @@ function parseHtml(html: string, baseUrl: string): ScrapeResult['data'] {
     meta: { description, keywords, ogTitle, ogDescription: ogDesc, ogImage, twitterCard, twitterTitle, twitterDescription },
     headings: { h1, h2, h3 },
     canonical,
-    links: { internal, external },
+    links: { internal, external, internalAnchors, descriptiveAnchorRatio },
     images,
     imagesWithAlt,
     wordCount,
@@ -613,7 +828,7 @@ async function fetchFallback(url: string, timeoutMs: number): Promise<ScrapeResu
 
       // Compute per-crawler access from robots data
       if (robotsResult.fetched && robotsResult.rules) {
-        const crawlers = ['GPTBot', 'ClaudeBot', 'Google-Extended', 'PerplexityBot', 'Amazonbot', 'CCBot', 'Bytespider'];
+        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
         const access: Record<string, boolean> = {};
         for (const crawler of crawlers) {
           access[crawler] = evaluateAgentAllowed(robotsResult.rules, crawler);
@@ -791,11 +1006,33 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
         const currentHost = window.location.hostname;
         let internal = 0;
         let external = 0;
+        const internalAnchors: Array<{ href: string; text: string; context: 'nav' | 'content' | 'footer' | 'header' | 'sidebar' }> = [];
+        const genericAnchors = /^(click here|here|read more|learn more|link|more|this|go|see more|view|details)$/i;
+
         allLinks.forEach((link) => {
           const href = link.getAttribute('href') || '';
-          if (href.startsWith('/') || href.includes(currentHost)) internal++;
-          else if (href.startsWith('http')) external++;
+          const anchorText = (link.textContent || '').trim();
+          if (href.startsWith('/') || href.includes(currentHost)) {
+            internal++;
+            if (internalAnchors.length < 50) {
+              // Classify context by nearest semantic parent
+              let context: 'nav' | 'content' | 'footer' | 'header' | 'sidebar' = 'content';
+              const closest = link.closest('nav, footer, header, aside, [role="navigation"], [role="banner"], [role="contentinfo"], [role="complementary"]');
+              if (closest) {
+                const tag = closest.tagName.toLowerCase();
+                const role = closest.getAttribute('role') || '';
+                if (tag === 'nav' || role === 'navigation') context = 'nav';
+                else if (tag === 'footer' || role === 'contentinfo') context = 'footer';
+                else if (tag === 'header' || role === 'banner') context = 'header';
+                else if (tag === 'aside' || role === 'complementary') context = 'sidebar';
+              }
+              internalAnchors.push({ href, text: anchorText.slice(0, 120), context });
+            }
+          } else if (href.startsWith('http')) external++;
         });
+
+        const descriptiveCount = internalAnchors.filter((a: any) => a.text.length > 2 && !genericAnchors.test(a.text)).length;
+        const descriptiveAnchorRatio = internalAnchors.length > 0 ? descriptiveCount / internalAnchors.length : 0;
 
         const allImages = Array.from(document.querySelectorAll('img'));
         const images = allImages.length;
@@ -824,7 +1061,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
           meta: { description, keywords, ogTitle, ogDescription, ogImage, twitterCard, twitterTitle, twitterDescription },
           headings: { h1, h2, h3 },
           canonical,
-          links: { internal, external },
+          links: { internal, external, internalAnchors, descriptiveAnchorRatio },
           images,
           imagesWithAlt,
           wordCount,
@@ -883,7 +1120,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
 
       // Compute per-crawler access from robots data
       if (robotsResult.fetched && robotsResult.rules) {
-        const crawlers = ['GPTBot', 'ClaudeBot', 'Google-Extended', 'PerplexityBot', 'Amazonbot', 'CCBot', 'Bytespider'];
+        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
         const access: Record<string, boolean> = {};
         for (const crawler of crawlers) {
           access[crawler] = evaluateAgentAllowed(robotsResult.rules, crawler);

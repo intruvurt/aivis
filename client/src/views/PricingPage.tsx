@@ -165,7 +165,7 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "PR-ready outputs",
       "verification after fix",
       "MCP integration",
-      "600-1000 code lines max - varies by issue complexity",
+      "600-1008 code lines max - varies by issue complexity",
     ],
     cta: "Get the fix pack",
     priceLabel: "$299",
@@ -356,7 +356,7 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
     if (tier.key === "scorefix") {
       ensureFeature("Everything in Signal, plus:", /everything in signal/i);
       ensureFeature(
-        "Automated GitHub PR remediation via MCP (10-25 credits per fix)",
+        "Automated GitHub PR remediation via MCP (600-1008 code lines)",
         /automated.*pr|github.*mcp|autopr/i
       );
     }
@@ -816,7 +816,7 @@ export default function PricingPage() {
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Automated GitHub PR remediation via MCP connections: 250-credit pack at 10-25 credits per fix with evidence-linked implementation",
+              "Automated GitHub PR remediation via MCP connections: 250-credit pack at 600-1008 code lines with evidence-linked implementation",
           },
         ],
       },

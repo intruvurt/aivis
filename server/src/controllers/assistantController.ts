@@ -69,7 +69,7 @@ function getDeterministicFallbackReply(message: string): string {
       '- Observer: 3 scans/mo + score + grades + top 3 recommendations + history',
       '- Alignment: 60 scans/mo + all recommendations with implementation fixes + exports + competitors + reverse engineer + mentions',
       '- Signal: 110 scans/mo + triple-check AI (3 models) + citation testing + API + white-label + scheduled rescans',
-      '- Score Fix: 250 credits/pack + automated GitHub PR remediation via MCP (10-25 credits per fix)',
+      '- Score Fix: 250 credits/pack + automated GitHub PR remediation via MCP (600-1008 code lines)',
       '',
       'Open [Pricing](/pricing) for full details and current billing options.',
     ].join('\n');
@@ -561,9 +561,9 @@ This eliminates single-model bias. Observer and Alignment get a single-model ana
 | Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
 | Alignment [Core] | $9/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
 | Signal [Pro] | $29/mo | 110 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 8 competitors |
-| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 10-25 credits per fix, issue-level validation, 10 competitors |
+| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
 
-Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (10-25 credits per fix).
+Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (600-1008 code lines).
 Always verify exact current pricing from live pricing context and /pricing.
 
 ## Credit System

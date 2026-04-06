@@ -425,13 +425,13 @@ export default function ScoreFixPage() {
           <Sparkles className="h-5 w-5 text-amber-400" />
           Score Fix
         </h1>
-        <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP - 10-25 credits per fix</p>
+        <p className="text-sm text-slate-400 mt-1">Automated GitHub PR remediation via MCP - 600-1008 code lines</p>
       </div>
       {!hasAccess ? (
         <div className="w-full py-16">
           <UpgradeWall
             feature="Score Fix"
-            description="Purchase a Score Fix credit pack to unlock automated GitHub PR remediations via MCP (10-25 credits per fix)."
+            description="Purchase a Score Fix credit pack to unlock automated GitHub PR remediations via MCP (600-1008 code lines)."
             requiredTier="scorefix"
             icon={<Sparkles className="w-12 h-12 text-amber-400" />}
             featurePreview={[
@@ -489,7 +489,7 @@ export default function ScoreFixPage() {
                   { icon: AuditEngineIcon, label: "Goal", value: "Automated PR generation" },
                   { icon: Search, label: "Focus", value: "GitHub MCP remediation" },
                   { icon: Workflow, label: "Method", value: "Evidence to automated PR" },
-                  { icon: ScoreFixIcon, label: "Cost", value: "10-25 credits per fix" },
+                  { icon: ScoreFixIcon, label: "Cost", value: "600-1008 code lines" },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
@@ -564,7 +564,7 @@ export default function ScoreFixPage() {
                   "Adds FAQ blocks and answer sections",
                   "Links evidence IDs to every change",
                   "Adds internal links via topical anchors",
-                  "10-25 credits per fix (complexity-based)",
+                  "600-1008 code lines (complexity-based)",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />

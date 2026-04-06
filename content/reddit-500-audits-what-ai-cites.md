@@ -165,6 +165,6 @@ All of these are on AiVIS and require no account:
 - **Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - checks JSON-LD, Open Graph, Twitter Cards, Microdata
 - **Content Extractability** - [aivis.biz/tools/content-extractability](https://aivis.biz/tools/content-extractability) - heading hierarchy, list usage, content density
 
-Full audit with visibility score: [aivis.biz/analyze](https://aivis.biz/analyze) - 10 free scans on the Observer tier, no credit card.
+Full audit with visibility score: [aivis.biz/analyze](https://aivis.biz/analyze) - 3 free scans on the Observer tier, no credit card.
 
 Happy to answer specific questions about results if you run an audit and share it here.

@@ -16,7 +16,7 @@ async function readRepoFile(...parts: string[]) {
 
 function checkTierLimits(): CheckResult[] {
   const expected = {
-    observer: { scansPerMonth: 10, hasApiAccess: false, hasScheduledRescans: false },
+    observer: { scansPerMonth: 3, hasApiAccess: false, hasScheduledRescans: false },
     alignment: { scansPerMonth: 60, hasApiAccess: false, hasScheduledRescans: false },
     signal: { scansPerMonth: 110, hasApiAccess: true, hasScheduledRescans: true },
     scorefix: { scansPerMonth: 250, hasApiAccess: true, hasScheduledRescans: true },

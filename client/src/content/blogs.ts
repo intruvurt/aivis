@@ -1345,7 +1345,7 @@ Batch Remediation handles multiple issues across multiple pages in a single oper
 
 **Pricing That Maps to Value**
 
-Observer is free. Ten audits per month. Full audit fidelity. No credit card required. You see exactly what the platform does before spending anything.
+Observer is free. Three audits per month. Full audit fidelity. No credit card required. You see exactly what the platform does before spending anything.
 
 Alignment is $49 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
 
@@ -2266,7 +2266,7 @@ The third mistake is not testing competitors. If you only test yourself, you kno
 
 Citation testing is the verification layer that turns AI visibility from a theoretical optimization into a measurable outcome. Without it, you are optimizing blind.
 
-Try it at [aivis.ing](https://aivis.ing). The first 10 audits are free.`,
+Try it at [aivis.ing](https://aivis.ing). The first 3 audits are free.`,
     keyPoints: [
       'Citation testing searches three independent engines (DuckDuckGo HTML, Bing HTML, DDG Instant Answer) in parallel for brand presence.',
       'AI answer engines use existing search indexes for retrieval. If search engines cannot see you, AI cannot cite you.',

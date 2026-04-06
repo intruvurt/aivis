@@ -21,6 +21,14 @@ const PRESS_STRUCTURED_DATA = [
 const FEATURED_POSTS = [
   {
     date: "Apr 2026",
+    platform: "DEV.to",
+    title: "I Audited 500+ Websites. JSON-LD Is the #1 Factor for AI Citation.",
+    description:
+      "The exact JSON-LD templates that get websites cited by ChatGPT, Perplexity, Claude, and Google AI Overview — with copy-paste code and validation steps.",
+    url: "https://dev.to/aivisbiz/i-audited-500-websites-json-ld-is-the-1-factor-for-ai-citation-29m4",
+  },
+  {
+    date: "Apr 2026",
     platform: "Substack",
     title: "Best Startup Launch Platforms for AI Visibility and Authority in 2026",
     description:

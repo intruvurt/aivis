@@ -307,4 +307,4 @@ The first two take an evening. Steps 3-5 take a week of systematic page-by-page 
 
 After implementation, run a full AI visibility audit to see where your score lands and what else is flagged. The schema is one layer. Crawler access, content depth, heading structure, and page performance compose the rest of the picture.
 
-Full audit at [aivis.biz/analyze](https://aivis.biz/analyze). Observer tier is free with 10 audits. Schema implementation questions welcome in the comments.
+Full audit at [aivis.biz/analyze](https://aivis.biz/analyze). Observer tier is free with 3 audits. Schema implementation questions welcome in the comments.

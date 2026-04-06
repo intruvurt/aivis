@@ -236,11 +236,11 @@ const Landing = () => {
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-                  See your visibility snapshot
+                  Run your free audit
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </Link>
-                <Link to="/pricing" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
-                  View plans &amp; pricing
+                <Link to="/score-fix" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
+                  See a sample report
                 </Link>
               </div>
             </motion.div>
@@ -280,6 +280,41 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* ── PROOF STRIP ── */}
+      <section className="py-10 bg-[#0a0a0f] border-b border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-white/10 bg-[#111827]/50 p-6 sm:p-8">
+            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
+              <div className="flex items-center gap-4 shrink-0">
+                <div className="text-center">
+                  <div className="text-3xl font-black text-red-300">15</div>
+                  <div className="text-[10px] text-white/40 mt-0.5">Before</div>
+                </div>
+                <svg className="w-6 h-6 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                <div className="text-center">
+                  <div className="text-3xl font-black text-emerald-300">52</div>
+                  <div className="text-[10px] text-white/40 mt-0.5">After</div>
+                </div>
+                <div className="text-center ml-2">
+                  <div className="text-2xl font-black text-cyan-300">+37</div>
+                  <div className="text-[10px] text-white/40 mt-0.5">Points</div>
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-sm text-white/70 leading-relaxed mb-1">
+                  <span className="text-white/90 font-semibold">Missing JSON-LD, broken heading hierarchy, zero FAQ schema.</span>
+                </p>
+                <p className="text-xs text-white/45">One audit. Three fixes applied. Score doubled on re-scan.</p>
+              </div>
+              <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+                Run your free audit
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS (bridge) ── */}
       <section className="py-20 bg-gradient-to-b from-[#0a0a0f] to-[#060607]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -305,57 +340,38 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ── PROBLEM STATEMENT ── */}
-      <section className="py-24 bg-[#060607] border-t border-white/8">
+      {/* ── THE GAP + WHAT YOU GET (compressed) ── */}
+      <section className="py-20 bg-[#060607] border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">The problem</span>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">
               <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">AI models skip sites they cannot extract</span>
             </h2>
-            <p className="text-white/55 text-lg max-w-2xl mx-auto">58.5% of Google searches now end in zero clicks. AI answer engines extract, compress, and cite structured content. If your page is not structured for extraction, you do not get cited - regardless of your domain authority.</p>
+            <p className="text-white/50 text-base max-w-2xl mx-auto">58.5% of Google searches now end in zero clicks. If your page is not structured for extraction, you do not get cited.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-5">
             {([
-              { accentClass: 'border-cyan-400/20 bg-cyan-400/10', titleClass: 'text-cyan-300', title: 'Live page audit', desc: 'Every finding is tied to a specific scraped element from your actual page - not inferred from your domain name or authority score.' },
-              { accentClass: 'border-violet-400/20 bg-violet-400/10', titleClass: 'text-violet-300', title: 'Six-part visibility score', desc: 'Content depth, heading structure, schema completeness, meta tags, technical SEO, and AI readability. Each grade traces to real evidence.' },
-              { accentClass: 'border-amber-400/20 bg-amber-400/10', titleClass: 'text-amber-300', title: 'Fixes ranked by likely lift', desc: 'Every recommendation cites the exact evidence ID - heading, meta tag, schema block, or content gap - that triggered it. Filter by effort level.' },
-            ] as const).map((card) => (
-              <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-                className={`rounded-2xl border ${card.accentClass} p-6`}>
-                <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
-                <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── VISIBILITY SNAPSHOT PREVIEW ── */}
-      <section className="py-20 bg-gradient-to-b from-[#060607] to-[#0a0a0f] border-t border-white/8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Visibility snapshot</span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">What your first audit reveals</h2>
-            <p className="text-white/50 text-sm max-w-xl mx-auto">Within a minute, AiVIS returns a structured snapshot of your page's AI readiness - every point backed by BRAG evidence.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {([
-              { accentClass: 'border-cyan-400/20 bg-cyan-400/8', titleClass: 'text-cyan-300', title: 'What AI understands', desc: 'Headings, entities, schema and content your page already provides that AI models can extract and use in generated answers.' },
-              { accentClass: 'border-amber-400/20 bg-amber-400/8', titleClass: 'text-amber-300', title: 'What AI cannot verify', desc: 'Missing signals, conflicting schema, thin content and unclear entity definitions that stop AI from trusting your page enough to cite it.' },
-              { accentClass: 'border-emerald-400/20 bg-emerald-400/8', titleClass: 'text-emerald-300', title: 'What to fix first', desc: 'The highest-impact issue on your page right now - with the evidence ID, a fix description, and the expected score lift if you resolve it.' },
+              { accentClass: 'border-cyan-400/20 bg-cyan-400/8', titleClass: 'text-cyan-300', title: 'What AI understands', desc: 'Headings, entities, schema and content your page already provides that AI can extract and cite.' },
+              { accentClass: 'border-amber-400/20 bg-amber-400/8', titleClass: 'text-amber-300', title: 'What AI cannot verify', desc: 'Missing signals, conflicting schema and unclear entity definitions that stop AI from trusting your page.' },
+              { accentClass: 'border-emerald-400/20 bg-emerald-400/8', titleClass: 'text-emerald-300', title: 'What to fix first', desc: 'The highest-impact issue right now - with the evidence ID, fix description, and expected score lift.' },
             ] as const).map((card) => (
               <motion.div key={card.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-                className={`rounded-2xl border ${card.accentClass} p-6`}>
-                <h3 className={`text-lg font-bold ${card.titleClass} mb-2`}>{card.title}</h3>
+                className={`rounded-2xl border ${card.accentClass} p-5`}>
+                <h3 className={`text-base font-bold ${card.titleClass} mb-1.5`}>{card.title}</h3>
                 <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
-          <div className="mt-10 text-center">
-            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-              Run your first audit free
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
+              Run your free audit
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Link>
+            <Link to="/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
+              See a sample report
+            </Link>
+            <Link to="/pricing" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
+              Fix my visibility
             </Link>
           </div>
         </div>
@@ -396,18 +412,35 @@ const Landing = () => {
       <section className="py-20 bg-[#060607] border-t border-white/8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">Real paid output</span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Score Fix Pack - what you actually receive</h2>
-            <p className="text-white/50 text-sm max-w-xl mx-auto">This is not a mockup. Score Fix subscribers receive an evidence-linked JSON-LD patch, H1 rewrite, and FAQ block in one exportable output - generated from their live audit findings.</p>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-widest mb-4">Real output</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">What changes when you apply the fixes</h2>
+            <p className="text-white/50 text-sm max-w-xl mx-auto">Each Fix Pack is generated from your live audit evidence. You get a JSON-LD patch, H1 rewrite, and FAQ block - and this is what they unlock.</p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4 mb-6">
+            <div className="rounded-xl border border-emerald-400/15 bg-emerald-400/5 p-4 text-center">
+              <div className="text-2xl font-black text-emerald-300 mb-1">+25–40</div>
+              <p className="text-xs text-white/50">Typical score lift after one Fix Pack</p>
+            </div>
+            <div className="rounded-xl border border-cyan-400/15 bg-cyan-400/5 p-4 text-center">
+              <div className="text-lg font-bold text-cyan-300 mb-1">Schema + H1 + FAQ</div>
+              <p className="text-xs text-white/50">Three fixes that cover most visibility gaps</p>
+            </div>
+            <div className="rounded-xl border border-violet-400/15 bg-violet-400/5 p-4 text-center">
+              <div className="text-lg font-bold text-violet-300 mb-1">Copy → Paste → Re-scan</div>
+              <p className="text-xs text-white/50">Apply the patch, re-audit, and measure the difference</p>
+            </div>
           </div>
           <div className="rounded-2xl border border-white/12 bg-[#323a4c]/40 p-3 sm:p-4 shadow-2xl">
             <img src="/images/fix-pack-preview.svg" alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block" className="w-full h-auto rounded-xl" loading="lazy" />
           </div>
-          <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output: JSON-LD patch + H1 rewrite + FAQ block · Generated from live audit evidence</p>
-          <div className="mt-5 flex justify-center">
+          <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output · Generated from live audit evidence · Not a mockup</p>
+          <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/score-fix" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
               See Score Fix details
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Link>
+            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-sm font-semibold hover:bg-cyan-500/15 transition-colors">
+              Run your audit first
             </Link>
           </div>
         </div>
@@ -532,18 +565,18 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_30%,rgba(139,92,246,0.07),transparent)]" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
-            See what AI{' '}
-            <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">gets wrong</span>
-            <br />about your site
+            If your site isn&apos;t being cited,{' '}
+            <span className="bg-gradient-to-r from-amber-300 via-white to-red-300 bg-clip-text text-transparent">it&apos;s already being replaced</span>
           </h2>
-          <p className="text-lg text-white/50 mb-10">Free tier · No credit card · Your visibility snapshot in under a minute</p>
+          <p className="text-lg text-white/55 mb-3">AiVIS shows why. And gives you a way to fix it.</p>
+          <p className="text-sm text-white/35 mb-10">Free tier · No credit card · Your first audit in under a minute</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25">
-              See your visibility snapshot
+              Run your free audit
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
-            <Link to="/pricing" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
-              View all plans
+            <Link to="/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
+              See what a fix looks like
             </Link>
           </div>
           <p className="mt-8 text-xs text-white/30">{MARKETING_CLAIMS.modelAllocation}</p>

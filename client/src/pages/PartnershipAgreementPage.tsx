@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck, Clock, Lock } from "lucide-react";
+import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck, Clock, Lock, Mail, KeyRound } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { API_URL } from "../config";
 
 const AGREEMENT_SLUG = "aivis-zeeniith-referral-delivery-2026";
+
+/** Read ?token= and ?ref= from URL */
+function getUrlParams(): { token: string | null; ref: string | null } {
+  const params = new URLSearchParams(window.location.search);
+  return { token: params.get("token"), ref: params.get("ref") };
+}
 
 interface AgreementData {
   id: string;
@@ -28,6 +34,8 @@ interface AgreementData {
   locked_at: string | null;
   locked_hash: string | null;
   created_at: string;
+  days_until_expiry: number | null;
+  expiry_warning: boolean;
 }
 
 interface VerifyResult {
@@ -51,6 +59,7 @@ export default function PartnershipAgreementPage() {
   const [agreement, setAgreement] = useState<AgreementData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
   const [signingParty, setSigningParty] = useState<"a" | "b" | null>(null);
   const [signatureName, setSignatureName] = useState("");
   const [signError, setSignError] = useState<string | null>(null);
@@ -59,9 +68,23 @@ export default function PartnershipAgreementPage() {
   const [verifyResult, setVerifyResult] = useState<VerifyResult | null>(null);
   const [verifying, setVerifying] = useState(false);
 
+  // OTP state
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState<string | null>(null);
+
+  const { token } = getUrlParams();
+
   const fetchAgreement = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}`);
+      const tokenParam = token ? `?token=${encodeURIComponent(token)}` : "";
+      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}${tokenParam}`);
+      if (res.status === 403) {
+        setAccessDenied(true);
+        return;
+      }
       if (res.status === 404) {
         setError("Agreement not found. It may not have been created yet.");
         return;
@@ -75,12 +98,36 @@ export default function PartnershipAgreementPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => { fetchAgreement(); }, [fetchAgreement]);
 
+  const handleRequestOtp = async () => {
+    if (!signingParty) return;
+    setOtpLoading(true);
+    setOtpError(null);
+    try {
+      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/request-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ party: signingParty }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setOtpError(data.error || "Failed to send OTP.");
+        return;
+      }
+      setOtpSent(true);
+      setOtpEmail(data.email || "");
+    } catch (err: any) {
+      setOtpError(err.message || "Network error.");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
   const handleSign = async () => {
-    if (!signingParty || !signatureName.trim()) return;
+    if (!signingParty || !signatureName.trim() || !otpCode.trim()) return;
     setSignError(null);
     setSignSuccess(null);
     setSigning(true);
@@ -88,7 +135,7 @@ export default function PartnershipAgreementPage() {
       const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/sign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ party: signingParty, signature: signatureName.trim() }),
+        body: JSON.stringify({ party: signingParty, signature: signatureName.trim(), otp: otpCode.trim() }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -98,6 +145,9 @@ export default function PartnershipAgreementPage() {
       setSignSuccess(data.message);
       setSignatureName("");
       setSigningParty(null);
+      setOtpSent(false);
+      setOtpCode("");
+      setOtpEmail("");
       await fetchAgreement();
     } catch (err: any) {
       setSignError(err.message || "Network error.");
@@ -134,7 +184,16 @@ export default function PartnershipAgreementPage() {
           </div>
         )}
 
-        {error && !loading && (
+        {accessDenied && !loading && (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-8 text-center">
+            <Lock className="inline-block mb-3 text-red-400" size={32} />
+            <h2 className="text-xl font-semibold text-red-300 mb-2">Access Denied</h2>
+            <p className="text-white/50 text-sm">This agreement page is private. A valid access token is required.</p>
+            <p className="text-white/40 text-xs mt-3">If you received an invite link, use the full URL provided. Otherwise, contact partners@aivis.biz.</p>
+          </div>
+        )}
+
+        {error && !loading && !accessDenied && (
           <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6 text-center">
             <AlertTriangle className="inline-block mb-2 text-amber-400" size={24} />
             <p className="text-amber-200">{error}</p>
@@ -144,6 +203,21 @@ export default function PartnershipAgreementPage() {
 
         {agreement && !loading && (
           <>
+            {/* Expiry warning banner (persistent from 7 days) */}
+            {agreement.expiry_warning && agreement.days_until_expiry !== null && agreement.days_until_expiry > 0 && (
+              <div className="rounded-2xl border border-orange-500/40 bg-orange-500/10 p-5 flex items-center gap-4">
+                <AlertTriangle className="text-orange-400 shrink-0" size={28} />
+                <div>
+                  <p className="text-orange-300 font-semibold">
+                    Agreement expires in {agreement.days_until_expiry} day{agreement.days_until_expiry !== 1 ? "s" : ""}
+                  </p>
+                  <p className="text-white/50 text-sm">
+                    Valid until {agreement.valid_until ? new Date(agreement.valid_until).toLocaleDateString() : "N/A"}.
+                    Please coordinate renewal with your partner or contact partners@aivis.biz.
+                  </p>
+                </div>
+              </div>
+            )}
             {/* Status banner */}
             <StatusBanner agreement={agreement} isExpired={isExpired} />
 
@@ -231,8 +305,7 @@ export default function PartnershipAgreementPage() {
               <section className="rounded-2xl border border-[#7c5cff]/30 bg-[rgba(18,18,26,0.94)] p-7 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
                 <h2 className="text-xl font-semibold mb-4">Sign this Agreement</h2>
                 <p className="text-white/60 text-sm mb-5">
-                  Enter your full legal name exactly as it appears in the contract above.
-                  Your signature, IP address, and timestamp will be recorded for legal verification.
+                  Select your role, verify your email with a one-time code, then enter your full legal name to sign.
                 </p>
 
                 <div className="space-y-4">
@@ -242,7 +315,7 @@ export default function PartnershipAgreementPage() {
                     <div className="flex gap-3">
                       <button
                         type="button"
-                        onClick={() => { setSigningParty("a"); setSignError(null); setSignSuccess(null); }}
+                        onClick={() => { setSigningParty("a"); setSignError(null); setSignSuccess(null); setOtpSent(false); setOtpCode(""); setOtpError(null); }}
                         disabled={!!agreement.party_a_signed_at}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                           signingParty === "a"
@@ -257,7 +330,7 @@ export default function PartnershipAgreementPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => { setSigningParty("b"); setSignError(null); setSignSuccess(null); }}
+                        onClick={() => { setSigningParty("b"); setSignError(null); setSignSuccess(null); setOtpSent(false); setOtpCode(""); setOtpError(null); }}
                         disabled={!!agreement.party_b_signed_at}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                           signingParty === "b"
@@ -273,8 +346,59 @@ export default function PartnershipAgreementPage() {
                     </div>
                   </div>
 
-                  {signingParty && (
+                  {signingParty && !otpSent && (
                     <>
+                      {/* Step 1: Request email verification */}
+                      <div className="rounded-xl border border-[#2a2f3a] bg-[#171722] p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Mail size={16} className="text-[#7c5cff]" />
+                          <span className="text-sm font-medium text-white/80">Step 1: Email Verification</span>
+                        </div>
+                        <p className="text-white/50 text-xs mb-3">
+                          A 6-digit code will be sent to the registered email for {signingParty === "a" ? "Party A" : "Party B"} to verify your identity.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleRequestOtp}
+                          disabled={otpLoading}
+                          className="px-5 py-2 rounded-lg bg-[#7c5cff] text-white font-medium text-sm hover:bg-[#6a4ce0] disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                        >
+                          {otpLoading ? <Loader2 className="animate-spin" size={14} /> : <Mail size={14} />}
+                          {otpLoading ? "Sending..." : "Send Verification Code"}
+                        </button>
+                        {otpError && (
+                          <p className="text-red-400 text-xs mt-2">{otpError}</p>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {signingParty && otpSent && (
+                    <>
+                      {/* Step 2: Enter OTP + sign */}
+                      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Check size={14} className="text-emerald-400" />
+                          <span className="text-sm text-emerald-300">Verification code sent to {otpEmail}</span>
+                        </div>
+                        <p className="text-white/40 text-xs">Code expires in 10 minutes.</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-white/70 mb-2 flex items-center gap-1.5">
+                          <KeyRound size={14} /> Verification code
+                        </label>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={otpCode}
+                          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                          placeholder="000000"
+                          className="w-40 bg-[#171722] border border-[#2a2f3a] rounded-lg px-4 py-2.5 text-white text-center text-lg tracking-[0.3em] font-mono placeholder:text-white/25 focus:border-[#7c5cff] focus:outline-none transition-colors"
+                        />
+                      </div>
+
                       <div>
                         <label className="block text-sm text-white/70 mb-2">
                           Full legal name (must match exactly: <strong className="text-white">{signingParty === "a" ? agreement.party_a_name : agreement.party_b_name}</strong>)
@@ -291,11 +415,19 @@ export default function PartnershipAgreementPage() {
                       <button
                         type="button"
                         onClick={handleSign}
-                        disabled={signing || !signatureName.trim()}
+                        disabled={signing || !signatureName.trim() || otpCode.length !== 6}
                         className="px-6 py-2.5 rounded-lg bg-[#7c5cff] text-white font-medium text-sm hover:bg-[#6a4ce0] disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2"
                       >
                         {signing ? <Loader2 className="animate-spin" size={16} /> : <FileText size={16} />}
-                        {signing ? "Signing..." : "Sign Agreement"}
+                        {signing ? "Signing..." : "Verify & Sign Agreement"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => { setOtpSent(false); setOtpCode(""); setOtpError(null); }}
+                        className="text-white/40 hover:text-white/60 text-xs underline transition-colors"
+                      >
+                        Resend code or change party
                       </button>
                     </>
                   )}

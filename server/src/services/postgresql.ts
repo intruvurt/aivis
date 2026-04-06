@@ -936,6 +936,32 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_agreements_slug ON partnership_agreements(slug)`,
             `CREATE INDEX IF NOT EXISTS idx_agreements_status ON partnership_agreements(status)`,
+            // ── Partnership agreements v2: OTP, access token, referral links, reminders ──
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS access_token VARCHAR(64)`,
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS otp_code_hash VARCHAR(128)`,
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS otp_party VARCHAR(1)`,
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS otp_expires_at TIMESTAMPTZ`,
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS otp_attempts INT DEFAULT 0`,
+            `ALTER TABLE partnership_agreements ADD COLUMN IF NOT EXISTS reminders_sent JSONB DEFAULT '[]'`,
+            `CREATE TABLE IF NOT EXISTS agreement_referral_links (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              agreement_slug VARCHAR(120) NOT NULL,
+              code VARCHAR(20) UNIQUE NOT NULL,
+              created_by VARCHAR(200),
+              expires_at TIMESTAMPTZ,
+              clicks INT DEFAULT 0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_referral_links_code ON agreement_referral_links(code)`,
+            `CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON agreement_referral_links(agreement_slug)`,
+            `CREATE TABLE IF NOT EXISTS agreement_referral_visits (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              link_code VARCHAR(20) NOT NULL,
+              visitor_hash VARCHAR(64),
+              referrer TEXT,
+              visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`,
           ];
           let patchOk = 0;
           let patchFail = 0;
@@ -3090,12 +3116,43 @@ export async function runMigrations(): Promise<void> {
         locked_at TIMESTAMPTZ,
         locked_hash VARCHAR(128),
         pdf_url TEXT,
+        access_token VARCHAR(64),
+        otp_code_hash VARCHAR(128),
+        otp_party VARCHAR(1),
+        otp_expires_at TIMESTAMPTZ,
+        otp_attempts INT DEFAULT 0,
+        reminders_sent JSONB DEFAULT '[]',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
     _q(`CREATE INDEX IF NOT EXISTS idx_agreements_slug ON partnership_agreements(slug)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_agreements_status ON partnership_agreements(status)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS agreement_referral_links (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        agreement_slug VARCHAR(120) NOT NULL,
+        code VARCHAR(20) UNIQUE NOT NULL,
+        created_by VARCHAR(200),
+        expires_at TIMESTAMPTZ,
+        clicks INT DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_links_code ON agreement_referral_links(code)`);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON agreement_referral_links(agreement_slug)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS agreement_referral_visits (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        link_code VARCHAR(20) NOT NULL,
+        visitor_hash VARCHAR(64),
+        referrer TEXT,
+        visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`);
 
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {

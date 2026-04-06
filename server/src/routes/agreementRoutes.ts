@@ -17,15 +17,43 @@ import {
   generateAgreementHtml,
   createAgreement,
   hashContent,
+  requestOtp,
+  verifyOtp,
+  createReferralLink,
+  trackReferralVisit,
+  getReferralStats,
+  getExpiryInfo,
+  checkAndRecordReminder,
 } from '../services/agreementService.js';
 
 const router = Router();
 
-/* ── GET /:slug - view agreement ───────────────────────────────────────────── */
+const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
+  .split(',')[0].trim().replace(/\/+$/, '');
+
+/* ── GET /:slug - view agreement (gated by access token) ───────────────────── */
 router.get('/:slug', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug as string);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
+
+    // Access token gating: require ?token= query param
+    const token = req.query.token as string | undefined;
+    if (agreement.access_token && token !== agreement.access_token) {
+      return res.status(403).json({ error: 'Access denied. A valid access token is required.' });
+    }
+
+    // Lazy expiry reminder check (fire-and-forget)
+    checkAndRecordReminder(agreement.slug).then((result) => {
+      if (result?.shouldSend) {
+        sendExpiryReminder(agreement.slug, result.milestone).catch((err) =>
+          console.error('[Agreements] Expiry reminder error:', err),
+        );
+      }
+    }).catch(() => {});
+
+    // Compute expiry info
+    const expiryInfo = getExpiryInfo(agreement);
 
     // Never expose IP/UA forensics to the public
     const safeView = {
@@ -50,6 +78,9 @@ router.get('/:slug', async (req: Request, res: Response) => {
       locked_at: agreement.locked_at,
       locked_hash: agreement.locked_hash,
       created_at: agreement.created_at,
+      // Expiry info for client banner
+      days_until_expiry: expiryInfo.days_until_expiry,
+      expiry_warning: expiryInfo.expiry_warning,
     };
 
     return res.json(safeView);
@@ -59,20 +90,60 @@ router.get('/:slug', async (req: Request, res: Response) => {
   }
 });
 
-/* ── POST /:slug/sign - sign the agreement ─────────────────────────────────── */
+/* ── POST /:slug/request-otp - send email verification code ────────────────── */
+const otpSchema = z.object({
+  party: z.enum(['a', 'b']),
+});
+
+router.post('/:slug/request-otp', async (req: Request, res: Response) => {
+  try {
+    const parsed = otpSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Provide party ("a" or "b").' });
+    }
+
+    const result = await requestOtp(req.params.slug as string, parsed.data.party);
+    if (!result.ok) return res.status(400).json({ error: result.error });
+
+    // Send OTP email
+    const otpResult = result as { ok: boolean; email: string; otp: string };
+    sendOtpEmail(otpResult.email, otpResult.otp, req.params.slug as string, parsed.data.party).catch((err) =>
+      console.error('[Agreements] OTP email error:', err),
+    );
+
+    // Mask email for response
+    const parts = otpResult.email.split('@');
+    const masked = parts[0].slice(0, 2) + '***@' + parts[1];
+
+    return res.json({ sent: true, email: masked, expires_in_seconds: 600 });
+  } catch (err) {
+    console.error('[Agreements] OTP request error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+/* ── POST /:slug/sign - sign the agreement (OTP required) ─────────────────── */
 const signSchema = z.object({
   party: z.enum(['a', 'b']),
   signature: z.string().min(2).max(200),
+  otp: z.string().length(6),
 });
 
 router.post('/:slug/sign', async (req: Request, res: Response) => {
   try {
     const parsed = signSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ error: 'Invalid request. Provide party ("a" or "b") and signature (your full legal name).' });
+      return res.status(400).json({ error: 'Provide party, signature (full legal name), and 6-digit OTP code.' });
     }
 
-    const { party, signature } = parsed.data;
+    const { party, signature, otp } = parsed.data;
+
+    // Verify OTP first
+    const otpCheck = await verifyOtp(req.params.slug as string, party, otp);
+    if (!otpCheck.ok) {
+      return res.status(400).json({ error: otpCheck.error });
+    }
+
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
     const ua = (req.headers['user-agent'] as string) || 'unknown';
 
@@ -84,7 +155,6 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
 
     // If fully locked, send confirmation emails to both parties
     if (result.fullyLocked) {
-      // Fire-and-forget email delivery
       sendSignedCopies(req.params.slug as string).catch((err) =>
         console.error('[Agreements] Email delivery error:', err),
       );
@@ -162,10 +232,85 @@ router.get('/:slug/export', async (req: Request, res: Response) => {
 
 /* ── Email delivery helper ─────────────────────────────────────────────────── */
 async function sendSignedCopies(slug: string): Promise<void> {
-  // Dynamic import to avoid circular dependency at module load
   const { sendAgreementSignedEmail } = await import('../services/agreementEmailService.js');
   await sendAgreementSignedEmail(slug);
 }
+
+/* ── OTP email helper ──────────────────────────────────────────────────────── */
+async function sendOtpEmail(email: string, code: string, slug: string, party: string): Promise<void> {
+  const { sendAgreementOtpEmail } = await import('../services/agreementEmailService.js');
+  await sendAgreementOtpEmail(email, code, slug, party);
+}
+
+/* ── Expiry reminder email helper ──────────────────────────────────────────── */
+async function sendExpiryReminder(slug: string, milestone: number): Promise<void> {
+  const { sendAgreementExpiryReminder } = await import('../services/agreementEmailService.js');
+  await sendAgreementExpiryReminder(slug, milestone);
+}
+
+/* ── POST /:slug/create-invite - create trackable referral link (admin) ────── */
+router.post('/:slug/create-invite', async (req: Request, res: Response) => {
+  const adminKey = req.headers['x-admin-key'] as string | undefined;
+  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ error: 'Forbidden.' });
+  }
+
+  try {
+    const createdBy = (req.body as any)?.created_by as string | undefined;
+    const result = await createReferralLink(req.params.slug as string, createdBy);
+    const agreement = await getAgreementBySlug(req.params.slug as string);
+    const inviteUrl = `${FRONTEND_URL}/partnership-terms?token=${agreement?.access_token ?? ''}&ref=${result.code}`;
+
+    return res.json({
+      ok: true,
+      code: result.code,
+      invite_url: inviteUrl,
+      expires_at: result.expires_at,
+    });
+  } catch (err) {
+    console.error('[Agreements] Create invite error:', err);
+    return res.status(500).json({ error: 'Failed to create invite link.' });
+  }
+});
+
+/* ── GET /:slug/referral-stats - view referral link metrics (admin) ────────── */
+router.get('/:slug/referral-stats', async (req: Request, res: Response) => {
+  const adminKey = req.headers['x-admin-key'] as string | undefined;
+  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ error: 'Forbidden.' });
+  }
+
+  try {
+    const stats = await getReferralStats(req.params.slug as string);
+    return res.json({ links: stats });
+  } catch (err) {
+    console.error('[Agreements] Referral stats error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+/* ── GET /r/:code - trackable referral link (tracks visit, returns redirect info) */
+router.get('/r/:code', async (req: Request, res: Response) => {
+  try {
+    const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+    const ua = (req.headers['user-agent'] as string) || 'unknown';
+    const referrer = (req.headers['referer'] as string) || undefined;
+
+    const result = await trackReferralVisit(req.params.code as string, ip, ua, referrer);
+    if (!result) return res.status(404).json({ error: 'Invite link not found or expired.' });
+
+    const redirectUrl = `${FRONTEND_URL}/partnership-terms?token=${encodeURIComponent(result.access_token ?? '')}&ref=${encodeURIComponent(req.params.code)}`;
+
+    // If request accepts JSON (client fetch), return JSON. Otherwise 302 redirect (direct browser navigation).
+    if (req.headers.accept?.includes('application/json')) {
+      return res.json({ redirect_url: redirectUrl });
+    }
+    return res.redirect(302, redirectUrl);
+  } catch (err) {
+    console.error('[Agreements] Referral redirect error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 /* ── POST /seed - create the AiVIS × Zeeniith agreement (admin only) ──────── */
 router.post('/seed', async (req: Request, res: Response) => {
@@ -193,7 +338,7 @@ router.post('/seed', async (req: Request, res: Response) => {
       },
       signingDeadlineHours: 24,
     });
-    return res.json({ ok: true, id: agreement.id, slug: agreement.slug });
+    return res.json({ ok: true, id: agreement.id, slug: agreement.slug, access_token: agreement.access_token });
   } catch (err) {
     console.error('[Agreements] Seed error:', err);
     return res.status(500).json({ error: 'Failed to seed agreement.' });

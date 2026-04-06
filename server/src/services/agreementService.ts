@@ -38,6 +38,12 @@ export interface AgreementRow {
   party_b_signature: string | null;
   locked_at: string | null;
   locked_hash: string | null;
+  access_token: string | null;
+  otp_code_hash: string | null;
+  otp_party: string | null;
+  otp_expires_at: string | null;
+  otp_attempts: number;
+  reminders_sent: number[];
   created_at: string;
   updated_at: string;
 }
@@ -52,6 +58,182 @@ export interface SignResult {
 
 export function hashContent(content: string): string {
   return crypto.createHash('sha256').update(content, 'utf-8').digest('hex');
+}
+
+/* ── Access token & OTP helpers ────────────────────────────────────────────── */
+
+export function generateAccessToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+export function generateOtp(): string {
+  // 6-digit numeric OTP
+  return String(crypto.randomInt(100000, 999999));
+}
+
+const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_OTP_ATTEMPTS = 5;
+
+export async function requestOtp(slug: string, party: 'a' | 'b'): Promise<{ ok: boolean; email?: string; error?: string }> {
+  const pool = getPool();
+  const agreement = await getAgreementBySlug(slug);
+  if (!agreement) return { ok: false, error: 'Agreement not found.' };
+  if (agreement.status === 'fully_signed') return { ok: false, error: 'Agreement already fully signed.' };
+  if (agreement.status === 'expired') return { ok: false, error: 'Agreement has expired.' };
+  if (agreement.status === 'revoked') return { ok: false, error: 'Agreement has been revoked.' };
+
+  const signedField = party === 'a' ? 'party_a_signed_at' : 'party_b_signed_at';
+  if (agreement[signedField]) return { ok: false, error: `Party ${party.toUpperCase()} has already signed.` };
+
+  const code = generateOtp();
+  const codeHash = hashContent(code);
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS).toISOString();
+  const email = party === 'a' ? agreement.party_a_email : agreement.party_b_email;
+
+  await pool.query(
+    `UPDATE partnership_agreements
+     SET otp_code_hash = $1, otp_party = $2, otp_expires_at = $3, otp_attempts = 0, updated_at = NOW()
+     WHERE slug = $4`,
+    [codeHash, party, expiresAt, slug],
+  );
+
+  return { ok: true, email, otp: code } as { ok: boolean; email: string; otp: string };
+}
+
+export async function verifyOtp(slug: string, party: 'a' | 'b', code: string): Promise<{ ok: boolean; error?: string }> {
+  const pool = getPool();
+  const agreement = await getAgreementBySlug(slug);
+  if (!agreement) return { ok: false, error: 'Agreement not found.' };
+
+  if (agreement.otp_party !== party) return { ok: false, error: 'No OTP requested for this party.' };
+  if (!agreement.otp_expires_at || new Date(agreement.otp_expires_at) < new Date()) {
+    return { ok: false, error: 'OTP has expired. Please request a new one.' };
+  }
+  if (agreement.otp_attempts >= MAX_OTP_ATTEMPTS) {
+    return { ok: false, error: 'Too many failed attempts. Please request a new OTP.' };
+  }
+
+  const codeHash = hashContent(code);
+  if (codeHash !== agreement.otp_code_hash) {
+    await pool.query(
+      `UPDATE partnership_agreements SET otp_attempts = otp_attempts + 1, updated_at = NOW() WHERE slug = $1`,
+      [slug],
+    );
+    return { ok: false, error: 'Invalid OTP code.' };
+  }
+
+  // Clear OTP after successful verification
+  await pool.query(
+    `UPDATE partnership_agreements SET otp_code_hash = NULL, otp_party = NULL, otp_expires_at = NULL, otp_attempts = 0, updated_at = NOW() WHERE slug = $1`,
+    [slug],
+  );
+
+  return { ok: true };
+}
+
+/* ── Referral link helpers ─────────────────────────────────────────────────── */
+
+export async function createReferralLink(slug: string, createdBy?: string): Promise<{ code: string; expires_at: string | null }> {
+  const pool = getPool();
+  const agreement = await getAgreementBySlug(slug);
+  if (!agreement) throw new Error('Agreement not found.');
+
+  const code = crypto.randomBytes(6).toString('base64url'); // ~8 chars
+  const expiresAt = agreement.valid_until;
+
+  await pool.query(
+    `INSERT INTO agreement_referral_links (agreement_slug, code, created_by, expires_at)
+     VALUES ($1, $2, $3, $4)`,
+    [slug, code, createdBy ?? null, expiresAt],
+  );
+
+  return { code, expires_at: expiresAt };
+}
+
+export async function trackReferralVisit(code: string, ip: string, ua: string, referrer?: string): Promise<{ slug: string; access_token: string | null } | null> {
+  const pool = getPool();
+
+  const { rows: links } = await pool.query(
+    `SELECT * FROM agreement_referral_links WHERE code = $1`,
+    [code],
+  );
+  const link = links[0] as any;
+  if (!link) return null;
+
+  if (link.expires_at && new Date(link.expires_at) < new Date()) return null;
+
+  // Track visit
+  const visitorHash = hashContent(`${ip}:${ua}`);
+  await pool.query(
+    `INSERT INTO agreement_referral_visits (link_code, visitor_hash, referrer) VALUES ($1, $2, $3)`,
+    [code, visitorHash, referrer ?? null],
+  );
+
+  // Increment clicks
+  await pool.query(`UPDATE agreement_referral_links SET clicks = clicks + 1 WHERE code = $1`, [code]);
+
+  // Get the agreement access token
+  const { rows: agreements } = await pool.query(
+    `SELECT slug, access_token FROM partnership_agreements WHERE slug = $1`,
+    [link.agreement_slug],
+  );
+  const agr = agreements[0] as { slug: string; access_token: string | null } | undefined;
+  return agr ?? null;
+}
+
+export async function getReferralStats(slug: string): Promise<any[]> {
+  const pool = getPool();
+  const { rows } = await pool.query(
+    `SELECT l.code, l.created_by, l.expires_at, l.clicks, l.created_at,
+            (SELECT COUNT(DISTINCT visitor_hash) FROM agreement_referral_visits WHERE link_code = l.code) AS unique_visitors
+     FROM agreement_referral_links l
+     WHERE l.agreement_slug = $1
+     ORDER BY l.created_at DESC`,
+    [slug],
+  );
+  return rows;
+}
+
+/* ── Expiry helpers ────────────────────────────────────────────────────────── */
+
+const REMINDER_MILESTONES = [45, 30, 14, 7];
+
+export function getExpiryInfo(agreement: AgreementRow): { days_until_expiry: number | null; expiry_warning: boolean; expiry_milestone: number | null } {
+  if (!agreement.valid_until) return { days_until_expiry: null, expiry_warning: false, expiry_milestone: null };
+
+  const now = Date.now();
+  const expiry = new Date(agreement.valid_until).getTime();
+  const daysLeft = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+
+  const milestone = REMINDER_MILESTONES.find(m => daysLeft <= m) ?? null;
+
+  return {
+    days_until_expiry: daysLeft,
+    expiry_warning: daysLeft <= 7,
+    expiry_milestone: milestone,
+  };
+}
+
+export async function checkAndRecordReminder(slug: string): Promise<{ shouldSend: boolean; milestone: number } | null> {
+  const pool = getPool();
+  const agreement = await getAgreementBySlug(slug);
+  if (!agreement || agreement.status !== 'fully_signed' || !agreement.valid_until) return null;
+
+  const { days_until_expiry } = getExpiryInfo(agreement);
+  if (days_until_expiry === null || days_until_expiry > 45 || days_until_expiry <= 0) return null;
+
+  const sent: number[] = Array.isArray(agreement.reminders_sent) ? agreement.reminders_sent : [];
+  const dueMilestone = REMINDER_MILESTONES.find(m => days_until_expiry <= m && !sent.includes(m));
+  if (!dueMilestone) return null;
+
+  // Record that we've handled this milestone
+  const updated = [...sent, dueMilestone];
+  await pool.query(
+    `UPDATE partnership_agreements SET reminders_sent = $1::jsonb, updated_at = NOW() WHERE slug = $2`,
+    [JSON.stringify(updated), slug],
+  );
+
+  return { shouldSend: true, milestone: dueMilestone };
 }
 
 function buildLockPayload(row: AgreementRow): string {
@@ -72,7 +254,36 @@ function buildLockPayload(row: AgreementRow): string {
 export async function getAgreementBySlug(slug: string): Promise<AgreementRow | null> {
   const pool = getPool();
   const { rows } = await pool.query('SELECT * FROM partnership_agreements WHERE slug = $1', [slug]);
-  return (rows[0] as AgreementRow) ?? null;
+  const row = (rows[0] as AgreementRow) ?? null;
+  if (!row) return null;
+
+  // Auto-expire: if valid_until has passed and status is still fully_signed, flip to expired
+  if (
+    row.status === 'fully_signed' &&
+    row.valid_until &&
+    new Date(row.valid_until) < new Date()
+  ) {
+    await pool.query(
+      `UPDATE partnership_agreements SET status = 'expired', updated_at = NOW() WHERE slug = $1 AND status = 'fully_signed'`,
+      [slug],
+    );
+    row.status = 'expired';
+  }
+
+  // Auto-expire: if signing deadline passed and still pending/partially_signed
+  if (
+    (row.status === 'pending' || row.status === 'partially_signed') &&
+    row.signing_deadline &&
+    new Date(row.signing_deadline) < new Date()
+  ) {
+    await pool.query(
+      `UPDATE partnership_agreements SET status = 'expired', updated_at = NOW() WHERE slug = $1 AND status IN ('pending', 'partially_signed')`,
+      [slug],
+    );
+    row.status = 'expired';
+  }
+
+  return row;
 }
 
 /* ── Create ────────────────────────────────────────────────────────────────── */
@@ -91,14 +302,15 @@ export async function createAgreement(input: CreateAgreementInput): Promise<Agre
   const termsHash = hashContent(input.termsHtml);
   const deadlineHours = input.signingDeadlineHours ?? 24;
   const deadline = new Date(Date.now() + deadlineHours * 60 * 60 * 1000).toISOString();
+  const accessToken = generateAccessToken();
 
   const { rows } = await pool.query(
     `INSERT INTO partnership_agreements
       (slug, title, terms_html, terms_hash,
        party_a_name, party_a_email, party_a_phone, party_a_org,
        party_b_name, party_b_email, party_b_phone, party_b_org,
-       signing_deadline, status)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'pending')
+       signing_deadline, status, access_token)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'pending',$14)
      ON CONFLICT (slug) DO UPDATE SET
        title = EXCLUDED.title,
        terms_html = EXCLUDED.terms_html,
@@ -112,6 +324,7 @@ export async function createAgreement(input: CreateAgreementInput): Promise<Agre
        party_b_phone = EXCLUDED.party_b_phone,
        party_b_org = EXCLUDED.party_b_org,
        signing_deadline = EXCLUDED.signing_deadline,
+       access_token = COALESCE(partnership_agreements.access_token, EXCLUDED.access_token),
        updated_at = NOW()
      WHERE partnership_agreements.status = 'pending'
      RETURNING *`,
@@ -119,7 +332,7 @@ export async function createAgreement(input: CreateAgreementInput): Promise<Agre
       input.slug, input.title, input.termsHtml, termsHash,
       input.partyA.name, input.partyA.email, input.partyA.phone ?? null, input.partyA.org ?? null,
       input.partyB.name, input.partyB.email, input.partyB.phone ?? null, input.partyB.org ?? null,
-      deadline,
+      deadline, accessToken,
     ],
   );
   return rows[0] as AgreementRow;

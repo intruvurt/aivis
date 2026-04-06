@@ -18,6 +18,7 @@ const Dashboard = React.lazy(() => import("./views/Dashboard"));
 const AnalyzePage = React.lazy(() => import("./views/AnalyzePage"));
 const PricingPage = React.lazy(() => import("./views/PricingPage"));
 const PartnershipTermsPage = React.lazy(() => import("./pages/PartnershipAgreementPage"));
+const ReferralRedirect = React.lazy(() => import("./pages/ReferralRedirect"));
 const AuthPage = React.lazy(() => import("./views/AuthPage"));
 const AnalyticsPage = React.lazy(() => import("./views/AnalyticsPage"));
 const KeywordsPage = React.lazy(() => import("./views/KeywordsPage"));
@@ -198,6 +199,7 @@ export default function App() {
             <Route path="/disclosures" element={<DisclosuresPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
+            <Route path="/r/:code" element={<ReferralRedirect />} />
             <Route path="/changelog" element={<ChangelogPage />} />
             <Route path="/compare" element={<ComparisonPage />} />
             <Route path="/compare/aivis-vs-otterly" element={<CompareOtterlyPage />} />

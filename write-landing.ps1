@@ -150,10 +150,10 @@ const CREDIT_COSTS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AI Visibility  Platform | AiVIS',
-    description: 'Enterprise AI visibility auditing for ChatGPT, Perplexity, Google AI, and Claude. Evidence-backed scoring with implementation-ready fixes.',
+    title: 'AI Visibility Intelligence Platform | AiVIS',
+    description: 'AI visibility intelligence auditing for ChatGPT, Perplexity, Google AI and Claude. Evidence-backed scoring with implementation-ready fixes.',
     path: '/landing',
-    ogTitle: 'AiVIS – Measure How AI Sees Your Site',
+    ogTitle: 'AiVIS - Measure How AI Sees Your Site',
     structuredData: LANDING_STRUCTURED_DATA,
   });
 

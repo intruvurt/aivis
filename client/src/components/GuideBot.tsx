@@ -639,9 +639,10 @@ export default function GuideBot() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Send a URL to audit, or tell me what to do…"
                     maxLength={1000}
+                    required
                     disabled={isLoading}
                     enterKeyHint="send"
-                    className="flex-1 card-charcoal/50 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/35/40 focus:border-white/12 disabled:opacity-50 transition-all"
+                    className="flex-1 field-vivid rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 border border-white/10 focus:outline-none focus:border-[#f97316]/45 focus:ring-1 focus:ring-[#0ea5e9]/40 disabled:opacity-50 transition-all"
                   />
                   {supportsVoice && (
                     <button

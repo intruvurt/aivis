@@ -282,26 +282,9 @@ router.get('/google/callback', async (req, res) => {
       }
     }
 
+    // Google already confirmed this email is verified — trust the provider
     if (!user.is_verified) {
-      try {
-        await issueOAuthVerification(user.id, user.email);
-      } catch (sendErr: any) {
-        return res.redirect(
-          buildFrontendAuthRedirect(req, {
-            oauth_error: publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'),
-            redirect: state.redirect || '/',
-          })
-        );
-      }
-
-      const pendingRedirect = buildFrontendAuthRedirect(req, {
-        oauth_pending_verification: '1',
-        oauth_email: user.email,
-        verification_expires_minutes: '30',
-        referral_attached: referralAttached ? '1' : '0',
-        redirect: state.redirect || '/',
-      });
-      return res.redirect(pendingRedirect);
+      user = (await updateUserById(user.id, { is_verified: true })) || user;
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });
@@ -513,26 +496,9 @@ router.get('/github/callback', async (req, res) => {
       }
     }
 
+    // GitHub already confirmed this email is verified — trust the provider
     if (!user.is_verified) {
-      try {
-        await issueOAuthVerification(user.id, user.email);
-      } catch (sendErr: any) {
-        return res.redirect(
-          buildFrontendAuthRedirect(req, {
-            oauth_error: publicOAuthErrorMessage(sendErr, 'Could not send verification email. Please try again.'),
-            redirect: state.redirect || '/',
-          })
-        );
-      }
-
-      const pendingRedirect = buildFrontendAuthRedirect(req, {
-        oauth_pending_verification: '1',
-        oauth_email: user.email,
-        verification_expires_minutes: '30',
-        referral_attached: referralAttached ? '1' : '0',
-        redirect: state.redirect || '/',
-      });
-      return res.redirect(pendingRedirect);
+      user = (await updateUserById(user.id, { is_verified: true })) || user;
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });

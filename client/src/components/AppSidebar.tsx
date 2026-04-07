@@ -68,6 +68,8 @@ const accountNav: NavItem[] = [
   { to: "/help", labelKey: "sidebar.help", icon: HelpCircle },
 ];
 
+const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";
+
 function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
@@ -144,6 +146,13 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
         <NavSection title={t("sidebar.agency")} items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
         <NavSection title={t("sidebar.account")} items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>
+
+      {/* CodeTrendy badge */}
+      <div className="px-4 py-2 shrink-0">
+        <a href="https://codetrendy.com" target="_blank" rel="noopener noreferrer">
+          <img src={CODETRENDY_BADGE_URL} alt="Listed on codetrendy.com" height={40} loading="lazy" className="opacity-60 hover:opacity-100 transition-opacity" />
+        </a>
+      </div>
 
       {/* User pill */}
       {user && (

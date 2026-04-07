@@ -1,7 +1,31 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Shield, CheckCircle2, Users, Lightbulb, GitBranch, ArrowRight, Info } from "lucide-react";
+import { motion, useInView } from "framer-motion";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
+
+/** Scroll-triggered slide-in from left or right */
+function SlideIn({ from = "left", children, delay = 0, className }: {
+  from?: "left" | "right";
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const x = from === "left" ? -80 : 80;
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x }}
+      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x }}
+      transition={{ duration: 0.6, ease: "easeOut", delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 import {
   AUTHOR_ID,
   BASE_URL,
@@ -67,6 +91,7 @@ export default function AboutPage() {
     >
 
       {/* Hero section */}
+      <SlideIn from="left">
       <section className="py-4 md:py-10">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -97,8 +122,10 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
       {/* Hook — human layer */}
+      <SlideIn from="right" delay={0.1}>
       <section className="mx-auto max-w-3xl px-4 py-14 text-center">
         <p className="text-xl md:text-2xl text-white/85 font-medium leading-relaxed mb-3">
           Most websites are not broken.
@@ -116,8 +143,10 @@ export default function AboutPage() {
           That silence is where visibility is lost now.
         </p>
       </section>
+      </SlideIn>
 
       {/* Why AiVIS exists */}
+      <SlideIn from="left" delay={0.1}>
       <section className="mx-auto max-w-3xl px-4 py-10 text-center">
         <p className="text-xl text-white/80 font-semibold leading-relaxed mb-4">
           AiVIS exists for one reason.
@@ -131,8 +160,10 @@ export default function AboutPage() {
           What the machine actually uses.
         </p>
       </section>
+      </SlideIn>
 
       {/* Founder signal — trust anchor */}
+      <SlideIn from="right" delay={0.1}>
       <section className="mx-auto max-w-3xl px-4 py-10 text-center border-b border-white/10 mb-4">
         <p className="text-lg text-white/75 leading-relaxed mb-4">
           Built by a solo operator who kept seeing the same problem.
@@ -146,8 +177,10 @@ export default function AboutPage() {
           Because they were unclear to machines.
         </p>
       </section>
+      </SlideIn>
 
       {/* Company mission */}
+      <SlideIn from="left" delay={0.1}>
       <section className="-mx-4 border-y border-white/10 bg-white/5 px-4 py-16 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div>
           <div className="grid md:grid-cols-2 gap-12">
@@ -178,8 +211,10 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
       {/* Founder section */}
+      <SlideIn from="right" delay={0.1}>
       <section className="py-16" id="leadership">
         <div>
           <h2 className="text-3xl brand-title mb-12 text-center">Leadership</h2>
@@ -277,7 +312,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
+      <SlideIn from="left" delay={0.1}>
       <section className="px-4 py-16 bg-white/5 border-y border-white/10" id="team">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-4 text-center">The Team</h2>
@@ -332,8 +369,10 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
       {/* Compliance & Trust section */}
+      <SlideIn from="right" delay={0.1}>
       <section className="px-4 py-16 bg-white/5 border-y border-white/10">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-4 text-center">Security & Compliance</h2>
@@ -397,8 +436,10 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
       {/* Platform focus */}
+      <SlideIn from="left" delay={0.1}>
       <section className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl brand-title mb-12 text-center">What the system actually evaluates</h2>
@@ -438,8 +479,10 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      </SlideIn>
 
       {/* Recognition */}
+      <SlideIn from="right" delay={0.1}>
       <section className="px-4 py-16 border-t border-white/10">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl brand-title mb-6">Recognition</h2>
@@ -448,8 +491,10 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
+      </SlideIn>
 
       {/* Proof block */}
+      <SlideIn from="left" delay={0.1}>
       <section className="mx-auto max-w-3xl px-4 py-14 text-center">
         <p className="text-xl text-white/80 font-medium leading-relaxed mb-4">
           Most first scans land between C and D.
@@ -462,8 +507,10 @@ export default function AboutPage() {
           The system exists to move that score with real fixes, not opinions.
         </p>
       </section>
+      </SlideIn>
 
       {/* Closing — urgency + clarity */}
+      <SlideIn from="right" delay={0.1}>
       <section className="px-4 py-16 bg-white/5 border-t border-white/10">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xl md:text-2xl text-white/85 font-semibold leading-relaxed mb-4">
@@ -484,6 +531,7 @@ export default function AboutPage() {
           </a>
         </div>
       </section>
+      </SlideIn>
 
       {/* Footer micro-copy */}
       <footer className="px-4 py-12 border-t border-white/10">

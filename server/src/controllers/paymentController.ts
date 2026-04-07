@@ -244,6 +244,10 @@ export const createStripeCheckout = async (req: Request, res: Response) => {
         : tierConfig.priceId;
 
     if (!effectivePriceId) {
+      const envVarHint = normalizedBillingPeriod === 'yearly'
+        ? `STRIPE_${tier.toUpperCase()}_YEARLY_PRICE_ID / STRIPE_${tier.toUpperCase()}_MONTHLY_PRICE_ID`
+        : `STRIPE_${tier.toUpperCase()}_MONTHLY_PRICE_ID`;
+      console.error(`[Stripe Checkout] Missing price ID for ${tier} (${normalizedBillingPeriod}). Set env var: ${envVarHint}`);
       return res.status(500).json({
         success: false,
         error: `Stripe price ID not configured for tier: ${tier} (${normalizedBillingPeriod})`,
@@ -841,8 +845,9 @@ async function handleCheckoutCompleted(session: any) {
     return;
   }
 
-  // Update user tier for subscription checkout
-  if (tierKey) {
+  // Update user tier for subscription checkout — only if payment was collected or not required (trial/coupon)
+  const paymentStatus = session.payment_status; // 'paid' | 'unpaid' | 'no_payment_required'
+  if (tierKey && (paymentStatus === 'paid' || paymentStatus === 'no_payment_required')) {
     const billingPeriod = String(session.metadata?.billing_period || 'monthly');
     await updateUserTier(userId, tierKey, session.subscription, billingPeriod);
 
@@ -850,9 +855,14 @@ async function handleCheckoutCompleted(session: any) {
     handleTrialConversionFromStripe(userId, tierKey).catch((err: any) => {
       console.warn(`[Checkout Completed] Trial conversion tracking failed (non-fatal):`, err?.message);
     });
+  } else if (tierKey) {
+    console.warn(`[Checkout Completed] Skipping tier upgrade — payment_status=${paymentStatus}`, {
+      sessionId: session.id, userId, tierKey,
+    });
+    return;
   }
 
-  console.log(`[Checkout Completed] User ${userId} upgraded to ${tierKey}`);
+  console.log(`[Checkout Completed] User ${userId} upgraded to ${tierKey} (payment_status=${paymentStatus})`);
 
   if (userId && tierKey) {
     createUserNotification({
@@ -910,7 +920,9 @@ async function handleSubscriptionCreated(subscription: any) {
     });
   }
 
-  if (userId && tierKey) {
+  // Only upgrade tier for active or trialing subscriptions — skip incomplete/unpaid
+  const safeStatuses = ['active', 'trialing'];
+  if (userId && tierKey && safeStatuses.includes(subscription.status)) {
     const billingPeriod = String(subscription.metadata?.billing_period || 'monthly');
     await updateUserTier(userId, tierKey, subscription.id, billingPeriod);
 

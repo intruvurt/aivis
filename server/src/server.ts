@@ -9812,6 +9812,125 @@ app.post('/api/admin/set-tier', adminLimiter, async (req, res) => {
   }
 });
 
+// ─── Admin: Audit paid-tier users (Signal/Alignment) — identify freeloaders ──
+app.get('/api/admin/tier-audit', adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+
+  try {
+    const allowlist = getAllowlistedElevatedEmails();
+    const result = await getPool().query(
+      `SELECT u.id, u.email, u.name, u.tier,
+              u.stripe_subscription_id,
+              u.stripe_customer_id,
+              u.trial_ends_at,
+              u.trial_used,
+              u.trial_converted,
+              u.trial_started_at,
+              u.created_at,
+              u.updated_at,
+              (SELECT s.status FROM subscriptions s WHERE s.user_id = u.id ORDER BY s.updated_at DESC LIMIT 1) AS sub_status,
+              (SELECT s.current_period_end FROM subscriptions s WHERE s.user_id = u.id ORDER BY s.updated_at DESC LIMIT 1) AS sub_period_end,
+              (SELECT COUNT(*) FROM payments p WHERE p.user_id = u.id AND p.status = 'completed') AS completed_payments
+       FROM users u
+       WHERE u.tier NOT IN ('observer', 'free')
+       ORDER BY u.tier DESC, u.created_at DESC`
+    );
+
+    const users = result.rows.map((u: any) => {
+      const isAllowlisted = allowlist.has(String(u.email || '').toLowerCase());
+      const hasSubscription = !!u.stripe_subscription_id;
+      const hasPaid = Number(u.completed_payments) > 0;
+      const isTrialing = u.trial_ends_at && new Date(u.trial_ends_at) > new Date();
+      const trialExpired = u.trial_ends_at && new Date(u.trial_ends_at) <= new Date();
+
+      let status: string;
+      if (isAllowlisted) status = 'allowlisted';
+      else if (hasSubscription && (u.sub_status === 'active' || u.sub_status === 'trialing')) status = 'paid_active';
+      else if (isTrialing) status = 'trial_active';
+      else if (hasPaid && hasSubscription) status = 'paid_lapsed';
+      else if (trialExpired && !hasPaid) status = 'FREELOADER_TRIAL_EXPIRED';
+      else if (!hasSubscription && !hasPaid && !isTrialing) status = 'FREELOADER_NO_PAYMENT';
+      else status = 'unknown';
+
+      return {
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        tier: u.tier,
+        status,
+        stripe_subscription_id: u.stripe_subscription_id || null,
+        sub_status: u.sub_status || null,
+        sub_period_end: u.sub_period_end || null,
+        trial_ends_at: u.trial_ends_at || null,
+        trial_used: u.trial_used,
+        trial_converted: u.trial_converted,
+        completed_payments: Number(u.completed_payments),
+        created_at: u.created_at,
+      };
+    });
+
+    const freeloaders = users.filter((u: any) => u.status.startsWith('FREELOADER'));
+    const summary = {
+      total_paid_tier_users: users.length,
+      allowlisted: users.filter((u: any) => u.status === 'allowlisted').length,
+      paid_active: users.filter((u: any) => u.status === 'paid_active').length,
+      trial_active: users.filter((u: any) => u.status === 'trial_active').length,
+      freeloaders: freeloaders.length,
+      unknown: users.filter((u: any) => u.status === 'unknown').length,
+    };
+
+    return res.json({ success: true, summary, freeloaders, all_users: users });
+  } catch (e: any) {
+    console.error('[Admin] Tier audit failed:', e);
+    return res.status(500).json({ error: 'Tier audit failed' });
+  }
+});
+
+// ─── Admin: Force-downgrade freeloaders to observer ──────────────────────────
+app.post('/api/admin/downgrade-freeloaders', adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+
+  try {
+    const allowlist = getAllowlistedElevatedEmails();
+    const dryRun = req.body?.dryRun !== false; // default: dry run
+
+    // Find users on paid tiers with no subscription, no payment, no active trial, not allowlisted
+    const result = await getPool().query(
+      `SELECT u.id, u.email, u.tier, u.trial_ends_at, u.stripe_subscription_id
+       FROM users u
+       WHERE u.tier NOT IN ('observer', 'free')
+         AND u.stripe_subscription_id IS NULL
+         AND u.trial_converted = FALSE
+         AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.user_id = u.id AND p.status = 'completed')
+         AND (u.trial_ends_at IS NULL OR u.trial_ends_at < NOW())`
+    );
+
+    const candidates = result.rows.filter(
+      (u: any) => !allowlist.has(String(u.email || '').toLowerCase())
+    );
+
+    if (!dryRun && candidates.length > 0) {
+      const ids = candidates.map((u: any) => u.id);
+      await getPool().query(
+        `UPDATE users SET tier = 'observer', trial_ends_at = NULL, updated_at = NOW()
+         WHERE id = ANY($1::uuid[])`,
+        [ids]
+      );
+      console.log(`[Admin] Downgraded ${ids.length} freeloader(s): ${candidates.map((u: any) => u.email).join(', ')}`);
+    }
+
+    return res.json({
+      success: true,
+      dryRun,
+      count: candidates.length,
+      affected: candidates.map((u: any) => ({ id: u.id, email: u.email, tier: u.tier })),
+    });
+  } catch (e: any) {
+    console.error('[Admin] Downgrade freeloaders failed:', e);
+    return res.status(500).json({ error: 'Downgrade failed' });
+  }
+});
+
 app.post('/api/admin/newsletter/preview', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
 

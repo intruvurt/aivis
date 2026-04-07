@@ -635,6 +635,11 @@ const routes = [
 		title: 'Team Workspace | AiVIS',
 		description: 'Manage your team workspace. Invite members, assign roles, and collaborate on AI visibility audits.',
 	},
+	{
+		path: '/badge',
+		title: 'AiVIS Dofollow Backlink Badge | Embed & Track',
+		description: 'Add a trackable dofollow backlink badge to your website footer. Earn SEO link equity and track impressions, clicks, and referrer domains in real time.',
+	},
 ];
 
 function escapeRegExp(value) {

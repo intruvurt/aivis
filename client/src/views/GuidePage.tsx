@@ -16,6 +16,7 @@ const GUIDE_SECTIONS = [
   { id: 'common-failures', label: 'Common Failures' },
   { id: 'operating-cadence', label: 'Operating Cadence' },
   { id: 'integration-workflows', label: 'Integrations' },
+  { id: 'dofollow-badge', label: 'Dofollow Badge' },
 ] as const;
 
 const HOW_TO_STEPS = [
@@ -91,6 +92,14 @@ export default function GuidePage() {
         <p className="mt-3 max-w-4xl text-sm leading-7 text-white/70">
           This page is your operator manual for AiVIS. It focuses on what to do, in what order, and what evidence to keep so visibility improvements are real and repeatable.
         </p>
+        <div className="mt-5 rounded-xl border border-white/10 bg-charcoal-deep/40 overflow-hidden">
+          <img
+            src="/scan-data.png"
+            alt="AiVIS scan data visualization showing audit evidence extraction flow"
+            className="w-full h-auto max-h-56 object-cover object-center opacity-80"
+            loading="lazy"
+          />
+        </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-xs text-white/70">
             <div className="text-white/45 uppercase tracking-wide mb-1">Objective</div>
@@ -465,6 +474,28 @@ export default function GuidePage() {
           </Link>
           <Link to="/pricing" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <FileSearch className="h-3.5 w-3.5" /> Compare integration tiers
+          </Link>
+        </div>
+      </section>
+
+      {/* ── 12 · Dofollow Backlink Badge ── */}
+      <section id="dofollow-badge" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">12) Dofollow backlink badge</h2>
+        <p className="mt-3 text-sm text-white/75">
+          Add the AiVIS badge to your website footer to earn a <strong className="text-cyan-300">high-quality dofollow backlink</strong> while showing visitors your site is AI-visibility audited. Every impression and click is tracked so you can measure referral impact.
+        </p>
+        <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">
+          <h3 className="text-sm brand-title-muted">How it works</h3>
+          <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
+            <li>Grab your personalised embed snippet from the <Link to="/badge" className="text-cyan-400 underline hover:text-cyan-300">Badge page</Link>.</li>
+            <li>Paste the HTML into your site footer — the badge image loads from AiVIS CDN.</li>
+            <li>A hidden 1×1 tracking pixel logs impressions; clicks redirect through a tracker before landing on AiVIS.</li>
+            <li>View real-time stats: total impressions, clicks, unique referring domains, and top referrers.</li>
+          </ul>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link to="/badge" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+            Get your badge
           </Link>
         </div>
       </section>

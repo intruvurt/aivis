@@ -131,6 +131,7 @@ import v1Routes from './routes/v1Routes.js';
 import v1WebhookRoutes from './routes/v1WebhookRoutes.js';
 import agreementRoutes from './routes/agreementRoutes.js';
 import paypalRoutes from './routes/paypalRoutes.js';
+import badgeRoutes from './routes/badgeRoutes.js';
 import { startTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
@@ -1075,6 +1076,7 @@ app.get('/.well-known/webmcp.json', (_req, res) => {
   });
 });
 
+app.use('/api/badge', badgeRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/trial', trialRoutes);
 app.use('/api/indexing', indexingRoutes);

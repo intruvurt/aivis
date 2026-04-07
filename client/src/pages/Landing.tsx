@@ -197,6 +197,17 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-[#060607]">
 
+      {/* ── PLATFORM ACCENT BANNER ── */}
+      <div className="relative w-full h-16 sm:h-20 overflow-hidden" aria-hidden="true">
+        <img
+          src="/aivis-circ-pfp-landscape-banner.png"
+          alt=""
+          className="w-full h-full object-cover opacity-40"
+          style={{ maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#060607]" />
+      </div>
+
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-[#060607]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.07),transparent)]" />

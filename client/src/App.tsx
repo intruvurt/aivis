@@ -97,6 +97,7 @@ const AgencyPage = React.lazy(() => import("./pages/AgencyPage"));
 const SnapshotPage = React.lazy(() => import("./pages/SnapshotPage"));
 const KeywordPageTemplate = React.lazy(() => import("./pages/KeywordPageTemplate"));
 const KeywordClusterIndex = React.lazy(() => import("./pages/KeywordClusterIndex"));
+const BadgeEmbedPage = React.lazy(() => import("./pages/BadgeEmbedPage"));
 
 /* ── Scroll to top on route change ─────────────────────── */
 function ScrollToTop() {
@@ -246,6 +247,7 @@ export default function App() {
             <Route path="/industries" element={<KeywordClusterIndex />} />
             <Route path="/industries/:slug" element={<KeywordPageTemplate />} />
             <Route path="/compare/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/badge" element={<BadgeEmbedPage />} />
             <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
             <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
           </Route>

@@ -797,6 +797,7 @@ export async function runMigrations(): Promise<void> {
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
               updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
+            `ALTER TABLE v1_projects ADD COLUMN IF NOT EXISTS auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE`,
             `CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`,
             `CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`,
             `CREATE TABLE IF NOT EXISTS v1_audits (
@@ -979,6 +980,21 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_partnership_invoices_slug ON partnership_invoices(agreement_slug)`,
             `CREATE INDEX IF NOT EXISTS idx_partnership_invoices_status ON partnership_invoices(status)`,
+
+            // ── Badge embed tracking (dofollow backlink badges) ──
+            `CREATE TABLE IF NOT EXISTS badge_events (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              event_type VARCHAR(12) NOT NULL CHECK (event_type IN ('impression','click')),
+              badge_owner_id UUID REFERENCES users(id) ON DELETE SET NULL,
+              referrer_url TEXT,
+              referrer_domain TEXT,
+              ip_hash VARCHAR(64),
+              user_agent TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_badge_events_type ON badge_events(event_type)`,
+            `CREATE INDEX IF NOT EXISTS idx_badge_events_owner ON badge_events(badge_owner_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_badge_events_created ON badge_events(created_at)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

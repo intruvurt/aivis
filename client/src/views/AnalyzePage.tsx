@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
-  Loader2,
   Zap,
   Globe,
   CheckCircle2,
@@ -958,7 +957,7 @@ const AnalyzePage: React.FC = () => {
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
                         Analyzing how AI reads your site…
                       </>
                     ) : (

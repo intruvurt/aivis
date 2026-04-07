@@ -189,36 +189,14 @@ export default function AboutPage() {
               {/* Founder card */}
               <div className="p-8 md:p-12">
                 <div className="mb-6">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/25 to-cyan-400/10 border border-blue-400/20 flex items-center justify-center mb-4 backdrop-blur-sm shadow-lg shadow-blue-500/10">
-                    {/* Glassy tech avatar — code brackets + magnifying glass */}
-                    <svg viewBox="0 0 64 64" className="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <linearGradient id="rmGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
-                          <stop offset="100%" stopColor="rgba(255,255,255,0.04)" />
-                        </linearGradient>
-                        <linearGradient id="rmAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#60a5fa" />
-                          <stop offset="100%" stopColor="#22d3ee" />
-                        </linearGradient>
-                      </defs>
-                      {/* Glassy backdrop circle */}
-                      <circle cx="32" cy="32" r="30" fill="url(#rmGlass)" stroke="url(#rmAccent)" strokeWidth="1.2" opacity="0.85" />
-                      {/* Left bracket { */}
-                      <path d="M18 18 C14 18, 13 22, 13 26 L13 29 C13 31, 11 32, 11 32 C11 32, 13 33, 13 35 L13 38 C13 42, 14 46, 18 46" stroke="url(#rmAccent)" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7" />
-                      {/* Right bracket } */}
-                      <path d="M46 18 C50 18, 51 22, 51 26 L51 29 C51 31, 53 32, 53 32 C53 32, 51 33, 51 35 L51 38 C51 42, 50 46, 46 46" stroke="url(#rmAccent)" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7" />
-                      {/* Magnifying glass */}
-                      <circle cx="32" cy="29" r="9" stroke="url(#rmAccent)" strokeWidth="1.8" fill="none" opacity="0.6" />
-                      <circle cx="32" cy="29" r="9" fill="rgba(96,165,250,0.08)" />
-                      <line x1="38.5" y1="35.5" x2="44" y2="41" stroke="url(#rmAccent)" strokeWidth="2.2" strokeLinecap="round" opacity="0.6" />
-                      {/* Lens glint */}
-                      <path d="M27 25 Q29 22, 33 24" stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeLinecap="round" fill="none" />
-                      {/* Code dot accents */}
-                      <circle cx="22" cy="32" r="1.2" fill="#60a5fa" opacity="0.5" />
-                      <circle cx="42" cy="32" r="1.2" fill="#22d3ee" opacity="0.5" />
-                    </svg>
-                  </div>
+                  <img
+                    src="/founder.png"
+                    alt="Ryan Mason, AiVIS founder and Head of Intruvurt Labs"
+                    width={80}
+                    height={80}
+                    className="w-20 h-20 rounded-full object-cover border border-blue-400/20 shadow-lg shadow-blue-500/10 mb-4"
+                    loading="lazy"
+                  />
                 </div>
 
                 <h3 className="text-2xl font-bold mb-1 text-blue-800 dark:text-blue-200">R. Mason</h3>
@@ -311,39 +289,14 @@ export default function AboutPage() {
             {/* Sadiq Khan - Platform Marketing Specialist */}
             <div className="rounded-lg border border-white/10 overflow-hidden bg-white/5 p-5 md:p-8">
               <div className="mb-6">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500/25 to-emerald-400/10 border border-cyan-400/20 flex items-center justify-center mb-4 backdrop-blur-sm shadow-lg shadow-cyan-500/10">
-                  {/* Glassy tech avatar — broadcast signal + growth chart */}
-                  <svg viewBox="0 0 64 64" className="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <linearGradient id="skGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.04)" />
-                      </linearGradient>
-                      <linearGradient id="skAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#22d3ee" />
-                        <stop offset="100%" stopColor="#34d399" />
-                      </linearGradient>
-                    </defs>
-                    {/* Glassy backdrop */}
-                    <circle cx="32" cy="32" r="30" fill="url(#skGlass)" stroke="url(#skAccent)" strokeWidth="1.2" opacity="0.85" />
-                    {/* Broadcast tower */}
-                    <line x1="32" y1="18" x2="32" y2="38" stroke="url(#skAccent)" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-                    <circle cx="32" cy="16" r="2.5" fill="url(#skAccent)" opacity="0.6" />
-                    {/* Signal waves */}
-                    <path d="M24 22 Q28 14, 32 16" stroke="url(#skAccent)" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.4" />
-                    <path d="M40 22 Q36 14, 32 16" stroke="url(#skAccent)" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.4" />
-                    <path d="M20 26 Q26 12, 32 16" stroke="url(#skAccent)" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.25" />
-                    <path d="M44 26 Q38 12, 32 16" stroke="url(#skAccent)" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.25" />
-                    {/* Growth chart bars */}
-                    <rect x="20" y="44" width="5" height="6" rx="1.5" fill="url(#skAccent)" opacity="0.35" />
-                    <rect x="27" y="40" width="5" height="10" rx="1.5" fill="url(#skAccent)" opacity="0.45" />
-                    <rect x="34" y="36" width="5" height="14" rx="1.5" fill="url(#skAccent)" opacity="0.55" />
-                    <rect x="41" y="32" width="5" height="18" rx="1.5" fill="url(#skAccent)" opacity="0.65" />
-                    {/* Trend arrow */}
-                    <path d="M22 43 L36 33 L44 30" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                    <path d="M41 28 L44 30 L42 33" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeLinecap="round" fill="none" />
-                  </svg>
-                </div>
+                <img
+                  src="/marketer.png"
+                  alt="Sadiq Khan, AiVIS Platform Marketing Specialist"
+                  width={80}
+                  height={80}
+                  className="w-20 h-20 rounded-full object-cover border border-cyan-400/20 shadow-lg shadow-cyan-500/10 mb-4"
+                  loading="lazy"
+                />
               </div>
 
               <h3 className="text-2xl font-bold mb-1 text-cyan-200">Sadiq Khan</h3>

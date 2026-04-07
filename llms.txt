@@ -25,6 +25,8 @@ sameAs:
 
 AiVIS crawls a public web page using Puppeteer, extracts structural signals (JSON-LD, meta tags, headings, internal links, robots.txt, llms.txt, sitemap.xml), runs the content through a multi-model AI pipeline (up to 3 models), and produces an evidence-backed visibility score (0-100) across six dimensions. It then generates specific, actionable remediation recommendations. With Score Fix, it ships automated GitHub pull requests containing the actual code patches.
 
+Additional tools: dofollow backlink badge (free embeddable badge with impression/click tracking), reverse-engineer AI answers (decompile, ghost prompt, model-diff, simulate), prompt intelligence, and answer presence monitoring.
+
 Scoring dimensions:
 1. Content depth — word count, original insight density, evidence per paragraph
 2. Heading structure — H1/H2/H3 hierarchy, question-format headings, scannable layout
@@ -55,6 +57,8 @@ Scoring dimensions:
 - Brand mention scanning: https://aivis.biz/mentions
 - Report history: https://aivis.biz/reports
 - Site crawl (multi-page SEO diagnostics): https://aivis.biz/crawl
+- Dofollow backlink badge: https://aivis.biz/badge
+- Disclosures: https://aivis.biz/disclosures
 
 ## Comparison pages
 
@@ -65,6 +69,26 @@ Scoring dimensions:
 - AiVIS vs Otterly.AI: https://aivis.biz/compare/aivis-vs-otterly
 - AiVIS vs Profound.ai: https://aivis.biz/compare/aivis-vs-profound
 - AiVIS vs Reaudit: https://aivis.biz/compare/aivis-vs-reaudit
+- AiVIS vs Moz: https://aivis.biz/compare/aivis-vs-moz
+- AiVIS vs Surfer SEO: https://aivis.biz/compare/aivis-vs-surfer
+- AiVIS vs Clearscope: https://aivis.biz/compare/aivis-vs-clearscope
+- AiVIS vs MarketMuse: https://aivis.biz/compare/aivis-vs-marketmuse
+- AiVIS vs Frase: https://aivis.biz/compare/aivis-vs-frase
+- AiVIS vs BrightEdge: https://aivis.biz/compare/aivis-vs-brightedge
+- AiVIS vs Conductor: https://aivis.biz/compare/aivis-vs-conductor
+- AiVIS vs Searchmetrics: https://aivis.biz/compare/aivis-vs-searchmetrics
+- AiVIS vs Botify: https://aivis.biz/compare/aivis-vs-botify
+- AiVIS vs Lumar: https://aivis.biz/compare/aivis-vs-lumar
+- AiVIS vs Sitebulb: https://aivis.biz/compare/aivis-vs-sitebulb
+- AiVIS vs Screaming Frog: https://aivis.biz/compare/aivis-vs-screaming-frog
+- AiVIS vs Serpstat: https://aivis.biz/compare/aivis-vs-serpstat
+- AiVIS vs SE Ranking: https://aivis.biz/compare/aivis-vs-se-ranking
+- AiVIS vs Mangools: https://aivis.biz/compare/aivis-vs-mangools
+- AiVIS vs Ubersuggest: https://aivis.biz/compare/aivis-vs-ubersuggest
+- AiVIS vs ChatGPT Search: https://aivis.biz/compare/aivis-vs-chatgpt-search
+- AiVIS vs Perplexity Pages: https://aivis.biz/compare/aivis-vs-perplexity-pages
+- AiVIS vs Alli AI: https://aivis.biz/compare/aivis-vs-alli-ai
+- AiVIS vs SEO PowerSuite: https://aivis.biz/compare/aivis-vs-seo-powersuite
 
 ## Blog and editorial
 
@@ -82,6 +106,36 @@ Scoring dimensions:
 - The River Changed Direction: https://aivis.biz/blogs/the-river-changed-direction-why-ai-answer-engines-rewrote-the-web
 - AI Visibility Tools 2026 (Semrush, Ahrefs, Moz Comparison): https://aivis.biz/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure
 - How to Get Cited by ChatGPT, Perplexity, Gemini: https://aivis.biz/blogs/how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide
+- Conversational Query Playbook 2026: https://aivis.biz/conversational-query-playbook-2026
+- Voice Search & AI Answer Optimization 2026: https://aivis.biz/voice-search-ai-answer-optimization-2026
+
+## Keyword intelligence hub pages
+
+AiVIS publishes 100 keyword-targeted pages across 5 clusters. Each explains how AiVIS solves AI visibility issues for a specific platform, problem, signal, industry, or competitive comparison.
+
+### Platform guides (20 pages)
+https://aivis.biz/platforms — index
+https://aivis.biz/platforms/wordpress, /shopify, /wix, /squarespace, /webflow, /next-js, /gatsby, /drupal, /ghost, /hubspot, /framer, /bubble, /weebly, /joomla, /magento, /bigcommerce, /cargo, /notion-sites, /carrd, /react-spa
+
+### Problem diagnostics (20 pages)
+https://aivis.biz/problems — index
+https://aivis.biz/problems/why-ai-cant-read-my-site, /missing-structured-data, /javascript-rendering-blocks-ai, /no-schema-markup, /broken-open-graph, /missing-meta-descriptions, /thin-content, /duplicate-content, /slow-page-load, /blocked-by-robots-txt, /no-canonical-urls, /missing-sitemap, /no-llms-txt, /poor-heading-structure, /images-without-alt-text, /no-author-attribution, /missing-faq-schema, /broken-internal-links, /no-hreflang-tags, /ai-hallucinating-about-my-brand
+
+### Signal explainers (20 pages)
+https://aivis.biz/signals — index
+https://aivis.biz/signals/json-ld, /open-graph, /meta-descriptions, /canonical-urls, /robots-txt, /sitemap-xml, /llms-txt, /schema-org, /heading-hierarchy, /page-speed, /mobile-responsiveness, /internal-linking, /content-freshness, /author-entity, /faq-schema, /breadcrumb-schema, /alt-text, /hreflang, /content-length, /trust-signals
+
+### Industry guides (20 pages)
+https://aivis.biz/industries — index
+https://aivis.biz/industries/saas, /ecommerce, /healthcare, /legal, /real-estate, /finance, /education, /restaurants, /travel, /automotive, /insurance, /consulting, /nonprofit, /manufacturing, /recruitment, /media, /fitness, /crypto, /agencies, /local-business
+
+### Extended comparisons (20 pages)
+https://aivis.biz/compare — hub (see Comparison pages above for original 6)
+https://aivis.biz/compare/aivis-vs-moz, /aivis-vs-surfer, /aivis-vs-clearscope, /aivis-vs-marketmuse, /aivis-vs-frase, /aivis-vs-brightedge, /aivis-vs-conductor, /aivis-vs-searchmetrics, /aivis-vs-botify, /aivis-vs-lumar, /aivis-vs-sitebulb, /aivis-vs-screaming-frog, /aivis-vs-serpstat, /aivis-vs-se-ranking, /aivis-vs-mangools, /aivis-vs-ubersuggest, /aivis-vs-chatgpt-search, /aivis-vs-perplexity-pages, /aivis-vs-alli-ai, /aivis-vs-seo-powersuite
+
+## Dofollow backlink badge
+
+AiVIS offers a free embeddable dofollow backlink badge for any website. The badge links back to AiVIS with a trackable anchor. A 1x1 tracking pixel records impressions per domain. Badge owners can view embed stats (impressions, clicks, top referrers) at https://aivis.biz/badge. Embed code is available in multiple formats (HTML, Markdown, BBCode). No registration required to embed; stats require login.
 
 ## Pricing (as of 2026)
 

@@ -342,9 +342,9 @@ export default function TeamPage() {
         </div>
         <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-violet-500/10 to-cyan-500/5 p-8 text-center">
           <Lock className="w-10 h-10 text-violet-400 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-white mb-2">Team workspaces start with Alignment</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">Team workspaces require Signal</h2>
           <p className="text-sm text-white/50 max-w-md mx-auto mb-5">
-            Upgrade to Alignment [$49/mo] for up to 3 team seats, or Signal [$149/mo] for up to 10 seats with invite management and shared audit feeds.
+            Upgrade to Signal [$149/mo] for up to 25 team seats with invite management, shared audit feeds, and full workspace collaboration.
           </p>
           <a
             href="/pricing"

@@ -1318,7 +1318,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
       {/* Test Status */}
       {loading && testStatus && testStatus !== 'completed' && (
         <div className="rounded-xl border border-white/12/30 bg-charcoal/5 p-6 text-center">
-          <Loader2 className="w-8 h-8 text-white/85 animate-spin mx-auto mb-3" />
+          <img src="/aivis-progress-spinner.png" alt="" className="w-8 h-8 animate-spin mx-auto mb-3" />
           <p className="text-sm text-white/85 font-medium">
             Testing {selectedQueries.length} queries across {selectedPlatforms.length} AI platform{selectedPlatforms.length === 1 ? '' : 's'}...
           </p>

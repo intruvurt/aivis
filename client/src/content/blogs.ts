@@ -1796,7 +1796,7 @@ Build the structure. Verify the citations. Compound the advantage.`,
     readMinutes: 9,
     category: 'technology',
     tags: ['AI-Tech', 'Visibility', 'Technical', 'AEO', 'Schema'],
-    keywords: ['how aivis works', 'ai visibility engine', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
+    keywords: ['how aivis works', 'ai visibility platform', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
     author: {
       name: 'Intruvurt',
       title: 'Founder, AiVIS',

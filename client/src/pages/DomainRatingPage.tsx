@@ -167,8 +167,8 @@ export default function DomainRatingPage() {
       {/* Loading state */}
       {loading && (
         <div className="flex flex-col items-center gap-4 py-16">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-400/20 border-t-cyan-400" />
-          <p className="text-sm text-white/50">Scanning platforms\u2026 this may take 30\u201360 seconds.</p>
+          <img src="/aivis-progress-spinner.png" alt="" className="h-10 w-10 animate-spin" />
+          <p className="text-sm text-white/50">Scanning platforms… this may take 30–60 seconds.</p>
         </div>
       )}
 

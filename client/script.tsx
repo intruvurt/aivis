@@ -75,8 +75,8 @@ export const HeroSection: React.FC = () => {
           </div>
 
           <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-[1.05]">
-            Ai Visibility Intelligence Audits
-            <span className="text-indigo-600"> Engine</span>
+            AI Visibility Intelligence
+            <span className="text-indigo-600"> Platform</span>
           </h1>
 
           <p className="mt-5 max-w-2xl text-base md:text-lg text-slate-600 leading-relaxed">

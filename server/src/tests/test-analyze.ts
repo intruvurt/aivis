@@ -20,7 +20,7 @@ function log(message: string, color: keyof typeof colors = 'reset') {
 }
 
 async function testAnalyze() {
-  log(' Testing Ai Visibility Intelligence Audits Analyze Endpoint', 'bright');
+  log(' Testing AI Visibility Intelligence Platform Analyze Endpoint', 'bright');
   log('='.repeat(60), 'cyan');
   log(`API URL: ${API_URL}`, 'blue');
   log(`Test URL: ${TEST_URL}`, 'blue');

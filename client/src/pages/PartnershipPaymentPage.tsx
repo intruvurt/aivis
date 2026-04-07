@@ -291,7 +291,7 @@ export default function PartnershipPaymentPage() {
     return (
       <PublicPageFrame>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+          <img src="/aivis-progress-spinner.png" alt="" className="w-8 h-8 animate-spin" />
         </div>
       </PublicPageFrame>
     );

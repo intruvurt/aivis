@@ -1811,7 +1811,7 @@ export default function HelpCenter() {
 
                   {ticketsLoading && tickets.length === 0 ? (
                     <div className="text-center py-16">
-                      <div className="w-6 h-6 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto" />
+                      <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin mx-auto" />
                       <p className="text-white/40 text-sm mt-3">Loading tickets...</p>
                     </div>
                   ) : tickets.length === 0 ? (
@@ -1998,7 +1998,7 @@ export default function HelpCenter() {
                         className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-semibold hover:bg-cyan-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       >
                         {ticketsLoading ? (
-                          <div className="w-4 h-4 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
+                          <img src="/aivis-progress-spinner.png" alt="" className="w-4 h-4 animate-spin" />
                         ) : (
                           <Send className="w-4 h-4" />
                         )}

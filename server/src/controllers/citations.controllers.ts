@@ -604,7 +604,7 @@ function buildBrandContext(
   if (brandSignals.ogSiteName && brandSignals.ogSiteName !== primaryName) {
     nameVariants.push(brandSignals.ogSiteName);
   }
-  // Title segments (e.g. "AI Visibility Intelligence Audits" from "AiVIS - AI Visibility Intelligence Audits")
+  // Title segments (e.g. "AI Visibility Intelligence Platform" from "AiVIS - AI Visibility Intelligence Platform")
   if (brandSignals.title) {
     const parts = brandSignals.title.split(/[\-|–·•:]/).map(p => p.trim()).filter(Boolean);
     for (const part of parts) {
@@ -695,6 +695,9 @@ function scoreBrandRelevance(
 
   // ─── Signal 2: Exact primary name (case-sensitive) ─────────────────
   if (blob.includes(ctx.primaryName)) score += 3;
+  // ─── Signal 2b: Case-insensitive primary name match (weaker) ───────
+  // Catches "aivis" when brand is "AiVIS" — common in user-generated content
+  else if (ctx.primaryName.length >= 3 && blobLower.includes(ctx.primaryName.toLowerCase())) score += 2;
 
   // ─── Signal 3: Name variant match ─────────────────────────────────
   for (const variant of ctx.nameVariants) {
@@ -703,12 +706,15 @@ function scoreBrandRelevance(
       // Long variants (full name expansions): case-insensitive is safe
       if (blobLower.includes(variant.toLowerCase())) { score += 3; break; }
     } else {
-      // Short variants: case-sensitive to avoid false positives
+      // Short variants: try case-sensitive first, fall back to case-insensitive
       if (blob.includes(variant)) {
-        // ALLCAPS-only match is weaker when the brand uses specific casing
-        // (e.g. "AIVIS" matching when the brand is actually "AiVIS")
         const isAllCapsOnly = ctx.strictMatch && variant === ctx.primaryName.toUpperCase();
         score += isAllCapsOnly ? 1 : 2;
+        break;
+      }
+      // Case-insensitive fallback for short variants (weaker signal)
+      if (blobLower.includes(variant.toLowerCase())) {
+        score += 1;
         break;
       }
     }
@@ -718,12 +724,13 @@ function scoreBrandRelevance(
   // Company/product pages vs personal profiles
   try {
     const urlPath = new URL(result.href).pathname.toLowerCase();
+    // Brand name in URL path (e.g. /r/aivis/, /repos/aivis/, /posts/aivis-review)
+    if (ctx.domainLabel && urlPath.includes(ctx.domainLabel)) score += 2;
     // Positive: company pages, products, apps
     if (/\/(company|organization|product|app|software|tool|startup)\//i.test(urlPath)) score += 1;
     // Negative: personal profile patterns (people/in/users followed by a name)
     if (/^\/(in|people|user|users|profile)\//i.test(urlPath)) {
       // Only penalize if the domain label isn't in the URL path
-      // e.g. linkedin.com/in/aivis-person → penalize, but linkedin.com/company/aivis → don't
       if (!ctx.domainLabel || !urlPath.includes(ctx.domainLabel)) score -= 1;
     }
   } catch { /* invalid URL, skip */ }
@@ -1000,12 +1007,19 @@ export async function authorityGranularCheck(req: Request, res: Response) {
             // ── Direct API path for platforms that expose free JSON endpoints ──
             if (hasDirectApi(platform)) {
               try {
-                const directQuery = targetDomain || trimmedTarget;
-                const directRows = await searchPlatformDirect(platform, directQuery, 10);
-                for (const row of directRows) {
-                  if (!row.href || seenHref.has(row.href)) continue;
-                  seenHref.add(row.href);
-                  parsedRows.push(row);
+                // Search by domain first, then by brand name if different
+                const directQueries = [targetDomain || trimmedTarget];
+                if (brandCtx.primaryName && brandCtx.primaryName.toLowerCase() !== (targetDomain || '').toLowerCase()) {
+                  directQueries.push(brandCtx.primaryName);
+                }
+                for (const directQuery of directQueries) {
+                  const directRows = await searchPlatformDirect(platform, directQuery, 10);
+                  for (const row of directRows) {
+                    if (!row.href || seenHref.has(row.href)) continue;
+                    seenHref.add(row.href);
+                    parsedRows.push(row);
+                  }
+                  if (parsedRows.length >= 5) break;
                 }
                 console.log(`[AuthorityCheck] platform=${platform} direct API found ${parsedRows.length} results`);
               } catch (directErr: any) {
@@ -1069,30 +1083,44 @@ export async function authorityGranularCheck(req: Request, res: Response) {
 
               // Final fallback: branded query WITHOUT site: operator, then filter to domain
               if (parsedRows.length === 0) {
-                const brandedQuery = `"${targetDomain || trimmedTarget}" ${domain}`;
-                try {
-                  const brandedResults = await scrapeBingRaw(brandedQuery, 15);
-                  const platformHost = domain.replace(/^www\./, '').toLowerCase();
-                  for (const row of brandedResults) {
-                    if (!row.href || seenHref.has(row.href)) continue;
-                    try {
-                      const resultHost = new URL(row.href).hostname.replace(/^www\./, '').toLowerCase();
-                      if (!resultHost.includes(platformHost) && !platformHost.includes(resultHost)) continue;
-                    } catch { continue; }
-                    seenHref.add(row.href);
-                    parsedRows.push(row);
-                  }
-                  if (parsedRows.length > 0) {
-                    console.log(`[AuthorityCheck] Branded fallback for platform=${platform} found ${parsedRows.length} results`);
-                  }
-                } catch { /* skip */ }
+                const brandQueries = [
+                  `"${targetDomain || trimmedTarget}" ${domain}`,
+                  ...(brandCtx.primaryName && brandCtx.primaryName.toLowerCase() !== (targetDomain || '').toLowerCase()
+                    ? [`"${brandCtx.primaryName}" ${domain}`]
+                    : []),
+                ];
+                for (const brandedQuery of brandQueries) {
+                  try {
+                    const brandedResults = await scrapeBingRaw(brandedQuery, 15);
+                    const platformHost = domain.replace(/^www\./, '').toLowerCase();
+                    for (const row of brandedResults) {
+                      if (!row.href || seenHref.has(row.href)) continue;
+                      try {
+                        const resultHost = new URL(row.href).hostname.replace(/^www\./, '').toLowerCase();
+                        if (!resultHost.includes(platformHost) && !platformHost.includes(resultHost)) continue;
+                      } catch { continue; }
+                      seenHref.add(row.href);
+                      parsedRows.push(row);
+                    }
+                    if (parsedRows.length > 0) {
+                      console.log(`[AuthorityCheck] Branded fallback for platform=${platform} found ${parsedRows.length} results`);
+                      break;
+                    }
+                  } catch { /* skip */ }
+                }
               }
             }
 
             // ── Google News RSS universal fallback (covers all 18 platforms) ──
             if (parsedRows.length === 0) {
+              const rssQueries = [
+                `site:${domain} ${targetDomain || trimmedTarget}`,
+                ...(brandCtx.primaryName && brandCtx.primaryName.toLowerCase() !== (targetDomain || '').toLowerCase()
+                  ? [`site:${domain} ${brandCtx.primaryName}`]
+                  : []),
+              ];
+              for (const rssQuery of rssQueries) {
               try {
-                const rssQuery = `site:${domain} ${targetDomain || trimmedTarget}`;
                 const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(rssQuery)}&hl=en-US&gl=US&ceid=US:en`;
                 const rssResp = await fetchWithTimeout(rssUrl, 8000);
                 if (rssResp.ok) {
@@ -1130,6 +1158,8 @@ export async function authorityGranularCheck(req: Request, res: Response) {
                   }
                 }
               } catch { /* skip */ }
+              if (parsedRows.length > 0) break;
+              }
             }
 
             // ── Filter results for brand relevance ──────────────────────

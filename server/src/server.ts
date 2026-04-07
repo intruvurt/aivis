@@ -1106,12 +1106,28 @@ app.get('/.well-known/webmcp.json', (_req, res) => {
   res.json({
     schema_version: '0.1.0',
     name: 'aivis',
-    display_name: 'AiVIS - AI Visibility Engine',
+    display_name: 'AiVIS - AI Visibility Intelligence Platform',
     description: 'Audit, measure, and improve how AI answer engines see your website.',
     tools_endpoint: '/api/webmcp/tools',
     invoke_endpoint: '/api/webmcp/tools/{tool_name}',
     manifest_endpoint: '/api/webmcp/manifest',
     auth: { type: 'bearer', prefix: 'avis_' },
+  });
+});
+
+// Standard MCP discovery - unauthenticated
+app.get('/.well-known/mcp.json', (_req, res) => {
+  res.json({
+    schema_version: '1.0.0',
+    name: 'aivis',
+    display_name: 'AiVIS - AI Visibility Intelligence Platform',
+    description: 'Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.',
+    url: 'https://aivis.biz/api/mcp',
+    transport: 'http',
+    auth: { type: 'bearer', instructions: 'Use an API key (avis_*) from your AiVIS dashboard under Settings → API Keys.' },
+    tools_endpoint: '/api/mcp/tools',
+    invoke_endpoint: '/api/mcp/call',
+    documentation: 'https://aivis.biz/api-docs',
   });
 });
 
@@ -7774,7 +7790,7 @@ For each recommendation:
 `
       : '';
 
-    const prompt1 = `${tierPromptPrefix}Ai Visibility Intelligence Audits for ${targetUrl} (${parsedTargetUrl.hostname}).
+    const prompt1 = `${tierPromptPrefix}AI Visibility Intelligence Platform audit for ${targetUrl} (${parsedTargetUrl.hostname}).
 Base ALL findings on the evidence below. Be honest - most sites score C/D. Cite [ev_*] IDs.
 
 WRITING STYLE (mandatory for all text fields):
@@ -8650,7 +8666,7 @@ Return ONLY valid JSON:
           }
         );
       })(),
-      summary: aiAnalysis.summary || `AI Visibility Intelligence Audits analysis for ${parsedTargetUrl.hostname}`,
+      summary: aiAnalysis.summary || `AI Visibility Intelligence Platform analysis for ${parsedTargetUrl.hostname}`,
       key_takeaways: aiAnalysis.key_takeaways || [],
       topical_keywords: aiAnalysis.topical_keywords || [],
       keyword_intelligence: aiAnalysis.keyword_intelligence || [],
@@ -9355,7 +9371,7 @@ app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspac
 
     const uploadRouting = detectUploadAnalysisMode(parsedFiles, sd);
 
-    let prompt = `AI Visibility Intelligence Audits - Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : 'batch'}.
+    let prompt = `AI Visibility Intelligence Platform - Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : 'batch'}.
   Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
   Treat this as uploaded source code or template content (not a live URL crawl).
   The upload includes ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(', ')}.
@@ -9391,7 +9407,7 @@ app.post('/api/analyze/upload', authRequired, workspaceRequired, requireWorkspac
   {"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"brand_entities":["<entities>"],"primary_topics":["<3-5>"],"recommendations":[{"priority":"high|medium|low","category":"<cat>","title":"<short>","description":"<detail>","impact":"<impact>","difficulty":"easy|medium|hard","implementation":"<steps>","evidence_ids":["up_*"]}],"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta-tags|schema|content|technical|readability","found":"<quote>","status":"good|warning|critical|missing","note":"<why>","source_id":"up_*"}]}`;
 
     if (uploadRouting.mode === 'writing_audit') {
-      prompt = `AI Visibility Intelligence Audits - Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
+      prompt = `AI Visibility Intelligence Platform - Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
 This is a WRITING and EDITORIAL analysis, not a live website crawl.
 Upload: ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(', ')}.
 

@@ -71,7 +71,7 @@ const ResetPassword = () => {
   if (validating) {
     return (
       <div id="src_pages_ResetPassword_validating" className="flex flex-1 items-center justify-center">
-        <div id="src_pages_ResetPassword_spinner" className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/10"></div>
+        <img src="/aivis-progress-spinner.png" alt="" id="src_pages_ResetPassword_spinner" className="h-12 w-12 animate-spin" />
       </div>
     );
   }

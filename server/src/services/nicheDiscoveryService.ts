@@ -265,7 +265,7 @@ async function updateJob(jobId: string, updates: Partial<DiscoveryJob>) {
   let i = 1;
 
   if (updates.status) { sets.push(`status = $${i}`); vals.push(updates.status); i++; }
-  if (updates.discovered_urls !== undefined) { sets.push(`discovered_urls = $${i}`); vals.push(updates.discovered_urls); i++; }
+  if (updates.discovered_urls !== undefined) { sets.push(`discovered_urls = $${i}`); vals.push(JSON.stringify(updates.discovered_urls)); i++; }
   if (updates.scheduled_count !== undefined) { sets.push(`scheduled_count = $${i}`); vals.push(updates.scheduled_count); i++; }
   if (updates.audited_count !== undefined) { sets.push(`audited_count = $${i}`); vals.push(updates.audited_count); i++; }
   if (updates.error !== undefined) { sets.push(`error = $${i}`); vals.push(updates.error); i++; }

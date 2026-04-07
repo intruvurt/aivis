@@ -410,7 +410,7 @@ function generateHTMLReport(
   <div class="header">
     ${logoHTML}<span style="font-size: 12px; color: #6b7280; vertical-align: middle;">${brandName !== DEFAULT_EXPORT_BRAND_NAME ? brandName : ''}</span>
     ${enterpriseLogoHeaderHTML}
-    <h1>${brandName !== DEFAULT_EXPORT_BRAND_NAME ? brandName + ': ' : ''}Ai Visibility Intelligence Audits Analysis Report</h1>
+    <h1>${brandName !== DEFAULT_EXPORT_BRAND_NAME ? brandName + ': ' : ''}AI Visibility Intelligence Platform Analysis Report</h1>
     <div class="meta">
       <strong>URL:</strong> ${result.url || 'N/A'}<br>
       <strong>Generated:</strong> ${new Date().toLocaleString()}<br>

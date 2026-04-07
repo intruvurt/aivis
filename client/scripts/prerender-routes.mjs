@@ -67,7 +67,7 @@ const routes = [
 	},
 	{
 		path: '/landing',
-		title: 'AiVIS Landing | AI Visibility Intelligence Audits',
+		title: 'AiVIS Landing | AI Visibility Intelligence Platform',
 		description: 'Measure whether AI can read, trust and cite your site with a live evidence-backed AiVIS audit.',
 	},
 	{
@@ -450,7 +450,7 @@ const routes = [
 	{
 		path: '/changelog',
 		title: 'Changelog | AiVIS',
-		description: 'A permanent ledger of every update, fix, and improvement shipped to AI Visibility Engine.',
+		description: 'A permanent ledger of every update, fix, and improvement shipped to AI Visibility Intelligence Platform.',
 	},
 	{
 		path: '/indexing',

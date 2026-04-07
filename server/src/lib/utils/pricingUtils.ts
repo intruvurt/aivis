@@ -1,4 +1,4 @@
-// AI Visibility Intelligence Audits: tier and usage guard utilities
+// AI Visibility Intelligence Platform: tier and usage guard utilities
 
 export const TierName = ['Observer', 'Alignment', 'Signal', 'scorefix'] as const;
 

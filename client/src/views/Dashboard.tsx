@@ -420,7 +420,7 @@ export default function Dashboard() {
 
         {loading ? (
           <div className="flex items-center justify-center py-14 text-white/60">
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
           </div>
         ) : audits.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-white/12 bg-white/[0.02] px-6 py-12 text-center text-sm text-white/58">

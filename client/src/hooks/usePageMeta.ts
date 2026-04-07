@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 
 interface PageMeta {
-  /** Page title - will be suffixed with " | Ai Visibility Intelligence Audits & monitoring" */
+  /** Page title - will be suffixed with " | AI Visibility Intelligence Platform" */
   title: string;
   /** Meta description for search engines and AI crawlers */
   description: string;
@@ -24,7 +24,7 @@ interface PageMeta {
   fullTitle?: string;
 }
 
-const SITE_NAME = 'AiVIS - Ai Visibility Intelligence Audits';
+const SITE_NAME = 'AiVIS - AI Visibility Intelligence Platform';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 

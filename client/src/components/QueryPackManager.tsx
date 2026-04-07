@@ -223,7 +223,7 @@ export default function QueryPackManager({
 
           {loading ? (
             <div className="flex justify-center items-center py-8">
-              <Loader2 className="w-6 h-6 text-white/60 animate-spin" />
+              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
             </div>
           ) : packs.length === 0 ? (
             <div className="text-center py-8">

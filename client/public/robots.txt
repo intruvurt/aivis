@@ -1,4 +1,4 @@
-# AiVIS - AI Visibility Intelligence Systems
+# AiVIS - AI Visibility Intelligence Platform
 # https://aivis.biz
 
 User-agent: *

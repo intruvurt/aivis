@@ -15,9 +15,9 @@ const QA_PAIRS = [
       'Keyword density and backlink volume are weaker signals in AI-first results. Engines increasingly prioritize intent alignment, semantic consistency, and structured clarity.',
   },
   {
-    question: 'What is Ai Visibility Intelligence Audits?',
+    question: 'What is AI Visibility Intelligence?',
     answer:
-      'Ai Visibility Intelligence Audits measures how often and how accurately AI systems include your content in generated answers, overviews, citations, and summaries.',
+      'AI Visibility Intelligence measures how often and how accurately AI systems include your content in generated answers, overviews, citations, and summaries.',
   },
   {
     question: 'What is AEO in simple terms?',
@@ -56,22 +56,22 @@ const IMPLEMENTATION_STEPS = [
 
 export default function AISearchVisibility2026() {
   usePageMeta({
-    title: 'Ai Visibility Intelligence Audits 2026',
+    title: 'AI Visibility Intelligence Platform 2026',
     description:
       'A 2026 framework for founders: shift from traditional SEO to AI Visibility with AEO, geo relevance, and Q/A content.',
     path: '/ai-search-visibility-2026',
-    ogTitle: 'Ai Visibility Intelligence Audits in 2026: Why Traditional SEO Is Collapsing',
+    ogTitle: 'AI Visibility Intelligence Platform in 2026: Why Traditional SEO Is Collapsing',
     structuredData: [
       {
         ...buildArticleSchema({
-          title: 'Ai Visibility Intelligence Audits in 2026: Why Traditional SEO Is Collapsing and What Replaces It',
+          title: 'AI Visibility Intelligence Platform in 2026: Why Traditional SEO Is Collapsing and What Replaces It',
           description:
             'Search has shifted from page ranking to AI answer synthesis. Learn how to structure content for extractability, citations, and authority.',
           path: '/ai-search-visibility-2026',
           datePublished: '2026-03-02',
         }),
         about: [
-          { '@type': 'Thing', name: 'Ai Visibility Intelligence Audits' },
+          { '@type': 'Thing', name: 'AI Visibility Intelligence Platform' },
           { '@type': 'Thing', name: 'Answer Engine Optimization' },
           { '@type': 'Thing', name: 'Geo Ranking' },
           { '@type': 'Thing', name: 'Content Infrastructure' },
@@ -80,7 +80,7 @@ export default function AISearchVisibility2026() {
       buildBreadcrumbSchema([
         { name: 'Home', path: '/' },
         { name: 'Insights', path: '/insights' },
-        { name: 'Ai Visibility Intelligence Audits in 2026', path: '/ai-search-visibility-2026' },
+        { name: 'AI Visibility Intelligence Platform in 2026', path: '/ai-search-visibility-2026' },
       ]),
     ],
   });
@@ -91,7 +91,7 @@ export default function AISearchVisibility2026() {
         <header className="mb-10 rounded-2xl border border-white/10/70 bg-charcoal-deep p-8">
           <p className="text-xs font-semibold tracking-wide uppercase text-white/85 mb-3">2026 Playbook</p>
           <h1 className="text-3xl md:text-4xl brand-title-lg leading-tight mb-4">
-            Ai Visibility Intelligence Audits in 2026
+            Ai Visibility Intelligence in 2026
           </h1>
           <p className="text-white/75 leading-relaxed">
             Traditional SEO mechanics are losing leverage. AI answer engines now prioritize structured understanding,

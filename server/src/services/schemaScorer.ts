@@ -1,5 +1,5 @@
 // server/src/services/schemaScorer.ts
-// Comprehensive deterministic schema scoring system for AI Visibility Engine.
+// Comprehensive deterministic schema scoring system for AI Visibility Intelligence Platform.
 // Informed by schema.org validation, GS1 Digital Link vocabulary (product identification),
 // and MLCommons Croissant metadata patterns (entity graph + @id cross-refs + vocabulary extension).
 

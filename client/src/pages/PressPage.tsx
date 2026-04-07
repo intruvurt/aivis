@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Newspaper } from "lucide-react";
+import { ExternalLink, Globe, Newspaper } from "lucide-react";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildWebPageSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
@@ -78,7 +78,7 @@ const MILESTONES = [
 
 const MEDIA_KIT = [
   { label: "Company Name", value: "Intruvurt Labs" },
-  { label: "Product", value: "AiVIS - AI Visibility Intelligence Audits" },
+  { label: "Product", value: "AiVIS - AI Visibility Intelligence Platform" },
   { label: "Founded", value: "December 2025" },
   { 
     label: "Founder", 
@@ -243,6 +243,23 @@ export default function PressPage() {
               Claims &amp; Methodology
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>
+          </div>
+        </section>
+
+        {/* Directory Listings */}
+        <section className="mx-auto max-w-4xl py-12">
+          <h3 className="text-2xl brand-title mb-8">Directory Listings</h3>
+          <div className="flex flex-wrap gap-4">
+            <a
+              href="http://www.usafreewebdirectory.com"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white/80 hover:border-white/20 hover:bg-white/[0.07] transition-colors group"
+            >
+              <Globe className="w-4 h-4 text-cyan-400/70" />
+              USA Business Listing Directory
+              <ExternalLink className="w-3.5 h-3.5 text-white/30 group-hover:text-white/50" />
+            </a>
           </div>
         </section>
 

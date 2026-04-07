@@ -1,123 +1,344 @@
+
+> ai-visibility-engine@1.0.0 build
+> vite build && node ./scripts/prerender-routes.mjs
+
 [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
 transforming...
-[32mΓ£ô[39m 4255 modules transformed.
+[32mΓ£ô[39m 4270 modules transformed.
 Circular chunk: vendor -> react-dom -> vendor. Please adjust the manual chunk logic for these chunks.
 rendering chunks...
 computing gzip size...
-[2mdist/[22m[32mindex.html                                              [39m[1m[2m 40.06 kB[22m[1m[22m[2m Γöé gzip:   9.95 kB[22m
+[2mdist/[22m[32mindex.html                                              [39m[1m[2m 40.46 kB[22m[1m[22m[2m Γöé gzip:  10.01 kB[22m
 [2mdist/[22m[35massets/ServerHeadersPage-BRYetETF.css                   [39m[1m[2m  1.95 kB[22m[1m[22m[2m Γöé gzip:   0.69 kB[22m
-[2mdist/[22m[35massets/index-ulSujyYt.css                               [39m[1m[2m165.79 kB[22m[1m[22m[2m Γöé gzip:  26.85 kB[22m
+[2mdist/[22m[35massets/index-CgLZIdCS.css                               [39m[1m[2m173.43 kB[22m[1m[22m[2m Γöé gzip:  27.89 kB[22m
 [2mdist/[22m[36massets/constants-Df6JqN_T.js                            [39m[1m[2m  0.07 kB[22m[1m[22m[2m Γöé gzip:   0.09 kB[22m
 [2mdist/[22m[36massets/safeHref-D-0Mbtdj.js                             [39m[1m[2m  0.31 kB[22m[1m[22m[2m Γöé gzip:   0.22 kB[22m
-[2mdist/[22m[36massets/Card-BBnVGAB9.js                                 [39m[1m[2m  0.34 kB[22m[1m[22m[2m Γöé gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/Card-DTSvAHHU.js                                 [39m[1m[2m  0.34 kB[22m[1m[22m[2m Γöé gzip:   0.22 kB[22m
 [2mdist/[22m[36massets/formStyles-BMkdRVTu.js                           [39m[1m[2m  0.37 kB[22m[1m[22m[2m Γöé gzip:   0.23 kB[22m
 [2mdist/[22m[36massets/targetKey-_cccmIF5.js                            [39m[1m[2m  0.45 kB[22m[1m[22m[2m Γöé gzip:   0.29 kB[22m
-[2mdist/[22m[36massets/AuditEngineIcon-ClyQ_Z3P.js                      [39m[1m[2m  0.67 kB[22m[1m[22m[2m Γöé gzip:   0.39 kB[22m
-[2mdist/[22m[36massets/ResetAuth-i8obCgMT.js                            [39m[1m[2m  0.71 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
-[2mdist/[22m[36massets/ContentBlueprintIcon-Cm7y94w1.js                 [39m[1m[2m  0.74 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/marketingClaims-xvLkhkUr.js                      [39m[1m[2m  0.66 kB[22m[1m[22m[2m Γöé gzip:   0.39 kB[22m
+[2mdist/[22m[36massets/AuditEngineIcon-CnSYKrwI.js                      [39m[1m[2m  0.67 kB[22m[1m[22m[2m Γöé gzip:   0.39 kB[22m
+[2mdist/[22m[36massets/ResetAuth-e_3UdnCj.js                            [39m[1m[2m  0.71 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/ContentBlueprintIcon-bys3V5pT.js                 [39m[1m[2m  0.74 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
 [2mdist/[22m[36massets/platformNarrative-BKnK6cYX.js                    [39m[1m[2m  0.77 kB[22m[1m[22m[2m Γöé gzip:   0.49 kB[22m
-[2mdist/[22m[36massets/AutoFix PRIcon-UbqsCo9i.js                         [39m[1m[2m  0.81 kB[22m[1m[22m[2m Γöé gzip:   0.41 kB[22m
-[2mdist/[22m[36massets/referralShare-RoYwv195.js                        [39m[1m[2m  0.97 kB[22m[1m[22m[2m Γöé gzip:   0.56 kB[22m
-[2mdist/[22m[36massets/AppPageFrame-DcAVhqAf.js                         [39m[1m[2m  1.16 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
-[2mdist/[22m[36massets/PaymentCanceledPage-DupTA4jK.js                  [39m[1m[2m  1.18 kB[22m[1m[22m[2m Γöé gzip:   0.55 kB[22m
-[2mdist/[22m[36massets/PlatformShiftBanner-Cv80GWks.js                  [39m[1m[2m  1.25 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
-[2mdist/[22m[36massets/PublicPageFrame-DQDTIMsF.js                      [39m[1m[2m  1.37 kB[22m[1m[22m[2m Γöé gzip:   0.66 kB[22m
-[2mdist/[22m[36massets/NotFound-DJadEnDE.js                             [39m[1m[2m  1.47 kB[22m[1m[22m[2m Γöé gzip:   0.73 kB[22m
-[2mdist/[22m[36massets/analysisStore-9zQzEEjB.js                        [39m[1m[2m  1.65 kB[22m[1m[22m[2m Γöé gzip:   0.81 kB[22m
-[2mdist/[22m[36massets/PaymentSuccessPage-BR-YBOsj.js                   [39m[1m[2m  1.68 kB[22m[1m[22m[2m Γöé gzip:   0.79 kB[22m
-[2mdist/[22m[36massets/useSupportTickets-Dpe1esSa.js                    [39m[1m[2m  2.08 kB[22m[1m[22m[2m Γöé gzip:   0.77 kB[22m
+[2mdist/[22m[36massets/ScoreFixIcon-DkGzU5GM.js                         [39m[1m[2m  0.81 kB[22m[1m[22m[2m Γöé gzip:   0.41 kB[22m
+[2mdist/[22m[36massets/referralShare-DxHQo8uj.js                        [39m[1m[2m  0.97 kB[22m[1m[22m[2m Γöé gzip:   0.56 kB[22m
+[2mdist/[22m[36massets/ReferralRedirect-B-eZIqhG.js                     [39m[1m[2m  1.02 kB[22m[1m[22m[2m Γöé gzip:   0.60 kB[22m
+[2mdist/[22m[36massets/AppPageFrame-BYatxwHH.js                         [39m[1m[2m  1.16 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
+[2mdist/[22m[36massets/PaymentCanceledPage-UHz20d93.js                  [39m[1m[2m  1.18 kB[22m[1m[22m[2m Γöé gzip:   0.55 kB[22m
+[2mdist/[22m[36massets/PlatformShiftBanner-CqyM64xP.js                  [39m[1m[2m  1.25 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
+[2mdist/[22m[36massets/PublicPageFrame-CNO-TCqW.js                      [39m[1m[2m  1.37 kB[22m[1m[22m[2m Γöé gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/NotFound-BBl3JNCw.js                             [39m[1m[2m  1.47 kB[22m[1m[22m[2m Γöé gzip:   0.74 kB[22m
+[2mdist/[22m[36massets/analysisStore-BZiuH6au.js                        [39m[1m[2m  1.65 kB[22m[1m[22m[2m Γöé gzip:   0.82 kB[22m
+[2mdist/[22m[36massets/PaymentSuccessPage-Dnu18k39.js                   [39m[1m[2m  1.68 kB[22m[1m[22m[2m Γöé gzip:   0.79 kB[22m
+[2mdist/[22m[36massets/useSupportTickets-BwwdO-In.js                    [39m[1m[2m  2.08 kB[22m[1m[22m[2m Γöé gzip:   0.77 kB[22m
+[2mdist/[22m[36massets/KeywordClusterIndex-7t3lpbRq.js                  [39m[1m[2m  2.16 kB[22m[1m[22m[2m Γöé gzip:   0.96 kB[22m
 [2mdist/[22m[36massets/uiPalette-ChTkSTwi.js                            [39m[1m[2m  2.30 kB[22m[1m[22m[2m Γöé gzip:   0.78 kB[22m
-[2mdist/[22m[36massets/state-aIdmgoPh.js                                [39m[1m[2m  2.69 kB[22m[1m[22m[2m Γöé gzip:   1.33 kB[22m
-[2mdist/[22m[36massets/PlatformProofLoopCard-BuQUd2Gs.js                [39m[1m[2m  2.76 kB[22m[1m[22m[2m Γöé gzip:   0.94 kB[22m
-[2mdist/[22m[36massets/InviteAcceptPage-B7HcobqF.js                     [39m[1m[2m  2.81 kB[22m[1m[22m[2m Γöé gzip:   1.23 kB[22m
-[2mdist/[22m[36massets/usePageMeta-xS_tnVeR.js                          [39m[1m[2m  2.89 kB[22m[1m[22m[2m Γöé gzip:   1.21 kB[22m
-[2mdist/[22m[36massets/ChangelogPage-DakLLW26.js                        [39m[1m[2m  2.97 kB[22m[1m[22m[2m Γöé gzip:   1.29 kB[22m
-[2mdist/[22m[36massets/ResetPassword-DUvgVt4l.js                        [39m[1m[2m  3.20 kB[22m[1m[22m[2m Γöé gzip:   1.23 kB[22m
-[2mdist/[22m[36massets/UpgradeWall-C-znEtIX.js                          [39m[1m[2m  3.37 kB[22m[1m[22m[2m Γöé gzip:   1.50 kB[22m
-[2mdist/[22m[36massets/api-CSG5Jjlz.js                                  [39m[1m[2m  3.45 kB[22m[1m[22m[2m Γöé gzip:   1.14 kB[22m
-[2mdist/[22m[36massets/GeoAIRanking2026-D9LzJ_d2.js                     [39m[1m[2m  3.50 kB[22m[1m[22m[2m Γöé gzip:   1.30 kB[22m
-[2mdist/[22m[36massets/AEOPlaybook2026-BVCbBmaP.js                      [39m[1m[2m  3.79 kB[22m[1m[22m[2m Γöé gzip:   1.38 kB[22m
-[2mdist/[22m[36massets/seoSchema-B4YFhvfl.js                            [39m[1m[2m  3.79 kB[22m[1m[22m[2m Γöé gzip:   1.47 kB[22m
-[2mdist/[22m[36massets/CompareProfoundPage-Bs0Qc4xa.js                  [39m[1m[2m  4.09 kB[22m[1m[22m[2m Γöé gzip:   1.42 kB[22m
-[2mdist/[22m[36massets/VerifyEmailPage-BOlO8ags.js                      [39m[1m[2m  4.32 kB[22m[1m[22m[2m Γöé gzip:   1.74 kB[22m
-[2mdist/[22m[36massets/VerifyLicensePage-C5PUfxJG.js                    [39m[1m[2m  4.38 kB[22m[1m[22m[2m Γöé gzip:   1.53 kB[22m
-[2mdist/[22m[36massets/CompareReauditPage-BScIs1K8.js                   [39m[1m[2m  4.40 kB[22m[1m[22m[2m Γöé gzip:   1.56 kB[22m
-[2mdist/[22m[36massets/PressPage-1eTIgz8E.js                            [39m[1m[2m  4.47 kB[22m[1m[22m[2m Γöé gzip:   1.62 kB[22m
-[2mdist/[22m[36massets/InsightsPage-BJPbkvsV.js                         [39m[1m[2m  4.60 kB[22m[1m[22m[2m Γöé gzip:   1.67 kB[22m
-[2mdist/[22m[36massets/SnapshotPage-BgxKimWN.js                         [39m[1m[2m  5.18 kB[22m[1m[22m[2m Γöé gzip:   1.69 kB[22m
-[2mdist/[22m[36massets/CompareOtterlyPage-DzFcyBCK.js                   [39m[1m[2m  5.30 kB[22m[1m[22m[2m Γöé gzip:   1.76 kB[22m
-[2mdist/[22m[36massets/NotificationPreferencesPanel-BTFq3XRS.js         [39m[1m[2m  5.76 kB[22m[1m[22m[2m Γöé gzip:   2.00 kB[22m
-[2mdist/[22m[36massets/FAQ-CD9aT0CT.js                                  [39m[1m[2m  5.90 kB[22m[1m[22m[2m Γöé gzip:   2.60 kB[22m
-[2mdist/[22m[36massets/ComparisonPage-CDqo0580.js                       [39m[1m[2m  5.96 kB[22m[1m[22m[2m Γöé gzip:   1.77 kB[22m
-[2mdist/[22m[36massets/ConversationalQueryPlaybook2026-BZPhD0-x.js      [39m[1m[2m  6.81 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
-[2mdist/[22m[36massets/CompliancePage-DYWm8ZTk.js                       [39m[1m[2m  6.98 kB[22m[1m[22m[2m Γöé gzip:   2.04 kB[22m
-[2mdist/[22m[36massets/NotificationsPage-DaQ73Sm3.js                    [39m[1m[2m  7.10 kB[22m[1m[22m[2m Γöé gzip:   2.30 kB[22m
+[2mdist/[22m[36massets/state-us4ik_7O.js                                [39m[1m[2m  2.69 kB[22m[1m[22m[2m Γöé gzip:   1.33 kB[22m
+[2mdist/[22m[36massets/PlatformProofLoopCard-S7jRyTqu.js                [39m[1m[2m  2.76 kB[22m[1m[22m[2m Γöé gzip:   0.94 kB[22m
+[2mdist/[22m[36massets/InviteAcceptPage-3eDr3DHu.js                     [39m[1m[2m  2.83 kB[22m[1m[22m[2m Γöé gzip:   1.25 kB[22m
+[2mdist/[22m[36massets/usePageMeta-WXlrKLq6.js                          [39m[1m[2m  2.90 kB[22m[1m[22m[2m Γöé gzip:   1.21 kB[22m
+[2mdist/[22m[36massets/ChangelogPage-BsIrZAvb.js                        [39m[1m[2m  2.97 kB[22m[1m[22m[2m Γöé gzip:   1.30 kB[22m
+[2mdist/[22m[36massets/ResetPassword-D1DEASaU.js                        [39m[1m[2m  3.20 kB[22m[1m[22m[2m Γöé gzip:   1.24 kB[22m
+[2mdist/[22m[36massets/FeatureInstruction-D_G9omu8.js                   [39m[1m[2m  3.22 kB[22m[1m[22m[2m Γöé gzip:   1.20 kB[22m
+[2mdist/[22m[36massets/UpgradeWall-nMbvzZp2.js                          [39m[1m[2m  3.37 kB[22m[1m[22m[2m Γöé gzip:   1.49 kB[22m
+[2mdist/[22m[36massets/GeoAIRanking2026-CMr2cVL4.js                     [39m[1m[2m  3.50 kB[22m[1m[22m[2m Γöé gzip:   1.30 kB[22m
+[2mdist/[22m[36massets/api-DozOPVAb.js                                  [39m[1m[2m  3.55 kB[22m[1m[22m[2m Γöé gzip:   1.15 kB[22m
+[2mdist/[22m[36massets/KeywordPageTemplate-4wQChyZl.js                  [39m[1m[2m  3.68 kB[22m[1m[22m[2m Γöé gzip:   1.42 kB[22m
+[2mdist/[22m[36massets/AEOPlaybook2026-BRIwIFid.js                      [39m[1m[2m  3.79 kB[22m[1m[22m[2m Γöé gzip:   1.38 kB[22m
+[2mdist/[22m[36massets/VerifyEmailPage-wGB7y-pt.js                      [39m[1m[2m  4.32 kB[22m[1m[22m[2m Γöé gzip:   1.74 kB[22m
+[2mdist/[22m[36massets/VerifyLicensePage-DUfFtDE5.js                    [39m[1m[2m  4.38 kB[22m[1m[22m[2m Γöé gzip:   1.53 kB[22m
+[2mdist/[22m[36massets/seoSchema-BxzxgfGL.js                            [39m[1m[2m  4.74 kB[22m[1m[22m[2m Γöé gzip:   1.81 kB[22m
+[2mdist/[22m[36massets/ConversionCTA-BSUvVGCT.js                        [39m[1m[2m  4.91 kB[22m[1m[22m[2m Γöé gzip:   1.51 kB[22m
+[2mdist/[22m[36massets/SnapshotPage-CsOeA_YH.js                         [39m[1m[2m  5.48 kB[22m[1m[22m[2m Γöé gzip:   1.81 kB[22m
+[2mdist/[22m[36massets/NotificationPreferencesPanel-DxFSRMlw.js         [39m[1m[2m  5.76 kB[22m[1m[22m[2m Γöé gzip:   2.00 kB[22m
+[2mdist/[22m[36massets/CompareProfoundPage-BF4bR0En.js                  [39m[1m[2m  5.84 kB[22m[1m[22m[2m Γöé gzip:   1.65 kB[22m
+[2mdist/[22m[36massets/CompareReauditPage-CR6_Aqsp.js                   [39m[1m[2m  5.89 kB[22m[1m[22m[2m Γöé gzip:   1.67 kB[22m
+[2mdist/[22m[36massets/FAQ-BkDuSo9w.js                                  [39m[1m[2m  5.90 kB[22m[1m[22m[2m Γöé gzip:   2.61 kB[22m
+[2mdist/[22m[36massets/ComparisonPage-Bl1ZPbV-.js                       [39m[1m[2m  5.96 kB[22m[1m[22m[2m Γöé gzip:   1.77 kB[22m
+[2mdist/[22m[36massets/ShareButtons-D12PaZqh.js                         [39m[1m[2m  6.05 kB[22m[1m[22m[2m Γöé gzip:   2.53 kB[22m
+[2mdist/[22m[36massets/CompareOtterlyPage-DjzNrr4x.js                   [39m[1m[2m  6.79 kB[22m[1m[22m[2m Γöé gzip:   1.86 kB[22m
+[2mdist/[22m[36massets/ConversationalQueryPlaybook2026-CJWu39_E.js      [39m[1m[2m  6.81 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
+[2mdist/[22m[36massets/CompliancePage-DFzZU4uR.js                       [39m[1m[2m  6.97 kB[22m[1m[22m[2m Γöé gzip:   2.03 kB[22m
+[2mdist/[22m[36massets/NotificationsPage-DxgNpQ5O.js                    [39m[1m[2m  7.10 kB[22m[1m[22m[2m Γöé gzip:   2.31 kB[22m
+[2mdist/[22m[36massets/InsightsPage-CCA2slNf.js                         [39m[1m[2m  7.37 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
+[2mdist/[22m[36massets/BadgeEmbedPage-Bj3tlQWb.js                       [39m[1m[2m  7.47 kB[22m[1m[22m[2m Γöé gzip:   2.38 kB[22m
 [2mdist/[22m[36massets/insights-CIWig624.js                             [39m[1m[2m  7.62 kB[22m[1m[22m[2m Γöé gzip:   2.84 kB[22m
-[2mdist/[22m[36massets/BlogPostPage-CwGUgfcc.js                         [39m[1m[2m  7.69 kB[22m[1m[22m[2m Γöé gzip:   2.61 kB[22m
-[2mdist/[22m[36massets/AISearchVisibility2026-C7Ih1lXf.js               [39m[1m[2m  7.90 kB[22m[1m[22m[2m Γöé gzip:   2.61 kB[22m
-[2mdist/[22m[36massets/VoiceSearchAIAnswerOptimization2026-CnMemZCB.js  [39m[1m[2m  8.47 kB[22m[1m[22m[2m Γöé gzip:   2.31 kB[22m
-[2mdist/[22m[36massets/BlogsPage-Dv0FYENB.js                            [39m[1m[2m  8.70 kB[22m[1m[22m[2m Γöé gzip:   2.71 kB[22m
-[2mdist/[22m[36massets/ContentExtractabilityPage-D4vveYhV.js            [39m[1m[2m  8.92 kB[22m[1m[22m[2m Γöé gzip:   2.85 kB[22m
-[2mdist/[22m[36massets/SchemaValidatorPage-VO9YhAwj.js                  [39m[1m[2m  9.05 kB[22m[1m[22m[2m Γöé gzip:   2.80 kB[22m
-[2mdist/[22m[36massets/AuditDetails-B6LiXhuo.js                         [39m[1m[2m  9.52 kB[22m[1m[22m[2m Γöé gzip:   2.72 kB[22m
-[2mdist/[22m[36massets/RobotsCheckerPage-CVl5KbV8.js                    [39m[1m[2m  9.63 kB[22m[1m[22m[2m Γöé gzip:   2.85 kB[22m
-[2mdist/[22m[36massets/MethodologyPage-DMS2ToLS.js                      [39m[1m[2m 10.63 kB[22m[1m[22m[2m Γöé gzip:   3.51 kB[22m
-[2mdist/[22m[36massets/AnswerPresencePage-BnHiLczS.js                   [39m[1m[2m 10.72 kB[22m[1m[22m[2m Γöé gzip:   3.37 kB[22m
-[2mdist/[22m[36massets/SiteCrawlPage-CVnCzzlC.js                        [39m[1m[2m 10.97 kB[22m[1m[22m[2m Γöé gzip:   3.37 kB[22m
-[2mdist/[22m[36massets/PromptIntelligencePage-DqDSXDSg.js               [39m[1m[2m 11.08 kB[22m[1m[22m[2m Γöé gzip:   3.62 kB[22m
-[2mdist/[22m[36massets/Dashboard-Buh-JJoN.js                            [39m[1m[2m 12.95 kB[22m[1m[22m[2m Γöé gzip:   3.84 kB[22m
-[2mdist/[22m[36massets/CompareRankScalePage-7QunVeRJ.js                 [39m[1m[2m 13.02 kB[22m[1m[22m[2m Γöé gzip:   3.82 kB[22m
-[2mdist/[22m[36massets/ApiDocsPage-CzxRYe-X.js                          [39m[1m[2m 13.39 kB[22m[1m[22m[2m Γöé gzip:   3.87 kB[22m
-[2mdist/[22m[36massets/Profile-DSyOE_N4.js                              [39m[1m[2m 13.79 kB[22m[1m[22m[2m Γöé gzip:   4.03 kB[22m
-[2mdist/[22m[36massets/AgencyPage-o8mPH4ce.js                           [39m[1m[2m 13.87 kB[22m[1m[22m[2m Γöé gzip:   4.27 kB[22m
-[2mdist/[22m[36massets/CompareAhrefsPage-W-tbaNMG.js                    [39m[1m[2m 13.93 kB[22m[1m[22m[2m Γöé gzip:   4.26 kB[22m
-[2mdist/[22m[36massets/CompareSemrushPage-slPFTKwa.js                   [39m[1m[2m 14.33 kB[22m[1m[22m[2m Γöé gzip:   4.17 kB[22m
-[2mdist/[22m[36massets/CompetitiveLandscapePage-BLi3a4ja.js             [39m[1m[2m 14.42 kB[22m[1m[22m[2m Γöé gzip:   4.40 kB[22m
-[2mdist/[22m[36massets/PartnershipAgreementPage-BgEohBAx.js             [39m[1m[2m 14.86 kB[22m[1m[22m[2m Γöé gzip:   4.07 kB[22m
-[2mdist/[22m[36massets/IntegrationsHubPage-DUuGu24_.js                  [39m[1m[2m 15.12 kB[22m[1m[22m[2m Γöé gzip:   3.96 kB[22m
-[2mdist/[22m[36massets/WhyAIVisibility-DLR0ogWU.js                      [39m[1m[2m 15.34 kB[22m[1m[22m[2m Γöé gzip:   4.50 kB[22m
-[2mdist/[22m[36massets/BrandIntegrityPage-Dqf11UdH.js                   [39m[1m[2m 15.42 kB[22m[1m[22m[2m Γöé gzip:   4.57 kB[22m
-[2mdist/[22m[36massets/GlossaryPage-C3RR9tvN.js                         [39m[1m[2m 16.35 kB[22m[1m[22m[2m Γöé gzip:   5.71 kB[22m
-[2mdist/[22m[36massets/ReferralsPage-C8hlYV7E.js                        [39m[1m[2m 17.16 kB[22m[1m[22m[2m Γöé gzip:   4.66 kB[22m
-[2mdist/[22m[36massets/AiVisibilityBenchmark-BhHAcziw.js                [39m[1m[2m 17.50 kB[22m[1m[22m[2m Γöé gzip:   4.75 kB[22m
-[2mdist/[22m[36massets/TextSummaryView-TREA0IRx.js                      [39m[1m[2m 17.78 kB[22m[1m[22m[2m Γöé gzip:   5.60 kB[22m
-[2mdist/[22m[36massets/GuidePage-0I-9v_dJ.js                            [39m[1m[2m 18.89 kB[22m[1m[22m[2m Γöé gzip:   5.04 kB[22m
-[2mdist/[22m[36massets/AboutPage-BVrEP1Cd.js                            [39m[1m[2m 19.37 kB[22m[1m[22m[2m Γöé gzip:   4.86 kB[22m
-[2mdist/[22m[36massets/NicheDiscoveryPage-D-iRskRq.js                   [39m[1m[2m 20.12 kB[22m[1m[22m[2m Γöé gzip:   5.09 kB[22m
-[2mdist/[22m[36massets/GscConsolePage-BNipH6yh.js                       [39m[1m[2m 20.86 kB[22m[1m[22m[2m Γöé gzip:   6.22 kB[22m
-[2mdist/[22m[36massets/TermsPage-BMZS-7Ez.js                            [39m[1m[2m 21.98 kB[22m[1m[22m[2m Γöé gzip:   6.85 kB[22m
-[2mdist/[22m[36massets/IndexingPage-cKkB7MNZ.js                         [39m[1m[2m 22.55 kB[22m[1m[22m[2m Γöé gzip:   5.80 kB[22m
-[2mdist/[22m[36massets/ServerHeadersPage-Bjj185Z6.js                    [39m[1m[2m 24.58 kB[22m[1m[22m[2m Γöé gzip:   6.31 kB[22m
-[2mdist/[22m[36massets/PrivacyPage-4bqa5tsG.js                          [39m[1m[2m 24.59 kB[22m[1m[22m[2m Γöé gzip:   6.55 kB[22m
-[2mdist/[22m[36massets/PublicReportPage-BgzCQ8eo.js                     [39m[1m[2m 24.63 kB[22m[1m[22m[2m Γöé gzip:   6.84 kB[22m
-[2mdist/[22m[36massets/KeywordsPage-CiaLVwJo.js                         [39m[1m[2m 24.82 kB[22m[1m[22m[2m Γöé gzip:   7.02 kB[22m
-[2mdist/[22m[36massets/GuideBot-BHUG9Exs.js                             [39m[1m[2m 25.30 kB[22m[1m[22m[2m Γöé gzip:   8.15 kB[22m
-[2mdist/[22m[36massets/AuthPage-TYD6LCmj.js                             [39m[1m[2m 25.35 kB[22m[1m[22m[2m Γöé gzip:   6.50 kB[22m
-[2mdist/[22m[36massets/Landing-Bx5DqMEG.js                              [39m[1m[2m 25.80 kB[22m[1m[22m[2m Γöé gzip:   6.63 kB[22m
-[2mdist/[22m[36massets/DisclosuresPage-yTHY1neO.js                      [39m[1m[2m 26.59 kB[22m[1m[22m[2m Γöé gzip:   7.86 kB[22m
-[2mdist/[22m[36massets/Admin-1_JWYsRX.js                                [39m[1m[2m 27.28 kB[22m[1m[22m[2m Γöé gzip:   6.13 kB[22m
-[2mdist/[22m[36massets/TeamPage-zvQrwhx6.js                             [39m[1m[2m 28.33 kB[22m[1m[22m[2m Γöé gzip:   6.08 kB[22m
-[2mdist/[22m[36massets/AutoFix PRPage-Dk7LkoOK.js                         [39m[1m[2m 29.35 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
-[2mdist/[22m[36massets/McpConsolePage-AQesgMCg.js                       [39m[1m[2m 30.70 kB[22m[1m[22m[2m Γöé gzip:   6.64 kB[22m
-[2mdist/[22m[36massets/PlatformWorkflowPage-CiZFJzMv.js                 [39m[1m[2m 32.52 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
-[2mdist/[22m[36massets/BillingPage-xh7G65lR.js                          [39m[1m[2m 36.43 kB[22m[1m[22m[2m Γöé gzip:   8.87 kB[22m
-[2mdist/[22m[36massets/PricingPage-DpEFX8Qj.js                          [39m[1m[2m 36.86 kB[22m[1m[22m[2m Γöé gzip:  10.94 kB[22m
-[2mdist/[22m[36massets/router-Cz2wl30G.js                               [39m[1m[2m 37.25 kB[22m[1m[22m[2m Γöé gzip:  13.41 kB[22m
-[2mdist/[22m[36massets/CitationsPage-5xsbNVzG.js                        [39m[1m[2m 37.42 kB[22m[1m[22m[2m Γöé gzip:  10.24 kB[22m
-[2mdist/[22m[36massets/SettingsPage-COP8eD3H.js                         [39m[1m[2m 38.38 kB[22m[1m[22m[2m Γöé gzip:  10.06 kB[22m
-[2mdist/[22m[36massets/icons-BTdtvOOS.js                                [39m[1m[2m 41.49 kB[22m[1m[22m[2m Γöé gzip:  13.47 kB[22m
-[2mdist/[22m[36massets/AdvancedFeaturesPanel-qiXTqJwx.js                [39m[1m[2m 43.82 kB[22m[1m[22m[2m Γöé gzip:  12.09 kB[22m
-[2mdist/[22m[36massets/CompetitorsPage-BM9ESd0t.js                      [39m[1m[2m 45.43 kB[22m[1m[22m[2m Γöé gzip:  11.10 kB[22m
-[2mdist/[22m[36massets/ReportsPage-DpSLcbW4.js                          [39m[1m[2m 51.24 kB[22m[1m[22m[2m Γöé gzip:  14.18 kB[22m
-[2mdist/[22m[36massets/CitationTracker-CfIg3K5_.js                      [39m[1m[2m 62.02 kB[22m[1m[22m[2m Γöé gzip:  13.92 kB[22m
-[2mdist/[22m[36massets/chart-deps-DwXOT-wa.js                           [39m[1m[2m 62.44 kB[22m[1m[22m[2m Γöé gzip:  20.60 kB[22m
-[2mdist/[22m[36massets/AnalyticsPage-CmfIOgBq.js                        [39m[1m[2m 69.68 kB[22m[1m[22m[2m Γöé gzip:  16.50 kB[22m
-[2mdist/[22m[36massets/ReverseEngineerPage-DdqllYxN.js                  [39m[1m[2m 77.28 kB[22m[1m[22m[2m Γöé gzip:  17.00 kB[22m
-[2mdist/[22m[36massets/HelpCenter-CmDYJ-qb.js                           [39m[1m[2m 86.96 kB[22m[1m[22m[2m Γöé gzip:  22.20 kB[22m
-[2mdist/[22m[36massets/index-BFwttkhI.js                                [39m[1m[2m141.35 kB[22m[1m[22m[2m Γöé gzip:  41.21 kB[22m
-[2mdist/[22m[36massets/AnalyzePage-VeW5kiXN.js                          [39m[1m[2m150.48 kB[22m[1m[22m[2m Γöé gzip:  36.32 kB[22m
-[2mdist/[22m[36massets/react-dom-Blryf1Xp.js                            [39m[1m[2m180.52 kB[22m[1m[22m[2m Γöé gzip:  56.35 kB[22m
-[2mdist/[22m[36massets/blogs-CxK-0LiB.js                                [39m[1m[2m275.23 kB[22m[1m[22m[2m Γöé gzip:  85.84 kB[22m
-[2mdist/[22m[36massets/recharts-A4GE1uPT.js                             [39m[1m[2m311.28 kB[22m[1m[22m[2m Γöé gzip:  78.45 kB[22m
-[2mdist/[22m[36massets/vendor-DdYPhK5i.js                               [39m[1m[2m408.51 kB[22m[1m[22m[2m Γöé gzip: 138.64 kB[22m
-[32mΓ£ô built in 39.96s[39m
+[2mdist/[22m[36massets/BlogPostPage-BWioMTE7.js                         [39m[1m[2m  7.81 kB[22m[1m[22m[2m Γöé gzip:   2.68 kB[22m
+[2mdist/[22m[36massets/AISearchVisibility2026-D-xRIera.js               [39m[1m[2m  7.90 kB[22m[1m[22m[2m Γöé gzip:   2.61 kB[22m
+[2mdist/[22m[36massets/VoiceSearchAIAnswerOptimization2026-DVDMC3Le.js  [39m[1m[2m  8.47 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
+[2mdist/[22m[36massets/BlogsPage-WNfXoIZE.js                            [39m[1m[2m  8.70 kB[22m[1m[22m[2m Γöé gzip:   2.71 kB[22m
+[2mdist/[22m[36massets/PressPage-DPN1YBLx.js                            [39m[1m[2m  9.40 kB[22m[1m[22m[2m Γöé gzip:   3.13 kB[22m
+[2mdist/[22m[36massets/ContentExtractabilityPage-DbLGy55E.js            [39m[1m[2m  9.63 kB[22m[1m[22m[2m Γöé gzip:   3.12 kB[22m
+[2mdist/[22m[36massets/SchemaValidatorPage-JOjeVL3b.js                  [39m[1m[2m  9.73 kB[22m[1m[22m[2m Γöé gzip:   3.10 kB[22m
+[2mdist/[22m[36massets/RobotsCheckerPage-Ck2i2Ee_.js                    [39m[1m[2m 10.32 kB[22m[1m[22m[2m Γöé gzip:   3.17 kB[22m
+[2mdist/[22m[36massets/DomainRatingPage-CDzp308N.js                     [39m[1m[2m 10.44 kB[22m[1m[22m[2m Γöé gzip:   3.49 kB[22m
+[2mdist/[22m[36massets/AuditDetails-DNvvzuE_.js                         [39m[1m[2m 10.57 kB[22m[1m[22m[2m Γöé gzip:   3.03 kB[22m
+[2mdist/[22m[36massets/AnswerPresencePage-CtnpLziB.js                   [39m[1m[2m 10.70 kB[22m[1m[22m[2m Γöé gzip:   3.36 kB[22m
+[2mdist/[22m[36massets/PromptIntelligencePage-BVaTI7pE.js               [39m[1m[2m 11.07 kB[22m[1m[22m[2m Γöé gzip:   3.61 kB[22m
+[2mdist/[22m[36massets/SiteCrawlPage-DeMkaYpk.js                        [39m[1m[2m 11.69 kB[22m[1m[22m[2m Γöé gzip:   3.68 kB[22m
+[2mdist/[22m[36massets/MethodologyPage-DD46C7RD.js                      [39m[1m[2m 11.81 kB[22m[1m[22m[2m Γöé gzip:   3.67 kB[22m
+[2mdist/[22m[36massets/PartnershipPaymentPage-BHDf-KhG.js               [39m[1m[2m 13.19 kB[22m[1m[22m[2m Γöé gzip:   3.59 kB[22m
+[2mdist/[22m[36massets/ApiDocsPage-gyH12YBV.js                          [39m[1m[2m 13.38 kB[22m[1m[22m[2m Γöé gzip:   3.86 kB[22m
+[2mdist/[22m[36massets/Profile-L9mq4CYX.js                              [39m[1m[2m 13.80 kB[22m[1m[22m[2m Γöé gzip:   4.03 kB[22m
+[2mdist/[22m[36massets/AgencyPage-B1VCXuMT.js                           [39m[1m[2m 13.89 kB[22m[1m[22m[2m Γöé gzip:   4.29 kB[22m
+[2mdist/[22m[36massets/Dashboard-Ovf_rqus.js                            [39m[1m[2m 13.97 kB[22m[1m[22m[2m Γöé gzip:   4.35 kB[22m
+[2mdist/[22m[36massets/CompareRankScalePage-Yqd-Ib_J.js                 [39m[1m[2m 14.23 kB[22m[1m[22m[2m Γöé gzip:   3.95 kB[22m
+[2mdist/[22m[36massets/CompetitiveLandscapePage-hpZ0siuy.js             [39m[1m[2m 14.41 kB[22m[1m[22m[2m Γöé gzip:   4.39 kB[22m
+[2mdist/[22m[36massets/IntegrationsHubPage-Dh_TsV1L.js                  [39m[1m[2m 15.11 kB[22m[1m[22m[2m Γöé gzip:   3.96 kB[22m
+[2mdist/[22m[36massets/CompareAhrefsPage-rTALE1_3.js                    [39m[1m[2m 15.15 kB[22m[1m[22m[2m Γöé gzip:   4.40 kB[22m
+[2mdist/[22m[36massets/BrandIntegrityPage-BW4mEiJV.js                   [39m[1m[2m 15.41 kB[22m[1m[22m[2m Γöé gzip:   4.55 kB[22m
+[2mdist/[22m[36massets/CompareSemrushPage-Bp0Edpr0.js                   [39m[1m[2m 15.54 kB[22m[1m[22m[2m Γöé gzip:   4.30 kB[22m
+[2mdist/[22m[36massets/WhyAIVisibility-B2IhdE7k.js                      [39m[1m[2m 16.52 kB[22m[1m[22m[2m Γöé gzip:   4.65 kB[22m
+[2mdist/[22m[36massets/AiVisibilityBenchmark-B_sUzk7i.js                [39m[1m[2m 17.13 kB[22m[1m[22m[2m Γöé gzip:   4.63 kB[22m
+[2mdist/[22m[36massets/ReferralsPage-BKP35QBz.js                        [39m[1m[2m 17.15 kB[22m[1m[22m[2m Γöé gzip:   4.66 kB[22m
+[2mdist/[22m[36massets/GlossaryPage-ClPCC3HY.js                         [39m[1m[2m 17.56 kB[22m[1m[22m[2m Γöé gzip:   5.89 kB[22m
+[2mdist/[22m[36massets/TextSummaryView-CiUV-Vg5.js                      [39m[1m[2m 17.77 kB[22m[1m[22m[2m Γöé gzip:   5.59 kB[22m
+[2mdist/[22m[36massets/AboutPage-DnvX0Upk.js                            [39m[1m[2m 19.12 kB[22m[1m[22m[2m Γöé gzip:   5.62 kB[22m
+[2mdist/[22m[36massets/NicheDiscoveryPage-CJo9e9yi.js                   [39m[1m[2m 20.76 kB[22m[1m[22m[2m Γöé gzip:   5.38 kB[22m
+[2mdist/[22m[36massets/PartnershipAgreementPage-CLmU8m0g.js             [39m[1m[2m 20.96 kB[22m[1m[22m[2m Γöé gzip:   5.51 kB[22m
+[2mdist/[22m[36massets/GscConsolePage-w5sCjMiA.js                       [39m[1m[2m 21.51 kB[22m[1m[22m[2m Γöé gzip:   6.49 kB[22m
+[2mdist/[22m[36massets/TermsPage-CvFIF_H1.js                            [39m[1m[2m 21.97 kB[22m[1m[22m[2m Γöé gzip:   6.85 kB[22m
+[2mdist/[22m[36massets/IndexingPage-DHiw3PjA.js                         [39m[1m[2m 23.12 kB[22m[1m[22m[2m Γöé gzip:   6.04 kB[22m
+[2mdist/[22m[36massets/PublicReportPage-BqFmuDZY.js                     [39m[1m[2m 24.61 kB[22m[1m[22m[2m Γöé gzip:   6.83 kB[22m
+[2mdist/[22m[36massets/AuthPage-hiJH54Fo.js                             [39m[1m[2m 24.92 kB[22m[1m[22m[2m Γöé gzip:   6.48 kB[22m
+[2mdist/[22m[36massets/PrivacyPage-BZhOqmeS.js                          [39m[1m[2m 24.95 kB[22m[1m[22m[2m Γöé gzip:   6.60 kB[22m
+[2mdist/[22m[36massets/ServerHeadersPage-D5nsPfNY.js                    [39m[1m[2m 25.14 kB[22m[1m[22m[2m Γöé gzip:   6.58 kB[22m
+[2mdist/[22m[36massets/KeywordsPage-ZoU3fa1a.js                         [39m[1m[2m 25.45 kB[22m[1m[22m[2m Γöé gzip:   7.32 kB[22m
+[2mdist/[22m[36massets/GuidePage-Dvh6asUD.js                            [39m[1m[2m 26.07 kB[22m[1m[22m[2m Γöé gzip:   6.47 kB[22m
+[2mdist/[22m[36massets/DisclosuresPage-CiNSkqm6.js                      [39m[1m[2m 26.58 kB[22m[1m[22m[2m Γöé gzip:   7.87 kB[22m
+[2mdist/[22m[36massets/Admin-b9heZ1dQ.js                                [39m[1m[2m 27.28 kB[22m[1m[22m[2m Γöé gzip:   6.12 kB[22m
+[2mdist/[22m[36massets/TeamPage-CtWM1pwN.js                             [39m[1m[2m 28.33 kB[22m[1m[22m[2m Γöé gzip:   6.07 kB[22m
+[2mdist/[22m[36massets/ScoreFixPage-qhEIAkFd.js                         [39m[1m[2m 29.37 kB[22m[1m[22m[2m Γöé gzip:   8.09 kB[22m
+[2mdist/[22m[36massets/McpConsolePage-Bzcuay30.js                       [39m[1m[2m 31.34 kB[22m[1m[22m[2m Γöé gzip:   6.89 kB[22m
+[2mdist/[22m[36massets/PlatformWorkflowPage-CTCO2Buy.js                 [39m[1m[2m 32.50 kB[22m[1m[22m[2m Γöé gzip:   8.08 kB[22m
+[2mdist/[22m[36massets/GuideBot-DvLmU1YG.js                             [39m[1m[2m 33.78 kB[22m[1m[22m[2m Γöé gzip:  10.55 kB[22m
+[2mdist/[22m[36massets/PricingPage-y99ItSOu.js                          [39m[1m[2m 36.36 kB[22m[1m[22m[2m Γöé gzip:  10.84 kB[22m
+[2mdist/[22m[36massets/BillingPage-8Vnh6Fwf.js                          [39m[1m[2m 36.37 kB[22m[1m[22m[2m Γöé gzip:   8.86 kB[22m
+[2mdist/[22m[36massets/router-DcyDXhxj.js                               [39m[1m[2m 37.25 kB[22m[1m[22m[2m Γöé gzip:  13.41 kB[22m
+[2mdist/[22m[36massets/CitationsPage-CxK-iRSM.js                        [39m[1m[2m 37.40 kB[22m[1m[22m[2m Γöé gzip:  10.23 kB[22m
+[2mdist/[22m[36massets/SettingsPage-B1kR3tfq.js                         [39m[1m[2m 38.38 kB[22m[1m[22m[2m Γöé gzip:  10.06 kB[22m
+[2mdist/[22m[36massets/Landing-J3sEqej_.js                              [39m[1m[2m 39.90 kB[22m[1m[22m[2m Γöé gzip:   9.85 kB[22m
+[2mdist/[22m[36massets/icons-GL4nAhF4.js                                [39m[1m[2m 41.79 kB[22m[1m[22m[2m Γöé gzip:  13.59 kB[22m
+[2mdist/[22m[36massets/AdvancedFeaturesPanel-Bq0S9BZO.js                [39m[1m[2m 43.83 kB[22m[1m[22m[2m Γöé gzip:  12.08 kB[22m
+[2mdist/[22m[36massets/CompetitorsPage-BDxMaJWP.js                      [39m[1m[2m 45.43 kB[22m[1m[22m[2m Γöé gzip:  11.12 kB[22m
+[2mdist/[22m[36massets/ReportsPage-DJW7NbW-.js                          [39m[1m[2m 53.21 kB[22m[1m[22m[2m Γöé gzip:  14.78 kB[22m
+[2mdist/[22m[36massets/CitationTracker-DehmscvN.js                      [39m[1m[2m 62.13 kB[22m[1m[22m[2m Γöé gzip:  13.98 kB[22m
+[2mdist/[22m[36massets/chart-deps-jzIaM4FZ.js                           [39m[1m[2m 62.44 kB[22m[1m[22m[2m Γöé gzip:  20.60 kB[22m
+[2mdist/[22m[36massets/AnalyticsPage-DGObSj8w.js                        [39m[1m[2m 70.62 kB[22m[1m[22m[2m Γöé gzip:  16.91 kB[22m
+[2mdist/[22m[36massets/ReverseEngineerPage-BrUq66DL.js                  [39m[1m[2m 77.99 kB[22m[1m[22m[2m Γöé gzip:  17.33 kB[22m
+[2mdist/[22m[36massets/HelpCenter-BhbXdJFw.js                           [39m[1m[2m 86.30 kB[22m[1m[22m[2m Γöé gzip:  21.98 kB[22m
+[2mdist/[22m[36massets/index-DBLSGpdg.js                                [39m[1m[2m145.11 kB[22m[1m[22m[2m Γöé gzip:  42.30 kB[22m
+[2mdist/[22m[36massets/AnalyzePage-DY1V5PP4.js                          [39m[1m[2m148.30 kB[22m[1m[22m[2m Γöé gzip:  35.53 kB[22m
+[2mdist/[22m[36massets/react-dom-C6eU2RPW.js                            [39m[1m[2m180.52 kB[22m[1m[22m[2m Γöé gzip:  56.35 kB[22m
+[2mdist/[22m[36massets/index-DetrqRTg.js                                [39m[1m[2m265.06 kB[22m[1m[22m[2m Γöé gzip:  67.53 kB[22m
+[2mdist/[22m[36massets/blogs-Ev4u8Wbu.js                                [39m[1m[2m275.25 kB[22m[1m[22m[2m Γöé gzip:  85.83 kB[22m
+[2mdist/[22m[36massets/recharts-B8lUIxi4.js                             [39m[1m[2m311.28 kB[22m[1m[22m[2m Γöé gzip:  78.45 kB[22m
+[2mdist/[22m[36massets/vendor-7DmINSj8.js                               [39m[1m[2m409.26 kB[22m[1m[22m[2m Γöé gzip: 138.85 kB[22m
+[32mΓ£ô built in 40.31s[39m
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\landing\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\pricing\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\analyze\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\faq\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\guide\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\workflow\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\methodology\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\insights\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\before-you-build-another-saas-run-this-30-second-reality-check\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\answer-engine-optimization-2026-why-citation-readiness-matters\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\why-traditional-seo-tactics-fail-for-ai-visibility\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\building-author-authority-for-citations-e-e-a-t-in-ai-era\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\how-llms-parse-your-content-technical-breakdown\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\geo-adaptive-ai-ranking-location-intelligence-shapes-answers\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\from-invisible-to-cited-case-study-brand-citation-growth\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\google-search-console-data-ai-visibility-monitoring\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\7-step-implementation-roadmap-audit-to-live-citations-30-days\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\google-search-console-2026-what-actually-matters-now\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\the-river-changed-direction-why-ai-answer-engines-rewrote-the-web\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\webmcp-is-the-protocol-seo-aeo-geo-never-had\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\aivis-api-access-explained-build-on-the-visibility-layer\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\aivis-platform-source-of-truth-every-feature-and-tool-explained\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\why-aivis-is-different-from-every-other-seo-aeo-platform\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\how-aivis-works-under-the-hood-full-technical-breakdown\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\why-agencies-and-smbs-are-switching-to-aivis-for-real-visibility\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\team-workspaces-how-aivis-handles-multi-client-agency-operations\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\citation-testing-explained-how-to-verify-ai-models-can-find-you\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\competitor-tracking-find-the-structural-gaps-and-win\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\brand-mention-tracking-where-ai-discovers-new-sources\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\ssfr-evidence-framework-the-scoring-engine-behind-aivis\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\reverse-engineering-competitors-decompile-ghost-audit-simulate\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\free-tools-schema-validator-robots-checker-content-extractability\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\scheduled-rescans-and-autopilot-monitoring-set-it-and-track-it\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\bix-boundaries-in-excess-how-guidebot-redefines-ai-platform-assistants\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\your-website-is-not-competing-for-clicks-anymore\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\why-ai-visibility\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\ai-search-visibility-2026\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\aeo-playbook-2026\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\geo-ai-ranking-2026\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-otterly\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-reaudit\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-profound\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-semrush\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-ahrefs\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-rankscale\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\glossary\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\benchmarks\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\about\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\press\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compliance\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\terms\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\privacy\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\disclosures\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\integrations\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\competitive-landscape\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\score-fix\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\api-docs\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\help\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\support\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\server-headers\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\verify-license\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\privacy\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\terms\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\changelog\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\indexing\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\tools\schema-validator\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\tools\robots-checker\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\tools\content-extractability\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\reverse-engineer\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\prompt-intelligence\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\answer-presence\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\brand-integrity\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\cannot-access-before-initialization-react-vite-production-tdz-fix\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\how-mcp-audit-workflows-change-everything-for-dev-teams\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\webmcp-third-party-tool-calling-aivis-the-headless-audit-engine\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\answer-engine-optimization-is-not-the-new-seoits-the-big-brother\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\startups-seoaeo-in-2026-a-strategic-guide-for-the-ai-first-era\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\the-old-saas-model-was-simple\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\json-ld-schema-strategy-get-cited-by-ai-models\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\google-search-console-hiding-ai-visibility-gaps\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\answer-engine-optimization-complete-guide-small-business\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\entity-clarity-why-ai-models-cite-some-brands-ignore-others\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\how-to-audit-website-ai-readiness-10-minutes\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\blogs\death-of-click-through-rates-what-replaces-ctr-ai-answers\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\partnership-terms\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\conversational-query-playbook-2026\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\voice-search-ai-answer-optimization-2026\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\keywords\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\competitors\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\citations\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\reports\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\analytics\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\niche-discovery\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\mcp\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\gsc\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\referrals\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\team\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\badge\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\wordpress\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\shopify\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\wix\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\squarespace\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\webflow\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\next-js\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\gatsby\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\drupal\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\ghost\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\hubspot\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\framer\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\bubble\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\weebly\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\joomla\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\magento\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\bigcommerce\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\cargo\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\notion-sites\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\carrd\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\platforms\react-spa\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\why-ai-cant-read-my-site\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\missing-structured-data\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\javascript-rendering-blocks-ai\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\no-schema-markup\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\broken-open-graph\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\missing-meta-descriptions\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\thin-content\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\duplicate-content\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\slow-page-load\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\blocked-by-robots-txt\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\no-canonical-urls\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\missing-sitemap\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\no-llms-txt\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\poor-heading-structure\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\images-without-alt-text\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\no-author-attribution\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\missing-faq-schema\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\broken-internal-links\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\no-hreflang-tags\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\problems\ai-hallucinating-about-my-brand\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\json-ld\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\open-graph\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\meta-descriptions\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\canonical-urls\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\robots-txt\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\sitemap-xml\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\llms-txt\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\schema-org\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\heading-hierarchy\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\page-speed\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\mobile-responsiveness\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\internal-linking\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\content-freshness\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\author-entity\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\faq-schema\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\breadcrumb-schema\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\alt-text\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\hreflang\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\content-length\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\signals\trust-signals\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\saas\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\ecommerce\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\healthcare\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\legal\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\real-estate\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\finance\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\education\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\restaurants\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\travel\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\automotive\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\insurance\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\consulting\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\nonprofit\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\manufacturing\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\recruitment\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\media\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\fitness\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\crypto\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\agencies\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\industries\local-business\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-moz\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-surfer\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-clearscope\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-marketmuse\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-frase\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-brightedge\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-conductor\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-searchmetrics\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-botify\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-lumar\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-sitebulb\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-screaming-frog\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-serpstat\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-se-ranking\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-mangools\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-ubersuggest\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-chatgpt-search\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-perplexity-pages\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-alli-ai\index.html
+[prerender] wrote C:\Users\Ma$e\Desktop\aivis\aivis\client\dist\compare\aivis-vs-seo-powersuite\index.html

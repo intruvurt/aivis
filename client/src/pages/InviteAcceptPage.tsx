@@ -54,9 +54,7 @@ export default function InviteAcceptPage() {
   }, [token, user, accessToken, navigate]);
 
   const handleLoginRedirect = () => {
-    // Store the invite URL so we can redirect back after auth
-    sessionStorage.setItem('aivis_post_auth_redirect', `/invite/${token}`);
-    navigate('/auth');
+    navigate(`/auth?redirect=${encodeURIComponent(`/invite/${token}`)}`);
   };
 
   return (
@@ -68,7 +66,7 @@ export default function InviteAcceptPage() {
       >
         {state === 'loading' && (
           <>
-            <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mx-auto" />
+            <img src="/aivis-progress-spinner.png" alt="" className="w-10 h-10 animate-spin mx-auto" />
             <h2 className="text-xl font-bold text-white">Accepting invitation…</h2>
             <p className="text-sm text-white/60">Please wait</p>
           </>

@@ -25,7 +25,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@id': ORGANIZATION_ID,
     name: 'AiVIS',
     legalName: 'Intruvurt Labs',
-    alternateName: 'Ai Visibility Intelligence Audits',
+    alternateName: 'AI Visibility Intelligence Platform',
     url: `${BASE_URL}/`,
     description:
       'AiVIS is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. Built by Intruvurt Labs for AI visibility audits, answer-engine readiness, and evidence-backed optimization workflows.',
@@ -74,7 +74,7 @@ export function buildAuthorRef(): Record<string, unknown> {
   };
 }
 
-export function buildWebSiteSchema(name = 'AiVIS - Ai Visibility Intelligence Audits'): Record<string, unknown> {
+export function buildWebSiteSchema(name = 'AiVIS - AI Visibility Intelligence Platform'): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

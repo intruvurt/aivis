@@ -49,14 +49,14 @@ const TOOL_ICONS: Record<string, React.ReactNode> = {
 };
 
 const TOOL_TIERS: Record<string, string> = {
-  run_audit: "Alignment+",
-  get_audit: "Alignment+",
-  list_audits: "Alignment+",
-  get_analytics: "Alignment+",
-  get_evidence: "Alignment+",
-  run_page_validation: "Alignment+",
+  run_audit: "Signal+",
+  get_audit: "Signal+",
+  list_audits: "Signal+",
+  get_analytics: "Signal+",
+  get_evidence: "Signal+",
+  run_page_validation: "Signal+",
   list_competitors: "Signal+",
-  get_usage: "Alignment+",
+  get_usage: "Signal+",
   run_citation_test: "Signal+",
 };
 
@@ -114,7 +114,7 @@ export default function McpConsolePage() {
 
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier || "observer") as CanonicalTier;
-  const hasAccess = meetsMinimumTier(tier, "alignment");
+  const hasAccess = meetsMinimumTier(tier, "signal");
 
   /* ── State ─────────────────────────────────────── */
   const [serverInfo, setServerInfo] = useState<MCPServerInfo | null>(null);
@@ -235,7 +235,7 @@ export default function McpConsolePage() {
           <UpgradeWall
             feature="MCP Server Console"
             description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports - all from your agent's toolbox."
-            requiredTier="alignment"
+            requiredTier="signal"
             icon={<Bot className="h-6 w-6" />}
           />
         </div>
@@ -272,7 +272,7 @@ export default function McpConsolePage() {
             <Copy className="h-3 w-3" /> Copy Config
           </button>
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
-            Alignment+
+            Signal+
           </span>
         </div>
       </div>
@@ -340,7 +340,7 @@ export default function McpConsolePage() {
                 : "bg-white/5 border-white/10"
             }`}>
               {connectionStatus === "testing" ? (
-                <Loader2 className="h-5 w-5 text-amber-400 animate-spin" />
+                <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
               ) : connectionStatus === "connected" ? (
                 <CheckCircle2 className="h-5 w-5 text-emerald-400" />
               ) : connectionStatus === "failed" ? (
@@ -573,7 +573,7 @@ export default function McpConsolePage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-white">Available Tools</h2>
-              <p className="text-xs text-white/40">{tools.length} tools · {tools.filter((t) => meetsMinimumTier(tier, TOOL_TIERS[t.name]?.includes("Signal") ? "signal" : "alignment")).length} at your tier</p>
+              <p className="text-xs text-white/40">{tools.length} tools · all require Signal+</p>
             </div>
           </div>
         </div>
@@ -587,7 +587,7 @@ export default function McpConsolePage() {
 
         {tools.length === 0 && connectionStatus === "testing" && (
           <div className="flex items-center justify-center gap-2 py-8 text-sm text-white/40">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <img src="/aivis-progress-spinner.png" alt="" className="h-4 w-4 animate-spin" />
             Loading tools…
           </div>
         )}
@@ -601,7 +601,7 @@ export default function McpConsolePage() {
             <div className="space-y-2">
           {group.items.map((tool) => {
             const isExpanded = expandedTool === tool.name;
-            const tierLabel = TOOL_TIERS[tool.name] || "Alignment+";
+            const tierLabel = TOOL_TIERS[tool.name] || "Signal+";
             const icon = TOOL_ICONS[tool.name] || <Wrench className="h-4 w-4 text-white/40" />;
             const schema = tool.inputSchema as { properties?: Record<string, { type?: string; description?: string }>; required?: string[] };
 
@@ -672,6 +672,33 @@ export default function McpConsolePage() {
                         >
                           {toolCallLoading && activeToolCall === "list_audits" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
                           List recent audits (5)
+                        </button>
+                      </div>
+                    )}
+
+                    {tool.name === "get_analytics" && (
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleToolCall("get_analytics", { days: 30 })}
+                          disabled={toolCallLoading}
+                          className="inline-flex items-center gap-2 rounded-lg bg-violet-500/15 border border-violet-500/20 px-3 py-1.5 text-xs text-violet-300 hover:bg-violet-500/25 transition disabled:opacity-40"
+                        >
+                          {toolCallLoading && activeToolCall === "get_analytics" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
+                          Last 30 days analytics
+                        </button>
+                        <span className="text-[11px] text-white/25">Read-only - score trends over time</span>
+                      </div>
+                    )}
+
+                    {tool.name === "list_competitors" && (
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleToolCall("list_competitors", {})}
+                          disabled={toolCallLoading}
+                          className="inline-flex items-center gap-2 rounded-lg bg-violet-500/15 border border-violet-500/20 px-3 py-1.5 text-xs text-violet-300 hover:bg-violet-500/25 transition disabled:opacity-40"
+                        >
+                          {toolCallLoading && activeToolCall === "list_competitors" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
+                          List tracked competitors
                         </button>
                       </div>
                     )}
@@ -757,21 +784,21 @@ export default function McpConsolePage() {
               <tr className="border-b border-white/5">
                 <td className="py-3 pr-4">MCP Server Access</td>
                 <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
-                <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
+                <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
               </tr>
               <tr className="border-b border-white/5">
                 <td className="py-3 pr-4">run_audit / list_audits / get_audit</td>
                 <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
-                <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
+                <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
               </tr>
               <tr className="border-b border-white/5">
                 <td className="py-3 pr-4">get_analytics / get_evidence</td>
                 <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
-                <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
+                <td className="py-3 text-center"><XCircle className="h-3.5 w-3.5 text-red-400/50 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
                 <td className="py-3 text-center"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mx-auto" /></td>
               </tr>

@@ -863,7 +863,7 @@ router.get('/manifest', (_req: Request, res: Response) => {
   res.json({
     schema_version: '0.1.0',
     name: 'aivis',
-    display_name: 'AiVIS - AI Visibility Engine',
+    display_name: 'AiVIS - AI Visibility Intelligence Platform',
     description:
       'Audit, measure, and improve how AI answer engines see your website. Structured tools for visibility scoring, citation testing, competitor comparison, and remediation planning.',
     logo_url: 'https://aivis.biz/icon-512.png',

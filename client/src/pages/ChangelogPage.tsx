@@ -43,7 +43,7 @@ export default function ChangelogPage() {
   usePageMeta({
     title: "Changelog",
     description:
-      "A permanent ledger of every update, fix, and improvement shipped to AI Visibility Engine.",
+      "A permanent ledger of every update, fix, and improvement shipped to AI Visibility Intelligence Platform.",
     path: "/changelog",
   });
 

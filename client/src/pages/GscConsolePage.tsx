@@ -391,7 +391,7 @@ export default function GscConsolePage() {
       >
         {connectionLoading ? (
           <div className="flex items-center gap-3 py-4 justify-center text-white/40 text-sm">
-            <Loader2 className="h-5 w-5 animate-spin" /> Checking GSC connection…
+            <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" /> Checking GSC connection…
           </div>
         ) : connectionStatus?.connected ? (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

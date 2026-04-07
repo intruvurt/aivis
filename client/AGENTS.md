@@ -1,11 +1,11 @@
 Here is the cleaned, hardened, full upgraded version of your engineering instruction file. It fixes drift, tightens contracts, removes ambiguity, and reads like something an actual coding agent can execute without hallucinating the architecture.
 
 ````md id="0q2r6h"
-# AI Coding Agent Instructions for AI Visibility Engine
+# AI Coding Agent Instructions for AI Visibility Intelligence Platform
 
 ## System overview
 
-AI Visibility Engine is a monorepo with a React client, an Express API server, and a shared type layer that acts as the contract between both sides.
+AI Visibility Intelligence Platform is a monorepo with a React client, an Express API server, and a shared type layer that acts as the contract between both sides.
 
 ### Repository structure
 

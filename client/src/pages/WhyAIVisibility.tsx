@@ -54,7 +54,7 @@ const WhyAIVisibility = () => {
         },
         inLanguage: 'en-US',
         about: [
-          { '@type': 'Thing', name: 'Ai Visibility Intelligence Audits' },
+          { '@type': 'Thing', name: 'AI Visibility Intelligence Platform' },
           { '@type': 'Thing', name: 'Zero-Click Searches' },
           { '@type': 'Thing', name: 'AI Citation Optimization' },
         ],
@@ -431,7 +431,7 @@ const WhyAIVisibility = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-charcoal-light/30 border border-white/10 rounded-xl p-6">
             <p className="text-xs uppercase tracking-wide text-white/80 font-semibold mb-2">Related Reading</p>
-            <h3 className="text-xl font-bold text-white mb-2">Ai Visibility Intelligence Audits in 2026</h3>
+            <h3 className="text-xl font-bold text-white mb-2">AI Visibility Intelligence Platform in 2026</h3>
             <p className="text-sm text-white/55 mb-4">
               Get the practical 2026 framework: AEO, geo-adaptive relevance, content infrastructure,
               and Q/A-structured blocks designed for AI extraction and citation.
@@ -462,7 +462,7 @@ const WhyAIVisibility = () => {
               Ready to See How AI Views Your Site?
             </h2>
             <p className="text-white/55 max-w-xl mx-auto">
-              Run a free audit and get evidence-backed insights into your Ai Visibility Intelligence Audits. No fluff, no invented scores, just facts.
+              Run a free audit and get evidence-backed insights into your AI Visibility Intelligence. No fluff, no invented scores, just facts.
             </p>
           </div>
           <Link

@@ -997,7 +997,7 @@ export default function PricingPage() {
         <div id="overview" className="section-anchor text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
             <Sparkles className="w-4 h-4" />
-            Ai Visibility Intelligence Audits
+            AI Visibility Intelligence Platform
           </div>
 
           <div className="lonely-text">
@@ -1162,7 +1162,7 @@ export default function PricingPage() {
                   ["Triple-check AI validation", false, false, true, true],
                   ["Citation testing", false, true, true, true],
                   ["MCP Server (AI agents)", false, false, true, true],
-                  ["Team seats", "1", "1", "10", "1"],
+                  ["Team seats", "1", "1", "25", "1"],
                   ["White-label reports", false, false, true, false],
                   ["Auto GitHub PRs via MCP", false, false, false, true],
                 ].map(([label, ...vals], idx) => (

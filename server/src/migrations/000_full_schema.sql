@@ -1,5 +1,5 @@
 -- ============================================
--- AI Visibility Engine - Full Database Schema
+-- AI Visibility Intelligence Platform - Full Database Schema
 -- Run this against your Neon PostgreSQL database
 -- ============================================
 

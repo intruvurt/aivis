@@ -2,7 +2,7 @@
 
 ## Repository mission
 
-AI Visibility Engine is a monorepo for auditing whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.
+AI Visibility Intelligence Platform is a monorepo for auditing whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.
 
 This repository has three active layers:
 

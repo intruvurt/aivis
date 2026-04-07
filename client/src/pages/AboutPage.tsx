@@ -132,7 +132,7 @@ const ABOUT_STRUCTURED_DATA = [
 
 export default function AboutPage() {
   usePageMeta({
-    title: 'About Intruvurt Labs | AiVIS \u2013 AI Visibility Intelligence Audits',
+    title: 'About Intruvurt Labs | AiVIS \u2013 AI Visibility Intelligence Platform',
     description: 'Intruvurt Labs: enterprise AI citation engine and visibility auditing platform. Founded December 2025. Ryan Mason, Head of Intruvurt Labs.',
     path: '/about',
     ogTitle: 'About AiVIS \u2013 Built by Intruvurt Labs',

@@ -87,7 +87,7 @@ export default function AuditDetails() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-white/60">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <img src="/aivis-progress-spinner.png" alt="" className="h-6 w-6 animate-spin" />
       </div>
     );
   }

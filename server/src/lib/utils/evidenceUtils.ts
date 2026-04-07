@@ -1,4 +1,4 @@
-// Evidence utilities for Ai Visibility Intelligence Audits Tool
+// Evidence utilities for AI Visibility Intelligence Platform
 
 export type EvidenceStatus = 'verified' | 'unknown';
 

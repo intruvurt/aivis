@@ -114,7 +114,7 @@ export default function EvidenceReviewPanel({ testId, isOpen, onClose }: Evidenc
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-6 h-6 text-white/60 animate-spin" />
+              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
             </div>
           ) : evidences.length === 0 ? (
             <div className="text-center py-8">

@@ -74,7 +74,7 @@ export default function RevCiteModal({ evidence, isOpen, onClose }: RevCiteModal
 
           {loading ? (
             <div className="flex justify-center items-center py-8">
-              <Loader2 className="w-6 h-6 text-white/60 animate-spin" />
+              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
             </div>
           ) : error ? (
             <div className="flex items-center gap-2 p-4 rounded-xl border border-white/10 bg-charcoal text-white/60">

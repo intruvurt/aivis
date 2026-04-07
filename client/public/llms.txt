@@ -1,4 +1,4 @@
-AiVIS - AI visibility audits and answer-engine readiness guidance.
+AiVIS - AI visibility intelligence platform and answer-engine readiness guidance.
 Canonical site: https://aivis.biz/
 Contact: support@aivis.biz
 
@@ -81,7 +81,7 @@ Public workflow pages
 - Report history: https://aivis.biz/reports
 
 Product summary
-AiVIS is a software product by Intruvurt Labs focused on AI visibility audits,
+AiVIS is a software product by Intruvurt Labs focused on AI visibility intelligence,
 answer-engine readiness, and evidence-backed optimization workflows.
 
 AiVIS scoring evaluates public pages across:

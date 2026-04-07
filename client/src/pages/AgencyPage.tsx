@@ -597,7 +597,7 @@ export default function AgencyPage() {
       <div className="aurora-card overflow-hidden">
         {loading && !projects.length ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
+            <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-16">

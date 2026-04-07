@@ -109,7 +109,7 @@ export const STRIPE_PRICING = {
 
   // PRO TIER (legacy starter subscription)
   pro: {
-    name: 'Ai Visibility Intelligence Audits – Pro',
+    name: 'AI Visibility Intelligence Platform – Pro',
     lookupKey: 'pro_monthly',
     priceId: process.env.STRIPE_PRO_PRICE_ID,
     amountCents: 4900,
@@ -123,7 +123,7 @@ export const STRIPE_PRICING = {
 
   // BUSINESS TIER - $149/month (Signal)
   business: {
-    name: 'Ai Visibility Intelligence Audits – Business',
+    name: 'AI Visibility Intelligence Platform – Business',
     lookupKey: 'business_monthly',
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
     amountCents: 2900,

@@ -70,9 +70,9 @@ router.post(
       if (!limits.hasTeamWorkspaces) {
         return res.status(403).json({
           success: false,
-          error: 'Team workspaces require Alignment or higher. Upgrade to create shared workspaces.',
+          error: 'Team workspaces require Signal or higher. Upgrade to create shared workspaces.',
           code: 'TIER_REQUIRED',
-          requiredTier: 'alignment',
+          requiredTier: 'signal',
         });
       }
 
@@ -121,9 +121,9 @@ router.post(
       if (!limits.hasTeamWorkspaces) {
         return res.status(403).json({
           success: false,
-          error: 'Team workspaces require Alignment or higher.',
+          error: 'Team workspaces require Signal or higher.',
           code: 'TIER_REQUIRED',
-          requiredTier: 'alignment',
+          requiredTier: 'signal',
         });
       }
 
@@ -290,9 +290,9 @@ router.post(
       if (!limits.hasTeamWorkspaces) {
         return res.status(403).json({
           success: false,
-          error: 'Team workspaces require Alignment or higher.',
+          error: 'Team workspaces require Signal or higher.',
           code: 'TIER_REQUIRED',
-          requiredTier: 'alignment',
+          requiredTier: 'signal',
         });
       }
 

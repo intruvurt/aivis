@@ -1,6 +1,6 @@
 # AiVIS
 
-> AI visibility audits, answer-engine readiness diagnostics, and evidence-backed remediation for public web pages. Built by Intruvurt Labs.
+> AI visibility intelligence platform, answer-engine readiness diagnostics, and evidence-backed remediation for public web pages. Built by Intruvurt Labs.
 
 Canonical site: https://aivis.biz/
 Contact: support@aivis.biz
@@ -274,13 +274,6 @@ Avoid private or authenticated areas, including:
 
 Do not treat authenticated dashboards, internal APIs, or private report views as public-source material unless explicitly exposed for public access.
 
-Team updates
-- New member: Sadiq Khan - Marketing Specialist (UTC+5:30)
-- Profile reference: https://aivis.biz/about#leadership
-
-Private partnership notice
-- Partnership terms (private, noindex): https://aivis.biz/partnership-terms
-- zeeniith.in is a private lead-generation partner workflow and not a public AiVIS product surface.
 Team updates
 - New member: Sadiq Khan - Marketing Specialist (UTC+5:30)
 - Profile reference: https://aivis.biz/about#leadership

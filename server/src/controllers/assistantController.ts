@@ -584,7 +584,7 @@ async function buildSiteFileContext(intent: FileFetchIntent): Promise<string | n
  * ──────────────────────────────────────────────────────────────────────────── */
 const PLATFORM_KNOWLEDGE = `
 ## What is AiVIS?
-AiVIS (Ai Visibility Intelligence Audits) is a real-time AI visibility intelligence platform. It measures how well AI search engines ~ ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot - can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
+AiVIS (AI Visibility Intelligence Platform) is a real-time AI visibility intelligence platform. It measures how well AI search engines ~ ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot - can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
 
 Website: https://aivis.biz
 Company: Intruvurt Labs - registration pending, B2B service provider in Georgia (Atlanta).

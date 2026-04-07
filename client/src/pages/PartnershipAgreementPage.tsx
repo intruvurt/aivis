@@ -223,7 +223,7 @@ export default function PartnershipAgreementPage() {
       <div className="space-y-5">
         {loading && (
           <div className="flex items-center justify-center py-20 text-white/50">
-            <Loader2 className="animate-spin mr-3" size={20} /> Loading agreement...
+            <img src="/aivis-progress-spinner.png" alt="" className="w-5 h-5 animate-spin mr-3" /> Loading agreement...
           </div>
         )}
 

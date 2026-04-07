@@ -130,7 +130,7 @@ const scoreModel = [
 
 const SITE_URL = "https://aivis.biz";
 const PAGE_URL = `${SITE_URL}/score-fix`;
-const PAGE_TITLE = "AI Visibility Score Fix AutoFix PR | AiVIS - Ai Visibility Intelligence Audits";
+const PAGE_TITLE = "AI Visibility Score Fix AutoFix PR | AiVIS - AI Visibility Intelligence Platform";
 const PAGE_DESCRIPTION =
   "AI Visibility Score Fix AutoFix PR from AiVIS connects to your GitHub repo via MCP and generates automated pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per automated remediation PR.";
 const OG_IMAGE = `${SITE_URL}/og/aivis-score-fix.jpg`;

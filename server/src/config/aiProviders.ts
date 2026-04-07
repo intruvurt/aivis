@@ -73,7 +73,7 @@ export const openrouterPrompt = async (
         {
           role: 'system',
           content: systemPrompt ||
-            'You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real',
+            'You are an AI Visibility Intelligence Platform expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real',
         },
         {
           role: 'user',
@@ -279,7 +279,7 @@ export const deepseekPrompt = async (
         {
           role: 'system',
           content: systemPrompt ||
-            'You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real',
+            'You are an AI Visibility Intelligence Platform expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real',
         },
         { role: 'user', content: promptText },
       ],
@@ -413,7 +413,7 @@ export const ollamaPrompt = async (
       `${OLLAMA_BASE_URL}/api/generate`,
       {
         model: 'llama2',
-        prompt: `You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real\n\n${promptText}`,
+        prompt: `You are an AI Visibility Intelligence Platform expert. Analyze websites and provide evidence-based insights. Output JSON only. Cite all evidence by ID. Mark unknowns explicitly. do this for real\n\n${promptText}`,
         stream: false,
         options: {
           temperature: 0.3,
@@ -482,7 +482,7 @@ export const analyzeWithOpenRouter = async (prompt: string): Promise<any> => {
           {
             role: 'system',
             content:
-              'You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights on their visibility to AI-driven search systems. do this for real',
+              'You are an AI Visibility Intelligence Platform expert. Analyze websites and provide evidence-based insights on their visibility to AI-driven search systems. do this for real',
           },
           {
             role: 'user',
@@ -529,7 +529,7 @@ export const analyzeWithOllama = async (prompt: string): Promise<any> => {
       `${OLLAMA_BASE_URL}/api/generate`,
       {
         model: 'llama2',
-        prompt: `You are an Ai Visibility Intelligence Audits expert. Analyze websites and provide evidence-based insights on their visibility to AI-driven search systems. do this for real\n\n${prompt}`,
+        prompt: `You are an AI Visibility Intelligence Platform expert. Analyze websites and provide evidence-based insights on their visibility to AI-driven search systems. do this for real\n\n${prompt}`,
         stream: false,
       },
       {

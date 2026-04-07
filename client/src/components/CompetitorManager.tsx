@@ -377,7 +377,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
   if (loading) {
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-8 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white/12" />
+        <img src="/aivis-progress-spinner.png" alt="" className="inline-block h-8 w-8 animate-spin" />
         <p className="mt-4 text-sm text-white/55">Loading competitors...</p>
       </div>
     );

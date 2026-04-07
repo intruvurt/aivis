@@ -7,6 +7,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { validateApiKey } from '../services/apiKeyService.js';
 import { getPool } from '../services/postgresql.js';
+import { TIER_LIMITS, uiTierFromCanonical } from '../../../shared/types.js';
+import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
 import * as cheerio from 'cheerio';
 import { normalizePublicHttpUrl, isPrivateOrLocalHost } from '../lib/urlSafety.js';
 import { getAllBenchmarks, getBenchmarkForCategory, compareToBenchmarks, recomputeBenchmarks } from '../services/industryBenchmarkService.js';
@@ -50,6 +52,7 @@ async function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   (req as any).apiUserId = result.userId;
   (req as any).apiWorkspaceId = result.workspaceId;
   (req as any).apiScopes = result.scopes;
+  (req as any).apiTier = result.tier;
   next();
 }
 
@@ -114,6 +117,56 @@ const apiKeyRateLimiter = rateLimit({
 });
 
 router.use(apiKeyRateLimiter);
+
+// ── Monthly API Quota Enforcement ─────────────────────────────────────────────
+async function enforceMonthlyQuota(req: Request, res: Response, next: NextFunction) {
+  const userId = (req as any).apiUserId as string | undefined;
+  const workspaceId = (req as any).apiWorkspaceId as string | undefined;
+  const tier = (req as any).apiTier as string | undefined;
+  if (!userId || !workspaceId || !tier) return next();
+
+  const canonicalTier = uiTierFromCanonical((tier as CanonicalTier | LegacyTier));
+  const quota = TIER_LIMITS[canonicalTier].maxApiRequestsPerMonth;
+  if (quota <= 0) {
+    return res.status(403).json({
+      error: 'API access is not available for the current plan tier',
+      code: 'FEATURE_LOCKED',
+    });
+  }
+
+  try {
+    const pool = getPool();
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+
+    const { rows } = await pool.query(
+      `SELECT COALESCE(SUM(requests), 0)::int AS total
+       FROM api_usage_daily
+       WHERE user_id = $1 AND workspace_id = $2 AND date >= $3 AND date <= $4`,
+      [userId, workspaceId, monthStart, monthEnd]
+    );
+
+    const used = Number(rows[0]?.total || 0);
+    if (used >= quota) {
+      return res.status(429).json({
+        error: `Monthly API quota exceeded (${used}/${quota}). Upgrade your plan for increased limits.`,
+        code: 'QUOTA_EXCEEDED',
+        usage: { used, limit: quota, resets: new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString() },
+      });
+    }
+
+    // Attach remaining for downstream handlers
+    (req as any).apiQuotaRemaining = quota - used;
+    res.setHeader('X-RateLimit-Quota-Limit', String(quota));
+    res.setHeader('X-RateLimit-Quota-Remaining', String(Math.max(0, quota - used)));
+  } catch {
+    // Non-blocking: if quota check fails, allow the request through
+  }
+  next();
+}
+
+router.use(enforceMonthlyQuota);
 router.use(meterApiUsage);
 
 function normalizeValidationUrl(input: string): string {
@@ -214,13 +267,20 @@ router.get('/usage', async (req: Request, res: Response) => {
       ),
     ]);
 
+    const tier = (req as any).apiTier as string || 'observer';
+    const canonicalTier = uiTierFromCanonical((tier as CanonicalTier | LegacyTier));
+    const monthlyQuota = TIER_LIMITS[canonicalTier].maxApiRequestsPerMonth;
+    const workspaceTotal = Number(workspaceUsage.rows?.[0]?.total || 0);
+
     res.json({
       success: true,
       data: {
         monthStart,
         monthEnd,
         apiKeyRequestsThisMonth: Number(keyUsage.rows?.[0]?.total || 0),
-        workspaceRequestsThisMonth: Number(workspaceUsage.rows?.[0]?.total || 0),
+        workspaceRequestsThisMonth: workspaceTotal,
+        monthlyQuota,
+        quotaRemaining: Math.max(0, monthlyQuota - workspaceTotal),
       },
     });
   } catch (err: any) {

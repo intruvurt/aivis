@@ -9,7 +9,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: false,
     allowBulk: false,
     allowRescan: false,
-    teamSeats: 1,
+    teamSeats: 0,
     maxProjects: 1
   },
   "Jump Start": {
@@ -22,7 +22,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: false,
     allowBulk: false,
     allowRescan: false,
-    teamSeats: 1,
+    teamSeats: 3,
     maxProjects: 3
   },
   Pro: {
@@ -35,7 +35,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: false,
     allowBulk: false,
     allowRescan: true,
-    teamSeats: 5,
+    teamSeats: 10,
     maxProjects: 5
   },
   Business: {
@@ -48,7 +48,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: true,
     allowBulk: true,
     allowRescan: true,
-    teamSeats: 15,
+    teamSeats: 10,
     maxProjects: 25
   },
   Enterprise: {

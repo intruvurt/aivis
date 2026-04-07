@@ -1162,7 +1162,7 @@ export default function PricingPage() {
                   ["Triple-check AI validation", false, false, true, true],
                   ["Citation testing", false, true, true, true],
                   ["MCP Server (AI agents)", false, false, true, true],
-                  ["Team seats", "1", "1", "25", "1"],
+                  ["Team seats", "0", "3", "10", "10"],
                   ["White-label reports", false, false, true, false],
                   ["Auto GitHub PRs via MCP", false, false, false, true],
                 ].map(([label, ...vals], idx) => (

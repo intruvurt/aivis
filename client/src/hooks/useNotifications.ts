@@ -352,6 +352,44 @@ export default function useNotifications() {
     };
   }, [fetchNotifications, isAuthenticated, pageVisible, streamConnected]);
 
+  // ── Browser tab title blinking when unread notifications exist ──
+  const originalTitleRef = useRef(document.title);
+  const blinkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    // Capture the base title once (before any blinking modifies it)
+    if (!blinkIntervalRef.current) {
+      originalTitleRef.current = document.title;
+    }
+
+    const shouldBlink = unreadCount > 0 && !pageVisible;
+
+    if (shouldBlink) {
+      let show = true;
+      blinkIntervalRef.current = setInterval(() => {
+        document.title = show
+          ? `(${unreadCount}) New notification — AiVIS`
+          : originalTitleRef.current;
+        show = !show;
+      }, 1200);
+    } else {
+      // Restore original title and stop blinking
+      if (blinkIntervalRef.current) {
+        clearInterval(blinkIntervalRef.current);
+        blinkIntervalRef.current = null;
+      }
+      document.title = originalTitleRef.current;
+    }
+
+    return () => {
+      if (blinkIntervalRef.current) {
+        clearInterval(blinkIntervalRef.current);
+        blinkIntervalRef.current = null;
+      }
+      document.title = originalTitleRef.current;
+    };
+  }, [unreadCount, pageVisible]);
+
   const recent = useMemo(() => notifications.slice(0, 6), [notifications]);
 
   return {

@@ -39,6 +39,7 @@ export type ApiKeyValidationResult =
       userId: string;
       workspaceId: string;
       scopes: string[];
+      tier: string;
       reason?: undefined;
     }
   | {
@@ -191,5 +192,5 @@ export async function validateApiKey(
     [hash]
   ).catch(() => {}); // non-critical
 
-  return { ok: true, keyId: row.id, userId: row.user_id, workspaceId: row.workspace_id, scopes: row.scopes };
+  return { ok: true, keyId: row.id, userId: row.user_id, workspaceId: row.workspace_id, scopes: row.scopes, tier: normalizedTier };
 }

@@ -185,6 +185,8 @@ export interface TierLimits {
   maxReportDeliveries: number;
   maxTeamMembers: number;
   maxStoredAudits: number;
+  /** Monthly API call quota for external API (0 = no API access, -1 = unlimited) */
+  maxApiRequestsPerMonth: number;
   /** Agency / VaaS extras */
   hasAgencyDashboard: boolean;
   hasBulkFix: boolean;
@@ -246,7 +248,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasAutoFixPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
-    maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 1, maxStoredAudits: 10,
+    maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 0, maxStoredAudits: 10,
+    maxApiRequestsPerMonth: 0,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },
@@ -257,9 +260,10 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
     hasAutoFixPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
-    hasTeamWorkspaces: false,
+    hasTeamWorkspaces: true,
     maxScheduledRescans: 2, allowedRescanFrequencies: ['weekly', 'monthly'] as readonly string[],
-    maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 1, maxStoredAudits: 50,
+    maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 3, maxStoredAudits: 50,
+    maxApiRequestsPerMonth: 500,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
@@ -272,7 +276,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: true,
     maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
-    maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 25, maxStoredAudits: 1000,
+    maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 10, maxStoredAudits: 1000,
+    maxApiRequestsPerMonth: 5000,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
     hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
   },
@@ -283,9 +288,10 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
     hasAlertIntegrations: false, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
-    hasTeamWorkspaces: false,
+    hasTeamWorkspaces: true,
     maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
-    maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 1, maxStoredAudits: 200,
+    maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 10, maxStoredAudits: 200,
+    maxApiRequestsPerMonth: 2000,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },

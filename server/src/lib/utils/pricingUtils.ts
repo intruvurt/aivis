@@ -13,7 +13,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: false,
     allowBulk: false,
     allowRescan: false,
-    teamSeats: 1,
+    teamSeats: 0,
     maxProjects: 1,
   },
   Alignment: {
@@ -26,7 +26,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: false,
     allowBulk: false,
     allowRescan: false,
-    teamSeats: 1,
+    teamSeats: 3,
     maxProjects: 3,
   },
   Signal: {
@@ -39,7 +39,7 @@ export const TIER_LIMITS = {
     allowWhiteLabel: true,
     allowBulk: false,
     allowRescan: true,
-    teamSeats: 5,
+    teamSeats: 10,
     maxProjects: 8,
   },
   scorefix: {

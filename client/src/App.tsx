@@ -95,6 +95,8 @@ const PressPage = React.lazy(() => import("./pages/PressPage"));
 const InviteAcceptPage = React.lazy(() => import("./pages/InviteAcceptPage"));
 const AgencyPage = React.lazy(() => import("./pages/AgencyPage"));
 const SnapshotPage = React.lazy(() => import("./pages/SnapshotPage"));
+const KeywordPageTemplate = React.lazy(() => import("./pages/KeywordPageTemplate"));
+const KeywordClusterIndex = React.lazy(() => import("./pages/KeywordClusterIndex"));
 
 /* ── Scroll to top on route change ─────────────────────── */
 function ScrollToTop() {
@@ -233,6 +235,17 @@ export default function App() {
             <Route path="/report/:shareId" element={<PublicReportPage />} />
             <Route path="/payment-success" element={<PaymentSuccessPage />} />
             <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
+
+            {/* ── Keyword pages (100-page SEO system) ── */}
+            <Route path="/platforms" element={<KeywordClusterIndex />} />
+            <Route path="/platforms/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/problems" element={<KeywordClusterIndex />} />
+            <Route path="/problems/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/signals" element={<KeywordClusterIndex />} />
+            <Route path="/signals/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/industries" element={<KeywordClusterIndex />} />
+            <Route path="/industries/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/compare/:slug" element={<KeywordPageTemplate />} />
             <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
             <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
           </Route>

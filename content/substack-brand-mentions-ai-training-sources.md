@@ -74,6 +74,8 @@ AiVIS finds Quora mentions via a `site:quora.com "your brand"` search through Bi
 
 Product Hunt is a launch and discovery platform. For SaaS, developer tools, and consumer products, a Product Hunt presence signals that your brand exists in the product ecosystem, not just the content ecosystem. AI models that index Product Hunt pages will associate your brand with your product category.
 
+AiVIS itself is listed on Product Hunt — [check it out here](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit). That listing is part of the same trust signal this article describes: an independent product directory confirming the brand exists outside its own domain.
+
 ---
 
 ## What One Scan Actually Looks Like
@@ -145,7 +147,7 @@ The fix isn't to spam these platforms. It's to create genuine presence where you
 2. Ship something worth discussing on Hacker News
 3. Maintain an active GitHub presence if you're technical
 4. Write substantive Quora answers in your expertise area
-5. Get your product on Product Hunt if you're launching something
+5. Get your product on [Product Hunt](https://www.producthunt.com/) if you're launching something — this is exactly what [AiVIS did](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit) to establish product ecosystem presence
 
 These aren't SEO hacks. They're real presence signals that both humans and AI models interpret as credibility.
 

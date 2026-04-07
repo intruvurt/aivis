@@ -45,6 +45,14 @@ const FEATURED_POSTS = [
   },
   {
     date: "Apr 2026",
+    platform: "Blogger",
+    title: "I Tracked 9 Free Sources for Brand Mentions and Found Where AI Models Actually Pull From",
+    description:
+      "Reddit, Hacker News, GitHub, Quora, Product Hunt, Mastodon, Google News, DuckDuckGo, Bing — the nine platforms that feed AI training data and how to monitor all of them.",
+    url: "https://intruvurt.blogspot.com/2026/04/ai-brand-mentions-9-sources-citation.html",
+  },
+  {
+    date: "Apr 2026",
     platform: "LinkedIn",
     title: "AiVIS audits how AI systems read a website",
     description:
@@ -168,6 +176,36 @@ export default function PressPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Product Hunt Badge */}
+        <section className="mx-auto max-w-4xl py-12">
+          <h3 className="text-2xl brand-title mb-8">Product Hunt</h3>
+          <a
+            href="https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 px-6 py-5 hover:border-orange-400/30 hover:bg-white/[0.07] transition-colors group"
+          >
+            <img
+              src="https://ph-files.imgix.net/c949b139-9ecd-41b9-80be-2a4723cb752e.png?auto=format&fit=crop&w=80&h=80"
+              alt="AiVIS on Product Hunt"
+              width={64}
+              height={64}
+              className="rounded-lg object-cover shrink-0"
+            />
+            <div className="min-w-0">
+              <p className="text-lg font-semibold text-white/90 group-hover:text-white transition-colors">
+                AiVIS – AI Visibility Intelligence Audit
+              </p>
+              <p className="mt-1 text-sm text-white/60">
+                See exactly what AI gets wrong about your website
+              </p>
+              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#ff6154]/15 px-3 py-1 text-xs font-semibold text-[#ff6154]">
+                Check it out on Product Hunt →
+              </span>
+            </div>
+          </a>
         </section>
 
         {/* Media Kit */}

@@ -1,10 +1,11 @@
-import React, { useRef } from "react";
-import { Shield, CheckCircle2, Users, Lightbulb, GitBranch, ArrowRight, Info } from "lucide-react";
+import React, { useRef, useEffect, useState } from "react";
+import { Shield, CheckCircle2, Users, Lightbulb, GitBranch, ArrowRight, Info, HelpCircle, BookOpen, Eye, Zap, BarChart3, FileText } from "lucide-react";
 import { motion, useInView } from "framer-motion";
+import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 
-/** Scroll-triggered slide-in from left or right */
+/** Scroll-triggered slide-in */
 function SlideIn({ from = "left", children, delay = 0, className }: {
   from?: "left" | "right";
   children: React.ReactNode;
@@ -13,16 +14,73 @@ function SlideIn({ from = "left", children, delay = 0, className }: {
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  const x = from === "left" ? -80 : 80;
+  const x = from === "left" ? -60 : 60;
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, x }}
       animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x }}
-      transition={{ duration: 0.6, ease: "easeOut", delay }}
+      transition={{ duration: 0.5, ease: "easeOut", delay }}
       className={className}
     >
       {children}
+    </motion.div>
+  );
+}
+
+/** Fade-up on scroll */
+function FadeUp({ children, delay = 0, className }: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.5, ease: "easeOut", delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Animated counter */
+function AnimatedCounter({ end, suffix = "", label, delay = 0 }: {
+  end: number; suffix?: string; label: string; delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    const duration = 1200;
+    const steps = 40;
+    const stepTime = duration / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current++;
+      setCount(Math.round((current / steps) * end));
+      if (current >= steps) { clearInterval(timer); setCount(end); }
+    }, stepTime);
+    return () => clearInterval(timer);
+  }, [inView, end]);
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.5, delay }}
+      className="text-center"
+    >
+      <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+        {count}{suffix}
+      </div>
+      <div className="text-xs text-white/50 mt-1">{label}</div>
     </motion.div>
   );
 }

@@ -777,6 +777,16 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // security_audit_log uses ON DELETE SET NULL - scrub actor identity but keep audit trail
     await client.query(`UPDATE security_audit_log SET actor_email = NULL, details = details - 'email' WHERE actor_id = $1`, [userId]);
 
+    // ── Phase 3c: No-FK tables with VARCHAR user_id (would orphan on user delete) ──
+    await client.query('DELETE FROM audit_score_timeline WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM alert_subscriptions WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM alert_notifications WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM fix_outcomes WHERE user_id = $1', [userId]);
+    // badge_events uses ON DELETE SET NULL - explicitly remove user's badge events
+    await client.query('DELETE FROM badge_events WHERE badge_owner_id = $1', [userId]);
+    // workspace_activity_log uses ON DELETE SET NULL - scrub user identity
+    await client.query('DELETE FROM workspace_activity_log WHERE user_id = $1', [userId]);
+
     // ── Phase 4: License chain (no user FK) ───────────────────────────────
     await client.query(`DELETE FROM license_verifications WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
     await client.query(`DELETE FROM license_activations WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);

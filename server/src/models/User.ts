@@ -56,6 +56,16 @@ export interface User {
   updated_at: Date;
 }
 
+// Columns safe to return from general lookups (excludes secrets)
+const SAFE_COLUMNS = `id, email, is_verified, verification_token_expires, name, role, tier,
+  company, website, bio, avatar_url, timezone, language,
+  org_description, org_logo_url, org_favicon_url, org_phone, org_address,
+  org_verified, org_verification_confidence, org_verification_reasons,
+  login_attempts, locked_until, last_login,
+  internal_tier_key, last_reset_date,
+  stripe_customer_id, stripe_subscription_id,
+  created_at, updated_at`;
+
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
@@ -75,7 +85,7 @@ export function generateVerificationToken(): { token: string; expires: Date } {
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-  const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+  const result = await pool.query(`SELECT ${SAFE_COLUMNS} FROM users WHERE id = $1`, [id]);
   return result.rows[0] || null;
 }
 
@@ -85,13 +95,13 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | null> {
-  const result = await pool.query(`SELECT * FROM users WHERE stripe_customer_id = $1`, [stripeCustomerId]);
+  const result = await pool.query(`SELECT ${SAFE_COLUMNS} FROM users WHERE stripe_customer_id = $1`, [stripeCustomerId]);
   return result.rows[0] || null;
 }
 
 export async function getUserByVerificationToken(token: string): Promise<User | null> {
   const result = await pool.query(
-    `SELECT * FROM users WHERE verification_token = $1 AND verification_token_expires > NOW()`,
+    `SELECT ${SAFE_COLUMNS} FROM users WHERE verification_token = $1 AND verification_token_expires > NOW()`,
     [token]
   );
   return result.rows[0] || null;
@@ -162,6 +172,17 @@ export async function resendVerificationEmail(email: string): Promise<{ token: s
 // Columns stored as JSONB in PostgreSQL - values must be JSON.stringify'd before binding
 const JSONB_COLUMNS = new Set(['org_verification_reasons']);
 
+// Allowlisted columns that may be updated via updateUserById - prevents SQL injection via dynamic keys
+const ALLOWED_UPDATE_COLUMNS = new Set([
+  'email', 'password_hash', 'name', 'role', 'tier', 'company', 'website', 'bio',
+  'avatar_url', 'timezone', 'language', 'is_verified', 'verification_token',
+  'verification_token_expires', 'org_description', 'org_logo_url', 'org_favicon_url',
+  'org_phone', 'org_address', 'org_verified', 'org_verification_confidence',
+  'org_verification_reasons', 'mfa_secret', 'login_attempts', 'locked_until',
+  'last_login', 'internal_tier_key', 'last_reset_date', 'stripe_customer_id',
+  'stripe_subscription_id',
+]);
+
 export async function updateUserById(
   id: string,
   updates: Partial<User> & { password?: string }
@@ -190,7 +211,7 @@ export async function updateUserById(
     }
   }
 
-  const fields = Object.keys(safeUpdates);
+  const fields = Object.keys(safeUpdates).filter(f => ALLOWED_UPDATE_COLUMNS.has(f));
   if (fields.length === 0) return getUserById(id);
 
   const setClause = fields.map((f, i) => `"${f}" = $${i + 2}`).join(', ');

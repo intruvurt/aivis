@@ -141,12 +141,21 @@ export async function updatePaymentBySubscriptionId(
   return _updatePayment('stripe_subscription_id', subId, updates);
 }
 
+const ALLOWED_WHERE_COLS = new Set(['stripe_session_id', 'stripe_subscription_id']);
+const ALLOWED_UPDATE_COLS = new Set([
+  'status', 'stripe_customer_id', 'stripe_subscription_id',
+  'completed_at', 'failed_at', 'canceled_at', 'subscription_status',
+  'cancel_at_period_end', 'last_payment_at', 'last_invoice_id',
+  'last_failed_payment_at', 'failed_invoice_id', 'current_period_end',
+]);
+
 async function _updatePayment(
   whereCol: string,
   whereVal: string,
   updates: Record<string, any>
 ): Promise<Payment | null> {
-  const keys = Object.keys(updates);
+  if (!ALLOWED_WHERE_COLS.has(whereCol)) throw new Error(`Invalid where column: ${whereCol}`);
+  const keys = Object.keys(updates).filter(k => ALLOWED_UPDATE_COLS.has(k));
   if (keys.length === 0) return null;
   const setClause = keys.map((k, i) => `${k} = $${i + 2}`).join(', ');
   const values = keys.map((k) => updates[k]);

@@ -283,7 +283,7 @@ const Landing = () => {
             {[
               { label: 'AI Platforms Scored', value: '4', accent: 'text-cyan-300' },
               { label: 'Audit categories', value: '6', accent: 'text-violet-300' },
-              { label: 'Avg score improvement', value: '31%', accent: 'text-emerald-300' },
+              { label: 'Evidence-backed method', value: 'BRAG', accent: 'text-emerald-300' },
               { label: 'Scans completed', value: platformStats?.completedAudits ? `${Number(platformStats.completedAudits).toLocaleString()}+` : '-', accent: 'text-amber-300' },
             ].map(({ label, value, accent }) => (
               <div key={label} className="text-center">

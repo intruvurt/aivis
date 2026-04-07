@@ -693,7 +693,7 @@ export default function AnalyticsPage() {
         apiFetch(`${API_URL}/api/analytics/platform-metrics`, { headers: {} }),
       ]);
 
-      if (analyticsRes.status === 401) { setLoading(false); return; }
+      if (analyticsRes.status === 401) { setError('Session expired — please sign in again.'); setLoading(false); return; }
       if (!analyticsRes.ok) throw new Error("Failed to load analytics");
       setData(mapAnalyticsApiResponse(await analyticsRes.json()));
 

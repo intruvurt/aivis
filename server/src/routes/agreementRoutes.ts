@@ -10,6 +10,7 @@
 
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
+import crypto from 'crypto';
 import { getPool } from '../services/postgresql.js';
 import {
   getPayPalAccessToken,
@@ -31,6 +32,17 @@ import {
 } from '../services/agreementService.js';
 
 const router = Router();
+
+/** Timing-safe admin key check to prevent timing attacks */
+function isValidAdminKey(key: string | undefined): boolean {
+  const expected = process.env.ADMIN_KEY;
+  if (!key || !expected) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(key), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0].trim().replace(/\/+$/, '');
@@ -266,8 +278,7 @@ async function sendExpiryReminder(slug: string, milestone: number): Promise<void
 
 /* ── POST /:slug/create-invite - create trackable referral link (admin) ────── */
 router.post('/:slug/create-invite', async (req: Request, res: Response) => {
-  const adminKey = req.headers['x-admin-key'] as string | undefined;
-  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+  if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 
@@ -291,8 +302,7 @@ router.post('/:slug/create-invite', async (req: Request, res: Response) => {
 
 /* ── GET /:slug/referral-stats - view referral link metrics (admin) ────────── */
 router.get('/:slug/referral-stats', async (req: Request, res: Response) => {
-  const adminKey = req.headers['x-admin-key'] as string | undefined;
-  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+  if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 
@@ -330,8 +340,7 @@ router.get('/r/:code', async (req: Request, res: Response) => {
 
 /* ── POST /seed - create the AiVIS × Zeeniith agreement (admin only) ──────── */
 router.post('/seed', async (req: Request, res: Response) => {
-  const adminKey = req.headers['x-admin-key'] as string | undefined;
-  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+  if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 
@@ -551,8 +560,7 @@ async function gateInvoiceAccess(
 
 /* ── POST /:slug/invoices - create invoice (admin only) ───────────────────── */
 router.post('/:slug/invoices', async (req: Request, res: Response) => {
-  const adminKey = req.headers['x-admin-key'] as string | undefined;
-  if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+  if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 

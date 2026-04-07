@@ -66,10 +66,10 @@ export default function InsightsPage() {
               {/* Right: mini chart visual */}
               <div className="space-y-3">
                 {[
-                  { icon: TrendingUp, label: 'AI Citation Rate', value: '+340%', sub: 'avg. lift after playbook execution', color: 'text-emerald-400' },
-                  { icon: Target, label: 'Answer Extraction', value: '87%', sub: 'of pages cited after structured optimization', color: 'text-blue-400' },
-                  { icon: Shield, label: 'E-E-A-T Score Gain', value: '+28pts', sub: 'mean improvement across audited domains', color: 'text-amber-400' },
-                  { icon: Zap, label: 'Time to First Citation', value: '14 days', sub: 'median from fix deployment to AI pickup', color: 'text-purple-400' },
+                  { icon: TrendingUp, label: 'Structured Data Focus', value: '100%', sub: 'every audit checks JSON-LD & schema markup', color: 'text-emerald-400' },
+                  { icon: Target, label: 'AI Platforms Covered', value: '4+', sub: 'ChatGPT · Perplexity · Claude · Gemini', color: 'text-blue-400' },
+                  { icon: Shield, label: 'Evidence-Backed', value: 'BRAG', sub: 'findings grounded in scraped evidence IDs', color: 'text-amber-400' },
+                  { icon: Zap, label: 'Playbook Depth', value: '6', sub: 'audit categories per scan', color: 'text-purple-400' },
                 ].map((stat) => (
                   <div key={stat.label} className="flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5">
                     <div className="shrink-0 w-9 h-9 rounded-lg bg-white/[0.05] flex items-center justify-center">

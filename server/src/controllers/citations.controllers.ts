@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { createHash } from 'crypto';
 import { getPool } from '../services/postgresql.js';
+import { sanitizeHtmlServer } from '../middleware/securityMiddleware.js';
 import { generateQueries, prioritizeQueries } from '../services/queryGenerator.js';
 import { testMultipleQueries, calculateCitationSummary, buildCitationPrompt } from '../services/citationTester.js';
 import type { CitationTest, AICitationResult } from '../../../shared/types.js';
@@ -2015,11 +2016,11 @@ export async function updateQueryPack(req: Request, res: Response) {
 
     if (name !== undefined) {
       updates.push(`name = $${paramIndex++}`);
-      values.push(name);
+      values.push(sanitizeHtmlServer(String(name)));
     }
     if (description !== undefined) {
       updates.push(`description = $${paramIndex++}`);
-      values.push(description || null);
+      values.push(description ? sanitizeHtmlServer(String(description)) : null);
     }
     if (normalizedQueries) {
       updates.push(`queries = $${paramIndex++}`);
@@ -2031,7 +2032,7 @@ export async function updateQueryPack(req: Request, res: Response) {
     }
     if (client_name !== undefined) {
       updates.push(`client_name = $${paramIndex++}`);
-      values.push(client_name || null);
+      values.push(client_name ? sanitizeHtmlServer(String(client_name)) : null);
     }
 
     if (updates.length === 0) {
@@ -2265,7 +2266,7 @@ export async function curateEvidence(req: Request, res: Response) {
     }
     if (curation_note !== undefined) {
       updates.push(`curation_note = $${paramIndex++}`);
-      values.push(curation_note || null);
+      values.push(curation_note ? sanitizeHtmlServer(String(curation_note)) : null);
     }
 
     if (updates.length === 0) {

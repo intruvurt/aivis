@@ -110,7 +110,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
       const response = await apiFetch(`${API_URL}/api/competitors`, {
         headers: {},
       });
-      if (response.status === 401) return;
+      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
 
       if (!response.ok) {
         throw new Error("Failed to fetch competitors");
@@ -170,7 +170,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
           nickname: nickname.trim(),
         }),
       });
-      if (response.status === 401) return;
+      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -216,7 +216,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
         method: "DELETE",
         headers: {},
       });
-      if (response.status === 401) return;
+      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
 
       if (!response.ok) {
         throw new Error("Failed to remove competitor");

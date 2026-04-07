@@ -3,10 +3,10 @@ import { BRAG_ACRONYM, BRAG_EXPANSION } from '@shared/types';
 export const CANONICAL_MODELS = {
   observerPrimary: 'Gemini 2.0 Flash',
   observerFallback: 'Llama 3.3 70B',
-  alignmentPrimary: 'GPT-4o Mini',
-  signalPrimary: 'GPT-4o Mini',
-  signalCritique: 'Claude 3.5 Haiku',
-  signalValidation: 'GPT-4o Mini',
+  alignmentPrimary: 'GPT-4.1 Mini',
+  signalPrimary: 'GPT-4.1 Mini',
+  signalCritique: 'Claude 3.5 Sonnet',
+  signalValidation: 'Grok 3 Mini',
 } as const;
 
 export const MARKETING_CLAIMS = {

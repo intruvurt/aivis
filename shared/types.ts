@@ -218,7 +218,7 @@ export const PRICING = {
   signal: {
     name: 'Signal',
     billing: { monthly: 149, yearly: 1394, yearlyDiscount: 0.22 },
-    limits: { scans: 110, competitors: 5, citations: 100 },
+    limits: { scans: 200, competitors: 10, citations: 250 },
   },
   scorefix: {
     name: 'ScoreFix AutoFix PR',
@@ -271,10 +271,10 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: true,
-    maxScheduledRescans: 10, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
-    maxApiKeys: 5, maxWebhooks: 10, maxReportDeliveries: 25, maxTeamMembers: 10, maxStoredAudits: 500,
+    maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
+    maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 25, maxStoredAudits: 1000,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
-    hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 10,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
   },
   scorefix: {
     scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 10, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,

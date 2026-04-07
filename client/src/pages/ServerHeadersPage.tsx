@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import { checkServerHeaders } from "../api";
 import type { ServerHeadersCheckResult } from "../../../shared/types";
 import { useAnalysisStore } from "../stores/analysisStore";
@@ -291,6 +292,19 @@ export default function ServerHeadersPage() {
             <p className="text-sm text-white/60">Check HTTP response headers, security policy, and cache behavior for any website.</p>
           </div>
         </div>
+
+        <FeatureInstruction
+          headline="How to use Server Headers Check"
+          steps={[
+            "Enter any URL or domain in the form below",
+            "Review the security score and header grade",
+            "Check each header category — security, caching, and meta",
+            "Fix flagged issues to improve both security and AI crawlability",
+          ]}
+          benefit="Properly configured headers signal trustworthiness to AI crawlers and ensure your content is cached and indexed correctly."
+          accentClass="text-emerald-400 border-emerald-500/30 bg-emerald-500/[0.06]"
+          defaultCollapsed
+        />
 
         <div className="surface-structured rounded-2xl p-6 mb-8">
           <form onSubmit={handleSubmit} className="space-y-4">

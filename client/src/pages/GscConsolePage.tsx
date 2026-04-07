@@ -11,6 +11,7 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
 import { API_URL } from "../config";
 
@@ -369,7 +370,18 @@ export default function GscConsolePage() {
           Alignment+
         </span>
       </motion.div>
-
+      <FeatureInstruction
+        headline="How to use Search Console Intelligence"
+        steps={[
+          "Connect your Google Search Console account using the button below",
+          "Select a property to view its search performance data",
+          "Cross-reference GSC queries with your AI visibility scores",
+          "Identify pages with high impressions but low AI citation potential",
+        ]}
+        benefit="Merge traditional search data with AI visibility metrics to find exactly where AI models are ignoring your best-performing content."
+        accentClass="text-emerald-400 border-emerald-500/30 bg-emerald-500/[0.06]"
+        defaultCollapsed
+      />
       {/* ── Connection Status ─────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}

@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkSchemaMarkup } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-schema-checks";
@@ -119,6 +120,21 @@ export default function SchemaValidatorPage() {
             </p>
           </div>
         </section>
+
+        <div className="px-4 pb-4">
+          <FeatureInstruction
+            headline="How to use Schema Validator"
+            steps={[
+              "Enter any page URL to scan its structured data",
+              "Review JSON-LD, OpenGraph, and Twitter Card signals found",
+              "Check the issues list for missing or malformed markup",
+              "Add recommended schema types to boost AI citation readiness",
+            ]}
+            benefit="Structured data is how AI models identify your content type, authorship, and key facts — the building blocks of citation."
+            accentClass="text-violet-400 border-violet-500/30 bg-violet-500/[0.06]"
+            defaultCollapsed
+          />
+        </div>
 
         {/* Form */}
         <section className="px-4 pb-8">

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { API_URL } from '../config';
 import { useAuthStore } from '../stores/authStore';
+import { useSettingsStore } from '../stores/settingsStore';
 import apiFetch from '../utils/api';
 import { meetsMinimumTier } from '@shared/types';
 
@@ -75,6 +76,8 @@ function normalizeAssistantReply(input: string): string {
 
 export function useGuideBotChat(currentPath: string) {
   const { user, token } = useAuthStore();
+  const bixWebDataEnabled = useSettingsStore((s) => s.bixWebDataEnabled);
+  const bixVerbosity = useSettingsStore((s) => s.bixVerbosity);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -119,6 +122,7 @@ export function useGuideBotChat(currentPath: string) {
               message: text.trim(),
               history: messages.slice(-10).map((m) => ({ role: m.role, content: m.content })),
               pageContext: currentPath,
+              bixPrefs: { webData: bixWebDataEnabled, verbosity: bixVerbosity },
             }),
             signal: controller.signal,
           }).finally(() => {
@@ -194,7 +198,7 @@ export function useGuideBotChat(currentPath: string) {
         setIsLoading(false);
       }
     },
-    [isLoading, token, messages, currentPath, user?.tier]
+    [isLoading, token, messages, currentPath, user?.tier, bixWebDataEnabled, bixVerbosity]
   );
 
   const clearChat = useCallback(() => {

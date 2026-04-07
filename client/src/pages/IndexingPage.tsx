@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import { useAuthStore } from "../stores/authStore";
 import { useAnalysisStore } from "../stores/analysisStore";
 import apiFetch from "../utils/api";
@@ -256,6 +257,19 @@ export default function IndexingPage() {
           </p>
         </div>
       </div>
+
+      <FeatureInstruction
+        headline="How to use Indexing & IndexNow"
+        steps={[
+          "Enter a URL to check its indexing status on Google and Bing",
+          "Use IndexNow to request immediate crawl for new or updated pages",
+          "Bulk-submit multiple URLs at once via the text area",
+          "Track submission history and success rates over time",
+        ]}
+        benefit="Pages that aren't indexed can't appear in AI answers. IndexNow pings search engines instantly so your updates are discovered faster."
+        accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+        defaultCollapsed
+      />
 
       {/* Summary stats */}
       <div className="mb-6 grid grid-cols-2 sm:grid-cols-5 gap-3">

@@ -33,6 +33,7 @@ import apiFetch from "../utils/api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { PLATFORM_NARRATIVE } from "../constants/platformNarrative";
 import PlatformShiftBanner from "../components/PlatformShiftBanner";
+import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
 import { normalizePublicUrlInput } from "../utils/targetKey";
 
@@ -730,6 +731,18 @@ const AnalyzePage: React.FC = () => {
           Run an evidence-backed audit to uncover visibility blockers, trust gaps, and extraction weaknesses.
         </p>
       </div>
+
+      <FeatureInstruction
+        headline="How to run your first audit"
+        steps={[
+          "Paste any public URL into the box below — your homepage, a product page, or a competitor.",
+          "Click Analyze and wait for the multi-model AI pipeline to finish (30–60 seconds).",
+          "Review your visibility score, category grades, and the prioritized fix list.",
+          "Use the recommendations to improve structure, schema, and trust signals — then re-audit to measure the lift.",
+        ]}
+        benefit="Every scan produces evidence-backed findings with actionable fixes ranked by expected visibility impact."
+        defaultCollapsed
+      />
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
           <section className="rounded-xl border border-white/10 bg-charcoal/80 p-6 shadow-2xl sm:p-8 lg:p-10">

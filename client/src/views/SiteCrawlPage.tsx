@@ -5,6 +5,7 @@ import { meetsMinimumTier, TIER_LIMITS, uiTierFromCanonical } from "@shared/type
 import type { CanonicalTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction from "../components/FeatureInstruction";
 import { startSiteCrawl, listSiteCrawls, getSiteCrawl } from "../api";
 import type { SiteCrawlResult, SiteCrawlSummary, SiteCrawlPage } from "../api";
 import {
@@ -245,6 +246,19 @@ export default function SiteCrawlPage() {
           Crawl your website and audit every discovered page for SEO, structure, and AI readiness.
         </p>
       </div>
+
+      <FeatureInstruction
+        headline="How to use Site Crawl"
+        steps={[
+          "Enter your root domain or a specific section URL to start the multi-page crawl.",
+          "Set max pages and depth — crawl results scale with your tier.",
+          "Review per-page SEO diagnostics: schema, canonical, heading structure, word count, and indexability.",
+          "Fix the pages with the most warnings and failures first, then re-crawl to validate.",
+        ]}
+        benefit="Catch structural SEO and AI readability issues across your entire site instead of auditing one page at a time."
+        accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+        defaultCollapsed
+      />
 
       {!hasAccess ? (
         <UpgradeWall

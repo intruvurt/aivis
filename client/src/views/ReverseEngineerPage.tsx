@@ -41,6 +41,7 @@ import toast from "react-hot-toast";
 
 import { API_URL } from "../config";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction from "../components/FeatureInstruction";
 import { meetsMinimumTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { AnswerDecompilerIcon, ContentBlueprintIcon, AuditEngineIcon } from "../components/icons";
@@ -2576,6 +2577,19 @@ export default function ReverseEngineerPage() {
         </h1>
         <p className="mt-1 text-sm text-slate-400">Deconstruct AI answers, generate page blueprints, compare models, and simulate probabilistic visibility impact.</p>
       </div>
+
+      <FeatureInstruction
+        headline="How to use the Reverse Engineer tools"
+        steps={[
+          "Pick a tool from the workbench: Decompile, Ghost Blueprint, Model Diff, Simulate, or AI Rewrite.",
+          "Paste an AI-generated answer, a query, or your page URL depending on the tool.",
+          "Review the structured analysis — entity maps, blueprint sections, model comparison tables, or rewrite output.",
+          "Apply the insights to your content: restructure headings, add missing entities, match the answer shape AI prefers.",
+        ]}
+        benefit="Understand exactly how AI models construct answers so you can build content they want to cite."
+        accentClass="text-violet-400 border-violet-500/30 bg-violet-500/[0.06]"
+        defaultCollapsed
+      />
 
       <div className="space-y-6">
         {!hasAccess ? (

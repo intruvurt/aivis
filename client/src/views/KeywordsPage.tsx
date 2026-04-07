@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
 
 // ─── UI config ────────────────────────────────────────────────────────────────
@@ -446,6 +447,18 @@ export default function KeywordsPage() {
           </button>
         </div>
       </div>
+
+      <FeatureInstruction
+        headline="How to use Keyword Intelligence"
+        steps={[
+          "Run at least one AI visibility audit — keywords are automatically extracted from every scan.",
+          "Select a domain from the dropdown to see aggregated keyword data across all its audits.",
+          "Filter by intent type, opportunity score, or use the search to find specific topics.",
+          "Star high-priority keywords, mark content status, and export your keyword plan as CSV.",
+        ]}
+        benefit="Discover the exact topics AI models associate with your domain so you can close content gaps and strengthen citation signals."
+        defaultCollapsed
+      />
 
       <div className="space-y-6">
         {/* Empty state */}

@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkRobotsAccess } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-robots-checks";
@@ -133,6 +134,21 @@ export default function RobotsCheckerPage() {
             </p>
           </div>
         </section>
+
+        <div className="px-4 pb-4">
+          <FeatureInstruction
+            headline="How to use AI Crawler Access Checker"
+            steps={[
+              "Enter a URL to scan its robots.txt and meta directives",
+              "Review which AI bots are allowed, blocked, or unspecified",
+              "Pay attention to critical bots like GPTBot and ClaudeBot",
+              "Update your robots.txt to allow the crawlers you want citing you",
+            ]}
+            benefit="If AI crawlers are blocked, your content can never appear in AI-generated answers — even if it's the best source."
+            accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+            defaultCollapsed
+          />
+        </div>
 
         {/* Form */}
         <section className="px-4 pb-8">

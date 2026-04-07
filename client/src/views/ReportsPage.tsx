@@ -34,6 +34,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useAnalysisStore } from "../stores/analysisStore";
 import { useSettingsStore } from "../stores/settingsStore";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction, { ButtonTooltip, InfoTip } from "../components/FeatureInstruction";
 import { API_URL, PUBLIC_APP_ORIGIN } from "../config";
 import apiFetch from "../utils/api";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -1358,6 +1359,17 @@ export default function ReportsPage() {
           <p className="mt-1 text-sm text-slate-400">
             Delivery hub for agencies, operators, and executive reviews
           </p>
+          <FeatureInstruction
+            headline="How to use Audit Reports"
+            steps={[
+              "Run audits from the Analyze page — completed audits appear here automatically",
+              "Use Re-analyze to refresh a report with the latest data",
+              "Export PDF or JSON to share results with clients or leadership",
+              "Share a public link for stakeholders who don't have an account",
+            ]}
+            benefit="Your reports hub — manage, compare, export, and share every audit in one place."
+            defaultCollapsed
+          />
         </div>
 
         <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:max-w-full lg:items-end">
@@ -1988,6 +2000,9 @@ export default function ReportsPage() {
                               <span className="px-1.5 py-0.5 rounded bg-emerald-900/30 border border-emerald-500/30 text-emerald-300">✓ {report.seoSummary.pass}</span>
                               <span className="px-1.5 py-0.5 rounded bg-amber-900/30 border border-amber-500/30 text-amber-300">⚠ {report.seoSummary.warn}</span>
                               <span className="px-1.5 py-0.5 rounded bg-red-900/30 border border-red-500/30 text-red-300">✗ {report.seoSummary.fail}</span>
+                              <InfoTip text="Pass = criteria met. Warn = improvement opportunity. Fail = blocking issue that hurts AI visibility." />
+                              <span className="px-1.5 py-0.5 rounded bg-amber-900/30 border border-amber-500/30 text-amber-300">⚠ {report.seoSummary.warn}</span>
+                              <span className="px-1.5 py-0.5 rounded bg-red-900/30 border border-red-500/30 text-red-300">✗ {report.seoSummary.fail}</span>
                             </span>
                           )}
                         </div>
@@ -1997,6 +2012,7 @@ export default function ReportsPage() {
                     {/* Right: Action strip */}
                     <div className="flex flex-wrap items-center gap-2 xl:flex-nowrap xl:ml-4">
                       {/* Primary: Re-analyze */}
+                      <ButtonTooltip tip="Run a fresh audit on this URL with the latest AI models">
                       <button
                         onClick={() => navigate(`/?url=${encodeURIComponent(report.url)}`)}
                         className="inline-flex items-center gap-1.5 rounded-lg btn-cta-primary px-3 py-1.5 text-xs font-bold"
@@ -2006,9 +2022,11 @@ export default function ReportsPage() {
                         <Eye className="w-3.5 h-3.5" />
                         Re-analyze
                       </button>
+                      </ButtonTooltip>
 
                       {/* Score Fix for low scores */}
                       {report.status === 'completed' && report.score < 75 && (
+                        <ButtonTooltip tip="Get an AI-generated fix plan to raise this score above 75">
                         <button
                           onClick={() => navigate(`/app/score-fix?source=reports&report=${encodeURIComponent(report.auditId || report.id)}&url=${encodeURIComponent(report.url)}`)}
                           className="inline-flex items-center gap-1.5 rounded-lg btn-cta-secondary px-3 py-1.5 text-xs font-semibold"
@@ -2018,9 +2036,11 @@ export default function ReportsPage() {
                           <Wand2 className="w-3.5 h-3.5" />
                           Fix Score
                         </button>
+                        </ButtonTooltip>
                       )}
 
                       {/* Compare */}
+                      <ButtonTooltip tip="Compare this URL side-by-side with competitors">
                       <button
                         onClick={() => navigate(`/compare?url=${encodeURIComponent(report.url)}`)}
                         className="inline-flex items-center gap-1.5 rounded-lg border border-white/12 bg-charcoal px-3 py-1.5 text-xs text-white/70 hover:text-white transition-colors"
@@ -2030,9 +2050,11 @@ export default function ReportsPage() {
                         <TrendingUp className="w-3.5 h-3.5" />
                         Compare
                       </button>
+                      </ButtonTooltip>
 
                       {/* Icon actions */}
                       <div className="flex items-center gap-1.5 ml-1">
+                        <ButtonTooltip tip="Download raw audit data as JSON" position="bottom">
                         <button
                           onClick={() => handleDownload(report)}
                           disabled={report.status !== "completed" || downloadingId === report.id}
@@ -2042,6 +2064,8 @@ export default function ReportsPage() {
                         >
                           {downloadingId === report.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                         </button>
+                        </ButtonTooltip>
+                        <ButtonTooltip tip="Export a branded PDF report for stakeholders" position="bottom">
                         <button
                           onClick={() => void handlePdfExport(report)}
                           disabled={report.status !== "completed" || !report.auditId || pdfExportingId === report.id}
@@ -2051,6 +2075,8 @@ export default function ReportsPage() {
                         >
                           {pdfExportingId === report.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                         </button>
+                        </ButtonTooltip>
+                        <ButtonTooltip tip="Generate a shareable public link for this audit" position="bottom">
                         <button
                           onClick={() => handleShare(report)}
                           disabled={report.status !== "completed" || sharingId === report.id}
@@ -2060,6 +2086,8 @@ export default function ReportsPage() {
                         >
                           {sharingId === report.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
                         </button>
+                        </ButtonTooltip>
+                        <ButtonTooltip tip="Copy a text summary of key findings to your clipboard" position="bottom">
                         <button
                           onClick={() => copyExecutiveSummary(report)}
                           disabled={report.status !== "completed"}
@@ -2069,6 +2097,8 @@ export default function ReportsPage() {
                         >
                           <Copy className="w-4 h-4" />
                         </button>
+                        </ButtonTooltip>
+                        <ButtonTooltip tip="Permanently remove this report" position="bottom">
                         <button
                           onClick={() => void deleteReport(report)}
                           disabled={deletingId === report.id}
@@ -2078,6 +2108,7 @@ export default function ReportsPage() {
                         >
                           {deletingId === report.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                         </button>
+                        </ButtonTooltip>
                       </div>
                     </div>
                   </div>

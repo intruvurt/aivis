@@ -4,6 +4,7 @@ import { useAuthStore } from "../stores/authStore";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { meetsMinimumTier, TIER_LIMITS, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction from "../components/FeatureInstruction";
 import { API_URL } from "../config";
 import apiFetch from "../utils/api";
 import {
@@ -306,6 +307,19 @@ export default function NicheDiscoveryPage() {
           Alignment+
         </span>
       </div>
+
+      <FeatureInstruction
+        headline="How to use Niche Discovery"
+        steps={[
+          "Type an industry or service niche (e.g. 'dentists in Austin') and click Discover.",
+          "Review the discovered URLs — valid ones are auto-selected for scheduling.",
+          "Set a scan frequency (daily, weekly, monthly) and add selected URLs to scheduled audits.",
+          "Check back later to see aggregated audit results across the niche.",
+        ]}
+        benefit="Build a competitor landscape automatically by discovering and monitoring real business URLs in any niche."
+        accentClass="text-emerald-400 border-emerald-500/30 bg-emerald-500/[0.06]"
+        defaultCollapsed
+      />
 
       {/* Stats overview - only show if history exists */}
       {historyLoaded && historyStats.totalJobs > 0 && (

@@ -34,6 +34,7 @@ import apiFetch from "../utils/api";
 import UpgradeWall from "../components/UpgradeWall";
 import { meetsMinimumTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
 import {
   EMPTY_ANALYTICS_DATA,
   EMPTY_PLATFORM_METRICS,
@@ -890,6 +891,19 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      <FeatureInstruction
+        headline="How to use Analytics"
+        steps={[
+          "Run 2+ audits on the same domain to start building trend data.",
+          "Use the time range buttons (7d / 30d / 90d / All) to zoom into the period you care about.",
+          "Check the SEO tab for per-check pass rates and use the focus hints to prioritize fixes.",
+          "Switch to Domains view to compare visibility across multiple sites you've audited.",
+        ]}
+        benefit="Track exactly how your visibility score and category grades move over time — proof that your fixes are working."
+        accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+        defaultCollapsed
+      />
+
       <div>
 
         {/* ── Auth guard ────────────────────────────────────────────────── */}
@@ -940,6 +954,10 @@ export default function AnalyticsPage() {
           <>
             {/* ── Key Metric Cards ───────────────────────────────────────── */}
             <SectionTitle title="Key Metrics" tone="orange" sub="Your personal audit performance at a glance" />
+            <div className="text-xs text-white/40 -mt-4 mb-4 ml-1 flex items-center gap-1">
+              <InfoTip text="Metrics are calculated from all your completed audits in the selected time range. Run more audits to improve accuracy." />
+              <span>Hover the ⓘ icons for explanations</span>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
               <StatCard icon={Activity} label="Total Scans"   value={data.totalAnalyses} accent={P.orange} />
               <StatCard icon={Target}   label="Avg Score"     value={data.averageScore ? `${data.averageScore.toFixed(1)}%` : "–"} accent={P.cyan} trend={trendDir} />

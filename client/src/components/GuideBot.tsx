@@ -24,7 +24,7 @@ import {
   MicOff,
 } from 'lucide-react';
 
-import { PAGE_SUGGESTIONS, DEFAULT_SUGGESTIONS, getGreeting } from '../constants/guideBotConfig';
+import { getSuggestions, DEFAULT_SUGGESTIONS, getGreeting, RELATED_PAGES } from '../constants/guideBotConfig';
 import renderMarkdown from '../utils/renderMarkdown';
 import { useGuideBotChat } from '../hooks/useGuideBotChat';
 import { useSupportTickets } from '../hooks/useSupportTickets';
@@ -97,8 +97,14 @@ export default function GuideBot() {
   const { createTicket, isLoading: tkLoading, error: tkError, clearError: tkClearError } = useSupportTickets();
   const { tasks, isLoading: tasksLoading, cancelTask } = useAgentTasks(isOpen && showTasks);
 
-  const suggestions = PAGE_SUGGESTIONS[pathname] || DEFAULT_SUGGESTIONS;
+  const [suggestions, setSuggestions] = useState<string[]>(() => getSuggestions(pathname));
+  const relatedPages = RELATED_PAGES[pathname] || [];
   const greeting = getGreeting(pathname);
+
+  // Rotate suggestions when page changes or chat is cleared
+  useEffect(() => {
+    setSuggestions(getSuggestions(pathname));
+  }, [pathname]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -262,7 +268,7 @@ export default function GuideBot() {
                 )}
                 {messages.length > 0 && (
                   <button
-                    onClick={clearChat}
+                    onClick={() => { clearChat(); setSuggestions(getSuggestions(pathname)); }}
                     className="p-1.5 text-white/55 hover:text-white/85 hover:bg-charcoal/60 rounded-full transition-colors text-xs"
                     title="Clear chat"
                   >
@@ -488,6 +494,13 @@ export default function GuideBot() {
                         {s}
                       </button>
                     ))}
+                    <button
+                      onClick={() => setSuggestions(getSuggestions(pathname))}
+                      className="text-[10px] px-2.5 py-1.5 rounded-full border border-white/8 text-white/40 hover:text-white/70 hover:border-white/15 transition-all duration-150"
+                      title="Show different suggestions"
+                    >
+                      ↻ More
+                    </button>
                   </div>
                   <div className="flex flex-wrap gap-2 pl-9 pt-1">
                     <button
@@ -503,6 +516,22 @@ export default function GuideBot() {
                       Share URL template
                     </button>
                   </div>
+                  {relatedPages.length > 0 && (
+                    <div className="pl-9 pt-2">
+                      <p className="text-[10px] text-white/35 mb-1.5">Related pages</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {relatedPages.map((rp) => (
+                          <Link
+                            key={rp.path}
+                            to={rp.path}
+                            className="text-[10px] px-2.5 py-1 rounded-full border border-cyan-400/15 bg-cyan-500/8 text-cyan-300/70 hover:text-cyan-200 hover:bg-cyan-500/15 transition-all duration-150"
+                          >
+                            {rp.label} →
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 

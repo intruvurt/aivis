@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, ExternalLink, AlertTriangle, CheckCircle2, TrendingUp, Search } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
 import { authorityCheck } from "../api";
 import type { AuthorityCheckResponse, AuthorityPlatform, ContentNature } from "@shared/types";
 
@@ -120,6 +121,19 @@ export default function DomainRatingPage() {
         </p>
       </div>
 
+      <FeatureInstruction
+        headline="How to use Domain Authority Checker"
+        steps={[
+          "Enter a URL or brand name in the search box below",
+          "Review your overall authority score and letter grade",
+          "Check platform-by-platform presence across 18 sources",
+          "Focus on platforms where your brand is missing or weak",
+        ]}
+        benefit="Discover where your brand has the strongest third-party signals — the same signals AI models use to decide who to cite."
+        accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+        defaultCollapsed
+      />
+
       {/* Input form */}
       <form onSubmit={run} className="flex gap-3">
         <div className="relative flex-1">
@@ -175,7 +189,7 @@ export default function DomainRatingPage() {
                     <span className={`text-4xl font-bold ${gradeColor(grade)}`}>{grade}</span>
                   </div>
                   <div>
-                    <p className="text-sm text-white/50">Authority Index</p>
+                    <p className="text-sm text-white/50">Authority Index <InfoTip text="Composite score from citations, backlinks, and trust signals across 18 platforms. Higher = more likely to be cited by AI." /></p>
                     <p className="text-3xl font-bold text-white">{report.overall.authority_index}<span className="text-lg text-white/40">/100</span></p>
                   </div>
                 </div>

@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkContentExtractability } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-content-extractability";
@@ -127,6 +128,21 @@ export default function ContentExtractabilityPage() {
             </p>
           </div>
         </section>
+
+        <div className="px-4 pb-4">
+          <FeatureInstruction
+            headline="How to use Content Extractability Grader"
+            steps={[
+              "Enter a page URL to analyze its content structure",
+              "Review heading hierarchy, FAQ patterns, and answer blocks",
+              "Check the issues list for structural improvements",
+              "Restructure content so AI models can extract clear, citable answers",
+            ]}
+            benefit="AI models prefer content with clear headings, FAQ blocks, and concise answer paragraphs — structured content gets cited more."
+            accentClass="text-amber-400 border-amber-500/30 bg-amber-500/[0.06]"
+            defaultCollapsed
+          />
+        </div>
 
         {/* Form */}
         <section className="px-4 pb-8">

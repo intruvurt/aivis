@@ -11,6 +11,7 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useAuthStore } from "../stores/authStore";
 import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
+import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
 import { API_URL } from "../config";
 
@@ -275,7 +276,18 @@ export default function McpConsolePage() {
           </span>
         </div>
       </div>
-
+      <FeatureInstruction
+        headline="How to use MCP Server Console"
+        steps={[
+          "Copy the MCP config snippet and add it to your AI coding agent",
+          "Enter your API key to authenticate requests",
+          "Test tools directly from this console to verify your setup",
+          "Use your agent to run audits, pull scores, and query analytics hands-free",
+        ]}
+        benefit="MCP lets your AI coding assistant call AiVIS tools directly — run audits and check scores without leaving your IDE."
+        accentClass="text-violet-400 border-violet-500/30 bg-violet-500/[0.06]"
+        defaultCollapsed
+      />
       {/* ── What is MCP? explainer ─────────────────────────────────── */}
       <div className="mb-6 rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-500/8 to-cyan-500/5 p-5 sm:p-6">
         <h2 className="text-base font-semibold text-white mb-2 flex items-center gap-2">

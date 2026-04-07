@@ -4,6 +4,7 @@ import { Activity, ArrowRight, BarChart3, Check, ClipboardList, Clock3, Copy, Ga
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
 import ConversionCTA from "../components/ConversionCTA";
+import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
 import { useAuthStore } from "../stores/authStore";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import { apiFetch } from "../utils/api";
@@ -192,6 +193,18 @@ export default function Dashboard() {
         </Link>
       }
     >
+      <FeatureInstruction
+        headline="Getting started with your dashboard"
+        steps={[
+          "Click 'New audit' to analyze any URL — your homepage, a product page, or a competitor.",
+          "Completed audits appear below with score, domain, and timestamp. Click any row to view the full report.",
+          "Check 'Activity' tab for your recent scan timeline, or switch to 'Quick actions' for shortcuts.",
+          "Upgrade your plan to unlock report history, analytics trends, and advanced tools.",
+        ]}
+        benefit="Your central hub for running audits, tracking progress, and accessing every AiVIS tool."
+        defaultCollapsed
+      />
+
       {/* ── Tab bar ─────────────────────────────────────────────────── */}
       <div className="inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
         <button
@@ -238,7 +251,7 @@ export default function Dashboard() {
         <section className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict <InfoTip text="Your most recent AI visibility score. Run audits regularly to track improvement." /></p>
               <div className="mt-3 flex items-end gap-4">
                 <div className="text-5xl font-semibold tracking-tight text-white">{primaryAudit.overallScore}</div>
                 <div className="pb-1 text-sm text-cyan-100/80">{primaryVerdict}</div>

@@ -52,6 +52,12 @@ interface UserPreferences {
   historyRetentionDays: number;
   /** 0 = never expire, otherwise days until link expires. Default 30. */
   shareLinkExpirationDays: number;
+
+  // Bix (GuideBot) Settings
+  /** Allow Bix to pull real web data (robots.txt, llms.txt, sitemap) when answering */
+  bixWebDataEnabled: boolean;
+  /** Bix response verbosity: 'concise' keeps answers short, 'detailed' allows longer explanations */
+  bixVerbosity: 'concise' | 'detailed';
 }
 
 interface SettingsState extends UserPreferences {
@@ -83,6 +89,8 @@ interface SettingsState extends UserPreferences {
   setSaveHistory: (enabled: boolean) => void;
   setHistoryRetentionDays: (days: number) => void;
   setShareLinkExpirationDays: (days: number) => void;
+  setBixWebDataEnabled: (enabled: boolean) => void;
+  setBixVerbosity: (verbosity: 'concise' | 'detailed') => void;
   updateProfile: (profile: Partial<UserProfile>) => void;
   resetSettings: () => void;
   updateLastSynced: () => void;
@@ -119,6 +127,10 @@ const defaultPreferences: UserPreferences = {
   saveHistory: true,
   historyRetentionDays: 30,
   shareLinkExpirationDays: 30,
+
+  // Bix
+  bixWebDataEnabled: true,
+  bixVerbosity: 'concise' as const,
 };
 
 const defaultProfile: UserProfile = {
@@ -236,6 +248,10 @@ export const useSettingsStore = create<SettingsState>()(
         // Valid values: 0 (never), 7, 14, 30, 90
         set({ shareLinkExpirationDays });
       },
+
+      // Bix Actions
+      setBixWebDataEnabled: (bixWebDataEnabled) => set({ bixWebDataEnabled }),
+      setBixVerbosity: (bixVerbosity) => set({ bixVerbosity }),
       
       // Profile Actions
       updateProfile: (profileUpdate) => {
@@ -299,6 +315,8 @@ export const useSettingsStore = create<SettingsState>()(
         saveHistory: state.saveHistory,
         historyRetentionDays: state.historyRetentionDays,
         shareLinkExpirationDays: state.shareLinkExpirationDays,
+        bixWebDataEnabled: state.bixWebDataEnabled,
+        bixVerbosity: state.bixVerbosity,
         profile: state.profile,
         lastSyncedAt: state.lastSyncedAt,
         version: state.version,
@@ -339,6 +357,10 @@ export const useDashboardSettings = () => useSettingsStore((state) => ({
   view: state.defaultView,
   itemsPerPage: state.itemsPerPage,
   showQuickStats: state.showQuickStats,
+}));
+export const useBixSettings = () => useSettingsStore((state) => ({
+  webDataEnabled: state.bixWebDataEnabled,
+  verbosity: state.bixVerbosity,
 }));
 
 // Type exports

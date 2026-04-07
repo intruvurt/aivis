@@ -121,6 +121,7 @@
     "serverHeaders": "Server Headers",
     "aiCrawlers": "AI Crawlers",
     "indexing": "Indexing",
+    "domainRating": "Domain Rating",
     "mcpConsole": "MCP Console",
     "agencyDashboard": "Agency Dashboard",
     "apiDocs": "API Docs",

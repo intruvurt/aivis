@@ -33,6 +33,7 @@ import apiFetch from "../utils/api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { PLATFORM_NARRATIVE } from "../constants/platformNarrative";
 import PlatformShiftBanner from "../components/PlatformShiftBanner";
+import ConversionCTA from "../components/ConversionCTA";
 import { normalizePublicUrlInput } from "../utils/targetKey";
 
 const normalizeUrl = normalizePublicUrlInput;
@@ -227,6 +228,7 @@ const AnalyzePage: React.FC = () => {
     percent: 0,
   });
   const [error, setError] = useState<string | null>(null);
+  const [scanLimitReached, setScanLimitReached] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [resultView, setResultView] = useState<"summary" | "technical">("summary");
@@ -476,6 +478,7 @@ const AnalyzePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+      setScanLimitReached(false);
       setResult(null);
       setResultView("summary");
       setProgress({ requestId: null, step: "starting", percent: 0 });
@@ -524,7 +527,9 @@ const AnalyzePage: React.FC = () => {
           throw new Error("Could not reach the website. Please verify the URL is correct.");
         }
         if (errorData?.code === "USAGE_LIMIT_REACHED") {
-          throw new Error("Live scan limit reached for this billing cycle. You can still view cached results, or upgrade/add audit credits to run a fresh live audit.");
+          setScanLimitReached(true);
+          setLoading(false);
+          return;
         }
         if (response.status === 429) {
           throw new Error(errorData?.error || "Rate limit exceeded. Please wait a moment and try again.");
@@ -892,10 +897,16 @@ const AnalyzePage: React.FC = () => {
                     </div>
                   )}
 
-                  {error && (
+                  {error && !scanLimitReached && (
                     <div role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-red-400/20 bg-red-400/10 px-3 py-2 text-sm text-red-200">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <span>{error}</span>
+                    </div>
+                  )}
+
+                  {scanLimitReached && (
+                    <div className="mt-3">
+                      <ConversionCTA variant="scan-limit" />
                     </div>
                   )}
                 </div>

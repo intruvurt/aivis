@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkContentExtractability } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-content-extractability";
 
@@ -274,6 +275,8 @@ export default function ContentExtractabilityPage() {
             </div>
           </section>
         )}
+
+        <ConversionCTA variant="free-tool" />
       </div>
     </>
   );

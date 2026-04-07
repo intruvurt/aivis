@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkRobotsAccess } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-robots-checks";
 
@@ -290,6 +291,8 @@ export default function RobotsCheckerPage() {
             </div>
           </section>
         )}
+
+        <ConversionCTA variant="free-tool" />
       </div>
     </>
   );

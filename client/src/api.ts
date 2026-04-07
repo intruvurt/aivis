@@ -220,6 +220,13 @@ export function getCitationIdentity(url: string) {
   });
 }
 
+export function authorityCheck(payload: { target: string; officialUrl?: string; platforms?: string[] }) {
+  return apiFetch<{ success: boolean; report: import("../../shared/types").AuthorityCheckResponse }>("/api/citations/authority-check", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Query Pack API
 // ────────────────────────────────────────────────────────────────────────────

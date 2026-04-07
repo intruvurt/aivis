@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { Activity, ArrowRight, BarChart3, Check, ClipboardList, Clock3, Copy, Gauge, Globe, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
+import ConversionCTA from "../components/ConversionCTA";
 import { useAuthStore } from "../stores/authStore";
+import useFeatureStatus from "../hooks/useFeatureStatus";
 import { apiFetch } from "../utils/api";
 import { TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
 
@@ -83,6 +85,9 @@ export default function Dashboard() {
   const userTier = useAuthStore((state) => state.user?.tier || "observer");
   const uiTier = uiTierFromCanonical(userTier as any);
   const canLoadHistory = TIER_LIMITS[uiTier].hasReportHistory;
+  const { status: featureStatus } = useFeatureStatus();
+  const scansUsed = Number(featureStatus?.usage?.usedThisMonth ?? 0);
+  const scansLimit = Number(featureStatus?.usage?.monthlyLimit ?? TIER_LIMITS[uiTier].scansPerMonth);
 
   useEffect(() => {
     const run = async () => {
@@ -222,6 +227,11 @@ export default function Dashboard() {
             <Link to="/app/analytics" className="text-cyan-200 hover:text-white transition text-sm font-medium">View benchmarks →</Link>
           </div>
         </section>
+      )}
+
+      {/* ── Observer usage nudge ──────────────────────────────────── */}
+      {uiTier === "observer" && (
+        <ConversionCTA variant="usage-nudge" scansUsed={scansUsed} scansLimit={scansLimit} />
       )}
 
       {primaryAudit && typeof primaryAudit.overallScore === "number" && (

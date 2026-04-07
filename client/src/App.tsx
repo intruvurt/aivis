@@ -56,6 +56,7 @@ const IndexingPage = React.lazy(() => import("./pages/IndexingPage"));
 const SchemaValidatorPage = React.lazy(() => import("./pages/SchemaValidatorPage"));
 const RobotsCheckerPage = React.lazy(() => import("./pages/RobotsCheckerPage"));
 const ContentExtractabilityPage = React.lazy(() => import("./pages/ContentExtractabilityPage"));
+const DomainRatingPage = React.lazy(() => import("./pages/DomainRatingPage"));
 const ComparisonPage = React.lazy(() => import("./pages/ComparisonPage"));
 const PlatformWorkflowPage = React.lazy(() => import("./pages/PlatformWorkflowPage"));
 const MethodologyPage = React.lazy(() => import("./pages/MethodologyPage"));
@@ -261,6 +262,7 @@ export default function App() {
             <Route path="server-headers" element={<ServerHeadersPage />} />
             <Route path="robots-checker" element={<RobotsCheckerPage />} />
             <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="domain-rating" element={<DomainRatingPage />} />
             <Route path="indexing" element={<IndexingPage />} />
             <Route path="profile" element={<Profile />} />
             <Route path="referrals" element={<ReferralsPage />} />
@@ -296,6 +298,7 @@ export default function App() {
           <Route path="/tools/schema-validator" element={<Navigate to="/app/schema-validator" replace />} />
           <Route path="/tools/robots-checker" element={<Navigate to="/app/robots-checker" replace />} />
           <Route path="/tools/content-extractability" element={<Navigate to="/app/content-extractability" replace />} />
+          <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
           <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
           <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
           <Route path="/billing" element={<Navigate to="/app/billing" replace />} />

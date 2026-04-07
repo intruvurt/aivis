@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Award, Clock, ExternalLink, Folder, Tag } from 'lucide-react';
 import { usePageMeta } from '../hooks/usePageMeta';
+import ConversionCTA from '../components/ConversionCTA';
 import { getBlogBySlug, getRelatedPosts } from '../content/blogs';
 import { buildArticleSchema, buildBreadcrumbSchema, buildWebPageSchema } from '../lib/seoSchema';
 
@@ -37,6 +38,8 @@ export default function BlogPostPage() {
         description: entry.description,
         path: entry.path,
         datePublished: entry.publishedAt,
+        dateModified: entry.updatedAt,
+        coverImageUrl: entry.featuredImage?.url,
       }),
       buildWebPageSchema({
         path: entry.path,
@@ -213,6 +216,8 @@ export default function BlogPostPage() {
               </div>
             </div>
           ) : null}
+
+          <ConversionCTA variant="blog" />
         </article>
       </main>
     </div>

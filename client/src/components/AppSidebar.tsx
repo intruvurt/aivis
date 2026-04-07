@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle, X, Building2, Network, Code2,
+  Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -52,6 +52,7 @@ const toolsNav: NavItem[] = [
   { to: "/app/schema-validator", labelKey: "sidebar.schemaValidator", icon: Shield },
   { to: "/app/server-headers", labelKey: "sidebar.serverHeaders", icon: Globe },
   { to: "/app/robots-checker", labelKey: "sidebar.aiCrawlers", icon: Cpu },
+  { to: "/app/domain-rating", labelKey: "sidebar.domainRating", icon: TrendingUp, minTier: "alignment" },
   { to: "/app/indexing", labelKey: "sidebar.indexing", icon: BookOpen },
   { to: "/app/mcp", labelKey: "sidebar.mcpConsole", icon: Wrench, minTier: "alignment" },
 ];

@@ -121,6 +121,7 @@
     "serverHeaders": "Cabeceras del Servidor",
     "aiCrawlers": "Rastreadores IA",
     "indexing": "Indexación",
+    "domainRating": "Calificación del Dominio",
     "mcpConsole": "Consola MCP",
     "agencyDashboard": "Panel de Agencia",
     "apiDocs": "Docs API",

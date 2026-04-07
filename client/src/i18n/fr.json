@@ -121,6 +121,7 @@
     "serverHeaders": "En-têtes Serveur",
     "aiCrawlers": "Robots IA",
     "indexing": "Indexation",
+    "domainRating": "Notation du Domaine",
     "mcpConsole": "Console MCP",
     "agencyDashboard": "Tableau de Bord Agence",
     "apiDocs": "Docs API",

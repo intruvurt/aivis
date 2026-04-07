@@ -2,6 +2,7 @@ import { useState, useCallback, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { checkSchemaMarkup } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
+import ConversionCTA from "../components/ConversionCTA";
 
 const HISTORY_KEY = "aivis-schema-checks";
 
@@ -276,6 +277,8 @@ export default function SchemaValidatorPage() {
             </div>
           </section>
         )}
+
+        <ConversionCTA variant="free-tool" />
       </div>
     </>
   );

@@ -79,9 +79,9 @@ import featureRoutes from './routes/featureRoutes.js';
 import workspaceRoutes from './routes/workspaceRoutes.js';
 import externalApiV1, { widgetPublicRouter } from './routes/externalApiV1.js';
 import complianceRoutes from './routes/complianceRoutes.js';
-import { startCompetitorAutopilotLoop, startRescanLoop } from './services/scheduledRescanService.js';
+import { startCompetitorAutopilotLoop, startRescanLoop, stopRescanLoop } from './services/scheduledRescanService.js';
 import { createDeployVerificationJob, startDeployVerificationLoop } from './services/deployVerificationService.js';
-import { setMcpAnalyzer, startMcpAuditLoop } from './services/mcpAuditProcessor.js';
+import { setMcpAnalyzer, startMcpAuditLoop, stopMcpAuditLoop } from './services/mcpAuditProcessor.js';
 import { extractDeployHookPayload, resolveDeployHookBySecret } from './services/deployHookService.js';
 import { dispatchWebhooks } from './services/webhookService.js';
 import { dispatchAuditReportDeliveries } from './services/reportDeliveryService.js';
@@ -91,14 +91,15 @@ import { runNicheRanking } from './services/citationRankingEngine.js';
 import { settleReferralCreditsIfEligible } from './services/referralCredits.js';
 import {
   startNewsletterLoop,
+  stopNewsletterLoop,
   buildNewsletterEmailPayload,
   getCurrentNewsletterEditionKey,
   runNewsletterDispatchCycle,
   getNewsletterDispatchSettings,
   upsertNewsletterDispatchSettings,
 } from './services/newsletterService.js';
-import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop } from './services/autoScoreFixService.js';
-import { startScheduledPlatformNotificationLoop } from './services/scheduledPlatformNotifications.js';
+import { startAutoScoreFixExpiryLoop, startAutoScoreFixWorkerLoop, startAutoScoreFixPostMergeLoop, stopAllAutoScoreFixLoops } from './services/autoScoreFixService.js';
+import { startScheduledPlatformNotificationLoop, stopScheduledPlatformNotificationLoop } from './services/scheduledPlatformNotifications.js';
 import { renderPlatformNewsletterEmail, sendPlatformNewsletterEmail, renderBroadcastEmail, sendBroadcastEmail } from './services/emailService.js';
 import { isGoogleMeasurementConfigured, sendMeasurementEvent } from './services/googleMeasurement.js';
 import { IS_PRODUCTION, NODE_ENV } from './config/runtime.js';
@@ -132,7 +133,7 @@ import v1WebhookRoutes from './routes/v1WebhookRoutes.js';
 import agreementRoutes from './routes/agreementRoutes.js';
 import paypalRoutes from './routes/paypalRoutes.js';
 import badgeRoutes from './routes/badgeRoutes.js';
-import { startTrialExpiryLoop } from './services/trialService.js';
+import { startTrialExpiryLoop, stopTrialExpiryLoop } from './services/trialService.js';
 import { startTaskWorker } from './services/agentTaskService.js';
 import { startAuditWorkerLoop } from './workers/auditWorker.js';
 import { startFixWorker } from './workers/fixWorker.js';
@@ -10598,7 +10599,13 @@ app.use((req, res) => {
 
 // Graceful shutdown
 async function shutdown(signal: string) {
-  console.log(`[${signal}] Shutting down`);
+  console.log(`[${signal}] Shutting down — stopping background loops`);
+  stopTrialExpiryLoop();
+  stopRescanLoop();
+  stopScheduledPlatformNotificationLoop();
+  stopAllAutoScoreFixLoops();
+  stopMcpAuditLoop();
+  stopNewsletterLoop();
   await closePool();
   process.exit(0);
 }

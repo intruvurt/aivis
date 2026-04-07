@@ -265,7 +265,10 @@ export async function sendTrialWarningEmails(): Promise<number> {
 
 // ─── Background Loop ─────────────────────────────────────────────────────────
 
+let _trialLoopTimer: ReturnType<typeof setInterval> | null = null;
+
 export function startTrialExpiryLoop(): void {
+  if (_trialLoopTimer) return;
   console.log('[TrialService] Starting trial expiry + warning loop');
 
   const run = async () => {
@@ -282,5 +285,12 @@ export function startTrialExpiryLoop(): void {
 
   // Run immediately, then on interval
   run();
-  setInterval(run, LOOP_INTERVAL_MS);
+  _trialLoopTimer = setInterval(run, LOOP_INTERVAL_MS);
+}
+
+export function stopTrialExpiryLoop(): void {
+  if (_trialLoopTimer) {
+    clearInterval(_trialLoopTimer);
+    _trialLoopTimer = null;
+  }
 }

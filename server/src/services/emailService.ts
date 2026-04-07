@@ -456,33 +456,29 @@ export function renderPlatformNewsletterEmail(args: PlatformNewsletterEmailArgs)
 
   const html = newsletterHtml(args);
   const text = [
-    `AiVIS Weekly Newsletter - ${args.editionLabel}`,
+    `AiVIS Biweekly - ${args.editionLabel}`,
     `Hi ${firstName},`,
     '',
     `Your tier: ${args.tierLabel}`,
     `Audits completed: ${args.snapshot.auditCount}`,
     scoreLine,
     '',
-    'PRICING SNAPSHOT:',
-    ...args.pricingSummary.map((line) => `- ${line}`),
+    ...args.pricingSummary.map((line) => `${line}`),
     '',
-    'REFERRAL UPDATE:',
-    ...args.referralSummary.map((line) => `- ${line}`),
+    ...args.referralSummary.map((line) => `${line}`),
     '',
-    'TOOLS IN FOCUS:',
-    ...args.toolsSummary.map((line) => `- ${line}`),
+    ...args.toolsSummary.map((line) => `${line}`),
     '',
     `Open app: ${FRONTEND_URL}/`,
-    `Pricing: ${FRONTEND_URL}/pricing`,
+    `Insights: ${FRONTEND_URL}/insights`,
     `FAQ: ${FRONTEND_URL}/faq`,
-    `Billing & referrals: ${FRONTEND_URL}/billing#referrals`,
     '',
     `${BRAND.name} - ${BRAND.tagline}`,
     `${BRAND.company} • ${BRAND.location}`,
   ].join('\n');
 
   return {
-    subject: `${BRAND.name} Weekly - ${args.editionLabel} | Pricing, referrals, and tool deep-dives`,
+    subject: `${BRAND.name} Biweekly - ${args.editionLabel} | AI visibility insights & actionable tips`,
     html,
     text,
   };
@@ -510,48 +506,50 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
     ? `Latest visibility score: <strong>${args.snapshot.latestScore}</strong>`
     : 'Run your next audit to capture your latest visibility score.';
 
-  const list = (items: string[]) => items.map((line) => `<li style="margin:0 0 8px;">${line}</li>`).join('');
-  
-  // Escape HTML special characters to prevent email injection
-  const escapeHtml = (text: string): string => {
-    const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-    return text.replace(/[&<>"']/g, (c) => map[c]);
+  const renderSection = (items: string[]) => {
+    if (items.length === 0) return '';
+    // First item is the section header, rest are content
+    const header = escapeEmailHtml(items[0]);
+    const content = items.slice(1).map((line) => {
+      // Detect URLs in the line and make them clickable
+      const urlMatch = line.match(/^(.+?)\s*→\s*(https?:\/\/\S+)$/);
+      if (urlMatch) {
+        return `<li style="margin:0 0 8px;"><a href="${encodeURI(urlMatch[2])}" style="color:#22d3ee;text-decoration:none;">${escapeEmailHtml(urlMatch[1])}</a></li>`;
+      }
+      return `<li style="margin:0 0 8px;">${escapeEmailHtml(line)}</li>`;
+    }).join('');
+    return `
+              <div style="border:1px solid #334155;border-radius:12px;padding:16px;background:#0f172a;margin-bottom:12px;">
+                <h2 style="margin:0 0 10px;font-size:14px;color:#f8fafc;letter-spacing:.4px;text-transform:uppercase;">${header}</h2>
+                <ul style="padding-left:18px;margin:0;line-height:1.7;font-size:14px;">${content}</ul>
+              </div>`;
   };
   
-  const safeFirstName = escapeHtml(firstName);
+  const safeFirstName = escapeEmailHtml(firstName);
 
   const body = `
           ${emailHeader('linear-gradient(135deg,#0ea5e9,#8b5cf6)')}
           <tr>
             <td style="padding:28px 36px 10px;background:#111827;color:#e5e7eb;">
               <p style="margin:0 0 8px;font-size:14px;">Hi ${safeFirstName},</p>
-              <h1 style="margin:0 0 10px;font-size:22px;line-height:1.25;color:#ffffff;">${BRAND.name} Weekly - ${args.editionLabel}</h1>
+              <h1 style="margin:0 0 10px;font-size:22px;line-height:1.25;color:#ffffff;">${BRAND.name} Biweekly - ${args.editionLabel}</h1>
               <p style="margin:0 0 8px;font-size:14px;color:#cbd5e1;">Tier: <strong>${args.tierLabel}</strong> • Audits completed: <strong>${args.snapshot.auditCount}</strong></p>
               <p style="margin:0 0 8px;font-size:14px;color:#cbd5e1;">${scoreLine}</p>
             </td>
           </tr>
           <tr>
             <td style="padding:8px 36px 26px;background:#111827;color:#cbd5e1;">
-              <div style="border:1px solid #334155;border-radius:12px;padding:16px;background:#0f172a;margin-bottom:12px;">
-                <h2 style="margin:0 0 10px;font-size:14px;color:#f8fafc;letter-spacing:.4px;text-transform:uppercase;">Pricing Snapshot</h2>
-                <ul style="padding-left:18px;margin:0;line-height:1.5;">${list(args.pricingSummary)}</ul>
-              </div>
-              <div style="border:1px solid #334155;border-radius:12px;padding:16px;background:#0f172a;margin-bottom:12px;">
-                <h2 style="margin:0 0 10px;font-size:14px;color:#f8fafc;letter-spacing:.4px;text-transform:uppercase;">Referral Update</h2>
-                <ul style="padding-left:18px;margin:0;line-height:1.5;">${list(args.referralSummary)}</ul>
-              </div>
-              <div style="border:1px solid #334155;border-radius:12px;padding:16px;background:#0f172a;">
-                <h2 style="margin:0 0 10px;font-size:14px;color:#f8fafc;letter-spacing:.4px;text-transform:uppercase;">Tools Deep-Dive</h2>
-                <ul style="padding-left:18px;margin:0;line-height:1.5;">${list(args.toolsSummary)}</ul>
-              </div>
+              ${renderSection(args.pricingSummary)}
+              ${renderSection(args.referralSummary)}
+              ${renderSection(args.toolsSummary)}
               <p style="margin:14px 0 0;font-size:13px;line-height:1.6;">
-                Open app: <a href="${FRONTEND_URL}/" style="color:#22d3ee;text-decoration:none;">Dashboard</a>
+                <a href="${FRONTEND_URL}/" style="color:#22d3ee;text-decoration:none;">Dashboard</a>
                 &nbsp;•&nbsp;
-                <a href="${FRONTEND_URL}/pricing" style="color:#22d3ee;text-decoration:none;">Pricing</a>
+                <a href="${FRONTEND_URL}/insights" style="color:#22d3ee;text-decoration:none;">Insights</a>
                 &nbsp;•&nbsp;
                 <a href="${FRONTEND_URL}/faq" style="color:#22d3ee;text-decoration:none;">FAQ</a>
                 &nbsp;•&nbsp;
-                <a href="${FRONTEND_URL}/billing#referrals" style="color:#22d3ee;text-decoration:none;">Referrals</a>
+                <a href="${FRONTEND_URL}/pricing" style="color:#22d3ee;text-decoration:none;">Plans</a>
               </p>
             </td>
           </tr>
@@ -559,9 +557,9 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
   `;
 
   return emailWrap(
-    `${BRAND.name} Weekly Newsletter`,
+    `${BRAND.name} Biweekly Newsletter`,
     body,
-    `You are receiving this update because you created a ${BRAND.name} account at ${BRAND.siteUrl}.`
+    `You are receiving this because you created a ${BRAND.name} account at ${BRAND.siteUrl}. Delivered biweekly.`
   );
 }
 
@@ -1218,6 +1216,260 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
     emailHeader('linear-gradient(135deg,#f59e0b,#ef4444)') + body + emailFooter(email),
     `You received this because your ${tierName} plan reached its monthly scan limit at aivis.biz`
   );
+}
+
+// ─── Billing / subscription lifecycle emails ─────────────────────────────────
+
+export async function sendPaymentConfirmationEmail(args: {
+  to: string;
+  userName?: string;
+  tierName: string;
+  amountFormatted: string;
+  billingPeriod: string;
+  invoiceUrl?: string | null;
+}): Promise<void> {
+  const firstName = String(args.userName || '').trim() || 'there';
+  const safeFirst = escapeEmailHtml(firstName);
+  const safeTier = escapeEmailHtml(args.tierName);
+  const safeAmount = escapeEmailHtml(args.amountFormatted);
+  const safePeriod = escapeEmailHtml(args.billingPeriod);
+  const invoiceLink = args.invoiceUrl
+    ? `<p style="margin:16px 0 0;font-size:14px;"><a href="${encodeURI(args.invoiceUrl)}" style="color:#22d3ee;text-decoration:none;">View invoice →</a></p>`
+    : '';
+
+  const body = `
+          <tr>
+            <td style="padding:40px;">
+              <h1 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#ffffff;">Payment confirmed</h1>
+              <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.6;">
+                Hi ${safeFirst}, your payment of <strong style="color:#22d3ee;">${safeAmount}</strong> for the
+                <strong style="color:#22d3ee;">${safeTier}</strong> plan (${safePeriod}) has been processed successfully.
+              </p>
+              <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:20px;">
+                <p style="margin:0;color:#94a3b8;font-size:13px;">Plan: <strong style="color:#e5e7eb;">${safeTier}</strong></p>
+                <p style="margin:6px 0 0;color:#94a3b8;font-size:13px;">Amount: <strong style="color:#e5e7eb;">${safeAmount}</strong></p>
+                <p style="margin:6px 0 0;color:#94a3b8;font-size:13px;">Period: <strong style="color:#e5e7eb;">${safePeriod}</strong></p>
+              </div>
+              ${invoiceLink}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:24px 0 8px;">
+                    <a href="${FRONTEND_URL}/"
+                       style="display:inline-block;background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#0f172a;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:10px;">
+                      Open Dashboard →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`;
+
+  try {
+    await resendSend({
+      to: args.to,
+      subject: `${BRAND.name} payment confirmed - ${args.tierName} plan`,
+      html: emailWrap(
+        `Payment Confirmed - ${BRAND.name}`,
+        emailHeader('linear-gradient(135deg,#10b981,#06b6d4)') + body + emailFooter(args.to),
+        `You received this because you made a payment on aivis.biz`,
+      ),
+      text: [
+        `Payment confirmed`,
+        `Hi ${firstName}, your payment of ${args.amountFormatted} for the ${args.tierName} plan (${args.billingPeriod}) has been processed.`,
+        ...(args.invoiceUrl ? [`Invoice: ${args.invoiceUrl}`] : []),
+        `Dashboard: ${FRONTEND_URL}/`,
+        `${BRAND.name} - ${BRAND.tagline}`,
+      ].join('\n\n'),
+    });
+  } catch (err: any) {
+    console.error('[Email] Failed to send payment confirmation:', err?.message);
+  }
+}
+
+export async function sendSubscriptionActivatedEmail(args: {
+  to: string;
+  userName?: string;
+  tierName: string;
+  features: string[];
+}): Promise<void> {
+  const firstName = String(args.userName || '').trim() || 'there';
+  const safeFirst = escapeEmailHtml(firstName);
+  const safeTier = escapeEmailHtml(args.tierName);
+  const featureList = args.features
+    .map((f) => `<li style="margin:0 0 6px;color:#cbd5e1;font-size:14px;">${escapeEmailHtml(f)}</li>`)
+    .join('');
+
+  const body = `
+          <tr>
+            <td style="padding:40px;">
+              <h1 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#ffffff;">Welcome to ${safeTier}!</h1>
+              <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.6;">
+                Hi ${safeFirst}, your <strong style="color:#22d3ee;">${safeTier}</strong> subscription is now active. Here's what's unlocked:
+              </p>
+              <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:20px;">
+                <ul style="padding-left:18px;margin:0;">${featureList}</ul>
+              </div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:24px 0 8px;">
+                    <a href="${FRONTEND_URL}/"
+                       style="display:inline-block;background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:10px;">
+                      Start Using ${safeTier} →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`;
+
+  try {
+    await resendSend({
+      to: args.to,
+      subject: `Your ${args.tierName} subscription is active - ${BRAND.name}`,
+      html: emailWrap(
+        `Subscription Active - ${BRAND.name}`,
+        emailHeader('linear-gradient(135deg,#06b6d4,#8b5cf6)') + body + emailFooter(args.to),
+        `You received this because you subscribed to a plan on aivis.biz`,
+      ),
+      text: [
+        `Welcome to ${args.tierName}!`,
+        `Hi ${firstName}, your ${args.tierName} subscription is active.`,
+        `Features unlocked:`,
+        ...args.features.map((f) => `- ${f}`),
+        `Dashboard: ${FRONTEND_URL}/`,
+        `${BRAND.name} - ${BRAND.tagline}`,
+      ].join('\n\n'),
+    });
+  } catch (err: any) {
+    console.error('[Email] Failed to send subscription activated:', err?.message);
+  }
+}
+
+export async function sendSubscriptionCancelledEmail(args: {
+  to: string;
+  userName?: string;
+  tierName: string;
+}): Promise<void> {
+  const firstName = String(args.userName || '').trim() || 'there';
+  const safeFirst = escapeEmailHtml(firstName);
+  const safeTier = escapeEmailHtml(args.tierName);
+
+  const body = `
+          <tr>
+            <td style="padding:40px;">
+              <h1 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#ffffff;">Subscription cancelled</h1>
+              <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.6;">
+                Hi ${safeFirst}, your <strong style="color:#22d3ee;">${safeTier}</strong> subscription has been cancelled.
+                You've been moved to the free Observer plan.
+              </p>
+              <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:20px;">
+                <p style="margin:0;color:#94a3b8;font-size:14px;">You still have access to:</p>
+                <ul style="padding-left:18px;margin:8px 0 0;">
+                  <li style="color:#cbd5e1;font-size:14px;margin:0 0 4px;">3 scans per month</li>
+                  <li style="color:#cbd5e1;font-size:14px;margin:0 0 4px;">Basic visibility scoring</li>
+                  <li style="color:#cbd5e1;font-size:14px;margin:0 0 4px;">AI-generated recommendations</li>
+                </ul>
+              </div>
+              <p style="margin:0 0 20px;color:#94a3b8;font-size:13px;line-height:1.6;">
+                Changed your mind? You can resubscribe anytime from the pricing page.
+              </p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:8px 0;">
+                    <a href="${FRONTEND_URL}/pricing"
+                       style="display:inline-block;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:10px;">
+                      View Plans →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`;
+
+  try {
+    await resendSend({
+      to: args.to,
+      subject: `Your ${BRAND.name} subscription has been cancelled`,
+      html: emailWrap(
+        `Subscription Cancelled - ${BRAND.name}`,
+        emailHeader('linear-gradient(135deg,#64748b,#475569)') + body + emailFooter(args.to),
+        `You received this because your subscription was cancelled on aivis.biz`,
+      ),
+      text: [
+        `Subscription cancelled`,
+        `Hi ${firstName}, your ${args.tierName} subscription has been cancelled. You've been moved to the free Observer plan.`,
+        `You still have access to 3 scans/month, basic scoring, and recommendations.`,
+        `Resubscribe: ${FRONTEND_URL}/pricing`,
+        `${BRAND.name} - ${BRAND.tagline}`,
+      ].join('\n\n'),
+    });
+  } catch (err: any) {
+    console.error('[Email] Failed to send subscription cancelled:', err?.message);
+  }
+}
+
+export async function sendPaymentFailedEmail(args: {
+  to: string;
+  userName?: string;
+  invoiceUrl?: string | null;
+}): Promise<void> {
+  const firstName = String(args.userName || '').trim() || 'there';
+  const safeFirst = escapeEmailHtml(firstName);
+  const invoiceLink = args.invoiceUrl
+    ? `<p style="margin:16px 0 0;font-size:14px;"><a href="${encodeURI(args.invoiceUrl)}" style="color:#22d3ee;text-decoration:none;">Update payment method →</a></p>`
+    : '';
+
+  const body = `
+          <tr>
+            <td style="padding:40px;">
+              <h1 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#ef4444;">Payment failed</h1>
+              <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.6;">
+                Hi ${safeFirst}, we weren't able to process your latest payment.
+                Please update your payment method to keep your subscription active.
+              </p>
+              <div style="background:#0f172a;border:1px solid #7f1d1d;border-radius:12px;padding:16px;margin-bottom:20px;">
+                <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
+                  If the issue isn't resolved, your account may be downgraded to the free Observer plan.
+                </p>
+              </div>
+              ${invoiceLink}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:24px 0 8px;">
+                    <a href="${FRONTEND_URL}/billing"
+                       style="display:inline-block;background:linear-gradient(135deg,#ef4444,#f97316);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:10px;">
+                      Update Payment →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6;">
+                Questions? Reply to this email or reach us at <a href="mailto:${BRAND.supportEmail}" style="color:#22d3ee;text-decoration:none;">${BRAND.supportEmail}</a>.
+              </p>
+            </td>
+          </tr>`;
+
+  try {
+    await resendSend({
+      to: args.to,
+      subject: `Action required: ${BRAND.name} payment failed`,
+      html: emailWrap(
+        `Payment Failed - ${BRAND.name}`,
+        emailHeader('linear-gradient(135deg,#ef4444,#b91c1c)') + body + emailFooter(args.to),
+        `You received this because a payment failed on your aivis.biz account`,
+      ),
+      text: [
+        `Payment failed`,
+        `Hi ${firstName}, we weren't able to process your latest payment. Please update your payment method to keep your subscription active.`,
+        ...(args.invoiceUrl ? [`Update payment: ${args.invoiceUrl}`] : []),
+        `Billing: ${FRONTEND_URL}/billing`,
+        `Questions? ${BRAND.supportEmail}`,
+        `${BRAND.name} - ${BRAND.tagline}`,
+      ].join('\n\n'),
+    });
+  } catch (err: any) {
+    console.error('[Email] Failed to send payment failed email:', err?.message);
+  }
 }
 
 // ─── Admin broadcast email - custom one-off announcements ─────────────────────

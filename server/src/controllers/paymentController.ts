@@ -27,6 +27,12 @@ import {
 import { settleReferralCreditsIfEligible } from '../services/referralCredits.js';
 import { handleTrialConversionFromStripe } from '../services/trialService.js';
 import { createUserNotification } from '../services/notificationService.js';
+import {
+  sendPaymentConfirmationEmail,
+  sendSubscriptionActivatedEmail,
+  sendSubscriptionCancelledEmail,
+  sendPaymentFailedEmail,
+} from '../services/emailService.js';
 import { getPool } from '../services/postgresql.js';
 import { logWebhookSignatureFailure, sanitizeAndLogError } from '../lib/securityEventLogger.js';
 
@@ -872,6 +878,25 @@ async function handleCheckoutCompleted(session: any) {
       message: `Your plan has been upgraded to ${tierKey}. Enjoy your new features!`,
       metadata: { tier: tierKey, stripeSessionId: session.id },
     }).catch(() => {});
+
+    // Send payment confirmation email (non-blocking)
+    const user = await User.findById(userId);
+    if (user?.email) {
+      const amountCents = typeof session.amount_total === 'number' ? session.amount_total : 0;
+      const amountFormatted = `$${(amountCents / 100).toFixed(2)}`;
+      const billingPeriod = String(session.metadata?.billing_period || 'monthly');
+      const tierLabel = tierKey.charAt(0).toUpperCase() + tierKey.slice(1);
+      sendPaymentConfirmationEmail({
+        to: user.email,
+        userName: user.name,
+        tierName: tierLabel,
+        amountFormatted,
+        billingPeriod,
+        invoiceUrl: session.invoice ? null : null, // invoice URL not available on checkout session
+      }).catch((err: any) => {
+        console.error('[Checkout Completed] Payment confirmation email failed (non-fatal):', err?.message);
+      });
+    }
   }
 }
 
@@ -944,6 +969,29 @@ async function handleSubscriptionCreated(subscription: any) {
         currentPeriodEnd: new Date(subscription.current_period_end * 1000),
       }
     );
+
+    // Send subscription activated email (non-blocking)
+    const user = await User.findById(userId);
+    if (user?.email) {
+      const tierLabel = tierKey.charAt(0).toUpperCase() + tierKey.slice(1);
+      const tierLimits = getTierLimits(tierKey);
+      const features: string[] = [
+        `${tierLimits?.auditsPerMonth || '?'} scans per month`,
+      ];
+      if (tierKey === 'alignment') {
+        features.push('Competitor tracking', 'Reverse engineering tools', 'Report exports & history');
+      } else if (tierKey === 'signal') {
+        features.push('Triple-Check AI (3-model validation)', 'Citation testing', 'API access & webhooks', 'White-label exports');
+      }
+      sendSubscriptionActivatedEmail({
+        to: user.email,
+        userName: user.name,
+        tierName: tierLabel,
+        features,
+      }).catch((err: any) => {
+        console.error('[Subscription Created] Activated email failed (non-fatal):', err?.message);
+      });
+    }
   }
 }
 
@@ -1061,6 +1109,20 @@ async function handleSubscriptionDeleted(subscription: any) {
       message: 'Your subscription has been canceled. You\'ve been moved to the free Observer plan.',
       metadata: { subscriptionId: subscription.id },
     }).catch(() => {});
+
+    // Send cancellation email (non-blocking)
+    const user = await User.findById(userId);
+    if (user?.email) {
+      const tierKey = subscription.metadata?.tier_key || getTierFromPriceId(priceId) || 'unknown';
+      const tierLabel = tierKey.charAt(0).toUpperCase() + tierKey.slice(1);
+      sendSubscriptionCancelledEmail({
+        to: user.email,
+        userName: user.name,
+        tierName: tierLabel,
+      }).catch((err: any) => {
+        console.error('[Subscription Deleted] Cancelled email failed (non-fatal):', err?.message);
+      });
+    }
   }
 }
 
@@ -1123,9 +1185,20 @@ async function handleInvoicePaymentFailed(invoice: any) {
 
   // Optionally restrict user access after failed payment
   if (payment?.user_id) {
-    // You could implement a "restricted" status here
     console.log(`[Invoice Failed] User ${payment.user_id} has a failed payment`);
-    // await User.findByIdAndUpdate(payment.user, { paymentStatus: 'past_due' });
+
+    // Send payment failed email (non-blocking)
+    const user = await User.findById(payment.user_id);
+    if (user?.email) {
+      const hostedInvoiceUrl = typeof invoice.hosted_invoice_url === 'string' ? invoice.hosted_invoice_url : null;
+      sendPaymentFailedEmail({
+        to: user.email,
+        userName: user.name,
+        invoiceUrl: hostedInvoiceUrl,
+      }).catch((err: any) => {
+        console.error('[Invoice Failed] Payment failed email failed (non-fatal):', err?.message);
+      });
+    }
   }
 }
 

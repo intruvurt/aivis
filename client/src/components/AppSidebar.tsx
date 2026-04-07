@@ -29,7 +29,7 @@ const mainNav: NavItem[] = [
   { to: "/app", labelKey: "sidebar.overview", icon: LayoutDashboard },
   { to: "/app/analyze", labelKey: "sidebar.seeVisibility", icon: Search },
   { to: "/app/reports", labelKey: "sidebar.reports", icon: FileText },
-  { to: "/app/score-fix", labelKey: "sidebar.scorefix", icon: Zap, minTier: "signal" },
+  { to: "/app/score-fix", labelKey: "sidebar.scorefix", icon: Zap, minTier: "alignment" },
 ];
 
 const evidenceNav: NavItem[] = [

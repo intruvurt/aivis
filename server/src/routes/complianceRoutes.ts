@@ -53,7 +53,7 @@ router.get('/consent', async (req: Request, res: Response) => {
 
     res.json({ success: true, data: rows });
   } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Compliance check failed. Please try again.' });
   }
 });
 
@@ -96,7 +96,7 @@ router.post('/consent', async (req: Request, res: Response) => {
 
     return res.status(201).json({ success: true, data: rows[0] });
   } catch (err: any) {
-    return res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({ success: false, error: 'Compliance check failed. Please try again.' });
   }
 });
 

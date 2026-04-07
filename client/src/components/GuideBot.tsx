@@ -24,7 +24,7 @@ import {
   MicOff,
 } from 'lucide-react';
 
-import { getSuggestions, DEFAULT_SUGGESTIONS, getGreeting, RELATED_PAGES } from '../constants/guideBotConfig';
+import { getSuggestions, DEFAULT_SUGGESTIONS, getGreeting, RELATED_PAGES, getProactiveHint, PROACTIVE_HINT_DELAY_MS, PROACTIVE_HINT_DISPLAY_MS } from '../constants/guideBotConfig';
 import renderMarkdown from '../utils/renderMarkdown';
 import { useGuideBotChat } from '../hooks/useGuideBotChat';
 import { useSupportTickets } from '../hooks/useSupportTickets';
@@ -100,6 +100,45 @@ export default function GuideBot() {
   const [suggestions, setSuggestions] = useState<string[]>(() => getSuggestions(pathname));
   const relatedPages = RELATED_PAGES[pathname] || [];
   const greeting = getGreeting(pathname);
+
+  // ── Proactive thought bubble ──
+  const [proactiveHint, setProactiveHint] = useState<string | null>(null);
+  const [hintDismissed, setHintDismissed] = useState<Set<string>>(() => new Set());
+  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hintHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // Clear any pending timers on page change or when chat opens
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+    if (hintHideTimerRef.current) clearTimeout(hintHideTimerRef.current);
+    setProactiveHint(null);
+
+    // Only show hints when chat is closed and user hasn't dismissed on this page
+    if (isOpen || hintDismissed.has(pathname)) return;
+
+    hintTimerRef.current = setTimeout(() => {
+      if (isOpen) return; // re-check in case they opened chat during timeout
+      const hint = getProactiveHint(pathname);
+      if (!hint) return;
+      setProactiveHint(hint);
+
+      // Auto-hide after display duration
+      hintHideTimerRef.current = setTimeout(() => {
+        setProactiveHint(null);
+      }, PROACTIVE_HINT_DISPLAY_MS);
+    }, PROACTIVE_HINT_DELAY_MS);
+
+    return () => {
+      if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+      if (hintHideTimerRef.current) clearTimeout(hintHideTimerRef.current);
+    };
+  }, [pathname, isOpen, hintDismissed]);
+
+  const dismissHint = () => {
+    setProactiveHint(null);
+    if (hintHideTimerRef.current) clearTimeout(hintHideTimerRef.current);
+    setHintDismissed((prev) => new Set(prev).add(pathname));
+  };
 
   // Rotate suggestions when page changes or chat is cleared
   useEffect(() => {
@@ -210,7 +249,7 @@ export default function GuideBot() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            onClick={() => setIsOpen(true)}
+            onClick={() => { dismissHint(); setIsOpen(true); }}
             className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
             aria-label="Open BIX"
           >
@@ -222,6 +261,35 @@ export default function GuideBot() {
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-cyan-400 rounded-full border-2 border-[#0d1117] animate-pulse" />
             )}
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* ── Proactive thought bubble ── */}
+      <AnimatePresence>
+        {!isOpen && proactiveHint && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="fixed bottom-[5.5rem] right-6 z-50 max-w-[260px]"
+          >
+            <div className="relative rounded-xl border border-cyan-400/20 bg-[#1e2736] px-3.5 py-2.5 shadow-lg shadow-black/30">
+              <button
+                onClick={dismissHint}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/20 transition-colors"
+                aria-label="Dismiss hint"
+              >
+                <X className="h-3 w-3" />
+              </button>
+              <div className="flex items-start gap-2">
+                <Sparkles className="h-3.5 w-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-white/75 leading-relaxed">{proactiveHint}</p>
+              </div>
+              {/* Speech bubble tail */}
+              <div className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 border-r border-b border-cyan-400/20 bg-[#1e2736]" />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

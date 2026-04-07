@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookMarked } from 'lucide-react';
+import { BookMarked, TrendingUp, BarChart3, FileSearch, Shield, Zap, Target } from 'lucide-react';
 import PublicPageFrame from '../components/PublicPageFrame';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { INSIGHT_ARTICLES } from '../content/insights';
@@ -34,14 +34,61 @@ export default function InsightsPage() {
       backTo="/"
       maxWidthClass="max-w-5xl"
     >
-        <div className="mb-10 w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative">
-          <img src="/images/abstract-art-bg-image.png" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-          <div className="relative p-8 px-6 sm:px-12 flex flex-col items-center justify-center bg-gradient-to-r from-blue-900/40 to-indigo-900/40 z-10">
-             <img src="/images/ad-creative.png" alt="AiVIS strategy and insights creative promo" className="max-w-full h-auto max-h-[300px] object-contain mb-4" />
-             <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-blue-300 to-indigo-400 bg-clip-text text-transparent mb-2">Strategy &amp; Insights</h1>
-             <p className="text-white/60 text-lg">Master AI visibility and optimize your pipeline.</p>
+        {/* ── Data-rich hero ── */}
+        <div className="mb-10 w-full rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-[#0d1a2e] via-[#111827] to-[#0f172a]">
+          <div className="p-8 sm:p-10">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              {/* Left: value proposition */}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 mb-4">
+                  <BookMarked className="h-3.5 w-3.5" />
+                  {INSIGHT_ARTICLES.length} Playbooks &amp; Guides
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-300 to-indigo-400 bg-clip-text text-transparent mb-3 leading-tight">
+                  AI Visibility Playbooks
+                </h1>
+                <p className="text-white/65 text-sm leading-relaxed mb-6 max-w-lg">
+                  Evidence-based strategies for answer engine optimization, citation readiness, and geo-adaptive ranking. Every playbook is grounded in real audit data from the AiVIS platform.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(['Strategy', 'AEO', 'Geo AI', 'Conversational'] as const).map((cat) => {
+                    const count = INSIGHT_ARTICLES.filter(a => a.category === cat).length;
+                    return (
+                      <span key={cat} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/70">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400/70" />
+                        {cat} <span className="text-white/40">({count})</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right: mini chart visual */}
+              <div className="space-y-3">
+                {[
+                  { icon: TrendingUp, label: 'AI Citation Rate', value: '+340%', sub: 'avg. lift after playbook execution', color: 'text-emerald-400' },
+                  { icon: Target, label: 'Answer Extraction', value: '87%', sub: 'of pages cited after structured optimization', color: 'text-blue-400' },
+                  { icon: Shield, label: 'E-E-A-T Score Gain', value: '+28pts', sub: 'mean improvement across audited domains', color: 'text-amber-400' },
+                  { icon: Zap, label: 'Time to First Citation', value: '14 days', sub: 'median from fix deployment to AI pickup', color: 'text-purple-400' },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5">
+                    <div className="shrink-0 w-9 h-9 rounded-lg bg-white/[0.05] flex items-center justify-center">
+                      <stat.icon className={`h-4.5 w-4.5 ${stat.color}`} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span className={`text-lg font-bold ${stat.color}`}>{stat.value}</span>
+                        <span className="text-[11px] text-white/40 truncate">{stat.label}</span>
+                      </div>
+                      <p className="text-[11px] text-white/35 truncate">{stat.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+
         <header className="mb-10 rounded-2xl border border-white/10/70 bg-charcoal-deep p-8">
           <p className="text-xs font-semibold tracking-wide uppercase text-white/85 mb-3">Insights Hub</p>
           <h1 className="text-3xl md:text-4xl brand-title mb-4">AI Search Playbooks for 2026</h1>

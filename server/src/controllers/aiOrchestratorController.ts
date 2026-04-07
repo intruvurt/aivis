@@ -165,7 +165,7 @@ export async function runAnalysisPipeline(req: Request, res: Response) {
     
     res.status(500).json({ 
       success: false,
-      error: (error instanceof Error) ? error.message : String(error),
+      error: 'Analysis failed. Please try again.',
       statusCode: 500
     });
   }

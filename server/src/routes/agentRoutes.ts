@@ -29,7 +29,7 @@ router.get('/tasks', authRequired, async (req: Request, res: Response) => {
     const tasks = await getUserTasks(userId, limit);
     return res.json({ tasks });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Failed to fetch tasks' });
+    return res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 });
 
@@ -49,7 +49,7 @@ router.post('/tasks', authRequired, async (req: Request, res: Response) => {
     return res.status(201).json({ task });
   } catch (err: any) {
     const status = err.message?.includes('limit reached') ? 429 : 500;
-    return res.status(status).json({ error: err.message || 'Failed to create task' });
+    return res.status(status).json({ error: 'Failed to create task' });
   }
 });
 
@@ -65,7 +65,7 @@ router.delete('/tasks/:id', authRequired, async (req: Request, res: Response) =>
     }
     return res.json({ cancelled: true });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Failed to cancel task' });
+    return res.status(500).json({ error: 'Failed to cancel task' });
   }
 });
 

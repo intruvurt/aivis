@@ -115,7 +115,7 @@ Format your response as JSON with this structure:
 
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Analysis failed. Please try again.',
       statusCode: 500
     });
   }

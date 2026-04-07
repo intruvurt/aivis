@@ -348,7 +348,7 @@ export const register = async (req: Request, res: Response) => {
     console.error('[Register Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error during registration',
+      error: 'Server error during registration',
       statusCode: 500,
     });
   }
@@ -459,7 +459,7 @@ export const login = async (req: Request, res: Response) => {
     console.error('[Login Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error during login',
+      error: 'Server error during login',
       statusCode: 500,
     });
   }
@@ -539,7 +539,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     console.error('[Verify Email Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error during email verification',
+      error: 'Server error during email verification',
       statusCode: 500,
     });
   }
@@ -594,7 +594,7 @@ export const resendVerification = async (req: Request, res: Response) => {
     console.error('[Resend Verification Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -627,7 +627,7 @@ export const getMe = async (req: Request, res: Response) => {
     console.error('[Get Me Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -818,7 +818,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     console.error('[Update Profile Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -850,7 +850,7 @@ export const getReferralSummary = async (req: Request, res: Response) => {
     console.error('[Get Referral Summary Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -882,7 +882,7 @@ export const validateReferral = async (req: Request, res: Response) => {
     console.error('[Validate Referral Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -926,7 +926,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     console.error('[Forgot Password Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }
@@ -973,7 +973,7 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
     console.error('[Reset Password Error]', error);
     return res.status(500).json({
       success: false,
-      error: error?.message || 'Server error',
+      error: 'Server error',
       statusCode: 500,
     });
   }

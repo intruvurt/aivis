@@ -125,7 +125,7 @@ export const createAudit = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -163,7 +163,7 @@ export const getAudits = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -192,7 +192,7 @@ export const getAuditById = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -234,7 +234,7 @@ export const updateAuditStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }

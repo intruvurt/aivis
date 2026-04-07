@@ -1033,7 +1033,7 @@ export async function handleAssistantMessage(req: Request, res: Response) {
           );
           if (rows[0]) {
             // Add the chat context as the first message
-            const chatContext = messages?.length
+            const chatContext = history?.length
               ? (history || []).slice(-3).map((m) => `${m.role}: ${m.content}`).join('\n')
               : ticketIntent.subject;
             await pool.query(

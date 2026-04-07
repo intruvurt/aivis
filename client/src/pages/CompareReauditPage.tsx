@@ -22,9 +22,6 @@ export default function CompareReauditPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-6">
-            <div className="flex justify-center mb-8">
-        <img src="/images/ad.png" alt="AiVIS strategic feature comparison promo" className="max-w-full h-auto max-h-[280px] object-contain rounded-xl opacity-85 hover:opacity-100 transition-opacity" />
-      </div>
       <h1 className="text-4xl font-extrabold mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
         AiVIS vs. Reaudit
       </h1>

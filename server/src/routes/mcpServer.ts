@@ -480,7 +480,7 @@ router.post('/call', async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     return res.status(500).json({
-      error: err.message,
+      error: 'Request failed. Please try again.',
       isError: true,
     });
   }

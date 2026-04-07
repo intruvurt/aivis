@@ -126,6 +126,19 @@ async function logRateLimitEvent(
   }
 }
 
+// ─── Owner exemption (allowlisted emails skip rate limits) ────────────────────
+
+function getAllowlistedEmails(): Set<string> {
+  const raw = String(process.env.ELEVATED_TIER_ALLOWLIST_EMAILS || process.env.ADMIN_ELEVATED_ALLOWLIST_EMAILS || '');
+  return new Set(raw.split(',').map(e => e.trim().toLowerCase()).filter(Boolean));
+}
+
+function isOwnerExempt(req: Request): boolean {
+  const email = String((req as any).user?.email || '').trim().toLowerCase();
+  if (!email) return false;
+  return getAllowlistedEmails().has(email);
+}
+
 // ─── Middleware factories ─────────────────────────────────────────────────────
 
 /**
@@ -134,6 +147,7 @@ async function logRateLimitEvent(
  */
 export function tieredRateLimit(route: RouteKey = 'api_default') {
   return (req: Request, res: Response, next: NextFunction): void => {
+    if (isOwnerExempt(req)) { next(); return; }
     const user = (req as any).user;
     const userId: string | null = user?.id ?? null;
     const tier: CanonicalTier = (user?.tier as CanonicalTier) || 'observer';
@@ -168,6 +182,7 @@ export function ipRateLimit(opts?: { maxRequests?: number; windowMs?: number }) 
   const windowMs = opts?.windowMs ?? IP_RATE_CONFIG.windowMs;
 
   return (req: Request, res: Response, next: NextFunction): void => {
+    if (isOwnerExempt(req)) { next(); return; }
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const key = `ip:${ip}`;
     const result = consumeToken(key, maxRequests, windowMs);

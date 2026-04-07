@@ -853,6 +853,38 @@ const startsWithRateLimitPath = (req: Request, prefix: string): boolean => {
   return getRateLimitPathCandidates(req).some((candidate) => candidate === normalizedPrefix || candidate.startsWith(`${normalizedPrefix}/`));
 };
 
+// ── Rate-limit owner exemption (cached, sync check) ──────────────────────────
+const _rlOwnerIds = new Set<string>();
+let _rlOwnerCacheReady = false;
+
+function refreshRateLimitOwnerCache(): void {
+  const raw = String(process.env.ELEVATED_TIER_ALLOWLIST_EMAILS || process.env.ADMIN_ELEVATED_ALLOWLIST_EMAILS || '');
+  const emails = raw.split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+  if (emails.length === 0) { _rlOwnerCacheReady = true; return; }
+  getPool()
+    .query(`SELECT id FROM users WHERE LOWER(email) = ANY($1::text[])`, [emails])
+    .then(({ rows }: { rows: Array<{ id: string }> }) => {
+      _rlOwnerIds.clear();
+      rows.forEach(r => _rlOwnerIds.add(String(r.id)));
+      _rlOwnerCacheReady = true;
+    })
+    .catch(() => { _rlOwnerCacheReady = true; });
+}
+setTimeout(refreshRateLimitOwnerCache, 3_000);
+setInterval(refreshRateLimitOwnerCache, 5 * 60 * 1000);
+
+function isRateLimitExempt(req: Request): boolean {
+  if (!_rlOwnerCacheReady || _rlOwnerIds.size === 0) return false;
+  const auth = String(req.get('authorization') || '').trim();
+  if (!/^Bearer\s+/i.test(auth)) return false;
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return false;
+  try {
+    const payload = verifyUserToken(token);
+    return payload?.userId ? _rlOwnerIds.has(payload.userId) : false;
+  } catch { return false; }
+}
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: IS_PRODUCTION ? 300 : 600,
@@ -876,6 +908,8 @@ const apiLimiter = rateLimit({
   },
   message: { error: 'Too many requests, please try again later', retryAfter: 60, code: 'RATE_LIMIT_EXCEEDED' },
   skip: (req) => {
+    // Owner allowlist exemption
+    if (isRateLimitExempt(req)) return true;
     // Exempt lightweight polling and health checks from the global budget
     if (matchesRateLimitPath(req, '/api/health') || matchesRateLimitPath(req, '/health')) return true;
     if (req.method === 'GET' && (matchesRateLimitPath(req, '/api/features/status') || matchesRateLimitPath(req, '/features/status'))) return true;
@@ -893,6 +927,7 @@ const heavyActionLimiter = rateLimit({
   max: IS_PRODUCTION ? 15 : 80,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => isRateLimitExempt(req),
   keyGenerator: (req) => {
     const userId = String((req as any).user?.id || '').trim();
     if (userId) return `user:${userId}`;
@@ -908,6 +943,7 @@ const licenseLimiter = rateLimit({
   max: IS_PRODUCTION ? 30 : 200,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => isRateLimitExempt(req),
   keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
   handler: (_req, res) => {
     res.status(429).json({ error: 'Too many license requests', code: 'LICENSE_RATE_LIMIT', retryAfter: 60 });
@@ -920,6 +956,7 @@ const authLimiter = rateLimit({
   max: IS_PRODUCTION ? 10 : 200,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => isRateLimitExempt(req),
   keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
   handler: (_req, res) => {
     res.status(429).json({ error: 'Too many auth requests, please try again later', code: 'AUTH_RATE_LIMIT', retryAfter: 60 });
@@ -932,6 +969,7 @@ const publicToolLimiter = rateLimit({
   max: IS_PRODUCTION ? 10 : 100,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => isRateLimitExempt(req),
   keyGenerator: (req) => ipKeyGenerator(getRateLimitClientIp(req)),
   handler: (_req, res) => {
     res.status(429).json({ error: 'Too many tool requests, please try again later', code: 'TOOL_RATE_LIMIT', retryAfter: 60 });
@@ -3357,7 +3395,7 @@ app.post('/api/seo/crawl', authRequired, heavyActionLimiter, async (req: Request
       // ignore rollback failure
     }
     console.error('[SEO crawl] error:', err);
-    return res.status(500).json({ success: false, error: err?.message || 'Failed to run SEO crawl', code: 'SEO_CRAWL_FAILED' });
+    return res.status(500).json({ success: false, error: 'Failed to run SEO crawl. Please try again.', code: 'SEO_CRAWL_FAILED' });
   } finally {
     client.release();
   }
@@ -9065,7 +9103,7 @@ Return ONLY valid JSON:
     const errMsg = String(err?.message || '');
     const isStrictTripleCheckFailure = errMsg.includes('TRIPLE_CHECK_');
     const status = Number(err?.status) || (code === 'INVALID_URL' ? 400 : isStrictTripleCheckFailure ? 503 : 500);
-    return res.status(status).json({ error: err.message || 'Analysis failed', code, request_id: requestId });
+    return res.status(status).json({ error: 'Analysis failed. Please try again.', code, request_id: requestId });
   } finally {
     releaseAnalyzeLock(analyzeLockKey);
   }
@@ -9718,7 +9756,7 @@ Return ONLY valid JSON:
 app.post('/api/analyze/intelligence', authRequired, workspaceRequired, requireWorkspacePermission('audit:run'), heavyActionLimiter, usageGate, incrementUsage, intelligenceAnalyzeHandler);
 
 // Admin endpoints
-const adminLimiter = rateLimit({ windowMs: 30_000, max: 5, standardHeaders: true, legacyHeaders: false });
+const adminLimiter = rateLimit({ windowMs: 30_000, max: 5, standardHeaders: true, legacyHeaders: false, skip: (req) => isRateLimitExempt(req) });
 
 function requireAdminKey(req: Request, res: Response): boolean {
   if (!process.env.ADMIN_KEY) {

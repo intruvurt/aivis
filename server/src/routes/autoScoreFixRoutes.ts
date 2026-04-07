@@ -293,7 +293,7 @@ router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error('[AutoScoreFix] Job submission error:', err?.message);
-    return res.status(500).json({ error: err?.message || 'Failed to submit job' });
+    return res.status(500).json({ error: 'Failed to submit job' });
   }
 });
 
@@ -386,7 +386,7 @@ router.post('/jobs/:id/cancel', workspaceRequired, async (req: Request, res: Res
       message: `${policy} Refunded ${result.refund} credits.`,
     });
   } catch (err: any) {
-    return res.status(500).json({ error: err?.message || 'Failed to cancel job' });
+    return res.status(500).json({ error: 'Failed to cancel job' });
   }
 });
 

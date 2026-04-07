@@ -245,3 +245,74 @@ const DEFAULT_GREETING =
 export function getGreeting(path: string): string {
   return GREETINGS[path] || GREETINGS[path.replace(/^\/app/, '')] || DEFAULT_GREETING;
 }
+
+/* ── Proactive thought bubbles ──────────────────────────────────────────────
+ * Shown above the floating BIX button when the chat is closed and the user
+ * has been idle on a page. Each page has a pool of contextual nudge messages.
+ * A random one is picked each time. Dismissing hides for that session/page.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+const PROACTIVE_HINTS: Record<string, string[]> = {
+  '/app': [
+    'Tip: Run your first audit to establish a baseline score.',
+    'Did you know? You can track competitors from the sidebar.',
+    'Try pasting a URL into Analyze to see how AI models read your site.',
+  ],
+  '/app/analyze': [
+    'Paste any URL to see how AI models extract and cite your content.',
+    'Pro tip: Audit your homepage first, then key service pages.',
+    'Need help reading results? I can break down every score category.',
+  ],
+  '/app/analytics': [
+    'Score trending down? I can help identify which category is dropping.',
+    'Compare multiple audits of the same URL to see real progress.',
+    'Tip: Weekly re-audits of the same URL produce the best trend data.',
+  ],
+  '/app/competitors': [
+    'Add a competitor URL to see how your visibility compares.',
+    'Competitor gaps reveal the fastest improvement opportunities.',
+  ],
+  '/app/citations': [
+    'Test whether AI platforms mention your brand in their answers.',
+    'Citation presence is the ultimate proof of AI visibility.',
+  ],
+  '/app/reports': [
+    'Export reports as PDF to share progress with stakeholders.',
+    'Share links let anyone view your audit — no login needed.',
+  ],
+  '/app/score-fix': [
+    'ScoreFix generates pull requests to fix AI visibility blockers automatically.',
+    'Each fix costs 10 credits and targets your highest-impact blockers.',
+  ],
+  '/pricing': [
+    'Not sure which plan? I can compare tiers based on your needs.',
+    'All plans include unlimited re-audits of previously scanned URLs.',
+  ],
+  '/guide': [
+    'Following the guide? I can clarify any step in more detail.',
+    'Start with Section 1 — baseline setup — for the best results.',
+  ],
+  '/insights': [
+    'These playbooks are built from real audit data across thousands of scans.',
+    'Start with the AEO playbook if AI visibility is new to you.',
+  ],
+};
+
+/** How long (ms) user must idle on a page before a proactive hint appears */
+export const PROACTIVE_HINT_DELAY_MS = 20_000; // 20 seconds
+
+/** How long (ms) the hint bubble stays visible before auto-dismissing */
+export const PROACTIVE_HINT_DISPLAY_MS = 12_000; // 12 seconds
+
+/**
+ * Get a random proactive hint for the current page.
+ * Returns null if no hints are configured for this path.
+ */
+export function getProactiveHint(path: string): string | null {
+  const pool =
+    PROACTIVE_HINTS[path] ||
+    PROACTIVE_HINTS[path.replace(/\/[^/]+$/, '')] || // try parent path
+    null;
+  if (!pool || pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
+}

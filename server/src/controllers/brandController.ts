@@ -31,7 +31,7 @@ export const getBrand = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -65,7 +65,7 @@ export const createBrand = async (req, res) => {
     
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -105,7 +105,7 @@ export const updateBrand = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -132,7 +132,7 @@ export const deleteBrand = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }
@@ -161,7 +161,7 @@ export const getAllBrands = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Something went wrong. Please try again.',
       statusCode: 500
     });
   }

@@ -928,7 +928,7 @@ router.post('/tools/:toolName', async (req: Request, res: Response) => {
     return res.json({ tool: toolName, result });
   } catch (err: any) {
     return res.status(err.message?.includes('not found') ? 404 : 500).json({
-      error: err.message,
+      error: 'Request failed. Please try again.',
       tool: req.params.toolName,
     });
   }

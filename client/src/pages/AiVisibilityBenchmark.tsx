@@ -81,15 +81,6 @@ export default function AiVisibilityBenchmark() {
           variants={stagger}
           className="mb-16"
         >
-          {/* Promo image */}
-          <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mb-10 flex justify-center">
-            <img
-              src="/images/ad-aivis.png"
-              alt="AiVIS AI visibility benchmark promo - your website can rank number one and still be invisible"
-              className="max-w-full h-auto max-h-[400px] object-contain rounded-2xl border border-white/10 shadow-2xl shadow-cyan-500/5"
-            />
-          </motion.div>
-
           {/* Badge */}
           <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="flex justify-center mb-6">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 text-xs font-bold tracking-widest uppercase">

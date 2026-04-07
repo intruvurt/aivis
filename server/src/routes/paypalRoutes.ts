@@ -84,7 +84,7 @@ router.post('/checkout', authRequired, async (req: Request, res: Response) => {
     }
   } catch (err: any) {
     console.error('[PayPal] Checkout error:', err);
-    return res.status(500).json({ error: err.message || 'PayPal checkout failed.' });
+    return res.status(500).json({ error: 'PayPal checkout failed.' });
   }
 });
 
@@ -118,7 +118,7 @@ router.get('/capture', authRequired, async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error('[PayPal] Capture error:', err);
-    return res.status(500).json({ error: err.message || 'Failed to capture PayPal payment.' });
+    return res.status(500).json({ error: 'Failed to capture PayPal payment.' });
   }
 });
 
@@ -151,7 +151,7 @@ router.get('/activate', authRequired, async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error('[PayPal] Activation error:', err);
-    return res.status(500).json({ error: err.message || 'Failed to activate subscription.' });
+    return res.status(500).json({ error: 'Failed to activate subscription.' });
   }
 });
 

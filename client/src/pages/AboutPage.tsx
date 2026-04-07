@@ -352,7 +352,7 @@ export default function AboutPage() {
               </div>
             </motion.div>
 
-            {/* Sadiq Khan */}
+            {/* Danielle C. Mason */}
             <motion.div
               className="rounded-xl border border-white/10 bg-white/[0.04] overflow-hidden"
               whileHover={{ borderColor: "rgba(6,182,212,0.2)" }}
@@ -362,16 +362,16 @@ export default function AboutPage() {
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src="/marketer.png"
-                    alt="Sadiq Khan, AiVIS Marketing"
+                    alt="Danielle C. Mason, AiVIS Marketing"
                     width={56}
                     height={56}
                     className="w-14 h-14 rounded-full object-cover border border-cyan-400/20 shadow-lg shadow-cyan-500/10"
                     loading="lazy"
                   />
                   <div>
-                    <h3 className="text-lg font-bold text-cyan-200">Sadiq Khan</h3>
+                    <h3 className="text-lg font-bold text-cyan-200">Danielle C. Mason</h3>
                     <p className="text-sm text-white/50">Platform Marketing</p>
-                    <p className="text-[10px] text-white/30">India (UTC+5:30)</p>
+                    <p className="text-[10px] text-white/30">Atlanta, GA (UTC-5)</p>
                   </div>
                 </div>
 

@@ -540,13 +540,13 @@ const Landing = () => {
                       </li>
                     ))}
                   </ul>
-                  <button type="button" disabled={plan.monthlyPrice === 0 || loadingTier !== null} onClick={() => handlePayment(plan.key)}
+                  <button type="button" disabled={loadingTier !== null && loadingTier !== plan.key} onClick={() => plan.monthlyPrice === 0 ? navigate('/auth?mode=signup') : handlePayment(plan.key)}
                     className={`w-full py-3 px-5 rounded-xl font-semibold text-sm transition ${
-                      plan.monthlyPrice === 0 ? 'bg-white/5 text-white/30 cursor-default border border-white/10' :
+                      plan.monthlyPrice === 0 ? 'border border-cyan-400/40 text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 cursor-pointer' :
                       loadingTier === plan.key ? 'opacity-60 cursor-wait bg-white/10 text-white border border-white/15' :
                       `border ${plan.accentClass} border-current bg-current/10 hover:bg-current/20 text-white`
                     }`}>
-                    {plan.monthlyPrice === 0 ? 'Start Free' : loadingTier === plan.key ? 'Processing…' : billingCycle === 'annual' ? `Get ${plan.name} (Annual)` : `Get ${plan.name}`}
+                    {plan.monthlyPrice === 0 ? 'Start Free →' : loadingTier === plan.key ? 'Processing…' : billingCycle === 'annual' ? `Get ${plan.name} (Annual)` : `Get ${plan.name}`}
                   </button>
                 </motion.div>
               );

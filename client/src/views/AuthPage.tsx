@@ -320,7 +320,7 @@ export default function AuthPage() {
           msg.includes("not exist");
         if (isUserMissing) {
           setError(
-            "We recently migrated our infrastructure. If you had an existing account, please re-register with the same email - your Stripe subscription will automatically re-link. Contact support@aivis.biz if you need assistance."
+            "Invalid email or password. Please try again or create a new account."
           );
         } else if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("load failed")) {
           setError("Could not reach the AiVIS API. This is usually a temporary network issue or a frontend API URL mismatch.");
@@ -578,7 +578,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#7f1d1d] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#6366f1] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
                 </button>
@@ -783,7 +783,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#7f1d1d] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#6366f1] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create Account"}
                 </button>

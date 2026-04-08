@@ -72,6 +72,7 @@ export default function Footer() {
 
       <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 pt-5 text-xs text-white/50 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <span>© {currentYear} AiVIS. All rights reserved.</span>
+        <a href="mailto:support@aivis.biz" className="text-white/50 hover:text-white transition">support@aivis.biz</a>
         <span>Evidence-grounded AI visibility audits for operators, agencies, and in-house teams.</span>
       </div>
     </footer>

@@ -880,7 +880,8 @@ export default function PricingPage() {
   // Check trial eligibility when authenticated
   useEffect(() => {
     if (!isAuthenticated || !token) {
-      setCanStartTrial(false);
+      // Show trial CTA to anonymous visitors — clicking will redirect to signup
+      setCanStartTrial(true);
       return;
     }
     // Only observers who haven't trialed are eligible
@@ -915,7 +916,7 @@ export default function PricingPage() {
 
   async function handleStartTrial() {
     if (!isAuthenticated || !token) {
-      navigate("/auth?mode=signin&redirect=/pricing");
+      navigate("/auth?mode=signup&redirect=/pricing");
       return;
     }
     setIsStartingTrial(true);

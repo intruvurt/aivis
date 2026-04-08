@@ -6,12 +6,14 @@ import en from './en.json';
 import es from './es.json';
 import fr from './fr.json';
 import de from './de.json';
+import uk from './uk.json';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', label: 'English', flag: '🇺🇸' },
   { code: 'es', label: 'Español', flag: '🇪🇸' },
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+  { code: 'uk', label: 'Українська', flag: '🇺🇦' },
 ] as const;
 
 i18n
@@ -23,6 +25,7 @@ i18n
       es: { translation: es },
       fr: { translation: fr },
       de: { translation: de },
+      uk: { translation: uk },
     },
     fallbackLng: 'en',
     interpolation: { escapeValue: false },

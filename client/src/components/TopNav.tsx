@@ -42,18 +42,18 @@ const RESEARCH_GROUPS: ToolGroup[] = [
     heading: "Analysis",
     accent: "text-cyan-400",
     links: [
-      { to: "/analytics", label: "Analytics", icon: BarChart3, desc: "Score history & trends", minTier: "observer", color: "text-cyan-400" },
-      { to: "/reports", label: "Reports", icon: FileText, desc: "Saved audit reports", minTier: "observer", color: "text-cyan-300" },
-      { to: "/site-crawl", label: "Site Crawl", icon: Layers, desc: "Multi-page SEO crawl", minTier: "alignment", color: "text-cyan-500" },
+      { to: "/app/analytics", label: "Analytics", icon: BarChart3, desc: "Score history & trends", minTier: "observer", color: "text-cyan-400" },
+      { to: "/app/reports", label: "Reports", icon: FileText, desc: "Saved audit reports", minTier: "observer", color: "text-cyan-300" },
+      { to: "/app/site-crawl", label: "Site Crawl", icon: Layers, desc: "Multi-page SEO crawl", minTier: "alignment", color: "text-cyan-500" },
     ],
   },
   {
     heading: "Research",
     accent: "text-emerald-400",
     links: [
-      { to: "/keywords", label: "Keywords", icon: Search, desc: "AI keyword research", minTier: "observer", color: "text-emerald-400" },
-      { to: "/niche-discovery", label: "Niche Discovery", icon: Globe, desc: "Top 100 niche rankings", minTier: "observer", color: "text-emerald-300" },
-      { to: "/competitors", label: "Competitors", icon: CompetitorRadarIcon, desc: "Side by side benchmarks", minTier: "alignment", color: "text-emerald-500" },
+      { to: "/app/keywords", label: "Keywords", icon: Search, desc: "AI keyword research", minTier: "observer", color: "text-emerald-400" },
+      { to: "/app/niche-discovery", label: "Niche Discovery", icon: Globe, desc: "Top 100 niche rankings", minTier: "observer", color: "text-emerald-300" },
+      { to: "/app/competitors", label: "Competitors", icon: CompetitorRadarIcon, desc: "Side by side benchmarks", minTier: "alignment", color: "text-emerald-500" },
     ],
   },
 ];
@@ -64,27 +64,27 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
     heading: "AI Intelligence",
     accent: "text-violet-400",
     links: [
-      { to: "/citations", label: "Citations", icon: Eye, desc: "AI citation tracking", minTier: "alignment", color: "text-violet-400" },
-      { to: "/reverse-engineer", label: "Reverse Engineer", icon: AnswerDecompilerIcon, desc: "Deconstruct AI answers", minTier: "alignment", color: "text-violet-300" },
-      { to: "/prompt-intelligence", label: "Prompt Intelligence", icon: Brain, desc: "AI query pattern analysis", minTier: "alignment", color: "text-violet-200" },
-      { to: "/answer-presence", label: "Answer Presence", icon: Globe, desc: "AI answer inclusion tracking", minTier: "alignment", color: "text-cyan-400" },
-      { to: "/brand-integrity", label: "Brand Integrity", icon: ShieldCheck, desc: "Brand accuracy monitoring", minTier: "alignment", color: "text-emerald-400" },
+      { to: "/app/citations", label: "Citations", icon: Eye, desc: "AI citation tracking", minTier: "alignment", color: "text-violet-400" },
+      { to: "/app/reverse-engineer", label: "Reverse Engineer", icon: AnswerDecompilerIcon, desc: "Deconstruct AI answers", minTier: "alignment", color: "text-violet-300" },
+      { to: "/app/prompt-intelligence", label: "Prompt Intelligence", icon: Brain, desc: "AI query pattern analysis", minTier: "alignment", color: "text-violet-200" },
+      { to: "/app/answer-presence", label: "Answer Presence", icon: Globe, desc: "AI answer inclusion tracking", minTier: "alignment", color: "text-cyan-400" },
+      { to: "/app/brand-integrity", label: "Brand Integrity", icon: ShieldCheck, desc: "Brand accuracy monitoring", minTier: "alignment", color: "text-emerald-400" },
     ],
   },
   {
     heading: "Technical",
     accent: "text-amber-400",
     links: [
-      { to: "/server-headers", label: "Server Headers", icon: Shield, desc: "HTTP headers, cache, security", minTier: "observer", color: "text-amber-400" },
-      { to: "/score-fix", label: "Score Fix", icon: FlaskConical, desc: "Remediation workflows", minTier: "scorefix", color: "text-amber-500" },
+      { to: "/tools/server-headers", label: "Server Headers", icon: Shield, desc: "HTTP headers, cache, security", minTier: "observer", color: "text-amber-400" },
+      { to: "/app/score-fix", label: "Score Fix", icon: FlaskConical, desc: "Remediation workflows", minTier: "scorefix", color: "text-amber-500" },
     ],
   },
   {
     heading: "Platform",
     accent: "text-indigo-400",
     links: [
-      { to: "/mcp", label: "MCP Console", icon: Cpu, desc: "AI agent tool server", minTier: "alignment", color: "text-indigo-400" },
-      { to: "/gsc", label: "Search Console", icon: BarChart3, desc: "GSC performance intelligence", minTier: "alignment", color: "text-emerald-400" },
+      { to: "/app/mcp", label: "MCP Console", icon: Cpu, desc: "AI agent tool server", minTier: "alignment", color: "text-indigo-400" },
+      { to: "/app/gsc", label: "Search Console", icon: BarChart3, desc: "GSC performance intelligence", minTier: "alignment", color: "text-emerald-400" },
     ],
   },
 ];
@@ -109,12 +109,12 @@ const DOCS_LINKS: DocsLink[] = [
   { to: "/help", label: "Help Center", icon: HelpCircle, color: "text-emerald-300" },
   { to: "/compliance", label: "Compliance & Security", icon: Shield, color: "text-rose-300" },
   { to: "/insights", label: "Insights", icon: Eye, color: "text-cyan-300" },
-  { to: "/benchmarks", label: "Benchmarks", icon: Target, color: "text-orange-300" },
+  { to: "/app/benchmarks", label: "Benchmarks", icon: Target, color: "text-orange-300" },
   { to: "/changelog", label: "Changelog", icon: FileText, color: "text-white/70" },
   { to: "/compare", label: "Compare", icon: BarChart3, color: "text-indigo-300" },
   { to: "/competitive-landscape", label: "Competitive Landscape", icon: Globe, color: "text-teal-300" },
   { to: "/integrations", label: "Integrations", icon: Wrench, color: "text-fuchsia-300" },
-  { to: "/workflow", label: "Workflow", icon: Zap, color: "text-amber-300" },
+  { to: "/app/workflow", label: "Workflow", icon: Zap, color: "text-amber-300" },
 ];
 
 type UserMenuLink = {

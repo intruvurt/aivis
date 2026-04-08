@@ -293,6 +293,10 @@ export default function App() {
             <Route path="admin" element={<Admin />} />
             <Route path="team" element={<TeamPage />} />
             <Route path="agency" element={<AgencyPage />} />
+            <Route path="badge" element={<BadgeEmbedPage />} />
+            <Route path="api-docs" element={<ApiDocsPage />} />
+            <Route path="integrations" element={<IntegrationsHubPage />} />
+            <Route path="help" element={<HelpCenter />} />
             <Route path="audits/:id" element={<AuditDetails />} />
           </Route>
 
@@ -315,6 +319,9 @@ export default function App() {
           <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
           <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />
           <Route path="/server-headers" element={<Navigate to="/tools/server-headers" replace />} />
+          <Route path="/schema-validator" element={<Navigate to="/tools/schema-validator" replace />} />
+          <Route path="/robots-checker" element={<Navigate to="/tools/robots-checker" replace />} />
+          <Route path="/content-extractability" element={<Navigate to="/tools/content-extractability" replace />} />
 
           <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
           <Route path="/profile" element={<Navigate to="/app/profile" replace />} />

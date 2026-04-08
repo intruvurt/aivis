@@ -59,15 +59,15 @@ const toolsNav: NavItem[] = [
 ];
 
 const agencyNav: NavItem[] = [
-  { to: "/badge", labelKey: "sidebar.badge", icon: Award },
-  { to: "/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
-  { to: "/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
+  { to: "/app/badge", labelKey: "sidebar.badge", icon: Award },
+  { to: "/app/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
+  { to: "/app/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
 ];
 
 const accountNav: NavItem[] = [
   { to: "/app/billing", labelKey: "sidebar.billing", icon: CreditCard },
   { to: "/app/settings", labelKey: "sidebar.settings", icon: Settings },
-  { to: "/help", labelKey: "sidebar.help", icon: HelpCircle },
+  { to: "/app/help", labelKey: "sidebar.help", icon: HelpCircle },
 ];
 
 const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";

@@ -486,7 +486,7 @@ Rules:
   };
 }
 
-export default {
+export {
   decompileAnswer,
   generateCompetitorGhost,
   analyzeModelPreferences,

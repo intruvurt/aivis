@@ -28,7 +28,6 @@ function run() {
     ['/competitors', 'client route competitors'],
     ['/citations', 'client route citations'],
     ['/gsc', 'client route gsc intelligence'],
-    ['/indexing', 'client route indexing/indexnow'],
     ['/mcp', 'client route mcp console'],
   ];
 
@@ -42,7 +41,6 @@ function run() {
     ['/api/self-healing', 'server self-healing endpoint'],
     ['/api/portfolio', 'server agency portfolio endpoint'],
     ['/api/growth', 'server growth engine endpoint'],
-    ['/api/indexing', 'server indexnow/indexing endpoint'],
     ['/api/integrations/gsc', 'server gsc endpoint'],
     ['/api/mcp', 'server mcp endpoint'],
   ];
@@ -68,4 +66,4 @@ try {
 } catch (error) {
   console.error(`Static platform wiring smoke FAILED: ${error?.message || String(error)}`);
   process.exit(1);
-}
+}

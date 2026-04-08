@@ -79,16 +79,6 @@
     "tools": "Інструменти аналітики",
     "analyze": "Аналізувати"
   },
-  "indexing": {
-    "title": "Індексація URL і IndexNow",
-    "description": "Перевірте статус індексації Google/Bing та надішліть URL для швидшого виявлення",
-    "checkStatus": "Перевірити статус індексації",
-    "bulkSubmit": "Масова відправка IndexNow",
-    "history": "Історія відправок",
-    "setupGuide": "Як налаштувати Bing IndexNow",
-    "submitToIndexNow": "Надіслати в IndexNow",
-    "importFile": "Імпортувати файл"
-  },
   "bix": {
     "placeholder": "Надішліть URL для аудиту або скажіть, що потрібно зробити…",
     "voiceInput": "Голосовий ввід",
@@ -120,7 +110,6 @@
     "schemaValidator": "Валідатор Schema",
     "serverHeaders": "Заголовки сервера",
     "aiCrawlers": "AI-сканери",
-    "indexing": "Індексація",
     "domainRating": "Рейтинг домену",
     "mcpConsole": "MCP Консоль",
     "agencyDashboard": "Панель агентства",

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
-  Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
+  Settings, CreditCard, Zap, Cpu, ArrowLeftRight,
   Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
   FileSearch,
 } from "lucide-react";
@@ -55,7 +55,6 @@ const toolsNav: NavItem[] = [
   { to: "/tools/robots-checker", labelKey: "sidebar.aiCrawlers", icon: Cpu },
   { to: "/tools/content-extractability", labelKey: "sidebar.contentExtractability", icon: FileSearch },
   { to: "/app/domain-rating", labelKey: "sidebar.domainRating", icon: TrendingUp, minTier: "alignment" },
-  { to: "/app/indexing", labelKey: "sidebar.indexing", icon: BookOpen },
   { to: "/app/mcp", labelKey: "sidebar.mcpConsole", icon: Wrench, minTier: "alignment" },
 ];
 

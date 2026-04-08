@@ -74,7 +74,6 @@ import { resolveWorkspaceForUser } from './services/tenantService.js';
 import { persistAuditRecord } from './services/auditPersistenceService.js';
 import { getPublicBenchmarkData } from './services/benchmarkService.js';
 import { extractContactsFromHtml } from './lib/contactUtils.js';
-import { pingIndexNow } from './utils/indexNow.js';
 import featureRoutes from './routes/featureRoutes.js';
 import workspaceRoutes from './routes/workspaceRoutes.js';
 import externalApiV1, { widgetPublicRouter } from './routes/externalApiV1.js';
@@ -110,7 +109,6 @@ import { enforceEffectiveTier, getAllowlistedElevatedEmails } from './services/e
 import { applySecurityMiddleware, analyzeRequestSchema, sendHtmlWithNonce } from './middleware/securityMiddleware.js';
 import { createOrRefreshPublicReportLink, resolvePublicReportReference } from './services/publicReportLinks.js';
 import trialRoutes from './routes/trialRoutes.js';
-import indexingRoutes from './routes/indexingRoutes.js';
 import openApiSpec from './routes/openApiSpec.js';
 import oauthRoutes from './routes/oauthRoutes.js';
 import mcpServer from './routes/mcpServer.js';
@@ -1134,7 +1132,6 @@ app.get('/.well-known/mcp.json', (_req, res) => {
 app.use('/api/badge', badgeRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/trial', trialRoutes);
-app.use('/api/indexing', indexingRoutes);
 app.use('/licenses', licenseLimiter, createLicenseAPI());
 
 // ── Deep Analysis (Python NLP microservice proxy) ────────────────────────
@@ -2178,16 +2175,6 @@ app.get('/api/contacts', authRequired, async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, error: 'Failed to load contacts' });
   }
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// IndexNow key file - serve from API server so IndexNow bot can verify
-// ─────────────────────────────────────────────────────────────────────────────
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY || '';
-if (INDEXNOW_KEY) {
-  app.get(`/${INDEXNOW_KEY}.txt`, (_req, res) => {
-    res.type('text/plain').send(INDEXNOW_KEY);
-  });
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Health check
@@ -9811,17 +9798,6 @@ app.post('/api/admin/cache/clear', adminLimiter, async (req, res) => {
   }
 });
 
-// ─── Admin: IndexNow - submit URL list to search engines ───────────────────────
-app.post('/api/admin/indexnow/ping', adminLimiter, async (req, res) => {
-  if (!requireAdminKey(req, res)) return;
-
-  const { urls } = req.body;
-  if (!Array.isArray(urls) || urls.length === 0) return res.status(400).json({ error: 'urls array required' });
-
-  const result = await pingIndexNow(urls);
-  return res.json({ success: true, ...result });
-});
-
 app.post('/api/admin/verify-user', adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
 
@@ -10844,33 +10820,6 @@ process.on('unhandledRejection', (reason) => {
     });
   } else {
     console.warn('[Startup] Citation scheduler bootstrap skipped because database is unavailable');
-  }
-
-  // ── IndexNow startup ping - submit canonical AiVIS insight URLs ────────────
-  // Guarded by INDEXNOW_STARTUP_PING=true because the static CDN may block
-  // IndexNow's verification bot, causing 403 noise on every deploy.
-  // Use the admin endpoint POST /api/admin/indexnow/ping for on-demand pings.
-  if (
-    process.env.INDEXNOW_STARTUP_PING === 'true' &&
-    (process.env.INDEXNOW_KEY || process.env.INDEXNOW_API_KEY) &&
-    process.env.NODE_ENV === 'production'
-  ) {
-    const frontendUrl = process.env.FRONTEND_URL || 'https://aivis.biz';
-    const ownInsightUrls = [
-      '/',
-      '/insights',
-      '/faq',
-      '/methodology',
-      '/pricing',
-      '/about',
-      '/insights/aeo-playbook-2026',
-      '/insights/ai-search-visibility-2026',
-      '/insights/geo-ai-ranking-2026',
-      '/insights/why-ai-visibility',
-    ].map((path) => `${frontendUrl}${path}`);
-    pingIndexNow(ownInsightUrls).catch((e: any) =>
-      console.warn('[Startup] IndexNow ping error (non-fatal):', e?.message)
-    );
   }
 
   // Render proxy compatibility

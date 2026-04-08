@@ -79,16 +79,6 @@
     "tools": "Intelligence Tools",
     "analyze": "Analyze"
   },
-  "indexing": {
-    "title": "URL Indexing & IndexNow",
-    "description": "Check Google/Bing indexing status and submit URLs for faster crawl discovery",
-    "checkStatus": "Check Indexing Status",
-    "bulkSubmit": "Bulk IndexNow Submit",
-    "history": "Submission History",
-    "setupGuide": "How to Set Up Bing IndexNow",
-    "submitToIndexNow": "Submit to IndexNow",
-    "importFile": "Import File"
-  },
   "bix": {
     "placeholder": "Send a URL to audit, or tell me what to do…",
     "voiceInput": "Voice input",
@@ -121,7 +111,6 @@
     "contentExtractability": "Content Extractability",
     "serverHeaders": "Server Headers",
     "aiCrawlers": "AI Crawlers",
-    "indexing": "Indexing",
     "domainRating": "Domain Rating",
     "mcpConsole": "MCP Console",
     "agencyDashboard": "Agency Dashboard",

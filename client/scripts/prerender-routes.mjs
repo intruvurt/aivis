@@ -609,11 +609,6 @@ const routes = [
 		description: 'A permanent ledger of every update, fix, and improvement shipped to AI Visibility Intelligence Platform.',
 	},
 	{
-		path: '/indexing',
-		title: 'URL Indexing & IndexNow | AiVIS',
-		description: 'Check Google and Bing indexing status and submit URLs via IndexNow for faster crawl discovery.',
-	},
-	{
 		path: '/tools/schema-validator',
 		title: 'Schema Markup Validator - AI Citation Readiness Check | AiVIS',
 		description: 'Free tool to validate structured data (JSON-LD, OpenGraph, Twitter Cards) for AI citation readiness. See what AI models can extract from your page.',
@@ -1354,38 +1349,6 @@ const routeSpecificEnrichment = {
 				{ question: 'How do I turn an AiVIS audit into a repeatable workflow?', answer: 'Start with a baseline audit, implement Score Fix recommendations, then re-audit to measure progress. Repeat this cycle as your content changes.' },
 				{ question: 'How often should I re-audit my site?', answer: 'Re-audit after implementing major content or technical changes, or at least monthly to track score trends against competitors.' },
 				{ question: 'What is the AiVIS workflow loop?', answer: 'Baseline audit, evidence-based remediation via Score Fix, re-audit validation, and ongoing competitor tracking — a continuous AI visibility operations cycle.' },
-			]));
-		},
-	},
-
-	'/indexing': {
-		tldr: 'The Indexing tool checks Google and Bing index status for any URL and submits pages via IndexNow for faster crawl discovery.',
-		sections: [
-			{
-				heading: 'What the indexing tool does',
-				paragraphs: [
-					'The indexing page lets users check whether a specific URL is indexed by Google and Bing, and submit URLs to search engines via the IndexNow protocol for accelerated discovery. This is useful after publishing new content or implementing AiVIS audit recommendations.',
-					'IndexNow is a ping-based protocol supported by Bing, Yandex, and other search engines. When you submit a URL, participating engines are notified that content has changed and should be re-crawled.',
-				],
-			},
-			{
-				heading: 'How indexing status checks work',
-				paragraphs: [
-					'The tool queries search engine indexes to determine whether a given URL appears in results. It reports indexed or not-indexed status for both Google and Bing independently, giving you a clear picture of your crawl coverage across major engines.',
-				],
-				listItems: [
-					'Check any public URL for Google and Bing index presence.',
-					'Submit URLs via IndexNow for faster re-crawling after content updates.',
-					'Useful after deploying schema fixes, heading restructures, or metadata improvements recommended by AiVIS audits.',
-					'No API keys required — the tool handles IndexNow submission server-side.',
-				],
-			},
-		],
-		buildExtraHead(canonicalUrl, route) {
-			return jsonLdScript(buildFaqSchema([
-				{ question: 'What is IndexNow?', answer: 'IndexNow is a protocol that notifies search engines like Bing and Yandex when content changes, prompting faster re-crawling without waiting for scheduled crawls.' },
-				{ question: 'Can I check if my page is indexed on Google?', answer: 'Yes. The AiVIS indexing tool checks Google and Bing index status for any public URL and reports whether each engine has the page in its index.' },
-				{ question: 'When should I use the indexing tool?', answer: 'After publishing new content or implementing audit recommendations like schema fixes, heading restructures, or metadata improvements.' },
 			]));
 		},
 	},

@@ -323,7 +323,6 @@ export default function GuidePage() {
             { to: '/app/schema-validator', title: 'Schema Validator', detail: 'Validate JSON-LD, Open Graph, Twitter Cards, and Microdata.' },
             { to: '/app/server-headers', title: 'Server Headers', detail: 'Inspect HTTP response headers and security configuration.' },
             { to: '/app/robots-checker', title: 'AI Crawlers', detail: 'Graded A–F for each major AI crawler in your robots.txt.' },
-            { to: '/app/indexing', title: 'Indexing', detail: 'Check sitemap presence, robots directives, and crawl signals.' },
             { to: '/app/mcp', title: 'MCP Console', detail: 'AI agents invoke audit tools programmatically via MCP.', tier: 'Alignment' },
           ] as const).map((item) => (
             <Link

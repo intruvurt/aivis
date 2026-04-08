@@ -118,7 +118,7 @@ function timeLeft(expiresAt: string): string {
 
 function apiUrl(path: string) {
   const base = (API_URL || "").replace(/\/+$/, "");
-  return `${base}/auto-score-fix${path}`;
+  return `${base}/api/auto-score-fix${path}`;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────

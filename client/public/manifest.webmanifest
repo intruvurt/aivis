@@ -9,33 +9,27 @@
   "theme_color": "#0891b2",
   "icons": [
     {
-      "src": "/aivis-circ-logo.png?v=20260407",
+      "src": "/aivis-circ-logo.png?v=20260408",
       "type": "image/png",
-      "sizes": "544x544",
+      "sizes": "392x392",
       "purpose": "any"
     },
     {
-      "src": "/aivis-circ-logo.png?v=20260407",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any"
-    },
-    {
-      "src": "/aivis-circ-logo.png?v=20260407",
+      "src": "/aivis-circ-logo.png?v=20260408",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "/aivis-circ-logo.png?v=20260407",
+      "src": "/aivis-circ-logo.png?v=20260408",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "/aivis-circ-logo.png?v=20260407",
+      "src": "/aivis-circ-logo.png?v=20260408",
       "type": "image/png",
-      "sizes": "512x512",
+      "sizes": "392x392",
       "purpose": "maskable"
     },
     {

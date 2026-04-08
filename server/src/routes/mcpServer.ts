@@ -21,6 +21,7 @@ import { verifyUserToken } from '../lib/utils/jwt.js';
 import { getUserById } from '../models/User.js';
 import { enforceEffectiveTier } from '../services/entitlementGuard.js';
 import { processQueuedAudit } from '../services/mcpAuditProcessor.js';
+import { ensureDefaultWorkspaceForUser } from '../services/tenantService.js';
 
 const router = Router();
 
@@ -75,7 +76,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
     (req as any).mcpUserId = rows[0].user_id;
     (req as any).mcpScopes = scopes;
 
-    // Look up default workspace for OAuth user
+    // Look up default workspace for OAuth user (auto-create if missing)
     const { rows: wsRows } = await pool.query(
       `SELECT w.id FROM workspaces w
        JOIN workspace_members wm ON wm.workspace_id = w.id
@@ -83,7 +84,12 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
        LIMIT 1`,
       [rows[0].user_id]
     );
-    (req as any).mcpWorkspaceId = wsRows[0]?.id;
+    if (wsRows[0]?.id) {
+      (req as any).mcpWorkspaceId = wsRows[0].id;
+    } else {
+      const ctx = await ensureDefaultWorkspaceForUser(rows[0].user_id);
+      (req as any).mcpWorkspaceId = ctx.workspaceId;
+    }
     return next();
   }
 
@@ -107,7 +113,12 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
        LIMIT 1`,
       [user.id]
     );
-    (req as any).mcpWorkspaceId = wsRows[0]?.id;
+    if (wsRows[0]?.id) {
+      (req as any).mcpWorkspaceId = wsRows[0].id;
+    } else {
+      const ctx = await ensureDefaultWorkspaceForUser(user.id, user.name || user.email);
+      (req as any).mcpWorkspaceId = ctx.workspaceId;
+    }
     return next();
   } catch {
     return res.status(401).json({ error: 'Invalid token. Use avis_* API key, avist_* OAuth token, or a valid session JWT.' });
@@ -230,6 +241,7 @@ type ToolExecutor = (params: Record<string, any>, userId: string, workspaceId: s
 
 const executors: Record<string, ToolExecutor> = {
   async run_audit(params, userId, workspaceId) {
+    if (!workspaceId) throw new Error('No workspace found. Please sign out and back in, or contact support.');
     const { url, goal, bypass_cache, platform_focus } = params;
 
     // Validate and normalize URL
@@ -479,8 +491,9 @@ router.post('/call', async (req: Request, res: Response) => {
       content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
     });
   } catch (err: any) {
+    console.error('[mcp] /call error:', err?.message, err?.stack);
     return res.status(500).json({
-      error: 'Request failed. Please try again.',
+      error: err?.message || 'Request failed. Please try again.',
       isError: true,
     });
   }

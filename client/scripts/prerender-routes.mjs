@@ -6,6 +6,162 @@ const indexPath = path.join(distDir, 'index.html');
 const methodologyTemplatePath = path.resolve(process.cwd(), 'scripts', 'templates', 'methodology-static.html');
 const pricingTemplatePath = path.resolve(process.cwd(), 'scripts', 'templates', 'pricing-static.html');
 
+// ── Blog content loader ──────────────────────────────────────────────
+// Reads blogs.ts and blogReady.generated.ts at build time so each blog
+// prerenders with unique article content instead of generic boilerplate.
+function loadBlogContentMap() {
+	const blogsPath = path.resolve(process.cwd(), 'src/content/blogs.ts');
+	const generatedPath = path.resolve(process.cwd(), 'src/content/blogReady.generated.ts');
+	const map = new Map();
+
+	function extractField(block, fieldName) {
+		for (const q of ["'", '"']) {
+			const r = new RegExp(fieldName + `:\\s*\\n?\\s*${q}([^${q}]*)${q}`);
+			const m = block.match(r);
+			if (m) return m[1];
+		}
+		return '';
+	}
+	function extractNumber(block, fieldName) {
+		const m = block.match(new RegExp(fieldName + ':\\s*(\\d+)'));
+		return m ? parseInt(m[1]) : 0;
+	}
+	function extractStringArray(block, fieldName) {
+		const m = block.match(new RegExp(fieldName + ':\\s*\\[([\\s\\S]*?)\\]'));
+		if (!m) return [];
+		return [...m[1].matchAll(/'([^']*)'/g)].map((x) => x[1]);
+	}
+	function extractAuthorName(block) {
+		const m = block.match(/author:\s*\{[^}]*?name:\s*'([^']*)'/s);
+		return m ? m[1] : 'AiVIS Team';
+	}
+	function extractContent(block) {
+		const m = block.match(/content:\s*`([\s\S]*?)`/);
+		return m ? m[1].trim() : '';
+	}
+
+	// Parse generated file (JSON-like)
+	if (fs.existsSync(generatedPath)) {
+		try {
+			const raw = fs.readFileSync(generatedPath, 'utf8');
+			const jsonStr = raw.replace(/^\/\*[\s\S]*?\*\/\s*export\s+const\s+\w+\s*=\s*/, '').replace(/;\s*$/, '');
+			const entries = JSON.parse(jsonStr);
+			for (const e of entries) {
+				map.set(e.slug, {
+					excerpt: e.excerpt || e.description || '',
+					keyPoints: e.keyPoints || [],
+					authorName: e.author?.name || 'AiVIS Team',
+					publishedAt: e.publishedAt || '',
+					readMinutes: e.readMinutes || 5,
+					category: e.category || '',
+					tags: e.tags || [],
+					contentPreview: (e.content || '').slice(0, 2000),
+				});
+			}
+		} catch (err) {
+			console.warn('[prerender] Warning: could not parse blogReady.generated.ts:', err.message);
+		}
+	}
+
+	// Parse blogs.ts using block splitting
+	if (fs.existsSync(blogsPath)) {
+		try {
+			const raw = fs.readFileSync(blogsPath, 'utf8');
+			const arrayStart = raw.indexOf('STATIC_BLOG_ENTRIES');
+			if (arrayStart === -1) throw new Error('STATIC_BLOG_ENTRIES not found');
+			const text = raw.slice(arrayStart);
+			const slugPattern = /slug:\s*'([^']+)'/g;
+			const slugPositions = [];
+			let sm;
+			while ((sm = slugPattern.exec(text)) !== null) {
+				slugPositions.push({ slug: sm[1], index: sm.index });
+			}
+			for (let i = 0; i < slugPositions.length; i++) {
+				const { slug, index } = slugPositions[i];
+				if (map.has(slug)) continue;
+				const endIndex = i + 1 < slugPositions.length ? slugPositions[i + 1].index : text.length;
+				const block = text.slice(index, endIndex);
+				const content = extractContent(block);
+				map.set(slug, {
+					excerpt: extractField(block, 'excerpt') || extractField(block, 'description'),
+					keyPoints: extractStringArray(block, 'keyPoints'),
+					authorName: extractAuthorName(block),
+					publishedAt: extractField(block, 'publishedAt'),
+					readMinutes: extractNumber(block, 'readMinutes') || 5,
+					category: extractField(block, 'category'),
+					tags: extractStringArray(block, 'tags'),
+					contentPreview: content.slice(0, 2000),
+				});
+			}
+		} catch (err) {
+			console.warn('[prerender] Warning: could not parse blogs.ts:', err.message);
+		}
+	}
+	console.log(`[prerender] Loaded ${map.size} blog entries for content enrichment`);
+	return map;
+}
+
+// ── Keyword page content loader ──────────────────────────────────────
+// Reads the 5 keyword cluster files so each /platforms/, /problems/,
+// /signals/, /industries/, and /compare/ page prerenders with unique content.
+function loadKeywordPageMap() {
+	const map = new Map();
+	const clusters = ['platforms', 'problems', 'signals', 'industries', 'compare'];
+	for (const cluster of clusters) {
+		const filePath = path.resolve(process.cwd(), `src/data/keywordPages/${cluster}.ts`);
+		if (!fs.existsSync(filePath)) continue;
+		try {
+			const raw = fs.readFileSync(filePath, 'utf8');
+			// Extract each page entry by finding slug fields
+			const slugPattern = /slug:\s*"([^"]+)"/g;
+			const slugPositions = [];
+			let sm;
+			while ((sm = slugPattern.exec(raw)) !== null) {
+				slugPositions.push({ slug: sm[1], index: sm.index });
+			}
+			for (let i = 0; i < slugPositions.length; i++) {
+				const { slug, index } = slugPositions[i];
+				const endIndex = i + 1 < slugPositions.length ? slugPositions[i + 1].index : raw.length;
+				const block = raw.slice(index, endIndex);
+				// Extract hook
+				const hookMatch = block.match(/hook:\s*"([^"]*(?:\\.[^"]*)*)"/s);
+				const hook = hookMatch ? hookMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') : '';
+				// Extract sections
+				const sections = [];
+				const sectionPattern = /heading:\s*"([^"]*)"[\s\S]*?content:\s*\[([\s\S]*?)\]/g;
+				let secMatch;
+				while ((secMatch = sectionPattern.exec(block)) !== null) {
+					const heading = secMatch[1];
+					const contentBlock = secMatch[2];
+					const paragraphs = [...contentBlock.matchAll(/"([^"]*(?:\\.[^"]*)*)"/g)].map((m) =>
+						m[1].replace(/\\"/g, '"').replace(/\\n/g, '\n')
+					);
+					sections.push({ heading, paragraphs });
+				}
+				// Extract FAQs
+				const faqs = [];
+				const faqPattern = /question:\s*"([^"]*(?:\\.[^"]*)*)"[\s\S]*?answer:\s*\n?\s*"([^"]*(?:\\.[^"]*)*)"/g;
+				let faqMatch;
+				while ((faqMatch = faqPattern.exec(block)) !== null) {
+					faqs.push({
+						question: faqMatch[1].replace(/\\"/g, '"'),
+						answer: faqMatch[2].replace(/\\"/g, '"'),
+					});
+				}
+				const routePath = cluster === 'compare' ? `/compare/${slug}` : `/${cluster}/${slug}`;
+				map.set(routePath, { hook, sections, faqs, cluster });
+			}
+		} catch (err) {
+			console.warn(`[prerender] Warning: could not parse ${cluster}.ts:`, err.message);
+		}
+	}
+	console.log(`[prerender] Loaded ${map.size} keyword pages for content enrichment`);
+	return map;
+}
+
+const blogContentMap = loadBlogContentMap();
+const keywordPageMap = loadKeywordPageMap();
+
 if (!fs.existsSync(indexPath)) {
 	console.error('[prerender] dist/index.html not found');
 	process.exit(1);
@@ -535,39 +691,9 @@ const routes = [
 		ogType: 'article',
 	},
 	{
-		path: '/blogs/json-ld-schema-strategy-get-cited-by-ai-models',
-		title: 'How to Build a JSON-LD Schema Strategy That Gets Your Site Cited by AI Models | AiVIS Blogs',
-		description: 'A technical implementation guide for JSON-LD schema strategies that increase citation probability across ChatGPT, Perplexity, Claude, and Gemini.',
-		ogType: 'article',
-	},
-	{
-		path: '/blogs/google-search-console-hiding-ai-visibility-gaps',
-		title: 'Why Your Google Search Console Data Is Hiding Your AI Visibility Gaps | AiVIS Blogs',
-		description: 'Google Search Console measures crawl health and keyword rankings but cannot detect whether AI answer engines can extract, trust, or cite your content.',
-		ogType: 'article',
-	},
-	{
-		path: '/blogs/answer-engine-optimization-complete-guide-small-business',
-		title: 'The Complete Guide to Answer Engine Optimization for Small Business Websites | AiVIS Blogs',
-		description: 'A practical AEO guide for small business owners covering schema markup, FAQ structure, content extractability, and citation readiness for AI answer engines.',
-		ogType: 'article',
-	},
-	{
-		path: '/blogs/entity-clarity-why-ai-models-cite-some-brands-ignore-others',
-		title: 'Entity Clarity: Why AI Models Cite Some Brands and Ignore Others | AiVIS Blogs',
-		description: 'AI models cite brands with clear entity signals. Learn what entity clarity means, how LLMs resolve brand identity, and what to fix on your site.',
-		ogType: 'article',
-	},
-	{
-		path: '/blogs/how-to-audit-website-ai-readiness-10-minutes',
-		title: 'How to Audit Your Website for AI Readiness in Under 10 Minutes | AiVIS Blogs',
-		description: 'A practical checklist for auditing your website AI readiness in under 10 minutes, covering schema, headings, FAQ blocks, metadata, and content structure.',
-		ogType: 'article',
-	},
-	{
-		path: '/blogs/death-of-click-through-rates-what-replaces-ctr-ai-answers',
-		title: 'The Death of Click-Through Rates: What Replaces CTR When AI Answers the Question | AiVIS Blogs',
-		description: 'CTR was the lingua franca of web marketing. AI answer engines bypass clicks entirely. Here are the new metrics that matter for visibility in 2026.',
+		path: '/blogs/your-website-can-rank-and-still-disappear',
+		title: 'Your Website Can Rank and Still Disappear | AiVIS Blogs',
+		description: 'Ranking on page one means nothing if AI answer engines never extract, cite, or surface your content. Here is why traditional SEO success masks a growing visibility crisis.',
 		ogType: 'article',
 	},
 	{
@@ -1178,7 +1304,147 @@ function renderSection(section) {
 			</section>`;
 }
 
+// ── Markdown-lite to HTML converter for blog content previews ────────
+function contentToHtml(raw, limit = 2000) {
+	const text = raw.slice(0, limit);
+	const lines = text.split('\n');
+	const parts = [];
+	let inList = false;
+	for (const line of lines) {
+		const trimmed = line.trim();
+		if (!trimmed) { if (inList) { parts.push('</ul>'); inList = false; } continue; }
+		if (trimmed.startsWith('## ')) {
+			if (inList) { parts.push('</ul>'); inList = false; }
+			parts.push(`<h3 style="font-size:18px;margin:18px 0 8px;">${escapeHtml(trimmed.slice(3))}</h3>`);
+		} else if (trimmed.startsWith('### ')) {
+			if (inList) { parts.push('</ul>'); inList = false; }
+			parts.push(`<h4 style="font-size:16px;margin:14px 0 6px;">${escapeHtml(trimmed.slice(4))}</h4>`);
+		} else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+			if (!inList) { parts.push('<ul style="margin:0;padding-left:20px;color:#374151;">'); inList = true; }
+			parts.push(`<li>${escapeHtml(trimmed.slice(2))}</li>`);
+		} else {
+			if (inList) { parts.push('</ul>'); inList = false; }
+			parts.push(`<p style="margin:0 0 12px;color:#374151;">${escapeHtml(trimmed)}</p>`);
+		}
+	}
+	if (inList) parts.push('</ul>');
+	return parts.join('\n');
+}
+
+// ── Blog-specific body renderer ──────────────────────────────────────
+function renderBlogBody(route, canonicalUrl) {
+	const slug = route.path.replace('/blogs/', '');
+	const meta = blogContentMap.get(slug);
+	const title = escapeHtml(route.title);
+	const description = escapeHtml(normalizeMetaDescription(route.description, 220));
+
+	if (!meta) return null; // fall through to default renderer
+
+	const authorName = escapeHtml(meta.authorName || 'AiVIS Team');
+	const date = meta.publishedAt || '';
+	const readMin = meta.readMinutes || 5;
+	const category = meta.category ? escapeHtml(meta.category.toUpperCase()) : '';
+	const tags = (meta.tags || []).map((t) => escapeHtml(t));
+	const excerpt = meta.excerpt ? escapeHtml(meta.excerpt) : description;
+
+	const keyPointsHtml = meta.keyPoints?.length
+		? `<section aria-labelledby="key-takeaways" style="margin:24px 0;">
+					<h2 id="key-takeaways" style="font-size:20px;margin:0 0 10px;">Key Takeaways</h2>
+					<ul style="margin:0;padding-left:20px;color:#374151;">
+						${meta.keyPoints.map((kp) => `<li style="margin-bottom:6px;">${escapeHtml(kp)}</li>`).join('\n\t\t\t\t\t\t')}
+					</ul>
+				</section>`
+		: '';
+
+	const contentHtml = meta.contentPreview
+		? `<section aria-labelledby="article-body" style="margin:24px 0;">
+					<h2 id="article-body" style="font-size:20px;margin:0 0 12px;">Article</h2>
+					${contentToHtml(meta.contentPreview)}
+					<p style="margin:18px 0 0;color:#6b7280;font-style:italic;">This is a preview. Enable JavaScript for the full interactive reading experience with related articles and discussion.</p>
+				</section>`
+		: '';
+
+	const tagsHtml = tags.length
+		? `<p style="margin:0;color:#6b7280;">Tags: ${tags.join(', ')}</p>`
+		: '';
+
+	return `<body>
+		<div id="root">
+			<article itemscope itemtype="https://schema.org/Article" style="max-width:840px;margin:0 auto;padding:48px 20px;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#111827;line-height:1.65;">
+				<header style="margin-bottom:24px;border-bottom:1px solid rgba(0,0,0,0.12);padding-bottom:16px;">
+					<h1 itemprop="headline" style="margin:0 0 10px;font-size:34px;line-height:1.15;letter-spacing:-0.02em;">${title}</h1>
+					<p style="margin:0 0 8px;color:#6b7280;font-size:14px;">By <span itemprop="author">${authorName}</span>${date ? ` · <time itemprop="datePublished" datetime="${escapeHtml(date)}">${escapeHtml(date)}</time>` : ''} · ${readMin} min read${category ? ` · ${category}` : ''}</p>
+					<p style="margin:0;color:#374151;" itemprop="description">${excerpt}</p>
+				</header>
+				${keyPointsHtml}
+				${contentHtml}
+				<footer style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.08);">
+					${tagsHtml}
+					<p style="margin:8px 0 0;color:#6b7280;font-size:13px;">Published on <a href="https://aivis.biz/blogs" style="color:#1d4ed8;">AiVIS Blogs</a> · <a href="${canonicalUrl}" style="color:#1d4ed8;">${canonicalUrl}</a></p>
+				</footer>
+			</article>
+		</div>
+	</body>`;
+}
+
+// ── Keyword page body renderer ───────────────────────────────────────
+function renderKeywordPageBody(route, canonicalUrl) {
+	const kwp = keywordPageMap.get(route.path);
+	if (!kwp) return null;
+
+	const title = escapeHtml(route.title);
+	const hook = kwp.hook ? escapeHtml(kwp.hook) : escapeHtml(normalizeMetaDescription(route.description, 300));
+
+	const sectionsHtml = (kwp.sections || [])
+		.map((sec) => {
+			const id = sec.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+			const paras = sec.paragraphs.map((p) => `<p style="margin:0 0 12px;color:#374151;">${escapeHtml(p)}</p>`).join('\n');
+			return `<section aria-labelledby="${escapeHtml(id)}" style="margin:24px 0;">
+					<h2 id="${escapeHtml(id)}" style="font-size:20px;margin:0 0 10px;">${escapeHtml(sec.heading)}</h2>
+					${paras}
+				</section>`;
+		})
+		.join('\n');
+
+	const faqsHtml = (kwp.faqs || []).length
+		? `<section aria-labelledby="faq" style="margin:24px 0;">
+					<h2 id="faq" style="font-size:20px;margin:0 0 12px;">Frequently Asked Questions</h2>
+					<dl style="margin:0;">
+						${kwp.faqs.map((f) => `<dt style="font-weight:600;margin:12px 0 4px;">${escapeHtml(f.question)}</dt>\n\t\t\t\t\t\t<dd style="margin:0 0 12px;color:#374151;">${escapeHtml(f.answer)}</dd>`).join('\n\t\t\t\t\t\t')}
+					</dl>
+				</section>`
+		: '';
+
+	return `<body>
+		<div id="root">
+			<main style="max-width:840px;margin:0 auto;padding:48px 20px;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#111827;line-height:1.65;">
+				<header style="margin-bottom:24px;border-bottom:1px solid rgba(0,0,0,0.12);padding-bottom:16px;">
+					<h1 style="margin:0 0 10px;font-size:34px;line-height:1.15;letter-spacing:-0.02em;">${title}</h1>
+					<p style="margin:0;color:#374151;">${hook}</p>
+				</header>
+				${sectionsHtml}
+				${faqsHtml}
+				<footer style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.08);">
+					<p style="margin:0;color:#6b7280;font-size:13px;"><a href="${canonicalUrl}" style="color:#1d4ed8;">${canonicalUrl}</a></p>
+				</footer>
+			</main>
+		</div>
+	</body>`;
+}
+
 function renderRouteBody(route, canonicalUrl) {
+	// Try blog-specific renderer for /blogs/* routes
+	if (route.path.startsWith('/blogs/')) {
+		const blogBody = renderBlogBody(route, canonicalUrl);
+		if (blogBody) return blogBody;
+	}
+
+	// Try keyword-page renderer for /platforms/*, /problems/*, /signals/*, /industries/*, /compare/*
+	if (/^\/(platforms|problems|signals|industries|compare)\//.test(route.path)) {
+		const kwBody = renderKeywordPageBody(route, canonicalUrl);
+		if (kwBody) return kwBody;
+	}
+
 	const title = escapeHtml(route.title);
 	const description = escapeHtml(normalizeMetaDescription(route.description, 220));
 	const routeLabel = escapeHtml(route.path === '/' ? 'home page' : route.path.replace(/^\//, ''));

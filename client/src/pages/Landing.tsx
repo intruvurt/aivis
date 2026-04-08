@@ -254,7 +254,7 @@ const Landing = () => {
                   Run your free audit
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </Link>
-                <Link to="/score-fix" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
+                <Link to="/app/score-fix" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
                   See a sample report
                 </Link>
               </div>
@@ -382,7 +382,7 @@ const Landing = () => {
               Run your free audit
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
-            <Link to="/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
+            <Link to="/app/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
               See a sample report
             </Link>
             <Link to="/pricing" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
@@ -450,7 +450,7 @@ const Landing = () => {
           </div>
           <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output · Generated from live audit evidence · Not a mockup</p>
           <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/score-fix" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
+            <Link to="/app/score-fix" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
               See Score Fix details
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
@@ -590,7 +590,7 @@ const Landing = () => {
               Run your free audit
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
-            <Link to="/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
+            <Link to="/app/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
               See what a fix looks like
             </Link>
           </div>

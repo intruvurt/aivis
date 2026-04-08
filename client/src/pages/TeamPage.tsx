@@ -503,20 +503,20 @@ export default function TeamPage() {
               <a href="/analyze" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-500/12 border border-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 transition-all">
                 <Target className="w-3.5 h-3.5" /> Run Audit
               </a>
-              <a href="/integrations" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+              <a href="/app/integrations" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
                 <Link className="w-3.5 h-3.5" /> Integrations
               </a>
               {tierLimits.hasCitationTesting && (
-                <a href="/citations" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+                <a href="/app/citations" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
                   <Activity className="w-3.5 h-3.5" /> Citations
                 </a>
               )}
               {tierLimits.hasCompetitorTracking && (
-                <a href="/competitors" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+                <a href="/app/competitors" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
                   <BarChart2 className="w-3.5 h-3.5" /> Competitors
                 </a>
               )}
-              <a href="/analytics" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
+              <a href="/app/analytics" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/7 border border-white/10 text-white/60 hover:text-white/80 hover:bg-white/10 transition-all">
                 <BarChart2 className="w-3.5 h-3.5" /> Analytics
               </a>
               {(role === 'owner') && (

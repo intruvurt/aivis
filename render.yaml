@@ -31,6 +31,10 @@ services:
         sync: false
       - key: SOLANA_RPC_URL
         value: https://mainnet.helius-rpc.com
+      # ── IndexNow (Bing/Yandex URL submission) ────────────────────────────
+      # 32-char hex key. The server auto-serves the key-file at /${key}.txt.
+      - key: INDEXNOW_KEY
+        sync: false
       # All other env vars (DATABASE_URL, JWT_SECRET, STRIPE_*, etc.)
       # should be set in the Render dashboard under Environment → Secret Files / Env Groups.
 

@@ -21,6 +21,10 @@ const BRAND = {
   year: new Date().getFullYear(),
 } as const;
 
+// Marketing / newsletter sender addresses
+const MARKETING_FROM = 'AiVIS Marketing <marketing@aivis.biz>';
+const MARKETING_REPLY_TO = 'kimsupport@aivis.biz';
+
 // Only treat as dev mode if explicitly running locally - default to production behavior
 const IS_DEV_MODE =
   FRONTEND_URL.includes('localhost') || process.env.NODE_ENV === 'development';
@@ -38,6 +42,8 @@ async function resendSend(payload: {
   subject: string;
   html: string;
   text: string;
+  from?: string;
+  replyTo?: string;
   attachments?: Array<{
     filename: string;
     content: string;
@@ -48,20 +54,23 @@ async function resendSend(payload: {
     return;
   }
 
+  const sendPayload: Record<string, unknown> = {
+    from: payload.from || FROM_EMAIL,
+    to: payload.to,
+    subject: payload.subject,
+    html: payload.html,
+    text: payload.text,
+    attachments: payload.attachments,
+  };
+  if (payload.replyTo) sendPayload.reply_to = payload.replyTo;
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      from: FROM_EMAIL,
-      to: payload.to,
-      subject: payload.subject,
-      html: payload.html,
-      text: payload.text,
-      attachments: payload.attachments,
-    }),
+    body: JSON.stringify(sendPayload),
   });
 
   if (!res.ok) {
@@ -497,6 +506,8 @@ export async function sendPlatformNewsletterEmail(args: PlatformNewsletterEmailA
     subject: rendered.subject,
     html: rendered.html,
     text: rendered.text,
+    from: MARKETING_FROM,
+    replyTo: MARKETING_REPLY_TO,
   });
 }
 
@@ -1527,5 +1538,12 @@ export function renderBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: s
 
 export async function sendBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: string): Promise<void> {
   const rendered = renderBroadcastEmail(args, recipientEmail);
-  await resendSend({ to: recipientEmail, subject: rendered.subject, html: rendered.html, text: rendered.text });
+  await resendSend({
+    to: recipientEmail,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+    from: MARKETING_FROM,
+    replyTo: MARKETING_REPLY_TO,
+  });
 }

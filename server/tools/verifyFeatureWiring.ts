@@ -17,7 +17,7 @@ async function readRepoFile(...parts: string[]) {
 function checkTierLimits(): CheckResult[] {
   const expected = {
     observer: { scansPerMonth: 3, hasApiAccess: false, hasScheduledRescans: false },
-    alignment: { scansPerMonth: 60, hasApiAccess: false, hasScheduledRescans: false },
+    alignment: { scansPerMonth: 60, hasApiAccess: false, hasScheduledRescans: true },
     signal: { scansPerMonth: 110, hasApiAccess: true, hasScheduledRescans: true },
     scorefix: { scansPerMonth: 250, hasApiAccess: true, hasScheduledRescans: true },
   } as const;
@@ -87,12 +87,13 @@ async function checkRouteWiring(): Promise<CheckResult[]> {
       ok: hasPattern(reverseEngineer, /meetsMinimumTier\(userTier,\s*'alignment'\)/),
     },
     {
-      name: 'feature routes gated by enforceFeature(api/rescan/webhook/whiteLabel)',
+      name: 'feature routes gated by enforceFeature(api/rescan/webhook/whiteLabel/nicheDiscovery)',
       ok:
         hasPattern(featureRoutes, /enforceFeature\('rescan'\)/) &&
         hasPattern(featureRoutes, /enforceFeature\('api'\)/) &&
         hasPattern(featureRoutes, /enforceFeature\('webhook'\)/) &&
-        hasPattern(featureRoutes, /enforceFeature\('whiteLabel'\)/),
+        hasPattern(featureRoutes, /enforceFeature\('whiteLabel'\)/) &&
+        hasPattern(featureRoutes, /enforceFeature\('nicheDiscovery'\)/),
     },
   ];
 }

@@ -1293,7 +1293,7 @@ router.post('/exports/generate-pdf', enforceFeature('export'), async (req: Reque
  * Discovers real business URLs via AI for a given niche + geographic area,
  * validates each URL via HTTP, flags duplicates.
  */
-router.post('/niche-discovery', enforceFeature('rescan'), async (req: Request, res: Response) => {
+router.post('/niche-discovery', enforceFeature('nicheDiscovery'), async (req: Request, res: Response) => {
   try {
     const query = String(req.body?.query || '').trim();
     const location = String(req.body?.location || '').trim();
@@ -1329,7 +1329,7 @@ router.post('/niche-discovery', enforceFeature('rescan'), async (req: Request, r
  * GET /api/features/niche-discovery
  * Returns past discovery jobs for the current user/workspace.
  */
-router.get('/niche-discovery', enforceFeature('rescan'), async (req: Request, res: Response) => {
+router.get('/niche-discovery', enforceFeature('nicheDiscovery'), async (req: Request, res: Response) => {
   try {
     const limit = Math.min(50, Math.max(1, Number(req.query?.limit || 20)));
     const jobs = await listJobs(req.user!.id, req.workspace!.id, limit);
@@ -1343,7 +1343,7 @@ router.get('/niche-discovery', enforceFeature('rescan'), async (req: Request, re
  * GET /api/features/niche-discovery/:id
  * Returns a single discovery job by ID.
  */
-router.get('/niche-discovery/:id', enforceFeature('rescan'), async (req: Request, res: Response) => {
+router.get('/niche-discovery/:id', enforceFeature('nicheDiscovery'), async (req: Request, res: Response) => {
   try {
     const job = await getJob(String(req.params.id), req.user!.id);
     if (!job) return res.status(404).json({ success: false, error: 'Discovery job not found' });
@@ -1358,7 +1358,7 @@ router.get('/niche-discovery/:id', enforceFeature('rescan'), async (req: Request
  * Body: { urls: string[], frequency?: string }
  * Adds selected validated URLs from a discovery job to scheduled rescans.
  */
-router.post('/niche-discovery/:id/schedule', enforceFeature('rescan'), async (req: Request, res: Response) => {
+router.post('/niche-discovery/:id/schedule', enforceFeature('nicheDiscovery'), async (req: Request, res: Response) => {
   try {
     const urls = req.body?.urls;
     if (!Array.isArray(urls) || urls.length === 0) {

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
 
-type FeatureName = 'export' | 'share' | 'competitor' | 'api' | 'webhook' | 'whiteLabel' | 'bulk' | 'rescan';
+type FeatureName = 'export' | 'share' | 'competitor' | 'api' | 'webhook' | 'whiteLabel' | 'bulk' | 'rescan' | 'nicheDiscovery';
 
 function hasFeatureEnabled(tier: CanonicalTier, feature: FeatureName): boolean {
   const limits = TIER_LIMITS[tier];
@@ -17,6 +17,8 @@ function hasFeatureEnabled(tier: CanonicalTier, feature: FeatureName): boolean {
       return limits.hasWhiteLabel;
     case 'rescan':
       return limits.hasScheduledRescans;
+    case 'nicheDiscovery':
+      return limits.hasNicheDiscovery;
     case 'share':
       return limits.hasShareableLink;
     case 'bulk':

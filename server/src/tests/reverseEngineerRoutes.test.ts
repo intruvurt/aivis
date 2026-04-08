@@ -39,7 +39,7 @@ vi.mock('../services/toolCreditGate.js', () => ({
   }),
 }));
 
-vi.mock('./reverseEngineerRoutes.js', () => ({
+vi.mock('../routes/reverseEngineerRoutes.js', () => ({
   decompileAnswer: (...args: unknown[]) => mockDecompileAnswer(...args),
   generateCompetitorGhost: (...args: unknown[]) => mockGenerateCompetitorGhost(...args),
   analyzeModelPreferences: (...args: unknown[]) => mockAnalyzeModelPreferences(...args),

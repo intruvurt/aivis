@@ -180,7 +180,7 @@ describe('Niche Discovery Routes', () => {
   });
 
   describe('tier gating', () => {
-    it('blocks observer (no scheduled rescans feature)', async () => {
+    it('blocks observer (no niche discovery feature)', async () => {
       authState.tier = 'observer';
       const app = makeApp();
       const res = await request(app)

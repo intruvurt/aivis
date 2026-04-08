@@ -256,7 +256,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
   alignment: {
     scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 3, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
-    hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
     hasAutoFixPR: false, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,

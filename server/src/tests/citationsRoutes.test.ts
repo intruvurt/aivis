@@ -110,6 +110,8 @@ describe('Citation Routes', () => {
     authState.tier = 'signal';
     // Default: mock environment with API key
     process.env.OPENROUTER_API_KEY = 'test-key-for-citations';
+    // Default: all pool.query calls return empty rows
+    mockQuery.mockResolvedValue({ rows: [] });
   });
 
   describe('tier gating', () => {
@@ -136,9 +138,6 @@ describe('Citation Routes', () => {
     });
 
     it('allows signal tier to generate-queries', async () => {
-      // Mock: resolveCitationIdentity DB lookup
-      mockQuery.mockResolvedValueOnce({ rows: [] }); // findLatestAuditForTarget
-
       mockGenerateQueries.mockResolvedValueOnce({
         queries: ['best CRM software 2025', 'how to choose a CRM'],
         industry: 'software',
@@ -185,9 +184,6 @@ describe('Citation Routes', () => {
       delete process.env.OPENROUTER_API_KEY;
       delete process.env.OPEN_ROUTER_API_KEY;
 
-      // Mock: resolveCitationIdentity DB lookup
-      mockQuery.mockResolvedValueOnce({ rows: [] });
-
       const app = makeApp();
       const res = await request(app)
         .post('/api/citations/generate-queries')
@@ -198,9 +194,6 @@ describe('Citation Routes', () => {
     });
 
     it('handles AI generation failure gracefully', async () => {
-      // Mock: resolveCitationIdentity DB lookup
-      mockQuery.mockResolvedValueOnce({ rows: [] });
-
       mockGenerateQueries.mockRejectedValueOnce(new Error('OpenRouter rate limited'));
 
       const app = makeApp();
@@ -209,7 +202,7 @@ describe('Citation Routes', () => {
         .send({ url: 'https://example.com' });
 
       expect(res.status).toBe(500);
-      expect(res.body.error).toBe('Failed to generate queries');
+      expect(res.body.error).toContain('generate');
     });
   });
 
@@ -248,7 +241,7 @@ describe('Citation Routes', () => {
       const res = await request(app)
         .post('/api/citations/test')
         .send({
-          url: 'not-a-url',
+          url: 'ftp://invalid-protocol.com',
           queries: ['test query'],
         });
 

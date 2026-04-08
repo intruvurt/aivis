@@ -138,7 +138,6 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       `${PRICING.alignment.limits.scans} audits/month`,
     ],
     cta: "Fix what’s blocking you",
-    priceLabel: `$${PRICING.alignment.billing.monthly}/mo`,
   },
   signal: {
     headline: "Track who is beating you and why",
@@ -154,7 +153,6 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "full evidence ledger",
     ],
     cta: "Track your visibility",
-    priceLabel: `$${PRICING.signal.billing.monthly}/mo`,
   },
   scorefix: {
     headline: "Ship fixes, not guesses",

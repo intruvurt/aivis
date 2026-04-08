@@ -58,6 +58,19 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'https://linkedin.com/in/web4aidev',
       'https://dobleduche.substack.com/',
     ],
+    knowsAbout: [
+      'AI visibility auditing',
+      'answer engine optimization',
+      'generative engine optimization',
+      'AI citation readiness',
+      'structured data and schema.org',
+      'machine readability',
+      'BRAG evidence framework',
+      'entity disambiguation',
+      'AI search optimization',
+    ],
+    areaServed: 'Worldwide',
+    slogan: 'Evidence-backed AI visibility intelligence',
   };
 }
 
@@ -95,6 +108,8 @@ export function buildWebPageSchema(input: {
   name: string;
   description: string;
   mainEntityId?: string;
+  speakableCssSelectors?: string[];
+  significantLinks?: string[];
 }): Record<string, unknown> {
   const url = `${BASE_URL}${input.path}`;
   return {
@@ -114,6 +129,17 @@ export function buildWebPageSchema(input: {
             '@id': input.mainEntityId,
           },
         }
+      : {}),
+    ...(input.speakableCssSelectors?.length
+      ? {
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: input.speakableCssSelectors,
+          },
+        }
+      : {}),
+    ...(input.significantLinks?.length
+      ? { significantLink: input.significantLinks }
       : {}),
   };
 }

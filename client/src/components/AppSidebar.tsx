@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Search, BarChart3, FileText, Target,
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, BookOpen, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp,
+  Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -58,6 +58,7 @@ const toolsNav: NavItem[] = [
 ];
 
 const agencyNav: NavItem[] = [
+  { to: "/badge", labelKey: "sidebar.badge", icon: Award },
   { to: "/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
   { to: "/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
 ];

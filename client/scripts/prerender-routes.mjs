@@ -1286,6 +1286,188 @@ const routeSpecificEnrichment = {
 			].join('\n');
 		},
 	},
+
+	'/compliance': {
+		tldr: 'The Compliance page documents AiVIS security and privacy posture so crawlers can associate the brand with concrete GDPR controls, data handling practices, and compliance commitments.',
+		sections: [
+			{
+				heading: 'What the compliance page covers',
+				paragraphs: [
+					'AiVIS processes website audits, competitor comparisons, and citation tests on behalf of authenticated users. The compliance page explains the controls in place for data collection, storage, retention, and deletion as well as the GDPR-aligned practices the platform follows.',
+					'This includes encryption at rest and in transit, minimal data collection principles, role-based access control, audit logging, and a clear data retention policy that gives users control over their information.',
+				],
+			},
+			{
+				heading: 'Security controls and SOC roadmap',
+				paragraphs: [
+					'Infrastructure runs on Render with managed PostgreSQL (Neon) and Redis. All connections use TLS. Server-side security middleware includes Helmet headers, Content Security Policy with nonce-based script loading, DOMPurify sanitization, and Zod input validation.',
+					'The platform is on a SOC 2 Type I readiness path. Current controls cover access management, incident response procedures, vulnerability scanning, dependency auditing, and change management through version-controlled deployments.',
+				],
+				listItems: [
+					'GDPR data subject rights: export, correction, and deletion requests honored within 30 days.',
+					'No client-provided API keys accepted on the analysis endpoint — credentials stay server-side.',
+					'URL validation blocks private and localhost targets in production to prevent SSRF.',
+					'All user inputs pass through DOMPurify and Zod schemas before persistence.',
+				],
+			},
+		],
+		buildExtraHead(canonicalUrl, route) {
+			return jsonLdScript(buildFaqSchema([
+				{ question: 'Is AiVIS GDPR compliant?', answer: 'AiVIS follows GDPR-aligned practices including minimal data collection, encryption, user data export and deletion rights, and transparent retention policies.' },
+				{ question: 'Where is AiVIS data stored?', answer: 'Data is stored in managed PostgreSQL (Neon) with TLS encryption at rest and in transit. Infrastructure is hosted on Render.' },
+				{ question: 'Does AiVIS have SOC 2 certification?', answer: 'AiVIS is on a SOC 2 Type I readiness path with controls covering access management, incident response, and change management.' },
+			]));
+		},
+	},
+
+	'/workflow': {
+		tldr: 'The Workflow page turns AiVIS from a one-off audit tool into a repeatable AI visibility operations loop with baseline, remediation, and re-audit stages.',
+		sections: [
+			{
+				heading: 'From single audit to continuous operations',
+				paragraphs: [
+					'Most teams run one audit and stop. The workflow page explains how to move from a single score snapshot to a repeatable improvement cycle: baseline your current AI visibility, prioritize Score Fix recommendations by impact, implement changes, and re-audit to measure progress.',
+					'This operational framing helps answer engines connect AiVIS with workflow-oriented queries like "how to improve AI visibility over time" or "AI audit workflow for marketing teams".',
+				],
+			},
+			{
+				heading: 'Workflow stages explained',
+				paragraphs: [
+					'The end-to-end workflow has three phases. Phase one is the initial baseline audit where you discover your current visibility score and evidence trail. Phase two is remediation where Score Fix provides implementation-ready recommendations ranked by expected impact. Phase three is re-audit to validate that changes improved your scores.',
+				],
+				listItems: [
+					'Baseline: Run an initial audit to capture your visibility score, BRAG evidence, and category breakdown.',
+					'Fix: Use Score Fix recommendations to address schema gaps, heading structure, metadata issues, and content extractability.',
+					'Re-audit: Run follow-up audits to track score changes and confirm recommendation uptake.',
+					'Track: Use analytics and competitor tracking to monitor trends and benchmark against rivals.',
+				],
+			},
+			{
+				heading: 'Why workflows matter for AI search',
+				paragraphs: [
+					'AI models re-index and re-evaluate content continuously. A one-time optimization degrades as content changes and competitors improve. The workflow approach ensures your site maintains and improves its machine-readability over time rather than treating AI visibility as a set-and-forget task.',
+				],
+			},
+		],
+		buildExtraHead(canonicalUrl, route) {
+			return jsonLdScript(buildFaqSchema([
+				{ question: 'How do I turn an AiVIS audit into a repeatable workflow?', answer: 'Start with a baseline audit, implement Score Fix recommendations, then re-audit to measure progress. Repeat this cycle as your content changes.' },
+				{ question: 'How often should I re-audit my site?', answer: 'Re-audit after implementing major content or technical changes, or at least monthly to track score trends against competitors.' },
+				{ question: 'What is the AiVIS workflow loop?', answer: 'Baseline audit, evidence-based remediation via Score Fix, re-audit validation, and ongoing competitor tracking — a continuous AI visibility operations cycle.' },
+			]));
+		},
+	},
+
+	'/indexing': {
+		tldr: 'The Indexing tool checks Google and Bing index status for any URL and submits pages via IndexNow for faster crawl discovery.',
+		sections: [
+			{
+				heading: 'What the indexing tool does',
+				paragraphs: [
+					'The indexing page lets users check whether a specific URL is indexed by Google and Bing, and submit URLs to search engines via the IndexNow protocol for accelerated discovery. This is useful after publishing new content or implementing AiVIS audit recommendations.',
+					'IndexNow is a ping-based protocol supported by Bing, Yandex, and other search engines. When you submit a URL, participating engines are notified that content has changed and should be re-crawled.',
+				],
+			},
+			{
+				heading: 'How indexing status checks work',
+				paragraphs: [
+					'The tool queries search engine indexes to determine whether a given URL appears in results. It reports indexed or not-indexed status for both Google and Bing independently, giving you a clear picture of your crawl coverage across major engines.',
+				],
+				listItems: [
+					'Check any public URL for Google and Bing index presence.',
+					'Submit URLs via IndexNow for faster re-crawling after content updates.',
+					'Useful after deploying schema fixes, heading restructures, or metadata improvements recommended by AiVIS audits.',
+					'No API keys required — the tool handles IndexNow submission server-side.',
+				],
+			},
+		],
+		buildExtraHead(canonicalUrl, route) {
+			return jsonLdScript(buildFaqSchema([
+				{ question: 'What is IndexNow?', answer: 'IndexNow is a protocol that notifies search engines like Bing and Yandex when content changes, prompting faster re-crawling without waiting for scheduled crawls.' },
+				{ question: 'Can I check if my page is indexed on Google?', answer: 'Yes. The AiVIS indexing tool checks Google and Bing index status for any public URL and reports whether each engine has the page in its index.' },
+				{ question: 'When should I use the indexing tool?', answer: 'After publishing new content or implementing audit recommendations like schema fixes, heading restructures, or metadata improvements.' },
+			]));
+		},
+	},
+
+	'/server-headers': {
+		tldr: 'The Server Headers analyzer inspects HTTP response headers, cache directives, and security header posture for any public URL.',
+		sections: [
+			{
+				heading: 'What the server headers tool analyzes',
+				paragraphs: [
+					'Enter any public URL and the tool fetches its HTTP response headers, then evaluates cache control directives, security headers, content type, and server configuration. This helps identify misconfigured caching, missing security headers, or server-side issues that could affect crawlability and trust signals.',
+					'Response headers directly influence how search engines and AI crawlers interact with your content. Proper cache headers ensure fresh content is served, security headers build trust, and correct content types prevent parsing errors.',
+				],
+			},
+			{
+				heading: 'Key headers evaluated',
+				paragraphs: [
+					'The analyzer reviews common headers that affect both traditional SEO and AI crawlability.',
+				],
+				listItems: [
+					'Cache-Control and ETag: whether content is cacheable and how freshness is validated.',
+					'Content-Security-Policy: whether the site enforces CSP to prevent XSS and injection attacks.',
+					'Strict-Transport-Security: whether HSTS is enabled to enforce HTTPS connections.',
+					'X-Content-Type-Options, X-Frame-Options: additional security posture indicators.',
+					'Content-Type and charset: ensures correct MIME type and encoding for parser compatibility.',
+				],
+			},
+			{
+				heading: 'Why headers matter for AI visibility',
+				paragraphs: [
+					'AI crawlers and answer engines need to trust the pages they index. Missing security headers or broken cache policies can downgrade a page in crawl priority. The headers tool gives you visibility into these invisible factors that audits alone cannot detect.',
+				],
+			},
+		],
+		buildExtraHead(canonicalUrl, route) {
+			return jsonLdScript(buildFaqSchema([
+				{ question: 'What HTTP headers affect AI crawlability?', answer: 'Cache-Control, Content-Type, security headers like CSP and HSTS, and server identification headers all influence how crawlers prioritize and trust your content.' },
+				{ question: 'How do I check my server headers?', answer: 'Enter any public URL in the AiVIS Server Headers tool. It fetches the response headers and evaluates cache, security, and content configuration.' },
+				{ question: 'Why do security headers matter for SEO?', answer: 'Security headers like HSTS and CSP signal trustworthiness to crawlers. Sites with proper security posture may receive higher crawl priority and trust scores.' },
+			]));
+		},
+	},
+
+	'/support': {
+		tldr: 'The Support page provides direct customer support channels, billing help, and troubleshooting resources for AiVIS platform users.',
+		sections: [
+			{
+				heading: 'Support channels and resources',
+				paragraphs: [
+					'AiVIS support covers platform usage questions, billing inquiries, technical troubleshooting, and feature requests. Users can reach support through the in-app contact form or email for issues that the Help Center does not resolve.',
+					'Common support topics include audit interpretation, score discrepancies, subscription management, team seat administration, and integration setup for the API and automation workflows.',
+				],
+			},
+			{
+				heading: 'Self-service and documentation',
+				paragraphs: [
+					'Before contacting support, users can consult the Help Center, FAQ, and Guide for answers to common questions. The platform also includes contextual help within audit results, Score Fix recommendations, and competitor tracking dashboards.',
+				],
+				listItems: [
+					'Help Center: comprehensive documentation covering audits, scoring, billing, and privacy.',
+					'FAQ: quick answers to the most common AI visibility and platform usage questions.',
+					'Guide: step-by-step workflow guidance for running audits, reading evidence, and shipping fixes.',
+					'Score Fix: implementation-ready recommendations with expected impact estimates.',
+				],
+			},
+			{
+				heading: 'Billing and account support',
+				paragraphs: [
+					'Billing support covers plan upgrades, downgrades, cancellation, invoice history, and payment method changes. All billing is processed through Stripe with PCI-compliant payment handling. Users on paid plans can manage their subscriptions directly through the Settings page.',
+				],
+			},
+		],
+		buildExtraHead(canonicalUrl, route) {
+			return [
+				jsonLdScript(buildFaqSchema([
+					{ question: 'How do I contact AiVIS support?', answer: 'Use the in-app contact form or email support directly. The Help Center and FAQ also answer most common questions.' },
+					{ question: 'How do I manage my AiVIS subscription?', answer: 'Go to Settings to upgrade, downgrade, or cancel your plan. Billing is handled through Stripe with PCI-compliant payment processing.' },
+					{ question: 'What topics does AiVIS support cover?', answer: 'Audit interpretation, score questions, billing, team seats, API integrations, and technical troubleshooting.' },
+				])),
+			].join('\n');
+		},
+	},
 };
 
 function renderSection(section) {

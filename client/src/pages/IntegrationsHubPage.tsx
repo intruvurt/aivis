@@ -332,7 +332,7 @@ export default function IntegrationsHubPage() {
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="flex items-center gap-2 text-white"><PlugZap className="h-4 w-4" /> Auto Score Fix</div>
               <p className="mt-2 text-xs leading-6 text-white/60">Convert findings into evidence-linked PR changes against GitHub, GitLab, or Bitbucket repositories.</p>
-              <span className="mt-2 inline-block rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-300 uppercase tracking-wide">Coming soon</span>
+              <span className="mt-2 inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-300 uppercase tracking-wide">Active</span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="flex items-center gap-2 text-white"><FileJson2 className="h-4 w-4" /> OpenAPI 3.0 Spec</div>

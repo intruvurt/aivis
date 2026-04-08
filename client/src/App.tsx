@@ -252,6 +252,14 @@ export default function App() {
             <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
           </Route>
 
+          {/* ═══ Free Tools (no auth required — server rate-limits) ═══ */}
+          <Route path="/tools" element={<AppLayout />}>
+            <Route path="schema-validator" element={<SchemaValidatorPage />} />
+            <Route path="robots-checker" element={<RobotsCheckerPage />} />
+            <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="server-headers" element={<ServerHeadersPage />} />
+          </Route>
+
           {/* ═══ Authenticated App Shell ═══ */}
           <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
@@ -308,11 +316,9 @@ export default function App() {
           <Route path="/benchmarks" element={<Navigate to="/app/benchmarks" replace />} />
           <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
           <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />
-          <Route path="/server-headers" element={<Navigate to="/app/server-headers" replace />} />
+          <Route path="/server-headers" element={<Navigate to="/tools/server-headers" replace />} />
           <Route path="/indexing" element={<Navigate to="/app/indexing" replace />} />
-          <Route path="/tools/schema-validator" element={<Navigate to="/app/schema-validator" replace />} />
-          <Route path="/tools/robots-checker" element={<Navigate to="/app/robots-checker" replace />} />
-          <Route path="/tools/content-extractability" element={<Navigate to="/app/content-extractability" replace />} />
+
           <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
           <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
           <Route path="/settings" element={<Navigate to="/app/settings" replace />} />

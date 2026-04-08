@@ -151,7 +151,6 @@ async function handleCheckoutComplete(session: any): Promise<void> {
 
     await updateUserById(userId, {
       tier: String(tier),
-      last_reset_date: new Date(),
     });
 
     return;

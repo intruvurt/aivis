@@ -51,14 +51,14 @@
   ],
   "screenshots": [
     {
-      "src": "/og-image.png",
+      "src": "/og-image.png?v=20260408",
       "type": "image/png",
       "sizes": "1200x630",
       "form_factor": "wide",
       "label": "AiVIS AI Visibility Audit - Desktop"
     },
     {
-      "src": "/analyze.png",
+      "src": "/analyze.png?v=20260408",
       "type": "image/png",
       "sizes": "1024x1024",
       "label": "AiVIS AI Visibility Audit - Mobile"

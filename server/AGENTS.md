@@ -115,7 +115,6 @@ All admin routes require `x-admin-key` header validated via `requireAdminKey()` 
 Key admin endpoints:
 
 - `POST /api/admin/cache/clear` - clear analysis cache
-- `POST /api/admin/indexnow/ping` - submit URLs to IndexNow
 - `POST /api/admin/verify-user` - force-verify a user
 - `POST /api/admin/set-tier` - manually set canonical tier
 - `POST /api/admin/newsletter/preview` - preview/test newsletter email

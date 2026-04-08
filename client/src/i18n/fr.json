@@ -79,16 +79,7 @@
     "tools": "Outils d'Intelligence",
     "analyze": "Analyser"
   },
-  "indexing": {
-    "title": "Indexation d'URL & IndexNow",
-    "description": "Vérifiez l'état d'indexation Google/Bing et soumettez des URLs pour un crawl plus rapide",
-    "checkStatus": "Vérifier l'État d'Indexation",
-    "bulkSubmit": "Soumission Groupée IndexNow",
-    "history": "Historique des Soumissions",
-    "setupGuide": "Comment Configurer Bing IndexNow",
-    "submitToIndexNow": "Soumettre à IndexNow",
-    "importFile": "Importer un Fichier"
-  },
+
   "bix": {
     "placeholder": "Envoyez une URL à auditer ou dites-moi quoi faire…",
     "voiceInput": "Entrée vocale",
@@ -120,7 +111,6 @@
     "schemaValidator": "Validateur Schema",
     "serverHeaders": "En-têtes Serveur",
     "aiCrawlers": "Robots IA",
-    "indexing": "Indexation",
     "domainRating": "Notation du Domaine",
     "mcpConsole": "Console MCP",
     "agencyDashboard": "Tableau de Bord Agence",

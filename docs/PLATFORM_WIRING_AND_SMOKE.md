@@ -4,7 +4,7 @@ This document defines the minimum non-negotiable wiring checks for core product 
 
 - UX/copy policy surfaces (pricing, methodology, legal)
 - audit/citation/competitor feature routes
-- GSC + IndexNow + MCP integration routes
+- GSC + MCP integration routes
 
 On this workspace, use `npm.cmd` instead of bare `npm` when running commands from PowerShell.
 

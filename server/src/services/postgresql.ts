@@ -1528,6 +1528,7 @@ export async function runMigrations(): Promise<void> {
       ['trial_tier', 'TEXT'],
       ['trial_started_at', 'TIMESTAMPTZ'],
       ['trial_converted', 'BOOLEAN DEFAULT FALSE'],
+      ['last_reset_date', 'TIMESTAMPTZ'],
     ];
     for (const [col, def] of userCols) {
       _q(

@@ -50,7 +50,7 @@ class AuthService {
         id: newUser.id,
         name: newUser.name ?? '',
         email: newUser.email ?? '',
-        tier: newUser.internal_tier_key || 'free',
+        tier: newUser.tier || 'free',
       },
     };
   }
@@ -81,7 +81,7 @@ class AuthService {
         id: user.id,
         name: user.name ?? '',
         email: user.email ?? '',
-        tier: user.internal_tier_key || 'free',
+        tier: user.tier || 'free',
       },
     };
   }

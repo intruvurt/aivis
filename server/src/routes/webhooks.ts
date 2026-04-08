@@ -150,9 +150,8 @@ async function handleCheckoutComplete(session: any): Promise<void> {
     }
 
     await updateUserById(userId, {
-      internal_tier_key: String(tier),
+      tier: String(tier),
       last_reset_date: new Date(),
-      // Add other fields as needed
     });
 
     return;
@@ -222,8 +221,7 @@ async function handleSubscriptionUpdate(subscription: any): Promise<void> {
 
   if (user) {
     await updateUserById(user.id, {
-      internal_tier_key: String(tier),
-      // Add other fields as needed
+      tier: String(tier),
     });
   }
 
@@ -240,7 +238,7 @@ async function handleSubscriptionCancellation(subscription: any): Promise<void> 
 
   if (user) {
     await updateUserById(user.id, {
-      internal_tier_key: "free",
+      tier: "observer",
       // Add other fields as needed
     });
   }

@@ -76,7 +76,6 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
     accent: "text-amber-400",
     links: [
       { to: "/server-headers", label: "Server Headers", icon: Shield, desc: "HTTP headers, cache, security", minTier: "observer", color: "text-amber-400" },
-      { to: "/indexing", label: "Indexing", icon: Layers, desc: "Index check & IndexNow", minTier: "observer", color: "text-amber-300" },
       { to: "/score-fix", label: "Score Fix", icon: FlaskConical, desc: "Remediation workflows", minTier: "scorefix", color: "text-amber-500" },
     ],
   },

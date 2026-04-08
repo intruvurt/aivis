@@ -43,8 +43,7 @@ export interface User {
   locked_until?: Date | null;
   last_login?: Date | null;
 
-  // Internal tier tracking
-  internal_tier_key?: string | null;
+  // Internal tier tracking (uses the canonical 'tier' column)
   last_reset_date?: Date | null;
 
   // Stripe
@@ -62,7 +61,7 @@ const SAFE_COLUMNS = `id, email, is_verified, verification_token_expires, name, 
   org_description, org_logo_url, org_favicon_url, org_phone, org_address,
   org_verified, org_verification_confidence, org_verification_reasons,
   login_attempts, locked_until, last_login,
-  internal_tier_key, last_reset_date,
+  last_reset_date,
   stripe_customer_id, stripe_subscription_id,
   created_at, updated_at`;
 
@@ -179,7 +178,7 @@ const ALLOWED_UPDATE_COLUMNS = new Set([
   'verification_token_expires', 'org_description', 'org_logo_url', 'org_favicon_url',
   'org_phone', 'org_address', 'org_verified', 'org_verification_confidence',
   'org_verification_reasons', 'mfa_secret', 'login_attempts', 'locked_until',
-  'last_login', 'internal_tier_key', 'last_reset_date', 'stripe_customer_id',
+  'last_login', 'last_reset_date', 'stripe_customer_id',
   'stripe_subscription_id',
 ]);
 

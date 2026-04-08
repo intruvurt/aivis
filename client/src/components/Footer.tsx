@@ -10,7 +10,7 @@ const linkGroups = [
       { label: "Pricing", to: "/pricing" },
       { label: "Methodology", to: "/methodology" },
       { label: "Integrations", to: "/integrations" },
-      { label: "Badge", to: "/badge" },
+      { label: "DoFollow Backlink", to: "/badge" },
     ],
   },
   {

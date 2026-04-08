@@ -168,7 +168,13 @@ export default function McpConsolePage() {
   useEffect(() => { fetchServerData(); }, [fetchServerData]);
 
   /* ── Try a tool ─────────────────────────────────── */
+  const pollRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup poll timer on unmount
+  useEffect(() => () => { if (pollRef.current) clearTimeout(pollRef.current); }, []);
+
   const handleToolCall = useCallback(async (toolName: string, args: Record<string, unknown>) => {
+    if (pollRef.current) { clearTimeout(pollRef.current); pollRef.current = null; }
     setToolCallLoading(true);
     setToolCallResult(null);
     setActiveToolCall(toolName);
@@ -181,6 +187,50 @@ export default function McpConsolePage() {
       });
       const data = await res.json();
       setToolCallResult(data);
+
+      // Auto-poll for run_audit queued responses
+      if (toolName === "run_audit" && data?.content?.[0]?.text) {
+        try {
+          const inner = JSON.parse(data.content[0].text);
+          if (inner.status === "queued" && inner.status_endpoint) {
+            const pollStatus = async (endpoint: string, attempts: number) => {
+              if (attempts <= 0) {
+                setToolCallResult({ content: [{ type: "text", text: JSON.stringify({ ...inner, status: "timeout", message: "Audit timed out. Check audit history for results." }, null, 2) }] });
+                setToolCallLoading(false);
+                return;
+              }
+              try {
+                const sRes = await apiFetch(`${API_URL}${endpoint}`);
+                const sData = await sRes.json();
+                const status = sData?.data?.status || sData?.status;
+                setToolCallResult({ content: [{ type: "text", text: JSON.stringify(sData?.data || sData, null, 2) }] });
+                if (status === "complete" || status === "error") {
+                  setToolCallLoading(false);
+                  // If complete, fetch the full audit result
+                  if (status === "complete" && inner.audit_id) {
+                    try {
+                      const aRes = await apiFetch(`${API_URL}/api/mcp/call`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name: "get_audit", arguments: { audit_id: inner.audit_id } }),
+                      });
+                      const aData = await aRes.json();
+                      setToolCallResult(aData);
+                    } catch { /* keep status result */ }
+                  }
+                } else {
+                  pollRef.current = setTimeout(() => pollStatus(endpoint, attempts - 1), 5000);
+                }
+              } catch {
+                pollRef.current = setTimeout(() => pollStatus(endpoint, attempts - 1), 5000);
+              }
+            };
+            // Start polling after 5s, up to 24 attempts (2 min total)
+            pollRef.current = setTimeout(() => pollStatus(inner.status_endpoint, 24), 5000);
+            return; // keep loading state active while polling
+          }
+        } catch { /* not a queued response, just show as-is */ }
+      }
     } catch {
       setToolCallResult({ error: "Network error - could not reach MCP server" });
     } finally {
@@ -555,7 +605,10 @@ export default function McpConsolePage() {
           {toolCallResult && activeToolCall === "run_audit" && (
             <div className="mt-3 rounded-xl border border-white/10 bg-[#0a0e1a] overflow-hidden">
               <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-white/[0.02]">
-                <span className="text-[10px] text-white/40 font-mono">Audit Response</span>
+                <span className="text-[10px] text-white/40 font-mono flex items-center gap-1.5">
+                  {toolCallLoading && <Loader2 className="h-3 w-3 animate-spin text-cyan-400" />}
+                  {toolCallLoading ? "Processing audit…" : "Audit Response"}
+                </span>
                 <button onClick={() => copyText(JSON.stringify(toolCallResult, null, 2))} className="text-[10px] text-white/30 hover:text-white/60 transition"><Copy className="h-3 w-3" /></button>
               </div>
               <pre className="p-3 text-[11px] text-emerald-200/70 overflow-x-auto font-mono max-h-48 overflow-y-auto">{JSON.stringify(toolCallResult, null, 2)}</pre>

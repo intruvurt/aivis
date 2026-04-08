@@ -1148,7 +1148,7 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3/mo", "60/mo", "110/mo", "15 + 250 PR credits"],
+                  ["Audit allowance", "3/mo", "60/mo", "200/mo", "15 + 250 PR credits"],
                   ["Visibility score + recs", true, true, true, true],
                   ["Citation gap diagnosis", true, true, true, true],
                   ["Shareable report links", false, true, true, true],

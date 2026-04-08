@@ -27,7 +27,7 @@
 
 ### **Signal Tier:**
 - **Monthly:** $149/month
-- **Yearly:** $1300/year ($110/month billed annually)
+- **Yearly:** $1300/year ($200/month billed annually)
 - **Savings:** $393/year (~22% off)
 - **Features:**
   - 110 scans/month
@@ -176,7 +176,7 @@ stripe listen --forward-to https://api.aivis.biz/api/payment/webhook
 3. Verify pricing shows:
    - Alignment: $38.22month (Billed annually at $348/year)
    - Savings: 💰 Save $10.78/year
-   - Signal: $110/month (Billed annually at $1300/year)
+   - Signal: $200/month (Billed annually at $1300/year)
    - Savings: 💰 Save $72/year
 
 4. Click "Upgrade" on Signal tier

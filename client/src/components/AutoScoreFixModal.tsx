@@ -65,7 +65,7 @@ interface AsfJob {
   created_at: string;
 }
 
-type AuditSnapshot = Pick<AnalysisResponse, "url" | "visibility_score" | "audit_id">;
+type AuditSnapshot = Pick<AnalysisResponse, "url" | "visibility_score" | "audit_id" | "recommendations">;
 
 interface GitHubRepo {
   id: number;
@@ -151,6 +151,8 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
   const [submitting, setSubmitting] = useState(false);
   const [submitMsg, setSubmitMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [lastJobId, setLastJobId] = useState<string | null>(null);
+  const [repoTree, setRepoTree] = useState<string[]>([]);
+  const [loadingTree, setLoadingTree] = useState(false);
 
   // Jobs tab state
   const [jobs, setJobs] = useState<AsfJob[]>([]);
@@ -206,6 +208,16 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
     }
     void fetchGitHubBranches(repoOwner.trim(), repoName.trim());
   }, [open, token, provider, repoOwner, repoName]);
+
+  // Fetch repo file tree when branch is selected (GitHub only)
+  useEffect(() => {
+    if (!open || !token || provider !== "github") return;
+    if (!repoOwner.trim() || !repoName.trim() || !repoBranch.trim()) {
+      setRepoTree([]);
+      return;
+    }
+    void fetchRepoTree(repoOwner.trim(), repoName.trim(), repoBranch.trim());
+  }, [open, token, provider, repoOwner, repoName, repoBranch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function fetchTokens() {
     fetch(apiUrl("/tokens"), { headers: headers() })
@@ -293,6 +305,25 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
       setBranches([]);
     } finally {
       setLoadingBranches(false);
+    }
+  }
+
+  async function fetchRepoTree(owner: string, repo: string, branch: string) {
+    setLoadingTree(true);
+    try {
+      const r = await fetch(apiUrl(`/github/tree?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}&branch=${encodeURIComponent(branch)}`), {
+        headers: headers(),
+      });
+      if (r.ok) {
+        const d = await r.json();
+        setRepoTree(d.tree || []);
+      } else {
+        setRepoTree([]);
+      }
+    } catch {
+      setRepoTree([]);
+    } finally {
+      setLoadingTree(false);
     }
   }
 
@@ -638,6 +669,35 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
                 </div>
               </div>
 
+              {/* Recommendations that will be targeted */}
+              {auditResult.recommendations && auditResult.recommendations.length > 0 && (
+                <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Issues to Fix ({auditResult.recommendations.filter(r => r.priority === "high" || r.priority === "medium").length} high/medium priority)
+                  </h4>
+                  <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                    {auditResult.recommendations
+                      .filter(r => r.priority === "high" || r.priority === "medium")
+                      .slice(0, 8)
+                      .map((rec, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs">
+                          <span className={`shrink-0 px-1.5 py-0.5 rounded font-semibold ${
+                            rec.priority === "high" ? "bg-red-500/20 text-red-300" : "bg-amber-500/20 text-amber-300"
+                          }`}>
+                            {rec.priority}
+                          </span>
+                          <span className="text-slate-300">{rec.title}</span>
+                        </div>
+                      ))}
+                    {auditResult.recommendations.filter(r => r.priority === "low").length > 0 && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        + {auditResult.recommendations.filter(r => r.priority === "low").length} low-priority items
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Provider (re-confirm) */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
@@ -760,6 +820,24 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
                     />
                   </div>
                 </>
+              )}
+
+              {/* Repository file structure preview */}
+              {loadingTree && (
+                <p className="text-xs text-slate-500 animate-pulse">Fetching repository structure…</p>
+              )}
+              {!loadingTree && repoTree.length > 0 && (
+                <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Repository Structure ({repoTree.length} files)
+                  </h4>
+                  <div className="max-h-32 overflow-y-auto scrollbar-thin">
+                    <pre className="text-[11px] leading-relaxed text-slate-500 whitespace-pre-wrap break-all">
+                      {repoTree.slice(0, 50).join("\n")}
+                      {repoTree.length > 50 ? `\n… and ${repoTree.length - 50} more files` : ""}
+                    </pre>
+                  </div>
+                </div>
               )}
 
               {submitMsg && (

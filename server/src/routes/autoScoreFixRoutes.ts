@@ -204,6 +204,43 @@ router.get('/github/branches', async (req: Request, res: Response) => {
   }
 });
 
+/** GET /api/auto-score-fix/github/tree?owner=:owner&repo=:repo&branch=:branch - repo file tree */
+router.get('/github/tree', async (req: Request, res: Response) => {
+  const userId = String((req as any).user?.id || '');
+  const owner = String(req.query.owner || '').trim();
+  const repo = String(req.query.repo || '').trim();
+  const branch = String(req.query.branch || 'main').trim();
+
+  if (!owner || !repo) {
+    return res.status(400).json({ error: 'owner and repo are required query params' });
+  }
+
+  try {
+    const storedToken = await getVcsToken(userId, 'github');
+    if (!storedToken) {
+      return res.status(400).json({ error: 'No GitHub token found. Connect GitHub first.', code: 'NO_GITHUB_TOKEN' });
+    }
+
+    const plainToken = decryptVcsToken(storedToken.encrypted);
+    const payload = await fetchGitHubApi(
+      `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
+      plainToken
+    );
+
+    const tree = Array.isArray(payload?.tree)
+      ? payload.tree
+          .filter((item: any) => item.type === 'blob')
+          .slice(0, 500)
+          .map((item: any) => String(item.path))
+      : [];
+
+    return res.json({ tree, count: tree.length, truncated: !!payload?.truncated });
+  } catch (err: any) {
+    console.error('[AutoScoreFix] GitHub tree error:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch repository file tree' });
+  }
+});
+
 // ─── Job Submission ───────────────────────────────────────────────────────────
 
 /** POST /api/auto-score-fix/jobs - submit an Auto Score Fix job */

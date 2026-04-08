@@ -47,6 +47,7 @@ export interface AutoScoreFixJobInput {
   repoName: string;
   repoBranch: string;
   encryptedToken: string;
+  repoTree?: string[];
   auditEvidence: {
     visibility_score: number;
     recommendations: Array<{
@@ -238,6 +239,33 @@ export async function deleteVcsToken(userId: string, provider: VcsProvider): Pro
   await pool.query('DELETE FROM vcs_tokens WHERE user_id = $1 AND provider = $2', [userId, provider]);
 }
 
+// ─── Repo Tree Fetch ──────────────────────────────────────────────────────────
+
+export async function fetchRepoTreePaths(
+  token: string,
+  owner: string,
+  repo: string,
+  branch: string
+): Promise<string[]> {
+  const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(branch)}?recursive=1`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+    },
+  });
+  if (!res.ok) return [];
+  const data = await res.json() as any;
+  return Array.isArray(data?.tree)
+    ? data.tree
+        .filter((item: any) => item.type === 'blob')
+        .slice(0, 300)
+        .map((item: any) => String(item.path))
+    : [];
+}
+
 // ─── LLM Fix Plan Generation ──────────────────────────────────────────────────
 
 export async function generateFixPlan(input: AutoScoreFixJobInput): Promise<AutoScoreFixPlan> {
@@ -271,11 +299,15 @@ You respond ONLY with valid JSON. No markdown. No prose outside JSON.
 Your code changes must be exact, production-ready, and directly derived from the evidence provided.
 Never invent problems not in the evidence. Every change must cite which recommendation it resolves.`;
 
+  const repoTreeSection = input.repoTree?.length
+    ? `\nREPOSITORY FILE STRUCTURE (actual file paths in ${input.repoOwner}/${input.repoName}@${input.repoBranch}):\n${input.repoTree.join('\n')}\n\nIMPORTANT: Only create or update files at paths that follow the conventions visible in the repository structure above. Match the existing directory layout, naming conventions, and framework patterns. Do NOT invent paths that conflict with or ignore the repo structure.`
+    : '';
+
   const prompt = `Analyze this AI visibility audit and produce a precise code fix plan.
 
 AUDIT EVIDENCE:
 ${evidenceJson}
-
+${repoTreeSection}
 Produce a JSON response with this exact structure:
 {
   "summary": "One sentence describing the primary fix strategy",
@@ -298,7 +330,7 @@ Requirements:
 - Target schema.org JSON-LD files, meta tag files, robots.txt, sitemap hints, or structured HTML sections
 - If private_exposure_scan findings exist, prioritize concrete fixes for secret leakage, route protection, session hardening, and header hardening.
 - Each file_change must be complete and self-contained (not a diff - full replacement content for the relevant file)
-- path must be relative to repo root (e.g. "public/schema/organization.json", "public/robots.txt", "src/seo/structured-data.ts")
+- Paths MUST be relative to the repo root and MUST match the directory structure and conventions of the actual repository${input.repoTree?.length ? ' shown above' : ''}
 - Limit to 5 most impactful file changes
 - PR body must include: Score context, Evidence summary, Per-file change rationale, Implementation verification steps`;
 
@@ -683,6 +715,17 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
         [jobId]
       );
 
+      // Fetch actual repo file tree so the AI knows the real structure
+      let repoTree: string[] = [];
+      if (row.encrypted_token && row.vcs_provider === 'github') {
+        try {
+          const plainToken = decryptVcsToken(row.encrypted_token);
+          repoTree = await fetchRepoTreePaths(plainToken, row.repo_owner, row.repo_name, row.repo_branch);
+        } catch (err: any) {
+          console.warn(`[AutoScoreFix] Failed to fetch repo tree for ${jobId}:`, err?.message);
+        }
+      }
+
       const planInput: AutoScoreFixJobInput = {
         userId: row.user_id,
         workspaceId: '',
@@ -692,6 +735,7 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
         repoName: row.repo_name,
         repoBranch: row.repo_branch,
         encryptedToken: row.encrypted_token || '',
+        repoTree,
         auditEvidence: row.evidence_snapshot,
       };
 

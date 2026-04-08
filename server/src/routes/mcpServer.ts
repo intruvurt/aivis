@@ -255,12 +255,20 @@ const executors: Record<string, ToolExecutor> = {
     const auditId = uuidv4();
     const pool = getPool();
 
+    // Insert with core columns first, then try adding goal/platform_focus if columns exist
     await pool.query(
-      `INSERT INTO audits (id, user_id, workspace_id, url, status, goal, platform_focus, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+      `INSERT INTO audits (id, user_id, workspace_id, url, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())
        ON CONFLICT DO NOTHING`,
-      [auditId, userId, workspaceId, normalized.url, 'queued', goal || null, JSON.stringify(platform_focus || [])],
+      [auditId, userId, workspaceId, normalized.url, 'queued'],
     );
+    // Best-effort: update goal/platform_focus if migration has added those columns
+    if (goal || (platform_focus && platform_focus.length)) {
+      pool.query(
+        `UPDATE audits SET goal = COALESCE($2, goal), platform_focus = COALESCE($3, platform_focus) WHERE id = $1`,
+        [auditId, goal || null, JSON.stringify(platform_focus || [])],
+      ).catch(() => { /* columns may not exist yet — safe to ignore */ });
+    }
 
     // Fire off background processing (don't await - return immediately)
     processQueuedAudit(auditId, userId, workspaceId, normalized.url).catch((err) => {
@@ -485,6 +493,17 @@ router.post('/call', async (req: Request, res: Response) => {
 
     const userId = (req as any).mcpUserId;
     const workspaceId = (req as any).mcpWorkspaceId;
+
+    // Audit log for MCP tool invocations
+    const xff = req.headers['x-forwarded-for'];
+    const clientIp = typeof xff === 'string' ? xff.split(',')[0]?.trim() : req.ip || '';
+    const authHeader = req.headers.authorization || '';
+    let authType = 'unknown';
+    if (authHeader.startsWith('Bearer avis_')) authType = 'api_key';
+    else if (authHeader.startsWith('Bearer avist_')) authType = 'oauth';
+    else if (authHeader.startsWith('Bearer ')) authType = 'jwt';
+    console.log(`[mcp-audit] tool=${name} uid=${userId} ws=${workspaceId} auth=${authType} ip=${clientIp} ua="${(req.headers['user-agent'] || '').slice(0, 120)}"`);
+
     const result = await executor(args || {}, userId, workspaceId);
 
     return res.json({
@@ -593,12 +612,19 @@ router.post('/scan-url', async (req: Request, res: Response) => {
     const auditId = crypto.randomUUID();
     const pool = getPool();
 
+    // Insert with core columns first, then try adding goal/platform_focus if columns exist
     await pool.query(
-      `INSERT INTO audits (id, user_id, workspace_id, url, status, goal, platform_focus, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+      `INSERT INTO audits (id, user_id, workspace_id, url, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())
        ON CONFLICT DO NOTHING`,
-      [auditId, userId, workspaceId, normalized.url, 'queued', goal || null, JSON.stringify(platform_focus || [])],
+      [auditId, userId, workspaceId, normalized.url, 'queued'],
     );
+    if (goal || (platform_focus && platform_focus.length)) {
+      pool.query(
+        `UPDATE audits SET goal = COALESCE($2, goal), platform_focus = COALESCE($3, platform_focus) WHERE id = $1`,
+        [auditId, goal || null, JSON.stringify(platform_focus || [])],
+      ).catch(() => { /* columns may not exist yet */ });
+    }
 
     // Fire off background processing
     processQueuedAudit(auditId, userId, workspaceId, normalized.url).catch((err) => {

@@ -1051,10 +1051,35 @@ if (IS_PRODUCTION) {
 // Apply API rate limiter in production
 if (IS_PRODUCTION) app.use('/api', apiLimiter);
 
-// Request logging in dev
+// Request logging
 if (!IS_PRODUCTION) {
   app.use((req, _res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// Production audit logging for sensitive endpoints (security forensics)
+if (IS_PRODUCTION) {
+  const AUDITED_PATHS = ['/api/analyze', '/api/mcp/', '/api/competitors', '/api/citations', '/api/reverse-engineer'];
+  app.use((req, res, next) => {
+    if (!AUDITED_PATHS.some(p => req.path.startsWith(p))) return next();
+    const start = Date.now();
+    const clientIp = getRateLimitClientIp(req);
+    const ua = req.headers['user-agent'] || '';
+    // Determine auth type from token prefix (never log the token itself)
+    const authHeader = req.headers.authorization || '';
+    let authType = 'none';
+    if (authHeader.startsWith('Bearer avis_')) authType = 'api_key';
+    else if (authHeader.startsWith('Bearer avist_')) authType = 'oauth';
+    else if (authHeader.startsWith('Bearer ')) authType = 'jwt';
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      const userId = (req as any).user?.id || (req as any).mcpUserId || '-';
+      console.log(
+        `[audit] ${req.method} ${req.path} ip=${clientIp} auth=${authType} uid=${userId} status=${res.statusCode} ${duration}ms ua="${ua.slice(0, 120)}"`
+      );
+    });
     next();
   });
 }

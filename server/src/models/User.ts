@@ -61,7 +61,6 @@ const SAFE_COLUMNS = `id, email, is_verified, verification_token_expires, name, 
   org_description, org_logo_url, org_favicon_url, org_phone, org_address,
   org_verified, org_verification_confidence, org_verification_reasons,
   login_attempts, locked_until, last_login,
-  last_reset_date,
   stripe_customer_id, stripe_subscription_id,
   created_at, updated_at`;
 

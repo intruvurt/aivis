@@ -1460,7 +1460,13 @@ export async function exportCitationTestCsv(req: Request, res: Response) {
     if (!rows.length) return res.status(404).json({ error: 'Citation test not found' });
 
     const test = rows[0] as any;
-    const results = Array.isArray(test.results) ? test.results : [];
+    let parsedResults = test.results;
+    if (typeof parsedResults === 'string') {
+      try { parsedResults = JSON.parse(parsedResults); } catch { parsedResults = []; }
+    }
+    const results = parsedResults && !Array.isArray(parsedResults) && parsedResults.citations
+      ? parsedResults.citations
+      : Array.isArray(parsedResults) ? parsedResults : [];
     const summary = (test.summary && typeof test.summary === 'object') ? test.summary : {};
 
     const escapeCsv = (value: unknown) => {
@@ -2103,6 +2109,11 @@ export async function executeQueryPack(req: Request, res: Response) {
       return res.status(400).json({ error: 'URL is required' });
     }
 
+    const normalizedUrl = normalizePublicHttpUrl(String(url));
+    if (!normalizedUrl.ok) {
+      return res.status(400).json({ error: normalizedUrl.error, code: 'INVALID_URL' });
+    }
+
     const pool = getPool();
 
     // Verify pack ownership
@@ -2135,7 +2146,7 @@ export async function executeQueryPack(req: Request, res: Response) {
       `INSERT INTO citation_tests (user_id, url, queries, status)
        VALUES ($1, $2, $3, 'pending')
        RETURNING id`,
-      [userId, url, JSON.stringify(normalizedQueries)]
+      [userId, normalizedUrl.url, JSON.stringify(normalizedQueries)]
     );
 
     const testId = created[0].id;
@@ -2157,7 +2168,7 @@ export async function executeQueryPack(req: Request, res: Response) {
     runCitationTestAsync(
       testId,
       userId,
-      url,
+      normalizedUrl.url,
       normalizedQueries,
       platforms || ['chatgpt', 'perplexity', 'claude', 'google_ai'],
       apiKey

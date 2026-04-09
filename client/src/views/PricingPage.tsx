@@ -46,6 +46,7 @@ interface TierPricing {
   name: string;
   displayName: string;
   billingModel: "core" | "subscription" | "one_time" | "free";
+  stripeReady?: boolean;
   pricing: {
     monthly: TierPrice | null;
     yearly: TierPrice | null;
@@ -403,6 +404,7 @@ function PricingCard({
       : pricing.monthly;
   const isFree = tier.billingModel === "free" || !tier.isPaid;
   const isCurrent = currentTier?.toLowerCase() === tier.key.toLowerCase();
+  const stripeReady = tier.stripeReady !== false;
   const colors = TIER_COLORS[tier.key] || TIER_COLORS.observer;
   const tierCopy = TIER_COPY[tier.key];
 
@@ -563,15 +565,17 @@ function PricingCard({
 
         <button
           onClick={() => onSelect(tier.key)}
-          disabled={isCurrent || isLoading}
+          disabled={isCurrent || isLoading || (!isFree && !stripeReady)}
           className={`w-full py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
             isCurrent
               ? "bg-charcoal-light text-white/50 cursor-not-allowed"
-              : isHighlighted
-                ? `bg-gradient-to-r ${colors.gradient} text-white hover:opacity-90 shadow-lg ${colors.glow}`
-                : isFree
-                  ? "bg-charcoal border border-white/12 text-white hover:bg-charcoal-light"
-                  : "bg-charcoal-light border border-white/10 text-white/85 hover:bg-charcoal"
+              : !isFree && !stripeReady
+                ? "bg-charcoal-light text-white/40 cursor-not-allowed border border-white/8"
+                : isHighlighted
+                  ? `bg-gradient-to-r ${colors.gradient} text-white hover:opacity-90 shadow-lg ${colors.glow}`
+                  : isFree
+                    ? "bg-charcoal border border-white/12 text-white hover:bg-charcoal-light"
+                    : "bg-charcoal-light border border-white/10 text-white/85 hover:bg-charcoal"
           }`}
           type="button"
         >
@@ -579,6 +583,8 @@ function PricingCard({
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : isCurrent ? (
             "Current Plan"
+          ) : !isFree && !stripeReady ? (
+            "Coming Soon"
           ) : isFree ? (
             tierCopy?.cta || "Start Free"
           ) : isOneTime ? (

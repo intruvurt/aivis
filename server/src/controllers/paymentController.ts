@@ -249,15 +249,15 @@ export const createStripeCheckout = async (req: Request, res: Response) => {
         ? (tierConfig.yearlyPriceId || tierConfig.priceId)
         : tierConfig.priceId;
 
-    if (!effectivePriceId) {
+    if (!effectivePriceId || !/^price_[A-Za-z0-9]{14,}$/.test(effectivePriceId)) {
       const envVarHint = normalizedBillingPeriod === 'yearly'
         ? `STRIPE_${tier.toUpperCase()}_YEARLY_PRICE_ID / STRIPE_${tier.toUpperCase()}_MONTHLY_PRICE_ID`
         : `STRIPE_${tier.toUpperCase()}_MONTHLY_PRICE_ID`;
-      console.error(`[Stripe Checkout] Missing price ID for ${tier} (${normalizedBillingPeriod}). Set env var: ${envVarHint}`);
-      return res.status(500).json({
+      console.error(`[Stripe Checkout] Missing or invalid price ID for ${tier} (${normalizedBillingPeriod}). Set env var: ${envVarHint}`);
+      return res.status(503).json({
         success: false,
-        error: `Stripe price ID not configured for tier: ${tier} (${normalizedBillingPeriod})`,
-        statusCode: 500,
+        error: `Stripe billing is not yet configured for ${tier}. Please contact support or configure Stripe price IDs.`,
+        statusCode: 503,
       });
     }
 
@@ -1428,6 +1428,9 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       return features;
     };
 
+    const isRealStripePriceId = (id: string | null | undefined): boolean =>
+      typeof id === 'string' && /^price_[A-Za-z0-9]{14,}$/.test(id);
+
     const publicPricing = ACTIVE_TIERS.map((key) => {
       const config = (STRIPE_PRICING as any)[key];
       if (!config) return null;
@@ -1447,11 +1450,15 @@ export const getPricingInfo = async (req: Request, res: Response) => {
           : baselinePricing.billingModel;
       const isPaid = billingModel !== 'free';
 
+      // stripeReady: true if at least one price ID is a real Stripe price (not a placeholder)
+      const stripeReady = !isPaid || isRealStripePriceId(config.priceId) || isRealStripePriceId(config.yearlyPriceId);
+
       return {
         key,
         name: config.name,
         displayName: config.name,
         billingModel,
+        stripeReady,
         pricing: {
           monthly: billingModel === 'subscription' && monthlyAmount > 0 ? { amount: monthlyAmount, formatted: `$${monthlyAmount}` } : null,
           yearly: billingModel === 'subscription' && yearlyAmount > 0 ? { amount: yearlyAmount, formatted: `$${yearlyAmount}` } : null,

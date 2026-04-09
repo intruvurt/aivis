@@ -485,11 +485,3 @@ Rules:
     preset: voicePreset,
   };
 }
-
-export {
-  decompileAnswer,
-  generateCompetitorGhost,
-  analyzeModelPreferences,
-  simulateVisibility,
-  rewriteContentVoice,
-};

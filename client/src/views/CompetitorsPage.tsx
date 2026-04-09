@@ -211,7 +211,7 @@ export default function CompetitorsPage() {
     return () => {
       isMounted = false;
     };
-  }, [token, hasAccess, isAuthenticated]);
+  }, [token, hasAccess, isAuthenticated, latestResult?.url]);
 
   function applyComparisonUrl() {
     try {

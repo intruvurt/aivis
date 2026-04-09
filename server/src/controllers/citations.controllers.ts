@@ -774,6 +774,21 @@ function isBrandRelevantResult(
   // Results on the brand's own domain need minimal proof
   const isOnOwnDomain = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
   if (isOnOwnDomain) return score >= 2;
+
+  // When brand has niche context, require at least 1 niche keyword hit for
+  // off-domain results — prevents false positives from unrelated entities
+  // that share a similar name (e.g. "AiVIS" visibility vs "Aivis" voice software)
+  if (ctx.nicheKeywords.length >= 3) {
+    const blob = `${result.title} ${result.snippet}`.toLowerCase();
+    const nicheHits = ctx.nicheKeywords.filter(kw => blob.includes(kw)).length;
+    // Domain match in URL gives a pass even without niche hits
+    const hasDomainInUrl = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
+    if (nicheHits === 0 && !hasDomainInUrl) {
+      // No niche overlap and no domain proof → very likely wrong entity
+      return false;
+    }
+  }
+
   // Third-party sites with ambiguous/short brand names need stronger evidence:
   // name-letter matching alone isn't enough - need niche context or domain proof
   const threshold = ctx.strictMatch ? 4 : BRAND_RELEVANCE_THRESHOLD;
@@ -1003,8 +1018,16 @@ export async function authorityGranularCheck(req: Request, res: Response) {
         const batchResults = await Promise.all(
           batch.map(async (platform) => {
             const domain = PLATFORM_DOMAINS[platform];
+            // Build probe queries — include niche context keywords for disambiguation
+            // so that a brand like "AiVIS" (AI visibility) doesn't match unrelated
+            // projects like "AivisSpeech" (AI voice).
+            const topNicheKw = brandCtx.nicheKeywords.slice(0, 2).join(' ');
+            const primaryTerm = mode === 'url' ? (targetDomain || trimmedTarget) : trimmedTarget;
             const probeQueries = Array.from(new Set([
-              mode === 'url' ? `site:${domain} "${targetDomain || trimmedTarget}"` : `site:${domain} "${trimmedTarget}"`,
+              // Primary: brand + niche context for disambiguation
+              topNicheKw ? `site:${domain} "${primaryTerm}" ${topNicheKw}` : `site:${domain} "${primaryTerm}"`,
+              // Fallback: brand only (no niche context)
+              `site:${domain} "${primaryTerm}"`,
               ...searchProfile.phrases.slice(0, 3).map((phrase) => `site:${domain} "${phrase}"`),
               ...searchProfile.quoteables.slice(0, 2).map((phrase) => `site:${domain} "${phrase}"`),
             ].filter(Boolean)));

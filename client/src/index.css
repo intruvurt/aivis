@@ -667,7 +667,6 @@ nav button[class*="rounded-lg"][class*="text-white"] {
       0 1px 3px rgba(0,0,0,0.3),
       0 4px 16px rgba(0,0,0,0.2);
     color: white;
-    overflow: hidden;
   }
 
   .card-charcoal::after {
@@ -682,6 +681,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   }
 
   .card-charcoal:hover {
+    z-index: 10;
     border-color: rgba(255,255,255,0.12);
     box-shadow:
       0 1px 3px rgba(0,0,0,0.3),

@@ -78,6 +78,7 @@ const TeamPage = React.lazy(() => import("./pages/TeamPage"));
 const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const HelpCenter = React.lazy(() => import("./pages/HelpCenter"));
 const Landing = React.lazy(() => import("./pages/Landing"));
+const SampleReport = React.lazy(() => import("./pages/SampleReport"));
 const WhyAIVisibility = React.lazy(() => import("./pages/WhyAIVisibility"));
 const AISearchVisibility2026 = React.lazy(() => import("./pages/AISearchVisibility2026"));
 const InsightsPage = React.lazy(() => import("./pages/InsightsPage"));
@@ -197,6 +198,7 @@ export default function App() {
             <Route path="/invite/:token" element={<InviteAcceptPage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/sample-report" element={<SampleReport />} />
             <Route path="/press" element={<PressPage />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/guide" element={<GuidePage />} />

@@ -147,6 +147,8 @@ import { tieredRateLimit, ipRateLimit } from './middleware/tieredRateLimiter.js'
 import { runDeterministicAuditLayer, buildDeterministicResponseAdditions, attachDeterministicToAudit } from './services/audit/deterministicPipeline.js';
 import { loadEvidenceForRun } from './services/audit/evidenceLedger.js';
 import { extractEvidenceFromScrape, enrichEvidenceFromAnalysis } from './services/evidenceExtractor.js';
+import { scoreEvidence } from './services/scoringEngine.js';
+import { buildPreviewResult } from './services/previewScanner.js';
 import { evaluateSSFRRules, buildSSFRSummary } from './services/ssfrRuleEngine.js';
 import { generateFixpacks } from './services/fixpackGenerator.js';
 import { persistSSFRResults } from './services/ssfrVerificationService.js';
@@ -6801,6 +6803,54 @@ app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('[Audits] Public report fetch error:', err);
     return res.status(500).json({ error: 'Failed to fetch public report' });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Preview scan — public, no auth, returns a mini audit result
+// ─────────────────────────────────────────────────────────────────────────────
+app.post('/api/analyze/preview', ipRateLimit({ maxRequests: 5, windowMs: 3_600_000 }), async (req: Request, res: Response) => {
+  const startTime = Date.now();
+  try {
+    const rawUrl = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+    if (!rawUrl) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+    if (rawUrl.length > 2048) {
+      return res.status(400).json({ error: 'URL too long' });
+    }
+
+    const { valid, url: targetUrl, error: urlError } = validateUrl(rawUrl);
+    if (!valid || !targetUrl) {
+      return res.status(400).json({ error: urlError || 'Invalid URL' });
+    }
+
+    // Scrape the page (reuses the full scraper with its SSRF protection)
+    let scrapeResult;
+    try {
+      scrapeResult = await scrapeWebsite(targetUrl);
+    } catch (scrapeErr: any) {
+      console.error('[Preview] Scrape failed:', scrapeErr?.message);
+      return res.status(422).json({ error: 'Could not fetch the page. Check the URL and try again.' });
+    }
+
+    // Extract evidence deterministically
+    const evidence = extractEvidenceFromScrape(scrapeResult);
+
+    // Score deterministically
+    const scoring = scoreEvidence(evidence);
+
+    // Build the mini result
+    const preview = buildPreviewResult(targetUrl, evidence, scoring);
+
+    return res.json({
+      success: true,
+      preview,
+      processing_time_ms: Date.now() - startTime,
+    });
+  } catch (err: any) {
+    console.error('[Preview] Unexpected error:', err);
+    return res.status(500).json({ error: 'Preview scan failed. Please try again.' });
   }
 });
 

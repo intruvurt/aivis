@@ -1,5 +1,5 @@
 // Landing - AiVIS
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
@@ -136,6 +136,37 @@ function NeuralCityIllustration() {
   );
 }
 
+// ─── Preview scan types + helpers ────────────────────────────────────────────
+
+interface PreviewScanResult {
+  url: string;
+  score: number;
+  status_line: string;
+  findings: string[];
+  recommendation: string;
+  hard_blockers: string[];
+  scanned_at: string;
+}
+
+const PROGRESS_STEPS = [
+  'Fetching page',
+  'Reading structure',
+  'Checking trust signals',
+  'Scoring citation readiness',
+] as const;
+
+function getScoreColor(score: number): string {
+  if (score >= 70) return 'text-emerald-400';
+  if (score >= 40) return 'text-amber-400';
+  return 'text-red-400';
+}
+
+function getScoreRingColor(score: number): string {
+  if (score >= 70) return 'border-emerald-400/40 bg-emerald-400/10';
+  if (score >= 40) return 'border-amber-400/40 bg-amber-400/10';
+  return 'border-red-400/40 bg-red-400/10';
+}
+
 const TIERS = [
   {
     key: 'observer' as const, name: PRICING.observer.name, subtitle: 'Free',
@@ -176,6 +207,14 @@ const Landing = () => {
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
+  // Preview scan state
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [scanning, setScanning] = useState(false);
+  const [scanStep, setScanStep] = useState(0);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [previewResult, setPreviewResult] = useState<PreviewScanResult | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
   // Visibility fallback: if whileInView animations fail (e.g. Capacitor WebView),
   // force all animated elements visible after 1.5 s
   const [forceVisible, setForceVisible] = useState(false);
@@ -204,6 +243,55 @@ const Landing = () => {
     }
   };
 
+  const handlePreviewScan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = previewUrl.trim();
+    if (!trimmed || scanning) return;
+
+    setScanning(true);
+    setScanStep(0);
+    setScanError(null);
+    setPreviewResult(null);
+
+    // Animate through progress steps
+    const stepInterval = setInterval(() => {
+      setScanStep((prev) => Math.min(prev + 1, PROGRESS_STEPS.length - 1));
+    }, 2500);
+
+    try {
+      const res = await fetch(`${API_URL}/api/analyze/preview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: trimmed }),
+      });
+      const data = await res.json();
+
+      clearInterval(stepInterval);
+
+      if (!res.ok || !data.success) {
+        setScanError(data.error || 'Scan failed. Check the URL and try again.');
+        setScanning(false);
+        return;
+      }
+
+      // Show final step briefly before revealing
+      setScanStep(PROGRESS_STEPS.length - 1);
+      await new Promise((r) => setTimeout(r, 600));
+
+      setPreviewResult(data.preview);
+      setScanning(false);
+
+      // Scroll to result
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    } catch {
+      clearInterval(stepInterval);
+      setScanError('Network error. Please check your connection and try again.');
+      setScanning(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#060607]">
 
@@ -219,70 +307,168 @@ const Landing = () => {
       </div>
 
       {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#060607]">
+      <section className="relative flex items-center overflow-hidden bg-[#060607] pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-16 lg:pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.07),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_60%,rgba(139,92,246,0.06),transparent)]" />
         <div className="hero-flow-overlay" aria-hidden="true" />
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Free Starter Tier
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-xs font-semibold tracking-wide">Evidence-backed · No black box</span>
+        <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4 tracking-tight">
+              Is your site{' '}
+              <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">visible to AI?</span>
+            </h1>
+            <p className="text-base sm:text-lg text-white/55 mb-8 leading-relaxed max-w-xl mx-auto">
+              Paste your URL. Get a real score, real findings, and the first fix — in under 30 seconds.
+              No login required for your first result.
+            </p>
+
+            {/* ── URL INPUT FORM ── */}
+            <form onSubmit={handlePreviewScan} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-4">
+              <input
+                type="url"
+                value={previewUrl}
+                onChange={(e) => setPreviewUrl(e.target.value)}
+                placeholder="https://yourdomain.com"
+                disabled={scanning}
+                className="flex-1 px-4 py-3.5 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 disabled:opacity-50 transition-all"
+                required
+              />
+              <button
+                type="submit"
+                disabled={scanning || !previewUrl.trim()}
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-6 py-3.5 rounded-xl text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                {scanning ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    Scanning…
+                  </>
+                ) : (
+                  <>
+                    Run free AI visibility check
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Trust microcopy */}
+            <p className="text-xs text-white/35 mb-6">No login for first result · No credit card · 5 free checks per hour</p>
+
+            {/* What you'll see strip */}
+            {!scanning && !previewResult && (
+              <div className="flex flex-wrap justify-center gap-4 text-xs text-white/40">
+                {['Citation blockers', 'Trust signal gaps', 'Machine readability issues', 'Priority fix'].map((item) => (
+                  <span key={item} className="flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-cyan-400/60" />
+                    {item}
+                  </span>
+                ))}
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6 tracking-tight">
-                Your site can{' '}
-                <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">rank</span>
-                <br />and still get{' '}
-                <span className="bg-gradient-to-r from-amber-300 to-white bg-clip-text text-transparent">skipped by AI</span>
-              </h1>
-              <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
-                See what AI understands about your page, what it cannot verify, and what to fix first. AiVIS gives you a visibility snapshot in under a minute - tied to real evidence from your live page, not guesses.
-              </p>
-              <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
-                Every finding is backed by BRAG evidence IDs - Based Retrieval and Auditable Grading. No assumptions, no filler. Just real page data and fixes ranked by likely lift.
-              </p>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-[#111827]/60">
-                  <span className="text-5xl font-black text-white tabular-nums leading-none">3</span>
-                  <div>
-                    <p className="text-white font-bold text-lg leading-tight">FREE Audits</p>
-                    <p className="text-white/50 text-xs">every month · no credit card</p>
+            )}
+
+            {/* ── SCAN PROGRESS ── */}
+            {scanning && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-2xl border border-white/10 bg-[#111827]/60 p-6 max-w-md mx-auto">
+                <div className="space-y-3">
+                  {PROGRESS_STEPS.map((step, i) => (
+                    <div key={step} className="flex items-center gap-3">
+                      {i < scanStep ? (
+                        <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      ) : i === scanStep ? (
+                        <svg className="w-4 h-4 text-cyan-400 animate-spin shrink-0" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                      ) : (
+                        <div className="w-4 h-4 rounded-full border border-white/15 shrink-0" />
+                      )}
+                      <span className={`text-sm ${i <= scanStep ? 'text-white/80' : 'text-white/30'}`}>{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── SCAN ERROR ── */}
+            {scanError && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 p-4 rounded-xl border border-red-400/25 bg-red-500/10 text-red-300 text-sm max-w-md mx-auto">
+                {scanError}
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* ── MINI SCAN RESULT ── */}
+          {previewResult && (
+            <motion.div ref={resultRef} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-10">
+              <div className="rounded-2xl border border-white/10 bg-[#111827]/60 p-6 sm:p-8">
+                {/* Score + status */}
+                <div className="flex items-center gap-5 mb-6">
+                  <div className={`w-20 h-20 rounded-full border-4 ${getScoreRingColor(previewResult.score)} flex items-center justify-center shrink-0`}>
+                    <span className={`text-3xl font-black ${getScoreColor(previewResult.score)}`}>{previewResult.score}</span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-white font-bold text-lg">{previewResult.status_line}</p>
+                    <p className="text-white/40 text-sm mt-0.5">{previewResult.url}</p>
                   </div>
                 </div>
-                {platformStats?.completedAudits && (
-                  <div className="hidden sm:flex flex-col items-start px-4 py-3 rounded-2xl border border-white/8 bg-[#111827]/40">
-                    <span className="text-2xl font-bold text-cyan-300">{Number(platformStats.completedAudits).toLocaleString()}+</span>
-                    <span className="text-xs text-white/45">audits completed</span>
+
+                {/* Findings */}
+                <div className="space-y-3 mb-6">
+                  {previewResult.findings.map((finding, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="w-2 h-2 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                      <span className="text-sm text-white/70 text-left">{finding}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Recommendation */}
+                {previewResult.recommendation && (
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-400/20 mb-6">
+                    <svg className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <div className="text-left">
+                      <p className="text-xs text-emerald-400 font-semibold mb-1">TOP FIX</p>
+                      <p className="text-sm text-emerald-200/80">{previewResult.recommendation}</p>
+                    </div>
                   </div>
                 )}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3.5 rounded-full text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-                  Run your free audit
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </Link>
-                <Link to="/app/score-fix" className="inline-flex items-center justify-center bg-transparent text-white/60 px-7 py-3.5 rounded-full text-base font-medium hover:text-white transition-colors border border-white/15 hover:border-white/25">
-                  See a sample report
-                </Link>
+
+                {/* Hard blockers callout */}
+                {previewResult.hard_blockers.length > 0 && (
+                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-400/20 mb-6">
+                    <p className="text-xs text-red-400 font-semibold mb-2">HARD BLOCKERS — these cap your score</p>
+                    <div className="space-y-1.5">
+                      {previewResult.hard_blockers.map((b, i) => (
+                        <p key={i} className="text-sm text-red-300/80 text-left">• {b}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Gated preview tease */}
+                <div className="relative rounded-xl border border-white/8 bg-[#0a0a14]/80 p-6 overflow-hidden">
+                  <div className="absolute inset-0 backdrop-blur-sm bg-[#060607]/60 z-10 flex flex-col items-center justify-center gap-3">
+                    <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                    <p className="text-white/60 text-sm font-medium">Full audit includes category breakdowns, BRAG evidence, and fix priorities</p>
+                    <Link
+                      to={isAuthenticated ? '/app/analyze' : `/auth?redirect=/app/analyze&url=${encodeURIComponent(previewResult.url)}`}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20"
+                    >
+                      Unlock full audit — free
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </Link>
+                  </div>
+                  {/* Blurred preview content */}
+                  <div className="space-y-3 opacity-40 select-none" aria-hidden="true">
+                    <div className="h-3 bg-white/10 rounded w-3/4" />
+                    <div className="h-3 bg-white/10 rounded w-1/2" />
+                    <div className="h-3 bg-white/10 rounded w-2/3" />
+                    <div className="h-8 bg-white/5 rounded mt-4" />
+                    <div className="h-3 bg-white/10 rounded w-5/6" />
+                    <div className="h-3 bg-white/10 rounded w-1/3" />
+                  </div>
+                </div>
               </div>
             </motion.div>
-            <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }} className="hidden lg:block">
-              <div className="relative rounded-2xl border border-cyan-400/15 bg-[#060c14]/60 p-4 shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-violet-500/5" />
-                <NeuralCityIllustration />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="px-2 py-0.5 rounded bg-cyan-400/15 border border-cyan-400/25 text-cyan-300 text-[9px] font-mono tracking-wider">SCAN ACTIVE</span>
-                  <span className="px-2 py-0.5 rounded bg-violet-400/15 border border-violet-400/25 text-violet-300 text-[9px] font-mono tracking-wider">AI LAYER</span>
-                </div>
-                <div className="absolute bottom-4 right-4">
-                  <span className="px-2 py-0.5 rounded bg-amber-400/15 border border-amber-400/25 text-amber-300 text-[9px] font-mono tracking-wider">AIVIS.BIZ</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -331,10 +517,10 @@ const Landing = () => {
                 </p>
                 <p className="text-xs text-white/45">One audit. Three fixes applied. Score doubled on re-scan.</p>
               </div>
-              <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-                Run your free audit
+              <a href="#hero-scanner" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer">
+                Check your site now
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -388,15 +574,12 @@ const Landing = () => {
             ))}
           </div>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20">
-              Run your free audit
+            <a href="#hero-scanner" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer">
+              Run free AI visibility check
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Link>
-            <Link to="/app/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
-              See a sample report
-            </Link>
-            <Link to="/pricing" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
-              Fix my visibility
+            </a>
+            <Link to="/sample-report" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all">
+              View sample report
             </Link>
           </div>
         </div>
@@ -460,8 +643,8 @@ const Landing = () => {
           </div>
           <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output · Generated from live audit evidence · Not a mockup</p>
           <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/app/score-fix" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
-              See Score Fix details
+            <Link to="/sample-report" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/18 transition-colors">
+              View sample report
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Link>
             <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300/80 text-sm font-semibold hover:bg-cyan-500/15 transition-colors">
@@ -596,12 +779,12 @@ const Landing = () => {
           <p className="text-lg text-white/55 mb-3">AiVIS shows why. And gives you a way to fix it.</p>
           <p className="text-sm text-white/35 mb-10">Free tier · No credit card · Your first audit in under a minute</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to={isAuthenticated ? '/app/analyze' : '/auth?redirect=/app/analyze'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25">
-              Run your free audit
+            <a href="#hero-scanner" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25 cursor-pointer">
+              Run free AI visibility check
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Link>
-            <Link to="/app/score-fix" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
-              See what a fix looks like
+            </a>
+            <Link to="/sample-report" className="inline-flex items-center justify-center gap-2 bg-transparent text-white/65 px-9 py-4 rounded-full text-lg font-semibold border border-white/18 hover:text-white hover:border-white/30 transition-all">
+              View sample report
             </Link>
           </div>
           <p className="mt-8 text-xs text-white/30">{MARKETING_CLAIMS.modelAllocation}</p>

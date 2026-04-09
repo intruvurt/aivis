@@ -218,6 +218,7 @@ export default function TopNav() {
     unreadCount: unreadNotifications,
     markRead: markNotificationRead,
     markAllRead: markAllNotificationsRead,
+    dismissAll: dismissAllNotifications,
   } = useNotifications();
 
   // Close user dropdown on outside click
@@ -569,13 +570,24 @@ export default function TopNav() {
                   <div className="absolute right-0 mt-2 w-80 bg-[#323a4c] border border-white/10 rounded-xl shadow-xl shadow-black/30 overflow-hidden z-[220]">
                     <div className="px-3 py-2.5 border-b border-white/10 bg-charcoal-light/30 flex items-center justify-between">
                       <p className="text-sm font-medium text-white">Notifications</p>
-                      <button
-                        type="button"
-                        onClick={() => { void markAllNotificationsRead(); }}
-                        className="text-[11px] text-cyan-200 hover:text-cyan-100"
-                      >
-                        Mark all read
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {notifications.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => { dismissAllNotifications(); }}
+                            className="text-[11px] text-white/50 hover:text-white/80"
+                          >
+                            Clear all
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => { void markAllNotificationsRead(); }}
+                          className="text-[11px] text-cyan-200 hover:text-cyan-100"
+                        >
+                          Mark all read
+                        </button>
+                      </div>
                     </div>
                     <div className="max-h-80 overflow-y-auto p-1.5">
                       {notifications.length === 0 ? (

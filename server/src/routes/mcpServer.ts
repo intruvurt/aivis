@@ -233,6 +233,28 @@ const TOOLS: MCPTool[] = [
     },
     requiredScope: 'read:audits',
   },
+  {
+    name: 'run_citation_test',
+    description: 'Test whether a URL is cited by AI answer engines. Runs queries across platforms (ChatGPT, Perplexity, Claude, Google AI) and returns a citation presence matrix.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', description: 'Brand URL to test citation presence for' },
+        platforms: {
+          type: 'array',
+          items: { type: 'string', enum: ['chatgpt', 'perplexity', 'claude', 'google_ai'] },
+          description: 'Platforms to test (default: all four)',
+        },
+        queries: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Specific queries to test. If omitted, queries must be provided via the citation test API.',
+        },
+      },
+      required: ['url'],
+    },
+    requiredScope: 'write:audits',
+  },
 ];
 
 // ── Tool executors ───────────────────────────────────────────────────────────
@@ -442,6 +464,35 @@ const executors: Record<string, ToolExecutor> = {
       [userId, workspaceId, monthStart, monthEnd]
     );
     return { month_start: monthStart, month_end: monthEnd, requests_this_month: Number(rows[0]?.total || 0) };
+  },
+
+  async run_citation_test(params, userId, _workspaceId) {
+    const normalized = normalizePublicHttpUrl(String(params.url));
+    if (!normalized.ok) throw new Error(normalized.error);
+
+    const platforms = params.platforms || ['chatgpt', 'perplexity', 'claude', 'google_ai'];
+    const queries: string[] = params.queries || [];
+    const pool = getPool();
+
+    const { rows: created } = await pool.query(
+      `INSERT INTO citation_tests (user_id, url, queries, status)
+       VALUES ($1, $2, $3, 'pending') RETURNING id`,
+      [userId, normalized.url, JSON.stringify(queries)],
+    );
+
+    const testId = created[0].id;
+
+    return {
+      test_id: testId,
+      url: normalized.url,
+      status: 'pending',
+      platforms,
+      query_count: queries.length,
+      status_endpoint: `/api/citations/test/${testId}`,
+      message: queries.length
+        ? 'Citation test started. Poll the status_endpoint for results.'
+        : 'Citation test created. Provide queries via the citation test API to execute.',
+    };
   },
 };
 

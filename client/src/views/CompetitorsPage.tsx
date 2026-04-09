@@ -553,6 +553,7 @@ export default function CompetitorsPage() {
 
                 <CompetitorManager
                   token={token}
+                  comparisonUrl={comparisonUrl}
                   onCompetitorsChange={() => setRefreshKey((k) => k + 1)}
                   onScanComplete={handleCompetitorScanComplete}
                 />

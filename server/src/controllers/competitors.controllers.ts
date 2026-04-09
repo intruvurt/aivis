@@ -84,10 +84,108 @@ const NICHE_COMPETITOR_SUGGESTIONS: Record<string, { label: string; suggestions:
   },
 };
 
-// GET /api/competitors/suggestions?niche=<key> - Get niche-based competitor suggestions
+// GET /api/competitors/suggestions?niche=<key>&url=<target> - Get competitor suggestions
+// Priority: (1) smart discovery from the user's audit history, (2) niche templates only when explicitly selected
 export async function getCompetitorSuggestions(req: Request, res: Response) {
   try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
     const nicheParam = String(req.query.niche || '').trim().toLowerCase();
+    const targetUrl = String(req.query.url || '').trim();
+    const pool = getPool();
+
+    // ── Phase 1: Smart discovery from user's audit history ────────────────
+    let discovered: CompetitorSuggestion[] = [];
+
+    if (targetUrl) {
+      let targetDomain = '';
+      try {
+        const candidate = /^https?:\/\//i.test(targetUrl) ? targetUrl : `https://${targetUrl}`;
+        targetDomain = new URL(candidate).hostname.replace(/^www\./, '').toLowerCase();
+      } catch { /* ignore malformed */ }
+
+      if (targetDomain) {
+        try {
+          // Get keywords from the target URL's latest audit
+          const { rows: auditRows } = await pool.query(
+            `SELECT result->'topical_keywords' AS keywords
+             FROM audits WHERE user_id = $1 AND url ILIKE $2
+             ORDER BY created_at DESC LIMIT 1`,
+            [userId, `%${targetDomain}%`],
+          );
+
+          const targetKeywords: string[] = Array.isArray(auditRows[0]?.keywords)
+            ? auditRows[0].keywords.map((k: unknown) => String(k).toLowerCase())
+            : [];
+
+          // Build set of domains to exclude (already-tracked + target itself)
+          const { rows: tracked } = await pool.query(
+            'SELECT competitor_url FROM competitor_tracking WHERE user_id = $1',
+            [userId],
+          );
+          const excludeDomains = new Set<string>();
+          excludeDomains.add(targetDomain);
+          for (const row of tracked) {
+            try { excludeDomains.add(new URL(row.competitor_url).hostname.replace(/^www\./, '').toLowerCase()); }
+            catch { /* skip */ }
+          }
+
+          // Find other audited URLs by this user that share keyword overlap
+          const { rows: candidates } = await pool.query(
+            `SELECT DISTINCT ON (lower(regexp_replace(regexp_replace(url, '^https?://(www\\.)?', ''), '/+$', '')))
+               url, result->'topical_keywords' AS keywords
+             FROM audits
+             WHERE user_id = $1 AND url NOT ILIKE $2
+             ORDER BY lower(regexp_replace(regexp_replace(url, '^https?://(www\\.)?', ''), '/+$', '')),
+                      created_at DESC
+             LIMIT 40`,
+            [userId, `%${targetDomain}%`],
+          );
+
+          for (const c of candidates) {
+            let domain = '';
+            try { domain = new URL(c.url).hostname.replace(/^www\./, '').toLowerCase(); }
+            catch { continue; }
+            if (excludeDomains.has(domain)) continue;
+
+            const cKeywords: string[] = Array.isArray(c.keywords)
+              ? c.keywords.map((k: unknown) => String(k).toLowerCase())
+              : [];
+
+            // Require at least 1 keyword overlap when we have keywords, otherwise accept all non-excluded domains
+            const overlap = targetKeywords.length > 0
+              ? targetKeywords.filter(k => cKeywords.includes(k)).length
+              : 0;
+
+            if (overlap >= 1 || targetKeywords.length === 0) {
+              discovered.push({ nickname: domain, url: c.url });
+              excludeDomains.add(domain);
+              if (discovered.length >= 8) break;
+            }
+          }
+        } catch (err) {
+          console.error('[Competitors] Smart discovery error (non-fatal):', err);
+        }
+      }
+    }
+
+    // ── Phase 2: Profile-based discovery fallback ─────────────────────────
+    if (discovered.length === 0) {
+      try {
+        const user = (req as any).user;
+        const website = String(user?.website || '').trim();
+        if (website) {
+          const profileResults = await discoverCompetitorsFromHistory(userId, website);
+          discovered = profileResults
+            .filter(s => !s.already_tracked)
+            .slice(0, 8)
+            .map(s => ({ nickname: s.domain, url: s.url }));
+        }
+      } catch { /* non-fatal */ }
+    }
+
+    // ── Phase 3: Niche templates (only when user explicitly picks one) ────
     const selectedNiche = nicheParam && NICHE_COMPETITOR_SUGGESTIONS[nicheParam] ? nicheParam : '';
 
     const nicheOptions = Object.entries(NICHE_COMPETITOR_SUGGESTIONS).map(([key, value]) => ({
@@ -96,17 +194,24 @@ export async function getCompetitorSuggestions(req: Request, res: Response) {
       count: value.suggestions.length,
     }));
 
-    const suggestions = selectedNiche
+    // Only return niche suggestions when the user explicitly selected a niche
+    const nicheSuggestions = selectedNiche
       ? NICHE_COMPETITOR_SUGGESTIONS[selectedNiche].suggestions
-      : Object.values(NICHE_COMPETITOR_SUGGESTIONS)
-          .flatMap((group) => group.suggestions)
-          .slice(0, 12);
+      : [];
+
+    // Smart discovery takes priority over niche templates
+    const suggestions = discovered.length > 0 ? discovered : nicheSuggestions;
 
     return res.json({
       success: true,
       selected_niche: selectedNiche || null,
       niches: nicheOptions,
       suggestions,
+      discovery_source: discovered.length > 0
+        ? 'audit_history'
+        : selectedNiche
+          ? 'niche'
+          : 'none',
     });
   } catch (err: any) {
     console.error('[Competitors] Suggestions error:', err);

@@ -33,6 +33,7 @@ interface Competitor {
 
 interface CompetitorManagerProps {
   token?: string;
+  comparisonUrl?: string;
   onCompetitorsChange?: () => void;
   onScanComplete?: (url: string) => void;
 }
@@ -63,7 +64,7 @@ function toFriendlyCompetitorError(message: string): string {
   return message;
 }
 
-export default function CompetitorManager({ token, onCompetitorsChange, onScanComplete }: CompetitorManagerProps) {
+export default function CompetitorManager({ token, comparisonUrl, onCompetitorsChange, onScanComplete }: CompetitorManagerProps) {
   const navigate = useNavigate();
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,6 +89,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
   const [sortMode, setSortMode] = useState<"recent" | "score-desc" | "score-asc">("recent");
   const [lastScanSummary, setLastScanSummary] = useState<{ url: string; score?: number } | null>(null);
   const [bulkSummary, setBulkSummary] = useState<string | null>(null);
+  const [discoverySource, setDiscoverySource] = useState<string>('none');
 
   useEffect(() => {
     if (token) {
@@ -133,8 +135,11 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
       setSuggestionsLoading(true);
       setSuggestionsError(null);
 
-      const query = niche ? `?niche=${encodeURIComponent(niche)}` : '';
-      const response = await apiFetch(`${API_URL}/api/competitors/suggestions${query}`, {
+      const params = new URLSearchParams();
+      if (niche) params.set('niche', niche);
+      if (comparisonUrl) params.set('url', comparisonUrl);
+      const qs = params.toString() ? `?${params.toString()}` : '';
+      const response = await apiFetch(`${API_URL}/api/competitors/suggestions${qs}`, {
         headers: {},
       });
 
@@ -145,6 +150,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
       const data = await response.json();
       setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
       setNiches(Array.isArray(data?.niches) ? data.niches : []);
+      setDiscoverySource(String(data?.discovery_source || 'none'));
     } catch (err: any) {
       console.error('Fetch suggestions error:', err);
       setSuggestionsError(err?.message || 'Failed to fetch suggestions');
@@ -471,7 +477,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                 type="text"
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && !submitting && handleAdd()}
+                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && newNickname.trim() && !submitting && addCompetitor()}
                 enterKeyHint="done"
                 placeholder="https://competitor.com"
                 disabled={submitting}
@@ -484,7 +490,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
                 type="text"
                 value={newNickname}
                 onChange={(e) => setNewNickname(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && !submitting && handleAdd()}
+                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && newNickname.trim() && !submitting && addCompetitor()}
                 enterKeyHint="done"
                 placeholder="Main Competitor"
                 disabled={submitting}
@@ -494,20 +500,24 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
 
             <div className="rounded-lg border border-white/10 bg-charcoal p-3">
               <div className="flex items-center justify-between gap-2 mb-2">
-                <p className="text-xs font-semibold text-white/80">Need ideas? Pick a niche</p>
-                <select
-                  value={selectedNiche}
-                  onChange={(e) => setSelectedNiche(e.target.value)}
-                  disabled={suggestionsLoading || submitting}
-                  className={`px-2 py-1 rounded-md text-xs ${appSelectSurfaceClass}`}
-                >
-                  <option value="">Popular options</option>
-                  {niches.map((niche) => (
-                    <option key={niche.key} value={niche.key}>
-                      {niche.label}
-                    </option>
-                  ))}
-                </select>
+                <p className="text-xs font-semibold text-white/80">
+                  {discoverySource === 'audit_history' ? 'Discovered from your audits' : 'Need ideas? Pick an industry'}
+                </p>
+                {discoverySource !== 'audit_history' && (
+                  <select
+                    value={selectedNiche}
+                    onChange={(e) => setSelectedNiche(e.target.value)}
+                    disabled={suggestionsLoading || submitting}
+                    className={`px-2 py-1 rounded-md text-xs ${appSelectSurfaceClass}`}
+                  >
+                    <option value="">Select industry…</option>
+                    {niches.map((niche) => (
+                      <option key={niche.key} value={niche.key}>
+                        {niche.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {suggestionsLoading ? (
@@ -515,7 +525,7 @@ export default function CompetitorManager({ token, onCompetitorsChange, onScanCo
               ) : suggestionsError ? (
                 <p className="text-xs text-white/70">{suggestionsError}</p>
               ) : suggestions.length === 0 ? (
-                <p className="text-xs text-white/55">No suggestions available for this niche yet.</p>
+                <p className="text-xs text-white/55">{discoverySource === 'none' && !selectedNiche ? 'Select an industry above for example competitors, or type a URL manually.' : 'No suggestions found. Enter a competitor URL manually.'}</p>
               ) : (
                 <div className="space-y-2 max-h-44 overflow-auto pr-1">
                   {suggestions.map((suggestion) => (

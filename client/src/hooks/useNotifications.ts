@@ -227,9 +227,15 @@ export default function useNotifications() {
 
     if (!res.ok) return;
 
-    setNotifications((prev) => prev.map((item) => ({ ...item, is_read: true })));
+    // Clear the list entirely so the dropdown empties after mark-all-read
+    setNotifications([]);
     setUnreadCount(0);
   }, [isAuthenticated]);
+
+  const dismissAll = useCallback(() => {
+    setNotifications([]);
+    setUnreadCount(0);
+  }, []);
 
   useEffect(() => {
     void fetchNotifications();
@@ -399,5 +405,6 @@ export default function useNotifications() {
     refresh: fetchNotifications,
     markRead,
     markAllRead,
+    dismissAll,
   };
 }

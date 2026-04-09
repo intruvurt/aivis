@@ -34,6 +34,7 @@ const AnswerPresencePage = React.lazy(() => import("./views/AnswerPresencePage")
 const BrandIntegrityPage = React.lazy(() => import("./views/BrandIntegrityPage"));
 const ScoreFixPage = React.lazy(() => import("./views/ScoreFixPage"));
 const SiteCrawlPage = React.lazy(() => import("./views/SiteCrawlPage"));
+const PipelinePage = React.lazy(() => import("./views/PipelinePage"));
 
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const Profile = React.lazy(() => import("./pages/Profile"));
@@ -276,6 +277,7 @@ export default function App() {
             <Route path="brand-integrity" element={<BrandIntegrityPage />} />
             <Route path="score-fix" element={<ScoreFixPage />} />
             <Route path="site-crawl" element={<SiteCrawlPage />} />
+            <Route path="pipeline" element={<PipelinePage />} />
             <Route path="benchmarks" element={<AiVisibilityBenchmark />} />
             <Route path="workflow" element={<PlatformWorkflowPage />} />
             <Route path="mcp" element={<McpConsolePage />} />
@@ -315,6 +317,7 @@ export default function App() {
           <Route path="/brand-integrity" element={<Navigate to="/app/brand-integrity" replace />} />
           <Route path="/score-fix" element={<Navigate to="/app/score-fix" replace />} />
           <Route path="/site-crawl" element={<Navigate to="/app/site-crawl" replace />} />
+          <Route path="/pipeline" element={<Navigate to="/app/pipeline" replace />} />
           <Route path="/benchmarks" element={<Navigate to="/app/benchmarks" replace />} />
           <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
           <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />

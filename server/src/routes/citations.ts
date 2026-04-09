@@ -77,8 +77,8 @@ const requireSignal = (req: Request, res: Response, next: NextFunction) => {
 router.post('/authority-check', requireAlignmentOrHigher, authorityGranularCheck);
 router.get('/identity', requireAlignmentOrHigher, getCitationIdentity);
 
-// Signal-only citation testing workflow
-router.post('/generate-queries', requireSignal, generateTestQueries);
+// Prompt Intelligence query generation (Alignment+)
+router.post('/generate-queries', requireAlignmentOrHigher, generateTestQueries);
 
 // Start a new citation test
 router.post('/test', requireSignal, startCitationTest);

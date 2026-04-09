@@ -147,48 +147,49 @@ export const ALIGNMENT_PRIMARY: AiProvider = {
 // ── Free model providers (Observer tier - $0.00 per scan) ──
 // Ordered by JSON-output reliability. Large instruct models first.
 // These must be widely-available OpenRouter :free models - avoid niche/unstable ones.
+// Verified against OpenRouter /models?q=:free on 2026-04-09.
 export const FREE_PROVIDERS: AiProvider[] = [
   {
     provider: 'openrouter',
-    model: 'google/gemini-2.0-flash-exp:free',
+    model: 'google/gemma-4-31b-it:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Gemini 2.0 Flash (Free)',
-    label: 'Gemini 2.0 Flash',
+    displayName: 'Gemma 4 31B (Free)',
+    label: 'Gemma 4 31B',
   },
   {
     provider: 'openrouter',
-    model: 'meta-llama/llama-3.3-70b-instruct:free',
+    model: 'google/gemma-4-26b-a4b-it:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Llama 3.3 70B (Free)',
-    label: 'Llama 3.3 70B',
+    displayName: 'Gemma 4 26B MoE (Free)',
+    label: 'Gemma 4 26B MoE',
   },
   {
     provider: 'openrouter',
-    model: 'qwen/qwen3-32b:free',
+    model: 'nvidia/nemotron-3-super-120b-a12b:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Qwen3 32B (Free)',
-    label: 'Qwen3 32B',
+    displayName: 'Nemotron 3 Super 120B (Free)',
+    label: 'Nemotron 3 Super 120B',
   },
   {
     provider: 'openrouter',
-    model: 'mistralai/mistral-small-3.1-24b-instruct:free',
+    model: 'minimax/minimax-m2.5:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Mistral Small 3.1 (Free)',
-    label: 'Mistral Small 3.1 24B',
+    displayName: 'MiniMax M2.5 (Free)',
+    label: 'MiniMax M2.5',
   },
   {
     provider: 'openrouter',
-    model: 'deepseek/deepseek-chat:free',
+    model: 'nvidia/nemotron-3-nano-30b-a3b:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'DeepSeek V3 (Free)',
-    label: 'DeepSeek V3',
+    displayName: 'Nemotron 3 Nano 30B (Free)',
+    label: 'Nemotron 3 Nano 30B',
   },
   {
     provider: 'openrouter',
-    model: 'google/gemma-3-27b-it:free',
+    model: 'openai/gpt-oss-120b:free',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Gemma 3 27B (Free)',
-    label: 'Gemma 3 27B',
+    displayName: 'GPT-OSS 120B (Free)',
+    label: 'GPT-OSS 120B',
   },
 ];
 

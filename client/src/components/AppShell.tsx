@@ -7,6 +7,48 @@ import TrialBanner from "./TrialBanner";
 
 const GuideBot = React.lazy(() => import("./GuideBot"));
 
+function OutletErrorFallback() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
+      <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-2xl">⚠️</div>
+      <h2 className="text-lg font-semibold text-white">Page failed to load</h2>
+      <p className="text-white/50 text-sm max-w-xs">This can happen on slow connections or after a deployment. Try reloading.</p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="px-5 py-2 rounded-xl bg-orange-400 text-slate-950 text-sm font-semibold hover:bg-orange-300 transition-colors"
+      >
+        Reload page
+      </button>
+    </div>
+  );
+}
+
+class OutletErrorBoundary extends React.Component<React.PropsWithChildren, { hasError: boolean }> {
+  constructor(props: React.PropsWithChildren) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error("[AppShell OutletError]", error, info.componentStack);
+  }
+  render() {
+    if (this.state.hasError) return <OutletErrorFallback />;
+    return this.props.children;
+  }
+}
+
+function PageLoadingIndicator() {
+  return (
+    <div className="flex items-center justify-center py-24">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-orange-400" />
+    </div>
+  );
+}
+
 export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const close = useCallback(() => setSidebarOpen(false), []);
@@ -36,7 +78,11 @@ export default function AppShell() {
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
-          <Outlet />
+          <OutletErrorBoundary>
+            <Suspense fallback={<PageLoadingIndicator />}>
+              <Outlet />
+            </Suspense>
+          </OutletErrorBoundary>
         </main>
       </div>
 

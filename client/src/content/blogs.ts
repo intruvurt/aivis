@@ -2143,7 +2143,7 @@ That is it. No configuration files. No admin panels to navigate. No support tick
 
 If you are an agency managing multiple clients, or a company with multiple departments that each need their own visibility tracking, workspaces give you the isolation and collaboration you need without the overhead.
 
-Try it out at [aivis.ing/team](https://aivis.ing/team).`,
+Try it out at [aivis.biz/app/team](https://aivis.biz/app/team).`,
     keyPoints: [
       'Every audit, competitor, citation test, and mention scan is scoped to the active workspace with X-Workspace-Id header injection.',
       'Four roles (Owner, Admin, Member, Viewer) are enforced server-side via middleware, not just UI filters.',

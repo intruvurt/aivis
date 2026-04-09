@@ -45,6 +45,10 @@ Feature pages
 - Brand Integrity Monitor: https://aivis.biz/brand-integrity
 - Indexing Intelligence: https://aivis.biz/indexing
 - Server Headers: https://aivis.biz/server-headers
+- Site Crawl: https://aivis.biz/site-crawl
+- Niche Discovery: https://aivis.biz/niche-discovery
+- Brand Mention Scanning: https://aivis.biz/mentions
+- Self-Healing Audit Pipeline: https://aivis.biz/app/pipeline
 
 Comparison pages
 - Compare Hub: https://aivis.biz/compare
@@ -73,6 +77,8 @@ Blog & editorial pages
 - 7-Step Implementation Roadmap: https://aivis.biz/blogs/7-step-implementation-roadmap-audit-to-live-citations-30-days
 - Google Search Console 2026: https://aivis.biz/blogs/google-search-console-2026-what-actually-matters-now
 - The River Changed Direction: https://aivis.biz/blogs/the-river-changed-direction-why-ai-answer-engines-rewrote-the-web
+- AI Visibility Tools 2026: https://aivis.biz/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure
+- How to Get Cited by ChatGPT, Perplexity, Gemini: https://aivis.biz/blogs/how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide
 - Before You Build Another SaaS: https://aivis.biz/blogs/before-you-build-another-saas-run-this-30-second-reality-check
 - Three Free Tools: https://aivis.biz/blogs/three-free-tools-schema-validator-robots-checker-content-extractability
 - Scheduled Rescans & Monitoring: https://aivis.biz/blogs/scheduled-rescans-and-autopilot-monitoring-set-it-and-track-it

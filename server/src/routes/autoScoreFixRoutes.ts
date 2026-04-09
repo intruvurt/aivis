@@ -427,7 +427,6 @@ router.post('/jobs/:id/cancel', workspaceRequired, async (req: Request, res: Res
   }
 });
 
-export default router;
 // ─── Status / Eligibility Check ──────────────────────────────────────────────
 
 /** GET /api/auto-score-fix/status - credit balance + tier eligibility (no workspace required) */
@@ -451,3 +450,5 @@ router.get('/status', async (req: Request, res: Response) => {
     eligible: tierEligible && availableCredits >= AUTO_SCORE_FIX_CREDIT_COST,
   });
 });
+
+export default router;

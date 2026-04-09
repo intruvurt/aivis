@@ -32,6 +32,7 @@ Allow: /industries/*
 Allow: /insights
 Allow: /integrations
 Allow: /landing
+Allow: /mentions
 Allow: /methodology
 Allow: /platforms
 Allow: /platforms/*
@@ -45,10 +46,12 @@ Allow: /score-fix
 Allow: /server-headers
 Allow: /signals
 Allow: /signals/*
+Allow: /site-crawl
 Allow: /support
 Allow: /tools/content-extractability
 Allow: /tools/robots-checker
 Allow: /tools/schema-validator
+Allow: /tools/server-headers
 Allow: /voice-search-ai-answer-optimization-2026
 Allow: /why-ai-visibility
 Allow: /workflow
@@ -59,6 +62,7 @@ Allow: /geo-ai-ranking-2026
 # Private/authenticated/non-public routes
 Disallow: /admin
 Disallow: /api/
+Disallow: /app/
 Disallow: /auth
 Disallow: /billing
 Disallow: /mcp

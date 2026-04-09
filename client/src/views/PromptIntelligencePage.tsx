@@ -87,7 +87,7 @@ export default function PromptIntelligencePage() {
   }, [isAuthenticated, navigate]);
 
   const userTier = (user?.tier as any) || "observer";
-  const hasAccess = meetsMinimumTier(userTier, "signal");
+  const hasAccess = meetsMinimumTier(userTier, "alignment");
 
   const defaultUrl = latestResult?.url || "";
   const [urlInput, setUrlInput] = useState(defaultUrl);

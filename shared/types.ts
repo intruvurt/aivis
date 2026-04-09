@@ -1747,3 +1747,146 @@ export interface EvidenceDrivenFixIssue {
   evidence_type: 'metadata' | 'dom' | 'schema' | 'link' | 'http' | 'search' | 'other';
 
 }
+
+/* ── Self-Healing Pipeline types ──────────────────────────────────────── */
+
+/** The 11 canonical fix classes that the pipeline maps every finding to. */
+export type FixClass =
+  | 'CONTENT_REWRITE'
+  | 'META_REWRITE'
+  | 'HEADING_RESTRUCTURE'
+  | 'SCHEMA_INSERT'
+  | 'SCHEMA_REPAIR'
+  | 'TRUST_BLOCK_ADD'
+  | 'INTERNAL_LINK_PATCH'
+  | 'TECHNICAL_CONFIG_PATCH'
+  | 'SECURITY_HARDENING'
+  | 'LLMS_TXT_CREATE'
+  | 'CRAWLABILITY_REPAIR';
+
+/** Scoring categories for deterministic evidence-based scoring. */
+export type ScoringCategory =
+  | 'content_depth'
+  | 'heading_structure'
+  | 'schema_structured_data'
+  | 'meta_tags_og'
+  | 'technical_seo'
+  | 'ai_readability'
+  | 'security_trust';
+
+/** A single scored category with evidence-backed reasoning. */
+export interface CategoryScore {
+  category: ScoringCategory;
+  score_0_100: number;
+  weight: number;
+  weighted_contribution: number;
+  evidence_keys: string[];
+  fix_classes: FixClass[];
+  reasoning: string;
+}
+
+/** The full deterministic score breakdown for one audit. */
+export interface ScoringResult {
+  overall_score: number;
+  categories: CategoryScore[];
+  hard_blockers: string[];
+  score_cap: number | null;
+  score_cap_reason: string | null;
+}
+
+/** A classified finding mapping to exactly one fix class. */
+export interface ClassifiedFinding {
+  id: string;
+  rule_id: string;
+  fix_class: FixClass;
+  title: string;
+  severity: SSFRRuleSeverity;
+  auto_fixable: boolean;
+  expected_uplift_min: number;
+  expected_uplift_max: number;
+  affected_files: string[];
+  evidence_ids: string[];
+  reasoning: string;
+}
+
+/** The full classification result for one audit. */
+export interface ClassificationResult {
+  findings: ClassifiedFinding[];
+  auto_fixable_count: number;
+  manual_only_count: number;
+  total_expected_uplift_min: number;
+  total_expected_uplift_max: number;
+}
+
+/** Pipeline remediation mode. */
+export type RemediationMode = 'advisory' | 'assisted' | 'autonomous';
+
+/** A single file patch produced by the pipeline. */
+export interface PipelinePatch {
+  file_path: string;
+  operation: 'create' | 'update' | 'append';
+  content: string;
+  fix_class: FixClass;
+  justification: string;
+}
+
+/** Level 1/2/3 fixpack from the pipeline. */
+export type FixpackLevel = 1 | 2 | 3;
+
+/** A levelled fixpack output. */
+export interface LevelledFixpack {
+  level: FixpackLevel;
+  fix_class: FixClass;
+  title: string;
+  summary: string;
+  patches: PipelinePatch[];
+  auto_applicable: boolean;
+  expected_uplift_min: number;
+  expected_uplift_max: number;
+  based_on_finding_ids: string[];
+}
+
+/** The outcome of a rescan comparison. */
+export interface RescanUplift {
+  score_before: number;
+  score_after: number;
+  score_delta: number;
+  categories_before: CategoryScore[];
+  categories_after: CategoryScore[];
+  improvements: Array<{
+    category: ScoringCategory;
+    delta: number;
+    fix_classes_applied: FixClass[];
+  }>;
+  proof_timestamp: string;
+}
+
+/** Status of a pipeline run. */
+export type PipelineRunStatus =
+  | 'pending'
+  | 'scanning'
+  | 'scoring'
+  | 'classifying'
+  | 'generating_fixpacks'
+  | 'awaiting_approval'
+  | 'applying'
+  | 'rescanning'
+  | 'completed'
+  | 'failed';
+
+/** Top-level pipeline run record. */
+export interface PipelineRun {
+  id: string;
+  user_id: string;
+  workspace_id: string | null;
+  target_url: string;
+  mode: RemediationMode;
+  status: PipelineRunStatus;
+  audit_id: string | null;
+  scoring_result: ScoringResult | null;
+  classification_result: ClassificationResult | null;
+  fixpacks: LevelledFixpack[];
+  rescan_uplift: RescanUplift | null;
+  created_at: string;
+  updated_at: string;
+}

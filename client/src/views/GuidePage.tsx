@@ -225,6 +225,9 @@ export default function GuidePage() {
           <Link to="/app/score-fix" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <Hammer className="h-3.5 w-3.5" /> Open Score Fix
           </Link>
+          <Link to="/app/pipeline" className="btn-cta-primary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
+            <RefreshCw className="h-3.5 w-3.5" /> Self-Healing Pipeline
+          </Link>
           <Link to="/app/reverse-engineer" className="btn-cta-secondary inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
             <FlaskConical className="h-3.5 w-3.5" /> Reverse Engineer Answers
           </Link>
@@ -242,6 +245,10 @@ export default function GuidePage() {
         <p className="mt-3 text-xs text-white/60">
           If there is no movement, review whether the edits touched extraction-critical zones (answer blocks, structure, schema alignment, trust signals) instead of cosmetic text.
         </p>
+        <p className="mt-2 text-xs text-white/60">
+          <strong className="text-white/80">Self-Healing Pipeline users:</strong> Trigger a rescan from your pipeline run detail page.
+          The system re-scrapes, re-scores, and produces an uplift proof with per-category deltas — no manual comparison needed.
+        </p>
       </section>
 
       <section id="tool-routing" className="section-anchor section-accent-rose mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
@@ -253,6 +260,7 @@ export default function GuidePage() {
             { to: '/app/analyze', title: 'Analyze', detail: 'Run baseline and post-fix audits on any URL.' },
             { to: '/app/reports', title: 'Reports', detail: 'Export, compare, and share timestamped audit snapshots.' },
             { to: '/app/score-fix', title: 'Score Fix', detail: 'Auto-generate GitHub PRs with evidence-linked code changes.', tier: 'Signal' },
+            { to: '/app/pipeline', title: 'Pipeline', detail: 'Self-healing scan → diagnose → fix → verify → score-uplift workflow.', tier: 'Alignment' },
           ] as const).map((item) => (
             <Link
               key={item.to}

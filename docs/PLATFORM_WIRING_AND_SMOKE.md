@@ -108,11 +108,21 @@ New backend endpoints:
 - `POST /api/fix-engine/plan` - maps detected issues to root causes, priorities, and deployable patch payloads.
 - `POST /api/fix-engine/verify` - computes before/after score delta for fix-loop verification.
 
-## Self-healing loop
+## Self-healing pipeline (implemented)
 
-- `GET /api/self-healing/preferences` / `PUT /api/self-healing/preferences` - mode control (`manual`, `assisted`, `autonomous`) and anomaly threshold.
-- `GET /api/self-healing/events` - latest anomaly detections, generated fix plans, confidence, and status.
-- `POST /api/self-healing/run-now` - trigger one full monitor→detect→diagnose cycle immediately.
+Mounted at `/api/pipeline`. Requires `authRequired` + `enforceFeatureGate('alignment')`.
+
+- `POST /api/pipeline/run` - execute full pipeline: scrape → evidence → SSFR rules → deterministic scoring (7 categories) → fix classification (25 rules → 11 FixClass values) → levelled fixpack generation (L1/L2/L3). Accepts `mode`: `advisory` | `assisted` | `autonomous`.
+- `GET /api/pipeline` - list user's pipeline runs (paginated via `limit`/`offset` query params).
+- `GET /api/pipeline/:id` - get run details including scoring result, classification result, and fixpacks.
+- `POST /api/pipeline/:id/approve` - transition run from `awaiting_approval` → `applying` (Assisted mode).
+- `POST /api/pipeline/:id/rescan` - trigger rescan verification: re-scrapes URL, re-scores, produces `RescanUplift` with score-before, score-after, per-category deltas.
+- `GET /api/pipeline/:id/uplift` - retrieve rescan uplift proof for a completed run.
+- `GET /api/auto-score-fix/status` - credit balance and tier eligibility check (separate route group).
+
+Pipeline status progression: `pending` → `scoring` → `classifying` → `generating_fixpacks` → `awaiting_approval` (or `completed` for advisory mode) → `applying` → `rescanning` → `completed` | `failed`.
+
+Hard-blocker caps enforce score ceilings: missing robots.txt (30), blocked AI crawlers (35), no title tag (40), no organization schema or JSON-LD (50).
 
 ## Agency portfolio control layer
 

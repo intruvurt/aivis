@@ -655,6 +655,7 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids UUID[]`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
             `CREATE TABLE IF NOT EXISTS audit_score_snapshots (
               audit_id UUID PRIMARY KEY,
               user_id UUID NOT NULL,
@@ -895,6 +896,44 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_badge_events_type ON badge_events(event_type)`,
             `CREATE INDEX IF NOT EXISTS idx_badge_events_owner ON badge_events(badge_owner_id)`,
             `CREATE INDEX IF NOT EXISTS idx_badge_events_created ON badge_events(created_at)`,
+
+            // ── Fix outcomes (ROI tracking for fix learning) ──
+            `CREATE TABLE IF NOT EXISTS fix_outcomes (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              fix_type VARCHAR(40) NOT NULL,
+              fix_subtype VARCHAR(60),
+              expected_delta NUMERIC(6,2) NOT NULL DEFAULT 0,
+              actual_delta NUMERIC(6,2) NOT NULL DEFAULT 0,
+              roi_ratio NUMERIC(6,2) NOT NULL DEFAULT 0,
+              url TEXT NOT NULL,
+              captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`,
+            `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_url ON fix_outcomes(url)`,
+
+            // ── Pipeline runs (self-healing audit pipeline orchestration) ──
+            `CREATE TABLE IF NOT EXISTS pipeline_runs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
+              target_url TEXT NOT NULL,
+              mode VARCHAR(20) NOT NULL DEFAULT 'advisory',
+              status VARCHAR(30) NOT NULL DEFAULT 'pending',
+              audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              scoring_result JSONB,
+              classification_result JSONB,
+              fixpacks JSONB DEFAULT '[]'::jsonb,
+              rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              rescan_uplift JSONB,
+              error_message TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_user ON pipeline_runs(user_id, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status)`,
+            `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_url ON pipeline_runs(target_url)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

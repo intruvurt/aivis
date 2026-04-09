@@ -208,6 +208,41 @@ const CATEGORIES: HelpCategory[] = [
         a: 'Keyword Intelligence extracts topical keywords from your audit results and shows how they relate to AI visibility. It identifies primary topics, semantic clusters, and content gaps. Use it to align your content strategy with what AI models look for.',
         tags: ['keywords', 'intelligence', 'topical', 'semantic', 'content'],
       },
+      {
+        q: 'What is the self-healing pipeline?',
+        a: 'The self-healing pipeline turns AiVIS from a scanner into a scan → diagnose → fix → verify → score-uplift machine. It chains evidence extraction, SSFR rule evaluation, deterministic scoring, fix classification, levelled fixpack generation, and optional rescan verification into a single automated workflow. Requires Alignment or higher.',
+        tags: ['pipeline', 'self-healing', 'remediation', 'fixpack', 'rescan', 'scoring'],
+      },
+      {
+        q: 'How do I run the self-healing pipeline?',
+        a: 'Navigate to the Pipeline page (Alignment+ required). Enter a URL and choose a remediation mode: Advisory (report only), Assisted (fixpacks generated, you approve before applying), or Autonomous (fixpacks applied automatically). The pipeline scrapes, scores, classifies findings, and generates levelled fixpacks.',
+        tags: ['pipeline', 'run', 'advisory', 'assisted', 'autonomous', 'mode'],
+      },
+      {
+        q: 'What are fixpack levels?',
+        a: 'Fixpacks are grouped into three levels. L1 (Instant): quick metadata fixes like meta tag rewrites, schema inserts/repairs, crawlability patches, and llms.txt creation. L2 (Structural): heading restructures, trust block additions, internal link patches, and content rewrites. L3 (Codebase): technical config patches and security hardening. Each level shows affected files, expected score uplift, and whether the fix is auto-applicable.',
+        tags: ['fixpack', 'level', 'L1', 'L2', 'L3', 'instant', 'structural', 'codebase'],
+      },
+      {
+        q: 'What is rescan verification?',
+        a: 'After fixes are applied, trigger a rescan from the pipeline run detail page. AiVIS re-scrapes the URL, re-scores it against the same 7 categories, and produces an uplift proof showing score-before, score-after, the delta, and per-category improvements. This lets you measure the real impact of every fix.',
+        tags: ['rescan', 'verification', 'uplift', 'proof', 'delta', 'score'],
+      },
+      {
+        q: 'What are the 7 scoring categories?',
+        a: 'Content Depth (18%), Schema & Structured Data (20%), Meta Tags & OG (15%), Technical SEO (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each category is scored deterministically from scraped evidence — no AI calls are involved in the scoring engine. Hard-blocker caps enforce score ceilings when critical signals like robots.txt access or organization schema are missing.',
+        tags: ['scoring', 'categories', 'weights', 'hard-blocker', 'deterministic'],
+      },
+      {
+        q: 'What are hard-blocker caps?',
+        a: 'If critical evidence is missing, the pipeline caps your overall score regardless of other signals. Missing robots.txt caps at 30, blocked AI crawlers at 35, no title tag at 40, no organization schema or JSON-LD at 50. These caps reflect the reality that AI engines cannot cite what they cannot access or identify.',
+        tags: ['hard-blocker', 'cap', 'robots', 'schema', 'title', 'ceiling'],
+      },
+      {
+        q: 'What remediation modes are available?',
+        a: 'Three modes: Advisory generates a report and fixpacks but takes no action. Assisted generates fixpacks and waits for your approval before marking them for application. Autonomous applies all auto-fixable patches without waiting. You choose the mode when launching a pipeline run.',
+        tags: ['remediation', 'mode', 'advisory', 'assisted', 'autonomous', 'approval'],
+      },
     ],
   },
   {

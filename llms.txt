@@ -57,6 +57,9 @@ Scoring dimensions:
 - Brand mention scanning: https://aivis.biz/mentions
 - Report history: https://aivis.biz/reports
 - Site crawl (multi-page SEO diagnostics): https://aivis.biz/crawl
+- Niche discovery: https://aivis.biz/niche-discovery
+- Brand mention scanning: https://aivis.biz/mentions
+- Self-healing audit pipeline: https://aivis.biz/app/pipeline
 - Dofollow backlink badge: https://aivis.biz/badge
 - Disclosures: https://aivis.biz/disclosures
 
@@ -108,6 +111,18 @@ Scoring dimensions:
 - How to Get Cited by ChatGPT, Perplexity, Gemini: https://aivis.biz/blogs/how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide
 - Conversational Query Playbook 2026: https://aivis.biz/conversational-query-playbook-2026
 - Voice Search & AI Answer Optimization 2026: https://aivis.biz/voice-search-ai-answer-optimization-2026
+- Before You Build Another SaaS: https://aivis.biz/blogs/before-you-build-another-saas-run-this-30-second-reality-check
+- Three Free Tools: https://aivis.biz/blogs/three-free-tools-schema-validator-robots-checker-content-extractability
+- Scheduled Rescans & Monitoring: https://aivis.biz/blogs/scheduled-rescans-and-autopilot-monitoring-set-it-and-track-it
+- BIX - GuideBot AI Assistant: https://aivis.biz/blogs/bix-boundaries-in-excess-how-guidebot-redefines-ai-platform-assistants
+- Your Website Is Not Competing for Clicks: https://aivis.biz/blogs/your-website-is-not-competing-for-clicks-anymore
+- TDZ Fix (React + Vite): https://aivis.biz/blogs/cannot-access-before-initialization-react-vite-production-tdz-fix
+- MCP Audit Workflows: https://aivis.biz/blogs/how-mcp-audit-workflows-change-everything-for-dev-teams
+- Team Workspaces: https://aivis.biz/blogs/team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing
+- WebMCP Headless Audit Engine: https://aivis.biz/blogs/webmcp-third-party-tool-calling-aivis-the-headless-audit-engine
+- AEO Is Not the New SEO: https://aivis.biz/blogs/answer-engine-optimization-is-not-the-new-seoits-the-big-brother
+- Startups SEO/AEO 2026: https://aivis.biz/blogs/startups-seoaeo-in-2026-a-strategic-guide-for-the-ai-first-era
+- The Old SaaS Model Was Simple: https://aivis.biz/blogs/the-old-saas-model-was-simple
 
 ## Keyword intelligence hub pages
 

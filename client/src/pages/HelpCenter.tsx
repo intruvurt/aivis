@@ -534,10 +534,10 @@ export default function HelpCenter() {
               requiresAuth={!isLoggedIn}
             />
             {activeTab === 'new-ticket' && (
-              <TabButton active icon={Plus} label="New Ticket" onClick={() => {}} />
+              <TabButton active icon={Plus} label="New Ticket" onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }} />
             )}
             {activeTab === 'ticket-detail' && activeTicket && (
-              <TabButton active icon={MessageSquare} label={activeTicket.ticket.ticket_number} onClick={() => {}} />
+              <TabButton active icon={MessageSquare} label={activeTicket.ticket.ticket_number} onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }} />
             )}
           </div>
         </div>

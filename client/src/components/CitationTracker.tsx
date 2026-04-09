@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { AICitationResult, AuthorityCheckResponse, AuthorityPlatform, CitationIdentityResponse, WebSearchPresenceResult, BrandMentionScanResponse, BrandMentionHistoryResponse, BrandMentionTimelinePoint } from "../../../shared/types";
+import { meetsMinimumTier } from "../../../shared/types";
 
 import { API_URL } from '../config';
 import apiFetch from '../utils/api';
@@ -455,9 +456,9 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
   const [mentionTimeline, setMentionTimeline] = useState<BrandMentionTimelinePoint[] | null>(null);
   const [mentionShowHistory, setMentionShowHistory] = useState(false);
 
-  const canRunAuthorityCheck = userTier === 'alignment' || userTier === 'signal' || userTier === 'scorefix';
-  const canTrackMentions = userTier === 'alignment' || userTier === 'signal' || userTier === 'scorefix';
-  const canRunCitationTests = userTier === 'signal' || userTier === 'scorefix';
+  const canRunAuthorityCheck = meetsMinimumTier(userTier as any, 'alignment');
+  const canTrackMentions = meetsMinimumTier(userTier as any, 'alignment');
+  const canRunCitationTests = meetsMinimumTier(userTier as any, 'signal');
   const normalizedAuthorityTarget = normalizePublicUrlInput(authorityTarget || url || '');
   const businessNameStorageKey = normalizedAuthorityTarget
     ? `aivis-citation-business:${buildTargetKey(normalizedAuthorityTarget)}`

@@ -1,9 +1,19 @@
 import { Router, type Request, type Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
 import { buildFixPlan, verifyFixLoop } from '../services/autoVisibilityFixEngine.js';
+import { meetsMinimumTier } from '../../../shared/types.js';
 
 const router = Router();
 router.use(authRequired);
+
+/* Alignment+ tier gate — observer users cannot access auto-visibility-fix */
+router.use((req: Request, res: Response, next) => {
+  const userTier = String((req as any).user?.tier || 'observer');
+  if (!meetsMinimumTier(userTier as any, 'alignment')) {
+    return res.status(403).json({ success: false, error: 'Auto Visibility Fix requires Alignment tier or above.' });
+  }
+  next();
+});
 
 router.post('/plan', async (req: Request, res: Response) => {
   try {
@@ -40,4 +50,4 @@ router.post('/verify', async (req: Request, res: Response) => {
   return res.json({ success: true, verification: verifyFixLoop(before, after, changedEvidence) });
 });
 
-export default router;
+export default router;

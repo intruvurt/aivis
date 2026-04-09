@@ -2341,7 +2341,7 @@ export default function ReverseEngineerPage() {
   });
 
   const hasAccess = meetsMinimumTier(user?.tier || "observer", "alignment");
-  const isSignalTier = user?.tier === "signal" || user?.tier === "scorefix";
+  const isSignalTier = meetsMinimumTier(user?.tier || "observer", "signal");
 
   const [activeTool, setActiveTool] = useState<Tool>("decompile");
   const [input, setInput] = useState("");

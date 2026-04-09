@@ -584,7 +584,7 @@ function PricingCard({
           ) : isCurrent ? (
             "Current Plan"
           ) : !isFree && !stripeReady ? (
-            "Coming Soon"
+            "Contact Support"
           ) : isFree ? (
             tierCopy?.cta || "Start Free"
           ) : isOneTime ? (

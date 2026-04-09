@@ -233,7 +233,7 @@ export const createStripeCheckout = async (req: Request, res: Response) => {
     }
 
     // Free tier doesn't need Stripe
-    if (tier === 'free' || tier === 'observer') {
+    if (!meetsMinimumTier(tier as any, 'alignment')) {
       return res.status(400).json({
         success: false,
         error: 'Observer/free tier does not require payment',
@@ -399,7 +399,7 @@ export const createScanPackCheckout = async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, error: 'Unauthorized', statusCode: 401 });
     }
 
-    if (normalizedTier === 'observer' || normalizedTier === 'free') {
+    if (!meetsMinimumTier(normalizedTier as any, 'alignment')) {
       return res.status(403).json({
         success: false,
         error: 'Observer tier is not eligible to purchase extra audit credits',
@@ -512,7 +512,7 @@ export const getCurrentSubscription = async (req: Request, res: Response) => {
       },
     };
 
-    const canBuyScanPacks = normalizedTier !== 'observer' && normalizedTier !== 'free';
+    const canBuyScanPacks = meetsMinimumTier(normalizedTier as any, 'alignment');
 
     // Fetch trial state from user row
     const trialRow = userId

@@ -27,6 +27,13 @@ import type {
   ContentNature,
 } from '../../../shared/types.js';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
+
+/** Safe JSON.parse with fallback — prevents one corrupted record from crashing entire response */
+function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
+  if (raw == null) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
 import { scrapeBingRaw } from '../services/webSearch.js';
 import { hasDirectApi, searchPlatformDirect } from '../services/platformDirectSearch.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
@@ -1900,7 +1907,7 @@ export async function createQueryPack(req: Request, res: Response) {
         id: pack.id,
         name: pack.name,
         description: pack.description,
-        queries: JSON.parse(pack.queries),
+        queries: safeParseJson(pack.queries, []),
         tags: pack.tags,
         client_name: pack.client_name,
         execution_count: pack.execution_count,
@@ -1940,7 +1947,7 @@ export async function listQueryPacks(req: Request, res: Response) {
       id: p.id,
       name: p.name,
       description: p.description,
-      queries: JSON.parse(p.queries),
+      queries: safeParseJson(p.queries, []),
       tags: p.tags,
       client_name: p.client_name,
       execution_count: p.execution_count,
@@ -1983,7 +1990,7 @@ export async function getQueryPack(req: Request, res: Response) {
         id: p.id,
         name: p.name,
         description: p.description,
-        queries: JSON.parse(p.queries),
+        queries: safeParseJson(p.queries, []),
         tags: p.tags,
         client_name: p.client_name,
         execution_count: p.execution_count,
@@ -2061,7 +2068,7 @@ export async function updateQueryPack(req: Request, res: Response) {
         id: p.id,
         name: p.name,
         description: p.description,
-        queries: JSON.parse(p.queries),
+        queries: safeParseJson(p.queries, []),
         tags: p.tags,
         client_name: p.client_name,
         execution_count: p.execution_count,
@@ -2125,7 +2132,7 @@ export async function executeQueryPack(req: Request, res: Response) {
     if (!packRows.length) return res.status(404).json({ error: 'Query pack not found' });
 
     const pack = packRows[0];
-    const queries = JSON.parse(pack.queries);
+    const queries = safeParseJson(pack.queries, [] as string[]);
 
     // Start citation test with pack queries
     const user = (req as any).user;
@@ -2228,7 +2235,7 @@ export async function getCitationEvidence(req: Request, res: Response) {
       curated: e.curated,
       curation_note: e.curation_note,
       starred: e.starred,
-      rev_cite_suggestions: e.rev_cite_suggestions ? JSON.parse(e.rev_cite_suggestions) : [],
+      rev_cite_suggestions: safeParseJson(e.rev_cite_suggestions, []),
     }));
 
     return res.json({

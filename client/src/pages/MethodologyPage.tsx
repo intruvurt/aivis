@@ -4,6 +4,11 @@ import { ChevronDown, FlaskConical, ShieldCheck, Sparkles } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { BRAG_ACRONYM, BRAG_EXPANSION, BRAG_TRAIL_LABEL } from "@shared/types";
+import {
+  buildWebPageSchema,
+  buildBreadcrumbSchema,
+  buildFaqSchema,
+} from "../lib/seoSchema";
 
 const BRAG_PROTOCOL_LABEL = `${BRAG_TRAIL_LABEL} protocol`;
 
@@ -162,6 +167,22 @@ export default function MethodologyPage() {
     ogDescription:
       `The complete scoring framework behind AiVIS audits: dimension weights, validation logic, ${BRAG_PROTOCOL_LABEL}, and how scores translate to real citation improvements.`,
     ogType: "article",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/methodology",
+        name: "AiVIS Methodology – How AI Visibility Scoring Works",
+        description:
+          "Complete scoring framework: six weighted dimensions, BRAG evidence protocol, pipeline steps, score bands, and methodology FAQ.",
+      }),
+      buildBreadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Methodology", path: "/methodology" },
+      ]),
+      buildFaqSchema(
+        methodologyFaq.map((item) => ({ question: item.question, answer: item.answer })),
+        { path: "/methodology" }
+      ),
+    ],
   });
 
   return (

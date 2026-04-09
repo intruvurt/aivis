@@ -877,7 +877,7 @@ async function handleCheckoutCompleted(session: any) {
       title: `Upgraded to ${tierKey.charAt(0).toUpperCase() + tierKey.slice(1)}`,
       message: `Your plan has been upgraded to ${tierKey}. Enjoy your new features!`,
       metadata: { tier: tierKey, stripeSessionId: session.id },
-    }).catch(() => {});
+    }).catch((err: any) => { console.warn('[Checkout] Notification failed:', err?.message); });
 
     // Send payment confirmation email (non-blocking)
     const user = await User.findById(userId);
@@ -1049,7 +1049,7 @@ async function handleSubscriptionUpdated(subscription: any) {
       title: `Plan Updated`,
       message: `Your subscription is now active on the ${newTierKey} plan.`,
       metadata: { tier: newTierKey },
-    }).catch(() => {});
+    }).catch((err: any) => { console.warn('[Subscription Updated] Notification failed:', err?.message); });
   } else if (['past_due', 'canceled', 'unpaid', 'incomplete_expired'].includes(subscription.status) && userId) {
     await updateUserTier(userId, 'free', null, null);
     // Also clear trial state
@@ -1064,7 +1064,7 @@ async function handleSubscriptionUpdated(subscription: any) {
       title: 'Plan Downgraded',
       message: `Your subscription status changed to ${subscription.status}. You've been moved to the Observer plan.`,
       metadata: { reason: subscription.status },
-    }).catch(() => {});
+    }).catch((err: any) => { console.warn('[Subscription Updated] Downgrade notification failed:', err?.message); });
   }
 }
 
@@ -1108,7 +1108,7 @@ async function handleSubscriptionDeleted(subscription: any) {
       title: 'Subscription Canceled',
       message: 'Your subscription has been canceled. You\'ve been moved to the free Observer plan.',
       metadata: { subscriptionId: subscription.id },
-    }).catch(() => {});
+    }).catch((err: any) => { console.warn('[Subscription Deleted] Notification failed:', err?.message); });
 
     // Send cancellation email (non-blocking)
     const user = await User.findById(userId);

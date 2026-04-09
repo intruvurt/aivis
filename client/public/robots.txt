@@ -45,6 +45,7 @@ Allow: /score-fix
 Allow: /server-headers
 Allow: /signals
 Allow: /signals/*
+Allow: /support
 Allow: /tools/content-extractability
 Allow: /tools/robots-checker
 Allow: /tools/schema-validator
@@ -90,8 +91,20 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
 Allow: /

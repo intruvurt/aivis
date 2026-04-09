@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function PaymentCanceledPage() {
+  usePageMeta({
+    title: 'Payment Canceled',
+    description: 'Your payment was canceled. You have not been charged.',
+    noIndex: true,
+  });
   return (
     <div className="flex flex-1 items-center justify-center p-8">
       <div className="max-w-md w-full text-center">

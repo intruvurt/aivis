@@ -47,7 +47,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
-      email: 'hello@aivis.biz',
+      email: 'support@aivis.biz',
       telephone: '+1-706-907-5299',
     },
     sameAs: [

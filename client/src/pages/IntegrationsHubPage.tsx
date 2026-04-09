@@ -22,6 +22,7 @@ import { useAuthStore } from "../stores/authStore";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import AdvancedFeaturesPanel from "../components/AdvancedFeaturesPanel";
 import { TIER_LIMITS, uiTierFromCanonical } from "../../../shared/types";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 type EndpointCheck = {
   key: string;
@@ -39,6 +40,12 @@ function baseApi(path: string): string {
 }
 
 export default function IntegrationsHubPage() {
+  usePageMeta({
+    title: 'Integrations Hub',
+    description: 'Explore AiVIS integrations, automation endpoints, and connected workflows for analytics and operations.',
+    path: '/integrations',
+  });
+
   const { token, user, isAuthenticated } = useAuthStore();
   const { status: featureStatus, updatedAtLabel, refresh } = useFeatureStatus();
 

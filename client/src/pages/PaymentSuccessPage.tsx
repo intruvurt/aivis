@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function PaymentSuccessPage() {
+  usePageMeta({
+    title: 'Payment Successful',
+    description: 'Your AiVIS plan upgrade was successful. New features are now active.',
+    noIndex: true,
+  });
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const refreshUser = useAuthStore((s) => s.refreshUser);

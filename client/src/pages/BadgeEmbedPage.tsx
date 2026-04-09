@@ -1,11 +1,18 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Check, Copy, ExternalLink, Eye, MousePointerClick, Globe } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 const SITE_URL = API_URL ? new URL(API_URL).origin : 'https://aivis.biz';
 
 export default function BadgeEmbedPage() {
+  usePageMeta({
+    title: 'Visibility Badge',
+    description: 'Embed the AiVIS visibility badge on your website to signal AI citation readiness and track impressions.',
+    path: '/badge',
+  });
+
   const user = useAuthStore((s) => s.user);
   const uid = user?.id || '';
 

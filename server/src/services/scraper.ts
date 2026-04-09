@@ -1058,8 +1058,9 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
         const wordCount = body.split(/\s+/).filter((w) => w.length > 0).length;
         const html = document.documentElement.outerHTML.substring(0, 100000);
         const ld = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
-          .map((s) => s.textContent || '')
-          .filter(Boolean);
+          .map((s) => (s.textContent || '').substring(0, 80_000))
+          .filter(Boolean)
+          .slice(0, 15);
 
         // Extract lang attribute
         const lang = document.documentElement.getAttribute('lang') || undefined;

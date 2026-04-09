@@ -24,10 +24,20 @@ export default function ReferralRedirect() {
       })
       .then((data: { redirect_url: string }) => {
         try {
-          const url = new URL(data.redirect_url);
-          navigate(`${url.pathname}${url.search}`, { replace: true });
+          const url = new URL(data.redirect_url, window.location.origin);
+          // Only allow same-origin redirects (pathname-based navigation)
+          if (url.origin === window.location.origin) {
+            navigate(`${url.pathname}${url.search}`, { replace: true });
+          } else {
+            // External URLs: only allow https
+            if (url.protocol === 'https:') {
+              window.location.href = url.href;
+            } else {
+              setError(true);
+            }
+          }
         } catch {
-          window.location.href = data.redirect_url;
+          setError(true);
         }
       })
       .catch(() => setError(true));

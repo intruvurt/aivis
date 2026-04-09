@@ -20,8 +20,10 @@ interface PageMeta {
   ogDescription?: string;
   /** Override OG type (defaults to website) */
   ogType?: string;
-  /** Full document.title override - bypasses the "SITE_NAME ~title" format. Use for homepage where title length (30-60 chars) matters for scoring. */
+  /** Full document.title override - bypasses the "SITE_NAME | title" format. Use for homepage where title length (30-60 chars) matters for scoring. */
   fullTitle?: string;
+  /** Set true to add noindex,nofollow robots meta tag */
+  noIndex?: boolean;
 }
 
 const SITE_NAME = 'AiVIS - AI Visibility Intelligence Platform';
@@ -166,13 +168,20 @@ function setStructuredData(data: Record<string, unknown> | Record<string, unknow
  *   path: '/pricing',
  * });
  */
-export function usePageMeta({ title, description, path, structuredData, ogTitle, ogDescription, ogType, fullTitle }: PageMeta): void {
+export function usePageMeta({ title, description, path, structuredData, ogTitle, ogDescription, ogType, fullTitle, noIndex }: PageMeta): void {
   useEffect(() => {
     // Document title - use fullTitle if provided (for homepage with strict 30-60 char requirement)
-    document.title = fullTitle || `${SITE_NAME} ~${title}`;
+    document.title = fullTitle || `${SITE_NAME} | ${title}`;
 
     // Meta description
     setMeta('description', description);
+
+    // Robots (noindex support)
+    if (noIndex) {
+      setMeta('robots', 'noindex,nofollow');
+    } else {
+      setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
+    }
 
     // Canonical URL
     const canonicalUrl = !path || path === '/' ? BASE_URL : `${BASE_URL}${path}`;
@@ -180,19 +189,26 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
 
     // Open Graph
     setMeta('og:type', ogType || 'website', true);
+    setMeta('og:site_name', 'AiVIS', true);
     setMeta('og:title', ogTitle || title, true);
     setMeta('og:description', ogDescription || description, true);
     setMeta('og:url', canonicalUrl, true);
+    setMeta('og:locale', 'en_US', true);
     setMeta('og:image', DEFAULT_SHARE_IMAGE, true);
     setMeta('og:image:secure_url', DEFAULT_SHARE_IMAGE, true);
     setMeta('og:image:type', 'image/png', true);
-    setMeta('og:image:alt', 'AiVIS logo | Intelligence • Visibility • Growth', true);
+    setMeta('og:image:width', '1200', true);
+    setMeta('og:image:height', '630', true);
+    setMeta('og:image:alt', 'AiVIS – AI Visibility Intelligence Platform', true);
 
     // Twitter
+    setMeta('twitter:card', 'summary_large_image');
+    setMeta('twitter:site', '@dobleduche');
+    setMeta('twitter:creator', '@dobleduche');
     setMeta('twitter:title', ogTitle || title);
     setMeta('twitter:description', ogDescription || description);
     setMeta('twitter:image', DEFAULT_SHARE_IMAGE);
-    setMeta('twitter:image:alt', 'AiVIS logo | Intelligence • Visibility • Growth');
+    setMeta('twitter:image:alt', 'AiVIS – AI Visibility Intelligence Platform');
 
     // Per-page structured data
     setStructuredData(structuredData);
@@ -200,7 +216,8 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     // Cleanup on unmount - restore defaults
     return () => {
       document.title = `${SITE_NAME}: AI visibility intelligence platform | See How AI Sees Your Website`;
+      setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
       setStructuredData(undefined);
     };
-  }, [title, description, path, ogTitle, ogDescription, ogType, structuredData, fullTitle]);
+  }, [title, description, path, ogTitle, ogDescription, ogType, structuredData, fullTitle, noIndex]);
 }

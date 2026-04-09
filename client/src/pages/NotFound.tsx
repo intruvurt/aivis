@@ -1,7 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function NotFound() {
+  usePageMeta({
+    title: 'Page Not Found',
+    description: 'The page you requested could not be found.',
+    noIndex: true,
+  });
   const navigate = useNavigate();
 
   return (

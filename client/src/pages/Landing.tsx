@@ -15,6 +15,7 @@ import {
   buildBreadcrumbSchema,
   buildItemListSchema,
   buildSoftwareApplicationSchema,
+  buildFaqSchema,
 } from '../lib/seoSchema';
 
 interface PlatformStats {
@@ -69,6 +70,7 @@ const LANDING_STRUCTURED_DATA = [
   }),
 ];
 
+// Built after FAQ_ITEMS are defined — appended to LANDING_STRUCTURED_DATA below
 const FAQ_ITEMS = [
   { q: 'What is AiVIS and what does it audit?', a: 'AiVIS measures AI visibility - how well AI answer engines like ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
   { q: 'How is AI visibility different from traditional SEO?', a: 'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content - thin structure, missing schema, or poor heading hierarchy means you get skipped, regardless of domain authority.' },
@@ -78,6 +80,14 @@ const FAQ_ITEMS = [
   { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors.' },
   { q: 'Who should use AiVIS?', a: 'AiVIS is built for founders, marketers, developers and agencies who need to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what changes will fix it.' },
 ] as const;
+
+// Append FAQ schema now that FAQ_ITEMS is defined
+LANDING_STRUCTURED_DATA.push(
+  buildFaqSchema(
+    FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a })),
+    { path: '/' }
+  )
+);
 
 // ─── Futuristic urban neural SVG ────────────────────────────────────────────
 function NeuralCityIllustration() {

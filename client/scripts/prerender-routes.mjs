@@ -593,16 +593,7 @@ const routes = [
 		title: 'AiVIS License Verification',
 		description: 'Public license verification page for validating AiVIS license keys and status.',
 	},
-	{
-		path: '/privacy',
-		title: 'AiVIS Privacy Policy',
-		description: 'Review AiVIS data collection, storage, and privacy practices for the AI visibility platform.',
-	},
-	{
-		path: '/terms',
-		title: 'AiVIS Terms of Service',
-		description: 'Terms and conditions for using AiVIS and its AI visibility audit, reporting, and optimization workflows.',
-	},
+	/* Removed: duplicate /privacy and /terms entries — originals above (lines ~542, ~547) */
 	{
 		path: '/changelog',
 		title: 'Changelog | AiVIS',

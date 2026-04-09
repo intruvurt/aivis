@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function PartnershipTermsPage() {
@@ -7,30 +7,8 @@ export default function PartnershipTermsPage() {
     description:
       "Private partnership terms for approved organizations operating cross-platform lead workflows with AiVIS.",
     path: "/partnership-terms",
+    noIndex: true,
   });
-
-  useEffect(() => {
-    const robotsMetaName = "robots";
-    let robotsMeta = document.querySelector(`meta[name=\"${robotsMetaName}\"]`) as HTMLMetaElement | null;
-    const previous = robotsMeta?.getAttribute("content") || null;
-
-    if (!robotsMeta) {
-      robotsMeta = document.createElement("meta");
-      robotsMeta.setAttribute("name", robotsMetaName);
-      document.head.appendChild(robotsMeta);
-    }
-
-    robotsMeta.setAttribute("content", "noindex, nofollow, noarchive");
-
-    return () => {
-      if (!robotsMeta) return;
-      if (previous) {
-        robotsMeta.setAttribute("content", previous);
-      } else {
-        robotsMeta.remove();
-      }
-    };
-  }, []);
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-12 text-white">
@@ -59,4 +37,4 @@ export default function PartnershipTermsPage() {
       </section>
     </main>
   );
-}
+}

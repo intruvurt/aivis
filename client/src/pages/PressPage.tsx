@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { ExternalLink, Globe, Newspaper } from "lucide-react";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { usePageMeta } from "../hooks/usePageMeta";
-import { buildWebPageSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
+import { buildWebPageSchema, buildBreadcrumbSchema, buildOrganizationSchema } from "../lib/seoSchema";
 
 const PRESS_STRUCTURED_DATA = [
+  buildOrganizationSchema(),
   buildWebPageSchema({
     path: "/press",
     name: "Press – AiVIS AI Visibility Intelligence Platform",

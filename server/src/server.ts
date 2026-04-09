@@ -741,6 +741,7 @@ function assertCriticalEnvForProduction(): void {
   if (!process.env.API_KEY_PEPPER?.trim()) missing.push('API_KEY_PEPPER');
   if (!FRONTEND_URL.trim()) missing.push('FRONTEND_URL');
   if (!hasAiProviderKey) missing.push('OPENROUTER_API_KEY (or OPEN_ROUTER_API_KEY)');
+  if (!process.env.STRIPE_WEBHOOK_SECRET?.trim()) missing.push('STRIPE_WEBHOOK_SECRET');
 
   if (missing.length > 0) {
     console.error(`[Startup] Missing required production env vars: ${missing.join(', ')}`);
@@ -749,10 +750,6 @@ function assertCriticalEnvForProduction(): void {
 }
 
 assertCriticalEnvForProduction();
-
-if (!process.env.STRIPE_WEBHOOK_SECRET?.trim()) {
-  console.warn('[Startup] STRIPE_WEBHOOK_SECRET not configured - Stripe checkout may open, but webhook fulfillment (tier upgrades) will fail.');
-}
 
 const normalizeOrigin = (origin: string): string => {
   const raw = String(origin || '').trim();
@@ -10735,7 +10732,10 @@ if (process.env.SENTRY_DSN) Sentry.setupExpressErrorHandler(app);
 app.use((err: any, _req: any, res: any, _next: any) => {
   console.error('[GlobalErrorHandler]', err);
   if (process.env.SENTRY_DSN) Sentry.captureException(err);
-  if (res.headersSent) return;
+  if (res.headersSent) {
+    console.warn('[GlobalErrorHandler] Headers already sent, error not delivered to client:', err?.message || err);
+    return;
+  }
   res.status(err.status || 500).json({
     error: 'Internal server error',
     code: 'INTERNAL_ERROR',

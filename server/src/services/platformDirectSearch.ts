@@ -21,6 +21,8 @@ export const DIRECT_API_PLATFORMS: ReadonlySet<AuthorityPlatform> = new Set([
   'techcrunch',
   'trustpilot',
   'blogger',
+  'devto',
+  'bluesky',
 ]);
 
 /** Returns true if the platform can be queried via a direct free API. */
@@ -262,6 +264,10 @@ export async function searchPlatformDirect(
       return searchTrustpilot(query, limit);
     case 'blogger':
       return searchBlogger(query, limit);
+    case 'devto':
+      return searchDevTo(query, limit);
+    case 'bluesky':
+      return searchBluesky(query, limit);
     default:
       return [];
   }
@@ -591,6 +597,114 @@ async function searchBlogger(query: string, limit = 10): Promise<PlatformRow[]> 
       }
     }
   }
+
+  return results.slice(0, limit);
+}
+
+// ── dev.to: Forem search feed API (public, no key) ─────────────────────
+
+interface DevToSearchItem {
+  class_name: string;
+  id: number;
+  title?: string;
+  path?: string;
+  tag_list?: string[];
+  user_id?: number;
+  user?: { username?: string; name?: string };
+  readable_publish_date?: string;
+}
+
+interface DevToSearchResponse {
+  result?: DevToSearchItem[];
+}
+
+async function searchDevTo(query: string, limit = 10): Promise<PlatformRow[]> {
+  const results: PlatformRow[] = [];
+  const seen = new Set<string>();
+
+  // Path 1: dev.to internal search API (JSON)
+  try {
+    const searchUrl = `https://dev.to/search/feed_content?per_page=${limit}&page=0&search_fields=${encodeURIComponent(query)}&class_name=Article`;
+    const data = await fetchJson<DevToSearchResponse>(searchUrl);
+    if (data?.result) {
+      for (const item of data.result) {
+        if (!item.title || !item.path) continue;
+        const href = `https://dev.to${item.path}`;
+        if (seen.has(href)) continue;
+        seen.add(href);
+        const snippet = [
+          item.user?.name || item.user?.username || '',
+          item.readable_publish_date || '',
+          ...(item.tag_list || []).slice(0, 4),
+        ].filter(Boolean).join(' · ');
+        results.push({ title: truncate(item.title, 200), snippet, href });
+        if (results.length >= limit) break;
+      }
+    }
+  } catch { /* skip */ }
+
+  // Path 2: Google News RSS fallback
+  if (results.length === 0) {
+    const rssItems = await fetchGoogleNewsRss('dev.to', query, limit);
+    for (const item of rssItems) {
+      if (!seen.has(item.href)) {
+        seen.add(item.href);
+        results.push(item);
+      }
+    }
+  }
+
+  return results.slice(0, limit);
+}
+
+// ── Bluesky: AT Protocol public search (no auth required) ───────────────
+
+interface BlueskySearchResponse {
+  posts?: Array<{
+    uri: string;
+    cid: string;
+    author: {
+      handle: string;
+      displayName?: string;
+    };
+    record: {
+      text?: string;
+      createdAt?: string;
+    };
+    likeCount?: number;
+    repostCount?: number;
+    replyCount?: number;
+  }>;
+}
+
+async function searchBluesky(query: string, limit = 10): Promise<PlatformRow[]> {
+  const results: PlatformRow[] = [];
+  const seen = new Set<string>();
+
+  try {
+    const searchUrl = `https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=${encodeURIComponent(query)}&limit=${Math.min(limit, 25)}`;
+    const data = await fetchJson<BlueskySearchResponse>(searchUrl);
+    if (data?.posts) {
+      for (const post of data.posts) {
+        const text = post.record?.text || '';
+        if (!text) continue;
+        // Build a web URL from the AT URI: at://did:plc:xxx/app.bsky.feed.post/yyy
+        const uriParts = post.uri.split('/');
+        const postId = uriParts[uriParts.length - 1];
+        const href = `https://bsky.app/profile/${post.author.handle}/post/${postId}`;
+        if (seen.has(href)) continue;
+        seen.add(href);
+        const title = truncate(text.split('\n')[0], 200);
+        const meta = [
+          post.author.displayName || post.author.handle,
+          post.likeCount ? `${post.likeCount} likes` : null,
+          post.repostCount ? `${post.repostCount} reposts` : null,
+        ].filter(Boolean).join(' · ');
+        results.push({ title, snippet: meta, href });
+        if (results.length >= limit) break;
+      }
+    }
+  } catch { /* skip */ }
 
   return results.slice(0, limit);
 }

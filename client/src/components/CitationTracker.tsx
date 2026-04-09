@@ -389,6 +389,9 @@ const AUTHORITY_PLATFORMS: AuthorityPlatform[] = [
   'devpost',
   'hackernews',
   'chrome_web_store',
+  'twitter',
+  'devto',
+  'bluesky',
 ];
 
 function platformLabel(platform: AuthorityPlatform): string {
@@ -411,6 +414,9 @@ function platformLabel(platform: AuthorityPlatform): string {
     devpost: 'Devpost',
     hackernews: 'Hacker News',
     chrome_web_store: 'Chrome Web Store',
+    twitter: 'Twitter / X',
+    devto: 'dev.to',
+    bluesky: 'Bluesky',
   };
   return map[platform] || platform;
 }

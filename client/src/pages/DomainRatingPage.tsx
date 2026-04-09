@@ -52,6 +52,9 @@ function platformLabel(p: AuthorityPlatform): string {
     devpost: "Devpost",
     hackernews: "Hacker News",
     chrome_web_store: "Chrome Web Store",
+    twitter: "Twitter / X",
+    devto: "dev.to",
+    bluesky: "Bluesky",
   };
   return labels[p] || p;
 }

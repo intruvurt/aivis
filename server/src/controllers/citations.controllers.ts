@@ -261,6 +261,9 @@ const PLATFORM_DOMAINS: Record<AuthorityPlatform, string> = {
   devpost: 'devpost.com',
   hackernews: 'news.ycombinator.com',
   chrome_web_store: 'chrome.google.com/webstore',
+  twitter: 'x.com',
+  devto: 'dev.to',
+  bluesky: 'bsky.app',
 };
 
 const PLATFORM_BASE_AUTHORITY: Record<AuthorityPlatform, number> = {
@@ -282,6 +285,9 @@ const PLATFORM_BASE_AUTHORITY: Record<AuthorityPlatform, number> = {
   devpost: 81,
   hackernews: 89,
   chrome_web_store: 86,
+  twitter: 78,
+  devto: 79,
+  bluesky: 72,
 };
 
 function decodeHtmlEntities(input: string): string {
@@ -732,8 +738,12 @@ function scoreBrandRelevance(
   // Company/product pages vs personal profiles
   try {
     const urlPath = new URL(result.href).pathname.toLowerCase();
-    // Brand name in URL path (e.g. /r/aivis/, /repos/aivis/, /posts/aivis-review)
-    if (ctx.domainLabel && urlPath.includes(ctx.domainLabel)) score += 2;
+    // Brand name in URL path — require word-boundary match to avoid
+    // substring false positives (e.g. "AivisSpeech" matching "aivis")
+    if (ctx.domainLabel) {
+      const pathSegments = urlPath.split(/[\/\-_\.]+/).filter(Boolean);
+      if (pathSegments.some(seg => seg === ctx.domainLabel)) score += 2;
+    }
     // Positive: company pages, products, apps
     if (/\/(company|organization|product|app|software|tool|startup)\//i.test(urlPath)) score += 1;
     // Negative: personal profile patterns (people/in/users followed by a name)
@@ -763,6 +773,32 @@ function scoreBrandRelevance(
   const personProfilePattern = /^#?\d*\s*[A-Z][a-zāčēģīķļņšūž]+\s+[A-Z][a-zāčēģīķļņšūž]+\s*[-–-]\s*(Facebook|LinkedIn|Twitter|Instagram)/i;
   if (personProfilePattern.test(result.title.trim())) score -= 2;
 
+  // ─── Signal 7: Compound-word disambiguation (negative) ────────────
+  // If the brand name appears only as a substring of a longer compound word
+  // (e.g. "AivisSpeech" when brand is "AiVIS"), this is very likely a
+  // different entity. Apply a strong penalty.
+  if (ctx.strictMatch && ctx.primaryName.length <= 12) {
+    const nameLC = ctx.primaryName.toLowerCase();
+    const titleLC = result.title.toLowerCase();
+    const snippetLC = result.snippet.toLowerCase();
+    const combined = `${titleLC} ${snippetLC}`;
+    let hasStandalone = false;
+    let hasCompound = false;
+    const nameRegex = new RegExp(nameLC.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    let rm: RegExpExecArray | null;
+    while ((rm = nameRegex.exec(combined)) !== null) {
+      const before = rm.index > 0 ? combined[rm.index - 1] : ' ';
+      const after = combined[rm.index + nameLC.length] || ' ';
+      if (/[a-z0-9]/i.test(before) || /[a-z0-9]/i.test(after)) {
+        hasCompound = true;
+      } else {
+        hasStandalone = true;
+      }
+    }
+    // Only penalize if name appears SOLELY as part of compound words, never standalone
+    if (hasCompound && !hasStandalone) score -= 3;
+  }
+
   return score;
 }
 
@@ -775,18 +811,23 @@ function isBrandRelevantResult(
   const isOnOwnDomain = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
   if (isOnOwnDomain) return score >= 2;
 
+  const blob = `${result.title} ${result.snippet}`.toLowerCase();
+  const hasDomainInUrl = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
+
+  // For strict-match brands (short/mixed-case like "AiVIS"), always require
+  // niche keyword overlap for off-domain results to disambiguate from unrelated
+  // entities sharing the same name (e.g. "AivisSpeech" TTS, "AIVIS" biomarker)
+  if (ctx.strictMatch && ctx.nicheKeywords.length > 0 && !hasDomainInUrl) {
+    const nicheHits = ctx.nicheKeywords.filter(kw => blob.includes(kw)).length;
+    if (nicheHits < 1) return false;
+  }
+
   // When brand has niche context, require at least 1 niche keyword hit for
   // off-domain results — prevents false positives from unrelated entities
   // that share a similar name (e.g. "AiVIS" visibility vs "Aivis" voice software)
-  if (ctx.nicheKeywords.length >= 3) {
-    const blob = `${result.title} ${result.snippet}`.toLowerCase();
+  if (ctx.nicheKeywords.length >= 3 && !hasDomainInUrl) {
     const nicheHits = ctx.nicheKeywords.filter(kw => blob.includes(kw)).length;
-    // Domain match in URL gives a pass even without niche hits
-    const hasDomainInUrl = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
-    if (nicheHits === 0 && !hasDomainInUrl) {
-      // No niche overlap and no domain proof → very likely wrong entity
-      return false;
-    }
+    if (nicheHits === 0) return false;
   }
 
   // Third-party sites with ambiguous/short brand names need stronger evidence:
@@ -1028,6 +1069,10 @@ export async function authorityGranularCheck(req: Request, res: Response) {
               topNicheKw ? `site:${domain} "${primaryTerm}" ${topNicheKw}` : `site:${domain} "${primaryTerm}"`,
               // Fallback: brand only (no niche context)
               `site:${domain} "${primaryTerm}"`,
+              // For twitter/x, also search the legacy domain
+              ...(platform === 'twitter' ? [
+                `site:twitter.com "${primaryTerm}"`,
+              ] : []),
               ...searchProfile.phrases.slice(0, 3).map((phrase) => `site:${domain} "${phrase}"`),
               ...searchProfile.quoteables.slice(0, 2).map((phrase) => `site:${domain} "${phrase}"`),
             ].filter(Boolean)));
@@ -1038,10 +1083,20 @@ export async function authorityGranularCheck(req: Request, res: Response) {
             // ── Direct API path for platforms that expose free JSON endpoints ──
             if (hasDirectApi(platform)) {
               try {
-                // Search by domain first, then by brand name if different
+                // Build diverse search queries for better recall:
+                // 1. Domain (most specific for the right entity)
+                // 2. Primary brand name (common reference)
+                // 3. Long name variants like full expansion (highly unique)
                 const directQueries = [targetDomain || trimmedTarget];
                 if (brandCtx.primaryName && brandCtx.primaryName.toLowerCase() !== (targetDomain || '').toLowerCase()) {
                   directQueries.push(brandCtx.primaryName);
+                }
+                // Add long, unique name variants (e.g. "AI Visibility Intelligence Platform")
+                for (const variant of brandCtx.nameVariants) {
+                  if (variant.length >= 15 && !directQueries.some(q => q.toLowerCase() === variant.toLowerCase())) {
+                    directQueries.push(variant);
+                    break; // one long variant is enough
+                  }
                 }
                 for (const directQuery of directQueries) {
                   const directRows = await searchPlatformDirect(platform, directQuery, 10);

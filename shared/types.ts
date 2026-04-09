@@ -1456,7 +1456,8 @@ export type AuthorityPlatform =
   | 'reddit' | 'linkedin' | 'substack' | 'medium' | 'github'
   | 'stackoverflow' | 'wikipedia' | 'youtube' | 'g2' | 'trustpilot'
   | 'crunchbase' | 'producthunt' | 'techcrunch' | 'blogger'
-  | 'facebook' | 'devpost' | 'hackernews' | 'chrome_web_store';
+  | 'facebook' | 'devpost' | 'hackernews' | 'chrome_web_store'
+  | 'twitter' | 'devto' | 'bluesky';
 
 export type ContentNature = 'spammy' | 'direct_promo' | 'organic_pain_solution' | 'neutral';
 

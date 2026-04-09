@@ -3,6 +3,7 @@
 // No API keys required from the user. All sources are free public endpoints.
 
 import { getPool } from './postgresql.js';
+import { textMentionsBrand } from './searchDisambiguation.js';
 
 export interface MentionRow {
   source: string;
@@ -516,6 +517,72 @@ async function scanLobsters(brand: string): Promise<MentionRow[]> {
   return rows;
 }
 
+// ── Source: Bluesky (AT Protocol public search) ─────────────────────────────
+
+async function scanBluesky(brand: string): Promise<MentionRow[]> {
+  const rows: MentionRow[] = [];
+  const url = `https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=${encodeURIComponent(brand)}&limit=20`;
+  const res = await fetchWithTimeout(url);
+  if (!res?.ok) return rows;
+  try {
+    const data = await res.json() as any;
+    for (const item of data?.posts || []) {
+      const text = item.record?.text || '';
+      if (!text) continue;
+      const author = item.author?.handle || 'unknown';
+      const postUri = item.uri || '';
+      // Convert AT URI to web URL: at://did:plc:xxx/app.bsky.feed.post/yyy → https://bsky.app/profile/handle/post/yyy
+      let webUrl = '';
+      const uriMatch = postUri.match(/at:\/\/[^/]+\/app\.bsky\.feed\.post\/(\w+)/);
+      if (uriMatch) {
+        webUrl = `https://bsky.app/profile/${author}/post/${uriMatch[1]}`;
+      }
+      rows.push({
+        source: 'bluesky',
+        url: webUrl || postUri,
+        title: `@${author}`,
+        snippet: truncate(text, 300),
+        detected_at: item.record?.createdAt || item.indexedAt || new Date().toISOString(),
+      });
+    }
+  } catch { /* skip */ }
+  return rows;
+}
+
+// ── Source: Twitter/X via Bing site dork ─────────────────────────────────────
+
+async function scanTwitter(brand: string): Promise<MentionRow[]> {
+  const rows: MentionRow[] = [];
+  // Search both x.com and legacy twitter.com
+  const query = `("${brand}") (site:x.com OR site:twitter.com)`;
+  const url = `https://www.bing.com/search?q=${encodeURIComponent(query)}&count=15`;
+  const res = await fetchWithTimeout(url);
+  if (!res?.ok) return rows;
+  try {
+    const html = await res.text();
+    const blockRegex = /<li\s+class="b_algo"[^>]*>([\s\S]*?)<\/li>/gi;
+    let block: RegExpExecArray | null;
+    const seenUrls = new Set<string>();
+    while ((block = blockRegex.exec(html)) !== null && rows.length < 15) {
+      const inner = block[1];
+      const linkMatch = inner.match(/<a[^>]*href="(https?:\/\/[^"]*(?:x\.com|twitter\.com)[^"]*)"[^>]*>([\s\S]*?)<\/a>/i);
+      if (!linkMatch) continue;
+      const href = linkMatch[1];
+      if (seenUrls.has(href)) continue;
+      seenUrls.add(href);
+      const snippetMatch = inner.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+      rows.push({
+        source: 'twitter',
+        url: href,
+        title: truncate(stripHtml(linkMatch[2]), 200),
+        snippet: truncate(stripHtml(snippetMatch?.[1] || ''), 300),
+        detected_at: new Date().toISOString(),
+      });
+    }
+  } catch { /* skip */ }
+  return rows;
+}
+
 // ── Main tracker ────────────────────────────────────────────────────────────
 
 const ALL_SOURCES = [
@@ -534,9 +601,22 @@ const ALL_SOURCES = [
   { name: 'medium', fn: (b: string, _d: string) => scanMedium(b) },
   { name: 'youtube', fn: (b: string, _d: string) => scanYouTube(b) },
   { name: 'lobsters', fn: (b: string, _d: string) => scanLobsters(b) },
+  { name: 'bluesky', fn: (b: string, _d: string) => scanBluesky(b) },
+  { name: 'twitter', fn: (b: string, _d: string) => scanTwitter(b) },
 ] as const;
 
 export type MentionSource = typeof ALL_SOURCES[number]['name'];
+
+/**
+ * Check if a mention result is genuinely about the brand.
+ * Uses word-boundary matching and compound-word rejection from searchDisambiguation.
+ */
+function isMentionRelevant(row: MentionRow, brand: string, domain: string): boolean {
+  // Results from the brand's own domain are always relevant
+  if (domain && row.url.toLowerCase().includes(domain.toLowerCase())) return true;
+  // Check title + snippet using word-boundary matching
+  return textMentionsBrand(row.title, brand) || textMentionsBrand(row.snippet, brand);
+}
 
 /**
  * Scan all free public sources for brand mentions.
@@ -572,6 +652,8 @@ export async function trackBrandMentions(
     sourcesChecked.push(source);
     for (const row of rows) {
       if (!row.url || seenUrls.has(row.url)) continue;
+      // Disambiguate: reject results where the brand only appears as a compound substring
+      if (!isMentionRelevant(row, brand, domain)) continue;
       seenUrls.add(row.url);
       mentions.push(row);
     }

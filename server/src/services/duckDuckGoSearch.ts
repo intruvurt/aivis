@@ -3,6 +3,7 @@
 // Used to verify web presence via DuckDuckGo's knowledge graph and instant answers.
 
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
+import { textMentionsBrand, resultMatchesCompetitor } from './searchDisambiguation.js';
 
 /**
  * DuckDuckGo Instant Answer API response shape (partial).
@@ -138,19 +139,16 @@ export async function checkDDGPresence(
     }
 
     const targetHostname = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     // Find brand/URL matches
     const matchingResults: WebSearchResultEntry[] = [];
     for (const entry of entries) {
       const entryHost = entry.url ? extractHost(entry.url) : '';
-      const titleLower = entry.title.toLowerCase();
-      const descLower = entry.description.toLowerCase();
 
       if (
         entryHost === targetHostname ||
-        titleLower.includes(brandLower) ||
-        descLower.includes(brandLower) ||
+        textMentionsBrand(entry.title, brandName) ||
+        textMentionsBrand(entry.description, brandName) ||
         (entry.url && entry.url.toLowerCase().includes(targetHostname))
       ) {
         matchingResults.push(entry);
@@ -161,14 +159,9 @@ export async function checkDDGPresence(
     const competitorUrlsFound: string[] = [];
     for (const compUrl of competitorUrls) {
       const compHost = extractHost(compUrl);
-      const compBrand = compHost.split('.')[0];
       const found = entries.some(e => {
         const h = e.url ? extractHost(e.url) : '';
-        return (
-          h === compHost ||
-          e.title.toLowerCase().includes(compBrand) ||
-          e.description.toLowerCase().includes(compBrand)
-        );
+        return resultMatchesCompetitor(h, e.title, e.description, compHost);
       });
       if (found) competitorUrlsFound.push(compUrl);
     }

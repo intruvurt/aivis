@@ -5,6 +5,7 @@
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
 import type { SearchLocaleProfile } from './searchLocale.js';
 import { inferSearchLocaleProfile } from './searchLocale.js';
+import { textMentionsBrand, resultMatchesCompetitor } from './searchDisambiguation.js';
 
 const BROWSER_USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -157,7 +158,6 @@ export async function checkWebSearchPresence(
     }
 
     const targetHostname = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     const topResults: WebSearchResultEntry[] = parsed.slice(0, 20).map((r, i) => ({
       title: r.title,
@@ -170,13 +170,11 @@ export async function checkWebSearchPresence(
     const matchingResults: WebSearchResultEntry[] = [];
     for (const result of topResults) {
       const resultHost = extractHost(result.url);
-      const titleLower = result.title.toLowerCase();
-      const descLower = result.description.toLowerCase();
 
       if (
         resultHost === targetHostname ||
-        titleLower.includes(brandLower) ||
-        descLower.includes(brandLower) ||
+        textMentionsBrand(result.title, brandName) ||
+        textMentionsBrand(result.description, brandName) ||
         result.url.toLowerCase().includes(targetHostname)
       ) {
         matchingResults.push(result);
@@ -187,14 +185,9 @@ export async function checkWebSearchPresence(
     const competitorUrlsFound: string[] = [];
     for (const compUrl of competitorUrls) {
       const compHost = extractHost(compUrl);
-      const compBrand = compHost.split('.')[0];
       const found = topResults.some(r => {
         const h = extractHost(r.url);
-        return (
-          h === compHost ||
-          r.title.toLowerCase().includes(compBrand) ||
-          r.description.toLowerCase().includes(compBrand)
-        );
+        return resultMatchesCompetitor(h, r.title, r.description, compHost);
       });
       if (found) competitorUrlsFound.push(compUrl);
     }
@@ -324,7 +317,6 @@ export async function checkBingSearchPresence(
     }
 
     const targetHostname = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     const topResults: WebSearchResultEntry[] = parsed.slice(0, 20).map((r, i) => ({
       title: r.title,
@@ -336,13 +328,11 @@ export async function checkBingSearchPresence(
     const matchingResults: WebSearchResultEntry[] = [];
     for (const result of topResults) {
       const resultHost = extractHost(result.url);
-      const titleLower = result.title.toLowerCase();
-      const descLower = result.description.toLowerCase();
 
       if (
         resultHost === targetHostname ||
-        titleLower.includes(brandLower) ||
-        descLower.includes(brandLower) ||
+        textMentionsBrand(result.title, brandName) ||
+        textMentionsBrand(result.description, brandName) ||
         result.url.toLowerCase().includes(targetHostname)
       ) {
         matchingResults.push(result);
@@ -352,14 +342,9 @@ export async function checkBingSearchPresence(
     const competitorUrlsFound: string[] = [];
     for (const compUrl of competitorUrls) {
       const compHost = extractHost(compUrl);
-      const compBrand = compHost.split('.')[0];
       const found = topResults.some(r => {
         const h = extractHost(r.url);
-        return (
-          h === compHost ||
-          r.title.toLowerCase().includes(compBrand) ||
-          r.description.toLowerCase().includes(compBrand)
-        );
+        return resultMatchesCompetitor(h, r.title, r.description, compHost);
       });
       if (found) competitorUrlsFound.push(compUrl);
     }
@@ -560,7 +545,6 @@ export async function checkBraveSearchPresence(
     }
 
     const targetHostname = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     const topResults: WebSearchResultEntry[] = parsed.slice(0, 20).map((r, i) => ({
       title: r.title,
@@ -572,13 +556,11 @@ export async function checkBraveSearchPresence(
     const matchingResults: WebSearchResultEntry[] = [];
     for (const result of topResults) {
       const resultHost = extractHost(result.url);
-      const titleLower = result.title.toLowerCase();
-      const descLower = result.description.toLowerCase();
 
       if (
         resultHost === targetHostname ||
-        titleLower.includes(brandLower) ||
-        descLower.includes(brandLower) ||
+        textMentionsBrand(result.title, brandName) ||
+        textMentionsBrand(result.description, brandName) ||
         result.url.toLowerCase().includes(targetHostname)
       ) {
         matchingResults.push(result);
@@ -588,14 +570,9 @@ export async function checkBraveSearchPresence(
     const competitorUrlsFound: string[] = [];
     for (const compUrl of competitorUrls) {
       const compHost = extractHost(compUrl);
-      const compBrand = compHost.split('.')[0];
       const found = topResults.some(r => {
         const h = extractHost(r.url);
-        return (
-          h === compHost ||
-          r.title.toLowerCase().includes(compBrand) ||
-          r.description.toLowerCase().includes(compBrand)
-        );
+        return resultMatchesCompetitor(h, r.title, r.description, compHost);
       });
       if (found) competitorUrlsFound.push(compUrl);
     }
@@ -704,7 +681,6 @@ export async function checkYahooSearchPresence(
     const html = await res.text();
     const parsed = parseYahooHtmlResults(html);
     const targetHostname = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     const topResults: WebSearchResultEntry[] = parsed.slice(0, 20).map((result, index) => ({
       title: result.title,
@@ -715,27 +691,20 @@ export async function checkYahooSearchPresence(
 
     const matchingResults = topResults.filter((result) => {
       const resultHost = extractHost(result.url);
-      const titleLower = result.title.toLowerCase();
-      const descLower = result.description.toLowerCase();
 
       return (
         resultHost === targetHostname ||
-        titleLower.includes(brandLower) ||
-        descLower.includes(brandLower) ||
+        textMentionsBrand(result.title, brandName) ||
+        textMentionsBrand(result.description, brandName) ||
         result.url.toLowerCase().includes(targetHostname)
       );
     });
 
     const competitorUrlsFound = competitorUrls.filter((compUrl) => {
       const compHost = extractHost(compUrl);
-      const compBrand = compHost.split('.')[0];
       return topResults.some((result) => {
         const resultHost = extractHost(result.url);
-        return (
-          resultHost === compHost ||
-          result.title.toLowerCase().includes(compBrand) ||
-          result.description.toLowerCase().includes(compBrand)
-        );
+        return resultMatchesCompetitor(resultHost, result.title, result.description, compHost);
       });
     });
 

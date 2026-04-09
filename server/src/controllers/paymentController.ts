@@ -1391,7 +1391,7 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       features.push('BRA Authority Checker');
       features.push('Reverse Engineer tools');
       features.push('Analytics dashboard & trends');
-      features.push('Brand mention tracking (15 sources)');
+      features.push('Brand mention tracking (17 sources)');
       features.push('Private exposure scan');
       features.push('Niche URL discovery');
       if (limits.pagesPerScan > 1) features.push(`Multi-page SEO crawl (${limits.pagesPerScan} pages)`);

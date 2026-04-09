@@ -13,7 +13,7 @@ Key differentiators
 - Evidence-backed: Every finding references specific crawled page elements via BRAG evidence IDs.
 - Triple-check pipeline: Signal tier uses three independent AI models to score, critique, and validate findings.
 - Citation testing: Live citation checks across DuckDuckGo, Bing, and DDG Instant Answer in parallel.
-- Brand mention tracking: 15 public sources (Reddit, HN, Mastodon, GitHub, ProductHunt, StackOverflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Quora, Google News, DuckDuckGo, Bing).
+- Brand mention tracking: 17 public sources (Reddit, HN, Mastodon, GitHub, ProductHunt, StackOverflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Quora, Google News, DuckDuckGo, Bing, Bluesky, Twitter/X).
 - MCP Server: 8 tool endpoints for AI coding agents (Signal tier).
 - WebMCP: 10 tool endpoints for browser-based AI integration (Alignment tier+).
 - No hallucinated findings: If something cannot be proven from page evidence, it is not included.

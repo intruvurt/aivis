@@ -324,7 +324,7 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
 
     if (tier.key === "alignment") {
       ensureFeature("Decision query gap analysis", /decision query gap|analytics dashboard/i);
-      ensureFeature("Brand mention tracking (15 sources)", /brand mention/i);
+      ensureFeature("Brand mention tracking (17 sources)", /brand mention/i);
       ensureFeature("Private exposure scan", /private exposure/i);
       ensureFeature("Competitor advantage signals", /competitor advantage|niche url/i);
       ensureFeature("MCP Server access", /mcp server/i);

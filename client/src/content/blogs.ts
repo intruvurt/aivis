@@ -1519,7 +1519,7 @@ Here is what it measures and how:
 
 **Live citation testing.** AiVIS runs your target queries against three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer - and verifies whether your brand or URL appears. No paid search APIs. No API keys. Real verification that your improvements produced real citations.
 
-**Mention tracking across 15 sources.** Reddit, Hacker News, Mastodon, DuckDuckGo site search, Bing site search, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters. Direct web scraping, no paid data brokers. When your brand appears in a community discussion, you know about it.
+**Mention tracking across 17 sources.** Reddit, Hacker News, Mastodon, DuckDuckGo site search, Bing site search, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, and Twitter/X. Direct web scraping, no paid data brokers. When your brand appears in a community discussion, you know about it.
 
 **Automated remediation.** Score Fix does not hand you a recommendations PDF. It generates GitHub pull requests with the actual code changes - schema patches, heading fixes, FAQ block insertions, meta corrections - each linked to the specific audit finding that identified the gap.
 

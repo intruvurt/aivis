@@ -103,7 +103,7 @@ export default function DisclosuresPage() {
           {/* ── 5 Brand Mentions ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">5. Brand Mention Scanning Disclosures</h2>
-            <p>The brand mention feature searches 15 public sources for references to your brand, domain, or configured keywords. These sources include community forums (Reddit, Hacker News, Lobsters), developer platforms (GitHub, Stack Overflow, Dev.to), social media (Mastodon, YouTube), knowledge bases (Wikipedia, Medium), Q&A sites (Quora), product directories (Product Hunt), and web search engines (DuckDuckGo, Bing, Google News).</p>
+            <p>The brand mention feature searches 17 public sources for references to your brand, domain, or configured keywords. These sources include community forums (Reddit, Hacker News, Lobsters), developer platforms (GitHub, Stack Overflow, Dev.to), social media (Mastodon, YouTube, Bluesky, Twitter/X), knowledge bases (Wikipedia, Medium), Q&A sites (Quora), product directories (Product Hunt), and web search engines (DuckDuckGo, Bing, Google News).</p>
             <p className="mt-2"><strong className="text-white">Limitations:</strong></p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Results depend on each source's public API availability and search index coverage.</li>

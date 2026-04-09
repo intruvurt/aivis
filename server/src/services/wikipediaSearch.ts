@@ -1,6 +1,7 @@
 import type { WebSearchPresenceResult, WebSearchResultEntry } from '../../../shared/types.js';
 import type { SearchLocaleProfile } from './searchLocale.js';
 import { inferSearchLocaleProfile } from './searchLocale.js';
+import { textMentionsBrand, resultMatchesCompetitor } from './searchDisambiguation.js';
 
 interface WikiOpenSearchResponse {
   0: string;
@@ -55,18 +56,14 @@ export async function checkWikipediaPresence(
       .slice(0, 10);
 
     const targetHost = extractHost(targetUrl);
-    const brandLower = brandName.toLowerCase();
 
     const matching_results = topResults.filter((r) => {
-      const t = r.title.toLowerCase();
-      const d = r.description.toLowerCase();
-      return t.includes(brandLower) || d.includes(brandLower) || r.url.toLowerCase().includes(targetHost);
+      return textMentionsBrand(r.title, brandName) || textMentionsBrand(r.description, brandName) || r.url.toLowerCase().includes(targetHost);
     });
 
     const competitor_urls_found = competitorUrls.filter((compUrl) => {
       const host = extractHost(compUrl);
-      const label = host.split('.')[0]?.toLowerCase() || '';
-      return topResults.some((r) => r.title.toLowerCase().includes(label) || r.description.toLowerCase().includes(label));
+      return topResults.some((r) => resultMatchesCompetitor(extractHost(r.url), r.title, r.description, host));
     });
 
     return {

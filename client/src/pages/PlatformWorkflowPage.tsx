@@ -445,7 +445,7 @@ export default function PlatformWorkflowPage() {
               <p className="text-xs text-white/50 mb-4">Build a complete picture of your brand's authority across AI platforms, web mentions, and entity associations.</p>
               <div className="space-y-2">
                 {[
-                  { tool: "Brand Mention Tracking", path: "/citations", desc: "Scan 15 sources for existing brand mentions" },
+                  { tool: "Brand Mention Tracking", path: "/citations", desc: "Scan 17 sources for existing brand mentions" },
                   { tool: "Citation Testing", path: "/citations", desc: "Verify AI platforms cite your brand" },
                   { tool: "Keyword Intelligence", path: "/keywords", desc: "Map entity associations AI models hold about you" },
                   { tool: "Niche Discovery", path: "/niche-discovery", desc: "Find niche URLs AI references - join that conversation" },

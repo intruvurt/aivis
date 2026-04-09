@@ -33,6 +33,8 @@ const MENTION_SOURCES = [
   { name: "Medium", desc: "Publishing platform articles" },
   { name: "YouTube", desc: "Video content mentions" },
   { name: "Lobsters", desc: "Tech link aggregator" },
+  { name: "Bluesky", desc: "Decentralised social posts" },
+  { name: "Twitter / X", desc: "Social media mentions" },
 ];
 
 const INTEGRITY_SIGNALS = [
@@ -55,8 +57,8 @@ const VALUE_CARDS = [
   },
   {
     icon: Search,
-    title: "Scan 15 public sources",
-    detail: "Brand mentions are tracked across Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters - no API keys needed.",
+    title: "Scan 17 public sources",
+    detail: "Brand mentions are tracked across Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, and Twitter/X - no API keys needed.",
   },
   {
     icon: TrendingUp,
@@ -67,7 +69,7 @@ const VALUE_CARDS = [
 
 const WORKFLOW_STEPS = [
   { step: 1, label: "Enter your brand URL", detail: "Paste your business URL - brand name, domain, and entity signals are extracted automatically." },
-  { step: 2, label: "Multi-source scan", detail: "15 public sources are queried simultaneously for recent brand mentions and references." },
+  { step: 2, label: "Multi-source scan", detail: "17 public sources are queried simultaneously for recent brand mentions and references." },
   { step: 3, label: "Integrity analysis", detail: "Each mention is classified: accurate, potentially inaccurate, absent, or displaced by a competitor." },
   { step: 4, label: "Timeline tracking", detail: "View mention history, detect emerging issues, and verify that corrections are propagating." },
 ];
@@ -76,7 +78,7 @@ const TIER_PATH = [
   {
     tier: "Alignment",
     title: "Brand Integrity monitoring",
-    detail: "Run brand mention scans across 15 public sources. See mention history, source breakdown, and integrity timeline.",
+    detail: "Run brand mention scans across 17 public sources. See mention history, source breakdown, and integrity timeline.",
   },
   {
     tier: "Signal",
@@ -165,7 +167,7 @@ export default function BrandIntegrityPage() {
             Brand Integrity Monitor
           </h1>
           <p className="text-white/60 text-lg mb-8 max-w-2xl">
-            Monitor what AI platforms and public sources say about your business. Detect misrepresentations, track accuracy, and protect your brand narrative across 15 free sources.
+            Monitor what AI platforms and public sources say about your business. Detect misrepresentations, track accuracy, and protect your brand narrative across 17 free sources.
           </p>
           <UpgradeWall
             feature="Brand Integrity Monitor"
@@ -175,7 +177,7 @@ export default function BrandIntegrityPage() {
 
           {/* Sources grid */}
           <div className="mt-12">
-            <h2 className="text-lg font-bold text-white mb-4">15 sources monitored</h2>
+            <h2 className="text-lg font-bold text-white mb-4">17 sources monitored</h2>
             <div className="grid grid-cols-3 gap-3">
               {MENTION_SOURCES.map((source) => (
                 <div key={source.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
@@ -382,7 +384,7 @@ export default function BrandIntegrityPage() {
             <ShieldCheck className="w-12 h-12 text-emerald-400/40 mx-auto mb-4" />
             <h3 className="text-white/70 text-lg font-semibold mb-2">Enter a URL to scan brand integrity</h3>
             <p className="text-white/40 text-sm max-w-md mx-auto">
-              The Brand Integrity Monitor scans 15 public sources for mentions of your brand and analyzes accuracy, sentiment, and competitor displacement.
+              The Brand Integrity Monitor scans 17 public sources for mentions of your brand and analyzes accuracy, sentiment, and competitor displacement.
             </p>
           </div>
         )}

@@ -124,7 +124,7 @@ const changelog: ChangelogEntry[] = [
   },
   {
     date: today(),
-    title: "Brand Mention Tracking (15 Sources)",
+    title: "Brand Mention Tracking (17 Sources)",
     description:
       "Track where your brand appears across Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, and Product Hunt.",
     why: "AI models learn from public mentions. Knowing where you're mentioned helps you reinforce positive signals and fix gaps.",

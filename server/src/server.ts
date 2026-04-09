@@ -6943,8 +6943,8 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       };
     };
 
-    // Clear stale provider backoffs so previous request failures can't cascade
-    // into this fresh analysis attempt. Each request gets a clean slate.
+    // Garbage-collect expired provider backoffs. Active backoffs from recent
+    // failures (e.g. 24 h for 404, 2 min for 429) are preserved intentionally.
     clearProviderBackoff();
 
     const cacheKey = `${targetUrl}::tier:${normalizedRequestTier}`;
@@ -7848,6 +7848,12 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
       remainingPipelineMs - PIPELINE_FLUSH_BUFFER_MS
     );
 
+    // Track AI phase start so each fallback provider gets the REMAINING budget,
+    // not a fresh full budget.  Without this, 6 free providers × 36 s = 216 s.
+    const aiPhaseStartMs = Date.now();
+    const aiPhaseDeadlineMs = aiPhaseStartMs + aiBudgetMs;
+    const MIN_FALLBACK_BUDGET_MS = 8_000; // don't bother if less than 8 s left
+
     let activeDeadlineTimer: ReturnType<typeof setTimeout> | null = null;
     const makeDeadlinePromise = (label: string, budgetMs: number) =>
       new Promise<never>((_, reject) => {
@@ -7870,6 +7876,14 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
         ai1Raw = null;
         ai1ParseResult = null;
 
+        // Use REMAINING budget, not the original full budget
+        const providerBudgetMs = Math.max(0, aiPhaseDeadlineMs - Date.now());
+        if (providerBudgetMs < MIN_FALLBACK_BUDGET_MS && pi > 0) {
+          console.warn(`[${requestId}] AI1 fallback budget exhausted (${providerBudgetMs}ms < ${MIN_FALLBACK_BUDGET_MS}ms) after ${pi} providers - stopping`);
+          break;
+        }
+        const effectiveBudgetMs = Math.max(MIN_FALLBACK_BUDGET_MS, providerBudgetMs);
+
         try {
           ai1Raw = await Promise.race([
             callAIProvider({
@@ -7878,9 +7892,9 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
               prompt: prompt1,
               apiKey,
               endpoint: prov.endpoint,
-              opts: { max_tokens: isscorefixTier ? 5000 : 3000, temperature: 0.1, timeoutMs: aiBudgetMs },
+              opts: { max_tokens: isscorefixTier ? 5000 : 3000, temperature: 0.1, timeoutMs: effectiveBudgetMs },
             }),
-            makeDeadlinePromise('primary', aiBudgetMs),
+            makeDeadlinePromise('primary', effectiveBudgetMs),
           ]);
           if (activeDeadlineTimer) {
             clearTimeout(activeDeadlineTimer);

@@ -80,7 +80,7 @@ const PLATFORM_MODEL_CANDIDATES: Record<CitationPlatform, ProviderCandidate[]> =
   ],
   claude: [
     { provider: 'openrouter', model: 'anthropic/claude-haiku-4.5', endpoint: OPENROUTER_ENDPOINT },
-    { provider: 'openrouter', model: 'anthropic/claude-3-haiku', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'anthropic/claude-haiku-4.5', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
@@ -91,7 +91,7 @@ const PLATFORM_MODEL_CANDIDATES: Record<CitationPlatform, ProviderCandidate[]> =
     { provider: 'openrouter', model: 'google/gemma-3-27b-it:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
-    { provider: 'openrouter', model: 'openai/gpt-4o-mini', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
   ],
 };
 
@@ -529,7 +529,7 @@ async function callGeminiDirect(query: string): Promise<GeminiDirectResult> {
     throw new Error('GEMINI_API_KEY not configured');
   }
 
-  const model = 'gemini-2.0-flash';
+  const model = 'gemini-2.5-flash';
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const prompt = buildCitationPrompt(query, 'google_ai');
 

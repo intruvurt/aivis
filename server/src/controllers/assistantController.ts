@@ -615,7 +615,7 @@ Scores use an A-F grading scale. Most sites score C or D on their first audit.
 - 81-100: Excellent - Among the most AI-visible sites
 
 ## AI Models Used
-- **Free Observer tier:** Gemini 2.0 Flash free (primary), Llama 3.3 70B Instruct free, Qwen3 32B free, Mistral Small 3.1 24B free, DeepSeek V3 free, Gemma 3 27B free. All via OpenRouter :free variants, $0.00/scan.
+- **Free Observer tier:** Gemma 4 31B free (primary), Gemma 4 26B MoE free, Nemotron 3 Super 120B free, MiniMax M2.5 free, Nemotron 3 Nano 30B free, GPT-OSS 120B free. All via OpenRouter :free variants, $0.00/scan.
 - **Alignment tier:** GPT-5 Nano (primary analysis), Claude Haiku 4.5 (fallback)
 - **Signal triple-check pipeline:** GPT-5 Mini → Claude Sonnet 4.6 peer critique (adjusts score -15 to +10) → Grok 4.1 Fast validation gate (confirms or overrides final score)
 - **Score Fix AutoFix PR:** GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast (3 independent model families)

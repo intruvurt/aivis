@@ -52,7 +52,7 @@ On [AiVIS](https://aivis.biz/methodology) Signal and Score Fix tiers, we run a 3
 
 **Stage 3** is a validation gate. A third model reviews both previous outputs and makes the final call on your score.
 
-Signal tier runs GPT-4o Mini plus Claude 3.5 Haiku plus GPT-4o Mini. Score Fix upgrades to full GPT-4o plus Claude 3.5 Haiku plus GPT-4o. Three separate models checking each other's work. If stage 2 or 3 fails for any reason, the system degrades gracefully and never crashes your audit.
+Signal tier runs GPT-5 Mini plus Claude Sonnet 4.6 plus Grok 4.1 Fast. Score Fix upgrades to the same high-quality models with looser timeout budgets. Three separate models checking each other's work. If stage 2 or 3 fails for any reason, the system degrades gracefully and never crashes your audit.
 
 Your final report shows how many models contributed and includes the triple-check summary. You know exactly how confident the result is.
 
@@ -80,7 +80,7 @@ These tools don't exist anywhere else. Not on Ahrefs. Not on SEMrush. Not on any
 
 Want to know where you actually rank in your niche across AI platforms? [AiVIS Niche Discovery](https://aivis.biz/niche-discovery) generates a Top 100 list for any niche using its AI model chain, then checks if your brand appears.
 
-But it doesn't stop there. If the initial parse doesn't find you (maybe your brand is abbreviated or spelled differently), it runs AI verification to catch alternate forms. Then it does citation verification across 4 platforms by asking GPT-4o Mini, Claude 3.5 Haiku, DeepSeek V3, and Gemini 2.0 Flash whether they'd mention your brand in context.
+But it doesn't stop there. If the initial parse doesn't find you (maybe your brand is abbreviated or spelled differently), it runs AI verification to catch alternate forms. Then it does citation verification across 4 platforms by asking GPT-5 Nano, Claude Haiku 4.5, DeepSeek V3.2, and Gemini 2.5 Flash whether they'd mention your brand in context.
 
 You get your exact rank, whether you're in the top 50 or top 100, the full rankings list, which model generated it, and per-platform citation verification with mention positions.
 

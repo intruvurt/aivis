@@ -103,7 +103,7 @@ SSFR doesn't do that. Every rule checks a concrete structural fact about your pa
 
 The AI models in the [AiVIS pipeline](https://aivis.biz/methodology) are used for content analysis, recommendation generation, and cross-validation. But the score itself is computed deterministically from your page structure. That's what makes it reproducible and auditable. Run the same URL twice, you get the same structural scores (content-based AI recommendations may vary, structural scores won't).
 
-On Signal and Score Fix tiers, the content analysis runs through a [triple-check pipeline](https://aivis.biz/methodology). Three separate AI models (GPT-4o Mini, Claude 3.5 Haiku, and a validation gate) cross-check each other's work. If any stage fails, the system degrades gracefully to the prior stage's output instead of crashing your audit.
+On Signal and Score Fix tiers, the content analysis runs through a [triple-check pipeline](https://aivis.biz/methodology). Three separate AI models (GPT-5 Mini, Claude Sonnet 4.6, and Grok 4.1 Fast as a validation gate) cross-check each other's work. If any stage fails, the system degrades gracefully to the prior stage's output instead of crashing your audit.
 
 ---
 

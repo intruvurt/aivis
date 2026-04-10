@@ -238,7 +238,7 @@ const changelog: ChangelogEntry[] = [
     date: "2026-03-18",
     title: "Free-Tier AI Model Chain Overhaul",
     description:
-      "Replaced the unreliable DeepSeek R1 reasoning model with Gemini 2.0 Flash as the primary free-tier model. Added a full 6-model fallback chain so free audits no longer fail silently.",
+      "Replaced the unreliable DeepSeek R1 reasoning model with Gemma 4 31B as the primary free-tier model. Added a full 6-model fallback chain so free audits no longer fail silently.",
     why: "DeepSeek R1 outputs reasoning blocks that break JSON parsing. The new chain is faster, more reliable, and gracefully falls back if any single model is unavailable.",
     audience: "free",
     action: "",

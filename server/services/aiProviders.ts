@@ -17,23 +17,23 @@ export interface ProviderConfig {
 export const PROVIDERS: ProviderConfig[] = [
   {
     provider: 'openrouter',
-    model: 'openai/gpt-4o-mini',
-    label: 'GPT-4o Mini',
-    isFree: true, // Very cheap ~$0.15/1M tokens
+    model: 'openai/gpt-5-nano',
+    label: 'GPT-5 Nano',
+    isFree: true, // Very cheap ~$0.05/1M tokens
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
   },
   {
     provider: 'openrouter',
-    model: 'google/gemini-2.0-flash-001',
-    label: 'Gemini 2.0 Flash',
+    model: 'google/gemini-2.5-flash',
+    label: 'Gemini 2.5 Flash',
     isFree: true, // Very cheap
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
   },
   {
     provider: 'openrouter',
-    model: 'anthropic/claude-3-5-haiku-20241022',
-    label: 'Claude 3.5 Haiku',
-    isFree: true, // Cheap ~$0.25/1M tokens
+    model: 'anthropic/claude-haiku-4.5',
+    label: 'Claude Haiku 4.5',
+    isFree: true, // Cheap ~$1/1M tokens
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
   },
   {

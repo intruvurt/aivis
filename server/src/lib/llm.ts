@@ -27,7 +27,7 @@ function baseUrlFor(provider: Provider): string {
 
 function modelFor(provider: Provider): string {
   if (provider === "openrouter")
-    return process.env.OPEN_ROUTER_MODEL || "openai/gpt-4o-mini";
+    return process.env.OPEN_ROUTER_MODEL || "openai/gpt-5-nano";
   return process.env.OLLAMA_MODEL || "llama3.1:8b";
 }
 

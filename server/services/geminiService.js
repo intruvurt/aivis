@@ -8,7 +8,7 @@ export async function geminiFreeViaOpenRouter(prompt, apiKey) {
       "X-Title": "Intruvurt",                   // recommended
     },
     body: JSON.stringify({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: "google/gemma-4-31b-it:free",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
     }),

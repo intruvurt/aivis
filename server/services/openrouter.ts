@@ -127,7 +127,7 @@ export async function geminiFreeViaOpenRouter(prompt: string, apiKey: string, op
             'X-Title': 'Intruvurt',
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.0-flash-exp:free',
+            model: 'google/gemma-4-31b-it:free',
             messages: [{ role: 'user', content: String(prompt ?? '') }],
             temperature: 0.3,
             max_tokens: 1200,

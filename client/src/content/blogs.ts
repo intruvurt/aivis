@@ -1097,13 +1097,13 @@ Every audit returns keyword intelligence - the terms AI models associate with yo
 
 **AI Model Pipeline**
 
-Observer runs on a free-tier model chain: Gemini 2.0 Flash, Llama 3.3 70B, Qwen3 32B, Mistral Small 3.1, DeepSeek V3, and Gemma 3 27B. Zero direct model cost. Best-effort fallback through OpenRouter.
+Observer runs on a free-tier model chain: Gemma 4 31B, Gemma 4 26B MoE, Nemotron 3 Super 120B, MiniMax M2.5, Nemotron 3 Nano 30B, and GPT-OSS 120B. Zero direct model cost. Best-effort fallback through OpenRouter.
 
-Alignment uses GPT-4o Mini as the primary model with a paid fallback chain. Target cost around $0.001 per scan. Single-pass analysis with improved output stability.
+Alignment uses GPT-5 Nano as the primary model with a paid fallback chain. Target cost around $0.001 per scan. Single-pass analysis with improved output stability.
 
-Signal runs the Triple-Check Pipeline - three separate AI models in sequence. AI1 generates the primary analysis. AI2 performs a peer critique and can adjust scores within a bounded range and add missing recommendations. AI3 validates and confirms or overrides the final score. Currently: GPT-4o Mini for AI1, Claude 3.5 Haiku for AI2, GPT-4o Mini for AI3. If AI2 or AI3 fail, the system degrades gracefully to the AI1-only result.
+Signal runs the Triple-Check Pipeline - three separate AI models in sequence. AI1 generates the primary analysis. AI2 performs a peer critique and can adjust scores within a bounded range and add missing recommendations. AI3 validates and confirms or overrides the final score. Currently: GPT-5 Mini for AI1, Claude Sonnet 4.6 for AI2, Grok 4.1 Fast for AI3. If AI2 or AI3 fail, the system degrades gracefully to the AI1-only result.
 
-Score Fix uses the same three-stage structure but with more expensive models - GPT-4o in the primary slot - and a looser timeout budget for deeper analysis.
+Score Fix uses the same three-stage structure but with the same high-quality models as Signal - GPT-5 Mini in the primary slot - and a looser timeout budget for deeper analysis.
 
 **Multi-Page SEO Crawl**
 
@@ -1851,7 +1851,7 @@ After SSFR, the crawl data and evidence scores flow into the AI model pipeline. 
 
 **Observer (free tier)** runs a single-pass analysis through a zero-cost model chain. The system sends your crawl summary, SSFR scores, and page structure to the first available model. If that model fails or times out, it falls through to the next provider in the chain. Six models deep. The prompt asks for a visibility score, content analysis, keyword intelligence, platform-specific scores for ChatGPT, Claude, Perplexity, and Gemini, and 8 to 12 actionable recommendations.
 
-**Alignment (core tier)** uses a paid primary model with better instruction following and JSON reliability. GPT-4o Mini handles most requests. If it fails, Claude 3.5 Haiku picks up, then the remaining paid chain. Same single-pass analysis but with measurably better output consistency.
+**Alignment (core tier)** uses a paid primary model with better instruction following and JSON reliability. GPT-5 Nano handles most requests. If it fails, Claude Haiku 4.5 picks up, then the remaining paid chain. Same single-pass analysis but with measurably better output consistency.
 
 **Signal (premium tier)** runs a triple-check pipeline. This is where it gets serious.
 
@@ -1859,7 +1859,7 @@ AI1 generates the primary analysis with the full prompt. AI2 receives the AI1 ou
 
 This is not just running the same thing three times. Each stage has a different role, different prompt, and different token budget. AI2 can shift the score within a bounded range. AI3 can override if the first two disagree. The system degrades gracefully if AI2 or AI3 fail. You always get at least the AI1 result.
 
-**Score Fix (AutoFix PR tier)** runs the same triple-check architecture but with more expensive models and looser timeout budgets. GPT-4o primary instead of Mini. This tier also powers automated GitHub PR generation where the AI analysis feeds directly into code-level fixes.
+**Score Fix (AutoFix PR tier)** runs the same triple-check architecture but with the same high-quality models and looser timeout budgets. GPT-5 Mini primary with Claude Sonnet 4.6 critique and Grok 4.1 Fast validation. This tier also powers automated GitHub PR generation where the AI analysis feeds directly into code-level fixes.
 
 ## Step 4: Platform-Specific Scoring
 
@@ -2612,7 +2612,7 @@ Each PR includes:
 - Before state from the audit
 - Expected improvement after merge
 
-The AI model chain for Score Fix runs on more expensive models with looser timeout budgets. GPT-4o primary versus GPT-4o Mini. The code generation needs higher accuracy than a score generation, so the model tier reflects that.
+The AI model chain for Score Fix runs on high-quality models with looser timeout budgets. GPT-5 Mini primary versus GPT-5 Nano. The code generation needs higher accuracy than a score generation, so the model tier reflects that.
 
 ## The Credit System
 

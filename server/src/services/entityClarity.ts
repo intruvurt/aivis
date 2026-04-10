@@ -1,6 +1,6 @@
 // server/src/services/entityClarity.ts
 // Heuristic-based entity clarity scoring - NO AI calls.
-// Prevents the primary GPT-4o Mini model from being rate-limited or put into
+// Prevents the primary GPT-5 Nano model from being rate-limited or put into
 // backoff before the main AI1 analysis pipeline runs.
 
 export interface EntityClarityResult {

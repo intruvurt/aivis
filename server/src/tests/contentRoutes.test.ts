@@ -18,7 +18,7 @@ vi.mock('../middleware/usageGate.js', () => ({
 
 vi.mock('../services/aiProviders.js', () => ({
   callAIProvider: (...args: unknown[]) => mockCallAIProvider(...args),
-  PROVIDERS: [{ provider: 'openrouter', model: 'gpt-4o-mini' }],
+  PROVIDERS: [{ provider: 'openrouter', model: 'gpt-5-nano' }],
 }));
 
 import contentRoutes from '../routes/contentRoutes.js';

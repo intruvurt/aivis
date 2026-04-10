@@ -29,7 +29,7 @@ if (OLLAMA_BASE_URL.trim()) {
 // CloudFlare proxy drops connections at ~100 s; Render/socket hard limit ~60 s.
 // Pipeline budget breakdown (57 s ceiling, 3 s buffer to 60 s limit):
 //   Scrape: up to 15 s
-//   AI1 primary (GPT-4o Mini): up to 25 s  → 40 s elapsed
+//   AI1 primary (GPT-5 Nano): up to 25 s  → 40 s elapsed
 //   AI1 fallback chain:     up to 14 s  → 54 s elapsed
 //   Response + buffer:       3 s
 // Free-tier models (:free variants) are rate-limited and slower - the
@@ -46,7 +46,7 @@ export const openrouterPrompt = async (
   promptTemplate: string | any,
   input: any,
   retryCount = 0,
-  model = 'openai/gpt-4o-mini',
+  model = 'openai/gpt-5-nano',
   maxTokens = 1500,
   systemPrompt?: string,
   temperature?: number,

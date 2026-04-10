@@ -8073,8 +8073,8 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
 
     // ─────────────────────────────────────────────────────────────────────
     // Triple-Check Pipeline (Signal + Score Fix tiers)
-    //   AI2 = Claude 3.5 Haiku peer critique   (score adjustment −15 to +10)
-    //   AI3 = GPT-4o Mini validation gate (confirms or overrides)
+    //   AI2 = Claude Sonnet 4.6 peer critique   (score adjustment −15 to +10)
+    //   AI3 = Grok 4.1 Fast validation gate (confirms or overrides)
     // STRICT MODE: for Signal/scorefix, both AI2 and AI3 must succeed.
     // If either stage fails, the request fails with a hard error.
     // ─────────────────────────────────────────────────────────────────────

@@ -179,12 +179,12 @@ Purpose:
 
 Current free chain:
 
-1. Llama 3.3 70B Instruct free
-2. Gemma 3 27B free
-3. Mistral Small 3.1 24B free
-4. Gemma 3 12B free
-5. Hermes 3 405B free
-6. Nemotron Nano free
+1. Gemma 4 31B free
+2. Gemma 4 26B MoE free
+3. Nemotron 3 Super 120B free
+4. MiniMax M2.5 free
+5. Nemotron 3 Nano 30B free
+6. GPT-OSS 120B free
 
 These are best-effort zero-cost fallbacks and may be rate-limited by OpenRouter.
 
@@ -198,8 +198,8 @@ Target cost:
 
 Primary behavior:
 
-* GPT-4o Mini primary
-* Claude 3.5 Haiku / Gemma class fallbacks
+* GPT-5 Nano primary
+* Claude Haiku 4.5 / Gemma class fallbacks
 * then remaining paid provider chain
 
 Purpose:
@@ -224,9 +224,9 @@ Pipeline:
 
 Current intended routing:
 
-* AI1: GPT-4o Mini
-* AI2: Claude 3.5 Haiku
-* AI3: GPT-4o Mini
+* AI1: GPT-5 Mini
+* AI2: Claude Sonnet 4.6
+* AI3: Grok 4.1 Fast
 
 Behavior:
 
@@ -252,15 +252,15 @@ Target cost:
 Behavior:
 
 * same 3-stage structure as Signal
-* more expensive models (GPT-4o primary)
+* more expensive models (GPT-5 Mini primary)
 * looser timeout budget
 * automated GitHub PR generation via MCP connections
 
 Intended routing:
 
-* AI1: GPT-4o
-* AI2: Claude 3.5 Haiku
-* AI3: GPT-4o
+* AI1: GPT-5 Mini
+* AI2: Claude Sonnet 4.6
+* AI3: Grok 4.1 Fast
 
 Billing model:
 

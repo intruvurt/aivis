@@ -23,6 +23,8 @@ import SSFRPanel from "./SSFRPanel";
 import AutoScoreFixWidget from "./AutoScoreFixWidget";
 import AutoScoreFixModal from "./AutoScoreFixModal";
 import { RecommendationList } from "./RecommendationList";
+import AIAnswerReality from "./AIAnswerReality";
+import FixImpactSimulator from "./FixImpactSimulator";
 import { getAnalysisExecutionClass, type AnalysisResponse, type CanonicalTier, type LegacyTier } from "@shared/types";
 import { canAccess } from "@shared/entitlements";
 import { Link } from "react-router-dom";
@@ -261,6 +263,16 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           ))}
         </section>
 
+        {/* 3b. AI ANSWER REALITY CHECK - the "oh shit" moment */}
+        {result.ai_platform_scores && (
+          <AIAnswerReality
+            scores={result.ai_platform_scores}
+            url={result.url || ''}
+            brandEntities={result.brand_entities || []}
+            topicalKeywords={result.topical_keywords || []}
+          />
+        )}
+
         {/* 4. CATEGORY GRID - up to 6 cards, 3 cols */}
         {categories.length > 0 && (
           <section>
@@ -379,7 +391,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                 </button>
               )}
             </div>
-            <RecommendationList recommendations={result.recommendations} />
+            <RecommendationList recommendations={result.recommendations} tier={normalizedTier} />
           </section>
         )}
 
@@ -452,6 +464,16 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           <div className="mb-5">
             <AutoScoreFixWidget auditResult={result} onOpen={() => setAutoFixOpen(true)} />
           </div>
+        )}
+
+        {/* Fix Impact Simulator - projected improvement */}
+        {result.recommendations?.length > 0 && (
+          <FixImpactSimulator
+            currentScore={result.visibility_score}
+            recommendations={result.recommendations}
+            onFixClick={() => setAutoFixOpen(true)}
+            hasAlignment={hasAlignment}
+          />
         )}
 
         {/* 1. Fix impact */}
@@ -592,6 +614,42 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             </>
           )}
         </div>
+
+        {/* 7. Competitive pressure teaser */}
+        {result.visibility_score < 80 && !hasAlignment && (
+          <div className="mt-5 rounded-[22px] border border-amber-500/15 bg-amber-500/[0.05] p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="h-4 w-4 text-amber-400" />
+              <span className="text-sm font-semibold text-white">Your competitors may be ahead</span>
+            </div>
+            <p className="text-xs text-white/55 leading-relaxed mb-3">
+              Sites in your category scoring above {Math.min(result.visibility_score + 20, 85)} are more likely to be cited by AI. Track and compare against direct competitors.
+            </p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 transition-colors"
+            >
+              Unlock competitor tracking <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+        {hasAlignment && result.visibility_score < 80 && (
+          <div className="mt-5 rounded-[22px] border border-amber-500/15 bg-amber-500/[0.05] p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="h-4 w-4 text-amber-400" />
+              <span className="text-sm font-semibold text-white">Check your competitive position</span>
+            </div>
+            <p className="text-xs text-white/55 leading-relaxed mb-3">
+              AI is recommending someone. Find out who — and what they are doing differently.
+            </p>
+            <Link
+              to="/app/competitors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 transition-colors"
+            >
+              Compare competitors <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
       </aside>
 
       <AutoScoreFixModal open={autoFixOpen} onClose={() => setAutoFixOpen(false)} auditResult={result} />

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { BRAG_TRAIL_LABEL, Recommendation } from '@shared/types';
-import { AlertCircle, CheckCircle2, Zap, ArrowRight, Code, Database, ChevronDown, ChevronUp, Clipboard, Check as CheckIcon } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Zap, ArrowRight, Code, Database, ChevronDown, ChevronUp, Clipboard, Check as CheckIcon, Clock, AlertTriangle, Lock } from 'lucide-react';
 import { Card } from './ui/Card';
+import { Link } from 'react-router-dom';
 
 // ─── BRAG Evidence Labels ─────────────────────────────────────────────────────
 // Maps ev_* IDs from the server's evidence manifest to human-readable labels.
@@ -224,6 +225,8 @@ function FixGuidePanel({ category }: { category?: string }) {
 
 interface RecommendationListProps {
   recommendations: Recommendation[];
+  /** Current user tier — controls implementation code visibility */
+  tier?: string;
 }
 
 function getVerificationTone(status?: Recommendation['verification_status']) {
@@ -238,7 +241,18 @@ function getVerificationLabel(status?: Recommendation['verification_status']) {
   return `${BRAG_TRAIL_LABEL}: unverified`;
 }
 
-export const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations }) => {
+export const RecommendationList: React.FC<RecommendationListProps> = ({ recommendations, tier = 'observer' }) => {
+  const [expandedEvidence, setExpandedEvidence] = useState<Set<number>>(new Set());
+  const isPaid = tier !== 'observer' && tier !== 'free';
+
+  const toggleEvidence = (idx: number) => {
+    setExpandedEvidence(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx); else next.add(idx);
+      return next;
+    });
+  };
+
   const getIcon = (priority: string) => {
     switch (priority) {
       case 'high': return <AlertCircle className="w-6 h-6 text-red-400" />;
@@ -266,83 +280,145 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({ recommen
     }
   };
 
+  const getDifficultyDisplay = (d: string) => {
+    switch (d) {
+      case 'easy': return { label: 'Easy', color: 'text-emerald-300', dot: 'bg-emerald-400' };
+      case 'hard': return { label: 'Hard', color: 'text-rose-300', dot: 'bg-rose-400' };
+      default: return { label: 'Medium', color: 'text-amber-300', dot: 'bg-amber-400' };
+    }
+  };
+
+  const getTimeLabel = (mins?: number) => {
+    if (!mins) return null;
+    if (mins <= 10) return '~5 min';
+    if (mins <= 20) return '~15 min';
+    if (mins <= 45) return '~30 min';
+    if (mins <= 90) return '~1 hr';
+    return '~2 hr';
+  };
+
   return (
     <div className="space-y-4">
-      {recommendations.map((rec, idx) => (
-        <Card key={idx} className={`border-l-4 ${getPriorityBorder(rec.priority)} overflow-hidden hover:shadow-md transition-shadow`}>
-          <div className="p-5 sm:p-6">
-            <div className="flex flex-col md:flex-row md:items-start gap-5">
+      {recommendations.map((rec, idx) => {
+        const diff = getDifficultyDisplay(rec.difficulty);
+        const timeLabel = getTimeLabel(rec.estimatedTimeMinutes);
 
-              <div className={`p-3 rounded-xl shrink-0 self-start ${
-                rec.priority === 'high' ? 'bg-charcoal' :
-                rec.priority === 'medium' ? 'bg-charcoal' : 'bg-charcoal'
-              }`}>
-                {getIcon(rec.priority)}
-              </div>
+        return (
+          <Card key={idx} className={`border-l-4 ${getPriorityBorder(rec.priority)} overflow-hidden hover:shadow-md transition-shadow`}>
+            <div className="p-5 sm:p-6">
+              <div className="flex flex-col md:flex-row md:items-start gap-5">
 
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-                  <h3 className="font-bold text-lg text-white leading-tight">{rec.title}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide w-fit border ${getPriorityColor(rec.priority)}`}>
-                    {rec.priority} Priority
-                  </span>
+                <div className="p-3 rounded-xl shrink-0 self-start bg-charcoal">
+                  {getIcon(rec.priority)}
                 </div>
 
-                <p className="text-white/75 mb-4 leading-relaxed">{rec.description}</p>
-
-                <div className="flex flex-wrap gap-4 text-sm mt-4 mb-5">
-                  <div className="flex items-center gap-2 px-3 py-1.5 card-charcoal/30 rounded-xl text-white/80 font-medium">
-                     <ArrowRight className="w-4 h-4" />
-                     Impact: {rec.impact}
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-charcoal border border-white/10 rounded-xl text-white/75 font-medium">
-                     <span className="w-2 h-2 rounded-full bg-charcoal"></span>
-                     Difficulty: <span className="capitalize">{rec.difficulty}</span>
-                  </div>
-                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${getVerificationTone(rec.verification_status)}`}>
-                    {getVerificationLabel(rec.verification_status)}
-                    <span className="opacity-80">
-                      ({rec.verified_evidence_count || 0}/{rec.total_evidence_refs || 0})
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+                    <h3 className="font-bold text-lg text-white leading-tight">{rec.title}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide w-fit border ${getPriorityColor(rec.priority)}`}>
+                      {rec.priority} Priority
                     </span>
                   </div>
-                </div>
 
-                {/* ─── BRAG Evidence Provenance ─────────────────────────────── */}
-                {rec.evidence_ids && rec.evidence_ids.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mb-5 px-3 py-2 rounded-xl bg-charcoal-deep border border-white/12">
-                    <div className="flex items-center gap-1.5 text-xs text-white/60 mr-1">
-                      <Database className="w-3 h-3" />
-                      <span className="font-medium uppercase tracking-wide">Based on</span>
+                  {/* ─── Consequence Statement (survival language) ────────── */}
+                  {rec.consequenceStatement && (
+                    <div className="mb-3 flex items-start gap-2 px-3 py-2.5 rounded-xl border border-rose-400/15 bg-rose-500/[0.06]">
+                      <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                      <p className="text-sm text-rose-200/80 leading-relaxed">{rec.consequenceStatement}</p>
                     </div>
-                    {rec.evidence_ids.map((id) => (
-                      <EvidenceBadge key={id} id={id} />
-                    ))}
-                  </div>
-                )}
-                {(!rec.evidence_ids || rec.evidence_ids.length === 0) && (
-                  <div className="mb-5 px-3 py-2 rounded-xl border border-white/10 bg-charcoal text-xs text-white/55">
-                    No linked BRAG evidence IDs were returned for this recommendation. Treat this as advisory and verify against the Evidence Ledger.
-                  </div>
-                )}
+                  )}
 
-                <div className="bg-[#323a4c] rounded-xl overflow-hidden ring-1 ring-white/40/5">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-charcoal-light border-b border-white/10">
-                    <Code className="w-4 h-4 text-white/55" />
-                    <span className="text-xs font-semibold text-white/55 uppercase tracking-wider">Implementation</span>
+                  <p className="text-white/75 mb-4 leading-relaxed">{rec.description}</p>
+
+                  {/* ─── Impact / Difficulty / Time / Visibility Loss (compact row) ─── */}
+                  <div className="flex flex-wrap gap-3 text-sm mt-4 mb-5">
+                    <div className="flex items-center gap-2 px-3 py-1.5 card-charcoal/30 rounded-xl text-white/80 font-medium">
+                       <ArrowRight className="w-4 h-4" />
+                       Impact: {rec.impact}
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-charcoal border border-white/10 rounded-xl text-white/75 font-medium">
+                       <span className={`w-2 h-2 rounded-full ${diff.dot}`}></span>
+                       <span className={diff.color}>{diff.label}</span>
+                    </div>
+                    {timeLabel && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-charcoal border border-white/10 rounded-xl text-white/70 font-medium">
+                        <Clock className="w-3.5 h-3.5 text-white/50" />
+                        {timeLabel}
+                      </div>
+                    )}
+                    {rec.estimatedVisibilityLoss && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-400/15 bg-rose-500/[0.06] text-rose-300 text-xs font-semibold">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        {rec.estimatedVisibilityLoss} visibility at risk
+                      </div>
+                    )}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${getVerificationTone(rec.verification_status)}`}>
+                      {getVerificationLabel(rec.verification_status)}
+                      <span className="opacity-80">
+                        ({rec.verified_evidence_count || 0}/{rec.total_evidence_refs || 0})
+                      </span>
+                    </div>
                   </div>
-                  <div className="p-4 overflow-x-auto">
-                    <code className="text-sm font-mono text-white/80">
-                      {rec.implementation}
-                    </code>
+
+                  {/* ─── BRAG Evidence Provenance (collapsible) ────────────── */}
+                  {rec.evidence_ids && rec.evidence_ids.length > 0 && (
+                    <div className="mb-5">
+                      <button
+                        type="button"
+                        onClick={() => toggleEvidence(idx)}
+                        className="flex items-center gap-2 text-xs text-white/50 hover:text-white/70 transition-colors"
+                      >
+                        <Database className="w-3 h-3" />
+                        <span className="font-medium uppercase tracking-wide">Evidence trail ({rec.evidence_ids.length})</span>
+                        {expandedEvidence.has(idx) ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+                      {expandedEvidence.has(idx) && (
+                        <div className="flex flex-wrap items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-charcoal-deep border border-white/12">
+                          {rec.evidence_ids.map((id) => (
+                            <EvidenceBadge key={id} id={id} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {(!rec.evidence_ids || rec.evidence_ids.length === 0) && (
+                    <div className="mb-5 px-3 py-2 rounded-xl border border-white/10 bg-charcoal text-xs text-white/55">
+                      No linked evidence IDs — treat as advisory.
+                    </div>
+                  )}
+
+                  {/* ─── Implementation (blurred for free tier) ────────────── */}
+                  <div className="relative bg-[#323a4c] rounded-xl overflow-hidden ring-1 ring-white/40/5">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-charcoal-light border-b border-white/10">
+                      <Code className="w-4 h-4 text-white/55" />
+                      <span className="text-xs font-semibold text-white/55 uppercase tracking-wider">Implementation</span>
+                    </div>
+                    <div className={`p-4 overflow-x-auto ${!isPaid ? 'blur-sm select-none' : ''}`}>
+                      <code className="text-sm font-mono text-white/80">
+                        {rec.implementation}
+                      </code>
+                    </div>
+                    {!isPaid && (
+                      <div className="absolute inset-0 top-10 flex flex-col items-center justify-center bg-charcoal/60 backdrop-blur-[2px]">
+                        <Lock className="w-5 h-5 text-white/40 mb-2" />
+                        <p className="text-sm text-white/60 font-medium mb-2">Implementation code locked</p>
+                        <Link
+                          to="/pricing"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-xs font-semibold text-slate-950 hover:scale-[1.02] transition-transform"
+                        >
+                          Unlock with Starter <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
+
+                  <FixGuidePanel category={(rec as any).scorefix_category} />
                 </div>
-
-                <FixGuidePanel category={(rec as any).scorefix_category} />
               </div>
             </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        );
+      })}
     </div>
   );
 };

@@ -7989,6 +7989,9 @@ RECOMMENDATION CONTRACT - every recommendation MUST follow this contract:
 3. evidence_ids must cite only real [ev_*] IDs listed above that confirm the problem.
 4. scorefix_category must be one of: "schema_structured_data" | "meta_tags" | "heading_structure" | "content_depth" | "technical_seo" | "ai_readability" | "image_accessibility" | "internal_linking" | "robots_access"
 5. Do not invent problems not backed by the DIAGNOSTIC SNAPSHOT or EVIDENCE.
+6. consequenceStatement must describe the REAL BUSINESS COST of ignoring this issue. Use survival language, not system language. Example: "AI answer engines will recommend your competitors instead of you for queries about <topic>" or "ChatGPT and Perplexity cannot extract your core value proposition — you become invisible in AI-generated answers".
+7. estimatedVisibilityLoss must be a percentage range of citation/visibility loss if not fixed (e.g. "15-25%"). Base on severity: high priority = 20-35%, medium = 10-20%, low = 5-15%.
+8. estimatedTimeMinutes must be realistic implementation time in minutes (5, 15, 30, 60, 120).
 
 ADDITIONAL CHECKS (flag these as recommendations when detected):
 - ICP clarity: if the page does not name a specific target audience (e.g. "for SEO managers" or "built for content teams"), recommend adding an explicit audience statement in the hero/subheadline. Category: content_depth.
@@ -7998,7 +8001,7 @@ ADDITIONAL CHECKS (flag these as recommendations when detected):
 - Scannability: if the H1 or subheadline exceeds 80 characters, or if sections lack subheadings, recommend splitting for mobile readability. Category: heading_structure.
 
 Return ONLY valid JSON (no markdown, no fences):
-{"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"keyword_intelligence":[{"keyword":"<from topical_keywords>","intent":"informational|commercial|navigational|transactional","volume_tier":"low|medium|high|very_high","competition":"low|medium|high","opportunity":<0-100>,"trend":"rising|stable|declining"}],"brand_entities":["<found on page>"],"primary_topics":["<3-5>"],"faq_count":<int>,"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta|schema|content|technical|readability","found":"<quote actual text from page>","status":"good|warning|critical|missing","note":"<specific why with measured value>","source_id":"<ev_* ID>"}],"recommendations":[{"priority":"high|medium|low","category":"<category_grade label>","scorefix_category":"<one of the 9 above>","title":"<short specific title>","description":"Measured: <actual value>. Target: <recommended value>. <explanation>","impact":"<specific projected impact with estimated score lift>","difficulty":"easy|medium|hard","implementation":"<specific steps with code/markup example>","evidence_ids":["<ev_*"]}],"crypto_intelligence":{"has_crypto_signals":false,"summary":"<or detected>","detected_assets":[],"keywords":[],"wallet_addresses":[],"sentiment":"neutral","risk_notes":[],"chain_networks":[]}}
+{"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"keyword_intelligence":[{"keyword":"<from topical_keywords>","intent":"informational|commercial|navigational|transactional","volume_tier":"low|medium|high|very_high","competition":"low|medium|high","opportunity":<0-100>,"trend":"rising|stable|declining"}],"brand_entities":["<found on page>"],"primary_topics":["<3-5>"],"faq_count":<int>,"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta|schema|content|technical|readability","found":"<quote actual text from page>","status":"good|warning|critical|missing","note":"<specific why with measured value>","source_id":"<ev_* ID>"}],"recommendations":[{"priority":"high|medium|low","category":"<category_grade label>","scorefix_category":"<one of the 9 above>","title":"<short specific title>","description":"Measured: <actual value>. Target: <recommended value>. <explanation>","impact":"<specific projected impact with estimated score lift>","difficulty":"easy|medium|hard","implementation":"<specific steps with code/markup example>","evidence_ids":["<ev_*"],"consequenceStatement":"<real business cost in survival language>","estimatedVisibilityLoss":"<X-Y%>","estimatedTimeMinutes":<5|15|30|60|120>}],"crypto_intelligence":{"has_crypto_signals":false,"summary":"<or detected>","detected_assets":[],"keywords":[],"wallet_addresses":[],"sentiment":"neutral","risk_notes":[],"chain_networks":[]}}
 
 Required category_grades labels: "Content Depth & Quality","Heading Structure & H1","Schema & Structured Data","Meta Tags & Open Graph","Technical SEO","AI Readability & Citability"
 Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match numeric score.`;
@@ -8689,6 +8692,10 @@ Return ONLY valid JSON:
       evidence_ids: Array.isArray(rec.evidence_ids)
         ? rec.evidence_ids.filter((id: unknown): id is string => typeof id === 'string')
         : [],
+      scorefix_category: typeof rec.scorefix_category === 'string' ? rec.scorefix_category : undefined,
+      consequenceStatement: typeof rec.consequenceStatement === 'string' ? rec.consequenceStatement : undefined,
+      estimatedVisibilityLoss: typeof rec.estimatedVisibilityLoss === 'string' ? rec.estimatedVisibilityLoss : undefined,
+      estimatedTimeMinutes: typeof rec.estimatedTimeMinutes === 'number' ? rec.estimatedTimeMinutes : undefined,
     }));
 
     const validGrades = ['A', 'B', 'C', 'D', 'F'];

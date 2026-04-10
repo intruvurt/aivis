@@ -1,0 +1,22 @@
+
+> build
+> npm --prefix client install && npm --prefix client run build && npm --prefix server install && npm --prefix server run build
+
+
+up to date, audited 705 packages in 13s
+
+194 packages are looking for funding
+  run `npm fund` for details
+
+7 vulnerabilities (1 low, 1 moderate, 4 high, 1 critical)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+> ai-visibility-engine@1.0.0 build
+> vite build && node ./scripts/prerender-routes.mjs
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...

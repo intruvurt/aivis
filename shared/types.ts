@@ -464,6 +464,12 @@ export interface Recommendation {
   resources?: string[];
   /** BRAG: IDs of scraped evidence fields that justify this recommendation */
   evidence_ids?: string[];
+  /** Consequence framing: what happens if user ignores this (survival language) */
+  consequenceStatement?: string;
+  /** Estimated % visibility loss if not fixed (e.g. "18-32%") */
+  estimatedVisibilityLoss?: string;
+  /** Scorefix category for auto-PR routing */
+  scorefix_category?: string;
 }
 
 /* ========================= Content & structural analysis ========================= */

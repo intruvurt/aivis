@@ -80,9 +80,9 @@ export const PROVIDERS: AiProvider[] = [
 ];
 
 // ── Signal tier: dedicated triple-check pipeline models ──
-// Updated 2026-03-29: GPT-4.1 mini primary, Claude 3.5 Sonnet peer critique, Grok 3 mini validation
+// Updated 2026-04-10: GPT-4.1 mini primary, Claude Sonnet 4 peer critique, Grok 3 mini validation
 // AI1: GPT-4.1 Mini (primary analysis - fast, cheap, strong JSON)
-// AI2: Claude 3.5 Sonnet (peer critique - different model family for diversity)
+// AI2: Claude Sonnet 4 (peer critique - different model family for diversity)
 // AI3: Grok 3 Mini (validation gate - third model family for true independence)
 export const SIGNAL_AI1: AiProvider = {
   provider: 'openrouter',
@@ -93,10 +93,10 @@ export const SIGNAL_AI1: AiProvider = {
 };
 export const SIGNAL_AI2: AiProvider = {
   provider: 'openrouter',
-  model: 'anthropic/claude-3.5-sonnet',
+  model: 'anthropic/claude-sonnet-4',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Claude 3.5 Sonnet',
-  label: 'Claude 3.5 Sonnet',
+  displayName: 'Claude Sonnet 4',
+  label: 'Claude Sonnet 4',
 };
 export const SIGNAL_AI3: AiProvider = {
   provider: 'openrouter',
@@ -107,10 +107,10 @@ export const SIGNAL_AI3: AiProvider = {
 };
 
 // ── scorefix tier: premium triple-check models ──
-// Updated 2026-03-29: GPT-4.1 primary, Claude 3.5 Sonnet critique, Grok 3 validation
+// Updated 2026-04-10: GPT-4.1 primary, Claude Sonnet 4 critique, Grok 3 validation
 // Three independent model families for maximum scoring diversity.
 // AI1: GPT-4.1 (deep primary - strongest reasoning)
-// AI2: Claude 3.5 Sonnet (peer critique - independent model family)
+// AI2: Claude Sonnet 4 (peer critique - independent model family)
 // AI3: Grok 3 (validation gate - third independent family)
 export const SCOREFIX_AI1: AiProvider = {
   provider: 'openrouter',
@@ -121,10 +121,10 @@ export const SCOREFIX_AI1: AiProvider = {
 };
 export const SCOREFIX_AI2: AiProvider = {
   provider: 'openrouter',
-  model: 'anthropic/claude-3.5-sonnet',
+  model: 'anthropic/claude-sonnet-4',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Claude 3.5 Sonnet',
-  label: 'Claude 3.5 Sonnet',
+  displayName: 'Claude Sonnet 4',
+  label: 'Claude Sonnet 4',
 };
 export const SCOREFIX_AI3: AiProvider = {
   provider: 'openrouter',

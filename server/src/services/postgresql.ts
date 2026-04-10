@@ -2030,6 +2030,7 @@ export async function runMigrations(): Promise<void> {
     _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids JSONB DEFAULT '[]'`);
     _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`);
     _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_run_id UUID`);
+    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`);
 
     // ─── SSFR Fixpacks ─────────────────────────────────────────────────────
     _q(`

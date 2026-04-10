@@ -42,6 +42,7 @@ const MODEL_SHORT_NAME_MAP: Record<string, ModelShortName> = {
   // Anthropic models (validated on OpenRouter)
   'anthropic/claude-3.5-haiku': 'Claude 3.5 Haiku',
   'anthropic/claude-3.5-sonnet': 'Claude 3.5 Sonnet',
+  'anthropic/claude-sonnet-4': 'Claude Sonnet 4',
   'anthropic/claude-3-haiku': 'Claude 3 Haiku',
   // Legacy IDs (still valid on OpenRouter, kept for cache hits)
   'openai/gpt-4o': 'GPT-4o',

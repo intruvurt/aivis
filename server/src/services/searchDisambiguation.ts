@@ -1,7 +1,7 @@
 // server/src/services/searchDisambiguation.ts
 // Shared helpers for brand/competitor disambiguation across all search services.
 // Ported from the BRA relevance scoring in citations.controllers.ts to ensure
-// consistent quality in mention tracking, web search, DDG, and Wikipedia checks.
+// consistent quality in mention tracking, web search, DDG and Wikipedia checks.
 
 /**
  * Escape a string for use in a RegExp.

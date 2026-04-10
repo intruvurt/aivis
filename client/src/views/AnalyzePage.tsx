@@ -246,6 +246,7 @@ const AnalyzePage: React.FC = () => {
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const progressSourceRef = useRef<EventSource | null>(null);
+  const pendingAutostartRef = useRef(false);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -277,6 +278,9 @@ const AnalyzePage: React.FC = () => {
     const requestedUrl = searchParams.get("url");
     if (!requestedUrl) return;
     setUrl(requestedUrl);
+    if (searchParams.get("autostart") === "1") {
+      pendingAutostartRef.current = true;
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -603,6 +607,15 @@ const AnalyzePage: React.FC = () => {
       setLoading(false);
     }
   }
+
+  // Auto-start analysis when navigated with ?autostart=1
+  useEffect(() => {
+    if (!pendingAutostartRef.current) return;
+    if (!url.trim() || loading) return;
+    pendingAutostartRef.current = false;
+    handleAnalyze();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !loading) handleAnalyze();

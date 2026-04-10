@@ -2014,7 +2014,7 @@ export default function ReportsPage() {
                       {/* Primary: Re-analyze */}
                       <ButtonTooltip tip="Run a fresh audit on this URL with the latest AI models">
                       <button
-                        onClick={() => navigate(`/?url=${encodeURIComponent(report.url)}`)}
+                        onClick={() => navigate(`/app/analyze?url=${encodeURIComponent(report.url)}&autostart=1`)}
                         className="inline-flex items-center gap-1.5 rounded-lg btn-cta-primary px-3 py-1.5 text-xs font-bold"
                         title="Re-analyze this URL"
                         type="button"

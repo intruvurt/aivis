@@ -5,6 +5,7 @@ import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier }
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
 import { checkCompetitorMilestones } from '../services/milestoneService.js';
+import { scrapeDDGRaw, scrapeBingRaw } from '../services/webSearch.js';
 
 type CompetitorSuggestion = {
   nickname: string;
@@ -97,6 +98,7 @@ export async function getCompetitorSuggestions(req: Request, res: Response) {
 
     // ── Phase 1: Smart discovery from user's audit history ────────────────
     let discovered: CompetitorSuggestion[] = [];
+    let usedWebSearch = false;
 
     if (targetUrl) {
       let targetDomain = '';
@@ -164,6 +166,53 @@ export async function getCompetitorSuggestions(req: Request, res: Response) {
               if (discovered.length >= 8) break;
             }
           }
+
+          // ── Phase 1b: Live web search when audit history yields nothing ──
+          if (discovered.length < 3 && targetKeywords.length > 0) {
+            try {
+              const searchQuery = targetKeywords.slice(0, 4).join(' ');
+              const [ddgResults, bingResults] = await Promise.all([
+                scrapeDDGRaw(searchQuery, 15).catch(() => []),
+                scrapeBingRaw(searchQuery, 10).catch(() => []),
+              ]);
+
+              const allResults = [...ddgResults, ...bingResults];
+              const NOISE_DOMAINS = new Set([
+                'wikipedia.org', 'youtube.com', 'reddit.com', 'facebook.com',
+                'twitter.com', 'x.com', 'instagram.com', 'linkedin.com',
+                'pinterest.com', 'tiktok.com', 'amazon.com', 'ebay.com',
+                'google.com', 'bing.com', 'duckduckgo.com', 'yahoo.com',
+                'quora.com', 'medium.com', 'github.com', 'stackoverflow.com',
+              ]);
+
+              const seenDomains = new Set<string>();
+              for (const r of allResults) {
+                if (discovered.length >= 8) break;
+                let href: string;
+                try { href = r.href; } catch { continue; }
+                let domain: string;
+                try { domain = new URL(href).hostname.replace(/^www\./, '').toLowerCase(); }
+                catch { continue; }
+
+                if (excludeDomains.has(domain)) continue;
+                if (seenDomains.has(domain)) continue;
+                if (NOISE_DOMAINS.has(domain)) continue;
+                // Skip gov/edu/social aggregator domains
+                if (/\.(gov|edu|mil)$/i.test(domain)) continue;
+
+                seenDomains.add(domain);
+                const label = domain.split('.')[0] || '';
+                // Skip very short or generic labels
+                if (label.length < 3) continue;
+
+                discovered.push({ nickname: domain, url: `https://${domain}` });
+                excludeDomains.add(domain);
+                usedWebSearch = true;
+              }
+            } catch (err) {
+              console.error('[Competitors] Web search discovery error (non-fatal):', err);
+            }
+          }
         } catch (err) {
           console.error('[Competitors] Smart discovery error (non-fatal):', err);
         }
@@ -208,7 +257,7 @@ export async function getCompetitorSuggestions(req: Request, res: Response) {
       niches: nicheOptions,
       suggestions,
       discovery_source: discovered.length > 0
-        ? 'audit_history'
+        ? (usedWebSearch ? 'web_search' : 'audit_history')
         : selectedNiche
           ? 'niche'
           : 'none',

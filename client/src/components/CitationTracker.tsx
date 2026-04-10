@@ -572,7 +572,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
             setYahooSearchByQuery(data.test.yahoo_search_by_query || null);
             setLoading(false);
           } else if (data.test.status === 'failed') {
-            setError('Citation test failed');
+            setError(data.test.error || 'Citation test failed. Please try again.');
             setLoading(false);
           }
         }

@@ -52,6 +52,7 @@ function getEnginesForTierSafe(tier: CanonicalTier): {
 } {
   const rank: Record<CanonicalTier, number> = {
     observer: 0,
+    starter: 0,
     alignment: 1,
     signal: 2,
     scorefix: 3,

@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2025-07-12
+
+### ✨ Added
+
+#### Starter Tier ($15/mo)
+- **New paid tier** between Observer (free) and Alignment ($49/mo) — 15 scans/month, paid AI model (GPT-5 Nano), all recommendations with implementation code, content highlights, PDF export, shareable links, force-refresh, 30-day report history, 25 stored audits, 14-day cache
+- **Annual billing** at $140/yr (~22% discount)
+- **Stripe integration** for Starter monthly and yearly subscriptions via lookup keys
+- **Tier-specific result stripping** — `stripStarterResult()` keeps full recommendations, implementation code, content highlights, and evidence manifest; strips keyword intelligence and deep evidence artifacts
+- **5-tier model** — observer (free) → starter ($15) → alignment ($49) → signal ($149) → scorefix ($299 one-time)
+
+#### UI Updates
+- **Starter pricing card** on Landing page with teal-400 theme and 7 feature highlights
+- **PricingPage** updated with Starter positioning, audience copy, enriched feature list, and tier comparison FAQ
+- **Profile page** with teal-themed Starter tier colors
+- **Sidebar** navigation supports all 5 canonical tiers
+- **Brand palette** with teal/emerald gradient for Starter tier
+
+#### Evidence Trail Fix
+- **BRAG evidence preservation** — `stripObserverResult()` and `stripAlignmentResult()` now preserve `evidence_ids`, `verified_evidence_count`, `total_evidence_refs`, and `evidence_benchmark` fields on recommendations
+- **Evidence manifest** retained for all paid tiers including Starter
+
+#### Content
+- 3 new blog posts: Starter tier announcement, evidence trail deep-dive, and plan comparison guide
+- Updated structured data (JSON-LD) with Starter in ItemList, SoftwareApplication, and Product schemas
+
+### 🔄 Changed
+- **Tier hierarchy renumbered** — observer=0, starter=1, alignment=2, signal=3, scorefix=4. Legacy aliases preserved (free=0, core=2, premium=3)
+- **CanonicalTier type** expanded in `shared/types.ts`, `server/src/types.ts` — 'starter' added to union
+- **TIER_LIMITS, PRICING, CANONICAL_TIER_PRICING** — all include Starter with appropriate limits
+- **Model routing** — Starter uses same paid model allocation as Alignment (GPT-5 Nano primary)
+- **Admin tools** — set-tier and email preview support all 5 tiers
+- **ALLOWED_TIERS** in payment routes includes 'starter'
+- **Scheduled rescan** model selection includes 'starter'
+
+---
+
 ## [1.9.0] - 2025-07-11
 
 ### ✨ Added

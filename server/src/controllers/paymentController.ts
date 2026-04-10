@@ -233,7 +233,7 @@ export const createStripeCheckout = async (req: Request, res: Response) => {
     }
 
     // Free tier doesn't need Stripe
-    if (!meetsMinimumTier(tier as any, 'alignment')) {
+    if (!meetsMinimumTier(tier as any, 'starter')) {
       return res.status(400).json({
         success: false,
         error: 'Observer/free tier does not require payment',
@@ -1378,9 +1378,10 @@ async function updateUserTier(userId: string, tierKey: string, subscriptionId: s
 export const getPricingInfo = async (req: Request, res: Response) => {
   try {
     // Only expose active consumer tiers
-    const ACTIVE_TIERS = ['observer', 'alignment', 'signal', 'scorefix'] as const;
+    const ACTIVE_TIERS = ['observer', 'starter', 'alignment', 'signal', 'scorefix'] as const;
     const uploadFilesByTier: Record<CanonicalTier, number> = {
       observer: 0,
+      starter: 2,
       alignment: 5,
       signal: 10,
       scorefix: 15,
@@ -1401,6 +1402,17 @@ export const getPricingInfo = async (req: Request, res: Response) => {
         features.push('Schema markup audit');
         features.push('Core recommendations');
         features.push('Single-page audit');
+        return features;
+      }
+
+      if (tier === 'starter') {
+        features.push('All recommendations with implementation code');
+        features.push('Content highlights');
+        features.push('PDF export');
+        features.push('Shareable report links');
+        features.push('Force-refresh (bypass cache)');
+        features.push('30-day report history');
+        features.push(`${uploadFilesByTier[tier]} document upload audits`);
         return features;
       }
 

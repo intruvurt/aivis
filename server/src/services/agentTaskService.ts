@@ -33,6 +33,7 @@ export interface AgentTask {
  * ──────────────────────────────────────────────────────────────────────────── */
 export const DAILY_TASK_LIMITS: Record<CanonicalTier, number> = {
   observer: 3,
+  starter: 6,
   alignment: 10,
   signal: 20,
   scorefix: 40,

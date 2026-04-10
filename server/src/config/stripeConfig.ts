@@ -43,6 +43,23 @@ export const STRIPE_PRICING = {
     },
   },
 
+  // STARTER TIER — $15/month or $140/year (22% off)
+  starter: {
+    name: PRICING.starter.name,
+    lookupKey: 'starter_monthly',
+    priceId: process.env.STRIPE_STARTER_MONTHLY_PRICE_ID,
+    amountCents: PRICING.starter.billing.monthly * 100,
+    yearlyPriceId: process.env.STRIPE_STARTER_YEARLY_PRICE_ID,
+    yearlyAmountCents: PRICING.starter.billing.yearly * 100,
+    mode: 'subscription',
+    metadata: {
+      tier_key: 'starter',
+      audits_per_month: PRICING.starter.limits.scans,
+      competitors: PRICING.starter.limits.competitors,
+      citation_queries: PRICING.starter.limits.citations,
+    },
+  },
+
   // ALIGNMENT TIER — $49/month or $458/year (22% off)
   alignment: {
     name: PRICING.alignment.name,

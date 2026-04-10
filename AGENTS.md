@@ -76,9 +76,10 @@ Do not patch client and server separately and hope they stay aligned.
 The platform runs on these canonical tiers:
 
 - `observer`
+- `starter`
 - `alignment`
 - `signal`
-- `scorefix'### Not a tier
+- `scorefix` — not a subscription tier; one-time purchase
 
 Legacy aliases must map into canonical keys through shared helpers.
 

@@ -123,6 +123,9 @@ Scoring dimensions:
 - AEO Is Not the New SEO: https://aivis.biz/blogs/answer-engine-optimization-is-not-the-new-seoits-the-big-brother
 - Startups SEO/AEO 2026: https://aivis.biz/blogs/startups-seoaeo-in-2026-a-strategic-guide-for-the-ai-first-era
 - The Old SaaS Model Was Simple: https://aivis.biz/blogs/the-old-saas-model-was-simple
+- AiVIS Starter Tier — Evidence-Backed AI Audits from $15: https://aivis.biz/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15
+- Why Every AI Visibility Audit Needs an Evidence Trail: https://aivis.biz/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail
+- Choosing the Right AI Visibility Plan: https://aivis.biz/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment
 
 ## Keyword intelligence hub pages
 
@@ -155,6 +158,7 @@ AiVIS offers a free embeddable dofollow backlink badge for any website. The badg
 ## Pricing (as of 2026)
 
 Observer (Free): $0/month, 3 scans/month, single-page audit, AI visibility score
+Starter: $15/month ($140/year), 15 scans/month, paid AI model (GPT-5 Nano), all recommendations with implementation code, content highlights, PDF export, shareable links, force-refresh, 30-day report history
 Alignment (Core): $49/month ($458/year), 60 scans/month, multi-page crawl (50 pages), competitor tracking, keyword intelligence, brand mention scanning
 Signal (Pro): $149/month ($1,394/year), 110 scans/month, triple-check AI pipeline (3 models), multi-page crawl (250 pages), citation testing, all Alignment features
 Score Fix (AutoFix PR): $299 one-time, 250 credits, automated GitHub pull requests with code patches, self-healing fix pipeline

@@ -4,6 +4,8 @@
 
 import { getPool } from './postgresql.js';
 import { textMentionsBrand, brandMatchesWordBoundary } from './searchDisambiguation.js';
+import { findKGCollisions, resolveEntityFromKG } from './googleKnowledgeGraph.js';
+import type { KGEntity } from './googleKnowledgeGraph.js';
 import type {
   EntityFingerprint,
   BlocklistEntry,
@@ -383,6 +385,22 @@ export function buildEntityQueries(fingerprint: EntityFingerprint): string[] {
 
 // ─── Collision Detection ─────────────────────────────────────────────────────
 
+/** Classify a KG entity type into the collision entity type taxonomy */
+function classifyKGEntity(
+  entity: KGEntity,
+): 'person' | 'company' | 'project' | 'unknown' {
+  const types = (Array.isArray(entity.types) ? entity.types : []).map(t => t.toLowerCase());
+  if (types.some(t => t.includes('person') || t.includes('author') || t.includes('artist'))) return 'person';
+  if (types.some(t => t.includes('organization') || t.includes('corporation') || t.includes('company'))) return 'company';
+  if (types.some(t => t.includes('softwareapplication') || t.includes('website') || t.includes('product'))) return 'project';
+  // Fall back to description-based classification
+  const desc = `${entity.description} ${entity.detailed_description}`.toLowerCase();
+  if (PERSON_INDICATORS.some(p => desc.includes(p))) return 'person';
+  if (COMPANY_INDICATORS.some(p => desc.includes(p))) return 'company';
+  if (PROJECT_INDICATORS.some(p => desc.includes(p))) return 'project';
+  return 'unknown';
+}
+
 /** Patterns that indicate person entities */
 const PERSON_INDICATORS = [
   'linkedin.com/in/', 'professor', 'phd', 'researcher', 'senior', 'director',
@@ -420,7 +438,8 @@ function classifyCollisionEntity(
  * Detect entity collisions for a given brand name by searching the web
  * and clustering results that clearly belong to different entities.
  *
- * Uses only free search APIs (DDG HTML scraping) — no paid APIs required.
+ * Uses free search APIs (Bing HTML scraping) and optionally the Google
+ * Knowledge Graph API (if GOOGLE_KG_KEY is set) for authoritative disambiguation.
  */
 export async function detectCollisions(
   brandName: string,
@@ -431,7 +450,45 @@ export async function detectCollisions(
   const suggestedBlocks: Array<{ pattern: string; type: BlocklistEntryType; reason: string }> = [];
 
   try {
-    // Search DDG for the brand name to find colliding entities
+    // Phase 1: Google Knowledge Graph collision detection (if API key is set)
+    const kgCollisions = await findKGCollisions(brandName, canonicalDomain);
+    for (const kgEntity of kgCollisions) {
+      const entityType = classifyKGEntity(kgEntity);
+      const blocks: Array<{ pattern: string; type: BlocklistEntryType; reason: string }> = [];
+
+      if (kgEntity.url) {
+        try {
+          const host = new URL(kgEntity.url).hostname.replace(/^www\./, '');
+          blocks.push({
+            pattern: host,
+            type: 'domain',
+            reason: `KG entity "${kgEntity.name}" (${kgEntity.description}) has official site "${host}"`,
+          });
+        } catch { /* skip */ }
+      }
+
+      // Extract distinctive keywords from KG description
+      const kgText = `${kgEntity.description} ${kgEntity.detailed_description}`;
+      const kgDistinctive = extractDistinctiveTermsFromText(kgText, brandName);
+      for (const term of kgDistinctive.slice(0, 2)) {
+        blocks.push({
+          pattern: term,
+          type: 'keyword',
+          reason: `Keyword "${term}" is associated with KG entity "${kgEntity.name}"`,
+        });
+      }
+
+      collisions.push({
+        entity_type: entityType,
+        name: kgEntity.name.slice(0, 120),
+        description: (kgEntity.description || kgEntity.detailed_description).slice(0, 300),
+        source_urls: kgEntity.url ? [kgEntity.url] : [],
+        suggested_blocks: blocks,
+      });
+      suggestedBlocks.push(...blocks);
+    }
+
+    // Phase 2: Web search collision detection (always runs — free, no key)
     const { scrapeBingRaw } = await import('./webSearch.js');
     const searchResults = await scrapeBingRaw(`"${brandName}"`, 15);
 
@@ -526,17 +583,49 @@ export async function detectCollisions(
 
 /** Extract terms that are distinctive to a collision cluster (not shared with our entity) */
 function extractDistinctiveTerms(text: string, brandName: string): string[] {
+  return extractDistinctiveTermsFromText(text, brandName);
+}
+
+/**
+ * Extract distinctive terms from any text block, not limited to hardcoded lists.
+ * Finds multi-word phrases and single words that appear in the text but are
+ * unrelated to the brand name, suitable for blocklist keyword suggestions.
+ */
+function extractDistinctiveTermsFromText(text: string, brandName: string): string[] {
+  if (!text || typeof text !== 'string') return [];
+  if (!brandName || typeof brandName !== 'string') return [];
   const lower = text.toLowerCase();
   const brandLower = brandName.toLowerCase();
+  const brandWords = new Set(brandLower.split(/\s+/));
 
-  // Common collision-distinctive terms
-  const candidates = [
-    'biomarker', 'biotech', 'pharmaceutical', 'clinical', 'astrazeneca',
-    'speech', 'voice', 'tts', 'text to speech', 'imitation',
-    'latvian', 'latvia', 'zoomcharts',
-  ];
+  // Common stopwords to skip
+  const stopwords = new Set([
+    'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+    'should', 'may', 'might', 'shall', 'can', 'to', 'of', 'in', 'for',
+    'on', 'with', 'at', 'by', 'from', 'as', 'into', 'through', 'during',
+    'before', 'after', 'above', 'below', 'between', 'out', 'off', 'over',
+    'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when',
+    'where', 'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more',
+    'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own',
+    'same', 'so', 'than', 'too', 'very', 'and', 'but', 'or', 'if', 'it',
+    'its', 'this', 'that', 'which', 'who', 'whom', 'what', 'about',
+  ]);
 
-  return candidates.filter((term) => lower.includes(term) && !brandLower.includes(term));
+  // Extract words (3+ chars) that aren't stopwords or brand words
+  const words = lower.match(/\b[a-z]{3,}\b/g) || [];
+  const wordFreq = new Map<string, number>();
+  for (const w of words) {
+    if (stopwords.has(w) || brandWords.has(w) || brandLower.includes(w)) continue;
+    wordFreq.set(w, (wordFreq.get(w) || 0) + 1);
+  }
+
+  // Return top distinctive terms by frequency (appear 2+ times)
+  return [...wordFreq.entries()]
+    .filter(([, count]) => count >= 2)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([word]) => word);
 }
 
 // ─── Entity Anchor Score ─────────────────────────────────────────────────────

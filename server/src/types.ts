@@ -21,12 +21,14 @@
 /* ========================= Canonical tier system ========================= */
 
 /**
- * AiVIS 3-Tier Model
+ * AiVIS 5-Tier Model
  * - observer: Free tier ("see how AI systems parse and interpret your site")
+ * - starter: Starter tier ("all recommendations with implementation code and PDF exports")
  * - alignment: Core tier ("turn structural gaps into extractable evidence")
  * - signal: Pro tier ("full visibility into how AI crawlers trust your content")
+ * - scorefix: AutoFix PR tier ("automated score remediation")
  */
-export type CanonicalTier = 'observer' | 'alignment' | 'signal';
+export type CanonicalTier = 'observer' | 'starter' | 'alignment' | 'signal';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -36,7 +38,7 @@ export type LegacyTier = 'free' | 'core' | 'premium' | 'enterprise' | 'pro';
 /**
  * Public-facing tiers for marketing/UI
  */
-export type UiTier = 'observer' | 'alignment' | 'signal';
+export type UiTier = 'observer' | 'starter' | 'alignment' | 'signal';
 
 /**
  * Converts canonical tier to UI-friendly tier (identity for new system)
@@ -50,6 +52,7 @@ export function uiTierFromCanonical(tier: CanonicalTier | LegacyTier): UiTier {
     enterprise: 'signal',
     pro: 'signal',
     observer: 'observer',
+    starter: 'starter',
     alignment: 'alignment',
     signal: 'signal',
   };
@@ -88,8 +91,10 @@ export function getTierDisplayName(tier: CanonicalTier | LegacyTier): string {
 export function getTierPositioning(tier: CanonicalTier): string {
   const positioning: Record<CanonicalTier, string> = {
     observer: 'see how AI systems parse and interpret your site',
+    starter: 'guided recommendations with implementation code',
     alignment: 'turn structural gaps into extractable evidence',
     signal: 'full visibility into how AI crawlers trust your content',
+    scorefix: 'automated fix PRs and verification',
   };
   return positioning[tier];
 }
@@ -100,8 +105,10 @@ export function getTierPositioning(tier: CanonicalTier): string {
 export function getTierAudience(tier: CanonicalTier): string {
   const audience: Record<CanonicalTier, string> = {
     observer: 'curious builders • founders testing the mirror',
+    starter: 'indie hackers • small teams shipping fast',
     alignment: 'solo builders • early founders • no-code creators',
     signal: 'agencies • studios • internal teams',
+    scorefix: 'teams needing automated remediation',
   };
   return audience[tier];
 }
@@ -159,6 +166,19 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
     hasScheduledRescans: false,
     hasReportHistory: false,
     hasShareableLink: false,
+  },
+  starter: {
+    scansPerMonth: 15,
+    pagesPerScan: 1,
+    competitors: 0,
+    cacheDays: 14,
+    hasExports: true,
+    hasForceRefresh: true,
+    hasApiAccess: false,
+    hasWhiteLabel: false,
+    hasScheduledRescans: false,
+    hasReportHistory: true,
+    hasShareableLink: true,
   },
   alignment: {
     scansPerMonth: 30,

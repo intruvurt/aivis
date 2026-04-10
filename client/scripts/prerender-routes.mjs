@@ -683,6 +683,24 @@ const routes = [
 		ogType: 'article',
 	},
 	{
+		path: '/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15',
+		title: 'AiVIS Starter Tier — Evidence-Backed AI Audits from $15 | AiVIS Blogs',
+		description: 'Introducing the AiVIS Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
+		ogType: 'article',
+	},
+	{
+		path: '/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail',
+		title: 'Why Every AI Visibility Audit Needs an Evidence Trail | AiVIS Blogs',
+		description: 'AI audits without evidence are opinions. The BRAG evidence framework links every recommendation to structural proof — here is why that matters and how it works.',
+		ogType: 'article',
+	},
+	{
+		path: '/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
+		title: 'Choosing the Right AI Visibility Plan: Observer vs Starter vs Alignment | AiVIS Blogs',
+		description: 'A practical comparison of AiVIS tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
+		ogType: 'article',
+	},
+	{
 		path: '/partnership-terms',
 		title: 'Referral and Delivery Partnership Terms | AiVIS',
 		description: 'Official partnership terms for referral and delivery partnerships with AiVIS AI Visibility Intelligence.',

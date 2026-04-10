@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
-import { meetsMinimumTier } from "@shared/types";
+import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 
 const LOGO_URL = "/aivis-logo.png";
 
@@ -18,7 +18,7 @@ interface NavItem {
   to: string;
   labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
-  minTier?: "observer" | "alignment" | "signal";
+  minTier?: "observer" | "starter" | "alignment" | "signal" | "scorefix";
 }
 
 interface AppSidebarProps {
@@ -74,7 +74,7 @@ const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";
 
 function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
   const user = useAuthStore((s) => s.user);
-  const tier = (user?.tier ?? "observer") as "observer" | "alignment" | "signal";
+  const tier = (user?.tier ?? "observer") as CanonicalTier;
   const { t } = useTranslation();
 
   return (

@@ -32,6 +32,7 @@ export interface CitationTestConfig {
   url: string;
   platforms?: CitationPlatform[];
   competitorUrls?: string[];
+  entityContext?: { brandName?: string; domain?: string; description?: string; niche?: string };
 }
 
 export interface CitationTestResult {
@@ -80,7 +81,7 @@ const PLATFORM_MODEL_CANDIDATES: Record<CitationPlatform, ProviderCandidate[]> =
   ],
   claude: [
     { provider: 'openrouter', model: 'anthropic/claude-haiku-4.5', endpoint: OPENROUTER_ENDPOINT },
-    { provider: 'openrouter', model: 'anthropic/claude-haiku-4.5', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'anthropic/claude-sonnet-4', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
@@ -185,9 +186,24 @@ Sources considered:
 Confidence:`,
 };
 
-export function buildCitationPrompt(query: string, platform?: CitationPlatform): string {
+export function buildCitationPrompt(
+  query: string,
+  platform?: CitationPlatform,
+  entityContext?: { brandName?: string; domain?: string; description?: string; niche?: string },
+): string {
   const normalizedQuery = normalizePromptInput(query);
   const platformContext = platform ? PLATFORM_PROMPT_CONTEXT[platform] ?? '' : '';
+
+  // Build entity grounding block so the model knows which entity is being tested
+  let entityBlock = '';
+  if (entityContext?.brandName || entityContext?.domain) {
+    const parts: string[] = [];
+    if (entityContext.brandName) parts.push(`Target entity: "${entityContext.brandName}"`);
+    if (entityContext.domain) parts.push(`Official domain: ${entityContext.domain}`);
+    if (entityContext.niche) parts.push(`Niche: ${entityContext.niche}`);
+    if (entityContext.description) parts.push(`Description: ${entityContext.description}`);
+    entityBlock = `\n\nEntity context for citation detection (do NOT force-include this entity — only mention it if retrieval evidence supports it):\n${parts.join('\n')}`;
+  }
 
   return `You are simulating a production answer engine under retrieval constraints.${platformContext}
 
@@ -209,7 +225,7 @@ Output contract:
 2. Then provide a short section called "Sources considered" listing domain names only.
 3. Then provide a short section called "Confidence" with one of: high, moderate, low.
 4. If the answer does not support mentioning the target brand or domain, do not force it in.
-
+${entityBlock}
 User query: ${normalizedQuery}`;
 }
 
@@ -631,18 +647,22 @@ export async function testQueryCitations(
         platform,
         competitorUrls,
         apiKey,
+        config.entityContext,
       );
       results.push(result);
     } catch (error: unknown) {
-      const message = toErrorMessage(error);
-      console.error(`[CitationTester] Error testing ${platform}: ${message}`);
+      const rawMessage = toErrorMessage(error);
+      console.error(`[CitationTester] Error testing ${platform}: ${rawMessage}`);
+      // Sanitize error message — strip potential API keys or internal paths
+      const safeMessage = rawMessage.length > 120 ? rawMessage.slice(0, 120) + '...' : rawMessage;
+      const sanitized = safeMessage.replace(/sk-[a-zA-Z0-9_-]{10,}/g, '[key]').replace(/[A-Za-z]:\\[^\s]+/g, '[path]');
       results.push({
         id: `${Date.now()}_${platform}`,
         query: config.query,
         platform,
         mentioned: false,
         position: 0,
-        excerpt: `Error: ${message}`,
+        excerpt: `Error: ${sanitized}`,
         competitors_mentioned: [],
         created_at: new Date().toISOString(),
       });
@@ -678,6 +698,7 @@ async function testSinglePlatform(
   platform: CitationPlatform,
   competitorUrls: string[],
   apiKey: string,
+  entityContext?: { brandName?: string; domain?: string; description?: string; niche?: string },
 ): Promise<AICitationResult> {
   if (platform === 'google_ai' && getGeminiApiKey()) {
     try {
@@ -714,7 +735,7 @@ async function testSinglePlatform(
     throw new Error(`Unknown platform: ${platform}`);
   }
 
-  const prompt = buildCitationPrompt(query, platform);
+  const prompt = buildCitationPrompt(query, platform, entityContext);
   let lastError: Error | null = null;
   let response = '';
   let usedModel = '';
@@ -797,6 +818,7 @@ export async function testMultipleQueries(
   competitorUrls: string[],
   apiKey: string,
   progressCallback?: (current: number, total: number) => void,
+  entityContext?: { brandName?: string; domain?: string; description?: string; niche?: string },
 ): Promise<CitationTestResult[]> {
   const jobs = queries.map((query, index) => ({ query, index }));
   const orderedResults: Array<CitationTestResult | undefined> = new Array(queries.length);
@@ -809,16 +831,36 @@ export async function testMultipleQueries(
         break;
       }
 
-      const result = await testQueryCitations(
-        {
+      let result: CitationTestResult;
+      try {
+        result = await testQueryCitations(
+          {
+            query: job.query,
+            brandName,
+            url,
+            platforms,
+            competitorUrls,
+            entityContext,
+          },
+          apiKey,
+        );
+      } catch (queryErr: unknown) {
+        console.error(`[CitationTester] Query "${job.query.slice(0, 60)}" failed entirely: ${toErrorMessage(queryErr)}`);
+        result = {
           query: job.query,
-          brandName,
-          url,
-          platforms,
-          competitorUrls,
-        },
-        apiKey,
-      );
+          results: platforms.map(p => ({
+            id: `${Date.now()}_${p}`,
+            query: job.query,
+            platform: p,
+            mentioned: false,
+            position: 0,
+            excerpt: `Error: query test failed`,
+            competitors_mentioned: [],
+            created_at: new Date().toISOString(),
+          })),
+          tested_at: new Date().toISOString(),
+        };
+      }
 
       orderedResults[job.index] = result;
       completed += 1;

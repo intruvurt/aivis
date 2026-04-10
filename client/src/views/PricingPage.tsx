@@ -72,6 +72,7 @@ interface CheckoutResponse {
 
 const TIER_ICONS: Record<string, ReactNode> = {
   observer: <Shield className="w-6 h-6" />,
+  starter: <Zap className="w-6 h-6" />,
   alignment: (
     <img
       src="/images/tier-alignment-sm.png"
@@ -102,6 +103,7 @@ const TIER_COLORS: Record<
 
 const TIER_POSITIONING: Record<string, string> = {
   observer: "find out what AI models can actually read on your site - free",
+  starter: "unlock all recommendations with implementation code and PDF exports",
   alignment: "turn audit findings into fixes you can export and implement",
   signal: "run audit workflows across multiple sites and team members",
   scorefix: "ship fixes automatically as GitHub pull requests via MCP",
@@ -109,6 +111,7 @@ const TIER_POSITIONING: Record<string, string> = {
 
 const TIER_AUDIENCE: Record<string, string> = {
   observer: "For anyone who wants to know what AI can actually read on their site",
+  starter: "For solo founders and builders who need fixes, not just scores",
   alignment: "For people who need to fix what the audit found, not just see it",
   signal: "For agencies and teams running audits across multiple client sites",
   scorefix: "For teams who want fixes shipped as pull requests automatically",
@@ -125,6 +128,19 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "limited evidence preview",
     ],
     cta: "See your AI blockers",
+  },
+  starter: {
+    headline: "Get the full fix plan",
+    body: "All recommendations with implementation code, content highlights, and PDF exports — at an accessible price.",
+    includes: [
+      `${PRICING.starter.limits.scans} audits/month`,
+      "all recommendations with implementation code",
+      "content highlights",
+      "PDF export and shareable links",
+      "force-refresh to measure changes instantly",
+      "30-day report history",
+    ],
+    cta: "Start fixing",
   },
   alignment: {
     headline: "Turn findings into fixes",
@@ -203,9 +219,9 @@ const PRICING_FAQ_ITEMS = [
       "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and - with AutoFix PR - opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
   },
   {
-    question: "What is the difference between Observer, Alignment, and Signal?",
+    question: "What is the difference between Observer, Starter, Alignment, and Signal?",
     answer:
-      "Observer gives a verdict, top blockers, and a competitor gap preview. Alignment unlocks full evidence and fix planning. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
+      "Observer gives a verdict, top blockers, and a competitor gap preview. Starter unlocks all recommendations with implementation code, content highlights, PDF export and shareable links. Alignment adds competitor tracking, citation workflows and full evidence. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
   },
   {
     question: "What does multi-model AI validation mean?",
@@ -320,6 +336,12 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
 
     if (tier.key === "observer") {
       ensureFeature("Citation gap diagnosis", /citation gap|keyword intelligence/i);
+    }
+
+    if (tier.key === "starter") {
+      ensureFeature("All recommendations with implementation code", /all recommendations|implementation code/i);
+      ensureFeature("Content highlights", /content highlights/i);
+      ensureFeature("PDF export", /pdf export/i);
     }
 
     if (tier.key === "alignment") {

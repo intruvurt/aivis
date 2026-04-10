@@ -127,6 +127,7 @@ export default function ProfilePage() {
 
   const TIER_COLORS: Record<CanonicalTier, { bg: string; border: string; text: string; badge: string; ring: string }> = {
     observer: { bg: "from-emerald-500/15 to-emerald-700/5", border: "border-emerald-400/25", text: "text-emerald-300", badge: "bg-emerald-500/20 text-emerald-200 border-emerald-400/30", ring: "text-emerald-400" },
+    starter: { bg: "from-teal-500/15 to-teal-700/5", border: "border-teal-400/25", text: "text-teal-300", badge: "bg-teal-500/20 text-teal-200 border-teal-400/30", ring: "text-teal-400" },
     alignment: { bg: "from-indigo-500/15 to-indigo-700/5", border: "border-indigo-400/25", text: "text-indigo-300", badge: "bg-indigo-500/20 text-indigo-200 border-indigo-400/30", ring: "text-indigo-400" },
     signal: { bg: "from-cyan-500/15 to-cyan-700/5", border: "border-cyan-400/25", text: "text-cyan-300", badge: "bg-cyan-500/20 text-cyan-200 border-cyan-400/30", ring: "text-cyan-400" },
     scorefix: { bg: "from-amber-500/15 to-amber-700/5", border: "border-amber-400/25", text: "text-amber-300", badge: "bg-amber-500/20 text-amber-200 border-amber-400/30", ring: "text-amber-400" },

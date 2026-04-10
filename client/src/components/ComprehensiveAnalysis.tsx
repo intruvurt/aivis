@@ -89,7 +89,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
   // Tier
   const normalizedTier: CanonicalTier | LegacyTier =
-    (["observer", "alignment", "signal", "scorefix", "free", "core", "premium"] as const).includes(tier as any)
+    (["observer", "starter", "alignment", "signal", "scorefix", "free", "core", "premium"] as const).includes(tier as any)
       ? (tier as CanonicalTier | LegacyTier)
       : "observer";
 

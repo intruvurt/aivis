@@ -35,6 +35,7 @@ import {
   computeAnchorScore,
   matchesBlocklist,
 } from '../services/entityFingerprint.js';
+import { resolveEntityFromKG } from '../services/googleKnowledgeGraph.js';
 
 /** Safe JSON.parse with fallback — prevents one corrupted record from crashing entire response */
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -1716,7 +1717,34 @@ async function runCitationTestAsync(
     const auditRecord = await findLatestAuditForTarget(userId, url);
     const audit = auditRecord?.result;
     const identity = await resolveCitationIdentity(userId, url);
-    const brandName = entityFp?.brand_name || identity?.business_name || audit?.brand_entities?.[0] || extractDomainLabel(url);
+    const rawBrandName = entityFp?.brand_name || identity?.business_name || audit?.brand_entities?.[0] || extractDomainLabel(url);
+    const brandName = (typeof rawBrandName === 'string' && rawBrandName.trim()) ? rawBrandName.trim() : extractDomainLabel(url) || 'unknown';
+
+    // Build entity context for disambiguated citation prompts
+    let entityDomain = '';
+    try { entityDomain = new URL(url).hostname.replace(/^www\./, ''); } catch { /* skip */ }
+    let kgDescription = '';
+    try {
+      const kgEntity = await resolveEntityFromKG(brandName, entityFp?.canonical_domain || entityDomain);
+      if (kgEntity) {
+        kgDescription = kgEntity.detailed_description || kgEntity.description || '';
+        // Auto-populate KG ID on fingerprint if missing
+        if (entityFp && !entityFp.google_kg_id && kgEntity.kg_id) {
+          const fpPool = getPool();
+          await fpPool.query(
+            'UPDATE entity_fingerprints SET google_kg_id = $1, updated_at = NOW() WHERE user_id = $2 AND (google_kg_id IS NULL OR google_kg_id = \'\')',
+            [kgEntity.kg_id, userId],
+          ).catch(() => { /* non-fatal */ });
+        }
+      }
+    } catch { /* KG lookup non-fatal */ }
+
+    const entityContext = {
+      brandName: brandName || undefined,
+      domain: entityFp?.canonical_domain || entityDomain || undefined,
+      description: kgDescription || (entityFp?.description_keywords?.length ? entityFp.description_keywords.join(', ') : undefined),
+      niche: entityFp?.product_category || undefined,
+    };
 
     // Load entity blocklist for false-positive filtering on results
     const entityBl = entityFp ? await getBlocklist(userId).catch(() => []) : [];
@@ -1743,7 +1771,8 @@ async function runCitationTestAsync(
       apiKey,
       (current, total) => {
         console.log(`[CitationTest ${testId}] Progress: ${current}/${total}`);
-      }
+      },
+      entityContext,
     );
 
     let summary = calculateCitationSummary(results);
@@ -1757,7 +1786,9 @@ async function runCitationTestAsync(
           url,
           missingPlatforms,
           competitorUrls,
-          apiKey
+          apiKey,
+          undefined,
+          entityContext,
         );
         results = [...results, ...expandedResults];
         summary = calculateCitationSummary(results);
@@ -1948,15 +1979,17 @@ export async function getCitationTest(req: Request, res: Response) {
       braveSearchByQuery = parsedResults.brave_search_by_query;
       wikipediaSearchByQuery = parsedResults.wikipedia_search_by_query;
       yahooSearchByQuery = parsedResults.yahoo_search_by_query;
+    } else if (parsedResults && !Array.isArray(parsedResults) && parsedResults.error) {
+      // Failed test — propagate error string to the client
+      citations = [];
     } else {
       citations = Array.isArray(parsedResults) ? parsedResults : [];
-      webSearchByQuery = undefined;
-      bingSearchByQuery = undefined;
-      ddgSearchByQuery = undefined;
-      braveSearchByQuery = undefined;
-      wikipediaSearchByQuery = undefined;
-      yahooSearchByQuery = undefined;
     }
+
+    // Surface the stored error message for failed tests
+    const failedError = (test.status === 'failed' && parsedResults?.error)
+      ? String(parsedResults.error).slice(0, 200)
+      : undefined;
 
     return res.json({
       success: true,
@@ -1965,6 +1998,7 @@ export async function getCitationTest(req: Request, res: Response) {
         url: test.url,
         queries: test.queries,
         status: test.status,
+        ...(failedError ? { error: failedError } : {}),
         results: citations,
         web_search_by_query: webSearchByQuery,
         bing_search_by_query: bingSearchByQuery,

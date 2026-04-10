@@ -37,6 +37,16 @@ export const ENTITLEMENTS: Readonly<Record<Plan, PlanEntitlements>> = {
     alerts: false,
     fixVerification: false,
   },
+  starter: {
+    auditsMonthly: 15,
+    pagesPerAudit: 3,
+    fullEvidence: true,
+    competitorTracking: false,
+    citationTracking: false,
+    history: "limited",
+    alerts: false,
+    fixVerification: false,
+  },
   alignment: {
     auditsMonthly: 60,
     pagesPerAudit: 5,

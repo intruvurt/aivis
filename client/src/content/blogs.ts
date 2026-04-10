@@ -3800,6 +3800,347 @@ The time to fix the ranking-citation gap is now, while the window is still open 
     tier: 'free',
     featured: true,
   },
+  // ────────── Starter Tier Launch Posts (2026-04-10) ──────────
+  {
+    slug: 'aivis-starter-tier-evidence-backed-ai-audits-from-15',
+    path: '/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15',
+    title: 'AiVIS Starter Tier — Evidence-Backed AI Audits from $15',
+    description:
+      'Introducing the AiVIS Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
+    excerpt:
+      'The gap between a free audit and a $49 plan was too wide. Starter closes it with paid-model accuracy, implementation code, and export features at $15/month.',
+    publishedAt: '2026-04-10',
+    readMinutes: 6,
+    category: 'strategy',
+    tags: ['Strategy', 'Visibility', 'Foundational'],
+    keywords: ['AiVIS Starter tier', 'AI visibility pricing', '$15 AI audit', 'paid AI model', 'evidence-backed audit', 'AiVIS plans'],
+    author: {
+      name: 'Intruvurt',
+      title: 'Founder, AiVIS',
+      expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Product Strategy'],
+      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      experience: '8+ years in SEO, AI ranking strategy',
+    },
+    content: `## Why We Built the Starter Tier
+
+When we launched <a href="/pricing">AiVIS pricing</a>, the jump from Observer (free, 3 scans/month) to Alignment ($49/month) left a gap. Freelancers running a handful of client sites, solo founders validating product pages, and content creators optimising a personal brand all needed more than 3 scans — but not 60. They needed a paid AI model, not the free-tier fallback. And they needed the full fix plan, not a truncated summary.
+
+Starter fills that gap.
+
+## What Starter Includes
+
+**15 scans per month** — enough for a small portfolio of pages, weekly re-audits of key landing pages, or a focused sprint on a single domain.
+
+**Paid AI model (GPT-5 Nano)** — the same model that powers <a href="/pricing">Alignment</a> audits. No free-tier rate limits, no reasoning-token overhead, no truncated responses. Every scan returns the same depth of structural analysis that paying customers get.
+
+**All recommendations with implementation code** — Observer shows you what is wrong. Starter shows you what is wrong and gives you the code to fix it. Every recommendation includes copy-pasteable implementation snippets: <a href="/signals/json-ld">JSON-LD blocks</a>, meta tag corrections, heading restructuring patterns, and robots.txt directives.
+
+**Content highlights** — the key structural signals the AI model identified as strengths or weaknesses, surfaced as a scannable summary before the full recommendation list.
+
+**PDF export** — generate a branded report you can send to a client, attach to a proposal, or archive for your records. The export includes the full score breakdown, all recommendations, and implementation code.
+
+**Shareable links** — create a public link to any audit result. Share it with a teammate, client, or stakeholder without requiring them to log in. Starter share links are not redacted — the recipient sees the full result.
+
+**Force-refresh** — bypass the cache and re-run the audit with fresh data. Useful after you have implemented fixes and want to verify the score improvement immediately.
+
+**30-day report history** — access any audit you have run in the last 30 days. Compare scores over time, track improvement, and verify that fixes are holding.
+
+## What Starter Does Not Include
+
+Starter is deliberately focused. It does not include:
+
+- <a href="/competitors">Competitor tracking</a> (Alignment+)
+- <a href="/citations">Citation testing</a> (Signal)
+- <a href="/keywords">Keyword intelligence</a> (Alignment+)
+- Scheduled rescans or autopilot monitoring
+- <a href="/blogs/team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing">Team workspaces</a>
+- Triple-check AI pipeline (Signal)
+
+These features are available on <a href="/pricing">Alignment ($49/month)</a> and <a href="/pricing">Signal ($149/month)</a>. If you need competitive analysis, citation verification, or multi-model consensus scoring, those tiers are designed for that.
+
+## Who Starter Is For
+
+- **Freelance developers** running visibility audits for 2–5 client sites
+- **Solo founders** validating that their product page is AI-extractable before launch
+- **Content creators** optimising blog posts and portfolio pages for AI citation
+- **Agency juniors** who need to run quick audits before escalating to a full competitive analysis
+- **Anyone** who tried Observer and wants the full fix plan without jumping to $49
+
+## Pricing
+
+**$15/month** or **$140/year** (~22% annual discount). No setup fees, no per-scan charges, cancel anytime.
+
+<a href="/pricing">See all plans →</a>
+
+## How to Upgrade
+
+If you are on Observer, go to your <a href="/app/billing">billing settings</a> and select Starter. Your scan limit updates immediately. Any remaining Observer scans for the month carry over.
+
+If you are evaluating AiVIS for the first time, <a href="/register">create a free account</a> and upgrade from the dashboard.
+
+## The Evidence Trail Matters
+
+Every Starter audit includes the full <a href="/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail">BRAG evidence trail</a> — verified evidence count, evidence IDs linked to specific recommendations, and the evidence benchmark score. You are not getting opinions. You are getting diagnostics backed by structural proof.
+
+Read more about <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment">choosing the right plan</a> for your use case.`,
+    keyPoints: [
+      'Starter tier bridges the gap between free Observer and $49 Alignment with 15 scans/month at $15.',
+      'Uses the same paid AI model (GPT-5 Nano) as Alignment — no free-tier rate limits or truncation.',
+      'Includes full recommendations with implementation code, PDF export, shareable links, and force-refresh.',
+      'Does not include competitor tracking, citation testing, keyword intelligence, or triple-check pipeline.',
+      'Annual billing available at $140/year (~22% discount).',
+    ],
+    relatedPostSlugs: [
+      'why-every-ai-visibility-audit-needs-an-evidence-trail',
+      'choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
+      'why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+  },
+  {
+    slug: 'why-every-ai-visibility-audit-needs-an-evidence-trail',
+    path: '/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail',
+    title: 'Why Every AI Visibility Audit Needs an Evidence Trail',
+    description:
+      'AI audits without evidence are opinions. The BRAG evidence framework links every recommendation to structural proof — here is why that matters and how it works.',
+    excerpt:
+      'Most AI audit tools give you a score and a list of suggestions. AiVIS gives you evidence IDs, verified counts, and benchmark scores that trace every recommendation back to structural proof.',
+    publishedAt: '2026-04-10',
+    readMinutes: 8,
+    category: 'technology',
+    tags: ['AI-Tech', 'Citations', 'Advanced', 'Visibility'],
+    keywords: ['evidence trail', 'BRAG evidence', 'AI audit evidence', 'evidence-backed recommendations', 'audit transparency', 'structural proof'],
+    author: {
+      name: 'Intruvurt',
+      title: 'Founder, AiVIS',
+      expertise: ['Answer Engine Optimization', 'AI Diagnostics', 'Evidence-Based Auditing'],
+      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      experience: '8+ years in SEO, AI ranking strategy',
+    },
+    content: `## The Problem with Black-Box Audits
+
+Most AI visibility tools operate like this: paste a URL, wait, receive a score and a list of recommendations. The score has no derivation. The recommendations have no evidence. You are expected to trust the output because the tool told you so.
+
+That is not an audit. That is an opinion.
+
+An audit, by definition, traces findings back to verifiable evidence. Financial audits cite transaction records. Security audits cite vulnerability signatures. <a href="/methodology">AI visibility audits</a> should cite structural signals.
+
+## What the BRAG Evidence Framework Does
+
+BRAG (Benchmark, Reference, Attestation, Ground-truth) is the evidence framework that AiVIS uses to link every recommendation to structural proof extracted from the scanned page.
+
+When AiVIS scans a URL, it does not generate recommendations from a prompt and hope they are relevant. The pipeline works in stages:
+
+1. **Structural extraction** — Puppeteer crawls the page and extracts every machine-readable signal: <a href="/signals/json-ld">JSON-LD schemas</a>, meta tags, <a href="/signals/heading-hierarchy">heading hierarchy</a>, internal links, <a href="/signals/robots-txt">robots.txt</a> rules, <a href="/signals/llms-txt">llms.txt</a> presence, <a href="/signals/sitemap-xml">sitemap.xml</a> coverage, and content blocks.
+
+2. **Evidence tagging** — each extracted signal is assigned an evidence ID. A missing FAQPage schema is not just a recommendation — it is evidence item \`E-SCH-014\` with a specific structural location, expected value, and actual value.
+
+3. **AI analysis** — the evidence-tagged signals are sent to the AI model (free-tier models for <a href="/pricing">Observer</a>, GPT-5 Nano for <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> and Alignment, triple-check pipeline for <a href="/pricing">Signal</a>). The model generates recommendations that reference specific evidence IDs.
+
+4. **Evidence manifest** — the final result includes an evidence manifest: a structured record of every evidence item, its category, the recommendation it supports, and whether it was verified against the actual page content.
+
+## What You See in an Audit Result
+
+Every AiVIS audit result includes:
+
+- **Evidence IDs on recommendations** — each recommendation lists the evidence items that support it. Click an evidence ID to see the raw structural signal.
+- **Verified evidence count** — the number of evidence items that were verified against the page. A recommendation backed by 3 verified evidence items is stronger than one backed by 1.
+- **Total evidence refs** — the total number of evidence references across all recommendations. Higher counts indicate a more thorough analysis.
+- **Evidence benchmark** — a score (0–100) that measures the overall evidence quality of the audit. It penalises recommendations that lack evidence backing and rewards recommendations with multiple verified signals.
+
+## Why Evidence Matters for Decision-Making
+
+When a client asks "why should I add FAQPage schema?", you can point to evidence item \`E-SCH-014\` showing the page has 6 question-format H2 headings but no corresponding FAQ schema — meaning AI models can see the questions but cannot extract structured Q&A pairs.
+
+When a stakeholder asks "why did our score drop?", you can compare evidence manifests between two audits and identify exactly which structural signals changed.
+
+When you are prioritising fixes, evidence counts help you triage. A recommendation backed by 5 evidence items across 3 dimensions is more impactful than one backed by a single signal.
+
+## Evidence Across Tiers
+
+All AiVIS tiers preserve the core evidence trail:
+
+- **<a href="/pricing">Observer</a> (free)** — evidence IDs and verified evidence count on every recommendation, plus the evidence benchmark score.
+- **<a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> ($15/mo)** — full evidence trail plus the evidence manifest (the complete structured record of all evidence items).
+- **<a href="/pricing">Alignment</a> ($49/mo)** — full evidence manifest plus deep evidence artifacts (raw extraction logs, signal deltas, confidence scores).
+- **<a href="/pricing">Signal</a> ($149/mo)** — triple-check evidence: three models independently verify evidence items, with cross-model agreement scores.
+
+## Building Trust in AI Diagnostics
+
+The AI visibility space is young. Most tools launched in 2025 or 2026. Trust is earned by transparency, not marketing claims. When an audit platform shows you exactly which signals it found, which ones it verified, and how each recommendation connects to structural proof — that is a platform you can build decisions on.
+
+AiVIS publishes its <a href="/methodology">scoring methodology</a>, its <a href="/signals/json-ld">signal definitions</a>, and its <a href="/blogs/how-aivis-works-under-the-hood-full-technical-breakdown">technical architecture</a>. The evidence trail is not a feature add-on. It is the foundation.
+
+Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">the Starter tier</a> that makes evidence-backed audits accessible from $15/month, or <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment">compare all plans</a> to find the right fit.`,
+    keyPoints: [
+      'Black-box audits produce opinions. Evidence-backed audits produce diagnostics traceable to structural signals.',
+      'BRAG (Benchmark, Reference, Attestation, Ground-truth) links every recommendation to specific evidence IDs, verified counts, and an evidence benchmark score.',
+      'The evidence manifest provides a complete record of all evidence items, their categories, and the recommendations they support.',
+      'Evidence counts help triage fixes: recommendations backed by multiple verified signals across dimensions are higher priority.',
+      'All AiVIS tiers preserve core evidence (IDs, counts, benchmark). Paid tiers add the full manifest and deep artifacts.',
+    ],
+    relatedPostSlugs: [
+      'aivis-starter-tier-evidence-backed-ai-audits-from-15',
+      'choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
+      'how-aivis-works-under-the-hood-full-technical-breakdown',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+  },
+  {
+    slug: 'choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
+    path: '/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
+    title: 'Choosing the Right AI Visibility Plan: Observer vs Starter vs Alignment',
+    description:
+      'A practical comparison of AiVIS tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
+    excerpt:
+      'Observer is free. Starter is $15. Alignment is $49. Signal is $149. Here is exactly what you get at each level and how to choose the right one.',
+    publishedAt: '2026-04-10',
+    readMinutes: 7,
+    category: 'strategy',
+    tags: ['Strategy', 'Visibility', 'Foundational'],
+    keywords: ['AiVIS plans comparison', 'Observer vs Starter', 'Starter vs Alignment', 'AI visibility pricing', 'which AiVIS plan', 'AiVIS tier comparison'],
+    author: {
+      name: 'Intruvurt',
+      title: 'Founder, AiVIS',
+      expertise: ['Answer Engine Optimization', 'Product Strategy', 'AI Discoverability'],
+      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      experience: '8+ years in SEO, AI ranking strategy',
+    },
+    content: `## The 5-Tier Model
+
+AiVIS uses a 5-tier model designed around usage patterns, not artificial feature gates. Each tier unlocks capabilities that match a specific workflow:
+
+| Tier | Price | Scans/mo | AI Model | Key Capability |
+|------|-------|----------|----------|----------------|
+| <a href="/pricing">Observer</a> | Free | 3 | Free models | Score + basic recs |
+| <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> | $15/mo | 15 | GPT-5 Nano | Full recs + code + exports |
+| <a href="/pricing">Alignment</a> | $49/mo | 60 | GPT-5 Nano | Competitors + keywords + crawl |
+| <a href="/pricing">Signal</a> | $149/mo | 110 | Triple-check (3 models) | Citations + multi-model consensus |
+| <a href="/score-fix">Score Fix</a> | $299 one-time | 250 credits | Full pipeline | Automated GitHub PRs |
+
+## Observer — Try Before You Buy
+
+**$0/month, 3 scans**
+
+Observer is for evaluation. Run your homepage through an <a href="/analyze">AI visibility audit</a>, see the score, read the recommendations, and decide whether the structural issues AiVIS identifies are real. The audit uses free AI models (Gemma 4 via OpenRouter) so there is no cost to AiVIS per scan.
+
+**What you get:**
+- AI visibility score (0–100) across 6 dimensions
+- Recommendations with evidence IDs and verified evidence counts
+- Evidence benchmark score
+- Basic result sharing (redacted)
+
+**What you do not get:**
+- Implementation code on recommendations
+- PDF export
+- Force-refresh (cache-only)
+- Report history beyond current session
+
+**Best for:** First-time users evaluating whether AI visibility matters for their site.
+
+## Starter — The Full Fix Plan
+
+**$15/month (or $140/year), 15 scans**
+
+<a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> is the first paid tier. It uses the same AI model as Alignment (GPT-5 Nano) and unlocks the full recommendation experience: every recommendation includes implementation code, content highlights surface key structural signals, and you can export, share, and force-refresh results.
+
+**What you get (everything in Observer, plus):**
+- Paid AI model (GPT-5 Nano) — same model as Alignment
+- All recommendations with copy-pasteable implementation code
+- Content highlights (strength/weakness summaries)
+- Full <a href="/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail">evidence manifest</a> (complete evidence record)
+- PDF export (branded, shareable)
+- Shareable links (unredacted)
+- Force-refresh (bypass cache)
+- 30-day report history
+- 25 stored audits
+- 14-day cache
+
+**What you do not get:**
+- Competitor tracking
+- Keyword intelligence
+- Citation testing
+- Scheduled rescans
+- Team workspaces
+
+**Best for:** Freelancers, solo founders, content creators, and anyone who needs the full fix plan without competitive analysis features.
+
+## Alignment — Competitive Intelligence
+
+**$49/month (or $458/year), 60 scans**
+
+Alignment is for teams and professionals who need to track competitors, research keywords, and crawl multiple pages per domain. It is the most popular tier for agencies and in-house SEO teams transitioning to AI visibility.
+
+**What you get (everything in Starter, plus):**
+- <a href="/competitors">Competitor tracking</a> (5 competitors, auto-detection)
+- <a href="/keywords">Keyword intelligence</a> (AI citation keyword research)
+- <a href="/mentions">Brand mention scanning</a> (15 free sources)
+- Multi-page crawl (50 pages per domain)
+- <a href="/blogs/scheduled-rescans-and-autopilot-monitoring-set-it-and-track-it">Scheduled rescans</a>
+- 90-day report history
+- 100 stored audits
+- Document upload audits (5 files)
+
+**Best for:** Agencies managing multiple client sites, in-house teams tracking competitive positioning, and professionals who need keyword and competitor data.
+
+## Signal — Multi-Model Consensus
+
+**$149/month (or $1,394/year), 110 scans**
+
+Signal is for organisations that need the highest audit accuracy and citation verification. The triple-check pipeline runs every audit through 3 independent AI models: the first performs deep analysis, the second provides peer critique (adjusting the score by −15 to +10), and the third acts as a validation gate.
+
+**What you get (everything in Alignment, plus):**
+- Triple-check AI pipeline (GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast)
+- <a href="/citations">Citation testing</a> (4 AI platforms + 6 search engines)
+- Multi-page crawl (250 pages per domain)
+- Advanced analytics and trend tracking
+- 365-day report history
+- 500 stored audits
+- Priority support
+
+**Best for:** Enterprises, large agencies, and any organisation where audit accuracy directly impacts business decisions.
+
+## Score Fix — Automated Remediation
+
+**$299 one-time, 250 credits**
+
+<a href="/score-fix">Score Fix</a> is not a subscription tier — it is an add-on that automates the fix process. Connect your GitHub repository, select the recommendations you want to implement, and AiVIS generates pull requests with the actual code patches.
+
+**Best for:** Development teams that want to skip manual implementation and ship fixes directly from the audit results.
+
+## How to Decide
+
+**Start with Observer.** Run 1–3 audits on your most important pages. If the recommendations are actionable and the structural issues are real, you have your answer.
+
+**Move to Starter if** you want the full fix plan: implementation code, exports, shareable links, and 15 scans/month. This is enough for a small portfolio or a focused optimisation sprint.
+
+**Move to Alignment if** you need competitive analysis, keyword intelligence, or multi-page crawls. This is the breakpoint where AiVIS becomes a platform, not just an audit tool.
+
+**Move to Signal if** you need citation verification, multi-model consensus, or enterprise-grade audit accuracy.
+
+All plans support annual billing with discounts ranging from 22% (Starter) to 23% (Alignment and Signal).
+
+<a href="/pricing">Compare all plans →</a>`,
+    keyPoints: [
+      'AiVIS uses a 5-tier model: Observer (free), Starter ($15), Alignment ($49), Signal ($149), and Score Fix ($299 one-time).',
+      'Observer is for evaluation — 3 free scans with basic recommendations. Starter adds paid-model accuracy and the full fix plan.',
+      'Alignment adds competitive intelligence: competitor tracking, keyword research, brand mentions, and multi-page crawl.',
+      'Signal adds multi-model consensus (triple-check pipeline) and citation testing across 10 platforms.',
+      'Start with Observer, upgrade to Starter for implementation code, and move to Alignment when you need competitive data.',
+    ],
+    relatedPostSlugs: [
+      'aivis-starter-tier-evidence-backed-ai-audits-from-15',
+      'why-every-ai-visibility-audit-needs-an-evidence-trail',
+      'answer-engine-optimization-2026-why-citation-readiness-matters',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {

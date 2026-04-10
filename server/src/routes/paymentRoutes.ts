@@ -24,7 +24,7 @@ const router = Router();
  */
 
 // Keep tier keys strict + predictable (match backend tiers)
-const ALLOWED_TIERS = ["observer", "alignment", "signal"] as const;
+const ALLOWED_TIERS = ["observer", "starter", "alignment", "signal"] as const;
 
 // ============================================================================
 // PUBLIC ROUTES

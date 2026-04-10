@@ -20,12 +20,14 @@ type RouteKey = 'analyze' | 'api_default';
 const TIER_RATE_LIMITS: Record<RouteKey, Record<CanonicalTier, { maxRequests: number; windowMs: number }>> = {
   analyze: {
     observer:  { maxRequests: 5,  windowMs: 60_000 },
+    starter:   { maxRequests: 10, windowMs: 60_000 },
     alignment: { maxRequests: 15, windowMs: 60_000 },
     signal:    { maxRequests: 30, windowMs: 60_000 },
     scorefix:  { maxRequests: 50, windowMs: 60_000 },
   },
   api_default: {
     observer:  { maxRequests: 30,  windowMs: 60_000 },
+    starter:   { maxRequests: 45,  windowMs: 60_000 },
     alignment: { maxRequests: 60,  windowMs: 60_000 },
     signal:    { maxRequests: 120, windowMs: 60_000 },
     scorefix:  { maxRequests: 200, windowMs: 60_000 },

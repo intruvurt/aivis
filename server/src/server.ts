@@ -49,6 +49,8 @@ import { verifyUserToken } from './lib/utils/jwt.js';
 import { assessCitationStrength } from './services/citationStrength.js';
 import { extractPlatformSignals, computePlatformScores, buildPlatformIntelligencePromptBlock } from './services/platformIntelligence.js';
 import { assessEntityClarity } from './services/entityClarity.js';
+import { textMentionsBrand } from './services/searchDisambiguation.js';
+import { getFingerprint as getEntityFingerprint } from './services/entityFingerprint.js';
 import { analyzeReviewSentiment } from './services/reviewSentiment.js';
 import { validateLLMReadability } from './services/llmReadabilityValidator.js';
 import type { LLMReadabilityScore } from './services/llmReadabilityValidator.js';
@@ -734,8 +736,30 @@ function stripAlignmentResult(result: any): any {
 }
 
 /**
+ * Starter tier: all recommendations with implementation code, content highlights,
+ * PDF export, shareable links - but no keyword intelligence, competitor tracking,
+ * or deep evidence artifacts.
+ */
+function stripStarterResult(result: any): any {
+  if (!result || typeof result !== 'object') return result;
+  return {
+    ...result,
+    // Starter keeps: recommendations (all), implementation code, content_highlights, evidence_manifest
+    // Starter strips: keyword intel, deep evidence artifacts, competitor features
+    keyword_intelligence: undefined,
+    evidence_fix_plan: undefined,
+    citation_parity_audit: undefined,
+    rail_evidence_audit: undefined,
+    strict_rubric: undefined,
+    recommendation_evidence_summary: undefined,
+    contradiction_report: undefined,
+  };
+}
+
+/**
  * Apply tier-appropriate result stripping.
  * Observer: minimal (top 3 recs, no implementation, no deep artifacts)
+ * Starter: standard (all recs + implementation, no keyword intel or evidence artifacts)
  * Alignment: standard (all recs + implementation, no evidence artifacts)
  * Signal/scorefix: full (everything returned)
  */
@@ -744,6 +768,7 @@ function applyTierResultStripping(result: any, tier: string): any {
   const tierLabel = getTierDisplayName((tier || 'observer') as CanonicalTier | LegacyTier);
   const tierMeta = { analysis_tier: canonicalTier, analysis_tier_display: tierLabel };
   if (tier === 'observer') return { ...stripObserverResult(result), ...tierMeta };
+  if (tier === 'starter') return { ...stripStarterResult(result), ...tierMeta };
   if (tier === 'alignment') return { ...stripAlignmentResult(result), ...tierMeta };
   return { ...result, ...tierMeta }; // signal + scorefix get everything
 }
@@ -4502,7 +4527,7 @@ function derivePlatformScores(
   }
 }
 
-type ModelTierScope = 'observer' | 'alignment' | 'signal' | 'scorefix' | 'cross-tier';
+type ModelTierScope = 'observer' | 'starter' | 'alignment' | 'signal' | 'scorefix' | 'cross-tier';
 
 type DerivedModelScore = {
   model_id: string;
@@ -7175,6 +7200,7 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     // ── Tier-based model allocation (updated 2026-03-24) ──
     // Observer [Free]:     Gemini 2.5 Flash :free (primary) - $0.00/scan
+    // Starter [$15]:       GPT-5 Nano (primary) - ~$0.001/scan (same as Alignment)
     // Alignment [Core]:    GPT-5 Nano (primary) - ~$0.001/scan
     // Signal [Premium]:    GPT-5 Mini (AI1) → Claude Sonnet 4.6 (AI2) → Grok 4.1 Fast (AI3) - ~$0.005/scan
     // scorefix [AutoFix PR]:   GPT-5 Mini (AI1) → Claude Sonnet 4.6 (AI2) → Grok 4.1 Fast (AI3) - premium 3-family pipeline
@@ -8954,7 +8980,13 @@ Return ONLY valid JSON:
         }
 
         // Don't flag the user's own site as a competitor
-        const isSelf = userDomain && analyzedDomain && userDomain === analyzedDomain;
+        // Check domain match AND brand name match to catch same-brand different TLDs
+        const userEntityFp = await getEntityFingerprint(hintUser.id).catch(() => null);
+        const userBrandName = userEntityFp?.brand_name?.toLowerCase() || '';
+        const domainBase = userDomain.replace(/\.[^.]+$/, ''); // strip TLD for fuzzy match
+        const analyzedBase = analyzedDomain.replace(/\.[^.]+$/, '');
+        const isSelf = (userDomain && analyzedDomain && userDomain === analyzedDomain)
+          || (domainBase && analyzedBase && domainBase === analyzedBase); // same brand, different TLD
 
         if (!isSelf && analyzedDomain && profileComplete) {
           const pool = getPool();
@@ -8984,12 +9016,19 @@ Return ONLY valid JSON:
             }
           } catch { /* non-fatal */ }
 
-          // Find shared signals
+          // Find shared signals — use word-boundary matching and exclude own brand
           const analyzedKeywordsLower = topicalKeywords.map(k => k.toLowerCase());
           const sharedKeywords = userKeywords.filter(k => analyzedKeywordsLower.includes(k));
+          const validUserKeywords = userKeywords.filter(k => k && typeof k === 'string');
           const sharedBrands = brandEntities.filter(b => {
+            if (!b || typeof b !== 'string') return false;
             const bLow = b.toLowerCase();
-            return userKeywords.some(uk => uk.includes(bLow) || bLow.includes(uk));
+            // Skip the user's own brand name — not a competitor signal
+            if (userBrandName && (bLow === userBrandName || textMentionsBrand(bLow, userBrandName) || textMentionsBrand(userBrandName, bLow))) {
+              return false;
+            }
+            // Use word-boundary matching instead of substring includes()
+            return validUserKeywords.some(uk => textMentionsBrand(uk, bLow));
           });
           const sharedSignals = [...new Set([...sharedKeywords, ...sharedBrands])].slice(0, 8);
 
@@ -9146,7 +9185,7 @@ Return ONLY valid JSON:
         // ── Background niche ranking (fire-and-forget, no response delay) ──
         const rankingApiKey = process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || null;
         const userTier = ((req as any).user?.tier || 'observer') as string;
-        const canRank = rankingApiKey && (userTier === 'signal' || userTier === 'scorefix' || userTier === 'alignment' || userTier === 'premium' || userTier === 'elite');
+        const canRank = rankingApiKey && (userTier === 'signal' || userTier === 'scorefix' || userTier === 'alignment' || userTier === 'starter' || userTier === 'premium' || userTier === 'elite');
         if (canRank) {
           const brandEntities: string[] = Array.isArray((result as any).brand_entities) ? (result as any).brand_entities : [];
           const topicalKeywords: string[] = Array.isArray((result as any).topical_keywords) ? (result as any).topical_keywords : [];
@@ -9984,7 +10023,7 @@ app.post('/api/admin/set-tier', adminLimiter, async (req, res) => {
   const { email, tier } = req.body;
   if (!email || !tier) return res.status(400).json({ error: 'email and tier required' });
 
-  const validTiers = ['observer', 'alignment', 'signal', 'scorefix'];
+  const validTiers = ['observer', 'starter', 'alignment', 'signal', 'scorefix'];
   if (!validTiers.includes(tier)) return res.status(400).json({ error: `tier must be one of: ${validTiers.join(', ')}` });
 
   try {
@@ -10127,7 +10166,7 @@ app.post('/api/admin/newsletter/preview', adminLimiter, async (req, res) => {
   const to = String(body.to || '').trim() || 'preview@aivis.biz';
   const userName = String(body.userName || '').trim() || 'Preview User';
   const tier = String(body.tier || 'observer').trim().toLowerCase();
-  const validTiers = ['observer', 'alignment', 'signal', 'scorefix'];
+  const validTiers = ['observer', 'starter', 'alignment', 'signal', 'scorefix'];
 
   if (!validTiers.includes(tier)) {
     return res.status(400).json({ error: `tier must be one of: ${validTiers.join(', ')}` });
@@ -11156,7 +11195,7 @@ process.on('unhandledRejection', (reason) => {
 
       const tier = (user.tier || 'observer') as CanonicalTier;
       const providers = (tier === 'signal' || tier === 'scorefix') ? PROVIDERS.slice(0, 3)
-        : tier === 'alignment' ? PROVIDERS.slice(0, 2)
+        : (tier === 'alignment' || tier === 'starter') ? PROVIDERS.slice(0, 2)
         : FREE_PROVIDERS.slice(0, 2);
 
       const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '';

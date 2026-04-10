@@ -6,6 +6,8 @@ import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
 import { checkCompetitorMilestones } from '../services/milestoneService.js';
 import { scrapeDDGRaw, scrapeBingRaw } from '../services/webSearch.js';
+import { textMentionsBrand } from '../services/searchDisambiguation.js';
+import { getFingerprint } from '../services/entityFingerprint.js';
 
 type CompetitorSuggestion = {
   nickname: string;
@@ -326,6 +328,20 @@ export async function createCompetitor(req: Request, res: Response) {
     try {
       canonicalDomain = new URL(normalized.url).hostname.replace(/^www\./, '');
     } catch { /* leave empty */ }
+
+    // Prevent adding own site as a competitor
+    const userObj = (req as any).user;
+    const userWebsite = String(userObj?.website || '').trim();
+    if (userWebsite && canonicalDomain) {
+      let ownDomain = '';
+      try {
+        const candidate = /^https?:\/\//i.test(userWebsite) ? userWebsite : `https://${userWebsite}`;
+        ownDomain = new URL(candidate).hostname.replace(/^www\./, '').toLowerCase();
+      } catch { /* skip */ }
+      if (ownDomain && ownDomain === canonicalDomain.toLowerCase()) {
+        return res.status(400).json({ error: 'You cannot add your own website as a competitor', code: 'SELF_COMPETITOR' });
+      }
+    }
 
     // Sanitize track_keywords
     const safeKeywords = Array.isArray(track_keywords)
@@ -818,6 +834,10 @@ export async function discoverCompetitorsFromHistory(
   } catch { return []; }
   if (!userDomain) return [];
 
+  // Get user's entity fingerprint to know their own brand name
+  const entityFp = await getFingerprint(userId).catch(() => null);
+  const userBrandName = entityFp?.brand_name?.toLowerCase() || '';
+
   // Get user's own latest audit keywords
   let userKeywords: string[] = [];
   try {
@@ -877,7 +897,18 @@ export async function discoverCompetitorsFromHistory(
       : [];
 
     const sharedKeywords = userKeywords.filter(k => keywords.includes(k));
-    const sharedBrands = brands.filter(b => userKeywords.some(uk => uk.includes(b) || b.includes(uk)));
+    // Use word-boundary matching instead of substring includes(),
+    // and exclude the user's own brand name from shared brand signals
+    const validKeywords = keywords.filter(k => k && typeof k === 'string');
+    const sharedBrands = brands.filter(b => {
+      if (!b || typeof b !== 'string') return false;
+      // Skip the user's own brand name — it's not a competitor signal
+      if (userBrandName && (b === userBrandName || textMentionsBrand(b, userBrandName) || textMentionsBrand(userBrandName, b))) {
+        return false;
+      }
+      // Use word-boundary matching to avoid false positives from substring collisions
+      return validKeywords.some(kw => textMentionsBrand(kw, b));
+    });
     const allShared = [...new Set([...sharedKeywords, ...sharedBrands])];
 
     const overlapRatio = userKeywords.length > 0 ? sharedKeywords.length / userKeywords.length : 0;

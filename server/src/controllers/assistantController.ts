@@ -18,6 +18,7 @@ import { getBranding } from '../services/brandingService.js';
  * ──────────────────────────────────────────────────────────────────────────── */
 const DAILY_LIMITS: Record<CanonicalTier, number> = {
   observer: 5,
+  starter: 8,
   alignment: 10,
   signal: 30, // Signal tier gets 30 messages/day — premium support
   scorefix: 25,
@@ -216,6 +217,7 @@ const ACTION_TIER_GATES: Record<AgentTaskType, CanonicalTier> = {
 
 const TIER_DISPLAY: Record<CanonicalTier, string> = {
   observer: 'Observer [Free]',
+  starter: 'Starter',
   alignment: 'Alignment [Core]',
   signal: 'Signal [Pro]',
   scorefix: 'Score Fix [AutoFix PR]',

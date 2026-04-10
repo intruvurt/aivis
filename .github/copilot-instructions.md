@@ -25,12 +25,14 @@ npm.cmd run build                      # Compile to dist/
 ### Shared types contract
 [shared/types.ts](shared/types.ts) defines `CanonicalTier`, `TIER_LIMITS`, `TierLimits`, and tier conversion helpers (`uiTierFromCanonical`, `meetsMinimumTier`). **Any tier/limit change must update this file first** - both client and server import from it.
 
-### Tier system (3-tier)
+### Tier system (5-tier)
 | Canonical | Display name | Monthly scans | Price |
 |-----------|-------------|---------------|-------|
 | `observer` | Observer (Free) | 3 | Free |
+| `starter` | Starter | 15 | $15/mo |
 | `alignment` | Alignment (Core) | 60 | $49/mo |
 | `signal` | Signal (Pro) | 110 | $149/mo |
+| `scorefix` | Score Fix (AutoFix PR) | 250 credits | $299 one-time |
 
 Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiTierFromCanonical()`.
 
@@ -39,6 +41,7 @@ Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiT
 
 **Tier-based model allocation (cost-optimised):**
 - **Observer (free):** `FREE_PROVIDERS.slice(0, 2)` - **$0.00/scan**. Uses OpenRouter `:free` model variants (Gemma 4 31B primary, Gemma 4 26B MoE fallback). Both are non-reasoning instruct models chosen specifically because they reliably produce JSON without wasting tokens on `<think>` chain-of-thought blocks. Rate-limited by OpenRouter but zero cost. Extended fallback chain (6 models total): Gemma 4 31B → Gemma 4 26B MoE → Nemotron 3 Super 120B → MiniMax M2.5 → Nemotron 3 Nano 30B → GPT-OSS 120B. All verified against OpenRouter `/models?q=:free` on 2026-04-09.
+- **Starter ($15/mo):** Same model allocation as Alignment — `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. GPT-5 Nano (primary), Claude Haiku 4.5 (fallback only). Full recommendations with implementation code, content highlights, PDF export, shareable links.
 - **Alignment ($49/mo):** `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. GPT-5 Nano (primary), Claude Haiku 4.5 (fallback only).
 - **Signal ($149/mo):** `PROVIDERS.slice(0, 3)` - **~$0.005/scan**. **Triple-Check Pipeline** (3 models). GPT-5 Mini deep analysis → Claude Sonnet 4.6 peer critique (score adjustment −15 to +10, extra recommendations) → Grok 4.1 Fast validation gate (confirms or overrides final score). Triple-check is Signal-exclusive; the progress overlay adapts dynamically.
 

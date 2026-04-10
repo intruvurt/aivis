@@ -73,6 +73,11 @@ export const TIER_BRAND_PALETTE = {
     border: 'border-cyan-300/35',
     glow: 'shadow-cyan-500/25',
   },
+  starter: {
+    gradient: 'from-teal-400 via-emerald-400 to-green-400',
+    border: 'border-teal-300/40',
+    glow: 'shadow-teal-500/25',
+  },
   alignment: {
     gradient: 'from-cyan-400 via-sky-400 to-indigo-400',
     border: 'border-sky-300/40',

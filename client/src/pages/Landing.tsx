@@ -59,6 +59,7 @@ const LANDING_STRUCTURED_DATA = [
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
     { name: `Observer (Free) – ${PRICING.observer.limits.scans} audits/month`, path: '/pricing#observer' },
+    { name: `Starter – ${PRICING.starter.limits.scans} audits/month – $${PRICING.starter.billing.monthly}/mo`, path: '/pricing#starter' },
     { name: `Alignment (Core) – ${PRICING.alignment.limits.scans} audits/month – $${PRICING.alignment.billing.monthly}/mo`, path: '/pricing#alignment' },
     { name: `Signal (Pro) – ${PRICING.signal.limits.scans} audits/month – $${PRICING.signal.billing.monthly}/mo`, path: '/pricing#signal' },
   ]),
@@ -78,6 +79,7 @@ const LANDING_STRUCTURED_DATA = [
     ],
     offers: [
       { name: 'Observer (Free)', price: '0' },
+      { name: 'Starter', price: String(PRICING.starter.billing.monthly) },
       { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly) },
       { name: 'Signal (Pro)', price: String(PRICING.signal.billing.monthly) },
     ],
@@ -116,6 +118,7 @@ LANDING_STRUCTURED_DATA.push(
     brand: 'AiVIS',
     offers: [
       { name: 'Observer (Free)', price: '0', description: `${PRICING.observer.limits.scans} AI visibility audits per month — free forever` },
+      { name: 'Starter', price: String(PRICING.starter.billing.monthly), description: `${PRICING.starter.limits.scans} audits/month with all recommendations, implementation code, and PDF exports` },
       { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly), description: `${PRICING.alignment.limits.scans} audits/month with competitor tracking, citation workflows and report exports` },
       { name: 'Signal (Pro)', price: String(PRICING.signal.billing.monthly), description: `${PRICING.signal.limits.scans} audits/month with 3-model consensus scoring, advanced citation testing and brand mention monitoring` },
     ],
@@ -223,6 +226,13 @@ const TIERS = [
     scans: PRICING.observer.limits.scans,
     color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null as string | null,
     features: [`${PRICING.observer.limits.scans} audits / month`, 'See your AI visibility score (0\u2013100)', 'Discover which keywords AI associates with your site', 'Find missing schema that blocks citations', 'Spot heading and meta tag gaps AI models penalise'],
+  },
+  {
+    key: 'starter' as const, name: PRICING.starter.name, subtitle: '$15/mo',
+    monthlyPrice: PRICING.starter.billing.monthly, annualMonthlyPrice: annualMonthlyPrice('starter'),
+    scans: PRICING.starter.limits.scans,
+    color: 'border-teal-400/30 bg-[#0d2420]/60 ring-1 ring-teal-400/20', accentClass: 'text-teal-300', badge: null as string | null,
+    features: [`${PRICING.starter.limits.scans} audits / month`, 'All recommendations with step-by-step implementation code', 'Content highlights showing what AI reads best', 'Export reports as PDF', 'Force-refresh to measure changes instantly', 'Share audit links with clients or stakeholders', '30-day report history'],
   },
   {
     key: 'alignment' as const, name: PRICING.alignment.name, subtitle: 'Core',

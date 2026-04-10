@@ -475,7 +475,7 @@ const Landing = () => {
       {/* ── TLDR / SUMMARY ── */}
       <section id="tldr" className="py-10 bg-[#0b0f1a]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-lg font-semibold text-white/80 mb-3">Summary</h2>
+          <h2 className="text-lg font-semibold text-white/80 mb-3">Summary:</h2>
           <p className="text-white/55 text-sm sm:text-base leading-relaxed">
             AiVIS audits whether AI answer engines — ChatGPT, Perplexity, Google AI, and Claude —
             can read, trust, and cite your website. Enter any URL to get a 0–100 visibility score

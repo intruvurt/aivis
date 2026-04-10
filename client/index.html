@@ -130,6 +130,12 @@
           Ranking alone does not earn citation. AiVIS measures the extractability, trust signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer.
           Learn more about the <a href="/methodology" style="color:#06b6d4">audit methodology</a> behind the scoring.
         </p>
+        <p style="color:#94a3b8;line-height:1.6">
+          According to a <a href="https://sparktoro.com/blog/2026-zero-click-search-study/" style="color:#06b6d4">2026 SparkToro study</a>, 58.5% of Google searches now end in zero clicks.
+          AI answer engines like ChatGPT, Perplexity and Google AI Overviews compose responses by retrieving, synthesizing and citing web sources directly.
+          Pages that lack structured data, clear entity definitions or sufficient content depth are systematically excluded from these generated answers.
+          AiVIS scores visibility across six weighted categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%).
+        </p>
 
         <h2 style="font-size:22px;margin:28px 0 10px">Evidence-backed visibility intelligence</h2>
         <h3 style="font-size:18px;margin:16px 0 8px">Full page interpretation</h3>
@@ -193,6 +199,13 @@
           Review the <a href="/methodology" style="color:#06b6d4">audit methodology</a> to understand how each category is scored or use the <a href="/tools/schema-validator" style="color:#06b6d4">structured data impact validator</a> to check your schema coverage.
         </p>
 
+        <h2 style="font-size:22px;margin:28px 0 10px">Real-world score improvement example</h2>
+        <p style="color:#94a3b8;line-height:1.6">
+          A user audited their SaaS landing page and received an initial score of 15/100. The audit identified three critical gaps: no JSON-LD structured data (Schema category grade F), a broken heading hierarchy with multiple H1 tags (Heading Structure grade D), and zero FAQ schema for their support questions.
+          After applying the three recommended fixes — adding Organization and FAQPage JSON-LD, restructuring headings into a single H1 with logical H2/H3 nesting, and converting support questions into FAQ schema — a re-scan showed a score of 52/100, a 37-point improvement in a single audit cycle.
+          The most impactful single fix was adding JSON-LD structured data, which lifted the Schema category from F to B and contributed roughly 18 of the 37 points gained.
+        </p>
+
         <h2 style="font-size:22px;margin:28px 0 10px">Frequently asked questions about AI search visibility</h2>
         <h3 style="font-size:18px;margin:16px 0 8px">What is AiVIS</h3>
         <p style="color:#94a3b8;line-height:1.6">AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. It crawls your page, extracts structural signals and maps them to a 0-100 visibility score across six weighted categories. Every finding is tied to real page evidence through BRAG evidence identifiers so results can be verified and traced, not assumed.</p>
@@ -243,7 +256,7 @@
           "url": "https://aivis.biz/aivis-logo.png",
           "contentUrl": "https://aivis.biz/aivis-logo.png"
         },
-        "foundingDate": "2025-12",
+        "foundingDate": "2025-12-01",
         "address": {
           "@type": "PostalAddress",
           "addressRegion": "GA",
@@ -371,9 +384,6 @@
             "priceValidUntil": "2027-12-31"
           }
         ],
-        "subjectOf": {
-          "@id": "https://aivis.biz/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai#article"
-        },
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
@@ -397,7 +407,8 @@
         "headline": "AiVIS AI Visibility AEO/SEO/GEO Audit Overview",
         "description": "Overview of how AiVIS audits machine readability, trust and citation readiness for answer engines.",
         "datePublished": "2026-03-17T00:00:00-05:00",
-        "dateModified": "2026-04-08T00:00:00-05:00",
+        "dateModified": "2026-04-10T00:00:00-05:00",
+        "image": ["https://aivis.biz/og-image2.png"],
         "author": {
           "@id": "https://aivis.biz/#author"
         },
@@ -560,6 +571,8 @@
         "@type": "HowTo",
         "name": "How to improve AI visibility for your website",
         "description": "Step by step guide to running an AI visibility audit and implementing evidence-backed fixes for answer engine readiness.",
+        "totalTime": "PT30M",
+        "image": "https://aivis.biz/og-image2.png",
         "step": [
           { "@type": "HowToStep", "position": 1, "name": "Run a baseline audit", "text": "Start by auditing the target URL to establish current visibility score and category grades across content depth, heading structure, schema coverage, metadata, technical SEO and AI readability." },
           { "@type": "HowToStep", "position": 2, "name": "Review category grades", "text": "Identify which of the six scoring categories show the biggest gaps. Focus on categories with B or lower grades first for maximum score impact." },
@@ -624,8 +637,8 @@
         "mainEntity": { "@id": "https://aivis.biz/#software-application" },
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "inLanguage": "en-US",
-        "dateModified": "2026-04-08",
-        "lastReviewed": "2026-04-08",
+        "dateModified": "2026-04-10",
+        "lastReviewed": "2026-04-10",
         "primaryImageOfPage": {
           "@type": "ImageObject",
           "url": "https://aivis.biz/aivis-symbol.png?v=20260408"

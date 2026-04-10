@@ -62,6 +62,17 @@ const LANDING_STRUCTURED_DATA = [
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',
     description: 'AI visibility intelligence platform - ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
+    featureList: [
+      'AI visibility search audits',
+      'Evidence-backed findings with BRAG identifiers',
+      'Structured data analysis',
+      'Heading and metadata analysis',
+      'Technical SEO checks',
+      'Citation readiness insights',
+      'Multi-model validation on eligible tiers',
+      'Competitor tracking',
+      'Brand mention scanning across 17 sources',
+    ],
     offers: [
       { name: 'Observer (Free)', price: '0' },
       { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly) },
@@ -482,6 +493,7 @@ const Landing = () => {
             can read, trust, and cite your website. Enter any URL to get a 0–100 visibility score
             with evidence-backed findings, category grades, and prioritised fixes.
             Every recommendation is grounded in real page evidence, not synthetic benchmarks.
+            Scoring covers six weighted categories: Content Depth (20%), Schema (20%), AI Readability (20%), Technical SEO (15%), Meta Tags (13%), and Heading Structure (12%).
           </p>
         </div>
       </section>
@@ -550,9 +562,9 @@ const Landing = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {([
-              { n: '01', color: 'text-cyan-300', borderColor: 'border-cyan-400/20 bg-cyan-400/5', title: 'Run a live audit', desc: 'Enter any public URL. AiVIS scans your page, extracts structure, schema, headings, meta tags and content, then runs them through an AI pipeline.' },
-              { n: '02', color: 'text-violet-300', borderColor: 'border-violet-400/20 bg-violet-400/5', title: 'See your visibility snapshot', desc: 'In under a minute you get a 0–100 score with a six-part visibility breakdown: what AI understands, what it cannot verify, and what to fix first.' },
-              { n: '03', color: 'text-amber-300', borderColor: 'border-amber-400/20 bg-amber-400/5', title: 'Open the full system', desc: 'Go deeper with competitor tracking, citation testing, score trends and fixes ranked by likely lift. Re-scan after each change to measure the difference.' },
+              { n: '01', color: 'text-cyan-300', borderColor: 'border-cyan-400/20 bg-cyan-400/5', title: 'Run a live audit', desc: 'Enter any public URL. AiVIS scans your page with a headless browser, extracts structure, schema (JSON-LD), headings (H1–H6), meta tags, Open Graph, body content, and links, then runs them through a multi-model AI pipeline.' },
+              { n: '02', color: 'text-violet-300', borderColor: 'border-violet-400/20 bg-violet-400/5', title: 'See your visibility snapshot', desc: 'In under a minute you get a 0–100 composite score with a six-category breakdown: Content Depth (20%), Schema (20%), AI Readability (20%), Technical SEO (15%), Meta Tags (13%), and Heading Structure (12%). Each finding cites a BRAG evidence ID.' },
+              { n: '03', color: 'text-amber-300', borderColor: 'border-amber-400/20 bg-amber-400/5', title: 'Open the full system', desc: 'Go deeper with competitor tracking across rivals, citation testing via 3 search engines, brand mention scanning across 17 sources, score trends over time, and fixes ranked by expected point lift. Re-scan after each change to measure the delta.' },
             ] as const).map((step) => (
               <motion.div key={step.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
                 className={`rounded-2xl border ${step.borderColor} p-6`}>
@@ -572,7 +584,7 @@ const Landing = () => {
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
               <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">Why do AI models skip your site?</span>
             </h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, you do not get cited.</p>
+            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, you do not get cited. Pages missing JSON-LD schema score 40–60% lower on average. Sites without clear heading hierarchies lose up to 15 points in the Heading Structure category alone.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {([

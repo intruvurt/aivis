@@ -34,7 +34,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       url: `${BASE_URL}/aivis-logo.png`,
       contentUrl: `${BASE_URL}/aivis-logo.png`,
     },
-    foundingDate: '2025-12',
+    foundingDate: '2025-12-01',
     address: {
       '@type': 'PostalAddress',
       addressRegion: 'GA',
@@ -241,6 +241,7 @@ export function buildItemListSchema(
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     ...(itemListId ? { '@id': itemListId } : {}),
+    numberOfItems: items.length,
     itemListElement: items.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
@@ -336,6 +337,7 @@ export function buildSoftwareApplicationSchema(input: {
   description: string;
   applicationCategory?: string;
   operatingSystem?: string;
+  featureList?: string[];
   offers?: Array<{
     name: string;
     price: string;
@@ -355,6 +357,9 @@ export function buildSoftwareApplicationSchema(input: {
     operatingSystem: input.operatingSystem ?? 'Web',
     creator: buildOrganizationRef(),
     publisher: buildOrganizationRef(),
+    ...(input.featureList && input.featureList.length > 0
+      ? { featureList: input.featureList }
+      : {}),
     ...(input.offers && input.offers.length > 0
       ? {
           offers: input.offers.map((o) => ({

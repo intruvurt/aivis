@@ -678,6 +678,10 @@ function stripObserverResult(result: any): any {
     category: rec.category,
     impact: rec.impact,
     verification_status: rec.verification_status,
+    evidence_ids: rec.evidence_ids,
+    verified_evidence_count: rec.verified_evidence_count,
+    total_evidence_refs: rec.total_evidence_refs,
+    evidence_benchmark: rec.evidence_benchmark,
     // No implementation, no evidence_references, no code examples
   }));
 
@@ -686,7 +690,7 @@ function stripObserverResult(result: any): any {
     recommendations: strippedRecommendations,
     content_highlights: undefined,
     keyword_intelligence: undefined,
-    evidence_manifest: undefined,
+    // evidence_manifest kept so Observer users can resolve BRAG evidence IDs
     evidence_fix_plan: undefined,
     citation_parity_audit: undefined,
     rail_evidence_audit: undefined,
@@ -718,9 +722,8 @@ function stripAlignmentResult(result: any): any {
   if (!result || typeof result !== 'object') return result;
   return {
     ...result,
-    // Alignment keeps: recommendations (all), keyword_intelligence, content_highlights
+    // Alignment keeps: recommendations (all), keyword_intelligence, content_highlights, evidence_manifest
     // Alignment strips: deep evidence/verification artifacts (Signal+ only)
-    evidence_manifest: undefined,
     evidence_fix_plan: undefined,
     citation_parity_audit: undefined,
     rail_evidence_audit: undefined,

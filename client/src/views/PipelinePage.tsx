@@ -303,8 +303,8 @@ function PipelinePageInner() {
         <h2 className="text-sm font-semibold text-white/70">Start a new pipeline run</h2>
         <div className="flex flex-col sm:flex-row gap-3">
           <input
-            type="url"
-            placeholder="https://example.com"
+            type="text"
+            placeholder="example.com"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             className="flex-1 rounded-lg border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/50"

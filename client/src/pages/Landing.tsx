@@ -1,6 +1,8 @@
 // Landing - AiVIS
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ClipboardPaste } from 'lucide-react';
+import { normalizePublicUrlInput } from '../utils/targetKey';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
@@ -306,6 +308,8 @@ const Landing = () => {
     e.preventDefault();
     const trimmed = previewUrl.trim();
     if (!trimmed || scanning) return;
+    // Normalize bare domains to https:// before sending to server
+    const normalizedPreviewUrl = normalizePublicUrlInput(trimmed);
 
     setScanning(true);
     setScanStep(0);
@@ -321,7 +325,7 @@ const Landing = () => {
       const res = await fetch(`${API_URL}/api/analyze/preview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: trimmed }),
+        body: JSON.stringify({ url: normalizedPreviewUrl }),
       });
       const data = await res.json();
 
@@ -384,15 +388,31 @@ const Landing = () => {
 
             {/* ── URL INPUT FORM ── */}
             <form onSubmit={handlePreviewScan} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-4">
-              <input
-                type="url"
-                value={previewUrl}
-                onChange={(e) => setPreviewUrl(e.target.value)}
-                placeholder="https://yourdomain.com"
-                disabled={scanning}
-                className="flex-1 px-4 py-3.5 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 disabled:opacity-50 transition-all"
-                required
-              />
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={previewUrl}
+                  onChange={(e) => setPreviewUrl(e.target.value)}
+                  placeholder="yourdomain.com"
+                  disabled={scanning}
+                  className="w-full px-4 py-3.5 pr-10 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 disabled:opacity-50 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const text = await navigator.clipboard.readText();
+                      if (text?.trim()) setPreviewUrl(text.trim());
+                    } catch { /* clipboard permission denied */ }
+                  }}
+                  disabled={scanning}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-white/30 hover:text-white/70 transition disabled:opacity-40"
+                  title="Paste from clipboard"
+                  aria-label="Paste from clipboard"
+                >
+                  <ClipboardPaste className="w-4 h-4" />
+                </button>
+              </div>
               <button
                 type="submit"
                 disabled={scanning || !previewUrl.trim()}

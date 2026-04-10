@@ -155,10 +155,10 @@ export default function CitationsPage() {
                   <div className="relative flex-1">
                     <Globe className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
                     <input
-                      type="url"
+                      type="text"
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
-                      placeholder="https://example.com/your-page"
+                      placeholder="example.com/your-page"
                       enterKeyHint="go"
                       className="field-vivid w-full pl-10 pr-4 py-3 rounded-xl border border-white/12 text-white text-sm placeholder-white/40"
                       autoComplete="url"

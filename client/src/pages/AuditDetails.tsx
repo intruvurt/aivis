@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Download, FileText, Gauge, Loader2, ShieldAlert, Wrench } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Download, FileText, Gauge, Loader2, ShieldAlert, Wrench } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
 import ShareButtons from "../components/ShareButtons";
@@ -115,6 +115,10 @@ export default function AuditDetails() {
       subtitle="Full AI visibility report for the selected audit run."
       actions={
         <div className="flex flex-wrap items-center gap-2">
+          <Link to="/app/reports" className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white/74 transition hover:bg-white/[0.07]">
+            <ArrowLeft className="h-4 w-4" />
+            Reports
+          </Link>
           {id ? (
             <Link to={`/export/${id}`} className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white/74 transition hover:bg-white/[0.07]">
               <Download className="h-4 w-4" />

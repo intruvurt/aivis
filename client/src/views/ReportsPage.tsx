@@ -1489,7 +1489,7 @@ export default function ReportsPage() {
                 <input
                   value={share.link}
                   readOnly
-                  className="flex-1 px-3 py-2 border border-white/12 rounded-xl text-sm text-white/85 select-all"
+                  className="flex-1 px-3 py-2 border border-white/12 rounded-xl bg-charcoal text-sm text-white/85 select-all"
                   onClick={(e) => (e.target as HTMLInputElement).select()}
                 />
                 <button

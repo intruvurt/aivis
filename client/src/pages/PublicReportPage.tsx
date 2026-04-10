@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { AlertCircle, ExternalLink, FileText, Loader2, Lock, ShieldCheck } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ExternalLink, FileText, Home, Loader2, Lock, ShieldCheck } from 'lucide-react';
 import type { AnalysisResponse } from '@shared/types';
 
 import { API_URL } from '../config';
@@ -123,7 +123,18 @@ export default function PublicReportPage() {
 
   return (
     <div className="text-white">
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+      {/* Top navigation bar */}
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 flex items-center justify-between">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          Back to AiVIS
+        </Link>
+        <Link to="/app/analyze" className="inline-flex items-center gap-1.5 rounded-lg border border-[#6A911E]/40 bg-[#6A911E]/10 px-3 py-1.5 text-xs font-semibold text-[#6A911E] hover:bg-[#6A911E]/20 transition-colors">
+          <Home className="w-3.5 h-3.5" />
+          Run your own audit
+        </Link>
+      </nav>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <header className="rounded-2xl border border-white/10/70 bg-charcoal-deep p-6">
           <div className="flex items-center gap-2 text-[#6A911E] mb-2">
             <FileText className="w-5 h-5" />
@@ -273,8 +284,14 @@ export default function PublicReportPage() {
           </>
         )}
 
-        <div className="pt-3">
-          <Link to="/" className="text-sm text-[#6A911E] hover:text-[#5A8018]">Return to AiVIS →</Link>
+        <div className="pt-3 flex items-center justify-between">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to AiVIS
+          </Link>
+          <Link to="/app/analyze" className="inline-flex items-center gap-1.5 rounded-lg border border-[#6A911E]/40 bg-[#6A911E]/10 px-3 py-1.5 text-xs font-semibold text-[#6A911E] hover:bg-[#6A911E]/20 transition-colors">
+            Run your own audit →
+          </Link>
         </div>
       </main>
     </div>

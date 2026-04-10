@@ -2312,7 +2312,7 @@ app.get('/api/ready', async (_req, res) => {
 });
 
 // ── Public benchmark aggregates (anonymised, no auth) ─────────────────────
-app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
+app.get('/api/public/benchmarks', ipRateLimit({ maxRequests: 30, windowMs: 60_000 }), async (_req: Request, res: Response) => {
   try {
     const pool = getPool();
     // UNION audits + historical analysis_cache entries not yet in audits
@@ -2385,7 +2385,7 @@ app.get('/api/public/benchmarks', async (_req: Request, res: Response) => {
 });
 
 // ── Public proof data (anonymised score improvements) ──────────────
-app.get('/api/public/proof', async (_req: Request, res: Response) => {
+app.get('/api/public/proof', ipRateLimit({ maxRequests: 30, windowMs: 60_000 }), async (_req: Request, res: Response) => {
   try {
     const proof = await getPublicBenchmarkData();
     res.json({ success: true, proof });
@@ -6758,7 +6758,7 @@ app.post('/api/audits/share-link', authRequired, workspaceRequired, heavyActionL
   }
 });
 
-app.post('/api/public/deploy-hooks/:hookId', async (req: Request, res: Response) => {
+app.post('/api/public/deploy-hooks/:hookId', ipRateLimit({ maxRequests: 5, windowMs: 60_000 }), async (req: Request, res: Response) => {
   try {
     const hookId = String(req.params.hookId || '').trim();
     const providedSecret = String(
@@ -6809,7 +6809,7 @@ app.post('/api/public/deploy-hooks/:hookId', async (req: Request, res: Response)
   }
 });
 
-app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
+app.get('/api/public/audits/:token', ipRateLimit({ maxRequests: 20, windowMs: 60_000 }), async (req: Request, res: Response) => {
   try {
     const token = String((req.params as any).token || '');
     if (!token) {
@@ -6860,7 +6860,7 @@ app.get('/api/public/audits/:token', async (req: Request, res: Response) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Preview scan — public, no auth, returns a mini audit result
 // ─────────────────────────────────────────────────────────────────────────────
-app.post('/api/analyze/preview', ipRateLimit({ maxRequests: 5, windowMs: 3_600_000 }), async (req: Request, res: Response) => {
+app.post('/api/analyze/preview', ipRateLimit({ maxRequests: 3, windowMs: 3_600_000 }), async (req: Request, res: Response) => {
   const startTime = Date.now();
   try {
     const rawUrl = typeof req.body?.url === 'string' ? req.body.url.trim() : '';

@@ -283,12 +283,11 @@ export default function SiteCrawlPage() {
                   <label htmlFor="crawl-url" className="block text-xs text-white/50 mb-1">Root URL</label>
                   <input
                     id="crawl-url"
-                    type="url"
-                    placeholder="https://example.com"
+                    type="text"
+                    placeholder="example.com"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
-                    required
                   />
                 </div>
 

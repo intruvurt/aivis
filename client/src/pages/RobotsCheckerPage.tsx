@@ -154,12 +154,11 @@ export default function RobotsCheckerPage() {
         <section className="px-4 pb-8">
           <form onSubmit={run} className="flex gap-3">
             <input
-              type="url"
+              type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder="example.com"
               className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30"
-              required
             />
             <button
               type="submit"

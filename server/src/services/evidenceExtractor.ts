@@ -74,7 +74,11 @@ export function extractEvidenceFromScrape(scrape: ScrapeResult): SSFREvidenceIte
   const hasAuthor = ldJsonItems.some((item: any) => {
     if (!item || typeof item !== 'object') return false;
     const raw = item as Record<string, unknown>;
-    return raw.author && typeof raw.author === 'object';
+    // Inline author property (e.g. Article.author, WebPage.author)
+    if (raw.author && typeof raw.author === 'object') return true;
+    // Standalone Person block counts as author entity
+    const types = Array.isArray(raw['@type']) ? raw['@type'] : [raw['@type']];
+    return types.some((t: unknown) => typeof t === 'string' && t.toLowerCase() === 'person');
   });
   items.push(ev('source', 'author_entity', hasAuthor, hasAuthor ? 'present' : 'missing'));
 

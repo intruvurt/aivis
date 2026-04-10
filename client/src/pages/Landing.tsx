@@ -353,7 +353,8 @@ const Landing = () => {
             </form>
 
             {/* Trust microcopy */}
-            <p className="text-xs text-white/35 mb-6">No login for first result · No credit card · 5 free checks per hour</p>
+            <p className="text-xs text-white/35 mb-4">No login for first result · No credit card · 5 free checks per hour</p>
+            <p className="text-xs text-white/30 mb-6">Built by <a href="/about" className="underline decoration-white/20 hover:text-white/50 transition-colors">Intruvurt Labs</a> · Evidence-backed auditing since 2025</p>
 
             {/* What you'll see strip */}
             {!scanning && !previewResult && (

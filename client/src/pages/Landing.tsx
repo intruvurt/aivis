@@ -545,7 +545,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">How it works</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Three steps to your first result</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">How does AiVIS audit your site?</h2>
             <p className="text-white/50 text-base max-w-2xl mx-auto">Every audit uses BRAG - Based Retrieval and Auditable Grading - so every finding traces back to a real element on your page.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -570,9 +570,9 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">AI models skip sites they cannot extract</span>
+              <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">Why do AI models skip your site?</span>
             </h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto">58.5% of Google searches now end in zero clicks. If your page is not structured for extraction, you do not get cited.</p>
+            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, you do not get cited.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {([
@@ -674,9 +674,9 @@ const Landing = () => {
           <div className="mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Method</span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent">What happens when you submit a URL</span>
+              <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent">What happens when you submit a URL?</span>
             </h2>
-            <p className="text-white/45 text-sm mt-2 font-mono">No black box. <Link to="/methodology" className="text-cyan-300/70 hover:text-cyan-300 underline">Canonical methodology page</Link></p>
+            <p className="text-white/45 text-sm mt-2 font-mono">No black box. Scoring categories are grounded in <a href="https://schema.org" target="_blank" rel="noopener noreferrer" className="text-cyan-300/70 hover:text-cyan-300 underline">Schema.org</a> vocabulary. <Link to="/methodology" className="text-cyan-300/70 hover:text-cyan-300 underline">Canonical methodology page</Link></p>
           </div>
           <ol className="space-y-6">
             {([

@@ -119,7 +119,10 @@
     "integrations": "Integraciones",
     "billing": "Facturación",
     "settings": "Configuración",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "resources": "RECURSOS",
+    "blog": "Blog",
+    "guide": "Guía"
   },
   "settings": {
     "title": "Configuración",

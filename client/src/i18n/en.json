@@ -119,7 +119,10 @@
     "integrations": "Integrations",
     "billing": "Billing",
     "settings": "Settings",
-    "help": "Help"
+    "help": "Help",
+    "resources": "RESOURCES",
+    "blog": "Blog",
+    "guide": "Guide"
   },
   "settings": {
     "title": "Settings",

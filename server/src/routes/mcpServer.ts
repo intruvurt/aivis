@@ -41,12 +41,12 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
     const result = await validateApiKey(token);
     if (!result.ok) {
       const isTierBlocked = result.reason === 'tier_blocked';
-      return res.status(isTierBlocked ? 403 : 401).json({ error: isTierBlocked ? 'MCP Server requires Signal or higher plan.' : 'Invalid API key', code: result.reason });
+      return res.status(isTierBlocked ? 403 : 401).json({ error: isTierBlocked ? 'MCP Server requires Alignment or higher plan.' : 'Invalid API key', code: result.reason });
     }
-    // Signal+ gate - MCP tooling is a Signal-tier capability
+    // Alignment+ gate - MCP tooling is an Alignment-tier capability (matches WebMCP)
     const { rows: tierRows } = await pool.query(`SELECT tier FROM users WHERE id = $1`, [result.userId]);
-    if (!meetsMinimumTier((tierRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier, 'signal')) {
-      return res.status(403).json({ error: 'MCP Server requires Signal or higher plan.' });
+    if (!meetsMinimumTier((tierRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier, 'alignment')) {
+      return res.status(403).json({ error: 'MCP Server requires Alignment or higher plan.' });
     }
     (req as any).mcpUserId = result.userId;
     (req as any).mcpWorkspaceId = result.workspaceId;
@@ -68,8 +68,8 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
     const { rows: userRows } = await pool.query(
       `SELECT tier FROM users WHERE id = $1`, [rows[0].user_id]
     );
-    if (!meetsMinimumTier((userRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier, 'signal')) {
-      return res.status(403).json({ error: 'MCP Server requires Signal or higher plan.' });
+    if (!meetsMinimumTier((userRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier, 'alignment')) {
+      return res.status(403).json({ error: 'MCP Server requires Alignment or higher plan.' });
     }
 
     const scopes: string[] = typeof rows[0].scopes === 'string' ? JSON.parse(rows[0].scopes) : rows[0].scopes;
@@ -101,8 +101,8 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
       return res.status(401).json({ error: 'User not found for JWT' });
     }
     const effectiveTier = await enforceEffectiveTier(user);
-    if (!meetsMinimumTier((effectiveTier || 'observer') as CanonicalTier | LegacyTier, 'signal')) {
-      return res.status(403).json({ error: 'MCP Server requires Signal or higher plan.' });
+    if (!meetsMinimumTier((effectiveTier || 'observer') as CanonicalTier | LegacyTier, 'alignment')) {
+      return res.status(403).json({ error: 'MCP Server requires Alignment or higher plan.' });
     }
     (req as any).mcpUserId = user.id;
     (req as any).mcpScopes = ['read:audits', 'write:audits', 'read:analytics', 'read:competitors'];

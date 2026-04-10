@@ -31,7 +31,7 @@ function hashSecret(secret: string): string {
   return crypto.createHash('sha256').update(secret).digest('hex');
 }
 
-const VALID_SCOPES = ['read:audits', 'read:analytics'];
+const VALID_SCOPES = ['read:audits', 'read:analytics', 'write:audits'];
 const CODE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const ACCESS_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 

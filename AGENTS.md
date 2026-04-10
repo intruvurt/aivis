@@ -33,6 +33,15 @@ The coding agent must treat `shared/` as the source of truth for cross-layer beh
 - `client/src/pages/Admin.tsx` — admin portal (stats, newsletter, broadcast, tools)
 - `client/src/lib/security/` — client-side sanitization (sanitize.ts, SafeHtml.tsx, SafeLink.tsx, auditChecklist.ts)
 - `docs/ADMIN_PORTAL.md` — admin system documentation
+- `server/src/routes/externalApiV1.ts` — v1 API (accepts both `avis_*` API keys and `avist_*` OAuth tokens)
+- `server/src/routes/oauthRoutes.ts` — OAuth 2.0 (RFC 6749): client register, authorize, token, revoke. Scopes: `read:audits`, `read:analytics`, `write:audits`
+- `server/src/routes/mcpServer.ts` — MCP JSON-RPC 2.0 server (Alignment+ tier gate, 15+ tools)
+- `server/src/routes/webMcp.ts` — WebMCP browser-agent surface (Alignment+ tier gate, mirrors MCP tools)
+- `server/src/routes/openApiSpec.ts` — OpenAPI 3.0.3 spec at `/api/v1/openapi.json`
+- `client/src/components/AppShell.tsx` — authenticated app layout (sidebar + topbar + footer + outlet)
+- `client/src/components/AppSidebar.tsx` — main sidebar navigation (Core, Evidence, Extensions, Platform, Agency, Resources, Account)
+- `client/src/components/Footer.tsx` — site-wide footer (Platform, Resources, Company links)
+- `client/src/content/blogs.ts` — blog post content (markdown links rendered via `renderInlineMarkdown`)
 
 ---
 
@@ -136,6 +145,22 @@ Downloads and share views must preserve:
 - export/share metadata
 
 Avoid building report shells that omit the real audit content.
+
+### 8) External API accepts both API keys and OAuth tokens
+
+`/api/v1/*` routes authenticate via `Bearer avis_*` (API key) or `Bearer avist_*` (OAuth token). Both paths resolve `apiUserId`, `apiWorkspaceId`, `apiScopes`, and `apiTier` on the request.
+
+### 9) MCP and WebMCP share the same Alignment+ tier gate
+
+Both `/api/mcp/*` and `/api/webmcp/*` require Alignment or higher. Do not change one without the other. Both accept `avis_*`, `avist_*`, and JWT tokens.
+
+### 10) Footer must render in both public and authenticated layouts
+
+`PublicLayout.tsx` and `AppShell.tsx` both render `<Footer />`. Removing the footer from either layout makes documentation pages (blogs, FAQ, guide, privacy, terms, disclosures) unreachable.
+
+### 11) Security headers
+
+`securityMiddleware.ts` enforces `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` and `X-Frame-Options: DENY` on all responses.
 
 ---
 

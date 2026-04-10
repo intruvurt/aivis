@@ -6,7 +6,7 @@ import {
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, Cpu, ArrowLeftRight,
   Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
-  FileSearch,
+  FileSearch, BookOpen,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -68,6 +68,11 @@ const accountNav: NavItem[] = [
   { to: "/app/billing", labelKey: "sidebar.billing", icon: CreditCard },
   { to: "/app/settings", labelKey: "sidebar.settings", icon: Settings },
   { to: "/app/help", labelKey: "sidebar.help", icon: HelpCircle },
+];
+
+const resourcesNav: NavItem[] = [
+  { to: "/blogs", labelKey: "sidebar.blog", icon: BookOpen },
+  { to: "/guide", labelKey: "sidebar.guide", icon: HelpCircle },
 ];
 
 const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";
@@ -146,6 +151,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
         <NavSection title={t("sidebar.extensions")} items={extensionNav} onClose={onClose} iconClass="text-emerald-400" iconBg="bg-emerald-500/10" />
         <NavSection title={t("sidebar.platform")} items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
         <NavSection title={t("sidebar.agency")} items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
+        <NavSection title={t("sidebar.resources")} items={resourcesNav} onClose={onClose} iconClass="text-cyan-400" iconBg="bg-cyan-500/10" />
         <NavSection title={t("sidebar.account")} items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
       </nav>
 

@@ -6,6 +6,44 @@ import ConversionCTA from '../components/ConversionCTA';
 import { getBlogBySlug, getRelatedPosts } from '../content/blogs';
 import { buildArticleSchema, buildBreadcrumbSchema, buildWebPageSchema } from '../lib/seoSchema';
 
+/** Parse markdown links [text](url) and bold **text** into React elements */
+function renderInlineMarkdown(text: string): React.ReactNode {
+  // Split on markdown links and bold markers
+  const regex = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|\*\*([^*]+)\*\*/g;
+  const elements: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Push plain text before the match
+    if (match.index > lastIndex) {
+      elements.push(text.slice(lastIndex, match.index));
+    }
+
+    if (match[1] && match[2]) {
+      // Markdown link: [text](url)
+      elements.push(
+        <a key={key++} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-orange-300 underline underline-offset-2 hover:text-orange-200 transition-colors">
+          {match[1]}
+        </a>
+      );
+    } else if (match[3]) {
+      // Bold: **text**
+      elements.push(<strong key={key++} className="font-semibold text-white">{match[3]}</strong>);
+    }
+
+    lastIndex = regex.lastIndex;
+  }
+
+  // Remaining text after last match
+  if (lastIndex < text.length) {
+    elements.push(text.slice(lastIndex));
+  }
+
+  return elements.length <= 1 ? (elements[0] ?? text) : <>{elements}</>;
+}
+
 const categoryLabels: Record<string, string> = {
   aeo: 'Answer Engine Optimization',
   seo: 'Traditional SEO',
@@ -96,13 +134,13 @@ export default function BlogPostPage() {
                   }
 
                   if (looksLikeHeading) {
-                    return <h3 key={`heading-${index}`} className="pt-2 text-xl font-semibold text-white">{block}</h3>;
+                    return <h3 key={`heading-${index}`} className="pt-2 text-xl font-semibold text-white">{renderInlineMarkdown(block)}</h3>;
                   }
 
                   if (looksLikeQuote) {
                     return (
                       <blockquote key={`quote-${index}`} className="rounded-r-2xl border-l-4 border-orange-400/60 bg-orange-950/18 px-4 py-3 italic text-white/85">
-                        {block.replace(/^>\s*/, '')}
+                        {renderInlineMarkdown(block.replace(/^>\s*/, ''))}
                       </blockquote>
                     );
                   }
@@ -117,13 +155,13 @@ export default function BlogPostPage() {
                     if (items.length > 0) {
                       return (
                         <ul key={`list-${index}`} className="list-disc space-y-2 pl-5 text-white/75 marker:text-orange-400">
-                          {items.map((item) => <li key={`${index}-${item}`}>{item}</li>)}
+                          {items.map((item) => <li key={`${index}-${item}`}>{renderInlineMarkdown(item)}</li>)}
                         </ul>
                       );
                     }
                   }
 
-                  return <p key={`paragraph-${index}`} className="text-white/75">{block}</p>;
+                  return <p key={`paragraph-${index}`} className="text-white/75">{renderInlineMarkdown(block)}</p>;
                 })}
             </div>
           ) : (

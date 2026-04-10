@@ -2,6 +2,7 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import AppTopBar from "./AppTopBar";
+import Footer from "./Footer";
 import GlobalCommandPalette from "./GlobalCommandPalette";
 import TrialBanner from "./TrialBanner";
 
@@ -84,6 +85,7 @@ export default function AppShell() {
             </Suspense>
           </OutletErrorBoundary>
         </main>
+        <Footer />
       </div>
 
       <GlobalCommandPalette />

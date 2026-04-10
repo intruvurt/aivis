@@ -1,9 +1,10 @@
 /**
- * External API v1 (Read-Only)
- * Authenticated via API key (Bearer avis_xxx header).
- * Provides read-only access to audits and analytics data for API-entitled tiers.
+ * External API v1
+ * Authenticated via API key (Bearer avis_xxx) or OAuth token (Bearer avist_xxx).
+ * Provides access to audits and analytics data for API-entitled tiers.
  */
 import { Router, Request, Response, NextFunction } from 'express';
+import crypto from 'node:crypto';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { validateApiKey } from '../services/apiKeyService.js';
 import { getPool } from '../services/postgresql.js';
@@ -17,43 +18,86 @@ import { getTimeline } from '../services/visibilityTimeline.js';
 
 const router = Router();
 
-// ── API Key Auth Middleware ───────────────────────────────────────────────────
+// ── Auth Middleware (API key or OAuth token) ─────────────────────────────────
 
 async function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader?.startsWith('Bearer avis_')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({
-      error: 'Missing or invalid API key. Provide: Authorization: Bearer avis_xxx',
+      error: 'Missing Authorization header. Provide: Bearer avis_xxx or Bearer avist_xxx',
       code: 'INVALID_API_KEY',
     });
   }
 
-  const key = authHeader.slice(7); // strip "Bearer "
-  const result = await validateApiKey(key);
+  const token = authHeader.slice(7);
 
-  if (!result.ok) {
-    if (result.reason === 'tier_blocked') {
-      return res.status(403).json({
-        error: 'API access is not available for the current plan tier',
-        code: 'FEATURE_LOCKED',
-      });
+  // ── API key path (avis_*) ──────────────────────────────────────────────────
+  if (token.startsWith('avis_')) {
+    const result = await validateApiKey(token);
+
+    if (!result.ok) {
+      if (result.reason === 'tier_blocked') {
+        return res.status(403).json({
+          error: 'API access is not available for the current plan tier',
+          code: 'FEATURE_LOCKED',
+        });
+      }
+
+      if (result.reason === 'expired') {
+        return res.status(401).json({ error: 'API key expired', code: 'API_KEY_EXPIRED' });
+      }
+
+      return res.status(401).json({ error: 'Invalid API key', code: 'INVALID_API_KEY' });
     }
 
-    if (result.reason === 'expired') {
-      return res.status(401).json({ error: 'API key expired', code: 'API_KEY_EXPIRED' });
-    }
-
-    return res.status(401).json({ error: 'Invalid API key', code: 'INVALID_API_KEY' });
+    (req as any).apiKeyId = result.keyId;
+    (req as any).apiUserId = result.userId;
+    (req as any).apiWorkspaceId = result.workspaceId;
+    (req as any).apiScopes = result.scopes;
+    (req as any).apiTier = result.tier;
+    return next();
   }
 
-  // Attach to request
-  (req as any).apiKeyId = result.keyId;
-  (req as any).apiUserId = result.userId;
-  (req as any).apiWorkspaceId = result.workspaceId;
-  (req as any).apiScopes = result.scopes;
-  (req as any).apiTier = result.tier;
-  next();
+  // ── OAuth token path (avist_*) ─────────────────────────────────────────────
+  if (token.startsWith('avist_')) {
+    const pool = getPool();
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const { rows } = await pool.query(
+      `SELECT user_id, scopes, expires_at, revoked FROM oauth_tokens WHERE token_hash = $1`,
+      [tokenHash],
+    );
+
+    if (!rows.length || rows[0].revoked || new Date(rows[0].expires_at) < new Date()) {
+      return res.status(401).json({ error: 'Invalid or expired OAuth token', code: 'INVALID_OAUTH_TOKEN' });
+    }
+
+    const { rows: userRows } = await pool.query(`SELECT tier FROM users WHERE id = $1`, [rows[0].user_id]);
+    const tier = uiTierFromCanonical((userRows[0]?.tier || 'observer') as CanonicalTier | LegacyTier);
+    if (!TIER_LIMITS[tier]?.hasApiAccess) {
+      return res.status(403).json({ error: 'API access is not available for the current plan tier', code: 'FEATURE_LOCKED' });
+    }
+
+    const scopes: string[] = typeof rows[0].scopes === 'string' ? JSON.parse(rows[0].scopes) : rows[0].scopes;
+    (req as any).apiUserId = rows[0].user_id;
+    (req as any).apiScopes = scopes;
+    (req as any).apiTier = tier;
+
+    // Resolve default workspace for the OAuth user
+    const { rows: wsRows } = await pool.query(
+      `SELECT w.id FROM workspaces w
+       JOIN workspace_members wm ON wm.workspace_id = w.id
+       WHERE wm.user_id = $1 AND w.is_default = TRUE LIMIT 1`,
+      [rows[0].user_id],
+    );
+    (req as any).apiWorkspaceId = wsRows[0]?.id;
+    return next();
+  }
+
+  return res.status(401).json({
+    error: 'Token must start with avis_ (API key) or avist_ (OAuth token)',
+    code: 'INVALID_API_KEY',
+  });
 }
 
 function meterApiUsage(req: Request, res: Response, next: NextFunction) {

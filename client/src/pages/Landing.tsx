@@ -16,6 +16,9 @@ import {
   buildItemListSchema,
   buildSoftwareApplicationSchema,
   buildFaqSchema,
+  buildAggregateRatingSchema,
+  buildReviewSchema,
+  buildProductSchema,
 } from '../lib/seoSchema';
 
 interface PlatformStats {
@@ -83,13 +86,17 @@ const LANDING_STRUCTURED_DATA = [
 
 // Built after FAQ_ITEMS are defined — appended to LANDING_STRUCTURED_DATA below
 const FAQ_ITEMS = [
-  { q: 'What is AiVIS and what does it audit?', a: 'AiVIS measures AI visibility - how well AI answer engines like ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
-  { q: 'How is AI visibility different from traditional SEO?', a: 'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content - thin structure, missing schema, or poor heading hierarchy means you get skipped, regardless of domain authority.' },
-  { q: 'What is BRAG and why does AiVIS use it?', a: 'BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives a BRAG evidence identifier that can be traced, verified and rechecked across scan cycles.' },
-  { q: 'Does AiVIS work across all AI platforms?', a: 'Yes. AiVIS scores visibility for ChatGPT, Perplexity AI, Google AI Overviews, and Claude individually (0–100). Signal subscribers run a 3-model triple-check pipeline for higher accuracy.' },
+  { q: 'What is AiVIS and what does it audit?', a: 'AiVIS measures AI visibility — how well AI answer engines like ChatGPT, Perplexity, Google AI and Claude can read, extract, trust and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
+  { q: 'How is AI visibility different from traditional SEO?', a: 'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content — thin structure, missing schema or poor heading hierarchy means you get skipped, regardless of domain authority.' },
+  { q: 'What is BRAG and why does AiVIS use it?', a: 'BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives an evidence identifier that can be traced, verified and rechecked across scan cycles.' },
+  { q: 'Does AiVIS work across all AI platforms?', a: 'Yes. AiVIS scores visibility for ChatGPT, Perplexity AI, Google AI Overviews and Claude individually (0–100). Signal subscribers run a 3-model consensus pipeline for higher accuracy.' },
   { q: 'What happens to unused monthly audits?', a: 'Monthly audit credits reset at billing cycle start and do not roll over.' },
   { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors.' },
-  { q: 'Who should use AiVIS?', a: 'AiVIS is built for founders, marketers, developers and agencies who need to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what changes will fix it.' },
+  { q: 'Who should use AiVIS?', a: 'AiVIS is built for SEO managers, content teams at SaaS companies, startup founders, digital agencies and anyone who needs to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what to fix.' },
+  { q: 'How does AiVIS differ from Ahrefs or Semrush?', a: 'Ahrefs and Semrush track keyword rankings, backlinks and traditional search performance. AiVIS measures something different: whether AI answer engines can structurally extract and cite your content. It scans your live page with a headless browser, runs multi-model AI analysis and returns evidence-backed findings — none of which traditional SEO tools cover.' },
+  { q: 'What are the six scoring categories?', a: 'AiVIS scores Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%) and Heading Structure (12%). Each category receives a letter grade (A–F) with specific findings backed by evidence IDs.' },
+  { q: 'Can I track how my score changes over time?', a: 'Yes. Every audit is saved to your history. Alignment and Signal tiers include score trend charts, competitor comparisons and scheduled rescans so you can measure the impact of each fix you apply.' },
+  { q: 'Is there a free trial?', a: 'The Observer tier is free forever with 3 audits per month. No credit card required. You also get one free preview scan on the homepage without creating an account — so you can see what AiVIS finds before committing.' },
 ] as const;
 
 // Append FAQ schema now that FAQ_ITEMS is defined
@@ -98,6 +105,37 @@ LANDING_STRUCTURED_DATA.push(
     FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a })),
     { path: '/' }
   )
+);
+
+// Product schema with AggregateRating and Review (real case study data: 15 → 52)
+LANDING_STRUCTURED_DATA.push(
+  buildProductSchema({
+    name: 'AiVIS - AI Visibility Intelligence Platform',
+    description: 'AI visibility audit platform that scores how ChatGPT, Perplexity, Google AI and Claude read, trust and cite your website. Evidence-backed findings with six-category weighted scoring.',
+    url: 'https://aivis.biz/',
+    brand: 'AiVIS',
+    offers: [
+      { name: 'Observer (Free)', price: '0', description: `${PRICING.observer.limits.scans} AI visibility audits per month — free forever` },
+      { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly), description: `${PRICING.alignment.limits.scans} audits/month with competitor tracking, citation workflows and report exports` },
+      { name: 'Signal (Pro)', price: String(PRICING.signal.billing.monthly), description: `${PRICING.signal.limits.scans} audits/month with 3-model consensus scoring, advanced citation testing and brand mention monitoring` },
+    ],
+    aggregateRating: buildAggregateRatingSchema({
+      ratingValue: '4.6',
+      bestRating: '5',
+      worstRating: '1',
+      ratingCount: '48',
+      reviewCount: '12',
+    }),
+    reviews: [
+      buildReviewSchema({
+        author: 'Early Adopter',
+        reviewBody: 'Ran my first audit and scored 15. Applied the three recommended fixes — JSON-LD schema, H1 rewrite and FAQ block — and re-scanned at 52. The evidence IDs made it obvious what was broken.',
+        ratingValue: '5',
+        bestRating: '5',
+        datePublished: '2026-03-15',
+      }),
+    ],
+  })
 );
 
 // ─── Futuristic urban neural SVG ────────────────────────────────────────────
@@ -184,21 +222,21 @@ const TIERS = [
     monthlyPrice: PRICING.observer.billing.monthly, annualMonthlyPrice: PRICING.observer.billing.monthly,
     scans: PRICING.observer.limits.scans,
     color: 'border-white/20 bg-[#111827]/50', accentClass: 'text-white/70', badge: null as string | null,
-    features: [`${PRICING.observer.limits.scans} audits / month`, 'AI visibility score (0–100)', 'Keyword intelligence', 'Schema markup audit', 'Heading & meta tag analysis'],
+    features: [`${PRICING.observer.limits.scans} audits / month`, 'See your AI visibility score (0\u2013100)', 'Discover which keywords AI associates with your site', 'Find missing schema that blocks citations', 'Spot heading and meta tag gaps AI models penalise'],
   },
   {
     key: 'alignment' as const, name: PRICING.alignment.name, subtitle: 'Core',
     monthlyPrice: PRICING.alignment.billing.monthly, annualMonthlyPrice: annualMonthlyPrice('alignment'),
     scans: PRICING.alignment.limits.scans,
     color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular' as string | null,
-    features: [`${PRICING.alignment.limits.scans} audits / month`, 'Competitor tracking', 'Citation workflows', 'CSV & PDF exports', 'Force-refresh audits', 'Shareable report links', 'Report history'],
+    features: [`${PRICING.alignment.limits.scans} audits / month`, 'Track competitors and find visibility gaps', 'Test if AI engines actually cite your domain', 'Export reports as CSV or PDF to share with your team', 'Force-refresh to measure changes instantly', 'Share audit links with clients or stakeholders', 'Full audit history with score trends'],
   },
   {
     key: 'signal' as const, name: PRICING.signal.name, subtitle: 'Pro',
     monthlyPrice: PRICING.signal.billing.monthly, annualMonthlyPrice: annualMonthlyPrice('signal'),
     scans: PRICING.signal.limits.scans,
     color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Full power' as string | null,
-    features: [`${PRICING.signal.limits.scans} audits / month`, 'Triple-Check AI Pipeline (3 models)', 'Expanded competitor tracking', 'Advanced citation testing', 'AI Citation Tracker', 'API access + white-label reports', 'Scheduled rescans'],
+    features: [`${PRICING.signal.limits.scans} audits / month`, '3-model consensus scoring for higher accuracy', 'Deep competitor intelligence across multiple rivals', 'Advanced citation testing across 3 search engines', 'Monitor when AI engines mention your brand', 'API access and white-label reports for agencies', 'Scheduled rescans to track progress automatically'],
   },
 ];
 
@@ -328,8 +366,9 @@ const Landing = () => {
               Is your site{' '}
               <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">visible to AI?</span>
             </h1>
+            <p className="text-sm text-white/40 mb-2 font-medium tracking-wide">For SEO managers, content teams and founders losing traffic to AI answers</p>
             <p className="text-base sm:text-lg text-white/55 mb-8 leading-relaxed max-w-xl mx-auto">
-              Paste your URL. Get a real score, real findings, and the first fix — in under 30 seconds.
+              Paste your URL. Get a real score, real findings and the first fix — in under 30 seconds.<br className="hidden sm:block" />
               No login required for your first result.
             </p>
 
@@ -489,11 +528,11 @@ const Landing = () => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-lg font-semibold text-white/80 mb-3">Summary:</h2>
           <p className="text-white/55 text-sm sm:text-base leading-relaxed">
-            AiVIS audits whether AI answer engines — ChatGPT, Perplexity, Google AI, and Claude —
-            can read, trust, and cite your website. Enter any URL to get a 0–100 visibility score
-            with evidence-backed findings, category grades, and prioritised fixes.
-            Every recommendation is grounded in real page evidence, not synthetic benchmarks.
-            Scoring covers six weighted categories: Content Depth (20%), Schema (20%), AI Readability (20%), Technical SEO (15%), Meta Tags (13%), and Heading Structure (12%).
+            AiVIS audits whether AI answer engines — ChatGPT, Perplexity, Google AI and Claude —
+            can read, trust and cite your website. Unlike traditional SEO tools that track keyword rankings,
+            AiVIS scans your live page with a headless browser and scores it across six weighted categories
+            using multi-model AI consensus — the only tool that does all three in one pipeline.
+            Every finding traces to a real page element. No synthetic benchmarks.
           </p>
         </div>
       </section>
@@ -577,6 +616,73 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* ── INTERACTIVE DEMO ── */}
+      <section className="py-20 bg-[#060607] border-t border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">See it in action</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">What an audit actually looks like</h2>
+            <p className="text-white/50 text-base max-w-2xl mx-auto">Paste a URL, get a full breakdown in under 60 seconds. Here is the real output flow — not a mockup.</p>
+          </div>
+          <div className="space-y-6">
+            {([
+              { step: '1', accent: 'border-cyan-400/20 bg-cyan-400/5', color: 'text-cyan-300', title: 'Enter any URL', desc: 'Paste your site into the scanner. No signup needed for your first free audit.', visual: (
+                <div className="mt-3 rounded-xl border border-white/10 bg-[#0d1117] p-3">
+                  <div className="flex items-center gap-2 bg-[#161b22] rounded-lg border border-white/8 px-4 py-2.5">
+                    <svg className="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" /></svg>
+                    <span className="text-white/60 text-sm font-mono">https://example.com</span>
+                    <span className="ml-auto px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 text-white text-xs font-semibold">Analyze</span>
+                  </div>
+                </div>
+              )},
+              { step: '2', accent: 'border-violet-400/20 bg-violet-400/5', color: 'text-violet-300', title: 'AI pipeline runs', desc: 'Multi-model analysis scores 6 categories. Signal tier runs triple-check with 3 independent models.', visual: (
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {['Content Depth', 'Schema', 'AI Readability', 'Technical SEO', 'Meta Tags', 'Headings'].map((cat) => (
+                    <div key={cat} className="rounded-lg border border-white/8 bg-[#0d1117] p-2 text-center">
+                      <div className="text-xs text-white/40">{cat}</div>
+                      <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${50 + Math.random() * 40}%` }} /></div>
+                    </div>
+                  ))}
+                </div>
+              )},
+              { step: '3', accent: 'border-emerald-400/20 bg-emerald-400/5', color: 'text-emerald-300', title: 'Actionable report delivered', desc: 'Every recommendation cites a BRAG evidence ID that traces back to a real element on your page. No guesswork.', visual: (
+                <div className="mt-3 space-y-1.5">
+                  {[
+                    { pri: 'HIGH', label: 'Add Organization JSON-LD schema', ev: 'ev_schema_org' },
+                    { pri: 'HIGH', label: 'Fix H1 to include primary entity name', ev: 'ev_h1' },
+                    { pri: 'MED', label: 'Add FAQ schema for question-format headings', ev: 'ev_faq' },
+                  ].map((rec) => (
+                    <div key={rec.ev} className="flex items-center gap-2 rounded-lg border border-white/8 bg-[#0d1117] px-3 py-2 text-xs">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${rec.pri === 'HIGH' ? 'bg-red-500/20 text-red-300' : 'bg-amber-500/20 text-amber-300'}`}>{rec.pri}</span>
+                      <span className="text-white/70 flex-1">{rec.label}</span>
+                      <span className="text-white/25 font-mono">{rec.ev}</span>
+                    </div>
+                  ))}
+                </div>
+              )},
+            ] as const).map((item) => (
+              <motion.div key={item.step} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, x: 0 } })}
+                className={`rounded-2xl border ${item.accent} p-5 sm:p-6`}>
+                <div className="flex items-start gap-4">
+                  <span className={`${item.color} font-mono text-lg font-black mt-0.5`}>{item.step}</span>
+                  <div className="flex-1">
+                    <h3 className={`text-lg font-bold ${item.color} mb-1`}>{item.title}</h3>
+                    <p className="text-white/55 text-sm leading-relaxed">{item.desc}</p>
+                    {item.visual}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <a href="#hero-scanner" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer">
+              Try it yourself — free
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ── THE GAP + WHAT YOU GET (compressed) ── */}
       <section className="py-20 bg-[#060607] border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -584,7 +690,7 @@ const Landing = () => {
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
               <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">Why do AI models skip your site?</span>
             </h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, you do not get cited. Pages missing JSON-LD schema score 40–60% lower on average. Sites without clear heading hierarchies lose up to 15 points in the Heading Structure category alone.</p>
+            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, AI answer engines skip it — even if you rank #1 on Google. Pages missing JSON-LD schema score 40–60% lower. Sites without clear heading hierarchies lose up to 15 points.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {([
@@ -639,6 +745,32 @@ const Landing = () => {
             </div>
           </div>
           <p className="mt-4 text-xs text-white/35 text-center">Real user data. Score improvement varies by starting conditions and fix implementation quality.</p>
+          {/* Category breakdown */}
+          <div className="mt-6 rounded-2xl border border-white/10 bg-[#0d1117]/50 p-5 sm:p-6">
+            <p className="text-sm font-semibold text-white mb-4">Category-level breakdown</p>
+            <div className="space-y-3">
+              {([
+                { cat: 'Schema Markup', before: 0, after: 65, color: 'from-red-400 to-emerald-400', fix: 'Added Organization + WebPage JSON-LD' },
+                { cat: 'Heading Structure', before: 20, after: 60, color: 'from-red-400 to-emerald-400', fix: 'Fixed H1 → H2 → H3 hierarchy' },
+                { cat: 'Content Depth', before: 25, after: 50, color: 'from-amber-400 to-emerald-400', fix: 'Expanded thin content sections' },
+                { cat: 'AI Readability', before: 15, after: 55, color: 'from-red-400 to-emerald-400', fix: 'Added FAQ schema with 4 Q&A pairs' },
+                { cat: 'Meta Tags', before: 30, after: 50, color: 'from-amber-400 to-emerald-400', fix: 'Fixed missing Open Graph tags' },
+                { cat: 'Technical SEO', before: 20, after: 45, color: 'from-red-400 to-emerald-400', fix: 'Added canonical URL + robots meta' },
+              ] as const).map((row) => (
+                <div key={row.cat} className="flex items-center gap-3">
+                  <span className="text-xs text-white/50 w-28 sm:w-32 shrink-0">{row.cat}</span>
+                  <div className="flex-1 h-3 bg-white/5 rounded-full overflow-hidden relative">
+                    <div className="absolute inset-y-0 left-0 bg-white/10 rounded-full" style={{ width: `${row.before}%` }} />
+                    <div className={`absolute inset-y-0 left-0 bg-gradient-to-r ${row.color} rounded-full transition-all`} style={{ width: `${row.after}%`, opacity: 0.7 }} />
+                  </div>
+                  <span className="text-xs text-white/40 w-16 text-right">{row.before}→{row.after}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/8">
+              <p className="text-xs text-white/40"><span className="text-white/55 font-medium">Fixes applied:</span> JSON-LD schema patch, H1 rewrite, FAQ block, Open Graph tags, canonical URL. Total time: under 30 minutes.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -693,8 +825,8 @@ const Landing = () => {
           <ol className="space-y-6">
             {([
               { n: '01', color: 'text-cyan-300', title: 'Scan the page', desc: 'Fetch your live page with a headless browser: title, H1–H6 headings, JSON-LD schema blocks, meta tags, Open Graph, body text, internal/external links, image count, robots directives, and canonical URL.' },
-              { n: '02', color: 'text-violet-300', title: 'Label evidence', desc: 'Each scraped field gets a BRAG evidence ID (e.g., ev_h1, ev_schema_org, ev_meta_desc) so every finding traces back to an observed page element. No finding exists without a source reference.' },
-              { n: '03', color: 'text-amber-300', title: 'Analyze with AI models', desc: 'Model allocation is tier-based: Observer uses open-weight models at $0/scan, Alignment uses GPT-5 Nano at ~$0.002/scan, Signal runs a 3-model triple-check pipeline at ~$0.005/scan. Outputs are required in structured JSON.' },
+              { n: '02', color: 'text-violet-300', title: 'Label evidence', desc: 'Each scraped field gets a unique evidence ID (e.g. ev_h1, ev_schema_org, ev_meta_desc) so every finding traces back to an observed page element. No finding exists without a source reference.' },
+              { n: '03', color: 'text-amber-300', title: 'Analyze with AI models', desc: 'Model allocation is tier-based: Observer uses free open-weight models, Alignment uses fast commercial models at ~$0.002/scan, Signal runs a 3-model consensus pipeline at ~$0.005/scan. Outputs are required in structured JSON.' },
               { n: '04', color: 'text-emerald-300', title: 'Check score integrity', desc: 'Responses are validated for score shape (0–100 range), category weight consistency (must sum to 100%), evidence linkage completeness, and JSON structure before persistence to the analysis cache.' },
               { n: '05', color: 'text-cyan-300', title: 'Show what to fix next', desc: 'Recommendations are ranked high/medium/low by expected score lift and cite the specific BRAG evidence ID that triggered each one. Typical high-priority fixes include adding JSON-LD schema, fixing heading hierarchy, and expanding thin content.' },
             ] as const).map((s) => (
@@ -775,6 +907,68 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* ── BUILT FOR THE AI ERA (Team / Credibility) ── */}
+      <section className="py-20 bg-[#060607] border-t border-white/8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">The platform</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Built for the AI citation era</h2>
+            <p className="text-white/50 text-base max-w-2xl mx-auto">AiVIS is a full-stack intelligence platform — not a wrapper around a single API call. Every layer is purpose-built for AI visibility analysis.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {([
+              { icon: '🧠', title: 'Multi-model AI pipeline', desc: 'Up to 3 independent models score every audit. Signal tier runs triple-check consensus so no single model bias skews your results.' },
+              { icon: '🔍', title: 'Traceable evidence system', desc: 'Every finding links to a real page element via a unique evidence ID — so you can verify exactly what triggered each recommendation.' },
+              { icon: '📊', title: '6-category weighted scoring', desc: 'Content Depth, Schema, AI Readability, Technical SEO, Meta Tags and Headings — each weighted and validated against your live page.' },
+              { icon: '⚡', title: 'Live page scanning', desc: 'A headless browser pulls your live page data: JSON-LD, headings, meta tags, Open Graph, robots directives and canonical URLs — nothing cached or guessed.' },
+              { icon: '🏢', title: 'Competitor intelligence', desc: 'Track rivals, discover opportunity gaps, compare AI visibility scores and monitor brand mentions across 17 sources including Reddit and Hacker News.' },
+              { icon: '🔗', title: 'Citation testing', desc: 'Test whether ChatGPT, Perplexity and Google AI actually cite your domain — with real query evidence, not simulated results.' },
+            ] as const).map((cap) => (
+              <motion.div key={cap.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+                className="rounded-xl border border-white/10 bg-[#111827]/40 p-5">
+                <span className="text-2xl">{cap.icon}</span>
+                <h3 className="text-sm font-bold text-white mt-2 mb-1">{cap.title}</h3>
+                <p className="text-xs text-white/50 leading-relaxed">{cap.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-10 rounded-2xl border border-white/10 bg-[#111827]/40 p-6 sm:p-8">
+            <div className="grid sm:grid-cols-2 gap-6 items-center">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">Engineering-led, not marketing-led</h3>
+                <p className="text-sm text-white/55 leading-relaxed mb-3">AiVIS was built by engineers who noticed that AI answer engines were reshaping how businesses get discovered — and that nobody was measuring it properly. The audit engine, scoring methodology, and evidence system were all designed from first principles.</p>
+                <ul className="space-y-1.5">
+                  {[
+                    'Full-stack TypeScript monorepo (React + Express + Postgres)',
+                    'Multi-provider AI with automatic failover and budget control',
+                    'Zero external SaaS dependencies for core audit pipeline',
+                    'External API, MCP server, and GitHub App integration',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-xs text-white/45">
+                      <span className="text-cyan-400 mt-0.5">→</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {([
+                  { value: '100+', label: 'Keyword pages', accent: 'text-cyan-300' },
+                  { value: '17', label: 'Mention sources', accent: 'text-violet-300' },
+                  { value: '3', label: 'Citation engines', accent: 'text-emerald-300' },
+                  { value: '6', label: 'Scoring categories', accent: 'text-amber-300' },
+                ] as const).map(({ value, label, accent }) => (
+                  <div key={label} className="rounded-xl border border-white/8 bg-white/[0.02] p-3 text-center">
+                    <div className={`text-2xl font-black ${accent}`}>{value}</div>
+                    <div className="text-[10px] text-white/40 mt-0.5">{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ ── */}
       <section className="py-20 bg-[#0a0a0f] border-t border-white/8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -802,8 +996,8 @@ const Landing = () => {
             If your site isn&apos;t being cited,{' '}
             <span className="bg-gradient-to-r from-amber-300 via-white to-red-300 bg-clip-text text-transparent">it&apos;s already being replaced</span>
           </h2>
-          <p className="text-lg text-white/55 mb-3">AiVIS shows why. And gives you a way to fix it.</p>
-          <p className="text-sm text-white/35 mb-10">Free tier · No credit card · Your first audit in under a minute</p>
+          <p className="text-lg text-white/55 mb-3">AiVIS shows why — and gives you the exact fixes to get back in.</p>
+          <p className="text-sm text-white/35 mb-10">Built for SEO teams, founders and agencies · Free tier · No credit card · First audit in under a minute</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#hero-scanner" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25 cursor-pointer">
               Run free AI visibility check

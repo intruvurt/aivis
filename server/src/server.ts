@@ -7300,6 +7300,38 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       `HTTPS: ${targetUrl.startsWith('https') ? 'enabled - OK' : 'NOT HTTPS - CRITICAL trust signal missing'}`,
       `TLDR / summary block: ${sd.hasTldr ? `detected - "${(sd.tldrText || '').substring(0, 80)}"` : 'not detected - consider adding a key-takeaways or TL;DR section'}`,
     ];
+
+    // ── Content clarity diagnostics (ICP, jargon, benefit vs feature, schema completeness) ──
+    const _bodyLower = (sd.body || '').toLowerCase();
+    const _bodyText = sd.body || '';
+
+    // ICP / target audience detection
+    const icpPatterns = /\b(for|built for|designed for|ideal for|perfect for|made for|helps?)\s+(seo|marketing|content|product|dev|founder|startup|agenc|team|manager|executive|cmo|cto|marketer|writer|freelance|small business|enterprise|saas|ecommerce|b2b|b2c)/i;
+    const hasIcp = icpPatterns.test(_bodyText);
+    diagnosticFlags.push(`Target audience (ICP): ${hasIcp ? 'DETECTED - page identifies a specific audience' : 'NOT DETECTED - no explicit target audience statement found. Pages that name their ICP (e.g. "built for SEO managers") convert and get cited more reliably'}`);
+
+    // Unexplained acronyms / jargon detection
+    const acronymRe = /\b[A-Z]{2,6}\b/g;
+    const foundAcronyms = new Set((_bodyText.match(acronymRe) || []).filter(a => !['AI', 'SEO', 'URL', 'HTML', 'CSS', 'API', 'FAQ', 'PDF', 'CSV', 'US', 'UK', 'EU', 'CEO', 'CTO', 'CMO', 'ROI', 'KPI', 'PR', 'QA', 'CMS', 'DNS', 'SSL', 'TLS', 'HTTP', 'HTTPS', 'JSON', 'XML', 'RSS', 'CDN', 'SPA', 'SSR', 'SSG', 'CTA', 'OG', 'USD', 'GBP', 'EUR', 'OK'].includes(a)));
+    const unexplainedAcronyms: string[] = [];
+    for (const acr of foundAcronyms) {
+      // Check if the acronym is expanded/explained nearby
+      const expandedRe = new RegExp(`${acr}\\s*[:(–-]|stands for|meaning|abbreviated|also known as`, 'i');
+      if (!expandedRe.test(_bodyText)) unexplainedAcronyms.push(acr);
+    }
+    diagnosticFlags.push(`Unexplained acronyms: ${unexplainedAcronyms.length === 0 ? 'none found - OK' : `${unexplainedAcronyms.length} found (${unexplainedAcronyms.slice(0, 8).join(', ')}) - consider expanding on first use for non-technical readers and AI extraction`}`);
+
+    // Benefit vs feature analysis (pricing / feature sections)
+    const featureOnlyPatterns = /\b(api access|csv export|pdf export|white.?label|scheduled|triple.?check|competitor track|citation test|brand mention|force.?refresh)\b/i;
+    const benefitPatterns = /\b(save time|increase|improve|boost|reduce|find out|discover|track .*(progress|changes)|share with|measure|monitor|automate|get (cited|found|visible))\b/i;
+    const hasFeatureOnly = featureOnlyPatterns.test(_bodyText);
+    const hasBenefitLanguage = benefitPatterns.test(_bodyText);
+    diagnosticFlags.push(`Benefit orientation: ${hasBenefitLanguage ? 'benefit language DETECTED' : 'NO benefit language found'} | ${hasFeatureOnly && !hasBenefitLanguage ? 'Features listed without outcome context - consider framing features as user benefits' : 'OK'}`);
+
+    // Schema completeness (Review, Product, FAQ count)
+    // These get updated later after schema extraction, but we flag the intent here
+    diagnosticFlags.push(`Schema completeness intent: check for Review/AggregateRating, Product with Offer pricing, FAQPage with 8+ items, HowTo steps`);
+
     // ────────────────────────────────────────────────────────────────────────
 
     // Evidence manifest
@@ -7322,6 +7354,9 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       ev_images: `${sd.images || 0} total images`,
       ev_img_alt: _imgAltGrade,
       ev_robots: _robotsAiGrade,
+      ev_icp: hasIcp ? 'Target audience explicitly identified on page' : 'No explicit target audience / ICP statement found on page',
+      ev_jargon: unexplainedAcronyms.length === 0 ? 'No unexplained acronyms detected' : `${unexplainedAcronyms.length} unexplained acronym(s): ${unexplainedAcronyms.slice(0, 8).join(', ')}`,
+      ev_benefit_framing: `${hasBenefitLanguage ? 'Benefit language present' : 'No benefit/outcome language detected'}${hasFeatureOnly && !hasBenefitLanguage ? ' - features listed without user outcome context' : ''}`,
       ev_llms_txt: (() => {
         const lt = (sd as any).llmsTxt;
         if (!lt?.fetched) return 'llms.txt: not fetched (timeout or not attempted)';
@@ -7801,6 +7836,20 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     if (evidenceManifest['ev_schema_quality']) {
       diagnosticFlags.push(`Schema quality: ${evidenceManifest['ev_schema_quality']}`);
     }
+    // Schema completeness: check for Review, Product, HowTo types
+    const _schemaTypes = schemaMarkup.schema_types.map((t: string) => t.toLowerCase());
+    const hasReviewSchema = _schemaTypes.some((t: string) => t.includes('review') || t.includes('aggregaterating'));
+    const hasProductSchema = _schemaTypes.some((t: string) => t.includes('product'));
+    const hasHowToSchema = _schemaTypes.some((t: string) => t.includes('howto'));
+    const schemaGaps: string[] = [];
+    if (!hasReviewSchema) schemaGaps.push('Review/AggregateRating');
+    if (!hasProductSchema) schemaGaps.push('Product with Offer');
+    if (!hasHowToSchema) schemaGaps.push('HowTo');
+    if (!schemaMarkup.has_faq_schema) schemaGaps.push('FAQPage');
+    evidenceManifest['ev_schema_completeness'] = schemaGaps.length === 0
+      ? 'All key schema types present (Review, Product, HowTo, FAQ)'
+      : `Missing schema types: ${schemaGaps.join(', ')} - adding these improves rich result eligibility and AI citation confidence`;
+    diagnosticFlags.push(`Schema completeness: ${evidenceManifest['ev_schema_completeness']}`);
     diagnosticFlags.push(`llms.txt: ${evidenceManifest['ev_llms_txt']}`);
 
     // ── Recompute bodySnippet now that OCR validation has populated ocrValidationResult ──
@@ -7907,6 +7956,13 @@ RECOMMENDATION CONTRACT - every recommendation MUST follow this contract:
 3. evidence_ids must cite only real [ev_*] IDs listed above that confirm the problem.
 4. scorefix_category must be one of: "schema_structured_data" | "meta_tags" | "heading_structure" | "content_depth" | "technical_seo" | "ai_readability" | "image_accessibility" | "internal_linking" | "robots_access"
 5. Do not invent problems not backed by the DIAGNOSTIC SNAPSHOT or EVIDENCE.
+
+ADDITIONAL CHECKS (flag these as recommendations when detected):
+- ICP clarity: if the page does not name a specific target audience (e.g. "for SEO managers" or "built for content teams"), recommend adding an explicit audience statement in the hero/subheadline. Category: content_depth.
+- Jargon and unexplained acronyms: if the page uses domain-specific acronyms without expansion on first use, recommend plain-language alternatives or inline definitions. Category: ai_readability.
+- Benefit vs feature framing: if pricing or feature sections list technical capabilities without stating the user outcome (e.g. "CSV export" instead of "Export reports to share with your team"), recommend rewriting as benefit-first statements. Category: content_depth.
+- Schema completeness: check for Review/AggregateRating (social proof), Product schema with Offer and pricing, FAQPage with 8+ items, and HowTo steps. Recommend adding any that are missing. Category: schema_structured_data.
+- Scannability: if the H1 or subheadline exceeds 80 characters, or if sections lack subheadings, recommend splitting for mobile readability. Category: heading_structure.
 
 Return ONLY valid JSON (no markdown, no fences):
 {"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"keyword_intelligence":[{"keyword":"<from topical_keywords>","intent":"informational|commercial|navigational|transactional","volume_tier":"low|medium|high|very_high","competition":"low|medium|high","opportunity":<0-100>,"trend":"rising|stable|declining"}],"brand_entities":["<found on page>"],"primary_topics":["<3-5>"],"faq_count":<int>,"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta|schema|content|technical|readability","found":"<quote actual text from page>","status":"good|warning|critical|missing","note":"<specific why with measured value>","source_id":"<ev_* ID>"}],"recommendations":[{"priority":"high|medium|low","category":"<category_grade label>","scorefix_category":"<one of the 9 above>","title":"<short specific title>","description":"Measured: <actual value>. Target: <recommended value>. <explanation>","impact":"<specific projected impact with estimated score lift>","difficulty":"easy|medium|hard","implementation":"<specific steps with code/markup example>","evidence_ids":["<ev_*"]}],"crypto_intelligence":{"has_crypto_signals":false,"summary":"<or detected>","detected_assets":[],"keywords":[],"wallet_addresses":[],"sentiment":"neutral","risk_notes":[],"chain_networks":[]}}
@@ -10416,6 +10472,150 @@ app.get('/api/admin/db/stats', adminLimiter, async (req, res) => {
   } catch (e: any) {
     console.error('[Admin] DB stats failed:', e);
     return res.status(500).json({ error: 'Failed to fetch DB stats' });
+  }
+});
+
+// ─── Admin: Pitch-ready metrics for investor decks ──────────────────────────
+app.get('/api/admin/pitch-metrics', adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  try {
+    const pool = getPool();
+    const [
+      totalsResult,
+      tierDistResult,
+      weeklyGrowthResult,
+      revenueResult,
+      conversionResult,
+      featureAdoptionResult,
+      topScoresResult,
+    ] = await Promise.all([
+      // Core totals
+      pool.query(`
+        SELECT
+          (SELECT COUNT(*) FROM users) AS total_users,
+          (SELECT COUNT(*) FROM users WHERE is_verified = TRUE) AS verified_users,
+          (SELECT COUNT(*) FROM audits) AS total_audits,
+          (SELECT COUNT(DISTINCT user_id) FROM audits) AS users_who_audited,
+          (SELECT COALESCE(AVG(score), 0) FROM audits WHERE score IS NOT NULL) AS avg_score,
+          (SELECT COUNT(*) FROM users WHERE created_at > NOW() - INTERVAL '7 days') AS signups_last_7d,
+          (SELECT COUNT(*) FROM users WHERE created_at > NOW() - INTERVAL '30 days') AS signups_last_30d,
+          (SELECT COUNT(*) FROM audits WHERE created_at > NOW() - INTERVAL '7 days') AS audits_last_7d,
+          (SELECT COUNT(*) FROM audits WHERE created_at > NOW() - INTERVAL '30 days') AS audits_last_30d
+      `),
+      // Tier distribution
+      pool.query(`
+        SELECT COALESCE(tier, 'observer') AS tier, COUNT(*) AS count
+        FROM users GROUP BY COALESCE(tier, 'observer') ORDER BY count DESC
+      `),
+      // Weekly user growth (last 12 weeks)
+      pool.query(`
+        SELECT date_trunc('week', created_at)::date AS week, COUNT(*) AS signups
+        FROM users
+        WHERE created_at > NOW() - INTERVAL '12 weeks'
+        GROUP BY week ORDER BY week
+      `),
+      // Revenue metrics
+      pool.query(`
+        SELECT
+          COALESCE(SUM(amount_cents) FILTER (WHERE status = 'completed'), 0) AS total_revenue_cents,
+          COUNT(*) FILTER (WHERE status = 'completed') AS completed_payments,
+          COUNT(*) FILTER (WHERE subscription_status = 'active') AS active_subscriptions,
+          COALESCE(SUM(amount_cents) FILTER (WHERE status = 'completed' AND completed_at > NOW() - INTERVAL '30 days'), 0) AS revenue_last_30d_cents,
+          COUNT(*) FILTER (WHERE status = 'completed' AND completed_at > NOW() - INTERVAL '30 days') AS payments_last_30d
+        FROM payments
+      `),
+      // Conversion funnel
+      pool.query(`
+        SELECT
+          (SELECT COUNT(*) FROM users) AS total_signups,
+          (SELECT COUNT(*) FROM users WHERE is_verified = TRUE) AS verified,
+          (SELECT COUNT(DISTINCT user_id) FROM audits) AS ran_audit,
+          (SELECT COUNT(*) FROM users WHERE tier IN ('alignment', 'signal', 'scorefix')) AS paid_tier,
+          (SELECT COUNT(*) FROM users WHERE trial_used = TRUE) AS started_trial,
+          (SELECT COUNT(*) FROM users WHERE trial_converted = TRUE) AS converted_trial
+      `),
+      // Feature adoption (last 30 days)
+      pool.query(`
+        SELECT
+          (SELECT COUNT(DISTINCT user_id) FROM competitor_tracking WHERE created_at > NOW() - INTERVAL '30 days') AS competitor_users,
+          (SELECT COUNT(DISTINCT user_id) FROM citation_tests WHERE created_at > NOW() - INTERVAL '30 days') AS citation_users,
+          (SELECT COUNT(*) FROM auto_score_fix_jobs WHERE created_at > NOW() - INTERVAL '30 days') AS autofix_jobs,
+          (SELECT COUNT(*) FROM audits WHERE created_at > NOW() - INTERVAL '30 days' AND tier_at_analysis = 'signal') AS signal_audits_30d
+      `),
+      // Top score improvements (for case studies)
+      pool.query(`
+        SELECT score_before, score_after, score_delta, domain, created_at
+        FROM auto_score_fix_jobs
+        WHERE rescan_completed_at IS NOT NULL AND score_delta > 0
+        ORDER BY score_delta DESC LIMIT 5
+      `),
+    ]);
+
+    const totals = totalsResult.rows[0] || {};
+    const revenue = revenueResult.rows[0] || {};
+    const conversion = conversionResult.rows[0] || {};
+    const adoption = featureAdoptionResult.rows[0] || {};
+
+    return res.json({
+      success: true,
+      generated_at: new Date().toISOString(),
+      headline: {
+        total_users: Number(totals.total_users || 0),
+        total_audits: Number(totals.total_audits || 0),
+        avg_score: Math.round(Number(totals.avg_score || 0)),
+        signups_last_7d: Number(totals.signups_last_7d || 0),
+        signups_last_30d: Number(totals.signups_last_30d || 0),
+        audits_last_7d: Number(totals.audits_last_7d || 0),
+        audits_last_30d: Number(totals.audits_last_30d || 0),
+      },
+      tier_distribution: tierDistResult.rows.map((r: any) => ({
+        tier: r.tier,
+        count: Number(r.count),
+      })),
+      weekly_growth: weeklyGrowthResult.rows.map((r: any) => ({
+        week: r.week,
+        signups: Number(r.signups),
+      })),
+      revenue: {
+        total_cents: Number(revenue.total_revenue_cents || 0),
+        total_usd: +(Number(revenue.total_revenue_cents || 0) / 100).toFixed(2),
+        completed_payments: Number(revenue.completed_payments || 0),
+        active_subscriptions: Number(revenue.active_subscriptions || 0),
+        last_30d_cents: Number(revenue.revenue_last_30d_cents || 0),
+        last_30d_usd: +(Number(revenue.revenue_last_30d_cents || 0) / 100).toFixed(2),
+        mrr_estimate_usd: +(Number(revenue.revenue_last_30d_cents || 0) / 100).toFixed(2),
+      },
+      conversion_funnel: {
+        total_signups: Number(conversion.total_signups || 0),
+        verified: Number(conversion.verified || 0),
+        ran_audit: Number(conversion.ran_audit || 0),
+        paid_tier: Number(conversion.paid_tier || 0),
+        started_trial: Number(conversion.started_trial || 0),
+        converted_trial: Number(conversion.converted_trial || 0),
+        signup_to_audit_pct: Number(conversion.total_signups) > 0
+          ? +((Number(conversion.ran_audit) / Number(conversion.total_signups)) * 100).toFixed(1)
+          : 0,
+        audit_to_paid_pct: Number(conversion.ran_audit) > 0
+          ? +((Number(conversion.paid_tier) / Number(conversion.ran_audit)) * 100).toFixed(1)
+          : 0,
+      },
+      feature_adoption_30d: {
+        competitor_tracking_users: Number(adoption.competitor_users || 0),
+        citation_testing_users: Number(adoption.citation_users || 0),
+        autofix_jobs: Number(adoption.autofix_jobs || 0),
+        signal_audits: Number(adoption.signal_audits_30d || 0),
+      },
+      top_score_improvements: topScoresResult.rows.map((r: any) => ({
+        domain: r.domain,
+        before: r.score_before,
+        after: r.score_after,
+        delta: r.score_delta,
+        date: r.created_at,
+      })),
+    });
+  } catch (e: any) {
+    console.error('[Admin] Pitch metrics failed:', e);
+    return res.status(500).json({ error: 'Failed to generate pitch metrics' });
   }
 });
 

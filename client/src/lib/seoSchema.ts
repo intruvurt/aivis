@@ -448,3 +448,81 @@ export function buildDefinedTermSetSchema(input: {
     })),
   };
 }
+
+export function buildAggregateRatingSchema(input: {
+  ratingValue: string;
+  bestRating?: string;
+  worstRating?: string;
+  ratingCount: string;
+  reviewCount?: string;
+}): Record<string, unknown> {
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: input.ratingValue,
+    bestRating: input.bestRating ?? '100',
+    worstRating: input.worstRating ?? '0',
+    ratingCount: input.ratingCount,
+    ...(input.reviewCount ? { reviewCount: input.reviewCount } : {}),
+  };
+}
+
+export function buildReviewSchema(input: {
+  author: string;
+  reviewBody: string;
+  ratingValue: string;
+  bestRating?: string;
+  datePublished?: string;
+}): Record<string, unknown> {
+  return {
+    '@type': 'Review',
+    author: { '@type': 'Person', name: input.author },
+    reviewBody: input.reviewBody,
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: input.ratingValue,
+      bestRating: input.bestRating ?? '100',
+    },
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+  };
+}
+
+export function buildProductSchema(input: {
+  name: string;
+  description: string;
+  url?: string;
+  brand?: string;
+  offers?: Array<{
+    name: string;
+    price: string;
+    priceCurrency?: string;
+    availability?: string;
+    priceValidUntil?: string;
+    description?: string;
+  }>;
+  aggregateRating?: Record<string, unknown>;
+  reviews?: Array<Record<string, unknown>>;
+}): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: input.name,
+    description: input.description,
+    ...(input.url ? { url: input.url } : {}),
+    ...(input.brand ? { brand: { '@type': 'Brand', name: input.brand } } : {}),
+    ...(input.offers?.length
+      ? {
+          offers: input.offers.map((o) => ({
+            '@type': 'Offer',
+            name: o.name,
+            price: o.price,
+            priceCurrency: o.priceCurrency ?? 'USD',
+            availability: o.availability ?? DEFAULT_OFFER_AVAILABILITY,
+            priceValidUntil: o.priceValidUntil ?? getDefaultOfferPriceValidUntil(),
+            ...(o.description ? { description: o.description } : {}),
+          })),
+        }
+      : {}),
+    ...(input.aggregateRating ? { aggregateRating: input.aggregateRating } : {}),
+    ...(input.reviews?.length ? { review: input.reviews } : {}),
+  };
+}

@@ -102,6 +102,206 @@ const DEFAULT_PAYMENT_SUMMARY: AdminPaymentSummary = {
 
 const NEWSLETTER_TIERS: NewsletterTier[] = ["observer", "alignment", "signal", "scorefix"];
 
+// ── Pitch Metrics Panel ─────────────────────────────────────────────────────
+interface PitchMetrics {
+  headline: {
+    total_users: number; total_audits: number; avg_score: number;
+    signups_last_7d: number; signups_last_30d: number;
+    audits_last_7d: number; audits_last_30d: number;
+  };
+  tier_distribution: { tier: string; count: number }[];
+  weekly_growth: { week: string; signups: number }[];
+  revenue: {
+    total_usd: number; active_subscriptions: number;
+    last_30d_usd: number; mrr_estimate_usd: number;
+    completed_payments: number;
+  };
+  conversion_funnel: {
+    total_signups: number; verified: number; ran_audit: number;
+    paid_tier: number; started_trial: number; converted_trial: number;
+    signup_to_audit_pct: number; audit_to_paid_pct: number;
+  };
+  feature_adoption_30d: {
+    competitor_tracking_users: number; citation_testing_users: number;
+    autofix_jobs: number; signal_audits: number;
+  };
+  top_score_improvements: {
+    domain: string; before: number; after: number; delta: number; date: string;
+  }[];
+  generated_at: string;
+}
+
+function PitchMetricsPanel({ adminHeaders, isAdmin, adminKey, currencyFormatter }: {
+  adminHeaders: Record<string, string>;
+  isAdmin: boolean;
+  adminKey: string;
+  currencyFormatter: Intl.NumberFormat;
+}) {
+  const [metrics, setMetrics] = useState<PitchMetrics | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const fetchPitchMetrics = async () => {
+    if (!isAdmin || !adminKey.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/pitch-metrics`, {
+        method: "GET",
+        headers: adminHeaders,
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`Failed (${res.status})`);
+      const data = await res.json();
+      setMetrics(data);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to load pitch metrics");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const maxBar = metrics?.weekly_growth?.length
+    ? Math.max(...metrics.weekly_growth.map((w) => w.signups), 1)
+    : 1;
+
+  return (
+    <div className="bg-charcoal rounded-lg shadow-sm p-6 mt-6 mb-8 border border-violet-400/20">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <span className="text-violet-300">&#9670;</span> Pitch Metrics
+            <span className="text-xs font-normal text-white/40 ml-2">TC Battlefield Ready</span>
+          </h2>
+          <p className="text-sm text-white/60 mt-1">One-click KPI snapshot for investor decks and pitch rehearsal.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => { setExpanded(!expanded); if (!metrics) fetchPitchMetrics(); }}
+          disabled={loading}
+          className="bg-violet-500/20 text-violet-200 border border-violet-400/30 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-violet-500/30 transition disabled:opacity-50"
+        >
+          {loading ? "Loading…" : expanded ? "Collapse" : "Load Pitch Metrics"}
+        </button>
+      </div>
+
+      {expanded && metrics && (
+        <div className="mt-6 space-y-6">
+          {/* Headline KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: "Total Users", value: metrics.headline.total_users.toLocaleString(), accent: "text-cyan-300" },
+              { label: "Total Audits", value: metrics.headline.total_audits.toLocaleString(), accent: "text-violet-300" },
+              { label: "Avg Score", value: String(metrics.headline.avg_score), accent: "text-amber-300" },
+              { label: "Signups (30d)", value: String(metrics.headline.signups_last_30d), accent: "text-emerald-300" },
+              { label: "Audits (7d)", value: String(metrics.headline.audits_last_7d), accent: "text-cyan-300" },
+              { label: "Audits (30d)", value: String(metrics.headline.audits_last_30d), accent: "text-violet-300" },
+              { label: "MRR Estimate", value: currencyFormatter.format(metrics.revenue.mrr_estimate_usd), accent: "text-emerald-300" },
+              { label: "Active Subs", value: String(metrics.revenue.active_subscriptions), accent: "text-amber-300" },
+            ].map(({ label, value, accent }) => (
+              <div key={label} className="rounded-lg border border-white/10 bg-[#323a4c]/45 p-3 text-center">
+                <p className="text-xs text-white/50 uppercase tracking-wide">{label}</p>
+                <p className={`mt-1 text-2xl font-bold ${accent}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Conversion Funnel */}
+          <div className="rounded-lg border border-white/10 p-4">
+            <p className="text-sm font-semibold text-white mb-3">Conversion Funnel</p>
+            <div className="space-y-2">
+              {[
+                { label: "Signed up", count: metrics.conversion_funnel.total_signups, pct: 100 },
+                { label: "Verified email", count: metrics.conversion_funnel.verified, pct: metrics.conversion_funnel.total_signups > 0 ? (metrics.conversion_funnel.verified / metrics.conversion_funnel.total_signups) * 100 : 0 },
+                { label: "Ran audit", count: metrics.conversion_funnel.ran_audit, pct: metrics.conversion_funnel.total_signups > 0 ? (metrics.conversion_funnel.ran_audit / metrics.conversion_funnel.total_signups) * 100 : 0 },
+                { label: "Started trial", count: metrics.conversion_funnel.started_trial, pct: metrics.conversion_funnel.total_signups > 0 ? (metrics.conversion_funnel.started_trial / metrics.conversion_funnel.total_signups) * 100 : 0 },
+                { label: "Paid tier", count: metrics.conversion_funnel.paid_tier, pct: metrics.conversion_funnel.total_signups > 0 ? (metrics.conversion_funnel.paid_tier / metrics.conversion_funnel.total_signups) * 100 : 0 },
+              ].map(({ label, count, pct }) => (
+                <div key={label} className="flex items-center gap-3">
+                  <span className="text-xs text-white/60 w-28 shrink-0">{label}</span>
+                  <div className="flex-1 h-5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 rounded-full transition-all" style={{ width: `${Math.max(pct, 1)}%` }} />
+                  </div>
+                  <span className="text-xs text-white/70 w-20 text-right">{count} ({pct.toFixed(1)}%)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Weekly Growth Chart */}
+          {metrics.weekly_growth.length > 0 && (
+            <div className="rounded-lg border border-white/10 p-4">
+              <p className="text-sm font-semibold text-white mb-3">Weekly Signups (12 weeks)</p>
+              <div className="flex items-end gap-1 h-24">
+                {metrics.weekly_growth.map((w) => (
+                  <div key={w.week} className="flex-1 flex flex-col items-center gap-1">
+                    <span className="text-[9px] text-white/50">{w.signups}</span>
+                    <div
+                      className="w-full bg-gradient-to-t from-cyan-500 to-violet-500 rounded-t"
+                      style={{ height: `${Math.max((w.signups / maxBar) * 100, 3)}%` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tier Distribution */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-lg border border-white/10 p-4">
+              <p className="text-sm font-semibold text-white mb-3">Tier Distribution</p>
+              <div className="space-y-2">
+                {metrics.tier_distribution.map((t) => (
+                  <div key={t.tier} className="flex items-center justify-between">
+                    <span className="text-sm text-white/70 capitalize">{t.tier}</span>
+                    <span className="text-sm font-semibold text-white">{t.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-white/10 p-4">
+              <p className="text-sm font-semibold text-white mb-3">Feature Adoption (30d)</p>
+              <div className="space-y-2">
+                {[
+                  { label: "Competitor tracking", value: metrics.feature_adoption_30d.competitor_tracking_users },
+                  { label: "Citation testing", value: metrics.feature_adoption_30d.citation_testing_users },
+                  { label: "Auto-fix jobs", value: metrics.feature_adoption_30d.autofix_jobs },
+                  { label: "Signal-tier audits", value: metrics.feature_adoption_30d.signal_audits },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex items-center justify-between">
+                    <span className="text-sm text-white/70">{label}</span>
+                    <span className="text-sm font-semibold text-white">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Top Score Improvements */}
+          {metrics.top_score_improvements.length > 0 && (
+            <div className="rounded-lg border border-white/10 p-4">
+              <p className="text-sm font-semibold text-white mb-3">Top Score Improvements (Case Studies)</p>
+              <div className="space-y-2">
+                {metrics.top_score_improvements.map((imp, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <span className="text-red-300 w-8 text-right">{imp.before}</span>
+                    <span className="text-white/30">&rarr;</span>
+                    <span className="text-emerald-300 w-8">{imp.after}</span>
+                    <span className="text-cyan-300 font-semibold">+{imp.delta}</span>
+                    <span className="text-white/50 flex-1 truncate">{imp.domain}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <p className="text-xs text-white/30 text-right">Generated {new Date(metrics.generated_at).toLocaleString()}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const Admin: React.FC = () => {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
@@ -539,6 +739,9 @@ const Admin: React.FC = () => {
             </p>
           </div>
         </div>
+
+        {/* ── Pitch Metrics (TC Battlefield) ── */}
+        <PitchMetricsPanel adminHeaders={adminHeaders} isAdmin={isAdmin} adminKey={adminKey} currencyFormatter={currencyFormatter} />
 
         <div
           id="src_pages_Admin_tools"

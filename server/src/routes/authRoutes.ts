@@ -728,14 +728,15 @@ router.delete('/account', authRequired, async (req: any, res) => {
 
     // ── Phase 3: Audit chain - audits uses ON DELETE SET NULL, so child rows orphan ──
     // Clean audit-linked tables that would survive due to SET NULL on audits.user_id
-    const auditIds = `SELECT id FROM audits WHERE user_id = $1`;
-    await client.query(`DELETE FROM brag_trail WHERE audit_run_id IN (${auditIds})`, [userId]);
-    await client.query(`DELETE FROM fixpack_assets WHERE fixpack_id IN (SELECT id FROM fixpacks WHERE user_id = $1)`, [userId]);
-    await client.query(`DELETE FROM fixpacks WHERE user_id = $1`, [userId]);
-    await client.query(`DELETE FROM audit_fixpacks WHERE audit_id IN (${auditIds})`, [userId]);
-    await client.query(`DELETE FROM audit_rule_results WHERE audit_id IN (${auditIds})`, [userId]);
-    await client.query(`DELETE FROM audit_evidence WHERE audit_id IN (${auditIds})`, [userId]);
-    await client.query(`DELETE FROM audits WHERE user_id = $1`, [userId]);
+    // NOTE: subquery is inlined directly (not interpolated via template literal) to prevent
+    // any risk of accidental SQL injection if this pattern were ever copy-pasted with user input.
+    await client.query('DELETE FROM brag_trail WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM fixpack_assets WHERE fixpack_id IN (SELECT id FROM fixpacks WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM fixpacks WHERE user_id = $1', [userId]);
+    await client.query('DELETE FROM audit_fixpacks WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM audit_rule_results WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM audit_evidence WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM audits WHERE user_id = $1', [userId]);
 
     // ── Phase 3b: SET NULL tables that orphan user data ───────────────────
     // citation_niche_rankings uses ON DELETE SET NULL - must explicitly delete

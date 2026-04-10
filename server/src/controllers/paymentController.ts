@@ -617,7 +617,8 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
 
   if (!webhookSecret) {
     console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET is not set - all webhook events will be rejected. Configure this env var in your deployment.');
-    return res.status(500).json({ success: false, error: 'Webhook endpoint misconfigured - missing secret' });
+    // Return 200 to prevent Stripe retry loops — the endpoint is misconfigured, retries won't help
+    return res.status(200).json({ success: false, error: 'Webhook endpoint not configured' });
   }
 
   if (!sig) {
@@ -1185,10 +1186,27 @@ async function handleInvoicePaymentFailed(invoice: any) {
 
   // Optionally restrict user access after failed payment
   if (payment?.user_id) {
-    console.log(`[Invoice Failed] User ${payment.user_id} has a failed payment`);
+    const userId = payment.user_id;
+    console.log(`[Invoice Failed] User ${userId} has a failed payment`);
+
+    // Downgrade user to observer if this is a repeated failure (attempt_count ≥ 3)
+    // Stripe retries up to 3-4 times by default. After the 3rd attempt, restrict access
+    // so users don't retain paid features indefinitely on a failed subscription.
+    const attemptCount = typeof invoice.attempt_count === 'number' ? invoice.attempt_count : 1;
+    if (attemptCount >= 3) {
+      await updateUserTier(userId, 'free', null, null);
+      console.warn(`[Invoice Failed] User ${userId} downgraded to observer after ${attemptCount} failed payment attempts`);
+      createUserNotification({
+        userId,
+        eventType: 'payment_failed_downgrade',
+        title: 'Account Downgraded',
+        message: 'Your payment has failed multiple times. Your account has been moved to the free Observer plan. Please update your payment method to restore access.',
+        metadata: { subscriptionId, invoiceId: invoice.id, attemptCount },
+      }).catch((err: any) => { console.warn('[Invoice Failed] Downgrade notification failed:', err?.message); });
+    }
 
     // Send payment failed email (non-blocking)
-    const user = await User.findById(payment.user_id);
+    const user = await User.findById(userId);
     if (user?.email) {
       const hostedInvoiceUrl = typeof invoice.hosted_invoice_url === 'string' ? invoice.hosted_invoice_url : null;
       sendPaymentFailedEmail({

@@ -23,6 +23,7 @@ import Tesseract from 'tesseract.js';
 import { timingSafeEqual } from 'crypto';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import validator from 'validator';
 import * as Sentry from '@sentry/node';
 
@@ -168,6 +169,17 @@ const PROXY_HARD_LIMIT_MS = 60_000;
 const PIPELINE_DEADLINE_MS = 52_000;
 const PIPELINE_FLUSH_BUFFER_MS = 4_000;
 const MIN_AI_BUDGET_MS = 10_000;
+
+/** Wraps a fire-and-forget promise with a hard timeout to prevent background task leaks. */
+const BACKGROUND_TASK_TIMEOUT_MS = 120_000; // 2 minutes
+function backgroundWithTimeout<T>(label: string, promise: Promise<T>, timeoutMs = BACKGROUND_TASK_TIMEOUT_MS): void {
+  const timer = setTimeout(() => {
+    console.warn(`[Background] ${label} exceeded ${timeoutMs}ms deadline — abandoned`);
+  }, timeoutMs);
+  promise
+    .catch((err: any) => console.warn(`[Background] ${label} failed (non-fatal):`, err?.message))
+    .finally(() => clearTimeout(timer));
+}
 
 const app = express();
 app.disable('x-powered-by');
@@ -1017,9 +1029,9 @@ app.use(
   cors({
     origin(origin, callback) {
       if (!origin) {
-        // Allow server-to-server requests (cURL, health checks) but block null origin in production
-        if (process.env.NODE_ENV === 'production') return callback(null, false);
-        return callback(null, true);
+        // Allow server-to-server requests (cURL, health checks) but block null/missing origin
+        // in all environments — null origin with credentials:true is a CORS bypass vector
+        return callback(null, false);
       }
       const normalizedOrigin = normalizeOrigin(origin);
       if (NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) return callback(null, true);
@@ -1048,6 +1060,15 @@ if (IS_PRODUCTION) {
     next();
   });
 }
+
+// Response compression (gzip/brotli) — skip for SSE streams (event-stream) and webhooks
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers.accept === 'text/event-stream') return false;
+    if (STRIPE_WEBHOOK_PATHS.has(req.originalUrl)) return false;
+    return compression.filter(req, res);
+  },
+}));
 
 // Apply API rate limiter in production
 if (IS_PRODUCTION) app.use('/api', apiLimiter);
@@ -7178,19 +7199,9 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       usePythonPayload: boolean;
     } = { ocrData: null, crossCheck: null, usePythonPayload: false };
 
-    let bodySnippet: string;
+    // Default body snippet — recomputed after OCR validation if Python fallback activates
+    let bodySnippet: string = (sd.body || '').substring(0, 2000);
     let ocrFallbackApplied = false;
-    if (ocrValidationResult.usePythonPayload && sd.ocrData) {
-      const ocrTextBlock = sd.ocrData.images
-        .map((img) => img.ocrText)
-        .join('\n\n')
-        .substring(0, 3000);
-      bodySnippet = `${(sd.body || '').substring(0, 1200)}\n\n[OCR-EXTRACTED IMAGE CONTENT — validated by Python cross-check at ${ocrValidationResult.crossCheck?.evidence_quality ?? 0}% quality]:\n${ocrTextBlock}`;
-      ocrFallbackApplied = true;
-      console.log(`[${requestId}] Dynamic OCR fallback ACTIVE: body augmented with ${sd.ocrData.totalOcrWords} OCR words`);
-    } else {
-      bodySnippet = (sd.body || '').substring(0, 2000);
-    }
 
     // ── Diagnostic pre-compute (deterministic, runs before AI) ──────────────
     const _metaDesc = (sd.meta?.description || '').trim();
@@ -7791,6 +7802,18 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
       diagnosticFlags.push(`Schema quality: ${evidenceManifest['ev_schema_quality']}`);
     }
     diagnosticFlags.push(`llms.txt: ${evidenceManifest['ev_llms_txt']}`);
+
+    // ── Recompute bodySnippet now that OCR validation has populated ocrValidationResult ──
+    if (ocrValidationResult.usePythonPayload && sd.ocrData) {
+      const ocrTextBlock = sd.ocrData.images
+        .map((img) => img.ocrText)
+        .join('\n\n')
+        .substring(0, 3000);
+      bodySnippet = `${(sd.body || '').substring(0, 1200)}\n\n[OCR-EXTRACTED IMAGE CONTENT — validated by Python cross-check at ${ocrValidationResult.crossCheck?.evidence_quality ?? 0}% quality]:\n${ocrTextBlock}`;
+      ocrFallbackApplied = true;
+      evidenceManifest['ev_body'] = bodySnippet.substring(0, 500);
+      console.log(`[${requestId}] Dynamic OCR fallback ACTIVE: body augmented with ${sd.ocrData.totalOcrWords} OCR words`);
+    }
 
     const evidenceBlock = Object.entries(evidenceManifest)
       .map(([id, value]) => `[${id}] ${value}`)
@@ -9074,22 +9097,20 @@ Return ONLY valid JSON:
           const nicheKeywords = topicalKeywords.slice(0, 10);
           const niche = nicheKeywords.slice(0, 3).join(', ') || 'SaaS tools and online software';
           if (brandName) {
-            runNicheRanking({
+            backgroundWithTimeout(`niche-ranking:${requestId}`, runNicheRanking({
               targetUrl,
               brandName,
               niche,
               nicheKeywords,
               apiKey: rankingApiKey!,
               userId,
-            }).catch((err: Error) => {
-              console.warn(`[${requestId}] Background niche ranking failed (non-fatal):`, err.message);
-            });
+            }));
           }
         }
 
         // ── Background deterministic audit layer (fire-and-forget) ──
         if (dbAuditId && scraped) {
-          runDeterministicAuditLayer(dbAuditId, userId, scraped)
+          backgroundWithTimeout(`deterministic:${requestId}`, runDeterministicAuditLayer(dbAuditId, userId, scraped)
             .then(async (deterministicResult) => {
               if (deterministicResult) {
                 const additions = buildDeterministicResponseAdditions(deterministicResult);
@@ -9097,34 +9118,26 @@ Return ONLY valid JSON:
                   console.warn(`[${requestId}] Deterministic attach failed (non-fatal):`, e?.message);
                 });
               }
-            })
-            .catch((e: any) => {
-              console.warn(`[${requestId}] Deterministic pipeline failed (non-fatal):`, e?.message);
-            });
+            }));
         }
 
         // ── Background SSFR evidence + rule engine + fixpack generation ──
         if (dbAuditId && scraped) {
-          (async () => {
-            try {
-              const ssfrEvidence = extractEvidenceFromScrape(scraped);
-              const enriched = enrichEvidenceFromAnalysis(ssfrEvidence, result as any);
-              const ruleResults = evaluateSSFRRules(enriched);
-              const fixpacks = generateFixpacks(ruleResults, enriched, targetUrl);
-              const pool = getPool();
-              await persistSSFRResults(pool, dbAuditId!, enriched, ruleResults, fixpacks);
-              const summary = buildSSFRSummary(ruleResults);
-              console.log(`[${requestId}] SSFR pipeline complete: ${summary.passed_rules}/${summary.total_rules} rules passed, ${fixpacks.length} fixpacks, cap=${summary.effective_score_cap ?? 'none'}`);
-            } catch (ssfrErr: any) {
-              console.warn(`[${requestId}] SSFR pipeline failed (non-fatal):`, ssfrErr?.message);
-            }
-          })();
+          backgroundWithTimeout(`ssfr:${requestId}`, (async () => {
+            const ssfrEvidence = extractEvidenceFromScrape(scraped);
+            const enriched = enrichEvidenceFromAnalysis(ssfrEvidence, result as any);
+            const ruleResults = evaluateSSFRRules(enriched);
+            const fixpacks = generateFixpacks(ruleResults, enriched, targetUrl);
+            const pool = getPool();
+            await persistSSFRResults(pool, dbAuditId!, enriched, ruleResults, fixpacks);
+            const summary = buildSSFRSummary(ruleResults);
+            console.log(`[${requestId}] SSFR pipeline complete: ${summary.passed_rules}/${summary.total_rules} rules passed, ${fixpacks.length} fixpacks, cap=${summary.effective_score_cap ?? 'none'}`);
+          })());
         }
 
         // ── Background Python deep analysis + cryptographic evidence ledger ──
         if (dbAuditId && scraped) {
-          (async () => {
-            try {
+          backgroundWithTimeout(`deep-analysis:${requestId}`, (async () => {
               const pyAvailable = await isPythonServiceAvailable();
               if (!pyAvailable) return;
 
@@ -9178,10 +9191,7 @@ Return ONLY valid JSON:
 
                 console.log(`[${requestId}] Python deep analysis complete: readability=${deepResult.readability?.reading_level}, entities=${deepResult.entities?.total_entity_count}, ledger_root=${ledgerResult?.root_hash?.slice(0, 12) ?? 'none'}`);
               }
-            } catch (deepErr: any) {
-              console.warn(`[${requestId}] Python deep analysis failed (non-fatal):`, deepErr?.message);
-            }
-          })();
+          })());
         }
       } catch (auditErr: any) {
         console.error(`[${requestId}] Failed to store audit trail:`, auditErr.message);

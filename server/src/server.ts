@@ -4533,8 +4533,8 @@ const METHODOLOGY_MODEL_PROFILES: ModelProfile[] = [
     },
   },
   {
-    modelId: 'deepseek/deepseek-chat-v3-0324',
-    label: 'DeepSeek V3',
+    modelId: 'deepseek/deepseek-v3.2',
+    label: 'DeepSeek V3.2',
     tierScope: 'observer',
     bias: 0,
     categoryWeights: {
@@ -4547,8 +4547,8 @@ const METHODOLOGY_MODEL_PROFILES: ModelProfile[] = [
     },
   },
   {
-    modelId: 'google/gemini-2.0-flash-exp',
-    label: 'Gemini 2.0 Flash',
+    modelId: 'google/gemini-2.5-flash',
+    label: 'Gemini 2.5 Flash',
     tierScope: 'observer',
     bias: 0,
     categoryWeights: {
@@ -4589,8 +4589,8 @@ const METHODOLOGY_MODEL_PROFILES: ModelProfile[] = [
     },
   },
   {
-    modelId: 'mistralai/mistral-small-3.1-24b-instruct',
-    label: 'Mistral Small 3.1',
+    modelId: 'mistralai/mistral-small-3.2-24b-instruct',
+    label: 'Mistral Small 3.2',
     tierScope: 'observer',
     bias: -3,
     categoryWeights: {
@@ -4603,8 +4603,8 @@ const METHODOLOGY_MODEL_PROFILES: ModelProfile[] = [
     },
   },
   {
-    modelId: 'openai/gpt-4o-mini',
-    label: 'GPT-4o Mini',
+    modelId: 'openai/gpt-5-nano',
+    label: 'GPT-5 Nano',
     tierScope: 'cross-tier',
     bias: 2,
     categoryWeights: {
@@ -4617,8 +4617,8 @@ const METHODOLOGY_MODEL_PROFILES: ModelProfile[] = [
     },
   },
   {
-    modelId: 'anthropic/claude-3.5-haiku',
-    label: 'Claude 3.5 Haiku',
+    modelId: 'anthropic/claude-haiku-4.5',
+    label: 'Claude Haiku 4.5',
     tierScope: 'signal',
     bias: 1,
     categoryWeights: {
@@ -7172,9 +7172,9 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
 
     // ── Tier-based model allocation (updated 2026-03-24) ──
     // Observer [Free]:     Gemini 2.5 Flash :free (primary) - $0.00/scan
-    // Alignment [Core]:    GPT-4.1 Mini (primary) - ~$0.001/scan
-    // Signal [Premium]:    GPT-4.1 Mini (AI1) → Claude 4 Sonnet (AI2) → Grok 3 Mini (AI3) - ~$0.004/scan
-    // scorefix [AutoFix PR]:   GPT-4.1 (AI1) → Claude 4 Sonnet (AI2) → Grok 3 (AI3) - premium 3-family pipeline
+    // Alignment [Core]:    GPT-5 Nano (primary) - ~$0.001/scan
+    // Signal [Premium]:    GPT-5 Mini (AI1) → Claude Sonnet 4.6 (AI2) → Grok 4.1 Fast (AI3) - ~$0.005/scan
+    // scorefix [AutoFix PR]:   GPT-5 Mini (AI1) → Claude Sonnet 4.6 (AI2) → Grok 4.1 Fast (AI3) - premium 3-family pipeline
     let providers: typeof PROVIDERS;
     if (isTripleCheck) {
       const ai1 = isscorefixTier ? SCOREFIX_AI1 : SIGNAL_AI1;

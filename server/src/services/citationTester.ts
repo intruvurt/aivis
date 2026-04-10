@@ -65,29 +65,29 @@ const MIN_SUBSTANTIVE_EXCERPT_LENGTH = 20;
 
 const PLATFORM_MODEL_CANDIDATES: Record<CitationPlatform, ProviderCandidate[]> = {
   chatgpt: [
-    { provider: 'openrouter', model: 'openai/gpt-4o-mini', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
   ],
   perplexity: [
-    { provider: 'openrouter', model: 'deepseek/deepseek-chat-v3-0324', endpoint: OPENROUTER_ENDPOINT },
-    { provider: 'openrouter', model: 'openai/gpt-4o-mini', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'deepseek/deepseek-v3.2', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it:free', endpoint: OPENROUTER_ENDPOINT },
   ],
   claude: [
-    { provider: 'openrouter', model: 'anthropic/claude-3.5-haiku', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'anthropic/claude-haiku-4.5', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'anthropic/claude-3-haiku', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
-    { provider: 'openrouter', model: 'openai/gpt-4o-mini', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'openai/gpt-5-nano', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it:free', endpoint: OPENROUTER_ENDPOINT },
   ],
   google_ai: [
-    { provider: 'openrouter', model: 'google/gemini-2.0-flash-001', endpoint: OPENROUTER_ENDPOINT },
+    { provider: 'openrouter', model: 'google/gemini-2.5-flash', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it:free', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'google/gemma-3-27b-it', endpoint: OPENROUTER_ENDPOINT },
     { provider: 'openrouter', model: 'meta-llama/llama-3.3-70b-instruct:free', endpoint: OPENROUTER_ENDPOINT },

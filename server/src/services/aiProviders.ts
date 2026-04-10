@@ -11,28 +11,28 @@ export type AiProvider = {
 
 // ── Paid model providers - ordered by cost-effectiveness ──
 // Used as fallback chain for all paid tiers.
-// Updated 2026-03-29: GPT-4.1 mini primary, Claude 3.5 Haiku/Sonnet, Grok 3 mini, Gemini 2.5 Flash
+// Updated 2026-04-10: GPT-5 Nano primary, Claude Haiku 4.5, Grok 4.1 Fast, Gemini 2.5 Flash, DeepSeek V3.2
 export const PROVIDERS: AiProvider[] = [
   {
     provider: 'openrouter',
-    model: 'openai/gpt-4.1-mini',
+    model: 'openai/gpt-5-nano',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'GPT-4.1 Mini',
-    label: 'GPT-4.1 Mini',
+    displayName: 'GPT-5 Nano',
+    label: 'GPT-5 Nano',
   },
   {
     provider: 'openrouter',
-    model: 'anthropic/claude-3.5-haiku',
+    model: 'anthropic/claude-haiku-4.5',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Claude 3.5 Haiku',
-    label: 'Claude 3.5 Haiku',
+    displayName: 'Claude Haiku 4.5',
+    label: 'Claude Haiku 4.5',
   },
   {
     provider: 'openrouter',
-    model: 'x-ai/grok-3-mini',
+    model: 'x-ai/grok-4.1-fast',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'Grok 3 Mini',
-    label: 'Grok 3 Mini',
+    displayName: 'Grok 4.1 Fast',
+    label: 'Grok 4.1 Fast',
   },
   {
     provider: 'openrouter',
@@ -43,10 +43,10 @@ export const PROVIDERS: AiProvider[] = [
   },
   {
     provider: 'openrouter',
-    model: 'deepseek/deepseek-chat-v3-0324',
+    model: 'deepseek/deepseek-v3.2',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    displayName: 'DeepSeek V3',
-    label: 'DeepSeek V3',
+    displayName: 'DeepSeek V3.2',
+    label: 'DeepSeek V3.2',
   },
   // DeepSeek native (preferred when DEEPSEEK_API_KEY is set - bypasses OpenRouter markup)
   {
@@ -80,68 +80,68 @@ export const PROVIDERS: AiProvider[] = [
 ];
 
 // ── Signal tier: dedicated triple-check pipeline models ──
-// Updated 2026-04-10: GPT-4.1 mini primary, Claude Sonnet 4 peer critique, Grok 3 mini validation
-// AI1: GPT-4.1 Mini (primary analysis - fast, cheap, strong JSON)
-// AI2: Claude Sonnet 4 (peer critique - different model family for diversity)
-// AI3: Grok 3 Mini (validation gate - third model family for true independence)
+// Updated 2026-04-10: GPT-5 Mini primary, Claude Sonnet 4.6 peer critique, Grok 4.1 Fast validation
+// AI1: GPT-5 Mini (primary analysis - strong reasoning, cost-effective)
+// AI2: Claude Sonnet 4.6 (peer critique - different model family for diversity)
+// AI3: Grok 4.1 Fast (validation gate - third model family for true independence)
 export const SIGNAL_AI1: AiProvider = {
   provider: 'openrouter',
-  model: 'openai/gpt-4.1-mini',
+  model: 'openai/gpt-5-mini',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'GPT-4.1 Mini',
-  label: 'GPT-4.1 Mini',
+  displayName: 'GPT-5 Mini',
+  label: 'GPT-5 Mini',
 };
 export const SIGNAL_AI2: AiProvider = {
   provider: 'openrouter',
-  model: 'anthropic/claude-sonnet-4',
+  model: 'anthropic/claude-sonnet-4.6',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Claude Sonnet 4',
-  label: 'Claude Sonnet 4',
+  displayName: 'Claude Sonnet 4.6',
+  label: 'Claude Sonnet 4.6',
 };
 export const SIGNAL_AI3: AiProvider = {
   provider: 'openrouter',
-  model: 'x-ai/grok-3-mini',
+  model: 'x-ai/grok-4.1-fast',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Grok 3 Mini',
-  label: 'Grok 3 Mini',
+  displayName: 'Grok 4.1 Fast',
+  label: 'Grok 4.1 Fast',
 };
 
 // ── scorefix tier: premium triple-check models ──
-// Updated 2026-04-10: GPT-4.1 primary, Claude Sonnet 4 critique, Grok 3 validation
+// Updated 2026-04-10: GPT-5 Mini primary, Claude Sonnet 4.6 critique, Grok 4.1 Fast validation
 // Three independent model families for maximum scoring diversity.
-// AI1: GPT-4.1 (deep primary - strongest reasoning)
-// AI2: Claude Sonnet 4 (peer critique - independent model family)
-// AI3: Grok 3 (validation gate - third independent family)
+// AI1: GPT-5 Mini (deep primary - strong reasoning at low cost)
+// AI2: Claude Sonnet 4.6 (peer critique - independent model family)
+// AI3: Grok 4.1 Fast (validation gate - third independent family)
 export const SCOREFIX_AI1: AiProvider = {
   provider: 'openrouter',
-  model: 'openai/gpt-4.1',
+  model: 'openai/gpt-5-mini',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'GPT-4.1',
-  label: 'GPT-4.1',
+  displayName: 'GPT-5 Mini',
+  label: 'GPT-5 Mini',
 };
 export const SCOREFIX_AI2: AiProvider = {
   provider: 'openrouter',
-  model: 'anthropic/claude-sonnet-4',
+  model: 'anthropic/claude-sonnet-4.6',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Claude Sonnet 4',
-  label: 'Claude Sonnet 4',
+  displayName: 'Claude Sonnet 4.6',
+  label: 'Claude Sonnet 4.6',
 };
 export const SCOREFIX_AI3: AiProvider = {
   provider: 'openrouter',
-  model: 'x-ai/grok-3',
+  model: 'x-ai/grok-4.1-fast',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'Grok 3',
-  label: 'Grok 3',
+  displayName: 'Grok 4.1 Fast',
+  label: 'Grok 4.1 Fast',
 };
 
 // ── Alignment tier: best affordable primary model ──
-// Updated 2026-03-24: GPT-4.1 mini - stronger JSON output, same price class
+// Updated 2026-04-10: GPT-5 Nano - newer gen, 50% cheaper input, same output cost
 export const ALIGNMENT_PRIMARY: AiProvider = {
   provider: 'openrouter',
-  model: 'openai/gpt-4.1-mini',
+  model: 'openai/gpt-5-nano',
   endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-  displayName: 'GPT-4.1 Mini',
-  label: 'GPT-4.1 Mini',
+  displayName: 'GPT-5 Nano',
+  label: 'GPT-5 Nano',
 };
 
 // ── Free model providers (Observer tier - $0.00 per scan) ──

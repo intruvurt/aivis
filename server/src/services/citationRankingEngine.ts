@@ -22,14 +22,19 @@ const TOP_LIST_LIMIT = 50;
 // ─── Model short-name registry ──────────────────────────────────────────────
 
 const MODEL_SHORT_NAME_MAP: Record<string, ModelShortName> = {
-  // Current preferred models (synced with aiProviders.ts 2026-03-29)
+  // Current preferred models (synced with aiProviders.ts 2026-04-10)
+  'openai/gpt-5-nano': 'GPT-5 Nano',
+  'openai/gpt-5-mini': 'GPT-5 Mini',
   'openai/gpt-4.1': 'GPT-4.1',
   'openai/gpt-4.1-mini': 'GPT-4.1 Mini',
+  'x-ai/grok-4.1-fast': 'Grok 4.1 Fast',
   'x-ai/grok-3': 'Grok 3',
   'x-ai/grok-3-mini': 'Grok 3 Mini',
   'google/gemini-2.5-flash': 'Gemini 2.5 Flash',
   'google/gemini-2.5-flash:free': 'Gemini 2.5 Flash',
+  'mistralai/mistral-small-3.2-24b-instruct': 'Mistral Small 3.2',
   'mistralai/mistral-small-latest': 'Mistral Small',
+  'deepseek/deepseek-v3.2': 'DeepSeek V3.2',
   'deepseek/deepseek-chat-v3-0324': 'DeepSeek V3',
   'deepseek/deepseek-chat-v3-0324:free': 'DeepSeek V3',
   'deepseek/deepseek-r1': 'DeepSeek R1',
@@ -40,9 +45,11 @@ const MODEL_SHORT_NAME_MAP: Record<string, ModelShortName> = {
   'qwen/qwen3-32b': 'Qwen3 32B',
   'qwen/qwen3-32b:free': 'Qwen3 32B',
   // Anthropic models (validated on OpenRouter)
+  'anthropic/claude-sonnet-4.6': 'Claude Sonnet 4.6',
+  'anthropic/claude-sonnet-4': 'Claude Sonnet 4',
+  'anthropic/claude-haiku-4.5': 'Claude Haiku 4.5',
   'anthropic/claude-3.5-haiku': 'Claude 3.5 Haiku',
   'anthropic/claude-3.5-sonnet': 'Claude 3.5 Sonnet',
-  'anthropic/claude-sonnet-4': 'Claude Sonnet 4',
   'anthropic/claude-3-haiku': 'Claude 3 Haiku',
   // Legacy IDs (still valid on OpenRouter, kept for cache hits)
   'openai/gpt-4o': 'GPT-4o',
@@ -60,23 +67,23 @@ export function modelShortName(modelId: string): ModelShortName {
 
 // ─── Ranking model candidates (ordered: primary first, then fallbacks) ──────
 
-// Synced with PROVIDERS chain in aiProviders.ts (2026-03-29)
+// Synced with PROVIDERS chain in aiProviders.ts (2026-04-10)
 const RANKING_MODEL_CHAIN: Array<{ model: string; role: ModelRole }> = [
-  { model: 'openai/gpt-4.1-mini', role: 'primary' },
-  { model: 'anthropic/claude-3.5-haiku', role: 'fallback' },
-  { model: 'deepseek/deepseek-chat-v3-0324', role: 'fallback' },
+  { model: 'openai/gpt-5-nano', role: 'primary' },
+  { model: 'anthropic/claude-haiku-4.5', role: 'fallback' },
+  { model: 'deepseek/deepseek-v3.2', role: 'fallback' },
   { model: 'google/gemini-2.5-flash', role: 'fallback' },
-  { model: 'x-ai/grok-3-mini', role: 'fallback' },
+  { model: 'x-ai/grok-4.1-fast', role: 'fallback' },
   { model: 'meta-llama/llama-3.3-70b-instruct', role: 'fallback' },
-  { model: 'mistralai/mistral-small-latest', role: 'fallback' },
+  { model: 'mistralai/mistral-small-3.2-24b-instruct', role: 'fallback' },
 ];
 
 // Citation verification model chain
-// Synced with PROVIDERS chain in aiProviders.ts (2026-03-29)
+// Synced with PROVIDERS chain in aiProviders.ts (2026-04-10)
 const CITATION_VERIFY_CHAIN: Array<{ model: string; role: ModelRole; platform: string }> = [
-  { model: 'openai/gpt-4.1-mini', role: 'primary', platform: 'chatgpt' },
-  { model: 'anthropic/claude-3.5-haiku', role: 'primary', platform: 'claude' },
-  { model: 'deepseek/deepseek-chat-v3-0324', role: 'primary', platform: 'perplexity' },
+  { model: 'openai/gpt-5-nano', role: 'primary', platform: 'chatgpt' },
+  { model: 'anthropic/claude-haiku-4.5', role: 'primary', platform: 'claude' },
+  { model: 'deepseek/deepseek-v3.2', role: 'primary', platform: 'perplexity' },
   { model: 'google/gemini-2.5-flash', role: 'fallback', platform: 'google_ai' },
 ];
 

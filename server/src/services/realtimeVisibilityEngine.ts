@@ -40,8 +40,8 @@ type RunState = {
 const RUN_TTL_SECONDS = 60 * 60;
 const CACHE_TTL_SECONDS = 60 * 60 * 8;
 const MODELS = [
-  'openai/gpt-4.1-mini',
-  'anthropic/claude-3.5-haiku',
+  'openai/gpt-5-nano',
+  'anthropic/claude-haiku-4.5',
   'meta-llama/llama-3.3-70b-instruct',
 ];
 

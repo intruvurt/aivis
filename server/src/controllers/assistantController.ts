@@ -616,16 +616,16 @@ Scores use an A-F grading scale. Most sites score C or D on their first audit.
 
 ## AI Models Used
 - **Free Observer tier:** Gemini 2.0 Flash free (primary), Llama 3.3 70B Instruct free, Qwen3 32B free, Mistral Small 3.1 24B free, DeepSeek V3 free, Gemma 3 27B free. All via OpenRouter :free variants, $0.00/scan.
-- **Alignment tier:** GPT-4.1 Mini (primary analysis), Claude 4 Sonnet (fallback)
-- **Signal triple-check pipeline:** GPT-4.1 Mini → Claude 4 Sonnet peer critique (adjusts score -15 to +10) → Grok 3 Mini validation gate (confirms or overrides final score)
-- **Score Fix AutoFix PR:** GPT-4.1 → Claude 4 Sonnet → Grok 3 (higher-capacity models)
+- **Alignment tier:** GPT-5 Nano (primary analysis), Claude Haiku 4.5 (fallback)
+- **Signal triple-check pipeline:** GPT-5 Mini → Claude Sonnet 4.6 peer critique (adjusts score -15 to +10) → Grok 4.1 Fast validation gate (confirms or overrides final score)
+- **Score Fix AutoFix PR:** GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast (3 independent model families)
 - All models accessed through OpenRouter API. Server-side key only - users never provide API keys.
 
 ## Triple-Check Pipeline (Signal Only)
 Signal tier subscribers ($149/mo) get every analysis reviewed by 3 independent AI models:
-1. **AI1 - GPT-4.1 Mini:** Primary analysis with full scoring
-2. **AI2 - Claude 4 Sonnet:** Peer critique that challenges inflated scores, identifies generic recommendations, verifies evidence grounding. Can adjust score -15 to +10 points.
-3. **AI3 - Grok 3 Mini:** Validation gate that confirms or overrides the final result.
+1. **AI1 - GPT-5 Mini:** Primary analysis with full scoring
+2. **AI2 - Claude Sonnet 4.6:** Peer critique that challenges inflated scores, identifies generic recommendations, verifies evidence grounding. Can adjust score -15 to +10 points.
+3. **AI3 - Grok 4.1 Fast:** Validation gate that confirms or overrides the final result.
 This eliminates single-model bias. Observer and Alignment get a single-model analysis (still evidence-grounded).
 
 ## Pricing Tiers

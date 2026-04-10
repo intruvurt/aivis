@@ -219,11 +219,15 @@ function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-function withTimeout<T>(p: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+function withTimeout<T>(p: Promise<T>, timeoutMs: number, label: string, ac?: AbortController): Promise<T> {
   if (!timeoutMs || timeoutMs <= 0) return p;
   let t: ReturnType<typeof setTimeout> | null = null;
   const timeout = new Promise<never>((_, reject) => {
-    t = setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+    t = setTimeout(() => {
+      // Abort the HTTP request so the connection is actually freed
+      if (ac) try { ac.abort(); } catch {}
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
   });
   return Promise.race([p, timeout]).finally(() => {
     if (t) clearTimeout(t);
@@ -300,6 +304,10 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
   }
 
   try {
+    // Create AbortController so the actual HTTP request is cancelled when the
+    // pipeline budget expires — prevents ghost connections from leaking.
+    const ac = new AbortController();
+
     if (provider === 'openrouter') {
       console.log(
         `[AI Provider] OpenRouter model=${args.model}, max_tokens=${maxTokens}, timeoutMs=${timeoutMs}`
@@ -315,10 +323,13 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
           maxTokens,
           enforcedSystemPrompt,
           args.opts?.temperature,
-          args.opts?.responseFormat
+          args.opts?.responseFormat,
+          timeoutMs,
+          ac.signal
         ),
         timeoutMs,
-        `OpenRouter(${args.model})`
+        `OpenRouter(${args.model})`,
+        ac
       );
 
       return result;
@@ -341,10 +352,13 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
           maxTokens,
           enforcedSystemPrompt,
           args.opts?.temperature,
-          args.opts?.responseFormat
+          args.opts?.responseFormat,
+          timeoutMs,
+          ac.signal
         ),
         timeoutMs,
-        `DeepSeek(${args.model})`
+        `DeepSeek(${args.model})`,
+        ac
       );
 
       return result;

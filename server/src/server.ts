@@ -7198,8 +7198,8 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     const isscorefixTier = normalizedTier === 'scorefix';
     const isFree = userTier === 'observer';
 
-    // ── Tier-based model allocation (updated 2026-03-24) ──
-    // Observer [Free]:     Gemini 2.5 Flash :free (primary) - $0.00/scan
+    // ── Tier-based model allocation (updated 2026-04-10) ──
+    // Observer [Free]:     Gemma 4 31B :free (primary) - $0.00/scan
     // Starter [$15]:       GPT-5 Nano (primary) - ~$0.001/scan (same as Alignment)
     // Alignment [Core]:    GPT-5 Nano (primary) - ~$0.001/scan
     // Signal [Premium]:    GPT-5 Mini (AI1) → Claude Sonnet 4.6 (AI2) → Grok 4.1 Fast (AI3) - ~$0.005/scan
@@ -7211,7 +7211,11 @@ app.post('/api/analyze', authRequired, workspaceRequired, requireWorkspacePermis
     } else if (isFree) {
       providers = [...FREE_PROVIDERS];
     } else {
-      providers = [ALIGNMENT_PRIMARY, ...PROVIDERS];
+      // Deduplicate: ALIGNMENT_PRIMARY may be the same model as PROVIDERS[0].
+      // Filter PROVIDERS to skip any model that matches the primary.
+      const primaryModel = ALIGNMENT_PRIMARY.model;
+      const fallbacks = PROVIDERS.filter(p => p.model !== primaryModel);
+      providers = [ALIGNMENT_PRIMARY, ...fallbacks];
     }
 
     if (!providers.length) return res.status(500).json({ error: 'No AI providers configured', code: 'NO_PROVIDERS', request_id: requestId });
@@ -8013,6 +8017,9 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
     const aiPhaseStartMs = Date.now();
     const aiPhaseDeadlineMs = aiPhaseStartMs + aiBudgetMs;
     const MIN_FALLBACK_BUDGET_MS = 8_000; // don't bother if less than 8 s left
+    // Cap primary model at 20s to guarantee ≥20s for the fallback chain.
+    // Without this cap the primary's 30s axios default eats the entire budget.
+    const PRIMARY_MODEL_CAP_MS = 20_000;
 
     let activeDeadlineTimer: ReturnType<typeof setTimeout> | null = null;
     const makeDeadlinePromise = (label: string, budgetMs: number) =>
@@ -8042,7 +8049,10 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
           console.warn(`[${requestId}] AI1 fallback budget exhausted (${providerBudgetMs}ms < ${MIN_FALLBACK_BUDGET_MS}ms) after ${pi} providers - stopping`);
           break;
         }
-        const effectiveBudgetMs = Math.max(MIN_FALLBACK_BUDGET_MS, providerBudgetMs);
+        // Primary model (pi=0) is capped at PRIMARY_MODEL_CAP_MS so fallbacks
+        // always have meaningful time budget. Fallbacks get the remaining budget.
+        const rawBudgetMs = Math.max(MIN_FALLBACK_BUDGET_MS, providerBudgetMs);
+        const effectiveBudgetMs = pi === 0 ? Math.min(rawBudgetMs, PRIMARY_MODEL_CAP_MS) : rawBudgetMs;
 
         try {
           ai1Raw = await Promise.race([

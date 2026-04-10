@@ -40,7 +40,7 @@ if (OLLAMA_BASE_URL.trim()) {
 // Retries are DISABLED: if OpenRouter doesn't respond in 30 s it won't
 // respond on a second try. Fallback to faster model handled in server.ts.
 const MAX_RETRIES = 0;
-const TIMEOUT_MS = 30_000;
+const DEFAULT_TIMEOUT_MS = 30_000;
 
 export const openrouterPrompt = async (
   promptTemplate: string | any,
@@ -51,6 +51,8 @@ export const openrouterPrompt = async (
   systemPrompt?: string,
   temperature?: number,
   responseFormat: 'json_object' | 'text' = 'json_object',
+  timeoutMs?: number,
+  abortSignal?: AbortSignal,
 ): Promise<any> => {
   if (!OPEN_ROUTER_API_KEY) {
     throw new Error(
@@ -89,6 +91,7 @@ export const openrouterPrompt = async (
       requestBody.response_format = { type: 'json_object' };
     }
 
+    const effectiveTimeout = timeoutMs && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS;
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       requestBody,
@@ -99,7 +102,8 @@ export const openrouterPrompt = async (
           'X-Title': 'AiVIS',
           'Content-Type': 'application/json',
         },
-        timeout: TIMEOUT_MS,
+        timeout: effectiveTimeout,
+        signal: abortSignal,
         // CRITICAL: Use 'text' so axios does NOT auto-parse the response as JSON.
         // With the default 'json', if the HTTP body is truncated mid-stream
         // (connection drop, timeout, large response), axios runs JSON.parse()
@@ -259,6 +263,8 @@ export const deepseekPrompt = async (
   systemPrompt?: string,
   temperature?: number,
   responseFormat: 'json_object' | 'text' = 'json_object',
+  timeoutMs?: number,
+  abortSignal?: AbortSignal,
 ): Promise<any> => {
   if (!DEEPSEEK_API_KEY) {
     throw new Error(
@@ -292,12 +298,14 @@ export const deepseekPrompt = async (
       requestBody.response_format = { type: 'json_object' };
     }
 
+    const effectiveTimeout = timeoutMs && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS;
     const response = await axios.post(DEEPSEEK_ENDPOINT, requestBody, {
       headers: {
         Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      timeout: TIMEOUT_MS,
+      timeout: effectiveTimeout,
+      signal: abortSignal,
       responseType: 'text',
     });
 

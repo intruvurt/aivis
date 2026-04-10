@@ -692,11 +692,11 @@ const Landing = () => {
           </div>
           <ol className="space-y-6">
             {([
-              { n: '01', color: 'text-cyan-300', title: 'Scan the page', desc: 'Fetch your live page: title, headings, schema, meta tags, body text, links, image count.' },
-              { n: '02', color: 'text-violet-300', title: 'Label evidence', desc: 'Each scraped field gets an evidence ID so every finding traces back to an observed page element.' },
-              { n: '03', color: 'text-amber-300', title: 'Analyze with AI models', desc: 'Model allocation is tier-based and enforced server-side. Outputs are required in structured JSON.' },
-              { n: '04', color: 'text-emerald-300', title: 'Check score integrity', desc: 'Responses are validated for score shape, category integrity, and evidence linkage before persistence.' },
-              { n: '05', color: 'text-cyan-300', title: 'Show what to fix next', desc: 'Recommendations are ranked high / medium / low and cite the specific evidence ID that triggered each one.' },
+              { n: '01', color: 'text-cyan-300', title: 'Scan the page', desc: 'Fetch your live page with a headless browser: title, H1–H6 headings, JSON-LD schema blocks, meta tags, Open Graph, body text, internal/external links, image count, robots directives, and canonical URL.' },
+              { n: '02', color: 'text-violet-300', title: 'Label evidence', desc: 'Each scraped field gets a BRAG evidence ID (e.g., ev_h1, ev_schema_org, ev_meta_desc) so every finding traces back to an observed page element. No finding exists without a source reference.' },
+              { n: '03', color: 'text-amber-300', title: 'Analyze with AI models', desc: 'Model allocation is tier-based: Observer uses open-weight models at $0/scan, Alignment uses GPT-5 Nano at ~$0.002/scan, Signal runs a 3-model triple-check pipeline at ~$0.005/scan. Outputs are required in structured JSON.' },
+              { n: '04', color: 'text-emerald-300', title: 'Check score integrity', desc: 'Responses are validated for score shape (0–100 range), category weight consistency (must sum to 100%), evidence linkage completeness, and JSON structure before persistence to the analysis cache.' },
+              { n: '05', color: 'text-cyan-300', title: 'Show what to fix next', desc: 'Recommendations are ranked high/medium/low by expected score lift and cite the specific BRAG evidence ID that triggered each one. Typical high-priority fixes include adding JSON-LD schema, fixing heading hierarchy, and expanding thin content.' },
             ] as const).map((s) => (
               <li key={s.n} className="flex gap-5">
                 <span className={`${s.color} font-mono text-xs pt-1 flex-shrink-0 w-6 tabular-nums font-bold`}>{s.n}</span>

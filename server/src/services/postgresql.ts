@@ -3147,6 +3147,60 @@ export async function runMigrations(): Promise<void> {
     _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_score_improvements_user_url ON score_improvements(user_id, url_hash)`);
     _q(`CREATE INDEX IF NOT EXISTS idx_score_improvements_delta ON score_improvements(delta DESC)`);
 
+    // ── Entity fingerprint system (per-user entity disambiguation) ────────
+    _q(`
+      CREATE TABLE IF NOT EXISTS entity_fingerprints (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        brand_name VARCHAR(200) NOT NULL,
+        canonical_domain VARCHAR(255) NOT NULL,
+        founder_name VARCHAR(200) NOT NULL DEFAULT '',
+        social_handles JSONB NOT NULL DEFAULT '{}',
+        wikidata_id VARCHAR(40) NOT NULL DEFAULT '',
+        google_kg_id VARCHAR(60) NOT NULL DEFAULT '',
+        schema_org_id TEXT NOT NULL DEFAULT '',
+        product_category VARCHAR(120) NOT NULL DEFAULT '',
+        description_keywords TEXT[] NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id)
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_entity_fingerprints_user ON entity_fingerprints(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS entity_blocklists (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        pattern TEXT NOT NULL,
+        type VARCHAR(20) NOT NULL DEFAULT 'name',
+        reason TEXT NOT NULL DEFAULT '',
+        auto_detected BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_entity_blocklists_user ON entity_blocklists(user_id)`);
+
+    _q(`
+      CREATE TABLE IF NOT EXISTS entity_audit_runs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        triggered_by VARCHAR(60) NOT NULL DEFAULT 'manual',
+        queries_run INTEGER NOT NULL DEFAULT 0,
+        citations_found INTEGER NOT NULL DEFAULT 0,
+        false_positives_blocked INTEGER NOT NULL DEFAULT 0,
+        anchor_score INTEGER NOT NULL DEFAULT 0,
+        duration_ms INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    _q(`CREATE INDEX IF NOT EXISTS idx_entity_audit_runs_user ON entity_audit_runs(user_id)`);
+
+    // Extend existing tables for entity-safe tracking
+    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN DEFAULT FALSE`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS canonical_domain TEXT`);
+    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS track_keywords JSONB DEFAULT '[]'`);
+
     // Execute all migrations in a single round-trip
     if (_ddl.length > 0) {
       console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);

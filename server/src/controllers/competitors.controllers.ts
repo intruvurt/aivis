@@ -262,7 +262,7 @@ export async function createCompetitor(req: Request, res: Response) {
     const userId = (req as any).user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-    const { url, nickname } = req.body;
+    const { url, nickname, track_keywords } = req.body;
     if (!url || !nickname) {
       return res.status(400).json({ error: 'URL and nickname are required' });
     }
@@ -271,6 +271,17 @@ export async function createCompetitor(req: Request, res: Response) {
     if (!normalized.ok) {
       return res.status(400).json({ error: normalized.error, code: 'INVALID_URL' });
     }
+
+    // Extract canonical domain from the URL
+    let canonicalDomain = '';
+    try {
+      canonicalDomain = new URL(normalized.url).hostname.replace(/^www\./, '');
+    } catch { /* leave empty */ }
+
+    // Sanitize track_keywords
+    const safeKeywords = Array.isArray(track_keywords)
+      ? track_keywords.filter((k: unknown) => typeof k === 'string' && String(k).length >= 2 && String(k).length <= 100).slice(0, 20).map((k: unknown) => String(k).trim())
+      : [];
 
     const safeNickname = String(nickname || '').trim();
     if (!safeNickname || safeNickname.length > 80) {
@@ -299,12 +310,12 @@ export async function createCompetitor(req: Request, res: Response) {
     // Insert competitor
     // Insert competitor - monitoring defaults to OFF; user must explicitly enable it.
     const { rows: created } = await pool.query(
-      `INSERT INTO competitor_tracking (user_id, competitor_url, nickname, monitoring_enabled)
-       VALUES ($1, $2, $3, FALSE)
+      `INSERT INTO competitor_tracking (user_id, competitor_url, nickname, monitoring_enabled, canonical_domain, track_keywords)
+       VALUES ($1, $2, $3, FALSE, $4, $5)
        ON CONFLICT (user_id, competitor_url)
-       DO UPDATE SET nickname = $3, updated_at = NOW()
+       DO UPDATE SET nickname = $3, canonical_domain = $4, track_keywords = $5, updated_at = NOW()
        RETURNING *`,
-      [userId, normalized.url, safeNickname]
+      [userId, normalized.url, safeNickname, canonicalDomain, JSON.stringify(safeKeywords)]
     );
 
     // Auto-link existing audit if available

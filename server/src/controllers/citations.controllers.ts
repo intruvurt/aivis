@@ -27,6 +27,14 @@ import type {
   ContentNature,
 } from '../../../shared/types.js';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
+import {
+  getFingerprint,
+  getBlocklist,
+  isEntityRelevant,
+  recordAuditRun,
+  computeAnchorScore,
+  matchesBlocklist,
+} from '../services/entityFingerprint.js';
 
 /** Safe JSON.parse with fallback — prevents one corrupted record from crashing entire response */
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -1038,6 +1046,13 @@ export async function authorityGranularCheck(req: Request, res: Response) {
     const brandCtx = buildBrandContext(trimmedTarget, mode, targetDomain, trustSignals.brandSignals, searchProfile);
     console.log(`[AuthorityCheck] Brand context: primary="${brandCtx.primaryName}" domain=${brandCtx.domain} strict=${brandCtx.strictMatch} variants=${brandCtx.nameVariants.length} nicheKW=${brandCtx.nicheKeywords.length}`);
 
+    // ── Load entity fingerprint + blocklist for entity-aware filtering ──
+    const entityFingerprint = await getFingerprint(userId).catch(() => null);
+    const entityBlocklist = entityFingerprint ? await getBlocklist(userId).catch(() => []) : [];
+    if (entityFingerprint) {
+      console.log(`[AuthorityCheck] Entity fingerprint loaded: brand="${entityFingerprint.brand_name}" domain=${entityFingerprint.canonical_domain} anchor=${computeAnchorScore(entityFingerprint)}`);
+    }
+
     type PlatformSummary = {
       platform: AuthorityPlatform;
       authority_score: number;
@@ -1046,6 +1061,8 @@ export async function authorityGranularCheck(req: Request, res: Response) {
       content_breakdown: Record<ContentNature, number>;
       items: AuthorityCitationItem[];
     };
+
+    let totalEntityBlockedCount = 0;
 
     const platformSummaries = await (async () => {
       const BATCH_SIZE = 3;
@@ -1257,15 +1274,35 @@ export async function authorityGranularCheck(req: Request, res: Response) {
               }
               return accepted;
             });
-            if (relevantRows.length < parsedRows.length) {
-              console.log(`[AuthorityCheck] platform=${platform} filtered ${parsedRows.length} -> ${relevantRows.length} relevant results`);
+
+            // ── Entity fingerprint second-pass filter ───────────────────
+            let entityFilteredRows = relevantRows;
+            let entityBlockedCount = 0;
+            if (entityFingerprint && entityBlocklist.length > 0) {
+              entityFilteredRows = relevantRows.filter(row => {
+                const check = isEntityRelevant(
+                  { title: row.title, snippet: row.snippet, url: row.href },
+                  entityFingerprint,
+                  entityBlocklist,
+                );
+                if (!check.relevant) {
+                  entityBlockedCount++;
+                  totalEntityBlockedCount++;
+                  console.log(`[AuthorityCheck] ENTITY-BLOCKED platform=${platform} reason="${check.reason}" title="${row.title.slice(0, 60)}"`);
+                }
+                return check.relevant;
+              });
+            }
+
+            if (relevantRows.length < parsedRows.length || entityBlockedCount > 0) {
+              console.log(`[AuthorityCheck] platform=${platform} filtered ${parsedRows.length} -> ${relevantRows.length} brand-relevant -> ${entityFilteredRows.length} entity-verified`);
             } else {
-              console.log(`[AuthorityCheck] platform=${platform} found ${relevantRows.length} results (all relevant)`);
+              console.log(`[AuthorityCheck] platform=${platform} found ${entityFilteredRows.length} results (all relevant)`);
             }
 
             const items: AuthorityCitationItem[] = [];
-            for (let index = 0; index < relevantRows.length; index++) {
-              const row = relevantRows[index];
+            for (let index = 0; index < entityFilteredRows.length; index++) {
+              const row = entityFilteredRows[index];
               const blob = `${row.title} ${row.snippet}`;
               const { nature, confidence } = classifyContentNature(blob);
               const authorityScore = scoreAuthority(platform, index + 1, row.snippet, row.title);
@@ -1354,6 +1391,17 @@ export async function authorityGranularCheck(req: Request, res: Response) {
       security: trustSignals.security,
       phishing_risk: trustSignals.phishingRisk,
       compliance: trustSignals.compliance,
+      entity: entityFingerprint ? {
+        fingerprint_active: true,
+        anchor_score: computeAnchorScore(entityFingerprint),
+        false_positives_blocked: totalEntityBlockedCount,
+        brand_name: entityFingerprint.brand_name,
+        canonical_domain: entityFingerprint.canonical_domain,
+      } : {
+        fingerprint_active: false,
+        anchor_score: 0,
+        false_positives_blocked: 0,
+      },
     };
 
     // ── Cache write (fire-and-forget) ────────────────────────────────────
@@ -1365,6 +1413,19 @@ export async function authorityGranularCheck(req: Request, res: Response) {
       );
     } catch (cacheWriteErr: any) {
       console.warn('[AuthorityCheck] Cache write failed:', cacheWriteErr?.message);
+    }
+
+    // ── Record entity audit run (fire-and-forget) ────────────────────────
+    if (entityFingerprint) {
+      recordAuditRun(
+        userId,
+        'authority_check',
+        platforms.length,
+        allItems.length,
+        totalEntityBlockedCount,
+        computeAnchorScore(entityFingerprint),
+        0,
+      ).catch(err => console.warn('[AuthorityCheck] Audit run record failed:', err?.message));
     }
 
     return res.json({ success: true, report: payload });
@@ -1650,11 +1711,15 @@ async function runCitationTestAsync(
       ['running', testId]
     );
 
-    // Get brand name
+    // Get brand name — prefer entity fingerprint if set
+    const entityFp = await getFingerprint(userId).catch(() => null);
     const auditRecord = await findLatestAuditForTarget(userId, url);
     const audit = auditRecord?.result;
     const identity = await resolveCitationIdentity(userId, url);
-    const brandName = identity?.business_name || audit?.brand_entities?.[0] || extractDomainLabel(url);
+    const brandName = entityFp?.brand_name || identity?.business_name || audit?.brand_entities?.[0] || extractDomainLabel(url);
+
+    // Load entity blocklist for false-positive filtering on results
+    const entityBl = entityFp ? await getBlocklist(userId).catch(() => []) : [];
 
     // Get competitor URLs
     const { rows: competitors } = await pool.query(
@@ -1731,9 +1796,14 @@ async function runCitationTestAsync(
     }
 
     for (const citationResult of allCitationResults) {
+      // Check entity blocklist for false positive detection
+      const isFalsePositive = entityFp && entityBl.length > 0
+        ? matchesBlocklist(`${citationResult.excerpt || ''} ${citationResult.query}`, entityBl).blocked
+        : false;
+
       await pool.query(
-        `INSERT INTO citation_results (citation_test_id, query, platform, mentioned, position, excerpt, competitors_mentioned, mention_quality_score)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        `INSERT INTO citation_results (citation_test_id, query, platform, mentioned, position, excerpt, competitors_mentioned, mention_quality_score, is_false_positive)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
         [
           testId,
           citationResult.query,
@@ -1743,6 +1813,7 @@ async function runCitationTestAsync(
           citationResult.excerpt,
           JSON.stringify(citationResult.competitors_mentioned),
          computeMentionQuality(Boolean(citationResult.mentioned), Number(citationResult.position || 0), String(citationResult.excerpt || '')),
+         isFalsePositive,
         ]
       );
     }

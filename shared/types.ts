@@ -1504,6 +1504,70 @@ export interface AuthorityCheckResponse {
   security: unknown;
   phishing_risk: unknown;
   compliance: unknown;
+  entity?: {
+    fingerprint_active: boolean;
+    anchor_score: number;
+    false_positives_blocked: number;
+    brand_name?: string;
+    canonical_domain?: string;
+  };
+}
+
+/* ── Entity fingerprint types ────────────────────────────────────────────── */
+
+export interface EntityFingerprint {
+  id: string;
+  user_id: string;
+  brand_name: string;
+  canonical_domain: string;
+  founder_name: string;
+  social_handles: Record<string, string>;
+  wikidata_id: string;
+  google_kg_id: string;
+  schema_org_id: string;
+  product_category: string;
+  description_keywords: string[];
+  updated_at: string;
+  created_at: string;
+}
+
+export type BlocklistEntryType = 'name' | 'domain' | 'keyword' | 'entity_type';
+
+export interface BlocklistEntry {
+  id: string;
+  user_id: string;
+  pattern: string;
+  type: BlocklistEntryType;
+  reason: string;
+  auto_detected: boolean;
+  created_at: string;
+}
+
+export interface CollisionCluster {
+  entity_type: 'person' | 'company' | 'project' | 'product' | 'unknown';
+  name: string;
+  description: string;
+  source_urls: string[];
+  suggested_blocks: Array<{ pattern: string; type: BlocklistEntryType; reason: string }>;
+}
+
+export interface CollisionDetectionResult {
+  brand_name: string;
+  collisions: CollisionCluster[];
+  anchor_score: number;
+  suggested_blocklist: Array<{ pattern: string; type: BlocklistEntryType; reason: string }>;
+}
+
+export interface AuditRunRecord {
+  id: string;
+  user_id: string;
+  triggered_by: string;
+  queries_run: number;
+  citations_found: number;
+  false_positives_blocked: number;
+  anchor_score: number;
+  duration_ms: number;
+  created_at: string;
 }
 
 /* ── Niche ranking types ────────────────────────────────────────────────── */

@@ -9,6 +9,7 @@ import CompetitorShareTable from "../components/CompetitorShareTable";
 import ConsistencyMatrix from "../components/ConsistencyMatrix";
 import DropAlertBanner from "../components/DropAlertBanner";
 import CoOccurrencePanel from "../components/CoOccurrencePanel";
+import EntityFingerprintPanel from "../components/EntityFingerprintPanel";
 import {
   ArrowLeft,
   Eye,
@@ -30,6 +31,7 @@ import {
   AlertTriangle,
   Target,
   Loader2,
+  Fingerprint,
 } from "lucide-react";
 import { meetsMinimumTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -38,7 +40,7 @@ import UpgradeWall from "../components/UpgradeWall";
 import { normalizePublicUrlInput } from "../utils/targetKey";
 
 /* ── Tab IDs ─────────────────────────────────────────────────────────────── */
-type CitationTab = "engine" | "intelligence" | "automation";
+type CitationTab = "engine" | "intelligence" | "entity" | "automation";
 
 /* ── Static data ─────────────────────────────────────────────────────────── */
 const QUICK_STATS = [
@@ -110,6 +112,7 @@ export default function CitationsPage() {
   const TABS: { id: CitationTab; label: string; icon: React.ElementType; minTier: string }[] = [
     { id: "engine", label: "Citation Engine", icon: Zap, minTier: "alignment" },
     { id: "intelligence", label: "Intelligence", icon: BarChart3, minTier: "alignment" },
+    { id: "entity", label: "Entity Fingerprint", icon: Fingerprint, minTier: "alignment" },
     { id: "automation", label: "Automation & Agency", icon: Users, minTier: "signal" },
   ];
 
@@ -311,6 +314,13 @@ export default function CitationsPage() {
                     </Link>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* ── Tab: Entity Fingerprint ──────────────────────────────── */}
+            {activeTab === "entity" && (
+              <div className="mt-4">
+                <EntityFingerprintPanel />
               </div>
             )}
 

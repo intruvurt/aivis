@@ -131,12 +131,13 @@ async function run() {
     }
   }
 
-  for (const stmt of createStatements) {
+  for (let stmt of createStatements) {
+    // Fix: backup used bare "ARRAY" type — replace with "text[]"
+    stmt = stmt.replace(/"(\w+)" ARRAY/g, '"$1" text[]');
     try {
       await client.query(stmt);
       createTableCount++;
     } catch (err) {
-      // Table might already exist or have type issues — try to continue
       const tableName = stmt.match(/CREATE TABLE IF NOT EXISTS "([^"]+)"/)?.[1] || '?';
       console.error(`  ⚠ CREATE TABLE "${tableName}": ${err.message.slice(0, 100)}`);
       errorCount++;
@@ -144,49 +145,30 @@ async function run() {
   }
   console.log(`  ✓ Created ${createTableCount} tables (${errorCount} errors)`);
 
-  // Phase 2: INSERT data in batches
+  // Phase 2: INSERT data (no transactions — pooler-safe)
   console.log('\n💾 Phase 2: Inserting data...');
   errorCount = 0;
   const insertLines = lines.filter(l => l.startsWith('INSERT INTO'));
   const totalInserts = insertLines.length;
   
-  // Batch inserts in transactions of 500
-  const BATCH_SIZE = 500;
-  for (let i = 0; i < insertLines.length; i += BATCH_SIZE) {
-    const batch = insertLines.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < insertLines.length; i++) {
+    const stmt = insertLines[i];
     try {
-      await client.query('BEGIN');
-      for (const stmt of batch) {
-        try {
-          await client.query(stmt);
-          insertCount++;
-        } catch (err) {
-          // Log first few errors, skip on duplicates
-          if (errorCount < 10) {
-            const table = stmt.match(/INSERT INTO "([^"]+)"/)?.[1] || '?';
-            console.error(`  ⚠ INSERT "${table}": ${err.message.slice(0, 120)}`);
-          }
-          errorCount++;
-        }
-      }
-      await client.query('COMMIT');
+      await client.query(stmt);
+      insertCount++;
     } catch (err) {
-      await client.query('ROLLBACK').catch(() => {});
-      // Retry individually
-      for (const stmt of batch) {
-        try {
-          await client.query(stmt);
-          insertCount++;
-        } catch {
-          errorCount++;
-        }
+      if (errorCount < 10) {
+        const table = stmt.match(/INSERT INTO "([^"]+)"/)?.[1] || '?';
+        console.error(`  ⚠ INSERT "${table}": ${err.message.slice(0, 120)}`);
       }
+      errorCount++;
     }
 
-    // Progress
-    const done = Math.min(i + BATCH_SIZE, totalInserts);
-    const pct = ((done / totalInserts) * 100).toFixed(0);
-    process.stdout.write(`\r  ⏳ ${done}/${totalInserts} (${pct}%) — ${insertCount} ok, ${errorCount} errors`);
+    // Progress every 500 rows
+    if ((i + 1) % 500 === 0 || i === insertLines.length - 1) {
+      const pct = (((i + 1) / totalInserts) * 100).toFixed(0);
+      process.stdout.write(`\r  ⏳ ${i + 1}/${totalInserts} (${pct}%) — ${insertCount} ok, ${errorCount} errors`);
+    }
   }
   console.log(`\n  ✓ Inserted ${insertCount} rows (${errorCount} errors)`);
 

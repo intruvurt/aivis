@@ -800,7 +800,11 @@ const normalizeOrigin = (origin: string): string => {
   if (!raw) return '';
 
   try {
-    return new URL(raw).origin.toLowerCase();
+    // URL.origin should never have a trailing slash, but strip defensively
+    // because some Node.js builds / transpilers return .href instead of .origin.
+    let o = new URL(raw).origin.toLowerCase();
+    while (o.endsWith('/')) o = o.slice(0, -1);
+    return o;
   } catch {
     let normalized = raw.toLowerCase();
     while (normalized.endsWith('/')) normalized = normalized.slice(0, -1);

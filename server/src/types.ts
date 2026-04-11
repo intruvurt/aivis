@@ -28,7 +28,7 @@
  * - signal: Pro tier ("full visibility into how AI crawlers trust your content")
  * - scorefix: AutoFix PR tier ("automated score remediation")
  */
-export type CanonicalTier = 'observer' | 'starter' | 'alignment' | 'signal';
+export type CanonicalTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'scorefix';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -38,7 +38,7 @@ export type LegacyTier = 'free' | 'core' | 'premium' | 'enterprise' | 'pro';
 /**
  * Public-facing tiers for marketing/UI
  */
-export type UiTier = 'observer' | 'starter' | 'alignment' | 'signal';
+export type UiTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'scorefix';
 
 /**
  * Converts canonical tier to UI-friendly tier (identity for new system)
@@ -55,6 +55,7 @@ export function uiTierFromCanonical(tier: CanonicalTier | LegacyTier): UiTier {
     starter: 'starter',
     alignment: 'alignment',
     signal: 'signal',
+    scorefix: 'scorefix',
   };
   return legacyMapping[tier] || 'observer';
 }
@@ -72,8 +73,10 @@ export function canonicalTierFromUi(tier: UiTier): CanonicalTier {
 export function getTierDisplayName(tier: CanonicalTier | LegacyTier): string {
   const displayNames: Record<string, string> = {
     observer: 'Observer (Free)',
+    starter: 'Starter',
     alignment: 'Alignment (Core)',
     signal: 'Signal (Pro)',
+    scorefix: 'Score Fix [AutoFix PR]',
     // Legacy
     free: 'Observer (Free)',
     core: 'Alignment (Core)',
@@ -123,14 +126,16 @@ export function meetsMinimumTier(
   const tierHierarchy: Record<string, number> = {
     // New tiers
     observer: 0,
-    alignment: 1,
-    signal: 2,
+    starter: 1,
+    alignment: 2,
+    signal: 3,
+    scorefix: 4,
     // Legacy mapping
     free: 0,
-    core: 1,
-    premium: 2,
-    enterprise: 2,
-    pro: 2,
+    core: 2,
+    premium: 3,
+    enterprise: 3,
+    pro: 3,
   };
 
   return (tierHierarchy[userTier] ?? 0) >= tierHierarchy[requiredTier];
@@ -202,6 +207,19 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
     hasForceRefresh: true,
     hasApiAccess: true,       // read-only webhooks/API
     hasWhiteLabel: true,      // white-label export
+    hasScheduledRescans: true,
+    hasReportHistory: true,
+    hasShareableLink: true,
+  },
+  scorefix: {
+    scansPerMonth: 250,
+    pagesPerScan: 20,
+    competitors: 3,
+    cacheDays: 90,
+    hasExports: true,
+    hasForceRefresh: true,
+    hasApiAccess: true,
+    hasWhiteLabel: true,
     hasScheduledRescans: true,
     hasReportHistory: true,
     hasShareableLink: true,

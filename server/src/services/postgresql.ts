@@ -18,6 +18,14 @@ function normalizeDatabaseUrl(raw: string): string {
     return input.replace(/sslmode=(prefer|require|verify-ca)\b/i, 'sslmode=verify-full');
   }
 
+  // Supabase (and most managed Postgres) require SSL.
+  // If no sslmode is set at all in production, default to require
+  // (which the block above will then upgrade to verify-full).
+  if (!/sslmode=/i.test(input)) {
+    const sep = input.includes('?') ? '&' : '?';
+    return `${input}${sep}sslmode=verify-full`;
+  }
+
   return input;
 }
 
@@ -97,7 +105,8 @@ async function checkDatabaseInitialized(client: PoolClient): Promise<boolean> {
     const result = await client.query(`
       SELECT EXISTS (
         SELECT 1 FROM information_schema.tables 
-        WHERE table_name = 'users'
+        WHERE table_schema = 'public'
+          AND table_name = 'users'
       ) as exists
     `);
     return result.rows[0]?.exists === true;

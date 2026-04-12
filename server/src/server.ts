@@ -3095,27 +3095,34 @@ const HEALTH_CACHE_TTL_MS = 5000; // Cache for 5 seconds
 async function computeHealthStatus() {
   let dbOk = false;
   let dbError: string | null = null;
+
+  // Check database with 1.5 second timeout - fail fast
   try {
     const pool = getPool();
-    // Add 3 second timeout to prevent hanging on database connection
-    const queryPromise = pool.query("SELECT 1");
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Database query timeout")), 3000),
-    );
-    await Promise.race([queryPromise, timeoutPromise]);
-    dbOk = true;
+    const dbController = new AbortController();
+    const dbTimeout = setTimeout(() => dbController.abort(), 1500);
+
+    try {
+      await pool.query("SELECT 1");
+      dbOk = true;
+    } finally {
+      clearTimeout(dbTimeout);
+    }
   } catch (error: any) {
-    dbError = error?.message || "Database check failed";
+    dbError = error?.message || "Database unreachable";
   }
 
+  // Check Python service with 1 second timeout
   let pythonOk = false;
   try {
-    // Add 2 second timeout for Python service check
-    const pythonPromise = isPythonServiceAvailable();
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Python service timeout")), 2000),
-    );
-    pythonOk = await Promise.race([pythonPromise, timeoutPromise]);
+    const pythonController = new AbortController();
+    const pythonTimeout = setTimeout(() => pythonController.abort(), 1000);
+
+    try {
+      pythonOk = await isPythonServiceAvailable();
+    } finally {
+      clearTimeout(pythonTimeout);
+    }
   } catch {
     pythonOk = false;
   }
@@ -3151,20 +3158,51 @@ app.get(
   "/api/health",
   ipRateLimit({ maxRequests: 60, windowMs: 60_000 }),
   async (_req, res) => {
-    // Check cache first
-    if (
-      healthCache &&
-      Date.now() - healthCache.timestamp < HEALTH_CACHE_TTL_MS
-    ) {
-      res.set("X-Health-Cache", "HIT");
-      return res.status(200).json(healthCache.data);
-    }
+    // Overall timeout: 1.8 seconds to complete entire request
+    const healthController = new AbortController();
+    const overallTimeout = setTimeout(() => {
+      healthController.abort();
+      if (!res.headersSent) {
+        res.status(200).json({
+          success: true,
+          status: "timeout",
+          ready: false,
+          timestamp: new Date().toISOString(),
+          db: "unreachable",
+          python_deep_analysis: "unreachable",
+        });
+      }
+    }, 1800);
 
-    // Cache miss - compute and store
-    const data = await computeHealthStatus();
-    healthCache = { timestamp: Date.now(), data };
-    res.set("X-Health-Cache", "MISS");
-    return res.status(200).json(data);
+    try {
+      // Check cache first
+      if (
+        healthCache &&
+        Date.now() - healthCache.timestamp < HEALTH_CACHE_TTL_MS
+      ) {
+        clearTimeout(overallTimeout);
+        res.set("X-Health-Cache", "HIT");
+        return res.status(200).json(healthCache.data);
+      }
+
+      // Cache miss - compute and store
+      const data = await computeHealthStatus();
+      clearTimeout(overallTimeout);
+      healthCache = { timestamp: Date.now(), data };
+      res.set("X-Health-Cache", "MISS");
+      return res.status(200).json(data);
+    } catch (err) {
+      clearTimeout(overallTimeout);
+      if (!res.headersSent) {
+        res.status(200).json({
+          success: true,
+          status: "error",
+          ready: false,
+          timestamp: new Date().toISOString(),
+          error: (err as any)?.message || "Health check error",
+        });
+      }
+    }
   },
 );
 

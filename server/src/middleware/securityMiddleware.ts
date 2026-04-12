@@ -31,6 +31,10 @@ export function applySecurityMiddleware(app: Express): void {
     helmet({
       contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: false,
+      // Allow cross-origin reads for CORS-enabled API endpoints.
+      // CORP: same-origin (Helmet default) would block cross-origin API responses
+      // even when Access-Control-Allow-Origin grants access.
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
 

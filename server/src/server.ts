@@ -1,6 +1,6 @@
 // server/src/server.ts
 import 'dotenv/config';
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 // Extend Request to carry the raw body buffer for webhook signature verification
 declare global {
@@ -185,6 +185,53 @@ function backgroundWithTimeout<T>(label: string, promise: Promise<T>, timeoutMs 
 
 const app = express();
 app.disable('x-powered-by');
+
+// ── EARLY CORS HANDLER ─────────────────────────────────────────────────────
+// Must run BEFORE Helmet/applySecurityMiddleware so OPTIONS preflights always
+// receive Access-Control-Allow-Origin before any other middleware can respond.
+// The same allowlist logic is replicated below in the cors() middleware; both
+// keeping each other as belt-and-suspenders.
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin as string | undefined;
+  if (!origin) return next();
+
+  const norm = (o: string): string => {
+    try {
+      let r = new URL(o).origin.toLowerCase();
+      while (r.endsWith('/')) r = r.slice(0, -1);
+      return r;
+    } catch {
+      let r = o.toLowerCase();
+      while (r.endsWith('/')) r = r.slice(0, -1);
+      return r;
+    }
+  };
+
+  const rawFrontendUrl = process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || '';
+  const earlyAllowed = [
+    'https://aivis.biz',
+    'https://www.aivis.biz',
+    ...rawFrontendUrl.split(','),
+  ].map(norm).filter(Boolean);
+
+  if (!earlyAllowed.includes(norm(origin))) return next();
+
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Vary', 'Origin');
+
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Requested-With, X-Request-Id, X-Workspace-Id, Cache-Control, Pragma',
+    );
+    res.setHeader('Access-Control-Max-Age', '86400');
+    return res.status(204).end();
+  }
+  next();
+});
+
 applySecurityMiddleware(app);
 const PORT = Number(process.env.PORT) || 10000;
 const PUBLIC_REPORT_SIGNING_SECRET = process.env.PUBLIC_REPORT_SIGNING_SECRET || process.env.JWT_SECRET || '';

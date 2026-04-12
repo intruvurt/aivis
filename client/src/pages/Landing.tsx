@@ -118,6 +118,7 @@ LANDING_STRUCTURED_DATA.push(
     name: 'AiVIS - AI Visibility Intelligence Platform',
     description: 'AI visibility audit platform that scores how ChatGPT, Perplexity, Google AI and Claude read, trust and cite your website. Evidence-backed findings with six-category weighted scoring.',
     url: 'https://aivis.biz/',
+    image: 'https://aivis.biz/og-image.png',
     brand: 'AiVIS',
     offers: [
       { name: 'Observer (Free)', price: '0', description: `${PRICING.observer.limits.scans} AI visibility audits per month — free forever` },

@@ -490,6 +490,7 @@ export function buildProductSchema(input: {
   name: string;
   description: string;
   url?: string;
+  image?: string;
   brand?: string;
   offers?: Array<{
     name: string;
@@ -508,6 +509,7 @@ export function buildProductSchema(input: {
     name: input.name,
     description: input.description,
     ...(input.url ? { url: input.url } : {}),
+    ...(input.image ? { image: input.image } : {}),
     ...(input.brand ? { brand: { '@type': 'Brand', name: input.brand } } : {}),
     ...(input.offers?.length
       ? {

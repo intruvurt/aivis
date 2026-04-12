@@ -1,13 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { ErrorBoundary } from "@sentry/react";
 
 import App from "./App";
 import "./index.css";
 import "./i18n"; // Initialize i18n before rendering
 
-import SentryFallback from "./components/SentryFallback";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 import { initSentryIfConsented } from "./lib/sentry";
 import { useAuthStore } from "./stores/authStore";
@@ -28,12 +26,10 @@ useAuthStore.getState().hydrate();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ErrorBoundary fallback={SentryFallback}>
-      <AppErrorBoundary>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AppErrorBoundary>
-    </ErrorBoundary>
+    <AppErrorBoundary>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AppErrorBoundary>
   </React.StrictMode>
 );

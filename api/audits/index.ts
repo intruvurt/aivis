@@ -21,8 +21,8 @@ function getBearerToken(req: Request): string | null {
 }
 
 function apiBaseUrlFromEnv(req: Request): string {
-  // Prefer explicit base URL for the API service (Render)
-  // Set on Render: API_BASE_URL=https://your-api-service.onrender.com
+  // Prefer explicit base URL for the API service (Railway or any deployment)
+  // Set in environment: API_BASE_URL=https://api.aivis.biz
   if (process.env.API_BASE_URL) return process.env.API_BASE_URL;
 
   // Or point to your frontend domain if it reverse-proxies /api to this service
@@ -62,9 +62,10 @@ export default async function handler(req: Request, res: Response) {
 
   const pool = getPool();
 
-  const userResult = await pool.query("SELECT id, tier FROM users WHERE id = $1", [
-    decoded.userId,
-  ]);
+  const userResult = await pool.query(
+    "SELECT id, tier FROM users WHERE id = $1",
+    [decoded.userId],
+  );
 
   if (!userResult.rows[0]) {
     return res.status(404).json({ success: false, error: "User not found" });
@@ -78,12 +79,14 @@ export default async function handler(req: Request, res: Response) {
     try {
       const result = await pool.query(
         "SELECT id, user_id, url, visibility_score, result, created_at FROM audits WHERE user_id = $1 ORDER BY created_at DESC",
-        [userId]
+        [userId],
       );
       return res.status(200).json({ success: true, data: result.rows });
     } catch (error: any) {
       console.error("List audits error:", error);
-      return res.status(500).json({ success: false, error: "Failed to fetch audits" });
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to fetch audits" });
     }
   }
 
@@ -93,16 +96,21 @@ export default async function handler(req: Request, res: Response) {
       const { url } = (req.body || {}) as { url?: string };
 
       if (!url) {
-        return res.status(400).json({ success: false, error: "URL is required" });
+        return res
+          .status(400)
+          .json({ success: false, error: "URL is required" });
       }
 
       // Validate URL
       let parsedUrl: URL;
       try {
         parsedUrl = new URL(url);
-        if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error("Invalid protocol");
+        if (!["http:", "https:"].includes(parsedUrl.protocol))
+          throw new Error("Invalid protocol");
       } catch {
-        return res.status(400).json({ success: false, error: "Invalid URL format" });
+        return res
+          .status(400)
+          .json({ success: false, error: "Invalid URL format" });
       }
 
       // Check monthly usage limits using canonical tier from DB
@@ -115,7 +123,7 @@ export default async function handler(req: Request, res: Response) {
          WHERE user_id = $1
            AND date >= date_trunc('month', now())::date
            AND date < (date_trunc('month', now()) + interval '1 month')::date`,
-        [userId]
+        [userId],
       );
 
       const monthlyUsed = usageResult.rows[0]?.total ?? 0;
@@ -134,7 +142,7 @@ export default async function handler(req: Request, res: Response) {
       // Create audit record
       const insertResult = await pool.query(
         "INSERT INTO audits (user_id, url) VALUES ($1, $2) RETURNING id, user_id, url, visibility_score, result, created_at",
-        [userId, parsedUrl.href]
+        [userId, parsedUrl.href],
       );
       const audit = insertResult.rows[0];
 
@@ -142,7 +150,7 @@ export default async function handler(req: Request, res: Response) {
         // Mark as processing
         await pool.query(
           "UPDATE audits SET result = COALESCE(result, '{}'::jsonb) || '{\"status\":\"processing\"}'::jsonb WHERE id = $1",
-          [audit.id]
+          [audit.id],
         );
 
         const startTime = Date.now();
@@ -154,7 +162,9 @@ export default async function handler(req: Request, res: Response) {
           body: JSON.stringify({ url: parsedUrl.href }),
         });
 
-        const analysisResult = (await analyzeResponse.json().catch(() => null)) as any;
+        const analysisResult = (await analyzeResponse
+          .json()
+          .catch(() => null)) as any;
         const processingTime = Date.now() - startTime;
 
         if (analysisResult?.overallScore !== undefined) {
@@ -171,11 +181,10 @@ export default async function handler(req: Request, res: Response) {
             processingTimeMs: processingTime,
           };
 
-          await pool.query("UPDATE audits SET visibility_score = $1, result = $2 WHERE id = $3", [
-            analysisResult.overallScore,
-            JSON.stringify(resultData),
-            audit.id,
-          ]);
+          await pool.query(
+            "UPDATE audits SET visibility_score = $1, result = $2 WHERE id = $3",
+            [analysisResult.overallScore, JSON.stringify(resultData), audit.id],
+          );
         } else {
           await pool.query("UPDATE audits SET result = $1 WHERE id = $2", [
             JSON.stringify({
@@ -199,7 +208,7 @@ export default async function handler(req: Request, res: Response) {
       // Fetch the updated audit
       const updatedResult = await pool.query(
         "SELECT id, user_id, url, visibility_score, result, created_at FROM audits WHERE id = $1",
-        [audit.id]
+        [audit.id],
       );
 
       return res.status(201).json({
@@ -209,7 +218,9 @@ export default async function handler(req: Request, res: Response) {
       });
     } catch (error: any) {
       console.error("Create audit error:", error);
-      return res.status(500).json({ success: false, error: "Failed to create audit" });
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to create audit" });
     }
   }
 

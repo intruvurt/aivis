@@ -9,9 +9,9 @@
  *  2. Have auto_scan_enabled = TRUE on the project row
  * This prevents surprise rescans for users who never opted in.
  */
-import cron from 'node-cron';
-import { getPool } from '../services/postgresql.js';
-import { enqueueAuditJob } from '../infra/queues/auditQueue.js';
+import cron from "node-cron";
+import { getPool } from "../services/postgresql.js";
+import { enqueueAuditJob } from "../infra/queues/auditQueue.js";
 
 let schedulerStarted = false;
 
@@ -53,18 +53,22 @@ async function enqueueAllProjectsForAudit(): Promise<void> {
          JOIN organizations o ON o.owner_user_id = u.id
          WHERE o.id = $1
          LIMIT 1`,
-        [project.org_id]
+        [project.org_id],
       );
 
       if (!members.length) continue;
 
       await enqueueAuditJob({
-        url: project.domain.startsWith('http') ? project.domain : `https://${project.domain}`,
+        url: project.domain.startsWith("http")
+          ? project.domain
+          : `https://${project.domain}`,
         userId: members[0].id,
-        priority: 'normal',
+        priority: "normal",
       });
     } catch (err: any) {
-      console.warn(`[Scheduler] Failed to enqueue audit for project ${project.id}: ${err.message}`);
+      console.warn(
+        `[Scheduler] Failed to enqueue audit for project ${project.id}: ${err.message}`,
+      );
     }
   }
 }
@@ -83,13 +87,13 @@ export async function handlePRMerged(payload: {
   await pool.query(
     `UPDATE v1_pull_requests SET status = 'merged', updated_at = NOW()
      WHERE pr_url = $1`,
-    [payload.prUrl]
+    [payload.prUrl],
   );
 
   // Find the project and trigger re-audit
   const { rows } = await pool.query(
     `SELECT p.id, p.domain, p.org_id FROM v1_projects p WHERE p.id = $1`,
-    [payload.projectId]
+    [payload.projectId],
   );
   if (!rows.length) return;
 
@@ -101,21 +105,25 @@ export async function handlePRMerged(payload: {
      JOIN organizations o ON o.owner_user_id = u.id
      WHERE o.id = $1
      LIMIT 1`,
-    [project.org_id]
+    [project.org_id],
   );
   if (!members.length) return;
 
-  console.log(`[Scheduler] PR merged for project ${project.id} - triggering re-audit`);
+  console.log(
+    `[Scheduler] PR merged for project ${project.id} - triggering re-audit`,
+  );
 
   await enqueueAuditJob({
-    url: project.domain.startsWith('http') ? project.domain : `https://${project.domain}`,
+    url: project.domain.startsWith("http")
+      ? project.domain
+      : `https://${project.domain}`,
     userId: members[0].id,
-    priority: 'high',
+    priority: "high",
   });
 }
 
 /**
- * Handle deploy hook - triggered by Vercel/Render deploy webhooks.
+ * Handle deploy hook - triggered by Railway/Vercel deploy webhooks.
  */
 export async function handleDeployHook(payload: {
   domain: string;
@@ -127,7 +135,7 @@ export async function handleDeployHook(payload: {
   const { rows: projects } = await pool.query(
     `SELECT p.id, p.domain, p.org_id FROM v1_projects p
      WHERE p.domain = $1 OR p.domain = $2`,
-    [payload.domain, payload.domain.replace(/^https?:\/\//, '')]
+    [payload.domain, payload.domain.replace(/^https?:\/\//, "")],
   );
   if (!projects.length) return;
 
@@ -137,16 +145,20 @@ export async function handleDeployHook(payload: {
        JOIN organizations o ON o.owner_user_id = u.id
        WHERE o.id = $1
        LIMIT 1`,
-      [project.org_id]
+      [project.org_id],
     );
     if (!members.length) continue;
 
-    console.log(`[Scheduler] Deploy hook (${payload.source}) for ${project.domain} - triggering re-scan`);
+    console.log(
+      `[Scheduler] Deploy hook (${payload.source}) for ${project.domain} - triggering re-scan`,
+    );
 
     await enqueueAuditJob({
-      url: project.domain.startsWith('http') ? project.domain : `https://${project.domain}`,
+      url: project.domain.startsWith("http")
+        ? project.domain
+        : `https://${project.domain}`,
       userId: members[0].id,
-      priority: 'high',
+      priority: "high",
     });
   }
 }
@@ -157,21 +169,23 @@ export async function handleDeployHook(payload: {
  */
 export function startScheduler(): void {
   if (schedulerStarted) return;
-  if (process.env.DISABLE_BACKGROUND_JOBS === '1') {
-    console.log('[Scheduler] Background jobs disabled via DISABLE_BACKGROUND_JOBS');
+  if (process.env.DISABLE_BACKGROUND_JOBS === "1") {
+    console.log(
+      "[Scheduler] Background jobs disabled via DISABLE_BACKGROUND_JOBS",
+    );
     return;
   }
   schedulerStarted = true;
 
   // Run full project audit sweep every 6 hours
-  cron.schedule('0 */6 * * *', () => {
+  cron.schedule("0 */6 * * *", () => {
     enqueueAllProjectsForAudit().catch((err) => {
-      console.error('[Scheduler] Audit sweep failed:', err.message);
+      console.error("[Scheduler] Audit sweep failed:", err.message);
     });
   });
 
   // Clean up stale audit jobs every hour
-  cron.schedule('0 * * * *', async () => {
+  cron.schedule("0 * * * *", async () => {
     try {
       const pool = getPool();
       // Mark stale running audits as failed after 10 minutes
@@ -180,9 +194,11 @@ export function startScheduler(): void {
         WHERE status = 'running' AND created_at < NOW() - INTERVAL '10 minutes'
       `);
     } catch (err: any) {
-      console.warn('[Scheduler] Stale job cleanup failed:', err.message);
+      console.warn("[Scheduler] Stale job cleanup failed:", err.message);
     }
   });
 
-  console.log('[Scheduler] Cron scheduler started (6h audit sweep, 1h stale cleanup)');
+  console.log(
+    "[Scheduler] Cron scheduler started (6h audit sweep, 1h stale cleanup)",
+  );
 }

@@ -200,14 +200,6 @@ jobs:
       - name: Audit server
         run: npm --prefix server audit --audit-level=moderate || true
 
-  # ─── Deploy to Render (main branch only) ───────────────────────────────────
-  deploy:
-    needs: [build, test-client, test-server, security]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Trigger Render deploy - API
-        run: curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_API }}"
-
-      - name: Trigger Render deploy - Web
-        run: curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_WEB }}"
+  # ─── Deploy to Railway (automatic via GitHub integration) ───────────────────
+  # Note: Railway automatically deploys on push to main.
+  # See railway.toml for deployment config. No manual deploy job needed.

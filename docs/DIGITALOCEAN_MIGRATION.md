@@ -1,4 +1,12 @@
-# DigitalOcean Migration Guide — Render → DO
+# ⚠️ DEPRECATED - Old migration guide (no longer relevant)
+
+**Current Deployment**: Railway (see [RAILWAY_DEPLOYMENT.md](../RAILWAY_DEPLOYMENT.md))
+
+This document describes a hypothetical migration from Render to DigitalOcean, which was never completed. The platform is now running on Railway. This document is kept for historical reference only.
+
+---
+
+# DigitalOcean Migration Guide — Render → DO (Historical Reference)
 
 > Generated 2026-04-08. Fresh DB backup verified: `backups/aivis-backup-2026-04-08T15-54-59.sql` (27.4 MB, 102 tables, 52 users, 404 audits).
 
@@ -6,13 +14,13 @@
 
 ## 1. What You're Moving
 
-| Component | Current Host | Migration Path |
-|-----------|-------------|----------------|
-| **Backend API** (Express + Puppeteer) | Render Web Service (`aivis`, Ohio) | DO Droplet or DO App Platform |
-| **Frontend** (Vite static) | Render Static Site (`aivis-web`) | DO Spaces + CDN, or nginx on same Droplet |
-| **Database** | Neon Postgres (external) | Keep on Neon **or** move to DO Managed Postgres |
-| **DNS** | aivis.biz → Render | Update A/CNAME to DO IPs |
-| **CI/CD** | GitHub Actions → Render deploy hooks | GitHub Actions → SSH/rsync to DO (or DO App auto-deploy) |
+| Component                             | Current Host                         | Migration Path                                           |
+| ------------------------------------- | ------------------------------------ | -------------------------------------------------------- |
+| **Backend API** (Express + Puppeteer) | Render Web Service (`aivis`, Ohio)   | DO Droplet or DO App Platform                            |
+| **Frontend** (Vite static)            | Render Static Site (`aivis-web`)     | DO Spaces + CDN, or nginx on same Droplet                |
+| **Database**                          | Neon Postgres (external)             | Keep on Neon **or** move to DO Managed Postgres          |
+| **DNS**                               | aivis.biz → Render                   | Update A/CNAME to DO IPs                                 |
+| **CI/CD**                             | GitHub Actions → Render deploy hooks | GitHub Actions → SSH/rsync to DO (or DO App auto-deploy) |
 
 ---
 
@@ -32,6 +40,7 @@
 ## 3. Recommended DO Architecture
 
 ### Option A: Single Droplet (cheapest, full control)
+
 ```
 Droplet (Ubuntu 24.04, 2 GB RAM minimum for Puppeteer)
 ├─ nginx (reverse proxy + static files)
@@ -44,6 +53,7 @@ Droplet (Ubuntu 24.04, 2 GB RAM minimum for Puppeteer)
 ```
 
 ### Option B: DO App Platform (managed, like Render)
+
 ```
 App Platform
 ├─ Web Service: server/ (Node.js component, auto-deploy from GitHub)
@@ -58,6 +68,7 @@ App Platform
 Export ALL of these from Render dashboard. The full reference is in `server/.env.example`.
 
 ### Critical (server won't start without these)
+
 ```
 DATABASE_URL          # Postgres connection string (Neon or new DO Postgres)
 JWT_SECRET            # Auth tokens break if this changes
@@ -66,6 +77,7 @@ OPEN_ROUTER_API_KEY   # AI provider auth (or OPENROUTER_API_KEY)
 ```
 
 ### Payments (Stripe)
+
 ```
 STRIPE_SECRET_KEY
 STRIPE_PUBLISHABLE_KEY
@@ -78,6 +90,7 @@ STRIPE_SCAN_PACK_*_PRICE_ID   # All scan pack price IDs
 ```
 
 ### Auth (OAuth)
+
 ```
 GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
 GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET
@@ -85,6 +98,7 @@ GSC_GOOGLE_CLIENT_ID / GSC_GOOGLE_CLIENT_SECRET / GSC_OAUTH_CALLBACK_URL
 ```
 
 ### Email
+
 ```
 RESEND_API_KEY
 FROM_EMAIL
@@ -92,6 +106,7 @@ RESEND_WEBHOOK_SECRET
 ```
 
 ### Security / Encryption
+
 ```
 APP_ENCRYPTION_KEY
 PUBLIC_REPORT_SIGNING_SECRET
@@ -104,12 +119,14 @@ LICENSE_ENCRYPTION_SECRET
 ```
 
 ### Monitoring
+
 ```
 SENTRY_DSN
 ADMIN_KEY
 ```
 
 ### Client (.env)
+
 ```
 VITE_API_URL=https://api.aivis.biz
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...
@@ -121,11 +138,13 @@ VITE_SENTRY_DSN=...
 ## 5. Migration Steps
 
 ### Step 1: Provision DO Resources
+
 1. Create Droplet: Ubuntu 24.04, **minimum 2 GB RAM** (Puppeteer needs headless Chrome)
 2. SSH in, install: Node.js 22, nginx, certbot, Chrome/Chromium, PM2
 3. Create deploy user + SSH key for GitHub Actions
 
 ### Step 2: Configure nginx
+
 Create two server blocks matching `render.yaml` headers:
 
 ```nginx
@@ -201,6 +220,7 @@ server {
 ```
 
 ### Step 3: Install Chrome for Puppeteer
+
 ```bash
 # On the Droplet
 apt-get update && apt-get install -y \
@@ -215,6 +235,7 @@ export PUPPETEER_CACHE_DIR=/home/deploy/.cache/puppeteer
 ```
 
 ### Step 4: Deploy Code
+
 ```bash
 # Clone repo on server
 git clone git@github.com:YOUR_ORG/aivis.git /var/www/aivis
@@ -228,6 +249,7 @@ cd ../client && npm install --include=dev && npm run build
 ```
 
 ### Step 5: Process Manager (PM2)
+
 ```bash
 npm install -g pm2
 
@@ -243,6 +265,7 @@ pm2 save
 ```
 
 ### Step 6: Update DNS
+
 ```
 A    aivis.biz        → <DO_DROPLET_IP>
 A    api.aivis.biz    → <DO_DROPLET_IP>
@@ -250,11 +273,13 @@ A    www.aivis.biz    → <DO_DROPLET_IP>
 ```
 
 ### Step 7: SSL Certificates
+
 ```bash
 certbot --nginx -d aivis.biz -d www.aivis.biz -d api.aivis.biz
 ```
 
 ### Step 8: Update External Services
+
 - **Stripe**: Update webhook endpoint URL (api.aivis.biz stays same, but verify)
 - **Google OAuth**: Verify redirect URIs still point to api.aivis.biz
 - **GitHub OAuth**: Same
@@ -262,36 +287,39 @@ certbot --nginx -d aivis.biz -d www.aivis.biz -d api.aivis.biz
 - **Google reCAPTCHA**: Verify domain list
 
 ### Step 9: Update CI/CD
+
 Replace Render deploy hooks in `.github/workflows/ci.yml` (lines 203–213):
 
 ```yaml
-  deploy:
-    needs: [build, test-client, test-server, security]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
+deploy:
+  needs: [build, test-client, test-server, security]
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  steps:
+    - uses: actions/checkout@v4
 
-      - name: Deploy to DigitalOcean
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: deploy
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            cd /var/www/aivis
-            git pull origin main
-            cd server && npm install --include=dev && npm run build
-            npx puppeteer browsers install chrome
-            cd ../client && npm install --include=dev && npm run build
-            pm2 restart aivis-api
+    - name: Deploy to DigitalOcean
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: deploy
+        key: ${{ secrets.DO_SSH_KEY }}
+        script: |
+          cd /var/www/aivis
+          git pull origin main
+          cd server && npm install --include=dev && npm run build
+          npx puppeteer browsers install chrome
+          cd ../client && npm install --include=dev && npm run build
+          pm2 restart aivis-api
 ```
 
 New GitHub secrets needed:
+
 - `DO_HOST` — Droplet IP or hostname
 - `DO_SSH_KEY` — Private SSH key for deploy user
 
 Remove old secrets:
+
 - `RENDER_DEPLOY_HOOK_API`
 - `RENDER_DEPLOY_HOOK_WEB`
 
@@ -301,15 +329,15 @@ Remove old secrets:
 
 These files contain Render-specific references (comments/config only — no functional changes needed for the app to run on DO):
 
-| File | Line(s) | What | Action |
-|------|---------|------|--------|
-| `render.yaml` | all | Render service definition | Keep as reference; not used by DO |
-| `.github/workflows/ci.yml` | 144 | Comment: "mirrors Render build commands" | Update comment |
-| `.github/workflows/ci.yml` | 203–213 | Deploy hooks `curl` to Render | Replace with SSH deploy (see §5.9) |
-| `api/audits/index.ts` | 2, 25 | Comments mentioning Render | Update comments |
-| `client/.env.example` | 9 | "set this in Render dashboard" | Update comment |
-| `server/.puppeteerrc.cjs` | 3–6 | Comment mentioning Render paths | Update comment (code is already portable via env var) |
-| `render.yaml` | 14 | `PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer` | Set to DO path in server .env |
+| File                       | Line(s) | What                                               | Action                                                |
+| -------------------------- | ------- | -------------------------------------------------- | ----------------------------------------------------- |
+| `render.yaml`              | all     | Render service definition                          | Keep as reference; not used by DO                     |
+| `.github/workflows/ci.yml` | 144     | Comment: "mirrors Render build commands"           | Update comment                                        |
+| `.github/workflows/ci.yml` | 203–213 | Deploy hooks `curl` to Render                      | Replace with SSH deploy (see §5.9)                    |
+| `api/audits/index.ts`      | 2, 25   | Comments mentioning Render                         | Update comments                                       |
+| `client/.env.example`      | 9       | "set this in Render dashboard"                     | Update comment                                        |
+| `server/.puppeteerrc.cjs`  | 3–6     | Comment mentioning Render paths                    | Update comment (code is already portable via env var) |
+| `render.yaml`              | 14      | `PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer` | Set to DO path in server .env                         |
 
 **Important**: The actual application code is fully portable. Only comments and CI/CD config reference Render.
 
@@ -318,11 +346,13 @@ These files contain Render-specific references (comments/config only — no func
 ## 7. Database Decision
 
 ### Option A: Keep Neon Postgres (recommended for now)
+
 - No data migration needed
 - Same `DATABASE_URL` works from DO
 - Potential latency if Neon region ≠ DO region (check both are US-East)
 
 ### Option B: Migrate to DO Managed Postgres
+
 1. Create DO Managed Postgres cluster
 2. Restore from backup: `psql $NEW_DATABASE_URL < backups/aivis-backup-2026-04-08T15-54-59.sql`
 3. Update `DATABASE_URL` in server env

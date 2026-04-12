@@ -30,7 +30,7 @@
   },
   "urlsAudited": [
     {
-      "url": "https://aivis.biz/",
+      "url": "https://aivis.biz",
       "status": 200,
       "latency_ms": 157,
       "title": "AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
@@ -231,21 +231,21 @@
     {
       "id": "ev-web-07ec97f80215",
       "source": "web",
-      "url": "https://aivis.biz/",
+      "url": "https://aivis.biz",
       "snippet": "homepage_title=AiVIS | AI Visibility Audit for ChatGPT, Perplexity, Claude",
       "retrievedAt": "2026-03-18T13:31:23.745361+00:00"
     },
     {
       "id": "ev-web-9173fef73bc4",
       "source": "web",
-      "url": "https://aivis.biz/",
+      "url": "https://aivis.biz",
       "snippet": "homepage_meta_description=AiVIS audits how ChatGPT, Perplexity, Claude, and Google AI read your site and returns a visibility score with evidence-linked fixes.",
       "retrievedAt": "2026-03-18T13:31:23.745382+00:00"
     },
     {
       "id": "ev-web-3cf2fb46c54a",
       "source": "web",
-      "url": "https://aivis.biz/",
+      "url": "https://aivis.biz",
       "snippet": "homepage_jsonld=FAQPage,HowTo,WebPage",
       "retrievedAt": "2026-03-18T13:31:23.745400+00:00"
     }

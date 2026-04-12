@@ -327,16 +327,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   // Normalize origin helper
   const normalizeOriginHelper = (o: string): string => {
-    const raw = String(o || "").trim();
+    const raw = String(o || "").trim().replace(/\/+$/, "");
     if (!raw) return "";
     try {
-      let normalized = new URL(raw).origin.toLowerCase();
-      while (normalized.endsWith("/")) normalized = normalized.slice(0, -1);
-      return normalized;
+      return new URL(raw).origin.toLowerCase().replace(/\/+$/, "");
     } catch {
-      let normalized = raw.toLowerCase();
-      while (normalized.endsWith("/")) normalized = normalized.slice(0, -1);
-      return normalized;
+      return raw.toLowerCase().replace(/\/+$/, "");
     }
   };
 
@@ -1135,19 +1131,12 @@ function assertCriticalEnvForProduction(): void {
 assertCriticalEnvForProduction();
 
 const normalizeOrigin = (origin: string): string => {
-  const raw = String(origin || "").trim();
+  const raw = String(origin || "").trim().replace(/\/+$/, "");
   if (!raw) return "";
-
   try {
-    // URL.origin should never have a trailing slash, but strip defensively
-    // because some Node.js builds / transpilers return .href instead of .origin.
-    let o = new URL(raw).origin.toLowerCase();
-    while (o.endsWith("/")) o = o.slice(0, -1);
-    return o;
+    return new URL(raw).origin.toLowerCase().replace(/\/+$/, "");
   } catch {
-    let normalized = raw.toLowerCase();
-    while (normalized.endsWith("/")) normalized = normalized.slice(0, -1);
-    return normalized;
+    return raw.toLowerCase().replace(/\/+$/, "");
   }
 };
 

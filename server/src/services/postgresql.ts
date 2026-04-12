@@ -103,8 +103,9 @@ export function getPool(): Pool {
       };
     } else if (IS_PRODUCTION) {
       console.warn(
-        "[DB SSL] No CA certificate provided; will attempt sslmode=require",
+        "[DB SSL] No CA certificate provided; connecting with ssl rejectUnauthorized=false (Supabase PgBouncer)",
       );
+      poolConfig.ssl = { rejectUnauthorized: false };
     }
 
     poolInstance = new PgPool(poolConfig);

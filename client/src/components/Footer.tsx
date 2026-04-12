@@ -38,42 +38,24 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-20 border-t border-white/10 bg-[#08101d] py-12 text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr_repeat(3,minmax(0,1fr))] lg:px-8">
-        <div className="space-y-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/75">AiVIS</p>
-            <h2 className="mt-2 text-lg font-semibold tracking-tight text-white">AI visibility intelligence for teams that need proof, not vibes.</h2>
-          </div>
-          <p className="max-w-md text-sm leading-6 text-white/64">
-            Audit whether AI systems can read, trust, and cite your site. Run evidence-backed audits, track movement, and turn blockers into execution.
-          </p>
-          <div className="flex flex-wrap gap-3 text-xs text-white/60">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><Lock className="h-3.5 w-3.5" /> TLS encrypted</span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><Shield className="h-3.5 w-3.5" /> No data resale</span>
-          </div>
+    <footer className="relative z-20 border-t border-white/10 bg-[#08101d] py-4 text-white">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-4 sm:px-6 lg:px-8">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300/75">AiVIS</span>
+
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/60">
+          {linkGroups.flatMap((g) => g.links).map((link) => (
+            <Link key={link.to} to={link.to} className="transition hover:text-white">
+              {link.label}
+            </Link>
+          ))}
         </div>
 
-        {linkGroups.map((group) => (
-          <div key={group.title}>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/52">{group.title}</h3>
-            <ul className="space-y-2.5 text-sm">
-              {group.links.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className="text-white/72 transition hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-3 border-t border-white/10 px-4 pt-5 text-xs text-white/50 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <span>© {currentYear} AiVIS. All rights reserved.</span>
-        <a href="mailto:support@aivis.biz" className="text-white/50 hover:text-white transition">support@aivis.biz</a>
-        <span>Evidence-grounded AI visibility audits for operators, agencies, and in-house teams.</span>
+        <div className="flex items-center gap-4 text-xs text-white/40">
+          <span className="inline-flex items-center gap-1.5"><Lock className="h-3 w-3" /> TLS encrypted</span>
+          <span className="inline-flex items-center gap-1.5"><Shield className="h-3 w-3" /> No data resale</span>
+          <span>© {currentYear} AiVIS.</span>
+          <a href="mailto:support@aivis.biz" className="transition hover:text-white">support@aivis.biz</a>
+        </div>
       </div>
     </footer>
   );

@@ -85,8 +85,19 @@ export function getPool(): Pool {
     throw new Error("DATABASE_URL not configured");
   }
   if (!poolInstance) {
+    // Strip sslmode/ssl params from URL so pg doesn't override our explicit ssl config
+    let connectionString = DATABASE_URL;
+    try {
+      const u = new URL(DATABASE_URL);
+      u.searchParams.delete("sslmode");
+      u.searchParams.delete("ssl");
+      connectionString = u.toString();
+    } catch {
+      // If URL parsing fails, use as-is
+    }
+
     const poolConfig: any = {
-      connectionString: DATABASE_URL,
+      connectionString,
       max: 20,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 30_000,

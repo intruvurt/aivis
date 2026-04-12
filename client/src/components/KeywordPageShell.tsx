@@ -40,7 +40,7 @@ export default function KeywordPageShell({ page, clusterMeta, icon }: Props) {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://aivis.biz/" },
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://aivis.biz" },
           { "@type": "ListItem", position: 2, name: clusterMeta.label, item: `https://aivis.biz${clusterMeta.basePath}` },
           { "@type": "ListItem", position: 3, name: page.title },
         ],

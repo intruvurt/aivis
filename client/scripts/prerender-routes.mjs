@@ -1701,7 +1701,7 @@ function prerenderHtml(route) {
 	if (route.path !== '/') {
 		html = html.replace(
 			'</head>',
-			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz/" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeHtml(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
+			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeHtml(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
 		);
 	}
 

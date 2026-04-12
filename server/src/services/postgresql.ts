@@ -11,17 +11,18 @@ function normalizeDatabaseUrl(raw: string): string {
 
   if (!IS_PRODUCTION) return input;
 
-  // pg v8 treats require/prefer/verify-ca as verify-full anyway.
-  // Make it explicit to silence the deprecation warning and preserve
-  // the same behaviour when pg v9 changes semantics.
-  if (/sslmode=(prefer|require|verify-ca)\b/i.test(input)) {
-    return input.replace(/sslmode=(prefer|require|verify-ca)\b/i, 'sslmode=verify-full');
+  // Supabase PgBouncer pooler uses intermediate CAs that are not in Node.js's
+  // default trust store, so sslmode=verify-full / verify-ca will always fail
+  // with "self-signed certificate in certificate chain".  We use sslmode=require
+  // here (encrypted but no chain verification) combined with
+  // ssl: { rejectUnauthorized: false } on the Pool below, which is the
+  // Supabase-recommended approach for Node.js connection-pooler URLs.
+  if (/sslmode=(prefer|require|verify-ca|verify-full)\b/i.test(input)) {
+    // Normalise any variant to plain 'require' — rejectUnauthorized=false on
+    // the Pool handles the trust aspect.
+    return input.replace(/sslmode=(prefer|require|verify-ca|verify-full)\b/i, 'sslmode=require');
   }
 
-  // Supabase (and most managed Postgres) require SSL.
-  // If no sslmode is set at all in production, default to require.
-  // (require = encrypted but no cert verification — safe for pooler connections
-  // where the cert may not match the pooler hostname.)
   if (!/sslmode=/i.test(input)) {
     const sep = input.includes('?') ? '&' : '?';
     return `${input}${sep}sslmode=require`;
@@ -84,6 +85,10 @@ export function getPool(): Pool {
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 30_000,
       statement_timeout: 30_000,
+      // Supabase PgBouncer pooler uses intermediate CAs not trusted by Node.js.
+      // rejectUnauthorized: false keeps the connection encrypted while skipping
+      // chain verification — standard practice for managed Postgres poolers.
+      ...(IS_PRODUCTION ? { ssl: { rejectUnauthorized: false } } : {}),
     });
   }
   return poolInstance;

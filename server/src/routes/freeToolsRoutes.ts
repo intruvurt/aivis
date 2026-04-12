@@ -527,4 +527,49 @@ router.post('/content-extractability', async (req: Request, res: Response) => {
   }
 });
 
+// ─────────────────────────────────────────────────────────────────
+// 4. DNS Lookup (DNS-over-HTTPS via Cloudflare 1.1.1.1)
+// ─────────────────────────────────────────────────────────────────
+
+const VALID_DOMAIN = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$/;
+const VALID_DNS_TYPES = new Set(['A', 'AAAA', 'MX', 'TXT', 'CNAME', 'NS', 'SOA', 'CAA', 'PTR', 'SRV']);
+
+/**
+ * GET /api/tools/dns?name=domain.com&type=A
+ *
+ * Proxies DNS-over-HTTPS queries to Cloudflare 1.1.1.1.
+ * Validates the domain name and type to prevent SSRF or enumeration abuses.
+ */
+router.get('/dns', async (req: Request, res: Response) => {
+  const name = String(req.query.name || '').trim().toLowerCase();
+  const type = String(req.query.type || 'A').toUpperCase();
+
+  if (!name) return res.status(400).json({ success: false, error: 'name is required' });
+  if (!VALID_DOMAIN.test(name)) return res.status(400).json({ success: false, error: 'Invalid domain name' });
+  if (!VALID_DNS_TYPES.has(type)) {
+    return res.status(400).json({ success: false, error: `Unsupported record type. Use: ${[...VALID_DNS_TYPES].join(', ')}` });
+  }
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5_000);
+    try {
+      const upstream = await fetch(
+        `https://1.1.1.1/dns-query?name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`,
+        { headers: { Accept: 'application/dns-json' }, signal: controller.signal },
+      );
+      if (!upstream.ok) {
+        return res.status(upstream.status).json({ success: false, error: `Upstream DNS error: ${upstream.status}` });
+      }
+      const data = await upstream.json();
+      return res.json({ success: true, data });
+    } finally {
+      clearTimeout(timer);
+    }
+  } catch (err: any) {
+    const msg = String(err?.message || 'DNS lookup failed');
+    return res.status(502).json({ success: false, error: msg, code: msg.includes('abort') ? 'TIMEOUT' : 'DNS_LOOKUP_FAILED' });
+  }
+});
+
 export default router;

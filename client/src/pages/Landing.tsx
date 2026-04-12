@@ -57,6 +57,7 @@ const LANDING_STRUCTURED_DATA = [
     path: '/',
     name: 'AiVIS – AI Visibility Intelligence Platform',
     description: 'AiVIS audits how answer engines read, trust, and cite your website. Evidence-backed scoring with BRAG identifiers.',
+    speakableCssSelectors: ['h1', 'h2', '.hero-description', '.feature-summary', '[data-speakable]'],
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
@@ -363,6 +364,9 @@ const Landing = () => {
         <img
           src="/aivis-circ-pfp-landscape-banner.png"
           alt=""
+          width="1440"
+          height="80"
+          fetchPriority="high"
           className="w-full h-full object-cover opacity-40"
           style={{ maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)' }}
         />
@@ -376,12 +380,12 @@ const Landing = () => {
         <div className="hero-flow-overlay" aria-hidden="true" />
         <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4 tracking-tight">
+            <h1 id="hero-headline" data-speakable className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4 tracking-tight">
               Is your site{' '}
               <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">visible to AI?</span>
             </h1>
             <p className="text-sm text-white/40 mb-2 font-medium tracking-wide">For SEO managers, content teams and founders losing traffic to AI answers</p>
-            <p className="text-base sm:text-lg text-white/55 mb-8 leading-relaxed max-w-xl mx-auto">
+            <p className="hero-description text-base sm:text-lg text-white/55 mb-8 leading-relaxed max-w-xl mx-auto" data-speakable>
               Paste your URL. Get a real score, real findings and the first fix — in under 30 seconds.<br className="hidden sm:block" />
               No login required for your first result.
             </p>
@@ -556,8 +560,8 @@ const Landing = () => {
       {/* ── TLDR / SUMMARY ── */}
       <section id="tldr" className="py-10 bg-[#0b0f1a]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-lg font-semibold text-white/80 mb-3">Summary:</h2>
-          <p className="text-white/55 text-sm sm:text-base leading-relaxed">
+          <h2 id="summary" className="text-lg font-semibold text-white/80 mb-3" data-speakable>Summary:</h2>
+          <p className="feature-summary text-white/55 text-sm sm:text-base leading-relaxed" data-speakable>
             AiVIS audits whether AI answer engines — ChatGPT, Perplexity, Google AI and Claude —
             can read, trust and cite your website. Unlike traditional SEO tools that track keyword rankings,
             AiVIS scans your live page with a headless browser and scores it across six weighted categories
@@ -626,8 +630,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">How it works</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">How does AiVIS audit your site?</h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto">Every audit uses BRAG - Based Retrieval and Auditable Grading - so every finding traces back to a real element on your page.</p>
+            <h2 id="how-it-works" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>How does AiVIS audit your site?</h2>
+            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">Every audit uses BRAG - Based Retrieval and Auditable Grading - so every finding traces back to a real element on your page.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {([
@@ -651,7 +655,7 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">See it in action</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">What an audit actually looks like</h2>
+            <h2 id="what-an-audit-looks-like" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>What an audit actually looks like</h2>
             <p className="text-white/50 text-base max-w-2xl mx-auto">Paste a URL, get a full breakdown in under 60 seconds. Here is the real output flow — not a mockup.</p>
           </div>
           <div className="space-y-6">
@@ -717,10 +721,10 @@ const Landing = () => {
       <section className="py-20 bg-[#060607] border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3">
+            <h2 id="ai-visibility-gap" className="text-3xl sm:text-4xl font-bold mb-3" data-speakable>
               <span className="bg-gradient-to-r from-amber-300 via-white to-amber-100 bg-clip-text text-transparent">Why do AI models skip your site?</span>
             </h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, AI answer engines skip it — even if you rank #1 on Google. Pages missing JSON-LD schema score 40–60% lower. Sites without clear heading hierarchies lose up to 15 points.</p>
+            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto"><a href="https://sparktoro.com/blog/2026-zero-click-search-study/" target="_blank" rel="noopener noreferrer" className="text-white/70 underline decoration-white/25 hover:text-white/90 transition-colors">58.5% of Google searches</a> now end in zero clicks. If your page is not structured for extraction, AI answer engines skip it — even if you rank #1 on Google. Pages missing JSON-LD schema score 40–60% lower. Sites without clear heading hierarchies lose up to 15 points.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {([
@@ -758,7 +762,7 @@ const Landing = () => {
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
             className="relative rounded-2xl border border-white/12 bg-[#0d1117]/60 p-3 sm:p-4 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 60px 30px rgba(6,6,7,0.85)' }} />
-            <img src="/images/case-study-score-lift.png" alt="Real AiVIS audit showing score improvement from 15 to 52 after applying recommended fixes" className="w-full h-auto rounded-xl" loading="lazy" />
+            <img src="/images/case-study-score-lift.png" alt="Real AiVIS audit showing score improvement from 15 to 52 after applying recommended fixes" width="1024" height="576" className="w-full h-auto rounded-xl" loading="lazy" />
           </motion.div>
           <div className="mt-8 grid sm:grid-cols-3 gap-4 text-center">
             <div className="rounded-2xl border border-red-400/20 bg-red-400/8 p-4">
@@ -827,7 +831,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="rounded-2xl border border-white/12 bg-[#323a4c]/40 p-3 sm:p-4 shadow-2xl">
-            <img src="/images/fix-pack-preview.svg" alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block" className="w-full h-auto rounded-xl" loading="lazy" />
+            <img src="/images/fix-pack-preview.svg" alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block" width="960" height="540" className="w-full h-auto rounded-xl" loading="lazy" />
           </div>
           <p className="mt-3 text-xs text-white/40 text-center">Real Fix Pack output · Generated from live audit evidence · Not a mockup</p>
           <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
@@ -847,7 +851,7 @@ const Landing = () => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">Method</span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+            <h2 id="methodology" className="text-2xl sm:text-3xl font-bold text-white" data-speakable>
               <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent">What happens when you submit a URL?</span>
             </h2>
             <p className="text-white/45 text-sm mt-2 font-mono">No black box. Scoring categories are grounded in <a href="https://schema.org" target="_blank" rel="noopener noreferrer" className="text-cyan-300/70 hover:text-cyan-300 underline">Schema.org</a> vocabulary. <Link to="/methodology" className="text-cyan-300/70 hover:text-cyan-300 underline">Canonical methodology page</Link></p>
@@ -885,8 +889,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">Transparent pricing</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Simple, transparent pricing</h2>
-            <p className="text-white/50 text-lg mb-6">All pricing verified server-side at checkout - no client-side overrides</p>
+            <h2 id="pricing-overview" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>Simple, transparent pricing</h2>
+            <p className="feature-summary text-white/50 text-lg mb-6">All pricing verified server-side at checkout - no client-side overrides</p>
             <div className="inline-flex items-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1">
               {(['monthly', 'annual'] as const).map((cycle) => (
                 <button key={cycle} type="button" onClick={() => setBillingCycle(cycle)} className={`px-5 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 ${billingCycle === cycle ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/75'}`}>
@@ -942,8 +946,8 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">The platform</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Built for the AI citation era</h2>
-            <p className="text-white/50 text-base max-w-2xl mx-auto">AiVIS is a full-stack intelligence platform — not a wrapper around a single API call. Every layer is purpose-built for AI visibility analysis.</p>
+            <h2 id="platform-capabilities" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>Built for the AI citation era</h2>
+            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">AiVIS is a full-stack intelligence platform — not a wrapper around a single API call. Every layer is purpose-built for AI visibility analysis.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {([
@@ -1004,7 +1008,7 @@ const Landing = () => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">FAQ</span>
-            <h2 className="text-3xl font-bold text-white">Frequently asked questions</h2>
+            <h2 id="faq" className="text-3xl font-bold text-white" data-speakable>Frequently asked questions</h2>
           </div>
           <dl className="space-y-5">
             {FAQ_ITEMS.map(({ q, a }) => (
@@ -1022,7 +1026,7 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(34,211,238,0.06),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_30%,rgba(139,92,246,0.07),transparent)]" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
+          <h2 id="cta-headline" className="text-4xl sm:text-5xl font-extrabold text-white mb-4" data-speakable>
             If your site isn&apos;t being cited,{' '}
             <span className="bg-gradient-to-r from-amber-300 via-white to-red-300 bg-clip-text text-transparent">it&apos;s already being replaced</span>
           </h2>

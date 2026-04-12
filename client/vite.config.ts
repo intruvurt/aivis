@@ -47,12 +47,15 @@ export default defineConfig(({ mode }) => ({
 
           if (id.includes("/react-dom/")) return "react-dom";
           if (id.includes("/react-router/") || id.includes("/react-router-dom/")) return "router";
+          if (id.includes("/framer-motion/")) return "motion";
           if (id.includes("/recharts/")) return "recharts";
           if (id.includes("/d3-") || id.includes("/victory")) return "chart-deps";
           if (id.includes("/zustand/") || id.includes("/@tanstack/")) return "state";
           if (id.includes("/lucide-react/")) return "icons";
+          if (id.includes("/@sentry/")) return "sentry";
+          if (id.includes("/i18next/") || id.includes("/react-i18next/")) return "i18n";
 
-          // Everything else (react, scheduler, sentry, etc.) in vendor to avoid circular chunks
+          // Everything else (react, scheduler, etc.) in vendor to avoid circular chunks
           return "vendor";
         }
       }

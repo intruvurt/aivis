@@ -70,13 +70,17 @@
 
     <!-- performance hints -->
 
+    <!-- Preload the above-fold hero banner so it is discovered early (improves LCP) -->
+    <link rel="preload" as="image" href="/aivis-circ-pfp-landscape-banner.png" fetchpriority="high" />
+
     <link rel="preconnect" href="https://www.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.google.com" />
     <!-- Google Fonts (non-render-blocking, replaces CSS @import) -->
+    <!-- DM Sans: specific weights only (was full variable font 100-1000 + opsz, ~3× larger) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
 
     <!-- reCAPTCHA deferred to body -->
 

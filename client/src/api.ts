@@ -2,7 +2,7 @@
 import { API_URL } from "./config";
 import { useAuthStore } from "./stores/authStore";
 import { getWorkspaceHeader } from "./stores/workspaceStore";
-import type { CitationIdentityResponse, ServerHeadersCheckResult, QueryPack } from "../../shared/types";
+import type { CitationIdentityResponse, ServerHeadersCheckResult, QueryPack } from "@shared/types";
 
 type ApiError = Error & { status?: number; code?: string };
 

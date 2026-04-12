@@ -158,7 +158,14 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
       {/* CodeTrendy badge */}
       <div className="px-4 py-2 shrink-0">
         <a href="https://codetrendy.com" target="_blank" rel="noopener noreferrer">
-          <img src={CODETRENDY_BADGE_URL} alt="Listed on codetrendy.com" height={40} loading="lazy" className="opacity-60 hover:opacity-100 transition-opacity" />
+          <img
+            src={CODETRENDY_BADGE_URL}
+            alt="Listed on codetrendy.com"
+            height={40}
+            loading="lazy"
+            className="opacity-60 hover:opacity-100 transition-opacity"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
         </a>
       </div>
 

@@ -11,27 +11,11 @@ function normalizeDatabaseUrl(raw: string): string {
 
   if (!IS_PRODUCTION) return input;
 
-<<<<<<< HEAD
-  // Supabase PgBouncer pooler uses intermediate CAs that are not in Node.js's
-  // default trust store, so sslmode=verify-full / verify-ca will always fail
-  // with "self-signed certificate in certificate chain".  We use sslmode=require
-  // here (encrypted but no chain verification) combined with
-  // ssl: { rejectUnauthorized: false } on the Pool below, which is the
-  // Supabase-recommended approach for Node.js connection-pooler URLs.
+  // Supabase PgBouncer pooler and managed Postgres services use intermediate CAs.
+  // Always use sslmode=require in the connection string; actual verification
+  // (rejectUnauthorized) is controlled by DATABASE_CA_CERT env var in getPool().
   if (/sslmode=(prefer|require|verify-ca|verify-full)\b/i.test(input)) {
-    // Normalise any variant to plain 'require' — rejectUnauthorized=false on
-    // the Pool handles the trust aspect.
     return input.replace(/sslmode=(prefer|require|verify-ca|verify-full)\b/i, 'sslmode=require');
-=======
-  // pg v8 treats require/prefer/verify-ca as verify-full anyway.
-  // Make it explicit to silence the deprecation warning and preserve
-  // the same behaviour when pg v9 changes semantics.
-  if (/sslmode=(prefer|require|verify-ca)\b/i.test(input)) {
-    return input.replace(
-      /sslmode=(prefer|require|verify-ca)\b/i,
-      "sslmode=verify-full",
-    );
->>>>>>> 394c402 (fix: always use DATABASE_CA_CERT if provided, regardless of NODE_ENV)
   }
 
   if (!/sslmode=/i.test(input)) {

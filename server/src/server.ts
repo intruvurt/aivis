@@ -247,6 +247,12 @@ import {
   ipRateLimit,
 } from "./middleware/tieredRateLimiter.js";
 import {
+  createRequestLogger,
+  getRecentLogs,
+  getRequestStats,
+  createLogsEndpoint,
+} from "./middleware/requestLogger.js";
+import {
   runDeterministicAuditLayer,
   buildDeterministicResponseAdditions,
   attachDeterministicToAudit,
@@ -380,6 +386,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 applySecurityMiddleware(app);
+
+// Add request logging for diagnostics (tracks all requests)
+app.use(createRequestLogger());
+
 const PORT = Number(process.env.PORT) || 10000;
 const PUBLIC_REPORT_SIGNING_SECRET =
   process.env.PUBLIC_REPORT_SIGNING_SECRET || process.env.JWT_SECRET || "";
@@ -3070,11 +3080,19 @@ app.get("/api/contacts", authRequired, async (req: Request, res: Response) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Health check
+// Health check with caching (5s) to prevent polling storms
 // ─────────────────────────────────────────────────────────────────────────────
 const DEPLOY_VERSION = "2026-03-19_credit-gate-fix";
 
-app.get("/api/health", async (_req, res) => {
+interface HealthCacheEntry {
+  timestamp: number;
+  data: any;
+}
+
+let healthCache: HealthCacheEntry | null = null;
+const HEALTH_CACHE_TTL_MS = 5000; // Cache for 5 seconds
+
+async function computeHealthStatus() {
   let dbOk = false;
   let dbError: string | null = null;
   try {
@@ -3088,7 +3106,7 @@ app.get("/api/health", async (_req, res) => {
   const pythonOk = await isPythonServiceAvailable();
 
   const status = dbOk ? "healthy" : "degraded";
-  res.status(200).json({
+  return {
     success: true,
     status,
     ready: dbOk,
@@ -3111,27 +3129,52 @@ app.get("/api/health", async (_req, res) => {
       used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
       total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
     },
-  });
-});
+  };
+}
 
-app.get("/api/ready", async (_req, res) => {
-  try {
-    const pool = getPool();
-    await pool.query("SELECT 1");
-    return res.status(200).json({
-      success: true,
-      status: "ready",
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error: any) {
-    return res.status(503).json({
-      success: false,
-      status: "not_ready",
-      error: error?.message || "Database check failed",
-      timestamp: new Date().toISOString(),
-    });
-  }
-});
+app.get(
+  "/api/health",
+  ipRateLimit({ maxRequests: 60, windowMs: 60_000 }),
+  async (_req, res) => {
+    // Check cache first
+    if (
+      healthCache &&
+      Date.now() - healthCache.timestamp < HEALTH_CACHE_TTL_MS
+    ) {
+      res.set("X-Health-Cache", "HIT");
+      return res.status(200).json(healthCache.data);
+    }
+
+    // Cache miss - compute and store
+    const data = await computeHealthStatus();
+    healthCache = { timestamp: Date.now(), data };
+    res.set("X-Health-Cache", "MISS");
+    return res.status(200).json(data);
+  },
+);
+
+app.get(
+  "/api/ready",
+  ipRateLimit({ maxRequests: 60, windowMs: 60_000 }),
+  async (_req, res) => {
+    try {
+      const pool = getPool();
+      await pool.query("SELECT 1");
+      return res.status(200).json({
+        success: true,
+        status: "ready",
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error: any) {
+      return res.status(503).json({
+        success: false,
+        status: "not_ready",
+        error: error?.message || "Database check failed",
+        timestamp: new Date().toISOString(),
+      });
+    }
+  },
+);
 
 // ── Public benchmark aggregates (anonymised, no auth) ─────────────────────
 app.get(
@@ -14966,6 +15009,31 @@ process.on("unhandledRejection", (reason) => {
     Sentry.captureException(
       reason instanceof Error ? reason : new Error(String(reason)),
     );
+});
+
+// ─── Admin: Request logs (diagnostics & traffic analysis) ───────────────────
+app.get("/api/admin/logs", adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const { path, ip, statusCode, limit } = req.query;
+  const logs = getRecentLogs({
+    path: path ? String(path) : undefined,
+    ip: ip ? String(ip) : undefined,
+    statusCode: statusCode ? parseInt(statusCode as string, 10) : undefined,
+    limit: limit ? parseInt(limit as string, 10) : 100,
+  });
+  res.json({ success: true, logs, count: logs.length });
+});
+
+// ─── Admin: Request statistics (traffic diagnostics) ───────────────────
+app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const stats = getRequestStats();
+  res.json({
+    success: true,
+    stats,
+    generated_at: new Date().toISOString(),
+    note: "Stats are based on recent requests kept in memory; restarting the server clears the buffer",
+  });
 });
 
 // Start server

@@ -32,8 +32,9 @@ async function initDOMPurify() {
       "[DOMPurify] Failed to initialize JSDOM, using in-memory fallback:",
       (err as any)?.message,
     );
-    // Fallback: use in-memory DOMPurify without JSDOM (basic sanitization only)
-    return DOMPurify;
+    // Fallback: assign module-level purify so sanitizeHtmlServer doesn't crash on null
+    purify = DOMPurify;
+    return purify;
   }
 }
 
@@ -140,11 +141,19 @@ export async function sendHtmlWithNonce(
  * sanitizeHtmlServer - strip dangerous tags/attributes from user-supplied HTML
  * ──────────────────────────────────────────────────────────────────────────── */
 export function sanitizeHtmlServer(input: string): string {
-  return purify.sanitize(input, {
-    USE_PROFILES: { html: true },
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
-    FORBID_ATTR: ["onerror", "onload", "onclick", "style"],
-  });
+  try {
+    if (purify && typeof purify.sanitize === "function") {
+      return purify.sanitize(input, {
+        USE_PROFILES: { html: true },
+        FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
+        FORBID_ATTR: ["onerror", "onload", "onclick", "style"],
+      });
+    }
+  } catch {
+    // DOMPurify unavailable (no DOM in this environment) — fall through
+  }
+  // Strip all HTML tags as a safe baseline when DOMPurify has no DOM to work with
+  return String(input).replace(/<[^>]+>/g, "");
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

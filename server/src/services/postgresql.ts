@@ -964,6 +964,17 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`,
             `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_url ON fix_outcomes(url)`,
 
+            // ── Ensure audits.id has a PRIMARY KEY constraint (may be missing after a
+            //    Neon restore or partial init batch) — pipeline_runs FKs require it ──
+            `DO $$ BEGIN
+              IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint
+                WHERE conrelid = 'audits'::regclass AND contype = 'p'
+              ) THEN
+                ALTER TABLE audits ADD PRIMARY KEY (id);
+              END IF;
+            END $$`,
+
             // ── Pipeline runs (self-healing audit pipeline orchestration) ──
             `CREATE TABLE IF NOT EXISTS pipeline_runs (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

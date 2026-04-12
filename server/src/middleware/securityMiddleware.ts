@@ -6,19 +6,48 @@
  *   applySecurityMiddleware(app);        // BEFORE any route registration
  */
 
-import type { Express, Request, Response, NextFunction } from 'express';
-import helmet from 'helmet';
-import crypto from 'crypto';
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
-import { z } from 'zod';
+import type { Express, Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import crypto from "crypto";
+import DOMPurify from "dompurify";
+import { z } from "zod";
 
 /* ────────────────────────────────────────────────────────────────────────────
- * Server-side DOMPurify instance (JSDOM-backed, created once)
+ * Server-side DOMPurify instance (JSDOM-backed, lazy-loaded)
+ * Lazy-load to avoid ES module conflicts at startup
  * ──────────────────────────────────────────────────────────────────────────── */
-const window = new JSDOM('').window;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const purify = DOMPurify(window as any);
+let purify: any = null;
+
+async function initDOMPurify() {
+  if (purify) return purify;
+
+  try {
+    const { JSDOM } = await import("jsdom");
+    const window = new JSDOM("").window;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    purify = DOMPurify(window as any);
+    return purify;
+  } catch (err) {
+    console.warn(
+      "[DOMPurify] Failed to initialize JSDOM, using in-memory fallback:",
+      (err as any)?.message,
+    );
+    // Fallback: use in-memory DOMPurify without JSDOM (basic sanitization only)
+    return DOMPurify;
+  }
+}
+
+// Pre-initialize asynchronously after a short delay to avoid blocking startup
+let purifyReady = false;
+setTimeout(() => {
+  initDOMPurify()
+    .then(() => {
+      purifyReady = true;
+    })
+    .catch(() => {
+      purifyReady = true; // Mark ready even if failed, fallback will be used
+    });
+}, 100);
 
 /* ────────────────────────────────────────────────────────────────────────────
  * applySecurityMiddleware - call once before any route registration
@@ -34,7 +63,7 @@ export function applySecurityMiddleware(app: Express): void {
       // Allow cross-origin reads for CORS-enabled API endpoints.
       // CORP: same-origin (Helmet default) would block cross-origin API responses
       // even when Access-Control-Allow-Origin grants access.
-      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      crossOriginResourcePolicy: { policy: "cross-origin" },
     }),
   );
 
@@ -61,21 +90,27 @@ export function applySecurityMiddleware(app: Express): void {
       "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
       "frame-src 'self' https: https://www.google.com https://js.stripe.com",
-      'upgrade-insecure-requests',
+      "upgrade-insecure-requests",
     ];
 
-    res.setHeader('Content-Security-Policy', directives.join('; '));
+    res.setHeader("Content-Security-Policy", directives.join("; "));
     next();
   });
 
   /* ── Additional security headers ─────────────────────────────────────── */
   app.use((_req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=(), payment=()",
+    );
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
+    );
+    res.setHeader("X-Frame-Options", "DENY");
     next();
   });
 }
@@ -86,15 +121,18 @@ export function applySecurityMiddleware(app: Express): void {
  * in practice: without this, <script> tags in the static build never carry the
  * nonce and inline scripts are blocked by CSP2+ browsers.
  * ──────────────────────────────────────────────────────────────────────────── */
-import { readFile } from 'fs/promises';
+import { readFile } from "fs/promises";
 
-export async function sendHtmlWithNonce(res: Response, htmlPath: string): Promise<void> {
-  const nonce = (res.locals.nonce as string) ?? '';
-  let html = await readFile(htmlPath, 'utf-8');
+export async function sendHtmlWithNonce(
+  res: Response,
+  htmlPath: string,
+): Promise<void> {
+  const nonce = (res.locals.nonce as string) ?? "";
+  let html = await readFile(htmlPath, "utf-8");
   // Inject nonce="..." into every <script …> opener (incl. ld+json - harmless)
   html = html.replace(/<script(?=[\s>])/gi, `<script nonce="${nonce}"`);
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache");
   res.send(html);
 }
 
@@ -104,8 +142,8 @@ export async function sendHtmlWithNonce(res: Response, htmlPath: string): Promis
 export function sanitizeHtmlServer(input: string): string {
   return purify.sanitize(input, {
     USE_PROFILES: { html: true },
-    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
-    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'style'],
+    FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
+    FORBID_ATTR: ["onerror", "onload", "onclick", "style"],
   });
 }
 
@@ -113,7 +151,7 @@ export function sanitizeHtmlServer(input: string): string {
  * escapeBootstrapState - safe JSON for embedding in <script> tags
  * ──────────────────────────────────────────────────────────────────────────── */
 export function escapeBootstrapState(state: unknown): string {
-  return JSON.stringify(state).replace(/</g, '\\u003c');
+  return JSON.stringify(state).replace(/</g, "\\u003c");
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -122,25 +160,25 @@ export function escapeBootstrapState(state: unknown): string {
 export function isSafeExternalUrl(value: string): boolean {
   try {
     const parsed = new URL(value);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
       return false;
     }
     // Block SSRF: reject private/loopback/internal hostnames
     const hostname = parsed.hostname.toLowerCase();
     if (
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      hostname === '::1' ||
-      hostname === '0.0.0.0' ||
-      hostname.endsWith('.local') ||
-      hostname.endsWith('.internal') ||
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname === "0.0.0.0" ||
+      hostname.endsWith(".local") ||
+      hostname.endsWith(".internal") ||
       /^10\./.test(hostname) ||
       /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
       /^192\.168\./.test(hostname) ||
       /^169\.254\./.test(hostname) ||
       /^0[0-7]+\./.test(hostname) ||
       /^0x[0-9a-f]+$/i.test(hostname) ||
-      hostname.startsWith('::ffff:') ||
+      hostname.startsWith("::ffff:") ||
       /^\[.*\]$/.test(hostname)
     ) {
       return false;
@@ -186,6 +224,6 @@ export const analyzeRequestSchema = z.object({
 
 export const feedbackSchema = z.object({
   message: z.string().min(1).max(10000),
-  category: z.enum(['bug', 'feature', 'other']),
+  category: z.enum(["bug", "feature", "other"]),
   email: z.string().email().optional(),
 });

@@ -35,6 +35,10 @@ function loadBlogContentMap() {
 		const m = block.match(/author:\s*\{[^}]*?name:\s*'([^']*)'/s);
 		return m ? m[1] : 'AiVIS Team';
 	}
+	function extractFeaturedImageUrl(block) {
+		const m = block.match(/featuredImage:\s*\{[\s\S]*?url:\s*['"](https?:[^'"]*)['"]/);
+		return m ? m[1] : '';
+	}
 	function extractContent(block) {
 		const m = block.match(/content:\s*`([\s\S]*?)`/);
 		return m ? m[1].trim() : '';
@@ -56,6 +60,7 @@ function loadBlogContentMap() {
 					category: e.category || '',
 					tags: e.tags || [],
 					contentPreview: (e.content || '').slice(0, 2000),
+					featuredImageUrl: e.featuredImage?.url || '',
 				});
 			}
 		} catch (err) {
@@ -91,6 +96,7 @@ function loadBlogContentMap() {
 					category: extractField(block, 'category'),
 					tags: extractStringArray(block, 'tags'),
 					contentPreview: content.slice(0, 2000),
+					featuredImageUrl: extractFeaturedImageUrl(block),
 				});
 			}
 		} catch (err) {
@@ -1678,6 +1684,12 @@ function prerenderHtml(route) {
 			/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"@id":\s*"https:\/\/aivis\.biz\/#homepage-article"(?:(?!<\/script>)[\s\S])*?<\/script>/,
 			''
 		);
+		// Remove the global site-navigation BreadcrumbList (not a valid page breadcrumb trail
+		// for inner pages - each inner page gets its own 2-item BreadcrumbList below).
+		html = html.replace(
+			/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"@id":\s*"https:\/\/aivis\.biz\/#breadcrumb"(?:(?!<\/script>)[\s\S])*?<\/script>/,
+			''
+		);
 	}
 
 	html = updateTag(html, /<title>.*?<\/title>/s, `<title>${route.title}</title>`);
@@ -1701,8 +1713,32 @@ function prerenderHtml(route) {
 	if (route.path !== '/') {
 		html = html.replace(
 			'</head>',
-			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeHtml(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
+			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "@id": "${canonicalUrl}#breadcrumb",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeHtml(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
 		);
+	}
+
+	// Inject article open graph meta tags for blog posts (required for correct LinkedIn previews)
+	if (route.path.startsWith('/blogs/') && route.path !== '/blogs') {
+		const slug = route.path.replace('/blogs/', '');
+		const blogMeta = blogContentMap.get(slug);
+		if (blogMeta) {
+			let articleMeta = '';
+			if (blogMeta.publishedAt) {
+				articleMeta += `  <meta property="article:published_time" content="${blogMeta.publishedAt}T00:00:00Z" />\n`;
+			}
+			articleMeta += `  <meta property="article:author" content="${escapeHtml(blogMeta.authorName || 'AiVIS Team')}" />\n`;
+			if (blogMeta.category) {
+				articleMeta += `  <meta property="article:section" content="${escapeHtml(blogMeta.category)}" />\n`;
+			}
+			if (blogMeta.featuredImageUrl) {
+				const imgUrl = blogMeta.featuredImageUrl.startsWith('http')
+					? blogMeta.featuredImageUrl
+					: `https://aivis.biz${blogMeta.featuredImageUrl}`;
+				html = updateTag(html, /<meta\s+property="og:image"\s+content="[^"]*"\s*\/>/,  `<meta property="og:image" content="${imgUrl}" />`);
+				html = updateTag(html, /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/>/,  `<meta name="twitter:image" content="${imgUrl}" />`);
+			}
+			html = html.replace('</head>', `${articleMeta}</head>`);
+		}
 	}
 
 	const extraHead = [enrichment?.buildExtraHead?.(canonicalUrl, route), route.extraHead].filter(Boolean).join('\n');

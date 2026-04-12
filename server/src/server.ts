@@ -3097,13 +3097,28 @@ async function computeHealthStatus() {
   let dbError: string | null = null;
   try {
     const pool = getPool();
-    await pool.query("SELECT 1");
+    // Add 3 second timeout to prevent hanging on database connection
+    const queryPromise = pool.query("SELECT 1");
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Database query timeout")), 3000),
+    );
+    await Promise.race([queryPromise, timeoutPromise]);
     dbOk = true;
   } catch (error: any) {
     dbError = error?.message || "Database check failed";
   }
 
-  const pythonOk = await isPythonServiceAvailable();
+  let pythonOk = false;
+  try {
+    // Add 2 second timeout for Python service check
+    const pythonPromise = isPythonServiceAvailable();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Python service timeout")), 2000),
+    );
+    pythonOk = await Promise.race([pythonPromise, timeoutPromise]);
+  } catch {
+    pythonOk = false;
+  }
 
   const status = dbOk ? "healthy" : "degraded";
   return {

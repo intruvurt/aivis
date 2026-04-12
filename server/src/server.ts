@@ -1506,7 +1506,8 @@ app.use(
 );
 
 // Explicit preflight handler - bulletproof CORS OPTIONS support
-app.options("*", cors());
+// Express 5 / path-to-regexp v8: "*" is no longer valid, use "(.*)"
+app.options("(.*)", cors());
 
 // Response timeout enforcement (55s to stay under Railway 60s proxy limit)
 // Prevents hung connections from blocking pool and infrastructure

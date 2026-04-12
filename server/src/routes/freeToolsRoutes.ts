@@ -572,4 +572,131 @@ router.get('/dns', async (req: Request, res: Response) => {
   }
 });
 
+// ─────────────────────────────────────────────────────────────────
+// 5. Language & Internationalisation Checker
+// ─────────────────────────────────────────────────────────────────
+
+const BCP47_RE = /^[a-z]{2,3}(-[a-z]{2,4}(-[a-z0-9]{2,8})?)?$/i;
+const RTL_LANGS = new Set(['ar', 'he', 'fa', 'ur', 'yi', 'dv', 'ha', 'ku', 'ps', 'sd', 'ug']);
+
+/**
+ * POST /api/tools/language-checker
+ *
+ * Audits a page's language signals for AI crawler readiness:
+ * html[lang], BCP 47 validity, hreflang tags, x-default, charset, dir attribute.
+ */
+router.post('/language-checker', async (req: Request, res: Response) => {
+  try {
+    const check = validateToolUrl(req.body?.url);
+    if (!check.valid) return res.status(400).json({ success: false, error: check.error });
+
+    const { headers, html, status, responseTimeMs } = await fetchPage(check.url);
+
+    // html[lang]
+    const langMatch = html.match(/<html[^>]+lang\s*=\s*["']([^"']+)["']/i);
+    const htmlLang = langMatch ? langMatch[1].trim().toLowerCase() : '';
+    const htmlLangValid = htmlLang ? BCP47_RE.test(htmlLang) : false;
+
+    // charset
+    const charsetMatchA = html.match(/<meta[^>]+charset\s*=\s*["']?([^"'\s;>]+)/i);
+    const charsetMatchB = html.match(/charset=([^"'\s;>]+)/i);
+    const charset = (charsetMatchA?.[1] || charsetMatchB?.[1] || '').toLowerCase().replace('-', '');
+
+    // dir attribute
+    const dirMatch = html.match(/<html[^>]+dir\s*=\s*["']([^"']+)["']/i) ||
+      html.match(/<body[^>]+dir\s*=\s*["']([^"']+)["']/i);
+    const dir = dirMatch ? dirMatch[1].toLowerCase() : '';
+    const isRtl = dir === 'rtl';
+    const langRoot = htmlLang.split('-')[0];
+    const expectsRtl = RTL_LANGS.has(langRoot);
+    const rtlMissing = expectsRtl && !isRtl;
+
+    // Content-Language HTTP header
+    const contentLanguageHeader = headers['content-language'] || '';
+
+    // hreflang tags — match both attribute orderings
+    const hreflangTagsAll: Array<{ lang: string; href: string; validLang: boolean }> = [];
+    const seenLangs = new Set<string>();
+    const hreflangRegex = /<link[^>]+(?:rel\s*=\s*["']alternate["'][^>]+hreflang|hreflang[^>]+rel\s*=\s*["']alternate["'])[^>]*>/gi;
+    let m: RegExpExecArray | null;
+    while ((m = hreflangRegex.exec(html)) !== null) {
+      const tagHtml = m[0];
+      const lm = tagHtml.match(/hreflang\s*=\s*["']([^"']+)["']/i);
+      if (!lm) continue;
+      const lang = lm[1].toLowerCase().trim();
+      if (seenLangs.has(lang)) continue;
+      seenLangs.add(lang);
+      const hm = tagHtml.match(/href\s*=\s*["']([^"']+)["']/i);
+      const href = hm ? hm[1] : '';
+      const validLang = lang === 'x-default' || BCP47_RE.test(lang);
+      hreflangTagsAll.push({ lang, href, validLang });
+    }
+
+    const hasHreflang = hreflangTagsAll.length > 0;
+    const hasXDefault = hreflangTagsAll.some(t => t.lang === 'x-default');
+    const selfRef = hasHreflang && hreflangTagsAll.some(t => {
+      if (!t.href) return false;
+      try { return new URL(t.href).hostname === new URL(check.url).hostname; } catch { return false; }
+    });
+    const hreflangLangs = hreflangTagsAll.filter(t => t.lang !== 'x-default').map(t => t.lang);
+    const invalidCodes = hreflangTagsAll.filter(t => !t.validLang).map(t => t.lang);
+
+    // Issues list
+    const issues: string[] = [];
+    if (!htmlLang) issues.push('Missing html[lang] — AI models cannot determine page language');
+    else if (!htmlLangValid) issues.push(`Invalid BCP 47 language code: "${htmlLang}"`);
+    if (!charset) issues.push('No charset declaration found — encoding ambiguous for international content');
+    else if (!['utf8', 'utf-8'].includes(charset)) issues.push(`Non-UTF-8 charset: "${charset}" — may cause rendering issues for international text`);
+    if (rtlMissing) issues.push(`Language "${htmlLang}" is right-to-left but dir="rtl" is not set on <html>`);
+    if (hasHreflang && !hasXDefault) issues.push('Hreflang tags found but missing x-default — AI models have no fallback language version');
+    if (hasHreflang && !selfRef) issues.push('No self-referencing hreflang entry — each page should reference itself within its hreflang set');
+    if (invalidCodes.length > 0) issues.push(`Invalid hreflang language codes: ${invalidCodes.join(', ')}`);
+    if (htmlLang && contentLanguageHeader && !contentLanguageHeader.toLowerCase().startsWith(langRoot)) {
+      issues.push(`html[lang]="${htmlLang}" conflicts with Content-Language header "${contentLanguageHeader}"`);
+    }
+
+    // Score (start at 100, deduct per problem)
+    let score = 100;
+    if (!htmlLang) score -= 30;
+    else if (!htmlLangValid) score -= 20;
+    if (!charset) score -= 10;
+    else if (!['utf8', 'utf-8'].includes(charset)) score -= 8;
+    if (rtlMissing) score -= 15;
+    if (hasHreflang && !hasXDefault) score -= 15;
+    if (hasHreflang && !selfRef) score -= 10;
+    if (invalidCodes.length > 0) score -= Math.min(10, invalidCodes.length * 5);
+    score = Math.max(0, Math.min(100, score));
+
+    return res.json({
+      success: true,
+      result: {
+        url: check.url,
+        status,
+        responseTimeMs,
+        score,
+        grade: letterGrade(score),
+        htmlLang: htmlLang || null,
+        htmlLangValid,
+        charset: charset || null,
+        contentLanguageHeader: contentLanguageHeader || null,
+        dir: dir || null,
+        isRtl,
+        hreflang: {
+          count: hreflangTagsAll.length,
+          tags: hreflangTagsAll,
+          hasXDefault,
+          selfReferencing: selfRef,
+          languages: hreflangLangs,
+          invalidCodes,
+        },
+        issues,
+        checkedAt: new Date().toISOString(),
+      },
+    });
+  } catch (err: any) {
+    const msg = String(err?.message || 'Language check failed');
+    return res.status(502).json({ success: false, error: msg });
+  }
+});
+
 export default router;

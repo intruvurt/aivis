@@ -111,6 +111,7 @@
     "contentExtractability": "Content Extractability",
     "serverHeaders": "Server Headers",
     "aiCrawlers": "AI Crawlers",
+    "languageChecker": "Language Checker",
     "domainRating": "Domain Rating",
     "mcpConsole": "MCP Console",
     "agencyDashboard": "Agency Dashboard",

@@ -56,6 +56,7 @@ const ServerHeadersPage = React.lazy(() => import("./pages/ServerHeadersPage"));
 const SchemaValidatorPage = React.lazy(() => import("./pages/SchemaValidatorPage"));
 const RobotsCheckerPage = React.lazy(() => import("./pages/RobotsCheckerPage"));
 const ContentExtractabilityPage = React.lazy(() => import("./pages/ContentExtractabilityPage"));
+const LanguageCheckerPage = React.lazy(() => import("./pages/LanguageCheckerPage"));
 const DomainRatingPage = React.lazy(() => import("./pages/DomainRatingPage"));
 const ComparisonPage = React.lazy(() => import("./pages/ComparisonPage"));
 const PlatformWorkflowPage = React.lazy(() => import("./pages/PlatformWorkflowPage"));
@@ -260,6 +261,7 @@ export default function App() {
             <Route path="robots-checker" element={<RobotsCheckerPage />} />
             <Route path="content-extractability" element={<ContentExtractabilityPage />} />
             <Route path="server-headers" element={<ServerHeadersPage />} />
+            <Route path="language-checker" element={<LanguageCheckerPage />} />
           </Route>
 
           {/* ═══ Authenticated App Shell ═══ */}
@@ -288,6 +290,7 @@ export default function App() {
             <Route path="server-headers" element={<ServerHeadersPage />} />
             <Route path="robots-checker" element={<RobotsCheckerPage />} />
             <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="language-checker" element={<LanguageCheckerPage />} />
             <Route path="domain-rating" element={<DomainRatingPage />} />
             <Route path="profile" element={<Profile />} />
             <Route path="referrals" element={<ReferralsPage />} />
@@ -327,6 +330,7 @@ export default function App() {
           <Route path="/schema-validator" element={<Navigate to="/tools/schema-validator" replace />} />
           <Route path="/robots-checker" element={<Navigate to="/tools/robots-checker" replace />} />
           <Route path="/content-extractability" element={<Navigate to="/tools/content-extractability" replace />} />
+          <Route path="/language-checker" element={<Navigate to="/tools/language-checker" replace />} />
 
           <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
           <Route path="/profile" element={<Navigate to="/app/profile" replace />} />

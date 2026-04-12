@@ -111,6 +111,7 @@
     "schemaValidator": "Schema-Validator",
     "serverHeaders": "Server-Header",
     "aiCrawlers": "KI-Crawler",
+    "languageChecker": "Sprach-Checker",
     "domainRating": "Domain-Bewertung",
     "mcpConsole": "MCP-Konsole",
     "agencyDashboard": "Agentur-Dashboard",

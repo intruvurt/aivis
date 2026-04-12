@@ -371,3 +371,10 @@ export function checkContentExtractability(payload: { url: string }) {
     body: JSON.stringify(payload),
   });
 }
+
+export function checkLanguage(payload: { url: string }) {
+  return apiFetch<{ success: boolean; result: any }>("/api/tools/language-checker", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

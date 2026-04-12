@@ -110,6 +110,7 @@
     "schemaValidator": "Валідатор Schema",
     "serverHeaders": "Заголовки сервера",
     "aiCrawlers": "AI-сканери",
+    "languageChecker": "Перевірка мови",
     "domainRating": "Рейтинг домену",
     "mcpConsole": "MCP Консоль",
     "agencyDashboard": "Панель агентства",

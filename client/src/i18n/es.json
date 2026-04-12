@@ -111,6 +111,7 @@
     "schemaValidator": "Validador Schema",
     "serverHeaders": "Cabeceras del Servidor",
     "aiCrawlers": "Rastreadores IA",
+    "languageChecker": "Verificador de Idioma",
     "domainRating": "Calificación del Dominio",
     "mcpConsole": "Consola MCP",
     "agencyDashboard": "Panel de Agencia",

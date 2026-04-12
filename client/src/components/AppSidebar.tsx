@@ -6,7 +6,7 @@ import {
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, Cpu, ArrowLeftRight,
   Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
-  FileSearch, BookOpen,
+  FileSearch, BookOpen, Languages,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -54,6 +54,7 @@ const toolsNav: NavItem[] = [
   { to: "/tools/server-headers", labelKey: "sidebar.serverHeaders", icon: Globe },
   { to: "/tools/robots-checker", labelKey: "sidebar.aiCrawlers", icon: Cpu },
   { to: "/tools/content-extractability", labelKey: "sidebar.contentExtractability", icon: FileSearch },
+  { to: "/tools/language-checker", labelKey: "sidebar.languageChecker", icon: Languages },
   { to: "/app/domain-rating", labelKey: "sidebar.domainRating", icon: TrendingUp, minTier: "alignment" },
   { to: "/app/mcp", labelKey: "sidebar.mcpConsole", icon: Wrench, minTier: "alignment" },
 ];

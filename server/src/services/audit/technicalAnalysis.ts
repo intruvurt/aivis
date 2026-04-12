@@ -41,7 +41,13 @@ export async function analyzeTechnical(input: TechnicalAnalysisInput): Promise<T
   const favicon = $('link[rel="icon"], link[rel="shortcut icon"]').first().attr('href')?.trim() || '';
   const ogImage = $('meta[property="og:image"]').attr('content')?.trim() || '';
   const twitterCard = $('meta[name="twitter:card"]').attr('content')?.trim() || '';
-  const hreflangCount = $('link[rel="alternate"][hreflang]').length;
+  const hreflangElements = $('link[rel="alternate"][hreflang]').toArray();
+  const hreflangCount = hreflangElements.length;
+  const hasHreflangXDefault = hreflangElements.some(el => $(el).attr('hreflang')?.toLowerCase() === 'x-default');
+  const hasHreflangSelfRef = hreflangElements.some(el => {
+    const href = $(el).attr('href') || '';
+    try { return href && new URL(href).hostname === new URL(finalUrl || 'https://x').hostname; } catch { return false; }
+  });
   const canonicalCount = $('link[rel="canonical"]').length;
   const scriptCount = $('script').length;
   const stylesheetCount = $('link[rel="stylesheet"]').length;
@@ -120,7 +126,45 @@ export async function analyzeTechnical(input: TechnicalAnalysisInput): Promise<T
     });
   }
 
-  if (anchorStats.emptyHrefCount > 0 || anchorStats.javascriptHrefCount > 0) {
+  if (hreflangCount > 0 && !hasHreflangXDefault) {
+    findings.push({
+      id: 'finding_hreflang_missing_xdefault',
+      category: 'Technical Integrity',
+      title: 'Hreflang tags present but x-default missing',
+      description: 'The page declares hreflang alternate links but does not include an x-default entry.',
+      severity: 'medium',
+      pageUrl: finalUrl,
+      impact: 'AI models have no fallback language version to serve when no other hreflang matches the user language.',
+      evidenceIds: [assetEv],
+    });
+    addFix({
+      title: 'Add x-default hreflang entry',
+      priority: 'p2',
+      implementationSurface: 'html_head',
+      findingIds: ['finding_hreflang_missing_xdefault'],
+      evidenceIds: [assetEv],
+      instructions: [
+        'Add <link rel="alternate" hreflang="x-default" href="https://yourdomain.com/"> pointing to your primary/fallback page.',
+        'x-default is served when no other hreflang matches the user\'s browser language.',
+      ],
+      expectedOutcome: 'Correct AI language routing and no language-mismatch citations.',
+    });
+  }
+
+  if (hreflangCount > 0 && !hasHreflangSelfRef) {
+    findings.push({
+      id: 'finding_hreflang_no_selfref',
+      category: 'Technical Integrity',
+      title: 'Hreflang set has no self-referencing entry',
+      description: 'Each page in a hreflang set must include a link pointing back to itself.',
+      severity: 'low',
+      pageUrl: finalUrl,
+      impact: 'Search and AI crawlers expect every page to reference itself in its hreflang group; missing self-references can cause routing failures.',
+      evidenceIds: [assetEv],
+    });
+  }
+
+
     findings.push({
       id: 'finding_weak_anchor_hygiene',
       category: 'Technical Integrity',
@@ -165,7 +209,9 @@ export async function analyzeTechnical(input: TechnicalAnalysisInput): Promise<T
       penalty(canonicalCount > 1, 22) -
       penalty(!ogImage, 6) -
       penalty(anchorStats.emptyHrefCount > 0 || anchorStats.javascriptHrefCount > 0, 12) -
-      penalty(imageDimensionStats.total > 0 && imageDimensionStats.missingDimensionCount > 0, Math.min(12, imageDimensionStats.missingDimensionCount * 2)),
+      penalty(imageDimensionStats.total > 0 && imageDimensionStats.missingDimensionCount > 0, Math.min(12, imageDimensionStats.missingDimensionCount * 2)) -
+      penalty(hreflangCount > 0 && !hasHreflangXDefault, 6) -
+      penalty(hreflangCount > 0 && !hasHreflangSelfRef, 4),
   );
 
   const accessibilitySurface = clampScore(100 - penalty(!lang, 8) - penalty(!viewport, 8) - penalty(anchorStats.hashOnlyCount > 5, 6));

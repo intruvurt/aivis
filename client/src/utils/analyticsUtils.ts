@@ -121,6 +121,8 @@ export interface PlatformMetricsData {
   timeframeMetrics: PlatformTimeframeMetric[];
   membershipTotals: {
     totalMembers: number;
+    realMembers: number;       // is_test = false
+    testMembers: number;       // is_test = true
     freeMembers: number;
     paidMembers: number;       // all non-observer (includes admin-set)
     elevatedMembers: number;   // same as paidMembers (alias)
@@ -161,6 +163,8 @@ export const EMPTY_PLATFORM_METRICS: PlatformMetricsData = {
   timeframeMetrics: [],
   membershipTotals: {
     totalMembers: 0,
+    realMembers: 0,
+    testMembers: 0,
     freeMembers: 0,
     paidMembers: 0,
     elevatedMembers: 0,
@@ -431,6 +435,8 @@ export function mapPlatformMetricsResponse(json: unknown): PlatformMetricsData {
     })),
     membershipTotals: {
       totalMembers: safeNumber(d?.membership_totals?.total_members, 0),
+      realMembers: safeNumber(d?.membership_totals?.real_members, 0),
+      testMembers: safeNumber(d?.membership_totals?.test_members, 0),
       freeMembers: safeNumber(d?.membership_totals?.free_members, 0),
       paidMembers: safeNumber(d?.membership_totals?.elevated_members ?? d?.membership_totals?.paid_members, 0),
       elevatedMembers: safeNumber(d?.membership_totals?.elevated_members ?? d?.membership_totals?.paid_members, 0),

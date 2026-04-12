@@ -1643,6 +1643,7 @@ export async function runMigrations(): Promise<void> {
         ["trial_started_at", "TIMESTAMPTZ"],
         ["trial_converted", "BOOLEAN DEFAULT FALSE"],
         ["last_reset_date", "TIMESTAMPTZ"],
+        ["is_test", "BOOLEAN DEFAULT FALSE"],
       ];
       for (const [col, def] of userCols) {
         _q(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col} ${def}`);

@@ -2948,6 +2948,8 @@ app.get(
       const totalsResult = await pool.query(
         `SELECT
          COUNT(*)::int AS total_members,
+         COUNT(*) FILTER (WHERE COALESCE(is_test, FALSE) = FALSE)::int AS real_members,
+         COUNT(*) FILTER (WHERE COALESCE(is_test, FALSE) = TRUE)::int AS test_members,
          COUNT(*) FILTER (WHERE COALESCE(tier, 'observer') = 'observer')::int AS free_members,
          COUNT(*) FILTER (WHERE COALESCE(tier, 'observer') <> 'observer')::int AS elevated_members,
          COUNT(*) FILTER (WHERE COALESCE(tier, 'observer') <> 'observer' AND EXISTS (
@@ -2963,6 +2965,8 @@ app.get(
           timeframe_metrics: rowsResult.rows,
           membership_totals: totalsResult.rows[0] || {
             total_members: 0,
+            real_members: 0,
+            test_members: 0,
             free_members: 0,
             elevated_members: 0,
             stripe_paid_members: 0,

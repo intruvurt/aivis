@@ -974,7 +974,7 @@ export default function AnalyticsPage() {
               <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
                   <div>
-                    <SectionTitle title="Platform Metrics" tone="cyan" sub={`${platformMetrics.membershipTotals.totalMembers} registered members · Traffic, Membership, Analyses`} />
+                    <SectionTitle title="Platform Metrics" tone="cyan" sub={`${platformMetrics.membershipTotals.realMembers} real · ${platformMetrics.membershipTotals.testMembers} test · ${platformMetrics.membershipTotals.totalMembers} total · ${platformMetrics.membershipTotals.stripePaidMembers} stripe paid`} />
                   </div>
                   <div className="flex rounded-xl p-1 gap-0.5" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     {(["1h", "24h", "7d", "30d", "90d", "180d", "365d"] as PlatformRangeKey[]).map((key) => (
@@ -990,14 +990,39 @@ export default function AnalyticsPage() {
                 </div>
 
                 {selectedPlatformMetrics && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <StatCard icon={Activity} label="Analyses" value={selectedPlatformMetrics.analysesRan} accent={P.orange} />
-                    <StatCard icon={Users} label="Active Members" value={selectedPlatformMetrics.activeMembers} accent={P.cyan} />
-                    <StatCard icon={Users} label="Total Members" value={platformMetrics.membershipTotals.totalMembers} accent={P.indigo} />
-                    <StatCard icon={Globe} label="Traffic Proxy" value={selectedPlatformMetrics.sessionTraffic} sub="sessions" accent={P.indigo} />
-                    <StatCard icon={Layers} label="Free Analyses" value={selectedPlatformMetrics.freeMemberAnalyses} accent={P.amber} />
-                    <StatCard icon={Gauge} label="Avg Visibility" value={`${selectedPlatformMetrics.avgVisibilityScore.toFixed(1)}%`} accent={P.cyan} />
-                  </div>
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                      <StatCard icon={Activity} label="Analyses" value={selectedPlatformMetrics.analysesRan} sub="in window" accent={P.orange} />
+                      <StatCard icon={Users} label="Active Members" value={selectedPlatformMetrics.activeMembers} sub="ran ≥1 audit" accent={P.cyan} />
+                      <StatCard icon={Users} label="Total Members" value={platformMetrics.membershipTotals.totalMembers} sub="registered" accent={P.indigo} />
+                      <StatCard icon={Globe} label="Traffic Proxy" value={selectedPlatformMetrics.sessionTraffic} sub="new login sessions" accent={P.indigo} />
+                      <StatCard icon={Layers} label="Free Analyses" value={selectedPlatformMetrics.freeMemberAnalyses} sub="observer tier" accent={P.amber} />
+                      <StatCard icon={Zap} label="Paid Analyses" value={selectedPlatformMetrics.paidMemberAnalyses} sub="stripe-verified" accent="#a78bfa" />
+                      <StatCard icon={Gauge} label="Avg Visibility" value={`${selectedPlatformMetrics.avgVisibilityScore.toFixed(1)}%`} accent={P.cyan} />
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2">
+                      <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.18)' }}>
+                        <span className="text-xs text-white/50">Real Users</span>
+                        <span className="text-sm font-bold text-emerald-300">{platformMetrics.membershipTotals.realMembers.toLocaleString()}</span>
+                      </div>
+                      <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.18)' }}>
+                        <span className="text-xs text-white/50">Test Accounts</span>
+                        <span className="text-sm font-bold text-rose-300">{platformMetrics.membershipTotals.testMembers.toLocaleString()}</span>
+                      </div>
+                      <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                        <span className="text-xs text-white/50">Free (Observer)</span>
+                        <span className="text-sm font-bold text-amber-300">{platformMetrics.membershipTotals.freeMembers.toLocaleString()}</span>
+                      </div>
+                      <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                        <span className="text-xs text-white/50">Elevated Tier</span>
+                        <span className="text-sm font-bold text-violet-300">{platformMetrics.membershipTotals.elevatedMembers.toLocaleString()}</span>
+                      </div>
+                      <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                        <span className="text-xs text-white/50">Stripe Paid</span>
+                        <span className="text-sm font-bold text-cyan-300">{platformMetrics.membershipTotals.stripePaidMembers.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -1014,6 +1039,40 @@ export default function AnalyticsPage() {
                   <StatCard icon={TrendingDown} label="Min Score" value={`${communityBenchmarks.min_score}%`} accent="#f87171" />
                   <StatCard icon={TrendingUp} label="Max Score" value={`${communityBenchmarks.max_score}%`} accent="#34d399" />
                 </div>
+
+                {/* Score distribution mini bar chart */}
+                {communityBenchmarks.distribution && (() => {
+                  const buckets = [
+                    { label: '0–29', key: '0-29', color: '#fb7185' },
+                    { label: '30–49', key: '30-49', color: '#f97316' },
+                    { label: '50–69', key: '50-69', color: '#fbbf24' },
+                    { label: '70+', key: '70+', color: '#34d399' },
+                  ];
+                  const distData = buckets.map(b => ({
+                    label: b.label,
+                    count: (communityBenchmarks.distribution as Record<string, number>)[b.key] || 0,
+                    color: b.color,
+                  }));
+                  const maxCount = Math.max(...distData.map(d => d.count), 1);
+                  const BAR_MAX_H = 48;
+                  return (
+                    <div className="mb-4">
+                      <p className="text-xs text-white/40 uppercase tracking-wider mb-3">Score Distribution</p>
+                      <div className="flex gap-3 items-end" style={{ height: `${BAR_MAX_H + 40}px` }}>
+                        {distData.map(({ label, count, color }) => {
+                          const barH = Math.max(4, Math.round((count / maxCount) * BAR_MAX_H));
+                          return (
+                            <div key={label} className="flex-1 flex flex-col items-center justify-end gap-1">
+                              <span className="text-[11px] leading-none mb-1" style={{ color }}>{count.toLocaleString()}</span>
+                              <div className="w-full rounded-t" style={{ height: barH, background: color + '55', border: `1px solid ${color}60` }} />
+                              <span className="text-[10px] text-white/40 mt-1.5">{label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {communityBenchmarks.category_averages.length > 0 && (() => {
                   const sorted = [...communityBenchmarks.category_averages];

@@ -24,6 +24,7 @@
     "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.103.0",
     "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "cheerio": "^1.2.0",

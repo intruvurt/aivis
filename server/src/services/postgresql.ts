@@ -1,16 +1,17 @@
-import 'dotenv/config';
-import pg from 'pg';
-import type { Pool, PoolClient } from 'pg';
-import { IS_PRODUCTION } from '../config/runtime.js';
+import "dotenv/config";
+import pg from "pg";
+import type { Pool, PoolClient } from "pg";
+import { IS_PRODUCTION } from "../config/runtime.js";
 
 const { Pool: PgPool } = pg;
 
 function normalizeDatabaseUrl(raw: string): string {
-  const input = String(raw || '').trim();
-  if (!input) return '';
+  const input = String(raw || "").trim();
+  if (!input) return "";
 
   if (!IS_PRODUCTION) return input;
 
+<<<<<<< HEAD
   // Supabase PgBouncer pooler uses intermediate CAs that are not in Node.js's
   // default trust store, so sslmode=verify-full / verify-ca will always fail
   // with "self-signed certificate in certificate chain".  We use sslmode=require
@@ -21,29 +22,43 @@ function normalizeDatabaseUrl(raw: string): string {
     // Normalise any variant to plain 'require' — rejectUnauthorized=false on
     // the Pool handles the trust aspect.
     return input.replace(/sslmode=(prefer|require|verify-ca|verify-full)\b/i, 'sslmode=require');
+=======
+  // pg v8 treats require/prefer/verify-ca as verify-full anyway.
+  // Make it explicit to silence the deprecation warning and preserve
+  // the same behaviour when pg v9 changes semantics.
+  if (/sslmode=(prefer|require|verify-ca)\b/i.test(input)) {
+    return input.replace(
+      /sslmode=(prefer|require|verify-ca)\b/i,
+      "sslmode=verify-full",
+    );
+>>>>>>> 394c402 (fix: always use DATABASE_CA_CERT if provided, regardless of NODE_ENV)
   }
 
   if (!/sslmode=/i.test(input)) {
-    const sep = input.includes('?') ? '&' : '?';
+    const sep = input.includes("?") ? "&" : "?";
     return `${input}${sep}sslmode=require`;
   }
 
   return input;
 }
 
-const DATABASE_URL = normalizeDatabaseUrl(process.env.DATABASE_URL?.trim() || '');
+const DATABASE_URL = normalizeDatabaseUrl(
+  process.env.DATABASE_URL?.trim() || "",
+);
 
 export const dbConfigured = DATABASE_URL.length > 0;
 
 let poolInstance: Pool | null = null;
 let migrationsRan = false;
 let databaseAvailable = dbConfigured;
-let lastDatabaseError: string | null = dbConfigured ? null : 'DATABASE_URL not configured';
+let lastDatabaseError: string | null = dbConfigured
+  ? null
+  : "DATABASE_URL not configured";
 let lastDatabaseErrorTime: number = 0;
 const DB_UNAVAILABLE_RETRY_MS = 60_000; // retry DB check after 60s
 
 export function isDatabaseQuotaError(err: unknown): boolean {
-  const message = err instanceof Error ? err.message : String(err || '');
+  const message = err instanceof Error ? err.message : String(err || "");
   return /exceeded the compute time quota/i.test(message);
 }
 
@@ -55,7 +70,11 @@ export function isDatabaseAvailable(): boolean {
   return dbConfigured && databaseAvailable;
 }
 
-export function getDatabaseStatus(): { configured: boolean; available: boolean; lastError: string | null } {
+export function getDatabaseStatus(): {
+  configured: boolean;
+  available: boolean;
+  lastError: string | null;
+} {
   return {
     configured: dbConfigured,
     available: isDatabaseAvailable(),
@@ -70,38 +89,58 @@ function markDatabaseAvailable(): void {
 
 function markDatabaseUnavailable(err: unknown): void {
   databaseAvailable = false;
-  lastDatabaseError = err instanceof Error ? err.message : String(err || 'Unknown database error');
+  lastDatabaseError =
+    err instanceof Error
+      ? err.message
+      : String(err || "Unknown database error");
   lastDatabaseErrorTime = Date.now();
 }
 
 export function getPool(): Pool {
   if (!dbConfigured) {
-    throw new Error('DATABASE_URL not configured');
+    throw new Error("DATABASE_URL not configured");
   }
   if (!poolInstance) {
-    poolInstance = new PgPool({
+    const poolConfig: any = {
       connectionString: DATABASE_URL,
       max: 20,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 30_000,
       statement_timeout: 30_000,
-      // Supabase PgBouncer pooler uses intermediate CAs not trusted by Node.js.
-      // rejectUnauthorized: false keeps the connection encrypted while skipping
-      // chain verification — standard practice for managed Postgres poolers.
-      ...(IS_PRODUCTION ? { ssl: { rejectUnauthorized: false } } : {}),
-    });
+    };
+
+    // If CA certificate is provided (Railway/managed Postgres), use it for SSL verification
+    const caCert = process.env.DATABASE_CA_CERT || process.env.PG_CA_CERT;
+    if (caCert) {
+      console.log("[DB SSL] Using CA certificate for connection");
+      poolConfig.ssl = {
+        rejectUnauthorized: true,
+        ca: [caCert],
+      };
+    } else if (IS_PRODUCTION) {
+      console.warn(
+        "[DB SSL] No CA certificate provided; will attempt sslmode=require",
+      );
+    }
+
+    poolInstance = new PgPool(poolConfig);
   }
   return poolInstance;
 }
 
-async function runSingleMigration(client: PoolClient, query: string, description?: string): Promise<boolean> {
+async function runSingleMigration(
+  client: PoolClient,
+  query: string,
+  description?: string,
+): Promise<boolean> {
   try {
     await client.query(query);
     if (description) console.log(`  ✓ ${description}`);
     return true;
   } catch (err: any) {
     // Log but don't fail on idempotent operations that already exist
-    if (description) console.warn(`  ⚠ ${description}: ${err.message.substring(0, 60)}`);
+    if (description)
+      console.warn(`  ⚠ ${description}: ${err.message.substring(0, 60)}`);
     return false;
   }
 }
@@ -123,18 +162,19 @@ async function checkDatabaseInitialized(client: PoolClient): Promise<boolean> {
 
 export async function runMigrations(): Promise<void> {
   if (migrationsRan || !dbConfigured) return;
-  
+
   let client: PoolClient | null = null;
-  const retriesFromEnv = Number(process.env.DB_MIGRATION_MAX_RETRIES || '');
-  const maxRetries = Number.isFinite(retriesFromEnv) && retriesFromEnv > 0
-    ? Math.floor(retriesFromEnv)
-    : 3;
+  const retriesFromEnv = Number(process.env.DB_MIGRATION_MAX_RETRIES || "");
+  const maxRetries =
+    Number.isFinite(retriesFromEnv) && retriesFromEnv > 0
+      ? Math.floor(retriesFromEnv)
+      : 3;
   let lastError: any;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       client = await getPool().connect();
-      
+
       // Check if core tables already exist
       const coreTablesExist = await checkDatabaseInitialized(client);
       if (coreTablesExist) {
@@ -959,24 +999,32 @@ export async function runMigrations(): Promise<void> {
             } catch (stmtErr: any) {
               patchFail++;
               // Log first 100 chars of the failing statement + error for debuggability
-              const stmtPreview = stmt.replace(/\s+/g, ' ').substring(0, 100);
-              console.warn(`[DB] Patch stmt failed (non-fatal): ${stmtPreview}... | ${stmtErr?.message?.substring(0, 80)}`);
+              const stmtPreview = stmt.replace(/\s+/g, " ").substring(0, 100);
+              console.warn(
+                `[DB] Patch stmt failed (non-fatal): ${stmtPreview}... | ${stmtErr?.message?.substring(0, 80)}`,
+              );
             }
           }
-          console.log(`[DB] Schema patch complete: ${patchOk} applied, ${patchFail} skipped`);
+          console.log(
+            `[DB] Schema patch complete: ${patchOk} applied, ${patchFail} skipped`,
+          );
         }
         markDatabaseAvailable();
-        console.log('[DB] Database already initialized, schema verified');
+        console.log("[DB] Database already initialized, schema verified");
         migrationsRan = true;
         return;
       }
-      
-      console.log(`[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`);
+
+      console.log(
+        `[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`,
+      );
       // Batch all DDL into a single round-trip to minimize Neon compute usage
       // (~200 queries → 1 query = ~99% reduction in compute time)
       const _ddl: string[] = [];
-      const _q = (sql: string) => { _ddl.push(sql.trim().replace(/;\s*$/, '')); };
-    _q(`
+      const _q = (sql: string) => {
+        _ddl.push(sql.trim().replace(/;\s*$/, ""));
+      };
+      _q(`
       CREATE TABLE IF NOT EXISTS analysis_cache (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         url TEXT UNIQUE NOT NULL,
@@ -987,8 +1035,10 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_analysis_cache_url ON analysis_cache(url)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_analysis_cache_url ON analysis_cache(url)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -1003,9 +1053,9 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_users_tier ON users(tier)`);
-    _q(`
+      _q(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_users_tier ON users(tier)`);
+      _q(`
       CREATE TABLE IF NOT EXISTS user_sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1016,12 +1066,12 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(
-      `CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token)`
-    );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token)`,
+      );
 
-    // ─── Organizations / Workspaces (must be created early - many tables reference workspaces) ───
-    _q(`
+      // ─── Organizations / Workspaces (must be created early - many tables reference workspaces) ───
+      _q(`
       CREATE TABLE IF NOT EXISTS organizations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name TEXT NOT NULL,
@@ -1032,10 +1082,14 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_organizations_owner ON organizations(owner_user_id)`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_organizations_personal_owner ON organizations(owner_user_id) WHERE is_personal = TRUE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_organizations_owner ON organizations(owner_user_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_organizations_personal_owner ON organizations(owner_user_id) WHERE is_personal = TRUE`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS workspaces (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
@@ -1048,10 +1102,14 @@ export async function runMigrations(): Promise<void> {
         UNIQUE (organization_id, slug)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspaces_org ON workspaces(organization_id)`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_workspaces_default_org ON workspaces(organization_id) WHERE is_default = TRUE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspaces_org ON workspaces(organization_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_workspaces_default_org ON workspaces(organization_id) WHERE is_default = TRUE`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS workspace_members (
         workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1060,9 +1118,11 @@ export async function runMigrations(): Promise<void> {
         PRIMARY KEY (workspace_id, user_id)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS workspace_invites (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -1075,12 +1135,18 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_invites_token ON workspace_invites(token)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_invites_workspace ON workspace_invites(workspace_id)`);
-    // Ensure invited_by column exists for tables created before it was added to the schema
-    _q(`ALTER TABLE workspace_invites ADD COLUMN IF NOT EXISTS invited_by UUID REFERENCES users(id) ON DELETE CASCADE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspace_invites_token ON workspace_invites(token)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspace_invites_workspace ON workspace_invites(workspace_id)`,
+      );
+      // Ensure invited_by column exists for tables created before it was added to the schema
+      _q(
+        `ALTER TABLE workspace_invites ADD COLUMN IF NOT EXISTS invited_by UUID REFERENCES users(id) ON DELETE CASCADE`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS usage_daily (
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         date DATE NOT NULL,
@@ -1088,7 +1154,7 @@ export async function runMigrations(): Promise<void> {
         PRIMARY KEY (user_id, date)
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS scan_pack_credits (
         user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
         credits_remaining NUMERIC(12,2) NOT NULL DEFAULT 0,
@@ -1096,7 +1162,7 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS scan_pack_transactions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1110,13 +1176,25 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_user_id ON scan_pack_transactions(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_pack_key ON scan_pack_transactions(pack_key)`);
-    _q(`ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_percent INT NOT NULL DEFAULT 0`);
-    _q(`ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_source VARCHAR(80)`);
-    _q(`ALTER TABLE scan_pack_credits ALTER COLUMN credits_remaining TYPE NUMERIC(12,2) USING credits_remaining::numeric(12,2)`);
-    _q(`ALTER TABLE scan_pack_transactions ALTER COLUMN credits_added TYPE NUMERIC(12,2) USING credits_added::numeric(12,2)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_user_id ON scan_pack_transactions(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scan_pack_tx_pack_key ON scan_pack_transactions(pack_key)`,
+      );
+      _q(
+        `ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_percent INT NOT NULL DEFAULT 0`,
+      );
+      _q(
+        `ALTER TABLE scan_pack_transactions ADD COLUMN IF NOT EXISTS bonus_source VARCHAR(80)`,
+      );
+      _q(
+        `ALTER TABLE scan_pack_credits ALTER COLUMN credits_remaining TYPE NUMERIC(12,2) USING credits_remaining::numeric(12,2)`,
+      );
+      _q(
+        `ALTER TABLE scan_pack_transactions ALTER COLUMN credits_added TYPE NUMERIC(12,2) USING credits_added::numeric(12,2)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS credit_usage_ledger (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1127,9 +1205,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_credit_usage_ledger_user ON credit_usage_ledger(user_id, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_credit_usage_ledger_user ON credit_usage_ledger(user_id, created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS tier_credit_bonus_grants (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1146,8 +1226,10 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, tier_key, billing_period, reason)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_tier_bonus_user_id ON tier_credit_bonus_grants(user_id)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tier_bonus_user_id ON tier_credit_bonus_grants(user_id)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS referral_codes (
         user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
         code VARCHAR(24) UNIQUE NOT NULL,
@@ -1155,9 +1237,11 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_codes_code ON referral_codes(code)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_codes_code ON referral_codes(code)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS referral_attributions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         referrer_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1173,11 +1257,17 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(referrer_user_id, referred_user_id)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_referrer ON referral_attributions(referrer_user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_referred ON referral_attributions(referred_user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_attr_status ON referral_attributions(status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_attr_referrer ON referral_attributions(referrer_user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_attr_referred ON referral_attributions(referred_user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_attr_status ON referral_attributions(status)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS referral_credit_ledger (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1188,10 +1278,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_ledger_user ON referral_credit_ledger(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_ledger_attr ON referral_credit_ledger(attribution_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_ledger_user ON referral_credit_ledger(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_ledger_attr ON referral_credit_ledger(attribution_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS user_milestones (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1201,9 +1295,11 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, milestone_key)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_user_milestones_user ON user_milestones(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_user_milestones_user ON user_milestones(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS tool_usage_monthly (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1214,9 +1310,11 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, tool_action, month_key)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_tool_usage_monthly_user_month ON tool_usage_monthly(user_id, month_key)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tool_usage_monthly_user_month ON tool_usage_monthly(user_id, month_key)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS newsletter_dispatches (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1227,17 +1325,23 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, edition_key)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_edition ON newsletter_dispatches(edition_key)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_user ON newsletter_dispatches(user_id)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_edition ON newsletter_dispatches(edition_key)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_newsletter_dispatches_user ON newsletter_dispatches(user_id)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS admin_runtime_settings (
         key VARCHAR(100) PRIMARY KEY,
         value JSONB NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_admin_runtime_settings_updated ON admin_runtime_settings(updated_at DESC)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_admin_runtime_settings_updated ON admin_runtime_settings(updated_at DESC)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS newsletter_editions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         edition_key VARCHAR(64) UNIQUE NOT NULL,
@@ -1251,9 +1355,13 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_editions_status_created ON newsletter_editions(status, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_newsletter_editions_key ON newsletter_editions(edition_key)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_newsletter_editions_status_created ON newsletter_editions(status, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_newsletter_editions_key ON newsletter_editions(edition_key)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS user_notification_preferences (
         user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
         email_notifications BOOLEAN NOT NULL DEFAULT TRUE,
@@ -1261,23 +1369,43 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS share_link_expiration_days INTEGER`);
-    _q(`UPDATE user_notification_preferences SET share_link_expiration_days = 30 WHERE share_link_expiration_days IS NULL`);
-    _q(`ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET DEFAULT 30`);
-    _q(`ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET NOT NULL`);
-    _q(`ALTER TABLE user_notification_preferences DROP CONSTRAINT IF EXISTS user_notification_preferences_share_link_expiration_days_check`);
-    _q(`
+      _q(
+        `ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS share_link_expiration_days INTEGER`,
+      );
+      _q(
+        `UPDATE user_notification_preferences SET share_link_expiration_days = 30 WHERE share_link_expiration_days IS NULL`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET DEFAULT 30`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences ALTER COLUMN share_link_expiration_days SET NOT NULL`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences DROP CONSTRAINT IF EXISTS user_notification_preferences_share_link_expiration_days_check`,
+      );
+      _q(`
       ALTER TABLE user_notification_preferences
       ADD CONSTRAINT user_notification_preferences_share_link_expiration_days_check
       CHECK (share_link_expiration_days IN (0, 7, 14, 30, 90))
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_user_notification_email ON user_notification_preferences(email_notifications)`);
-    // Granular notification preferences - per-category and channel toggles (2026-03-29)
-    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
-    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS sound_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
-    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS browser_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
-    _q(`ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS muted_categories TEXT[] NOT NULL DEFAULT '{}'`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_user_notification_email ON user_notification_preferences(email_notifications)`,
+      );
+      // Granular notification preferences - per-category and channel toggles (2026-03-29)
+      _q(
+        `ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS sound_enabled BOOLEAN NOT NULL DEFAULT TRUE`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS browser_enabled BOOLEAN NOT NULL DEFAULT FALSE`,
+      );
+      _q(
+        `ALTER TABLE user_notification_preferences ADD COLUMN IF NOT EXISTS muted_categories TEXT[] NOT NULL DEFAULT '{}'`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS notifications (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -1291,10 +1419,16 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_scope_created ON notifications(scope, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(is_read, created_at DESC)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_notifications_scope_created ON notifications(scope, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(is_read, created_at DESC)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS notification_reads (
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         notification_id UUID NOT NULL REFERENCES notifications(id) ON DELETE CASCADE,
@@ -1302,9 +1436,13 @@ export async function runMigrations(): Promise<void> {
         PRIMARY KEY (user_id, notification_id)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_notification_reads_user ON notification_reads(user_id, read_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_notification_reads_notification ON notification_reads(notification_id)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_notification_reads_user ON notification_reads(user_id, read_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_notification_reads_notification ON notification_reads(notification_id)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS scheduled_platform_notifications (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         event_type VARCHAR(80) NOT NULL DEFAULT 'platform_event',
@@ -1320,9 +1458,13 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_status_time ON scheduled_platform_notifications(status, scheduled_for ASC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_created_by ON scheduled_platform_notifications(created_by_user_id, created_at DESC)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_status_time ON scheduled_platform_notifications(status, scheduled_for ASC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scheduled_platform_notifications_created_by ON scheduled_platform_notifications(created_by_user_id, created_at DESC)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS payments (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1336,7 +1478,7 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS subscriptions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1348,9 +1490,13 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status)`);
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status)`,
+      );
+      _q(`
       CREATE TABLE IF NOT EXISTS usage (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
@@ -1361,7 +1507,7 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS audits (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -1373,11 +1519,15 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audits_user_id ON audits(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audits_created_at ON audits(created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_audits_user_id ON audits(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audits_created_at ON audits(created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS competitor_tracking (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1390,9 +1540,11 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, competitor_url)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_user_id ON competitor_tracking(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitor_tracking_user_id ON competitor_tracking(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_tests (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1405,10 +1557,14 @@ export async function runMigrations(): Promise<void> {
         completed_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_user_id ON citation_tests(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_status ON citation_tests(status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_tests_user_id ON citation_tests(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_tests_status ON citation_tests(status)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_results (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         citation_test_id UUID NOT NULL REFERENCES citation_tests(id) ON DELETE CASCADE,
@@ -1422,9 +1578,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_results_test_id ON citation_results(citation_test_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_results_test_id ON citation_results(citation_test_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_prompt_ledger (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1446,104 +1604,104 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(citation_test_id, prompt_hash, platform)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_user_created ON citation_prompt_ledger(user_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_url_created ON citation_prompt_ledger(url, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_test ON citation_prompt_ledger(citation_test_id)`);
-
-    // ─── Additive column migrations (safe to re-run) ─────────────────────────
-    // users: columns added after initial schema
-    const userCols: [string, string][] = [
-      ['name', 'VARCHAR(255)'],
-      ['role', "VARCHAR(20) DEFAULT 'user'"],
-      ['verification_token', 'VARCHAR(128)'],
-      ['verification_token_expires', 'TIMESTAMPTZ'],
-      ['stripe_subscription_id', 'VARCHAR(255)'],
-      ['stripe_customer_id', 'VARCHAR(255)'],
-      ['login_attempts', 'INTEGER DEFAULT 0'],
-      ['locked_until', 'TIMESTAMPTZ'],
-      ['last_login', 'TIMESTAMPTZ'],
-      ['mfa_secret', 'VARCHAR(32)'],
-      ['company', 'VARCHAR(255)'],
-      ['website', 'TEXT'],
-      ['bio', 'TEXT'],
-      ['avatar_url', 'TEXT'],
-      ['timezone', 'VARCHAR(80)'],
-      ['language', 'VARCHAR(32)'],
-      ['org_description', 'TEXT'],
-      ['org_logo_url', 'TEXT'],
-      ['org_favicon_url', 'TEXT'],
-      ['org_phone', 'VARCHAR(64)'],
-      ['org_address', 'TEXT'],
-      ['org_verified', 'BOOLEAN DEFAULT FALSE'],
-      ['org_verification_confidence', 'INTEGER'],
-      ['org_verification_reasons', 'JSONB'],
-      ['trial_ends_at', 'TIMESTAMPTZ'],
-      ['trial_used', 'BOOLEAN DEFAULT FALSE'],
-      ['trial_tier', 'TEXT'],
-      ['trial_started_at', 'TIMESTAMPTZ'],
-      ['trial_converted', 'BOOLEAN DEFAULT FALSE'],
-      ['last_reset_date', 'TIMESTAMPTZ'],
-    ];
-    for (const [col, def] of userCols) {
       _q(
-        `ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col} ${def}`
+        `CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_user_created ON citation_prompt_ledger(user_id, created_at DESC)`,
       );
-    }
-
-    // payments: expand to hold full Stripe lifecycle data
-    const paymentCols: [string, string][] = [
-      ['tier', "VARCHAR(50) DEFAULT 'observer'"],
-      ['method', "VARCHAR(20) DEFAULT 'stripe'"],
-      ['stripe_session_id', 'VARCHAR(255)'],
-      ['stripe_price_id', 'VARCHAR(255)'],
-      ['amount_cents', 'INTEGER'],
-      ['currency', "VARCHAR(10) DEFAULT 'usd'"],
-      ['completed_at', 'TIMESTAMPTZ'],
-      ['failed_at', 'TIMESTAMPTZ'],
-      ['canceled_at', 'TIMESTAMPTZ'],
-      ['subscription_status', 'VARCHAR(30)'],
-      ['cancel_at_period_end', 'BOOLEAN DEFAULT FALSE'],
-      ['last_payment_at', 'TIMESTAMPTZ'],
-      ['last_invoice_id', 'VARCHAR(255)'],
-      ['last_failed_payment_at', 'TIMESTAMPTZ'],
-      ['failed_invoice_id', 'VARCHAR(255)'],
-      ['metadata', 'JSONB'],
-    ];
-    for (const [col, def] of paymentCols) {
       _q(
-        `ALTER TABLE payments ADD COLUMN IF NOT EXISTS ${col} ${def}`
+        `CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_url_created ON citation_prompt_ledger(url, created_at DESC)`,
       );
-    }
-    _q(
-      `CREATE INDEX IF NOT EXISTS idx_payments_stripe_session ON payments(stripe_session_id) WHERE stripe_session_id IS NOT NULL`
-    );
-    _q(
-      `CREATE INDEX IF NOT EXISTS idx_payments_stripe_sub ON payments(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL`
-    );
-    _q(
-      `CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id)`
-    );
-
-    // analysis_cache: columns added after initial schema
-    const cacheCols: [string, string][] = [
-      ['analyzed_at_timestamp', 'BIGINT'],
-      ['analyzed_at', 'TIMESTAMPTZ'],
-      ['updated_at', 'TIMESTAMPTZ DEFAULT NOW()'],
-    ];
-    for (const [col, def] of cacheCols) {
       _q(
-        `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS ${col} ${def}`
+        `CREATE INDEX IF NOT EXISTS idx_citation_prompt_ledger_test ON citation_prompt_ledger(citation_test_id)`,
       );
-    }
-    // Backfill analyzed_at_timestamp for rows that existed before the column
-    _q(`
+
+      // ─── Additive column migrations (safe to re-run) ─────────────────────────
+      // users: columns added after initial schema
+      const userCols: [string, string][] = [
+        ["name", "VARCHAR(255)"],
+        ["role", "VARCHAR(20) DEFAULT 'user'"],
+        ["verification_token", "VARCHAR(128)"],
+        ["verification_token_expires", "TIMESTAMPTZ"],
+        ["stripe_subscription_id", "VARCHAR(255)"],
+        ["stripe_customer_id", "VARCHAR(255)"],
+        ["login_attempts", "INTEGER DEFAULT 0"],
+        ["locked_until", "TIMESTAMPTZ"],
+        ["last_login", "TIMESTAMPTZ"],
+        ["mfa_secret", "VARCHAR(32)"],
+        ["company", "VARCHAR(255)"],
+        ["website", "TEXT"],
+        ["bio", "TEXT"],
+        ["avatar_url", "TEXT"],
+        ["timezone", "VARCHAR(80)"],
+        ["language", "VARCHAR(32)"],
+        ["org_description", "TEXT"],
+        ["org_logo_url", "TEXT"],
+        ["org_favicon_url", "TEXT"],
+        ["org_phone", "VARCHAR(64)"],
+        ["org_address", "TEXT"],
+        ["org_verified", "BOOLEAN DEFAULT FALSE"],
+        ["org_verification_confidence", "INTEGER"],
+        ["org_verification_reasons", "JSONB"],
+        ["trial_ends_at", "TIMESTAMPTZ"],
+        ["trial_used", "BOOLEAN DEFAULT FALSE"],
+        ["trial_tier", "TEXT"],
+        ["trial_started_at", "TIMESTAMPTZ"],
+        ["trial_converted", "BOOLEAN DEFAULT FALSE"],
+        ["last_reset_date", "TIMESTAMPTZ"],
+      ];
+      for (const [col, def] of userCols) {
+        _q(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+
+      // payments: expand to hold full Stripe lifecycle data
+      const paymentCols: [string, string][] = [
+        ["tier", "VARCHAR(50) DEFAULT 'observer'"],
+        ["method", "VARCHAR(20) DEFAULT 'stripe'"],
+        ["stripe_session_id", "VARCHAR(255)"],
+        ["stripe_price_id", "VARCHAR(255)"],
+        ["amount_cents", "INTEGER"],
+        ["currency", "VARCHAR(10) DEFAULT 'usd'"],
+        ["completed_at", "TIMESTAMPTZ"],
+        ["failed_at", "TIMESTAMPTZ"],
+        ["canceled_at", "TIMESTAMPTZ"],
+        ["subscription_status", "VARCHAR(30)"],
+        ["cancel_at_period_end", "BOOLEAN DEFAULT FALSE"],
+        ["last_payment_at", "TIMESTAMPTZ"],
+        ["last_invoice_id", "VARCHAR(255)"],
+        ["last_failed_payment_at", "TIMESTAMPTZ"],
+        ["failed_invoice_id", "VARCHAR(255)"],
+        ["metadata", "JSONB"],
+      ];
+      for (const [col, def] of paymentCols) {
+        _q(`ALTER TABLE payments ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_payments_stripe_session ON payments(stripe_session_id) WHERE stripe_session_id IS NOT NULL`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_payments_stripe_sub ON payments(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id)`,
+      );
+
+      // analysis_cache: columns added after initial schema
+      const cacheCols: [string, string][] = [
+        ["analyzed_at_timestamp", "BIGINT"],
+        ["analyzed_at", "TIMESTAMPTZ"],
+        ["updated_at", "TIMESTAMPTZ DEFAULT NOW()"],
+      ];
+      for (const [col, def] of cacheCols) {
+        _q(`ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+      // Backfill analyzed_at_timestamp for rows that existed before the column
+      _q(`
       UPDATE analysis_cache
       SET analyzed_at_timestamp = EXTRACT(EPOCH FROM created_at)::BIGINT * 1000
       WHERE analyzed_at_timestamp IS NULL
     `);
 
-    // ─── License tables ───────────────────────────────────────────────────────
-    _q(`
+      // ─── License tables ───────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS licenses (
         id VARCHAR(255) PRIMARY KEY,
         license_key VARCHAR(255) UNIQUE NOT NULL,
@@ -1561,7 +1719,7 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS license_activations (
         id VARCHAR(255) PRIMARY KEY,
         license_id VARCHAR(255) REFERENCES licenses(id),
@@ -1573,7 +1731,7 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(license_id, machine_id)
       )
     `);
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS license_verifications (
         id VARCHAR(255) PRIMARY KEY,
         license_id VARCHAR(255) REFERENCES licenses(id),
@@ -1581,14 +1739,22 @@ export async function runMigrations(): Promise<void> {
         metadata JSONB DEFAULT '{}'
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(license_key)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_activations_license ON license_activations(license_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_activations_machine ON license_activations(machine_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_verifications_license ON license_verifications(license_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(license_key)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_activations_license ON license_activations(license_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_activations_machine ON license_activations(machine_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_verifications_license ON license_verifications(license_id)`,
+      );
 
-    // ─── Assistant usage tracking ─────────────────────────────────────────────
-    _q(`
+      // ─── Assistant usage tracking ─────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS assistant_usage (
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         date DATE NOT NULL,
@@ -1597,8 +1763,8 @@ export async function runMigrations(): Promise<void> {
       )
     `);
 
-    // ─── SEO crawl persistence ───────────────────────────────────────────────
-    _q(`
+      // ─── SEO crawl persistence ───────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS seo_crawls (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1613,10 +1779,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawls_user ON seo_crawls(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawls_created ON seo_crawls(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_seo_crawls_user ON seo_crawls(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_seo_crawls_created ON seo_crawls(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS seo_crawl_pages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         crawl_id UUID NOT NULL REFERENCES seo_crawls(id) ON DELETE CASCADE,
@@ -1634,10 +1804,12 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(crawl_id, url)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_seo_crawl_pages_crawl ON seo_crawl_pages(crawl_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_seo_crawl_pages_crawl ON seo_crawl_pages(crawl_id)`,
+      );
 
-    // ─── Scheduled Rescans ────────────────────────────────────────────────────
-    _q(`
+      // ─── Scheduled Rescans ────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS scheduled_rescans (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1652,11 +1824,15 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, url)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_user ON scheduled_rescans(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_next ON scheduled_rescans(next_run_at) WHERE enabled = TRUE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_user ON scheduled_rescans(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_next ON scheduled_rescans(next_run_at) WHERE enabled = TRUE`,
+      );
 
-    // ─── Audit Score Snapshots ─────────────────────────────────────────────
-    _q(`
+      // ─── Audit Score Snapshots ─────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_score_snapshots (
         audit_id UUID PRIMARY KEY REFERENCES audits(id) ON DELETE CASCADE,
         prior_run_id UUID REFERENCES audit_score_snapshots(audit_id) ON DELETE SET NULL,
@@ -1674,29 +1850,61 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_user_url ON audit_score_snapshots(user_id, normalized_url, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_workspace_url ON audit_score_snapshots(workspace_id, normalized_url, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_user_url ON audit_score_snapshots(user_id, normalized_url, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_score_snapshots_workspace_url ON audit_score_snapshots(workspace_id, normalized_url, created_at DESC)`,
+      );
 
-    // ── Reconcile audit_score_snapshots schema: add SSFR pipeline columns ──
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS family_scores JSONB`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS final_score NUMERIC(6,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_cap INTEGER`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_version VARCHAR(20)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS framework_detected VARCHAR(60)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS crawlability_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS indexability_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS renderability_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS metadata_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS schema_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS entity_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`);
-    _q(`ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`);
+      // ── Reconcile audit_score_snapshots schema: add SSFR pipeline columns ──
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS family_scores JSONB`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS final_score NUMERIC(6,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS score_version VARCHAR(20)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS framework_detected VARCHAR(60)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS crawlability_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS indexability_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS renderability_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS metadata_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS schema_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS entity_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`,
+      );
+      _q(
+        `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`,
+      );
 
-    // NOTE: audit_rule_results reconciliation ALTERs moved to after CREATE TABLE (line ~1315)
+      // NOTE: audit_rule_results reconciliation ALTERs moved to after CREATE TABLE (line ~1315)
 
-    // ─── Deploy Hook Endpoints ─────────────────────────────────────────────
-    _q(`
+      // ─── Deploy Hook Endpoints ─────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS deploy_hook_endpoints (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1711,10 +1919,12 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_hook_endpoints_workspace ON deploy_hook_endpoints(workspace_id, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_deploy_hook_endpoints_workspace ON deploy_hook_endpoints(workspace_id, created_at DESC)`,
+      );
 
-    // ─── Deploy Verification Jobs ───────────────────────────────────────────
-    _q(`
+      // ─── Deploy Verification Jobs ───────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS deploy_verification_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1741,12 +1951,18 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_user ON deploy_verification_jobs(user_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_workspace ON deploy_verification_jobs(workspace_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_due ON deploy_verification_jobs(scheduled_for ASC) WHERE status IN ('pending', 'failed', 'running')`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_user ON deploy_verification_jobs(user_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_workspace ON deploy_verification_jobs(workspace_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_deploy_verification_jobs_due ON deploy_verification_jobs(scheduled_for ASC) WHERE status IN ('pending', 'failed', 'running')`,
+      );
 
-    // ─── API Keys ─────────────────────────────────────────────────────────────
-    _q(`
+      // ─── API Keys ─────────────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS api_keys (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1760,11 +1976,13 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash) WHERE enabled = TRUE`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash) WHERE enabled = TRUE`,
+      );
 
-    // ─── External API Metering ───────────────────────────────────────────────
-    _q(`
+      // ─── External API Metering ───────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS api_usage_daily (
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -1774,11 +1992,15 @@ export async function runMigrations(): Promise<void> {
         PRIMARY KEY (user_id, workspace_id, api_key_id, date)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_usage_workspace_date ON api_usage_daily(workspace_id, date)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_usage_key_date ON api_usage_daily(api_key_id, date)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_api_usage_workspace_date ON api_usage_daily(workspace_id, date)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_api_usage_key_date ON api_usage_daily(api_key_id, date)`,
+      );
 
-    // ─── External API Page Validation Records ───────────────────────────────
-    _q(`
+      // ─── External API Page Validation Records ───────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS api_page_validations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1789,10 +2011,12 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_page_validations_workspace_created ON api_page_validations(workspace_id, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_api_page_validations_workspace_created ON api_page_validations(workspace_id, created_at DESC)`,
+      );
 
-    // ─── MCP Export Tokens ──────────────────────────────────────────────────
-    _q(`
+      // ─── MCP Export Tokens ──────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS mcp_export_tokens (
         token UUID PRIMARY KEY,
         audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
@@ -1802,10 +2026,12 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_mcp_export_tokens_expires ON mcp_export_tokens(expires_at)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_mcp_export_tokens_expires ON mcp_export_tokens(expires_at)`,
+      );
 
-    // ─── Authority Check Cache ──────────────────────────────────────────────
-    _q(`
+      // ─── Authority Check Cache ──────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS authority_check_cache (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1814,11 +2040,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_authority_cache_key ON authority_check_cache(user_id, cache_key)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_authority_cache_created ON authority_check_cache(created_at)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_authority_cache_key ON authority_check_cache(user_id, cache_key)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_authority_cache_created ON authority_check_cache(created_at)`,
+      );
 
-    // ─── Consent / Compliance Persistence ───────────────────────────────────
-    _q(`
+      // ─── Consent / Compliance Persistence ───────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS user_consents (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1833,10 +2063,12 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, workspace_id, consent_type)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_user_consents_workspace ON user_consents(workspace_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_user_consents_workspace ON user_consents(workspace_id)`,
+      );
 
-    // ─── Webhooks ─────────────────────────────────────────────────────────────
-    _q(`
+      // ─── Webhooks ─────────────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS webhooks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1852,10 +2084,10 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_user ON webhooks(user_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_user ON webhooks(user_id)`);
 
-    // ─── User Branding (White-Label) ──────────────────────────────────────────
-    _q(`
+      // ─── User Branding (White-Label) ──────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS user_branding (
         user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
         company_name VARCHAR(255),
@@ -1869,43 +2101,107 @@ export async function runMigrations(): Promise<void> {
       )
     `);
 
-    // Workspace foreign keys for tenant-scoped resources
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitoring_enabled BOOLEAN NOT NULL DEFAULT TRUE`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitor_frequency VARCHAR(20) NOT NULL DEFAULT 'daily'`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS next_monitor_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_detected_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`);
-    _q(`ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS source_type VARCHAR(20)`);
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS citation_urls JSONB`);
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_used TEXT`);
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_role VARCHAR(20)`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS workspace_id UUID`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`);
-    _q(`ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`);
-    _q(`ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS provider VARCHAR(20) NOT NULL DEFAULT 'generic'`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_provider ON webhooks(provider)`);
-    _q(`ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS display_name VARCHAR(120)`);
-    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
-    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS tagline VARCHAR(255)`);
-    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255)`);
-    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS website_url TEXT`);
-    _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS show_cover_page BOOLEAN DEFAULT FALSE`);
+      // Workspace foreign keys for tenant-scoped resources
+      _q(
+        `ALTER TABLE audits ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE audits ADD COLUMN IF NOT EXISTS tier_at_analysis VARCHAR(40)`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitoring_enabled BOOLEAN NOT NULL DEFAULT TRUE`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS monitor_frequency VARCHAR(20) NOT NULL DEFAULT 'daily'`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS next_monitor_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_detected_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`,
+      );
+      _q(
+        `ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS source_type VARCHAR(20)`,
+      );
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS citation_urls JSONB`,
+      );
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_used TEXT`,
+      );
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS model_role VARCHAR(20)`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS workspace_id UUID`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_fingerprint TEXT`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_snapshot JSONB`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_change_evidence JSONB`,
+      );
+      _q(
+        `ALTER TABLE scheduled_rescans ADD COLUMN IF NOT EXISTS last_score_change_reason JSONB`,
+      );
+      _q(
+        `ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS provider VARCHAR(20) NOT NULL DEFAULT 'generic'`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_webhooks_provider ON webhooks(provider)`,
+      );
+      _q(
+        `ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS display_name VARCHAR(120)`,
+      );
+      _q(
+        `ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
+      _q(
+        `ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS tagline VARCHAR(255)`,
+      );
+      _q(
+        `ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS contact_email VARCHAR(255)`,
+      );
+      _q(`ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS website_url TEXT`);
+      _q(
+        `ALTER TABLE user_branding ADD COLUMN IF NOT EXISTS show_cover_page BOOLEAN DEFAULT FALSE`,
+      );
 
-    // ─── Automatic Report Delivery Targets ───────────────────────────────────
-    _q(`
+      // ─── Automatic Report Delivery Targets ───────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS report_delivery_targets (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1923,10 +2219,14 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_user ON report_delivery_targets(user_id)`);
-    _q(`ALTER TABLE report_delivery_targets ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_user ON report_delivery_targets(user_id)`,
+      );
+      _q(
+        `ALTER TABLE report_delivery_targets ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS public_report_links (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL UNIQUE REFERENCES audits(id) ON DELETE CASCADE,
@@ -1941,10 +2241,12 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_public_report_links_slug ON public_report_links(slug)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_public_report_links_slug ON public_report_links(slug)`,
+      );
 
-    // ─── IndexNow Submissions ─────────────────────────────────────────────────
-    _q(`
+      // ─── IndexNow Submissions ─────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS indexnow_submissions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1955,10 +2257,12 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_indexnow_submissions_user ON indexnow_submissions(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_indexnow_submissions_user ON indexnow_submissions(user_id)`,
+      );
 
-    // ─── Agent Tasks (GuideBot task queue) ─────────────────────────────────
-    _q(`
+      // ─── Agent Tasks (GuideBot task queue) ─────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS agent_tasks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1972,11 +2276,15 @@ export async function runMigrations(): Promise<void> {
         completed_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_user_status ON agent_tasks(user_id, status)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_pending ON agent_tasks(status, created_at) WHERE status = 'pending'`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agent_tasks_user_status ON agent_tasks(user_id, status)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agent_tasks_pending ON agent_tasks(status, created_at) WHERE status = 'pending'`,
+      );
 
-    // ─── SSFR Audit Evidence ────────────────────────────────────────────────
-    _q(`
+      // ─── SSFR Audit Evidence ────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_evidence (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
@@ -1990,24 +2298,40 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_audit ON audit_evidence(audit_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_family ON audit_evidence(audit_id, family)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_evidence_audit ON audit_evidence(audit_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_evidence_family ON audit_evidence(audit_id, family)`,
+      );
 
-    // ── Reconcile audit_evidence: add columns used by SSFR pipeline ──
-    // The legacy deterministic-pipeline definition (line ~1825) lacks these columns.
-    // If the table was created from that definition first, these must be added.
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS audit_id UUID`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS family VARCHAR(20)`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_key TEXT`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS value JSONB DEFAULT '{}'`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'present'`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`);
-    _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`);
-    _q(`ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`);
+      // ── Reconcile audit_evidence: add columns used by SSFR pipeline ──
+      // The legacy deterministic-pipeline definition (line ~1825) lacks these columns.
+      // If the table was created from that definition first, these must be added.
+      _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS audit_id UUID`);
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+      );
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_key TEXT`,
+      );
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS value JSONB DEFAULT '{}'`,
+      );
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`,
+      );
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'present'`,
+      );
+      _q(
+        `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`,
+      );
+      _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`);
+      _q(`ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`);
 
-    // ─── SSFR Rule Results ──────────────────────────────────────────────────
-    _q(`
+      // ─── SSFR Rule Results ──────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_rule_results (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
@@ -2023,32 +2347,66 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit ON audit_rule_results(audit_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_blocker ON audit_rule_results(audit_id) WHERE is_hard_blocker = TRUE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit ON audit_rule_results(audit_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_rule_results_blocker ON audit_rule_results(audit_id) WHERE is_hard_blocker = TRUE`,
+      );
 
-    // ── Reconcile audit_rule_results: add columns used by ruleEngine inserts ──
-    // These columns exist in the legacy second definition but not in the primary one above.
-    // ADD COLUMN IF NOT EXISTS is safe for both fresh and existing tables.
-    // audit_id may be missing if the table was originally created with the legacy schema (audit_run_id).
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_id UUID`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS description TEXT`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_impact NUMERIC(5,2) DEFAULT 0`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS hard_blocker BOOLEAN DEFAULT FALSE`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids_json JSONB DEFAULT '[]'::jsonb`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS remediation_key VARCHAR(80)`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS title TEXT`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS passed BOOLEAN DEFAULT FALSE`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS severity VARCHAR(12) DEFAULT 'medium'`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN DEFAULT FALSE`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids JSONB DEFAULT '[]'`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_run_id UUID`);
-    _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`);
+      // ── Reconcile audit_rule_results: add columns used by ruleEngine inserts ──
+      // These columns exist in the legacy second definition but not in the primary one above.
+      // ADD COLUMN IF NOT EXISTS is safe for both fresh and existing tables.
+      // audit_id may be missing if the table was originally created with the legacy schema (audit_run_id).
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_id UUID`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS description TEXT`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_impact NUMERIC(5,2) DEFAULT 0`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS hard_blocker BOOLEAN DEFAULT FALSE`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids_json JSONB DEFAULT '[]'::jsonb`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS remediation_key VARCHAR(80)`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+      );
+      _q(`ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS title TEXT`);
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS passed BOOLEAN DEFAULT FALSE`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS severity VARCHAR(12) DEFAULT 'medium'`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN DEFAULT FALSE`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids JSONB DEFAULT '[]'`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_run_id UUID`,
+      );
+      _q(
+        `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`,
+      );
 
-    // ─── SSFR Fixpacks ─────────────────────────────────────────────────────
-    _q(`
+      // ─── SSFR Fixpacks ─────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_fixpacks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
@@ -2063,11 +2421,17 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_audit ON audit_fixpacks(audit_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_priority ON audit_fixpacks(audit_id, priority)`);
-    _q(`ALTER TABLE audit_fixpacks ADD COLUMN IF NOT EXISTS audit_run_id UUID`);
-    // Seed personal organization/workspace for existing users (idempotent)
-    _q(`
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_audit ON audit_fixpacks(audit_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_fixpacks_priority ON audit_fixpacks(audit_id, priority)`,
+      );
+      _q(
+        `ALTER TABLE audit_fixpacks ADD COLUMN IF NOT EXISTS audit_run_id UUID`,
+      );
+      // Seed personal organization/workspace for existing users (idempotent)
+      _q(`
       INSERT INTO organizations (name, slug, owner_user_id, is_personal)
       SELECT
         COALESCE(NULLIF(u.name, ''), split_part(u.email, '@', 1) || '''s Organization') AS name,
@@ -2080,7 +2444,7 @@ export async function runMigrations(): Promise<void> {
       )
     `);
 
-    _q(`
+      _q(`
       INSERT INTO workspaces (organization_id, name, slug, created_by_user_id, is_default)
       SELECT o.id, 'Personal Workspace', 'default', o.owner_user_id, TRUE
       FROM organizations o
@@ -2090,7 +2454,7 @@ export async function runMigrations(): Promise<void> {
         )
     `);
 
-    _q(`
+      _q(`
       INSERT INTO workspace_members (workspace_id, user_id, role)
       SELECT w.id, o.owner_user_id, 'owner'
       FROM organizations o
@@ -2099,81 +2463,101 @@ export async function runMigrations(): Promise<void> {
       ON CONFLICT (workspace_id, user_id) DO NOTHING
     `);
 
-    // Backfill workspace_id on existing rows via user's default workspace
-    _q(`
+      // Backfill workspace_id on existing rows via user's default workspace
+      _q(`
       UPDATE audits a
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE a.workspace_id IS NULL AND a.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE competitor_tracking ct
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE ct.workspace_id IS NULL AND ct.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE competitor_tracking
       SET next_monitor_at = NOW() + INTERVAL '24 hours'
       WHERE next_monitor_at IS NULL
     `);
-    _q(`ALTER TABLE competitor_tracking ALTER COLUMN next_monitor_at SET DEFAULT (NOW() + INTERVAL '24 hours')`);
-    _q(`
+      _q(
+        `ALTER TABLE competitor_tracking ALTER COLUMN next_monitor_at SET DEFAULT (NOW() + INTERVAL '24 hours')`,
+      );
+      _q(`
       UPDATE citation_tests t
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE t.workspace_id IS NULL AND t.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE scheduled_rescans sr
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE sr.workspace_id IS NULL AND sr.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE api_keys ak
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE ak.workspace_id IS NULL AND ak.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE webhooks wh
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE wh.workspace_id IS NULL AND wh.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE user_branding ub
       SET workspace_id = wm.workspace_id
       FROM workspace_members wm
       JOIN workspaces w ON w.id = wm.workspace_id AND w.is_default = TRUE
       WHERE ub.workspace_id IS NULL AND ub.user_id = wm.user_id
     `);
-    _q(`
+      _q(`
       UPDATE public_report_links prl
       SET workspace_id = a.workspace_id
       FROM audits a
       WHERE prl.workspace_id IS NULL AND prl.audit_id = a.id
     `);
 
-    _q(`CREATE INDEX IF NOT EXISTS idx_audits_workspace ON audits(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_workspace ON competitor_tracking(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_competitor_tracking_next_monitor ON competitor_tracking(next_monitor_at) WHERE monitoring_enabled = TRUE`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_tests_workspace ON citation_tests(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_workspace ON scheduled_rescans(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_api_keys_workspace ON api_keys(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_webhooks_workspace ON webhooks(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_workspace ON report_delivery_targets(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_public_report_links_workspace ON public_report_links(workspace_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audits_workspace ON audits(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitor_tracking_workspace ON competitor_tracking(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitor_tracking_next_monitor ON competitor_tracking(next_monitor_at) WHERE monitoring_enabled = TRUE`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_tests_workspace ON citation_tests(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_scheduled_rescans_workspace ON scheduled_rescans(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_api_keys_workspace ON api_keys(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_webhooks_workspace ON webhooks(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_report_delivery_targets_workspace ON report_delivery_targets(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_public_report_links_workspace ON public_report_links(workspace_id)`,
+      );
 
-    // ─── Niche Competitive Ranking Table ─────────────────────────────────────
-    _q(`
+      // ─── Niche Competitive Ranking Table ─────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_niche_rankings (
         id VARCHAR(64) PRIMARY KEY,
         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -2194,13 +2578,21 @@ export async function runMigrations(): Promise<void> {
         ran_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_user ON citation_niche_rankings(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_url ON citation_niche_rankings(target_url)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_ran_at ON citation_niche_rankings(ran_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_niche_rankings_in_top50 ON citation_niche_rankings(in_top_50) WHERE in_top_50 = TRUE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_niche_rankings_user ON citation_niche_rankings(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_niche_rankings_url ON citation_niche_rankings(target_url)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_niche_rankings_ran_at ON citation_niche_rankings(ran_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_niche_rankings_in_top50 ON citation_niche_rankings(in_top_50) WHERE in_top_50 = TRUE`,
+      );
 
-    // ─── GDPR fix: change citation_niche_rankings from SET NULL → CASCADE ──
-    _q(`DO $$ BEGIN
+      // ─── GDPR fix: change citation_niche_rankings from SET NULL → CASCADE ──
+      _q(`DO $$ BEGIN
       IF EXISTS (
         SELECT 1 FROM information_schema.table_constraints
         WHERE constraint_name = 'citation_niche_rankings_user_id_fkey'
@@ -2213,8 +2605,8 @@ export async function runMigrations(): Promise<void> {
       END IF;
     END $$`);
 
-    // ─── Scheduled Citation Ranking Jobs ─────────────────────────────────────
-    _q(`
+      // ─── Scheduled Citation Ranking Jobs ─────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_scheduled_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2231,12 +2623,20 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_user ON citation_scheduled_jobs(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_active ON citation_scheduled_jobs(is_active) WHERE is_active = TRUE`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_sched_next_run ON citation_scheduled_jobs(next_run_at ASC) WHERE is_active = TRUE`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_branding_workspace ON user_branding(workspace_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_sched_user ON citation_scheduled_jobs(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_sched_active ON citation_scheduled_jobs(is_active) WHERE is_active = TRUE`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_sched_next_run ON citation_scheduled_jobs(next_run_at ASC) WHERE is_active = TRUE`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_user_branding_workspace ON user_branding(workspace_id)`,
+      );
 
-    _q(`
+      _q(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -2247,10 +2647,12 @@ export async function runMigrations(): Promise<void> {
         END IF;
       END $$;
     `);
-    _q(`DROP INDEX IF EXISTS idx_scheduled_rescans_user_workspace_url`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_scheduled_rescans_user_ws_url ON scheduled_rescans(user_id, COALESCE(workspace_id, '00000000-0000-0000-0000-000000000000'::uuid), url)`);
+      _q(`DROP INDEX IF EXISTS idx_scheduled_rescans_user_workspace_url`);
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_scheduled_rescans_user_ws_url ON scheduled_rescans(user_id, COALESCE(workspace_id, '00000000-0000-0000-0000-000000000000'::uuid), url)`,
+      );
 
-    _q(`
+      _q(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -2277,7 +2679,7 @@ export async function runMigrations(): Promise<void> {
       END $$;
     `);
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS query_packs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2293,11 +2695,17 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_user ON query_packs(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_workspace ON query_packs(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_query_packs_created ON query_packs(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_query_packs_user ON query_packs(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_query_packs_workspace ON query_packs(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_query_packs_created ON query_packs(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS query_pack_executions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         query_pack_id UUID NOT NULL REFERENCES query_packs(id) ON DELETE CASCADE,
@@ -2307,10 +2715,14 @@ export async function runMigrations(): Promise<void> {
         executed_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_pack_executions_pack ON query_pack_executions(query_pack_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_pack_executions_test ON query_pack_executions(citation_test_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_pack_executions_pack ON query_pack_executions(query_pack_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_pack_executions_test ON query_pack_executions(citation_test_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_evidences (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         citation_result_id UUID NOT NULL REFERENCES citation_results(id) ON DELETE CASCADE,
@@ -2326,14 +2738,24 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(citation_result_id, evidence_key)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_result ON citation_evidences(citation_result_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_pack ON citation_evidences(query_pack_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_curated ON citation_evidences(curated) WHERE curated = TRUE`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_starred ON citation_evidences(starred) WHERE starred = TRUE`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_citation_evidences_confidence ON citation_evidences(confidence_score DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_evidences_result ON citation_evidences(citation_result_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_evidences_pack ON citation_evidences(query_pack_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_evidences_curated ON citation_evidences(curated) WHERE curated = TRUE`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_evidences_starred ON citation_evidences(starred) WHERE starred = TRUE`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_citation_evidences_confidence ON citation_evidences(confidence_score DESC)`,
+      );
 
-    // ─── Auto Score Fix Jobs ──────────────────────────────────────────────────
-    _q(`
+      // ─── Auto Score Fix Jobs ──────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS auto_score_fix_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2373,26 +2795,58 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_user ON auto_score_fix_jobs(user_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_status ON auto_score_fix_jobs(status)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_expires ON auto_score_fix_jobs(expires_at) WHERE status IN ('pending_approval', 'pending')`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_workspace ON auto_score_fix_jobs(workspace_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_asf_jobs_user ON auto_score_fix_jobs(user_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_asf_jobs_status ON auto_score_fix_jobs(status)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_asf_jobs_expires ON auto_score_fix_jobs(expires_at) WHERE status IN ('pending_approval', 'pending')`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_asf_jobs_workspace ON auto_score_fix_jobs(workspace_id)`,
+      );
 
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS implementation_duration_minutes INTEGER`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS checks_status VARCHAR(32) NOT NULL DEFAULT 'unknown'`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS github_pr_merged_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_status VARCHAR(24) NOT NULL DEFAULT 'not_scheduled'`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_asf_jobs_rescan_status ON auto_score_fix_jobs(rescan_status)`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_scheduled_for TIMESTAMPTZ`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_started_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_completed_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_before NUMERIC(6,2)`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_after NUMERIC(6,2)`);
-    _q(`ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_delta NUMERIC(6,2)`);
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS implementation_duration_minutes INTEGER`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS checks_status VARCHAR(32) NOT NULL DEFAULT 'unknown'`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS github_pr_merged_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_status VARCHAR(24) NOT NULL DEFAULT 'not_scheduled'`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_asf_jobs_rescan_status ON auto_score_fix_jobs(rescan_status)`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_scheduled_for TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_started_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_completed_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS rescan_audit_id UUID REFERENCES audits(id) ON DELETE SET NULL`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_before NUMERIC(6,2)`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_after NUMERIC(6,2)`,
+      );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_delta NUMERIC(6,2)`,
+      );
 
-    // ─── VCS Tokens (encrypted at rest) ──────────────────────────────────────
-    _q(`
+      // ─── VCS Tokens (encrypted at rest) ──────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS vcs_tokens (
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         provider VARCHAR(20) NOT NULL,
@@ -2404,10 +2858,12 @@ export async function runMigrations(): Promise<void> {
         PRIMARY KEY(user_id, provider)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_vcs_tokens_user ON vcs_tokens(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_vcs_tokens_user ON vcs_tokens(user_id)`,
+      );
 
-    // ─── Visibility Snapshots (self-hosted tracker) ───────────────────────────
-    _q(`
+      // ─── Visibility Snapshots (self-hosted tracker) ───────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS visibility_snapshots (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         prompt TEXT NOT NULL,
@@ -2421,12 +2877,18 @@ export async function runMigrations(): Promise<void> {
         captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_vs_engine_time ON visibility_snapshots(engine, captured_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_vs_brand_time ON visibility_snapshots(brand_found, captured_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_vs_captured ON visibility_snapshots(captured_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_vs_engine_time ON visibility_snapshots(engine, captured_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_vs_brand_time ON visibility_snapshots(brand_found, captured_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_vs_captured ON visibility_snapshots(captured_at DESC)`,
+      );
 
-    // ─── Fixpack completion tracking ─────────────────────────────────────────
-    _q(`
+      // ─── Fixpack completion tracking ─────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS fixpack_status (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2442,21 +2904,45 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, audit_id, fixpack_id)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_user ON fixpack_status(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_audit ON fixpack_status(audit_id)`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocked_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS reopened_at TIMESTAMPTZ`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocker_reason TEXT`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS lifecycle_state VARCHAR(32) NOT NULL DEFAULT 'opened'`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_status VARCHAR(24) NOT NULL DEFAULT 'not_requested'`);
-    _q(`ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_notes TEXT`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_lifecycle_state ON fixpack_status(lifecycle_state)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_status ON fixpack_status(status)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_status_verification_status ON fixpack_status(verification_status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_status_user ON fixpack_status(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_status_audit ON fixpack_status(audit_id)`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocked_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS reopened_at TIMESTAMPTZ`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS blocker_reason TEXT`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS lifecycle_state VARCHAR(32) NOT NULL DEFAULT 'opened'`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_status VARCHAR(24) NOT NULL DEFAULT 'not_requested'`,
+      );
+      _q(
+        `ALTER TABLE fixpack_status ADD COLUMN IF NOT EXISTS verification_notes TEXT`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_status_lifecycle_state ON fixpack_status(lifecycle_state)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_status_status ON fixpack_status(status)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_status_verification_status ON fixpack_status(verification_status)`,
+      );
 
-    // ─── Deterministic audit pipeline tables ──────────────────────────────────
-    _q(`
+      // ─── Deterministic audit pipeline tables ──────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_evidence (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_run_id UUID NOT NULL,
@@ -2474,25 +2960,41 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_run ON audit_evidence(audit_run_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_url ON audit_evidence(url)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_evidence_created ON audit_evidence(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_evidence_run ON audit_evidence(audit_run_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_evidence_url ON audit_evidence(url)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_evidence_created ON audit_evidence(created_at DESC)`,
+      );
 
-    // NOTE: audit_rule_results is already created at line ~1315 with the
-    // correct schema (audit_id FK, is_hard_blocker, evidence_ids, etc.).
-    // Legacy duplicate definition removed to prevent schema confusion.
-    // The ALTER TABLE reconciliation at line ~1030 adds any missing columns.
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit_id ON audit_rule_results(audit_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_rule_results_created ON audit_rule_results(created_at DESC)`);
+      // NOTE: audit_rule_results is already created at line ~1315 with the
+      // correct schema (audit_id FK, is_hard_blocker, evidence_ids, etc.).
+      // Legacy duplicate definition removed to prevent schema confusion.
+      // The ALTER TABLE reconciliation at line ~1030 adds any missing columns.
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_rule_results_audit_id ON audit_rule_results(audit_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_rule_results_created ON audit_rule_results(created_at DESC)`,
+      );
 
-    // NOTE: audit_score_snapshots is already created at line ~739 with the
-    // correct schema (audit_id PK, prior_run_id, normalized_url, etc.).
-    // Legacy duplicate definition removed to prevent schema confusion.
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_user ON audit_score_snapshots(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_url ON audit_score_snapshots(url)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audit_score_snap_created ON audit_score_snapshots(created_at DESC)`);
+      // NOTE: audit_score_snapshots is already created at line ~739 with the
+      // correct schema (audit_id PK, prior_run_id, normalized_url, etc.).
+      // Legacy duplicate definition removed to prevent schema confusion.
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_score_snap_user ON audit_score_snapshots(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_score_snap_url ON audit_score_snapshots(url)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audit_score_snap_created ON audit_score_snapshots(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS fixpacks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_run_id UUID NOT NULL,
@@ -2513,11 +3015,15 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_run ON fixpacks(audit_run_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_user ON fixpacks(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_created ON fixpacks(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpacks_run ON fixpacks(audit_run_id)`,
+      );
+      _q(`CREATE INDEX IF NOT EXISTS idx_fixpacks_user ON fixpacks(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpacks_created ON fixpacks(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS fixpack_assets (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         fixpack_id UUID NOT NULL REFERENCES fixpacks(id) ON DELETE CASCADE,
@@ -2527,9 +3033,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fixpack_assets_fp ON fixpack_assets(fixpack_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fixpack_assets_fp ON fixpack_assets(fixpack_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS verification_runs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -2544,10 +3052,14 @@ export async function runMigrations(): Promise<void> {
         completed_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_verification_runs_user ON verification_runs(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_verification_runs_created ON verification_runs(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_verification_runs_user ON verification_runs(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_verification_runs_created ON verification_runs(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS brag_trail (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_run_id UUID NOT NULL,
@@ -2561,10 +3073,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_brag_trail_run ON brag_trail(audit_run_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_brag_trail_created ON brag_trail(created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_brag_trail_run ON brag_trail(audit_run_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_brag_trail_created ON brag_trail(created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS trial_email_log (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -2573,9 +3089,11 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, email_type)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_trial_email_log_user ON trial_email_log(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_trial_email_log_user ON trial_email_log(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS rate_limit_events (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID,
@@ -2586,11 +3104,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_rate_limit_events_created ON rate_limit_events(created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_rate_limit_events_user ON rate_limit_events(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_rate_limit_events_created ON rate_limit_events(created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_rate_limit_events_user ON rate_limit_events(user_id)`,
+      );
 
-    // ─── Citation Intelligence Tables ─────────────────────────────────────────
-    _q(`
+      // ─── Citation Intelligence Tables ─────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_mention_trends (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2603,10 +3125,14 @@ export async function runMigrations(): Promise<void> {
         sampled_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_cite_trends_user_url ON citation_mention_trends(user_id, url, sampled_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_cite_trends_sampled ON citation_mention_trends(sampled_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_trends_user_url ON citation_mention_trends(user_id, url, sampled_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_trends_sampled ON citation_mention_trends(sampled_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_competitor_share (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2620,9 +3146,11 @@ export async function runMigrations(): Promise<void> {
         computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_cite_share_user_url ON citation_competitor_share(user_id, url, computed_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_share_user_url ON citation_competitor_share(user_id, url, computed_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_drop_alerts (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2636,9 +3164,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_cite_alerts_user ON citation_drop_alerts(user_id, dismissed, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_alerts_user ON citation_drop_alerts(user_id, dismissed, created_at DESC)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS citation_cooccurrences (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2652,12 +3182,16 @@ export async function runMigrations(): Promise<void> {
         found_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_cite_cooccur_user_url ON citation_cooccurrences(user_id, url, found_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_cooccur_user_url ON citation_cooccurrences(user_id, url, found_at DESC)`,
+      );
 
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS mention_quality_score SMALLINT`);
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS mention_quality_score SMALLINT`,
+      );
 
-    // ─── SOC1 Compliance Tables ─────────────────────────────────────────
-    _q(`
+      // ─── SOC1 Compliance Tables ─────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS security_audit_log (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -2672,13 +3206,21 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_created ON security_audit_log(created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_actor ON security_audit_log(actor_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_action ON security_audit_log(action, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_sec_audit_log_category ON security_audit_log(category, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_sec_audit_log_created ON security_audit_log(created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_sec_audit_log_actor ON security_audit_log(actor_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_sec_audit_log_action ON security_audit_log(action, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_sec_audit_log_category ON security_audit_log(category, created_at DESC)`,
+      );
 
-    // ─── Brand Mention Tracker ───────────────────────────────────────────
-    _q(`
+      // ─── Brand Mention Tracker ───────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS brand_mentions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2693,20 +3235,32 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id, source, url)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_brand_mentions_user_brand ON brand_mentions(user_id, LOWER(brand), detected_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_brand_mentions_source ON brand_mentions(user_id, source)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_brand_mentions_user_brand ON brand_mentions(user_id, LOWER(brand), detected_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_brand_mentions_source ON brand_mentions(user_id, source)`,
+      );
 
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS content_hash VARCHAR(64)`);
+      _q(
+        `ALTER TABLE audits ADD COLUMN IF NOT EXISTS content_hash VARCHAR(64)`,
+      );
 
-    // ─── MCP audit queue columns ────────────────────────────────────────────
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(24) NOT NULL DEFAULT 'complete'`);
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS goal TEXT`);
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS platform_focus JSONB`);
-    _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status IN ('queued', 'scanning', 'analyzing')`);
+      // ─── MCP audit queue columns ────────────────────────────────────────────
+      _q(
+        `ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(24) NOT NULL DEFAULT 'complete'`,
+      );
+      _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS goal TEXT`);
+      _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS platform_focus JSONB`);
+      _q(
+        `ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status IN ('queued', 'scanning', 'analyzing')`,
+      );
 
-    // ─── Niche Discovery Jobs ───────────────────────────────────────────────
-    _q(`
+      // ─── Niche Discovery Jobs ───────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS niche_discovery_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2722,10 +3276,12 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_niche_discovery_user ON niche_discovery_jobs(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_niche_discovery_user ON niche_discovery_jobs(user_id)`,
+      );
 
-    // ─── OAuth 2.0 Tables ────────────────────────────────────────────────────
-    _q(`
+      // ─── OAuth 2.0 Tables ────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS oauth_clients (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         client_id VARCHAR(64) NOT NULL UNIQUE,
@@ -2738,10 +3294,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_clients_user ON oauth_clients(user_id)`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_oauth_clients_client_id ON oauth_clients(client_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_oauth_clients_user ON oauth_clients(user_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_oauth_clients_client_id ON oauth_clients(client_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         code_hash VARCHAR(128) NOT NULL,
@@ -2754,9 +3314,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_codes_hash ON oauth_authorization_codes(code_hash)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_oauth_codes_hash ON oauth_authorization_codes(code_hash)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS oauth_tokens (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         token_hash VARCHAR(128) NOT NULL,
@@ -2768,11 +3330,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user ON oauth_tokens(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_oauth_tokens_hash ON oauth_tokens(token_hash)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user ON oauth_tokens(user_id)`,
+      );
 
-    // ─── Support tickets ──────────────────────────────────────────────────────
-    _q(`
+      // ─── Support tickets ──────────────────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS support_tickets (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         ticket_number VARCHAR(16) NOT NULL UNIQUE,
@@ -2788,11 +3354,17 @@ export async function runMigrations(): Promise<void> {
         resolved_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_support_tickets_number ON support_tickets(ticket_number)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_support_tickets_number ON support_tickets(ticket_number)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS support_ticket_messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
@@ -2802,10 +3374,12 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON support_ticket_messages(ticket_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON support_ticket_messages(ticket_id)`,
+      );
 
-    // ── Agent task queue ──
-    _q(`
+      // ── Agent task queue ──
+      _q(`
       CREATE TABLE IF NOT EXISTS agent_tasks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2819,11 +3393,15 @@ export async function runMigrations(): Promise<void> {
         completed_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_user ON agent_tasks(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status) WHERE status = 'pending'`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agent_tasks_user ON agent_tasks(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status) WHERE status = 'pending'`,
+      );
 
-    // ── GitHub App installations ──
-    _q(`
+      // ── GitHub App installations ──
+      _q(`
       CREATE TABLE IF NOT EXISTS github_app_installations (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
@@ -2838,11 +3416,17 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_workspace ON github_app_installations(workspace_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_github_app_inst_user ON github_app_installations(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_github_app_inst_workspace ON github_app_installations(workspace_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_github_app_inst_id ON github_app_installations(installation_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS workspace_activity_log (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -2852,11 +3436,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_activity_ws ON workspace_activity_log(workspace_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_workspace_activity_user ON workspace_activity_log(user_id, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspace_activity_ws ON workspace_activity_log(workspace_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_workspace_activity_user ON workspace_activity_log(user_id, created_at DESC)`,
+      );
 
-    // ── Audit score timeline (Level 4 – Visibility Timeline) ─────────────────
-    _q(`
+      // ── Audit score timeline (Level 4 – Visibility Timeline) ─────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS audit_score_timeline (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
@@ -2871,11 +3459,15 @@ export async function runMigrations(): Promise<void> {
         captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_ast_user_url ON audit_score_timeline(user_id, url)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_ast_captured_at ON audit_score_timeline(captured_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_ast_user_url ON audit_score_timeline(user_id, url)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_ast_captured_at ON audit_score_timeline(captured_at DESC)`,
+      );
 
-    // ── Alert subscriptions (Level 4 – Alert Service) ────────────────────────
-    _q(`
+      // ── Alert subscriptions (Level 4 – Alert Service) ────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS alert_subscriptions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
@@ -2888,10 +3480,12 @@ export async function runMigrations(): Promise<void> {
         UNIQUE (user_id, channel)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_alert_sub_user ON alert_subscriptions(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_alert_sub_user ON alert_subscriptions(user_id)`,
+      );
 
-    // ── In-app alert notifications (Level 4 – Alert Service) ─────────────────
-    _q(`
+      // ── In-app alert notifications (Level 4 – Alert Service) ─────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS alert_notifications (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
@@ -2903,11 +3497,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_alert_notif_user ON alert_notifications(user_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_alert_notif_unread ON alert_notifications(user_id) WHERE read_at IS NULL`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_alert_notif_user ON alert_notifications(user_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_alert_notif_unread ON alert_notifications(user_id) WHERE read_at IS NULL`,
+      );
 
-    // ── Fix outcomes / ROI tracking (Level 4 – Fix Learning) ─────────────────
-    _q(`
+      // ── Fix outcomes / ROI tracking (Level 4 – Fix Learning) ─────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS fix_outcomes (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id VARCHAR(255) NOT NULL,
@@ -2920,11 +3518,15 @@ export async function runMigrations(): Promise<void> {
         captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_user ON fix_outcomes(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_type ON fix_outcomes(fix_type)`,
+      );
 
-    // ── Level 5: VaaS - Industry benchmarks ───────────────────────────────────
-    _q(`
+      // ── Level 5: VaaS - Industry benchmarks ───────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS industry_benchmarks (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         category VARCHAR(100) NOT NULL,
@@ -2938,11 +3540,15 @@ export async function runMigrations(): Promise<void> {
         computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_category ON industry_benchmarks(category)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_computed ON industry_benchmarks(computed_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_category ON industry_benchmarks(category)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_industry_benchmarks_computed ON industry_benchmarks(computed_at DESC)`,
+      );
 
-    // ── Level 5: VaaS - Embeddable widget tokens ──────────────────────────────
-    _q(`
+      // ── Level 5: VaaS - Embeddable widget tokens ──────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS widget_embed_tokens (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2957,11 +3563,15 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_widget_tokens_user ON widget_embed_tokens(user_id)`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_widget_tokens_token ON widget_embed_tokens(token)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_widget_tokens_user ON widget_embed_tokens(user_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_widget_tokens_token ON widget_embed_tokens(token)`,
+      );
 
-    // ── Level 5: VaaS - Bulk fix jobs ─────────────────────────────────────────
-    _q(`
+      // ── Level 5: VaaS - Bulk fix jobs ─────────────────────────────────────────
+      _q(`
       CREATE TABLE IF NOT EXISTS bulk_fix_jobs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -2975,11 +3585,15 @@ export async function runMigrations(): Promise<void> {
         completed_at TIMESTAMPTZ
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_user ON bulk_fix_jobs(user_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_status ON bulk_fix_jobs(status, created_at DESC)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_user ON bulk_fix_jobs(user_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_status ON bulk_fix_jobs(status, created_at DESC)`,
+      );
 
-    // ── V1 Infrastructure Tables (projects, issues, evidence, fixes, PRs) ──
-    _q(`
+      // ── V1 Infrastructure Tables (projects, issues, evidence, fixes, PRs) ──
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_projects (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         org_id UUID NOT NULL,
@@ -2992,11 +3606,17 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`);
-    _q(`ALTER TABLE v1_projects ADD COLUMN IF NOT EXISTS auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_projects_org ON v1_projects(org_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_v1_projects_org_domain ON v1_projects(org_id, domain)`,
+      );
+      _q(
+        `ALTER TABLE v1_projects ADD COLUMN IF NOT EXISTS auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_audits (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
@@ -3007,10 +3627,14 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audits_project ON v1_audits(project_id, created_at DESC)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audits_status ON v1_audits(status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_audits_project ON v1_audits(project_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_audits_status ON v1_audits(status)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_audit_categories (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
@@ -3018,9 +3642,11 @@ export async function runMigrations(): Promise<void> {
         score INT NOT NULL DEFAULT 0
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_audit_categories_audit ON v1_audit_categories(audit_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_audit_categories_audit ON v1_audit_categories(audit_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_issues (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         audit_id UUID NOT NULL REFERENCES v1_audits(id) ON DELETE CASCADE,
@@ -3032,10 +3658,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_issues_audit ON v1_issues(audit_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_issues_severity ON v1_issues(severity)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_issues_audit ON v1_issues(audit_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_issues_severity ON v1_issues(severity)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_evidence (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
@@ -3044,9 +3674,11 @@ export async function runMigrations(): Promise<void> {
         raw JSONB DEFAULT '{}'
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_evidence_issue ON v1_evidence(issue_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_evidence_issue ON v1_evidence(issue_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_fixes (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         issue_id UUID NOT NULL REFERENCES v1_issues(id) ON DELETE CASCADE,
@@ -3057,10 +3689,10 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_issue ON v1_fixes(issue_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_status ON v1_fixes(status)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_issue ON v1_fixes(issue_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_v1_fixes_status ON v1_fixes(status)`);
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS v1_pull_requests (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         project_id UUID REFERENCES v1_projects(id) ON DELETE CASCADE,
@@ -3072,11 +3704,15 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_prs_project ON v1_pull_requests(project_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_v1_prs_status ON v1_pull_requests(status)`,
+      );
 
-    // ── Partnership agreements (dual-party signing + tamper-lock) ──────────
-    _q(`
+      // ── Partnership agreements (dual-party signing + tamper-lock) ──────────
+      _q(`
       CREATE TABLE IF NOT EXISTS partnership_agreements (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         slug VARCHAR(120) UNIQUE NOT NULL,
@@ -3115,10 +3751,14 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agreements_slug ON partnership_agreements(slug)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_agreements_status ON partnership_agreements(status)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agreements_slug ON partnership_agreements(slug)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_agreements_status ON partnership_agreements(status)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS agreement_referral_links (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         agreement_slug VARCHAR(120) NOT NULL,
@@ -3129,10 +3769,14 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_links_code ON agreement_referral_links(code)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON agreement_referral_links(agreement_slug)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_links_code ON agreement_referral_links(code)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON agreement_referral_links(agreement_slug)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS agreement_referral_visits (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         link_code VARCHAR(20) NOT NULL,
@@ -3141,10 +3785,12 @@ export async function runMigrations(): Promise<void> {
         visited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_referral_visits_code ON agreement_referral_visits(link_code)`,
+      );
 
-    /* ── Score-improvement benchmarks (public proof) ───────────── */
-    _q(`
+      /* ── Score-improvement benchmarks (public proof) ───────────── */
+      _q(`
       CREATE TABLE IF NOT EXISTS score_improvements (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -3160,11 +3806,15 @@ export async function runMigrations(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
-    _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_score_improvements_user_url ON score_improvements(user_id, url_hash)`);
-    _q(`CREATE INDEX IF NOT EXISTS idx_score_improvements_delta ON score_improvements(delta DESC)`);
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_score_improvements_user_url ON score_improvements(user_id, url_hash)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_score_improvements_delta ON score_improvements(delta DESC)`,
+      );
 
-    // ── Entity fingerprint system (per-user entity disambiguation) ────────
-    _q(`
+      // ── Entity fingerprint system (per-user entity disambiguation) ────────
+      _q(`
       CREATE TABLE IF NOT EXISTS entity_fingerprints (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -3182,9 +3832,11 @@ export async function runMigrations(): Promise<void> {
         UNIQUE(user_id)
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_entity_fingerprints_user ON entity_fingerprints(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_entity_fingerprints_user ON entity_fingerprints(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS entity_blocklists (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -3195,9 +3847,11 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_entity_blocklists_user ON entity_blocklists(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_entity_blocklists_user ON entity_blocklists(user_id)`,
+      );
 
-    _q(`
+      _q(`
       CREATE TABLE IF NOT EXISTS entity_audit_runs (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -3210,47 +3864,64 @@ export async function runMigrations(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    _q(`CREATE INDEX IF NOT EXISTS idx_entity_audit_runs_user ON entity_audit_runs(user_id)`);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_entity_audit_runs_user ON entity_audit_runs(user_id)`,
+      );
 
-    // Extend existing tables for entity-safe tracking
-    _q(`ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN DEFAULT FALSE`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS canonical_domain TEXT`);
-    _q(`ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS track_keywords JSONB DEFAULT '[]'`);
+      // Extend existing tables for entity-safe tracking
+      _q(
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN DEFAULT FALSE`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS canonical_domain TEXT`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS track_keywords JSONB DEFAULT '[]'`,
+      );
 
-    // Execute all migrations in a single round-trip
-    if (_ddl.length > 0) {
-      console.log(`[DB] Executing ${_ddl.length} DDL statements in single batch...`);
-      await client.query(_ddl.join(';\n'));
+      // Execute all migrations in a single round-trip
+      if (_ddl.length > 0) {
+        console.log(
+          `[DB] Executing ${_ddl.length} DDL statements in single batch...`,
+        );
+        await client.query(_ddl.join(";\n"));
+      }
+
+      // Migration complete
+      markDatabaseAvailable();
+      migrationsRan = true;
+      console.log("[DB] Database migrations complete");
+      return;
+    } catch (err) {
+      lastError = err;
+      const msg = (err as any).message || String(err);
+      console.warn(
+        `[DB] Migration error on attempt ${attempt}/${maxRetries}: ${msg.substring(0, 80)}`,
+      );
+
+      if (!shouldRetryDatabaseError(err)) {
+        console.warn(
+          "[DB] Migration retries skipped because the database reported a quota exhaustion error",
+        );
+        break;
+      }
+
+      if (attempt < maxRetries) {
+        const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 15000);
+        console.log(`[DB] Retrying in ${delayMs}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    } finally {
+      if (client) client.release();
     }
-
-    // Migration complete
-  markDatabaseAvailable();
-    migrationsRan = true;
-    console.log('[DB] Database migrations complete');
-    return;
-  } catch (err) {
-    lastError = err;
-    const msg = (err as any).message || String(err);
-    console.warn(`[DB] Migration error on attempt ${attempt}/${maxRetries}: ${msg.substring(0, 80)}`);
-
-    if (!shouldRetryDatabaseError(err)) {
-      console.warn('[DB] Migration retries skipped because the database reported a quota exhaustion error');
-      break;
-    }
-    
-    if (attempt < maxRetries) {
-      const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 15000);
-      console.log(`[DB] Retrying in ${delayMs}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-  } finally {
-    if (client) client.release();
   }
-  }
-  
+
   // After all retries exhausted
   markDatabaseUnavailable(lastError);
-  console.error('[DB] Migration failed after all retries:', (lastError as any).message);
+  console.error(
+    "[DB] Migration failed after all retries:",
+    (lastError as any).message,
+  );
   // Don't throw - allow server to start even if migrations fail
   // This allows recovery when DB is temporarily overloaded
   migrationsRan = true;
@@ -3268,17 +3939,17 @@ export async function getConnection(): Promise<PoolClient> {
 }
 
 export async function executeTransaction<T>(
-  callback: (client: PoolClient) => Promise<T>
+  callback: (client: PoolClient) => Promise<T>,
 ): Promise<T> {
   const client = await getPool().connect();
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     const result = await callback(client);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return result;
   } catch (err) {
     try {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
     } catch {
       /* ignore rollback errors */
     }
@@ -3299,7 +3970,7 @@ export async function healthCheck(): Promise<boolean> {
     // TTL expired - attempt a real connection check
   }
   try {
-    await getPool().query('SELECT 1');
+    await getPool().query("SELECT 1");
     markDatabaseAvailable();
     return true;
   } catch (err) {

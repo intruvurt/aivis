@@ -9,27 +9,21 @@
   "theme_color": "#0891b2",
   "icons": [
     {
-      "src": "/aivis-circ-logo.png?v=20260408",
-      "type": "image/png",
-      "sizes": "392x392",
-      "purpose": "any"
-    },
-    {
-      "src": "/aivis-circ-logo.png?v=20260408",
+      "src": "/android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "/aivis-circ-logo.png?v=20260408",
+      "src": "/android-chrome-512x512.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "maskable"
+      "sizes": "512x512",
+      "purpose": "any"
     },
     {
-      "src": "/aivis-circ-logo.png?v=20260408",
+      "src": "/android-chrome-512x512.png",
       "type": "image/png",
-      "sizes": "392x392",
+      "sizes": "512x512",
       "purpose": "maskable"
     },
     {

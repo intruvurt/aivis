@@ -1735,6 +1735,7 @@ function prerenderHtml(route) {
 					? blogMeta.featuredImageUrl
 					: `https://aivis.biz${blogMeta.featuredImageUrl}`;
 				html = updateTag(html, /<meta\s+property="og:image"\s+content="[^"]*"\s*\/>/,  `<meta property="og:image" content="${imgUrl}" />`);
+				html = updateTag(html, /<meta\s+property="og:image:secure_url"\s+content="[^"]*"\s*\/>/,  `<meta property="og:image:secure_url" content="${imgUrl}" />`);
 				html = updateTag(html, /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/>/,  `<meta name="twitter:image" content="${imgUrl}" />`);
 			}
 			html = html.replace('</head>', `${articleMeta}</head>`);

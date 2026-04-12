@@ -20,7 +20,7 @@ const SECURITY_HEADERS = {
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com; " +
     "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; " +
+    "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://codetrendy.com; " +
     "connect-src 'self' https://api.aivis.biz https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.sentry.io https://*.ingest.sentry.io; " +
     "font-src 'self' data:; " +
     "frame-src https://www.google.com https://recaptcha.google.com https://js.stripe.com; " +

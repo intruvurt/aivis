@@ -2672,7 +2672,7 @@ export async function runMigrations(): Promise<void> {
         END IF;
 
         ALTER TABLE users ADD CONSTRAINT users_tier_canonical
-          CHECK (tier IN ('observer', 'alignment', 'signal', 'scorefix'));
+          CHECK (tier IN ('observer', 'starter', 'alignment', 'signal', 'scorefix'));
       END $$;
     `);
 

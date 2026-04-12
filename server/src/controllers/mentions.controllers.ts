@@ -25,7 +25,13 @@ export async function runMentionScan(req: Request, res: Response) {
 
     // Tool credit gate
     const user = (req as any).user;
-    const gate = await gateToolAction(userId, 'mention_scan', user.tier || 'observer');
+    let gate: Awaited<ReturnType<typeof gateToolAction>>;
+    try {
+      gate = await gateToolAction(userId, 'mention_scan', user.tier || 'observer');
+    } catch (gateErr: any) {
+      console.error('[MentionScan] gateToolAction failed:', gateErr?.message, '\n', gateErr?.stack || gateErr);
+      return res.status(500).json({ error: 'Mention scan temporarily unavailable. Please try again.' });
+    }
     if (!gate.allowed) {
       return res.status(402).json({
         error: gate.reason,
@@ -61,7 +67,7 @@ export async function runMentionScan(req: Request, res: Response) {
       persisted,
     });
   } catch (err: any) {
-    console.error('[MentionScan] Error:', err?.message);
+    console.error('[MentionScan] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Mention scan failed' });
   }
 }
@@ -93,7 +99,7 @@ export async function getMentionHistoryHandler(req: Request, res: Response) {
       source_breakdown: breakdown,
     });
   } catch (err: any) {
-    console.error('[MentionHistory] Error:', err?.message);
+    console.error('[MentionHistory] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Failed to fetch mention history' });
   }
 }
@@ -121,7 +127,7 @@ export async function getMentionTimelineHandler(req: Request, res: Response) {
       timeline,
     });
   } catch (err: any) {
-    console.error('[MentionTimeline] Error:', err?.message);
+    console.error('[MentionTimeline] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Failed to fetch mention timeline' });
   }
 }

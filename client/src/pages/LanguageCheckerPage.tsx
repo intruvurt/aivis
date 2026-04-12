@@ -323,7 +323,7 @@ export default function LanguageCheckerPage() {
           </section>
         )}
 
-        <ConversionCTA />
+        <ConversionCTA variant="free-tool" />
       </div>
     </>
   );

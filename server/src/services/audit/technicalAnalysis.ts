@@ -164,7 +164,7 @@ export async function analyzeTechnical(input: TechnicalAnalysisInput): Promise<T
     });
   }
 
-
+  if (anchorStats.emptyHrefCount > 0 || anchorStats.javascriptHrefCount > 0) {
     findings.push({
       id: 'finding_weak_anchor_hygiene',
       category: 'Technical Integrity',

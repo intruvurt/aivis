@@ -155,11 +155,34 @@ const otpSchema = z.object({
   email: z.string().email(),
 });
 
+/** In-memory OTP rate limit: max 3 requests per email per 15 minutes */
+const otpRateMap = new Map<string, number[]>();
+const OTP_RATE_WINDOW_MS = 15 * 60 * 1000;
+const OTP_RATE_MAX = 3;
+
+function isOtpRateLimited(email: string): boolean {
+  const now = Date.now();
+  const key = email.toLowerCase();
+  const timestamps = (otpRateMap.get(key) || []).filter(t => now - t < OTP_RATE_WINDOW_MS);
+  if (timestamps.length >= OTP_RATE_MAX) {
+    otpRateMap.set(key, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  otpRateMap.set(key, timestamps);
+  return false;
+}
+
 router.post('/:slug/request-otp', async (req: Request, res: Response) => {
   try {
     const parsed = otpSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: 'Provide party ("a" or "b").' });
+    }
+
+    // Per-email rate limit: 3 OTP requests per 15 min window
+    if (isOtpRateLimited(parsed.data.email)) {
+      return res.status(429).json({ error: 'Too many OTP requests. Please wait 15 minutes before trying again.' });
     }
 
     const agreement = await getAgreementBySlug(req.params.slug as string);

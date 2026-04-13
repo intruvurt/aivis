@@ -12,7 +12,7 @@ const BEARER_PATTERN = /Bearer\s+[A-Za-z0-9._~+/-]{16,}/gi;
 const BASIC_AUTH_PATTERN = /Basic\s+[A-Za-z0-9+/=]{16,}/gi;
 
 // Environment variable leakage: KEY=value
-const ENV_VAR_PATTERN = /(OPENROUTER_API_KEY|OPEN_ROUTER_API_KEY|GOOGLE_CLIENT_SECRET|JWT_SECRET|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|DATABASE_PASSWORD|DB_PASSWORD|ADMIN_KEY|SENTRY_DSN|WEBHOOK_SECRET|API_KEY)[\s=:]+[^\s"'}]+/gi;
+const ENV_VAR_PATTERN = /(OPENROUTER_API_KEY|OPEN_ROUTER_API_KEY|GOOGLE_CLIENT_SECRET|JWT_SECRET|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|DATABASE_PASSWORD|DB_PASSWORD|ADMIN_KEY|SENTRY_DSN|WEBHOOK_SECRET|API_KEY|PAYPAL_SECRET|PAYPAL_API_KEY|PAYPAL_CLIENT_ID|RESEND_API_KEY|SERP_API_KEY|DEEPSEEK_API_KEY|DATABASE_URL)[\s=:]+[^\s"'}]+/gi;
 
 // Email addresses (partial masking)
 const EMAIL_PATTERN = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
@@ -68,7 +68,7 @@ function sanitizeString(input: string): string {
     .replace(AWS_KEY_PATTERN, '[AWS_KEY_REDACTED]')
     .replace(GCP_PRIVATE_KEY_PATTERN, '"private_key":"[REDACTED]"')
     .replace(EMAIL_PATTERN, (email) => maskEmail(email));
-  
+
   // Also attempt URL-based sanitization
   try {
     const maybeUrl = sanitizeUrlString(input);
@@ -76,7 +76,7 @@ function sanitizeString(input: string): string {
   } catch {
     // Not a URL, use string sanitization only
   }
-  
+
   return sanitized;
 }
 

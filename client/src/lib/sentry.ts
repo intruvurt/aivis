@@ -32,6 +32,27 @@ export function initSentryIfConsented(): void {
 
     // keep this conservative for an “enterprise” feel
     tracesSampleRate: 0.05,
+    // Strip tokens, secrets, and OTPs from URLs before sending to Sentry
+    beforeSend(event) {
+      if (event.request?.url) {
+        event.request.url = event.request.url.replace(
+          /([?&])(token|access_token|password|secret|otp|reset_code|api_key|ref)=[^&]*/gi,
+          '$1$2=[REDACTED]',
+        );
+      }
+      // Also strip from breadcrumbs
+      if (event.breadcrumbs) {
+        for (const bc of event.breadcrumbs) {
+          if (typeof bc.data?.url === 'string') {
+            bc.data.url = bc.data.url.replace(
+              /([?&])(token|access_token|password|secret|otp|reset_code|api_key|ref)=[^&]*/gi,
+              '$1$2=[REDACTED]',
+            );
+          }
+        }
+      }
+      return event;
+    },
   });
 
   sentryInitialized = true;

@@ -309,7 +309,7 @@ const Admin: React.FC = () => {
   const [stats, setStats] = useState<AdminStats>(DEFAULT_STATS);
   const [state, setState] = useState<LoadState>("idle");
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
-  const [adminKey, setAdminKey] = useState<string>(() => sessionStorage.getItem("aivis_admin_key") || "");
+  const [adminKey, setAdminKey] = useState<string>("");
 
   const [newsletterSettings, setNewsletterSettings] = useState<NewsletterSettings>(DEFAULT_NEWSLETTER_SETTINGS);
   const [settingsLoading, setSettingsLoading] = useState(false);
@@ -440,9 +440,8 @@ const Admin: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, adminKey]);
 
-  useEffect(() => {
-    sessionStorage.setItem("aivis_admin_key", adminKey);
-  }, [adminKey]);
+  // Admin key is intentionally NOT persisted to browser storage.
+  // It lives only in React state and is cleared on page unload.
 
   const fetchNewsletterSettings = async () => {
     if (!isAdmin || !adminKey.trim()) return;

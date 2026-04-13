@@ -8,7 +8,7 @@ import { buildBreadcrumbSchema, buildCollectionSchema, buildItemListSchema } fro
 
 export default function InsightsPage() {
   usePageMeta({
-    title: 'AI Visibility Insights Hub | AiVIS',
+    title: 'AI Visibility Insights Hub',
     description:
       'Strategic AI search playbooks covering AI visibility, AEO implementation, and geo-adaptive ranking in 2026.',
     path: '/insights',

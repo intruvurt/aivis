@@ -1,7 +1,7 @@
 import express from "express";
 import { getBrand, createBrand, updateBrand, deleteBrand, getAllBrands } from "../controllers/brandController.ts";
 import { body } from "express-validator";
-import { protect, requireRole } from "../middleware/auth.ts";
+import { authRequired, requireRole } from "../middleware/authRequired.js";
 
 const router = express.Router();
 
@@ -9,11 +9,11 @@ const router = express.Router();
 router.get("/:tenant_id", getBrand);
 
 // Protected admin routes
-router.get("/", protect, requireRole(["admin"]), getAllBrands);
+router.get("/", authRequired, requireRole(["admin"]), getAllBrands);
 
 router.post(
   "/",
-  protect,
+  authRequired,
   requireRole(["admin"]),
   [
     body("tenant_id").notEmpty().trim().withMessage("Tenant ID is required"),
@@ -27,7 +27,7 @@ router.post(
 
 router.put(
   "/:tenant_id",
-  protect,
+  authRequired,
   requireRole(["admin"]),
   [
     body("brandName").optional().trim(),
@@ -38,6 +38,6 @@ router.put(
   updateBrand
 );
 
-router.delete("/:tenant_id", protect, requireRole(["admin"]), deleteBrand);
+router.delete("/:tenant_id", authRequired, requireRole(["admin"]), deleteBrand);
 
 export default router;

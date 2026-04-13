@@ -149,16 +149,16 @@ router.get('/github/repos', async (req: Request, res: Response) => {
     const payload = await fetchGitHubApi(`/user/repos?sort=updated&per_page=${perPage}&affiliation=owner,collaborator,organization_member`, plainToken);
     const repos = Array.isArray(payload)
       ? payload.map((repo: any) => ({
-          id: repo.id,
-          full_name: repo.full_name,
-          owner: repo?.owner?.login || '',
-          name: repo.name,
-          default_branch: repo.default_branch || 'main',
-          private: Boolean(repo.private),
-          permissions: repo.permissions || {},
-          pushed_at: repo.pushed_at || null,
-          html_url: repo.html_url || null,
-        }))
+        id: repo.id,
+        full_name: repo.full_name,
+        owner: repo?.owner?.login || '',
+        name: repo.name,
+        default_branch: repo.default_branch || 'main',
+        private: Boolean(repo.private),
+        permissions: repo.permissions || {},
+        pushed_at: repo.pushed_at || null,
+        html_url: repo.html_url || null,
+      }))
       : [];
 
     return res.json({ repos, count: repos.length });
@@ -191,10 +191,10 @@ router.get('/github/branches', async (req: Request, res: Response) => {
     const payload = await fetchGitHubApi(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches?per_page=100`, plainToken);
     const branches = Array.isArray(payload)
       ? payload.map((branch: any) => ({
-          name: String(branch?.name || ''),
-          sha: String(branch?.commit?.sha || ''),
-          protected: Boolean(branch?.protected),
-        }))
+        name: String(branch?.name || ''),
+        sha: String(branch?.commit?.sha || ''),
+        protected: Boolean(branch?.protected),
+      }))
       : [];
 
     return res.json({ branches, count: branches.length });
@@ -229,9 +229,9 @@ router.get('/github/tree', async (req: Request, res: Response) => {
 
     const tree = Array.isArray(payload?.tree)
       ? payload.tree
-          .filter((item: any) => item.type === 'blob')
-          .slice(0, 500)
-          .map((item: any) => String(item.path))
+        .filter((item: any) => item.type === 'blob')
+        .slice(0, 500)
+        .map((item: any) => String(item.path))
       : [];
 
     return res.json({ tree, count: tree.length, truncated: !!payload?.truncated });
@@ -360,6 +360,39 @@ router.get('/jobs/:id', workspaceRequired, async (req: Request, res: Response) =
     return res.json({ job });
   } catch (err: any) {
     return res.status(500).json({ error: 'Failed to retrieve job' });
+  }
+});
+
+/** GET /api/auto-score-fix/jobs/:id/diffs - per-file diff preview for a job */
+router.get('/jobs/:id/diffs', workspaceRequired, async (req: Request, res: Response) => {
+  const userId = String((req as any).user?.id || '');
+  const workspaceId = String((req as any).workspace?.id || '');
+  const jobId = String(req.params.id || '');
+  try {
+    const job = await getJobById(jobId, userId, workspaceId);
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+
+    const fileChanges: Array<{
+      path: string;
+      operation: string;
+      is_deterministic: boolean;
+      diff: unknown;
+      validation_warnings: string[];
+    }> = ((job as any).fix_plan?.file_changes ?? []).map((fc: any) => ({
+      path: fc.path,
+      operation: fc.operation,
+      is_deterministic: fc.is_deterministic === true,
+      diff: fc.diff ?? null,
+      validation_warnings: Array.isArray(fc.validation_warnings) ? fc.validation_warnings : [],
+    }));
+
+    return res.json({
+      job_id: jobId,
+      deterministic_patches_count: (job as any).fix_plan?.deterministic_patches_count ?? 0,
+      diffs: fileChanges,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to retrieve diffs' });
   }
 });
 

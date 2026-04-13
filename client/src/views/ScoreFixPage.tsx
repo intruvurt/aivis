@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { ScoreFixIcon, ContentBlueprintIcon, AuditEngineIcon } from "../components/icons";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationRef, buildWebPageSchema } from "../lib/seoSchema";
 import UpgradeWall from "../components/UpgradeWall";
+import ScoreFixWizard from "../components/ScoreFixWizard";
 
 const blockerRows = [
   {
@@ -244,6 +245,9 @@ export default function ScoreFixPage() {
   const [liveRecommendations, setLiveRecommendations] = useState<LiveRecommendation[]>([]);
   const [liveEvidenceById, setLiveEvidenceById] = useState<Record<string, LiveEvidenceItem>>({});
   const [liveEvidenceState, setLiveEvidenceState] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
+  const [liveAuditId, setLiveAuditId] = useState('');
+  const [liveTargetUrl, setLiveTargetUrl] = useState('');
+  const [liveVisibilityScore, setLiveVisibilityScore] = useState(0);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -348,8 +352,9 @@ export default function ScoreFixPage() {
           return;
         }
 
-        const auditsPayload = (await auditsRes.json().catch(() => ({}))) as { audits?: Array<{ id?: string }> };
+        const auditsPayload = (await auditsRes.json().catch(() => ({}))) as { audits?: Array<{ id?: string; url?: string; target_url?: string }> };
         const latestAuditId = String(auditsPayload?.audits?.[0]?.id || "").trim();
+        const auditUrl = (auditsPayload?.audits?.[0]?.url || auditsPayload?.audits?.[0]?.target_url || "").trim();
         if (!latestAuditId) {
           setLiveEvidenceState("unavailable");
           return;
@@ -370,9 +375,13 @@ export default function ScoreFixPage() {
         }
 
         const detail = (await detailRes.json().catch(() => ({}))) as {
+          url?: string;
+          target_url?: string;
           result?: {
             recommendations?: LiveRecommendation[];
             evidence_ledger?: Record<string, LiveEvidenceItem>;
+            visibility_score?: number;
+            url?: string;
           };
         };
 
@@ -388,6 +397,9 @@ export default function ScoreFixPage() {
         setLiveRecommendations(recommendations);
         setLiveEvidenceById(evidenceLedger as Record<string, LiveEvidenceItem>);
         setLiveEvidenceState(recommendations.length > 0 ? "ready" : "unavailable");
+        setLiveAuditId(latestAuditId);
+        setLiveTargetUrl(auditUrl || detail?.url || detail?.target_url || detail?.result?.url || "");
+        setLiveVisibilityScore(detail?.result?.visibility_score ?? 0);
       } catch {
         if (!cancelled) setLiveEvidenceState("unavailable");
       }
@@ -442,8 +454,35 @@ export default function ScoreFixPage() {
           />
         </div>
       ) : (
-      <div className="text-white">
       <div className="space-y-6">
+        {/* ScoreFix Wizard — primary flow */}
+        {liveTargetUrl ? (
+          <ScoreFixWizard
+            token={token || ""}
+            auditSnapshot={{
+              audit_id: liveAuditId,
+              target_url: liveTargetUrl,
+              visibility_score: liveVisibilityScore,
+              recommendations: liveRecommendations,
+              evidence_ledger: liveEvidenceById,
+            }}
+            packCreditsBalance={packCreditsBalance}
+            creditCost={10}
+          />
+        ) : liveEvidenceState === "loading" ? (
+          <div className="flex items-center justify-center gap-2 py-20 text-white/40">
+            <span>Loading your latest audit…</span>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
+            <p className="text-sm text-white/60">
+              No audit found.{" "}
+              <Link to="/app/analyze" className="text-amber-300 underline">Run an audit first</Link>,
+              then return here to apply fixes automatically.
+            </p>
+          </div>
+        )}
+        {/* Reference info for context */}
         <motion.section
           {...sectionFade}
           className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-4 shadow-2xl sm:p-6 lg:p-7"
@@ -828,7 +867,6 @@ export default function ScoreFixPage() {
           Last updated: March 2026 · Evidence-validated remediation for enterprise white-label delivery.
         </footer>
       </div>
-    </div>
       )}
     </>
   );

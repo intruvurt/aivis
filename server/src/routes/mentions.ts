@@ -7,6 +7,8 @@ import {
   runMentionScan,
   getMentionHistoryHandler,
   getMentionTimelineHandler,
+  getMentionKPIHandler,
+  getMentionKPIHistoryHandler,
 } from '../controllers/mentions.controllers.js';
 
 const router = Router();
@@ -36,5 +38,11 @@ router.get('/history', requireAlignmentOrHigher, getMentionHistoryHandler);
 
 // GET /api/mentions/timeline - daily mention counts over past N days
 router.get('/timeline', requireAlignmentOrHigher, getMentionTimelineHandler);
+
+// GET /api/mentions/kpi - compute live KPI dashboard metrics
+router.get('/kpi', requireAlignmentOrHigher, getMentionKPIHandler);
+
+// GET /api/mentions/kpi/history - historical KPI snapshots for trend charts
+router.get('/kpi/history', requireAlignmentOrHigher, getMentionKPIHistoryHandler);
 
 export default router;

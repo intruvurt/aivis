@@ -1,6 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { protect } from "../middleware/auth.ts";
+import { authRequired } from "../middleware/authRequired.js";
 import enforceFeature from "../middleware/usageEnforcement.ts";
 import Audit from "../models/Audit.ts";
 
@@ -103,7 +103,7 @@ function safeAuditPayload(auditDoc) {
  */
 router.post(
   "/pdf/:auditId",
-  protect,
+  authRequired,
   enforceFeature("export"),
   async (req, res) => {
     try {
@@ -147,7 +147,7 @@ router.post(
  */
 router.get(
   "/html/:auditId",
-  protect,
+  authRequired,
   enforceFeature("export"),
   async (req, res) => {
     try {
@@ -185,21 +185,19 @@ router.get(
     <div><strong>Score:</strong> ${payload.visibility_score ?? "-"}</div>
   </div>
 
-  ${
-    payload.snapshot
-      ? `<div class="box"><strong>Snapshot</strong><pre>${String(
-          JSON.stringify(payload.snapshot, null, 2)
-        ).replaceAll("<", "&lt;")}</pre></div>`
-      : ""
-  }
+  ${payload.snapshot
+          ? `<div class="box"><strong>Snapshot</strong><pre>${String(
+            JSON.stringify(payload.snapshot, null, 2)
+          ).replaceAll("<", "&lt;")}</pre></div>`
+          : ""
+        }
 
-  ${
-    payload.result
-      ? `<div class="box"><strong>Result</strong><pre>${String(
-          JSON.stringify(payload.result, null, 2)
-        ).replaceAll("<", "&lt;")}</pre></div>`
-      : `<div class="box"><strong>Result</strong><pre>No result payload found on this audit record.</pre></div>`
-  }
+  ${payload.result
+          ? `<div class="box"><strong>Result</strong><pre>${String(
+            JSON.stringify(payload.result, null, 2)
+          ).replaceAll("<", "&lt;")}</pre></div>`
+          : `<div class="box"><strong>Result</strong><pre>No result payload found on this audit record.</pre></div>`
+        }
 </body>
 </html>`;
 
@@ -217,7 +215,7 @@ router.get(
  */
 router.get(
   "/json/:auditId",
-  protect,
+  authRequired,
   enforceFeature("export"),
   async (req, res) => {
     try {
@@ -257,7 +255,7 @@ router.get(
  */
 router.get(
   "/csv/:auditId",
-  protect,
+  authRequired,
   enforceFeature("export"),
   async (req, res) => {
     try {
@@ -291,12 +289,12 @@ router.get(
         header = ["id", "title", "source_url", "excerpt", "retrieved_at"];
         rows = Array.isArray(evidence)
           ? evidence.map((e) => [
-              e?.id ?? "",
-              e?.title ?? "",
-              e?.sourceUrl ?? e?.source_url ?? "",
-              e?.excerpt ?? "",
-              e?.retrievedAt ?? e?.retrieved_at ?? "",
-            ])
+            e?.id ?? "",
+            e?.title ?? "",
+            e?.sourceUrl ?? e?.source_url ?? "",
+            e?.excerpt ?? "",
+            e?.retrievedAt ?? e?.retrieved_at ?? "",
+          ])
           : [];
       } else {
         const recs =
@@ -310,15 +308,15 @@ router.get(
         header = ["item", "category", "severity", "why", "recommendation"];
         rows = Array.isArray(recs)
           ? recs.map((r) => {
-              if (typeof r === "string") return [r, "", "", "", ""];
-              return [
-                r?.claim ?? r?.item ?? r?.finding ?? "",
-                r?.category ?? "",
-                r?.severity ?? r?.status ?? "",
-                r?.whyItMatters ?? r?.why ?? "",
-                r?.recommendation ?? r?.fix ?? "",
-              ];
-            })
+            if (typeof r === "string") return [r, "", "", "", ""];
+            return [
+              r?.claim ?? r?.item ?? r?.finding ?? "",
+              r?.category ?? "",
+              r?.severity ?? r?.status ?? "",
+              r?.whyItMatters ?? r?.why ?? "",
+              r?.recommendation ?? r?.fix ?? "",
+            ];
+          })
           : [];
       }
 
@@ -360,7 +358,7 @@ router.get(
  */
 router.post(
   "/share/:auditId",
-  protect,
+  authRequired,
   enforceFeature("share"),
   async (req, res) => {
     try {
@@ -481,12 +479,12 @@ router.get("/shared/:token", async (req, res) => {
     const responseData = isFull
       ? payload
       : {
-          auditId: payload.auditId,
-          url: payload.url,
-          analyzed_at: payload.analyzed_at,
-          visibility_score: payload.visibility_score,
-          snapshot: payload.snapshot, // best universal summary container
-        };
+        auditId: payload.auditId,
+        url: payload.url,
+        analyzed_at: payload.analyzed_at,
+        visibility_score: payload.visibility_score,
+        snapshot: payload.snapshot, // best universal summary container
+      };
 
     return res.json({ success: true, data: responseData });
   } catch (error) {

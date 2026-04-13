@@ -763,9 +763,9 @@ const AnalyzePage: React.FC = () => {
               AI Visibility Audit
             </div>
 
-            <h1 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               Analyze your site the way AI systems read it
-            </h1>
+            </h2>
             <p className="mt-4 max-w-3xl text-base leading-8 text-white/65">
               Run an evidence-backed audit on any website to uncover visibility blockers, trust gaps, extraction weaknesses, and the fixes most likely to improve AI comprehension and citation readiness.
             </p>

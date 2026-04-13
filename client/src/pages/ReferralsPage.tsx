@@ -33,7 +33,7 @@ export default function ReferralsPage() {
   const [error, setError] = useState<string | null>(null);
 
   usePageMeta({
-    title: 'Referrals | AiVIS AI Visibility Platform',
+    title: 'Referrals',
     description: 'Invite colleagues to AiVIS and earn bonus scan credits. Grow your team’s AI visibility intelligence together.',
     path: '/referrals',
     structuredData: [

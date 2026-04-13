@@ -16,22 +16,6 @@ const CORE_PATHS = ['/', '/about', '/pricing', '/product', '/services'];
 let workerInterval: ReturnType<typeof setInterval> | null = null;
 let active = 0;
 
-function deriveScore(payload: Awaited<ReturnType<typeof scrapeWebsite>>): number {
-  const wordCount = Number(payload.data.wordCount || 0);
-  const hasH1 = Array.isArray(payload.data.headings?.h1) && payload.data.headings!.h1.length > 0;
-  const schemaCount = Number(payload.data.structuredData?.jsonLdCount || 0);
-  const hasMeta = Boolean(payload.data.meta?.description);
-  const hasCanonical = Boolean(payload.data.canonical);
-
-  let score = 25;
-  score += Math.min(25, Math.round(wordCount / 40));
-  if (hasH1) score += 15;
-  if (schemaCount > 0) score += 20;
-  if (hasMeta) score += 10;
-  if (hasCanonical) score += 10;
-  return Math.max(0, Math.min(100, score));
-}
-
 function hashContent(content: string): string {
   return createHash('sha256').update(content).digest('hex');
 }
@@ -199,18 +183,17 @@ async function runSingleJob() {
     ]);
 
     await updateAuditJobProgress(job.id, 'extract', 48, ['Extracting page signals', 'Compiling structure + trust data']);
-    const score = deriveScore(scraped);
-    await updateAuditJobProgress(job.id, 'score', 82, ['Scoring visibility', 'Preparing report payload']);
+    await updateAuditJobProgress(job.id, 'score', 82, ['Queuing for AI pipeline', 'Preparing report payload']);
 
     await getPool().query(
       `INSERT INTO audits (user_id, url, visibility_score, result, status, created_at, updated_at)
        VALUES ($1, $2, $3, $4::jsonb, 'completed', NOW(), NOW())`,
-      [job.payload.userId, scraped.url, score, JSON.stringify({ queued: true, score, scrape: scraped.data })]
+      [job.payload.userId, scraped.url, null, JSON.stringify({ queued: true, pending_ai_score: true, scrape: scraped.data })]
     );
 
     await completeAuditJob(job.id, {
       success: true,
-      score,
+      score: null,
       reused: false,
       changedPages: diff.changedPages,
       checkedPages: diff.checked,
@@ -219,7 +202,7 @@ async function runSingleJob() {
     await publishAuditCompleted({
       userId: job.payload.userId,
       domain: scraped.url,
-      score,
+      score: 0,
     });
   } catch (err: any) {
     await failAuditJob(job.id, err?.message || 'Audit failed');
@@ -239,4 +222,4 @@ export function startAuditWorkerLoop() {
         });
     }
   }, 800);
-}
+}

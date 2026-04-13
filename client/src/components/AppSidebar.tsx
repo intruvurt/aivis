@@ -68,6 +68,7 @@ const agencyNav: NavItem[] = [
 const accountNav: NavItem[] = [
   { to: "/app/billing", labelKey: "sidebar.billing", icon: CreditCard },
   { to: "/app/settings", labelKey: "sidebar.settings", icon: Settings },
+  { to: "/app/compliance-dashboard", labelKey: "sidebar.complianceDashboard", icon: Shield },
   { to: "/app/help", labelKey: "sidebar.help", icon: HelpCircle },
 ];
 

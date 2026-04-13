@@ -100,4 +100,135 @@ router.post('/consent', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /api/compliance/audit-logs
+ * Returns a unified activity log: scan runs + consent events for the authenticated user.
+ * Sorted newest-first, capped at 200 rows total.
+ */
+router.get('/audit-logs', async (req: Request, res: Response) => {
+  try {
+    const pool = getPool();
+    const userId = req.user!.id;
+    const limit = Math.min(Number(req.query.limit) || 100, 200);
+    const offset = Math.max(Number(req.query.offset) || 0, 0);
+
+    const workspaceId = req.workspace!.id;
+
+    // Scan activity from audits table
+    const scansPromise = pool.query(
+      `SELECT
+         id,
+         'scan_run'       AS action_type,
+         url              AS subject,
+         visibility_score AS detail_num,
+         tier_at_analysis AS detail_text,
+         created_at
+       FROM audits
+       WHERE user_id = $1
+         AND workspace_id = $2
+       ORDER BY created_at DESC
+       LIMIT $3`,
+      [userId, workspaceId, limit]
+    );
+
+    // Consent events from user_consents table
+    const consentsPromise = pool.query(
+      `SELECT
+         id,
+         'consent_update'               AS action_type,
+         consent_type                   AS subject,
+         NULL::int                      AS detail_num,
+         CONCAT(status, ' (', source, ')') AS detail_text,
+         updated_at                     AS created_at
+       FROM user_consents
+       WHERE user_id = $1
+         AND workspace_id = $2
+       ORDER BY updated_at DESC
+       LIMIT 50`,
+      [userId, workspaceId]
+    );
+
+    const [scansResult, consentsResult] = await Promise.all([scansPromise, consentsPromise]);
+
+    // Merge and sort by timestamp descending
+    const combined = [
+      ...scansResult.rows,
+      ...consentsResult.rows,
+    ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    const page = combined.slice(offset, offset + limit);
+
+    return res.json({
+      success: true,
+      data: page,
+      meta: { total: combined.length, limit, offset },
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'Failed to fetch audit logs.' });
+  }
+});
+
+/**
+ * GET /api/compliance/export
+ * GDPR-style full data export for the authenticated user.
+ * Returns JSON with profile, audits (metadata only, no result blob), consent records, and payments.
+ */
+router.get('/export', async (req: Request, res: Response) => {
+  try {
+    const pool = getPool();
+    const userId = req.user!.id;
+
+    const exportWorkspaceId = req.workspace!.id;
+
+    const [profileResult, auditsResult, consentsResult, paymentsResult] = await Promise.all([
+      pool.query(
+        `SELECT id, name, email, tier, created_at, updated_at FROM users WHERE id = $1`,
+        [userId]
+      ),
+      pool.query(
+        `SELECT id, url, visibility_score, tier_at_analysis, status, created_at
+         FROM audits
+         WHERE user_id = $1
+           AND workspace_id = $2
+         ORDER BY created_at DESC
+         LIMIT 1000`,
+        [userId, exportWorkspaceId]
+      ),
+      pool.query(
+        `SELECT id, consent_type, status, policy_version, source, created_at, updated_at
+         FROM user_consents
+         WHERE user_id = $1
+           AND workspace_id = $2
+         ORDER BY updated_at DESC`,
+        [userId, exportWorkspaceId]
+      ),
+      pool.query(
+        `SELECT id, amount, currency, status, created_at
+         FROM payments
+         WHERE user_id = $1
+         ORDER BY created_at DESC`,
+        [userId]
+      ),
+    ]);
+
+    const exportPayload = {
+      exported_at: new Date().toISOString(),
+      schema_version: '1.0',
+      profile: profileResult.rows[0] ?? null,
+      audits: auditsResult.rows,
+      consent_records: consentsResult.rows,
+      payments: paymentsResult.rows,
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="aivis-data-export-${new Date().toISOString().slice(0, 10)}.json"`
+    );
+    return res.status(200).json(exportPayload);
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'Data export failed. Please try again.' });
+  }
+});
+
 export default router;

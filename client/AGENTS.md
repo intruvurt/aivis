@@ -83,14 +83,15 @@ Do not hardcode tier logic independently in client and server.
 
 ### 2) Canonical tier model
 
-The platform runs on a 4-tier canonical system.
+The platform runs on a 5-tier canonical system.
 
 | Canonical key | Display name      | Monthly scans |   Price |
 | ------------- | ----------------- | ------------: | ------: |
 | `observer`    | Observer [Free]   |             3 |    Free |
+| `starter`     | Starter           |            15 |  $15/mo |
 | `alignment`   | Alignment [Core]  |            60 |   $49/mo |
 | `signal`      | Signal [Pro]      |           110 |  $149/mo |
-| `scorefix`    | Score Fix [AutoFix PR] |           15 | $299 one-time |
+| `scorefix`    | Score Fix [AutoFix PR] |      250 credits | $299 one-time |
 
 Legacy aliases must resolve through canonical helpers, never through ad hoc string checks.
 

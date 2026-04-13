@@ -88,7 +88,7 @@ export function repairTruncatedJson(raw: string): any | null {
   }
 }
 
-export function safeJsonParse<T>(raw: string): { ok: true; value: T } | { ok: false; error: string } {
+export function safeJsonParse<T>(raw: string): { ok: true; value: T; repaired?: true } | { ok: false; error: string } {
   try {
     const cleaned = stripMarkdownCodeFences(raw);
     return { ok: true, value: JSON.parse(cleaned) as T };
@@ -98,7 +98,7 @@ export function safeJsonParse<T>(raw: string): { ok: true; value: T } | { ok: fa
       const repaired = repairTruncatedJson(cleaned);
       if (repaired !== null) {
         console.warn('[safeJsonParse] JSON was truncated - repaired successfully');
-        return { ok: true, value: repaired as T };
+        return { ok: true, value: repaired as T, repaired: true };
       }
     } catch { }
     try {
@@ -106,7 +106,7 @@ export function safeJsonParse<T>(raw: string): { ok: true; value: T } | { ok: fa
       const extracted = extractPartialAnalysis(cleaned);
       if (extracted !== null) {
         console.warn('[safeJsonParse] JSON repair failed but extracted partial analysis via regex');
-        return { ok: true, value: extracted as T };
+        return { ok: true, value: extracted as T, repaired: true };
       }
     } catch { }
     return { ok: false, error: e.message || 'Invalid JSON' };

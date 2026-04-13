@@ -7,7 +7,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function ApiDocsPage() {
   usePageMeta({
-    title: "AiVIS API Docs | Auth, Endpoints, Quickstart",
+    title: "API Docs | Auth, Endpoints, Quickstart",
     description:
       "Developer docs for AiVIS API: quickstart, API key auth, endpoint reference, scopes, error handling, and integration examples.",
     path: "/api-docs",

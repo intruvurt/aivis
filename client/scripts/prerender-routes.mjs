@@ -420,6 +420,12 @@ const routes = [
 		ogType: 'article',
 	},
 	{
+		path: '/blogs/brand-authority-mention-tracking-entity-clarity-ai',
+		title: 'Brand Authority Is No Longer What You Say. It\'s What AI Repeats. | AiVIS Blogs',
+		description: 'Why brand authority has shifted from what you publish to what AI systems can understand, repeat, and cite. A deep look at mention tracking, entity clarity, and the new standard for machine legibility.',
+		ogType: 'article',
+	},
+	{
 		path: '/blogs/ssfr-evidence-framework-the-scoring-engine-behind-aivis',
 		title: 'The SSFR Evidence Framework: The Scoring Engine Behind Every AiVIS Audit | AiVIS Blogs',
 		description: 'Source, Signal, Fact, Relationship. The 27-rule deterministic evidence engine that evaluates machine readability before any AI model gets involved.',
@@ -1763,4 +1769,41 @@ for (const route of routes) {
 	fs.writeFileSync(targetPath, html, 'utf8');
 	console.log(`[prerender] wrote ${targetPath}`);
 }
+
+// ── Sitemap auto-generation ────────────────────────────────────────────────
+// Generates sitemap.xml from the routes array so it is always in sync with
+// prerendered pages. Skips authenticated app-only routes.
+const SITEMAP_SKIP = new Set(['/mcp', '/referrals', '/team', '/gsc', '/analytics', '/reports']);
+
+function sitemapMeta(p) {
+	if (p === '/') return { priority: '1.0', changefreq: 'daily' };
+	if (['/pricing', '/analyze', '/landing'].includes(p)) return { priority: '0.9', changefreq: 'weekly' };
+	if (['/insights', '/blogs', '/changelog', '/press'].includes(p)) return { priority: '0.8', changefreq: 'weekly' };
+	if (/^\/(platforms|problems|signals|industries)$/.test(p)) return { priority: '0.7', changefreq: 'weekly' };
+	if (p.startsWith('/blogs/')) return { priority: '0.8', changefreq: 'monthly' };
+	if (['/privacy', '/terms', '/disclosures'].includes(p)) return { priority: '0.3', changefreq: 'monthly' };
+	if (['/compliance', '/server-headers', '/verify-license', '/badge'].includes(p)) return { priority: '0.6', changefreq: 'monthly' };
+	return { priority: '0.7', changefreq: 'monthly' };
+}
+
+const today = new Date().toISOString().slice(0, 10);
+const sitemapEntries = routes
+	.filter((r) => !SITEMAP_SKIP.has(r.path))
+	.map((r) => {
+		const { priority, changefreq } = sitemapMeta(r.path);
+		return `  <url><loc>https://aivis.biz${r.path}</loc><lastmod>${today}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+	});
+
+const sitemapXml = [
+	'<?xml version="1.0" encoding="UTF-8"?>',
+	'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+	...sitemapEntries,
+	'</urlset>',
+].join('\n');
+
+const publicSitemapPath = path.resolve(process.cwd(), 'public', 'sitemap.xml');
+const distSitemapPath = path.join(distDir, 'sitemap.xml');
+fs.writeFileSync(publicSitemapPath, sitemapXml, 'utf8');
+fs.writeFileSync(distSitemapPath, sitemapXml, 'utf8');
+console.log(`[prerender] generated sitemap.xml (${sitemapEntries.length} URLs, lastmod ${today})`);
 

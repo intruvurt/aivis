@@ -54,16 +54,13 @@ async function getPreference(userId: string) {
 function inferIssuesFromResult(result: any): DetectedIssue[] {
   const recs = Array.isArray(result?.recommendations) ? result.recommendations : [];
   if (!recs.length) {
-    return [
-      { issue: 'not mentioned consistently across AI responses', severity: 'high', page: '/', auto_fixable: false },
-      { issue: 'weak structure and heading hierarchy', severity: 'medium', page: '/pricing', fix_type: 'heading', auto_fixable: true, impact_score: 4 },
-    ];
+    return [];
   }
 
   return recs.slice(0, 5).map((rec: any) => ({
     issue: String(rec?.title || rec?.description || 'visibility issue').trim(),
     severity: rec?.priority === 'high' ? 'high' : rec?.priority === 'medium' ? 'medium' : 'low',
-    page: '/pricing',
+    page: String(rec?.page || rec?.url || '/').trim() || '/',
     fix_type: rec?.fix_type ?? 'generic',
     impact_score: rec?.impact_score ?? undefined,
     auto_fixable: rec?.auto_fixable ?? false,

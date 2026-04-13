@@ -754,18 +754,33 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // workspace_activity_log uses ON DELETE SET NULL - scrub user identity
     await client.query('DELETE FROM workspace_activity_log WHERE user_id = $1', [userId]);
 
+    // ── Phase 3d: Social listening + SERP data ────────────────────────────────
+    // brand_mentions has no user FK — must delete explicitly before users row
+    await client.query('DELETE FROM brand_mentions WHERE user_id = $1', [userId]);
+    // mention_kpi_snapshots has direct user_id FK (ON DELETE CASCADE), belt-and-suspenders
+    await client.query('DELETE FROM mention_kpi_snapshots WHERE user_id = $1', [userId]);
+    // serp_snapshots has direct user_id FK (ON DELETE CASCADE), belt-and-suspenders
+    await client.query('DELETE FROM serp_snapshots WHERE user_id = $1', [userId]);
+
     // ── Phase 4: License chain (no user FK) ───────────────────────────────
     await client.query(`DELETE FROM license_verifications WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
     await client.query(`DELETE FROM license_activations WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
     await client.query(`DELETE FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1)`, [userId]);
 
     // ── Phase 5: Delete user row - ON DELETE CASCADE handles remaining 60+ tables ──
+    // Explicitly covered above: scheduled_platform_notifications, trial_email_log,
+    // rate_limit_events, verification_runs, github_app_installations, brag_trail,
+    // fixpack_assets, fixpacks, audit_fixpacks, audit_rule_results, audit_evidence,
+    // audits, citation_niche_rankings, audit_score_timeline, alert_subscriptions,
+    // alert_notifications, fix_outcomes, badge_events, workspace_activity_log,
+    // license_verifications, license_activations, licenses, brand_mentions,
+    // mention_kpi_snapshots, serp_snapshots. (25 tables explicitly + 60+ via cascade)
     await client.query('DELETE FROM users WHERE id = $1', [userId]);
 
     await client.query('COMMIT');
     return res.json({ ok: true, message: 'Account and all associated data permanently deleted' });
   } catch (err: any) {
-    await client.query('ROLLBACK').catch(() => {});
+    await client.query('ROLLBACK').catch(() => { });
     console.error('GDPR account deletion failed:', err.message);
     return res.status(500).json({ error: 'Failed to delete account. Please try again or contact support.' });
   } finally {

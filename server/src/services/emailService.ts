@@ -44,6 +44,7 @@ async function resendSend(payload: {
   text: string;
   from?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
   attachments?: Array<{
     filename: string;
     content: string;
@@ -63,6 +64,7 @@ async function resendSend(payload: {
     attachments: payload.attachments,
   };
   if (payload.replyTo) sendPayload.reply_to = payload.replyTo;
+  if (payload.headers) sendPayload.headers = payload.headers;
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -501,6 +503,8 @@ export async function sendPlatformNewsletterEmail(args: PlatformNewsletterEmailA
 
   const rendered = renderPlatformNewsletterEmail(args);
 
+  const unsubUrl = `${FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(args.to)}`;
+
   await resendSend({
     to: args.to,
     subject: rendered.subject,
@@ -508,6 +512,10 @@ export async function sendPlatformNewsletterEmail(args: PlatformNewsletterEmailA
     text: rendered.text,
     from: MARKETING_FROM,
     replyTo: MARKETING_REPLY_TO,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
   });
 }
 
@@ -535,7 +543,7 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
                 <ul style="padding-left:18px;margin:0;line-height:1.7;font-size:14px;">${content}</ul>
               </div>`;
   };
-  
+
   const safeFirstName = escapeEmailHtml(firstName);
 
   const body = `
@@ -564,7 +572,7 @@ function newsletterHtml(args: PlatformNewsletterEmailArgs): string {
               </p>
             </td>
           </tr>
-          ${emailFooter(args.to)}
+          ${emailFooter(args.to, { unsubscribe: true })}
   `;
 
   return emailWrap(
@@ -609,7 +617,10 @@ function emailHeader(accentGradient: string = 'linear-gradient(135deg,#06b6d4,#8
 }
 
 /** Branded footer - reused across all emails */
-function emailFooter(recipientEmail: string): string {
+function emailFooter(recipientEmail: string, options?: { unsubscribe?: boolean }): string {
+  const unsubLink = options?.unsubscribe
+    ? `\n                <tr>\n                  <td align="center" style="padding-top:12px;">\n                    <a href="${FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(recipientEmail)}" style="color:#64748b;font-size:11px;text-decoration:underline;">Unsubscribe from marketing emails</a>\n                  </td>\n                </tr>`
+    : '';
   return `
           <!-- Footer -->
           <tr>
@@ -634,7 +645,7 @@ function emailFooter(recipientEmail: string): string {
                       <a href="${BRAND.siteUrl}" style="color:#22d3ee;text-decoration:none;">aivis.biz</a>
                     </p>
                   </td>
-                </tr>
+                </tr>${unsubLink}
               </table>
             </td>
           </tr>`;
@@ -1519,7 +1530,7 @@ export function renderBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: s
               ${ctaBlock}
             </td>
           </tr>` +
-    emailFooter(recipientEmail),
+    emailFooter(recipientEmail, { unsubscribe: true }),
     `You received this because you have an account at aivis.biz`
   );
 
@@ -1538,6 +1549,7 @@ export function renderBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: s
 
 export async function sendBroadcastEmail(args: BroadcastEmailArgs, recipientEmail: string): Promise<void> {
   const rendered = renderBroadcastEmail(args, recipientEmail);
+  const unsubUrl = `${FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(recipientEmail)}`;
   await resendSend({
     to: recipientEmail,
     subject: rendered.subject,
@@ -1545,5 +1557,9 @@ export async function sendBroadcastEmail(args: BroadcastEmailArgs, recipientEmai
     text: rendered.text,
     from: MARKETING_FROM,
     replyTo: MARKETING_REPLY_TO,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
   });
 }

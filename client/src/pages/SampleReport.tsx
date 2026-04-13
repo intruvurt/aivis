@@ -45,7 +45,7 @@ const scoreColor = (s: number) => s >= 60 ? 'text-emerald-400' : s >= 35 ? 'text
 const ringColor = (s: number) => s >= 60 ? 'border-emerald-400/40 bg-emerald-500/10' : s >= 35 ? 'border-amber-400/40 bg-amber-500/10' : 'border-red-400/40 bg-red-500/10';
 
 const SampleReport = () => {
-  usePageMeta({ title: 'Sample Report — AiVIS', description: 'See what a real AiVIS AI visibility audit looks like. Score breakdown, evidence-backed findings, and priority fixes.' });
+  usePageMeta({ title: 'Sample Report', description: 'See what a real AiVIS AI visibility audit looks like. Score breakdown, evidence-backed findings, and priority fixes.' });
 
   return (
     <div className="min-h-screen bg-[#060607] text-white">

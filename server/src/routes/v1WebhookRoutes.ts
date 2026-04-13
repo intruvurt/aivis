@@ -5,9 +5,18 @@
  * POST /v1/webhooks/deploy   - Deploy hook (Vercel/Render)
  */
 import { Router, Request, Response } from 'express';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { verifyWebhookSignature } from '../services/githubAppService.js';
 import { handlePRMerged, handleDeployHook } from '../services/scheduler.js';
 import { getPool } from '../services/postgresql.js';
+
+function verifyDeploySignature(rawBody: string | Buffer, signature: string): boolean {
+  const secret = process.env.DEPLOY_WEBHOOK_SECRET || '';
+  if (!secret || !signature) return false;
+  const expected = 'sha256=' + createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (expected.length !== signature.length) return false;
+  return timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+}
 
 const router = Router();
 
@@ -72,6 +81,13 @@ router.post('/github', async (req: Request, res: Response) => {
 // ── Deploy Hooks (Vercel / Render) ───────────────────────────────────────────
 
 router.post('/deploy', async (req: Request, res: Response) => {
+  // Verify deploy webhook signature
+  const sig = String(req.headers['x-deploy-signature'] || '');
+  const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+  if (!verifyDeploySignature(rawBody, sig)) {
+    return res.status(401).json({ error: 'Invalid deploy webhook signature' });
+  }
+
   const domain = String(req.body?.domain || req.body?.url || '').trim();
   const source = String(req.body?.source || req.headers['x-deploy-source'] || 'unknown').trim();
 

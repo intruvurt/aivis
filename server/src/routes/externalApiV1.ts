@@ -204,10 +204,14 @@ async function enforceMonthlyQuota(req: Request, res: Response, next: NextFuncti
     (req as any).apiQuotaRemaining = quota - used;
     res.setHeader('X-RateLimit-Quota-Limit', String(quota));
     res.setHeader('X-RateLimit-Quota-Remaining', String(Math.max(0, quota - used)));
-  } catch {
-    // Non-blocking: if quota check fails, allow the request through
+    next();
+  } catch (err) {
+    console.error('[API Quota] Failed to check quota — failing closed:', err);
+    return res.status(503).json({
+      error: 'Service temporarily unavailable',
+      code: 'QUOTA_CHECK_FAILED',
+    });
   }
-  next();
 }
 
 router.use(enforceMonthlyQuota);
@@ -620,7 +624,7 @@ router.get('/evidence/:auditId', requireScope('read:audits'), async (req: Reques
 router.get('/benchmarks', async (req: Request, res: Response) => {
   try {
     // Trigger background recompute (non-blocking)
-    void recomputeBenchmarks().catch(() => {});
+    void recomputeBenchmarks().catch(() => { });
 
     const category = req.query.category as string | undefined;
 

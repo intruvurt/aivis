@@ -17,6 +17,10 @@ import { getPool, executeTransaction } from './postgresql.js';
 import { consumePackCredits } from './scanPackCredits.js';
 import { callAIProvider, SIGNAL_AI1 } from './aiProviders.js';
 import { isGitHubAppConfigured, getInstallationForUser, getInstallationForWorkspace, createPRViaApp } from './githubAppService.js';
+import { mapRuleResultsToIntents, getDeterministicIntents } from './fixIntentMapper.js';
+import { buildDeterministicPatches } from './deterministicPatchBuilder.js';
+import { generateLineDiff, type FileDiff } from './fixDiffService.js';
+import type { SSFRRuleResult, SSFREvidenceItem } from '../../../shared/types.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -84,6 +88,12 @@ export interface FileChange {
   content: string;
   operation: 'create' | 'update';
   justification: string;
+  /** Line-level diff (populated during PR creation when before-content is available) */
+  diff?: FileDiff;
+  /** True when this patch was generated deterministically without LLM */
+  is_deterministic?: boolean;
+  /** Non-fatal validation warnings from the patch validator */
+  validation_warnings?: string[];
 }
 
 export interface AutoScoreFixPlan {
@@ -94,6 +104,8 @@ export interface AutoScoreFixPlan {
   file_changes: FileChange[];
   pr_title: string;
   pr_body: string;
+  /** Number of file changes generated without LLM (deterministic engine) */
+  deterministic_patches_count?: number;
 }
 
 type JobExecutionRow = {
@@ -260,9 +272,9 @@ export async function fetchRepoTreePaths(
   const data = await res.json() as any;
   return Array.isArray(data?.tree)
     ? data.tree
-        .filter((item: any) => item.type === 'blob')
-        .slice(0, 300)
-        .map((item: any) => String(item.path))
+      .filter((item: any) => item.type === 'blob')
+      .slice(0, 300)
+      .map((item: any) => String(item.path))
     : [];
 }
 
@@ -282,11 +294,11 @@ export async function generateFixPlan(input: AutoScoreFixJobInput): Promise<Auto
       schema_markup: input.auditEvidence.schema_markup || {},
       private_exposure_scan: input.auditEvidence.private_exposure_scan
         ? {
-            summary: input.auditEvidence.private_exposure_scan.summary || {},
-            findings: Array.isArray(input.auditEvidence.private_exposure_scan.findings)
-              ? input.auditEvidence.private_exposure_scan.findings.slice(0, 15)
-              : [],
-          }
+          summary: input.auditEvidence.private_exposure_scan.summary || {},
+          findings: Array.isArray(input.auditEvidence.private_exposure_scan.findings)
+            ? input.auditEvidence.private_exposure_scan.findings.slice(0, 15)
+            : [],
+        }
         : null,
     },
     null,
@@ -363,6 +375,146 @@ Requirements:
   }
 
   return parsed;
+}
+
+// ─── Hybrid Fix Plan (deterministic first, LLM second) ───────────────────────
+
+/**
+ * Load SSFR rule results and evidence for an audit from the database.
+ * Returns empty arrays when the audit has no SSFR data.
+ */
+async function loadSsfrDataForAudit(auditId: string): Promise<{
+  ruleResults: SSFRRuleResult[];
+  evidence: SSFREvidenceItem[];
+}> {
+  const pool = getPool();
+
+  const [rrRes, evRes] = await Promise.all([
+    pool.query<{
+      rule_id: string; family: string; title: string; passed: boolean;
+      severity: string; is_hard_blocker: boolean; score_cap: number | null;
+      evidence_ids: unknown; details: unknown;
+    }>(
+      `SELECT rule_id, COALESCE(family,'source') AS family, COALESCE(title,'') AS title,
+              passed, COALESCE(severity,'medium') AS severity,
+              COALESCE(is_hard_blocker, false) AS is_hard_blocker,
+              score_cap,
+              COALESCE(evidence_ids, '[]'::jsonb)::jsonb AS evidence_ids,
+              details
+       FROM audit_rule_results
+       WHERE audit_id = $1`,
+      [auditId],
+    ),
+    pool.query<{
+      family: string; evidence_key: string; value: unknown;
+      source: string; confidence: string; notes: unknown;
+    }>(
+      `SELECT COALESCE(family,'source') AS family, COALESCE(evidence_key,'') AS evidence_key,
+              value, COALESCE(source,'scraper') AS source,
+              COALESCE(confidence, 1.0) AS confidence,
+              notes
+       FROM audit_evidence
+       WHERE audit_id = $1`,
+      [auditId],
+    ),
+  ]);
+
+  const ruleResults: SSFRRuleResult[] = rrRes.rows.map(r => ({
+    family: r.family as SSFRRuleResult['family'],
+    rule_id: r.rule_id,
+    title: r.title,
+    passed: r.passed,
+    severity: (r.severity ?? 'medium') as SSFRRuleResult['severity'],
+    is_hard_blocker: r.is_hard_blocker,
+    score_cap: r.score_cap ?? undefined,
+    evidence_ids: Array.isArray(r.evidence_ids) ? (r.evidence_ids as string[]) : [],
+    details: r.details ? (r.details as Record<string, unknown>) : undefined,
+  }));
+
+  const evidence: SSFREvidenceItem[] = evRes.rows.map(e => ({
+    family: e.family as SSFREvidenceItem['family'],
+    evidence_key: e.evidence_key,
+    value: e.value,
+    source: e.source,
+    status: 'present' as const,
+    confidence: parseFloat(String(e.confidence)),
+    notes: e.notes,
+  }));
+
+  return { ruleResults, evidence };
+}
+
+/**
+ * Hybrid plan generation:
+ *  1. Load SSFR rule results from DB (if auditId present)
+ *  2. Build deterministic patches for auto-generatable rules
+ *  3. Fall back to LLM only for non-deterministic issues
+ *
+ * The returned plan has `is_deterministic` flagged per file change.
+ * Diffs are generated from empty "before" at this stage — they are
+ * enriched with real repo content later in processAutoScoreFixJob().
+ */
+export async function generateHybridFixPlan(
+  input: AutoScoreFixJobInput,
+): Promise<AutoScoreFixPlan> {
+  // Step 1 — Load SSFR data from DB if we have an audit_id
+  let ruleResults: SSFRRuleResult[] = [];
+  let evidence: SSFREvidenceItem[] = [];
+
+  if (input.auditId) {
+    try {
+      ({ ruleResults, evidence } = await loadSsfrDataForAudit(input.auditId));
+    } catch (err: unknown) {
+      console.warn('[AutoScoreFix] Failed to load SSFR data for hybrid plan:', (err as Error).message);
+    }
+  }
+
+  // Step 2 — Build deterministic patches
+  const intents = mapRuleResultsToIntents(ruleResults, evidence, input.targetUrl);
+  const deterministicIntents = getDeterministicIntents(intents);
+  const deterministicPatches = buildDeterministicPatches(
+    deterministicIntents,
+    evidence,
+    input.targetUrl,
+    {}, // before-content populated later from GitHub
+  );
+
+  const deterministicChanges: FileChange[] = deterministicPatches.map(p => ({
+    path: p.targetFile,
+    content: p.content,
+    operation: p.operation,
+    justification: p.justification,
+    diff: p.diff,
+    is_deterministic: true,
+    validation_warnings: p.validation.warnings,
+  }));
+
+  // Step 3 — If no/few deterministic patches, supplement with LLM plan
+  // Always call LLM for content rewrites and non-deterministic issues
+  const llmPlan = await generateFixPlan(input);
+
+  // Merge: deterministic patches take priority; LLM fills the gaps
+  // Deduplicate by target path — deterministic wins
+  const deterministicPaths = new Set(deterministicChanges.map(c => c.path));
+  const llmChanges = llmPlan.file_changes.filter(c => !deterministicPaths.has(c.path));
+
+  const allChanges = [
+    ...deterministicChanges,
+    ...llmChanges.map(c => ({ ...c, is_deterministic: false })),
+  ].slice(0, 8); // cap at 8 file changes
+
+  return {
+    summary: deterministicChanges.length > 0
+      ? `${deterministicChanges.length} deterministic fix(es) + ${llmChanges.length} AI-assisted fix(es). ${llmPlan.summary}`
+      : llmPlan.summary,
+    score_before: llmPlan.score_before,
+    projected_score_lift: llmPlan.projected_score_lift,
+    evidence_count: llmPlan.evidence_count + deterministicChanges.length,
+    file_changes: allChanges,
+    pr_title: llmPlan.pr_title,
+    pr_body: llmPlan.pr_body,
+    deterministic_patches_count: deterministicChanges.length,
+  };
 }
 
 // ─── GitHub PR Creation (REST only) ──────────────────────────────────────────
@@ -670,6 +822,56 @@ async function loadJobExecutionRow(jobId: string): Promise<JobExecutionRow | nul
   };
 }
 
+/**
+ * Fetch before-content for each file change from GitHub and populate diffs.
+ * This gives reviewers a real before/after view of what the PR will change.
+ * Failures are non-fatal — the plan is returned as-is if fetching fails.
+ */
+async function populateDiffsFromGitHub(
+  plan: AutoScoreFixPlan,
+  token: string,
+  repoOwner: string,
+  repoName: string,
+  branch: string,
+): Promise<AutoScoreFixPlan> {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+  };
+  const baseUrl = `https://api.github.com/repos/${repoOwner}/${repoName}`;
+
+  const enriched = await Promise.all(
+    plan.file_changes.map(async (change): Promise<FileChange> => {
+      // Skip creates that already have a diff (e.g. from deterministic builder)
+      if (change.operation === 'create' && change.diff?.has_changes) return change;
+      // Skip if diff already fully populated from a deterministic patch
+      if (change.is_deterministic && change.diff) return change;
+
+      try {
+        const res = await fetch(`${baseUrl}/contents/${change.path}?ref=${branch}`, { headers });
+        if (!res.ok) {
+          // File doesn't exist yet — diff is already an all-additions diff from content
+          if (!change.diff) {
+            return { ...change, diff: generateLineDiff('', change.content) };
+          }
+          return change;
+        }
+        const data = await res.json() as { content?: string };
+        const beforeContent = data.content
+          ? Buffer.from(data.content.replace(/\n/g, ''), 'base64').toString('utf8')
+          : '';
+        return { ...change, diff: generateLineDiff(beforeContent, change.content) };
+      } catch {
+        return change;
+      }
+    })
+  );
+
+  return { ...plan, file_changes: enriched };
+}
+
 async function markJobFailedWithRefund(jobId: string, userId: string, reason: string): Promise<void> {
   const pool = getPool();
   const safeReason = String(reason || 'Unknown error').slice(0, 500);
@@ -729,6 +931,7 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
       const planInput: AutoScoreFixJobInput = {
         userId: row.user_id,
         workspaceId: '',
+        auditId: row.audit_id ?? undefined,
         targetUrl: row.target_url,
         vcsProvider: row.vcs_provider,
         repoOwner: row.repo_owner,
@@ -739,12 +942,36 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
         auditEvidence: row.evidence_snapshot,
       };
 
-      plan = await generateFixPlan(planInput);
+      // Use hybrid plan when audit_id is present (deterministic first, LLM second),
+      // otherwise fall back to pure LLM plan.
+      plan = row.audit_id
+        ? await generateHybridFixPlan(planInput)
+        : await generateFixPlan(planInput);
+
+      // Populate real before/after diffs from the GitHub repo (best-effort)
+      if (row.vcs_provider === 'github' && row.encrypted_token) {
+        try {
+          const plainToken = decryptVcsToken(row.encrypted_token);
+          plan = await populateDiffsFromGitHub(
+            plan, plainToken, row.repo_owner, row.repo_name, row.repo_branch,
+          );
+        } catch (err: unknown) {
+          console.warn(`[AutoScoreFix] Diff population failed for ${jobId}:`, (err as Error).message);
+        }
+      }
+
       await pool.query(
         `UPDATE auto_score_fix_jobs
-         SET status='creating_pr', fix_plan=$1, pr_title=$2, pr_body=$3, updated_at=NOW()
-         WHERE id=$4`,
-        [JSON.stringify(plan), plan.pr_title, plan.pr_body, jobId]
+         SET status='creating_pr', fix_plan=$1, pr_title=$2, pr_body=$3,
+             deterministic_patches_count=$4, updated_at=NOW()
+         WHERE id=$5`,
+        [
+          JSON.stringify(plan),
+          plan.pr_title,
+          plan.pr_body,
+          plan.deterministic_patches_count ?? 0,
+          jobId,
+        ]
       );
     }
 

@@ -13,6 +13,11 @@ export function isRecaptchaEnforced(): boolean {
   return Boolean(getRecaptchaSecret());
 }
 
+// Startup warning: if running in production without reCAPTCHA, log a prominent alert
+if (process.env.NODE_ENV === 'production' && !getRecaptchaSecret()) {
+  console.warn('[Security] ⚠️  RECAPTCHA_SECRET_KEY / RECAPT_SAFE_KEY not set — reCAPTCHA verification is disabled. All captcha checks will auto-pass.');
+}
+
 export async function verifyRecaptchaToken(
   token: string,
   remoteIp?: string

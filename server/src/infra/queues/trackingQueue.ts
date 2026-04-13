@@ -4,6 +4,8 @@ import { getBullMQConnection } from './connection.js';
 export interface TrackingJobData {
   runId: string;
   projectId: string;
+  /** Canonical tier string from the enqueueing user; used for P0/P1 priority routing. */
+  tenantTier?: string;
 }
 
 let trackingQueueInstance: Queue<TrackingJobData> | null = null;
@@ -29,9 +31,11 @@ export function getTrackingQueue(): Queue<TrackingJobData> | null {
 export async function enqueueTrackingRun(data: TrackingJobData): Promise<string> {
   const queue = getTrackingQueue();
   if (!queue) throw new Error('Tracking queue unavailable - Redis not configured');
+  // P0 (priority 1) for signal/enterprise; P1 (priority 3) for everything else.
+  const bullPriority = (data.tenantTier === 'signal' || data.tenantTier === 'enterprise') ? 1 : 3;
   const job = await queue.add('run-tracking', data, {
     jobId: `tracking:${data.runId}`,
-    priority: 3,
+    priority: bullPriority,
   });
   return String(job.id || data.runId);
 }

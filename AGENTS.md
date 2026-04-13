@@ -25,7 +25,8 @@ The coding agent must treat `shared/` as the source of truth for cross-layer beh
 - `server/src/services/duckDuckGoSearch.ts` — DDG Instant Answer API (knowledge graph)
 - `server/src/services/citationTester.ts` — citation test orchestration (runs all 3 engines in parallel)
 - `server/src/controllers/competitors.controllers.ts` — competitor CRUD + comparison + opportunity detection
-- `server/src/services/mentionTracker.ts` — brand mention scanner (17 free sources: Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X)
+- `server/src/services/mentionTracker.ts` — brand mention scanner (19 free sources: Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions)
+- `server/src/services/serpService.ts` — SerpAPI client: `fetchSERPSignals()`, `computeSERPBoosts()`, `saveSERPSnapshot()`, `getCachedSERPSnapshot()`. Requires `SERP_API_KEY` env var. Used to enrich entity clarity + authority scoring for Alignment+ tiers.
 - `server/src/controllers/mentions.controllers.ts` — mention scan, history, timeline handlers
 - `server/src/routes/mentions.ts` — `/api/mentions` routes (Alignment+ tier gate)
 - `server/src/services/postgresql.ts` — DB bootstrap and migrations

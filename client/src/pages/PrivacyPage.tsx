@@ -7,7 +7,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function PrivacyPage() {
   usePageMeta({
-    title: 'Privacy Policy | AiVIS AI Visibility Platform',
+    title: 'Privacy Policy',
     description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
     path: '/privacy',
     structuredData: [

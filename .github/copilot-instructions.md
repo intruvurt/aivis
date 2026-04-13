@@ -77,7 +77,11 @@ app.post('/api/analyze', authRequired, usageGate, incrementUsage, handler);
 - `VITE_SENTRY_DSN` - Client error tracking
 
 ## Database
-Migrations auto-run at startup in [server/src/services/postgresql.ts](../server/src/services/postgresql.ts). Key tables: `users`, `user_sessions`, `usage_daily`, `analysis_cache`, `payments`, `audits`, `competitor_tracking`, `citation_tests`, `citation_results`, `licenses`.
+Migrations auto-run at startup in [server/src/services/postgresql.ts](../server/src/services/postgresql.ts). Key tables: `users`, `user_sessions`, `usage_daily`, `analysis_cache`, `payments`, `audits`, `competitor_tracking`, `citation_tests`, `citation_results`, `licenses`, `brand_mentions`, `mention_kpi_snapshots`, `serp_snapshots`, `ner_run_entities`.
+
+## Social listening + SERP
+- [server/src/services/mentionTracker.ts](server/src/services/mentionTracker.ts) — 19 free sources (Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions). No API key required.
+- [server/src/services/serpService.ts](server/src/services/serpService.ts) — SerpAPI client: `fetchSERPSignals()`, `computeSERPBoosts()`, `saveSERPSnapshot()`, `getCachedSERPSnapshot()`. Requires `SERP_API_KEY` env var. Tier-gated: Alignment+ only. Boosts `entity_clarity_score` and `authority_score`.
 
 ## Key API routes
 | Endpoint | Auth | Purpose |

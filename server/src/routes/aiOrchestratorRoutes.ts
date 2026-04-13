@@ -1,9 +1,9 @@
 import express from "express";
 import { runAnalysisPipeline } from "../controllers/aiOrchestratorController.ts";
-import { protect } from "../middleware/auth.ts";
+import { authRequired } from "../middleware/authRequired.js";
 
 const router = express.Router();
 
-router.post("/analyze", protect, runAnalysisPipeline);
+router.post("/analyze", authRequired, runAnalysisPipeline);
 
 export default router;

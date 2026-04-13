@@ -969,9 +969,22 @@ export default function AnalyticsPage() {
             </div>
 
 
-            {/* Platform metrics - admin only */}
+            {/* ── Platform metrics – admin only ──────────────────────────
+                Completely separate from user account analytics above.
+                Only admins can see this section. */}
             {String(user?.role || "").toLowerCase() === "admin" && platformMetrics.timeframeMetrics.length > 0 && (
-              <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <>
+                {/* Visual separator between personal and platform sections */}
+                <div className="my-6 flex items-center gap-3">
+                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
+                    style={{ background: 'rgba(34,211,238,0.10)', border: '1px solid rgba(34,211,238,0.22)', color: '#67e8f9' }}>
+                    Platform &amp; Admin Data
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                </div>
+
+              <div className="rounded-2xl mb-6 p-5" style={{ background: 'rgba(10,14,28,0.75)', border: '1px solid rgba(34,211,238,0.18)' }}>
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
                   <div>
                     <SectionTitle title="Platform Metrics" tone="cyan" sub={`${platformMetrics.membershipTotals.realMembers} real · ${platformMetrics.membershipTotals.testMembers} test · ${platformMetrics.membershipTotals.totalMembers} total · ${platformMetrics.membershipTotals.stripePaidMembers} stripe paid`} />
@@ -997,7 +1010,7 @@ export default function AnalyticsPage() {
                       <StatCard icon={Users} label="Total Members" value={platformMetrics.membershipTotals.totalMembers} sub="registered" accent={P.indigo} />
                       <StatCard icon={Globe} label="Traffic Proxy" value={selectedPlatformMetrics.sessionTraffic} sub="new login sessions" accent={P.indigo} />
                       <StatCard icon={Layers} label="Free Analyses" value={selectedPlatformMetrics.freeMemberAnalyses} sub="observer tier" accent={P.amber} />
-                      <StatCard icon={Zap} label="Paid Analyses" value={selectedPlatformMetrics.paidMemberAnalyses} sub="stripe-verified" accent="#a78bfa" />
+                      <StatCard icon={Zap} label="Non-Free Analyses" value={selectedPlatformMetrics.paidMemberAnalyses} sub="elevated tier" accent="#a78bfa" />
                       <StatCard icon={Gauge} label="Avg Visibility" value={`${selectedPlatformMetrics.avgVisibilityScore.toFixed(1)}%`} accent={P.cyan} />
                     </div>
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -1025,6 +1038,7 @@ export default function AnalyticsPage() {
                   </>
                 )}
               </div>
+              </>
             )}
 
             {/* ── Community Benchmarks - visible to all authenticated users ── */}

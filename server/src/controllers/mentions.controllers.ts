@@ -6,6 +6,9 @@ import {
   getMentionHistory,
   getMentionSourceBreakdown,
   getMentionTimeline,
+  computeMentionKPIs,
+  saveMentionKPISnapshot,
+  getMentionKPIHistory,
 } from '../services/mentionTracker.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
 
@@ -129,5 +132,55 @@ export async function getMentionTimelineHandler(req: Request, res: Response) {
   } catch (err: any) {
     console.error('[MentionTimeline] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Failed to fetch mention timeline' });
+  }
+}
+
+/**
+ * GET /api/mentions/kpi?brand=XYZ
+ * Compute and return live KPI dashboard metrics for a brand.
+ * Also saves a daily snapshot for trend history.
+ */
+export async function getMentionKPIHandler(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const brand = String(req.query.brand || '').trim();
+    if (!brand) return res.status(400).json({ error: 'brand query param is required' });
+
+    const kpis = await computeMentionKPIs(userId, brand);
+
+    // Save daily snapshot (non-fatal)
+    saveMentionKPISnapshot(userId, kpis).catch((err: any) =>
+      console.warn('[MentionKPI] Snapshot save failed (non-fatal):', err?.message),
+    );
+
+    return res.json({ success: true, kpi: kpis });
+  } catch (err: any) {
+    console.error('[MentionKPI] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Failed to compute mention KPIs' });
+  }
+}
+
+/**
+ * GET /api/mentions/kpi/history?brand=XYZ&days=30
+ * Return historical KPI snapshots for trend charts.
+ */
+export async function getMentionKPIHistoryHandler(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const brand = String(req.query.brand || '').trim();
+    if (!brand) return res.status(400).json({ error: 'brand query param is required' });
+
+    const days = Math.min(Math.max(parseInt(String(req.query.days || '30'), 10) || 30, 1), 90);
+
+    const history = await getMentionKPIHistory(userId, brand, days);
+
+    return res.json({ success: true, brand, days, history });
+  } catch (err: any) {
+    console.error('[MentionKPIHistory] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Failed to fetch KPI history' });
   }
 }

@@ -41,6 +41,7 @@ const Profile = React.lazy(() => import("./pages/Profile"));
 const ReferralsPage = React.lazy(() => import("./pages/ReferralsPage"));
 const SettingsPage = React.lazy(() => import("./pages/SettingsPage"));
 const BillingPage = React.lazy(() => import("./pages/BillingPage"));
+const ComplianceDashboardPage = React.lazy(() => import("./views/ComplianceDashboardPage"));
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
 const PrivacyPage = React.lazy(() => import("./pages/PrivacyPage"));
@@ -296,6 +297,7 @@ export default function App() {
             <Route path="referrals" element={<ReferralsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="billing" element={<BillingPage />} />
+            <Route path="compliance-dashboard" element={<ComplianceDashboardPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="admin" element={<Admin />} />
             <Route path="team" element={<TeamPage />} />

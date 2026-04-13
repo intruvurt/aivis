@@ -583,6 +583,65 @@ async function scanTwitter(brand: string): Promise<MentionRow[]> {
   return rows;
 }
 
+// ── Source: Lemmy (federated link aggregator) ─────────────────────────────────
+
+async function scanLemmy(brand: string): Promise<MentionRow[]> {
+  const rows: MentionRow[] = [];
+  // Query a large, stable Lemmy instance (lemmy.world) for post mentions
+  const url = `https://lemmy.world/api/v3/search?q=${encodeURIComponent(brand)}&type_=Posts&sort=New&limit=20`;
+  const res = await fetchWithTimeout(url);
+  if (!res?.ok) return rows;
+  try {
+    const data = await res.json() as any;
+    for (const item of data?.posts || []) {
+      const post = item.post;
+      if (!post?.name) continue;
+      rows.push({
+        source: 'lemmy',
+        url: post.ap_id || `https://lemmy.world/post/${post.id}`,
+        title: post.name,
+        snippet: truncate(post.body || post.url || '', 300),
+        detected_at: post.published || new Date().toISOString(),
+      });
+    }
+  } catch { /* skip */ }
+  return rows;
+}
+
+// ── Source: GitHub Discussions search ────────────────────────────────────────
+
+async function scanGitHubDiscussions(brand: string): Promise<MentionRow[]> {
+  const rows: MentionRow[] = [];
+  // GitHub REST search API works without auth for public content (60 req/hr)
+  const url = `https://api.github.com/search/issues?q=${encodeURIComponent(`${brand} in:title,body type:discussion`)}&per_page=10&sort=updated&order=desc`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'AiVIS-MentionTracker/1.0',
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      signal: controller.signal,
+    });
+    if (!res.ok) return rows;
+    const data = await res.json() as any;
+    for (const item of data?.items || []) {
+      if (!item?.html_url) continue;
+      rows.push({
+        source: 'github_discussions',
+        url: item.html_url,
+        title: truncate(item.title || '', 200),
+        snippet: truncate(item.body ? item.body.slice(0, 300) : '', 300),
+        detected_at: item.updated_at || item.created_at || new Date().toISOString(),
+      });
+    }
+  } catch { /* skip */ }
+  finally { clearTimeout(timer); }
+  return rows;
+}
+
 // ── Main tracker ────────────────────────────────────────────────────────────
 
 const ALL_SOURCES = [
@@ -603,6 +662,8 @@ const ALL_SOURCES = [
   { name: 'lobsters', fn: (b: string, _d: string) => scanLobsters(b) },
   { name: 'bluesky', fn: (b: string, _d: string) => scanBluesky(b) },
   { name: 'twitter', fn: (b: string, _d: string) => scanTwitter(b) },
+  { name: 'lemmy', fn: (b: string, _d: string) => scanLemmy(b) },
+  { name: 'github_discussions', fn: (b: string, _d: string) => scanGitHubDiscussions(b) },
 ] as const;
 
 export type MentionSource = typeof ALL_SOURCES[number]['name'];
@@ -671,6 +732,44 @@ export async function trackBrandMentions(
   };
 }
 
+// ── Sentiment Classification ────────────────────────────────────────────────
+
+const POSITIVE_SIGNALS = [
+  'great', 'excellent', 'amazing', 'awesome', 'fantastic', 'love', 'loved', 'best',
+  'incredible', 'outstanding', 'perfect', 'brilliant', 'superb', 'wonderful',
+  'helpful', 'useful', 'solid', 'impressive', 'highly recommend', 'recommend',
+  'worth', 'easy to use', 'powerful', 'innovative', 'fast', 'reliable',
+  'featured', 'launched', 'released', 'shipped', 'new feature', 'exciting',
+  'congratulations', 'congrats', 'kudos', 'interesting', 'nice', 'cool',
+];
+
+const NEGATIVE_SIGNALS = [
+  'bad', 'terrible', 'awful', 'horrible', 'worst', 'broken', 'fail', 'failed',
+  'failing', 'useless', 'waste', 'disappointing', 'disappointed', 'bug', 'buggy',
+  'crash', 'crashed', 'error', 'problem', 'issue', 'issues', 'slow',
+  'expensive', 'overpriced', 'scam', 'fraud', 'misleading', 'hate', 'hated',
+  'avoid', 'not worth', 'poor', 'mediocre', 'frustrating', 'annoying',
+  'broken', 'outage', 'down', 'unreliable', 'warning', 'beware',
+];
+
+/**
+ * Fast rule-based sentiment classifier. Returns 'positive', 'negative', or 'neutral'.
+ * Checks title and snippet text against positive/negative word/phrase lists.
+ */
+export function classifySentiment(title: string, snippet: string): 'positive' | 'negative' | 'neutral' {
+  const text = `${title} ${snippet}`.toLowerCase();
+  let posScore = 0;
+  let negScore = 0;
+  for (const p of POSITIVE_SIGNALS) {
+    if (text.includes(p)) posScore++;
+  }
+  for (const n of NEGATIVE_SIGNALS) {
+    if (text.includes(n)) negScore++;
+  }
+  if (posScore === negScore) return 'neutral';
+  return posScore > negScore ? 'positive' : 'negative';
+}
+
 /**
  * Store mention scan results in the database.
  */
@@ -689,14 +788,15 @@ export async function persistMentionScan(
   let paramIndex = 1;
 
   for (const m of mentions) {
-    placeholders.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++})`);
-    values.push(userId, brand, domain, m.source, m.url, m.title, m.snippet);
+    const sentiment = classifySentiment(m.title, m.snippet);
+    placeholders.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++})`);
+    values.push(userId, brand, domain, m.source, m.url, m.title, m.snippet, sentiment);
   }
 
   await pool.query(
-    `INSERT INTO brand_mentions (user_id, brand, domain, source, url, title, snippet)
+    `INSERT INTO brand_mentions (user_id, brand, domain, source, url, title, snippet, sentiment)
      VALUES ${placeholders.join(', ')}
-     ON CONFLICT (user_id, source, url) DO UPDATE SET title = EXCLUDED.title, snippet = EXCLUDED.snippet`,
+     ON CONFLICT (user_id, source, url) DO UPDATE SET title = EXCLUDED.title, snippet = EXCLUDED.snippet, sentiment = EXCLUDED.sentiment`,
     values,
   );
 }
@@ -774,5 +874,145 @@ export async function getMentionTimeline(
   return result.rows.map((r: any) => ({
     date: r.date,
     count: parseInt(r.count, 10),
+  }));
+}
+
+// ── KPI Computation ──────────────────────────────────────────────────────────
+
+export interface MentionKPIResult {
+  brand: string;
+  volume: number;
+  positive_count: number;
+  negative_count: number;
+  neutral_count: number;
+  net_sentiment_score: number;
+  brand_health_score: number;
+  source_count: number;
+  top_sources: Array<{ source: string; count: number }>;
+  computed_at: string;
+}
+
+/**
+ * Compute live KPI metrics for a brand from stored brand_mentions.
+ * - net_sentiment_score: (positive - negative) / total * 100, range -100..100
+ * - brand_health_score: composite 0-100
+ *   40% = NSS normalised to 0-100
+ *   30% = volume index (log scale, caps at ~500 mentions = 100)
+ *   30% = source diversity (source_count / 17 total sources * 100)
+ */
+export async function computeMentionKPIs(userId: string, brand: string): Promise<MentionKPIResult> {
+  const pool = getPool();
+
+  // Sentiment aggregation
+  const sentResult = await pool.query(
+    `SELECT
+       COUNT(*) as volume,
+       COUNT(*) FILTER (WHERE sentiment = 'positive') as positive_count,
+       COUNT(*) FILTER (WHERE sentiment = 'negative') as negative_count,
+       COUNT(*) FILTER (WHERE sentiment = 'neutral') as neutral_count,
+       COUNT(DISTINCT source) as source_count
+     FROM brand_mentions
+     WHERE user_id = $1 AND LOWER(brand) = LOWER($2)`,
+    [userId, brand],
+  );
+
+  const row = sentResult.rows[0] || {};
+  const volume = parseInt(row.volume || '0', 10);
+  const positiveCount = parseInt(row.positive_count || '0', 10);
+  const negativeCount = parseInt(row.negative_count || '0', 10);
+  const neutralCount = parseInt(row.neutral_count || '0', 10);
+  const sourceCount = parseInt(row.source_count || '0', 10);
+
+  const nss = volume > 0 ? ((positiveCount - negativeCount) / volume) * 100 : 0;
+
+  // Volume index: log scale, 500 mentions → 100 points
+  const volumeIndex = volume > 0 ? Math.min((Math.log10(volume + 1) / Math.log10(501)) * 100, 100) : 0;
+
+  // Source diversity: out of 17 known sources
+  const diversityScore = Math.min((sourceCount / 17) * 100, 100);
+
+  // Brand health composite
+  const nssNorm = (nss + 100) / 2; // map -100..100 to 0..100
+  const brandHealthScore = nssNorm * 0.4 + volumeIndex * 0.3 + diversityScore * 0.3;
+
+  // Top sources
+  const topSourceResult = await pool.query(
+    `SELECT source, COUNT(*) as count
+     FROM brand_mentions
+     WHERE user_id = $1 AND LOWER(brand) = LOWER($2)
+     GROUP BY source
+     ORDER BY count DESC
+     LIMIT 5`,
+    [userId, brand],
+  );
+  const topSources = topSourceResult.rows.map((r: any) => ({
+    source: r.source as string,
+    count: parseInt(r.count, 10),
+  }));
+
+  return {
+    brand,
+    volume,
+    positive_count: positiveCount,
+    negative_count: negativeCount,
+    neutral_count: neutralCount,
+    net_sentiment_score: Math.round(nss * 10) / 10,
+    brand_health_score: Math.round(brandHealthScore * 10) / 10,
+    source_count: sourceCount,
+    top_sources: topSources,
+    computed_at: new Date().toISOString(),
+  };
+}
+
+/**
+ * Persist a daily KPI snapshot (upsert by user+brand+date).
+ */
+export async function saveMentionKPISnapshot(userId: string, kpis: MentionKPIResult): Promise<void> {
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO mention_kpi_snapshots
+       (user_id, brand, snapshot_date, volume, positive_count, negative_count, neutral_count,
+        net_sentiment_score, brand_health_score, source_count, top_sources)
+     VALUES ($1, $2, CURRENT_DATE, $3, $4, $5, $6, $7, $8, $9, $10)
+     ON CONFLICT (user_id, brand, snapshot_date)
+     DO UPDATE SET
+       volume = EXCLUDED.volume,
+       positive_count = EXCLUDED.positive_count,
+       negative_count = EXCLUDED.negative_count,
+       neutral_count = EXCLUDED.neutral_count,
+       net_sentiment_score = EXCLUDED.net_sentiment_score,
+       brand_health_score = EXCLUDED.brand_health_score,
+       source_count = EXCLUDED.source_count,
+       top_sources = EXCLUDED.top_sources`,
+    [
+      userId, kpis.brand, kpis.volume, kpis.positive_count, kpis.negative_count,
+      kpis.neutral_count, kpis.net_sentiment_score, kpis.brand_health_score,
+      kpis.source_count, JSON.stringify(kpis.top_sources),
+    ],
+  );
+}
+
+/**
+ * Get historical KPI snapshots for trend charts (last N days).
+ */
+export async function getMentionKPIHistory(
+  userId: string,
+  brand: string,
+  days = 30,
+): Promise<Array<{ date: string; volume: number; net_sentiment_score: number; brand_health_score: number }>> {
+  const pool = getPool();
+  const result = await pool.query(
+    `SELECT snapshot_date as date, volume, net_sentiment_score, brand_health_score
+     FROM mention_kpi_snapshots
+     WHERE user_id = $1 AND LOWER(brand) = LOWER($2)
+       AND snapshot_date > CURRENT_DATE - INTERVAL '1 day' * $3
+     ORDER BY snapshot_date ASC`,
+    [userId, brand, days],
+  );
+  return result.rows.map((r: any) => ({
+    date: r.date,
+    volume: parseInt(r.volume, 10),
+    net_sentiment_score: parseFloat(r.net_sentiment_score),
+    brand_health_score: parseFloat(r.brand_health_score),
   }));
 }

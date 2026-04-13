@@ -19,18 +19,18 @@ type RouteKey = 'analyze' | 'api_default';
 
 const TIER_RATE_LIMITS: Record<RouteKey, Record<CanonicalTier, { maxRequests: number; windowMs: number }>> = {
   analyze: {
-    observer:  { maxRequests: 5,  windowMs: 60_000 },
-    starter:   { maxRequests: 10, windowMs: 60_000 },
+    observer: { maxRequests: 5, windowMs: 60_000 },
+    starter: { maxRequests: 10, windowMs: 60_000 },
     alignment: { maxRequests: 15, windowMs: 60_000 },
-    signal:    { maxRequests: 30, windowMs: 60_000 },
-    scorefix:  { maxRequests: 50, windowMs: 60_000 },
+    signal: { maxRequests: 30, windowMs: 60_000 },
+    scorefix: { maxRequests: 50, windowMs: 60_000 },
   },
   api_default: {
-    observer:  { maxRequests: 30,  windowMs: 60_000 },
-    starter:   { maxRequests: 45,  windowMs: 60_000 },
-    alignment: { maxRequests: 60,  windowMs: 60_000 },
-    signal:    { maxRequests: 120, windowMs: 60_000 },
-    scorefix:  { maxRequests: 200, windowMs: 60_000 },
+    observer: { maxRequests: 30, windowMs: 60_000 },
+    starter: { maxRequests: 45, windowMs: 60_000 },
+    alignment: { maxRequests: 60, windowMs: 60_000 },
+    signal: { maxRequests: 120, windowMs: 60_000 },
+    scorefix: { maxRequests: 200, windowMs: 60_000 },
   },
 };
 
@@ -149,11 +149,16 @@ function isOwnerExempt(req: Request): boolean {
  */
 export function tieredRateLimit(route: RouteKey = 'api_default') {
   return (req: Request, res: Response, next: NextFunction): void => {
-    if (isOwnerExempt(req)) { next(); return; }
     const user = (req as any).user;
     const userId: string | null = user?.id ?? null;
     const tier: CanonicalTier = (user?.tier as CanonicalTier) || 'observer';
-    const config = TIER_RATE_LIMITS[route]?.[tier] ?? TIER_RATE_LIMITS.api_default.observer;
+    const baseConfig = TIER_RATE_LIMITS[route]?.[tier] ?? TIER_RATE_LIMITS.api_default.observer;
+
+    // Owner-exempt users get a 10x ceiling instead of unlimited bypass
+    const config = isOwnerExempt(req)
+      ? { maxRequests: baseConfig.maxRequests * 10, windowMs: baseConfig.windowMs }
+      : baseConfig;
+
     const key = `tiered:${route}:${userId || 'anon'}`;
 
     const result = consumeToken(key, config.maxRequests, config.windowMs);
@@ -163,7 +168,7 @@ export function tieredRateLimit(route: RouteKey = 'api_default') {
 
     if (!result.allowed) {
       res.setHeader('Retry-After', Math.ceil(result.retryAfterMs / 1000));
-      logRateLimitEvent(userId, req.ip ?? null, route, tier, true).catch(() => {});
+      logRateLimitEvent(userId, req.ip ?? null, route, tier, true).catch(() => { });
       res.status(429).json({
         error: 'Rate limit reached. Please retry shortly.',
         code: 'RATE_LIMIT_EXCEEDED',
@@ -194,7 +199,7 @@ export function ipRateLimit(opts?: { maxRequests?: number; windowMs?: number }) 
 
     if (!result.allowed) {
       res.setHeader('Retry-After', Math.ceil(result.retryAfterMs / 1000));
-      logRateLimitEvent(null, ip, req.path, null, true).catch(() => {});
+      logRateLimitEvent(null, ip, req.path, null, true).catch(() => { });
       res.status(429).json({
         error: 'Rate limit reached. Please retry shortly.',
         code: 'RATE_LIMIT_EXCEEDED',

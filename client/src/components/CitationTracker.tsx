@@ -16,9 +16,10 @@ import {
   Save,
   History,
   Globe,
+  Layers,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import type { AICitationResult, AuthorityCheckResponse, AuthorityPlatform, CitationIdentityResponse, WebSearchPresenceResult, BrandMentionScanResponse, BrandMentionHistoryResponse, BrandMentionTimelinePoint } from "../../../shared/types";
+import type { AICitationResult, AuthorityCheckResponse, AuthorityPlatform, CitationIdentityResponse, WebSearchPresenceResult, BrandMentionScanResponse, BrandMentionHistoryResponse, BrandMentionTimelinePoint, MentionKPIData, NERRunSummary } from "../../../shared/types";
 import { meetsMinimumTier } from "../../../shared/types";
 
 import { API_URL } from '../config';
@@ -455,12 +456,40 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
   const [evidencePanelOpen, setEvidencePanelOpen] = useState(false);
   const [queryPackManagerOpen, setQueryPackManagerOpen] = useState(false);
 
+  // Competitor Discovery state
+  const [competitorQueries, setCompetitorQueries] = useState('');
+  const [competitorLoading, setCompetitorLoading] = useState(false);
+  const [competitorRunId, setCompetitorRunId] = useState<string | null>(null);
+  const [competitorStatus, setCompetitorStatus] = useState<string | null>(null);
+  const [competitorProgress, setCompetitorProgress] = useState(0);
+  const [competitorTotal, setCompetitorTotal] = useState(0);
+  type CompetitorInsight = { domain: string; mentions: number; citations: number; avg_position: number | null; score: number };
+  const [competitorData, setCompetitorData] = useState<CompetitorInsight[] | null>(null);
+
+  // Entity Clarity state
+  type EntityClarityResult = {
+    entity_clarity_score: number;
+    authority_score: number;
+    recognition_rate: number;
+    category_consistency: number;
+    description_consistency: number;
+    avg_confidence: number;
+    dominant_category: string | null;
+    all_categories: Array<{ category: string; count: number }>;
+    sample_descriptions: string[];
+    total_snapshots: number;
+    insights: string[];
+  };
+  const [entityClarityData, setEntityClarityData] = useState<EntityClarityResult | null>(null);
+  const [nerData, setNerData] = useState<NERRunSummary | null>(null);
+
   // Brand Mention Tracker state
   const [mentionLoading, setMentionLoading] = useState(false);
   const [mentionResult, setMentionResult] = useState<BrandMentionScanResponse | null>(null);
   const [mentionHistory, setMentionHistory] = useState<BrandMentionHistoryResponse | null>(null);
   const [mentionTimeline, setMentionTimeline] = useState<BrandMentionTimelinePoint[] | null>(null);
   const [mentionShowHistory, setMentionShowHistory] = useState(false);
+  const [mentionKPI, setMentionKPI] = useState<MentionKPIData | null>(null);
 
   const canRunAuthorityCheck = meetsMinimumTier(userTier as any, 'alignment');
   const canTrackMentions = meetsMinimumTier(userTier as any, 'alignment');
@@ -541,6 +570,66 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
       // ignore local storage failures
     }
   }, [businessName, businessNameStorageKey]);
+
+  // Poll for competitor discovery run completion
+  useEffect(() => {
+    if (!competitorRunId || !token) return;
+    if (competitorStatus === 'completed' || competitorStatus === 'failed') return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/tracking/runs/${competitorRunId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const run = data.run || {};
+        const status: string = run.status || 'queued';
+        setCompetitorStatus(status);
+        const completed = Number(run.completed_queries || 0);
+        const total = Number(run.total_queries || competitorTotal);
+        setCompetitorProgress(total > 0 ? Math.round((completed / total) * 100) : 0);
+
+        if (status === 'completed') {
+          const compRes = await fetch(`${API_URL}/api/tracking/runs/${competitorRunId}/competitors`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (compRes.ok) {
+            const compData = await compRes.json();
+            setCompetitorData(compData.competitors || []);
+          }
+          // Also fetch entity clarity (runs post-completion in worker)
+          try {
+            const clarityRes = await fetch(`${API_URL}/api/tracking/runs/${competitorRunId}/entity-clarity`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (clarityRes.ok) {
+              const clarityData = await clarityRes.json();
+              setEntityClarityData(clarityData);
+            }
+          } catch { /* clarity is optional */ }
+          // Fetch NER entity co-mention data (zero-cost, post-completion)
+          try {
+            const nerRes = await fetch(`${API_URL}/api/tracking/runs/${competitorRunId}/ner`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (nerRes.ok) {
+              const nerJson = await nerRes.json();
+              setNerData(nerJson);
+            }
+          } catch { /* NER is optional */ }
+          setCompetitorLoading(false);
+          clearInterval(interval);
+        } else if (status === 'failed') {
+          toast.error('Competitor discovery failed');
+          setCompetitorLoading(false);
+          clearInterval(interval);
+        }
+      } catch { /* ignore poll errors */ }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [competitorRunId, competitorStatus, token, competitorTotal]);
 
   // Poll for test completion
   useEffect(() => {
@@ -700,6 +789,47 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
     }
   }
 
+  async function handleDiscoverCompetitors() {
+    if (!token || !url || !canRunAuthorityCheck) return;
+    const lines = competitorQueries.split('\n').map((s) => s.trim()).filter(Boolean);
+    if (lines.length === 0) { toast.error('Enter at least one query'); return; }
+    if (lines.length > 50) { toast.error('Maximum 50 queries'); return; }
+
+    try {
+      setCompetitorLoading(true);
+      setCompetitorData(null);
+      setEntityClarityData(null);
+      setNerData(null);
+      setCompetitorStatus('starting');
+      setCompetitorProgress(0);
+
+      const projRes = await apiFetch(`${API_URL}/api/tracking/projects`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: url, queries: lines }),
+      });
+      if (!projRes.ok) {
+        const e = await projRes.json().catch(() => ({}));
+        throw new Error((e as any).error || 'Failed to create tracking project');
+      }
+      const { projectId } = await projRes.json();
+
+      const runRes = await apiFetch(`${API_URL}/api/tracking/projects/${projectId}/runs`, { method: 'POST' });
+      if (!runRes.ok) {
+        const e = await runRes.json().catch(() => ({}));
+        throw new Error((e as any).error || 'Failed to start tracking run');
+      }
+      const { runId, totalQueries } = await runRes.json();
+      setCompetitorRunId(runId);
+      setCompetitorTotal(totalQueries);
+      setCompetitorStatus('queued');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to start competitor discovery');
+      setCompetitorLoading(false);
+      setCompetitorStatus(null);
+    }
+  }
+
   async function handleMentionScan() {
     if (!token || !canTrackMentions) return;
     const brand = businessName.trim() || citationIdentity?.business_name || '';
@@ -725,15 +855,20 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
       setMentionResult(data);
       toast.success(`Found ${data.mentions.length} mentions across ${data.sources_checked.length} sources`);
 
-      // Also load history + timeline
-      const [histRes, tlRes] = await Promise.all([
+      // Also load history + timeline + KPI
+      const [histRes, tlRes, kpiRes] = await Promise.all([
         apiFetch(`${API_URL}/api/mentions/history?brand=${encodeURIComponent(brand)}&limit=50`),
         apiFetch(`${API_URL}/api/mentions/timeline?brand=${encodeURIComponent(brand)}&days=30`),
+        apiFetch(`${API_URL}/api/mentions/kpi?brand=${encodeURIComponent(brand)}`),
       ]);
       if (histRes.ok) setMentionHistory(await histRes.json());
       if (tlRes.ok) {
         const tlData = await tlRes.json();
         setMentionTimeline(tlData.timeline || []);
+      }
+      if (kpiRes.ok) {
+        const kpiData = await kpiRes.json();
+        if (kpiData.kpi) setMentionKPI(kpiData.kpi);
       }
     } catch (err: any) {
       toast.error(err.message || 'Mention scan failed');
@@ -1058,6 +1193,92 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
             {/* Scan results */}
             {mentionResult && (
               <div className="space-y-4">
+                {/* ── KPI Dashboard ─────────────────────────────────────── */}
+                {mentionKPI && (
+                  <div className="rounded-xl border border-white/10 bg-charcoal p-4 space-y-4">
+                    <p className="text-[10px] uppercase tracking-wide text-white/45">KPI Dashboard</p>
+
+                    {/* 4 stat cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-center">
+                        <p className="text-2xl font-bold text-white">{mentionKPI.volume}</p>
+                        <p className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5">Total Mentions</p>
+                      </div>
+                      <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-center">
+                        <p className={`text-2xl font-bold ${mentionKPI.net_sentiment_score >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {mentionKPI.net_sentiment_score >= 0 ? '+' : ''}{mentionKPI.net_sentiment_score.toFixed(1)}%
+                        </p>
+                        <p className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5">Net Sentiment</p>
+                      </div>
+                      <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-center">
+                        <p className="text-2xl font-bold text-white">{mentionKPI.source_count}<span className="text-sm text-white/40">/17</span></p>
+                        <p className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5">Sources Active</p>
+                      </div>
+                      <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-center">
+                        <p className={`text-2xl font-bold ${mentionKPI.brand_health_score >= 65 ? 'text-emerald-400' : mentionKPI.brand_health_score >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
+                          {Math.round(mentionKPI.brand_health_score)}
+                        </p>
+                        <p className="text-[10px] text-white/50 uppercase tracking-wider mt-0.5">Brand Health</p>
+                      </div>
+                    </div>
+
+                    {/* Sentiment breakdown bar */}
+                    {mentionKPI.volume > 0 && (
+                      <div>
+                        <div className="flex justify-between text-[10px] text-white/45 mb-1">
+                          <span>Positive {mentionKPI.positive_count} ({Math.round(mentionKPI.positive_count / mentionKPI.volume * 100)}%)</span>
+                          <span>Neutral {mentionKPI.neutral_count}</span>
+                          <span>Negative {mentionKPI.negative_count} ({Math.round(mentionKPI.negative_count / mentionKPI.volume * 100)}%)</span>
+                        </div>
+                        <div className="flex h-2 rounded-full overflow-hidden gap-px">
+                          {mentionKPI.positive_count > 0 && (
+                            <div
+                              className="bg-emerald-500 rounded-full"
+                              style={{ flex: mentionKPI.positive_count }}
+                              title={`Positive: ${mentionKPI.positive_count}`}
+                            />
+                          )}
+                          {mentionKPI.neutral_count > 0 && (
+                            <div
+                              className="bg-white/30 rounded-full"
+                              style={{ flex: mentionKPI.neutral_count }}
+                              title={`Neutral: ${mentionKPI.neutral_count}`}
+                            />
+                          )}
+                          {mentionKPI.negative_count > 0 && (
+                            <div
+                              className="bg-rose-500 rounded-full"
+                              style={{ flex: mentionKPI.negative_count }}
+                              title={`Negative: ${mentionKPI.negative_count}`}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Top sources */}
+                    {mentionKPI.top_sources.length > 0 && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wide text-white/45 mb-2">Top Sources</p>
+                        <div className="space-y-1">
+                          {mentionKPI.top_sources.map((s) => {
+                            const pct = mentionKPI.volume > 0 ? Math.round((s.count / mentionKPI.volume) * 100) : 0;
+                            return (
+                              <div key={s.source} className="flex items-center gap-2">
+                                <span className="text-[10px] text-white/60 w-24 shrink-0 capitalize">{s.source.replace('_', ' ')}</span>
+                                <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                  <div className="h-full rounded-full bg-white/40" style={{ width: `${pct}%` }} />
+                                </div>
+                                <span className="text-[10px] text-white/50 w-8 text-right">{s.count}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Source breakdown cards */}
                 <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
                   {mentionResult.sources_checked.map((src) => {
@@ -1149,6 +1370,360 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
           </>
         )}
       </div>
+
+      {/* ─── Authority + Entity Clarity Engine ─────────────────────────────── */}
+      {canRunAuthorityCheck && entityClarityData && (
+        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-white/28/20 to-white/14/20">
+              <Sparkles className="w-5 h-5 text-white/85" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">Authority + Entity Clarity Engine</h3>
+              <p className="text-xs text-white/55">
+                How consistently AI models recognize, categorize, and describe your entity across queries.
+              </p>
+            </div>
+          </div>
+
+          {/* Score pair */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="rounded-xl border border-white/10 bg-charcoal p-4 text-center">
+              <p className="text-[10px] uppercase tracking-widest text-white/45 mb-1">Entity Clarity</p>
+              <p className={`text-4xl font-bold tabular-nums ${entityClarityData.entity_clarity_score >= 70 ? 'text-emerald-400' : entityClarityData.entity_clarity_score >= 45 ? 'text-amber-400' : 'text-red-400'}`}>
+                {entityClarityData.entity_clarity_score}
+              </p>
+              <p className="text-[10px] text-white/40 mt-1">/ 100</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-charcoal p-4 text-center">
+              <p className="text-[10px] uppercase tracking-widest text-white/45 mb-1">Authority Score</p>
+              <p className={`text-4xl font-bold tabular-nums ${entityClarityData.authority_score >= 70 ? 'text-emerald-400' : entityClarityData.authority_score >= 45 ? 'text-amber-400' : 'text-red-400'}`}>
+                {entityClarityData.authority_score}
+              </p>
+              <p className="text-[10px] text-white/40 mt-1">/ 100</p>
+            </div>
+          </div>
+
+          {/* Signal bars */}
+          <div className="space-y-3 mb-5">
+            {([
+              { label: 'Recognition Rate', value: entityClarityData.recognition_rate, description: 'How often AI identifies your product by name' },
+              { label: 'Category Consistency', value: entityClarityData.category_consistency, description: 'How consistently AI places you in the same category' },
+              { label: 'Description Consistency', value: entityClarityData.description_consistency, description: 'How stable AI descriptions are across queries' },
+              { label: 'Avg Confidence', value: entityClarityData.avg_confidence, description: 'How certain the model is when it describes you' },
+            ] as Array<{ label: string; value: number; description: string }>).map((sig) => (
+              <div key={sig.label}>
+                <div className="flex justify-between items-baseline mb-1">
+                  <span className="text-xs text-white/70 font-medium">{sig.label}</span>
+                  <span className="text-xs tabular-nums text-white/85 font-semibold">{sig.value.toFixed(0)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${sig.value >= 70 ? 'bg-emerald-500' : sig.value >= 45 ? 'bg-amber-500' : 'bg-red-500'}`}
+                    style={{ width: `${Math.min(sig.value, 100)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-white/35 mt-0.5">{sig.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Dominant category */}
+          {entityClarityData.all_categories.length > 0 && (
+            <div className="mb-5 rounded-xl border border-white/10 bg-charcoal p-3">
+              <p className="text-[10px] uppercase tracking-widest text-white/45 mb-2">How AI categorizes you</p>
+              <div className="space-y-1.5">
+                {entityClarityData.all_categories.map((cat) => {
+                  const pct = entityClarityData.total_snapshots > 0
+                    ? Math.round((cat.count / entityClarityData.total_snapshots) * 100)
+                    : 0;
+                  return (
+                    <div key={cat.category} className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <div className="flex justify-between mb-0.5">
+                          <span className="text-xs text-white/75 capitalize">{cat.category}</span>
+                          <span className="text-[10px] tabular-nums text-white/50">{pct}%</span>
+                        </div>
+                        <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+                          <div className="h-full rounded-full bg-white/40" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Description samples */}
+          {entityClarityData.sample_descriptions.length > 0 && (
+            <div className="mb-5 rounded-xl border border-white/10 bg-charcoal p-3">
+              <p className="text-[10px] uppercase tracking-widest text-white/45 mb-2">How AI describes you (sample)</p>
+              <div className="space-y-2">
+                {entityClarityData.sample_descriptions.map((desc, i) => (
+                  <div key={i} className="flex gap-2">
+                    <Quote className="w-3 h-3 text-white/30 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-white/65 leading-relaxed italic">{desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Insights */}
+          {entityClarityData.insights.length > 0 && (
+            <div className="space-y-2 mb-4">
+              <p className="text-[10px] uppercase tracking-widest text-white/45">AI Diagnosis</p>
+              {entityClarityData.insights.map((insight, i) => (
+                <div key={i} className={`flex gap-2.5 rounded-lg border p-3 ${entityClarityData.entity_clarity_score >= 70 ? 'border-emerald-500/20 bg-emerald-500/8' : 'border-amber-500/20 bg-amber-500/8'}`}>
+                  <AlertCircle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${entityClarityData.entity_clarity_score >= 70 ? 'text-emerald-400' : 'text-amber-400'}`} />
+                  <p className="text-xs text-white/75 leading-relaxed">{insight}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <p className="text-[10px] text-white/35">
+            Based on {entityClarityData.total_snapshots} AI response{entityClarityData.total_snapshots !== 1 ? 's' : ''} analyzed from this run.
+            Entity extraction uses GPT-4o-mini structured output + deterministic domain validation.
+          </p>
+        </div>
+      )}
+
+      {/* ─── NER: Entity Co-mention Cloud ──────────────────────────────────── */}
+      {canRunAuthorityCheck && nerData && nerData.entities.length > 0 && (
+        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-white/28/20 to-white/14/20">
+              <Layers className="w-5 h-5 text-white/85" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">Named Entity Co-mention Map</h3>
+              <p className="text-xs text-white/55">
+                Every ORG, product, person and location AI mentions in the same responses as your brand.
+              </p>
+            </div>
+          </div>
+
+          {/* Summary stat row */}
+          <div className="grid grid-cols-4 gap-2 mb-5">
+            {([
+              { label: 'Total Entities', value: nerData.total_unique_entities },
+              { label: 'Orgs', value: nerData.org_count },
+              { label: 'Products', value: nerData.product_count },
+              { label: 'Co-mentioned', value: nerData.co_mentioned_count },
+            ] as Array<{ label: string; value: number }>).map((s) => (
+              <div key={s.label} className="rounded-xl border border-white/10 bg-charcoal p-3 text-center">
+                <p className="text-2xl font-bold tabular-nums text-white/90">{s.value}</p>
+                <p className="text-[10px] uppercase tracking-widest text-white/45 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Entity list grouped by type */}
+          {(['ORG', 'PRODUCT', 'PERSON', 'LOCATION'] as Array<'ORG' | 'PRODUCT' | 'PERSON' | 'LOCATION' | 'BRAND'>).map((type) => {
+            const group = nerData.entities.filter((e) => e.type === type && !e.is_target_brand);
+            if (group.length === 0) return null;
+            const typeLabel: Record<string, string> = {
+              ORG: 'Organizations', PRODUCT: 'Products & Brands',
+              PERSON: 'People', LOCATION: 'Locations',
+            };
+            const typeBadge: Record<string, string> = {
+              ORG: 'bg-blue-500/15 text-blue-300 border-blue-500/25',
+              PRODUCT: 'bg-purple-500/15 text-purple-300 border-purple-500/25',
+              PERSON: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
+              LOCATION: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+            };
+            return (
+              <div key={type} className="mb-4">
+                <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">{typeLabel[type]}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.slice(0, 20).map((e) => (
+                    <span
+                      key={e.text}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-medium ${typeBadge[type]}`}
+                    >
+                      {e.text}
+                      <span className="opacity-60 text-[10px]">×{e.total_count}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Your brand row if present */}
+          {nerData.entities.filter((e) => e.is_target_brand).length > 0 && (
+            <div className="mt-3 pt-3 border-t border-white/8">
+              <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Your Brand</p>
+              <div className="flex flex-wrap gap-1.5">
+                {nerData.entities.filter((e) => e.is_target_brand).map((e) => (
+                  <span
+                    key={e.text}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-white/25 bg-white/10 text-xs font-semibold text-white"
+                  >
+                    {e.text}
+                    <span className="opacity-60 text-[10px]">×{e.total_count}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <p className="text-[10px] text-white/35 mt-4">
+            Extracted from {nerData.total_unique_entities} unique entity tokens across all AI model responses.
+            No API cost — pure pattern-based extraction.
+          </p>
+        </div>
+      )}
+
+      {/* ─── AI Competitor Pressure Engine ──────────────────────────────────── */}
+      {canRunAuthorityCheck && (
+        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-white/28/20 to-white/14/20">
+              <TrendingUp className="w-5 h-5 text-white/85" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">AI Competitor Pressure Engine</h3>
+              <p className="text-xs text-white/55">
+                Discovers who AI trusts instead of you — extracted from real query outputs, not SERP rankings.
+              </p>
+            </div>
+          </div>
+
+          {!competitorLoading && !competitorData && (
+            <div className="mb-4 rounded-xl border border-white/10 bg-charcoal p-4 text-xs text-white/55">
+              <p className="mb-3 leading-relaxed">
+                Enter realistic queries your buyers use. The engine runs each through AI models, extracts all cited domains from the responses, scores them by mention frequency + citation rate, and surfaces the domains that are replacing you in AI answers.
+              </p>
+              <textarea
+                value={competitorQueries}
+                onChange={(e) => setCompetitorQueries(e.target.value)}
+                placeholder={"best AI visibility tools\nwho should I use for AI SEO\nalternatives to manual schema markup\nhow to rank in ChatGPT answers\n..."}
+                rows={5}
+                disabled={competitorLoading}
+                className="field-vivid w-full px-4 py-3 rounded-xl border border-white/10 bg-charcoal-deep text-white text-xs placeholder-white/30 resize-none disabled:opacity-40"
+              />
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-[11px] text-white/40">
+                  {competitorQueries.split('\n').filter((s) => s.trim()).length}/50 queries
+                </span>
+                <button
+                  onClick={handleDiscoverCompetitors}
+                  disabled={competitorLoading || !competitorQueries.trim()}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-white/28 to-white/14 text-white text-sm font-medium disabled:opacity-40"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  Discover Competitors
+                </button>
+              </div>
+            </div>
+          )}
+
+          {competitorLoading && (
+            <div className="mb-4 rounded-xl border border-white/10 bg-charcoal p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white/60" />
+                <p className="text-xs text-white/75">
+                  Running {competitorTotal} queries across AI models — extracting domain signals…
+                </p>
+              </div>
+              <div className="w-full bg-charcoal-deep rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="h-full bg-white/80 rounded-full transition-all duration-500"
+                  style={{ width: `${competitorProgress}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-white/40 mt-1">{competitorProgress}% complete</p>
+            </div>
+          )}
+
+          {competitorData && competitorData.length === 0 && (
+            <div className="rounded-xl border border-white/10 bg-charcoal p-4">
+              <p className="text-xs text-white/55">
+                No significant competitors detected in this query set. Try broader or more commercial queries to surface domain competition.
+              </p>
+              <button
+                onClick={() => { setCompetitorData(null); setEntityClarityData(null); setCompetitorRunId(null); setCompetitorStatus(null); }}
+                className="mt-3 text-xs text-white/60 hover:text-white/80 underline"
+              >
+                Try different queries
+              </button>
+            </div>
+          )}
+
+          {competitorData && competitorData.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-white/80 flex-shrink-0" />
+                  <p className="text-sm font-semibold text-white">You are losing to these domains:</p>
+                </div>
+                <button
+                  onClick={() => { setCompetitorData(null); setEntityClarityData(null); setCompetitorRunId(null); setCompetitorStatus(null); setCompetitorQueries(''); }}
+                  className="text-xs text-white/45 hover:text-white/70 transition-colors"
+                >
+                  Run again
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {competitorData.map((comp) => {
+                  const voiceShare = competitorTotal > 0 ? Math.round((comp.mentions / competitorTotal) * 100) : 0;
+                  const citationRate = comp.mentions > 0 ? Math.round((comp.citations / comp.mentions) * 100) : 0;
+                  return (
+                    <div key={comp.domain} className="rounded-xl border border-white/10 bg-charcoal p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{comp.domain}</p>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-white/55">
+                            <span>
+                              appears in <span className="text-white/85 font-medium">{comp.mentions}</span>/{competitorTotal} queries
+                            </span>
+                            <span>
+                              citation rate <span className="text-white/85 font-medium">{citationRate}%</span>
+                            </span>
+                            {comp.avg_position != null && (
+                              <span>
+                                avg position <span className="text-white/85 font-medium">#{Number(comp.avg_position).toFixed(1)}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 text-right">
+                          <p className="text-xl font-bold text-white">{voiceShare}%</p>
+                          <p className="text-[10px] text-white/40 uppercase tracking-wide">voice share</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 w-full bg-charcoal-deep rounded-full h-1 overflow-hidden">
+                        <div
+                          className="h-full bg-white/30 rounded-full"
+                          style={{ width: `${Math.min(voiceShare * 2, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-charcoal p-4">
+                <p className="text-xs font-semibold text-white/80 mb-1">Fix to beat them</p>
+                <p className="text-xs text-white/55 leading-relaxed mb-3">
+                  These competitors win because of stronger schema, consistent citations, and higher answer-engine presence. Run a ScoreFix to build a targeted action plan that closes the gap.
+                </p>
+                <a
+                  href="/scorefix"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-white/28 to-white/14 text-white text-xs font-medium"
+                >
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  Go to ScoreFix
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Header */}
       <div className="brand-bar-top rounded-2xl border border-white/10 bg-charcoal-deep p-6">

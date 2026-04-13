@@ -6,21 +6,21 @@ import {
   getAuditById,
   updateAuditStatus
 } from "../controllers/auditController.ts";
-import { protect } from "../middleware/auth.ts";
+import { authRequired } from "../middleware/authRequired.js";
 
 const router = express.Router();
 
 router.post(
   "/",
-  protect,
+  authRequired,
   [
     body("url").isURL().withMessage("Valid URL is required")
   ],
   createAudit
 );
 
-router.get("/", protect, getAudits);
-router.get("/:id", protect, getAuditById);
-router.put("/:id", protect, updateAuditStatus);
+router.get("/", authRequired, getAudits);
+router.get("/:id", authRequired, getAuditById);
+router.put("/:id", authRequired, updateAuditStatus);
 
 export default router;

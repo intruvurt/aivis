@@ -5,8 +5,20 @@ import { getPool } from './postgresql.js';
 
 function redis() {
   const r = getRedis();
-  if (!r) throw new Error('Redis is not configured - realtime visibility engine requires REDIS_URL or REDIS_HOST');
+  if (!r) throw new RedisUnavailableError();
   return r;
+}
+
+class RedisUnavailableError extends Error {
+  constructor() {
+    super('Redis is not configured - realtime visibility engine requires REDIS_URL or REDIS_HOST');
+    this.name = 'RedisUnavailableError';
+  }
+}
+
+/** Check if the realtime visibility engine is available (requires Redis). */
+export function isRealtimeEngineAvailable(): boolean {
+  return getRedis() != null;
 }
 
 type MentionStrength = 'strong' | 'medium' | 'weak' | 'none';

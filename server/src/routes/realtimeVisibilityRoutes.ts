@@ -4,12 +4,16 @@ import {
   getRealtimeVisibilityRun,
   getVisibilityHistory,
   startRealtimeVisibilityRun,
+  isRealtimeEngineAvailable,
 } from '../services/realtimeVisibilityEngine.js';
 
 const router = Router();
 
 router.post('/start', authRequired, async (req: Request, res: Response) => {
   try {
+    if (!isRealtimeEngineAvailable()) {
+      return res.status(503).json({ success: false, error: 'Realtime visibility engine is unavailable (Redis not configured)' });
+    }
     const domain = String(req.body?.domain || '').trim();
     const brand = String(req.body?.brand || '').trim();
     if (!domain) return res.status(400).json({ success: false, error: 'domain is required' });
@@ -67,4 +71,4 @@ router.get('/history', authRequired, async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+export default router;

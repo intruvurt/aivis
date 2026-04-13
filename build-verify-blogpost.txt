@@ -1,0 +1,4 @@
+
+> ai-visibility-engine@1.0.0 build
+> vite build && node ./scripts/prerender-routes.mjs
+

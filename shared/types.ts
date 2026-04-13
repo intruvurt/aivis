@@ -76,7 +76,7 @@ const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   alignment: 'solo builders • early founders • no-code creators • production ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
   scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
-  };
+};
 
 const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
   observer: 0,
@@ -343,11 +343,11 @@ export interface TierPricing {
 }
 
 export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>> = {
-  observer:   { monthlyUsd: PRICING.observer.billing.monthly,    yearlyUsd: PRICING.observer.billing.yearly,    oneTimeUsd: 0,                        billingModel: 'free' },
-  starter:    { monthlyUsd: PRICING.starter.billing.monthly,     yearlyUsd: PRICING.starter.billing.yearly,     oneTimeUsd: 0,                        billingModel: 'subscription' },
-  alignment:  { monthlyUsd: PRICING.alignment.billing.monthly,   yearlyUsd: PRICING.alignment.billing.yearly,   oneTimeUsd: 0,                        billingModel: 'subscription' },
-  signal:     { monthlyUsd: PRICING.signal.billing.monthly,      yearlyUsd: PRICING.signal.billing.yearly,      oneTimeUsd: 0,                        billingModel: 'subscription' },
-  scorefix:   { monthlyUsd: 0,                                   yearlyUsd: 0,                                  oneTimeUsd: PRICING.scorefix.billing.oneTime, billingModel: 'one_time' },
+  observer: { monthlyUsd: PRICING.observer.billing.monthly, yearlyUsd: PRICING.observer.billing.yearly, oneTimeUsd: 0, billingModel: 'free' },
+  starter: { monthlyUsd: PRICING.starter.billing.monthly, yearlyUsd: PRICING.starter.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
+  alignment: { monthlyUsd: PRICING.alignment.billing.monthly, yearlyUsd: PRICING.alignment.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
+  signal: { monthlyUsd: PRICING.signal.billing.monthly, yearlyUsd: PRICING.signal.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
+  scorefix: { monthlyUsd: 0, yearlyUsd: 0, oneTimeUsd: PRICING.scorefix.billing.oneTime, billingModel: 'one_time' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */
@@ -379,10 +379,10 @@ export interface ToolCreditRule {
 }
 
 export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
-  citation_query:   { freeMonthly: { observer: 0, starter: 0, alignment: 5,  signal: 20, scorefix: 10 }, creditCost: 1 },
-  reverse_engineer: { freeMonthly: { observer: 0, starter: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 2 },
-  mention_scan:     { freeMonthly: { observer: 0, starter: 0, alignment: 3,  signal: 10, scorefix: 5  }, creditCost: 1 },
-  competitor_scan:  { freeMonthly: { observer: 0, starter: 0, alignment: 2,  signal: 5,  scorefix: 3  }, creditCost: 2 },
+  citation_query: { freeMonthly: { observer: 0, starter: 0, alignment: 5, signal: 20, scorefix: 10 }, creditCost: 1 },
+  reverse_engineer: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 2 },
+  mention_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 1 },
+  competitor_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 2, signal: 5, scorefix: 3 }, creditCost: 2 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */
@@ -405,14 +405,14 @@ export interface MilestoneDefinition {
 }
 
 export const MILESTONES: readonly MilestoneDefinition[] = [
-  { key: 'first_audit',          label: 'First Audit',        description: 'Run your first AI visibility audit',            icon: '🔍', creditReward: 1 },
-  { key: 'power_scanner_25',     label: 'Power Scanner',      description: 'Complete 25 audits',                            icon: '⚡', creditReward: 3 },
-  { key: 'century_club_100',     label: 'Century Club',       description: 'Complete 100 audits',                           icon: '🏆', creditReward: 5 },
-  { key: 'score_improver_10',    label: 'Score Improver',     description: 'Improve a site score by 10+ points',            icon: '📈', creditReward: 2 },
-  { key: 'citation_hunter_10',   label: 'Citation Hunter',    description: 'Run 10 citation tests',                         icon: '📝', creditReward: 2 },
-  { key: 'competitor_watcher_3', label: 'Competitor Watcher',  description: 'Track 3 competitors',                          icon: '🥊', creditReward: 2 },
-  { key: 'streak_7_days',        label: '7-Day Streak',       description: 'Use the platform 7 consecutive days',           icon: '🔥', creditReward: 3 },
-  { key: 'referral_star_3',      label: 'Referral Star',      description: 'Successfully refer 3 users',                   icon: '⭐', creditReward: 5 },
+  { key: 'first_audit', label: 'First Audit', description: 'Run your first AI visibility audit', icon: '🔍', creditReward: 1 },
+  { key: 'power_scanner_25', label: 'Power Scanner', description: 'Complete 25 audits', icon: '⚡', creditReward: 3 },
+  { key: 'century_club_100', label: 'Century Club', description: 'Complete 100 audits', icon: '🏆', creditReward: 5 },
+  { key: 'score_improver_10', label: 'Score Improver', description: 'Improve a site score by 10+ points', icon: '📈', creditReward: 2 },
+  { key: 'citation_hunter_10', label: 'Citation Hunter', description: 'Run 10 citation tests', icon: '📝', creditReward: 2 },
+  { key: 'competitor_watcher_3', label: 'Competitor Watcher', description: 'Track 3 competitors', icon: '🥊', creditReward: 2 },
+  { key: 'streak_7_days', label: '7-Day Streak', description: 'Use the platform 7 consecutive days', icon: '🔥', creditReward: 3 },
+  { key: 'referral_star_3', label: 'Referral Star', description: 'Successfully refer 3 users', icon: '⭐', creditReward: 5 },
 ];
 
 /* ── Private exposure scan packaging ────────────────────────────────────── */
@@ -424,11 +424,11 @@ export interface PrivateExposureTierPackaging {
 }
 
 export const PRIVATE_EXPOSURE_SCAN_PACKAGING: Readonly<Record<CanonicalTier, PrivateExposureTierPackaging>> = {
-  observer:   { available: false, label: 'Not available', maxTargetsPerScan: 0,  description: 'Upgrade to Starter or Alignment to access Private Exposure Scans.' },
-  starter:    { available: false, label: 'Not available', maxTargetsPerScan: 0,  description: 'Upgrade to Alignment to access Private Exposure Scans.' },
-  alignment:  { available: true,  label: 'Standard',      maxTargetsPerScan: 3,  description: 'Run private exposure scans on up to 3 targets per request.' },
-  signal:     { available: true,  label: 'Advanced',      maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
-  scorefix:   { available: true,  label: 'Premium',       maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
+  observer: { available: false, label: 'Not available', maxTargetsPerScan: 0, description: 'Upgrade to Starter or Alignment to access Private Exposure Scans.' },
+  starter: { available: false, label: 'Not available', maxTargetsPerScan: 0, description: 'Upgrade to Alignment to access Private Exposure Scans.' },
+  alignment: { available: true, label: 'Standard', maxTargetsPerScan: 3, description: 'Run private exposure scans on up to 3 targets per request.' },
+  signal: { available: true, label: 'Advanced', maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
+  scorefix: { available: true, label: 'Premium', maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
 };
 
 /* ========================= AI Platform scores ========================= */
@@ -761,7 +761,7 @@ export interface AnalysisResponse {
   /** Contradiction report from multi-model analysis */
   contradiction_report?: ContradictionReport;
   /** Threat intelligence from security scan */
-  threat_intel?: { risk_level?: string; [key: string]: unknown };
+  threat_intel?: { risk_level?: string;[key: string]: unknown };
   /** SEO diagnostics computed from scrape data */
   seo_diagnostics?: SeoDiagnostics;
   /** Strict rubric scoring system with gates and fixpacks */
@@ -1242,11 +1242,11 @@ export type TextSummaryDepth = 'minimal' | 'brief' | 'standard' | 'detailed';
 
 export function getTextSummaryDepth(tier: CanonicalTier): TextSummaryDepth {
   switch (tier) {
-    case 'signal':    return 'detailed';
-    case 'scorefix':  return 'detailed';
+    case 'signal': return 'detailed';
+    case 'scorefix': return 'detailed';
     case 'alignment': return 'standard';
-    case 'starter':   return 'standard';
-    default:          return 'brief';
+    case 'starter': return 'standard';
+    default: return 'brief';
   }
 }
 
@@ -1273,14 +1273,14 @@ export interface SupportTicket {
 }
 
 export const SUPPORT_TICKET_CATEGORIES: ReadonlyArray<{ value: SupportTicketCategory; label: string }> = [
-  { value: 'general',         label: 'General' },
-  { value: 'billing',         label: 'Billing' },
-  { value: 'technical',       label: 'Technical' },
-  { value: 'account',         label: 'Account' },
-  { value: 'audit_results',   label: 'Audit Results' },
+  { value: 'general', label: 'General' },
+  { value: 'billing', label: 'Billing' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'account', label: 'Account' },
+  { value: 'audit_results', label: 'Audit Results' },
   { value: 'api_integration', label: 'API Integration' },
   { value: 'feature_request', label: 'Feature Request' },
-  { value: 'bug_report',      label: 'Bug Report' },
+  { value: 'bug_report', label: 'Bug Report' },
 ];
 
 /* ── SSFR types ─────────────────────────────────────────────────────────── */
@@ -1989,4 +1989,83 @@ export interface PipelineRun {
   rescan_uplift: RescanUplift | null;
   created_at: string;
   updated_at: string;
+}
+
+/* ── Brand Mention Tracker ──────────────────────────────────────────────── */
+
+export type MentionSentiment = 'positive' | 'negative' | 'neutral';
+
+export interface BrandMentionRow {
+  id?: string;
+  source: string;
+  url: string;
+  title: string;
+  snippet: string;
+  sentiment?: MentionSentiment;
+  detected_at: string;
+}
+
+export interface BrandMentionScanResponse {
+  success: boolean;
+  brand: string;
+  domain: string;
+  sources_checked: string[];
+  mentions: BrandMentionRow[];
+  scanned_at: string;
+  persisted: number;
+}
+
+export interface BrandMentionHistoryResponse {
+  success: boolean;
+  mentions: BrandMentionRow[];
+  total: number;
+  source_breakdown: Array<{ source: string; count: number; latest?: string }>;
+}
+
+export interface BrandMentionTimelinePoint {
+  date: string;
+  count: number;
+}
+
+/* ── Mention KPI Dashboard ──────────────────────────────────────────────── */
+
+export interface MentionKPIData {
+  brand: string;
+  volume: number;
+  positive_count: number;
+  negative_count: number;
+  neutral_count: number;
+  /** (positive - negative) / volume * 100, range -100..100 */
+  net_sentiment_score: number;
+  /** Composite 0–100: 40% NSS-normalised + 30% volume index + 30% source diversity */
+  brand_health_score: number;
+  source_count: number;
+  top_sources: Array<{ source: string; count: number }>;
+  computed_at: string;
+}
+
+/* ── Named Entity Recognition (NER) ────────────────────────────────────────── */
+
+export type NEREntityType = 'ORG' | 'PRODUCT' | 'PERSON' | 'LOCATION' | 'BRAND';
+
+export interface NEREntity {
+  text: string;
+  type: NEREntityType;
+  /** Summed occurrences across all results in the run */
+  total_count: number;
+  /** Number of distinct results the entity appeared in */
+  result_count: number;
+  is_target_brand: boolean;
+}
+
+export interface NERRunSummary {
+  run_id: string;
+  entities: NEREntity[];
+  total_unique_entities: number;
+  org_count: number;
+  product_count: number;
+  person_count: number;
+  location_count: number;
+  /** Non-target ORG + PRODUCT entities co-mentioned alongside the brand */
+  co_mentioned_count: number;
 }

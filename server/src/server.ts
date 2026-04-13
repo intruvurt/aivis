@@ -228,6 +228,7 @@ import v1WebhookRoutes from "./routes/v1WebhookRoutes.js";
 import agreementRoutes from "./routes/agreementRoutes.js";
 import paypalRoutes from "./routes/paypalRoutes.js";
 import badgeRoutes from "./routes/badgeRoutes.js";
+import trackingRoutes from "./routes/trackingRoutes.js";
 import {
   startTrialExpiryLoop,
   stopTrialExpiryLoop,
@@ -235,6 +236,7 @@ import {
 import { startTaskWorker } from "./services/agentTaskService.js";
 import { startAuditWorkerLoop } from "./workers/auditWorker.js";
 import { startFixWorker } from "./workers/fixWorker.js";
+import { startTrackingWorker } from "./workers/trackingWorker.js";
 import { startPRWorker } from "./workers/prWorker.js";
 import { startScheduler } from "./services/scheduler.js";
 import { startSelfHealingLoop } from "./services/selfHealingService.js";
@@ -272,6 +274,7 @@ import { generateFixpacks } from "./services/fixpackGenerator.js";
 import { persistSSFRResults } from "./services/ssfrVerificationService.js";
 import {
   isPythonServiceAvailable,
+  getCachedPythonAvailability,
   analyzeContentDeep,
   recordEvidenceLedger,
   generateFingerprint,
@@ -346,9 +349,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     "http://localhost:3000", // dev
     ...(rawFrontendUrl
       ? rawFrontendUrl
-          .split(",")
-          .map((o) => o.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((o) => o.trim())
+        .filter(Boolean)
       : []),
   ]
     .map(normalizeOriginHelper)
@@ -821,8 +824,8 @@ function dedupeRecommendations<
 
     const existingEvidence = Array.isArray(existing.evidence_ids)
       ? existing.evidence_ids.filter(
-          (id): id is string => typeof id === "string",
-        )
+        (id): id is string => typeof id === "string",
+      )
       : [];
     const currentEvidence = Array.isArray(rec.evidence_ids)
       ? rec.evidence_ids.filter((id): id is string => typeof id === "string")
@@ -840,12 +843,12 @@ function dedupeRecommendations<
       id: base.id || fallback.id,
       description:
         String(base.description || "").length >=
-        String(fallback.description || "").length
+          String(fallback.description || "").length
           ? base.description
           : fallback.description,
       implementation:
         String(base.implementation || "").length >=
-        String(fallback.implementation || "").length
+          String(fallback.implementation || "").length
           ? base.implementation
           : fallback.implementation,
       impact:
@@ -1148,8 +1151,8 @@ const ALLOWED_ORIGINS = [
     normalizeOrigin("http://localhost:3000"),
     ...(FRONTEND_URL
       ? FRONTEND_URL.split(",")
-          .map((o: string) => normalizeOrigin(o.trim()))
-          .filter(Boolean)
+        .map((o: string) => normalizeOrigin(o.trim()))
+        .filter(Boolean)
       : []),
   ]),
 ];
@@ -1244,8 +1247,8 @@ let _rlOwnerCacheReady = false;
 function refreshRateLimitOwnerCache(): void {
   const raw = String(
     process.env.ELEVATED_TIER_ALLOWLIST_EMAILS ||
-      process.env.ADMIN_ELEVATED_ALLOWLIST_EMAILS ||
-      "",
+    process.env.ADMIN_ELEVATED_ALLOWLIST_EMAILS ||
+    "",
   );
   const emails = raw
     .split(",")
@@ -1628,6 +1631,7 @@ app.use("/api/visibility", realtimeVisibilityRoutes);
 app.use("/api/fix-engine", autoVisibilityFixRoutes);
 app.use("/api/self-healing", selfHealingRoutes);
 app.use("/api/pipeline", pipelineRoutes);
+app.use("/api/tracking", trackingRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/growth", growthEngineRoutes);
 app.use("/api/orgs", orgRoutes);
@@ -1940,7 +1944,7 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
         !isNaN(existingBestScore) &&
         score === existingBestScore &&
         new Date(audit.created_at).getTime() >
-          new Date(existing.highestAudit.created_at).getTime();
+        new Date(existing.highestAudit.created_at).getTime();
 
       if (isHigher || isTieButNewer) {
         existing.highestAudit = audit;
@@ -1965,9 +1969,9 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
 
     const avgScore = latestScores.length
       ? Math.round(
-          latestScores.reduce((sum, value) => sum + value, 0) /
-            latestScores.length,
-        )
+        latestScores.reduce((sum, value) => sum + value, 0) /
+        latestScores.length,
+      )
       : 0;
     const bestScore = highestScores.length ? Math.max(...highestScores) : 0;
     const worstScore = latestScores.length ? Math.min(...latestScores) : 0;
@@ -1998,7 +2002,9 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
       .sort((a, b) => (b.latest_score ?? 0) - (a.latest_score ?? 0));
     const urlBreakdown = urlBreakdownAll.slice(0, 100);
 
-    const scoreHistory = latestPerUrlAudits.map((a) => ({
+    // Use ALL audits (not latest-per-url) so the trend reflects the real scan
+    // history by day, not just the date each URL was last audited.
+    const scoreHistory = audits.map((a) => ({
       date: new Date(a.created_at).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -2125,7 +2131,7 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
       if (
         !existing ||
         new Date(audit.created_at).getTime() <
-          new Date(existing.created_at).getTime()
+        new Date(existing.created_at).getTime()
       ) {
         firstAuditPerUrl[key] = audit;
       }
@@ -2227,14 +2233,34 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
       return pt;
     });
 
-    // ── Consecutive-day streak ────────────────────────────────────────
+    // ── Consecutive-day streak (independent 30-day window, range-agnostic) ─
+    // Uses a dedicated query so the range filter on `audits` never truncates it.
+    // Grace period: if the user hasn't scanned yet today, the streak is still
+    // alive — we start counting from yesterday instead of today.
     let streakDays = 0;
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(nowTs);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      if ((activityMap[key] ?? 0) > 0) streakDays++;
-      else break;
+    {
+      const streakResult = await pool.query(
+        `SELECT DISTINCT DATE(created_at AT TIME ZONE 'UTC')::text AS day
+         FROM audits
+         WHERE user_id = $1
+           AND created_at >= CURRENT_TIMESTAMP - INTERVAL '31 days'
+         ORDER BY day DESC`,
+        [userId],
+      );
+      const auditDaySet = new Set(
+        streakResult.rows.map((r: any) => String(r.day)),
+      );
+      const todayUTC = new Date().toISOString().slice(0, 10);
+      // Start from today if there's already an audit; otherwise yesterday (grace)
+      const startOffset = auditDaySet.has(todayUTC) ? 0 : 1;
+      const checkTs = new Date();
+      for (let i = startOffset; i < 32; i++) {
+        const d = new Date(checkTs);
+        d.setUTCDate(d.getUTCDate() - i);
+        const key = d.toISOString().slice(0, 10);
+        if (auditDaySet.has(key)) streakDays++;
+        else break;
+      }
     }
 
     // ── Deterministic pipeline data (rule results + score snapshots) ──
@@ -2280,10 +2306,10 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
             .filter((v: unknown) => typeof v === "number");
           avgFamilyScores[f] = vals.length
             ? Math.round(
-                (vals.reduce((a: number, b: number) => a + b, 0) /
-                  vals.length) *
-                  10,
-              ) / 10
+              (vals.reduce((a: number, b: number) => a + b, 0) /
+                vals.length) *
+              10,
+            ) / 10
             : 0;
         }
       }
@@ -2442,8 +2468,8 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
       avg_word_count:
         wordCounts.length > 0
           ? Math.round(
-              wordCounts.reduce((s, v) => s + v, 0) / wordCounts.length,
-            )
+            wordCounts.reduce((s, v) => s + v, 0) / wordCounts.length,
+          )
           : 0,
       min_word_count: wordCounts.length > 0 ? Math.min(...wordCounts) : 0,
       max_word_count: wordCounts.length > 0 ? Math.max(...wordCounts) : 0,
@@ -2454,8 +2480,8 @@ app.get("/api/analytics", authRequired, async (req: Request, res: Response) => {
       avg_response_time_ms:
         responseTimes.length > 0
           ? Math.round(
-              responseTimes.reduce((s, v) => s + v, 0) / responseTimes.length,
-            )
+            responseTimes.reduce((s, v) => s + v, 0) / responseTimes.length,
+          )
           : 0,
       fastest_response_ms:
         responseTimes.length > 0 ? Math.min(...responseTimes) : 0,
@@ -2916,13 +2942,11 @@ app.get(
          COUNT(a.*)::int AS analyses_ran,
          COUNT(DISTINCT a.user_id)::int AS active_members,
          COUNT(*) FILTER (WHERE COALESCE(u.tier, 'observer') = 'observer')::int AS free_member_analyses,
-         COUNT(*) FILTER (WHERE COALESCE(u.tier, 'observer') <> 'observer' AND EXISTS (
-           SELECT 1 FROM payments p WHERE p.user_id = u.id AND p.status = 'completed' AND p.stripe_subscription_id IS NOT NULL
-         ))::int AS paid_member_analyses,
+         -- elevated_analyses counts ALL non-observer-tier users (includes manually
+         -- upgraded, admin-set tiers, not just Stripe-verified subscribers)
+         COUNT(*) FILTER (WHERE COALESCE(u.tier, 'observer') <> 'observer')::int AS paid_member_analyses,
          COUNT(DISTINCT CASE WHEN COALESCE(u.tier, 'observer') = 'observer' THEN a.user_id END)::int AS free_active_members,
-         COUNT(DISTINCT CASE WHEN COALESCE(u.tier, 'observer') <> 'observer' AND EXISTS (
-           SELECT 1 FROM payments p WHERE p.user_id = u.id AND p.status = 'completed' AND p.stripe_subscription_id IS NOT NULL
-         ) THEN a.user_id END)::int AS paid_active_members,
+         COUNT(DISTINCT CASE WHEN COALESCE(u.tier, 'observer') <> 'observer' THEN a.user_id END)::int AS paid_active_members,
          COALESCE(ROUND(AVG(a.visibility_score)::numeric, 1), 0)::float AS avg_visibility_score,
          (
            SELECT COUNT(*)::int
@@ -3705,7 +3729,7 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
     const h1Count = isHtml ? htmlBody.match(/<h1\b[^>]*>/gi)?.length || 0 : 0;
     const jsonLdCount = isHtml
       ? htmlBody.match(/<script[^>]+type=["']application\/ld\+json["'][^>]*>/gi)
-          ?.length || 0
+        ?.length || 0
       : 0;
     const schemaTypes = isHtml ? extractSchemaTypes(htmlBody) : [];
     const hasOpenGraph = isHtml && /<meta[^>]+property=["']og:/i.test(htmlBody);
@@ -3749,36 +3773,36 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       Math.min(
         100,
         (targetUrl.startsWith("https://") ? 15 : 0) +
-          // HSTS: full marks for strong config, partial for weak
-          (security.hsts
-            ? hstsMaxAge >= 31536000 && hstsIncludesSubs
-              ? 12
-              : 7
+        // HSTS: full marks for strong config, partial for weak
+        (security.hsts
+          ? hstsMaxAge >= 31536000 && hstsIncludesSubs
+            ? 12
+            : 7
+          : 0) +
+        // CSP: full marks for real policy, reduced for weak/unsafe-inline
+        (security.csp
+          ? cspHasDefaultSrc && !cspHasUnsafeInline
+            ? 20
+            : 12
+          : 0) +
+        // X-Frame-Options: only credit valid values
+        (security.xFrameOptions && xfoValid
+          ? 10
+          : security.xFrameOptions
+            ? 5
             : 0) +
-          // CSP: full marks for real policy, reduced for weak/unsafe-inline
-          (security.csp
-            ? cspHasDefaultSrc && !cspHasUnsafeInline
-              ? 20
-              : 12
+        // X-Content-Type-Options: only credit "nosniff"
+        (security.xContentTypeOptions && xctValid
+          ? 10
+          : security.xContentTypeOptions
+            ? 4
             : 0) +
-          // X-Frame-Options: only credit valid values
-          (security.xFrameOptions && xfoValid
-            ? 10
-            : security.xFrameOptions
-              ? 5
-              : 0) +
-          // X-Content-Type-Options: only credit "nosniff"
-          (security.xContentTypeOptions && xctValid
-            ? 10
-            : security.xContentTypeOptions
-              ? 4
-              : 0) +
-          // Referrer-Policy: strict gets full marks
-          (security.referrerPolicy ? (rpStrict ? 8 : 5) : 0) +
-          (security.permissionsPolicy ? 8 : 0) +
-          (security.crossOriginOpenerPolicy ? 6 : 0) +
-          (security.crossOriginEmbedderPolicy ? 6 : 0) +
-          (security.crossOriginResourcePolicy ? 5 : 0),
+        // Referrer-Policy: strict gets full marks
+        (security.referrerPolicy ? (rpStrict ? 8 : 5) : 0) +
+        (security.permissionsPolicy ? 8 : 0) +
+        (security.crossOriginOpenerPolicy ? 6 : 0) +
+        (security.crossOriginEmbedderPolicy ? 6 : 0) +
+        (security.crossOriginResourcePolicy ? 5 : 0),
       ),
     );
 
@@ -3787,10 +3811,10 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       Math.min(
         100,
         (cacheControl || expires ? 45 : 0) +
-          (etag ? 20 : 0) +
-          (typeof maxAgeSeconds === "number" && maxAgeSeconds > 0 ? 20 : 0) +
-          (headers["vary"] ? 10 : 0) +
-          (headers["content-encoding"] ? 5 : 0),
+        (etag ? 20 : 0) +
+        (typeof maxAgeSeconds === "number" && maxAgeSeconds > 0 ? 20 : 0) +
+        (headers["vary"] ? 10 : 0) +
+        (headers["content-encoding"] ? 5 : 0),
       ),
     );
 
@@ -3799,13 +3823,13 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       Math.min(
         100,
         (!isHtml ? 30 : 0) +
-          (isHtml && jsonLdCount > 0 ? 35 : 0) +
-          (isHtml && h1Count === 1 ? 20 : 0) +
-          (isHtml && hasMetaDescription ? 15 : 0) +
-          (isHtml && hasCanonical ? 10 : 0) +
-          (isHtml && hasOpenGraph ? 10 : 0) +
-          (isHtml && hasTwitterCards ? 10 : 0) -
-          (headers["x-robots-tag"]?.toLowerCase().includes("noindex") ? 20 : 0),
+        (isHtml && jsonLdCount > 0 ? 35 : 0) +
+        (isHtml && h1Count === 1 ? 20 : 0) +
+        (isHtml && hasMetaDescription ? 15 : 0) +
+        (isHtml && hasCanonical ? 10 : 0) +
+        (isHtml && hasOpenGraph ? 10 : 0) +
+        (isHtml && hasTwitterCards ? 10 : 0) -
+        (headers["x-robots-tag"]?.toLowerCase().includes("noindex") ? 20 : 0),
       ),
     );
 
@@ -3827,9 +3851,9 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
 
     const overallScore = Math.round(
       securityScore * 0.4 +
-        cachingScore * 0.2 +
-        richResultsScore * 0.25 +
-        performanceScore * 0.15,
+      cachingScore * 0.2 +
+      richResultsScore * 0.25 +
+      performanceScore * 0.15,
     );
 
     const grade: "A" | "B" | "C" | "D" | "F" =
@@ -3895,9 +3919,9 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       Math.min(
         100,
         (security.csp ? 45 : 10) +
-          (security.xContentTypeOptions ? 20 : 5) +
-          (security.xFrameOptions ? 15 : 5) +
-          (targetUrl.startsWith("https://") ? 20 : 0),
+        (security.xContentTypeOptions ? 20 : 5) +
+        (security.xFrameOptions ? 15 : 5) +
+        (targetUrl.startsWith("https://") ? 20 : 0),
       ),
     );
     const xssRisk: "low" | "medium" | "high" =
@@ -3936,9 +3960,9 @@ const handleServerHeadersCheck = async (req: Request, res: Response) => {
       Math.min(
         100,
         (hasEdgeSignal ? 45 : 15) +
-          (hasCachePolicy ? 25 : 10) +
-          (hasCompression ? 15 : 5) +
-          (hasRateLimitHeaders ? 15 : 5),
+        (hasCachePolicy ? 25 : 10) +
+        (hasCompression ? 15 : 5) +
+        (hasRateLimitHeaders ? 15 : 5),
       ),
     );
     const ddosRisk: "low" | "medium" | "high" =
@@ -5546,33 +5570,33 @@ function normalizeWritingAudit(raw: any, contentType: WritingContentType) {
   ]);
   const factCheckItems = Array.isArray(raw?.fact_check_items)
     ? raw.fact_check_items
-        .map((item: any) => {
-          const status =
-            typeof item?.status === "string" &&
+      .map((item: any) => {
+        const status =
+          typeof item?.status === "string" &&
             validFactStatuses.has(item.status)
-              ? item.status
-              : "unverified";
-          return {
-            claim:
-              typeof item?.claim === "string" ? item.claim.slice(0, 500) : "",
-            status: status as
-              | "verified"
-              | "unverified"
-              | "disputed"
-              | "missing_source",
-            note: typeof item?.note === "string" ? item.note.slice(0, 300) : "",
-          };
-        })
-        .filter((item: any) => item.claim)
-        .slice(0, 20)
+            ? item.status
+            : "unverified";
+        return {
+          claim:
+            typeof item?.claim === "string" ? item.claim.slice(0, 500) : "",
+          status: status as
+            | "verified"
+            | "unverified"
+            | "disputed"
+            | "missing_source",
+          note: typeof item?.note === "string" ? item.note.slice(0, 300) : "",
+        };
+      })
+      .filter((item: any) => item.claim)
+      .slice(0, 20)
     : [];
 
   // Chunking issues normalization
   const chunkingIssues = Array.isArray(raw?.chunking_issues)
     ? raw.chunking_issues
-        .map((item: any) => String(item))
-        .filter(Boolean)
-        .slice(0, 10)
+      .map((item: any) => String(item))
+      .filter(Boolean)
+      .slice(0, 10)
     : [];
 
   return {
@@ -5793,9 +5817,9 @@ function buildAnalysisIntegrity(params: {
   };
   reflectionApplied?: boolean;
   reflectionSource?:
-    | "evidence-bounds"
-    | "deterministic-fallback"
-    | "upload-evidence";
+  | "evidence-bounds"
+  | "deterministic-fallback"
+  | "upload-evidence";
   normalizedTargetUrl?: string;
   fallbackMode?: string;
   warnings?: string[];
@@ -5819,6 +5843,7 @@ function buildAnalysisIntegrity(params: {
     evidence_items: Object.keys(params.evidenceManifest || {}).length,
     model_count: params.modelCount,
     triple_check_enabled: params.tripleCheckEnabled,
+    deep_analysis_available: getCachedPythonAvailability(),
     recommendation_evidence_coverage_percent: Math.max(
       0,
       Math.min(
@@ -7131,27 +7156,27 @@ function computeSeoDiagnostics(
     title:
       titleLen >= 30 && titleLen <= 60
         ? {
-            status: "pass" as const,
-            detail: `Title length ${titleLen} chars (ideal range).`,
-          }
+          status: "pass" as const,
+          detail: `Title length ${titleLen} chars (ideal range).`,
+        }
         : titleLen > 0
           ? {
-              status: "warn" as const,
-              detail: `Title length ${titleLen} chars (recommended 30-60).`,
-            }
+            status: "warn" as const,
+            detail: `Title length ${titleLen} chars (recommended 30-60).`,
+          }
           : { status: "fail" as const, detail: "Missing page title." },
 
     meta_description:
       metaLen >= 120 && metaLen <= 155
         ? {
-            status: "pass" as const,
-            detail: `Meta description ${metaLen} chars (ideal range).`,
-          }
+          status: "pass" as const,
+          detail: `Meta description ${metaLen} chars (ideal range).`,
+        }
         : metaLen > 0
           ? {
-              status: "warn" as const,
-              detail: `Meta description ${metaLen} chars (recommended 120-155).`,
-            }
+            status: "warn" as const,
+            detail: `Meta description ${metaLen} chars (recommended 120-155).`,
+          }
           : { status: "fail" as const, detail: "Missing meta description." },
 
     h1:
@@ -7159,23 +7184,23 @@ function computeSeoDiagnostics(
         ? { status: "pass" as const, detail: "Exactly one H1 found." }
         : h1Count > 1
           ? {
-              status: "warn" as const,
-              detail: `${h1Count} H1 tags found (recommended exactly one).`,
-            }
+            status: "warn" as const,
+            detail: `${h1Count} H1 tags found (recommended exactly one).`,
+          }
           : { status: "fail" as const, detail: "No H1 heading found." },
 
     schema:
       schemaCount >= 2
         ? {
-            status: "pass" as const,
-            detail: `${schemaCount} JSON-LD schema blocks detected.`,
-          }
+          status: "pass" as const,
+          detail: `${schemaCount} JSON-LD schema blocks detected.`,
+        }
         : schemaCount === 1
           ? {
-              status: "warn" as const,
-              detail:
-                "One schema block detected; add FAQ/Organization coverage.",
-            }
+            status: "warn" as const,
+            detail:
+              "One schema block detected; add FAQ/Organization coverage.",
+          }
           : { status: "fail" as const, detail: "No JSON-LD schema detected." },
 
     canonical: hasCanonical
@@ -7185,9 +7210,9 @@ function computeSeoDiagnostics(
     https:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail: "HTTPS not applicable for uploaded file context.",
-          }
+          status: "warn" as const,
+          detail: "HTTPS not applicable for uploaded file context.",
+        }
         : hasHttps
           ? { status: "pass" as const, detail: "HTTPS enabled." }
           : { status: "fail" as const, detail: "HTTPS not enabled." },
@@ -7195,180 +7220,180 @@ function computeSeoDiagnostics(
     robots:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail:
-              "robots directives not applicable for uploaded file context.",
-          }
+          status: "warn" as const,
+          detail:
+            "robots directives not applicable for uploaded file context.",
+        }
         : robotsMeta
           ? isNoindex
             ? {
-                status: "fail" as const,
-                detail: `Robots directive includes noindex (${robotsMeta}).`,
-              }
+              status: "fail" as const,
+              detail: `Robots directive includes noindex (${robotsMeta}).`,
+            }
             : {
-                status: "pass" as const,
-                detail: `Robots directive detected (${robotsMeta}).`,
-              }
+              status: "pass" as const,
+              detail: `Robots directive detected (${robotsMeta}).`,
+            }
           : {
-              status: "warn" as const,
-              detail: "No robots meta directive detected.",
-            },
+            status: "warn" as const,
+            detail: "No robots meta directive detected.",
+          },
 
     indexability:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail:
-              "Indexability is not directly verifiable for uploaded files.",
-          }
+          status: "warn" as const,
+          detail:
+            "Indexability is not directly verifiable for uploaded files.",
+        }
         : isNoindex
           ? { status: "fail" as const, detail: "Page is marked noindex." }
           : {
-              status: "pass" as const,
-              detail: "No noindex directive detected.",
-            },
+            status: "pass" as const,
+            detail: "No noindex directive detected.",
+          },
 
     internal_link_health:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail:
-              "Internal link architecture requires live-site crawl context.",
-          }
+          status: "warn" as const,
+          detail:
+            "Internal link architecture requires live-site crawl context.",
+        }
         : internalLinks >= 3
           ? {
-              status: "pass" as const,
-              detail: `${internalLinks} internal links detected.`,
-            }
+            status: "pass" as const,
+            detail: `${internalLinks} internal links detected.`,
+          }
           : internalLinks > 0
             ? {
-                status: "warn" as const,
-                detail: `${internalLinks} internal links detected; add more contextual links.`,
-              }
+              status: "warn" as const,
+              detail: `${internalLinks} internal links detected; add more contextual links.`,
+            }
             : {
-                status: "fail" as const,
-                detail: "No internal links detected.",
-              },
+              status: "fail" as const,
+              detail: "No internal links detected.",
+            },
 
     content_uniqueness:
       words.length < 120
         ? {
-            status: "warn" as const,
-            detail: `Content is thin (${words.length} words), uniqueness confidence is limited.`,
-          }
+          status: "warn" as const,
+          detail: `Content is thin (${words.length} words), uniqueness confidence is limited.`,
+        }
         : uniqueWordRatio >= 0.6
           ? {
-              status: "pass" as const,
-              detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% suggests non-duplicative content.`,
-            }
+            status: "pass" as const,
+            detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% suggests non-duplicative content.`,
+          }
           : uniqueWordRatio >= 0.45
             ? {
-                status: "warn" as const,
-                detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% indicates moderate repetition.`,
-              }
+              status: "warn" as const,
+              detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% indicates moderate repetition.`,
+            }
             : {
-                status: "fail" as const,
-                detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% indicates heavy repetition/thin uniqueness.`,
-              },
+              status: "fail" as const,
+              detail: `Lexical diversity ratio ${(uniqueWordRatio * 100).toFixed(0)}% indicates heavy repetition/thin uniqueness.`,
+            },
 
     performance_hint:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail:
-              "Response-time performance is not available for uploaded files.",
-          }
+          status: "warn" as const,
+          detail:
+            "Response-time performance is not available for uploaded files.",
+        }
         : responseTimeMs > 0
           ? responseTimeMs <= 1800
             ? {
-                status: "pass" as const,
-                detail: `Response time ${responseTimeMs}ms (good).`,
-              }
+              status: "pass" as const,
+              detail: `Response time ${responseTimeMs}ms (good).`,
+            }
             : responseTimeMs <= 3000
               ? {
-                  status: "warn" as const,
-                  detail: `Response time ${responseTimeMs}ms (needs improvement).`,
-                }
+                status: "warn" as const,
+                detail: `Response time ${responseTimeMs}ms (needs improvement).`,
+              }
               : {
-                  status: "fail" as const,
-                  detail: `Response time ${responseTimeMs}ms (slow for crawl/index reliability).`,
-                }
+                status: "fail" as const,
+                detail: `Response time ${responseTimeMs}ms (slow for crawl/index reliability).`,
+              }
           : {
-              status: "warn" as const,
-              detail: "Response-time metric unavailable for this scan.",
-            },
+            status: "warn" as const,
+            detail: "Response-time metric unavailable for this scan.",
+          },
 
     image_alt_coverage:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail:
-              "Image alt coverage is not available for uploaded file context.",
-          }
+          status: "warn" as const,
+          detail:
+            "Image alt coverage is not available for uploaded file context.",
+        }
         : imgTags.length === 0
           ? {
-              status: "warn" as const,
-              detail: "No images found; alt coverage not applicable.",
-            }
+            status: "warn" as const,
+            detail: "No images found; alt coverage not applicable.",
+          }
           : altCoverage >= 0.9
             ? {
-                status: "pass" as const,
-                detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}).`,
-              }
+              status: "pass" as const,
+              detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}).`,
+            }
             : altCoverage >= 0.7
               ? {
-                  status: "warn" as const,
-                  detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}); improve for accessibility.`,
-                }
+                status: "warn" as const,
+                detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}); improve for accessibility.`,
+              }
               : {
-                  status: "fail" as const,
-                  detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}); many images are unlabeled.`,
-                },
+                status: "fail" as const,
+                detail: `Alt text coverage ${(altCoverage * 100).toFixed(0)}% (${imagesWithAlt}/${imgTags.length}); many images are unlabeled.`,
+              },
 
     semantic_landmarks:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail: "Semantic landmarks require live HTML context.",
-          }
+          status: "warn" as const,
+          detail: "Semantic landmarks require live HTML context.",
+        }
         : landmarkCount >= 3
           ? {
-              status: "pass" as const,
-              detail: `${landmarkCount} semantic landmarks detected (<main>/<nav>/<header>/<footer>/<aside>).`,
-            }
+            status: "pass" as const,
+            detail: `${landmarkCount} semantic landmarks detected (<main>/<nav>/<header>/<footer>/<aside>).`,
+          }
           : landmarkCount >= 1
             ? {
-                status: "warn" as const,
-                detail: `${landmarkCount} semantic landmark detected; add clearer page regions.`,
-              }
+              status: "warn" as const,
+              detail: `${landmarkCount} semantic landmark detected; add clearer page regions.`,
+            }
             : {
-                status: "fail" as const,
-                detail:
-                  "No semantic landmarks detected; add main/nav/header/footer regions.",
-              },
+              status: "fail" as const,
+              detail:
+                "No semantic landmarks detected; add main/nav/header/footer regions.",
+            },
 
     form_accessibility:
       sourceType === "upload"
         ? {
-            status: "warn" as const,
-            detail: "Form label checks require live HTML context.",
-          }
+          status: "warn" as const,
+          detail: "Form label checks require live HTML context.",
+        }
         : formInputCount === 0
           ? { status: "pass" as const, detail: "No form controls detected." }
           : labelTagCount + ariaLabelCount >= formInputCount
             ? {
-                status: "pass" as const,
-                detail: `Form labeling coverage looks good (${labelTagCount + ariaLabelCount}/${formInputCount}).`,
-              }
+              status: "pass" as const,
+              detail: `Form labeling coverage looks good (${labelTagCount + ariaLabelCount}/${formInputCount}).`,
+            }
             : labelTagCount + ariaLabelCount > 0
               ? {
-                  status: "warn" as const,
-                  detail: `Partial form labeling (${labelTagCount + ariaLabelCount}/${formInputCount}); add labels/aria-label to all controls.`,
-                }
+                status: "warn" as const,
+                detail: `Partial form labeling (${labelTagCount + ariaLabelCount}/${formInputCount}); add labels/aria-label to all controls.`,
+              }
               : {
-                  status: "fail" as const,
-                  detail: `No form labels detected for ${formInputCount} controls.`,
-                },
+                status: "fail" as const,
+                detail: `No form labels detected for ${formInputCount} controls.`,
+              },
   };
 }
 
@@ -7376,12 +7401,12 @@ function buildEvidenceFixPlan(
   seoDiagnostics: ReturnType<typeof computeSeoDiagnostics> | undefined,
   recommendations:
     | Array<{
-        id?: string;
-        title?: string;
-        description?: string;
-        implementation?: string;
-        evidence_ids?: string[];
-      }>
+      id?: string;
+      title?: string;
+      description?: string;
+      implementation?: string;
+      evidence_ids?: string[];
+    }>
     | undefined,
   evidenceManifest: Record<string, string> | undefined,
   mode: "standard" | "thorough" = "standard",
@@ -7403,119 +7428,119 @@ function buildEvidenceFixPlan(
     actualFix: string;
     validation: string[];
   }> = [
-    {
-      key: "h1",
-      area: "Heading Structure",
-      title: "H1 heading quality issue",
-      severityWhenFail: "critical",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_h1_count",
-      actualFix:
-        "Use exactly one H1 that states the page intent in plain language and place it near the top of the main content.",
-      validation: [
-        "View page source and confirm exactly one <h1>.",
-        "Re-run scan and verify H1 check is PASS.",
-      ],
-    },
-    {
-      key: "schema",
-      area: "Structured Data",
-      title: "Schema coverage gap",
-      severityWhenFail: "critical",
-      severityWhenWarn: "high",
-      evidenceId: "ev_schema",
-      actualFix:
-        "Add valid JSON-LD for Organization and page-relevant schemas (FAQ/Article/Service) with consistent entity names.",
-      validation: [
-        "Validate JSON-LD in Rich Results Test.",
-        "Re-run scan and confirm schema check improves.",
-      ],
-    },
-    {
-      key: "meta_description",
-      area: "Metadata",
-      title: "Meta description needs correction",
-      severityWhenFail: "high",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_meta_description",
-      actualFix:
-        "Write a unique 120-155 character meta description that mirrors the core intent and includes one concrete differentiator.",
-      validation: [
-        "Inspect rendered HTML for updated meta description.",
-        "Re-run scan and check metadata status.",
-      ],
-    },
-    {
-      key: "canonical",
-      area: "Technical SEO",
-      title: "Canonical signal missing or weak",
-      severityWhenFail: "high",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_canonical",
-      actualFix:
-        "Add a self-referencing canonical URL on the primary page variant and ensure duplicates point to it.",
-      validation: [
-        "Confirm exactly one rel=canonical in head.",
-        "Re-run scan and verify canonical status is PASS.",
-      ],
-    },
-    {
-      key: "https",
-      area: "Security & Trust",
-      title: "HTTPS trust signal issue",
-      severityWhenFail: "critical",
-      severityWhenWarn: "low",
-      evidenceId: "ev_https",
-      actualFix:
-        "Force HTTPS with 301 redirects from HTTP, then update canonical and sitemap URLs to HTTPS.",
-      validation: [
-        "Open HTTP URL and verify redirect to HTTPS.",
-        "Re-run scan and verify HTTPS check is PASS.",
-      ],
-    },
-    {
-      key: "title",
-      area: "Metadata",
-      title: "Title tag optimization needed",
-      severityWhenFail: "high",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_title",
-      actualFix:
-        "Set a descriptive title in the 30-60 character range with entity + intent + differentiator.",
-      validation: [
-        "Inspect <title> in source.",
-        "Re-run scan and confirm title check improves.",
-      ],
-    },
-    {
-      key: "internal_link_health",
-      area: "Link Architecture",
-      title: "Internal linking is too weak",
-      severityWhenFail: "high",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_links_int",
-      actualFix:
-        "Add contextual internal links from supporting pages to the target page using descriptive anchors.",
-      validation: [
-        "Crawl and verify internal links increased.",
-        "Re-run scan and validate internal link health.",
-      ],
-    },
-    {
-      key: "content_uniqueness",
-      area: "Content Quality",
-      title: "Content uniqueness/depth risk",
-      severityWhenFail: "high",
-      severityWhenWarn: "medium",
-      evidenceId: "ev_word_count",
-      actualFix:
-        "Expand thin/repetitive sections with specific examples, factual claims, and intent-aligned subheadings.",
-      validation: [
-        "Check body word count and topical breadth increased.",
-        "Re-run scan and verify improved content status.",
-      ],
-    },
-  ];
+      {
+        key: "h1",
+        area: "Heading Structure",
+        title: "H1 heading quality issue",
+        severityWhenFail: "critical",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_h1_count",
+        actualFix:
+          "Use exactly one H1 that states the page intent in plain language and place it near the top of the main content.",
+        validation: [
+          "View page source and confirm exactly one <h1>.",
+          "Re-run scan and verify H1 check is PASS.",
+        ],
+      },
+      {
+        key: "schema",
+        area: "Structured Data",
+        title: "Schema coverage gap",
+        severityWhenFail: "critical",
+        severityWhenWarn: "high",
+        evidenceId: "ev_schema",
+        actualFix:
+          "Add valid JSON-LD for Organization and page-relevant schemas (FAQ/Article/Service) with consistent entity names.",
+        validation: [
+          "Validate JSON-LD in Rich Results Test.",
+          "Re-run scan and confirm schema check improves.",
+        ],
+      },
+      {
+        key: "meta_description",
+        area: "Metadata",
+        title: "Meta description needs correction",
+        severityWhenFail: "high",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_meta_description",
+        actualFix:
+          "Write a unique 120-155 character meta description that mirrors the core intent and includes one concrete differentiator.",
+        validation: [
+          "Inspect rendered HTML for updated meta description.",
+          "Re-run scan and check metadata status.",
+        ],
+      },
+      {
+        key: "canonical",
+        area: "Technical SEO",
+        title: "Canonical signal missing or weak",
+        severityWhenFail: "high",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_canonical",
+        actualFix:
+          "Add a self-referencing canonical URL on the primary page variant and ensure duplicates point to it.",
+        validation: [
+          "Confirm exactly one rel=canonical in head.",
+          "Re-run scan and verify canonical status is PASS.",
+        ],
+      },
+      {
+        key: "https",
+        area: "Security & Trust",
+        title: "HTTPS trust signal issue",
+        severityWhenFail: "critical",
+        severityWhenWarn: "low",
+        evidenceId: "ev_https",
+        actualFix:
+          "Force HTTPS with 301 redirects from HTTP, then update canonical and sitemap URLs to HTTPS.",
+        validation: [
+          "Open HTTP URL and verify redirect to HTTPS.",
+          "Re-run scan and verify HTTPS check is PASS.",
+        ],
+      },
+      {
+        key: "title",
+        area: "Metadata",
+        title: "Title tag optimization needed",
+        severityWhenFail: "high",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_title",
+        actualFix:
+          "Set a descriptive title in the 30-60 character range with entity + intent + differentiator.",
+        validation: [
+          "Inspect <title> in source.",
+          "Re-run scan and confirm title check improves.",
+        ],
+      },
+      {
+        key: "internal_link_health",
+        area: "Link Architecture",
+        title: "Internal linking is too weak",
+        severityWhenFail: "high",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_links_int",
+        actualFix:
+          "Add contextual internal links from supporting pages to the target page using descriptive anchors.",
+        validation: [
+          "Crawl and verify internal links increased.",
+          "Re-run scan and validate internal link health.",
+        ],
+      },
+      {
+        key: "content_uniqueness",
+        area: "Content Quality",
+        title: "Content uniqueness/depth risk",
+        severityWhenFail: "high",
+        severityWhenWarn: "medium",
+        evidenceId: "ev_word_count",
+        actualFix:
+          "Expand thin/repetitive sections with specific examples, factual claims, and intent-aligned subheadings.",
+        validation: [
+          "Check body word count and topical breadth increased.",
+          "Re-run scan and verify improved content status.",
+        ],
+      },
+    ];
 
   const maxIssues = mode === "thorough" ? 12 : 7;
   const issues: Array<{
@@ -7637,27 +7662,27 @@ function buildStrictRubricSystem(args: {
     args.sourceType === "upload"
       ? 90
       : Math.round(
-          toScore(diagnostics.https?.status) * 0.34 +
-            toScore(diagnostics.indexability?.status) * 0.33 +
-            toScore(diagnostics.robots?.status) * 0.33,
-        );
+        toScore(diagnostics.https?.status) * 0.34 +
+        toScore(diagnostics.indexability?.status) * 0.33 +
+        toScore(diagnostics.robots?.status) * 0.33,
+      );
   const metadataScore = Math.round(
     toScore(diagnostics.title?.status) * 0.34 +
-      toScore(diagnostics.meta_description?.status) * 0.33 +
-      toScore(diagnostics.canonical?.status) * 0.33,
+    toScore(diagnostics.meta_description?.status) * 0.33 +
+    toScore(diagnostics.canonical?.status) * 0.33,
   );
   const structureScore = Math.round(
     toScore(diagnostics.h1?.status) * 0.34 +
-      toScore(diagnostics.schema?.status) * 0.33 +
-      toScore(diagnostics.semantic_landmarks?.status) * 0.33,
+    toScore(diagnostics.schema?.status) * 0.33 +
+    toScore(diagnostics.semantic_landmarks?.status) * 0.33,
   );
   const evidenceLinkScore = Math.round(
     Math.max(0, Math.min(100, coverage)) * 0.6 +
-      Math.max(0, Math.min(100, integrity)) * 0.4,
+    Math.max(0, Math.min(100, integrity)) * 0.4,
   );
   const parityBlendScore = Math.round(
     Math.max(0, Math.min(100, parityScore)) * 0.55 +
-      Math.max(0, Math.min(100, railScore)) * 0.45,
+    Math.max(0, Math.min(100, railScore)) * 0.45,
   );
 
   const gates: StrictRubricSystem["gates"] = [
@@ -7757,14 +7782,14 @@ function buildStrictRubricSystem(args: {
         actions.length > 0
           ? actions
           : [
-              "No direct remediation action captured; inspect gate evidence and rerun deterministic scan.",
-            ],
+            "No direct remediation action captured; inspect gate evidence and rerun deterministic scan.",
+          ],
       validation_steps:
         validation_steps.length > 0
           ? validation_steps
           : [
-              "Re-run audit and confirm gate status moves from fail/warn to pass.",
-            ],
+            "Re-run audit and confirm gate status moves from fail/warn to pass.",
+          ],
     };
   };
 
@@ -7982,11 +8007,11 @@ function buildRailEvidenceAudit(args: {
   const fixIssueCount = Number(fixPlan.issue_count || 0);
   const fixPlanEvidenceRefs = Array.isArray(fixPlan.issues)
     ? fixPlan.issues.reduce(
-        (total, issue) =>
-          total +
-          (Array.isArray(issue?.evidence_ids) ? issue.evidence_ids.length : 0),
-        0,
-      )
+      (total, issue) =>
+        total +
+        (Array.isArray(issue?.evidence_ids) ? issue.evidence_ids.length : 0),
+      0,
+    )
     : 0;
   const parityScore = Number(parity.ai_visibility_score_0_100 || 0);
   const parityEvidenceCount = Array.isArray(parity.evidence)
@@ -8987,23 +9012,23 @@ app.post(
       // Primary lookup: workspace-scoped (includes NULL workspace for legacy audits)
       let { rows } = auditId
         ? await pool.query(
-            `SELECT id, created_at
+          `SELECT id, created_at
            FROM audits
            WHERE id = $1 AND user_id = $2
              AND (workspace_id IS NOT DISTINCT FROM $3 OR workspace_id IS NULL)
            LIMIT 1`,
-            [auditId, userId, workspaceId || null],
-          )
+          [auditId, userId, workspaceId || null],
+        )
         : await pool.query(
-            `SELECT id, created_at
+          `SELECT id, created_at
            FROM audits
            WHERE user_id = $1
              AND (workspace_id IS NOT DISTINCT FROM $2 OR workspace_id IS NULL)
              AND url = $3
            ORDER BY ABS(EXTRACT(EPOCH FROM (created_at - $4::timestamptz))) ASC
            LIMIT 1`,
-            [userId, workspaceId || null, rawUrl.trim(), analyzedAt],
-          );
+          [userId, workspaceId || null, rawUrl.trim(), analyzedAt],
+        );
 
       // Fallback: if workspace-scoped query missed, try user-only ownership check.
       // This covers audits that ended up with a different workspace_id (e.g. user
@@ -9152,8 +9177,8 @@ app.post(
       const hookId = String(req.params.hookId || "").trim();
       const providedSecret = String(
         req.get("x-aivis-deploy-secret") ||
-          req.get("authorization")?.replace(/^Bearer\s+/i, "") ||
-          "",
+        req.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+        "",
       ).trim();
 
       if (!hookId || !providedSecret) {
@@ -9855,8 +9880,8 @@ app.post(
         sd.robots?.fetched === false
           ? null
           : sd.robots?.allows?.gptbot === false ||
-              (sd.robots?.allows as any)?.GPTBot === false ||
-              (sd.robots?.allows as any)?.openai === false
+            (sd.robots?.allows as any)?.GPTBot === false ||
+            (sd.robots?.allows as any)?.openai === false
             ? false
             : sd.robots?.fetched
               ? true
@@ -9882,9 +9907,9 @@ app.post(
         _qH2s.length === 0
           ? "0 question-format H2s - add W/H question headings to qualify for FAQ/AEO extraction"
           : `${_qH2s.length} question-format H2s: ${_qH2s
-              .slice(0, 3)
-              .map((q) => `"${q.substring(0, 55)}"`)
-              .join(", ")}`;
+            .slice(0, 3)
+            .map((q) => `"${q.substring(0, 55)}"`)
+            .join(", ")}`;
 
       const _ogComplete =
         sd.meta?.ogTitle && sd.meta?.ogDescription
@@ -10135,10 +10160,10 @@ app.post(
           return null;
         }),
       ])) as [
-        CitationStrength[] | null,
-        Awaited<ReturnType<typeof assessEntityClarity>> | null,
-        Awaited<ReturnType<typeof analyzeReviewSentiment>> | null,
-      ];
+          CitationStrength[] | null,
+          Awaited<ReturnType<typeof assessEntityClarity>> | null,
+          Awaited<ReturnType<typeof analyzeReviewSentiment>> | null,
+        ];
 
       if (citationStrengths) {
         domainIntelligence.citation_strength = citationStrengths;
@@ -10244,8 +10269,8 @@ app.post(
         const rawHtml = sd.html || "";
         const spaIndicators = [
           rawHtml.includes('id="root"') ||
-            rawHtml.includes('id="app"') ||
-            rawHtml.includes('id="__next"'),
+          rawHtml.includes('id="app"') ||
+          rawHtml.includes('id="__next"'),
           rawHtml.includes("__NEXT_DATA__") || rawHtml.includes("__NUXT__"),
           /\bnonce=["'][^"']+["']/.test(rawHtml) && bodyWordCount < 5,
           (rawHtml.match(/<script/gi) || []).length > 3 && bodyWordCount < 10,
@@ -10352,15 +10377,15 @@ app.post(
             `Only ${bodyWordCount} crawl-accessible word(s) detected at audit time`,
             ...(likelySpa
               ? [
-                  "This appears to be a JavaScript-rendered (SPA) page - content is not in the initial HTML",
-                  "AI answer engines (ChatGPT, Perplexity, Gemini) cannot read client-side-only content",
-                  "Implement SSR (server-side rendering), SSG (static site generation), or prerendering to make content crawlable",
-                ]
+                "This appears to be a JavaScript-rendered (SPA) page - content is not in the initial HTML",
+                "AI answer engines (ChatGPT, Perplexity, Gemini) cannot read client-side-only content",
+                "Implement SSR (server-side rendering), SSG (static site generation), or prerendering to make content crawlable",
+              ]
               : [
-                  "The page delivered minimal headings, metadata, links, and structured data signals",
-                  "Expose a crawlable content route (SSR/SSG/prerendered HTML) for core intent pages",
-                  "Ensure title/meta/canonical/JSON-LD are present in initial HTML and not only client-side",
-                ]),
+                "The page delivered minimal headings, metadata, links, and structured data signals",
+                "Expose a crawlable content route (SSR/SSG/prerendered HTML) for core intent pages",
+                "Ensure title/meta/canonical/JSON-LD are present in initial HTML and not only client-side",
+              ]),
           ],
           topical_keywords: [],
           keyword_intelligence: [],
@@ -10447,7 +10472,7 @@ app.post(
 
         try {
           await AnalysisCacheService.set(cacheKey, thinResult as any);
-        } catch {}
+        } catch { }
 
         try {
           const userId = (req as any).user?.id || (req as any).userId;
@@ -10549,20 +10574,20 @@ app.post(
           }),
           canRunPrivateExposureScan
             ? withTimeout(
-                runPrivateExposureScan({
-                  targetUrl,
-                  ownershipAsserted: true,
-                  authenticatedContextProvided: false,
-                }),
-                8_000,
-                "Private exposure scan timeout (8s)",
-              ).catch((e: any) => {
-                console.warn(
-                  `[${requestId}] Private exposure scan skipped (non-fatal):`,
-                  e.message,
-                );
-                return null;
-              })
+              runPrivateExposureScan({
+                targetUrl,
+                ownershipAsserted: true,
+                authenticatedContextProvided: false,
+              }),
+              8_000,
+              "Private exposure scan timeout (8s)",
+            ).catch((e: any) => {
+              console.warn(
+                `[${requestId}] Private exposure scan skipped (non-fatal):`,
+                e.message,
+              );
+              return null;
+            })
             : Promise.resolve(null),
           withTimeout(
             assessUrlRisk(targetUrl),
@@ -11045,9 +11070,9 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
         typeof aiAnalysis.visibility_score === "number"
           ? clampScore(aiAnalysis.visibility_score)
           : computeWeightedCategoryScore(
-              aiAnalysis.category_grades,
-              evidenceBounds,
-            );
+            aiAnalysis.category_grades,
+            evidenceBounds,
+          );
 
       // ─────────────────────────────────────────────────────────────────────
       // Triple-Check Pipeline (Signal + Score Fix tiers)
@@ -11118,16 +11143,16 @@ PRIMARY AI SCORE: ${ai1Score}/100
 
 PRIMARY ANALYSIS (JSON):
 ${JSON.stringify(
-  {
-    visibility_score: ai1Score,
-    category_grades: aiAnalysis.category_grades,
-    summary: aiAnalysis.summary,
-    key_takeaways: aiAnalysis.key_takeaways,
-    content_highlights: aiAnalysis.content_highlights,
-  },
-  null,
-  0,
-)}
+          {
+            visibility_score: ai1Score,
+            category_grades: aiAnalysis.category_grades,
+            summary: aiAnalysis.summary,
+            key_takeaways: aiAnalysis.key_takeaways,
+            content_highlights: aiAnalysis.content_highlights,
+          },
+          null,
+          0,
+        )}
 
 EVIDENCE (scraped from live page):
 ${evidenceBlock}
@@ -11183,15 +11208,15 @@ Return ONLY valid JSON:
                 ai2Parsed.value.missed_issues,
               )
                 ? ai2Parsed.value.missed_issues
-                    .filter((issue: any) => typeof issue === "string")
-                    .slice(0, 5)
+                  .filter((issue: any) => typeof issue === "string")
+                  .slice(0, 5)
                 : [];
               const ai2ExtraRecommendations = Array.isArray(
                 ai2Parsed.value.extra_recommendations,
               )
                 ? ai2Parsed.value.extra_recommendations
-                    .filter((r: any) => typeof r === "string")
-                    .slice(0, 5)
+                  .filter((r: any) => typeof r === "string")
+                  .slice(0, 5)
                 : [];
               const peerCritiqueFacts = {
                 hasTldr: sd.hasTldr === true,
@@ -11287,9 +11312,9 @@ Return ONLY valid JSON:
                     const bounds = evidenceBounds[override.label as string];
                     const boundedScore = bounds
                       ? Math.max(
-                          bounds.floor,
-                          Math.min(bounds.ceiling, override.adjusted_score),
-                        )
+                        bounds.floor,
+                        Math.min(bounds.ceiling, override.adjusted_score),
+                      )
                       : override.adjusted_score;
                     const newScore = Math.round(
                       Math.min(100, Math.max(0, boundedScore)),
@@ -11353,20 +11378,20 @@ PROPOSED FINAL SCORE: ${proposedScore}/100
 
 CATEGORY GRADES (after AI2 overrides):
 ${JSON.stringify(
-  aiAnalysis.category_grades.map((g: any) => ({
-    label: g.label,
-    grade: g.grade,
-    score: g.score,
-  })),
-  null,
-  0,
-)}
+            aiAnalysis.category_grades.map((g: any) => ({
+              label: g.label,
+              grade: g.grade,
+              score: g.score,
+            })),
+            null,
+            0,
+          )}
 
 KEY EVIDENCE:
 ${Object.entries(evidenceManifest)
-  .slice(0, 10)
-  .map(([id, v]) => `[${id}] ${v}`)
-  .join("\n")}
+              .slice(0, 10)
+              .map(([id, v]) => `[${id}] ${v}`)
+              .join("\n")}
 
 INSTRUCTIONS:
 - Validate whether ${proposedScore}/100 is fair given the evidence.
@@ -11421,11 +11446,11 @@ Return ONLY valid JSON:
                   const ai3Final =
                     typeof ai3Parsed.value.final_score === "number"
                       ? Math.round(
-                          Math.max(
-                            0,
-                            Math.min(100, ai3Parsed.value.final_score),
-                          ),
-                        )
+                        Math.max(
+                          0,
+                          Math.min(100, ai3Parsed.value.final_score),
+                        ),
+                      )
                       : proposedScore;
                   tripleCheckResult.final_score = ai3Final;
                   tripleCheckResult.confidence =
@@ -11786,8 +11811,8 @@ Return ONLY valid JSON:
           implementation: rec.implementation || "",
           evidence_ids: Array.isArray(rec.evidence_ids)
             ? rec.evidence_ids.filter(
-                (id: unknown): id is string => typeof id === "string",
-              )
+              (id: unknown): id is string => typeof id === "string",
+            )
             : [],
           scorefix_category:
             typeof rec.scorefix_category === "string"
@@ -11817,10 +11842,10 @@ Return ONLY valid JSON:
             typeof g.score === "number"
               ? Math.min(100, Math.max(0, g.score))
               : evidenceMidpointScore(
-                  g.label || "General",
-                  evidenceBounds,
-                  finalVisibilityScore,
-                ),
+                g.label || "General",
+                evidenceBounds,
+                finalVisibilityScore,
+              ),
           summary: g.summary || "",
           strengths: Array.isArray(g.strengths)
             ? g.strengths.filter((s: any) => typeof s === "string")
@@ -11890,11 +11915,11 @@ Return ONLY valid JSON:
       );
       const finalizedRecommendationBundle = requireLiveAi
         ? verifyRecommendationEvidence(
-            verifiedRecommendationBundle.recommendations.filter(
-              (rec: any) => rec.verification_status !== "unverified",
-            ),
-            validEvidenceIds,
-          )
+          verifiedRecommendationBundle.recommendations.filter(
+            (rec: any) => rec.verification_status !== "unverified",
+          ),
+          validEvidenceIds,
+        )
         : verifiedRecommendationBundle;
 
       if (
@@ -12131,30 +12156,30 @@ Return ONLY valid JSON:
           : {}),
         ...(sd.ocrData && sd.ocrData.images.length > 0
           ? {
-              ocr_validation: {
-                images_processed: sd.ocrData.images.length,
-                total_ocr_words: sd.ocrData.totalOcrWords,
-                processing_time_ms: sd.ocrData.processingTimeMs,
-                cross_check: ocrValidationResult.crossCheck
-                  ? {
-                      evidence_quality:
-                        ocrValidationResult.crossCheck.evidence_quality,
-                      scrape_coverage_ratio:
-                        ocrValidationResult.crossCheck.scrape_coverage_ratio,
-                      recommendation:
-                        ocrValidationResult.crossCheck.recommendation,
-                    }
-                  : null,
-                fallback_applied: ocrFallbackApplied,
-                context_alts: sd.ocrData.images
-                  .filter((img) => !img.alt && img.contextAlt)
-                  .map((img) => ({
-                    src: img.src,
-                    suggested_alt: img.contextAlt,
-                  }))
-                  .slice(0, 10),
-              },
-            }
+            ocr_validation: {
+              images_processed: sd.ocrData.images.length,
+              total_ocr_words: sd.ocrData.totalOcrWords,
+              processing_time_ms: sd.ocrData.processingTimeMs,
+              cross_check: ocrValidationResult.crossCheck
+                ? {
+                  evidence_quality:
+                    ocrValidationResult.crossCheck.evidence_quality,
+                  scrape_coverage_ratio:
+                    ocrValidationResult.crossCheck.scrape_coverage_ratio,
+                  recommendation:
+                    ocrValidationResult.crossCheck.recommendation,
+                }
+                : null,
+              fallback_applied: ocrFallbackApplied,
+              context_alts: sd.ocrData.images
+                .filter((img) => !img.alt && img.contextAlt)
+                .map((img) => ({
+                  src: img.src,
+                  suggested_alt: img.contextAlt,
+                }))
+                .slice(0, 10),
+            },
+          }
           : {}),
       });
 
@@ -12442,7 +12467,7 @@ Return ONLY valid JSON:
               auditId: dbAuditId,
               requestId,
             },
-          }).catch(() => {});
+          }).catch(() => { });
         }
       }
 
@@ -12686,15 +12711,15 @@ Return ONLY valid JSON:
                         nlp: deepResult,
                         evidence_ledger: ledgerResult
                           ? {
-                              root_hash: ledgerResult.root_hash,
-                              entry_count: ledgerResult.entry_count,
-                            }
+                            root_hash: ledgerResult.root_hash,
+                            entry_count: ledgerResult.entry_count,
+                          }
                           : null,
                         content_fingerprint: fingerprint
                           ? {
-                              fingerprint: fingerprint.fingerprint,
-                              method: fingerprint.method,
-                            }
+                            fingerprint: fingerprint.fingerprint,
+                            method: fingerprint.method,
+                          }
                           : null,
                         enriched_at: new Date().toISOString(),
                       }),
@@ -12820,13 +12845,13 @@ app.post(
       const incomingFiles = Array.isArray(body.files)
         ? body.files
         : [
-            {
-              fileName: body.fileName,
-              mimeType: body.mimeType,
-              content: body.content,
-              encoding: body.encoding,
-            },
-          ];
+          {
+            fileName: body.fileName,
+            mimeType: body.mimeType,
+            content: body.content,
+            encoding: body.encoding,
+          },
+        ];
 
       const validIncomingFiles = incomingFiles.filter(
         (entry) =>
@@ -13060,9 +13085,9 @@ app.post(
       const providers = ["signal", "scorefix"].includes(uploadTier)
         ? [uploadAi1, ...PROVIDERS.filter((p) => p.model !== uploadAi1.model)]
         : [
-            ALIGNMENT_PRIMARY,
-            ...PROVIDERS.filter((p) => p.model !== ALIGNMENT_PRIMARY.model),
-          ];
+          ALIGNMENT_PRIMARY,
+          ...PROVIDERS.filter((p) => p.model !== ALIGNMENT_PRIMARY.model),
+        ];
 
       const distinctKinds = [
         ...new Set(extractedByFile.map((f) => f.uploadKind)),
@@ -13110,8 +13135,8 @@ app.post(
   Base findings only on evidence below and return valid JSON.
 
   EVIDENCE:\n${Object.entries(evidenceManifest)
-    .map(([id, value]) => `[${id}] ${value}`)
-    .join("\n")}
+          .map(([id, value]) => `[${id}] ${value}`)
+          .join("\n")}
 
   MANDATORY SCORING BOUNDS (enforced server-side):\n${boundsBlock}
   Score near the LOWER end of each range unless evidence clearly demonstrates exceptional quality.
@@ -13136,8 +13161,8 @@ This is a WRITING and EDITORIAL analysis, not a live website crawl.
 Upload: ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(", ")}.
 
 EVIDENCE:\n${Object.entries(evidenceManifest)
-          .map(([id, value]) => `[${id}] ${value}`)
-          .join("\n")}
+            .map(([id, value]) => `[${id}] ${value}`)
+            .join("\n")}
 
 ═══════════════════════════════════════════════════════════════
 AUDIT METHODOLOGY - 7-PASS CONTENT INTELLIGENCE FRAMEWORK
@@ -13253,8 +13278,8 @@ Return ONLY valid JSON:
         id: typeof rec?.id === "string" ? rec.id : `rec_up_${idx + 1}`,
         priority:
           rec?.priority === "high" ||
-          rec?.priority === "medium" ||
-          rec?.priority === "low"
+            rec?.priority === "medium" ||
+            rec?.priority === "low"
             ? rec.priority
             : "medium",
         category: typeof rec?.category === "string" ? rec.category : "General",
@@ -13265,8 +13290,8 @@ Return ONLY valid JSON:
           typeof rec?.impact === "string" ? rec.impact : "Moderate improvement",
         difficulty:
           rec?.difficulty === "easy" ||
-          rec?.difficulty === "medium" ||
-          rec?.difficulty === "hard"
+            rec?.difficulty === "medium" ||
+            rec?.difficulty === "hard"
             ? rec.difficulty
             : "medium",
         implementation:
@@ -13275,8 +13300,8 @@ Return ONLY valid JSON:
             : String(rec?.implementation ?? ""),
         evidence_ids: Array.isArray(rec?.evidence_ids)
           ? rec.evidence_ids.filter(
-              (id: unknown): id is string => typeof id === "string",
-            )
+            (id: unknown): id is string => typeof id === "string",
+          )
           : [],
       }));
       const dedupedUploadRecommendations = dedupeRecommendations(
@@ -13291,9 +13316,9 @@ Return ONLY valid JSON:
         typeof aiAnalysis.visibility_score === "number"
           ? clampScore(aiAnalysis.visibility_score)
           : computeWeightedCategoryScore(
-              aiAnalysis.category_grades,
-              evidenceBounds,
-            );
+            aiAnalysis.category_grades,
+            evidenceBounds,
+          );
       const uploadModelScores = deriveModelScores({
         baseScore: uploadVisibilityScore,
         categoryGrades: Array.isArray(aiAnalysis.category_grades)
@@ -13339,9 +13364,9 @@ Return ONLY valid JSON:
           word_count: sd.wordCount || 0,
           faq_count:
             Array.isArray(schemaMarkup?.schema_types) &&
-            schemaMarkup.schema_types.some(
-              (t: string) => String(t).toLowerCase() === "faqpage",
-            )
+              schemaMarkup.schema_types.some(
+                (t: string) => String(t).toLowerCase() === "faqpage",
+              )
               ? 5
               : 0,
           headings: {
@@ -13382,9 +13407,9 @@ Return ONLY valid JSON:
           word_count: sd.wordCount || 0,
           faq_count:
             Array.isArray(schemaMarkup?.schema_types) &&
-            schemaMarkup.schema_types.some(
-              (t: string) => String(t).toLowerCase() === "faqpage",
-            )
+              schemaMarkup.schema_types.some(
+                (t: string) => String(t).toLowerCase() === "faqpage",
+              )
               ? 5
               : 0,
           headings: {
@@ -13423,9 +13448,9 @@ Return ONLY valid JSON:
       const writingAudit =
         uploadRouting.mode === "writing_audit"
           ? normalizeWritingAudit(
-              (aiAnalysis as any)?.writing_audit || {},
-              uploadRouting.contentType,
-            )
+            (aiAnalysis as any)?.writing_audit || {},
+            uploadRouting.contentType,
+          )
           : null;
 
       const result = attachTruthSignals({
@@ -13442,19 +13467,19 @@ Return ONLY valid JSON:
         ai_platform_scores: {
           chatgpt: clampScore(
             aiAnalysis.ai_platform_scores?.chatgpt ??
-              uploadDerivedPlatformScores.chatgpt,
+            uploadDerivedPlatformScores.chatgpt,
           ),
           perplexity: clampScore(
             aiAnalysis.ai_platform_scores?.perplexity ??
-              uploadDerivedPlatformScores.perplexity,
+            uploadDerivedPlatformScores.perplexity,
           ),
           google_ai: clampScore(
             aiAnalysis.ai_platform_scores?.google_ai ??
-              uploadDerivedPlatformScores.google_ai,
+            uploadDerivedPlatformScores.google_ai,
           ),
           claude: clampScore(
             aiAnalysis.ai_platform_scores?.claude ??
-              uploadDerivedPlatformScores.claude,
+            uploadDerivedPlatformScores.claude,
           ),
         },
         ai_model_scores: uploadModelScores,
@@ -13477,9 +13502,9 @@ Return ONLY valid JSON:
           has_meta_description: !!(sd.meta?.description || "").trim(),
           faq_count:
             Array.isArray(schemaMarkup?.schema_types) &&
-            schemaMarkup.schema_types.some(
-              (t: string) => String(t).toLowerCase() === "faqpage",
-            )
+              schemaMarkup.schema_types.some(
+                (t: string) => String(t).toLowerCase() === "faqpage",
+              )
               ? 5
               : 0,
         },
@@ -13894,8 +13919,8 @@ app.post("/api/admin/newsletter/preview", adminLimiter, async (req, res) => {
   const latestScoreRaw = body.latestScore;
   const parsedLatestScore =
     latestScoreRaw === null ||
-    latestScoreRaw === "" ||
-    typeof latestScoreRaw === "undefined"
+      latestScoreRaw === "" ||
+      typeof latestScoreRaw === "undefined"
       ? null
       : Number(latestScoreRaw);
   const latestScore = Number.isFinite(parsedLatestScore as number)
@@ -14437,17 +14462,17 @@ app.get("/api/admin/pitch-metrics", adminLimiter, async (req, res) => {
         signup_to_audit_pct:
           Number(conversion.total_signups) > 0
             ? +(
-                (Number(conversion.ran_audit) /
-                  Number(conversion.total_signups)) *
-                100
-              ).toFixed(1)
+              (Number(conversion.ran_audit) /
+                Number(conversion.total_signups)) *
+              100
+            ).toFixed(1)
             : 0,
         audit_to_paid_pct:
           Number(conversion.ran_audit) > 0
             ? +(
-                (Number(conversion.paid_tier) / Number(conversion.ran_audit)) *
-                100
-              ).toFixed(1)
+              (Number(conversion.paid_tier) / Number(conversion.ran_audit)) *
+              100
+            ).toFixed(1)
             : 0,
       },
       feature_adoption_30d: {
@@ -15142,7 +15167,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
         if (driftErrors.length) {
           console.error(
             "[Pricing Drift] Stripe config does not match PRICING contract:\n  " +
-              driftErrors.join("\n  "),
+            driftErrors.join("\n  "),
           );
         } else {
           console.log("[Pricing] All Stripe amounts match PRICING contract ✓");
@@ -15228,10 +15253,10 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
         typeof data.visibility_score === "number"
           ? clampScore(data.visibility_score)
           : computeWeightedCategoryScore(
-              Array.isArray(data.category_grades) ? data.category_grades : [],
-              undefined,
-              0,
-            );
+            Array.isArray(data.category_grades) ? data.category_grades : [],
+            undefined,
+            0,
+          );
       const auditId = await persistAuditRecord({
         userId,
         workspaceId,
@@ -15254,7 +15279,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url: targetUrl,
           visibility_score: score,
           source: "scheduled_rescan",
-        }).catch(() => {});
+        }).catch(() => { });
 
         dispatchAuditReportDeliveries({
           userId,
@@ -15263,7 +15288,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url: targetUrl,
           result: { ...data, visibility_score: score },
           ownerTier: "signal",
-        }).catch(() => {});
+        }).catch(() => { });
 
         if (isGoogleMeasurementConfigured()) {
           sendMeasurementEvent({
@@ -15275,7 +15300,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
               workspace_id: workspaceId,
               visibility_score: score,
             },
-          }).catch(() => {});
+          }).catch(() => { });
         }
       }
 
@@ -15303,7 +15328,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           audit_id: auditId,
           url,
           source: "scheduled_rescan",
-        }).catch(() => {});
+        }).catch(() => { });
         await createUserNotification({
           userId,
           eventType: "scheduled_rescan_completed",
@@ -15315,7 +15340,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             auditId,
             url,
           },
-        }).catch(() => {});
+        }).catch(() => { });
         await createPlatformNotification({
           eventType: "scheduled_rescan_completed",
           title: "Background rescan executed",
@@ -15328,7 +15353,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             url,
             source: "scheduled_rescan",
           },
-        }).catch(() => {});
+        }).catch(() => { });
 
         // ── Trend alert: detect score drops ──────────────────────────────
         try {
@@ -15398,7 +15423,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url,
           source: "scheduled_rescan",
           reason,
-        }).catch(() => {});
+        }).catch(() => { });
         await createUserNotification({
           userId,
           eventType: "scheduled_rescan_failed",
@@ -15410,7 +15435,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             url,
             reason,
           },
-        }).catch(() => {});
+        }).catch(() => { });
         await createPlatformNotification({
           eventType: "scheduled_rescan_failed",
           title: "Background rescan failed",
@@ -15423,7 +15448,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             reason,
             source: "scheduled_rescan",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
       onSkipped: async ({ userId, workspaceId, url, scheduleId, reason }) => {
         await dispatchWebhooks(userId, workspaceId, "rescan.failed", {
@@ -15431,7 +15456,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url,
           source: "scheduled_rescan",
           reason: `skipped_no_substantial_change:${reason}`,
-        }).catch(() => {});
+        }).catch(() => { });
         await createUserNotification({
           userId,
           eventType: "scheduled_rescan_skipped",
@@ -15443,7 +15468,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             url,
             reason,
           },
-        }).catch(() => {});
+        }).catch(() => { });
         await createPlatformNotification({
           eventType: "scheduled_rescan_skipped",
           title: "Background rescan skipped",
@@ -15456,7 +15481,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             reason,
             source: "scheduled_rescan",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
     });
     startCompetitorAutopilotLoop(analyzeInternally);
@@ -15477,7 +15502,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             runAt,
             source: "auto_score_fix",
           },
-        }).catch(() => {});
+        }).catch(() => { });
 
         await createPlatformNotification({
           eventType: "auto_score_fix_rescan_scheduled",
@@ -15491,7 +15516,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             runAt,
             source: "auto_score_fix",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
       onCompleted: async ({
         userId,
@@ -15511,7 +15536,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           score_before: scoreBefore,
           score_after: scoreAfter,
           score_delta: scoreDelta,
-        }).catch(() => {});
+        }).catch(() => { });
 
         // ── Fix learning + timeline ───────────────────────────────────────
         if (scoreAfter !== null && Number.isFinite(scoreAfter)) {
@@ -15521,7 +15546,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             expectedDelta: 5, // conservative default; job-level deltas are tracked separately
             actualDelta: scoreDelta ?? 0,
             url,
-          }).catch(() => {});
+          }).catch(() => { });
 
           recordTimelinePoint({
             userId,
@@ -15532,7 +15557,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             fixId: jobId ?? null,
             eventType: "fix_merged",
             eventLabel: `Auto fix merged (job ${jobId})`,
-          }).catch(() => {});
+          }).catch(() => { });
         }
 
         await createUserNotification({
@@ -15550,7 +15575,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             scoreDelta,
             source: "auto_score_fix",
           },
-        }).catch(() => {});
+        }).catch(() => { });
 
         await createPlatformNotification({
           eventType: "auto_score_fix_rescan_completed",
@@ -15567,7 +15592,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             scoreDelta,
             source: "auto_score_fix",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
       onFailed: async ({ userId, workspaceId, jobId, url, reason }) => {
         await dispatchWebhooks(userId, workspaceId, "rescan.failed", {
@@ -15575,7 +15600,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url,
           source: "auto_score_fix",
           reason,
-        }).catch(() => {});
+        }).catch(() => { });
 
         await createUserNotification({
           userId,
@@ -15589,7 +15614,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             reason,
             source: "auto_score_fix",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
     });
 
@@ -15612,7 +15637,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           score_before: scoreBefore,
           score_after: scoreAfter,
           score_delta: scoreDelta,
-        }).catch(() => {});
+        }).catch(() => { });
 
         await createUserNotification({
           userId,
@@ -15629,7 +15654,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             scoreDelta,
             source: "deploy_verification",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
       onFailed: async ({ userId, workspaceId, jobId, url, reason }) => {
         await dispatchWebhooks(userId, workspaceId, "rescan.failed", {
@@ -15637,7 +15662,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           url,
           source: "deploy_verification",
           reason,
-        }).catch(() => {});
+        }).catch(() => { });
 
         await createUserNotification({
           userId,
@@ -15651,7 +15676,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
             reason,
             source: "deploy_verification",
           },
-        }).catch(() => {});
+        }).catch(() => { });
       },
     });
     startTrialExpiryLoop();
@@ -15661,6 +15686,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startTaskWorker();
     startAuditWorkerLoop();
     startFixWorker();
+    startTrackingWorker();
     startPRWorker();
     startScheduler();
     startSelfHealingLoop();

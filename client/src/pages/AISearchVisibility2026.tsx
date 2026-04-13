@@ -56,7 +56,7 @@ const IMPLEMENTATION_STEPS = [
 
 export default function AISearchVisibility2026() {
   usePageMeta({
-    title: 'AI Visibility Intelligence Platform 2026',
+    title: 'AI Visibility Platform 2026',
     description:
       'A 2026 framework for founders: shift from traditional SEO to AI Visibility with AEO, geo relevance, and Q/A content.',
     path: '/ai-search-visibility-2026',

@@ -89,7 +89,7 @@ export default function BlogsPage() {
   const hasActiveFilters = searchQuery || selectedTags.length > 0 || selectedCategories.length > 0 || sortBy !== 'newest';
 
   usePageMeta({
-    title: 'AiVIS Blogs | AI Visibility, Citation, and Answer Engine Optimization Essays',
+    title: 'Blogs | AI Visibility, Citation, and Answer Engine Optimization',
     description:
       'Enterprise blog on Answer Engine Optimization, AI visibility, content extractability, citations, and the future of search. Written by AiVIS founder.',
     path: '/blogs',

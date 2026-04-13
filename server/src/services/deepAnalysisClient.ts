@@ -22,6 +22,11 @@ const HEALTH_CHECK_INTERVAL_MS = 60_000; // Re-check every 60s
 // Health check
 // ---------------------------------------------------------------------------
 
+/** Returns the last-known availability without triggering a new health check. */
+export function getCachedPythonAvailability(): boolean {
+  return _serviceAvailable === true;
+}
+
 export async function isPythonServiceAvailable(): Promise<boolean> {
   const now = Date.now();
   if (_serviceAvailable !== null && now - _lastHealthCheck < HEALTH_CHECK_INTERVAL_MS) {

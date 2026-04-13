@@ -58,6 +58,12 @@ Allow: /workflow
 Allow: /ai-search-visibility-2026
 Allow: /aeo-playbook-2026
 Allow: /geo-ai-ranking-2026
+Allow: /niche-discovery
+Allow: /partnership-terms
+Allow: /keywords
+Allow: /competitors
+Allow: /citations
+Allow: /verify-license
 
 # Private/authenticated/non-public routes
 Disallow: /admin
@@ -66,7 +72,6 @@ Disallow: /app/
 Disallow: /auth
 Disallow: /billing
 Disallow: /mcp
-Disallow: /niche-discovery
 Disallow: /notifications
 Disallow: /payment-canceled
 Disallow: /payment-success
@@ -76,7 +81,6 @@ Disallow: /report/
 Disallow: /settings
 Disallow: /team
 Disallow: /verify-email
-Disallow: /partnership-terms
 
 Crawl-delay: 1
 

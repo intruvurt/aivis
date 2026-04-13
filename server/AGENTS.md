@@ -37,7 +37,8 @@ The workspace owner's Windows path contains `$e` (`Ma$e`). PowerShell expands `$
 - `src/services/webSearch.ts` - DuckDuckGo HTML + Bing web search scrapers (free, no API keys)
 - `src/services/duckDuckGoSearch.ts` - DDG Instant Answer API (knowledge graph)
 - `src/services/citationTester.ts` - citation test orchestration (all 3 search engines in parallel)
-- `src/services/mentionTracker.ts` - brand mention scanner (15 free public sources, no API keys)
+- `src/services/mentionTracker.ts` - brand mention scanner (19 free public sources, no API keys: Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions)
+- `src/services/serpService.ts` - SerpAPI integration for structured SERP signals (knowledge panel, organic rank, featured snippet, PAA, rich results, sitelinks). Tier-gated: Alignment+ only. Set `SERP_API_KEY` in Railway.
 - `src/controllers/mentions.controllers.ts` - mention scan, history, timeline handlers
 - `src/routes/mentions.ts` - `/api/mentions` routes (Alignment+ tier gate)
 - `src/controllers/competitors.controllers.ts` - competitor CRUD, comparison logic, opportunity detection

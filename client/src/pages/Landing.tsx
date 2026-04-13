@@ -257,7 +257,9 @@ const TIERS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AiVIS \u2013 AI Visibility Intelligence Platform',
+    // fullTitle bypasses 'SITE_NAME | title' so the browser tab shows the brand once
+    fullTitle: 'AiVIS \u2013 AI Visibility Intelligence Platform',
+    title: 'AI Visibility Intelligence Platform',
     description: 'AiVIS audits how answer engines read, trust, and cite your website. See what AI understands, what it cannot verify, and what to fix first.',
     path: '/',
     ogTitle: 'AiVIS – Your Site Can Rank and Still Get Skipped by AI',

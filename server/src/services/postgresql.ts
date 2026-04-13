@@ -996,6 +996,122 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_user ON pipeline_runs(user_id, created_at DESC)`,
             `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status)`,
             `CREATE INDEX IF NOT EXISTS idx_pipeline_runs_url ON pipeline_runs(target_url)`,
+            // ── Multi-tenant AI citation/mention tracker ──
+            `CREATE TABLE IF NOT EXISTS tenants (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              name TEXT NOT NULL DEFAULT 'Personal',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS tenant_users (
+              tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              role VARCHAR(20) NOT NULL DEFAULT 'owner',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              PRIMARY KEY (tenant_id, user_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tenant_users_user ON tenant_users(user_id)`,
+            `CREATE TABLE IF NOT EXISTS tracking_projects (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+              domain TEXT NOT NULL,
+              competitor_domains JSONB NOT NULL DEFAULT '[]'::jsonb,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_projects_tenant ON tracking_projects(tenant_id, created_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS tracking_queries (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+              query TEXT NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_queries_project ON tracking_queries(project_id)`,
+            `CREATE TABLE IF NOT EXISTS tracking_runs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+              status VARCHAR(20) NOT NULL DEFAULT 'queued',
+              total_queries INTEGER NOT NULL DEFAULT 0,
+              completed_queries INTEGER NOT NULL DEFAULT 0,
+              error_message TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              completed_at TIMESTAMPTZ
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_runs_project ON tracking_runs(project_id, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_runs_status ON tracking_runs(status)`,
+            `CREATE TABLE IF NOT EXISTS tracking_results (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+              query_id UUID NOT NULL REFERENCES tracking_queries(id) ON DELETE CASCADE,
+              model VARCHAR(80) NOT NULL,
+              mentioned BOOLEAN NOT NULL DEFAULT FALSE,
+              cited BOOLEAN NOT NULL DEFAULT FALSE,
+              position INTEGER,
+              raw_response TEXT,
+              competitor_mentions JSONB NOT NULL DEFAULT '[]'::jsonb,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_results_run ON tracking_results(run_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_results_query ON tracking_results(query_id)`,
+            `CREATE TABLE IF NOT EXISTS tracking_citations (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              result_id UUID NOT NULL REFERENCES tracking_results(id) ON DELETE CASCADE,
+              url TEXT NOT NULL,
+              domain TEXT NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_citations_result ON tracking_citations(result_id)`,
+            `CREATE TABLE IF NOT EXISTS tracking_query_cache (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              query_hash VARCHAR(64) NOT NULL,
+              model VARCHAR(80) NOT NULL,
+              raw_response TEXT NOT NULL,
+              expires_at TIMESTAMPTZ NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (query_hash, model)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_qcache_hash ON tracking_query_cache(query_hash, model)`,
+            `CREATE INDEX IF NOT EXISTS idx_tracking_qcache_expires ON tracking_query_cache(expires_at)`,
+            `CREATE TABLE IF NOT EXISTS competitors (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              domain TEXT UNIQUE NOT NULL,
+              first_seen TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_competitors_domain ON competitors(domain)`,
+            `CREATE TABLE IF NOT EXISTS project_competitors (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+              competitor_id UUID NOT NULL REFERENCES competitors(id) ON DELETE CASCADE,
+              score FLOAT NOT NULL DEFAULT 0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (project_id, competitor_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_project_competitors_project ON project_competitors(project_id, score DESC)`,
+            `CREATE TABLE IF NOT EXISTS competitor_metrics (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+              competitor_id UUID NOT NULL REFERENCES competitors(id) ON DELETE CASCADE,
+              mentions INTEGER NOT NULL DEFAULT 0,
+              citations INTEGER NOT NULL DEFAULT 0,
+              avg_position FLOAT,
+              UNIQUE (run_id, competitor_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_competitor_metrics_run ON competitor_metrics(run_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_competitor_metrics_competitor ON competitor_metrics(competitor_id)`,
+            `CREATE TABLE IF NOT EXISTS entity_snapshots (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+              query_id UUID NOT NULL REFERENCES tracking_queries(id) ON DELETE CASCADE,
+              model TEXT NOT NULL,
+              entity_detected BOOLEAN NOT NULL DEFAULT FALSE,
+              entity_name TEXT,
+              category TEXT,
+              description TEXT,
+              confidence FLOAT NOT NULL DEFAULT 0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (run_id, query_id, model)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_snapshots_run ON entity_snapshots(run_id)`,
           ];
           let patchOk = 0;
           let patchFail = 0;
@@ -2852,6 +2968,9 @@ export async function runMigrations(): Promise<void> {
       _q(
         `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS score_delta NUMERIC(6,2)`,
       );
+      _q(
+        `ALTER TABLE auto_score_fix_jobs ADD COLUMN IF NOT EXISTS deterministic_patches_count INTEGER DEFAULT 0`,
+      );
 
       // ─── VCS Tokens (encrypted at rest) ──────────────────────────────────────
       _q(`
@@ -3238,6 +3357,7 @@ export async function runMigrations(): Promise<void> {
         url TEXT NOT NULL,
         title TEXT,
         snippet TEXT,
+        sentiment VARCHAR(10) DEFAULT 'neutral',
         detected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         UNIQUE(user_id, source, url)
@@ -3248,6 +3368,73 @@ export async function runMigrations(): Promise<void> {
       );
       _q(
         `CREATE INDEX IF NOT EXISTS idx_brand_mentions_source ON brand_mentions(user_id, source)`,
+      );
+
+      // ─── Mention sentiment + KPI ─────────────────────────────────────────────
+      _q(
+        `ALTER TABLE brand_mentions ADD COLUMN IF NOT EXISTS sentiment VARCHAR(10) DEFAULT 'neutral'`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS mention_kpi_snapshots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        brand TEXT NOT NULL,
+        snapshot_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        volume INTEGER NOT NULL DEFAULT 0,
+        positive_count INTEGER NOT NULL DEFAULT 0,
+        negative_count INTEGER NOT NULL DEFAULT 0,
+        neutral_count INTEGER NOT NULL DEFAULT 0,
+        net_sentiment_score FLOAT NOT NULL DEFAULT 0,
+        brand_health_score FLOAT NOT NULL DEFAULT 0,
+        source_count INTEGER NOT NULL DEFAULT 0,
+        top_sources JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, brand, snapshot_date)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_mention_kpi_user_brand ON mention_kpi_snapshots(user_id, LOWER(brand), snapshot_date DESC)`,
+      );
+
+      // ─── NER run entities ────────────────────────────────────────────────────
+      _q(`
+      CREATE TABLE IF NOT EXISTS ner_run_entities (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+        entity_text TEXT NOT NULL,
+        entity_type VARCHAR(20) NOT NULL,
+        total_count INTEGER NOT NULL DEFAULT 1,
+        is_target_brand BOOLEAN NOT NULL DEFAULT FALSE,
+        result_count INTEGER NOT NULL DEFAULT 1,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(run_id, entity_text)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_ner_run_entities_run ON ner_run_entities(run_id)`,
+      );
+
+      // ─── SERP snapshots (structured SERP data per user/domain) ──────────────
+      _q(`
+      CREATE TABLE IF NOT EXISTS serp_snapshots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        domain TEXT NOT NULL,
+        query TEXT NOT NULL,
+        snapshot_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        organic_position INTEGER,
+        featured_snippet BOOLEAN NOT NULL DEFAULT FALSE,
+        knowledge_panel BOOLEAN NOT NULL DEFAULT FALSE,
+        knowledge_panel_description TEXT,
+        paa_questions JSONB NOT NULL DEFAULT '[]'::jsonb,
+        rich_results BOOLEAN NOT NULL DEFAULT FALSE,
+        sitelinks BOOLEAN NOT NULL DEFAULT FALSE,
+        scraped_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id, domain, snapshot_date)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_serp_snapshots_user_domain ON serp_snapshots(user_id, LOWER(domain), snapshot_date DESC)`,
       );
 
       _q(
@@ -3885,6 +4072,177 @@ export async function runMigrations(): Promise<void> {
       );
       _q(
         `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS track_keywords JSONB DEFAULT '[]'`,
+      );
+
+      // ── Multi-tenant AI citation/mention tracker ──
+      _q(`
+      CREATE TABLE IF NOT EXISTS tenants (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL DEFAULT 'Personal',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(`
+      CREATE TABLE IF NOT EXISTS tenant_users (
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        role VARCHAR(20) NOT NULL DEFAULT 'owner',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (tenant_id, user_id)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tenant_users_user ON tenant_users(user_id)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_projects (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        domain TEXT NOT NULL,
+        competitor_domains JSONB NOT NULL DEFAULT '[]'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_projects_tenant ON tracking_projects(tenant_id, created_at DESC)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_queries (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+        query TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_queries_project ON tracking_queries(project_id)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_runs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+        status VARCHAR(20) NOT NULL DEFAULT 'queued',
+        total_queries INTEGER NOT NULL DEFAULT 0,
+        completed_queries INTEGER NOT NULL DEFAULT 0,
+        error_message TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_runs_project ON tracking_runs(project_id, created_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_runs_status ON tracking_runs(status)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+        query_id UUID NOT NULL REFERENCES tracking_queries(id) ON DELETE CASCADE,
+        model VARCHAR(80) NOT NULL,
+        mentioned BOOLEAN NOT NULL DEFAULT FALSE,
+        cited BOOLEAN NOT NULL DEFAULT FALSE,
+        position INTEGER,
+        raw_response TEXT,
+        competitor_mentions JSONB NOT NULL DEFAULT '[]'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_results_run ON tracking_results(run_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_results_query ON tracking_results(query_id)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_citations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        result_id UUID NOT NULL REFERENCES tracking_results(id) ON DELETE CASCADE,
+        url TEXT NOT NULL,
+        domain TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_citations_result ON tracking_citations(result_id)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS tracking_query_cache (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        query_hash VARCHAR(64) NOT NULL,
+        model VARCHAR(80) NOT NULL,
+        raw_response TEXT NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (query_hash, model)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_qcache_hash ON tracking_query_cache(query_hash, model)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_tracking_qcache_expires ON tracking_query_cache(expires_at)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS competitors (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        domain TEXT UNIQUE NOT NULL,
+        first_seen TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitors_domain ON competitors(domain)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS project_competitors (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_id UUID NOT NULL REFERENCES tracking_projects(id) ON DELETE CASCADE,
+        competitor_id UUID NOT NULL REFERENCES competitors(id) ON DELETE CASCADE,
+        score FLOAT NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (project_id, competitor_id)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_project_competitors_project ON project_competitors(project_id, score DESC)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS competitor_metrics (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+        competitor_id UUID NOT NULL REFERENCES competitors(id) ON DELETE CASCADE,
+        mentions INTEGER NOT NULL DEFAULT 0,
+        citations INTEGER NOT NULL DEFAULT 0,
+        avg_position FLOAT,
+        UNIQUE (run_id, competitor_id)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitor_metrics_run ON competitor_metrics(run_id)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_competitor_metrics_competitor ON competitor_metrics(competitor_id)`,
+      );
+      _q(`
+      CREATE TABLE IF NOT EXISTS entity_snapshots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        run_id UUID NOT NULL REFERENCES tracking_runs(id) ON DELETE CASCADE,
+        query_id UUID NOT NULL REFERENCES tracking_queries(id) ON DELETE CASCADE,
+        model TEXT NOT NULL,
+        entity_detected BOOLEAN NOT NULL DEFAULT FALSE,
+        entity_name TEXT,
+        category TEXT,
+        description TEXT,
+        confidence FLOAT NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (run_id, query_id, model)
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_entity_snapshots_run ON entity_snapshots(run_id)`,
       );
 
       // Execute all migrations in a single round-trip

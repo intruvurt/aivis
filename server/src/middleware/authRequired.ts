@@ -3,13 +3,28 @@ import type { Request, Response, NextFunction } from 'express';
 import { verifyUserToken } from '../lib/utils/jwt.js';
 import { getUserById } from '../models/User.js';
 import { redactSensitive, sanitizeError } from '../lib/safeLogging.js';
-import { 
+import {
   logMissingToken,
   logInvalidToken,
   logEmailUnverified,
   sanitizeAndLogError
 } from '../lib/securityEventLogger.js';
 import { enforceEffectiveTier, getAllowlistedElevatedEmails } from '../services/entitlementGuard.js';
+
+/**
+ * Role-based access control middleware.
+ * Must be placed AFTER authRequired in the middleware chain.
+ */
+export function requireRole(allowedRoles: string[]) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const role = (req as any).user?.role;
+    if (!role || !allowedRoles.includes(role)) {
+      res.status(403).json({ error: 'Insufficient permissions', code: 'FORBIDDEN' });
+      return;
+    }
+    next();
+  };
+}
 
 export async function authRequired(req: Request, res: Response, next: NextFunction) {
   const auth = req.headers.authorization;
@@ -64,7 +79,7 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
     // – req.userId / .tier = flat fields (used by usageGate, incrementUsage)
     req.user = { ...user, tier: effectiveTier as any, role: effectiveRole as any };
     req.userId = user.id;
-    req.tier   = effectiveTier;
+    req.tier = effectiveTier;
 
     next();
   } catch (error) {

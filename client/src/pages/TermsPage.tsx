@@ -7,7 +7,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function TermsPage() {
   usePageMeta({
-    title: 'Terms of Service | AiVIS AI Visibility Platform',
+    title: 'Terms of Service',
     description: 'AiVIS terms of service governing use of the AI visibility auditing platform, including acceptable use, billing, IP rights, and disclaimers.',
     path: '/terms',
     structuredData: [

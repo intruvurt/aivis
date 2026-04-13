@@ -3,7 +3,8 @@
  *
  * VCS token management + job submission/management for automated PR generation.
  * All routes require authentication.
- * Job submission additionally requires: signal+ tier AND ≥10 pack credits.
+ * Job submission requires ≥10 pack credits (purchased via ScoreFix upgrade).
+ * Any tier can access ScoreFix as long as they purchase the upgrade.
  *
  * FEATURE LOCKED - GitHub remediation mechanism is being redesigned.
  * All endpoints return 503 until the lock is lifted.
@@ -13,7 +14,6 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
 import { workspaceRequired } from '../middleware/workspaceRequired.js';
-import { meetsMinimumTier } from '../../../shared/types.js';
 import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
 import { getAvailablePackCredits } from '../services/scanPackCredits.js';
 import {
@@ -74,19 +74,10 @@ async function fetchGitHubApi(path: string, token: string) {
 
 // ─── VCS Token Management ─────────────────────────────────────────────────────
 
-/** POST /api/auto-score-fix/tokens - save or update a VCS token (signal+) */
+/** POST /api/auto-score-fix/tokens - save or update a VCS token (any tier with ScoreFix upgrade) */
 router.post('/tokens', async (req: Request, res: Response) => {
   const user = (req as any).user;
   const userId = String(user?.id || '');
-  const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
-
-  if (!meetsMinimumTier(userTier, 'signal')) {
-    return res.status(403).json({
-      error: 'VCS integration requires Signal or higher.',
-      code: 'TIER_INSUFFICIENT',
-      requiredTier: 'signal',
-    });
-  }
 
   const { provider, token } = (req.body || {}) as { provider?: string; token?: string };
   if (!provider || !VALID_PROVIDERS.includes(provider as VcsProvider)) {
@@ -250,16 +241,7 @@ router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
   const workspaceId = String((req as any).workspace?.id || '');
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
 
-  // Tier gate: signal+
-  if (!meetsMinimumTier(userTier, 'signal')) {
-    return res.status(403).json({
-      error: 'Auto Score Fix requires Signal or higher.',
-      code: 'TIER_INSUFFICIENT',
-      requiredTier: 'signal',
-    });
-  }
-
-  // Credit gate
+  // Credit gate — any tier can use ScoreFix as long as they purchased the upgrade
   const availableCredits = await getAvailablePackCredits(userId);
   if (availableCredits < AUTO_SCORE_FIX_CREDIT_COST) {
     return res.status(402).json({
@@ -468,7 +450,7 @@ router.get('/status', async (req: Request, res: Response) => {
   const userId = String(user?.id || '');
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
 
-  const tierEligible = meetsMinimumTier(userTier, 'signal');
+  const tierEligible = true; // Any tier can access ScoreFix with credits
 
   let availableCredits = 0;
   try {
@@ -480,7 +462,7 @@ router.get('/status', async (req: Request, res: Response) => {
     tier_eligible: tierEligible,
     available_credits: availableCredits,
     required_credits: AUTO_SCORE_FIX_CREDIT_COST,
-    eligible: tierEligible && availableCredits >= AUTO_SCORE_FIX_CREDIT_COST,
+    eligible: availableCredits >= AUTO_SCORE_FIX_CREDIT_COST,
   });
 });
 

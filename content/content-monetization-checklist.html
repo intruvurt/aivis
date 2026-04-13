@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Monetization Platform Checklist — 4-Platform Revenue System</title>
+<meta name="description" content="A printable, step-by-step checklist for monetizing content across Reddit, Blogger, Substack, and WhatsApp. Covers foundation, discovery, capture, nurture, conversion, and scaling." />
+<meta name="robots" content="noindex" />
+
+<style>
+@media print {
+  body { padding: 0; font-size: 11pt; }
+  .no-print, .no-print * { display: none !important; }
+  .page-break { page-break-before: always; }
+  .check-item input[type="checkbox"] { -webkit-appearance: checkbox; appearance: checkbox; }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  color: #1a1a2e;
+  background: #f8f9fc;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  padding: 40px 36px 32px;
+}
+
+.header h1 {
+  font-size: 1.75em;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.header p {
+  font-size: 1em;
+  opacity: 0.85;
+  max-width: 600px;
+}
+
+.header .badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.body-content {
+  padding: 32px 36px 40px;
+}
+
+.progress-bar {
+  background: #e8eaf0;
+  border-radius: 8px;
+  height: 10px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress-bar .fill {
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  height: 100%;
+  width: 0%;
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 0.85em;
+  color: #6b7280;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8eaf0;
+}
+
+.section-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.section-header h2 {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.section-header .count {
+  margin-left: auto;
+  font-size: 0.8em;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.check-item:hover {
+  background: #f8f9fc;
+}
+
+.check-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: #10b981;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.check-item label {
+  cursor: pointer;
+  flex: 1;
+}
+
+.check-item .task {
+  font-weight: 600;
+  color: #1a1a2e;
+  display: block;
+  font-size: 0.95em;
+}
+
+.check-item .detail {
+  font-size: 0.85em;
+  color: #6b7280;
+  display: block;
+  margin-top: 2px;
+}
+
+.check-item.checked .task {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+/* Section color coding */
+.s-foundation .section-icon { background: #ede9fe; color: #7c3aed; }
+.s-discovery .section-icon { background: #dbeafe; color: #2563eb; }
+.s-capture .section-icon   { background: #d1fae5; color: #059669; }
+.s-nurture .section-icon   { background: #fef3c7; color: #d97706; }
+.s-convert .section-icon   { background: #fce7f3; color: #db2777; }
+.s-scale .section-icon     { background: #e0e7ff; color: #4338ca; }
+.s-avoid .section-icon     { background: #fee2e2; color: #dc2626; }
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 32px;
+}
+
+.timeline-card {
+  background: #f8f9fc;
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-left: 3px solid #3b82f6;
+}
+
+.timeline-card h4 {
+  font-size: 0.8em;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.timeline-card p {
+  font-size: 0.85em;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.footer-note {
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 0.88em;
+  color: #1e40af;
+  margin-top: 8px;
+}
+
+.print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a1a2e;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: background 0.2s;
+}
+
+.print-btn:hover { background: #0f3460; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <div class="badge">Free Resource</div>
+  <h1>Content Monetization Platform Checklist</h1>
+  <p>The complete step-by-step action plan for building a revenue system across Reddit, Blogger, Substack &amp; WhatsApp.</p>
+</div>
+
+<div class="body-content">
+
+<div class="no-print">
+  <button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+  <div class="progress-label"><span id="progressText">0 of 52 completed</span></div>
+  <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+</div>
+
+<!-- TIMELINE OVERVIEW -->
+<div class="timeline">
+  <div class="timeline-card">
+    <h4>Month 1-2</h4>
+    <p>Foundation &amp; Discovery: Blogger + Reddit active</p>
+  </div>
+  <div class="timeline-card">
+    <h4>Month 3-4</h4>
+    <p>Capture &amp; Nurture: Lead magnets + Substack cadence</p>
+  </div>
+  <div class="timeline-card">
+    <h4>Month 5-6</h4>
+    <p>Conversion: WhatsApp offers + Substack paid tier</p>
+  </div>
+  <div class="timeline-card">
+    <h4>Month 7-12</h4>
+    <p>Scale: Repurpose loop + second product launch</p>
+  </div>
+</div>
+
+<!-- ======================== SECTION 1: FOUNDATION ======================== -->
+<div class="section s-foundation">
+  <div class="section-header">
+    <div class="section-icon">&#9881;</div>
+    <h2>Phase 1 &mdash; Foundation Setup</h2>
+    <span class="count" data-section="foundation">0/8</span>
+  </div>
+
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f1" /><label for="f1">
+      <span class="task">Create Blogger blog</span>
+      <span class="detail">Pick a niche-relevant subdomain. Complete "About" and "Contact" pages.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f2" /><label for="f2">
+      <span class="task">Keyword research — find 20 long-tail keywords</span>
+      <span class="detail">Target "how to" and "best X for Y" queries with low competition. Use Google autocomplete, AlsoAsked, or Ubersuggest free tier.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f3" /><label for="f3">
+      <span class="task">Publish first 2 SEO-optimised Blogger articles</span>
+      <span class="detail">One tutorial post, one listicle. Include H1/H2/H3 hierarchy, meta description, and internal links.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f4" /><label for="f4">
+      <span class="task">Set up free Substack newsletter</span>
+      <span class="detail">Write a welcome email that introduces you and sets expectations for frequency and topic.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f5" /><label for="f5">
+      <span class="task">Create or optimise Reddit profile</span>
+      <span class="detail">Bio links to Blogger homepage. Avatar and banner match your brand. Pin one value post.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f6" /><label for="f6">
+      <span class="task">Identify 3-4 target subreddits</span>
+      <span class="detail">Must have 10k+ members, active daily threads, and rules that allow self-post guides.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f7" /><label for="f7">
+      <span class="task">Add JSON-LD structured data to every Blogger post</span>
+      <span class="detail">Article schema, FAQ schema where relevant, HowTo schema for tutorials. Validate with Google Rich Results Test.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="foundation">
+    <input type="checkbox" id="f8" /><label for="f8">
+      <span class="task">Set up Google Search Console for Blogger</span>
+      <span class="detail">Submit sitemap. Monitor indexing status weekly.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 2: DISCOVERY ======================== -->
+<div class="section s-discovery">
+  <div class="section-header">
+    <div class="section-icon">&#128269;</div>
+    <h2>Phase 2 &mdash; Discovery (Reddit + Blogger SEO)</h2>
+    <span class="count" data-section="discovery">0/8</span>
+  </div>
+
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d1" /><label for="d1">
+      <span class="task">Post 3-5 substantive Reddit comments daily for 2 weeks</span>
+      <span class="detail">Answer questions thoroughly. No links. No self-promotion. Build comment karma and profile authority.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d2" /><label for="d2">
+      <span class="task">Publish first original Reddit post ("how I did X" format)</span>
+      <span class="detail">Share real data, process, or results. End with "happy to answer questions." Do NOT link to your blog in the post body.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d3" /><label for="d3">
+      <span class="task">Reach a cadence of 2 Blogger articles per week</span>
+      <span class="detail">Alternate between tutorial posts and listicle/comparison posts. Aim for 1,500+ words each.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d4" /><label for="d4">
+      <span class="task">Interlink all Blogger articles</span>
+      <span class="detail">Every post links to at least 2 other posts on your blog. Keeps visitors on site and improves SEO crawl depth.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d5" /><label for="d5">
+      <span class="task">Publish 1 Reddit thread per week (ongoing)</span>
+      <span class="detail">Rotate formats: breakdown, comparison, case study, AMA-style. Track which subreddits drive the most profile clicks.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d6" /><label for="d6">
+      <span class="task">Check Google Search Console for indexed pages</span>
+      <span class="detail">All published posts should be indexed within 7-14 days. Request indexing for any that are not.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d7" /><label for="d7">
+      <span class="task">Identify top 3 performing Blogger posts by traffic</span>
+      <span class="detail">These become your priority posts for lead magnet embedding and affiliate links.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="discovery">
+    <input type="checkbox" id="d8" /><label for="d8">
+      <span class="task">Benchmark: 50+ organic Blogger visitors/day by month 3</span>
+      <span class="detail">If below 50, revisit keyword targeting. If above, accelerate publishing cadence.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 3: CAPTURE ======================== -->
+<div class="section s-capture">
+  <div class="section-header">
+    <div class="section-icon">&#127919;</div>
+    <h2>Phase 3 &mdash; Capture (Lead Magnets)</h2>
+    <span class="count" data-section="capture">0/8</span>
+  </div>
+
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c1" /><label for="c1">
+      <span class="task">Create first lead magnet (checklist or template)</span>
+      <span class="detail">Must be directly related to your top-performing blog post topic. Immediately useful, under 5 minutes to consume.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c2" /><label for="c2">
+      <span class="task">Embed lead magnet CTA in every Blogger post</span>
+      <span class="detail">Place after the first major section AND at the end of the article. Use a visually distinct box.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c3" /><label for="c3">
+      <span class="task">Offer dual delivery: email (Substack) OR WhatsApp</span>
+      <span class="detail">Giving a choice increases total conversion rate by 20-30%. Both channels build your owned audience.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c4" /><label for="c4">
+      <span class="task">Set up WhatsApp Business account</span>
+      <span class="detail">Create your first broadcast list. Set business profile with description, category, and website link.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c5" /><label for="c5">
+      <span class="task">Create second lead magnet for a different topic</span>
+      <span class="detail">Different blog post = different lead magnet. Specificity converts better than one generic offer.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c6" /><label for="c6">
+      <span class="task">Add floating sidebar or header opt-in widget on Blogger</span>
+      <span class="detail">Visible on every page. Simple headline + email/WhatsApp field. Captures visitors who land on any post.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c7" /><label for="c7">
+      <span class="task">Track lead magnet conversion rate</span>
+      <span class="detail">Healthy: 5-15% of blog visitors. Below 5% = make the offer more specific or reposition the CTA box.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="capture">
+    <input type="checkbox" id="c8" /><label for="c8">
+      <span class="task">Benchmark: 10-50 Substack subscribers by end of month 2</span>
+      <span class="detail">Plus a handful of WhatsApp broadcast contacts from lead magnets.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 4: NURTURE ======================== -->
+<div class="section s-nurture">
+  <div class="section-header">
+    <div class="section-icon">&#128140;</div>
+    <h2>Phase 4 &mdash; Nurture (Substack Newsletter)</h2>
+    <span class="count" data-section="nurture">0/8</span>
+  </div>
+
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n1" /><label for="n1">
+      <span class="task">Establish weekly newsletter cadence (same day, same time)</span>
+      <span class="detail">Consistency trains open-habit. Tuesday or Thursday mornings perform well for most niches.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n2" /><label for="n2">
+      <span class="task">Rotate newsletter formats to maintain engagement</span>
+      <span class="detail">Weekly insight, curated roundup, behind-the-scenes, framework issue. Vary to prevent fatigue.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n3" /><label for="n3">
+      <span class="task">Include one clear CTA per newsletter issue</span>
+      <span class="detail">Reply to this email, share with a friend, read the full blog post, or join WhatsApp. One CTA only.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n4" /><label for="n4">
+      <span class="task">Track open rate weekly</span>
+      <span class="detail">Healthy for small lists: 40%+. Declining open rate = subject lines need work or content quality dropping.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n5" /><label for="n5">
+      <span class="task">Track reply rate per issue</span>
+      <span class="detail">2-5% reply rate indicates strong engagement. Ask questions in your newsletters to encourage replies.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n6" /><label for="n6">
+      <span class="task">Send WhatsApp tips 2x per week to broadcast list</span>
+      <span class="detail">Quick value messages. Voice notes convert 3-5x better than text for building personal connection.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n7" /><label for="n7">
+      <span class="task">Invite engaged Substack subscribers to WhatsApp VIP list</span>
+      <span class="detail">High-openers and frequent repliers. Personal channel builds deeper trust for future offers.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="nurture">
+    <input type="checkbox" id="n8" /><label for="n8">
+      <span class="task">Benchmark: 100+ Substack subscribers by end of month 3</span>
+      <span class="detail">Growing from both Blogger lead magnets and Reddit profile traffic.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 5: CONVERSION ======================== -->
+<div class="section s-convert">
+  <div class="section-header">
+    <div class="section-icon">&#128176;</div>
+    <h2>Phase 5 &mdash; Conversion (Monetisation)</h2>
+    <span class="count" data-section="convert">0/10</span>
+  </div>
+
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v1" /><label for="v1">
+      <span class="task">Launch Substack paid tier ($7-15/mo)</span>
+      <span class="detail">Only after 200+ engaged free subscribers. Paid content: deeper analysis, exclusive frameworks, Q&amp;A.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v2" /><label for="v2">
+      <span class="task">Create first digital product ($19-49)</span>
+      <span class="detail">Template pack, toolkit, or guide that solves a specific problem. Zero reproduction cost, infinite margin.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v3" /><label for="v3">
+      <span class="task">Set up payment page (Gumroad, Stripe, or LemonSqueezy)</span>
+      <span class="detail">Clean checkout. One-tap purchase from WhatsApp link. Mobile-optimised is critical.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v4" /><label for="v4">
+      <span class="task">Run 3-email Substack launch sequence</span>
+      <span class="detail">Email 1: problem. Email 2: solution + product link. Email 3: urgency/last chance. Space over 3 days.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v5" /><label for="v5">
+      <span class="task">Send first WhatsApp flash offer</span>
+      <span class="detail">"First 10 people to reply get [product] at [discount price]." Track reply count and conversions.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v6" /><label for="v6">
+      <span class="task">Add affiliate links to top 5 Blogger posts</span>
+      <span class="detail">Only recommend tools you genuinely use. Contextual placement within reviews and tutorials.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v7" /><label for="v7">
+      <span class="task">Offer a one-on-one service via WhatsApp ($97-250)</span>
+      <span class="detail">Strategy call, audit, or coaching session. Use for early cash flow while passive revenue builds.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v8" /><label for="v8">
+      <span class="task">Track conversion rate from each channel</span>
+      <span class="detail">WhatsApp flash offers, Substack email launches, Blogger affiliate clicks. Know which channel sells best.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v9" /><label for="v9">
+      <span class="task">Record and sell a workshop ($29-79)</span>
+      <span class="detail">Two-hour recorded session teaching a process. Sell as evergreen product via Substack &amp; WhatsApp.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="convert">
+    <input type="checkbox" id="v10" /><label for="v10">
+      <span class="task">Benchmark: $500-2,000/mo combined revenue by month 5-6</span>
+      <span class="detail">From Substack paid + digital products + affiliate income + services.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 6: SCALE ======================== -->
+<div class="section s-scale">
+  <div class="section-header">
+    <div class="section-icon">&#128640;</div>
+    <h2>Phase 6 &mdash; Scale &amp; Compound (Month 7-12)</h2>
+    <span class="count" data-section="scale">0/7</span>
+  </div>
+
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s1" /><label for="s1">
+      <span class="task">Activate the content repurposing loop</span>
+      <span class="detail">Blogger post → Reddit thread → Substack deep dive → WhatsApp voice note. One idea = 4 platform touches.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s2" /><label for="s2">
+      <span class="task">Create segmented WhatsApp broadcast lists</span>
+      <span class="detail">Segment by interest/topic based on which lead magnet they opted into. Segmented offers convert 2-3x higher.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s3" /><label for="s3">
+      <span class="task">Launch a second product at a higher price point</span>
+      <span class="detail">Build on your first product's success. Bundle, expand, or create a premium tier.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s4" /><label for="s4">
+      <span class="task">Establish 6-8 week launch cycles</span>
+      <span class="detail">Tease (week 1) → Build anticipation (week 2) → Launch (week 3) → Close with flash offer (week 4).</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s5" /><label for="s5">
+      <span class="task">Optimise top 5 evergreen Blogger posts</span>
+      <span class="detail">Tailored lead magnet per post. Strong internal links. Affiliate links. These are your automated funnel engines.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s6" /><label for="s6">
+      <span class="task">Add referral incentive: "Refer 3 friends, get bonus"</span>
+      <span class="detail">Turns conversion channel into discovery. WhatsApp subscribers refer friends to Substack for a free resource.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="scale">
+    <input type="checkbox" id="s7" /><label for="s7">
+      <span class="task">Benchmark: $2,000-5,000/mo by month 12</span>
+      <span class="detail">Revenue from Substack paid + 2 digital products + affiliate + periodic services. Phase out 1-on-1 as passive grows.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ======================== SECTION 7: MISTAKES TO AVOID ======================== -->
+<div class="section s-avoid">
+  <div class="section-header">
+    <div class="section-icon">&#9888;</div>
+    <h2>Mistakes to Avoid (Sanity Checks)</h2>
+    <span class="count" data-section="avoid">0/7</span>
+  </div>
+
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a1" /><label for="a1">
+      <span class="task">Never sell directly on Reddit</span>
+      <span class="detail">Reddit is reputation-only. Promotional posts get you banned and undo months of authority-building.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a2" /><label for="a2">
+      <span class="task">Every Blogger post targets a real search keyword</span>
+      <span class="detail">No diary posts. No "my thoughts on X." Every article serves an intent — how to, best, compare, review.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a3" /><label for="a3">
+      <span class="task">Do NOT launch Substack paid before 200 free subscribers</span>
+      <span class="detail">Gating too early kills momentum. Build trust with free first, then convert.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a4" /><label for="a4">
+      <span class="task">Limit WhatsApp to 2-3 broadcasts per week maximum</span>
+      <span class="detail">More than 3 and people mute/block. Every message must justify the interruption.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a5" /><label for="a5">
+      <span class="task">Every Blogger post has a lead magnet CTA</span>
+      <span class="detail">Blog traffic without capture = wasted traffic. No exceptions.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a6" /><label for="a6">
+      <span class="task">Layer platforms — do not launch all 4 simultaneously</span>
+      <span class="detail">Week 1: Blogger + Reddit. Week 3: Add Substack. Month 2: Add WhatsApp. Layering beats chaos.</span>
+    </label>
+  </div>
+  <div class="check-item" data-group="avoid">
+    <input type="checkbox" id="a7" /><label for="a7">
+      <span class="task">Free content must be so good that paid feels inevitable</span>
+      <span class="detail">If readers don't think "the paid stuff must be even better," your funnel will not convert.</span>
+    </label>
+  </div>
+</div>
+
+<div class="footer-note">
+  <strong>Remember:</strong> Reddit brings them in. Blogger captures them. Substack earns their trust. WhatsApp closes the deal. Execute this checklist phase by phase and you will have a working revenue system within 6 months.
+</div>
+
+</div><!-- .body-content -->
+</div><!-- .container -->
+
+<script>
+(function () {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  var total = checkboxes.length;
+  var storageKey = 'cm_checklist_state';
+
+  function saveState() {
+    var state = {};
+    checkboxes.forEach(function (cb) { state[cb.id] = cb.checked; });
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      var state = JSON.parse(raw);
+      checkboxes.forEach(function (cb) {
+        if (state[cb.id]) cb.checked = true;
+      });
+    } catch (e) {}
+  }
+
+  function updateProgress() {
+    var checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+    var pct = Math.round((checked / total) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = checked + ' of ' + total + ' completed';
+
+    // Update section counts
+    var sections = ['foundation','discovery','capture','nurture','convert','scale','avoid'];
+    sections.forEach(function (s) {
+      var items = document.querySelectorAll('[data-group="' + s + '"] input[type="checkbox"]');
+      var done = 0;
+      items.forEach(function (cb) { if (cb.checked) done++; });
+      var label = document.querySelector('[data-section="' + s + '"]');
+      if (label) label.textContent = done + '/' + items.length;
+    });
+  }
+
+  function toggleChecked(e) {
+    var item = e.target.closest('.check-item');
+    if (item) {
+      if (e.target.checked) item.classList.add('checked');
+      else item.classList.remove('checked');
+    }
+    saveState();
+    updateProgress();
+  }
+
+  loadState();
+  // Apply visual state on load
+  checkboxes.forEach(function (cb) {
+    if (cb.checked) {
+      var item = cb.closest('.check-item');
+      if (item) item.classList.add('checked');
+    }
+    cb.addEventListener('change', toggleChecked);
+  });
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>

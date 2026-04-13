@@ -20,6 +20,7 @@ const linkGroups = [
       { label: "Blog", to: "/blogs" },
       { label: "Guide", to: "/guide" },
       { label: "FAQ", to: "/faq" },
+      { label: "Substack", to: "https://substack.com/@intruvurtlabs", external: true },
     ],
   },
   {
@@ -43,11 +44,17 @@ export default function Footer() {
         <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300/75">AiVIS</span>
 
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/60">
-          {linkGroups.flatMap((g) => g.links).map((link) => (
-            <Link key={link.to} to={link.to} className="transition hover:text-white">
-              {link.label}
-            </Link>
-          ))}
+          {linkGroups.flatMap((g) => g.links).map((link) =>
+            'external' in link && link.external ? (
+              <a key={link.to} href={link.to} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.to} to={link.to} className="transition hover:text-white">
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-4 text-xs text-white/40">

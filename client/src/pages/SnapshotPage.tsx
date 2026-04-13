@@ -98,6 +98,26 @@ export default function SnapshotPage() {
   const colors = scoreColor(score);
   const auditId = result.audit_id;
 
+  // Highlight the target URL inside the summary text
+  const targetHost = (() => {
+    try { return new URL(result.url).hostname.replace(/^www\./, ""); } catch { return ""; }
+  })();
+
+  const summaryNode = useMemo(() => {
+    const raw = result.summary || "";
+    if (!targetHost || !raw.includes(targetHost)) return raw;
+    const idx = raw.indexOf(targetHost);
+    return (
+      <>
+        {raw.slice(0, idx)}
+        <span className="inline-flex items-center gap-1 rounded-md bg-cyan-400/15 px-1.5 py-0.5 font-semibold text-cyan-300 border border-cyan-400/25">
+          {targetHost}
+        </span>
+        {raw.slice(idx + targetHost.length)}
+      </>
+    );
+  }, [result.summary, targetHost]);
+
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 text-white sm:px-6">
       {/* ── Score hero ───────────────────────────────────────────── */}
@@ -113,7 +133,7 @@ export default function SnapshotPage() {
         <p className="text-center text-sm text-white/70">{scoreVerdict(score)}</p>
 
         <p className="max-w-xl text-center text-sm leading-relaxed text-white/60">
-          {result.summary}
+          {summaryNode}
         </p>
       </section>
 

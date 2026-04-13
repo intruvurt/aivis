@@ -3929,7 +3929,7 @@ An audit, by definition, traces findings back to verifiable evidence. Financial 
 
 ## What the BRAG Evidence Framework Does
 
-BRAG (Benchmark, Reference, Attestation, Ground-truth) is the evidence framework that AiVIS uses to link every recommendation to structural proof extracted from the scanned page.
+BRAG (Based Retrieval and Auditable Grading) is the evidence framework that AiVIS uses to link every recommendation to structural proof extracted from the scanned page.
 
 When AiVIS scans a URL, it does not generate recommendations from a prompt and hope they are relevant. The pipeline works in stages:
 
@@ -3976,7 +3976,7 @@ AiVIS publishes its <a href="/methodology">scoring methodology</a>, its <a href=
 Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">the Starter tier</a> that makes evidence-backed audits accessible from $15/month, or <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment">compare all plans</a> to find the right fit.`,
     keyPoints: [
       'Black-box audits produce opinions. Evidence-backed audits produce diagnostics traceable to structural signals.',
-      'BRAG (Benchmark, Reference, Attestation, Ground-truth) links every recommendation to specific evidence IDs, verified counts, and an evidence benchmark score.',
+      'BRAG (Based Retrieval and Auditable Grading) links every recommendation to specific evidence IDs, verified counts, and an evidence benchmark score.',
       'The evidence manifest provides a complete record of all evidence items, their categories, and the recommendations they support.',
       'Evidence counts help triage fixes: recommendations backed by multiple verified signals across dimensions are higher priority.',
       'All AiVIS tiers preserve core evidence (IDs, counts, benchmark). Paid tiers add the full manifest and deep artifacts.',

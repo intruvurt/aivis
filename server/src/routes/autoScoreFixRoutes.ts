@@ -3,7 +3,7 @@
  *
  * VCS token management + job submission/management for automated PR generation.
  * All routes require authentication.
- * Job submission additionally requires: alignment+ tier AND ≥10 pack credits.
+ * Job submission additionally requires: signal+ tier AND ≥10 pack credits.
  *
  * FEATURE LOCKED - GitHub remediation mechanism is being redesigned.
  * All endpoints return 503 until the lock is lifted.
@@ -74,17 +74,17 @@ async function fetchGitHubApi(path: string, token: string) {
 
 // ─── VCS Token Management ─────────────────────────────────────────────────────
 
-/** POST /api/auto-score-fix/tokens - save or update a VCS token (alignment+) */
+/** POST /api/auto-score-fix/tokens - save or update a VCS token (signal+) */
 router.post('/tokens', async (req: Request, res: Response) => {
   const user = (req as any).user;
   const userId = String(user?.id || '');
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
 
-  if (!meetsMinimumTier(userTier, 'alignment')) {
+  if (!meetsMinimumTier(userTier, 'signal')) {
     return res.status(403).json({
-      error: 'VCS integration requires Alignment or higher.',
+      error: 'VCS integration requires Signal or higher.',
       code: 'TIER_INSUFFICIENT',
-      requiredTier: 'alignment',
+      requiredTier: 'signal',
     });
   }
 
@@ -250,12 +250,12 @@ router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
   const workspaceId = String((req as any).workspace?.id || '');
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
 
-  // Tier gate: alignment+
-  if (!meetsMinimumTier(userTier, 'alignment')) {
+  // Tier gate: signal+
+  if (!meetsMinimumTier(userTier, 'signal')) {
     return res.status(403).json({
-      error: 'Auto Score Fix requires Alignment or higher.',
+      error: 'Auto Score Fix requires Signal or higher.',
       code: 'TIER_INSUFFICIENT',
-      requiredTier: 'alignment',
+      requiredTier: 'signal',
     });
   }
 
@@ -468,7 +468,7 @@ router.get('/status', async (req: Request, res: Response) => {
   const userId = String(user?.id || '');
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
 
-  const tierEligible = meetsMinimumTier(userTier, 'alignment');
+  const tierEligible = meetsMinimumTier(userTier, 'signal');
 
   let availableCredits = 0;
   try {

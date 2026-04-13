@@ -16,6 +16,7 @@ import crypto from 'crypto';
 import { getPool, executeTransaction } from './postgresql.js';
 import { consumePackCredits } from './scanPackCredits.js';
 import { callAIProvider, SIGNAL_AI1 } from './aiProviders.js';
+import { renderPrompt } from './promptRegistry.js';
 import { isGitHubAppConfigured, getInstallationForUser, getInstallationForWorkspace, createPRViaApp } from './githubAppService.js';
 import { mapRuleResultsToIntents, getDeterministicIntents } from './fixIntentMapper.js';
 import { buildDeterministicPatches } from './deterministicPatchBuilder.js';
@@ -305,54 +306,25 @@ export async function generateFixPlan(input: AutoScoreFixJobInput): Promise<Auto
     2
   );
 
-  const systemPrompt = `You are an expert web engineer specializing in AI visibility optimization (AEO/GEO/SEO).
-You analyze structured audit evidence and produce precise, evidence-backed code file changes.
-You respond ONLY with valid JSON. No markdown. No prose outside JSON.
-Your code changes must be exact, production-ready, and directly derived from the evidence provided.
-Never invent problems not in the evidence. Every change must cite which recommendation it resolves.`;
-
   const repoTreeSection = input.repoTree?.length
     ? `\nREPOSITORY FILE STRUCTURE (actual file paths in ${input.repoOwner}/${input.repoName}@${input.repoBranch}):\n${input.repoTree.join('\n')}\n\nIMPORTANT: Only create or update files at paths that follow the conventions visible in the repository structure above. Match the existing directory layout, naming conventions, and framework patterns. Do NOT invent paths that conflict with or ignore the repo structure.`
     : '';
 
-  const prompt = `Analyze this AI visibility audit and produce a precise code fix plan.
-
-AUDIT EVIDENCE:
-${evidenceJson}
-${repoTreeSection}
-Produce a JSON response with this exact structure:
-{
-  "summary": "One sentence describing the primary fix strategy",
-  "score_before": ${input.auditEvidence.visibility_score},
-  "projected_score_lift": "e.g. +12 to +18 points",
-  "evidence_count": <number of recommendations addressed>,
-  "pr_title": "fix: AiVIS Score Fix - evidence-backed visibility improvements for ${input.targetUrl}",
-  "pr_body": "<full PR description in markdown with evidence citations, before/after summary, and implementation notes>",
-  "file_changes": [
-    {
-      "path": "relative/file/path.ext",
-      "operation": "create" | "update",
-      "justification": "Which recommendation this resolves and why",
-      "content": "<complete file content or targeted patch content>"
-    }
-  ]
-}
-
-Requirements:
-- Target schema.org JSON-LD files, meta tag files, robots.txt, sitemap hints, or structured HTML sections
-- If private_exposure_scan findings exist, prioritize concrete fixes for secret leakage, route protection, session hardening, and header hardening.
-- Each file_change must be complete and self-contained (not a diff - full replacement content for the relevant file)
-- Paths MUST be relative to the repo root and MUST match the directory structure and conventions of the actual repository${input.repoTree?.length ? ' shown above' : ''}
-- Limit to 5 most impactful file changes
-- PR body must include: Score context, Evidence summary, Per-file change rationale, Implementation verification steps`;
+  const promptConfig = renderPrompt('scorefix.fix_plan', {
+    evidenceJson,
+    repoTreeSection,
+    repoTreeShown: Boolean(input.repoTree?.length),
+    scoreBefore: input.auditEvidence.visibility_score,
+    targetUrl: input.targetUrl,
+  });
 
   const raw = await callAIProvider({
     provider: SIGNAL_AI1.provider,
     model: SIGNAL_AI1.model,
-    prompt,
+    prompt: promptConfig.prompt,
     apiKey: process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '',
     opts: {
-      systemPrompt,
+      systemPrompt: promptConfig.systemPrompt,
       max_tokens: 4000,
       temperature: 0.15,
       responseFormat: 'json_object',

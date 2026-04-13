@@ -13,6 +13,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
 import { getPool } from '../services/postgresql.js';
 import { validateApiKey } from '../services/apiKeyService.js';
+import { getRequestAuthToken } from '../lib/authSession.js';
 import { normalizePublicHttpUrl, isPrivateOrLocalHost } from '../lib/urlSafety.js';
 import {
   TIER_LIMITS,
@@ -21,7 +22,11 @@ import {
   type CanonicalTier,
   type LegacyTier,
 } from '../../../shared/types.js';
+import { verifyUserToken } from '../lib/utils/jwt.js';
+import { getUserById } from '../models/User.js';
+import { enforceEffectiveTier } from '../services/entitlementGuard.js';
 import { processQueuedAudit } from '../services/mcpAuditProcessor.js';
+import { ensureDefaultWorkspaceForUser } from '../services/tenantService.js';
 
 const router = Router();
 
@@ -46,12 +51,10 @@ type ToolExecutor = (
 // ── Auth (shared pattern with MCP) ───────────────────────────────────────────
 
 async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
+  const token = getRequestAuthToken(req);
+  if (!token) {
     return res.status(401).json({ error: 'Missing Authorization header. Use Bearer avis_* or avist_*' });
   }
-
-  const token = authHeader.slice(7);
   const pool = getPool();
 
   if (token.startsWith('avis_')) {
@@ -97,7 +100,40 @@ async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
     return next();
   }
 
-  return res.status(401).json({ error: 'Token must start with avis_ (API key) or avist_ (OAuth token)' });
+  try {
+    const decoded = verifyUserToken(token);
+    const user = await getUserById(decoded.userId);
+    if (!user) {
+      return res.status(401).json({ error: 'User not found for JWT' });
+    }
+
+    const effectiveTier = await enforceEffectiveTier(user);
+    const tier = uiTierFromCanonical((effectiveTier || 'observer') as CanonicalTier | LegacyTier);
+    if (!TIER_LIMITS[tier]?.hasApiAccess) {
+      return res.status(403).json({ error: 'Your plan does not include API access. Upgrade to Alignment or higher.' });
+    }
+
+    (req as any).mcpUserId = user.id;
+    (req as any).mcpScopes = ['read:audits', 'write:audits', 'read:analytics', 'read:competitors'];
+    (req as any).mcpTier = tier;
+
+    const { rows: wsRows } = await pool.query(
+      `SELECT w.id FROM workspaces w
+       JOIN workspace_members wm ON wm.workspace_id = w.id
+       WHERE wm.user_id = $1 AND w.is_default = TRUE LIMIT 1`,
+      [user.id],
+    );
+    if (wsRows[0]?.id) {
+      (req as any).mcpWorkspaceId = wsRows[0].id;
+    } else {
+      const ctx = await ensureDefaultWorkspaceForUser(user.id, user.name || user.email);
+      (req as any).mcpWorkspaceId = ctx.workspaceId;
+    }
+
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'Token must start with avis_ (API key), avist_ (OAuth token), or be a valid session JWT' });
+  }
 }
 
 // ── Tool registry ────────────────────────────────────────────────────────────

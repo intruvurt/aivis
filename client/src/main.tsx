@@ -21,7 +21,7 @@ window.addEventListener('vite:preloadError', () => {
   }
 });
 
-// Hydrate auth state from localStorage BEFORE rendering
+// Hydrate auth state from browser storage BEFORE rendering
 useAuthStore.getState().hydrate();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

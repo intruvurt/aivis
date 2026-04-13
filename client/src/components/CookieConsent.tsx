@@ -69,8 +69,8 @@ role="dialog"
   >
     <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
       <div id="cookie-consent-heading" className="text-sm text-center sm:text-left text-slate-300">
-        We use cookies for authentication and analytics to improve your experience.
-        By using our service, you agree to our use of cookies.
+        We use browser storage to remember your session in this tab and optional analytics after consent.
+        Your consent choice is stored locally in this browser.
       </div>
       <div className="flex flex-wrap justify-center sm:justify-start gap-3">
         <Button

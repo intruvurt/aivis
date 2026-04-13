@@ -15,7 +15,9 @@ import type { Request, Response, NextFunction } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
 import { workspaceRequired } from '../middleware/workspaceRequired.js';
 import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
+import { getBullMQConnection } from '../infra/queues/connection.js';
 import { getAvailablePackCredits } from '../services/scanPackCredits.js';
+import { isGitHubAppConfigured } from '../services/githubAppService.js';
 import {
   AUTO_SCORE_FIX_CREDIT_COST,
   VcsProvider,
@@ -457,12 +459,23 @@ router.get('/status', async (req: Request, res: Response) => {
     availableCredits = await getAvailablePackCredits(userId);
   } catch { /* non-fatal */ }
 
+  const redisConfigured = Boolean(getBullMQConnection());
+  const githubAppConfigured = isGitHubAppConfigured();
+  const pipelineReady = !AUTO_SCORE_FIX_LOCKED && redisConfigured && githubAppConfigured;
+
   return res.json({
     tier: userTier,
     tier_eligible: tierEligible,
     available_credits: availableCredits,
     required_credits: AUTO_SCORE_FIX_CREDIT_COST,
     eligible: availableCredits >= AUTO_SCORE_FIX_CREDIT_COST,
+    locked: AUTO_SCORE_FIX_LOCKED,
+    pipeline: {
+      redis_configured: redisConfigured,
+      github_app_configured: githubAppConfigured,
+      pr_worker_ready: pipelineReady,
+    },
+    execution_mode: pipelineReady ? 'automated_pr' : 'plan_only_until_pipeline_ready',
   });
 });
 

@@ -18,6 +18,7 @@ import {
 import { sendVerificationEmail } from '../services/emailService.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { sendWelcomeOnboardingEmail } from '../services/emailService.js';
+import { setSessionCookie } from '../lib/authSession.js';
 import { signUserToken } from '../lib/utils/jwt.js';
 import {
   attachReferralAtSignup,
@@ -447,6 +448,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Generate token with userId + tier (matches jwt.ts contract)
     const token = signUserToken({ userId: user.id, tier: effectiveTier || 'observer' });
+    setSessionCookie(res, token);
 
     return res.json({
       success: true,
@@ -506,6 +508,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     // Generate auth token now that email is verified
     const authToken = signUserToken({ userId: user.id, tier: effectiveTier || 'observer' });
+    setSessionCookie(res, authToken);
 
     // Fire-and-forget: send welcome onboarding email (don't block verification response)
     sendWelcomeOnboardingEmail(user.email, user.name || '').catch((err) => {
@@ -720,9 +723,9 @@ export const updateProfile = async (req: Request, res: Response) => {
     const shouldAutoEnrich = req.body?.auto_enrich !== false;
     const enrichment = shouldAutoEnrich && requestedWebsite
       ? await enrichOrgProfileFromWebsite({
-          website: requestedWebsite,
-          claimedEntityName: requestedCompany || requestedName || null,
-        })
+        website: requestedWebsite,
+        claimedEntityName: requestedCompany || requestedName || null,
+      })
       : null;
 
     const existingUser = req.user as User;
@@ -799,18 +802,18 @@ export const updateProfile = async (req: Request, res: Response) => {
         share_link_expiration_days: prefs.shareLinkExpirationDays,
         enrichment: enrichment
           ? {
-              verified: enrichment.verified,
-              confidence_score: enrichment.confidence_score,
-              verification_reasons: enrichment.verification_reasons,
-              source_domain: enrichment.domain,
-            }
+            verified: enrichment.verified,
+            confidence_score: enrichment.confidence_score,
+            verification_reasons: enrichment.verification_reasons,
+            source_domain: enrichment.domain,
+          }
           : null,
         competitor_suggestions: competitorSuggestions && competitorSuggestions.length > 0
           ? {
-              suggestions: competitorSuggestions,
-              total: competitorSuggestions.length,
-              new_count: competitorSuggestions.filter(s => !s.already_tracked).length,
-            }
+            suggestions: competitorSuggestions,
+            total: competitorSuggestions.length,
+            new_count: competitorSuggestions.filter(s => !s.already_tracked).length,
+          }
           : null,
       },
     });

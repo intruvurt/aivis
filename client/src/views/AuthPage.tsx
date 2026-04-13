@@ -77,6 +77,7 @@ export default function AuthPage() {
 
   // selectors (don’t destructure whole store)
   const login = useAuthStore((s) => s.login);
+  const refreshUser = useAuthStore((s) => s.refreshUser);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
@@ -116,13 +117,6 @@ export default function AuthPage() {
       return "";
     }
   }, []);
-
-  const decodeBase64Url = (value: string): string => {
-    const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = normalized.length % 4;
-    const padded = pad ? normalized + "=".repeat(4 - pad) : normalized;
-    return atob(padded);
-  };
 
   const startGoogleOAuth = useCallback(() => {
     if (mode === "signup" && (!acceptedTerms || !acceptedPrivacy)) {
@@ -183,8 +177,7 @@ export default function AuthPage() {
     const oauthPending = String(searchParams.get("oauth_pending_verification") || "").trim() === "1";
     const oauthEmail = String(searchParams.get("oauth_email") || "").trim();
     const verifyWindow = String(searchParams.get("verification_expires_minutes") || "").trim();
-    const oauthToken = String(searchParams.get("oauth_token") || "").trim();
-    const oauthUserRaw = String(searchParams.get("oauth_user") || "").trim();
+    const oauthSuccess = String(searchParams.get("oauth_success") || "").trim() === "1";
     const redirect = safeRedirect(searchParams.get("redirect"));
 
     if (oauthError) {
@@ -204,27 +197,17 @@ export default function AuthPage() {
       return;
     }
 
-    if (!oauthToken || !oauthUserRaw) return;
+    if (!oauthSuccess) return;
 
-    try {
-      const parsed = JSON.parse(decodeBase64Url(oauthUserRaw));
-      const nextUser = {
-        id: parsed.id,
-        email: parsed.email,
-        role: parsed.role,
-        tier: parsed.tier || "observer",
-        full_name: parsed.name,
-        display_name: parsed.name,
-        created_at: parsed.created_at,
-      };
-      login(nextUser, oauthToken);
+    void refreshUser().then((ok) => {
       clearOauthParamsFromUrl(redirect);
-      navigate(redirect, { replace: true });
-    } catch {
-      setError("OAuth sign-in response was invalid. Please try again.");
-      clearOauthParamsFromUrl(redirect);
-    }
-  }, [searchParams, login, navigate]);
+      if (ok) {
+        navigate(redirect, { replace: true });
+        return;
+      }
+      setError("OAuth sign-in completed, but the session could not be restored. Please sign in again.");
+    });
+  }, [searchParams, refreshUser, navigate]);
 
   const handleResendVerification = useCallback(async () => {
     if (!email || resendCooldown > 0) return;
@@ -290,8 +273,8 @@ export default function AuthPage() {
         const token = payload?.token;
         const entitlements = payload?.entitlements ?? null;
 
-        if (!user || !token) {
-          throw new Error("Invalid server response: missing user or token");
+        if (!user) {
+          throw new Error("Invalid server response: missing user");
         }
 
         login(

@@ -1,4 +1,5 @@
 import { callAIProvider } from './aiProviders.js';
+import { renderPrompt } from './promptRegistry.js';
 
 export interface GeneratedQueries {
   queries: string[];
@@ -32,9 +33,9 @@ export async function generateQueries(
   const entities = Array.isArray(content.entities) ? content.entities.filter(Boolean).slice(0, 6) : [];
   const quotableHighlights = Array.isArray(content.contentHighlights)
     ? content.contentHighlights
-        .map((item) => String(item?.found || item?.note || '').replace(/\s+/g, ' ').trim())
-        .filter((item) => item.length >= 18 && item.length <= 140)
-        .slice(0, 5)
+      .map((item) => String(item?.found || item?.note || '').replace(/\s+/g, ' ').trim())
+      .filter((item) => item.length >= 18 && item.length <= 140)
+      .slice(0, 5)
     : [];
   const recommendationThemes = Array.isArray(content.recommendations)
     ? content.recommendations.map((item) => String(item?.title || item?.category || '').trim()).filter(Boolean).slice(0, 5)
@@ -43,51 +44,25 @@ export async function generateQueries(
     ? content.keywordIntelligence.map((item) => String(item?.keyword || '').trim()).filter(Boolean).slice(0, 8)
     : [];
 
-  const prompt = `You are an enterprise search-query strategist building a real citation test pack.
-Generate ${count} realistic search queries that people would ask AI assistants (ChatGPT, Perplexity, Claude, Google AI) where "${brandName}" or the site "${url}" SHOULD legitimately appear.
-
-Website: ${url}
-Brand/Company: ${brandName}
-Title: ${content.title || 'N/A'}
-Description: ${content.description || 'N/A'}
-Topics: ${topics.join(', ') || 'N/A'}
-Entities: ${entities.join(', ') || 'N/A'}
-Priority keywords: ${keywordIntelligence.join(', ') || 'N/A'}
-Quotable page highlights: ${quotableHighlights.join(' | ') || 'N/A'}
-Remediation / feature themes: ${recommendationThemes.join(', ') || 'N/A'}
-FAQ Count: ${content.faqCount || 0}
-
-Generate query groups across these use cases:
-1. Direct entity and brand discovery
-2. Product/service category discovery
-3. Problem-solution intent for buyers and operators
-4. Comparison, alternative, and shortlist evaluation
-5. Review, trust, and proof queries
-6. Quoted-answer / exact-phrase style prompts based on the page's quotable content
-7. Feature, capability, integration, workflow, and compliance questions
-8. Executive / buyer framing like ROI, implementation, best fit, and who it is for
-
-IMPORTANT RULES:
-- Make queries natural and conversational
-- Include both branded and non-branded prompts
-- Focus on search cases where the brand has a legitimate reason to be cited
-- Use unique product/service wording and quotable phrases when available
-- Favor niche precision over broad generic prompts
-- Queries should be 3-18 words long
-- Avoid duplicates or near-duplicates
-
-Return ONLY valid JSON (no markdown, no fences):
-{
-  "industry": "<detected industry/niche>",
-  "queries": ["query 1", "query 2", ...],
-  "topics": ["topic 1", "topic 2", ...]
-}`;
+  const promptConfig = renderPrompt('citations.query_pack', {
+    count,
+    brandName,
+    url,
+    title: content.title || 'N/A',
+    description: content.description || 'N/A',
+    topics,
+    entities,
+    keywordIntelligence,
+    quotableHighlights,
+    recommendationThemes,
+    faqCount: content.faqCount || 0,
+  });
 
   try {
     const response = await callAIProvider({
       provider: 'openrouter',
       model: 'google/gemma-3-27b-it',  // Cost-effective for query generation
-      prompt,
+      prompt: promptConfig.prompt,
       apiKey,
       endpoint: 'https://openrouter.ai/api/v1/chat/completions',
       opts: { max_tokens: 1200 },

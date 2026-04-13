@@ -56,6 +56,7 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
 
   const timeoutMs = init.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const controller = new AbortController();
+  const credentials = init.credentials ?? 'include';
   // Merge caller's signal with our timeout
   if (init.signal) {
     init.signal.addEventListener('abort', () => controller.abort(init.signal!.reason));
@@ -66,13 +67,13 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
     let requestInput = input;
     let response: Response;
     try {
-      response = await fetch(requestInput, { ...init, headers, signal: controller.signal });
+      response = await fetch(requestInput, { ...init, headers, credentials, signal: controller.signal });
     } catch (error) {
       const fallback = resolveSameOriginFallback(input);
       if (!fallback) throw error;
       console.warn('[apiFetch] Primary API host unreachable, retrying same-origin', { from: String(input), to: fallback });
       requestInput = fallback;
-      response = await fetch(requestInput, { ...init, headers, signal: controller.signal });
+      response = await fetch(requestInput, { ...init, headers, credentials, signal: controller.signal });
       // If the fallback returns HTML (e.g. the React SPA index.html), the API is unreachable.
       // Throw immediately so callers get a clear network error instead of a JSON parse failure.
       const ct = response.headers.get('content-type') || '';
@@ -85,7 +86,7 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
     }
 
     // If the token expired, try refreshing once and retry
-    if (response.status === 401 && authHeader) {
+    if (response.status === 401 && (authHeader || state.isAuthenticated)) {
       if (typeof refreshUser === 'function') {
         const ok = await refreshUser();
         if (ok) {
@@ -94,7 +95,7 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
           if (nextAuthHeader) {
             headers.set('Authorization', nextAuthHeader);
           }
-          response = await fetch(requestInput, { ...init, headers, signal: controller.signal });
+          response = await fetch(requestInput, { ...init, headers, credentials, signal: controller.signal });
         }
       }
     }

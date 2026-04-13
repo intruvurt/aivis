@@ -1,5 +1,6 @@
 // server/src/middleware/authRequired.ts
 import type { Request, Response, NextFunction } from 'express';
+import { getRequestAuthToken } from '../lib/authSession.js';
 import { verifyUserToken } from '../lib/utils/jwt.js';
 import { getUserById } from '../models/User.js';
 import { redactSensitive, sanitizeError } from '../lib/safeLogging.js';
@@ -27,8 +28,8 @@ export function requireRole(allowedRoles: string[]) {
 }
 
 export async function authRequired(req: Request, res: Response, next: NextFunction) {
-  const auth = req.headers.authorization;
-  if (!auth?.startsWith('Bearer ')) {
+  const token = getRequestAuthToken(req);
+  if (!token) {
     // Suppress log noise from our own internal scanner bot
     const ua = req.headers['user-agent'] || '';
     if (!ua.includes('AiVIS-PrivateExposureScan')) {
@@ -41,7 +42,6 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
   }
 
   try {
-    const token = auth.slice('Bearer '.length);
     const decoded = verifyUserToken(token);
 
     // Look up the user in the database for tier / existence check

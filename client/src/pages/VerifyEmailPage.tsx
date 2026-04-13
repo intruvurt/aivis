@@ -8,7 +8,7 @@ import { API_URL } from '../config';
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, refreshUser } = useAuthStore();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
   const [resendEmail, setResendEmail] = useState("");
@@ -65,9 +65,9 @@ export default function VerifyEmailPage() {
         setStatus("success");
         setMessage(data.message || "Email verified successfully!");
 
-        // Auto-login if server returned a token
+        // Auto-login if the server returned a user payload, otherwise restore from the cookie-backed session.
         const payload = data.data || data;
-        if (payload.token && payload.user) {
+        if (payload.user) {
           login(
             {
               id: payload.user.id,
@@ -80,15 +80,16 @@ export default function VerifyEmailPage() {
           // Redirect to dashboard after brief delay
           setTimeout(() => navigate("/"), 2000);
         } else {
-          // Redirect to login
-          setTimeout(() => navigate("/auth?mode=signin"), 3000);
+          void refreshUser().finally(() => {
+            setTimeout(() => navigate("/auth?mode=signin"), 3000);
+          });
         }
       } catch {
         setStatus("error");
         setMessage("Network error. Please try again.");
       }
     })();
-  }, [searchParams, login, navigate]);
+  }, [searchParams, login, refreshUser, navigate]);
 
   return (
     <div className="flex flex-1 items-center justify-center p-4">

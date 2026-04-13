@@ -5,6 +5,7 @@ import { CheckCircle2, ArrowRight, Sparkles, Search, BadgeCheck, Link2, Workflow
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
+import apiFetch from "../utils/api";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ScoreFixIcon, ContentBlueprintIcon, AuditEngineIcon } from "../components/icons";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationRef, buildWebPageSchema } from "../lib/seoSchema";
@@ -94,7 +95,7 @@ const proofCards = [
 const faq = [
   {
     q: "What is Score Fix AutoFix PR?",
-    a: "Score Fix AutoFix PR is the automated remediation layer after an AI visibility audit. It connects to your GitHub repo via MCP and generates pull requests with real structural, content, schema, and internal-link changes designed to improve extraction clarity and citation readiness.",
+    a: "Score Fix AutoFix PR is the remediation layer after an AI visibility audit. When the remediation pipeline is configured, it connects to your GitHub repo and generates pull requests with structural, content, schema, and internal-link changes designed to improve extraction clarity and citation readiness. When the pipeline is unavailable, it still presents the evidence-linked plan and setup requirements.",
   },
   {
     q: "How many credits does each fix cost?",
@@ -133,7 +134,7 @@ const SITE_URL = "https://aivis.biz";
 const PAGE_URL = `${SITE_URL}/score-fix`;
 const PAGE_TITLE = "AI Visibility Score Fix AutoFix PR | AiVIS - AI Visibility Intelligence Platform";
 const PAGE_DESCRIPTION =
-  "AI Visibility Score Fix AutoFix PR from AiVIS connects to your GitHub repo via MCP and generates automated pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per automated remediation PR.";
+  "AI Visibility Score Fix AutoFix PR from AiVIS turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can generate GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per remediation job.";
 const OG_IMAGE = `${SITE_URL}/og/aivis-score-fix.jpg`;
 
 const scoreFixFaqEntities = faq.map((item) => ({
@@ -235,6 +236,19 @@ type LiveEvidenceItem = {
   source?: string;
 };
 
+type ScoreFixStatus = {
+  eligible?: boolean;
+  available_credits?: number;
+  required_credits?: number;
+  locked?: boolean;
+  execution_mode?: string;
+  pipeline?: {
+    redis_configured?: boolean;
+    github_app_configured?: boolean;
+    pr_worker_ready?: boolean;
+  };
+};
+
 export default function ScoreFixPage() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
@@ -248,6 +262,7 @@ export default function ScoreFixPage() {
   const [liveAuditId, setLiveAuditId] = useState('');
   const [liveTargetUrl, setLiveTargetUrl] = useState('');
   const [liveVisibilityScore, setLiveVisibilityScore] = useState(0);
+  const [scoreFixStatus, setScoreFixStatus] = useState<ScoreFixStatus | null>(null);
 
   useEffect(() => {
     document.title = PAGE_TITLE;
@@ -325,6 +340,23 @@ export default function ScoreFixPage() {
 
   useEffect(() => {
     let cancelled = false;
+
+    const fetchScoreFixStatus = async () => {
+      if (!isAuthenticated) {
+        if (!cancelled) setScoreFixStatus(null);
+        return;
+      }
+      try {
+        const res = await apiFetch(`${API_URL}/api/auto-score-fix/status`, {
+          method: "GET",
+        });
+        if (!res.ok) return;
+        const data = (await res.json().catch(() => null)) as ScoreFixStatus | null;
+        if (!cancelled) setScoreFixStatus(data);
+      } catch {
+        if (!cancelled) setScoreFixStatus(null);
+      }
+    };
 
     const fetchLiveEvidence = async () => {
       if (!isAuthenticated || !token) {
@@ -405,6 +437,7 @@ export default function ScoreFixPage() {
       }
     };
 
+    void fetchScoreFixStatus();
     void fetchLiveEvidence();
     return () => {
       cancelled = true;
@@ -425,6 +458,11 @@ export default function ScoreFixPage() {
       };
     });
   }, [liveRecommendations, liveEvidenceById]);
+
+  const scoreFixPipelineReady = Boolean(scoreFixStatus?.pipeline?.pr_worker_ready);
+  const scoreFixReadinessText = scoreFixPipelineReady
+    ? "Automation pipeline ready: queue worker and GitHub App are configured for PR execution."
+    : "Automation pipeline not fully configured: remediation plans remain evidence-linked, but automatic PR execution requires Redis and GitHub App configuration.";
 
   return (
     <>
@@ -447,9 +485,9 @@ export default function ScoreFixPage() {
             requiredTier="scorefix"
             icon={<Sparkles className="w-12 h-12 text-amber-400" />}
             featurePreview={[
-              "Auto-generate GitHub PRs containing schema patches and content fixes",
+              "Generate evidence-linked remediation plans and PR-ready fix sets",
               "Each PR references the exact audit finding that triggered it",
-              "Review and merge - no manual editing required",
+              "Automatic PR execution activates when the queue worker and GitHub App are configured",
             ]}
           />
         </div>
@@ -498,8 +536,12 @@ export default function ScoreFixPage() {
                 Score Fix AutoFix PR - Automated GitHub Remediation for AI Visibility
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300 sm:text-[15px]">
-                Score Fix connects to your GitHub repo via MCP and generates pull requests with real fixes - schema patches, H1 rewrites, FAQ blocks, and structural improvements. Each automated PR costs 10-25 credits depending on complexity. No manual content editing required.
+                Score Fix turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can open GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural improvements. Each remediation job costs 10-25 credits depending on complexity.
               </p>
+
+              <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm leading-6 ${scoreFixPipelineReady ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-100" : "border-amber-400/25 bg-amber-400/10 text-amber-100"}`}>
+                {scoreFixReadinessText}
+              </div>
 
               {packCreditsBalance > 0 && (
                 <div className="flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-medium text-amber-200 w-fit mb-4">
@@ -527,7 +569,7 @@ export default function ScoreFixPage() {
                 {[
                   { icon: AuditEngineIcon, label: "Goal", value: "Automated PR generation" },
                   { icon: Search, label: "Focus", value: "GitHub MCP remediation" },
-                  { icon: Workflow, label: "Method", value: "Evidence to automated PR" },
+                  { icon: Workflow, label: "Method", value: scoreFixPipelineReady ? "Evidence to automated PR" : "Evidence to PR-ready remediation plan" },
                   { icon: ScoreFixIcon, label: "Cost", value: "600-1008 code lines" },
                 ].map((item) => {
                   const Icon = item.icon;
@@ -593,17 +635,17 @@ export default function ScoreFixPage() {
                 <h2 className="text-2xl brand-title">What Score Fix AutoFix PR does</h2>
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
-                Score Fix AutoFix PR connects to your GitHub repo via MCP. It translates audit findings into automated pull requests containing schema patches, content rewrites, and structural fixes. Each PR references evidence IDs so you can verify exactly which audit signal drove each change. No manual editing - just review and merge.
+                Score Fix AutoFix PR translates audit findings into remediation packages containing schema patches, content rewrites, and structural fixes. When the automation pipeline is ready, those packages can be opened as GitHub pull requests. Every change references evidence IDs so you can verify exactly which audit signal drove it.
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[
-                  "Generates PRs with schema patches",
-                  "Rewrites H1 and hero copy automatically",
+                  scoreFixPipelineReady ? "Generates PRs with schema patches" : "Generates PR-ready schema patch sets",
+                  "Rewrites H1 and hero copy from audit evidence",
                   "Adds FAQ blocks and answer sections",
                   "Links evidence IDs to every change",
                   "Adds internal links via topical anchors",
-                  "600-1008 code lines (complexity-based)",
+                  scoreFixPipelineReady ? "PR execution enabled by queue worker" : "Automatic PR execution waits for queue worker setup",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />

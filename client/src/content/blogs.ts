@@ -975,15 +975,13 @@ The agent calls compare_competitors. Returns your score vs theirs. Category-by-c
 
 No copy-pasting between tabs. No switching contexts. The AI agent operates directly against structured tools with typed parameters and structured responses.
 
-The 12 tools are organized by capability phase:
+The 10 tools are organized by capability phase:
 
 Core analysis includes scan_url, get_audit_report, export_report, and list_projects. These cover the fundamentals: trigger audits, pull results, export data.
 
 Trend and competitive analysis includes reanalyze_url, get_visibility_history, and compare_competitors. These cover longitudinal tracking and competitive intelligence.
 
 Citation and remediation includes run_citation_test, create_remediation_plan, and get_methodology. These cover advanced verification and implementation planning.
-
-Supporting tools include get_usage for quota monitoring and get_methodology for scoring rubric details.
 
 Tier Gating: Who Gets What
 

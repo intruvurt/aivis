@@ -1,4 +1,3 @@
-// client/src/stores/authStore.ts
 import { create } from "zustand";
 import { API_URL } from "../config";
 import { buildBearerHeader, normalizeAuthToken } from "../utils/authToken";
@@ -6,280 +5,166 @@ import { buildBearerHeader, normalizeAuthToken } from "../utils/authToken";
 export type AuthTier = "observer" | "alignment" | "signal" | "scorefix";
 
 export type AuthUser = {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string;
-  full_name?: string;
-  display_name?: string;
-  tier?: AuthTier;
-  trial_ends_at?: string | null;
-  trial_active?: boolean;
-  trial_used?: boolean;
-  created_at?: string;
-  avatar_url?: string;
-  org_logo_url?: string;
-  org_favicon_url?: string;
-  company?: string;
-  website?: string;
+    id: string;
+    email: string;
+    name?: string;
+    role?: string;
+    full_name?: string;
+    display_name?: string;
+    tier?: AuthTier;
+    trial_ends_at?: string | null;
+    trial_active?: boolean;
+    trial_used?: boolean;
+    created_at?: string;
+    avatar_url?: string;
+    org_logo_url?: string;
+    org_favicon_url?: string;
+    company?: string;
+    website?: string;
 };
 
 export type AuthState = {
-  isHydrated: boolean;
-  isAuthenticated: boolean;
-
-  user: AuthUser | null;
-  token: string | null;
-
-  // actions
-  setUser: (user: AuthUser | null) => void;
-  setToken: (token: string | null) => void;
-
-  login: (user: AuthUser, token: string) => void;
-  logout: () => void;
-  refreshUser: () => Promise<boolean>;
-
-  hydrate: () => void;
-
-  // helpers
-  getAuthHeader: () => Record<string, string>;
+    isHydrated: boolean;
+    isAuthenticated: boolean;
+    user: AuthUser | null;
+    token: string | null;
+    setUser: (user: AuthUser | null) => void;
+    setToken: (token: string | null) => void;
+    login: (user: AuthUser, token?: string | null) => void;
+    logout: () => void;
+    refreshUser: () => Promise<boolean>;
+    hydrate: () => void;
+    getAuthHeader: () => Record<string, string>;
 };
 
-const KEY_V2 = "aivis_auth_v2";
-const OLD_KEYS = ["auth-storage", "aivis_auth_v1"];
+const LEGACY_KEYS = ["aivis_auth_v2", "auth-storage", "aivis_auth_v1"];
 
 function canUseStorage() {
-  return typeof window !== "undefined" && !!window.sessionStorage;
+    return typeof window !== "undefined" && !!window.sessionStorage;
 }
 
-function safeParse<T>(raw: string | null): T | null {
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
-function writeV2(payload: { user: AuthUser | null; token: string | null }) {
-  if (!canUseStorage()) return;
-  try {
-    window.sessionStorage.setItem(KEY_V2, JSON.stringify(payload));
-  } catch {
-    // ignore
-  }
-}
-
-function clearAllAuthKeys() {
-  if (!canUseStorage()) return;
-  try {
-    window.sessionStorage.removeItem(KEY_V2);
-    // Clear old keys from both storages (migration cleanup)
-    for (const k of OLD_KEYS) {
-      window.sessionStorage.removeItem(k);
-      window.localStorage.removeItem(k);
+function clearLegacyAuthStorage() {
+    if (!canUseStorage()) return;
+    try {
+        for (const key of LEGACY_KEYS) {
+            window.sessionStorage.removeItem(key);
+            window.localStorage.removeItem(key);
+        }
+        window.sessionStorage.removeItem("aivis-analysis");
+        window.localStorage.removeItem("aivis-analysis");
+    } catch {
+        // ignore storage cleanup failures
     }
-    // Clear persisted analysis data so a new session never sees a previous user's results
-    window.sessionStorage.removeItem('aivis-analysis');
-    window.localStorage.removeItem('aivis-analysis');
-  } catch {
-    // ignore
-  }
 }
-
-type OldShape =
-  | { user?: any; token?: any; isAuthenticated?: any; entitlements?: any }
-  | { user?: any; session?: { access_token?: any } | any };
 
 function normalizeAuthUser(raw: any): AuthUser | null {
-  if (!raw || typeof raw !== "object") return null;
+    if (!raw || typeof raw !== "object") return null;
 
-  const user: AuthUser = {
-    id: String(raw.id ?? ""),
-    email: String(raw.email ?? ""),
-    name: typeof raw.name === "string" ? raw.name : undefined,
-    role: typeof raw.role === "string" ? raw.role : undefined,
-    tier: (raw.tier as AuthTier) ?? "observer",
-    trial_ends_at: raw.trial_ends_at ?? null,
-    trial_active: raw.trial_active === true,
-    trial_used: raw.trial_used === true,
-    full_name: raw.full_name ?? raw.name ?? undefined,
-    display_name: raw.display_name ?? raw.name ?? undefined,
-    created_at: raw.created_at ?? undefined,
-    avatar_url: raw.avatar_url ?? undefined,
-    org_logo_url: raw.org_logo_url ?? undefined,
-    org_favicon_url: raw.org_favicon_url ?? undefined,
-    company: raw.company ?? undefined,
-    website: raw.website ?? undefined,
-  };
+    const user: AuthUser = {
+        id: String(raw.id ?? ""),
+        email: String(raw.email ?? ""),
+        name: typeof raw.name === "string" ? raw.name : undefined,
+        role: typeof raw.role === "string" ? raw.role : undefined,
+        tier: (raw.tier as AuthTier) ?? "observer",
+        trial_ends_at: raw.trial_ends_at ?? null,
+        trial_active: raw.trial_active === true,
+        trial_used: raw.trial_used === true,
+        full_name: raw.full_name ?? raw.name ?? undefined,
+        display_name: raw.display_name ?? raw.name ?? undefined,
+        created_at: raw.created_at ?? undefined,
+        avatar_url: raw.avatar_url ?? undefined,
+        org_logo_url: raw.org_logo_url ?? undefined,
+        org_favicon_url: raw.org_favicon_url ?? undefined,
+        company: raw.company ?? undefined,
+        website: raw.website ?? undefined,
+    };
 
-  if (!user.id || !user.email) return null;
-  return user;
-}
-
-function extractFromAny(raw: any): { user: AuthUser | null; token: string | null } {
-  if (!raw || typeof raw !== "object") return { user: null, token: null };
-
-  // possible shapes:
-  // { token, user }
-  // { session: { access_token }, user }
-  // { state: { token, user } } (persist middleware style)
-  const state = raw.state && typeof raw.state === "object" ? raw.state : raw;
-
-  const token =
-    typeof state.token === "string"
-      ? state.token
-      : typeof state.session?.access_token === "string"
-        ? state.session.access_token
-        : null;
-  const normalizedToken = normalizeAuthToken(token);
-
-  const u = state.user && typeof state.user === "object" ? state.user : null;
-  const user = normalizeAuthUser(u);
-
-  // minimal validity: must have id+email to count
-  if (!user?.id || !user?.email) return { user: null, token: normalizedToken };
-  return { user, token: normalizedToken };
+    if (!user.id || !user.email) return null;
+    return user;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  isHydrated: false,
-  isAuthenticated: false,
+    isHydrated: false,
+    isAuthenticated: false,
+    user: null,
+    token: null,
 
-  user: null,
-  token: null,
+    setUser: (user) => {
+        set({ user, isAuthenticated: !!user || !!get().token });
+    },
 
-  setUser: (user) => {
-    set({ user, isAuthenticated: !!get().token });
-    writeV2({ user, token: get().token });
-  },
+    setToken: (token) => {
+        const normalizedToken = normalizeAuthToken(token);
+        set({ token: normalizedToken, isAuthenticated: !!normalizedToken || !!get().user });
+    },
 
-  setToken: (token) => {
-    const normalizedToken = normalizeAuthToken(token);
-    set({ token: normalizedToken, isAuthenticated: !!normalizedToken });
-    writeV2({ user: get().user, token: normalizedToken });
-  },
-
-  login: (user, token) => {
-    const normalizedToken = normalizeAuthToken(token);
-    // Clear any persisted analysis belonging to a previous user before setting the new session
-    if (canUseStorage()) {
-      try {
-        window.sessionStorage.removeItem('aivis-analysis');
-        window.localStorage.removeItem('aivis-analysis');
-      } catch { /* ignore */ }
-    }
-    set({ user, token: normalizedToken, isAuthenticated: !!normalizedToken });
-    writeV2({ user, token: normalizedToken });
-  },
-
-  logout: () => {
-    set({ user: null, token: null, isAuthenticated: false });
-    clearAllAuthKeys();
-  },
-
-  refreshUser: async () => {
-    const token = normalizeAuthToken(get().token);
-    if (!token) return false;
-
-    const authHeader = buildBearerHeader(token);
-    if (!authHeader) return false;
-
-    try {
-      const response = await fetch(`${API_URL}/api/user/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authHeader,
-        },
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const data = await response.json().catch(() => null);
-      const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
-
-      set({
-        user: nextUser,
-        isAuthenticated: true,
-      });
-
-      writeV2({ user: nextUser, token });
-      return true;
-    } catch {
-      return false;
-    }
-  },
-
-  hydrate: () => {
-    if (!canUseStorage()) {
-      set({ isHydrated: true });
-      return;
-    }
-
-    // 1) Prefer v2
-    // Check sessionStorage first, then migrate from localStorage if needed
-    const v2 = safeParse<{ user: AuthUser | null; token: string | null }>(
-      window.sessionStorage.getItem(KEY_V2) ?? window.localStorage.getItem(KEY_V2)
-    );
-    // If found in localStorage, migrate to sessionStorage and remove from localStorage
-    if (!window.sessionStorage.getItem(KEY_V2) && window.localStorage.getItem(KEY_V2)) {
-      try {
-        window.sessionStorage.setItem(KEY_V2, window.localStorage.getItem(KEY_V2)!);
-        window.localStorage.removeItem(KEY_V2);
-      } catch { /* ignore */ }
-    }
-
-    if (v2 && (v2.token || v2.user)) {
-      const user = v2.user ?? null;
-      const token = normalizeAuthToken(v2.token);
-      set({
-        isHydrated: true,
-        user,
-        token,
-        isAuthenticated: !!token,
-      });
-
-      if (token && !user) {
-        void get().refreshUser();
-      }
-      return;
-    }
-
-    // 2) Attempt migrate old keys
-    for (const k of OLD_KEYS) {
-      const old = safeParse<OldShape>(window.sessionStorage.getItem(k) ?? window.localStorage.getItem(k));
-      const extracted = extractFromAny(old);
-      if (extracted.user || extracted.token) {
-        writeV2({ user: extracted.user, token: extracted.token });
+    login: (user, token) => {
+        clearLegacyAuthStorage();
         set({
-          isHydrated: true,
-          user: extracted.user,
-          token: extracted.token,
-          isAuthenticated: !!extracted.token,
+            user,
+            token: normalizeAuthToken(token),
+            isAuthenticated: true,
+            isHydrated: true,
         });
-        if (extracted.token && !extracted.user) {
-          void get().refreshUser();
+    },
+
+    logout: () => {
+        set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
+        clearLegacyAuthStorage();
+
+        if (typeof window !== "undefined") {
+            void fetch(`${API_URL}/api/auth/logout`, {
+                method: "POST",
+                credentials: "include",
+            }).catch(() => undefined);
         }
-        return;
-      }
-    }
+    },
 
-    // 3) Nothing usable
-    set({ isHydrated: true, user: null, token: null, isAuthenticated: false });
-  },
+    refreshUser: async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/user/refresh`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+            });
 
-  getAuthHeader: () => {
-    const authHeader = buildBearerHeader(get().token);
-    return authHeader ? { Authorization: authHeader } : {};
-  },
+            if (!response.ok) {
+                set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
+                return false;
+            }
+
+            const data = await response.json().catch(() => null);
+            const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
+            const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null);
+
+            set({
+                user: nextUser,
+                token: nextToken,
+                isAuthenticated: !!nextUser,
+                isHydrated: true,
+            });
+
+            return !!nextUser;
+        } catch {
+            set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
+            return false;
+        }
+    },
+
+    hydrate: () => {
+        clearLegacyAuthStorage();
+        set({ isHydrated: false, user: null, token: null, isAuthenticated: false });
+        void get().refreshUser();
+    },
+
+    getAuthHeader: () => {
+        const authHeader = buildBearerHeader(get().token);
+        return authHeader ? { Authorization: authHeader } : {};
+    },
 }));
 
 export default useAuthStore;
 
-// optional selectors
 export const selectUser = (s: AuthState) => s.user;
 export const selectIsAuthed = (s: AuthState) => s.isAuthenticated;
 export const selectLogout = (s: AuthState) => s.logout;

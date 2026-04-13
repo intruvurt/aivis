@@ -250,9 +250,10 @@ const AnalyzePage: React.FC = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { token, isAuthenticated, refreshUser, logout, user } = useAuthStore();
+  const { token, isAuthenticated, isHydrated, refreshUser, logout, user } = useAuthStore();
 
   useEffect(() => {
+    if (!isHydrated) return;
     if (!isAuthenticated && token) {
       refreshUser().then((success) => {
         if (!success) {
@@ -263,7 +264,7 @@ const AnalyzePage: React.FC = () => {
     } else if (!isAuthenticated) {
       navigate("/auth?mode=signin");
     }
-  }, [isAuthenticated, token, refreshUser, logout, navigate]);
+  }, [isAuthenticated, isHydrated, token, refreshUser, logout, navigate]);
 
   useEffect(() => {
     try {
@@ -374,10 +375,8 @@ const AnalyzePage: React.FC = () => {
   function openProgressStream(requestId: string) {
     closeProgressStream();
 
-    const qs = new URLSearchParams();
-    if (token) qs.set("token", token);
-    const sseUrl = `${API_URL}/api/audit/progress/${encodeURIComponent(requestId)}${qs.toString() ? `?${qs}` : ""}`;
-    const es = new EventSource(sseUrl);
+    const sseUrl = `${API_URL}/api/audit/progress/${encodeURIComponent(requestId)}`;
+    const es = new EventSource(sseUrl, { withCredentials: true });
     progressSourceRef.current = es;
 
     es.onmessage = (evt) => {

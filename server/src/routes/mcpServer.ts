@@ -15,6 +15,7 @@ import crypto from 'node:crypto';
 const uuidv4 = () => crypto.randomUUID();
 import { getPool } from '../services/postgresql.js';
 import { validateApiKey } from '../services/apiKeyService.js';
+import { getRequestAuthToken } from '../lib/authSession.js';
 import { normalizePublicHttpUrl, isPrivateOrLocalHost } from '../lib/urlSafety.js';
 import { TIER_LIMITS, uiTierFromCanonical, meetsMinimumTier, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
 import { verifyUserToken } from '../lib/utils/jwt.js';
@@ -28,12 +29,10 @@ const router = Router();
 // ── Auth: accept both API key and OAuth token ────────────────────────────────
 
 async function mcpAuth(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
+  const token = getRequestAuthToken(req);
+  if (!token) {
     return res.status(401).json({ error: 'Missing Authorization header. Use Bearer avis_* or avist_*' });
   }
-
-  const token = authHeader.slice(7);
   const pool = getPool();
 
   // API key path

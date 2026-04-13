@@ -49,15 +49,15 @@ const TOOL_ICONS: Record<string, React.ReactNode> = {
 };
 
 const TOOL_TIERS: Record<string, string> = {
-  run_audit: "Signal+",
-  get_audit: "Signal+",
-  list_audits: "Signal+",
-  get_analytics: "Signal+",
-  get_evidence: "Signal+",
-  run_page_validation: "Signal+",
-  list_competitors: "Signal+",
-  get_usage: "Signal+",
-  run_citation_test: "Signal+",
+  run_audit: "Alignment+",
+  get_audit: "Alignment+",
+  list_audits: "Alignment+",
+  get_analytics: "Alignment+",
+  get_evidence: "Alignment+",
+  run_page_validation: "Alignment+",
+  list_competitors: "Alignment+",
+  get_usage: "Alignment+",
+  run_citation_test: "Alignment+",
 };
 
 /* ── Setup configs ─────────────────────────────────────────────── */
@@ -114,7 +114,7 @@ export default function McpConsolePage() {
 
   const user = useAuthStore((s) => s.user);
   const tier = (user?.tier || "observer") as CanonicalTier;
-  const hasAccess = meetsMinimumTier(tier, "signal");
+  const hasAccess = meetsMinimumTier(tier, "alignment");
 
   /* ── State ─────────────────────────────────────── */
   const [serverInfo, setServerInfo] = useState<MCPServerInfo | null>(null);
@@ -285,7 +285,7 @@ export default function McpConsolePage() {
           <UpgradeWall
             feature="MCP Server Console"
             description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports - all from your agent's toolbox."
-            requiredTier="signal"
+            requiredTier="alignment"
             icon={<Bot className="h-6 w-6" />}
           />
         </div>
@@ -322,7 +322,7 @@ export default function McpConsolePage() {
             <Copy className="h-3 w-3" /> Copy Config
           </button>
           <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
-            Signal+
+            Alignment+
           </span>
         </div>
       </div>

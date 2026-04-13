@@ -59,6 +59,7 @@ import type {
   SchemaMarkup,
 } from "../../shared/types.js";
 import { verifyUserToken } from "./lib/utils/jwt.js";
+import { getRequestAuthToken } from "./lib/authSession.js";
 import { assessCitationStrength } from "./services/citationStrength.js";
 import {
   extractPlatformSignals,
@@ -75,6 +76,7 @@ import { scoreSchema, deriveContentSignals } from "./services/schemaScorer.js";
 import type { CitationStrength } from "../../shared/types.js";
 import { safeJsonParse } from "./lib/jsonUtils.js";
 import { AnalysisCacheService } from "./services/cacheService.js";
+import { renderPrompt } from "./services/promptRegistry.js";
 import {
   consumePackCredits,
   getAvailablePackCredits,
@@ -1730,11 +1732,11 @@ app.get(
 // ─────────────────────────────────────────────────────────────────────────────
 app.post("/api/user/refresh", async (req: Request, res: Response) => {
   try {
-    const auth = req.headers.authorization;
-    if (!auth?.startsWith("Bearer "))
+    const token = getRequestAuthToken(req);
+    if (!token)
       return res.status(401).json({ success: false, error: "No token" });
 
-    const decoded = verifyUserToken(auth.slice("Bearer ".length));
+    const decoded = verifyUserToken(token);
     const user = await getUserById(decoded.userId);
     if (!user)
       return res.status(401).json({ success: false, error: "User not found" });
@@ -1757,6 +1759,7 @@ app.post("/api/user/refresh", async (req: Request, res: Response) => {
 
     return res.json({
       success: true,
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -3475,6 +3478,11 @@ Avoid private or authenticated areas, including:
 // ─────────────────────────────────────────────────────────────────────────────
 app.get("/api/compliance/status", (_req, res) => {
   res.json({
+    source: "self_reported_static",
+    verified: false,
+    generated_from_runtime_checks: false,
+    disclaimer:
+      "This endpoint returns self-reported platform metadata. It does not prove active attestations, live control monitoring, or independent audit completion.",
     organization: {
       name: "Intruvurt Labs",
       founded: "2025-12",
@@ -8236,12 +8244,7 @@ app.get(
 
     let viewerUserId = "";
     try {
-      const bearer = String(req.headers.authorization || "");
-      const headerToken = bearer.startsWith("Bearer ")
-        ? bearer.slice("Bearer ".length).trim()
-        : "";
-      const queryToken = String(req.query.token || "").trim();
-      const token = headerToken || queryToken;
+      const token = getRequestAuthToken(req);
       if (!token) {
         return res
           .status(401)
@@ -10803,53 +10806,18 @@ For each recommendation:
 `
         : "";
 
-      const prompt1 = `${tierPromptPrefix}AI Visibility Intelligence Platform audit for ${targetUrl} (${parsedTargetUrl.hostname}).
-Base ALL findings on the evidence below. Be honest - most sites score C/D. Cite [ev_*] IDs.
-
-WRITING STYLE (mandatory for all text fields):
-- Write in a direct, technical, human-edited voice. No filler. No marketing fluff.
-- Never use a comma before "and", "or", "but", or "etc." - use the serial-comma-free style throughout.
-- Avoid comma-heavy AI patterns. Prefer short declarative sentences over long compound ones.
-- Do not start sentences with "Additionally", "Furthermore", "Moreover", or "In conclusion".
-
-EVIDENCE:
-${evidenceBlock}
-
-DIAGNOSTIC SNAPSHOT (pre-computed from live scraped data - treat as confirmed facts):
-${diagnosticFlags.map((f) => `  • ${f}`).join("\n")}
-
-BODY (first 2000 chars):
-${bodySnippet}
-${platformIntelBlock}
-${findabilityGoalsBlock}
-${mockDataScanBlock}
-
-MANDATORY SCORING BOUNDS (enforced server-side - scores outside these ranges will be overridden):
-${boundsBlock}
-Score according to evidence quality: weak evidence lands in the lower half; strong evidence lands upper half. Most sites earn C/D.
-
-RECOMMENDATION CONTRACT - every recommendation MUST follow this contract:
-1. description must START with "Measured: <actual value from evidence>. Target: <required/recommended value>." - no exceptions.
-2. implementation must include at least one concrete code, markup, or config example relevant to the specific finding.
-3. evidence_ids must cite only real [ev_*] IDs listed above that confirm the problem.
-4. scorefix_category must be one of: "schema_structured_data" | "meta_tags" | "heading_structure" | "content_depth" | "technical_seo" | "ai_readability" | "image_accessibility" | "internal_linking" | "robots_access"
-5. Do not invent problems not backed by the DIAGNOSTIC SNAPSHOT or EVIDENCE.
-6. consequenceStatement must describe the REAL BUSINESS COST of ignoring this issue. Use survival language, not system language. Example: "AI answer engines will recommend your competitors instead of you for queries about <topic>" or "ChatGPT and Perplexity cannot extract your core value proposition — you become invisible in AI-generated answers".
-7. estimatedVisibilityLoss must be a percentage range of citation/visibility loss if not fixed (e.g. "15-25%"). Base on severity: high priority = 20-35%, medium = 10-20%, low = 5-15%.
-8. estimatedTimeMinutes must be realistic implementation time in minutes (5, 15, 30, 60, 120).
-
-ADDITIONAL CHECKS (flag these as recommendations when detected):
-- ICP clarity: if the page does not name a specific target audience (e.g. "for SEO managers" or "built for content teams"), recommend adding an explicit audience statement in the hero/subheadline. Category: content_depth.
-- Jargon and unexplained acronyms: if the page uses domain-specific acronyms without expansion on first use, recommend plain-language alternatives or inline definitions. Category: ai_readability.
-- Benefit vs feature framing: if pricing or feature sections list technical capabilities without stating the user outcome (e.g. "CSV export" instead of "Export reports to share with your team"), recommend rewriting as benefit-first statements. Category: content_depth.
-- Schema completeness: check for Review/AggregateRating (social proof), Product schema with Offer and pricing, FAQPage with 8+ items, and HowTo steps. Recommend adding any that are missing. Category: schema_structured_data.
-- Scannability: if the H1 or subheadline exceeds 80 characters, or if sections lack subheadings, recommend splitting for mobile readability. Category: heading_structure.
-
-Return ONLY valid JSON (no markdown, no fences):
-{"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"keyword_intelligence":[{"keyword":"<from topical_keywords>","intent":"informational|commercial|navigational|transactional","volume_tier":"low|medium|high|very_high","competition":"low|medium|high","opportunity":<0-100>,"trend":"rising|stable|declining"}],"brand_entities":["<found on page>"],"primary_topics":["<3-5>"],"faq_count":<int>,"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta|schema|content|technical|readability","found":"<quote actual text from page>","status":"good|warning|critical|missing","note":"<specific why with measured value>","source_id":"<ev_* ID>"}],"recommendations":[{"priority":"high|medium|low","category":"<category_grade label>","scorefix_category":"<one of the 9 above>","title":"<short specific title>","description":"Measured: <actual value>. Target: <recommended value>. <explanation>","impact":"<specific projected impact with estimated score lift>","difficulty":"easy|medium|hard","implementation":"<specific steps with code/markup example>","evidence_ids":["<ev_*"],"consequenceStatement":"<real business cost in survival language>","estimatedVisibilityLoss":"<X-Y%>","estimatedTimeMinutes":<5|15|30|60|120>}],"crypto_intelligence":{"has_crypto_signals":false,"summary":"<or detected>","detected_assets":[],"keywords":[],"wallet_addresses":[],"sentiment":"neutral","risk_notes":[],"chain_networks":[]}}
-
-Required category_grades labels: "Content Depth & Quality","Heading Structure & H1","Schema & Structured Data","Meta Tags & Open Graph","Technical SEO","AI Readability & Citability"
-Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match numeric score.`;
+      const prompt1 = renderPrompt("audit.primary", {
+        tierPromptPrefix,
+        targetUrl,
+        hostname: parsedTargetUrl.hostname,
+        evidenceBlock,
+        diagnosticFlags,
+        bodySnippet,
+        platformIntelBlock,
+        findabilityGoalsBlock,
+        mockDataScanBlock,
+        boundsBlock,
+      }).prompt;
 
       emitProgress(requestId, "ai1", 45);
 
@@ -11135,41 +11103,18 @@ Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match nu
           Math.floor(tcBudgetMs * 0.55),
         ); // 55% of TC budget to AI2
 
-        const ai2Prompt = `You are a PEER REVIEWER for an AI visibility audit. Your job is to CRITIQUE the primary analysis below and adjust the score.
-Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
-
-ORIGINAL URL: ${targetUrl}
-PRIMARY AI SCORE: ${ai1Score}/100
-
-PRIMARY ANALYSIS (JSON):
-${JSON.stringify(
-          {
+        const ai2Prompt = renderPrompt("audit.peer_review", {
+          targetUrl,
+          ai1Score,
+          primaryAnalysis: {
             visibility_score: ai1Score,
             category_grades: aiAnalysis.category_grades,
             summary: aiAnalysis.summary,
             key_takeaways: aiAnalysis.key_takeaways,
             content_highlights: aiAnalysis.content_highlights,
           },
-          null,
-          0,
-        )}
-
-EVIDENCE (scraped from live page):
-${evidenceBlock}
-
-INSTRUCTIONS:
-- Review each category grade. Are they justified by the evidence?
-- Check for inflated scores (AI models tend to be too generous).
-- Check for missed issues the primary analysis overlooked.
-- Provide a score_adjustment between -15 and +10 (negative = primary was too generous, positive = too harsh).
-- List 0-3 extra recommendations the primary analysis missed.
-- Do NOT claim a signal is missing when the evidence says it is present or OK.
-- Do NOT recommend adding TLDR/summary, fixing meta description length, or fixing H1 count if the evidence block already shows those as detected or in-range.
-- Extra recommendations must be directly grounded in the evidence block, not generic best practices.
-- Be STRICT. Most sites deserve C/D grades. Penalise missing schema, thin content, weak meta tags.
-
-Return ONLY valid JSON:
-{"score_adjustment":<-15 to +10>,"critique":"<2-3 sentences explaining why you adjusted>","missed_issues":["<issues primary missed>"],"extra_recommendations":["<0-3 actionable items>"],"category_overrides":[{"label":"<category name>","adjusted_score":<0-100>,"reason":"<why>"}],"confidence":"high|medium|low"}`;
+          evidenceBlock,
+        }).prompt;
 
         try {
           const ai2Raw = await Promise.race([
@@ -11367,41 +11312,20 @@ Return ONLY valid JSON:
             Math.min(100, ai1Score + tripleCheckResult.ai2_adjustment),
           );
 
-          const ai3Prompt = `You are a VALIDATION GATE for an AI visibility audit. Two prior models have already analyzed this website. Your job is to confirm or override the proposed final score.
-Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
-
-URL: ${targetUrl}
-AI1 PRIMARY SCORE: ${ai1Score}/100 (model: ${providers[0].model})
-AI2 PEER ADJUSTMENT: ${tripleCheckResult.ai2_adjustment > 0 ? "+" : ""}${tripleCheckResult.ai2_adjustment} (model: ${tripleCheckResult.ai2_model || "skipped"})
-AI2 CRITIQUE: ${tripleCheckResult.ai2_critique || "N/A"}
-PROPOSED FINAL SCORE: ${proposedScore}/100
-
-CATEGORY GRADES (after AI2 overrides):
-${JSON.stringify(
-            aiAnalysis.category_grades.map((g: any) => ({
+          const ai3Prompt = renderPrompt("audit.validation_gate", {
+            targetUrl,
+            ai1Score,
+            ai2Adjustment: tripleCheckResult.ai2_adjustment,
+            ai2Model: tripleCheckResult.ai2_model,
+            ai2Critique: tripleCheckResult.ai2_critique,
+            proposedScore,
+            categoryGrades: aiAnalysis.category_grades.map((g: any) => ({
               label: g.label,
               grade: g.grade,
               score: g.score,
             })),
-            null,
-            0,
-          )}
-
-KEY EVIDENCE:
-${Object.entries(evidenceManifest)
-              .slice(0, 10)
-              .map(([id, v]) => `[${id}] ${v}`)
-              .join("\n")}
-
-INSTRUCTIONS:
-- Validate whether ${proposedScore}/100 is fair given the evidence.
-- If the score needs modification, provide a final_score override (0-100).  
-- validated=true means you agree with the proposed score (±3 points).
-- validated=false means you're overriding it.
-- Be STRICT. Empty schema/meta/H1 = low scores. Don't inflate.
-
-Return ONLY valid JSON:
-{"validated":<true|false>,"final_score":<0-100>,"verdict":"<1-2 sentences>","confidence":"high|medium|low"}`;
+            evidenceManifest,
+          }).prompt;
 
           try {
             const ai3Raw = await Promise.race([

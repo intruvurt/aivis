@@ -17,6 +17,7 @@ import {
 import { authRequired } from '../middleware/authRequired.js';
 import { getPool } from '../services/postgresql.js';
 import { createUser, getUserByEmail, updateUserById } from '../models/User.js';
+import { clearSessionCookie, setSessionCookie } from '../lib/authSession.js';
 import { signUserToken } from '../lib/utils/jwt.js';
 import { attachReferralAtSignup, normalizeReferralCodeInput, validateReferralCode } from '../services/referralCredits.js';
 import { saveVcsToken } from '../services/autoScoreFixService.js';
@@ -288,13 +289,11 @@ router.get('/google/callback', async (req, res) => {
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });
-    const safeUser = pickSafeOAuthUser(user);
+    setSessionCookie(res, token);
 
     return res.redirect(
       buildFrontendAuthRedirect(req, {
         oauth_success: '1',
-        oauth_token: token,
-        oauth_user: Buffer.from(JSON.stringify(safeUser), 'utf8').toString('base64url'),
         referral_attached: referralAttached ? '1' : '0',
         redirect: state.redirect || '/',
       })
@@ -502,13 +501,11 @@ router.get('/github/callback', async (req, res) => {
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });
-    const safeUser = pickSafeOAuthUser(user);
+    setSessionCookie(res, token);
 
     return res.redirect(
       buildFrontendAuthRedirect(req, {
         oauth_success: '1',
-        oauth_token: token,
-        oauth_user: Buffer.from(JSON.stringify(safeUser), 'utf8').toString('base64url'),
         referral_attached: referralAttached ? '1' : '0',
         redirect: state.redirect || '/',
       })
@@ -588,6 +585,10 @@ router.post(
 // GET CURRENT USER - Requires authentication
 router.get('/me', authRequired, getMe);
 router.get('/profile', authRequired, getMe);
+router.post('/logout', (_req, res) => {
+  clearSessionCookie(res);
+  return res.json({ success: true });
+});
 router.put('/profile', authRequired, updateProfile);
 
 // CHANGE PASSWORD (authenticated)

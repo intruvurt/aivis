@@ -9792,7 +9792,11 @@ app.post(
       let providers: typeof PROVIDERS;
       if (isTripleCheck) {
         const ai1 = isscorefixTier ? SCOREFIX_AI1 : SIGNAL_AI1;
-        providers = [ai1];
+        // Include paid-tier fallbacks so a GPT-5 Mini timeout doesn't skip
+        // straight to deterministic.  AI2/AI3 (triple-check critique stages)
+        // are NOT suitable fallbacks for AI1 — they use different prompts.
+        const ai1Fallbacks = PROVIDERS.filter((p) => p.model !== ai1.model);
+        providers = [ai1, ...ai1Fallbacks];
       } else if (isFree) {
         providers = [...FREE_PROVIDERS];
       } else {

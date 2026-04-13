@@ -707,6 +707,9 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids UUID[]`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS title TEXT`,
+            `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS severity VARCHAR(12)`,
             `CREATE TABLE IF NOT EXISTS audit_score_snapshots (
               audit_id UUID PRIMARY KEY,
               user_id UUID NOT NULL,
@@ -737,6 +740,16 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS content_score NUMERIC(5,2)`,
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS citation_score NUMERIC(5,2)`,
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`,
+
+            // ── Ensure audit_score_snapshots has pkey (may be missing after restore) ──
+            `DO $$ BEGIN
+              IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint
+                WHERE conrelid = 'audit_score_snapshots'::regclass AND contype = 'p'
+              ) THEN
+                ALTER TABLE audit_score_snapshots ADD PRIMARY KEY (audit_id);
+              END IF;
+            END $$`,
             // ── V1 Infrastructure Tables (projects, issues, fixes, PRs) ──
             `CREATE TABLE IF NOT EXISTS v1_projects (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -965,12 +978,16 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_url ON fix_outcomes(url)`,
 
             // ── Ensure audits.id has a PRIMARY KEY constraint (may be missing after a
-            //    Neon restore or partial init batch) — pipeline_runs FKs require it ──
+            //    Neon restore or partial init batch) — pipeline_runs FKs require it.
+            //    First deduplicate any orphan id collisions, then add the constraint. ──
             `DO $$ BEGIN
               IF NOT EXISTS (
                 SELECT 1 FROM pg_constraint
                 WHERE conrelid = 'audits'::regclass AND contype = 'p'
               ) THEN
+                -- Remove duplicate ids (keep the newest row per id)
+                DELETE FROM audits a USING audits b
+                  WHERE a.id = b.id AND a.ctid < b.ctid;
                 ALTER TABLE audits ADD PRIMARY KEY (id);
               END IF;
             END $$`,

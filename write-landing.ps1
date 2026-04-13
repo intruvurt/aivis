@@ -52,9 +52,10 @@ const LANDING_STRUCTURED_DATA = [
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
     { name: 'Observer [Free] – 3 audits/month', path: '/pricing#observer' },
+    { name: 'Starter – 15 audits/month – $15/mo', path: '/pricing#starter' },
     { name: 'Alignment [Core] – 60 audits/month – $49/mo', path: '/pricing#alignment' },
-    { name: 'Signal [Pro] – 110 audits/month – $149/mo', path: '/pricing#signal' },
-    { name: 'Score Fix [AutoFix PR] – 15 audits per pack – $1499 one-time', path: '/pricing#scorefix' },
+    { name: 'Signal [Pro] – 200 audits/month – $149/mo', path: '/pricing#signal' },
+    { name: 'Score Fix [AutoFix PR] – 250 credits – $299 one-time', path: '/pricing#scorefix' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS - AI Visibility Intelligence Platform',
@@ -122,14 +123,19 @@ const TIERS = [
     features: ['3 audits / month','AI visibility score (0–100)','Keyword intelligence','Schema markup audit','Heading & meta tag analysis','Auto','Public share links (redacted)'],
   },
   {
-    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 9, annualMonthlyPrice: 7, scans: 60,
+    key: 'starter', name: 'Starter', subtitle: 'Starter', monthlyPrice: 15, annualMonthlyPrice: 12, scans: 15,
+    color: 'border-emerald-400/30 bg-[#0d1f1a]/60 ring-1 ring-emerald-400/20', accentClass: 'text-emerald-300', badge: null, creditHint: null,
+    features: ['15 audits / month','Full recommendations with code','PDF exports','Shareable links','Content highlights','Force-refresh audits','30-day report history'],
+  },
+  {
+    key: 'alignment', name: 'Alignment', subtitle: 'Core', monthlyPrice: 49, annualMonthlyPrice: 38, scans: 60,
     color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20', accentClass: 'text-cyan-300', badge: 'Most Popular for Solo/F', creditHint: 'Annual plan: earn credits toward API add-ons',
     features: ['60 audits / month','Competitor tracking','Citation workflows','CSV & PDF exports','Force-refresh audits','Shareable report links','Report history'],
   },
   {
-    key: 'signal', name: 'Signal', subtitle: 'Pro', monthlyPrice: 29, annualMonthlyPrice: 23, scans: 110,
+    key: 'signal', name: 'Signal', subtitle: 'Pro', monthlyPrice: 149, annualMonthlyPrice: 116, scans: 200,
     color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20', accentClass: 'text-violet-300', badge: 'Annual earns credits', creditHint: 'Yearly subscribers earn tier credits redeemable within Signal features',
-    features: ['110 audits / month','Triple-Check AI Pipeline (3 models)','Expanded competitor tracking','Advanced citation testing','AI Citation Tracker','API access + white-label reports','Scheduled rescans'],
+    features: ['200 audits / month','Triple-Check AI Pipeline (3 models)','Expanded competitor tracking','Advanced citation testing','AI Citation Tracker','API access + white-label reports','Scheduled rescans'],
   },
   {
     key: 'scorefix', name: 'Score Fix', subtitle: 'AutoFix PR', monthlyPrice: 299, annualMonthlyPrice: 299, scans: 15,

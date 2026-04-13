@@ -424,7 +424,7 @@ export async function sendUsageCapEmail(
         ``,
         `YOUR OPTIONS:`,
         `- Alignment: $49/month - 60 scans, competitor tracking, reverse engineering, exports`,
-        `- Signal: $149/month - 110 scans, Triple-Check AI, citation testing, API, white-label`,
+        `- Signal: $149/month - 200 scans, Triple-Check AI, citation testing, API, white-label`,
         ``,
         `View plans: ${FRONTEND_URL}/pricing`,
         ``,
@@ -1172,7 +1172,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                       <tr>
                         <td>
                           <span style="font-size:16px;font-weight:700;color:#22d3ee;">Alignment</span>
-                          <span style="color:#94a3b8;font-size:14px;"> - $9/month</span>
+                          <span style="color:#94a3b8;font-size:14px;"> - $49/month</span>
                         </td>
                       </tr>
                       <tr><td style="padding:6px 0 0;color:#cbd5e1;font-size:13px;line-height:1.6;">60 scans/month &bull; Competitor tracking &bull; Reverse engineering tools &bull; PDF &amp; CSV exports</td></tr>
@@ -1193,7 +1193,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                           <span style="display:inline-block;background:#f59e0b;color:#0f172a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;">MOST POPULAR</span>
                         </td>
                       </tr>
-                      <tr><td style="padding:6px 0 0;color:#cbd5e1;font-size:13px;line-height:1.6;">110 scans/month &bull; Triple-Check AI (3 models) &bull; Citation testing &bull; All Alignment features &bull; API access &bull; White-label reports</td></tr>
+                      <tr><td style="padding:6px 0 0;color:#cbd5e1;font-size:13px;line-height:1.6;">200 scans/month &bull; Triple-Check AI (3 models) &bull; Citation testing &bull; All Alignment features &bull; API access &bull; White-label reports</td></tr>
                     </table>
                   </td>
                 </tr>

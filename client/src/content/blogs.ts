@@ -1073,15 +1073,17 @@ This is the complete operational reference for every feature, tool, and pipeline
 
 If you want to know exactly what you are paying for, or exactly what you are missing, this is the document.
 
-**The Four Tiers**
+**The Five Tiers**
 
-AiVIS runs on four canonical tiers. Every entitlement, every feature gate, every model allocation flows from these four keys.
+AiVIS runs on five canonical tiers. Every entitlement, every feature gate, every model allocation flows from these five keys.
 
 Observer is the free tier. Three audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
 
+Starter is the entry paid tier at $15 per month. Fifteen audits per month. Full recommendations with implementation code. PDF exports. Shareable links. Content highlights. Force-refresh audits. Thirty-day report history.
+
 Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
 
-Signal is the premium tier at $149 per month, or $116 per month billed annually at $1,394 per year. One hundred ten audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
+Signal is the premium tier at $149 per month, or $116 per month billed annually at $1,394 per year. Two hundred audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
 
 Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
 
@@ -1203,7 +1205,7 @@ The dashboard computes real metrics from actual audit data - not placeholder gra
 
 AiVIS is a structured AI visibility system with five pressure points - crawlability, extractability, trust, scoring consistency, and operational follow-through - and every feature exists to improve at least one of those without breaking the others.`,
     keyPoints: [
-      'Four canonical tiers with explicit feature gates and no ambiguity about what each includes.',
+      'Five canonical tiers with explicit feature gates and no ambiguity about what each includes.',
       'Triple-Check AI Pipeline validates audit accuracy through three independent model passes.',
       'Citation testing verifies real-world AI search presence across three free search engines.',
       'Score Fix generates evidence-linked GitHub PRs that trace every code change back to a specific audit finding.',
@@ -1345,9 +1347,11 @@ Batch Remediation handles multiple issues across multiple pages in a single oper
 
 Observer is free. Three audits per month. Full audit fidelity. No credit card required. You see exactly what the platform does before spending anything.
 
+Starter is $15 per month. Fifteen audits. Full recommendations with implementation code. PDF exports. Shareable links. Content highlights. The bridge from free to operational.
+
 Alignment is $49 per month. Sixty audits. Multi-page crawls. Competitor tracking. Brand mentions. Exports. API key. The operational foundation.
 
-Signal is $149 per month, or $110 per month billed annually. One hundred ten audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
+Signal is $149 per month, or $116 per month billed annually. Two hundred audits. Triple-Check Pipeline. Citation testing. Alert integrations. Automation workflows. Priority queue. White-label reports. The full intelligence stack.
 
 Score Fix is $299 per 250-credit pack. Not a subscription. You buy credits, use them for automated PR generation at 10 to 25 credits per fix, and repurchase when exhausted.
 
@@ -2024,9 +2028,11 @@ These tools are not locked behind a paywall. They are part of how we demonstrate
 
 Observer is free. Three scans per month. Zero cost. Full audit pipeline with a zero-cost model chain. This is not a crippled trial. It is the real engine running on free models.
 
-Alignment is 9 dollars per month. Sixty scans. Paid models with better consistency. Competitor tracking. Brand mention scanning. Scheduled rescans. This is the agency tier for teams managing a handful of clients.
+Starter is 15 dollars per month. Fifteen scans. Paid AI model with full recommendations, implementation code, PDF exports, and shareable links. The entry point for professionals who need actionable output.
 
-Signal is 29 dollars per month. One hundred ten scans. Triple-check AI pipeline. Citation testing. Citation intelligence with drop alerts. Notification system. This is for agencies and businesses that need verification, not just scoring.
+Alignment is 49 dollars per month. Sixty scans. Paid models with better consistency. Competitor tracking. Brand mention scanning. Scheduled rescans. This is the agency tier for teams managing a handful of clients.
+
+Signal is 149 dollars per month. Two hundred scans. Triple-check AI pipeline. Citation testing. Citation intelligence with drop alerts. Notification system. This is for agencies and businesses that need verification, not just scoring.
 
 Score Fix is 299 dollars per 250-credit pack. Automated GitHub PR generation via MCP. The AI does not just tell you what to fix. It opens a pull request with the actual code changes. Ten to twenty-five credits per PR depending on complexity.
 
@@ -4087,7 +4093,7 @@ Alignment is for teams and professionals who need to track competitors, research
 
 ## Signal — Multi-Model Consensus
 
-**$149/month (or $1,394/year), 110 scans**
+**$149/month (or $1,394/year), 200 scans**
 
 Signal is for organisations that need the highest audit accuracy and citation verification. The triple-check pipeline runs every audit through 3 independent AI models: the first performs deep analysis, the second provides peer critique (adjusting the score by −15 to +10), and the third acts as a validation gate.
 

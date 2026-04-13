@@ -155,7 +155,7 @@ If you pass all three with A or B grades, your foundation is solid and the rever
 
 The free Observer tier at [AiVIS](https://aivis.biz/pricing) gives you 3 full audits per month. The reverse engineering tools are available on the Alignment tier ($49/month, 60 scans) which also includes competitor tracking across up to 3 competitors, brand mention monitoring across 9 sources, and niche discovery.
 
-For the full reverse engineering + citation testing + triple-check AI pipeline, the Signal tier ($149/month, 110 scans) covers everything.
+For the full reverse engineering + citation testing + triple-check AI pipeline, the Signal tier ($149/month, 200 scans) covers everything.
 
 ---
 

@@ -71,18 +71,20 @@ Canonical tier truth lives in `shared/types.ts`.
 | Canonical tier | Display name | Billing |
 | --- | --- | --- |
 | `observer` | Observer (Free) | Free |
-| `alignment` | Alignment (Core) | $49/mo ($348/yr) |
-| `signal` | Signal (Pro) | $149/mo ($1300/yr) |
-| `scorefix` | Score Fix [AutoFix PR] | $1499 one-time |
+| `starter` | Starter | $15/mo ($140/yr) |
+| `alignment` | Alignment (Core) | $49/mo ($458/yr) |
+| `signal` | Signal (Pro) | $149/mo ($1,394/yr) |
+| `scorefix` | Score Fix [AutoFix PR] | $299 one-time |
 
 Selected entitlement highlights from the shared contract:
 
 | Tier | Scans/month | Team workspaces | Share links | Triple-check | AutoFix PR |
 | --- | ---: | --- | --- | --- | --- |
 | `observer` | 3 | no | no | no | no |
-| `alignment` | 60 | no | yes | no | no |
-| `signal` | 110 | yes | yes | yes | yes |
-| `scorefix` | 15 | no | yes | yes | yes |
+| `starter` | 15 | no | yes | no | yes |
+| `alignment` | 60 | yes | yes | no | yes |
+| `signal` | 200 | yes | yes | yes | yes |
+| `scorefix` | 15 | yes | yes | yes | yes |
 
 ## Key routes
 

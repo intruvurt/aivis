@@ -244,7 +244,7 @@ Signal-exclusive requirements:
 
 ### Score Fix [AutoFix PR]
 
-Automated GitHub PR remediation tier via MCP. Not a subscription - users pay $1499 per 250-credit pack and must repurchase when credits are exhausted. Each automated PR costs 10-25 credits depending on fix complexity.
+Automated GitHub PR remediation tier via MCP. Not a subscription - users pay $299 per 250-credit pack and must repurchase when credits are exhausted. Each automated PR costs 10-25 credits depending on fix complexity.
 
 Target cost:
 
@@ -265,7 +265,7 @@ Intended routing:
 
 Billing model:
 
-* $1499 one-time per 250-credit pack
+* $299 one-time per 250-credit pack
 * 10-25 credits per automated GitHub PR fix
 * no recurring subscription
 * user must repurchase when credits are exhausted

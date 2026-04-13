@@ -127,7 +127,7 @@ If you want the full 28-rule SSFR audit with recommendations, the free Observer 
 
 Need more depth? The Alignment tier ($49/month, 60 scans) adds [competitor tracking](https://aivis.biz/competitors) with head-to-head comparisons across schema coverage, content depth, and page speed. It also adds [brand mention tracking](https://aivis.biz/mentions) across 9 free sources (Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt) and [reverse engineering tools](https://aivis.biz/reverse-engineer) that decompose how AI models think about content in your niche.
 
-Signal tier ($149/month, 110 scans) unlocks the triple-check pipeline, [citation testing](https://aivis.biz/citations) across 3 search engines with AI platform simulation, and API access for programmatic audits.
+Signal tier ($149/month, 200 scans) unlocks the triple-check pipeline, [citation testing](https://aivis.biz/citations) across 3 search engines with AI platform simulation, and API access for programmatic audits.
 
 The point isn't to upsell you. The point is that AI visibility is measurable, and the measurements are structural, not magical. Whether you use the free tools or the full platform, start by understanding what AI models actually see when they look at your site.
 

@@ -89,9 +89,10 @@ export default function TermsPage() {
           {/* ── 6 Pricing ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">6. Pricing, Billing, and Refunds</h2>
-            <p>The Service offers four tiers:</p>
+            <p>The Service offers five tiers:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">Observer (Free):</strong> Limited monthly scans with core audit capabilities.</li>
+              <li><strong className="text-white">Starter ($15/mo or $140/yr):</strong> Full recommendations with implementation code, PDF exports, shareable links, and content highlights.</li>
               <li><strong className="text-white">Alignment ($49/mo or $458/yr):</strong> Expanded scan allowance, exports, force refresh, competitor tracking, mention digests.</li>
               <li><strong className="text-white">Signal ($149/mo or $1,394/yr):</strong> Full platform access including triple-check workflows, citation testing, team workspaces, API, webhooks, and scheduled rescans.</li>
               <li><strong className="text-white">Score Fix ($299 one-time):</strong> 250-credit pack with automated remediation, evidence-linked pull request generation, and batch operations.</li>

@@ -30,7 +30,7 @@
 - **Yearly:** $1300/year ($200/month billed annually)
 - **Savings:** $393/year (~22% off)
 - **Features:**
-  - 110 scans/month
+  - 200 scans/month
   - Track 5 competitors
   - 100 citation queries/test
   - AI Citation Tracker access

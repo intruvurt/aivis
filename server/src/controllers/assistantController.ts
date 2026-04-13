@@ -539,7 +539,7 @@ async function fetchSiteFileContent(
     const truncated =
       text.length > maxBytes
         ? text.slice(0, maxBytes) +
-          `\n\n[...truncated at ${Math.round(maxBytes / 1000)}KB - full file is ${Math.round(text.length / 1000)}KB]`
+        `\n\n[...truncated at ${Math.round(maxBytes / 1000)}KB - full file is ${Math.round(text.length / 1000)}KB]`
         : text;
     return { content: truncated, status: res.status, byteLength: text.length };
   } catch (err: any) {
@@ -636,7 +636,7 @@ This eliminates single-model bias. Observer and Alignment get a single-model ana
 | Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
 | Alignment [Core] | $49/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
 | Signal [Pro] | $149/mo | 200 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 10 competitors |
-| Score Fix [AutoFix PR] | $1499 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
+| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
 
 Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (600-1008 code lines).
 Always verify exact current pricing from live pricing context and /pricing.

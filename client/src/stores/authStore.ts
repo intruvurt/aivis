@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { API_URL } from "../config";
 import { buildBearerHeader, normalizeAuthToken } from "../utils/authToken";
 
-export type AuthTier = "observer" | "alignment" | "signal" | "scorefix";
+export type AuthTier = "observer" | "starter" | "alignment" | "signal" | "scorefix";
 
 export type AuthUser = {
     id: string;

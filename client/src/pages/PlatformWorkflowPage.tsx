@@ -127,7 +127,7 @@ const executionTracks = [
 
 /* ─── FAQ ─── */
 const faqs = [
-  { q: "How many pages can I audit per scan?", a: "Depends on your tier: Observer gets 3 pages/scan, Alignment gets 3, Signal gets 10, and Score Fix gets 10 pages per scan." },
+  { q: "How many pages can I audit per scan?", a: "Depends on your tier: Observer gets 3 pages/scan, Starter gets 3, Alignment gets 3, Signal gets 10, and Score Fix gets 10 pages per scan." },
   { q: "Can I connect AiVIS to my existing tools?", a: "Yes. Use the REST API with scoped API keys, wire webhooks to Slack/Discord/Zapier/Teams/Notion, or connect AI agents via MCP." },
   { q: "How do scheduled rescans work?", a: "Set a frequency (daily, weekly, biweekly, monthly) for any URL. AiVIS automatically re-audits and notifies you via webhook if the score changes." },
   { q: "What's the difference between competitor tracking and citation testing?", a: "Competitor tracking benchmarks your visibility score against other sites. Citation testing checks whether AI platforms like ChatGPT and Perplexity actually mention your brand in their answers." },

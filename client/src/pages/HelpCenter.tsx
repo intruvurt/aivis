@@ -142,7 +142,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What tier do I need?',
-        a: 'Alignment, Signal, or Score Fix. Observer users see an upgrade prompt. Exact pricing and limits are shown on the live Pricing page. The authority check endpoint is POST /api/citations/authority-check.',
+        a: 'Starter, Alignment, Signal, or Score Fix. Observer users see an upgrade prompt. Exact pricing and limits are shown on the live Pricing page. The authority check endpoint is POST /api/citations/authority-check.',
         tags: ['tier', 'paid', 'alignment', 'signal', 'scorefix', 'pricing'],
       },
       {
@@ -180,7 +180,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'Can I export my report?',
-        a: 'All tiers include shareable report links (Observer links are redacted). CSV, PDF, and JSON export is available on Alignment, Signal, and Score Fix. Observer tier results are viewable in-app and saved to analysis history.',
+        a: 'All tiers include shareable report links (Observer links are redacted). CSV, PDF, and JSON export is available on Starter, Alignment, Signal, and Score Fix. Observer tier results are viewable in-app and saved to analysis history.',
         tags: ['export', 'download', 'share', 'report'],
       },
       {
@@ -254,12 +254,12 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'What are the tiers?',
-        a: 'Observer, Alignment, Signal, and Score Fix tiers are available. Plan limits and pricing are live-configured and always shown on the Pricing page. Alignment and Signal are subscriptions; Score Fix is a one-time remediation purchase.',
+        a: 'Observer, Starter, Alignment, Signal, and Score Fix tiers are available. Plan limits and pricing are live-configured and always shown on the Pricing page. Starter, Alignment and Signal are subscriptions; Score Fix is a one-time remediation purchase.',
         tags: ['pricing', 'tiers', 'plans', 'cost'],
       },
       {
         q: 'Can I cancel anytime?',
-        a: 'Yes. Subscriptions (Alignment/Signal) can be managed from Billing and cancellation takes effect at the end of the current cycle. Score Fix is one-time, so there is no recurring cancellation cycle for that purchase.',
+        a: 'Yes. Subscriptions (Starter/Alignment/Signal) can be managed from Billing and cancellation takes effect at the end of the current cycle. Score Fix is one-time, so there is no recurring cancellation cycle for that purchase.',
         tags: ['cancel', 'subscription', 'billing'],
       },
       {

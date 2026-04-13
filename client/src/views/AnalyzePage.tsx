@@ -247,6 +247,7 @@ const AnalyzePage: React.FC = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const progressSourceRef = useRef<EventSource | null>(null);
   const pendingAutostartRef = useRef(false);
+  const sseAliveRef = useRef(false);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -331,15 +332,35 @@ const AnalyzePage: React.FC = () => {
     };
   }, []);
 
+  // Fallback timer: if real SSE events are flowing, do nothing. Otherwise
+  // synthesise both step AND percent so the pipeline checklist animates.
   useEffect(() => {
     if (!loading) return;
+    const FALLBACK_SCHEDULE: { step: string; pct: number }[] = [
+      { step: "dns", pct: 5 },
+      { step: "crawl", pct: 15 },
+      { step: "extract", pct: 25 },
+      { step: "schema", pct: 35 },
+      { step: "technical", pct: 38 },
+      { step: "security", pct: 42 },
+      { step: "ai1", pct: 50 },
+      { step: "ai2", pct: 60 },
+      { step: "ai3", pct: 75 },
+      { step: "compile", pct: 90 },
+      { step: "finalize", pct: 92 },
+    ];
+    let idx = 0;
     const tick = window.setInterval(() => {
+      // Real SSE is driving progress — skip synthetic updates
+      if (sseAliveRef.current) return;
       setProgress((prev) => {
         if (prev.percent >= 92 || prev.step === "complete") return prev;
-        const softIncrement = prev.percent < 30 ? 2 : 1;
-        return { ...prev, percent: Math.min(92, prev.percent + softIncrement) };
+        const target = FALLBACK_SCHEDULE[idx];
+        if (!target) return prev;
+        idx = Math.min(idx + 1, FALLBACK_SCHEDULE.length - 1);
+        return { ...prev, step: target.step, percent: target.pct };
       });
-    }, 1400);
+    }, 3000);
     return () => window.clearInterval(tick);
   }, [loading]);
 
@@ -385,6 +406,7 @@ const AnalyzePage: React.FC = () => {
         const nextStep = data.step || data.stage;
         const nextPercent = typeof data.percent === "number" ? data.percent : data.progress;
         if (typeof nextPercent === "number" && typeof nextStep === "string") {
+          sseAliveRef.current = true;
           setProgress({
             requestId,
             step: nextStep,
@@ -484,7 +506,13 @@ const AnalyzePage: React.FC = () => {
       setScanLimitReached(false);
       setResult(null);
       setResultView("summary");
-      setProgress({ requestId: null, step: "starting", percent: 0 });
+      sseAliveRef.current = false;
+
+      // Generate requestId client-side so we can open the SSE stream
+      // immediately, in parallel with the POST (not after the response).
+      const requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      setProgress({ requestId, step: "starting", percent: 0 });
+      openProgressStream(requestId);
 
       const endpoint = `${API_URL}/api/analyze`;
 
@@ -494,16 +522,10 @@ const AnalyzePage: React.FC = () => {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ url: normalizedUrl, forceRefresh: true }),
+        body: JSON.stringify({ url: normalizedUrl, forceRefresh: true, requestId }),
         timeoutMs: HARD_TIMEOUT_MS,
         signal: abortSignal,
       }, 0);
-
-      const requestId = response.headers.get("X-Audit-Request-Id");
-      if (requestId) {
-        setProgress({ requestId, step: "initializing", percent: 0 });
-        openProgressStream(requestId);
-      }
 
       if (response.status === 401) {
         closeProgressStream();

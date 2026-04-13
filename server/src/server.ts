@@ -3257,15 +3257,21 @@ app.get(
   async (_req: Request, res: Response) => {
     try {
       const pool = getPool();
-      // UNION audits + historical analysis_cache entries not yet in audits
+      // UNION audits + analysis_cache entries not yet in audits.
+      // audits table keeps every scan (including re-scans of the same URL).
+      // analysis_cache has one row per URL. Cache rows are included only when
+      // their URL has no corresponding audits row, to avoid double-counting.
+      // NULL visibility_score rows are INCLUDED so total_audits matches
+      // platform-metrics analyses_ran. Aggregate functions (AVG, PERCENTILE_CONT,
+      // MIN, MAX) and FILTER clauses naturally skip NULLs.
       const allScoresCte = `
       WITH all_audits AS (
-        SELECT visibility_score, result FROM audits WHERE visibility_score IS NOT NULL
+        SELECT visibility_score, result FROM audits
         UNION ALL
         SELECT (result->>'visibility_score')::int AS visibility_score, result
         FROM analysis_cache
         WHERE result->>'visibility_score' IS NOT NULL
-          AND url NOT IN (SELECT DISTINCT url FROM audits WHERE visibility_score IS NOT NULL)
+          AND url NOT IN (SELECT url FROM audits)
       )`;
       const [scoreResult, categoryResult] = await Promise.all([
         pool.query(`
@@ -8265,7 +8271,17 @@ app.get(
         .json({ error: "Invalid session", code: "INVALID_TOKEN" });
     }
 
-    const entry = auditProgress.get(requestId);
+    // The SSE stream may be opened before the POST handler has registered
+    // the progress entry (client-generated requestId sent in parallel).
+    // Poll briefly instead of returning an immediate 404.
+    let entry = auditProgress.get(requestId);
+    if (!entry) {
+      for (let attempt = 0; attempt < 15; attempt++) {
+        await new Promise<void>((r) => setTimeout(r, 200));
+        entry = auditProgress.get(requestId);
+        if (entry) break;
+      }
+    }
     if (!entry) {
       return res.status(404).json({
         error: "Audit progress stream not found",

@@ -297,7 +297,17 @@ function robotsEvidence(robots?: RobotsInfo): EvidenceItem {
   const fetched = robots?.fetched ?? false;
   const allows = robots?.allows ?? {};
 
-  const aiAgents = ['gptbot', 'GPTBot', 'OpenAI', 'openai', 'BingPreview'];
+  const aiAgents = [
+    'gptbot',
+    'GPTBot',
+    'OpenAI',
+    'openai',
+    'BingPreview',
+    'bingbot',
+    'adidxbot',
+    'microsoftpreview',
+    'bingvideopreview',
+  ];
   const aiBlocked = aiAgents.filter((a) => allows[a] === false);
   const allBlocked = aiBlocked.length >= 2;
 

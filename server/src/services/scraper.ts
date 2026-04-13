@@ -226,7 +226,7 @@ async function fetchRobotsForOrigin(origin: string): Promise<RobotsInfo> {
       'FacebookBot', 'Meta-ExternalAgent',               // Meta AI
       'Cohere-ai',                                       // Cohere (Command)
       'YouBot',                                          // You.com
-      'BingPreview', 'bingbot',                          // Microsoft (Copilot)
+      'BingPreview', 'bingbot', 'AdIdxBot', 'MicrosoftPreview', 'BingVideoPreview', // Microsoft (Bing + Copilot)
       'Googlebot-Image',                                 // Google image
       'OAI-SearchBot',                                   // OpenAI search
       'DuckAssistBot',                                   // DuckDuckGo AI Chat
@@ -834,7 +834,7 @@ async function fetchFallback(url: string, timeoutMs: number): Promise<ScrapeResu
 
       // Compute per-crawler access from robots data
       if (robotsResult.fetched && robotsResult.rules) {
-        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
+        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'AdIdxBot', 'MicrosoftPreview', 'BingVideoPreview', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
         const access: Record<string, boolean> = {};
         for (const crawler of crawlers) {
           access[crawler] = evaluateAgentAllowed(robotsResult.rules, crawler);
@@ -1137,7 +1137,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
 
       // Compute per-crawler access from robots data
       if (robotsResult.fetched && robotsResult.rules) {
-        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
+        const crawlers = ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Anthropic-ai', 'Google-Extended', 'PerplexityBot', 'Applebot-Extended', 'Amazonbot', 'CCBot', 'Bytespider', 'FacebookBot', 'Meta-ExternalAgent', 'Cohere-ai', 'YouBot', 'BingPreview', 'bingbot', 'AdIdxBot', 'MicrosoftPreview', 'BingVideoPreview', 'OAI-SearchBot', 'DuckAssistBot', 'PhindBot'];
         const access: Record<string, boolean> = {};
         for (const crawler of crawlers) {
           access[crawler] = evaluateAgentAllowed(robotsResult.rules, crawler);

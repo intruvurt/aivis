@@ -911,7 +911,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
                   onKeyDown={(e) => e.key === "Enter" && authorityTarget.trim() && handleAuthorityCheck()}
                   enterKeyHint="go"
                   placeholder="https://yourdomain.com"
-                  className="field-vivid w-full px-4 py-2.5 rounded-full border border-white/10 text-white text-sm placeholder-white/50"
+                  className="field-vivid bg-charcoal w-full px-4 py-2.5 rounded-full border border-white/10 text-white text-sm placeholder-white/50"
                 />
               </div>
               <div>
@@ -922,7 +922,7 @@ export default function CitationTracker({ url, token, userTier = 'observer' }: C
                   onKeyDown={(e) => e.key === "Enter" && authorityTarget.trim() && handleAuthorityCheck()}
                   enterKeyHint="go"
                   placeholder={citationIdentity?.business_name || 'Auto-filled from audit evidence'}
-                  className="field-vivid w-full px-4 py-2.5 rounded-full border border-white/10 text-white text-sm placeholder-white/50"
+                  className="field-vivid bg-charcoal w-full px-4 py-2.5 rounded-full border border-white/10 text-white text-sm placeholder-white/50"
                 />
               </div>
             </div>

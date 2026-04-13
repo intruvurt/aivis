@@ -84,7 +84,7 @@ export function getTierDisplayName(tier: CanonicalTier | LegacyTier): string {
     enterprise: 'Signal (Pro)',
     pro: 'Signal (Pro)',
   };
-  
+
   return displayNames[tier] || 'Observer (Free)';
 }
 
@@ -161,7 +161,7 @@ export interface TierLimits {
 export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   observer: {
     scansPerMonth: 3,
-    pagesPerScan: 1,          // single page only
+    pagesPerScan: 3,
     competitors: 0,
     cacheDays: 7,
     hasExports: false,
@@ -174,7 +174,7 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   },
   starter: {
     scansPerMonth: 15,
-    pagesPerScan: 1,
+    pagesPerScan: 3,
     competitors: 0,
     cacheDays: 14,
     hasExports: true,
@@ -186,35 +186,35 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
     hasShareableLink: true,
   },
   alignment: {
-    scansPerMonth: 30,
-    pagesPerScan: 5,          // light multi-page crawl
+    scansPerMonth: 60,
+    pagesPerScan: 50,         // multi-page crawl
     competitors: 1,
     cacheDays: 30,
-    hasExports: true,         // PDF export
+    hasExports: true,
     hasForceRefresh: true,
     hasApiAccess: false,
     hasWhiteLabel: false,
-    hasScheduledRescans: false,
+    hasScheduledRescans: true,
     hasReportHistory: true,
     hasShareableLink: true,
   },
   signal: {
-    scansPerMonth: 150,
-    pagesPerScan: 20,         // deep crawl
-    competitors: 3,
+    scansPerMonth: 200,
+    pagesPerScan: 250,        // deep crawl
+    competitors: 10,
     cacheDays: 90,
     hasExports: true,
     hasForceRefresh: true,
-    hasApiAccess: true,       // read-only webhooks/API
-    hasWhiteLabel: true,      // white-label export
+    hasApiAccess: true,
+    hasWhiteLabel: true,
     hasScheduledRescans: true,
     hasReportHistory: true,
     hasShareableLink: true,
   },
   scorefix: {
-    scansPerMonth: 250,
-    pagesPerScan: 20,
-    competitors: 3,
+    scansPerMonth: 15,
+    pagesPerScan: 500,
+    competitors: 5,
     cacheDays: 90,
     hasExports: true,
     hasForceRefresh: true,
@@ -250,7 +250,7 @@ export interface AIPlatformScores {
  * Validates AI platform scores
  */
 export function validateAIPlatformScores(scores: AIPlatformScores): boolean {
-  return Object.values(scores).every(score => 
+  return Object.values(scores).every(score =>
     typeof score === 'number' && score >= 0 && score <= 100
   );
 }
@@ -385,24 +385,24 @@ export interface AnalysisResponse {
 
   ai_platform_scores: AIPlatformScores;
   recommendations: Recommendation[];
-  
+
   // Structured data analysis
   schema_markup: SchemaMarkup;
   content_analysis: ContentAnalysis;
-  
+
   // Summary and insights
   summary: string;
   key_takeaways: string[];
   topical_keywords: string[];
   brand_entities: string[];
-  
+
   // Domain and technical data
   domain_intelligence: DomainIntelligence;
   technical_signals: TechnicalSignals;
-  
+
   // Crypto-specific analysis
   crypto_intelligence: CryptoIntelligence;
-  
+
   // Metadata
   url: string; // The analyzed URL
   analyzed_at: string; // ISO timestamp
@@ -417,9 +417,9 @@ export interface AnalysisResponse {
  */
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
   if (!obj || typeof obj !== 'object') return false;
-  
+
   const response = obj as Record<string, unknown>;
-  
+
   return (
     typeof response.visibility_score === 'number' &&
     typeof response.ai_platform_scores === 'object' &&
@@ -490,9 +490,9 @@ export function toUserProfileUi(user: UserProfile): UserProfileUi {
  */
 export function isAuthUser(obj: unknown): obj is AuthUser {
   if (!obj || typeof obj !== 'object') return false;
-  
+
   const user = obj as Record<string, unknown>;
-  
+
   return (
     typeof user.id === 'string' &&
     typeof user.email === 'string' &&
@@ -536,9 +536,9 @@ export function hasExceededLimits(
   tier: CanonicalTier
 ): boolean {
   const limits = TIER_LIMITS[tier];
-  
+
   if (limits.scansPerMonth === -1) return false; // Unlimited
-  
+
   return usage.analyses_count >= limits.scansPerMonth;
 }
 

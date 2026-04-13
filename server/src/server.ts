@@ -4593,15 +4593,10 @@ app.post(
         });
       }
 
-      const tierPageCap =
-        normalizedTier === "scorefix"
-          ? 500
-          : normalizedTier === "signal"
-            ? 250
-            : 50;
+      const tierPageCap = TIER_LIMITS[normalizedTier]?.pagesPerScan ?? 50;
       const maxPages = Math.max(
         1,
-        Math.min(tierPageCap, Number(rawMaxPages || 25)),
+        Math.min(tierPageCap, Number(rawMaxPages || 50)),
       );
       const maxDepth = Math.max(1, Math.min(4, Number(rawMaxDepth || 2)));
 

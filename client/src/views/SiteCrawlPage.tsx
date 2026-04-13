@@ -171,7 +171,7 @@ export default function SiteCrawlPage() {
   });
 
   const [url, setUrl] = useState("");
-  const [maxPages, setMaxPages] = useState(Math.min(25, limits.pagesPerScan));
+  const [maxPages, setMaxPages] = useState(Math.min(50, limits.pagesPerScan));
   const [maxDepth, setMaxDepth] = useState(2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -269,7 +269,7 @@ export default function SiteCrawlPage() {
           featurePreview={[
             "BFS crawl discovers pages via internal links",
             "Per-page SEO diagnostics - schema, canonical, indexability",
-            "Tier-based page caps: 3 (Alignment), 10 (Signal)",
+            "Tier-based page caps: 50 (Alignment), 250 (Signal), 500 (Score Fix)",
             "Crawl history with pass/warn/fail breakdowns",
           ]}
         />

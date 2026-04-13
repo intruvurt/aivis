@@ -250,7 +250,7 @@ export default function GuideBot() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             onClick={() => { dismissHint(); setIsOpen(true); }}
-            className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
+            className="fixed bottom-20 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
             aria-label="Open BIX"
           >
             <img src="/bix-agent.png" alt="BIX guide agent" className="w-full h-full object-cover" />
@@ -272,7 +272,7 @@ export default function GuideBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-[5.5rem] right-6 z-50 max-w-[260px]"
+            className="fixed bottom-[7.5rem] right-6 z-50 max-w-[260px]"
           >
             <div className="relative rounded-xl border border-cyan-400/20 bg-[#1e2736] px-3.5 py-2.5 shadow-lg shadow-black/30">
               <button
@@ -301,7 +301,7 @@ export default function GuideBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-3rem)] bg-[#323a4c] border border-white/12 rounded-2xl shadow-2xl shadow-black/40 flex flex-col overflow-hidden"
+            className="fixed bottom-20 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-3rem)] bg-[#323a4c] border border-white/12 rounded-2xl shadow-2xl shadow-black/40 flex flex-col overflow-hidden"
           >
             {/* ── Header ── */}
             <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-white/20 to-white/12 border-b border-white/12 shrink-0">

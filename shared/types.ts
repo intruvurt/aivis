@@ -279,7 +279,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 1,
   },
   alignment: {
-    scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 3, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
+    scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 50, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
@@ -293,7 +293,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
   signal: {
-    scansPerMonth: PRICING.signal.limits.scans, pagesPerScan: 10, competitors: PRICING.signal.limits.competitors, cacheDays: 90,
+    scansPerMonth: PRICING.signal.limits.scans, pagesPerScan: 250, competitors: PRICING.signal.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -307,7 +307,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
   },
   scorefix: {
-    scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 10, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
+    scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 500, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,

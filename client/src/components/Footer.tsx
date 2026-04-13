@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Lock, Shield } from "lucide-react";
+import { Lock, Shield, ExternalLink, Mail, Globe, Zap } from "lucide-react";
 
 const linkGroups = [
   {
@@ -10,6 +10,7 @@ const linkGroups = [
       { label: "Pricing", to: "/pricing" },
       { label: "Methodology", to: "/methodology" },
       { label: "Integrations", to: "/integrations" },
+      { label: "API Docs", to: "/api-docs" },
       { label: "DoFollow Backlink", to: "/badge" },
     ],
   },
@@ -20,6 +21,7 @@ const linkGroups = [
       { label: "Blog", to: "/blogs" },
       { label: "Guide", to: "/guide" },
       { label: "FAQ", to: "/faq" },
+      { label: "Help Center", to: "/help" },
       { label: "Substack", to: "https://substack.com/@intruvurtlabs", external: true },
     ],
   },
@@ -39,29 +41,93 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-20 border-t border-white/10 bg-[#08101d] py-4 text-white">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-4 sm:px-6 lg:px-8">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-300/75">AiVIS</span>
+    <footer className="relative z-20 border-t border-white/[0.06] bg-[#060c18] text-white">
+      {/* ── Top accent line ── */}
+      <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
-        <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/60">
-          {linkGroups.flatMap((g) => g.links).map((link) =>
-            'external' in link && link.external ? (
-              <a key={link.to} href={link.to} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                {link.label}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ── Main grid ── */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:grid-cols-4 lg:grid-cols-5">
+          {/* Brand column */}
+          <div className="col-span-2 sm:col-span-4 lg:col-span-2 lg:pr-8">
+            <div className="flex items-center gap-2.5 mb-4">
+              <img src="/aivis-logo.png" alt="AiVIS" className="h-8 w-8 rounded-lg object-contain" />
+              <span className="text-lg font-bold tracking-tight text-white">
+                Ai<span className="text-cyan-400">VIS</span>
+              </span>
+            </div>
+            <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
+              AI Visibility Intelligence Platform. Measure how AI search engines understand, cite, and recommend your website.
+            </p>
+            <div className="flex flex-col gap-2 text-xs text-white/40">
+              <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
+                <Mail className="h-3.5 w-3.5" />
+                support@aivis.biz
               </a>
-            ) : (
-              <Link key={link.to} to={link.to} className="transition hover:text-white">
-                {link.label}
-              </Link>
-            )
-          )}
+              <a href="https://aivis.biz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
+                <Globe className="h-3.5 w-3.5" />
+                aivis.biz
+              </a>
+            </div>
+          </div>
+
+          {/* Link columns */}
+          {linkGroups.map((group) => (
+            <div key={group.title}>
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30 mb-4">
+                {group.title}
+              </h4>
+              <ul className="space-y-2.5">
+                {group.links.map((link) => (
+                  <li key={link.to}>
+                    {"external" in link && link.external ? (
+                      <a
+                        href={link.to}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center gap-1 text-[13px] text-white/50 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                        <ExternalLink className="h-2.5 w-2.5 opacity-0 -translate-y-px group-hover:opacity-60 transition-opacity" />
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.to}
+                        className="text-[13px] text-white/50 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-white/40">
-          <span className="inline-flex items-center gap-1.5"><Lock className="h-3 w-3" /> TLS encrypted</span>
-          <span className="inline-flex items-center gap-1.5"><Shield className="h-3 w-3" /> No data resale</span>
-          <span>© {currentYear} AiVIS.</span>
-          <a href="mailto:support@aivis.biz" className="transition hover:text-white">support@aivis.biz</a>
+        {/* ── Divider ── */}
+        <div className="h-px bg-white/[0.06]" />
+
+        {/* ── Bottom bar ── */}
+        <div className="flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-[11px] text-white/30">
+            <span className="inline-flex items-center gap-1.5">
+              <Lock className="h-3 w-3 text-emerald-500/60" />
+              <span>TLS encrypted</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Shield className="h-3 w-3 text-cyan-400/50" />
+              <span>No data resale</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Zap className="h-3 w-3 text-amber-400/50" />
+              <span>GDPR compliant</span>
+            </span>
+          </div>
+
+          <p className="text-[11px] text-white/25">
+            © {currentYear} Intruvurt Labs · AiVIS. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

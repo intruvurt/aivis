@@ -60,7 +60,7 @@ function getDeterministicFallbackReply(message: string): string {
       '- Schema and technical signal checks',
       '- Analysis history in-app',
       '',
-      'Upgrade to Alignment to unlock all recommendations with step-by-step implementation fixes, competitor tracking, exports, and more. Compare plans at [Pricing](/pricing).',
+      'Upgrade to Starter ($15/mo) for full recommendations with implementation code, exports, and shareable links. Or jump to Alignment ($49/mo) to unlock competitor tracking, reverse engineer tools, and mention scanning. Compare plans at [Pricing](/pricing).',
     ].join('\n');
   }
 
@@ -68,8 +68,9 @@ function getDeterministicFallbackReply(message: string): string {
     return [
       'Quick tier breakdown:',
       '- Observer: 3 scans/mo + score + grades + top 3 recommendations + history',
-      '- Alignment: 60 scans/mo + all recommendations with implementation fixes + exports + competitors + reverse engineer + mentions',
-      '- Signal: 200 scans/mo + triple-check AI (3 models) + citation testing + API + white-label + scheduled rescans + 30 Bix messages/day',
+      '- Starter: 15 scans/mo + full recommendations with implementation code + exports + shareable links + report history',
+      '- Alignment: 60 scans/mo + competitor tracking (1) + reverse engineer + mention scanner + force refresh + 50 citations/mo',
+      '- Signal: 200 scans/mo + triple-check AI (3 models) + citation testing (250/mo) + API + white-label + scheduled rescans + 10 competitors + 30 Bix messages/day',
       '- Score Fix: 250 credits/pack + automated GitHub PR remediation via MCP (600-1008 code lines)',
       '',
       'Open [Pricing](/pricing) for full details and current billing options.',
@@ -633,12 +634,13 @@ This eliminates single-model bias. Observer and Alignment get a single-model ana
 ## Pricing Tiers
 | Tier | Price | Scans/Month | Key Features |
 |------|-------|-------------|--------------|
-| Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, recommendations, analysis history |
-| Alignment [Core] | $49/mo | 60 | + Exports, competitor tracking (3), reverse engineer tools, mention scanner, force refresh, report history, shareable links |
-| Signal [Pro] | $149/mo | 200 | + Triple-check AI (3 models), citation tracker, API access, white-label reports, scheduled rescans, 10 competitors |
-| Score Fix [AutoFix PR] | $299 one-time | 250 | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 10 competitors |
+| Observer [Free] | $0 | 3 | AI visibility score, keyword intelligence, schema audit, top 3 recommendations (title + description only), analysis history |
+| Starter | $15/mo | 15 | + Full recommendations with implementation code, content highlights, PDF export, shareable links, report history |
+| Alignment [Core] | $49/mo | 60 | + Competitor tracking (1), reverse engineer tools, mention scanner, force refresh, 50 citations/mo |
+| Signal [Pro] | $149/mo | 200 | + Triple-check AI (3 models), citation tracker (250/mo), API access, white-label reports, scheduled rescans, 10 competitors |
+| Score Fix [AutoFix PR] | $299 one-time | 250 credits | + Automated GitHub PR remediation via MCP, 600-1008 code lines, issue-level validation, 5 competitors |
 
-Alignment and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (600-1008 code lines).
+Starter, Alignment, and Signal are recurring subscriptions. Score Fix AutoFix PR is a one-time 250-credit pack purchase for automated GitHub PR remediation (600-1008 code lines).
 Always verify exact current pricing from live pricing context and /pricing.
 
 ## Credit System
@@ -674,7 +676,7 @@ Main hub. Enter a URL to run an audit. Shows recent audit history and score over
 Score history over time. Track how your AI visibility improves as you implement recommendations. Charts show trends for overall score and individual categories.
 
 ### Competitor Tracking (/competitors) - Alignment+
-Add up to 3 (Alignment), 8 (Signal), or 10 (Score Fix) competitor URLs. Compare your AI visibility scores side-by-side. See where competitors outperform you and what to prioritize.
+Add up to 1 (Alignment), 10 (Signal), or 5 (Score Fix) competitor URLs. Compare your AI visibility scores side-by-side. See where competitors outperform you and what to prioritize.
 
 ### Citation Tracker (/citations) - Signal only
 Test whether AI platforms actually mention/cite your site. Submit queries and see if ChatGPT, Perplexity, Claude etc. reference your content in their answers.
@@ -722,7 +724,7 @@ All payments processed through Stripe (PCI Level 1). We never see card details. 
 If a page blocks bots or times out, AiVIS returns partial results with clear error indicators. Accessible areas are still scored; inaccessible areas are marked as "Unknown."
 
 **Q: Can I export my report?**
-Alignment and Signal tiers include JSON export and shareable report links. Observer tier results are viewable in-app and saved to analysis history.
+Starter, Alignment, and Signal tiers include exports and shareable report links. Observer tier results are viewable in-app and saved to analysis history.
 
 **Q: How is usage enforced?**
 Server-side hard caps. Your tier limit is checked before every analysis request. When you hit your monthly limit, you see a clear message with next reset time.
@@ -789,7 +791,8 @@ RULES - FOLLOW STRICTLY:
 14. CREDIT & MILESTONE AWARENESS: When relevant, mention the user's credit balance and milestone progress. If a user runs a tool that costs credits, let them know the cost and remaining balance. Celebrate milestone unlocks enthusiastically. If credits are low, gently suggest scan packs without being pushy.
 15. PROACTIVE CTA: When the user seems idle or asks "what can I do?", suggest actionable next steps like: "Send me a URL to audit, or try: 'track [URL] as competitor', 'test citations for [query]', 'scan mentions for [brand]', 'schedule audit for [URL]', or 'fetch robots.txt for [URL]'."
 16. SITE FILE ANALYSIS: When SITE_FILE_CONTEXT is provided below, analyze the fetched file(s) and provide actionable AI visibility recommendations. For robots.txt: evaluate crawler access rules, AI bot policies (GPTBot, ClaudeBot, Googlebot, PerplexityBot), sitemap references, and common issues. For llms.txt: assess structure, completeness, and usefulness for AI model consumption. For sitemap.xml: check URL coverage, format, freshness indicators, and missing pages. Always be specific and actionable. If a file was not found (404), explain why it matters and suggest how to create one. Users can fetch files with: "fetch robots.txt for [URL]", "check llms.txt for [URL]", "audit files for [URL]" (fetches all 3).
-17. OBSERVER TIER EXPERIENCE: Observer (free) users receive a scored summary with their visibility score, category grades, key takeaways, and their top 3 recommendations (title + description only). They do NOT receive implementation code, detailed fix instructions, full keyword intelligence, content highlights, evidence fix plans, or the complete recommendation list. When an Observer user asks "how do I fix this?" or requests specific technical implementation steps, acknowledge their question and explain that step-by-step implementation guidance is available on the Alignment plan. Keep it helpful - give them the general direction (e.g., "adding JSON-LD schema would help here") without writing out the actual code or full technical walkthrough. Always frame upgrades as unlocking deeper insight, not as a paywall.
+17. OBSERVER TIER EXPERIENCE: Observer (free) users receive a scored summary with their visibility score, category grades, key takeaways, and their top 3 recommendations (title + description only). They do NOT receive implementation code, detailed fix instructions, full keyword intelligence, content highlights, evidence fix plans, or the complete recommendation list. When an Observer user asks "how do I fix this?" or requests specific technical implementation steps, acknowledge their question and explain that step-by-step implementation guidance is available starting from the Starter plan ($15/mo). Keep it helpful - give them the general direction (e.g., "adding JSON-LD schema would help here") without writing out the actual code or full technical walkthrough. Always frame upgrades as unlocking deeper insight, not as a paywall.
+18a. STARTER TIER EXPERIENCE: Starter users ($15/mo) get full recommendations with implementation code, content highlights, PDF export, shareable links, and report history - the same analysis depth as Alignment. However, they do NOT have access to competitor tracking, reverse engineer tools, mention scanner, citations, or API access. When a Starter user asks about these features, explain what they do and mention that Alignment ($49/mo) unlocks them.
 18. CONTEXTUAL PAGE NAVIGATION: When the user asks about a feature, always include a direct link to the relevant page. If the user's question maps to a specific tool (e.g. "how do competitors work" → [Competitors](/app/competitors)), link them there. Proactively suggest related pages the user may not know about.
 19. SUPPORT TICKET INTEGRATION: When TICKET_CONTEXT is provided below, summarize the ticket status, last response, and next steps. Users can say "open ticket about [issue]" to create one or "check ticket TK-XXXX" to look up status. Always include the ticket number in your response.
 20. **DATA-GROUNDED RESPONSES:** When the user asks about their own audit results, scores, competitors, or citations, reference the actual data from ENRICHED USER CONTEXT. Quote real numbers (audit count, credit balance, URLs audited). Never invent statistics or results.

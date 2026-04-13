@@ -50,7 +50,7 @@ interface VerifyResult {
 
 export default function PartnershipAgreementPage() {
   usePageMeta({
-    title: "Referral and Delivery Partnership Terms | AiVIS",
+    title: "Referral and Delivery Partnership Terms | AiVIS.biz",
     description: "Private commercial terms for AiVIS referral and delivery partnerships.",
     path: "/partnership-terms",
     noIndex: true,
@@ -146,14 +146,14 @@ export default function PartnershipAgreementPage() {
   }, [verifiedEmail, emailRequired, loading]);
 
   const handleRequestOtp = async () => {
-    if (!signingParty) return;
+    if (!signingParty || !token || !verifiedEmail) return;
     setOtpLoading(true);
     setOtpError(null);
     try {
       const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/request-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ party: signingParty }),
+        body: JSON.stringify({ party: signingParty, token, email: verifiedEmail }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -170,7 +170,7 @@ export default function PartnershipAgreementPage() {
   };
 
   const handleSign = async () => {
-    if (!signingParty || !signatureName.trim() || !otpCode.trim()) return;
+    if (!signingParty || !signatureName.trim() || !otpCode.trim() || !token || !verifiedEmail) return;
     setSignError(null);
     setSignSuccess(null);
     setSigning(true);
@@ -178,7 +178,7 @@ export default function PartnershipAgreementPage() {
       const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/sign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ party: signingParty, signature: signatureName.trim(), otp: otpCode.trim() }),
+        body: JSON.stringify({ party: signingParty, signature: signatureName.trim(), otp: otpCode.trim(), token, email: verifiedEmail }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -200,9 +200,11 @@ export default function PartnershipAgreementPage() {
   };
 
   const handleVerify = async () => {
+    if (!token || !verifiedEmail) return;
     setVerifying(true);
     try {
-      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/verify`);
+      const qs = new URLSearchParams({ token, email: verifiedEmail });
+      const res = await fetch(`${API_URL}/api/agreements/${AGREEMENT_SLUG}/verify?${qs}`);
       const data: VerifyResult = await res.json();
       setVerifyResult(data);
     } catch {
@@ -531,7 +533,7 @@ export default function PartnershipAgreementPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={handleVerify}
-                  disabled={verifying}
+                  disabled={verifying || !token || !verifiedEmail}
                   className="px-5 py-2 rounded-lg bg-white/5 border border-[#2a2f3a] text-white/80 text-sm hover:bg-white/10 transition-all flex items-center gap-2"
                 >
                   {verifying ? <Loader2 className="animate-spin" size={14} /> : <ShieldCheck size={14} />}
@@ -540,7 +542,7 @@ export default function PartnershipAgreementPage() {
 
                 {agreement.status === "fully_signed" && (
                   <a
-                    href={`${API_URL}/api/agreements/${AGREEMENT_SLUG}/export`}
+                    href={`${API_URL}/api/agreements/${AGREEMENT_SLUG}/export?${new URLSearchParams({ token: token || "", email: verifiedEmail || "" }).toString()}`}
                     className="px-5 py-2 rounded-lg bg-white/5 border border-[#2a2f3a] text-white/80 text-sm hover:bg-white/10 transition-all flex items-center gap-2"
                     download
                   >

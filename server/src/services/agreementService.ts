@@ -502,7 +502,7 @@ ${agreement.terms_html}
 
 <div class="footer">
   <p>AiVIS Partnership Agreement - Generated ${new Date().toISOString()}</p>
-  <p>This document is a machine-verifiable signed copy. Verify integrity at https://aivis.biz/partnership-terms/${escapeHtml(agreement.slug)}</p>
+  <p>This document is a machine-verifiable signed copy. Verify integrity from the private partnership terms page using the original access link.</p>
 </div>
 </body>
 </html>`;

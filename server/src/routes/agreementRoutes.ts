@@ -1,9 +1,15 @@
 /**
- * Partnership agreement routes - signing, verification, PDF export, email delivery.
+ * Partnership agreement routes - signing, verification, export, and email delivery.
  *
- * Public endpoints (no auth required - parties sign via slug + exact name match):
+ * Access model:
+ *   - invite token gates agreement access
+ *   - party email must match one of the agreement signers for protected actions
+ *   - OTP is required before signing
+ *
+ * Protected endpoints:
  *   GET  /api/agreements/:slug          - view agreement status + terms
- *   POST /api/agreements/:slug/sign     - sign as party a or b
+ *   POST /api/agreements/:slug/request-otp - send OTP to authorized signer email
+ *   POST /api/agreements/:slug/sign     - sign as the authorized party
  *   GET  /api/agreements/:slug/verify   - tamper-proof integrity check
  *   GET  /api/agreements/:slug/export   - download signed HTML copy
  */
@@ -47,24 +53,48 @@ function isValidAdminKey(key: string | undefined): boolean {
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0].trim().replace(/\/+$/, '');
 
+function normalizeEmail(value: string | undefined): string | null {
+  const trimmed = String(value || '').trim().toLowerCase();
+  return trimmed || null;
+}
+
+function getAgreementAccessParams(req: Request): { token: string | null; email: string | null } {
+  const body = (req.body || {}) as Record<string, unknown>;
+  return {
+    token: String(req.query.token || body.token || '').trim() || null,
+    email: normalizeEmail((req.query.email as string | undefined) || (body.email as string | undefined)),
+  };
+}
+
+function canAccessAgreement(agreement: Awaited<ReturnType<typeof getAgreementBySlug>>, token: string | null, email: string | null): boolean {
+  if (!agreement) return false;
+  if (agreement.access_token && token !== agreement.access_token) return false;
+  const partyAEmail = normalizeEmail(agreement.party_a_email);
+  const partyBEmail = normalizeEmail(agreement.party_b_email);
+  if (!email || (email !== partyAEmail && email !== partyBEmail)) return false;
+  return true;
+}
+
+function getAuthorizedParty(agreement: NonNullable<Awaited<ReturnType<typeof getAgreementBySlug>>>, email: string | null): 'a' | 'b' | null {
+  const normalized = normalizeEmail(email || undefined);
+  if (!normalized) return null;
+  if (normalized === normalizeEmail(agreement.party_a_email)) return 'a';
+  if (normalized === normalizeEmail(agreement.party_b_email)) return 'b';
+  return null;
+}
+
 /* ── GET /:slug - view agreement (gated by access token + party email) ──────── */
 router.get('/:slug', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug as string);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
 
-    // Access token gating: require ?token= query param
-    const token = req.query.token as string | undefined;
-    if (agreement.access_token && token !== agreement.access_token) {
+    const { token, email } = getAgreementAccessParams(req);
+    if (!agreement.access_token || token !== agreement.access_token) {
       return res.status(403).json({ error: 'Access denied. A valid access token is required.' });
     }
 
-    // Email gating: require ?email= matching one of the party emails
-    const email = (req.query.email as string | undefined)?.trim().toLowerCase();
-    const partyAEmail = agreement.party_a_email?.toLowerCase();
-    const partyBEmail = agreement.party_b_email?.toLowerCase();
-
-    if (!email || (email !== partyAEmail && email !== partyBEmail)) {
+    if (!canAccessAgreement(agreement, token, email)) {
       return res.status(403).json({
         error: 'Access denied. A valid party email is required.',
         email_required: true,
@@ -78,7 +108,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
           console.error('[Agreements] Expiry reminder error:', err),
         );
       }
-    }).catch(() => {});
+    }).catch(() => { });
 
     // Compute expiry info
     const expiryInfo = getExpiryInfo(agreement);
@@ -121,6 +151,8 @@ router.get('/:slug', async (req: Request, res: Response) => {
 /* ── POST /:slug/request-otp - send email verification code ────────────────── */
 const otpSchema = z.object({
   party: z.enum(['a', 'b']),
+  token: z.string().min(8),
+  email: z.string().email(),
 });
 
 router.post('/:slug/request-otp', async (req: Request, res: Response) => {
@@ -128,6 +160,18 @@ router.post('/:slug/request-otp', async (req: Request, res: Response) => {
     const parsed = otpSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ error: 'Provide party ("a" or "b").' });
+    }
+
+    const agreement = await getAgreementBySlug(req.params.slug as string);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
+
+    if (!canAccessAgreement(agreement, parsed.data.token, normalizeEmail(parsed.data.email))) {
+      return res.status(403).json({ error: 'Access denied. Valid agreement token and party email required.' });
+    }
+
+    const authorizedParty = getAuthorizedParty(agreement, parsed.data.email);
+    if (authorizedParty !== parsed.data.party) {
+      return res.status(403).json({ error: 'Selected signing party does not match the verified email for this agreement.' });
     }
 
     const result = await requestOtp(req.params.slug as string, parsed.data.party);
@@ -155,6 +199,8 @@ const signSchema = z.object({
   party: z.enum(['a', 'b']),
   signature: z.string().min(2).max(200),
   otp: z.string().length(6),
+  token: z.string().min(8),
+  email: z.string().email(),
 });
 
 router.post('/:slug/sign', async (req: Request, res: Response) => {
@@ -165,6 +211,18 @@ router.post('/:slug/sign', async (req: Request, res: Response) => {
     }
 
     const { party, signature, otp } = parsed.data;
+
+    const agreement = await getAgreementBySlug(req.params.slug as string);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
+
+    if (!canAccessAgreement(agreement, parsed.data.token, normalizeEmail(parsed.data.email))) {
+      return res.status(403).json({ error: 'Access denied. Valid agreement token and party email required.' });
+    }
+
+    const authorizedParty = getAuthorizedParty(agreement, parsed.data.email);
+    if (authorizedParty !== party) {
+      return res.status(403).json({ error: 'Selected signing party does not match the verified email for this agreement.' });
+    }
 
     // Verify OTP first
     const otpCheck = await verifyOtp(req.params.slug as string, party, otp);
@@ -212,6 +270,11 @@ router.get('/:slug/verify', async (req: Request, res: Response) => {
       });
     }
 
+    const { token, email } = getAgreementAccessParams(req);
+    if (!canAccessAgreement(agreement, token, email)) {
+      return res.status(403).json({ error: 'Access denied. Valid agreement token and party email required.' });
+    }
+
     // Check terms hash integrity
     const termsIntact = hashContent(agreement.terms_html) === agreement.terms_hash;
 
@@ -243,6 +306,10 @@ router.get('/:slug/export', async (req: Request, res: Response) => {
   try {
     const agreement = await getAgreementBySlug(req.params.slug as string);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found.' });
+    const { token, email } = getAgreementAccessParams(req);
+    if (!canAccessAgreement(agreement, token, email)) {
+      return res.status(403).json({ error: 'Access denied. Valid agreement token and party email required.' });
+    }
     if (agreement.status !== 'fully_signed') {
       return res.status(400).json({ error: 'Agreement must be fully signed before export.' });
     }
@@ -353,13 +420,13 @@ router.post('/seed', async (req: Request, res: Response) => {
         name: 'Ryan Mason',
         email: process.env.PARTY_A_EMAIL || 'partners@aivis.biz',
         phone: '706-907-5299',
-        org: 'AiVIS / Intruvurt Labs',
+        org: 'AiVIS.biz / Intruvurt Labs',
       },
       partyB: {
         name: 'Dharmik Suthar',
         email: process.env.PARTY_B_EMAIL || 'zeeniithinfo@gmail.com',
         phone: '+91 6357 120 971',
-        org: 'Zeeniith',
+        org: 'Zeeniith.in',
       },
       signingDeadlineHours: 24,
     });
@@ -376,14 +443,14 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>Party A introduces clients and commercial opportunities. Party B provides the development, implementation, technical execution, testing, and delivery for accepted projects. These terms define ownership of leads, how compensation is earned, how payments are handled, and how both parties are protected.</p>
 
 <h2>2. Roles</h2>
-<p><strong>Party A (AiVIS / Intruvurt Labs):</strong></p>
+<p><strong>Party A (AiVIS.biz / Intruvurt Labs):</strong></p>
 <ul>
   <li>Sources and introduces leads and clients</li>
   <li>May support positioning, discovery, and sales conversations</li>
   <li>May handle payment collection from the client unless otherwise agreed in writing</li>
   <li>Retains the commission defined in these terms</li>
 </ul>
-<p><strong>Party B (Zeeniith):</strong></p>
+<p><strong>Party B (Zeeniith.in):</strong></p>
 <ul>
   <li>Scopes the technical work and delivery approach</li>
   <li>Builds, tests, and delivers the approved scope</li>
@@ -395,32 +462,56 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>A lead is deemed owned by Party A if Party A first introduced the client to Party B through email, message, call, document, meeting, website form, or any other verifiable written or recorded communication. In the event of a dispute, the earliest verifiable record controls.</p>
 
 <h2>4. Closing</h2>
-<p>Closing may be handled by Party A, Party B, or both parties together. Regardless of who closes the deal, if the lead originated from Party A, the commission terms in this agreement apply in full.</p>
+<p>Closing may be handled by Party A, Party B, or both parties together. Regardless of who closes the deal, if the lead originated from Party A, the commission terms in this agreement apply in full. Where Party B receives client funds directly, Party B remains responsible for timely remittance of Party A's commission under Section 6.</p>
 
 <h2>5. Commission and revenue split</h2>
-<p>For every client introduced by Party A that becomes a signed and paid project, Party A earns a fixed commission of <strong>10 percent of the total gross project value</strong>. Party B receives <strong>90 percent of the total gross project value</strong>.</p>
-<p>The 10 percent commission applies to:</p>
+<p>For every client introduced by Party A that becomes a signed and paid project, Party A earns a commission of <strong>10 percent to 18.5 percent of the total gross project value</strong>, depending on the rate agreed in writing for that client, project, or referral category. Party B receives the remaining <strong>81.5 percent to 90 percent</strong>.</p>
+<p>The applicable commission rate must be confirmed in writing prior to project commencement through proposal, invoice, message, or other verifiable record. If no rate is explicitly defined, the default commission payable to Party A shall be <strong>10 percent</strong> of the total gross project value.</p>
+<p>The commission applies to:</p>
 <ul>
   <li>Initial project value</li>
   <li>Approved scope increases</li>
   <li>Upsells tied to the same client relationship during the protected period</li>
-  <li>Recurring retainer work derived from the same introduced client during the protected period</li>
+  <li>Recurring or retainer work derived from the same introduced client during the protected period</li>
 </ul>
 
 <h2>6. Payment handling</h2>
-<p>Unless otherwise agreed in writing, Party A may collect payment from the client. Party A retains the 10 percent commission and remits 90 percent to Party B from each cleared client payment.</p>
-<p>Where possible, payments should be milestone based rather than only final delivery based. That means the 10 percent and 90 percent split applies to each milestone payment as received.</p>
-<p>Party B shall be paid within <strong>3 business days</strong> after Party A receives cleared funds from the client for the relevant milestone or project payment.</p>
+<p>Party B shall act as the sole payment controller for all referred projects and is responsible for collecting all client payments.</p>
+<p>Party B shall calculate and remit Party A's agreed commission of <strong>10 percent to 18.5 percent</strong> from the total gross project value for each introduced client.</p>
+<p>Payment to Party A must be made within <strong>3 business days</strong> of the earliest of:</p>
+<ul>
+  <li>Final project completion</li>
+  <li>Client acceptance of deliverables</li>
+  <li>Delivery of the agreed scope</li>
+  <li>Receipt of the final cleared client payment</li>
+</ul>
+<p>Party B may not delay payment by:</p>
+<ul>
+  <li>Withholding completion designation</li>
+  <li>Extending delivery beyond agreed scope without written approval</li>
+  <li>Reclassifying completed work as ongoing to defer commission</li>
+</ul>
+<p>If the project is structured in milestones, the parties may agree in writing that commission is paid proportionally within <strong>3 business days</strong> of each cleared milestone payment.</p>
+<p>Party B shall maintain complete and accurate records of:</p>
+<ul>
+  <li>Client invoices</li>
+  <li>Payments received</li>
+  <li>Scope approvals and changes</li>
+  <li>Project completion status</li>
+</ul>
+<p>Such records must be provided to Party A upon request.</p>
+<p>Failure to remit commission within the required timeframe constitutes a <strong>material breach</strong> of this agreement.</p>
 
 <h2>7. Deposit rule</h2>
-<p>No development work begins until the client has paid a non-refundable upfront deposit of at least <strong>50 percent</strong>, unless both parties approve a different structure in writing.</p>
+<p>No development work begins until the client has paid a non-refundable upfront deposit of at least <strong>50 percent</strong>, unless otherwise agreed in writing.</p>
 
 <h2>8. Scope control</h2>
 <p>Before work starts, the parties must have written agreement on project scope, deliverables, pricing, timeline, assumptions, and exclusions. Any change outside approved scope must be approved in writing and priced separately.</p>
 
 <h2>9. Non-circumvention and client protection</h2>
-<p>Party B shall not bypass Party A or contract directly with any client introduced by Party A except through Party A's written consent. This protection remains in effect during the active relationship and for <strong>12 months</strong> after the last active project, invoice, or commercial discussion involving that client.</p>
-<p>If Party B directly accepts work from a protected client introduced by Party A during that protected period, Party A remains entitled to the 10 percent commission on all resulting work from that client during that period.</p>
+<p>Party B shall not bypass Party A or contract directly with any client introduced by Party A except with written consent.</p>
+<p>This protection remains in effect during the active relationship and for <strong>12 months</strong> after the last commercial interaction with that client.</p>
+<p>If Party B accepts work directly from a protected client during this period, Party A remains entitled to the full commission on all resulting work.</p>
 
 <h2>10. Client-facing position</h2>
 <p>Projects may be white label or openly collaborative depending on the deal. If the work is white label, Party B agrees not to identify itself to the client as the primary commercial counterparty unless Party A approves it in writing.</p>
@@ -458,38 +549,38 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>Party B acknowledges that all traffic is provided on a non-exclusive, pass-through basis and is responsible for its own sales process, qualification, and conversion.</p>
 
 <h2>21. Attribution and tracking</h2>
-<p>All referral activity must be tracked using AiVIS-controlled mechanisms, including but not limited to:</p>
+<p>All referral activity must be tracked using AiVIS-controlled mechanisms including:</p>
 <ul>
   <li>Unique tracking links</li>
-  <li>Query parameters (UTM or equivalent)</li>
+  <li>Query parameters</li>
   <li>Redirect logging</li>
   <li>Timestamped click events</li>
 </ul>
-<p>AiVIS will maintain internal logs of:</p>
-<ul>
-  <li>Click events</li>
-  <li>Referral source</li>
-  <li>Timestamp</li>
-  <li>Destination endpoint</li>
-</ul>
-<p>These logs constitute the <strong>primary source of truth</strong> for referral delivery.</p>
+<p>AiVIS logs constitute the <strong>primary source of truth</strong> for referral delivery.</p>
 <p>Party B is responsible for maintaining accurate internal records of:</p>
 <ul>
   <li>Inquiries received</li>
-  <li>Response status</li>
+  <li>Engagement status</li>
   <li>Deal progression</li>
   <li>Closed transactions</li>
 </ul>
 
 <h2>22. Verification and reporting</h2>
-<p>Party B agrees to provide transparent reporting for all referred inquiries upon request, including:</p>
+<p>Party B agrees to provide transparent and verifiable reporting for all referred activity upon request, including:</p>
 <ul>
-  <li>Confirmation of receipt</li>
+  <li>Confirmation of inquiry receipt</li>
   <li>Status (unresponsive, active, closed, rejected)</li>
-  <li>Timestamps of engagement</li>
+  <li>Engagement timestamps</li>
+  <li>Payment and completion records</li>
 </ul>
-<p>If Party B fails to provide verifiable reporting or denies conversion activity without supporting evidence, AiVIS reserves the right to treat such claims as unverified and non-binding.</p>
-<p>AiVIS is not required to rely on Party B-reported outcomes where discrepancies exist between tracking data and Party B disclosures.</p>
+<p>Party B must provide verifiable proof of:</p>
+<ul>
+  <li>Invoice issuance</li>
+  <li>Payment receipt</li>
+  <li>Project completion</li>
+  <li>Commission calculation</li>
+</ul>
+<p>In the absence of verifiable records, any reasonable commission claim by Party A supported by referral and project evidence may be presumed valid pending rebuttal.</p>
 
 <h2>23. Performance threshold and termination</h2>
 <p>If AiVIS delivers a minimum of <strong>5 to 10</strong> tracked referral inquiries within a reasonable timeframe and:</p>
@@ -517,11 +608,11 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>Party B accepts full responsibility for its ability to convert incoming traffic into customers. Failure to convert referred traffic does not constitute failure on the part of AiVIS.</p>
 
 <h2>25. Anti-dispute clause</h2>
-<p>In the event of a dispute regarding referral outcomes:</p>
+<p>In the event of a dispute:</p>
 <ul>
-  <li>AiVIS tracking logs will be considered authoritative for traffic delivery</li>
-  <li>Party B must provide verifiable evidence for any claim of non-receipt or non-conversion</li>
-  <li>Absence of verifiable Party B-side data defaults in favor of AiVIS records</li>
+  <li>AiVIS tracking logs remain authoritative for referral delivery</li>
+  <li>Party B must provide verifiable evidence for any claim of non-receipt, non-conversion, or non-payment</li>
+  <li>Absence of Party B-side records defaults in favor of Party A's evidence</li>
 </ul>
 
 <h2>26. Acceptance</h2>

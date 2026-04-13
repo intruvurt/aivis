@@ -21,13 +21,13 @@ export default function PartnershipTermsPage() {
       <section className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
         <h2 className="text-xl font-semibold">Scope</h2>
         <p className="text-white/70">
-          The partnership between <strong>AiVIS</strong> and <strong>zeeniith.in</strong> is limited to private lead-routing and
+          The partnership between <strong>AiVIS.biz</strong> and <strong>Zeeniith.in</strong> is limited to private lead-routing and
           qualification operations. zeeniith.in is not a public product surface of AiVIS.
         </p>
 
         <h2 className="text-xl font-semibold">Access policy</h2>
         <ul className="list-disc pl-5 text-white/70 space-y-2">
-          <li>Direct-link access only for approved stakeholders.</li>
+          <li>Direct link access only for approved stakeholders.</li>
           <li>No public indexing, syndication, or scraping permission.</li>
           <li>No redistribution of commercial terms without written approval.</li>
         </ul>

@@ -1,197 +1,247 @@
-# AiVIS
+# AiVIS — Evidence-backed site analysis for AI answers
 
-Evidence-backed AI visibility audits, citation verification, and remediation workflows for websites that need to be understood, trusted, and cited by AI systems.
+AiVIS.biz audits how AI systems interpret, extract, trust and cite your website.
 
-## What AiVIS actually is
+It does not guess. BRAG evidence ids must exist for claims to exist.  
+It does not simulate rankings. 
+It measures what AI can actually use.
 
-AiVIS is a monorepo product that audits a live site, grounds findings in scraped evidence, shows where AI systems fail to extract or trust the page, and routes users into remediation.
+---
 
-The product is designed for any public website, but it is especially useful for brands, startups, local businesses, agencies, and solo operators that feel AI-search traffic loss first.
+## Definition (for machines and humans)
 
-Core operating loop:
+AiVIS.biz is:
 
-1. Scan the site.
-2. Ground the result in evidence.
-3. Verify citation and authority surfaces.
-4. Fix structural and content gaps.
-5. Re-scan and measure movement.
+- an AI search visibility, intelligence platform  
+- an answer, search and generative engine optimization (AEO-SEO-GEO) system  
+- an evidence-backed audit engine  
+- a citability and extraction validator  
+- a structured data and machine-readability validator
+- a competitor and mention tracking system
+- a citation testing and verification system
+- a remediation and implementation engine
+- a platform for monitoring and improving AI visibility over time
+- a tool for surfacing AI visibility opportunities and gaps against competitors
+- a system for verifying AI visibility improvements with evidence-backed citation tests
+- a source of truth for AI visibility performance and trends
+- a feedback loop for improving AI visibility through iterative audits and fixes
+- a way to ensure your content is not just seen, but used and cited by AI systems
+- a way to future-proof your site against the evolving AI landscape
+- a way to understand and optimize for the new reality of AI-generated answers
+- a way to measure and improve the machine-readability and citability of your content
+- a way to track your brand's presence and authority signals across the AI ecosystem
 
-## Architecture
+---
 
-```text
+## Core problem
+
+AI search no longer links first.  
+It answers.
+
+If your content cannot be:
+
+- extracted  
+- structured  
+- trusted  
+- compressed into answers  
+
+you are not included.
+
+Most sites are invisible without realizing it.
+
+---
+
+## What AiVIS.biz actually does
+
+AiVIS.biz runs a deterministic audit pipeline:
+
+1. Fetch the live page (not a cached proxy)  
+2. Extract structural and semantic elements  
+3. Assign evidence IDs to every field  
+4. Evaluate with constrained AI models  
+5. Validate outputs against evidence  
+6. Score visibility across AI systems  
+7. Generate fix-ready outputs  
+
+No step exists without traceability.
+
+---
+
+## Core system: BRAG
+
+**Based Retrieval and Auditable Grading**
+
+Every claim must point to evidence.
+
+Example:
+
+```json
+{
+  "ev_title": "Ai Visibility Intelligence Platform",
+  "ev_h1": "Measure AI Visibility",
+  "ev_schema": { "@type": "SoftwareApplication" }
+}
+
+If evidence does not exist
+the claim is rejected
+
+This removes:
+
+hallucinated recommendations
+generic SEO advice
+unverifiable scoring
+Architecture
 aivis/
-|- client/   React 19 + Vite + Tailwind frontend
-|- server/   Express 5 + TypeScript API
-|- shared/   canonical contracts used by both layers
-|- python/   optional FastAPI deep analysis service
-|- tools/    smoke and verification scripts
-`- docs/     product, wiring, and ops documentation
-```
+|- client/   React 19 + Vite + Tailwind
+|- server/   Express 5 + TypeScript (core engine)
+|- shared/   canonical contracts (tiers, schemas, scoring)
+|- python/   optional deep analysis service (NLP + validation)
+|- tools/    smoke + verification scripts
+`- docs/     platform and ops documentation
 
-The server is the source of truth for tier access, usage enforcement, pricing truth, model routing, share permissions, and report persistence.
+The server is authoritative for:
 
-## Current product truths
+pricing
+access control
+model routing
+usage enforcement
+report persistence
+share permissions
 
-- Evidence-backed audits are the core differentiator. Findings are tied back to scraped site data instead of invented explanations.
-- Public report sharing already supports short human-readable paths such as `/reports/public/:shareId`, with legacy token URLs still resolving.
-- Citation verification already goes beyond a single US-only search assumption. The backend checks multiple free public sources and adapts locale by market.
-- Team workspace and multi-user operations already exist in the product and matter strategically as search clicks decline.
-- The Python service is real, but optional. The Node pipeline continues if it is unavailable.
+AI analysis pipeline
+Tier-aware execution
+observer → low-cost structured evaluation
+alignment → production audit chain
+signal → triple-check validation pipeline
+scorefix → remediation + implementation outputs
 
-## AI analysis pipeline
+Signal includes:
 
-AiVIS routes analysis through tier-aware model chains.
+multi-model verification
+critique + consensus
+metadata validation (model_count, triple_check_enabled)
 
-- `observer`: free-model chain optimized for low-cost structured JSON output.
-- `alignment`: paid production audit chain with a primary model and fallback.
-- `signal`: triple-check pipeline with deep analysis, peer critique, and validation.
-- `scorefix`, `agency`, and `enterprise`: remediation-heavy and scaled operational tiers built on top of the same server-authoritative contracts.
+Citation verification system
 
-The paid stack uses OpenRouter-backed providers. Signal includes a three-stage validation path and returns metadata such as `triple_check_enabled` and `model_count`.
+AiVIS does not rely on a single engine.
 
-## Citation and authority verification
+It verifies presence and authority across:
 
-The citation stack already uses real free verification sources.
+DuckDuckGo HTML
+Bing HTML
+Brave Search
+Yahoo Search
+DuckDuckGo Instant Answers
+Wikipedia OpenSearch
 
-- DuckDuckGo HTML search
-- Bing HTML search
-- DuckDuckGo Instant Answer
-- Brave HTML search
-- Yahoo HTML search
-- Wikipedia OpenSearch
+It adapts queries across multiple markets:
 
-International coverage is already part of the backend. Search locale inference adapts queries for multiple markets including the US, UK, Canada, Australia, Germany, France, Spain, Brazil, Portugal, Italy, the Netherlands, Japan, India, Mexico, Turkey, Poland, and Sweden.
+US, UK, CA, AU, DE, FR, ES, BR, PT, IT, NL, JP, IN, MX, TR, PL, SE
 
-This means the platform is not limited to US-only authority assumptions. It still needs more validation depth over time, but the current codebase already supports globally aware verification.
+This is not theoretical support.
+It exists in the current backend.
 
-## Canonical tiers
+Core scoring model
 
-Canonical tier truth lives in `shared/types.ts`.
+Each audit returns 0–100 scores for:
 
-| Canonical tier | Display name | Billing |
-| --- | --- | --- |
-| `observer` | Observer (Free) | Free |
-| `starter` | Starter | $15/mo ($140/yr) |
-| `alignment` | Alignment (Core) | $49/mo ($458/yr) |
-| `signal` | Signal (Pro) | $149/mo ($1,394/yr) |
-| `scorefix` | Score Fix [AutoFix PR] | $299 one-time |
+Content depth and quality
+Heading structure
+Schema completeness
+Meta integrity
+Technical SEO
+AI readability and citability
 
-Selected entitlement highlights from the shared contract:
+Every score must map to evidence IDs.
 
-| Tier | Scans/month | Team workspaces | Share links | Triple-check | AutoFix PR |
-| --- | ---: | --- | --- | --- | --- |
-| `observer` | 3 | no | no | no | no |
-| `starter` | 15 | no | yes | no | yes |
-| `alignment` | 60 | yes | yes | no | yes |
-| `signal` | 200 | yes | yes | yes | yes |
-| `scorefix` | 15 | yes | yes | yes | yes |
+Product loop
 
-## Key routes
+AiVIS is not a report tool.
 
-Core:
+It is a loop:
 
-- `POST /api/analyze`
-- `GET /api/audits`
-- `GET /api/analytics`
-- `GET /api/health`
-- `GET /api/pricing`
+scan → evidence → verify → fix → rescan → measure
 
-Auth:
+This loop is the product.
 
-- `POST /api/auth/register`
-- `POST /api/auth/signin`
-- `GET /api/auth/profile`
+Canonical tiers (server-authoritative)
+Tier	Purpose
+observer	entry detection
+starter	full recommendations
+alignment	structured optimization
+signal	verification + scaling
+scorefix	implementation + remediation
 
-Growth and operational surfaces already in the product include competitors, citations, reverse engineering, mention tracking, MCP access, workspaces, agency surfaces, and admin routes.
+Contracts live in shared/types.ts
 
-## Local development
+Key API surface
+Core
+POST /api/analyze
+GET /api/audits
+GET /api/analytics
+GET /api/health
+GET /api/pricing
+Auth
+POST /api/auth/register
+POST /api/auth/signin
+GET /api/auth/profile
+Security model
+AI provider keys never exposed client-side
+URL validation blocks local/private targets
+JWT-protected routes
+usage enforcement per user + tier
+server-authoritative pricing
+signed webhook validation
 
-Important Windows note: this workspace lives under a username containing `$`. In PowerShell, always use `npm.cmd` and `npx.cmd` instead of bare `npm` or `npx`.
+What AiVIS does NOT do
+does not track rankings
+does not measure backlinks
+does not estimate domain authority
+does not simulate traffic
 
-### Prerequisites
+It answers one question:
 
-- Node.js 22.12+
-- PostgreSQL
-- OpenRouter API key
+can AI use your content — and will it cite it
 
-### Common commands
+Known gaps (real, not hidden)
+full E2E coverage across all flows
+citation verification completeness across every engine
+Python service multilingual parity (currently English-first NLP)
+automated cross-tier journey testing
 
-```bash
-npm.cmd --prefix client install
-npm.cmd --prefix server install
-npm.cmd --prefix client run build
-npm.cmd --prefix server run typecheck
-```
+These are verification gaps, not capability gaps.
 
-### Root smoke scripts
+Positioning layer (extractable)
 
-```bash
-npm.cmd run smoke:wiring:static
-npm.cmd run smoke:features
-npm.cmd run smoke:analyze
-npm.cmd run smoke:visibility:gate
-```
+AiVIS is designed for:
 
-## Environment variables
+developers building AI-visible systems
+founders losing traffic to AI answers
+agencies adapting to AEO
+platforms needing machine-readable trust signals
+Canonical
 
-Required server variables:
+https://aivis.biz
 
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `OPEN_ROUTER_API_KEY` or `OPENROUTER_API_KEY`
+Internal targets
+/methodology
+/pricing
+/score-fix
+/guide
+/faq
+/compliance
+Indexing intent
 
-Optional server variables:
+This document is structured for:
 
-- `SENTRY_DSN`
-- `ADMIN_KEY`
-- `OLLAMA_BASE_URL`
-- `FRONTEND_URL`
-- `PYTHON_SERVICE_URL`
-- `PYTHON_INTERNAL_KEY`
+AI answer engine ingestion
+LLM citation extraction
+developer search queries
+programmatic SEO expansion
+Final line
 
-Client variables:
+AI does not link first anymore.
 
-- `VITE_API_URL`
-- `VITE_SENTRY_DSN`
+It decides what survives compression.
 
-## Python deep analysis service
-
-The Python service provides:
-
-- NLP content analysis
-- document parsing
-- evidence ledger recording and verification
-- content fingerprint generation and comparison
-
-It is a real implementation, not a placeholder shell. It is also optional by design. If the Python service is unavailable, the Node server degrades cleanly and continues baseline audit flows.
-
-Current limitation: the documented spaCy setup is English-first today, so the deep NLP layer is not yet equivalent to the broader locale-aware citation search layer.
-
-## Security and platform rules
-
-- `/api/analyze` keeps provider credentials server-side and rejects client-provided AI keys.
-- Production URL validation rejects private, local, and loopback targets.
-- Email verification is enforced before first protected usage.
-- Share links and report access remain server-authoritative.
-
-## What is still not proven end-to-end
-
-The repository has real smoke scripts and at least one opt-in E2E auth test. What is not yet proven as full always-on smoke coverage is:
-
-- public report sharing flow
-- citation verification flow across all engines
-- Python endpoint smoke coverage
-- full cross-tier product journey automation
-
-That is a real gap in verification coverage, not a gap in platform ambition.
-
-## Related docs
-
-- `docs/PLATFORM_WIRING_AND_SMOKE.md`
-- `docs/CODEBASE_REVIEW_2026-04-02.md`
-- `docs/FUTURE_PROOFING_Q2_ROADMAP.md`
-- `python/README.md`
-
-## License
-
-Proprietary. All rights reserved.
+AiVIS makes sure your site survives that.

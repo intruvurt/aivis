@@ -1,5 +1,5 @@
 -- ============================================
--- AI Visibility Intelligence Platform - Full Database Schema
+-- Evidence-backed site analysis for AI answers Platform - Full Database Schema
 -- Run this against your Neon PostgreSQL database
 -- ============================================
 

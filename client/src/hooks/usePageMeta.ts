@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 
 interface PageMeta {
-  /** Page title - will be suffixed with " | AI Visibility Intelligence Platform" */
+  /** Page title - will be suffixed with " | Evidence-backed site analysis for AI answers Platform" */
   title: string;
   /** Meta description for search engines and AI crawlers */
   description: string;
@@ -26,7 +26,7 @@ interface PageMeta {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'AiVIS - AI Visibility Intelligence Platform';
+const SITE_NAME = 'AiVIS.biz -> evidence-backed site analysis for AI answers';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 
@@ -199,7 +199,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('og:image:type', 'image/png', true);
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
-    setMeta('og:image:alt', 'AiVIS – AI Visibility Intelligence Platform', true);
+    setMeta('og:image:alt', 'AiVIS – Evidence-backed site analysis for AI answers Platform', true);
 
     // Twitter
     setMeta('twitter:card', 'summary_large_image');
@@ -208,14 +208,14 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('twitter:title', ogTitle || title);
     setMeta('twitter:description', ogDescription || description);
     setMeta('twitter:image', DEFAULT_SHARE_IMAGE);
-    setMeta('twitter:image:alt', 'AiVIS – AI Visibility Intelligence Platform');
+    setMeta('twitter:image:alt', 'AiVIS – Evidence-backed site analysis for AI answers Platform');
 
     // Per-page structured data
     setStructuredData(structuredData);
 
     // Cleanup on unmount - restore defaults
     return () => {
-      document.title = `${SITE_NAME}: AI visibility intelligence platform | See How AI Sees Your Website`;
+      document.title = `${SITE_NAME}: Evidence-backed site analysis for AI answers platform | See How AI Sees Your Website`;
       setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
       setStructuredData(undefined);
     };

@@ -1,4 +1,4 @@
-// AI Visibility Intelligence Platform: tier and usage guard utilities
+// Evidence-backed site analysis for AI answers Platform: tier and usage guard utilities
 
 export const TierName = ['Observer', 'Alignment', 'Signal', 'scorefix'] as const;
 

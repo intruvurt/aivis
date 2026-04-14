@@ -221,15 +221,15 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS - AI visibility intelligence platform',
-		description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
-		ogTitle: 'AiVIS - AI visibility intelligence platform',
-		ogDescription: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
+		title: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
+		description: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
+		ogTitle: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
+		ogDescription: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
 	{
 		path: '/landing',
-		title: 'AiVIS Landing | AI Visibility Intelligence Platform',
+		title: 'AiVIS Landing | Evidence-backed site analysis for AI answers Platform',
 		description: 'Measure whether AI can read, trust and cite your site with a live evidence-backed AiVIS audit.',
 	},
 	{
@@ -527,8 +527,8 @@ const routes = [
 	},
 	{
 		path: '/glossary',
-		title: 'AI Visibility & AEO Glossary - Key Terms Defined | AiVIS',
-		description: 'Comprehensive glossary of AI visibility, answer engine optimization (AEO), and AI citation readiness terms. Definitions for AI Visibility Score, content extractability, entity clarity, Triple-Check validation, and more.',
+		title: 'AI Visibility & AEO Glossary - 60+ Terms Defined | AiVIS',
+		description: '60+ in-depth definitions for AI visibility, answer engine optimization, distortion mapping, evidence-backed scoring, BRAG evidence trails, SSFR analysis, triple-check orchestration, and citation readiness.',
 	},
 	{
 		path: '/benchmarks',
@@ -538,7 +538,7 @@ const routes = [
 	{
 		path: '/about',
 		title: 'About AiVIS | Intruvurt Labs',
-		description: 'About AiVIS and Intruvurt Labs: the AI visibility intelligence platform focused on answer-engine readiness and evidence-backed fixes.',
+		description: 'About AiVIS and Intruvurt Labs: the Evidence-backed site analysis for AI answers platform focused on answer-engine readiness and evidence-backed fixes.',
 	},
 	{
 		path: '/press',
@@ -609,7 +609,7 @@ const routes = [
 	{
 		path: '/changelog',
 		title: 'Changelog | AiVIS',
-		description: 'A permanent ledger of every update, fix, and improvement shipped to AI Visibility Intelligence Platform.',
+		description: 'A permanent ledger of every update, fix, and improvement shipped to Evidence-backed site analysis for AI answers Platform.',
 	},
 	{
 		path: '/tools/schema-validator',
@@ -715,7 +715,7 @@ const routes = [
 	{
 		path: '/partnership-terms',
 		title: 'Referral and Delivery Partnership Terms | AiVIS',
-		description: 'Official partnership terms for referral and delivery partnerships with AiVIS AI Visibility Intelligence.',
+		description: 'Official partnership terms for referral and delivery partnerships with AiVIS Evidence-backed site analysis for AI answers.',
 	},
 	{
 		path: '/conversational-query-playbook-2026',

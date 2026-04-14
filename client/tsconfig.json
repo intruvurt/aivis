@@ -29,6 +29,7 @@
     "noEmit": true
   },
   "include": [
+    "src/**/*",
     "app/**/*",
     "views/**/*",
     "components/**/*",
@@ -51,7 +52,6 @@
     "dist",
     "node_modules",
     "server",
-    "server/node_modules",
-    "src"
+    "server/node_modules"
   ]
 }

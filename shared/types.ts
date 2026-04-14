@@ -1013,6 +1013,7 @@ export interface AICitationResult {
   excerpt: string;
   screenshot_url?: string;
   competitors_mentioned: string[];
+  citation_urls?: string[];
   created_at: string;
   model_used?: string;
   model_short?: string;
@@ -1536,9 +1537,21 @@ export interface AuthorityCheckResponse {
     refusal_reason?: string;
     notes: string[];
   };
-  security: unknown;
-  phishing_risk: unknown;
-  compliance: unknown;
+  security: {
+    https: boolean;
+    hardening_score: number;
+    missing_header_count: number;
+  };
+  phishing_risk: {
+    level: 'low' | 'medium' | 'high';
+    reasons: string[];
+  };
+  compliance: {
+    detected_niche: string;
+    required_signals: string[];
+    present_signals: string[];
+    missing_signals: string[];
+  };
   entity?: {
     fingerprint_active: boolean;
     anchor_score: number;

@@ -85,7 +85,7 @@ export default function GeoAIRanking2026() {
           <h2 className="text-xl brand-title mb-3">Continue the Cluster</h2>
           <div className="flex flex-wrap gap-3">
             <Link to="/ai-search-visibility-2026" className="text-sm text-white/85 hover:text-white/85 font-semibold">
-              AI Visibility Intelligence Platform in 2026 →
+              Evidence-backed site analysis for AI answers Platform in 2026 →
             </Link>
             <Link to="/aeo-playbook-2026" className="text-sm text-white/85 hover:text-white/85 font-semibold">
               AEO Playbook for 2026 →

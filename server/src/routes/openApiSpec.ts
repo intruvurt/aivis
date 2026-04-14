@@ -13,7 +13,7 @@ const OPENAPI_SPEC = {
     title: 'AiVIS API',
     version: '1.0.0',
     description:
-      'AI Visibility Intelligence Platform REST API. Audit whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.',
+      'Evidence-backed site analysis for AI answers Platform REST API. Audit whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.',
     contact: { name: 'AiVIS Support', url: 'https://aivis.biz', email: 'support@aivis.biz' },
     license: { name: 'Proprietary' },
   },

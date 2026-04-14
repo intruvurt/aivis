@@ -844,7 +844,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your account is verified and ready to go.</p>
 
               <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                AiVIS is the <strong style="color:#22d3ee;">AI Visibility Intelligence Platform</strong> - the only platform
+                AiVIS is the <strong style="color:#22d3ee;">Evidence-backed site analysis for AI answers Platform</strong> - the only platform
                 that measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude
                 can understand, cite, and recommend your website. This is not traditional SEO. This is the citation layer -
                 whether your content is structured, deep, and trustworthy enough for AI systems to confidently include in
@@ -1029,7 +1029,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
           </tr>`;
 
   return emailWrap(
-    `Welcome to ${BRAND.name} - How to Use the AI Visibility Intelligence Platform`,
+    `Welcome to ${BRAND.name} - How to Use the Evidence-backed site analysis for AI answers Platform`,
     emailHeader() + body + emailFooter(email),
     `You received this because you verified your email at aivis.biz`
   );

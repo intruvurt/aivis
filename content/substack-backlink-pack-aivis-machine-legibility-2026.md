@@ -17,7 +17,7 @@
 ### Branded anchors
 - AiVIS
 - AiVIS audit
-- AI Visibility Intelligence Audits
+- Evidence-backed site analysis for AI answers Audits
 - AiVIS machine legibility audit
 
 ### Partial-match anchors
@@ -147,7 +147,7 @@ Practical framing around structure, evidence, and machine trust:
 https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ### 9) Guest-post author bio backlink
-DobleDuche builds AiVIS (AI Visibility Intelligence Audits) and writes about machine legibility, citation readiness, and answer-engine discoverability. Read more at: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
+DobleDuche builds AiVIS (Evidence-backed site analysis for AI answers Audits) and writes about machine legibility, citation readiness, and answer-engine discoverability. Read more at: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ### 10) Podcast show-notes backlink
 Referenced article: “Why I built AiVIS and why many websites are invisible to AI”

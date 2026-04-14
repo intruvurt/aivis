@@ -144,7 +144,7 @@ async function dispatchEmail(toEmail: string, payload: AlertPayload): Promise<vo
       <p style="color:#374151;line-height:1.6">${escapeHtml(payload.body)}</p>
       ${payload.metadata?.url ? `<p style="margin-top:16px"><a href="${escapeHtml(String(payload.metadata.url))}" style="color:#4f46e5">View Audit</a></p>` : ''}
       <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb">
-      <p style="color:#9ca3af;font-size:12px">AI Visibility Intelligence Platform - disable or manage alerts from your dashboard settings.</p>
+      <p style="color:#9ca3af;font-size:12px">Evidence-backed site analysis for AI answers Platform - disable or manage alerts from your dashboard settings.</p>
     </div>
   `;
   const text = `${payload.title}\n\n${payload.body}`;
@@ -234,7 +234,7 @@ async function dispatchDiscord(webhookUrl: string, payload: AlertPayload): Promi
           description: payload.body,
           color: colorMap[payload.type] ?? 0x6366f1,
           timestamp: new Date().toISOString(),
-          footer: { text: 'AI Visibility Intelligence Platform' },
+          footer: { text: 'Evidence-backed site analysis for AI answers Platform' },
         },
       ],
     }),
@@ -300,7 +300,7 @@ export async function sendAlert(userId: string, payload: AlertPayload): Promise<
 export async function sendTestAlert(channel: AlertChannel, channelConfig: Record<string, string>): Promise<void> {
   const payload: AlertPayload = {
     type: 'score_improvement',
-    title: 'AI Visibility Intelligence Platform - Test Alert',
+    title: 'Evidence-backed site analysis for AI answers Platform - Test Alert',
     body: 'This is a test notification from AiVIS. Your alert channel is configured correctly.',
   };
 

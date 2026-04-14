@@ -169,4 +169,4 @@ This is the first post on our Webflow blog, and we'll be publishing deep dives o
 
 If you want to see where your site stands right now, [run a free audit on AiVIS](https://aivis.biz/analyze). 28 structural checks, deterministic scoring, and actionable recommendations. No guessing.
 
-[AiVIS.biz - AI Visibility Intelligence Audits](https://aivis.biz)
+[AiVIS.biz - Evidence-backed site analysis for AI answers Audits](https://aivis.biz)

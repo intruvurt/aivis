@@ -3,6 +3,7 @@
 ## ✅ PRICING FIXED - CORRECT MATH
 
 ### **What Was Fixed:**
+
 1. ✅ Yearly pricing now shows annual total, not monthly
 2. ✅ Display shows monthly equivalent when yearly selected
 3. ✅ Savings calculation is correct
@@ -15,6 +16,7 @@
 ## 📊 Correct Pricing Structure
 
 ### **Alignment Tier:**
+
 - **Monthly:** $49/month
 - **Yearly:** $348/year ($38.22month billed annually)
 - **Savings:** $10.78/year (~22% off)
@@ -26,6 +28,7 @@
   - Force-refresh, report history
 
 ### **Signal Tier:**
+
 - **Monthly:** $149/month
 - **Yearly:** $1300/year ($200/month billed annually)
 - **Savings:** $393/year (~22% off)
@@ -43,9 +46,10 @@
 
 ### **Step 1: Create Stripe Products**
 
-Log into https://dashboard.stripe.com and create products:
+Log into <https://dashboard.stripe.com> and create products:
 
 #### **Alignment - Monthly**
+
 1. Go to Products → Create product
 2. Name: `Alignment - Monthly`
 3. Price: `$49.00 USD` recurring monthly
@@ -53,12 +57,14 @@ Log into https://dashboard.stripe.com and create products:
 5. Save as: `STRIPE_ALIGNMENT_MONTHLY_PRICE_ID`
 
 #### **Alignment - Yearly**
+
 1. Products → Find Alignment product
 2. Add another price: `$348.00 USD` recurring yearly
 3. Copy the Price ID
 4. Save as: `STRIPE_ALIGNMENT_YEARLY_PRICE_ID`
 
 #### **Signal - Monthly**
+
 1. Products → Create product
 2. Name: `Signal - Monthly`
 3. Price: `$149.00 USD` recurring monthly
@@ -66,6 +72,7 @@ Log into https://dashboard.stripe.com and create products:
 5. Save as: `STRIPE_SIGNAL_MONTHLY_PRICE_ID`
 
 #### **Signal - Yearly**
+
 1. Products → Find Signal product
 2. Add another price: `$1300.00 USD` recurring yearly
 3. Copy the Price ID
@@ -110,7 +117,7 @@ FRONTEND_URL=https://aivis.biz  # Ai Search Visibility & Monitoring frontend
 
 ### **Step 1: Create Webhook Endpoint**
 
-1. Go to: https://dashboard.stripe.com/webhooks
+1. Go to: <https://dashboard.stripe.com/webhooks>
 2. Click "Add endpoint"
 3. Endpoint URL: `https://yourdomain.com/api/payment/webhook`
 4. Select events to listen for:
@@ -141,6 +148,7 @@ stripe listen --forward-to https://api.aivis.biz/api/payment/webhook
 ### **Test Monthly Checkout:**
 
 1. Start servers:
+
    ```bash
    cd server && npm run dev
    cd client && npm run dev
@@ -194,7 +202,9 @@ stripe listen --forward-to https://api.aivis.biz/api/payment/webhook
 ## 🐛 Common Issues & Fixes
 
 ### **Issue: "Missing price ID"**
+
 **Fix:** Make sure all environment variables are set in `server/.env`:
+
 ```bash
 STRIPE_ALIGNMENT_MONTHLY_PRICE_ID=price_xxx
 STRIPE_ALIGNMENT_YEARLY_PRICE_ID=price_xxx
@@ -203,16 +213,21 @@ STRIPE_SIGNAL_YEARLY_PRICE_ID=price_xxx
 ```
 
 ### **Issue: "Invalid tier: alignment"**
+
 **Fix:** This is fixed! We added observer/alignment/signal to ALLOWED_TIERS.
 
 ### **Issue: Webhook signature verification fails**
+
 **Fix:**
+
 1. Make sure `STRIPE_WEBHOOK_SECRET` is set
 2. For development, use Stripe CLI: `stripe listen --forward-to https://api.aivis.biz/api/payment/webhook`
 3. For production, create webhook in Stripe Dashboard
 
 ### **Issue: Wrong price displayed**
+
 **Fix:** We fixed this!
+
 - Monthly: Shows actual monthly price
 - Yearly: Shows monthly equivalent + "Billed annually at $X/year"
 - Savings: Correct calculation (monthly * 12 - yearly_total)
@@ -259,7 +274,8 @@ Before going live:
 After users subscribe, you'll see:
 
 **Products:**
-```
+
+```text
 Alignment
 ├─ Monthly: $49.00/month (X active)
 └─ Yearly: $348.00/year (Y active)
@@ -270,7 +286,8 @@ Signal
 ```
 
 **Revenue:**
-```
+
+```text
 MRR: $XXX
 Active Subscriptions: XX
 Churn Rate: X%
@@ -278,18 +295,20 @@ Churn Rate: X%
 
 ---
 
-## 🚀 You're Ready!
+## 🚀 You're Ready
 
 **Pricing is now correct and Stripe is wired properly!**
 
 Just add your Stripe Price IDs to the environment variables and you're ready to accept payments! 💰
 
 **Test Mode:**
+
 - Use test API keys (start with `sk_test_`)
 - Use test card: 4242 4242 4242 4242
 - No real charges
 
 **Live Mode:**
+
 - Use live API keys (start with `sk_live_`)
 - Real charges to real cards
 - Real money! 💸

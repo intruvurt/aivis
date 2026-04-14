@@ -36,7 +36,7 @@ export default function TermsPage() {
           {/* ── 2 Service Description ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. Service Description</h2>
-            <p>AiVIS is an AI visibility intelligence platform that audits publicly accessible web pages. The Service crawls a submitted URL using a headless browser, extracts structural and content signals, routes the data through one or more large language models, and returns a visibility score with evidence-backed findings and recommendations.</p>
+            <p>AiVIS is an Evidence-backed site analysis for AI answers platform that audits publicly accessible web pages. The Service crawls a submitted URL using a headless browser, extracts structural and content signals, routes the data through one or more large language models, and returns a visibility score with evidence-backed findings and recommendations.</p>
             <p className="mt-2">Additional platform capabilities include competitor tracking, citation testing, brand mention scanning, scheduled rescans, report generation, team workspaces, API access, and webhook integrations. Feature availability is governed by your subscription tier.</p>
             <p className="mt-2">Every analysis report includes an <strong className="text-white">execution class badge</strong> (LIVE, DETERMINISTIC_FALLBACK, SCRAPE_ONLY, or UPLOAD) that indicates the runtime conditions under which results were generated.</p>
           </section>

@@ -1,9 +1,9 @@
-# AI Coding Agent Instructions for AI visibility intelligence platform 
+# AI Coding Agent Instructions for Evidence-backed site analysis for AI answers platform 
 
 ## Architecture overview
 - **Monorepo**: `client/` (Vite + React 19 + Tailwind), `server/` (Express 5 + TypeScript), `shared/` (types shared between both)
 - **Data flow**: `POST /api/analyze` → `authRequired` → `usageGate` → `incrementUsage` → `scraper.ts` (Puppeteer) → multi-model AI chain via `callAIProvider()` → `AnalysisCacheService` → JSON response
-- **Entry points**: [client/src/main.tsx](client/src/main.tsx) (React router), [server/src/server.ts](server/src/server.ts) (Express routes)
+- **Entry points**: [client/src/main.tsx](../client/src/main.tsx) (React router), [server/src/server.ts](../server/src/server.ts) (Express routes)
 
 ## Development commands
 
@@ -23,7 +23,7 @@ npm.cmd run build                      # Compile to dist/
 ## Critical conventions
 
 ### Shared types contract
-[shared/types.ts](shared/types.ts) defines `CanonicalTier`, `TIER_LIMITS`, `TierLimits`, and tier conversion helpers (`uiTierFromCanonical`, `meetsMinimumTier`). **Any tier/limit change must update this file first** - both client and server import from it.
+[shared/types.ts](../shared/types.ts) defines `CanonicalTier`, `TIER_LIMITS`, `TierLimits`, and tier conversion helpers (`uiTierFromCanonical`, `meetsMinimumTier`). **Any tier/limit change must update this file first** - both client and server import from it.
 
 ### Tier system (5-tier)
 | Canonical | Display name | Monthly scans | Price |
@@ -37,7 +37,7 @@ npm.cmd run build                      # Compile to dist/
 Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiTierFromCanonical()`.
 
 ### AI providers
-[server/src/services/aiProviders.ts](server/src/services/aiProviders.ts) exports `PROVIDERS` (paid), `FREE_PROVIDERS` (free-tier), and `callAIProvider()`. Actual prompt logic lives in [server/src/config/aiProviders.ts](server/src/config/aiProviders.ts).
+[server/src/services/aiProviders.ts](../server/src/services/aiProviders.ts) exports `PROVIDERS` (paid), `FREE_PROVIDERS` (free-tier), and `callAIProvider()`. Actual prompt logic lives in [server/src/config/aiProviders.ts](../server/src/config/aiProviders.ts).
 
 **Tier-based model allocation (cost-optimised):**
 - **Observer (free):** `FREE_PROVIDERS.slice(0, 2)` - **$0.00/scan**. Uses OpenRouter `:free` model variants (Gemma 4 31B primary, Gemma 4 26B MoE fallback). Both are non-reasoning instruct models chosen specifically because they reliably produce JSON without wasting tokens on `<think>` chain-of-thought blocks. Rate-limited by OpenRouter but zero cost. Extended fallback chain (6 models total): Gemma 4 31B → Gemma 4 26B MoE → Nemotron 3 Super 120B → MiniMax M2.5 → Nemotron 3 Nano 30B → GPT-OSS 120B. All verified against OpenRouter `/models?q=:free` on 2026-04-09.
@@ -80,8 +80,8 @@ app.post('/api/analyze', authRequired, usageGate, incrementUsage, handler);
 Migrations auto-run at startup in [server/src/services/postgresql.ts](../server/src/services/postgresql.ts). Key tables: `users`, `user_sessions`, `usage_daily`, `analysis_cache`, `payments`, `audits`, `competitor_tracking`, `citation_tests`, `citation_results`, `licenses`, `brand_mentions`, `mention_kpi_snapshots`, `serp_snapshots`, `ner_run_entities`.
 
 ## Social listening + SERP
-- [server/src/services/mentionTracker.ts](server/src/services/mentionTracker.ts) — 19 free sources (Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions). No API key required.
-- [server/src/services/serpService.ts](server/src/services/serpService.ts) — SerpAPI client: `fetchSERPSignals()`, `computeSERPBoosts()`, `saveSERPSnapshot()`, `getCachedSERPSnapshot()`. Requires `SERP_API_KEY` env var. Tier-gated: Alignment+ only. Boosts `entity_clarity_score` and `authority_score`.
+- [server/src/services/mentionTracker.ts](../server/src/services/mentionTracker.ts) — 19 free sources (Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions). No API key required.
+- [server/src/services/serpService.ts](../server/src/services/serpService.ts) — SerpAPI client: `fetchSERPSignals()`, `computeSERPBoosts()`, `saveSERPSnapshot()`, `getCachedSERPSnapshot()`. Requires `SERP_API_KEY` env var. Tier-gated: Alignment+ only. Boosts `entity_clarity_score` and `authority_score`.
 
 ## Key API routes
 | Endpoint | Auth | Purpose |

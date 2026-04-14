@@ -501,7 +501,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'aivis',
     version: '1.0.0',
-    description: 'AiVIS AI Visibility Intelligence Platform - audit, evidence, analytics, and competitor tools for AI agents.',
+    description: 'AiVIS Evidence-backed site analysis for AI answers Platform - audit, evidence, analytics, and competitor tools for AI agents.',
     protocol: 'mcp-http-v1',
     auth: ['Bearer avis_* (API key)', 'Bearer avist_* (OAuth token)'],
     endpoints: {

@@ -98,9 +98,9 @@ export function getPool(): Pool {
 
     const poolConfig: any = {
       connectionString,
-      max: 20,
+      max: 30,
       idleTimeoutMillis: 30_000,
-      connectionTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 10_000,
       statement_timeout: 30_000,
     };
 

@@ -1,11 +1,8 @@
-Here is the cleaned, hardened, full upgraded version of your engineering instruction file. It fixes drift, tightens contracts, removes ambiguity, and reads like something an actual coding agent can execute without hallucinating the architecture.
-
-````md id="0q2r6h"
-# AI Coding Agent Instructions for AI Visibility Intelligence Platform
+# AI Coding Agent Instructions for Evidence-backed site analysis for AI answers Platform
 
 ## System overview
 
-AI Visibility Intelligence Platform is a monorepo with a React client, an Express API server, and a shared type layer that acts as the contract between both sides.
+Evidence-backed site analysis for AI answers Platform is a monorepo with a React client, an Express API server, and a shared type layer that acts as the contract between both sides.
 
 ### Repository structure
 
@@ -26,12 +23,12 @@ POST /api/analyze
   -> AI model pipeline via callAIProvider()
   -> AnalysisCacheService
   -> JSON response
-````
+```
 
 ### Primary entry points
 
-* `client/src/main.tsx` - app bootstrap and router mounting
-* `server/src/server.ts` - Express app bootstrap and route registration
+- `client/src/main.tsx` - app bootstrap and router mounting
+- `server/src/server.ts` - Express app bootstrap and route registration
 
 ---
 
@@ -70,12 +67,12 @@ npm.cmd run build
 
 `shared/types.ts` is the canonical contract for:
 
-* `CanonicalTier`
-* `TierLimits`
-* `TIER_LIMITS`
-* tier conversion helpers
-* tier comparison helpers such as `meetsMinimumTier`
-* canonical-to-UI tier mapping via `uiTierFromCanonical`
+- `CanonicalTier`
+- `TierLimits`
+- `TIER_LIMITS`
+- tier conversion helpers
+- tier comparison helpers such as `meetsMinimumTier`
+- canonical-to-UI tier mapping via `uiTierFromCanonical`
 
 If you change tier names, scan allowances, limits, access rules, or compatibility aliases, update `shared/types.ts` first.
 
@@ -85,22 +82,22 @@ Do not hardcode tier logic independently in client and server.
 
 The platform runs on a 5-tier canonical system.
 
-| Canonical key | Display name      | Monthly scans |   Price |
-| ------------- | ----------------- | ------------: | ------: |
-| `observer`    | Observer [Free]   |             3 |    Free |
-| `starter`     | Starter           |            15 |  $15/mo |
-| `alignment`   | Alignment [Core]  |            60 |   $49/mo |
-| `signal`      | Signal [Pro]      |           110 |  $149/mo |
-| `scorefix`    | Score Fix [AutoFix PR] |      250 credits | $299 one-time |
+| Canonical key | Display name           | Monthly scans |         Price |
+| ------------- | ---------------------- | ------------: | ------------: |
+| `observer`    | Observer [Free]        |             3 |          Free |
+| `starter`     | Starter                |            15 |       $15/mo  |
+| `alignment`   | Alignment [Core]       |            60 |       $49/mo  |
+| `signal`      | Signal [Pro]           |           110 |      $149/mo  |
+| `scorefix`    | Score Fix [AutoFix PR] |   250 credits | $299 one-time |
 
 Legacy aliases must resolve through canonical helpers, never through ad hoc string checks.
 
 Supported legacy aliases include:
 
-* `free` -> `observer`
-* `core` -> `alignment`
-* `premium` -> `signal`
-* `elite` -> `scorefix`
+- `free` -> `observer`
+- `core` -> `alignment`
+- `premium` -> `signal`
+- `elite` -> `scorefix`
 
 ### 3) Do not infer tier behavior from labels
 
@@ -124,11 +121,11 @@ if (user.tier === "signal") { ... }
 
 The client must never decide:
 
-* which AI model chain is allowed
-* whether a tier has access
-* billing price truth
-* usage allowance truth
-* provider API keys
+- which AI model chain is allowed
+- whether a tier has access
+- billing price truth
+- usage allowance truth
+- provider API keys
 
 All of that is server-owned.
 
@@ -144,17 +141,17 @@ Client-provided provider keys are forbidden.
 
 AI provider orchestration lives in:
 
-* `server/src/services/aiProviders.ts`
+- `server/src/services/aiProviders.ts`
 
 This module exports:
 
-* `PROVIDERS` - paid fallback chain
-* `FREE_PROVIDERS` - free-tier fallback chain
-* `SIGNAL_AI1`
-* `SIGNAL_AI2`
-* `SIGNAL_AI3`
-* `ALIGNMENT_PRIMARY`
-* `callAIProvider()`
+- `PROVIDERS` - paid fallback chain
+- `FREE_PROVIDERS` - free-tier fallback chain
+- `SIGNAL_AI1`
+- `SIGNAL_AI2`
+- `SIGNAL_AI3`
+- `ALIGNMENT_PRIMARY`
+- `callAIProvider()`
 
 Prompt composition and provider routing logic also live there unless explicitly split into helper modules.
 
@@ -170,13 +167,13 @@ Uses `FREE_PROVIDERS`
 
 Target cost:
 
-* **$0.00 / scan**
+- **$0.00 / scan**
 
 Purpose:
 
-* free tier with zero direct model spend
-* optimized for stable JSON generation
-* avoids reasoning-heavy models that waste tokens on chain-of-thought formatting
+- free tier with zero direct model spend
+- optimized for stable JSON generation
+- avoids reasoning-heavy models that waste tokens on chain-of-thought formatting
 
 Current free chain:
 
@@ -195,19 +192,19 @@ Uses `ALIGNMENT_PRIMARY` + `PROVIDERS` fallback
 
 Target cost:
 
-* **~$0.001 / scan**
+- **~$0.001 / scan**
 
 Primary behavior:
 
-* GPT-5 Nano primary
-* Claude Haiku 4.5 / Gemma class fallbacks
-* then remaining paid provider chain
+- GPT-5 Nano primary
+- Claude Haiku 4.5 / Gemma class fallbacks
+- then remaining paid provider chain
 
 Purpose:
 
-* cheap but reliable production scoring
-* improved output stability over Observer
-* still single-pass analysis
+- cheap but reliable production scoring
+- improved output stability over Observer
+- still single-pass analysis
 
 ### Signal [Premium]
 
@@ -215,7 +212,7 @@ Uses a **Triple-Check Pipeline**
 
 Target cost:
 
-* **~$0.004 / scan**
+- **~$0.004 / scan**
 
 Pipeline:
 
@@ -225,22 +222,22 @@ Pipeline:
 
 Current intended routing:
 
-* AI1: GPT-5 Mini
-* AI2: Claude Sonnet 4.6
-* AI3: Grok 4.1 Fast
+- AI1: GPT-5 Mini
+- AI2: Claude Sonnet 4.6
+- AI3: Grok 4.1 Fast
 
 Behavior:
 
-* AI2 can adjust score roughly within bounded range
-* AI2 can add missing recommendations
-* AI3 validates, confirms, or overrides final score
-* if AI2 or AI3 fail, system must degrade gracefully to AI1-only result
+- AI2 can adjust score roughly within bounded range
+- AI2 can add missing recommendations
+- AI3 validates, confirms, or overrides final score
+- if AI2 or AI3 fail, system must degrade gracefully to AI1-only result
 
 Signal-exclusive requirements:
 
-* triple-check overlay support
-* response must expose `triple_check_enabled`
-* response must expose `model_count`
+- triple-check overlay support
+- response must expose `triple_check_enabled`
+- response must expose `model_count`
 
 ### Score Fix [AutoFix PR]
 
@@ -248,28 +245,28 @@ Automated GitHub PR remediation tier via MCP. Not a subscription - users pay $29
 
 Target cost:
 
-* **~$0.015 / credit**
+- **~$0.015 / credit**
 
 Behavior:
 
-* same 3-stage structure as Signal
-* more expensive models (GPT-5 Mini primary)
-* looser timeout budget
-* automated GitHub PR generation via MCP connections
+- same 3-stage structure as Signal
+- more expensive models (GPT-5 Mini primary)
+- looser timeout budget
+- automated GitHub PR generation via MCP connections
 
 Intended routing:
 
-* AI1: GPT-5 Mini
-* AI2: Claude Sonnet 4.6
-* AI3: Grok 4.1 Fast
+- AI1: GPT-5 Mini
+- AI2: Claude Sonnet 4.6
+- AI3: Grok 4.1 Fast
 
 Billing model:
 
-* $299 one-time per 250-credit pack
-* 10-25 credits per automated GitHub PR fix
-* no recurring subscription
-* user must repurchase when credits are exhausted
-* legacy alias `elite` maps to `scorefix`
+- $299 one-time per 250-credit pack
+- 10-25 credits per automated GitHub PR fix
+- no recurring subscription
+- user must repurchase when credits are exhausted
+- legacy alias `elite` maps to `scorefix`
 
 ---
 
@@ -279,21 +276,21 @@ Billing model:
 
 Current stage token sizing:
 
-* AI1 = `5000`
-* AI2 = `600`
-* AI3 = `400`
+- AI1 = `5000`
+- AI2 = `600`
+- AI3 = `400`
 
 Current timing model:
 
-* total pipeline budget: `52s`
-* per-call HTTP timeout: `30s`
-* deadline timers must be cleared after `Promise.race` settles
-* never leave orphan timeout handlers alive
+- total pipeline budget: `52s`
+- per-call HTTP timeout: `30s`
+- deadline timers must be cleared after `Promise.race` settles
+- never leave orphan timeout handlers alive
 
 If any stage times out:
 
-* recover gracefully
-* do not crash the whole request unless no usable analysis remains
+- recover gracefully
+- do not crash the whole request unless no usable analysis remains
 
 ### JSON repair requirement
 
@@ -309,19 +306,19 @@ This is mandatory for resilient parsing.
 
 The AI prompt should request:
 
-* **8 to 12 recommendations**
-* no fake cap lower than that
-* no silent truncation
+- **8 to 12 recommendations**
+- no fake cap lower than that
+- no silent truncation
 
 Client renderers must display all returned recommendations.
 
 Do not slice recommendations in:
 
-* recommendation lists
-* comprehensive analysis blocks
-* exports
-* document generation
-* PDF or JSON exports
+- recommendation lists
+- comprehensive analysis blocks
+- exports
+- document generation
+- PDF or JSON exports
 
 If recommendations are missing, fix the pipeline or prompt. Do not hide the issue by clipping arrays.
 
@@ -339,27 +336,27 @@ app.post("/api/analyze", authRequired, usageGate, incrementUsage, handler);
 
 Responsibilities:
 
-* validate JWT
-* require verified account when applicable
-* attach `req.user`
-* block unauthorized access
+- validate JWT
+- require verified account when applicable
+- attach `req.user`
+- block unauthorized access
 
 ### `usageGate`
 
 Responsibilities:
 
-* check monthly tier limit
-* read current usage from `usage_daily`
-* enforce scan ceilings
-* may be skipped in local dev if explicitly configured
+- check monthly tier limit
+- read current usage from `usage_daily`
+- enforce scan ceilings
+- may be skipped in local dev if explicitly configured
 
 ### `incrementUsage`
 
 Responsibilities:
 
-* increment usage after request passes gate
-* persist daily usage row
-* keep usage accounting aligned with billing logic
+- increment usage after request passes gate
+- persist daily usage row
+- keep usage accounting aligned with billing logic
 
 Do not reorder these arbitrarily.
 
@@ -371,10 +368,10 @@ Do not reorder these arbitrarily.
 
 In production, audit targets must reject:
 
-* localhost
-* loopback
-* private IP ranges
-* internal network hosts
+- localhost
+- loopback
+- private IP ranges
+- internal network hosts
 
 This logic belongs in `isPrivateOrLocalHost()` or equivalent hardened validator.
 
@@ -384,9 +381,9 @@ Analysis cache keys must be normalized case-insensitively by URL.
 
 Do not let:
 
-* `EXAMPLE.com`
-* `example.com/`
-* `https://example.com`
+- `EXAMPLE.com`
+- `example.com/`
+- `https://example.com`
 
 fragment cache identity unnecessarily without intentional normalization rules.
 
@@ -396,20 +393,20 @@ Secrets must only come from server environment variables.
 
 Never expose:
 
-* OpenRouter keys
-* Stripe secret keys
-* JWT secret
-* admin keys
-* internal provider credentials
+- OpenRouter keys
+- Stripe secret keys
+- JWT secret
+- admin keys
+- internal provider credentials
 
 ### Share links and public views
 
 Any public snapshot/share route must be:
 
-* explicitly generated
-* non-guessable
-* permission-aware
-* optionally redacted by tier
+- explicitly generated
+- non-guessable
+- permission-aware
+- optionally redacted by tier
 
 Never expose private report internals by simply sharing internal audit IDs.
 
@@ -419,23 +416,23 @@ Never expose private report internals by simply sharing internal audit IDs.
 
 ### Required server environment variables
 
-* `DATABASE_URL` - Postgres connection string
-* `JWT_SECRET` - JWT signing secret
-* `OPENROUTER_API_KEY` or `OPEN_ROUTER_API_KEY` - provider auth
+- `DATABASE_URL` - Postgres connection string
+- `JWT_SECRET` - JWT signing secret
+- `OPENROUTER_API_KEY` or `OPEN_ROUTER_API_KEY` - provider auth
 
 ### Optional server environment variables
 
-* `SENTRY_DSN`
-* `ADMIN_KEY`
-* `OLLAMA_BASE_URL`
-* `FRONTEND_URL`
+- `SENTRY_DSN`
+- `ADMIN_KEY`
+- `OLLAMA_BASE_URL`
+- `FRONTEND_URL`
 
 ### Client environment variables
 
 Inside `client/.env`
 
-* `VITE_API_URL` - backend base URL
-* `VITE_SENTRY_DSN` - frontend error reporting
+- `VITE_API_URL` - backend base URL
+- `VITE_SENTRY_DSN` - frontend error reporting
 
 ---
 
@@ -443,20 +440,20 @@ Inside `client/.env`
 
 Migrations auto-run at startup in:
 
-* `server/src/services/postgresql.ts`
+- `server/src/services/postgresql.ts`
 
 Core tables include:
 
-* `users`
-* `user_sessions`
-* `usage_daily`
-* `analysis_cache`
-* `payments`
-* `audits`
-* `competitor_tracking`
-* `citation_tests`
-* `citation_results`
-* `licenses`
+- `users`
+- `user_sessions`
+- `usage_daily`
+- `analysis_cache`
+- `payments`
+- `audits`
+- `competitor_tracking`
+- `citation_tests`
+- `citation_results`
+- `licenses`
 
 Do not add billing, audits, or entitlement logic without checking how those tables already interact.
 
@@ -507,15 +504,15 @@ The dashboard should not invent metrics.
 
 It must derive from real analysis fields such as:
 
-* `visibility_score`
-* `content_analysis.word_count`
-* `schema_markup.json_ld_count`
-* `technical_signals.response_time_ms`
-* `technical_signals.https_enabled`
-* `recommendations`
-* `keyword_intelligence`
-* `topical_keywords`
-* `ai_platform_scores`
+- `visibility_score`
+- `content_analysis.word_count`
+- `schema_markup.json_ld_count`
+- `technical_signals.response_time_ms`
+- `technical_signals.https_enabled`
+- `recommendations`
+- `keyword_intelligence`
+- `topical_keywords`
+- `ai_platform_scores`
 
 ### Section ordering
 
@@ -523,9 +520,9 @@ Dashboard section ordering is user-configurable and persisted locally.
 
 If changing section keys, also update:
 
-* persisted storage key handling
-* normalization logic
-* visible section composition logic
+- persisted storage key handling
+- normalization logic
+- visible section composition logic
 
 ### History rules
 
@@ -533,8 +530,8 @@ If changing section keys, also update:
 
 Server audit history must come from:
 
-* `/api/audits`
-* `/api/analytics`
+- `/api/audits`
+- `/api/analytics`
 
 If both are merged, dedupe by normalized target and timestamp.
 
@@ -542,13 +539,13 @@ If both are merged, dedupe by normalized target and timestamp.
 
 Downloaded reports must include:
 
-* report metadata
-* URL
-* analyzed timestamp
-* visibility score
-* full analysis payload
-* goal alignment if present
-* export timestamp
+- report metadata
+- URL
+- analyzed timestamp
+- visibility score
+- full analysis payload
+- goal alignment if present
+- export timestamp
 
 Do not export partial shells that omit the actual audit result.
 
@@ -591,17 +588,17 @@ Observer/free should never attempt paid checkout.
 
 If AI2 or AI3 fail in triple-check mode:
 
-* keep AI1 result if valid
-* mark model count accordingly
-* do not fail entire request unnecessarily
+- keep AI1 result if valid
+- mark model count accordingly
+- do not fail entire request unnecessarily
 
 ### Network failures
 
 If frontend fetch fails:
 
-* show clear retry guidance
-* do not invent successful state
-* keep last valid local result only if intentionally supported
+- show clear retry guidance
+- do not invent successful state
+- keep last valid local result only if intentionally supported
 
 ### Abort behavior
 
@@ -634,22 +631,10 @@ This product is not “just an SEO auditor.”
 
 It is a structured AI visibility system with five pressure points:
 
-* crawlability
-* extractability
-* trust
-* scoring consistency
-* operational follow-through
+- crawlability
+- extractability
+- trust
+- scoring consistency
+- operational follow-through
 
 Every meaningful change should improve at least one of those without breaking the others.
-
-```
-
-Main fixes I made:
-the auth column in your route table was inaccurate and blank in places
-pricing and payment route truth got separated cleanly
-the tier/model rules are now explicit and harder for an agent to misread
-the client/server trust boundary is clearer
-the instruction set now reads like an execution contract instead of mixed notes
-
-The next thing worth doing is turning this into a repo-level `AGENTS.md` plus a smaller `server/AGENTS.md` and `client/AGENTS.md` split, so the coding agent gets tighter local instructions instead of one giant slab.
-```

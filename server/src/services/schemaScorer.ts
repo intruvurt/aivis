@@ -1,5 +1,5 @@
 // server/src/services/schemaScorer.ts
-// Comprehensive deterministic schema scoring system for AI Visibility Intelligence Platform.
+// Comprehensive deterministic schema scoring system for Evidence-backed site analysis for AI answers Platform.
 // Informed by schema.org validation, GS1 Digital Link vocabulary (product identification),
 // and MLCommons Croissant metadata patterns (entity graph + @id cross-refs + vocabulary extension).
 
@@ -33,32 +33,32 @@ export interface SchemaScoreBreakdown {
 // ── Required/Recommended property maps per schema.org type ──────────────────
 
 const TYPE_PROPERTY_MAP: Record<string, { required: string[]; recommended: string[] }> = {
-  Organization:     { required: ['name', 'url'],                       recommended: ['logo', 'address', 'contactPoint', 'sameAs', '@id'] },
-  LocalBusiness:    { required: ['name', 'url', 'address'],             recommended: ['telephone', 'openingHours', 'geo', 'sameAs', '@id'] },
-  Person:           { required: ['name'],                               recommended: ['sameAs', 'jobTitle', 'worksFor', 'knowsAbout', '@id'] },
-  WebSite:          { required: ['name', 'url'],                        recommended: ['potentialAction', '@id'] },
-  WebPage:          { required: ['name', 'url'],                        recommended: ['isPartOf', 'about', 'publisher', '@id', 'datePublished'] },
-  Article:          { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', 'mainEntityOfPage', '@id', 'description'] },
-  BlogPosting:      { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', 'mainEntityOfPage', '@id'] },
-  NewsArticle:      { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', '@id'] },
-  FAQPage:          { required: ['mainEntity'],                         recommended: ['name', '@id'] },
-  HowTo:            { required: ['name', 'step'],                       recommended: ['description', 'image', 'totalTime'] },
-  BreadcrumbList:   { required: ['itemListElement'],                    recommended: [] },
-  ItemList:         { required: ['itemListElement'],                    recommended: ['numberOfItems', 'name'] },
-  Product:          { required: ['name'],                               recommended: ['image', 'offers', 'brand', 'description', 'sku', 'gtin', 'gtin13', 'gtin8', 'mpn', 'aggregateRating', '@id'] },
-  SoftwareApplication: { required: ['name'],                            recommended: ['applicationCategory', 'operatingSystem', 'offers', 'aggregateRating', 'featureList', '@id'] },
-  Review:           { required: ['itemReviewed', 'reviewRating'],       recommended: ['author', 'datePublished', '@id'] },
-  AggregateRating:  { required: ['ratingValue', 'reviewCount'],         recommended: ['bestRating', 'worstRating'] },
-  DefinedTermSet:   { required: ['name', 'hasDefinedTerm'],             recommended: ['description'] },
-  DefinedTerm:      { required: ['name'],                               recommended: ['description', 'termCode'] },
-  Dataset:          { required: ['name', 'description'],                recommended: ['license', 'url', 'creator', 'datePublished', 'distribution'] },
-  Event:            { required: ['name', 'startDate'],                  recommended: ['location', 'organizer', 'endDate', 'description'] },
-  VideoObject:      { required: ['name', 'uploadDate'],                 recommended: ['description', 'thumbnailUrl', 'contentUrl', 'duration'] },
-  ImageObject:      { required: ['contentUrl'],                         recommended: ['caption', 'description'] },
-  Service:          { required: ['name'],                               recommended: ['provider', 'serviceType', 'description', 'offers'] },
-  Course:           { required: ['name', 'provider'],                   recommended: ['description', 'hasCourseInstance'] },
-  Recipe:           { required: ['name', 'recipeIngredient'],           recommended: ['recipeInstructions', 'image', 'nutrition'] },
-  JobPosting:       { required: ['title', 'datePosted', 'hiringOrganization'], recommended: ['description', 'employmentType', 'jobLocation'] },
+  Organization: { required: ['name', 'url'], recommended: ['logo', 'address', 'contactPoint', 'sameAs', '@id'] },
+  LocalBusiness: { required: ['name', 'url', 'address'], recommended: ['telephone', 'openingHours', 'geo', 'sameAs', '@id'] },
+  Person: { required: ['name'], recommended: ['sameAs', 'jobTitle', 'worksFor', 'knowsAbout', '@id'] },
+  WebSite: { required: ['name', 'url'], recommended: ['potentialAction', '@id'] },
+  WebPage: { required: ['name', 'url'], recommended: ['isPartOf', 'about', 'publisher', '@id', 'datePublished'] },
+  Article: { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', 'mainEntityOfPage', '@id', 'description'] },
+  BlogPosting: { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', 'mainEntityOfPage', '@id'] },
+  NewsArticle: { required: ['headline', 'author', 'datePublished'], recommended: ['publisher', 'image', '@id'] },
+  FAQPage: { required: ['mainEntity'], recommended: ['name', '@id'] },
+  HowTo: { required: ['name', 'step'], recommended: ['description', 'image', 'totalTime'] },
+  BreadcrumbList: { required: ['itemListElement'], recommended: [] },
+  ItemList: { required: ['itemListElement'], recommended: ['numberOfItems', 'name'] },
+  Product: { required: ['name'], recommended: ['image', 'offers', 'brand', 'description', 'sku', 'gtin', 'gtin13', 'gtin8', 'mpn', 'aggregateRating', '@id'] },
+  SoftwareApplication: { required: ['name'], recommended: ['applicationCategory', 'operatingSystem', 'offers', 'aggregateRating', 'featureList', '@id'] },
+  Review: { required: ['itemReviewed', 'reviewRating'], recommended: ['author', 'datePublished', '@id'] },
+  AggregateRating: { required: ['ratingValue', 'reviewCount'], recommended: ['bestRating', 'worstRating'] },
+  DefinedTermSet: { required: ['name', 'hasDefinedTerm'], recommended: ['description'] },
+  DefinedTerm: { required: ['name'], recommended: ['description', 'termCode'] },
+  Dataset: { required: ['name', 'description'], recommended: ['license', 'url', 'creator', 'datePublished', 'distribution'] },
+  Event: { required: ['name', 'startDate'], recommended: ['location', 'organizer', 'endDate', 'description'] },
+  VideoObject: { required: ['name', 'uploadDate'], recommended: ['description', 'thumbnailUrl', 'contentUrl', 'duration'] },
+  ImageObject: { required: ['contentUrl'], recommended: ['caption', 'description'] },
+  Service: { required: ['name'], recommended: ['provider', 'serviceType', 'description', 'offers'] },
+  Course: { required: ['name', 'provider'], recommended: ['description', 'hasCourseInstance'] },
+  Recipe: { required: ['name', 'recipeIngredient'], recommended: ['recipeInstructions', 'image', 'nutrition'] },
+  JobPosting: { required: ['title', 'datePosted', 'hiringOrganization'], recommended: ['description', 'employmentType', 'jobLocation'] },
 };
 
 // Core types that signal strong overall schema implementation

@@ -99,7 +99,7 @@ const featureStatusCache = new Map<string, CacheEntry>();
 const notificationsCache = new Map<string, CacheEntry>();
 
 const FEATURE_CACHE_TTL = 15_000;  // 15 s
-const NOTIF_CACHE_TTL   = 8_000;   // 8 s
+const NOTIF_CACHE_TTL = 8_000;   // 8 s
 
 function readCache<T>(cache: Map<string, CacheEntry>, key: string, ttl: number): T | null {
   const entry = cache.get(key);
@@ -119,6 +119,7 @@ export function clearUserFeatureCaches(userId: string): void {
 }
 
 function internalServerError(res: Response, fallback: string) {
+  if (res.headersSent) return;
   return res.status(500).json({
     success: false,
     error: fallback,
@@ -207,37 +208,37 @@ router.get('/status', async (req: Request, res: Response) => {
 
     const usagePromise = dbConfigured
       ? getPool().query(
-          `SELECT COALESCE(SUM(requests), 0) AS total_requests
+        `SELECT COALESCE(SUM(requests), 0) AS total_requests
            FROM usage_daily
            WHERE user_id = $1 AND date >= $2 AND date <= $3`,
-          [req.user!.id, monthStart, monthEnd]
-        )
+        [req.user!.id, monthStart, monthEnd]
+      )
       : Promise.resolve({ rows: [{ total_requests: 0 }] } as { rows: Array<{ total_requests: number }> });
 
     const packCreditsPromise = dbConfigured
       ? getPool().query(
-          `SELECT COALESCE(credits_remaining, 0) AS credits_remaining
+        `SELECT COALESCE(credits_remaining, 0) AS credits_remaining
            FROM scan_pack_credits
            WHERE user_id = $1
            LIMIT 1`,
-          [req.user!.id]
-        )
+        [req.user!.id]
+      )
       : Promise.resolve({ rows: [{ credits_remaining: 0 }] } as { rows: Array<{ credits_remaining: number }> });
 
     const referralEarnedPromise = dbConfigured
       ? getPool().query(
-          `SELECT COALESCE(SUM(credits_awarded_referrer), 0) AS total_earned
+        `SELECT COALESCE(SUM(credits_awarded_referrer), 0) AS total_earned
            FROM referral_attributions
            WHERE referrer_user_id = $1 AND status = 'granted'`,
-          [req.user!.id]
-        )
+        [req.user!.id]
+      )
       : Promise.resolve({ rows: [{ total_earned: 0 }] } as { rows: Array<{ total_earned: number }> });
 
     const trialPromise = dbConfigured
       ? getPool().query(
-          `SELECT trial_ends_at, trial_used FROM users WHERE id = $1`,
-          [req.user!.id]
-        )
+        `SELECT trial_ends_at, trial_used FROM users WHERE id = $1`,
+        [req.user!.id]
+      )
       : Promise.resolve({ rows: [{ trial_ends_at: null, trial_used: false }] } as { rows: Array<{ trial_ends_at: string | null; trial_used: boolean }> });
 
     const [scheduledRescans, deployVerifications, apiKeys, webhooks, reportDeliveries, usageResult, packCreditsResult, referralEarnedResult, trialResult, unlockedMilestones, nextMilestones, toolUsage] = await Promise.all([
@@ -967,12 +968,12 @@ router.patch('/webhooks/:id', enforceFeature('webhook'), async (req: Request, re
     const updated =
       typeof url !== 'undefined' || typeof events !== 'undefined' || typeof provider !== 'undefined' || typeof displayName !== 'undefined'
         ? await updateWebhook(String(req.params.id), req.user!.id, req.workspace!.id, {
-            enabled,
-            url,
-            events,
-            provider,
-            displayName,
-          })
+          enabled,
+          url,
+          events,
+          provider,
+          displayName,
+        })
         : await toggleWebhook(String(req.params.id), req.user!.id, req.workspace!.id, Boolean(enabled));
 
     if (!updated) return res.status(404).json({ success: false, error: 'Webhook not found' });

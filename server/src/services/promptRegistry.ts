@@ -72,7 +72,7 @@ function serializeJson(value: unknown): string {
 }
 
 function buildAuditPrimaryPrompt(args: AuditPrimaryArgs): string {
-    return `${args.tierPromptPrefix}AI Visibility Intelligence Platform audit for ${args.targetUrl} (${args.hostname}).
+    return `${args.tierPromptPrefix}Evidence-backed site analysis for AI answers Platform audit for ${args.targetUrl} (${args.hostname}).
 Base ALL findings on the evidence below. Be honest - most sites score C/D. Cite [ev_*] IDs.
 
 WRITING STYLE (mandatory for all text fields):

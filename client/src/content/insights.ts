@@ -19,14 +19,14 @@ export const INSIGHT_ARTICLES: InsightArticle[] = [
   {
     slug: 'ai-search-visibility-2026',
     path: '/ai-search-visibility-2026',
-    title: 'AI Visibility Intelligence Platform in 2026',
+    title: 'Evidence-backed site analysis for AI answers Platform in 2026',
     description:
       'Why traditional SEO is collapsing and how to win with AI-first content infrastructure, AEO, and citation-driven visibility.',
     category: 'Strategy',
     publishedAt: '2026-03-02',
     readMinutes: 8,
     keywords: [
-      'AI Visibility Intelligence Platform',
+      'Evidence-backed site analysis for AI answers Platform',
       'traditional SEO collapse',
       'AI citations',
       'content infrastructure',
@@ -40,7 +40,7 @@ export const INSIGHT_ARTICLES: InsightArticle[] = [
           'AI systems increasingly synthesize answers directly from source material, so inclusion and citation quality matter more than classic rank position. The question is no longer whether you rank, but whether AI models extract and attribute your content.',
       },
       {
-        question: 'What is the primary KPI in AI Visibility Intelligence?',
+        question: 'What is the primary KPI in Evidence-backed site analysis for AI answers?',
         answer:
           'Core KPI is whether your content is extracted and cited accurately in AI-generated answers. Secondary KPIs include schema coverage, answer-block readiness, and entity trust signals.',
       },

@@ -20,7 +20,7 @@ function log(message: string, color: keyof typeof colors = 'reset') {
 }
 
 async function testAnalyze() {
-  log(' Testing AI Visibility Intelligence Platform Analyze Endpoint', 'bright');
+  log(' Testing Evidence-backed site analysis for AI answers Platform Analyze Endpoint', 'bright');
   log('='.repeat(60), 'cyan');
   log(`API URL: ${API_URL}`, 'blue');
   log(`Test URL: ${TEST_URL}`, 'blue');
@@ -29,9 +29,9 @@ async function testAnalyze() {
 
   try {
     const startTime = Date.now();
-    
+
     log(' Sending analysis request...', 'yellow');
-    
+
     const response = await axios.post(
       `${API_URL}/api/analyze`,
       { url: TEST_URL },
@@ -54,7 +54,7 @@ async function testAnalyze() {
 
     log(' Analysis successful!', 'green');
     console.log('');
-    
+
     log('Response Details:', 'bright');
     log('─'.repeat(60), 'cyan');
     console.log(`Status Code: ${response.status}`);
@@ -85,7 +85,7 @@ async function testAnalyze() {
     if (data.recommendations && data.recommendations.length > 0) {
       log(`Recommendations: ${data.recommendations.length}`, 'bright');
       log('─'.repeat(60), 'cyan');
-      
+
       // Show first 3 recommendations
       data.recommendations.slice(0, 3).forEach((rec: any, idx: number) => {
         console.log(`${idx + 1}. [${rec.priority.toUpperCase()}] ${rec.title}`);
@@ -147,7 +147,7 @@ async function testAnalyze() {
       console.log(`AI1 (Primary): ${data.triple_check.ai1?.model || 'N/A'}`);
       console.log(`AI2 (Critique): ${data.triple_check.ai2?.model || 'N/A'}`);
       console.log(`AI3 (Validator): ${data.triple_check.ai3?.model || 'N/A'}`);
-      
+
       if (data.triple_check.ai3?.validation) {
         console.log('');
         console.log('Final Validation:');
@@ -194,7 +194,7 @@ async function testAnalyze() {
 // Run test suite
 async function runTests() {
   console.log('');
-  
+
   try {
     await testAnalyze();
     console.log('');

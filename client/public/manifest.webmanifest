@@ -2,7 +2,7 @@
   "id": "/",
   "name": "AiVIS",
   "short_name": "AiVIS",
-  "description": "AI visibility intelligence platform. Audit how ChatGPT, Perplexity, Google AI and Claude read, trust, and cite your website.",
+  "description": "Evidence-backed site analysis for AI answers platform. Audit how ChatGPT, Perplexity, Google AI and Claude read, trust, and cite your website.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#2e3646",

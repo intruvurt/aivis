@@ -57,7 +57,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              AI Visibility Intelligence Platform. Measure how AI search engines understand, cite, and recommend your website.
+              Evidence-backed site analysis for AI answers Platform. Measure how AI search engines understand, cite, and recommend your website.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
               <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">

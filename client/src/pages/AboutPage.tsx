@@ -117,11 +117,12 @@ const ABOUT_STRUCTURED_DATA = [
       'https://twitter.com/intruvurt',
       'https://www.reddit.com/user/intruvurt/',
       'https://www.reddit.com/r/AiVIS/',
+      'https://stackoverflow.com/users/29677022/intruvurt',
     ],
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About AiVIS; AI visibility intelligence platform & Remediation Platform',
+    name: 'About AiVIS; Evidence-backed site analysis for AI answers platform & Remediation Platform',
     description: 'Enterprise citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
   }),
   buildBreadcrumbSchema([
@@ -132,11 +133,11 @@ const ABOUT_STRUCTURED_DATA = [
 
 export default function AboutPage() {
   usePageMeta({
-    title: 'About Intruvurt Labs | AiVIS \u2013 AI Visibility Intelligence Platform',
+    title: 'About Intruvurt Labs | AiVIS \u2013 Evidence-backed site analysis for AI answers Platform',
     description: 'Intruvurt Labs: enterprise AI citation engine and visibility auditing platform. Founded December 2025. Ryan Mason, Head of Intruvurt Labs.',
     path: '/about',
     ogTitle: 'About AiVIS \u2013 Built by Intruvurt Labs',
-    ogDescription: 'Intruvurt Labs builds enterprise-grade AI visibility intelligence tools. Named founder: Ryan Mason. US Federal Registration Pending.',
+    ogDescription: 'Intruvurt Labs builds enterprise-grade Evidence-backed site analysis for AI answers tools. Named founder: Ryan Mason. US Federal Registration Pending.',
     structuredData: ABOUT_STRUCTURED_DATA,
   });
   return (
@@ -381,6 +382,17 @@ export default function AboutPage() {
                 <p className="text-sm text-white/55 leading-relaxed mb-4">
                   Handles outreach, content pipeline, and partnership coordination for agencies and builders.
                 </p>
+
+                <div className="flex flex-wrap gap-2 text-xs mb-3">
+                  {["kimsupport@aivis.biz", "marketing@aivis.biz"].map((e) => (
+                    <a key={e} href={`mailto:${e}`} className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1 text-white/50 hover:text-white/70 transition">
+                      {e}
+                    </a>
+                  ))}
+                  <a href="tel:+1-706-907-5299" className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1 text-white/50 hover:text-white/70 transition">
+                    +1-706-907-5299
+                  </a>
+                </div>
 
                 <div className="mt-4 pt-3 border-t border-white/8 flex flex-wrap gap-1.5">
                   {["Content Marketing", "AEO Strategy", "Community Growth", "Platform Distribution"].map((t) => (

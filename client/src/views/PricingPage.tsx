@@ -1024,7 +1024,7 @@ export default function PricingPage() {
         <div id="overview" className="section-anchor text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
             <Sparkles className="w-4 h-4" />
-            AI Visibility Intelligence Platform
+            Evidence-backed site analysis for AI answers Platform
           </div>
 
           <div className="lonely-text">

@@ -126,7 +126,7 @@ export const STRIPE_PRICING = {
 
   // PRO TIER (legacy starter subscription)
   pro: {
-    name: 'AI Visibility Intelligence Platform – Pro',
+    name: 'Evidence-backed site analysis for AI answers Platform – Pro',
     lookupKey: 'pro_monthly',
     priceId: process.env.STRIPE_PRO_PRICE_ID,
     amountCents: 4900,
@@ -140,7 +140,7 @@ export const STRIPE_PRICING = {
 
   // BUSINESS TIER - $149/month (Signal)
   business: {
-    name: 'AI Visibility Intelligence Platform – Business',
+    name: 'Evidence-backed site analysis for AI answers Platform – Business',
     lookupKey: 'business_monthly',
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
     amountCents: 2900,
@@ -151,7 +151,7 @@ export const STRIPE_PRICING = {
       projects_max: 20,
     },
   },
-// ENTERPRISE TIER - removed (not an active tier)
+  // ENTERPRISE TIER - removed (not an active tier)
 };
 
 // ============================================================================
@@ -366,19 +366,19 @@ export const WEBHOOK_EVENTS = {
   // Checkout events
   CHECKOUT_COMPLETED: 'checkout.session.completed',
   CHECKOUT_EXPIRED: 'checkout.session.expired',
-  
+
   // Subscription events
   SUBSCRIPTION_CREATED: 'customer.subscription.created',
   SUBSCRIPTION_UPDATED: 'customer.subscription.updated',
   SUBSCRIPTION_DELETED: 'customer.subscription.deleted',
-  
+
   // Invoice events
   INVOICE_PAID: 'invoice.paid',
   INVOICE_PAYMENT_FAILED: 'invoice.payment_failed',
 
   // Connect/common payout events
   PAYOUT_FAILED: 'payout.failed',
-  
+
   // Payment intent events (for one-time payments)
   PAYMENT_INTENT_SUCCEEDED: 'payment_intent.succeeded',
   PAYMENT_INTENT_FAILED: 'payment_intent.payment_failed',

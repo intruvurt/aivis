@@ -163,7 +163,7 @@ async function fetchPageBrandSignals(targetUrl: string): Promise<PageBrandSignal
           if (item['@type'] === 'WebSite' && !schemaOrgName) schemaOrgName = item.name.trim();
         }
         if (schemaOrgName) break;
-      } catch {}
+      } catch { }
     }
 
     return { title, ogSiteName, schemaOrgName };
@@ -627,7 +627,7 @@ function buildBrandContext(
   if (brandSignals.ogSiteName && brandSignals.ogSiteName !== primaryName) {
     nameVariants.push(brandSignals.ogSiteName);
   }
-  // Title segments (e.g. "AI Visibility Intelligence Platform" from "AiVIS - AI Visibility Intelligence Platform")
+  // Title segments (e.g. "Evidence-backed site analysis for AI answers Platform" from "AiVIS.biz -> evidence-backed site analysis for AI answers")
   if (brandSignals.title) {
     const parts = brandSignals.title.split(/[\-|–·•:]/).map(p => p.trim()).filter(Boolean);
     for (const part of parts) {
@@ -1012,8 +1012,8 @@ export async function authorityGranularCheck(req: Request, res: Response) {
 
     const normalizedRequestedPlatforms = Array.isArray(requestedPlatforms)
       ? requestedPlatforms
-          .map((item) => String(item || '').trim().toLowerCase())
-          .filter((item): item is AuthorityPlatform => (Object.keys(PLATFORM_DOMAINS) as AuthorityPlatform[]).includes(item as AuthorityPlatform))
+        .map((item) => String(item || '').trim().toLowerCase())
+        .filter((item): item is AuthorityPlatform => (Object.keys(PLATFORM_DOMAINS) as AuthorityPlatform[]).includes(item as AuthorityPlatform))
       : [];
 
     const platforms = normalizedRequestedPlatforms.length > 0
@@ -1109,7 +1109,7 @@ export async function authorityGranularCheck(req: Request, res: Response) {
                 if (brandCtx.primaryName && brandCtx.primaryName.toLowerCase() !== (targetDomain || '').toLowerCase()) {
                   directQueries.push(brandCtx.primaryName);
                 }
-                // Add long, unique name variants (e.g. "AI Visibility Intelligence Platform")
+                // Add long, unique name variants (e.g. "Evidence-backed site analysis for AI answers Platform")
                 for (const variant of brandCtx.nameVariants) {
                   if (variant.length >= 15 && !directQueries.some(q => q.toLowerCase() === variant.toLowerCase())) {
                     directQueries.push(variant);
@@ -1224,45 +1224,45 @@ export async function authorityGranularCheck(req: Request, res: Response) {
                   : []),
               ];
               for (const rssQuery of rssQueries) {
-              try {
-                const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(rssQuery)}&hl=en-US&gl=US&ceid=US:en`;
-                const rssResp = await fetchWithTimeout(rssUrl, 8000);
-                if (rssResp.ok) {
-                  const xml = await rssResp.text();
-                  const rssBlockRegex = /<item>([\s\S]*?)<\/item>/gi;
-                  let rssBlock: RegExpExecArray | null;
-                  const platformHost = domain.replace(/^www\./, '').toLowerCase();
-                  while ((rssBlock = rssBlockRegex.exec(xml)) !== null) {
-                    const block = rssBlock[1];
-                    const titleMatch = block.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
-                    const linkMatch = block.match(/<link>([\s\S]*?)<\/link>/i);
-                    // Try to extract actual article URL from description <a href="">
-                    const descHrefMatch = block.match(/<description>[\s\S]*?href="(https?:\/\/[^"]+)"/i);
+                try {
+                  const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(rssQuery)}&hl=en-US&gl=US&ceid=US:en`;
+                  const rssResp = await fetchWithTimeout(rssUrl, 8000);
+                  if (rssResp.ok) {
+                    const xml = await rssResp.text();
+                    const rssBlockRegex = /<item>([\s\S]*?)<\/item>/gi;
+                    let rssBlock: RegExpExecArray | null;
+                    const platformHost = domain.replace(/^www\./, '').toLowerCase();
+                    while ((rssBlock = rssBlockRegex.exec(xml)) !== null) {
+                      const block = rssBlock[1];
+                      const titleMatch = block.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
+                      const linkMatch = block.match(/<link>([\s\S]*?)<\/link>/i);
+                      // Try to extract actual article URL from description <a href="">
+                      const descHrefMatch = block.match(/<description>[\s\S]*?href="(https?:\/\/[^"]+)"/i);
 
-                    const rssTitle = titleMatch?.[1]?.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() || '';
-                    const rawLink = linkMatch?.[1]?.trim() || '';
+                      const rssTitle = titleMatch?.[1]?.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() || '';
+                      const rawLink = linkMatch?.[1]?.trim() || '';
 
-                    // Prefer real platform URL from description over Google News redirect
-                    let rssHref = rawLink;
-                    if (descHrefMatch?.[1]) {
-                      try {
-                        const descHost = new URL(descHrefMatch[1]).hostname.replace(/^www\./, '').toLowerCase();
-                        if (descHost.includes(platformHost) || platformHost.includes(descHost)) {
-                          rssHref = descHrefMatch[1];
-                        }
-                      } catch { /* keep rawLink */ }
+                      // Prefer real platform URL from description over Google News redirect
+                      let rssHref = rawLink;
+                      if (descHrefMatch?.[1]) {
+                        try {
+                          const descHost = new URL(descHrefMatch[1]).hostname.replace(/^www\./, '').toLowerCase();
+                          if (descHost.includes(platformHost) || platformHost.includes(descHost)) {
+                            rssHref = descHrefMatch[1];
+                          }
+                        } catch { /* keep rawLink */ }
+                      }
+
+                      if (!rssTitle || !rssHref || seenHref.has(rssHref)) continue;
+                      seenHref.add(rssHref);
+                      parsedRows.push({ title: rssTitle, snippet: '', href: rssHref });
                     }
-
-                    if (!rssTitle || !rssHref || seenHref.has(rssHref)) continue;
-                    seenHref.add(rssHref);
-                    parsedRows.push({ title: rssTitle, snippet: '', href: rssHref });
+                    if (parsedRows.length > 0) {
+                      console.log(`[AuthorityCheck] Google News RSS fallback for platform=${platform} found ${parsedRows.length} results`);
+                    }
                   }
-                  if (parsedRows.length > 0) {
-                    console.log(`[AuthorityCheck] Google News RSS fallback for platform=${platform} found ${parsedRows.length} results`);
-                  }
-                }
-              } catch { /* skip */ }
-              if (parsedRows.length > 0) break;
+                } catch { /* skip */ }
+                if (parsedRows.length > 0) break;
               }
             }
 
@@ -1556,7 +1556,7 @@ export async function startCitationTest(req: Request, res: Response) {
     runCitationTestAsync(testId, userId, normalizedUrl.url, normalizedQueries, platforms || ['chatgpt', 'perplexity', 'claude', 'google_ai'], apiKey);
 
     // Check citation milestones in background
-    checkCitationMilestones(userId).catch(() => {});
+    checkCitationMilestones(userId).catch(() => { });
 
     return res.json({
       success: true,
@@ -1843,8 +1843,8 @@ async function runCitationTestAsync(
           citationResult.position,
           citationResult.excerpt,
           JSON.stringify(citationResult.competitors_mentioned),
-         computeMentionQuality(Boolean(citationResult.mentioned), Number(citationResult.position || 0), String(citationResult.excerpt || '')),
-         isFalsePositive,
+          computeMentionQuality(Boolean(citationResult.mentioned), Number(citationResult.position || 0), String(citationResult.excerpt || '')),
+          isFalsePositive,
         ]
       );
     }
@@ -1913,19 +1913,19 @@ async function runCitationTestAsync(
 
     console.log(`[CitationTest ${testId}] Completed successfully`);
 
-      // Record trend snapshot for sparkline (non-fatal)
-      try {
-        const mentionedCount = allCitationResults.filter(r => r.mentioned).length;
-        await recordMentionTrendSnapshot(
-          userId, url, testId,
-          summary.mention_rate,
-          allCitationResults.length,
-          mentionedCount,
-          summary.platforms
-        );
-      } catch (trendErr: any) {
-        console.warn('[CitationTest] Trend snapshot failed (non-fatal):', trendErr?.message);
-      }
+    // Record trend snapshot for sparkline (non-fatal)
+    try {
+      const mentionedCount = allCitationResults.filter(r => r.mentioned).length;
+      await recordMentionTrendSnapshot(
+        userId, url, testId,
+        summary.mention_rate,
+        allCitationResults.length,
+        mentionedCount,
+        summary.platforms
+      );
+    } catch (trendErr: any) {
+      console.warn('[CitationTest] Trend snapshot failed (non-fatal):', trendErr?.message);
+    }
   } catch (err: any) {
     console.error(`[CitationTest ${testId}] Error:`, err);
 

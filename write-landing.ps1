@@ -46,8 +46,8 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS – AI Visibility Intelligence Platform | ChatGPT, Perplexity, Google AI',
-    description: 'AiVIS is an AI visibility intelligence platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
+    name: 'AiVIS – Evidence-backed site analysis for AI answers Platform | ChatGPT, Perplexity, Google AI',
+    description: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
@@ -58,8 +58,8 @@ const LANDING_STRUCTURED_DATA = [
     { name: 'Score Fix [AutoFix PR] – 250 credits – $299 one-time', path: '/pricing#scorefix' },
   ]),
   buildSoftwareApplicationSchema({
-    name: 'AiVIS - AI Visibility Intelligence Platform',
-    description: 'AI visibility intelligence platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
+    name: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
+    description: 'Evidence-backed site analysis for AI answers platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer [Free]', price: '0' },
       { name: 'Alignment [Core]', price: '9' },
@@ -111,7 +111,7 @@ function NeuralCityIllustration() {
       <line x1="330" y1="80" x2="380" y2="60" stroke="rgba(251,191,36,0.28)" strokeWidth="0.6" />
       <line x1="380" y1="60" x2="455" y2="100" stroke="rgba(139,92,246,0.22)" strokeWidth="0.6" strokeDasharray="4,3" />
       <text x="200" y="10" fontSize="6" fill="rgba(34,211,238,0.65)" fontFamily="monospace" letterSpacing="1">AIVIS.BIZ</text>
-      <text x="170" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">AI VISIBILITY INTELLIGENCE PLATFORM</text>
+      <text x="170" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">Evidence-backed site analysis for AI answers PLATFORM</text>
     </svg>
   );
 }
@@ -156,8 +156,8 @@ const CREDIT_COSTS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AI Visibility Intelligence Platform | AiVIS',
-    description: 'AI visibility intelligence auditing for ChatGPT, Perplexity, Google AI and Claude. Evidence-backed scoring with implementation-ready fixes.',
+    title: 'Evidence-backed site analysis for AI answers | AiVIS',
+    description: 'Evidence-backed site analysis for AI answers assembling in ChatGPT, Perplexity, Google AI and Claude. BRAG scoring with implementation-ready fixes.',
     path: '/landing',
     ogTitle: 'AiVIS - Measure How AI Sees Your Site',
     structuredData: LANDING_STRUCTURED_DATA,
@@ -202,7 +202,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-8">
-                <img src="/images/aivis-logo-hero.png" alt="AiVIS – AI Visibility Intelligence Audits" className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
+                <img src="/images/aivis-logo-hero.png" alt="AiVIS - Evidence-backed site analysis for AI answers Audits" className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">
@@ -530,5 +530,6 @@ const Landing = () => {
 export default Landing;
 '@
 
-[IO.File]::WriteAllText('C:\Users\Ma$e\Downloads\ai-visible-engine-v2\aivis\client\src\pages\Landing.tsx', $content)
-Write-Host "Written: $((Get-Content 'C:\Users\Ma$e\Downloads\ai-visible-engine-v2\aivis\client\src\pages\Landing.tsx' | Measure-Object -Line).Lines) lines"
+$outPath = "C:\Users\Ma`$e\Downloads\ai-visible-engine-v2\aivis\client\src\pages\Landing.tsx"
+[IO.File]::WriteAllText($outPath, $content)
+Write-Host "Written: $((Get-Content $outPath | Measure-Object -Line).Lines) lines"

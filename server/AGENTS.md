@@ -1,7 +1,3 @@
-
-`server/AGENTS.md`
-
-```md id="67bx4u"
 # server/AGENTS.md
 
 ## Server role
@@ -61,6 +57,7 @@ All 3 run in parallel per citation query via `Promise.all` in `citationTester.ts
 Source union type in `shared/types.ts`: `'ddg_web' | 'bing_web' | 'ddg_instant'`
 
 No paid search APIs. No API keys. Bing and DDG HTML are scraped with rotating browser user agents.
+
 - `src/services/scraper.ts` - crawl/extraction
 - `src/services/AnalysisCacheService*` - cache strategy
 - `src/services/emailService.ts` - all transactional + broadcast email (Resend API)

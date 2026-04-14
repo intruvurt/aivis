@@ -34,7 +34,7 @@ export default function ReferralsPage() {
 
   usePageMeta({
     title: 'Referrals',
-    description: 'Invite colleagues to AiVIS and earn bonus scan credits. Grow your team’s AI visibility intelligence together.',
+    description: 'Invite colleagues to AiVIS and earn bonus scan credits. Grow your team’s Evidence-backed site analysis for AI answers together.',
     path: '/referrals',
     structuredData: [
       buildWebPageSchema({ path: '/referrals', name: 'AiVIS Referral Program', description: 'Earn bonus credits by referring others to the AiVIS AI visibility platform.' }),

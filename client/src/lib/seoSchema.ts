@@ -25,10 +25,10 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@id': ORGANIZATION_ID,
     name: 'AiVIS',
     legalName: 'Intruvurt Labs',
-    alternateName: 'AI Visibility Intelligence Platform',
+    alternateName: 'Evidence-backed site analysis for AI answers',
     url: `${BASE_URL}/`,
     description:
-      'AiVIS is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. Built by Intruvurt Labs for AI visibility audits, answer-engine readiness, and evidence-backed optimization workflows.',
+      'AiVIS is AI visibility infrastructure that exposes how answer engines distort, misattribute and rewrite your content. Built by Intruvurt Labs. Evidence-backed distortion scoring, BRAG evidence identifiers, and fix protocols for ChatGPT, Perplexity, Google AI and Claude.',
     logo: {
       '@type': 'ImageObject',
       url: `${BASE_URL}/aivis-logo.png`,
@@ -95,11 +95,16 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'structured data and schema.org',
       'machine readability',
       'BRAG evidence framework',
+      'evidence-backed analysis',
+      'Ai answer decompile',  
       'entity disambiguation',
       'AI search optimization',
+      'answer distortion measurement',
+      'AI content misattribution',
+      'fix protocol generation',
     ],
     areaServed: 'Worldwide',
-    slogan: 'Evidence-backed AI visibility intelligence',
+    slogan: 'Prove what AI gets wrong about you',
   };
 }
 
@@ -116,7 +121,7 @@ export function buildAuthorRef(): Record<string, unknown> {
   };
 }
 
-export function buildWebSiteSchema(name = 'AiVIS - AI Visibility Intelligence Platform'): Record<string, unknown> {
+export function buildWebSiteSchema(name = 'AiVIS.biz -> evidence-backed site analysis for AI answers'): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

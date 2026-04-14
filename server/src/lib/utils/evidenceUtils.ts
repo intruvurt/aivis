@@ -1,4 +1,4 @@
-// Evidence utilities for AI Visibility Intelligence Platform
+// Evidence utilities for Evidence-backed site analysis for AI answers Platform
 
 export type EvidenceStatus = 'verified' | 'unknown';
 

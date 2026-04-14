@@ -9,7 +9,7 @@ const PRESS_STRUCTURED_DATA = [
   buildOrganizationSchema(),
   buildWebPageSchema({
     path: "/press",
-    name: "Press – AiVIS AI Visibility Intelligence Platform",
+    name: "Press – AiVIS Evidence-backed site analysis for AI answers Platform",
     description:
       "Press resources, media coverage, and public milestones for AiVIS by Intruvurt Labs.",
   }),
@@ -67,19 +67,19 @@ const MILESTONES = [
     date: "2026",
     title: "TechCrunch Startup Battlefield - Top 200 Nominee",
     description:
-      "AiVIS selected as a Top 200 nominee for TechCrunch Startup Battlefield 2026, competing in the AI/ML category for AI visibility intelligence and citation-readiness auditing.",
+      "AiVIS selected as a Top 200 nominee for TechCrunch Startup Battlefield 2026, competing in the AI/ML category for Evidence-backed site analysis for AI answers and citation-readiness auditing.",
   },
   {
     date: "Dec 2025",
     title: "Platform Launch",
     description:
-      "AiVIS launched as the first evidence-backed AI visibility intelligence auditing platform with real crawl data, evidence ledger, and multi-model triple-check scoring.",
+      "AiVIS launched as the first evidence-backed Evidence-backed site analysis for AI answers auditing platform with real crawl data, evidence ledger, and multi-model triple-check scoring.",
   },
 ];
 
 const MEDIA_KIT = [
   { label: "Company Name", value: "Intruvurt Labs" },
-  { label: "Product", value: "AiVIS - AI Visibility Intelligence Platform" },
+  { label: "Product", value: "AiVIS.biz -> evidence-backed site analysis for AI answers" },
   { label: "Founded", value: "December 2025" },
   { 
     label: "Founder", 
@@ -96,9 +96,9 @@ export default function PressPage() {
     description:
       "Press resources, media coverage, and public milestones for AiVIS by Intruvurt Labs. TechCrunch Startup Battlefield Top 200 nominee.",
     path: "/press",
-    ogTitle: "Press - AiVIS AI Visibility Intelligence Platform by Intruvurt Labs",
+    ogTitle: "Press - AiVIS Evidence-backed site analysis for AI answers Platform by Intruvurt Labs",
     ogDescription:
-      "Press resources and public milestones for AiVIS, the AI visibility intelligence auditing platform. TechCrunch Startup Battlefield Top 200 nominee.",
+      "Press resources and public milestones for AiVIS, the Evidence-backed site analysis for AI answers auditing platform. TechCrunch Startup Battlefield Top 200 nominee.",
     structuredData: PRESS_STRUCTURED_DATA,
   });
 
@@ -119,7 +119,7 @@ export default function PressPage() {
             AiVIS in the Press
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            The first evidence-backed AI visibility intelligence auditing platform - built
+            The first evidence-backed Evidence-backed site analysis for AI answers auditing platform - built
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>
@@ -197,7 +197,7 @@ export default function PressPage() {
             />
             <div className="min-w-0">
               <p className="text-lg font-semibold text-white/90 group-hover:text-white transition-colors">
-                AiVIS – AI Visibility Intelligence Audit
+                AiVIS – Evidence-backed site analysis for AI answers Audit
               </p>
               <p className="mt-1 text-sm text-white/60">
                 See exactly what AI gets wrong about your website

@@ -75,7 +75,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           <h1 className="mt-5 text-4xl md:text-6xl font-bold tracking-tight text-slate-900 leading-[1.05]">
-            AI Visibility Intelligence
+            Evidence-backed site analysis for AI answers
             <span className="text-indigo-600"> Platform</span>
           </h1>
 

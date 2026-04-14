@@ -1481,7 +1481,6 @@ app.use(
       const normalizedOrigin = normalizeOrigin(origin);
       const isAllowed = NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin);
       if (isAllowed) {
-        console.log(`[CORS] ✓ Allowed origin: ${origin}`);
         return callback(null, true);
       }
       console.warn(
@@ -1518,7 +1517,9 @@ app.options("(.*)", cors());
 // Prevents hung connections from blocking pool and infrastructure
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setTimeout(55000, () => {
-    res.status(408).json({ error: "Request timeout", code: "TIMEOUT" });
+    if (!res.headersSent) {
+      res.status(408).json({ error: "Request timeout", code: "TIMEOUT" });
+    }
   });
   next();
 });
@@ -1647,7 +1648,7 @@ app.get("/.well-known/webmcp.json", (_req, res) => {
   res.json({
     schema_version: "0.1.0",
     name: "aivis",
-    display_name: "AiVIS - AI Visibility Intelligence Platform",
+    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website.",
     tools_endpoint: "/api/webmcp/tools",
@@ -1662,7 +1663,7 @@ app.get("/.well-known/mcp.json", (_req, res) => {
   res.json({
     schema_version: "1.0.0",
     name: "aivis",
-    display_name: "AiVIS - AI Visibility Intelligence Platform",
+    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.",
     url: "https://aivis.biz/api/mcp",
@@ -3422,7 +3423,7 @@ app.post(
 );
 
 app.get("/llms.txt", (_req, res) => {
-  res.type("text/plain").send(`AiVIS - AI visibility intelligence platform
+  res.type("text/plain").send(`AiVIS.biz -> evidence-backed site analysis for AI answers
 https://aivis.biz/
 
 AiVIS scores whether answer engines can parse, trust, and cite a page.
@@ -12022,7 +12023,7 @@ For each recommendation:
         })(),
         summary:
           aiAnalysis.summary ||
-          `AI Visibility Intelligence Platform analysis for ${parsedTargetUrl.hostname}`,
+          `Evidence-backed site analysis for AI answers Platform analysis for ${parsedTargetUrl.hostname}`,
         key_takeaways: aiAnalysis.key_takeaways || [],
         topical_keywords: aiAnalysis.topical_keywords || [],
         keyword_intelligence: aiAnalysis.keyword_intelligence || [],
@@ -13057,7 +13058,7 @@ app.post(
 
       const uploadRouting = detectUploadAnalysisMode(parsedFiles, sd);
 
-      let prompt = `AI Visibility Intelligence Platform - Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : "batch"}.
+      let prompt = `Evidence-backed site analysis for AI answers Platform - Code & Template Audit for uploaded document ${parsedFiles.length === 1 ? `"${primaryFileName}"` : "batch"}.
   Write in a direct, technical voice. No filler. Never use a comma before "and", "or", "but", or "etc."
   Treat this as uploaded source code or template content (not a live URL crawl).
   The upload includes ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(", ")}.
@@ -13095,7 +13096,7 @@ app.post(
   {"visibility_score":<0-100>,"ai_platform_scores":{"chatgpt":<0-100>,"perplexity":<0-100>,"google_ai":<0-100>,"claude":<0-100>},"summary":"<2-3 sentences>","key_takeaways":["<3-5 items>"],"topical_keywords":["<5-10>"],"brand_entities":["<entities>"],"primary_topics":["<3-5>"],"recommendations":[{"priority":"high|medium|low","category":"<cat>","title":"<short>","description":"<detail>","impact":"<impact>","difficulty":"easy|medium|hard","implementation":"<steps>","evidence_ids":["up_*"]}],"category_grades":[{"grade":"A|B|C|D|F","label":"<category>","score":<0-100>,"summary":"<1-2 sent>","strengths":[],"improvements":[]}],"content_highlights":[{"area":"heading|meta-tags|schema|content|technical|readability","found":"<quote>","status":"good|warning|critical|missing","note":"<why>","source_id":"up_*"}]}`;
 
       if (uploadRouting.mode === "writing_audit") {
-        prompt = `AI Visibility Intelligence Platform - Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
+        prompt = `Evidence-backed site analysis for AI answers Platform - Deep Content & Editorial Audit for uploaded ${uploadRouting.contentType}.
 This is a WRITING and EDITORIAL analysis, not a live website crawl.
 Upload: ${parsedFiles.length} file(s): ${parsedFiles.map((f) => f.fileName).join(", ")}.
 

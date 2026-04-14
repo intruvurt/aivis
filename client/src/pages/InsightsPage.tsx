@@ -16,7 +16,7 @@ export default function InsightsPage() {
     structuredData: [
       buildCollectionSchema(
         'AiVIS Insights Hub',
-        'Strategic content for AI Visibility Intelligence Platform, answer engine optimization, and geo ranking in 2026.',
+        'Strategic content for Evidence-backed site analysis for AI answers Platform, answer engine optimization, and geo ranking in 2026.',
         '/insights'
       ),
       buildItemListSchema(INSIGHT_ARTICLES.map((article) => ({ name: article.title, path: article.path }))),

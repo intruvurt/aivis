@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
 import ShareButtons from "../components/ShareButtons";
 import { auditService } from "../services/auditService";
+import { usePageMeta } from "../hooks/usePageMeta";
 import type { AnalysisResponse } from "@shared/types";
 
 /** Normalise both "passed via location.state" and "fetched from GET /audits/:id" into a usable AnalysisResponse-shaped object. */
@@ -38,6 +39,12 @@ export default function AuditDetails() {
   const { id } = useParams();
   const location = useLocation();
   const passedResult = (location.state as any)?.result as AnalysisResponse | undefined;
+
+  usePageMeta({
+    title: "Audit Details — AiVIS",
+    description: "View detailed AI visibility audit results and recommendations.",
+    path: `/app/audits/${id ?? ""}`,
+  });
 
   const [audit, setAudit] = useState<Record<string, any> | null>(passedResult ? normaliseAudit(passedResult as any) : null);
   const [loading, setLoading] = useState(!passedResult);

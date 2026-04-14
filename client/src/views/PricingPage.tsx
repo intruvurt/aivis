@@ -102,25 +102,25 @@ const TIER_COLORS: Record<
 > = TIER_BRAND_PALETTE;
 
 const TIER_POSITIONING: Record<string, string> = {
-  observer: "find out what AI models can actually read on your site - free",
-  starter: "unlock all recommendations with implementation code and PDF exports",
-  alignment: "turn audit findings into fixes you can export and implement",
-  signal: "run audit workflows across multiple sites and team members",
-  scorefix: "ship fixes automatically as GitHub pull requests via MCP",
+  observer: "detection audit — see what AI models misread on your site, free",
+  starter: "full audit with all recommendations, implementation code, and fix-ready outputs",
+  alignment: "structured optimization — turn extraction failures into evidence-backed fixes",
+  signal: "verified AI answer pipeline — triple-check consensus across 3 models",
+  scorefix: "evidence-based fix pack — automated PRs that ship fixes via MCP",
 };
 
 const TIER_AUDIENCE: Record<string, string> = {
-  observer: "For anyone who wants to know what AI can actually read on their site",
+  observer: "For anyone who wants to see what AI misreads on their site",
   starter: "For solo founders and builders who need fixes, not just scores",
-  alignment: "For people who need to fix what the audit found, not just see it",
+  alignment: "For teams who need to fix what the audit found, not just see it",
   signal: "For agencies and teams running audits across multiple client sites",
   scorefix: "For teams who want fixes shipped as pull requests automatically",
 };
 
 const TIER_COPY: Record<string, { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }> = {
   observer: {
-    headline: "See what AI gets wrong",
-    body: "Run your first audits and expose the blockers stopping AI from trusting and citing your site.",
+    headline: "Detection audit",
+    body: "See what AI systems misread on your site — free forever.",
     includes: [
       `${PRICING.observer.limits.scans} audits/month`,
       "up to 3 pages per audit",
@@ -130,8 +130,8 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     cta: "See your AI blockers",
   },
   starter: {
-    headline: "Get the full fix plan",
-    body: "All recommendations with implementation code, content highlights, and PDF exports — at an accessible price.",
+    headline: "Full audit + recommendations",
+    body: "All recommendations with implementation code, content highlights, and fix-ready outputs — at an accessible price.",
     includes: [
       `${PRICING.starter.limits.scans} audits/month`,
       "all recommendations with implementation code",
@@ -143,8 +143,8 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     cta: "Start fixing",
   },
   alignment: {
-    headline: "Turn findings into fixes",
-    body: "Get full evidence and a clear fix plan so you stop guessing what matters.",
+    headline: "Structured optimization system",
+    body: "Turn extraction failures into evidence-backed fixes so you stop guessing what matters.",
     includes: [
       "full report",
       "full evidence",
@@ -157,8 +157,8 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     cta: "Fix what’s blocking you",
   },
   signal: {
-    headline: "Track who is beating you and why",
-    body: "Monitor citations, competitors and visibility shifts over time and see what changes after every fix.",
+    headline: "Verified AI answer pipeline",
+    body: "Triple-check consensus across 3 models. Monitor citations, competitors and extraction shifts over time.",
     includes: [
       "citation tracking",
       "competitor intelligence",
@@ -169,11 +169,11 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
       "workflow alerts",
       "full evidence ledger",
     ],
-    cta: "Track your visibility",
+    cta: "Track your citations",
   },
   scorefix: {
-    headline: "Ship fixes, not guesses",
-    body: "Automated GitHub fix deployment. Scope scales based on complexity.",
+    headline: "Evidence-based fix pack",
+    body: "Automated GitHub fix deployment. Ship fixes, not guesses. Scope scales based on complexity.",
     includes: [
       "exact remediation",
       "PR-ready outputs",

@@ -346,7 +346,7 @@ function Step2Preview({
       type: 'ai',
       lines: [
         { kind: 'remove', text: '- "AI tools for analysis"' },
-        { kind: 'add', text: `+ "${domain} is an AI visibility platform that audits how` },
+        { kind: 'add', text: `+ "${domain} is an evidence-backed audit system that measures how` },
         { kind: 'add', text: '   AI systems read, trust and cite your site."' },
       ],
     },

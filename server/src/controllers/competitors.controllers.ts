@@ -406,7 +406,7 @@ export async function createCompetitor(req: Request, res: Response) {
     }
 
     // Check competitor milestones in background
-    checkCompetitorMilestones(userId).catch(() => {});
+    checkCompetitorMilestones(userId).catch((e: any) => console.warn('[Competitors] Milestone check failed:', e?.message));
 
     return res.status(201).json({ success: true, competitor: comp });
   } catch (err: any) {

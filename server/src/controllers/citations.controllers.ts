@@ -1556,7 +1556,7 @@ export async function startCitationTest(req: Request, res: Response) {
     runCitationTestAsync(testId, userId, normalizedUrl.url, normalizedQueries, platforms || ['chatgpt', 'perplexity', 'claude', 'google_ai'], apiKey);
 
     // Check citation milestones in background
-    checkCitationMilestones(userId).catch(() => { });
+    checkCitationMilestones(userId).catch((e: any) => console.warn('[Citations] Milestone check failed:', e?.message));
 
     return res.json({
       success: true,

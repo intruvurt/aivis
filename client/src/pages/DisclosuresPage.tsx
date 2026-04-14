@@ -7,7 +7,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function DisclosuresPage() {
   usePageMeta({
-    title: 'Consumer Disclosures | AiVIS AI Visibility Platform',
+    title: 'Consumer Disclosures | AiVIS — AI Answer Audit System',
     description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies and platform disclaimers.',
     path: '/disclosures',
     structuredData: [

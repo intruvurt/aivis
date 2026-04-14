@@ -63,11 +63,11 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
-  observer: 'see how AI systems parse and interpret your site; free forever',
-  starter: 'unlock all recommendations with implementation code and PDF exports at an accessible price',
-  alignment: 'turn structural gaps into extractable evidence with single model production audits',
-  signal: 'full visibility into how AI crawlers trust your content, triple-check pipeline included',
-  scorefix: 'automated score remediation; AI generated PRs to fix visibility issues',
+  observer: 'detection audit — see what AI systems misread on your site; free forever',
+  starter: 'full audit with all recommendations, implementation code, and fix-ready outputs',
+  alignment: 'structured optimization system — turn extraction failures into evidence-backed fixes',
+  signal: 'verified AI answer pipeline — triple-check consensus across 3 models',
+  scorefix: 'evidence-based fix pack — automated PRs that ship fixes, not guesses',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {

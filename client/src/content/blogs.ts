@@ -849,7 +849,7 @@ The only question is whether you have any tools worth calling.`,
     path: '/blogs/aivis-api-access-explained-build-on-the-visibility-layer',
     title: 'AiVIS API Access Explained: Build on the Visibility Layer',
     description:
-      'Full breakdown of AiVIS API and WebMCP access: how to generate keys, authenticate requests, pull audit data, trigger scans, and integrate visibility intelligence into your own stack.',
+      'Full breakdown of AiVIS API and WebMCP access: how to generate keys, authenticate requests, pull audit data, trigger scans, and integrate audit intelligence into your own stack.',
     excerpt:
       'Your visibility data should not be trapped inside a dashboard. Here is how to pull it into your own tools, pipelines, and AI agents.',
     publishedAt: '2026-03-24',
@@ -877,7 +877,7 @@ Yes. And you should.
 
 Because visibility data trapped inside a dashboard is visibility data that never makes it into the systems where decisions actually happen. CI/CD pipelines. Internal reporting dashboards. Slack alerts. Automated competitive monitoring. AI agent workflows.
 
-If your visibility intelligence lives in a tab you check once a week, you are already behind.
+If your audit intelligence lives in a tab you check once a week, you are already behind.
 
 This is the full breakdown of how AiVIS API access works, who gets access, what you can do with it, and how to get started today.
 
@@ -1001,7 +1001,7 @@ Why API Access Changes the Game
 
 The real value of API access is not pulling data out of one dashboard and putting it into another.
 
-It is making visibility intelligence operational.
+It is making audit intelligence operational.
 
 When your CI/CD pipeline can check whether a new deploy degraded your AI readability score before it goes to production, that is operational visibility.
 
@@ -1057,7 +1057,7 @@ It is infrastructure you build on.`,
     readMinutes: 14,
     category: 'technology',
     tags: ['AI-Tech', 'Visibility', 'Technical', 'Implementation'],
-    keywords: ['aivis features', 'ai visibility platform', 'aivis tools', 'tier comparison', 'platform overview', 'citation testing', 'triple check ai', 'mcp server'],
+    keywords: ['aivis features', 'ai answer audit', 'aivis tools', 'tier comparison', 'platform overview', 'citation testing', 'triple check ai', 'mcp server'],
     author: {
       name: 'R. Mason',
       title: 'Founder, AiVIS / Intruvurt Labs',
@@ -1798,7 +1798,7 @@ Build the structure. Verify the citations. Compound the advantage.`,
     readMinutes: 9,
     category: 'technology',
     tags: ['AI-Tech', 'Visibility', 'Technical', 'AEO', 'Schema'],
-    keywords: ['how aivis works', 'ai visibility platform', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
+    keywords: ['how aivis works', 'ai answer audit system', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
     author: {
       name: 'Intruvurt',
       title: 'Founder, AiVIS',

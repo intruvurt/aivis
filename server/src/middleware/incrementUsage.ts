@@ -39,10 +39,8 @@ export async function incrementUsage(req: Request, res: Response, next: NextFunc
     });
   } catch (err: any) {
     console.error('[incrementUsage] CRITICAL: Metering write failed:', err?.message || err);
-    return res.status(503).json({
-      error: 'Usage metering temporarily unavailable. Please try again.',
-      code: 'METERING_UNAVAILABLE',
-    });
+    // Allow request through — metering failure should not block audits.
+    // Usage counter may be slightly behind but the audit itself is not affected.
   }
 
   next();

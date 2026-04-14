@@ -108,13 +108,21 @@ function loadBlogContentMap() {
 }
 
 // ── Keyword page content loader ──────────────────────────────────────
-// Reads the 5 keyword cluster files so each /platforms/, /problems/,
+// Reads the keyword cluster files so each /platforms/, /problems/,
 // /signals/, /industries/, and /compare/ page prerenders with unique content.
 function loadKeywordPageMap() {
 	const map = new Map();
-	const clusters = ['platforms', 'problems', 'signals', 'industries', 'compare'];
-	for (const cluster of clusters) {
-		const filePath = path.resolve(process.cwd(), `src/data/keywordPages/${cluster}.ts`);
+	// Each entry: { file, routeCluster } — routeCluster is the URL prefix
+	const clusterFiles = [
+		{ file: 'platforms', routeCluster: 'platforms' },
+		{ file: 'problems', routeCluster: 'problems' },
+		{ file: 'problemsExtended', routeCluster: 'problems' },
+		{ file: 'signals', routeCluster: 'signals' },
+		{ file: 'industries', routeCluster: 'industries' },
+		{ file: 'compare', routeCluster: 'compare' },
+	];
+	for (const { file, routeCluster } of clusterFiles) {
+		const filePath = path.resolve(process.cwd(), `src/data/keywordPages/${file}.ts`);
 		if (!fs.existsSync(filePath)) continue;
 		try {
 			const raw = fs.readFileSync(filePath, 'utf8');
@@ -154,11 +162,11 @@ function loadKeywordPageMap() {
 						answer: faqMatch[2].replace(/\\"/g, '"'),
 					});
 				}
-				const routePath = cluster === 'compare' ? `/compare/${slug}` : `/${cluster}/${slug}`;
-				map.set(routePath, { hook, sections, faqs, cluster });
+				const routePath = routeCluster === 'compare' ? `/compare/${slug}` : `/${routeCluster}/${slug}`;
+				map.set(routePath, { hook, sections, faqs, cluster: routeCluster });
 			}
 		} catch (err) {
-			console.warn(`[prerender] Warning: could not parse ${cluster}.ts:`, err.message);
+			console.warn(`[prerender] Warning: could not parse ${file}.ts:`, err.message);
 		}
 	}
 	console.log(`[prerender] Loaded ${map.size} keyword pages for content enrichment`);
@@ -825,6 +833,27 @@ const routes = [
 	{ path: '/problems/broken-internal-links', title: 'Broken Internal Links Hurt AI Crawling | AiVIS', description: 'Broken internal links prevent AI crawlers from discovering important content. Fix broken links to improve AI site coverage.' },
 	{ path: '/problems/no-hreflang-tags', title: 'No Hreflang Tags - AI Can\'t Route Multi-Language Content | AiVIS', description: 'Without hreflang tags, AI models may cite the wrong language version of your content.' },
 	{ path: '/problems/ai-hallucinating-about-my-brand', title: 'AI Is Hallucinating About My Brand | AiVIS', description: 'AI models generating false information about your brand? Learn why hallucinations happen and how to provide corrective structured data.' },
+	// Problems Extended cluster (query-first, question-oriented pages)
+	{ path: '/problems/why-ai-doesnt-cite-my-website', title: 'Why AI Doesn\'t Cite My Website — Diagnosis | AiVIS', description: 'AI answer engines skip your site because they cannot extract, trust, or attribute your content. Diagnose exactly why with an evidence-backed audit.' },
+	{ path: '/problems/how-to-fix-ai-search-visibility', title: 'How to Fix AI Search Visibility — Step-by-Step | AiVIS', description: 'Your site is invisible to AI answer engines. Follow this step-by-step diagnostic to identify extraction failures and fix them with evidence.' },
+	{ path: '/problems/why-chatgpt-ignores-my-site', title: 'Why ChatGPT Ignores My Site — Root Causes | AiVIS', description: 'ChatGPT does not cite your site even though you rank well in Google. Here is why, and what structural changes fix it.' },
+	{ path: '/problems/why-perplexity-doesnt-mention-my-brand', title: 'Why Perplexity Doesn\'t Mention My Brand | AiVIS', description: 'Perplexity builds answers from extractable pages. If your brand is absent, the extraction pipeline cannot reach your content.' },
+	{ path: '/problems/how-to-get-cited-by-ai-models', title: 'How to Get Cited by AI Models — Evidence-Based Guide | AiVIS', description: 'AI citation is not luck. It requires crawl access, extractable structure, and attributable claims. Here is exactly how to earn it.' },
+	{ path: '/problems/why-ai-gives-wrong-information-about-my-company', title: 'Why AI Gives Wrong Information About My Company | AiVIS', description: 'AI models fabricate or misattribute facts about your company when they cannot find authoritative structured data to extract.' },
+	{ path: '/problems/how-to-audit-ai-answer-readiness', title: 'How to Audit AI Answer Readiness | AiVIS', description: 'A systematic audit checks whether AI crawlers can access, extract, and attribute your content. Here is the full methodology.' },
+	{ path: '/problems/why-google-ai-overview-skips-my-content', title: 'Why Google AI Overview Skips My Content | AiVIS', description: 'Google AI Overviews extract from pages with clear structure. If your content is skipped, the extraction signals are missing.' },
+	{ path: '/problems/how-to-make-website-ai-readable', title: 'How to Make Your Website AI-Readable | AiVIS', description: 'AI readability means your page can be crawled, parsed into structured representations, and attributed. Here is how to achieve all three.' },
+	{ path: '/problems/why-ai-misquotes-my-content', title: 'Why AI Misquotes My Content — Causes and Fixes | AiVIS', description: 'AI misquotes happen when extraction is partial or schema markup is ambiguous. Diagnose and fix the root causes.' },
+	{ path: '/problems/how-to-fix-entity-confusion-in-ai', title: 'How to Fix Entity Confusion in AI Results | AiVIS', description: 'AI models confuse your brand with others when entity signals are weak. Strengthen disambiguation with structured data.' },
+	{ path: '/problems/why-ai-attributes-my-content-to-competitors', title: 'Why AI Attributes My Content to Competitors | AiVIS', description: 'When your content lacks clear authorship and entity markup, AI models credit competitors instead. Here is how to fix attribution.' },
+	{ path: '/problems/how-to-optimize-for-ai-answer-engines', title: 'How to Optimize for AI Answer Engines | AiVIS', description: 'AI answer engines do not rank pages — they extract fragments. Optimization means making your content structurally extractable.' },
+	{ path: '/problems/why-structured-data-matters-for-ai-citations', title: 'Why Structured Data Matters for AI Citations | AiVIS', description: 'Structured data gives AI models the machine-readable signals they need to extract, verify, and cite your content accurately.' },
+	{ path: '/problems/how-to-test-if-ai-can-extract-your-content', title: 'How to Test If AI Can Extract Your Content | AiVIS', description: 'Run an extraction readiness audit to check whether AI models can access, parse, and attribute your pages.' },
+	{ path: '/problems/why-ai-search-gives-outdated-information', title: 'Why AI Search Gives Outdated Information About You | AiVIS', description: 'AI models serve stale answers when your freshness signals are weak or your content lacks temporal markup.' },
+	{ path: '/problems/how-to-fix-ai-extraction-failures', title: 'How to Fix AI Extraction Failures | AiVIS', description: 'AI extraction fails silently. Diagnose JavaScript rendering blocks, missing schema, and crawler access issues step by step.' },
+	{ path: '/problems/why-claude-cant-find-my-website', title: 'Why Claude Can\'t Find My Website | AiVIS', description: 'Claude builds answers from extractable content. If your site is absent, crawl access or structural signals are blocking extraction.' },
+	{ path: '/problems/how-to-improve-ai-citation-readiness', title: 'How to Improve AI Citation Readiness | AiVIS', description: 'Citation readiness is measurable. Audit your crawl access, schema markup, entity clarity, and content extractability.' },
+	{ path: '/problems/why-ai-answers-ignore-small-businesses', title: 'Why AI Answers Ignore Small Businesses | AiVIS', description: 'Small businesses are invisible to AI answers not because of size but because of missing structural signals. Here is how to fix it.' },
 	// Signals cluster
 	{ path: '/signals/json-ld', title: 'JSON-LD Structured Data for AI Visibility | AiVIS', description: 'JSON-LD is the structured data format AI models prefer. Learn how to implement it for maximum AI citation potential.' },
 	{ path: '/signals/open-graph', title: 'Open Graph Tags for AI Answer Engines | AiVIS', description: 'Open Graph tags help AI models classify and display your content. Learn which OG tags matter most for AI citations.' },

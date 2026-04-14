@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
             <p>AiVIS is operated by <strong className="text-white">Intruvurt Labs</strong>, a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
-            <p className="mt-2">We collect only the data necessary to operate a multi-model AI visibility platform. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
+            <p className="mt-2">We collect only the data necessary to operate a multi-model AI answer audit system. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
             <p className="mt-2">This Privacy Policy should be read alongside our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/disclosures" className={linkCls}>Consumer Disclosures</Link>.</p>
           </section>
 

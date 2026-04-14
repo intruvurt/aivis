@@ -132,9 +132,9 @@ const scoreModel = [
 
 const SITE_URL = "https://aivis.biz";
 const PAGE_URL = `${SITE_URL}/score-fix`;
-const PAGE_TITLE = "AI Visibility Score Fix AutoFix PR | AiVIS - AI Visibility Intelligence Platform";
+const PAGE_TITLE = "Score Fix AutoFix PR | AiVIS — evidence-backed AI answer audit and fix system";
 const PAGE_DESCRIPTION =
-  "AI Visibility Score Fix AutoFix PR from AiVIS turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can generate GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per remediation job.";
+  "Score Fix AutoFix PR from AiVIS turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can generate GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per remediation job.";
 const OG_IMAGE = `${SITE_URL}/og/aivis-score-fix.jpg`;
 
 const scoreFixFaqEntities = faq.map((item) => ({

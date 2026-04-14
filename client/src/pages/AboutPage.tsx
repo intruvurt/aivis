@@ -118,12 +118,17 @@ const ABOUT_STRUCTURED_DATA = [
       'https://www.reddit.com/user/intruvurt/',
       'https://www.reddit.com/r/AiVIS/',
       'https://stackoverflow.com/users/29677022/intruvurt',
+      'https://intruvurt.medium.com',
+      'https://dobleduche.substack.com',
+      'https://dev.to/aivisbiz',
+      'https://github.com/dobleduche/brag',
+
     ],
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About AiVIS; Evidence-backed site analysis for AI answers platform & Remediation Platform',
-    description: 'Enterprise citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
+    name: 'About AiVIS.biz; Evidence-backed site analysis for AI answers & Remediation Platform',
+    description: 'AiVIS.biz citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
   }),
   buildBreadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -179,12 +184,12 @@ export default function AboutPage() {
           </FadeUp>
           <FadeUp delay={0.1}>
             <h1 className="text-3xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
-              About AiVIS
+              About AiVIS.biz
             </h1>
           </FadeUp>
           <FadeUp delay={0.15}>
             <p className="text-base md:text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
-              Citation tracking engine and AI visibility platform built for freelancers, agencies, and organizations that demand proof of digital authority.
+              Evidence-backed AI answer audit and fix system built for freelancers, agencies, and organizations that demand proof of extraction readiness.
             </p>
           </FadeUp>
           <FadeUp delay={0.2}>
@@ -235,7 +240,7 @@ export default function AboutPage() {
             AiVIS exists for one reason.
           </p>
           <p className="text-base text-white/65 leading-relaxed mb-3">
-            To show what AI can actually read, trust, and cite from your site.
+            To show what AI can actually read, trust and cite from your site.
           </p>
           <p className="text-sm text-white/45 leading-relaxed">
             Not what you think it says. Not what your SEO tool says. What the machine actually uses.
@@ -305,13 +310,13 @@ export default function AboutPage() {
                     loading="lazy"
                   />
                   <div>
-                    <h3 className="text-lg font-bold text-blue-200">R. Mason</h3>
+                    <h3 className="text-lg font-bold text-blue-200">Ryan Mason</h3>
                     <p className="text-sm text-white/50">Head of AiVIS, Intruvurt Labs</p>
                   </div>
                 </div>
 
                 <p className="text-sm text-white/60 leading-relaxed mb-3">
-                  Leads vision and engineering. Deep expertise in citation architecture, machine readability, and AI extractability.
+                  Leads vision and engineering. Deep expertise in citation architecture, machine readability and AI extractability.
                 </p>
                 <p className="text-sm text-white/55 leading-relaxed mb-4">
                   Mission: help businesses survive the shift from searchable websites to AI-readable entities.
@@ -320,9 +325,14 @@ export default function AboutPage() {
                 <div className="flex flex-wrap gap-2 text-xs mb-3">
                   {[
                     { label: "LinkedIn", href: "https://linkedin.com/in/web4aidev" },
+                    { label: "Substack", href: "https://substack.com/@dobleduche/posts" },
                     { label: "X", href: "https://twitter.com/intruvurt" },
+                    { label: "Bluesky", href: "https://bluesky.com/intruvurt" },
+                    { label: "Medium", href: "https://medium.com/@dobleduche" },
+                    { label: "Dev.to", href: "https://dev.to/aivisbiz" },
+                    { label: "YouTube", href: "https://www.youtube.com/@mediatechmele" },
                     { label: "Reddit", href: "https://www.reddit.com/user/intruvurt/" },
-                    { label: "r/AiVIS", href: "https://www.reddit.com/r/AiVIS/" },
+                    { label: "r/AiVIS", href: "https://www.reddit.com/user/renomase/" },
                     { label: "Stack Overflow", href: "https://stackoverflow.com/users/29677022/intruvurt" },
                   ].map((l) => (
                     <a
@@ -346,7 +356,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-white/8 flex flex-wrap gap-1.5">
-                  {["Citation Parity", "Machine Readability", "AI Optimization", "Executive Audit"].map((t) => (
+                  {["Citation Parity", "Machine Readability", "AI Optimization", "Executive Analysis"].map((t) => (
                     <span key={t} className="px-2 py-0.5 rounded-full text-[10px] bg-white/[0.04] border border-white/8 text-white/55">{t}</span>
                   ))}
                 </div>
@@ -564,7 +574,7 @@ export default function AboutPage() {
       {/* Footer */}
       <footer className="px-4 py-8 border-t border-white/8">
         <p className="text-[10px] text-white/35 text-center leading-relaxed">
-          Intruvurt Labs &bull; Pro-grade Citation & AI Visibility Platform
+          Intruvurt Labs &bull; Evidence-backed AI answer audit and fix system
           <br />
           US Federal Registration Pending &bull; Security posture from live controls only
         </p>

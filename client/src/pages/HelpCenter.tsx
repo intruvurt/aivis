@@ -356,7 +356,7 @@ const HELP_FAQ_ITEMS = CATEGORIES.flatMap((cat) =>
 
 export default function HelpCenter() {
   usePageMeta({
-    title: 'Help Center | AiVIS AI Visibility Platform',
+    title: 'Help Center | AiVIS — AI Answer Audit System',
     description: 'Answers to common questions about AI visibility audits, scoring, Score Fix, citations, pricing, and platform workflow.',
     path: '/help',
     structuredData: [

@@ -56,28 +56,28 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS — Evidence-backed site analysis for AI answers',
+    name: 'AiVIS — Evidence-backed AI answer audit and fix system',
     description:
-      'AiVIS analyzes how AI answer engines read, trust, and cite your site using evidence-backed scoring tied to real page signals.',
+      'AiVIS is an evidence-backed AI answer audit and fix system that analyzes how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence.',
   }),
   buildBreadcrumbSchema([{ name: 'Landing', path: '/landing' }]),
   buildItemListSchema([
-    { name: 'Observer — 3 audits/month', path: '/pricing#observer' },
-    { name: 'Starter — 15 audits/month — $15/mo', path: '/pricing#starter' },
-    { name: 'Alignment — 60 audits/month — $49/mo', path: '/pricing#alignment' },
-    { name: 'Signal — 200 audits/month — $149/mo', path: '/pricing#signal' },
-    { name: 'Score Fix — $299 one-time', path: '/pricing#scorefix' },
+    { name: 'Observer — Detection audit (free)', path: '/pricing#observer' },
+    { name: 'Starter — Full audit + recommendations — $15/mo', path: '/pricing#starter' },
+    { name: 'Alignment — Structured optimization — $49/mo', path: '/pricing#alignment' },
+    { name: 'Signal — Verified AI answer pipeline — $149/mo', path: '/pricing#signal' },
+    { name: 'Score Fix — Evidence-based fix pack — $299', path: '/pricing#scorefix' },
   ]),
   buildSoftwareApplicationSchema({
     name: 'AiVIS',
     description:
-      'Evidence-backed site analysis for AI answers. AiVIS shows what answer engines can read, trust, and cite from your site, then maps fixes to real page evidence.',
+      'AiVIS is an evidence-backed AI answer audit and fix system that analyzes how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence.',
     offers: [
       { name: 'Observer', price: '0' },
-      { name: 'Starter', price: '15' },
-      { name: 'Alignment', price: '49' },
-      { name: 'Signal', price: '149' },
-      { name: 'Score Fix', price: '299' },
+      { name: 'Full Audit + Recommendations', price: '15' },
+      { name: 'Structured Optimization System', price: '49' },
+      { name: 'Verified AI Answer Pipeline', price: '149' },
+      { name: 'Evidence-Based Fix Pack', price: '299' },
     ],
   }),
 ];
@@ -111,16 +111,16 @@ LANDING_STRUCTURED_DATA.push(
 // Product schema with AggregateRating and Review (real case study data: 15 → 52)
 LANDING_STRUCTURED_DATA.push(
   buildProductSchema({
-    name: 'AiVIS - Evidence-backed site analysis for AI answers',
-    description: 'AI visibility infrastructure that exposes how ChatGPT, Perplexity, Google AI and Claude distort, misattribute and rewrite your content. Evidence-backed distortion scoring with six-category weighted analysis and BRAG evidence identifiers.',
+    name: 'AiVIS — Evidence-backed AI answer audit and fix system',
+    description: 'AiVIS audits how AI systems read, trust, and cite your site. Every result is tied to real page evidence, with fix-ready outputs to improve extraction and citation accuracy.',
     url: 'https://aivis.biz/',
     image: 'https://aivis.biz/og-image.png',
     brand: 'AiVIS',
     offers: [
-      { name: 'Observer (Free)', price: '0', description: `${PRICING.observer.limits.scans} AI visibility audits per month — free forever` },
-      { name: 'Starter', price: String(PRICING.starter.billing.monthly), description: `${PRICING.starter.limits.scans} audits/month with all recommendations, implementation code, and PDF exports` },
-      { name: 'Alignment (Core)', price: String(PRICING.alignment.billing.monthly), description: `${PRICING.alignment.limits.scans} audits/month with competitor tracking, citation workflows and report exports` },
-      { name: 'Signal (Pro)', price: String(PRICING.signal.billing.monthly), description: `${PRICING.signal.limits.scans} audits/month with 3-model consensus scoring, advanced citation testing and brand mention monitoring` },
+      { name: 'Detection Audit (Free)', price: '0', description: `${PRICING.observer.limits.scans} audits per month — free forever` },
+      { name: 'Full Audit + Recommendations', price: String(PRICING.starter.billing.monthly), description: `${PRICING.starter.limits.scans} audits/month with all recommendations, implementation code, and PDF exports` },
+      { name: 'Structured Optimization System', price: String(PRICING.alignment.billing.monthly), description: `${PRICING.alignment.limits.scans} audits/month with competitor tracking, citation workflows and report exports` },
+      { name: 'Verified AI Answer Pipeline', price: String(PRICING.signal.billing.monthly), description: `${PRICING.signal.limits.scans} audits/month with 3-model consensus scoring, advanced citation testing and brand mention monitoring` },
     ],
     aggregateRating: buildAggregateRatingSchema({
       ratingValue: '4.6',
@@ -262,9 +262,9 @@ const TIERS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AiVIS — Evidence-backed site analysis for AI answers',
+    title: 'AiVIS — Evidence-backed AI answer audit and fix system',
     description:
-      'AiVIS analyzes how AI answer engines read, trust, and cite your site. Evidence-backed scoring with implementation-ready fixes tied to real page signals.',
+      'AiVIS scans your live page, shows exactly what AI systems misread or ignore, and gives you fix-ready outputs tied to real evidence. No guesses. No black box.',
     path: '/landing',
     ogTitle: 'AiVIS — Fix what AI gets wrong about your site',
     structuredData: LANDING_STRUCTURED_DATA,
@@ -388,19 +388,19 @@ const Landing = () => {
         <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
             <h1 id="hero-headline" data-speakable className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6 tracking-tight">
-              AI cites what it can verify
+              AiVIS — evidence-backed
               <br />
               <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                not what you meant to say
+                AI answer audit and fix system
               </span>
             </h1>
 
             <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl mx-auto">
-              AiVIS analyzes your live page against the structural signals that shape AI answers. It shows what answer engines can read, trust, and reproduce from your site, then ties every finding to real page evidence.
+              AI doesn&apos;t mention you — it cites what it can extract and trust.
             </p>
 
-            <p className="text-sm text-white/40 font-mono mb-8 max-w-xl mx-auto">
-              Evidence-backed scoring across content depth, heading structure, schema, metadata, technical access, and AI readability.
+            <p className="text-sm text-white/40 mb-8 max-w-xl mx-auto leading-relaxed">
+              AiVIS scans your live page, shows exactly what AI systems misread or ignore, and gives you fix-ready outputs tied to real evidence. No guesses. No black box.
             </p>
 
             {/* ── URL INPUT FORM ── */}
@@ -735,10 +735,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 id="ai-visibility-gap" className="text-3xl sm:text-4xl font-bold mb-3" data-speakable>
-              <span className="bg-gradient-to-r from-red-300 via-white to-amber-100 bg-clip-text text-transparent">AI rewrites your content. Here&apos;s what it gets wrong.</span>
+              <span className="bg-gradient-to-r from-red-300 via-white to-amber-100 bg-clip-text text-transparent">What AI gets wrong about your site</span>
             </h2>
             <p className="text-white/55 text-lg max-w-2xl mx-auto">
-              AI answer engines do not browse your site like a human. They extract, compress, and reproduce what they can parse. If your page lacks structure, clarity, or machine-readable context, you are easier to skip, distort, or omit.
+              AI doesn&apos;t crawl like search engines. It extracts, compresses, and decides what survives. If your structure breaks, your content gets skipped — or worse, rewritten incorrectly. AiVIS finds those breakpoints and fixes them before they spread.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -967,8 +967,8 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">The platform</span>
-            <h2 id="platform-capabilities" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>Built for the AI distortion era</h2>
-            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">AiVIS is AI visibility infrastructure — not a wrapper around a single API call. Every layer is purpose-built to expose, measure and correct how AI engines represent your content.</p>
+            <h2 id="platform-capabilities" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>Built for the AI audit era</h2>
+            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">AiVIS is an evidence-backed audit and fix system — not a wrapper around a single API call. Every layer is purpose-built to expose extraction failures and deliver fixes tied to real page evidence.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {([
@@ -1048,10 +1048,10 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_30%,rgba(139,92,246,0.07),transparent)]" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 id="cta-headline" className="text-4xl sm:text-5xl font-extrabold text-white mb-4" data-speakable>
-            Fix what AI gets wrong
+            Audit your site
             <br />
             <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-              before it becomes the answer
+              see what AI can actually use
             </span>
           </h2>
           <p className="text-lg text-white/50 mb-10">

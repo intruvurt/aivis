@@ -1,1 +1,1 @@
-export const SITE_NAME = "AiVIS - AI Visibility Intelligence Platform";
+export const SITE_NAME = "AiVIS — evidence-backed AI answer audit and fix system";

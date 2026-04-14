@@ -2,14 +2,16 @@ import type { KeywordPage, KeywordCluster } from "./types";
 import { CLUSTER_META } from "./types";
 import { platformPages } from "./platforms";
 import { problemPages } from "./problems";
+import { problemExtendedPages } from "./problemsExtended";
 import { signalPages } from "./signals";
 import { industryPages } from "./industries";
 import { comparePages } from "./compare";
 
-/** Every keyword page across all clusters (100 total). */
+/** Every keyword page across all clusters (120 total). */
 export const ALL_KEYWORD_PAGES: KeywordPage[] = [
   ...platformPages,
   ...problemPages,
+  ...problemExtendedPages,
   ...signalPages,
   ...industryPages,
   ...comparePages,

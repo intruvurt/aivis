@@ -52,11 +52,40 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     },
     sameAs: [
       'https://twitter.com/dobleduche',
+      'https://twitter.com/intruvurt',
+      'https://twitter.com/odinarysol',
+      'https://twitter.com/nimrevxyz',
+      'https://github.com/dobleduche',
+      'https://github.com/dobleduche/brag',
       'https://bsky.app/profile/intruvurt.bsky.social',
       'https://www.reddit.com/user/intruvurt',
+      'https://www.reddit.com/user/renomase',
       'https://www.reddit.com/r/AiVIS/',
+      'https://www.youtube.com/@mediatechmele',
       'https://linkedin.com/in/web4aidev',
+      'https://www.linkedin.com/posts/web4aidev_aivis-audits-how-ai-systems-read-a-website-share-7447000684455071745-tDOK',
+      'https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit',
+      'https://relaxstart.com/startup/ai-visibility-intelligence-platform',
       'https://dobleduche.substack.com/',
+      'https://dobleduche.substack.com/p/best-startup-launch-platforms-for',
+      'https://dobleduche.substack.com/p/your-website-is-not-competing-for',
+      'https://dobleduche.substack.com/p/the-quiet-shift-why-websites-now',
+      'https://intruvurtlabs.substack.com/',
+      'https://intruvurt.medium.com/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai-ac7ad86ccbf8',
+      'https://intruvurt.medium.com/before-you-build-another-saas-run-this-30-second-reality-check-af7b1bb30bcc',
+      'https://intruvurt.medium.com/answer-engine-optimization-aeo-2026',
+      'https://intruvurt.medium.com/why-seo-fails-for-ai-visibility',
+      'https://intruvurt.medium.com/eeat-ai-citations',
+      'https://intruvurt.medium.com/llm-content-extraction-breakdown',
+      'https://intruvurt.medium.com/geo-ai-ranking',
+      'https://intruvurt.medium.com/case-study-citation-growth',
+      'https://intruvurt.medium.com/gsc-ai-visibility',
+      'https://intruvurt.medium.com/implementation-roadmap',
+      'https://intruvurt.medium.com/google-search-console-2026',
+      'https://intruvurt.blogspot.com/2026/04/platforms-that-move-builders-ai-visibility.html',
+      'https://intruvurt.blogspot.com/2026/04/ai-brand-mentions-9-sources-citation.html',
+      'https://intruvurt.blogspot.com/2026/04/brand-authority-mention-tracking-entity-clarity-ai.html',
+      'https://dev.to/aivisbiz/i-audited-500-websites-json-ld-is-the-1-factor-for-ai-citation-29m4',
     ],
     knowsAbout: [
       'AI visibility auditing',
@@ -125,18 +154,18 @@ export function buildWebPageSchema(input: {
     about: buildOrganizationRef(),
     ...(input.mainEntityId
       ? {
-          mainEntity: {
-            '@id': input.mainEntityId,
-          },
-        }
+        mainEntity: {
+          '@id': input.mainEntityId,
+        },
+      }
       : {}),
     ...(input.speakableCssSelectors?.length
       ? {
-          speakable: {
-            '@type': 'SpeakableSpecification',
-            cssSelector: input.speakableCssSelectors,
-          },
-        }
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: input.speakableCssSelectors,
+        },
+      }
       : {}),
     ...(input.significantLinks?.length
       ? { significantLink: input.significantLinks }
@@ -362,15 +391,15 @@ export function buildSoftwareApplicationSchema(input: {
       : {}),
     ...(input.offers && input.offers.length > 0
       ? {
-          offers: input.offers.map((o) => ({
-            '@type': 'Offer',
-            name: o.name,
-            price: o.price,
-            priceCurrency: o.priceCurrency ?? 'USD',
-            availability: o.availability ?? DEFAULT_OFFER_AVAILABILITY,
-            priceValidUntil: o.priceValidUntil ?? getDefaultOfferPriceValidUntil(),
-          })),
-        }
+        offers: input.offers.map((o) => ({
+          '@type': 'Offer',
+          name: o.name,
+          price: o.price,
+          priceCurrency: o.priceCurrency ?? 'USD',
+          availability: o.availability ?? DEFAULT_OFFER_AVAILABILITY,
+          priceValidUntil: o.priceValidUntil ?? getDefaultOfferPriceValidUntil(),
+        })),
+      }
       : {}),
   };
 }
@@ -397,10 +426,10 @@ export function buildPersonSchema(input: {
     ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
     ...(input.worksForId
       ? {
-          worksFor: {
-            '@id': input.worksForId,
-          },
-        }
+        worksFor: {
+          '@id': input.worksForId,
+        },
+      }
       : {}),
   };
 }
@@ -513,16 +542,16 @@ export function buildProductSchema(input: {
     ...(input.brand ? { brand: { '@type': 'Brand', name: input.brand } } : {}),
     ...(input.offers?.length
       ? {
-          offers: input.offers.map((o) => ({
-            '@type': 'Offer',
-            name: o.name,
-            price: o.price,
-            priceCurrency: o.priceCurrency ?? 'USD',
-            availability: o.availability ?? DEFAULT_OFFER_AVAILABILITY,
-            priceValidUntil: o.priceValidUntil ?? getDefaultOfferPriceValidUntil(),
-            ...(o.description ? { description: o.description } : {}),
-          })),
-        }
+        offers: input.offers.map((o) => ({
+          '@type': 'Offer',
+          name: o.name,
+          price: o.price,
+          priceCurrency: o.priceCurrency ?? 'USD',
+          availability: o.availability ?? DEFAULT_OFFER_AVAILABILITY,
+          priceValidUntil: o.priceValidUntil ?? getDefaultOfferPriceValidUntil(),
+          ...(o.description ? { description: o.description } : {}),
+        })),
+      }
       : {}),
     ...(input.aggregateRating ? { aggregateRating: input.aggregateRating } : {}),
     ...(input.reviews?.length ? { review: input.reviews } : {}),

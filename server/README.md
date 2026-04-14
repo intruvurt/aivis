@@ -2,7 +2,7 @@
 
 AiVIS is not an SEO tool.
 
-AiVIS is an evidence-backed analysis engine that measures how AI systems interpret, extract, trust, and cite your website in generated answers.
+AiVIS is an evidence-backed analysis engine that measures how AI systems interpret, extract, trust and cite your website in generated answers.
 
 Most tools guess.
 
@@ -12,7 +12,7 @@ AiVIS proves.
 
 ## What this server actually does
 
-This server powers the AiVIS audit pipeline.
+This server powers the AiVIS.biz analysis and validation pipeline.
 
 It does not simulate visibility.  
 It does not estimate authority.  

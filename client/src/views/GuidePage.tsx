@@ -17,6 +17,7 @@ const GUIDE_SECTIONS = [
   { id: 'operating-cadence', label: 'Operating Cadence' },
   { id: 'integration-workflows', label: 'Integrations' },
   { id: 'dofollow-badge', label: 'Dofollow Badge' },
+  { id: 'by-symptom', label: 'By Symptom' },
 ] as const;
 
 const HOW_TO_STEPS = [
@@ -485,9 +486,55 @@ export default function GuidePage() {
         </div>
       </section>
 
-      {/* ── 12 · Dofollow Backlink Badge ── */}
+      {/* ── 12 · By Symptom ── */}
+      <section id="by-symptom" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">12) Find the guide by symptom</h2>
+        <p className="mt-3 text-sm text-white/75">
+          If you are searching by problem rather than by workflow step, these pages diagnose each failure mode in detail with evidence-backed remediation paths.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {([
+            { to: '/problems/site-not-showing-in-chatgpt', label: 'Site not showing in ChatGPT' },
+            { to: '/problems/chatgpt-not-mentioning-my-website', label: 'ChatGPT not mentioning my website' },
+            { to: '/problems/ai-ignores-my-website-content', label: 'AI ignores my website content' },
+            { to: '/problems/website-never-appears-in-ai-answers', label: 'Website never appears in AI answers' },
+            { to: '/problems/content-not-used-by-ai', label: 'My content is not used by AI' },
+            { to: '/problems/chatgpt-gets-my-site-wrong', label: 'ChatGPT gets my site wrong' },
+            { to: '/problems/ai-summarizing-my-site-incorrectly', label: 'AI summarizing my site incorrectly' },
+            { to: '/problems/ai-not-picking-up-my-pages', label: 'AI not picking up my pages' },
+            { to: '/problems/how-chatgpt-decides-what-websites-to-use', label: 'How ChatGPT decides what websites to use' },
+            { to: '/problems/how-ai-tools-choose-sources', label: 'How AI tools choose sources' },
+            { to: '/problems/why-some-sites-get-cited-not-mine', label: 'Why some sites get cited and not mine' },
+            { to: '/problems/what-makes-website-visible-to-ai-search', label: 'What makes a website visible to AI search' },
+            { to: '/problems/how-ai-models-read-websites', label: 'How AI models read websites' },
+            { to: '/problems/how-to-get-site-mentioned-in-chatgpt', label: 'How to get site mentioned in ChatGPT' },
+            { to: '/problems/how-to-make-ai-cite-my-website', label: 'How to make AI cite my website' },
+            { to: '/problems/how-to-make-content-show-in-ai-results', label: 'How to make content show in AI results' },
+            { to: '/problems/how-to-structure-content-for-ai-models', label: 'How to structure content for AI models' },
+            { to: '/problems/seo-vs-ai-search-difference', label: 'SEO vs AI search — what is different' },
+            { to: '/problems/why-ai-search-replacing-google-clicks', label: 'Why AI search is replacing Google clicks' },
+            { to: '/problems/saas-show-up-in-chatgpt', label: 'SaaS: how to show up in ChatGPT' },
+            { to: '/problems/startup-not-mentioned-in-ai-answers', label: 'Startup not mentioned in AI answers' },
+            { to: '/problems/why-chatgpt-uses-some-sites-not-mine', label: 'Why ChatGPT uses some sites and not mine' },
+            { to: '/problems/how-to-know-if-ai-can-read-my-website', label: 'How to know if AI can read my site' },
+            { to: '/problems/why-ai-rewrites-instead-of-linking', label: 'Why AI rewrites instead of linking' },
+            { to: '/problems/how-to-fix-content-ai-misunderstands', label: 'How to fix content AI misunderstands' },
+          ] as { to: string; label: string }[]).map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="flex items-center gap-2 rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2.5 text-xs text-white/75 hover:border-white/20 hover:text-white transition"
+            >
+              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-orange-300" />
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 13 · Dofollow Backlink Badge ── */}
       <section id="dofollow-badge" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">12) Dofollow backlink badge</h2>
+        <h2 className="text-xl brand-title">13) Dofollow backlink badge</h2>
         <p className="mt-3 text-sm text-white/75">
           Add the AiVIS badge to your website footer to earn a <strong className="text-cyan-300">high-quality dofollow backlink</strong> while showing visitors your site is AI-visibility audited. Every impression and click is tracked so you can measure referral impact.
         </p>

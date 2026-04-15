@@ -1235,7 +1235,7 @@ export interface ModelAnalysis {
 
 /* ── BRAG constants ─────────────────────────────────────────────────────── */
 export const BRAG_ACRONYM = 'BRAG';
-export const BRAG_EXPANSION = 'Build-Reference-Audit-Ground';
+export const BRAG_EXPANSION = 'Based-Retrieval-Auditable-Grading';
 export const BRAG_TRAIL_LABEL = 'BRAG Trail';
 
 /* ── Text summary depth helper ──────────────────────────────────────────── */

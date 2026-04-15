@@ -4560,6 +4560,169 @@ Zero Trust your content strategy. Verify every signal. Authenticate every claim.
 
 Run your first AiVIS audit to start the citation verification loop and find out exactly which of the six layers is holding you back.`,
   },
+  {
+    slug: 'why-ai-doesnt-cite-websites',
+    path: '/blogs/why-ai-doesnt-cite-websites',
+    title: 'After 968 Website Audits: Why AI Doesn\'t Cite Most Sites (And What Actually Fixes It)',
+    description:
+      'After 968 audits, most sites fail AI visibility due to poor structure, not SEO. Learn why AI ignores content and how to fix it.',
+    excerpt:
+      'Technical SEO scores high. Structured data and content structure score lowest. High-ranking pages still fail to appear in AI-generated answers. Here is what the data says — and what actually fixes it.',
+    publishedAt: '2026-04-15',
+    updatedAt: '2026-04-15',
+    readMinutes: 9,
+    category: 'aeo',
+    tags: ['AEO', 'GEO', 'Schema', 'Advanced', 'Foundational', 'Citations', 'Technical'],
+    keywords: [
+      'why AI doesn\'t cite websites', 'AI visibility audit findings', 'schema markup AI',
+      'content structure AI extraction', 'AEO', 'GEO', 'ChatGPT citation', 'Perplexity citation',
+      'structured data AI', 'JSON-LD FAQPage', 'answer engine optimization', 'AI readability',
+      'heading structure extraction', 'entity clarity', 'AI ignores website',
+      'how to get cited by AI', '968 audits', 'SEO vs AEO',
+    ],
+    author: {
+      name: 'Intruvurt',
+      title: 'Founder, AiVIS',
+      expertise: [
+        'Answer Engine Optimization', 'AI Citation Strategy', 'Structured Data',
+        'Content Architecture', 'GEO', 'E-E-A-T',
+      ],
+      credentials: ['Founded AiVIS', '968+ Website Audits', 'AI Visibility Research'],
+      experience: '8+ years in SEO, AEO, and AI-readability research across 968+ live audits',
+    },
+    keyPoints: [
+      'Technical SEO passes on most audited sites — yet those same sites score lowest on structured data and content structure.',
+      'Schema markup is the weakest category across all 968 audits: missing, incomplete, or generically present with no entity clarity.',
+      'AI does not rank pages — it extracts them. Extraction fails when heading hierarchy is broken or schema declares no meaningful relationships.',
+      'Backlinks, domain authority, and keyword density showed no direct correlation with AI citation rates in the audited dataset.',
+      'Pages scoring 65+ share four consistent traits: direct H2/H3 answers, valid FAQPage schema, complete Organization JSON-LD, and consistent entity naming.',
+      'The path from SEO to AEO to GEO is structural, not technical — and most sites are still at step one.',
+    ],
+    relatedPostSlugs: [
+      'answer-engine-optimization-2026-why-citation-readiness-matters',
+      'why-traditional-seo-tactics-fail-for-ai-visibility',
+      'zero-trust-ai-visibility-never-assume-ai-engines-can-find-cite-your-site',
+    ],
+    sourceMediumUrl: 'https://aivis.biz/blogs/why-ai-doesnt-cite-websites',
+    tier: 'free',
+    featured: true,
+    content: `Technical SEO Is Not the Problem
+
+Across 968+ audits, most sites passed core technical requirements: page speed, mobile responsiveness, indexability, and meta tag completeness. These signals help search engines rank pages. They do not guarantee that AI systems can understand, extract, or reuse the content.
+
+> The gap between strong SEO performance and strong AI visibility is structural — not technical.
+
+Schema Markup Is the Weakest Layer
+
+The lowest-scoring category across all audits was structured data. This single gap accounts for the majority of AI citation failures in sites that otherwise have solid SEO fundamentals.
+
+Common issues found across audits:
+- Schema entirely absent
+- Incomplete JSON-LD blocks with required fields missing
+- Generic schema that provides no entity clarity
+- FAQPage schema containing vague or empty answers
+- No declared relationships between organisation, product, and article entities
+
+In many cases schema existed on the page but contributed no usable meaning to AI extraction. For AI systems, weak schema produces low entity-confidence, incomplete extraction, and no attribution.
+
+AI Does Not Rank Pages — It Extracts Them
+
+AI systems like ChatGPT, Perplexity, and Google AI Overview follow a structured extraction process on every page they process:
+
+- Parse page structure and heading hierarchy
+- Identify named entities and their declared relationships
+- Extract segments that answer specific query patterns
+- Compress extracted segments into a coherent answer
+- Decide whether the source is trustworthy enough to cite
+
+If the structure breaks at any point in that chain, the page is skipped. AI systems do not partially cite broken pages — they move to the next available source.
+
+Structural Failures That Cause Invisibility
+
+Across the 968-audit dataset, the same failure patterns appear regardless of industry, domain authority, or SEO investment:
+
+- Headings that are generic rather than meaning-mapped to a specific question or claim
+- Thin or empty content sections beneath headings
+- No defined question-and-answer structure anywhere on the page
+- Inconsistent or contradictory schema across page sections
+- Content written for human readers but not structured for machine parsing
+
+These patterns prevent AI models from forming a reliable interpretation of what the page is claiming and who is claiming it.
+
+What Does Not Fix AI Visibility
+
+The following factors showed no direct correlation with AI visibility scores in the dataset. Sites with strong values in every one of these areas consistently failed the structured data and content dimensions that citation depends on:
+
+- Backlink count and domain authority
+- Keyword density and keyword targeting precision
+- Traditional SEO composite scores
+- Lighthouse performance and Core Web Vitals ratings
+
+Structural gaps override all of these. That is the finding.
+
+Patterns From Higher-Scoring Pages
+
+Pages that scored 65 or above on AI visibility and showed consistent citation rates across platforms shared identifiable structural traits. They were not necessarily longer, better-written, or more authoritative in the traditional SEO sense. They were better extracted.
+
+- A single unambiguous H1 mapped to the page's primary topic
+- Direct, factual answers placed immediately under each H2 and H3 heading
+- FAQ blocks with complete, self-contained question-answer pairs that required no context from the rest of the page
+- Valid JSON-LD using FAQPage, Article, and Organisation types with all required properties populated
+- Consistent entity references — same business name, same domain, same schema identity throughout the page
+
+These pages give AI models less ambiguity work. Less ambiguity means higher attribution confidence. Higher attribution confidence means more citations.
+
+How to Make Your Site Citable by AI
+
+Six changes produce the highest measurable improvement based on audited data.
+
+- **Add meaningful structure**: Each H2 and H3 section must answer one clear question. If a section cannot be summarised in a single extractable answer, the AI will not extract it as a discrete citation-worthy claim.
+- **Fix heading hierarchy**: Never skip heading levels. H1 → H2 → H3 is the extraction skeleton. Jumping from H1 to H4 without intermediate levels breaks AI parsing of content relationships.
+- **Implement specific schema**: FAQPage, Article, and Organisation with all required properties. Incomplete schema is treated as low-confidence by AI extraction pipelines and is sometimes worse than no schema.
+- **Add real FAQ blocks**: Questions your audience actually asks. Answers that stand alone independently of surrounding context. Each Q&A pair should be importable directly into an AI answer without editing.
+- **Remove entity ambiguity**: Use the same business name, domain reference, and declared identity across all schema, headings, and body content. Conflicting entity names across sections are a hard extraction failure.
+- **Test with actual queries**: Write down the queries you want to appear for. Check whether your page answers them within the first two sentences of the relevant section. If an AI reader needs to parse three paragraphs before reaching the answer, restructure those paragraphs.
+
+SEO → AEO → GEO
+
+The three-stage model for understanding how optimisation has evolved.
+
+**SEO (Search Engine Optimisation)** targets Google's link-graph ranking algorithm. Success is measured in organic position.
+
+**AEO (Answer Engine Optimisation)** targets extraction and attribution. Success means appearing as a cited source in AI-generated answers, not just in ranked results. Structure and schema are the primary levers.
+
+**GEO (Generative Engine Optimisation)** targets how AI-generated answers are shaped and framed. Success means influencing the structure of AI outputs such that your content is positioned as the canonical reference on a topic.
+
+Most websites are still optimised only for SEO. The gap between SEO-optimised and citation-ready is the primary source of visibility loss in AI-generated answer environments.
+
+Visibility Now Depends on Structure
+
+AI systems do not reward presence. They reward clarity. If your content cannot be extracted cleanly — if the entities are ambiguous, the schema is generic, and the content structure forces inference — it will not be cited.
+
+The data across 968+ audits points to one consistent conclusion: structural optimisation is not a future consideration. It is the primary determinant of AI visibility today.
+
+Why does AI ignore my website?
+
+Because the content is not structured in a way that AI systems can reliably extract and reuse. AI models require clear entity identification, schema markup that declares what the page is about, and content organised around answerable questions. Pages that omit these signals are skipped during extraction even when they rank well on Google.
+
+Does SEO help with AI visibility?
+
+Only partially. Technical SEO helps ensure the page is crawlable and indexed — a necessary prerequisite for retrieval-based AI models like Perplexity. It has no effect on whether content can be extracted, attributed, and cited. Structure and schema are the determining factors once indexation is confirmed.
+
+What is the most common issue found across audits?
+
+Poor or missing schema markup combined with unclear content structure. These two issues appear together in the majority of low-scoring audits and explain why otherwise well-built sites produce zero AI citations regardless of how much SEO investment they carry.
+
+Can backlinks improve AI citations?
+
+Not directly. Backlinks are a link-graph signal used by search engine ranking algorithms. AI citation decisions are based on content extractability, entity clarity, and schema completeness — not on how many external sites link to the page.
+
+How long does it take to improve AI visibility after fixing schema?
+
+Schema fixes — adding Organisation, FAQPage, and Article JSON-LD with correct properties — can be deployed in a single release and show measurable score improvement in your next AiVIS audit immediately after. Content restructuring (heading fixes, FAQ section additions) typically takes one to two editing sessions per page depending on existing content depth.
+
+Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to receive an evidence-backed score showing exactly which structural signals are failing on your site — with fixes generated specifically for your page content.`,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {

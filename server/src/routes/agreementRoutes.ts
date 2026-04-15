@@ -428,6 +428,54 @@ router.get('/r/:code', async (req: Request, res: Response) => {
   }
 });
 
+/* ── POST /:slug/extend - reset signing deadline + status (admin only) ─────── */
+router.post('/:slug/extend', async (req: Request, res: Response) => {
+  if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
+    return res.status(403).json({ error: 'Forbidden.' });
+  }
+
+  try {
+    const hours = Number((req.body as any)?.hours ?? 48);
+    if (!Number.isFinite(hours) || hours < 1 || hours > 720) {
+      return res.status(400).json({ error: 'hours must be a number between 1 and 720.' });
+    }
+
+    const pool = getPool();
+    const newDeadline = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+
+    // Reset deadline AND flip status back to pending/partially_signed as appropriate.
+    // If one party already signed we keep it as partially_signed so they don't need to re-sign.
+    const { rows } = await pool.query(
+      `UPDATE partnership_agreements
+       SET signing_deadline = $1,
+           status = CASE
+             WHEN party_a_signed_at IS NOT NULL OR party_b_signed_at IS NOT NULL
+             THEN 'partially_signed'
+             ELSE 'pending'
+           END,
+           updated_at = NOW()
+       WHERE slug = $2
+       RETURNING id, slug, status, signing_deadline`,
+      [newDeadline, req.params.slug],
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ error: 'Agreement not found.' });
+    }
+
+    return res.json({
+      ok: true,
+      slug: rows[0].slug,
+      status: rows[0].status,
+      signing_deadline: rows[0].signing_deadline,
+      hours_extended: hours,
+    });
+  } catch (err) {
+    console.error('[Agreements] Extend deadline error:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
 /* ── POST /seed - create the AiVIS × Zeeniith agreement (admin only) ──────── */
 router.post('/seed', async (req: Request, res: Response) => {
   if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
@@ -451,7 +499,7 @@ router.post('/seed', async (req: Request, res: Response) => {
         phone: '+91 6357 120 971',
         org: 'Zeeniith.in',
       },
-      signingDeadlineHours: 24,
+      signingDeadlineHours: 48,
     });
     return res.json({ ok: true, id: agreement.id, slug: agreement.slug, access_token: agreement.access_token });
   } catch (err) {

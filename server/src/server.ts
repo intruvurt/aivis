@@ -15182,6 +15182,16 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     // Don't exit - allow server to start with partial schema
   }
 
+  // Validate FRONTEND_URL at startup — a missing or schemeless value causes malformed OAuth redirects
+  const _frontendUrlVal = String(process.env.FRONTEND_URL || '').trim();
+  if (NODE_ENV === 'production') {
+    if (!_frontendUrlVal) {
+      console.error('[Startup] CRITICAL: FRONTEND_URL env var is not set. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com');
+    } else if (!/^https?:\/\//i.test(_frontendUrlVal)) {
+      console.error(`[Startup] CRITICAL: FRONTEND_URL="${_frontendUrlVal}" is missing the https:// scheme prefix. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com`);
+    }
+  }
+
   const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
 

@@ -206,5 +206,5 @@ router.get('/rank-score/snapshot', requireSignal, getCitationRankSnapshotHandler
 // Historic trend
 router.get('/rank-score/history', requireSignal, getCitationRankHistoryHandler);
 
-export { citationRoutes };
-export default citationRoutes;
+export { router as citationRoutes };
+export default router;

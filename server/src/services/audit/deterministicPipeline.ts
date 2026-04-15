@@ -15,7 +15,10 @@
 import {
   extractEvidenceFromScrapedData,
   persistEvidenceItems,
+  buildSerpEvidenceItems,
   type EvidenceLedger,
+  type SerpEvidenceInput,
+  type KgEvidenceInput,
 } from './evidenceLedger.js';
 import {
   evaluateRules,
@@ -68,26 +71,44 @@ export async function runDeterministicAuditLayer(
   auditRunId: string,
   userId: string,
   scrapeResult: ScrapeResult,
+  opts?: {
+    /** Pre-fetched SERP signals to inject as evidence (optional — skipped when no SERP key) */
+    serpEvidence?: SerpEvidenceInput;
+    /** Pre-fetched Knowledge Graph entity data to inject as evidence (optional) */
+    kgEvidence?: KgEvidenceInput;
+    /** Brand name used for SERP/KG labelling */
+    brand?: string;
+  },
 ): Promise<DeterministicResult> {
-  // 1. Extract evidence
+  // 1. Extract deterministic evidence from scrape data
   const ledger = extractEvidenceFromScrapedData(auditRunId, scrapeResult);
 
-  // 2. Run rule engine
+  // 2. Inject real SERP + KG evidence items when available
+  if (opts?.serpEvidence || opts?.kgEvidence) {
+    const externalItems = buildSerpEvidenceItems({
+      serp: opts.serpEvidence,
+      kg: opts.kgEvidence,
+      brand: opts.brand,
+    });
+    ledger.items.push(...externalItems);
+  }
+
+  // 3. Run rule engine against augmented evidence
   const ruleResults = evaluateRules(ledger.items, ledger.contradictions.length);
 
-  // 3. Compute score
+  // 4. Compute score
   const scoreSnapshot = computeScore(ruleResults);
 
-  // 4. Detect framework
+  // 5. Detect framework
   const framework = detectFramework(scrapeResult.data.html || '');
 
-  // 5. Generate fixpacks
+  // 6. Generate fixpacks
   const fixpacks = generateFixpacks(ruleResults, ledger.items, scoreSnapshot, framework);
 
-  // 6. Build BRAG trail
+  // 7. Build BRAG trail
   const bragTrail = buildBRAGTrail(fixpacks, ruleResults);
 
-  // 7. Persist everything (best-effort, non-blocking within the pipeline)
+  // 8. Persist everything (best-effort, non-blocking within the pipeline)
   await persistAll(auditRunId, userId, scrapeResult.url, ledger, ruleResults, scoreSnapshot, fixpacks, bragTrail, framework);
 
   return {

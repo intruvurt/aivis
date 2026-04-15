@@ -300,7 +300,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: true,
-    maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
+    maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
     maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 10, maxStoredAudits: 1000,
     maxApiRequestsPerMonth: 5000,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
@@ -314,7 +314,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasAlertIntegrations: false, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
     hasTeamWorkspaces: true,
-    maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'monthly'] as readonly string[],
+    maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
     maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 10, maxStoredAudits: 200,
     maxApiRequestsPerMonth: 2000,
     hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
@@ -371,7 +371,7 @@ export function getAnalysisExecutionClass(result: AnalysisResponse): AnalysisExe
 }
 
 /* ── Tool credit costs ──────────────────────────────────────────────────── */
-export type ToolAction = 'citation_query' | 'reverse_engineer' | 'mention_scan' | 'competitor_scan';
+export type ToolAction = 'citation_query' | 'reverse_engineer' | 'mention_scan' | 'competitor_scan' | 'mention_juice';
 
 export interface ToolCreditRule {
   freeMonthly: Readonly<Record<CanonicalTier, number>>;
@@ -383,6 +383,7 @@ export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
   reverse_engineer: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 2 },
   mention_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 1 },
   competitor_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 2, signal: 5, scorefix: 3 }, creditCost: 2 },
+  mention_juice: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 1 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */
@@ -1408,6 +1409,25 @@ export interface CitableSection {
   risk_factors: string[];
 }
 
+/**
+ * Preset schedules for citation monitoring.
+ *   - `2x_month`  — twice monthly, ~15 days apart  (360 interval_hours)
+ *   - `4x_month`  — four times monthly, ~7.5 days apart (180 interval_hours)
+ *   - `weekly`    — once a week (168 interval_hours)
+ *   - `daily`     — once a day  (24 interval_hours, Signal tier only)
+ *   - `custom`    — user-defined interval_hours
+ */
+export type CitationSchedulePreset = '2x_month' | '4x_month' | 'weekly' | 'daily' | 'custom';
+
+/** Maps a preset to the equivalent interval_hours value */
+export const CITATION_PRESET_HOURS: Readonly<Record<CitationSchedulePreset, number>> = {
+  '2x_month': 360,  // 15 days
+  '4x_month': 180,  // 7.5 days
+  weekly: 168,      // 7 days
+  daily: 24,        // 1 day
+  custom: 0,        // caller provides interval_hours directly
+} as const;
+
 export interface ScheduledCitationJob {
   id: string;
   user_id: string;
@@ -1415,6 +1435,8 @@ export interface ScheduledCitationJob {
   niche?: string;
   niche_keywords: string[];
   interval_hours: number;
+  /** Convenience preset — if set, interval_hours is derived from CITATION_PRESET_HOURS */
+  preset?: CitationSchedulePreset;
   is_active: boolean;
   last_run_at?: string;
   next_run_at?: string;

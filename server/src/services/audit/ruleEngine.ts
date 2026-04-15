@@ -26,7 +26,9 @@ export type RuleFamily =
   | 'entity'
   | 'content'
   | 'citation'
-  | 'trust';
+  | 'trust'
+  | 'ecommerce'
+  | 'authority';
 
 export interface RuleResult {
   family: RuleFamily;
@@ -51,6 +53,8 @@ export interface ScoreBreakdown {
   content: number;
   citation: number;
   trust: number;
+  ecommerce: number;
+  authority: number;
 }
 
 export interface ScoreSnapshot {
@@ -72,6 +76,10 @@ const FAMILY_WEIGHT: Record<RuleFamily, number> = {
   content: 10,
   citation: 10,
   trust: 10,
+  // Ecommerce and authority families add bonus scoring but don't penalise
+  // non-ecommerce / API-key-less audits — rules pass by default when signals absent.
+  ecommerce: 0, // weight 0 = no false penalties; rules add +points when passing
+  authority: 0, // weight 0 = no false penalties; rules add +points when passing
 };
 
 // ─── Rule definitions ─────────────────────────────────────────────────────────
@@ -613,6 +621,161 @@ const RULES: RuleDef[] = [
       return { passed: true, keys: [] };
     },
   },
+
+  // ── Ecommerce (0 base weight — only active when platform detected) ──
+  {
+    id: 'EC01',
+    family: 'ecommerce',
+    title: 'Product JSON-LD schema present',
+    description: 'Ecommerce sites must include Product schema for AI citation eligibility.',
+    severity: 'critical',
+    hardBlocker: false,
+    weight: 5,
+    remediationKey: 'add_product_schema',
+    evaluate: (ev) => {
+      const platform = ev.get('ecommerce_platform');
+      const val = platform?.value as Record<string, unknown> | undefined;
+      if (!val?.isEcommerce) return { passed: true, keys: ['ecommerce_platform'] }; // not ecommerce = pass
+      const product = ev.get('product_schema');
+      const pVal = product?.value as Record<string, unknown> | undefined;
+      return { passed: pVal?.present === true, keys: ['ecommerce_platform', 'product_schema'] };
+    },
+  },
+  {
+    id: 'EC02',
+    family: 'ecommerce',
+    title: 'Offer / price schema present',
+    description: 'Price and availability markup is required for ecommerce AI citations.',
+    severity: 'high',
+    hardBlocker: false,
+    weight: 4,
+    remediationKey: 'add_offer_schema',
+    evaluate: (ev) => {
+      const platform = ev.get('ecommerce_platform');
+      const val = platform?.value as Record<string, unknown> | undefined;
+      if (!val?.isEcommerce) return { passed: true, keys: ['ecommerce_platform'] };
+      const offer = ev.get('offer_schema');
+      const oVal = offer?.value as Record<string, unknown> | undefined;
+      return { passed: oVal?.present === true, keys: ['ecommerce_platform', 'offer_schema'] };
+    },
+  },
+  {
+    id: 'EC03',
+    family: 'ecommerce',
+    title: 'AggregateRating schema present',
+    description: 'Review signals help AI platforms recommend and cite products with high trust.',
+    severity: 'medium',
+    hardBlocker: false,
+    weight: 3,
+    remediationKey: 'add_aggregate_rating_schema',
+    evaluate: (ev) => {
+      const platform = ev.get('ecommerce_platform');
+      const val = platform?.value as Record<string, unknown> | undefined;
+      if (!val?.isEcommerce) return { passed: true, keys: ['ecommerce_platform'] };
+      const rating = ev.get('aggregate_rating_schema');
+      const rVal = rating?.value as Record<string, unknown> | undefined;
+      return { passed: rVal?.present === true, keys: ['ecommerce_platform', 'aggregate_rating_schema'] };
+    },
+  },
+  {
+    id: 'EC04',
+    family: 'ecommerce',
+    title: 'BreadcrumbList schema present',
+    description: 'Breadcrumb schema clarifies product hierarchy for AI navigation and citation.',
+    severity: 'medium',
+    hardBlocker: false,
+    weight: 3,
+    remediationKey: 'add_breadcrumb_schema',
+    evaluate: (ev) => {
+      const platform = ev.get('ecommerce_platform');
+      const val = platform?.value as Record<string, unknown> | undefined;
+      if (!val?.isEcommerce) return { passed: true, keys: ['ecommerce_platform'] };
+      const breadcrumb = ev.get('breadcrumb_schema');
+      const bVal = breadcrumb?.value as Record<string, unknown> | undefined;
+      return {
+        passed: bVal?.schemaBreadcrumb === true,
+        keys: ['ecommerce_platform', 'breadcrumb_schema'],
+      };
+    },
+  },
+  {
+    id: 'EC05',
+    family: 'ecommerce',
+    title: 'Merchant trust signals present',
+    description: 'Cart, checkout, availability and pricing signals confirm merchant legitimacy to AI.',
+    severity: 'low',
+    hardBlocker: false,
+    weight: 2,
+    remediationKey: 'add_merchant_signals',
+    evaluate: (ev) => {
+      const platform = ev.get('ecommerce_platform');
+      const val = platform?.value as Record<string, unknown> | undefined;
+      if (!val?.isEcommerce) return { passed: true, keys: ['ecommerce_platform'] };
+      const merch = ev.get('merchant_signals');
+      const mVal = merch?.value as Record<string, unknown> | undefined;
+      return { passed: (mVal?.count as number ?? 0) >= 2, keys: ['ecommerce_platform', 'merchant_signals'] };
+    },
+  },
+
+  // ── Authority — SERP / Knowledge Graph signals (0 base weight) ──
+  // These rules contribute bonus notes and scoring only when SERP/KG keys
+  // are configured. They pass by default when evidence is absent.
+  {
+    id: 'AU01',
+    family: 'authority',
+    title: 'Brand confirmed in Google Knowledge Graph',
+    description: 'A Knowledge Graph entity record signals authoritative brand recognition to AI.',
+    severity: 'medium',
+    hardBlocker: false,
+    weight: 5,
+    remediationKey: 'build_kg_entity',
+    evaluate: (ev) => {
+      const item = ev.get('kg_entity_confirmed');
+      if (!item || item.status === 'absent' && item.confidence < 0.9) {
+        // No KG integration configured — pass silently
+        return { passed: true, keys: [] };
+      }
+      const val = item.value as Record<string, unknown> | undefined;
+      return { passed: val?.present === true, keys: ['kg_entity_confirmed'] };
+    },
+  },
+  {
+    id: 'AU02',
+    family: 'authority',
+    title: 'Appears in SERP top-10',
+    description: 'Organic SERP presence is a strong co-citation signal for AI platforms.',
+    severity: 'medium',
+    hardBlocker: false,
+    weight: 5,
+    remediationKey: 'improve_seo_rankings',
+    evaluate: (ev) => {
+      const item = ev.get('serp_organic_position');
+      if (!item || item.confidence < 0.9) return { passed: true, keys: [] }; // no SERP API = pass
+      const val = item.value as Record<string, unknown> | undefined;
+      return { passed: val?.found === true, keys: ['serp_organic_position'] };
+    },
+  },
+  {
+    id: 'AU03',
+    family: 'authority',
+    title: 'Featured snippet or knowledge panel present',
+    description: 'Ownership of a snippet or knowledge panel is the highest AI visibility signal.',
+    severity: 'high',
+    hardBlocker: false,
+    weight: 5,
+    remediationKey: 'target_featured_snippet',
+    evaluate: (ev) => {
+      const snippet = ev.get('serp_featured_snippet');
+      const kp = ev.get('serp_knowledge_panel');
+      if (!snippet && !kp) return { passed: true, keys: [] }; // no SERP API = pass
+      const hasSnippet = (snippet?.value as Record<string, unknown> | undefined)?.present === true;
+      const hasKp = (kp?.value as Record<string, unknown> | undefined)?.present === true;
+      return {
+        passed: hasSnippet || hasKp,
+        keys: ['serp_featured_snippet', 'serp_knowledge_panel'].filter((k) => ev.has(k)),
+      };
+    },
+  },
 ];
 
 // ─── Rule execution ───────────────────────────────────────────────────────────
@@ -662,6 +825,8 @@ export function computeScore(ruleResults: RuleResult[]): ScoreSnapshot {
     content: 0,
     citation: 0,
     trust: 0,
+    ecommerce: 0,
+    authority: 0,
   };
 
   // Compute per-family scores - start at max weight, subtract failures

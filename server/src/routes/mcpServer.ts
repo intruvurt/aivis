@@ -565,7 +565,6 @@ const executors: Record<string, ToolExecutor> = {
       brand: cleanBrand,
       url: normalized.url,
       citation_rank_score: result.citation_rank_score,
-      tier_label: result.tier_label,
       queries_tested: result.queries_tested,
       models_tested: result.models_tested,
       found_count: result.found_count,

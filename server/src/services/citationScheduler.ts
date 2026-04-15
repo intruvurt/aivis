@@ -9,7 +9,8 @@
 
 import { getPool } from './postgresql.js';
 import { runNicheRanking } from './citationRankingEngine.js';
-import type { ScheduledCitationJob } from '../../../shared/types.js';
+import type { ScheduledCitationJob, CitationSchedulePreset } from '../../../shared/types.js';
+import { CITATION_PRESET_HOURS } from '../../../shared/types.js';
 import { detectAndStoreDropAlert } from './citationIntelligenceService.js';
 import { sendCitationDropAlert } from './trendAlertEmails.js';
 
@@ -205,15 +206,28 @@ export async function bootstrapScheduler(): Promise<void> {
 
 // ─── DB-backed CRUD ───────────────────────────────────────────────────────────
 
+/**
+ * Resolve an optional preset + explicit intervalHours to final hours value.
+ * Preset takes priority. 'custom' uses the provided intervalHours.
+ */
+function resolvePresetHours(preset: CitationSchedulePreset | undefined, intervalHours: number): number {
+  if (preset && preset !== 'custom') {
+    return CITATION_PRESET_HOURS[preset];
+  }
+  return Math.max(1, Math.min(intervalHours, 8760)); // 1h – 1yr
+}
+
 export async function createScheduledJob(input: {
   userId: string;
   targetUrl: string;
   niche?: string;
   nicheKeywords?: string[];
   intervalHours: number;
+  /** Optional preset — if provided, intervalHours is derived from preset */
+  preset?: CitationSchedulePreset;
 }): Promise<ScheduledCitationJob> {
   const pool = getPool();
-  const intervalHours = Math.max(1, Math.min(input.intervalHours, 8760)); // 1h – 1yr
+  const intervalHours = resolvePresetHours(input.preset, input.intervalHours);
   const now = new Date();
   const nextRun = addHours(now, intervalHours);
 
@@ -232,7 +246,7 @@ export async function createScheduledJob(input: {
     ]
   );
 
-  const job = rowToJob(rows[0]);
+  const job = rowToJob(rows[0], input.preset);
 
   // Start timer immediately
   startJobTimer(job);
@@ -253,7 +267,7 @@ export async function listScheduledJobs(userId: string): Promise<ScheduledCitati
     `SELECT * FROM citation_scheduled_jobs WHERE user_id = $1 ORDER BY created_at DESC`,
     [userId]
   );
-  return rows.map(rowToJob);
+  return rows.map(r => rowToJob(r));
 }
 
 export async function getScheduledJob(id: string, userId: string): Promise<ScheduledCitationJob | null> {
@@ -319,6 +333,24 @@ export async function updateScheduledJobInterval(
   return job;
 }
 
+/**
+ * Update a scheduled job's preset (and derive the interval from it).
+ * For 'custom', pass explicit intervalHours instead.
+ */
+export async function updateScheduledJobPreset(
+  id: string,
+  userId: string,
+  preset: CitationSchedulePreset,
+  customIntervalHours?: number,
+): Promise<ScheduledCitationJob | null> {
+  const hours = resolvePresetHours(preset, customIntervalHours ?? 168);
+  const job = await updateScheduledJobInterval(id, userId, hours);
+  if (!job) return null;
+  // Annotate the in-memory object with the preset label
+  job.preset = preset;
+  return job;
+}
+
 // ─── Active job count (for monitoring) ───────────────────────────────────────
 
 export function getActiveTimerCount(): number {
@@ -327,7 +359,7 @@ export function getActiveTimerCount(): number {
 
 // ─── DB row -> type mapping ───────────────────────────────────────────────────
 
-function rowToJob(row: Record<string, any>): ScheduledCitationJob {
+function rowToJob(row: Record<string, any>, presetOverride?: CitationSchedulePreset): ScheduledCitationJob {
   return {
     id: row.id,
     user_id: row.user_id,
@@ -335,6 +367,7 @@ function rowToJob(row: Record<string, any>): ScheduledCitationJob {
     niche: row.niche ?? undefined,
     niche_keywords: Array.isArray(row.niche_keywords) ? row.niche_keywords : [],
     interval_hours: Number(row.interval_hours),
+    preset: (presetOverride ?? row.preset ?? undefined) as CitationSchedulePreset | undefined,
     is_active: Boolean(row.is_active),
     last_run_at: row.last_run_at ? new Date(row.last_run_at).toISOString() : undefined,
     next_run_at: row.next_run_at ? new Date(row.next_run_at).toISOString() : undefined,

@@ -121,6 +121,24 @@ export function extractEvidenceFromScrapedData(
   // 24. JSON-LD property completeness
   items.push(jsonLdCompletenessEvidence(d.structuredData));
 
+  // 25. Ecommerce platform detection
+  items.push(ecommercePlatformEvidence(d.html || ''));
+
+  // 26. Product / ProductGroup schema
+  items.push(ecommerceProductSchemaEvidence(d.structuredData));
+
+  // 27. Offer / price schema
+  items.push(ecommerceOfferSchemaEvidence(d.structuredData));
+
+  // 28. AggregateRating schema (reviews)
+  items.push(ecommerceRatingSchemaEvidence(d.structuredData));
+
+  // 29. BreadcrumbList schema depth
+  items.push(ecommerceBreadcrumbEvidence(d.structuredData, d.html || ''));
+
+  // 30. Merchant / cart signals (HTML patterns)
+  items.push(ecommerceMerchantSignalsEvidence(d.html || ''));
+
   // Detect contradictions across evidence
   const contradictions = detectContradictions(items);
 
@@ -564,6 +582,348 @@ function jsonLdCompletenessEvidence(sd?: StructuredData): EvidenceItem {
     confidence: 1.0,
     notes,
   };
+}
+
+// ─── Ecommerce evidence helpers ───────────────────────────────────────────────
+
+function ecommercePlatformEvidence(html: string): EvidenceItem {
+  const lower = html.toLowerCase();
+  let platform = 'none';
+  if (lower.includes('shopify')) platform = 'shopify';
+  else if (lower.includes('woocommerce') || lower.includes('wc-block')) platform = 'woocommerce';
+  else if (lower.includes('magento') || lower.includes('mage/')) platform = 'magento';
+  else if (lower.includes('bigcommerce')) platform = 'bigcommerce';
+  else if (lower.includes('prestashop')) platform = 'prestashop';
+  else if (
+    lower.includes('add-to-cart') || lower.includes('add_to_cart') ||
+    lower.includes('product-price') || lower.includes('product_price') ||
+    lower.includes('sku') || lower.includes('cart-item')
+  ) platform = 'generic_ecommerce';
+
+  const isEcommerce = platform !== 'none';
+  const notes: string[] = [];
+  if (isEcommerce) notes.push(`Detected platform: ${platform}. Ecommerce schema validation is active.`);
+  else notes.push('No ecommerce platform detected. Ecommerce rules will not penalise this site.');
+
+  return {
+    category: 'ecommerce',
+    key: 'ecommerce_platform',
+    label: 'Ecommerce platform detected',
+    value: { platform, isEcommerce },
+    status: isEcommerce ? 'present' : 'absent',
+    confidence: 1.0,
+    notes,
+  };
+}
+
+function ecommerceProductSchemaEvidence(sd?: StructuredData): EvidenceItem {
+  const types = sd?.uniqueTypes ?? [];
+  const raw = sd?.raw ?? [];
+  const hasProduct = types.some((t) => /^Product$|^ProductGroup$/i.test(t));
+
+  const notes: string[] = [];
+  if (hasProduct) {
+    const productEntities = raw.filter((e) => {
+      const t = e?.['@type'];
+      return (
+        t === 'Product' || t === 'ProductGroup' ||
+        (Array.isArray(t) && t.some((v: string) => /^Product/i.test(v)))
+      );
+    });
+    notes.push(`Found ${productEntities.length} Product entity(ies) in JSON-LD.`);
+    // Check for required Product properties
+    const missing = productEntities.flatMap((e) => {
+      const m: string[] = [];
+      if (!e.name) m.push('name');
+      if (!e.description && !e.offers) m.push('description or offers');
+      return m;
+    });
+    if (missing.length > 0) notes.push(`Missing Product properties: ${[...new Set(missing)].join(', ')}.`);
+  } else {
+    notes.push('No Product schema found. Ecommerce sites must include Product JSON-LD for AI citation eligibility.');
+  }
+
+  return {
+    category: 'ecommerce',
+    key: 'product_schema',
+    label: 'Product JSON-LD schema',
+    value: { present: hasProduct, types: types.filter((t) => /^Product/i.test(t)) },
+    status: hasProduct ? 'present' : 'absent',
+    confidence: 1.0,
+    notes,
+  };
+}
+
+function ecommerceOfferSchemaEvidence(sd?: StructuredData): EvidenceItem {
+  const types = sd?.uniqueTypes ?? [];
+  const raw = sd?.raw ?? [];
+  const hasOffer = types.some((t) => /^Offer$|^AggregateOffer$/i.test(t));
+
+  // Also check nested offers inside Product entities
+  const hasNestedOffer = raw.some((e) => {
+    const offers = e?.offers;
+    if (!offers) return false;
+    if (typeof offers === 'object' && !Array.isArray(offers)) {
+      const t = offers?.['@type'];
+      return t === 'Offer' || t === 'AggregateOffer';
+    }
+    if (Array.isArray(offers)) return offers.some((o) => o?.['@type'] === 'Offer');
+    return false;
+  });
+
+  const present = hasOffer || hasNestedOffer;
+  const notes: string[] = [];
+  if (present) {
+    notes.push('Offer schema found. Price and availability are machine-readable.');
+    // Check for price in offers
+    const offerEntities = raw.flatMap((e) => {
+      if (!e?.offers) return [];
+      return Array.isArray(e.offers) ? e.offers : [e.offers];
+    });
+    const missingPrice = offerEntities.filter((o) => !o?.price && !o?.priceRange).length;
+    if (missingPrice > 0) notes.push(`${missingPrice} Offer(s) missing price property.`);
+  } else {
+    notes.push('No Offer schema detected. Without price/availability markup AI assistants cannot extract product details.');
+  }
+
+  return {
+    category: 'ecommerce',
+    key: 'offer_schema',
+    label: 'Offer / price schema',
+    value: { present, nested: hasNestedOffer },
+    status: present ? 'present' : 'absent',
+    confidence: 1.0,
+    notes,
+  };
+}
+
+function ecommerceRatingSchemaEvidence(sd?: StructuredData): EvidenceItem {
+  const types = sd?.uniqueTypes ?? [];
+  const raw = sd?.raw ?? [];
+  const hasRating = types.some((t) => /^AggregateRating$/i.test(t));
+
+  // Also check nested aggregateRating
+  const hasNestedRating = raw.some((e) => {
+    const r = e?.aggregateRating;
+    if (!r) return false;
+    return r?.['@type'] === 'AggregateRating' || (typeof r === 'object' && r.ratingValue);
+  });
+
+  const present = hasRating || hasNestedRating;
+  const notes: string[] = [];
+  if (present) {
+    notes.push('AggregateRating schema found. Review signals are machine-readable for AI platforms.');
+  } else {
+    notes.push('No AggregateRating schema. Products without ratings lose rich snippet eligibility and AI trust signals.');
+  }
+
+  return {
+    category: 'ecommerce',
+    key: 'aggregate_rating_schema',
+    label: 'AggregateRating (review) schema',
+    value: { present },
+    status: present ? 'present' : 'absent',
+    confidence: 1.0,
+    notes,
+  };
+}
+
+function ecommerceBreadcrumbEvidence(sd?: StructuredData, html?: string): EvidenceItem {
+  const types = sd?.uniqueTypes ?? [];
+  const raw = sd?.raw ?? [];
+  const hasSchemaBreadcrumb = types.some((t) => /^BreadcrumbList$/i.test(t));
+
+  let depth = 0;
+  if (hasSchemaBreadcrumb) {
+    const breadcrumb = raw.find((e) => e?.['@type'] === 'BreadcrumbList');
+    const items = breadcrumb?.itemListElement;
+    depth = Array.isArray(items) ? items.length : 0;
+  }
+
+  // Fallback: check HTML for breadcrumb nav patterns
+  const hasHtmlBreadcrumb =
+    !hasSchemaBreadcrumb &&
+    html != null &&
+    (html.toLowerCase().includes('breadcrumb') || html.includes('aria-label="breadcrumb"'));
+
+  const present = hasSchemaBreadcrumb || hasHtmlBreadcrumb;
+  const notes: string[] = [];
+  if (hasSchemaBreadcrumb) {
+    notes.push(`BreadcrumbList found with depth ${depth}. ${depth >= 3 ? 'Good category hierarchy.' : 'Shallow — consider deeper hierarchy.'}`);
+  } else if (hasHtmlBreadcrumb) {
+    notes.push('HTML breadcrumb detected but no BreadcrumbList JSON-LD. Add schema markup for AI extractability.');
+  } else {
+    notes.push('No breadcrumb navigation found. Breadcrumbs improve product page hierarchy signals for AI crawlers.');
+  }
+
+  return {
+    category: 'ecommerce',
+    key: 'breadcrumb_schema',
+    label: 'Breadcrumb navigation structure',
+    value: { present, schemaBreadcrumb: hasSchemaBreadcrumb, htmlBreadcrumb: hasHtmlBreadcrumb, depth },
+    status: hasSchemaBreadcrumb ? 'present' : present ? 'partial' : 'absent',
+    confidence: 1.0,
+    notes,
+  };
+}
+
+function ecommerceMerchantSignalsEvidence(html: string): EvidenceItem {
+  const lower = html.toLowerCase();
+  const signals: string[] = [];
+
+  if (lower.includes('add-to-cart') || lower.includes('add_to_cart') || lower.includes('addtocart')) signals.push('cart');
+  if (lower.includes('checkout') || lower.includes('buy-now') || lower.includes('buy now')) signals.push('checkout');
+  if (lower.includes('in-stock') || lower.includes('in stock') || lower.includes('availability')) signals.push('availability');
+  if (lower.includes('free-shipping') || lower.includes('free shipping')) signals.push('free_shipping');
+  if (lower.includes('return-policy') || lower.includes('return policy') || lower.includes('30-day')) signals.push('return_policy');
+  if (lower.includes('secure-checkout') || lower.includes('ssl') || lower.includes('https://')) signals.push('secure_checkout');
+  if (/\$[\d,]+\.?\d{0,2}|\€[\d,]+|£[\d,]+/.test(html)) signals.push('price_display');
+
+  const isEcommerce = signals.length >= 2;
+  const notes: string[] = [];
+  if (signals.length > 0) notes.push(`Merchant signals detected: ${signals.join(', ')}.`);
+  else notes.push('No merchant signals detected in HTML.');
+
+  return {
+    category: 'ecommerce',
+    key: 'merchant_signals',
+    label: 'Merchant page signals',
+    value: { signals, count: signals.length, isEcommerce },
+    status: signals.length >= 2 ? 'present' : signals.length === 1 ? 'partial' : 'absent',
+    confidence: 0.9,
+    notes,
+  };
+}
+
+// ─── SERP / Knowledge Graph evidence injection ─────────────────────────────────
+//
+// These items are injected POST-scrape from real API calls. They carry the same
+// EvidenceItem interface and are persisted to audit_evidence alongside all other items.
+//
+// Keys are prefixed `serp_` and `kg_` to avoid collision with scrape-derived keys.
+
+export interface SerpEvidenceInput {
+  organicPosition?: number | null;
+  hasFeaturedSnippet?: boolean;
+  hasKnowledgePanel?: boolean;
+  knowledgePanelData?: Record<string, unknown>;
+  paaQuestions?: string[];
+  richResults?: boolean;
+}
+
+export interface KgEvidenceInput {
+  entityPresent?: boolean;
+  entityTypes?: string[];
+  entityDescription?: string;
+  resultScore?: number;
+  kgId?: string;
+}
+
+export function buildSerpEvidenceItems(opts: {
+  serp?: SerpEvidenceInput;
+  kg?: KgEvidenceInput;
+  brand?: string;
+}): EvidenceItem[] {
+  const items: EvidenceItem[] = [];
+  const { serp, kg } = opts;
+
+  // SERP organic position
+  if (serp !== undefined) {
+    const pos = serp.organicPosition;
+    const found = typeof pos === 'number' && pos > 0;
+    const notes: string[] = [];
+    if (found) notes.push(`Brand appears at organic position ${pos} in SERP.`);
+    else notes.push('Brand not found in SERP organic results (positions 1-10 checked).');
+
+    items.push({
+      category: 'authority',
+      key: 'serp_organic_position',
+      label: 'SERP organic position',
+      value: { position: pos ?? 0, found },
+      source: 'serp_api',
+      status: found && pos! <= 5 ? 'present' : found ? 'partial' : 'absent',
+      confidence: 0.95,
+      notes,
+    });
+
+    // Featured snippet
+    const featuredNotes: string[] = [];
+    if (serp.hasFeaturedSnippet) featuredNotes.push('Site owns a featured snippet — highest AI citation priority signal.');
+    else featuredNotes.push('No featured snippet. Structured Q&A content can help claim one.');
+
+    items.push({
+      category: 'authority',
+      key: 'serp_featured_snippet',
+      label: 'SERP featured snippet',
+      value: { present: serp.hasFeaturedSnippet ?? false },
+      source: 'serp_api',
+      status: serp.hasFeaturedSnippet ? 'present' : 'absent',
+      confidence: 0.95,
+      notes: featuredNotes,
+    });
+
+    // Knowledge panel
+    const kpNotes: string[] = [];
+    if (serp.hasKnowledgePanel) kpNotes.push('Knowledge panel present — entity is recognized by Google\'s Knowledge Graph.');
+    else kpNotes.push('No knowledge panel. Adding Organization/Person schema and claiming entities can help.');
+
+    items.push({
+      category: 'authority',
+      key: 'serp_knowledge_panel',
+      label: 'SERP knowledge panel',
+      value: { present: serp.hasKnowledgePanel ?? false, data: serp.knowledgePanelData ?? null },
+      source: 'serp_api',
+      status: serp.hasKnowledgePanel ? 'present' : 'absent',
+      confidence: 0.95,
+      notes: kpNotes,
+    });
+
+    // PAA coverage
+    if (Array.isArray(serp.paaQuestions) && serp.paaQuestions.length > 0) {
+      items.push({
+        category: 'authority',
+        key: 'serp_paa_questions',
+        label: 'SERP "People Also Ask" questions',
+        value: { count: serp.paaQuestions.length, questions: serp.paaQuestions.slice(0, 5) },
+        source: 'serp_api',
+        status: 'present',
+        confidence: 0.95,
+        notes: [`${serp.paaQuestions.length} PAA questions found. Answering these with FAQ schema improves coverage.`],
+      });
+    }
+  }
+
+  // KG entity confirmation
+  if (kg !== undefined) {
+    const confirmed = kg.entityPresent === true;
+    const kgNotes: string[] = [];
+    if (confirmed) {
+      kgNotes.push(`Brand entity confirmed in Google Knowledge Graph.`);
+      if (kg.entityTypes && kg.entityTypes.length > 0) kgNotes.push(`Entity types: ${kg.entityTypes.join(', ')}.`);
+      if (kg.entityDescription) kgNotes.push(`Description: "${kg.entityDescription.substring(0, 100)}${kg.entityDescription.length > 100 ? '...' : ''}"`);
+    } else {
+      kgNotes.push('Brand entity not found in Google Knowledge Graph. This reduces AI citability.');
+    }
+
+    items.push({
+      category: 'authority',
+      key: 'kg_entity_confirmed',
+      label: 'Google Knowledge Graph entity',
+      value: {
+        present: confirmed,
+        types: kg.entityTypes ?? [],
+        description: kg.entityDescription ?? null,
+        kgId: kg.kgId ?? null,
+        resultScore: kg.resultScore ?? 0,
+      },
+      source: 'google_kg_api',
+      status: confirmed ? 'present' : 'absent',
+      confidence: 0.95,
+      notes: kgNotes,
+    });
+  }
+
+  return items;
 }
 
 // ─── Persistence ──────────────────────────────────────────────────────────────

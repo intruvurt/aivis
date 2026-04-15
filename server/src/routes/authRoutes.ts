@@ -52,8 +52,17 @@ function getApiBase(req: express.Request): string {
 }
 
 function getFrontendBase(req: express.Request): string {
-  const explicit = String(process.env.FRONTEND_URL || process.env.CLIENT_URL || '').trim();
-  if (explicit) return explicit.replace(/\/+$/, '');
+  const envVal = String(process.env.FRONTEND_URL || process.env.CLIENT_URL || '').trim();
+  const explicit = envVal.replace(/\/+$/, '');
+  // Only trust the explicit value if it has a valid http(s):// scheme — guard against
+  // misconfigured env vars like 'aivis.biz' (no scheme) or 'aivis.biz.https' (mangled)
+  if (explicit && /^https?:\/\//i.test(explicit)) return explicit;
+  if (explicit && process.env.NODE_ENV === 'production') {
+    console.error(
+      `[Auth] FRONTEND_URL "${explicit}" has no http(s):// scheme — falling back to req-derived base. ` +
+      'Fix this by setting FRONTEND_URL=https://yourdomain.com in your environment.'
+    );
+  }
   const host = req.hostname || req.get('host') || '';
   if (/localhost:3001/i.test(host)) return 'http://localhost:5173';
   return `${req.protocol}://${host}`.replace(/\/+$/, '');
@@ -95,17 +104,33 @@ function decodeOAuthState(raw: string): OAuthStatePayload | null {
   }
 }
 
-function buildFrontendAuthRedirect(req: express.Request, params: Record<string, string>) {
-  const frontendBase = getFrontendBase(req);
-  const authUrl = new URL('/auth', frontendBase);
-  for (const [key, value] of Object.entries(params)) {
-    if (value) authUrl.searchParams.set(key, value);
+function buildFrontendAuthRedirect(req: express.Request, params: Record<string, string>): string {
+  const buildUrl = (base: string): string => {
+    const authUrl = new URL('/auth', base);
+    for (const [key, value] of Object.entries(params)) {
+      if (value) authUrl.searchParams.set(key, value);
+    }
+    // Ensure redirect always goes to our frontend — never allow open redirects
+    if (authUrl.origin !== new URL(base).origin) {
+      return new URL('/auth', base).toString();
+    }
+    return authUrl.toString();
+  };
+
+  try {
+    return buildUrl(getFrontendBase(req));
+  } catch (urlErr) {
+    // Hard fallback: derive origin directly from the request — never let a URL
+    // construction failure leave the user stranded or expose a broken redirect
+    console.error('[Auth] buildFrontendAuthRedirect URL construction failed, using req-origin fallback:', urlErr);
+    const safeBase = `${req.protocol}://${req.hostname}`;
+    try {
+      return buildUrl(safeBase);
+    } catch {
+      // Absolute last resort — just send to /auth on the same origin without params
+      return `${safeBase}/auth`;
+    }
   }
-  // Ensure redirect always goes to our frontend - never allow open redirects
-  if (authUrl.origin !== new URL(frontendBase).origin) {
-    return new URL('/auth', frontendBase).toString();
-  }
-  return authUrl.toString();
 }
 
 function wantsJson(req: express.Request): boolean {

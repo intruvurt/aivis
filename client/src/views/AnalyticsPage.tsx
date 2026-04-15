@@ -35,6 +35,8 @@ import UpgradeWall from "../components/UpgradeWall";
 import { meetsMinimumTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 import {
   EMPTY_ANALYTICS_DATA,
   EMPTY_PLATFORM_METRICS,
@@ -650,6 +652,33 @@ function ActionableInsights({ data, pipeline }: { data: AnalyticsData; pipeline:
 
 /* ── component ───────────────────────────────────────────────────────────── */
 
+const ANALYTICS_FAQ = [
+  {
+    question: "What does the AI visibility score in analytics actually measure?",
+    answer: "The AI visibility score is a composite of five signals sampled across ChatGPT, Perplexity, Claude, and Google AI Overview: how often your domain appears in citations, whether your entity (brand, product, or URL) is mentioned by name, whether your content provides extractable direct answers, how structured your pages are for machine consumption, and whether your authority signals (backlinks, domain trust, third-party mentions) meet model citation thresholds. The analytics view tracks these composite scores over time so you can attribute score changes to specific audits, content changes, or structural improvements.",
+  },
+  {
+    question: "Why does my score fluctuate between audits if I haven't changed anything?",
+    answer: "AI model behavior is not static. The same prompt run against the same page can produce different citation or mention outcomes as underlying model weights update, retrieval indexes refresh, and competitor content shifts the embedding neighborhood your domain occupies. Score variance of ±5 points between audits with no content changes is normal. Consistent movement of ±10 or more usually reflects a real structural change — either in your content, your competitors' content, or a model-level policy shift. The trend line, not individual point scores, is the reliable signal.",
+  },
+  {
+    question: "What is the difference between the Overview, Trends, Platforms, SEO, and Insights tabs?",
+    answer: "Overview gives a summary dashboard: latest score, recent audit history, and quick-access metrics. Trends shows your score over time with selectable date ranges, making it easy to attribute improvements or drops to specific audit dates. Platforms breaks out performance by AI engine (ChatGPT, Perplexity, Claude, Google AIO) so you can identify platform-specific gaps. SEO correlates traditional search signals — crawlability, page speed, structured data coverage — with your AI visibility score. Insights surfaces pattern-based recommendations derived from the cross-tab analysis: what changed, what is driving improvement, and what to prioritize next.",
+  },
+  {
+    question: "How many audits do I need before trend data becomes meaningful?",
+    answer: "Three audits of the same URL give you a baseline comparison. Seven or more audits over a 30-day period give you enough data points to distinguish genuine trend direction from variance noise. If you are actively making content improvements between audits, running one audit before the change and one after is the minimum for measuring impact. The analytics view highlights the audit dates on the trend line so you can annotate your own internal history of what changed and when.",
+  },
+  {
+    question: "Can I use analytics to track multiple URLs or just one?",
+    answer: "Analytics aggregates data across all URLs you have audited, not just one. The platform-level tabs show your overall cross-URL AI visibility health. If you want per-URL trend analysis, filter by URL in the audit history view and use the Competitors feature to benchmark individual pages against specific competitors. The Insights tab surfaces cross-URL patterns — for example, if multiple pages share the same structural weakness, it appears as a high-priority consolidated recommendation.",
+  },
+  {
+    question: "What should I do if my analytics show a score drop?",
+    answer: "First, check whether the drop correlates with a recent content change, a competitor's new content, or an AI model update week. Use the Trends tab to identify the exact audit where the drop began, then open that audit's detail view and compare it to the previous one. Look for changes in citation eligibility, entity clarity scores, and evidence density metrics. If no content changed on your end, check whether a competitor in your category received new high-authority mentions or published dense BRAG-scored content in the same period, as this can shift your relative citation probability downward.",
+  },
+];
+
 export default function AnalyticsPage() {
   const navigate = useNavigate();
   const { token, user } = useAuthStore();
@@ -658,6 +687,14 @@ export default function AnalyticsPage() {
     title: 'Analytics',
     description: 'Track your AI visibility score trends, real score distribution, real/actual improvement turns, real platform performance, and real daily activity.',
     path: '/analytics',
+    structuredData: [
+      buildWebPageSchema({
+        path: '/analytics',
+        name: 'AI Visibility Analytics — Score Trends & Platform Performance | AiVIS',
+        description: 'Track AI visibility score trends across ChatGPT, Perplexity, Claude, and Google AIO. Monitor citation rates, entity recognition, evidence scores, and cross-platform performance over time.',
+      }),
+      buildFaqSchema(ANALYTICS_FAQ, { path: '/analytics' }),
+    ],
   });
 
   const hasAccess = meetsMinimumTier(user?.tier || 'observer', 'alignment');
@@ -1756,6 +1793,12 @@ export default function AnalyticsPage() {
         )}
 
       </div>
+
+      <PageQASection
+        items={ANALYTICS_FAQ}
+        heading="Understanding your AI visibility analytics"
+        className="mt-6"
+      />
     </div>
   );
 }

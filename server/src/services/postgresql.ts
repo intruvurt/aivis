@@ -1129,6 +1129,11 @@ export async function runMigrations(): Promise<void> {
               UNIQUE (run_id, query_id, model)
             )`,
             `CREATE INDEX IF NOT EXISTS idx_entity_snapshots_run ON entity_snapshots(run_id)`,
+            // citation_results additive columns (needed on already-initialized DBs)
+            `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS mention_quality_score SMALLINT`,
+            `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN`,
+            `ALTER TABLE citation_results ALTER COLUMN is_false_positive DROP DEFAULT`,
+            `ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS brand_name TEXT`,
           ];
           let patchOk = 0;
           let patchFail = 0;

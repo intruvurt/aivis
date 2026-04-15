@@ -4,6 +4,31 @@ import { checkContentExtractability } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const CONTENT_EXTRACTABILITY_FAQ = [
+  {
+    question: "What makes content extractable by AI answer engines?",
+    answer: "Content extractability depends on five structural factors: answer-block density (sections that contain a direct question followed by a 40-120 word answer), heading hierarchy (H1/H2/H3 that signal topic organization without excessive nesting), paragraph brevity (claims expressed in 1-3 sentences rather than multi-paragraph blocks), evidence specificity (concrete numbers, comparisons, and named examples rather than vague generalities), and semantic HTML (proper use of <p>, <ul>, <section>, and <article> rather than div-heavy layouts that obscure content structure from parsers).",
+  },
+  {
+    question: "Why does AI extraction differ from search engine crawling?",
+    answer: "Search engines primarily look at link signals, keyword density, and domain authority to rank pages. AI answer engines extract content differently: they parse for direct answer patterns, entity definitions, and evidence-backed claims that can be surfaced in a conversational response. A page that ranks well in Google Search but scores poorly on extractability may do so because it is optimized for keyword placement and link acquisition rather than structured, citable information architecture. The two optimization goals increasingly diverge as AI-generated answers handle more query types.",
+  },
+  {
+    question: "What is an answer-block and how do I create one?",
+    answer: "An answer-block is a section of content structured to directly answer a specific question. The minimum viable template is: (1) an H2 or H3 heading phrased as the question, (2) a 60-100 word paragraph that answers it directly with a concrete claim in the first sentence, (3) optional supporting evidence such as a list, comparison, or example. Pages with 3-5 well-formed answer blocks per 1000 words of content consistently outperform those without in AI citation rate comparisons, because they reduce the inference work the model must do to determine what the page is claiming.",
+  },
+  {
+    question: "Does content length affect extractability scores?",
+    answer: "Raw length does not improve extractability — density does. A 600-word page with three well-formed answer blocks scores higher than a 3000-word page with the same information buried in discursive prose. The extractability grader evaluates the ratio of citable content to total content length, heading-to-paragraph ratio, and the presence of structured lists and definition patterns, not total word count. Over-long content that frontloads generalities before getting to the answer typically scores poorly on direct answer confidence.",
+  },
+  {
+    question: "How does FAQ section structure affect AI citation rates?",
+    answer: "FAQ sections dramatically improve extractability scores because they already mirror the question-answer extraction pattern AI models use. FAQs should be: implemented as real HTML heading+paragraph pairs (not just visual styling), covered by FAQPage JSON-LD schema, placed in page sections that are early in the DOM and not hidden behind tabs or accordions that require JavaScript interaction, and written with direct answers in the first sentence rather than preamble-heavy responses. FAQ sections implemented this way can generate direct citation events for the specific questions users ask AI platforms.",
+  },
+];
 
 const HISTORY_KEY = "aivis-content-extractability";
 
@@ -67,6 +92,14 @@ export default function ContentExtractabilityPage() {
     title: "Content Extractability Grader \u2014 AI Answer Block Analysis",
     description: "Free tool to grade how well AI models can extract answers from your page. Analyzes heading hierarchy, FAQ patterns, answer-block density, and content structure.",
     path: "/tools/content-extractability",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/tools/content-extractability",
+        name: "Content Extractability Grader \u2014 AI Answer Block Analysis | AiVIS",
+        description: "Grade how well AI models can extract answers from your page. Free analysis of heading hierarchy, FAQ structure, answer-block density, and content extractability for AI citations.",
+      }),
+      buildFaqSchema(CONTENT_EXTRACTABILITY_FAQ, { path: "/tools/content-extractability" }),
+    ],
   });
 
   const [url, setUrl] = useState("");
@@ -372,6 +405,11 @@ export default function ContentExtractabilityPage() {
 
         <ConversionCTA variant="free-tool" />
       </div>
+      <PageQASection
+        items={CONTENT_EXTRACTABILITY_FAQ}
+        heading="Understanding content extractability for AI answers"
+        className="mt-6"
+      />
     </>
   );
 }

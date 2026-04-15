@@ -4,6 +4,31 @@ import { checkRobotsAccess } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const ROBOTS_FAQ = [
+  {
+    question: "Which AI bots should be allowed to crawl my site?",
+    answer: "GPTBot (OpenAI/ChatGPT), ClaudeBot (Anthropic), PerplexityBot, Googlebot-Extended (Google AI Overview), OAI-SearchBot, and YouBot are the primary AI crawler user agents affecting citation and answer inclusion. Blocking any of these reduces your probability of appearing in that platform's AI-generated answers. Common robots.txt mistakes include using wildcard blocks (User-agent: *) that inadvertently block AI bots, or adding GPTBot to disallow lists over opt-out preferences without realizing the cost to AI visibility.",
+  },
+  {
+    question: "What is the difference between robots.txt, meta robots, and X-Robots-Tag?",
+    answer: "robots.txt is a file-level directive that tells crawlers which paths to visit. Meta robots is an HTML tag (<meta name='robots' content='...'>) that controls indexing and following for individual pages. X-Robots-Tag is an HTTP response header that applies the same controls to any file type including PDFs and images. For AI visibility, the X-Robots-Tag header check matters because AI crawlers that process documents and data files will respect it at the file level, not just at the HTML document level.",
+  },
+  {
+    question: "Can blocking AI bots protect my content?",
+    answer: "Blocking AI bots prevents your content from being used as a real-time training or retrieval source by those specific platforms. However, the trade-off is complete exclusion from AI-generated answers on those platforms. This is a legitimate choice for content-sensitive publishers, but it means any brand queries, product questions, or category-level informational searches on ChatGPT or Perplexity will not surface your content as a source. For most businesses, the visibility benefit of AI indexing significantly outweighs the training data concern.",
+  },
+  {
+    question: "What does 'no index' mean for AI visibility?",
+    answer: "A noindex directive (via meta robots or X-Robots-Tag) tells search engines and crawlers not to include the page in their index. Most AI answer platforms respect noindex signals, meaning noindexed pages will not be cited in AI-generated answers. If you have pages designated as noindex for SEO reasons (thin content, duplicate pages, staging URLs) but want those pages to be considered for AI citation, you will need to re-evaluate whether the noindex is intentional or was applied broadly.",
+  },
+  {
+    question: "What is the canonical tag and does it affect AI citations?",
+    answer: "The canonical tag (<link rel='canonical'>) signals which version of a page is the authoritative URL when multiple versions exist. AI crawlers generally respect canonical URLs, meaning a page declared as a duplicate will typically not receive direct citations — the canonical version will. If your site has pagination, print versions, or tracking-parameter URLs generating duplicate content, proper canonicalization ensures AI citation authority consolidates on your primary page rather than being split or attributed to a non-preferred URL.",
+  },
+];
 
 const HISTORY_KEY = "aivis-robots-checks";
 
@@ -74,6 +99,14 @@ export default function RobotsCheckerPage() {
     title: "AI Crawler Access Checker \u2014 Robots.txt Audit for AI Bots",
     description: "Free tool to check if GPTBot, ClaudeBot, Googlebot, and 12 other AI crawlers can access your site. Audit robots.txt, meta robots, and X-Robots-Tag directives.",
     path: "/tools/robots-checker",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/tools/robots-checker",
+        name: "AI Crawler Access Checker \u2014 Robots.txt Audit | AiVIS",
+        description: "Check if GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers can access your site. Free robots.txt and meta robots audit tool.",
+      }),
+      buildFaqSchema(ROBOTS_FAQ, { path: "/tools/robots-checker" }),
+    ],
   });
 
   const [url, setUrl] = useState("");
@@ -386,6 +419,11 @@ export default function RobotsCheckerPage() {
 
         <ConversionCTA variant="free-tool" />
       </div>
+      <PageQASection
+        items={ROBOTS_FAQ}
+        heading="Understanding AI crawler access and robots directives"
+        className="mt-6"
+      />
     </>
   );
 }

@@ -4,6 +4,31 @@ import { checkLanguage } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const LANGUAGE_CHECKER_FAQ = [
+  {
+    question: "Why does html[lang] matter for AI answer visibility?",
+    answer: "The html[lang] attribute tells AI crawlers, screen readers, and search engines what language your page is written in. AI models use language metadata to match your content to locale-specific queries — a page without a lang attribute is more likely to be misclassified and served to the wrong language audience or excluded from language-filtered retrievals. For multilingual sites, missing or incorrect lang attributes mean pages may not appear in the AI-generated answers for their target language market even when the content quality is high.",
+  },
+  {
+    question: "What is hreflang and when do I need it?",
+    answer: "Hreflang tags (<link rel='alternate' hreflang='...'>) tell search engines and AI crawlers that multiple URL versions of the same content exist for different languages or regions, and specify which URL is canonical for each locale. You need hreflang if your site serves the same content in multiple languages (e.g., en, fr, de versions of the same page) or if you serve regionally different content to the same language audience (e.g., en-US vs en-GB). Without hreflang, AI models may cite the wrong regional version of your page or dilute citation signals across your language variants.",
+  },
+  {
+    question: "What is the x-default hreflang tag?",
+    answer: "The x-default hreflang value specifies which page should be served to users whose language or region doesn't match any defined hreflang variant. This is typically the language selector page or the default-language version of your content. AI models use x-default as a fallback resolution path when the user's detected locale doesn't match an explicit hreflang pair. Without x-default, international citation events may send users to the wrong regional version or encounter a 404 on a mismatched locale URL.",
+  },
+  {
+    question: "How does charset declaration affect content parsing?",
+    answer: "The Content-Type charset declaration (e.g., charset=UTF-8 in the HTTP header or <meta charset='utf-8'> in the HTML head) tells parsers how to decode byte sequences into characters. An incorrect or missing charset causes malformed text rendering in AI parser outputs, especially for content that includes special characters, diacritics, or non-ASCII punctuation. UTF-8 should be declared universally. If your charset is mismatched between the HTTP header and the HTML meta tag, behavior is browser-dependent and can produce parsing artifacts that reduce extraction confidence.",
+  },
+  {
+    question: "Can RTL language content be extracted by AI models?",
+    answer: "Yes, provided the RTL direction is properly declared via dir='rtl' on the html element and the language is specified in html[lang] with an appropriate BCP 47 language tag (e.g., lang='ar' for Arabic, lang='he' for Hebrew). AI models trained on multilingual data can extract and cite RTL content. The main failure mode is content that sets dir='rtl' but uses lang='en', causing language-model mismatch and reduced citation relevance for the intended locale. Consistent lang + dir + charset declaration is the minimum requirement for reliable multilingual extraction.",
+  },
+];
 
 const HISTORY_KEY = "aivis-language-checks";
 
@@ -79,6 +104,14 @@ export default function LanguageCheckerPage() {
     title: "Language & Hreflang Checker \u2014 Multilingual AI Visibility Audit",
     description: "Free tool to audit your page's language signals for AI models. Checks html[lang], hreflang tags, x-default, charset, RTL direction, and Content-Language headers.",
     path: "/tools/language-checker",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/tools/language-checker",
+        name: "Language & Hreflang Checker \u2014 Multilingual AI Visibility | AiVIS",
+        description: "Audit html[lang], hreflang, x-default, charset, and RTL language signals for multilingual AI visibility. Free language and internationalization checker.",
+      }),
+      buildFaqSchema(LANGUAGE_CHECKER_FAQ, { path: "/tools/language-checker" }),
+    ],
   });
 
   const [url, setUrl] = useState("");
@@ -409,6 +442,11 @@ export default function LanguageCheckerPage() {
 
         <ConversionCTA variant="free-tool" />
       </div>
+      <PageQASection
+        items={LANGUAGE_CHECKER_FAQ}
+        heading="Understanding language signals for multilingual AI visibility"
+        className="mt-6"
+      />
     </>
   );
 }

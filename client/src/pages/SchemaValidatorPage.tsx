@@ -4,6 +4,31 @@ import { checkSchemaMarkup } from "../api";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const SCHEMA_FAQ = [
+  {
+    question: "What structured data types matter most for AI citation eligibility?",
+    answer: "The highest-impact schema types for AI citation are: FAQPage (enables direct FAQ extraction by AI answer engines), Article and BlogPosting (establishes content type and authorship for authority scoring), HowTo (structured step-by-step processes that AI models extract as procedural answers), Organization and Person (entity disambiguation for branded queries), Product and Service (used in commercial-intent AI responses), and BreadcrumbList (hierarchical context AI uses to situate page content within a site's topical structure). JSON-LD implementation is strongly preferred over Microdata or RDFa because it is machine-parseable without layout interference.",
+  },
+  {
+    question: "Does schema markup directly cause AI citations?",
+    answer: "Schema markup does not directly cause citations — but it significantly increases extraction confidence. AI answer engines use structured data as disambiguation and verification signals when determining if a page's claim is reliable enough to cite. A page with FAQPage schema expressing the same content as a competitor's unstructured paragraph will typically score higher on extraction confidence. The benefit is most measurable for entity-rich content: business information, product details, pricing, how-to instructions, and question-answer pairs.",
+  },
+  {
+    question: "What does the schema validator check specifically?",
+    answer: "This tool checks: JSON-LD presence and syntactic validity, schema type recognition against the AI-relevant subset of schema.org types, OpenGraph tag completeness (og:title, og:description, og:image, og:url), Twitter Card meta tags, and canonicalization signals. The report flags missing high-value types, broken JSON syntax, duplicate declarations, and OpenGraph property gaps that reduce AI platform sharing and extraction quality. Each finding is labeled with an impact level so you can prioritize which fixes to make first.",
+  },
+  {
+    question: "How do I add schema markup to a page that already has content?",
+    answer: "The fastest implementation method is to add a JSON-LD <script> tag to the <head> of your page. This doesn't require any changes to your visible HTML structure. In WordPress, plugins like Yoast SEO or Rank Math handle basic schema automatically. For custom sites, generate the JSON-LD object with your page's specific data and inject it server-side or via a script tag. For CMS-agnostic implementation, the minimum viable schema for most pages is a single FAQPage block with your three most-asked questions and direct answers in 40-80 words each.",
+  },
+  {
+    question: "Why does OpenGraph data affect AI visibility?",
+    answer: "OpenGraph metadata is used by AI platforms for link preview extraction and social entity resolution. When Perplexity, ChatGPT with browsing, and similar AI systems evaluate a page, they use og:title and og:description as secondary evidence for entity name and topic categorization — especially when the main content is difficult to parse. Missing og:image reduces the probability of platform-level link previews being generated, which limits the social distribution signals that contribute to authority scoring over time.",
+  },
+];
 
 const HISTORY_KEY = "aivis-schema-checks";
 
@@ -59,6 +84,14 @@ export default function SchemaValidatorPage() {
     title: "Schema Markup Validator \u2014 AI Citation Readiness Check",
     description: "Free tool to validate your structured data (JSON-LD, OpenGraph, Twitter Cards) for AI citation readiness. See what AI models can extract from your page.",
     path: "/tools/schema-validator",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/tools/schema-validator",
+        name: "Schema Markup Validator \u2014 AI Citation Readiness Check | AiVIS",
+        description: "Validate JSON-LD, OpenGraph, and Twitter Cards for AI citation readiness. Free tool to check what AI models can extract from your page's structured data.",
+      }),
+      buildFaqSchema(SCHEMA_FAQ, { path: "/tools/schema-validator" }),
+    ],
   });
 
   const [url, setUrl] = useState("");
@@ -378,6 +411,11 @@ export default function SchemaValidatorPage() {
 
         <ConversionCTA variant="free-tool" />
       </div>
+      <PageQASection
+        items={SCHEMA_FAQ}
+        heading="Understanding schema markup for AI visibility"
+        className="mt-6"
+      />
     </>
   );
 }

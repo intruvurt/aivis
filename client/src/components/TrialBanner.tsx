@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, Sparkles, Zap } from "lucide-react";
-import toast from "react-hot-toast";
 import { useAuthStore } from "../stores/authStore";
-import { apiFetch } from "../utils/api";
+import FreeTrialModal from "./FreeTrialModal";
 
 /**
  * Global banner displayed in the app shell:
@@ -13,9 +12,7 @@ import { apiFetch } from "../utils/api";
 export default function TrialBanner() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
-  const setUser = useAuthStore((s) => s.setUser);
-  const [starting, setStarting] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   if (!user) return null;
 
@@ -59,39 +56,21 @@ export default function TrialBanner() {
   // ── Eligible for trial: observer who hasn't used it yet ──
   const isObserver = !user.tier || user.tier === "observer";
   if (isObserver && !user.trial_used) {
-    const handleStart = async () => {
-      if (!token || starting) return;
-      setStarting(true);
-      try {
-        const res = await apiFetch("/api/trial/start", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data?.error || "Failed to start trial");
-        toast.success("Signal trial activated! Enjoy 14 days of full access.");
-        // Update local user state to reflect trial
-        setUser({ ...user, trial_active: true, trial_ends_at: data.trial_ends_at, trial_used: true, tier: "signal" as any });
-      } catch (err: any) {
-        toast.error(err?.message || "Could not start trial");
-      } finally {
-        setStarting(false);
-      }
-    };
-
     return (
-      <div className="w-full px-4 py-2 text-center text-sm font-medium flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600/80 to-indigo-600/80 text-white">
-        <Sparkles className="w-4 h-4 shrink-0" />
-        <span>Try Signal free for 14 days — unlock triple-check AI, citation testing, and more</span>
-        <button
-          onClick={handleStart}
-          disabled={starting}
-          className="ml-2 px-3 py-0.5 rounded bg-white/20 hover:bg-white/30 transition-colors text-xs font-semibold disabled:opacity-50"
-          type="button"
-        >
-          {starting ? "Starting…" : "Start Free Trial"}
-        </button>
-      </div>
+      <>
+        {showModal && <FreeTrialModal onClose={() => setShowModal(false)} />}
+        <div className="w-full px-4 py-2 text-center text-sm font-medium flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600/80 to-indigo-600/80 text-white">
+          <Sparkles className="w-4 h-4 shrink-0" />
+          <span>Try Signal free for 14 days — unlock triple-check AI, citation testing, and more</span>
+          <button
+            onClick={() => setShowModal(true)}
+            className="ml-2 px-3 py-0.5 rounded bg-white/20 hover:bg-white/30 transition-colors text-xs font-semibold"
+            type="button"
+          >
+            Start Free Trial
+          </button>
+        </div>
+      </>
     );
   }
 

@@ -5,6 +5,31 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
 import { authorityCheck } from "../api";
 import type { AuthorityCheckResponse, AuthorityPlatform, ContentNature } from "@shared/types";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const DOMAIN_RATING_FAQ = [
+  {
+    question: "What is the BRA (Brand Relevance Authority) rating?",
+    answer: "BRA is AiVIS's composite citation authority score for a domain or brand entity. It aggregates signals across 18 platforms: backlink profile authority (referring domain quality and volume), content nature classification (whether your content is informational, commercial, or transactional, which affects citation type probability), cross-platform mention frequency (how often your brand is referenced outside your own domain), and trust signal density (co-citation with established authoritative sources). BRA scores range from 0-100, with scores above 60 indicating citation-ready authority across most AI answer categories.",
+  },
+  {
+    question: "How does domain authority affect AI citations specifically?",
+    answer: "AI answer engines weight citation candidates by domain trust because their training data included human editorial decisions about which sources credible publications link to. Domains with strong backlink profiles, consistent HTTPS deployment, low spam scores, and co-citation with established authoritative sources are more likely to be used as AI answer sources than similar-content domains with weak link profiles. Improving domain authority for AI purposes means the same things it means for traditional SEO: earning editorial mentions from relevant, trusted domains.",
+  },
+  {
+    question: "Why is content nature (informational vs. commercial) important?",
+    answer: "AI models calibrate citation behavior by detected query intent. For informational queries ('what is X', 'how does X work'), models strongly prefer citing informational content — explainers, definitions, guides, case studies. For commercial queries ('best X for Y', 'X vs Y'), they mix commercial and informational sources. If your domain's content is classified predominantly commercial (heavy product pages, pricing, CTAs), you may be under-cited for informational queries even with high domain authority. Adding a substantive informational content layer improves cross-intent citation probability.",
+  },
+  {
+    question: "What are the 18 platforms checked by the domain rating tool?",
+    answer: "The AiVIS authority checker evaluates your domain and brand entity across: Moz Domain Authority, Ahrefs-equivalent link metrics, Majestic Trust/Citation Flow, Semrush Authority Score, Wikipedia entity presence, Wikidata entity record, LinkedIn company page, Google Knowledge Graph, Bing entity index, Reddit brand discussions, ProductHunt listing, GitHub presence (for tech brands), media mentions (news index), SchemaApp entity resolution, Crunchbase, G2/Capterra review presence, academic citing (Google Scholar), and government/EDU co-citation where applicable. Each platform that recognizes your entity adds a positive signal to the composite BRA score.",
+  },
+  {
+    question: "How do I improve a low BRA score?",
+    answer: "The highest-ROI actions for improving BRA are: (1) earning editorial mentions from topically relevant sites with authority scores above 30, (2) creating a Wikipedia or Wikidata entity record if your brand qualifies for notability criteria, (3) publishing original research, data, or statements that credible publications have a reason to cite, (4) registering and completing profiles on the 18 authority platforms the checker evaluates, and (5) generating sustained non-paid coverage in industry publications — three to five mentions per quarter consistently outperforms single viral mentions in long-term BRA improvement.",
+  },
+];
 
 /* ── helpers ──────────────────────────────────────────────────────────── */
 
@@ -81,6 +106,14 @@ export default function DomainRatingPage() {
     description:
       "Measure your brand's citation authority across 18 platforms. See backlinks, content nature, authority scores, and trust signals in one evidence-backed report.",
     path: "/app/domain-rating",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/app/domain-rating",
+        name: "Domain Authority Checker \u2014 AiVIS BRA Rating",
+        description: "Measure your brand's citation authority across 18 platforms including Moz, Ahrefs, Wikipedia, LinkedIn, and Google Knowledge Graph. Free domain rating and trust signal check.",
+      }),
+      buildFaqSchema(DOMAIN_RATING_FAQ, { path: "/app/domain-rating" }),
+    ],
   });
 
   const [target, setTarget] = useState("");
@@ -422,6 +455,12 @@ export default function DomainRatingPage() {
           <p className="text-xs text-white/25">Results include citations, backlinks, content nature, and trust signals.</p>
         </div>
       )}
+
+      <PageQASection
+        items={DOMAIN_RATING_FAQ}
+        heading="Understanding domain authority for AI citations"
+        className="mt-6"
+      />
     </div>
   );
 }

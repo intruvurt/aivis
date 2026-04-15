@@ -13,6 +13,32 @@ import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
 import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const GSC_FAQ = [
+  {
+    question: "What is Search Console Intelligence and how is it different from Google Search Console?",
+    answer: "Google Search Console shows you raw performance data: impressions, clicks, CTR, and position for your pages in Google Search. AiVIS Search Console Intelligence takes that same data and runs it through a pattern analysis layer that identifies: pages with declining CTR that need answer-block optimization, queries where your page ranks highly but doesn't drive clicks (a sign that a featured snippet or AI Overview is intercepting traffic before the click), keyword clusters where your content ranks but competitors' AI-optimized content is outperforming you, and structural gaps between your GSC performance profile and AI citation readiness benchmarks.",
+  },
+  {
+    question: "What does 'declining CTR' in the GSC analysis mean for AI visibility?",
+    answer: "Declining CTR means your page is appearing in search results but fewer people are clicking it over time. This is often an early signal that an AI Overview, featured snippet, or competitor's direct answer result is satisfying the user intent before they need to click through. For AI visibility strategy, declining CTR pages are high-priority candidates for answer-block restructuring — if your content structure is improved, your page may be selected as the AI Overview source rather than being bypassed by it.",
+  },
+  {
+    question: "What is a CTR opportunity and how is it detected?",
+    answer: "A CTR opportunity is a query where your page ranks in the top 10 but has a CTR significantly below the average for that rank position. This typically means your title tag and meta description are not compelling the click, or that an AI-generated result is handling the query without a click. The GSC Intelligence tool surfaces these by comparing your actual CTR to rank-position benchmarks and flagging gaps of more than 1.5 standard deviations. These queries are candidates for content refreshes with stronger direct answers that may improve both CTR and AI citation probability.",
+  },
+  {
+    question: "What does 'AI Overview intercept' mean?",
+    answer: "An AI Overview intercept is a query where your page appears in regular search results but an AI-generated answer box (from Google's AI Overview, formerly SGE) appears above it and answers the query directly. This suppresses your CTR because users get their answer without clicking through. Paradoxically, the way to recover is to make your content the source of that AI Overview — improving your page's answer-block structure, entity clarity, and citation eligibility so that when the AI Overview generates, it cites your page.",
+  },
+  {
+    question: "Does connecting Google Search Console require sharing login credentials?",
+    answer: "No. The AiVIS GSC integration uses Google's OAuth 2.0 flow — you authorize access through Google's official permission screen, and AiVIS receives a read-only access token that never touches your Google login credentials. AiVIS only reads performance data (queries, pages, CTR, impressions, position) and never modifies any Search Console settings or property data. You can revoke access from your Google account settings at any time independently of your AiVIS account.",
+  },
+];
+
 import { API_URL } from "../config";
 
 /* ── Types ─────────────────────────────────────────────────────── */
@@ -72,6 +98,14 @@ export default function GscConsolePage() {
     title: "Search Console Intelligence | AiVIS",
     description: "Connect Google Search Console to analyze real performance data, detect declining pages, find CTR opportunities, and generate evidence-backed recommendations.",
     path: "/gsc",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/gsc",
+        name: "Search Console Intelligence | AiVIS",
+        description: "Connect Google Search Console to detect declining CTR pages, AI Overview intercepts, and keyword opportunity gaps. Evidence-backed recommendations for AI visibility improvement.",
+      }),
+      buildFaqSchema(GSC_FAQ, { path: "/gsc" }),
+    ],
   });
 
   const user = useAuthStore((s) => s.user);
@@ -796,6 +830,12 @@ export default function GscConsolePage() {
         </Link>
       </motion.div>
       </div>
+
+      <PageQASection
+        items={GSC_FAQ}
+        heading="Understanding Search Console Intelligence for AI visibility"
+        className="mt-6"
+      />
     </div>
   );
 }

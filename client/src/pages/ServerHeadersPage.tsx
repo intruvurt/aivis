@@ -10,6 +10,8 @@ import FeatureInstruction from "../components/FeatureInstruction";
 import { checkServerHeaders } from "../api";
 import type { ServerHeadersCheckResult } from "../../../shared/types";
 import { useAnalysisStore } from "../stores/analysisStore";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 import "../styles/animations.css";
 
 /* ── History persistence ─────────────────────────────────────────── */
@@ -96,6 +98,29 @@ const FALLBACK_SAMPLES = [
   "https://developer.mozilla.org",
 ];
 
+const SERVER_HEADERS_FAQ = [
+  {
+    question: "Why do server headers matter for AI visibility?",
+    answer: "Server headers control how AI crawlers interact with your content at the HTTP layer. The most impactful headers for AI visibility are: X-Robots-Tag (controls indexing and citation eligibility for any file type), Cache-Control (affects how quickly updated content is re-indexed after you make changes), Content-Type with charset (ensures proper text parsing — malformed charset declarations can cause AI parsers to misread content), and CORS headers (affect whether browser-based AI extensions can read your page content directly). Security headers like Strict-Transport-Security also influence trust scoring in citation models.",
+  },
+  {
+    question: "What is HSTS and how does it affect AI citation?",
+    answer: "HSTS (HTTP Strict Transport Security) forces browsers and crawlers to use HTTPS for all connections to your domain. For AI citation, HSTS serves as a trust signal: pages on HTTPS-only domains with max-age of at least one year are treated as production-quality assets rather than unverified HTTP endpoints. AI platforms that incorporate domain trust into citation selection will rank HSTS-enabled origins higher than HTTP or mixed-content origins, all else equal. The recommended header is: Strict-Transport-Security: max-age=31536000; includeSubDomains.",
+  },
+  {
+    question: "What does X-Frame-Options have to do with AI?",
+    answer: "X-Frame-Options: DENY prevents your content from being embedded in iframes. While this is primarily a security control against clickjacking, it also signals to AI platforms that your origin is a production site with active security configuration. Pages with no security headers at all — no X-Frame-Options, no CSP, no HSTS — are statistically more common on low-quality or abandoned domains, so their presence or absence is part of the domain quality assessment that influences citation probability at the infrastructure level.",
+  },
+  {
+    question: "What is the Content-Security-Policy header and should I add it?",
+    answer: "Content-Security-Policy (CSP) restricts which scripts, styles, and resources can execute on your page. For AI visibility, the main benefit is indirect: CSP implementation is a strong signal of technical hygiene and indicates that a page is actively maintained by someone who cares about security, which contributes positively to domain trust scoring. A basic CSP declaration is not difficult to add for static content sites. For complex SPAs, CSP requires careful tuning to avoid blocking legitimate scripts, so start with a report-only policy before enforcing.",
+  },
+  {
+    question: "Why does the Cache-Control header affect how quickly AI citations update?",
+    answer: "Cache-Control headers tell crawlers and CDNs how long to serve a cached version of your page before re-fetching. If you make content improvements to update your AI visibility score, a max-age=86400 (24 hours) or longer cache policy means AI crawlers may not see the change for up to a day. For active AEO optimization work where you are making frequent updates, setting Cache-Control: max-age=3600 or using must-revalidate ensures your updated content is retrieved on the next crawl cycle rather than served from a stale cache.",
+  },
+];
+
 export default function ServerHeadersPage() {
   const navigate = useNavigate();
   const [url, setUrl] = useState("https://aivis.biz");
@@ -134,6 +159,14 @@ export default function ServerHeadersPage() {
     title: "Server Headers Check",
     description: "Inspect HTTP response headers for security policy, caching, and server behavior.",
     path: "/server-headers",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/server-headers",
+        name: "Server Headers Check \u2014 HTTP Security & Caching Analysis | AiVIS",
+        description: "Inspect HTTP response headers for security policy (HSTS, CSP, X-Frame-Options), caching, and server behavior affecting AI crawler access and citation eligibility.",
+      }),
+      buildFaqSchema(SERVER_HEADERS_FAQ, { path: "/server-headers" }),
+    ],
   });
 
   const securityCount = useMemo(() => {

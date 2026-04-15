@@ -9,6 +9,36 @@ import { useAuthStore } from "../stores/authStore";
 import useFeatureStatus from "../hooks/useFeatureStatus";
 import { apiFetch } from "../utils/api";
 import { TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
+import { usePageMeta } from "../hooks/usePageMeta";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const DASHBOARD_FAQ = [
+  {
+    question: "What does AI visibility mean and why does it matter?",
+    answer: "AI visibility measures how likely your website, brand, or content is to appear in AI-generated answers from platforms like ChatGPT, Perplexity, Claude, and Google AI Overview. Unlike traditional search rankings which track click positions, AI visibility tracks whether your content is being cited, mentioned, or used as source material when users ask questions in conversational AI interfaces. As AI-generated answers increasingly answer queries without a search click, brands invisible to AI answer engines lose discovery channels entirely \u2014 even if their SEO rankings remain strong.",
+  },
+  {
+    question: "How is my AI visibility score calculated?",
+    answer: "Your score is a composite of five weighted signals: citation eligibility (whether your page structure and evidence density meet thresholds for AI model citation), entity clarity (how precisely AI models can identify who you are and what you do), answer extractability (whether your content contains direct, literal answers AI can surface), authority signals (external mention volume, domain trust, and co-citation patterns), and structural readiness (schema markup, semantic HTML, crawl accessibility). Each signal is scored 0\u2013100 and weighted to produce the overall visibility score.",
+  },
+  {
+    question: "What should I do first after my initial audit?",
+    answer: "Start with the highest-impact recommendations in your audit report \u2014 typically the top three items flagged as Critical or High priority. These usually relate to entity clarity (does your homepage clearly state what your business does, for whom, and with what outcomes), answer block presence (do you have dedicated sections that directly answer common questions about your product or service), and evidence specificity (do your claims include numbers, comparisons, or verifiable facts that AI can extract as authoritative specifics). Fixing these three categories typically produces the largest score improvement in the shortest time.",
+  },
+  {
+    question: "How many scans do I get and when do they reset?",
+    answer: "Your monthly scan allocation resets on your billing cycle date. The exact count depends on your plan: Observer (free) gets 3 scans per month, Starter gets 15, Alignment gets 60, and Signal gets 110. Each scan runs the full AI visibility pipeline against one URL. Credits are not carried over between months. You can monitor your remaining scans in the dashboard header usage indicator at any time.",
+  },
+  {
+    question: "Can I scan the same URL multiple times?",
+    answer: "Yes. Re-scanning the same URL after making content or structural changes is how you measure improvement. Each scan runs a fresh analysis against the live URL, so changes you make to your page between scans are reflected in subsequent results. Running a baseline scan before making changes and a follow-up scan after is the recommended workflow for validating the impact of specific AEO improvements.",
+  },
+  {
+    question: "Where can I find my past audit results?",
+    answer: "Your audit history appears in the Recent Audits section of the dashboard and in the full Audit History view (linked from the sidebar). Each audit shows the URL, the date analyzed, and the visibility score at the time of the scan. Clicking into any past audit opens the full report with the original analysis, recommendations, and evidence breakdown \u2014 even if the page has changed since. Report history retention depends on your plan tier.",
+  },
+];
 
 type AuditRecord = {
   _id?: string;
@@ -89,6 +119,20 @@ export default function Dashboard() {
   const { status: featureStatus } = useFeatureStatus();
   const scansUsed = Number(featureStatus?.usage?.usedThisMonth ?? 0);
   const scansLimit = Number(featureStatus?.usage?.monthlyLimit ?? TIER_LIMITS[uiTier].scansPerMonth);
+
+  usePageMeta({
+    title: "Dashboard",
+    description: "Your AI visibility command center. Monitor scan usage, review recent audits, track scores, and access all AI optimization tools from one place.",
+    path: "/dashboard",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/dashboard",
+        name: "AI Visibility Dashboard | AiVIS",
+        description: "Monitor your AI visibility scores, manage audits, track usage, and access citation testing, competitor tracking, and answer engineering tools.",
+      }),
+      buildFaqSchema(DASHBOARD_FAQ, { path: "/dashboard" }),
+    ],
+  });
 
   useEffect(() => {
     const run = async () => {
@@ -471,6 +515,11 @@ export default function Dashboard() {
         )}
       </section>
       )}
+      <PageQASection
+        items={DASHBOARD_FAQ}
+        heading="Understanding AI visibility for your site"
+        className="mt-6"
+      />
     </AppPageFrame>
   );
 }

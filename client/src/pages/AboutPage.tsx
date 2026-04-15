@@ -373,7 +373,7 @@ export default function AboutPage() {
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src="/marketer.png"
-                    alt="Danielle C. Mason, AiVIS Marketing"
+                    alt="Danielle C. M, AiVIS Marketing"
                     width={56}
                     height={56}
                     className="w-14 h-14 rounded-full object-cover border border-cyan-400/20 shadow-lg shadow-cyan-500/10"

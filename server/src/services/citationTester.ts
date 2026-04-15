@@ -360,7 +360,7 @@ function hasDomainMentionInSources(sourcesText: string, hostname: string): boole
   return sourceLines.some((line) => line === hostname || line.includes(hostname));
 }
 
-function containsNegativeMentionContext(responseLower: string, brandName: string, hostname: string): boolean {
+export function containsNegativeMentionContext(responseLower: string, brandName: string, hostname: string): boolean {
   const negativePhrases = [
     'could not find',
     "couldn't find",
@@ -452,7 +452,7 @@ function findCompetitorMentions(response: string, competitorUrls: string[]): str
   return mentioned;
 }
 
-function excerptHasSubstantiveSupport(excerpt: string, brandName: string, hostname: string): boolean {
+export function excerptHasSubstantiveSupport(excerpt: string, brandName: string, hostname: string): boolean {
   if (!excerpt || excerpt.length < MIN_SUBSTANTIVE_EXCERPT_LENGTH) {
     return false;
   }

@@ -17,6 +17,10 @@ export const TRACKING_CONCURRENCY = 5;
 export type TrackingModelResponse = {
   model: string;
   text: string;
+  /** 'ai' means a real LLM produced this text.
+   *  'serp' means it is SERP snippet data (not an AI answer) — used only for
+   *  SERP-presence scoring, never for AI citation detection. */
+  source_type: 'ai' | 'serp';
 };
 
 export type CreateTrackingProjectInput = {
@@ -179,6 +183,7 @@ async function runOpenRouterModel(query: string, model: string, modelLabel: stri
     return {
       model: modelLabel,
       text,
+      source_type: 'ai' as const,
     };
   } finally {
     clearTimeout(timeout);
@@ -206,6 +211,7 @@ async function runSerpFallback(query: string, domain: string): Promise<TrackingM
   return {
     model: 'serp-fallback',
     text: lines.join('\n'),
+    source_type: 'serp' as const,
   };
 }
 
@@ -505,8 +511,20 @@ export async function saveTrackingResult(params: {
   domain: string;
   competitorDomains: string[];
 }): Promise<void> {
-  const parsed = extractMentions(params.text, params.domain);
-  const competitorHits = competitorMentions(params.text, parsed.urls, params.competitorDomains);
+  // SERP-fallback rows contain search-engine snippet text, NOT AI-generated answers.
+  // Applying mention-detection to this text inflates citation scores with search ranking
+  // signals that have nothing to do with AI citation behaviour.  Store the raw SERP text
+  // for reference but record it with neutral mention/cited/position values so it never
+  // contributes to AI visibility or citation-rate calculations.
+  const isSerp = params.model === 'serp-fallback';
+
+  const parsed = isSerp
+    ? { mentioned: false, cited: false, position: null, urls: [] as string[] }
+    : extractMentions(params.text, params.domain);
+
+  const competitorHits = isSerp
+    ? {}
+    : competitorMentions(params.text, parsed.urls, params.competitorDomains);
 
   const inserted = await getPool().query(
     `INSERT INTO tracking_results (
@@ -528,13 +546,16 @@ export async function saveTrackingResult(params: {
 
   const resultId = String(inserted.rows[0].id);
 
-  for (const url of parsed.urls) {
-    const citationDomain = extractUrlDomain(url);
-    if (!citationDomain) continue;
-    await getPool().query(
-      `INSERT INTO tracking_citations (result_id, url, domain) VALUES ($1, $2, $3)`,
-      [resultId, url, citationDomain],
-    );
+  // Only write citation URL rows for real AI model responses.
+  if (!isSerp) {
+    for (const url of parsed.urls) {
+      const citationDomain = extractUrlDomain(url);
+      if (!citationDomain) continue;
+      await getPool().query(
+        `INSERT INTO tracking_citations (result_id, url, domain) VALUES ($1, $2, $3)`,
+        [resultId, url, citationDomain],
+      );
+    }
   }
 }
 
@@ -592,6 +613,10 @@ export async function computeRunInsightsForUser(userId: string, runId: string): 
   }>();
 
   for (const row of rows) {
+    // Skip SERP-fallback rows — they carry search-snippet text, not AI answers,
+    // and should never contribute to AI visibility or citation score calculations.
+    if (row.model === 'serp-fallback') continue;
+
     const key = String(row.query_id);
     const current = byQuery.get(key) || {
       query: String(row.query),
@@ -968,15 +993,90 @@ async function saveEntitySnapshot(params: {
   );
 }
 
-// Jaccard word similarity — description consistency proxy without embeddings
-function jaccardSimilarity(a: string, b: string): number {
+// ── Semantic similarity ─────────────────────────────────────────────────────
+//
+// TF-IDF cosine similarity with bigram augmentation.
+// Replaces the old Jaccard word-overlap approach which had ~30 % false-positive
+// rate because it treated "AI-powered SaaS platform" and "machine-learning
+// software-as-a-service solution" as completely different (0 overlap).
+//
+// How it works:
+//  1. Tokenise into lowercased word unigrams + consecutive bigrams (2-word pairs).
+//  2. Apply a compact stopword filter so common words don't dominate cosine.
+//  3. Build a TF (term-frequency) map per document.
+//  4. Build a corpus-level IDF using the mini-set of documents being compared
+//     so that words appearing in every description get down-weighted.
+//  5. Compute TF-IDF weight per token, then cosine similarity across two vectors.
+//
+// Result: two descriptions that share different words but carry the same meaning
+// score much higher than with Jaccard because bigrams capture phrase patterns.
+
+const STOPWORDS = new Set([
+  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'been', 'but', 'by', 'do', 'for', 'from',
+  'has', 'have', 'how', 'in', 'is', 'it', 'its', 'not', 'of', 'on', 'or', 'our', 'so',
+  'than', 'that', 'the', 'they', 'this', 'to', 'up', 'was', 'we', 'were', 'what',
+  'when', 'which', 'who', 'will', 'with', 'you', 'your', 'i', 'my', 'he', 'she',
+  'his', 'her', 'their', 'also', 'can', 'get', 'if', 'into', 'more', 'no', 'one',
+  'only', 'over', 'some', 'such', 'there', 'use', 'used', 'using', 'very', 'about',
+]);
+
+function tokenise(text: string): string[] {
+  const raw = text.toLowerCase().split(/\W+/).filter((w) => w.length > 2 && !STOPWORDS.has(w));
+  const tokens = [...raw];
+  // Add bigrams for phrase-level matching
+  for (let i = 0; i < raw.length - 1; i++) {
+    tokens.push(`${raw[i]}__${raw[i + 1]}`);
+  }
+  return tokens;
+}
+
+function buildTF(tokens: string[]): Map<string, number> {
+  const tf = new Map<string, number>();
+  for (const t of tokens) tf.set(t, (tf.get(t) ?? 0) + 1 / tokens.length);
+  return tf;
+}
+
+function tfidfCosineSimilarity(a: string, b: string, idf?: Map<string, number>): number {
   if (!a || !b) return 0;
-  const wordsA = new Set(a.toLowerCase().split(/\W+/).filter((w) => w.length > 3));
-  const wordsB = new Set(b.toLowerCase().split(/\W+/).filter((w) => w.length > 3));
-  if (!wordsA.size || !wordsB.size) return 0;
-  const intersection = new Set([...wordsA].filter((w) => wordsB.has(w)));
-  const union = new Set([...wordsA, ...wordsB]);
-  return intersection.size / union.size;
+  const tokA = tokenise(a);
+  const tokB = tokenise(b);
+  if (!tokA.length || !tokB.length) return 0;
+
+  const tfA = buildTF(tokA);
+  const tfB = buildTF(tokB);
+
+  // Build union vocabulary
+  const vocab = new Set([...tfA.keys(), ...tfB.keys()]);
+
+  let dot = 0, normA = 0, normB = 0;
+  for (const term of vocab) {
+    const idfW = idf?.get(term) ?? 1;
+    const wa = (tfA.get(term) ?? 0) * idfW;
+    const wb = (tfB.get(term) ?? 0) * idfW;
+    dot += wa * wb;
+    normA += wa * wa;
+    normB += wb * wb;
+  }
+  if (!normA || !normB) return 0;
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+/**
+ * Build a mini corpus-level IDF from a set of documents.
+ * Terms that appear in every document get IDF ≈ 0 (log(1)=0 → we floor at 0.1).
+ */
+function buildCorpusIDF(docs: string[]): Map<string, number> {
+  const N = docs.length;
+  const df = new Map<string, number>();
+  for (const doc of docs) {
+    const unique = new Set(tokenise(doc));
+    for (const t of unique) df.set(t, (df.get(t) ?? 0) + 1);
+  }
+  const idf = new Map<string, number>();
+  for (const [term, count] of df) {
+    idf.set(term, Math.max(0.1, Math.log((N + 1) / (count + 1)) + 1));
+  }
+  return idf;
 }
 
 function computeCategoryConsistency(categories: string[]): number {
@@ -994,11 +1094,15 @@ function computeCategoryConsistency(categories: string[]): number {
 function computeDescriptionConsistency(descriptions: string[]): number {
   const valid = descriptions.filter(Boolean);
   if (valid.length < 2) return valid.length === 1 ? 1 : 0;
+
+  // Build IDF on the mini-corpus so repeated filler words don't dominate
+  const idf = buildCorpusIDF(valid);
+
   let total = 0;
   let count = 0;
   for (let i = 0; i < valid.length; i++) {
     for (let j = i + 1; j < valid.length; j++) {
-      total += jaccardSimilarity(valid[i], valid[j]);
+      total += tfidfCosineSimilarity(valid[i], valid[j], idf);
       count++;
     }
   }
@@ -1090,14 +1194,16 @@ export async function getEntityClarityForRun(userId: string, runId: string): Pro
     (recognition_rate * 0.4 + category_consistency * 0.3 + description_consistency * 0.2 + avg_confidence * 0.1) * 100,
   );
 
-  // Authority signals from run metrics
+  // Authority signals from run metrics — exclude serp-fallback rows which store
+  // SERP snippet text (not AI answers) and always have mentioned=false/cited=false
+  // to avoid misleadingly deflating the rates.
   const metricsRes = await getPool().query(
     `SELECT
        COUNT(*) FILTER (WHERE mentioned)::float / NULLIF(COUNT(*), 0) AS mention_rate,
        COUNT(*) FILTER (WHERE cited)::float / NULLIF(COUNT(*), 0) AS citation_rate,
        AVG(CASE WHEN position IS NOT NULL THEN 1.0 / NULLIF(position, 0) ELSE 0 END) AS avg_pos_score
      FROM tracking_results
-     WHERE run_id = $1`,
+     WHERE run_id = $1 AND model != 'serp-fallback'`,
     [runId],
   );
   const m = metricsRes.rows[0] || {};

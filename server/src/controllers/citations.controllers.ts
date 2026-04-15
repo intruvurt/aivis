@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import { getPool } from '../services/postgresql.js';
 import { sanitizeHtmlServer } from '../middleware/securityMiddleware.js';
 import { generateQueries, prioritizeQueries } from '../services/queryGenerator.js';
-import { testMultipleQueries, calculateCitationSummary, buildCitationPrompt } from '../services/citationTester.js';
+import { testMultipleQueries, calculateCitationSummary, buildCitationPrompt, excerptHasSubstantiveSupport, containsNegativeMentionContext } from '../services/citationTester.js';
 import type { CitationTest, AICitationResult } from '../../../shared/types.js';
 import {
   runNicheRanking,
@@ -1827,10 +1827,36 @@ async function runCitationTestAsync(
     }
 
     for (const citationResult of allCitationResults) {
-      // Check entity blocklist for false positive detection
-      const isFalsePositive = entityFp && entityBl.length > 0
-        ? matchesBlocklist(`${citationResult.excerpt || ''} ${citationResult.query}`, entityBl).blocked
+      const excerpt = citationResult.excerpt || '';
+      const query = citationResult.query || '';
+
+      // --- Strengthened false-positive detection ---
+      // A result is a false positive when any of the following conditions hold:
+      //   1. Entity blocklist match (entity name collision with a known false entity)
+      //   2. The excerpt contains a negative mention context ("could not find X", etc.)
+      //   3. The site was "mentioned" but the excerpt has no substantive support
+      //      (too short, no brand/host hit, no meaningful verbs)
+      //   4. Low quality score on a claimed mention (mention_quality_score < 15)
+      const blocklistHit = entityFp && entityBl.length > 0
+        ? matchesBlocklist(`${excerpt} ${query}`, entityBl).blocked
         : false;
+
+      const negativeContext = citationResult.mentioned
+        ? containsNegativeMentionContext(excerpt.toLowerCase(), brandName, entityDomain)
+        : false;
+
+      const lacksSubstantiveSupport = citationResult.mentioned
+        ? !excerptHasSubstantiveSupport(excerpt, brandName, entityDomain)
+        : false;
+
+      const qualityScore = computeMentionQuality(
+        Boolean(citationResult.mentioned),
+        Number(citationResult.position || 0),
+        String(excerpt),
+      );
+      const lowQualityMention = Boolean(citationResult.mentioned) && qualityScore < 15;
+
+      const isFalsePositive = blocklistHit || negativeContext || lacksSubstantiveSupport || lowQualityMention;
 
       await pool.query(
         `INSERT INTO citation_results (citation_test_id, query, platform, mentioned, position, excerpt, competitors_mentioned, mention_quality_score, is_false_positive)
@@ -1841,9 +1867,9 @@ async function runCitationTestAsync(
           citationResult.platform,
           citationResult.mentioned,
           citationResult.position,
-          citationResult.excerpt,
+          excerpt,
           JSON.stringify(citationResult.competitors_mentioned),
-          computeMentionQuality(Boolean(citationResult.mentioned), Number(citationResult.position || 0), String(citationResult.excerpt || '')),
+          qualityScore,
           isFalsePositive,
         ]
       );

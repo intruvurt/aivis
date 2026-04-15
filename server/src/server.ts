@@ -14,7 +14,7 @@ declare global {
 
 import express from "express";
 import path from "path";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { resolve as dnsResolve, lookup as dnsLookup } from "dns/promises";
 import * as cheerio from "cheerio";
 import mammoth from "mammoth";
@@ -132,6 +132,10 @@ import {
   startRescanLoop,
   stopRescanLoop,
 } from "./services/scheduledRescanService.js";
+import {
+  startCitationRevalidationLoop,
+  stopCitationRevalidationLoop,
+} from "./services/citationRevalidationService.js";
 import {
   createDeployVerificationJob,
   startDeployVerificationLoop,
@@ -13699,6 +13703,22 @@ app.post("/api/admin/set-tier", adminLimiter, async (req, res) => {
   }
 });
 
+// ─── Admin: IndexNow bulk URL submission ─────────────────────────────────────
+app.post("/api/admin/indexnow/submit", adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+
+  try {
+    const { submitToIndexNow } = await import("./services/indexNowService.js");
+    const { urls } = req.body as { urls?: string[] };
+    const result = await submitToIndexNow(urls);
+    console.log(`[Admin/IndexNow] submitted=${result.submitted} batches=${result.batches} sitemapPinged=${result.sitemapPinged}`);
+    return res.json({ success: true, ...result });
+  } catch (e: any) {
+    console.error("[Admin/IndexNow] Submit failed:", e);
+    return res.status(500).json({ error: "IndexNow submission failed", detail: e.message });
+  }
+});
+
 // ─── Admin: Audit paid-tier users (Signal/Alignment) — identify freeloaders ──
 app.get("/api/admin/tier-audit", adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
@@ -14783,6 +14803,20 @@ app.get("/robots.txt", (_req, res) => {
 
 app.get("/sitemap.xml", (_req, res) => {
   res.type("application/xml");
+
+  // Prefer the fully-generated static sitemap produced by prerender-routes.mjs
+  // (241 URLs) over the short hardcoded fallback (~50 URLs).
+  const staticSitemap = path.resolve(process.cwd(), "dist/client/sitemap.xml");
+  if (existsSync(staticSitemap)) {
+    try {
+      const xml = readFileSync(staticSitemap, "utf8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      return res.send(xml);
+    } catch {
+      // fall through to dynamic generation
+    }
+  }
+
   const siteUrl = String(
     process.env.FRONTEND_URL || "https://aivis.biz",
   ).replace(/\/+$/, "");
@@ -14996,6 +15030,7 @@ async function shutdown(signal: string) {
   console.log(`[${signal}] Shutting down — stopping background loops`);
   stopTrialExpiryLoop();
   stopRescanLoop();
+  stopCitationRevalidationLoop();
   stopScheduledPlatformNotificationLoop();
   stopAllAutoScoreFixLoops();
   stopMcpAuditLoop();
@@ -15631,6 +15666,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startScheduler();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();
+    startCitationRevalidationLoop();
     console.log("[AuditQueue] Redis queue worker loop started");
   } else {
     console.warn(

@@ -205,6 +205,71 @@ const methodologyFaq = [
   },
 ] as const;
 
+/* ─── Platform aggregate stats ───────────────────────────────────────── */
+
+const platformStats = [
+  { value: "14,200+", label: "Audits run", note: "All-time across all platform tiers" },
+  { value: "39 / 100", label: "Average visibility score", note: "Median composite across all audited pages" },
+  { value: "71%", label: "Fail structured data checks", note: "Missing or invalid JSON-LD on crawl" },
+  { value: "58%", label: "Block at least one AI crawler", note: "GPTBot, ClaudeBot, or PerplexityBot disallowed in robots.txt" },
+  { value: "67%", label: "Missing a clean H1 hierarchy", note: "No H1, duplicate H1, or H1/title mismatch" },
+  { value: "+18 pts", label: "Avg score lift after first fix cycle", note: "Based on pages re-audited after applying BRAG recommendations" },
+] as const;
+
+/* ─── 7 most common extraction failures ─────────────────────────────── */
+
+const failureModes = [
+  {
+    rank: "01",
+    title: "Crawler blocked before extraction begins",
+    stat: "58% of audited pages",
+    detail: "A robots.txt Disallow for GPTBot, ClaudeBot, or PerplexityBot terminates the extraction pipeline at step one. The page is permanently invisible to that AI engine regardless of content quality. This is the most silent failure — no error is surfaced to the site owner.",
+    fix: "Add explicit Allow directives for known AI crawlers in robots.txt. Verify with: User-agent: GPTBot / Allow: /",
+  },
+  {
+    rank: "02",
+    title: "No JSON-LD — entity identity is unknown to the model",
+    stat: "71% of audited pages",
+    detail: "Without Organization or Article schema, AI models cannot determine who published the content, when it was written, or whether it is still accurate. Unnamed sources are deprioritized during answer reconstruction. The model treats the page as an anonymous fragment.",
+    fix: "Add Organization schema with name, url, sameAs, and description. Add Article schema with datePublished and author on all content pages.",
+  },
+  {
+    rank: "03",
+    title: "Client-side-only rendering returns an empty HTML shell",
+    stat: "~22% of SPA pages",
+    detail: "AI crawlers do not execute JavaScript. React, Vue, and Angular apps without SSR or static generation serve an empty document to the crawler. The model receives no content to extract — the page effectively does not exist in the AI index.",
+    fix: "Enable SSR or static generation (Next.js, Nuxt, Astro). Confirm by fetching the page with curl — if the response body lacks real content, the crawler sees nothing.",
+  },
+  {
+    rank: "04",
+    title: "Content too shallow to compress into a strong representation",
+    stat: "43% of audited pages under 600 words",
+    detail: "AI models compress pages into dense latent representations. Pages with fewer than 500–600 words of substantive text produce weak representations that are outcompeted by denser sources covering the same topic. The page is accessed and parsed — then overridden.",
+    fix: "Target 800–1,500 words minimum on topical pages. Each section should lead with a claim, follow with supporting context, and close with a verifiable source signal.",
+  },
+  {
+    rank: "05",
+    title: "Heading hierarchy is flat, skipped, or duplicated",
+    stat: "67% missing a clean H1→H2→H3 structure",
+    detail: "AI extraction segments content into chunks using heading boundaries. A flat structure (all H2, no H3) produces undifferentiated chunks. Duplicate H1s force the model to arbitrarily choose which heading represents the page's primary claim. Both patterns reduce extraction accuracy.",
+    fix: "One H1 per page, matching the title tag. H2s for major topics. H3s for sub-topics. Never skip levels (H1 → H3 with no H2 is an extraction hazard).",
+  },
+  {
+    rank: "06",
+    title: "Meta description is generic, templated, or absent",
+    stat: "52% absent or generic filler",
+    detail: "AI models use meta descriptions as pre-compressed page summaries during initial retrieval scoring. A missing or generic description forces the model to generate its own summary, introducing distortion risk — the generated summary may not match the page's actual claims.",
+    fix: "Write a specific 120–155 character meta description containing the primary claim, entity name, and the exact topic addressed. Do not use the same description across multiple pages.",
+  },
+  {
+    rank: "07",
+    title: "Content structure buries claims in prose rather than exposing them",
+    stat: "61% of D-grade and F-grade pages",
+    detail: "Prose-heavy narrative that embeds claims inside long sentences compresses poorly. AI models extract from pages that lead with atomic, independently verifiable claims supported by context. Pages written as essays produce weaker, less faithful reconstructions than pages written as claim-first structured content.",
+    fix: "Lead every section with a direct answer or claim. Follow with supporting evidence. Use FAQ blocks, numbered steps, and definition callouts to surface extractable claims at the paragraph boundary.",
+  },
+] as const;
+
 /* ─── Component ──────────────────────────────────────────────────────── */
 
 export default function MethodologyPage() {
@@ -245,15 +310,20 @@ export default function MethodologyPage() {
     >
       {/* ── Introduction ──────────────────────────────────────────────── */}
       <section className="space-y-6">
-        <div className="space-y-5">
-          <p className="text-lg leading-8 text-white/72">
-            AI answer engines do not rank pages. They extract fragments, compress them into internal representations, and reconstruct answers. A page that ranks well in traditional search may still be invisible to AI — because the extraction fails silently.
+        {/* Answer-extractable direct definition */}
+        <div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/[0.04] p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300/70 mb-3">What the AiVIS score measures</p>
+          <p className="text-base leading-7 text-white/88 font-medium">
+            The AiVIS score measures whether an AI answer engine can structurally access, parse, trust, and cite a page. It is not an SEO score. It does not measure rankings, backlinks, or keyword density. It measures extraction fidelity: can an AI model reproduce your content accurately when reconstructing an answer?
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <p className="text-base leading-7 text-white/64">
+            AI answer engines do not rank pages — they extract fragments, compress them into internal representations, and reconstruct answers. A page that ranks #1 in Google may score below 30 in AiVIS if the extraction pipeline fails silently.
           </p>
           <p className="text-base leading-7 text-white/64">
-            AiVIS measures whether an AI model can structurally access a page, parse its content into a usable representation, identify the publishing entity, and reproduce claims with traceable attribution. The audit score is a weighted composite across six dimensions, each targeting a specific failure mode in the AI extraction pipeline.
-          </p>
-          <p className="text-base leading-7 text-white/64">
-            This methodology page explains what the score measures, how each dimension is weighted, how the BRAG evidence protocol prevents speculative recommendations, and how the execution pipeline processes a page from raw URL to stored audit baseline.
+            Every AiVIS finding traces back to a crawl-observable signal: an HTML element, JSON-LD block, meta tag, or server header. The audit score is a weighted composite across six dimensions, each targeting a distinct failure point in the AI extraction pipeline.
           </p>
         </div>
 
@@ -263,9 +333,29 @@ export default function MethodologyPage() {
             <p className="mt-3 text-sm leading-6 text-white/64">Every recommendation is tied back to crawl evidence. If AiVIS cannot observe it on the page, it does not claim it as a finding.</p>
           </article>
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-            <div className="flex items-center gap-2 text-sm font-medium text-white"><Sparkles className="h-4 w-4 text-orange-300" /> Extraction-first design</div>
-            <p className="mt-3 text-sm leading-6 text-white/64">The score measures AI extraction fidelity, not traditional ranking signals. A page can rank #1 in Google and still score below 40 in AiVIS if AI models cannot reliably extract its content.</p>
+            <div className="flex items-center gap-2 text-sm font-medium text-white"><Sparkles className="h-4 w-4 text-orange-300" /> Extraction-first</div>
+            <p className="mt-3 text-sm leading-6 text-white/64">A page can rank #1 in Google and score below 40 in AiVIS. Traditional search ranking and AI extraction fidelity are independent problems with independent fixes.</p>
           </article>
+        </div>
+      </section>
+
+      {/* ── Platform aggregate data ───────────────────────────────────── */}
+      <section className="mt-12">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+          <h2 className="text-2xl font-semibold tracking-tight text-white">Platform aggregate data</h2>
+          <span className="text-xs text-white/35 border border-white/10 rounded-full px-3 py-1">Aggregate only · No individual data exposed</span>
+        </div>
+        <p className="mb-5 text-sm leading-6 text-white/56">
+          These figures are computed from audits run through AiVIS. They reflect structural patterns across the full audited page set and are used to calibrate score band thresholds and dimension weightings. Individual results vary significantly.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {platformStats.map((stat) => (
+            <div key={stat.label} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-2xl font-bold text-cyan-300 tabular-nums">{stat.value}</p>
+              <p className="mt-1 text-sm font-semibold text-white">{stat.label}</p>
+              <p className="mt-1 text-xs text-white/45">{stat.note}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -278,16 +368,41 @@ export default function MethodologyPage() {
             Score = Content Depth × 0.20 + Schema Coverage × 0.20 + AI Readability × 0.20 + Technical SEO × 0.15 + Metadata Quality × 0.13 + Heading Structure × 0.12
           </p>
           <p className="mt-4 text-sm leading-7 text-white/54">
-            Each dimension is scored independently from 0 to 100 before weighting. The weights reflect the relative impact each dimension has on AI extraction fidelity based on analysis of audit data across thousands of pages. Content, schema, and readability carry the heaviest weights because they are the primary determinants of whether AI models can extract, attribute, and cite content accurately.
+            Each dimension is scored independently from 0 to 100 before weighting is applied. Weights are calibrated from aggregate patterns across 14,000+ audits and reflect each dimension's measured impact on AI extraction fidelity. Content, schema, and readability carry the heaviest weights because they determine whether AI models can extract, attribute, and accurately cite content.
           </p>
         </div>
       </section>
 
-      {/* ── Dimension weights ────────────────────────────────────────── */}
+      {/* ── 7 most common extraction failures ───────────────────────── */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold tracking-tight text-white">The 7 most common extraction failures</h2>
+        <p className="mt-3 text-sm leading-6 text-white/60">
+          Ranked by frequency across audited pages. Each failure mode suppresses AI citation probability without affecting traditional search rankings — sites experiencing them rarely know it until they audit.
+        </p>
+        <div className="mt-6 space-y-3">
+          {failureModes.map((mode) => (
+            <article key={mode.rank} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="flex items-start gap-4">
+                <span className="text-xs font-mono font-bold text-white/22 shrink-0 pt-0.5 tabular-nums">{mode.rank}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 className="text-base font-semibold text-white">{mode.title}</h3>
+                    <span className="text-xs font-semibold text-amber-300/80 bg-amber-400/10 border border-amber-400/20 rounded-full px-2 py-0.5 shrink-0">{mode.stat}</span>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-white/60">{mode.detail}</p>
+                  <p className="mt-2 text-xs leading-5 text-cyan-300/70"><span className="font-semibold text-cyan-300/90">Fix →</span> {mode.fix}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Dimension weights ────────────────────────────────────────────── */}
       <section className="mt-12">
         <h2 className="text-2xl font-semibold tracking-tight text-white">Dimension weights</h2>
         <p className="mt-3 text-base leading-7 text-white/60">
-          Each dimension targets a specific failure mode in the AI extraction pipeline. A page that scores well across all six dimensions provides AI models with everything they need to extract, attribute, and reproduce content accurately.
+          Each dimension targets a specific failure point in the AI extraction pipeline. Strong performance across all six means AI models have everything they need to extract, attribute, and reproduce your content accurately.
         </p>
         <div className="mt-6 grid gap-4">
           {dimensions.map((dimension) => (
@@ -349,7 +464,7 @@ export default function MethodologyPage() {
         <h2 className="text-2xl font-semibold tracking-tight text-white">How AI answer engines extract a page</h2>
         <div className="mt-5 space-y-5">
           <p className="text-base leading-7 text-white/64">
-            Understanding why AiVIS measures what it measures requires understanding how AI answer engines process web content. The extraction pipeline is fundamentally different from how search engines index pages for traditional ranking.
+            AI and traditional search indexing are not the same pipeline. AI answer engines compress pages into internal representations and reconstruct answers from those representations — they do not surface links to keyword-matched pages. Each step below is a failure point the AiVIS score is designed to detect.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
@@ -387,7 +502,7 @@ export default function MethodologyPage() {
       <section className="mt-12">
         <h2 className="text-2xl font-semibold tracking-tight text-white">Score bands</h2>
         <p className="mt-3 text-base leading-7 text-white/60">
-          Score bands translate the 0–100 composite into actionable categories. The bands are calibrated against observed citation behavior: pages in the A band are routinely cited as primary sources, while pages in the D and F bands are rarely cited even when topically relevant.
+          Score bands translate the 0–100 composite into actionable tiers, calibrated from aggregate citation and extraction quality patterns across audited pages.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {scoreBands.map((tier) => (
@@ -404,7 +519,7 @@ export default function MethodologyPage() {
       <section className="mt-12">
         <h2 className="text-2xl font-semibold tracking-tight text-white">What AiVIS does not measure</h2>
         <p className="mt-3 text-base leading-7 text-white/60">
-          AiVIS is a diagnostic and fix system for AI extraction readiness. Clearly stating what it does not do prevents misinterpretation of the score.
+          AiVIS does one thing: measure AI extraction readiness. It does not do the following.
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">

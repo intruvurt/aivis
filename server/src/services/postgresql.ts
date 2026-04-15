@@ -742,11 +742,19 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_score_snapshots ADD COLUMN IF NOT EXISTS trust_score NUMERIC(5,2)`,
 
             // ── Ensure audit_score_snapshots has pkey (may be missing after restore) ──
+            // Dedup first: keep the row with the latest created_at per audit_id before
+            // adding the constraint to avoid "could not create unique index" failures.
             `DO $$ BEGIN
               IF NOT EXISTS (
                 SELECT 1 FROM pg_constraint
                 WHERE conrelid = 'audit_score_snapshots'::regclass AND contype = 'p'
               ) THEN
+                -- Remove duplicate audit_id rows (keep the newest by created_at, then ctid)
+                DELETE FROM audit_score_snapshots a
+                  USING audit_score_snapshots b
+                  WHERE a.audit_id = b.audit_id
+                    AND (a.created_at < b.created_at
+                         OR (a.created_at = b.created_at AND a.ctid < b.ctid));
                 ALTER TABLE audit_score_snapshots ADD PRIMARY KEY (audit_id);
               END IF;
             END $$`,
@@ -978,7 +986,7 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_fix_outcomes_url ON fix_outcomes(url)`,
 
             // ── Ensure audits.id has a PRIMARY KEY constraint (may be missing after a
-            //    Neon restore or partial init batch) — pipeline_runs FKs require it.
+            //    partial init batch or DB restore) — pipeline_runs FKs require it.
             //    First deduplicate any orphan id collisions, then add the constraint. ──
             `DO $$ BEGIN
               IF NOT EXISTS (
@@ -1194,7 +1202,7 @@ export async function runMigrations(): Promise<void> {
       console.log(
         `[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`,
       );
-      // Batch all DDL into a single round-trip to minimize Neon compute usage
+      // Batch all DDL into a single round-trip to minimize connection overhead
       // (~200 queries → 1 query = ~99% reduction in compute time)
       const _ddl: string[] = [];
       const _q = (sql: string) => {

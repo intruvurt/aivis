@@ -933,8 +933,9 @@ export default function AnalyticsPage() {
         )}
 
         {token && hasAccess && loading && (
-          <div className="flex items-center justify-center py-20 gap-3 text-white/50">
-            <RefreshCw className="w-5 h-5 animate-spin text-orange-400" /> Loading analytics…
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-white/50">
+            <img src="/aivis-progress-spinner.png" alt="" className="h-8 w-8 animate-spin" />
+            <p className="text-sm">Loading analytics…</p>
           </div>
         )}
 

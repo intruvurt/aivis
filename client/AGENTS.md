@@ -416,7 +416,7 @@ Never expose private report internals by simply sharing internal audit IDs.
 
 ### Required server environment variables
 
-- `DATABASE_URL` - Postgres connection string
+- `DATABASE_URL` - Supabase PostgreSQL connection string (PgBouncer pooler — `sslmode=require` enforced automatically)
 - `JWT_SECRET` - JWT signing secret
 - `OPENROUTER_API_KEY` or `OPEN_ROUTER_API_KEY` - provider auth
 
@@ -426,6 +426,7 @@ Never expose private report internals by simply sharing internal audit IDs.
 - `ADMIN_KEY`
 - `OLLAMA_BASE_URL`
 - `FRONTEND_URL`
+- `DATABASE_CA_CERT` / `PG_CA_CERT` - CA cert for Railway/managed Postgres with verified SSL
 
 ### Client environment variables
 
@@ -433,6 +434,8 @@ Inside `client/.env`
 
 - `VITE_API_URL` - backend base URL
 - `VITE_SENTRY_DSN` - frontend error reporting
+- `VITE_SUPABASE_URL` - Supabase project URL (used by `client/src/utils/supabase.ts` SDK helper)
+- `VITE_SUPABASE_ANON_KEY` - Supabase anon/public key (preferred naming; legacy `VITE_SUPABASE_PUBLISHABLE_KEY` also accepted)
 
 ---
 

@@ -65,18 +65,23 @@ app.post('/api/analyze', authRequired, usageGate, incrementUsage, handler);
 ## Environment variables
 
 ### Server (required)
-- `DATABASE_URL` - Postgres connection string
+- `DATABASE_URL` - Supabase PostgreSQL connection string (PgBouncer pooler, `sslmode=require` auto-enforced)
 - `JWT_SECRET` - Signs user tokens
 - `OPEN_ROUTER_API_KEY` or `OPENROUTER_API_KEY` - AI provider auth
 
 ### Server (optional)
 - `SENTRY_DSN`, `ADMIN_KEY`, `OLLAMA_BASE_URL`, `FRONTEND_URL`
+- `DATABASE_CA_CERT` / `PG_CA_CERT` - CA cert for Railway/managed Postgres verified SSL
 
 ### Client (`client/.env`)
 - `VITE_API_URL` - Backend base URL
 - `VITE_SENTRY_DSN` - Client error tracking
+- `VITE_SUPABASE_URL` - Supabase project URL (for the browser-side Supabase JS client)
+- `VITE_SUPABASE_ANON_KEY` - Supabase anon/public key (preferred; legacy `VITE_SUPABASE_PUBLISHABLE_KEY` also accepted)
 
 ## Database
+Database is **Supabase PostgreSQL** (migrated from Neon). Server connects via `pg` Pool through the Supabase PgBouncer pooler URL (`DATABASE_URL`). The server uses the service-role password so RLS is bypassed server-side (correct). The browser-side Supabase JS client (`client/src/utils/supabase.ts`) uses the anon key and is only instantiated when both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set.
+
 Migrations auto-run at startup in [server/src/services/postgresql.ts](../server/src/services/postgresql.ts). Key tables: `users`, `user_sessions`, `usage_daily`, `analysis_cache`, `payments`, `audits`, `competitor_tracking`, `citation_tests`, `citation_results`, `licenses`, `brand_mentions`, `mention_kpi_snapshots`, `serp_snapshots`, `ner_run_entities`.
 
 ## Social listening + SERP

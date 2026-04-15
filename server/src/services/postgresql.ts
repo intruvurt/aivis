@@ -4081,8 +4081,22 @@ export async function runMigrations(): Promise<void> {
       );
 
       // Extend existing tables for entity-safe tracking
+      // NOTE: DEFAULT NULL (not FALSE) so revalidation service can find un-processed rows via IS NULL.
       _q(
-        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN DEFAULT FALSE`,
+        `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN`,
+      );
+      // Add brand_name to citation_tests (used by revalidation + false-positive gates)
+      _q(
+        `ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS brand_name TEXT`,
+      );
+      // Post-launch fix: remove erroneous DEFAULT FALSE from is_false_positive so
+      // the revalidation service can detect un-processed rows via IS NULL.
+      // Also reset rows that were silently defaulted to FALSE (never explicitly evaluated).
+      _q(
+        `ALTER TABLE citation_results ALTER COLUMN is_false_positive DROP DEFAULT`,
+      );
+      _q(
+        `UPDATE citation_results SET is_false_positive = NULL WHERE is_false_positive = FALSE AND excerpt IS NOT NULL`,
       );
       _q(
         `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS canonical_domain TEXT`,

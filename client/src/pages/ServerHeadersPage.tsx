@@ -617,6 +617,84 @@ export default function ServerHeadersPage() {
             </div>
           </div>
         ) : null}
+
+        {/* Educational: HTTP Headers & AI Crawlability */}
+        <section aria-label="About Server Headers Check" className="mt-8 space-y-6">
+          <div className="surface-structured rounded-2xl p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white">How HTTP Response Headers Affect AI Crawlability</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              This tool inspects the HTTP response headers returned by a web server and scores them across three
+              dimensions: security posture (nine headers including Content-Security-Policy, HSTS, and
+              X-Content-Type-Options), caching behaviour (Cache-Control, ETag, Expires), and AI/bot access
+              signals (X-Robots-Tag, Vary, CDN fingerprints). Response headers are evaluated before any page
+              content is parsed, which means a single header misconfiguration can silently block every AI
+              crawler on the internet — even if your robots.txt and meta tags are perfectly configured.
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
+              Security headers also function as trust signals for AI systems. A page served without
+              HSTS, lacking a Content-Security-Policy, or missing X-Content-Type-Options is rated lower on
+              technical authority indicators. AI models that incorporate web trustworthiness heuristics treat
+              security-hardened origins as higher-confidence citation sources compared to pages that return
+              no security headers at all.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — High risk</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A page that returns{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">X-Robots-Tag: noindex</code> in
+                its HTTP response headers. This header overrides any robots.txt Allow rule and any meta robots
+                tag. Every crawler — including GPTBot, ClaudeBot, and Google-Extended — will honour the
+                noindex directive and exclude the page from AI answer pools entirely.
+              </p>
+              <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+                <li>X-Robots-Tag: noindex silently blocks AI at the HTTP layer</li>
+                <li>No HSTS header — site is vulnerable to protocol downgrade attacks</li>
+                <li>Cache-Control: no-store — AI crawlers cannot cache; re-index on every visit</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — Low risk</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A page returning{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">Strict-Transport-Security: max-age=31536000</code>,{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">X-Content-Type-Options: nosniff</code>, and{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">Cache-Control: public, max-age=3600</code>.
+                No X-Robots-Tag present. AI crawlers can access, cache, and periodically re-index the page.
+                Security headers signal a well-maintained, trustworthy origin.
+              </p>
+              <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+                <li>HSTS present — enforces HTTPS, eliminates protocol downgrade risk</li>
+                <li>Cache-Control public — AI crawlers cache and re-index efficiently</li>
+                <li>No X-Robots-Tag — crawl access fully governed by robots.txt</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="surface-structured rounded-2xl p-6 space-y-4">
+            <h3 className="text-base font-semibold text-white">Key Headers That Directly Impact AI Indexing</h3>
+            <dl className="space-y-4 text-sm">
+              <div>
+                <dt className="text-white/85 font-medium"><code className="bg-white/10 px-1 rounded text-xs">X-Robots-Tag</code></dt>
+                <dd className="text-white/60 mt-1">The HTTP-level equivalent of the meta robots tag. Values of <code className="text-xs bg-white/10 px-1 rounded">noindex</code> or <code className="text-xs bg-white/10 px-1 rounded">none</code> block all crawlers. Unlike meta tags, this header applies to non-HTML resources (PDFs, images) and cannot be overridden by page-level markup.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium"><code className="bg-white/10 px-1 rounded text-xs">Cache-Control</code></dt>
+                <dd className="text-white/60 mt-1"><code className="text-xs bg-white/10 px-1 rounded">no-store</code> or <code className="text-xs bg-white/10 px-1 rounded">private</code> directives prevent AI crawlers from caching the response. Use <code className="text-xs bg-white/10 px-1 rounded">public, max-age=3600</code> or longer for static content that should be readily available for re-indexing.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium"><code className="bg-white/10 px-1 rounded text-xs">Content-Security-Policy</code></dt>
+                <dd className="text-white/60 mt-1">A well-formed CSP signals that the page has been security-reviewed. AI trust heuristics treat its presence (even a basic one) as a positive authority signal. Its absence is a flag. Start with <code className="text-xs bg-white/10 px-1 rounded">default-src &apos;self&apos;</code> and expand from there.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium"><code className="bg-white/10 px-1 rounded text-xs">Strict-Transport-Security</code></dt>
+                <dd className="text-white/60 mt-1">HSTS enforces encrypted connections and is required for any page considered for citation in security-aware AI responses. A max-age of at least 31,536,000 (one year) is the accepted minimum for production origins.</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
       </div>
     </div>
   );

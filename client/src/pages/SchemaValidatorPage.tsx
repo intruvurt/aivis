@@ -293,6 +293,89 @@ export default function SchemaValidatorPage() {
           </section>
         )}
 
+        {/* Educational: Structured Data & AI Citation Eligibility */}
+        <section aria-label="About Schema Validator" className="px-4 pb-6 space-y-6 mt-8">
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white">How Structured Data Affects AI Citation Eligibility</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              This tool evaluates nine categories of machine-readable structured data signals embedded in a
+              webpage&apos;s HTML: Organization, Article, FAQ, HowTo, Product, Breadcrumb, WebSite, WebPage,
+              and Person schemas. AI language models — including ChatGPT, Gemini, Perplexity, and Claude — use
+              structured data to identify authorship, classify content type, extract entity relationships, and
+              assess citation confidence. A page without JSON-LD schema forces AI systems to infer everything
+              from raw text, which increases the probability of misattribution, partial citations, or being
+              skipped entirely in favour of a competitor with cleaner structured signals.
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
+              Letter grades reflect schema coverage density and correctness. An{" "}
+              <strong className="text-white">A grade</strong> means broad schema coverage with all required
+              properties present. An <strong className="text-white">F grade</strong> indicates no detectable
+              structured data — the page relies entirely on AI natural-language inference, making authoritative
+              citation unlikely. Grades B through D represent partial implementations with missing required
+              fields, incomplete author declarations, or schema blocks that exist but lack the properties AI
+              parsers need to extract useful signal.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — F grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A product page with no JSON-LD. No{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">@type: &quot;Product&quot;</code>,
+                no price, no publisher, no reviews. AI models cannot reliably attribute the product name to the
+                brand. Perplexity is likely to surface a competitor&apos;s structured product page instead.
+              </p>
+              <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+                <li>No Organization or author identity — entity is unresolvable</li>
+                <li>No FAQPage — AI cannot extract Q&amp;A pairs for featured snippets</li>
+                <li>Missing BreadcrumbList — AI cannot determine topic hierarchy</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — A grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                The same page with{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">@type: &quot;Product&quot;</code>{" "}
+                (name, brand, offers, aggregateRating), an{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">Organization</code> with{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">sameAs</code> links to
+                authoritative profiles, and a{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">FAQPage</code> for common
+                questions. AI models extract brand name, price range, and FAQ answers from structured sources —
+                dramatically increasing citation accuracy and snippet frequency.
+              </p>
+              <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+                <li>Organization with sameAs — entity unambiguously identified</li>
+                <li>FAQPage — Q&amp;A pairs directly extractable</li>
+                <li>BreadcrumbList + Article — content type and hierarchy machine-readable</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h3 className="text-base font-semibold text-white">Common Schema Errors &amp; How to Fix Them</h3>
+            <dl className="space-y-4 text-sm">
+              <div>
+                <dt className="text-white/85 font-medium">Missing <code className="bg-white/10 px-1 rounded text-xs">@type</code> property</dt>
+                <dd className="text-white/60 mt-1">Every JSON-LD block must declare a type. Without it, validators and AI parsers ignore the entire block. Fix: add <code className="text-xs bg-white/10 px-1 rounded">&quot;@type&quot;: &quot;Article&quot;</code> (or the relevant type) as the first property.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Organization missing <code className="bg-white/10 px-1 rounded text-xs">sameAs</code> links</dt>
+                <dd className="text-white/60 mt-1">Without <code className="text-xs bg-white/10 px-1 rounded">sameAs</code> pointing to LinkedIn, Wikidata, or authoritative profiles, AI models cannot disambiguate your entity from others with the same name. Fix: add an array of confirmed external profile URLs.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">FAQPage with fewer than two Q&amp;A pairs</dt>
+                <dd className="text-white/60 mt-1">A FAQ block with a single entry is unlikely to trigger AI extraction or Google FAQ rich results. Aim for 3–8 clearly written question-answer pairs that address real user intent.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Article missing <code className="bg-white/10 px-1 rounded text-xs">author</code> and <code className="bg-white/10 px-1 rounded text-xs">datePublished</code></dt>
+                <dd className="text-white/60 mt-1">AI models weigh recency and authorship heavily. An Article schema without a declared author and publish date is treated as anonymous, reducing citation trust signals for time-sensitive queries.</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
         <ConversionCTA variant="free-tool" />
       </div>
     </>

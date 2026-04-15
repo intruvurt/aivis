@@ -28,6 +28,44 @@ export default function CompliancePage() {
   return (
     <PublicPageFrame icon={ShieldCheck} title="Compliance & Security" subtitle="Formal posture, controls, and current certification status for AiVIS" maxWidthClass="max-w-5xl">
       <div className="space-y-6">
+        <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-white">About This Compliance &amp; Security Page</h2>
+          <p className="text-sm text-white/75 leading-relaxed">
+            This page is the authoritative, machine-readable record of AiVIS's security posture, data-handling
+            controls, jurisdictional operating terms, and current certification status. AiVIS is an AI Visibility
+            Intelligence System built and operated by Intruvurt Labs, a company incorporated under the laws of
+            the State of Georgia, United States (postal code 30501). Every statement on this page is
+            evidence-backed and deliberately scoped to what can be independently verified. We do not publish
+            forward-looking compliance claims that lack a corresponding attestation.
+          </p>
+          <p className="text-sm text-white/75 leading-relaxed">
+            AiVIS applies layered security controls across all platform surfaces. Data transmitted between users
+            and the platform is encrypted in transit using TLS. Authenticated access controls govern all internal
+            data access paths. Application logs and security events are retained under defined operational access
+            limits. Payment data is handled exclusively by Stripe; AiVIS never stores, transmits, or processes
+            raw card details. Data handling timelines and retention schedules are governed by the Privacy Policy,
+            which is accessible from the footer of every page.
+          </p>
+          <p className="text-sm text-white/75 leading-relaxed">
+            Every audit that runs on AiVIS executes a real-time, three-layer threat intelligence scan in parallel
+            with the visibility analysis. The scan checks the target URL against the abuse.ch URLhaus malicious
+            URL database (covering known malware distribution, phishing, and command-and-control endpoints),
+            runs a Google Safe Browsing API v4 check for social engineering and malware indicators, and applies
+            hostname heuristics to detect punycode homograph attacks, raw IP hosting, suspicious URL patterns,
+            and risky top-level domains such as .tk, .ml, .cf, and .gq. Threat results are surfaced in a
+            dedicated banner on every audit report with risk levels ranging from Low to Critical.
+          </p>
+          <p className="text-sm text-white/75 leading-relaxed">
+            For data-subject rights, AiVIS supports GDPR-style operational controls — including data access,
+            correction, deletion, and export requests — processed through privacy@aivis.biz under documented
+            response timelines. Regarding certification: AiVIS does not currently claim SOC 1 Type I or SOC 2
+            Type II certification. This page will be updated when a certification or third-party attestation can
+            be evidenced. Platform disputes are subject to the exclusive jurisdiction of courts in Georgia, USA,
+            as documented in the Terms of Service. Security concerns can be reported to security@aivis.biz,
+            legal inquiries to legal@aivis.biz, and abuse reports to abuse@aivis.biz.
+          </p>
+        </section>
+
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">Current posture</h2>
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">

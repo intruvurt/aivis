@@ -334,6 +334,86 @@ export default function DomainRatingPage() {
         )}
       </AnimatePresence>
 
+      {/* Educational: Domain Authority & AI Entity Confidence */}
+      <section aria-label="About Domain Authority Checker" className="mt-8 space-y-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-white">How Cross-Platform Presence Drives AI Citation Confidence</h2>
+          <p className="text-sm text-white/75 leading-relaxed">
+            This tool measures your brand or domain's authority signal across 18 third-party platforms that AI
+            language models use as entity disambiguation anchors: Reddit, LinkedIn, Medium, Substack, GitHub,
+            Stack Overflow, Wikipedia, YouTube, G2, Trustpilot, Product Hunt, Crunchbase, TechCrunch,
+            AngelList, Hacker News, Dev.to, Quora, and Lobsters. Each platform represents a distinct type of
+            social proof — community recognition, professional presence, peer review, media coverage, or
+            developer credibility — and AI models weight these signals collectively when deciding whether a
+            named entity is concrete and citation-worthy.
+          </p>
+          <p className="text-sm text-white/75 leading-relaxed">
+            The core principle is entity disambiguation: when a user asks an AI model "what is [your brand]?"
+            or "who makes [your product]?", the model searches its knowledge graph for corroborating signals.
+            A brand detected on one platform is treated with low confidence — it could be a name collision or
+            low-authority mention. A brand with confirmed presence on five or more diverse platforms, including
+            at least one professional profile (LinkedIn, Crunchbase) and one community signal (Reddit, Product
+            Hunt, Hacker News), is treated as a high-confidence, citable entity. This is why AI models
+            consistently cite well-represented brands over technically superior but lesser-known alternatives.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — D grade (1–2 platforms)</p>
+            <p className="text-sm text-white/70 leading-relaxed">
+              A SaaS product with only a homepage and a single Twitter mention. No LinkedIn company page,
+              no GitHub organisation, no Product Hunt listing, no Crunchbase entry. AI models that query
+              for this brand find insufficient cross-platform corroboration and either skip the citation,
+              confuse the entity with a similarly named product, or produce a low-confidence answer with a
+              disclaimer that the information could not be verified.
+            </p>
+            <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+              <li>1–2 platform signals — entity treated as unverified or low-confidence</li>
+              <li>No professional profiles — cannot confirm company existence</li>
+              <li>No community signals — no independent corroboration of product claims</li>
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — A grade (8+ platforms)</p>
+            <p className="text-sm text-white/70 leading-relaxed">
+              A SaaS product with a LinkedIn company page, GitHub organisation, Product Hunt listing,
+              Crunchbase entry, G2 reviews, a Hacker News Show HN post with engagement, a Dev.to presence,
+              and a Wikipedia article or notable media coverage. AI models find consistent corroborating
+              signals across professional, community, and media surfaces and cite the brand with high
+              confidence in both informational and comparative answers.
+            </p>
+            <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+              <li>8+ platforms — entity is unambiguously identified and high-confidence</li>
+              <li>Professional + community + media mix — broad signal diversity</li>
+              <li>Peer reviews (G2, Trustpilot) — social proof for product-specific citations</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+          <h3 className="text-base font-semibold text-white">Understanding Your Authority Score</h3>
+          <dl className="space-y-4 text-sm">
+            <div>
+              <dt className="text-white/85 font-medium">Grade A (80–100) — Strong entity signal</dt>
+              <dd className="text-white/60 mt-1">Your brand is present across multiple diverse platforms, including at least one authoritative professional profile and one or more community or media mentions. AI models are likely to cite you as a directly named entity in answers that involve your category or use case.</dd>
+            </div>
+            <div>
+              <dt className="text-white/85 font-medium">Grade B–C (50–79) — Moderate signal, room to grow</dt>
+              <dd className="text-white/60 mt-1">Presence on several platforms but gaps in key categories (e.g., no review platform like G2 or Trustpilot, or no developer community signal). AI citations exist but may be hedged. Focus on adding presence in the highest-weight missing categories.</dd>
+            </div>
+            <div>
+              <dt className="text-white/85 font-medium">Grade D–F (0–49) — Insufficient cross-platform coverage</dt>
+              <dd className="text-white/60 mt-1">The brand is either very new, very niche, or has not been established on third-party platforms that AI training corpora rely on. Priority actions: submit a Crunchbase entry, create a Product Hunt listing, establish a GitHub organisation, and publish a Show HN or Dev.to post to seed community corroboration.</dd>
+            </div>
+            <div>
+              <dt className="text-white/85 font-medium">&quot;Not detected&quot; on a specific platform</dt>
+              <dd className="text-white/60 mt-1">Not detected means the platform returned no public-facing data matching your domain or brand name. This is an actionable gap. Each additional high-authority platform presence adds a discrete positive data point to the entity graph AI models consult when generating answers about your brand.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       {/* Empty state */}
       {!loading && !report && !error && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">

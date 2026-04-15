@@ -291,6 +291,85 @@ export default function ContentExtractabilityPage() {
           </section>
         )}
 
+        {/* Educational: Content Structure & AI Extractability */}
+        <section aria-label="About Content Extractability" className="px-4 pb-6 space-y-6 mt-8">
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white">How Content Structure Determines AI Extraction Quality</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              This tool measures five structural dimensions that govern how reliably AI language models can
+              extract, summarise, and cite your content: heading hierarchy conformance (H1 → H2 → H3 depth
+              and order), total word count, paragraph density, list-element presence (ordered and unordered),
+              and answer-block patterns — structured question-answer pairs that AI models preferentially extract
+              for featured snippets and direct answers. A page that scores poorly on these dimensions forces
+              AI into probabilistic summarisation, which often produces generic or inaccurate paraphrases
+              rather than authoritative direct-answer citations.
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
+              Word count thresholds reflect minimum extractable substance: pages under 300 words are classified
+              as thin content and are routinely skipped by AI answer engines that require sufficient context
+              depth. Pages between 600 and 1200 words hit the core extractability window, where AI models can
+              identify a primary claim, supporting evidence, and a conclusion — the three-part structure
+              required for a coherent answer citation. Pages above 1200 words with clean heading hierarchy are
+              treated as authoritative sources and are disproportionately cited in long-form AI answers.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — F grade (score: 15)</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A 200-word page consisting of a single H1 followed by one unbroken paragraph. No sub-headings,
+                no lists, no question-answer pairs. AI models classify this as thin content. The lack of
+                structural anchors means the AI cannot identify which sentence represents the key claim versus
+                supporting context, resulting in low-confidence extraction or a full skip.
+              </p>
+              <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+                <li>200 words — below the 300-word thin-content threshold</li>
+                <li>No H2/H3 sub-headings — AI cannot segment content into extractable units</li>
+                <li>Wall-of-text paragraph — no structural signal for primary claim location</li>
+                <li>Zero answer blocks — AI cannot produce a direct-answer citation</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — A grade (score: 85)</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                An 850-word page with one H1, four H2 section sub-headings, two ordered lists, and a
+                dedicated FAQ section using question-phrased H3 headings each followed by a direct-answer
+                paragraph. AI models can segment this page into five discrete extractable units, identify the
+                primary claim from the H1, and cite specific FAQ answers verbatim in direct-answer responses.
+              </p>
+              <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+                <li>850 words — above the 600-word core extractability threshold</li>
+                <li>H1 → H2 → H3 hierarchy — clean content segmentation for AI</li>
+                <li>FAQ with H3 + answer paragraphs — directly extractable for featured snippets</li>
+                <li>Ordered lists — step-by-step processes are numbered and easily cited</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h3 className="text-base font-semibold text-white">Content Structure Fixes for AI Citation Readiness</h3>
+            <dl className="space-y-4 text-sm">
+              <div>
+                <dt className="text-white/85 font-medium">Break content into H2-headed sections</dt>
+                <dd className="text-white/60 mt-1">Each major topic cluster should have its own H2 heading. AI extraction algorithms use heading tags as section anchors. A flat, heading-free page forces the AI to segment by sentence heuristics, which is far less accurate than semantic heading boundaries.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Add at least one FAQ-style section</dt>
+                <dd className="text-white/60 mt-1">Question-phrased H3 headings (<em>What is X? How does Y work?</em>) immediately followed by a direct-answer paragraph are the most reliably cited content format across ChatGPT, Perplexity, and Gemini. Pair with FAQPage JSON-LD for double coverage.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Replace walls of text with structured paragraphs</dt>
+                <dd className="text-white/60 mt-1">Limit each paragraph to 3–5 sentences that address a single sub-point. Paragraphs over 150 words are harder for AI to extract cleanly — the model must decide where the main claim begins, increasing paraphrase error rate in citations.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Use ordered lists for processes, unordered for features</dt>
+                <dd className="text-white/60 mt-1">Ordered lists signal step-by-step procedures that AI citation engines reproduce in sequence. Unordered lists are used for parallel feature sets. Mixing them (numbered lists for features, bullet lists for steps) confuses AI sequence extraction and reduces citation usefulness.</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
         <ConversionCTA variant="free-tool" />
       </div>
     </>

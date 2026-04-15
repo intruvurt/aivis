@@ -323,6 +323,90 @@ export default function LanguageCheckerPage() {
           </section>
         )}
 
+        {/* Educational: Language, Locale & AI Extraction */}
+        <section aria-label="About Language Checker" className="px-4 pb-6 space-y-6 mt-8">
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white">Why Language Signals Determine AI Citation Targeting</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              This tool inspects four internationalisation signals that directly control how AI language models
+              classify, route, and extract content for language-specific answer generation: the{" "}
+              <code className="text-white/85 bg-white/10 px-1 rounded text-xs">html[lang]</code>{" "}
+              attribute on the root element, BCP 47 language tag validity, hreflang annotations for
+              multi-regional content, and character encoding declaration. When these signals are absent or
+              malformed, AI systems must guess the language and locale of a page from statistical inference
+              alone — a process that introduces classification errors and reduces citation confidence for
+              non-English or multilingual content.
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
+              The <code className="text-white/85 bg-white/10 px-1 rounded text-xs">html[lang]</code> attribute is
+              the primary language declaration parsed by AI crawlers. A valid BCP 47 tag such as{" "}
+              <code className="text-white/85 bg-white/10 px-1 rounded text-xs">en-US</code> or{" "}
+              <code className="text-white/85 bg-white/10 px-1 rounded text-xs">fr-FR</code> tells the AI which
+              linguistic model to apply when extracting and understanding the content. Values like{" "}
+              <code className="text-white/85 bg-white/10 px-1 rounded text-xs">english</code> or{" "}
+              <code className="text-white/85 bg-white/10 px-1 rounded text-xs">en_US</code> (underscore instead of
+              hyphen) are invalid under BCP 47 and are treated as unknown locale, degrading extraction quality.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — F grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A multilingual site with{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">&lt;html lang=&quot;english&quot;&gt;</code>{" "}
+                (invalid BCP 47), no hreflang annotations, and{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">charset=&quot;ISO-8859-1&quot;</code>.
+                AI models misclassify the language, cannot determine the canonical locale for multilingual
+                queries, and risk character-encoding corruption when extracting non-ASCII text.
+              </p>
+              <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+                <li>Invalid lang tag — AI language classifier falls back to probabilistic inference</li>
+                <li>No hreflang — AI cannot determine which locale serves which region</li>
+                <li>Non-UTF-8 charset — risk of extraction corruption for accented characters</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — A grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">&lt;html lang=&quot;en-US&quot;&gt;</code>,{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">&lt;meta charset=&quot;UTF-8&quot;&gt;</code>,
+                and hreflang annotations covering all language variants including a self-referencing tag and an
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">x-default</code> fallback. AI
+                models correctly identify the language, map locale-specific content to the right user context,
+                and extract content without encoding issues.
+              </p>
+              <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+                <li>Valid BCP 47 lang tag — AI language classifier is deterministic</li>
+                <li>Self-referencing hreflang + x-default — canonical locale unambiguous</li>
+                <li>UTF-8 charset — full Unicode range extractable without corruption</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h3 className="text-base font-semibold text-white">Language Signal Checklist for AI Citation Readiness</h3>
+            <dl className="space-y-4 text-sm">
+              <div>
+                <dt className="text-white/85 font-medium">Missing <code className="bg-white/10 px-1 rounded text-xs">html[lang]</code></dt>
+                <dd className="text-white/60 mt-1">Add <code className="text-xs bg-white/10 px-1 rounded">&lt;html lang=&quot;en-US&quot;&gt;</code> (or the appropriate region-subtag) to every page. This single attribute is the most impactful language signal and is read by every major AI crawler before any page content is parsed.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Missing <code className="bg-white/10 px-1 rounded text-xs">x-default</code> hreflang</dt>
+                <dd className="text-white/60 mt-1">For multilingual sites, <code className="text-xs bg-white/10 px-1 rounded">&lt;link rel=&quot;alternate&quot; hreflang=&quot;x-default&quot;&gt;</code> signals the fallback page for users whose language is not explicitly covered. Without it, AI models cannot determine the canonical URL for ambiguous locale queries.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Self-referencing hreflang omitted</dt>
+                <dd className="text-white/60 mt-1">Every hreflang implementation must include a tag pointing back to the current page&apos;s own URL and language. Without the self-reference, some AI crawlers treat the hreflang set as incomplete and fall back to inference rather than using your declared locale mapping.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">RTL language without <code className="bg-white/10 px-1 rounded text-xs">dir=&quot;rtl&quot;</code></dt>
+                <dd className="text-white/60 mt-1">Right-to-left languages (Arabic, Hebrew, Farsi) require <code className="text-xs bg-white/10 px-1 rounded">dir=&quot;rtl&quot;</code> on the html element alongside the lang tag. Without it, AI extraction order may be reversed, corrupting extracted text sequences in summarisation tasks.</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
         <ConversionCTA variant="free-tool" />
       </div>
     </>

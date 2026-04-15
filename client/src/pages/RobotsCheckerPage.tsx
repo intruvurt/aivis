@@ -307,6 +307,83 @@ export default function RobotsCheckerPage() {
           </section>
         )}
 
+        {/* Educational: AI Crawler Access & robots.txt */}
+        <section aria-label="About AI Robots Checker" className="px-4 pb-6 space-y-6 mt-8">
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white">Why robots.txt Is Critical for AI Citation Access</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              This tool audits your robots.txt file against 15 AI crawlers that power the major AI answer
+              engines: GPTBot and ChatGPT-User (OpenAI / ChatGPT), ClaudeBot and Claude-SearchBot (Anthropic),
+              Google-Extended (Gemini), PerplexityBot (Perplexity AI), YouBot (You.com), Applebot-Extended
+              (Apple Intelligence), Amazonbot (Amazon Alexa), cohere-ai (Cohere), Meta-ExternalAgent and
+              Meta-ExternalFetcher (Meta AI), Bytespider (ByteDance), Diffbot, and CCBot (Common Crawl — the
+              training corpus used by most open-weight models). A site that blocks any of these crawlers cannot
+              appear in that AI engine&apos;s answers, regardless of content quality.
+            </p>
+            <p className="text-sm text-white/75 leading-relaxed">
+              There are three possible access states for each crawler:{" "}
+              <strong className="text-white">Allowed</strong> (explicit or implicit permission to crawl all paths),{" "}
+              <strong className="text-white">Blocked</strong> (a Disallow rule matches the crawler&apos;s user-agent), and{" "}
+              <strong className="text-white">Not specified</strong> (no robot rules exist for this crawler — technically
+              allowed by convention but not guaranteed). Explicitly allowed is always the safest and
+              highest-signal state.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-rose-400">Failing Example — F grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A robots.txt containing{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">User-agent: GPTBot</code>{" "}
+                followed by{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">Disallow: /</code>.
+                ChatGPT&apos;s crawler is completely locked out. Even if your content is the best answer to a
+                user&apos;s query, ChatGPT cannot index or cite it. Competing pages without this rule will be
+                cited instead.
+              </p>
+              <ul className="text-xs text-rose-300/80 space-y-1 list-disc pl-4">
+                <li>Blocking ChatGPT, Gemini, and Perplexity eliminates citations from the three largest AI answer engines</li>
+                <li>Wildcard <code className="text-xs">User-agent: *</code> with Disallow blocks all crawlers including AI</li>
+                <li>No meta robots tag fallback — browser renders content but AI cannot access it</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Passing Example — A grade</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                A robots.txt that explicitly lists each AI crawler with{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">Allow: /</code>, plus{" "}
+                <code className="text-white/85 bg-white/10 px-1 rounded text-xs">&lt;meta name=&quot;robots&quot; content=&quot;index, follow&quot;&gt;</code>{" "}
+                on every page. All 15 AI crawlers can access and index your content. Citations are gated only
+                by content quality and structured data, not by access restrictions.
+              </p>
+              <ul className="text-xs text-emerald-300/80 space-y-1 list-disc pl-4">
+                <li>Explicit Allow per crawler — no ambiguity about crawl permissions</li>
+                <li>Meta robots index/follow on HTML pages — belt-and-suspenders approach</li>
+                <li>X-Robots-Tag header absent or set to allow — headers don&apos;t override permissions</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
+            <h3 className="text-base font-semibold text-white">How to Fix AI Crawler Blocking</h3>
+            <dl className="space-y-4 text-sm">
+              <div>
+                <dt className="text-white/85 font-medium">Remove per-bot Disallow rules for AI crawlers</dt>
+                <dd className="text-white/60 mt-1">If your robots.txt has individual <code className="text-xs bg-white/10 px-1 rounded">User-agent: GPTBot / Disallow: /</code> entries, remove or convert them to <code className="text-xs bg-white/10 px-1 rounded">Allow: /</code>. Each AI engine must be enabled separately — removing a wildcard block is not enough.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Check X-Robots-Tag response headers</dt>
+                <dd className="text-white/60 mt-1">A page may have an open robots.txt but return <code className="text-xs bg-white/10 px-1 rounded">X-Robots-Tag: noindex</code> in its HTTP response headers. This silently blocks all crawlers, including AI, at the HTTP level. Use the Server Headers Check tool to detect this.</dd>
+              </div>
+              <div>
+                <dt className="text-white/85 font-medium">Add explicit entries for newer AI crawlers</dt>
+                <dd className="text-white/60 mt-1">Meta-ExternalAgent, Claude-SearchBot, and Applebot-Extended are newer crawlers that many older robots.txt files do not address. Add explicit <code className="text-xs bg-white/10 px-1 rounded">User-agent / Allow: /</code> blocks so there is no ambiguity as the AI ecosystem expands.</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
         <ConversionCTA variant="free-tool" />
       </div>
     </>

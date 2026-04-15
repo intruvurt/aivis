@@ -170,7 +170,7 @@ const TOOLS: WebMcpTool[] = [
   {
     name: 'get_audit_report',
     description:
-      'Retrieve the full evidence-linked audit report for a completed audit. Includes visibility score, category grades, recommendations with evidence IDs, content analysis, AI platform scores, keyword intelligence, and timestamped metadata.',
+      'Retrieve the full evidence-backed audit report for a completed audit. Includes visibility score, category grades, recommendations with evidence IDs, content analysis, AI platform scores, keyword intelligence, and timestamped metadata.',
     phase: 1,
     minimumTier: 'alignment',
     inputSchema: {

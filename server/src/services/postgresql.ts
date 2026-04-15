@@ -1134,6 +1134,37 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE citation_results ADD COLUMN IF NOT EXISTS is_false_positive BOOLEAN`,
             `ALTER TABLE citation_results ALTER COLUMN is_false_positive DROP DEFAULT`,
             `ALTER TABLE citation_tests ADD COLUMN IF NOT EXISTS brand_name TEXT`,
+            // ── MentionJuice Score snapshots ──
+            `CREATE TABLE IF NOT EXISTS mention_juice_snapshots (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              brand TEXT NOT NULL,
+              domain TEXT NOT NULL,
+              mention_juice_score FLOAT NOT NULL DEFAULT 0,
+              tier VARCHAR(20) NOT NULL DEFAULT 'weak',
+              total_mentions INTEGER NOT NULL DEFAULT 0,
+              credibility_breakdown JSONB NOT NULL DEFAULT '{}',
+              spam_filtered INTEGER NOT NULL DEFAULT 0,
+              duplicate_filtered INTEGER NOT NULL DEFAULT 0,
+              evidence_ids JSONB NOT NULL DEFAULT '[]',
+              computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_mjs_user_brand ON mention_juice_snapshots(user_id, brand, computed_at DESC)`,
+            // ── CitationRankScore snapshots ──
+            `CREATE TABLE IF NOT EXISTS citation_rank_snapshots (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              brand TEXT NOT NULL,
+              url TEXT NOT NULL,
+              citation_rank_score FLOAT NOT NULL DEFAULT 0,
+              model_coverage JSONB NOT NULL DEFAULT '{}',
+              evidence_results JSONB NOT NULL DEFAULT '[]',
+              queries_tested INTEGER NOT NULL DEFAULT 0,
+              models_tested INTEGER NOT NULL DEFAULT 0,
+              found_count INTEGER NOT NULL DEFAULT 0,
+              computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_crs_user_url ON citation_rank_snapshots(user_id, url, computed_at DESC)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

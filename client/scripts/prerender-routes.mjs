@@ -117,6 +117,7 @@ function loadKeywordPageMap() {
 		{ file: 'platforms', routeCluster: 'platforms' },
 		{ file: 'problems', routeCluster: 'problems' },
 		{ file: 'problemsExtended', routeCluster: 'problems' },
+		{ file: 'problemsRaw', routeCluster: 'problems' },
 		{ file: 'signals', routeCluster: 'signals' },
 		{ file: 'industries', routeCluster: 'industries' },
 		{ file: 'compare', routeCluster: 'compare' },

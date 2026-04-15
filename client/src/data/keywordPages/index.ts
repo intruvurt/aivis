@@ -6,12 +6,14 @@ import { problemExtendedPages } from "./problemsExtended";
 import { signalPages } from "./signals";
 import { industryPages } from "./industries";
 import { comparePages } from "./compare";
+import { problemRawPages } from "./problemsRaw";
 
-/** Every keyword page across all clusters (120 total). */
+/** Every keyword page across all clusters (145 total). */
 export const ALL_KEYWORD_PAGES: KeywordPage[] = [
   ...platformPages,
   ...problemPages,
   ...problemExtendedPages,
+  ...problemRawPages,
   ...signalPages,
   ...industryPages,
   ...comparePages,

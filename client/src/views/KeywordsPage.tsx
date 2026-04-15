@@ -26,9 +26,36 @@ import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import { usePageMeta } from "../hooks/usePageMeta";
 import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 // ─── UI config ────────────────────────────────────────────────────────────────
-
+const KEYWORDS_FAQ = [
+  {
+    question: "What is keyword intelligence for AI visibility?",
+    answer: "Keyword intelligence for AI visibility goes beyond traditional search volume metrics to identify which query types trigger AI-generated answers and which phrases are most likely to result in citations. AiVIS extracts keywords from your audit results and classifies them by intent, AI extractability, search volume range, and competitive difficulty. The goal is to surface the terms where structuring your content as direct answers would most increase your citation probability in AI platforms like ChatGPT, Perplexity, Claude, and Google AI Overviews.",
+  },
+  {
+    question: "How are AI-era keywords different from traditional SEO keywords?",
+    answer: "Traditional SEO keywords are optimized for keyword-match ranking algorithms that score based on occurrence density, anchor text, and backlink profiles. AI-era keywords are phrases that appear verbatim in user prompts to AI answer engines, triggering specific answer-generation events. The key difference is intent structure: AI keywords tend to be longer, more conversational, and question-oriented. They reward direct, concise answers in the first paragraph rather than keyword frequency. A page that ranks well for 'AI visibility tool' as a traditional keyword may fail to appear in answers to 'what tool checks AI visibility for websites' unless structured as a direct answer to that question.",
+  },
+  {
+    question: "What does AI extractability mean for a keyword?",
+    answer: "AI extractability is a signal of how reliably your content can be parsed and surfaced for a given keyword. An extractable keyword-content pairing means the page has a clear, concise answer to the query the keyword represents, the answer is accessible without JavaScript rendering, the entity associated with the keyword is unambiguously identified in the same section, and no extraction blockers such as interstitials or paywalls prevent the AI crawler from reading the relevant passage. Keywords with low extractability scores indicate that content exists on the page but is buried, split across sections, or structurally unclear.",
+  },
+  {
+    question: "How do I use keyword intent to optimize for AI citations?",
+    answer: "Match answer structure to intent type: informational keywords (what is, how does, why) need direct definition or explanation blocks in the first 150 words of the relevant section. Commercial keywords (best, top, vs, compare) need evidence-dense comparison blocks with verifiable specifics. Transactional keywords (buy, pricing, get) need clear entity-offer statements with schema markup. Navigational keywords are resolved by entity clarity — making sure AI systems can attribute the exact URL to the brand unambiguously. Restructuring pages around these intent-matched answer blocks increases citation probability more than content quantity.",
+  },
+  {
+    question: "What is the opportunity score shown next to keywords?",
+    answer: "The opportunity score (0\u2013100) is a composite signal that weighs search volume, competitive difficulty, AI extractability, and intent clarity. Higher scores indicate keywords where a targeted content improvement would produce the greatest visibility gain relative to the effort required. It prioritizes gaps where you have some existing content but poor answer structure, rather than areas where you have no content at all, since incremental improvements to existing pages typically yield faster citation gains.",
+  },
+  {
+    question: "Where do the keyword suggestions come from?",
+    answer: "Keywords are derived from three sources: your own audit results (entities and topics that your content signals mention), AI-generated question variants that match your page's subject matter, and comparison data from competitor audits that identify the terms where competitors are being cited but you are not. Where Search Console or keyword enrichment data is available, real autocomplete and People Also Ask terms are layered in to validate volume and confirm actual user query patterns.",
+  },
+];
 const INTENT_CONFIG = {
   informational: { label: "Informational", color: "bg-blue-500/15 text-blue-300 border-blue-400/25" },
   commercial:    { label: "Commercial",    color: "bg-emerald-500/15 text-emerald-300 border-emerald-400/25" },
@@ -99,6 +126,14 @@ export default function KeywordsPage() {
     title: 'Keywords',
     description: 'Keyword intelligence and intent analysis from your AI visibility audits.',
     path: '/keywords',
+    structuredData: [
+      buildWebPageSchema({
+        path: '/keywords',
+        name: 'AI Visibility Keyword Intelligence | AiVIS',
+        description: 'Keyword intent analysis, AI extractability scoring, and opportunity detection from your AI visibility audit results. Identify which query types drive AI citations and which need answer-block restructuring.',
+      }),
+      buildFaqSchema(KEYWORDS_FAQ, { path: '/keywords' }),
+    ],
   });
 
   // Redirect to auth if not authenticated
@@ -866,13 +901,19 @@ export default function KeywordsPage() {
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-emerald-400" />Real search term</span>
                 <span className="flex items-center gap-1.5"><XCircle className="w-3 h-3 text-white/35" />Not in autocomplete</span>
               </>}
-              <span>Opportunity 0–100: higher = better ROI potential</span>
+            <span>Opportunity 0–100: higher = better ROI potential</span>
             </div>
             </>
             )}
           </>
         )}
       </div>
+
+      <PageQASection
+        items={KEYWORDS_FAQ}
+        heading="Understanding AI visibility keyword intelligence"
+        className="mt-6"
+      />
     </div>
   );
 }

@@ -14,6 +14,8 @@ import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
 import { normalizePublicUrlInput } from "../utils/targetKey";
 import apiFetch from "../utils/api";
 import { API_URL } from "../config";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 /* ── Static data ────────────────────────────────────── */
 const QUICK_STATS = [
@@ -80,6 +82,14 @@ export default function PromptIntelligencePage() {
     title: "Prompt Intelligence - AI Query Analysis",
     description: "Understand how AI models interpret queries about your brand. Map prompt patterns to inclusion, exclusion, and competitor displacement outcomes.",
     path: "/prompt-intelligence",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/prompt-intelligence",
+        name: "Prompt Intelligence — AI Query Pattern Analysis | AiVIS",
+        description: "Test how AI models respond to different query phrasings about your brand. Map prompt variant patterns to citation inclusion, exclusion, and competitor displacement outcomes.",
+      }),
+      buildFaqSchema(PROMPT_INTELLIGENCE_FAQ, { path: "/prompt-intelligence" }),
+    ],
   });
 
   React.useEffect(() => {
@@ -317,6 +327,12 @@ export default function PromptIntelligencePage() {
           </Link>
         </div>
       </div>
+
+      <PageQASection
+        items={PROMPT_INTELLIGENCE_FAQ}
+        heading="Understanding prompt intelligence for AI visibility"
+        className="mt-6"
+      />
     </div>
   );
 }

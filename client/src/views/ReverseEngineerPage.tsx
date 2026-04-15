@@ -45,6 +45,35 @@ import FeatureInstruction from "../components/FeatureInstruction";
 import { meetsMinimumTier } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { AnswerDecompilerIcon, ContentBlueprintIcon, AuditEngineIcon } from "../components/icons";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const REVERSE_ENGINEER_FAQ = [
+  {
+    question: "What is answer decompilation and why does it matter?",
+    answer: "Answer decompilation is the process of reverse-engineering how an AI model constructed a specific generated answer — identifying which source signals, entity associations, structural patterns, and evidence types it used to produce the response. Understanding the decompiled structure of a high-ranking AI answer tells you exactly what your content needs in order to be selected as a source or replicated as a model for similar answers. It shifts optimization from guessing to evidence-based replication.",
+  },
+  {
+    question: "How does AiVIS reverse-engineer AI-generated answers?",
+    answer: "The Answer Decompiler takes a target URL or AI answer text and breaks it into structural components: entity claims (what the answer asserts about specific entities), evidence types (whether claims are backed by examples, numbers, comparisons, or methodology), citation patterns (how sources are attributed), intent alignment (which prompt type the answer was constructed for), and extraction quality markers (how easily the source content could be parsed). The output maps the answer's structure to a blueprint you can use to rebuild or improve your own content.",
+  },
+  {
+    question: "What is the BRAG evidence framework?",
+    answer: "BRAG stands for Benchmark, Rationale, Authority, and Gap — the four evidence-quality dimensions that AiVIS uses to score whether a page's claims are backed by extractable proof. Benchmark evidence is specific, measurable data (numbers, rates, comparisons). Rationale evidence explains the 'why' behind claims (methodology, mechanism, causal logic). Authority evidence signals credibility (credentials, track record, verifiable history). Gap evidence explicitly addresses common objections or alternative interpretations. Pages with dense BRAG-aligned evidence are significantly more likely to be cited by AI answer engines because their claims can be surfaced as trustworthy specifics.",
+  },
+  {
+    question: "What is the Content Blueprint tool?",
+    answer: "The Content Blueprint tool generates a structured content specification based on your audit results and decompiled answer patterns. It outputs a page-level blueprint: recommended H1 framing, required answer-block sections, entity statements to include in the opening paragraph, FAQ items aligned to detected prompt patterns, evidence requirements (what BRAG signals are missing), and schema markup recommendations. The blueprint converts audit findings into a concrete writing and restructuring specification rather than abstract advice.",
+  },
+  {
+    question: "What does the model-diff tool show?",
+    answer: "The model-diff tool compares how different AI platforms — ChatGPT, Perplexity, Claude, and Google AI — describe the same entity or respond to the same prompt. Differences reveal platform-specific citation biases, entity resolution preferences, and extraction behaviors. If ChatGPT consistently describes your brand differently from Perplexity, the diff output identifies which content signals are driving the divergence. This lets you make targeted structural changes to improve consistency across all platforms rather than optimizing blindly for one.",
+  },
+  {
+    question: "Who should use the Reverse Engineer tools?",
+    answer: "These tools are for teams who need to understand AI answer behavior at a technical level: content strategists who want to reverse-engineer what makes cited pages succeed, developers implementing AEO (answer engine optimization) improvements, agencies auditing multiple client sites, and product teams maintaining AI-visible documentation. The tools work best after running a standard AI visibility audit, because the audit findings provide the entity and evidence baseline that the decompiler and blueprint tools operate against.",
+  },
+];
 
 const CLIENT_TIMEOUT_MS = 60_000;
 
@@ -2338,6 +2367,14 @@ export default function ReverseEngineerPage() {
     title: "Reverse Engineer",
     description: "Deconstruct how AI models build answers. Decompile, blueprint, diff, and simulate tools for AI content engineering.",
     path: "/reverse-engineer",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/reverse-engineer",
+        name: "AI Answer Reverse Engineer — Decompile, Blueprint, Diff | AiVIS",
+        description: "Reverse-engineer how AI models construct answers. Decompile answer structure, generate content blueprints, diff platform behavior, and simulate AI answer variants with the BRAG evidence framework.",
+      }),
+      buildFaqSchema(REVERSE_ENGINEER_FAQ, { path: "/reverse-engineer" }),
+    ],
   });
 
   const hasAccess = meetsMinimumTier(user?.tier || "observer", "alignment");
@@ -2916,6 +2953,12 @@ export default function ReverseEngineerPage() {
           </>
         )}
       </div>
+
+      <PageQASection
+        items={REVERSE_ENGINEER_FAQ}
+        heading="Understanding AI answer reverse engineering"
+        className="mt-6"
+      />
     </div>
   );
 }

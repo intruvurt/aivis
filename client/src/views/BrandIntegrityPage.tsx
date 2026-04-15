@@ -15,6 +15,8 @@ import { normalizePublicUrlInput } from "../utils/targetKey";
 import apiFetch from "../utils/api";
 import { API_URL } from "../config";
 import type { BrandMentionScanResponse } from "../../../shared/types";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 /* ── Static data ────────────────────────────────────── */
 const MENTION_SOURCES = [
@@ -103,6 +105,14 @@ export default function BrandIntegrityPage() {
     title: "Brand Integrity Monitor - AI Accuracy Tracking",
     description: "Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time, and protect brand integrity.",
     path: "/brand-integrity",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/brand-integrity",
+        name: "Brand Integrity Monitor | AiVIS",
+        description: "Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time across 19 sources including Reddit, Hacker News, Google News, and GitHub.",
+      }),
+      buildFaqSchema(BRAND_INTEGRITY_FAQ, { path: "/brand-integrity" }),
+    ],
   });
 
   React.useEffect(() => {
@@ -436,6 +446,12 @@ export default function BrandIntegrityPage() {
           </Link>
         </div>
       </div>
+
+      <PageQASection
+        items={BRAND_INTEGRITY_FAQ}
+        heading="Understanding brand integrity monitoring for AI"
+        className="mt-6"
+      />
     </div>
   );
 }

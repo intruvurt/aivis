@@ -13,6 +13,8 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import UpgradeWall from "../components/UpgradeWall";
 import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
 import { normalizePublicUrlInput } from "../utils/targetKey";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 /* ── Static data ────────────────────────────────────── */
 const AI_PLATFORMS = [
@@ -86,6 +88,14 @@ export default function AnswerPresencePage() {
     title: "Answer Presence Engine - AI Platform Visibility",
     description: "Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI. Evidence-based presence detection.",
     path: "/answer-presence",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/answer-presence",
+        name: "AI Answer Presence Engine | AiVIS",
+        description: "Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI Overviews. Evidence-based citation and mention detection.",
+      }),
+      buildFaqSchema(ANSWER_PRESENCE_FAQ, { path: "/answer-presence" }),
+    ],
   });
 
   React.useEffect(() => {
@@ -301,6 +311,12 @@ export default function AnswerPresencePage() {
           </Link>
         </div>
       </div>
+
+      <PageQASection
+        items={ANSWER_PRESENCE_FAQ}
+        heading="Understanding AI answer presence"
+        className="mt-6"
+      />
     </div>
   );
 }

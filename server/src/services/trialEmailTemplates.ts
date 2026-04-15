@@ -186,7 +186,7 @@ function wrap(body: string): string {
   return `
     <div style="background:#0f172a;color:#e5e7eb;padding:24px;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:600px;margin:0 auto;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;background:#111827;">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS - AI Visibility Intelligence Platform</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS.biz -> evidence-backed site analysis for AI answers</div>
         ${body}
         <div style="margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);color:#64748b;font-size:11px;line-height:1.6;">
           <p style="margin:0;">AiVIS by Intruvurt Labs · Georgia, USA</p>

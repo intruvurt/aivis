@@ -1,4 +1,4 @@
-# AiVIS - AI Visibility Intelligence Platform
+# AiVIS.biz -> evidence-backed site analysis for AI answers
 # https://aivis.biz
 
 User-agent: *

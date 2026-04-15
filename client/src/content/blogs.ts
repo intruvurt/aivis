@@ -4725,11 +4725,11 @@ Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to receive an evidence-
   },
   {
     slug: 'ai-citation-tracking-real-probabilistic-fix-2026',
-    title: "You Can't Track AI Citations Cleanly. Here's the Real Fix.",
+    title: "Your Analytics Are Blind to AI Citations. Here's the Metric That Changes That.",
     description:
-      'Reddit users are right: there is no clean way to track where your brand appears in AI-generated answers. Standard analytics cannot see it. Search tools cannot measure it. This post explains the probabilistic approach that actually works — and how to build a consistent citation monitoring workflow.',
+      'Analytics cannot see AI citations — there is no click event when a model cites you. Learn the probabilistic approach that tracks your brand position across ChatGPT, Claude, and Gemini with a repeatable, evidence-backed workflow.',
     category: 'aeo',
-    tags: ['AEO', 'Visibility', 'AI Monitoring', 'Evidence'],
+    tags: ['AEO', 'Citations', 'Advanced', 'AI-Tech'],
     publishedAt: '2026-04-15',
     readMinutes: 10,
     keyPoints: [
@@ -4848,17 +4848,19 @@ A drop in CitationRankScore usually traces back to one of three causes:
 2. **Model behaviour shift** — an AI model updated its retrieval or weighting. Check whether the drop is isolated to one model or affects all of them. Cross-model drops suggest a structural issue; single-model drops suggest a model update.
 3. **Sampling variance** — small query sets can show noise. If your query set is under 10 queries, a one or two query swing can produce a 10-15 point score move that does not reflect a real change.
 
-## Getting started
+## Start measuring what your analytics can't see
 
-Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to see your current AI visibility score and get evidence-backed recommendations for your specific page structure. Signal tier users can run CitationRankScore scans directly with custom query sets to begin building a reproducible citation tracking workflow.`,
+Your dashboard has no record of whether AI models are citing you — AiVIS does. Run a free audit at [aivis.biz](https://aivis.biz) and get your current visibility score with evidence-backed recommendations. Upgrade to Signal to run CitationRankScore scans with your own query set and get the per-query, per-model breakdown your competitors haven't started tracking yet.
+
+**[Run your free audit →](https://aivis.biz)**`,
   },
   {
     slug: 'mention-juice-score-source-credibility-ai-visibility-2026',
-    title: "Mention Juice Score: Why 50 Low-Quality Mentions Are Worth Less Than 3 Wikipedia References",
+    title: "Your Brand Mention Count Is Lying to You About AI Visibility",
     description:
-      'Not all brand mentions carry equal weight in AI model training and retrieval. The Mention Juice Score quantifies credibility-weighted mention presence across 19 sources. Here is why source authority, recency, and spam filtering matter more than mention volume.',
+      'Mention volume is a vanity metric. AI models weight sources by credibility — one Wikipedia reference outweighs hundreds of directory listings. See how Mention Juice Score measures what actually drives AI citation strength.',
     category: 'aeo',
-    tags: ['AEO', 'Visibility', 'Brand Mentions', 'Authority'],
+    tags: ['AEO', 'Visibility', 'Strategy', 'AI-Tech'],
     publishedAt: '2026-04-15',
     readMinutes: 9,
     keyPoints: [
@@ -4980,15 +4982,19 @@ A low score typically indicates one or more of:
 
 **High volume, low credibility** — many mentions exist but they are concentrated in Tier 4 sources. The fix is quality-focused outreach: a single Product Hunt launch, a genuine HN Show HN post, or a detailed case study published on Dev.to is worth more than hundreds of directory listings.
 
-Run a MentionJuice scan at [aivis.biz](https://aivis.biz) to see your current credibility-weighted mention score and identify which source tiers are missing from your present coverage.`,
+## Find out which source tiers are costing you the most
+
+Volume is not your problem — credibility weight is. Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to get your MentionJuice score across all 19 tracked sources. See exactly which Tier 1 gaps are holding your AI visibility back and get a prioritised action plan to close them.
+
+**[Check your Mention Juice score →](https://aivis.biz)**`,
   },
   {
     slug: 'mcp-query-validation-evidence-id-extraction-ai-rank-2026',
-    title: "MCP Query Validation and Evidence ID Extraction: Find Exactly Where You Rank Across AI Models",
+    title: "See Exactly Where Your Brand Ranks in AI Answers — Query by Query, Model by Model",
     description:
-      'The validate_queries_evidence MCP tool runs test queries across live AI models and extracts signed evidence IDs showing where your brand appears — and at what position — in each model response. This is how you build a verifiable audit trail for AI citation rank.',
+      'Stop guessing where your brand appears in ChatGPT, Claude, and Gemini. Run real queries, get real positions, and get a signed evidence trail for every result. Citation rank — not estimated, verified.',
     category: 'implementation',
-    tags: ['AEO', 'Visibility', 'MCP', 'Technical'],
+    tags: ['AEO', 'Technical', 'Implementation', 'Citations'],
     publishedAt: '2026-04-15',
     readMinutes: 9,
     keyPoints: [
@@ -5130,11 +5136,11 @@ When you see a cluster of 0.7-confidence results for the same query across multi
 
 When you see 0.3 confidence (not found) consistently across all models for a specific query, that query represents a gap in your AI citation surface. Evaluate whether it is a gap worth addressing based on how closely the query matches your actual product positioning.
 
-## Getting started
+## Get your citation rank score across every AI model
 
-Signal tier users can call \`validate_queries_evidence\` via the MCP server at \`/api/mcp/call\` or via the REST API at \`POST /api/citations/rank-score\`. Start with the 5 to 10 queries most representative of how your target audience discovers products in your category. Run the scan, review the evidence results, and identify the query × model combinations where presence is weakest.
+Stop estimating where your brand appears in AI answers — measure it. Signal tier users can run \`validate_queries_evidence\` at [aivis.biz](https://aivis.biz) right now. Pick 10 queries your buyers actually use, get a CitationRankScore with full evidence IDs per query and model, and turn every gap into a prioritised fix.
 
-Those gaps are your citation optimisation roadmap. Use the structural recommendations from your AiVIS audit at [aivis.biz](https://aivis.biz) to address the root causes that reduce citation rank across models.`,
+**[Start your citation audit →](https://aivis.biz)**`,
   },
 ];
 

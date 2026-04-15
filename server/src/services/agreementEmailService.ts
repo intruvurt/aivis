@@ -17,8 +17,8 @@ async function resendSend(payload: {
   attachments?: Array<{ filename: string; content: string }>;
 }): Promise<void> {
   if (!RESEND_KEY_VALID) {
-    console.log(`[AgreementEmail] No valid RESEND_API_KEY - console fallback: To: ${payload.to} | Subject: ${payload.subject}`);
-    return;
+    console.error(`[AgreementEmail] RESEND_API_KEY is missing or invalid — email NOT delivered. To: ${payload.to} | Subject: ${payload.subject}`);
+    throw new Error('Email service is not configured. Please contact support if you are not receiving emails.');
   }
 
   const res = await fetch('https://api.resend.com/emails', {

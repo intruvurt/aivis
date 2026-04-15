@@ -200,11 +200,14 @@ router.post('/:slug/request-otp', async (req: Request, res: Response) => {
     const result = await requestOtp(req.params.slug as string, parsed.data.party);
     if (!result.ok) return res.status(400).json({ error: result.error });
 
-    // Send OTP email
+    // Send OTP email — awaited so we can surface delivery failures to the user
     const otpResult = result as { ok: boolean; email: string; otp: string };
-    sendOtpEmail(otpResult.email, otpResult.otp, req.params.slug as string, parsed.data.party).catch((err) =>
-      console.error('[Agreements] OTP email error:', err),
-    );
+    try {
+      await sendOtpEmail(otpResult.email, otpResult.otp, req.params.slug as string, parsed.data.party);
+    } catch (err) {
+      console.error('[Agreements] OTP email delivery failed:', err);
+      return res.status(502).json({ error: 'Failed to send verification email. Please try again in a moment, or contact support@aivis.biz.' });
+    }
 
     // Mask email for response
     const parts = otpResult.email.split('@');

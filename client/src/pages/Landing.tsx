@@ -262,11 +262,11 @@ const TIERS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AiVIS — Evidence-backed AI answer audit and fix system',
+    title: 'AiVIS — AI Visibility Audit: Does ChatGPT Cite Your Brand?',
     description:
-      'AiVIS scans your live page, shows exactly what AI systems misread or ignore, and gives you fix-ready outputs tied to real evidence. No guesses. No black box.',
+      'Find out if ChatGPT, Claude, and Perplexity cite your site — or ignore it. Free AI visibility audit in seconds. Evidence-backed score with prioritized fixes included.',
     path: '/landing',
-    ogTitle: 'AiVIS — Fix what AI gets wrong about your site',
+    ogTitle: 'AiVIS — Does AI Cite Your Brand, or Ignore It?',
     structuredData: LANDING_STRUCTURED_DATA,
   });
 

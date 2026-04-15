@@ -1638,6 +1638,7 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh; /* dynamic viewport height — adjusts when iOS toolbar shows/hides */
   overflow: hidden;
   background: #060a14;
   background-image:

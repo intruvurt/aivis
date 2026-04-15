@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import AppTopBar from "./AppTopBar";
 import Footer from "./Footer";
@@ -54,9 +54,11 @@ export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const close = useCallback(() => setSidebarOpen(false), []);
 
+  // Close sidebar on every route change (handles back/forward navigation on mobile)
+  const location = useLocation();
   useEffect(() => {
     close();
-  }, [close]);
+  }, [location.pathname, close]);
 
   return (
     <div className="aurora-shell">

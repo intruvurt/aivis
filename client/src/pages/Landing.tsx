@@ -387,11 +387,14 @@ const Landing = () => {
         <div className="hero-flow-overlay" aria-hidden="true" />
         <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
-            <h1 id="hero-headline" data-speakable className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-6 tracking-tight">
-              AiVIS — evidence-backed
-              <br />
-              <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                AI answer audit and fix system
+            <h1 id="hero-headline" data-speakable className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] text-white mb-6 tracking-tight">
+              <span className="block">AiVIS</span>
+              <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">evidence-backed</span>
+              <span className="block bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
+                AI answer audit
+              </span>
+              <span className="block bg-gradient-to-r from-violet-300 via-white to-cyan-300 bg-clip-text text-transparent">
+                and fix system
               </span>
             </h1>
 

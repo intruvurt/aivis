@@ -40,6 +40,9 @@ import {
   dismissDropAlertHandler,
   getCoOccurrencesHandler,
   runCoOccurrenceCheckHandler,
+  runCitationRankScoreHandler,
+  getCitationRankSnapshotHandler,
+  getCitationRankHistoryHandler,
 } from '../controllers/citations.controllers.js';
 
 const router = Router();
@@ -189,7 +192,19 @@ router.post('/drop-alerts/:id/dismiss', requireSignal, dismissDropAlertHandler);
 // Unlinked co-occurrence scanning (signal)
 router.get('/co-occurrences', requireSignal, getCoOccurrencesHandler);
 router.post('/co-occurrences', requireSignal, runCoOccurrenceCheckHandler);
-const citationRoutes = router;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CITATION RANK SCORE (Signal) — probabilistic AI model citation coverage
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Compute citation rank score across AI models for a set of queries
+router.post('/rank-score', requireSignal, runCitationRankScoreHandler);
+
+// Latest snapshot for a URL
+router.get('/rank-score/snapshot', requireSignal, getCitationRankSnapshotHandler);
+
+// Historic trend
+router.get('/rank-score/history', requireSignal, getCitationRankHistoryHandler);
 
 export { citationRoutes };
 export default citationRoutes;

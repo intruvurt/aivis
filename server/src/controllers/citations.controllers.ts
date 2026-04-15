@@ -48,6 +48,12 @@ import { hasDirectApi, searchPlatformDirect } from '../services/platformDirectSe
 import { gateToolAction } from '../services/toolCreditGate.js';
 import { checkCitationMilestones } from '../services/milestoneService.js';
 import {
+  computeCitationRankScore,
+  saveCitationRankSnapshot,
+  getLatestCitationRankSnapshot,
+  getCitationRankHistory,
+} from '../services/citationRankScoreService.js';
+import {
   getMentionTrendHistory,
   aggregateCompetitorShare,
   buildConsistencyMatrix,
@@ -2921,5 +2927,135 @@ export async function runCoOccurrenceCheckHandler(req: Request, res: Response) {
   } catch (err: any) {
     console.error('[CoOccurrence] Scan failed:', err.message);
     return res.status(500).json({ error: 'Co-occurrence scan failed' });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CitationRankScore — probabilistic AI model coverage scoring
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * POST /api/citations/rank-score
+ * Compute the probabilistic CitationRankScore for a brand across AI models.
+ *
+ * Body: {
+ *   brand: string,
+ *   url: string,
+ *   queries: string[],           // 1–20 queries
+ * }
+ *
+ * Tier: Alignment (1 model/query) or Signal (3 models/query).
+ */
+export async function runCitationRankScoreHandler(req: Request, res: Response) {
+  const user = (req as any).user;
+  if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { brand, url: rawUrl, queries } = (req.body || {}) as any;
+
+  if (!brand || typeof brand !== 'string' || brand.trim().length < 2) {
+    return res.status(400).json({ error: 'brand is required (min 2 characters)' });
+  }
+  if (!rawUrl || typeof rawUrl !== 'string') {
+    return res.status(400).json({ error: 'url is required' });
+  }
+  if (!Array.isArray(queries) || queries.length === 0) {
+    return res.status(400).json({ error: 'queries array is required (at least one query)' });
+  }
+  if (queries.length > 20) {
+    return res.status(400).json({ error: 'Maximum 20 queries per request' });
+  }
+
+  const apiKey = getServerApiKey();
+  if (!apiKey) {
+    return res.status(503).json({ error: 'AI provider not configured' });
+  }
+
+  const normalizedTarget = normalizePublicHttpUrl(rawUrl);
+  if (!normalizedTarget.ok) return res.status(400).json({ error: normalizedTarget.error ?? 'Invalid URL' });
+  const url = normalizedTarget.url;
+
+  const cleanBrand = brand.trim().slice(0, 100);
+  const cleanQueries: string[] = queries
+    .map((q: any) => String(q || '').trim().slice(0, 200))
+    .filter((q: string) => q.length > 3);
+
+  if (cleanQueries.length === 0) {
+    return res.status(400).json({ error: 'No valid queries provided' });
+  }
+
+  const tier = (user.tier || 'observer') as string;
+  const rankTier: 'alignment' | 'signal' = tier === 'signal' || tier === 'scorefix' ? 'signal' : 'alignment';
+
+  try {
+    const result = await computeCitationRankScore(
+      cleanBrand,
+      url,
+      cleanQueries,
+      rankTier,
+      apiKey,
+    );
+
+    // Persist (non-fatal)
+    saveCitationRankSnapshot(user.id, result).catch((err: any) =>
+      console.warn('[CitationRankScore] Snapshot save failed (non-fatal):', err?.message),
+    );
+
+    return res.json({ success: true, ...result });
+  } catch (err: any) {
+    console.error('[CitationRankScore] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Citation rank score computation failed' });
+  }
+}
+
+/**
+ * GET /api/citations/rank-score/snapshot?url=...
+ * Return the latest persisted CitationRankScore snapshot for a URL.
+ */
+export async function getCitationRankSnapshotHandler(req: Request, res: Response) {
+  const user = (req as any).user;
+  if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
+
+  const rawUrl = String(req.query.url || '').trim();
+  if (!rawUrl) return res.status(400).json({ error: 'url query param is required' });
+
+  const normalizedTarget = normalizePublicHttpUrl(rawUrl);
+  if (!normalizedTarget.ok) return res.status(400).json({ error: normalizedTarget.error ?? 'Invalid URL' });
+  const url = normalizedTarget.url;
+
+  try {
+    const snapshot = await getLatestCitationRankSnapshot(user.id, url);
+    if (!snapshot) {
+      return res.status(404).json({ error: 'No CitationRankScore snapshot found for this URL' });
+    }
+    return res.json({ success: true, ...snapshot });
+  } catch (err: any) {
+    console.error('[CitationRankSnapshot] Error:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch CitationRankScore snapshot' });
+  }
+}
+
+/**
+ * GET /api/citations/rank-score/history?url=...&limit=20
+ * Return historical CitationRankScore trend.
+ */
+export async function getCitationRankHistoryHandler(req: Request, res: Response) {
+  const user = (req as any).user;
+  if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
+
+  const rawUrl = String(req.query.url || '').trim();
+  if (!rawUrl) return res.status(400).json({ error: 'url query param is required' });
+
+  const normalizedTarget = normalizePublicHttpUrl(rawUrl);
+  if (!normalizedTarget.ok) return res.status(400).json({ error: normalizedTarget.error ?? 'Invalid URL' });
+  const url = normalizedTarget.url;
+
+  const limit = Math.min(Math.max(parseInt(String(req.query.limit || '20'), 10) || 20, 1), 60);
+
+  try {
+    const history = await getCitationRankHistory(user.id, url, limit);
+    return res.json({ success: true, url, history });
+  } catch (err: any) {
+    console.error('[CitationRankHistory] Error:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch CitationRankScore history' });
   }
 }

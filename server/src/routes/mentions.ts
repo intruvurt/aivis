@@ -9,6 +9,9 @@ import {
   getMentionTimelineHandler,
   getMentionKPIHandler,
   getMentionKPIHistoryHandler,
+  computeMentionJuiceHandler,
+  getMentionJuiceSnapshotHandler,
+  getMentionJuiceHistoryHandler,
 } from '../controllers/mentions.controllers.js';
 
 const router = Router();
@@ -44,5 +47,18 @@ router.get('/kpi', requireAlignmentOrHigher, getMentionKPIHandler);
 
 // GET /api/mentions/kpi/history - historical KPI snapshots for trend charts
 router.get('/kpi/history', requireAlignmentOrHigher, getMentionKPIHistoryHandler);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MentionJuice Score (Alignment+)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// POST /api/mentions/juice - compute live credibility-weighted MentionJuice Score
+router.post('/juice', requireAlignmentOrHigher, computeMentionJuiceHandler);
+
+// GET /api/mentions/juice/snapshot?brand=XYZ - fetch latest snapshot
+router.get('/juice/snapshot', requireAlignmentOrHigher, getMentionJuiceSnapshotHandler);
+
+// GET /api/mentions/juice/history?brand=XYZ - score trend history
+router.get('/juice/history', requireAlignmentOrHigher, getMentionJuiceHistoryHandler);
 
 export default router;

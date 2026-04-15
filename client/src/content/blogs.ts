@@ -4723,6 +4723,419 @@ Schema fixes — adding Organisation, FAQPage, and Article JSON-LD with correct 
 
 Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to receive an evidence-backed score showing exactly which structural signals are failing on your site — with fixes generated specifically for your page content.`,
   },
+  {
+    slug: 'ai-citation-tracking-real-probabilistic-fix-2026',
+    title: "You Can't Track AI Citations Cleanly. Here's the Real Fix.",
+    description:
+      'Reddit users are right: there is no clean way to track where your brand appears in AI-generated answers. Standard analytics cannot see it. Search tools cannot measure it. This post explains the probabilistic approach that actually works — and how to build a consistent citation monitoring workflow.',
+    category: 'aeo',
+    tags: ['AEO', 'Visibility', 'AI Monitoring', 'Evidence'],
+    publishedAt: '2026-04-15',
+    readMinutes: 10,
+    keyPoints: [
+      'Why standard analytics tools cannot track AI citations',
+      'What probabilistic citation scoring measures and how it works',
+      'How evidence IDs create an auditable trace per query × model',
+      'The CitationRankScore formula: mean rank × presence rate × 100',
+      'How to set up a repeatable citation monitoring workflow',
+    ],
+    content: `## Why Reddit users are right about AI citation tracking
+
+On any forum thread about AEO, you will find the same frustration repeated: there is no clean, reliable way to track whether an AI model is citing your brand or website. People try Google Analytics referral traffic. They try UTM parameters. They try Perplexity attribution. None of it works consistently.
+
+They are right. Standard analytics tools were built to measure human click events and session behaviour. AI-generated answers do not produce click events when a model cites a brand internally during inference. There is no redirect, no session, no cookie. The citation happens entirely inside the model's response generation — invisible to every conventional tracking tool.
+
+This is not a tooling gap that can be patched with a tag manager update. It reflects a structural incompatibility between how analytics was designed (click → session → conversion) and how AI citation works (retrieval → inference → response generation with no client-side event).
+
+## What actually needs to be measured
+
+To track AI citations you need to measure three distinct things:
+
+**1. Presence rate** — across a representative set of queries your brand could reasonably appear in, how often does an AI model include your brand in its response?
+
+**2. Position** — when your brand does appear, where does it rank? Position 1 in a top-5 list is worth much more than position 9 in a long enumeration.
+
+**3. Cross-model coverage** — different AI models have different training data and retrieval mechanisms. ChatGPT, Claude, Gemini, and Perplexity do not agree on citations. Coverage across all four is the real signal.
+
+None of these can be measured with a pixel or a tag. They require running actual queries against actual models and parsing the structured output.
+
+## The probabilistic citation rank score
+
+The CitationRankScore is a probabilistic measure of brand citation strength across AI models. It combines presence rate with ranked position weighting:
+
+**Position scoring**: position 1 = 100 points, each subsequent position loses 5 points. Position 20 = 5 points. Not found = 0 points.
+
+**Score formula**: \`mean(rank_scores_where_found) × (found_count / total_checks) × 100\`
+
+This produces a score between 0 and 100 that captures both how often your brand appears and how prominently it appears when it does. A brand cited at position 1 in 40% of queries scores much higher than a brand cited at position 15 in 80% of queries — which correctly reflects the actual visibility value.
+
+## What are evidence IDs and why do they matter
+
+Every query × model combination that returns a result generates an evidence ID — a deterministic hash of the query, the model, the brand, and the excerpt from the response. For example:
+
+\`\`\`
+query: "best project management tools for remote teams"
+model: chatgpt
+brand: Acme
+excerpt: "Acme is frequently recommended for..."
+evidence_id: a3f8b2c1d4e5f6a7...
+\`\`\`
+
+Evidence IDs let you:
+- Verify that a specific citation was observed at a specific time
+- Track whether citation position improves or regresses across scan runs
+- Audit changes after you make structural or content fixes to your site
+- Provide reproducible evidence when reporting results to stakeholders
+
+Without evidence IDs, citation tracking is an assertion. With them, it is a verifiable record.
+
+## The presence-rate visibility problem
+
+The most common failure pattern in citation tracking is measuring the wrong thing. People search for their brand name directly and confirm it appears. That is brand recognition testing, not citation tracking.
+
+Citation tracking must use the queries your target audience is actually running — not branded queries. The test set should include:
+
+- Category queries: "best [product category] tools"
+- Problem queries: "how do I [problem your product solves]"
+- Comparison queries: "[competitor] vs alternatives"
+- Use-case queries: "[specific workflow] software"
+
+A brand that only appears in response to branded queries has zero organic AI citation presence. The relevant metric is non-branded presence rate.
+
+## Why cross-model coverage is the real signal
+
+Individual AI models have meaningful differences in how they retrieve and cite brands:
+
+- **ChatGPT** relies heavily on training data recency and popularity signals
+- **Claude** tends to favour officially documented sources with clear entity declarations
+- **Gemini** leverages Google's knowledge graph and structured data signals
+- **Perplexity** uses live retrieval and is influenced by current search ranking
+
+A brand with strong citation presence on one model but zero presence on three others has fragile AI visibility. Cross-model coverage score (the percentage of model × query combinations that return a positive citation) is a more reliable predictor of sustained AI visibility than performance on any single model.
+
+## Building a repeatable citation monitoring workflow
+
+A citation monitoring workflow that actually produces useful data has four components:
+
+**1. A fixed query set** — 10 to 20 queries that represent your realistic discovery surface. Queries should be revisited quarterly. AI model training and retrieval behaviour shifts over time.
+
+**2. Scheduled scan runs** — at minimum monthly, ideally weekly, using the same query set to produce comparable scores across time.
+
+**3. Score trend tracking** — a CitationRankScore time series that makes improvement or regression visible. A single score point is an observation. A trend line is insight.
+
+**4. Evidence ID archiving** — preserving the per-query evidence trail so you can verify that improvements reflect genuine changes in model behaviour, not sampling variance.
+
+## What affects citation rank most
+
+Across scans, the structural factors with the strongest correlation to citation rank improvement are:
+
+- **Schema completeness** — Organisation, Product, and Article JSON-LD with correct \`name\`, \`url\`, and \`description\` properties. Models use schema to resolve entity identity.
+- **FAQ and Q&A structure** — content organised as direct question → direct answer. This format maps cleanly to how AI models construct their own responses.
+- **Third-party mentions on authoritative sources** — citations from Wikipedia, Hacker News, Reddit (quality threads), and Stack Overflow each carry credibility weight that influences model confidence in citing a brand.
+- **Entity consistency** — the brand name appearing in exactly the same form across homepage, About page, knowledge graph entries, and external citations. Inconsistent naming causes entity resolution failures.
+
+## How often should you run citation scans?
+
+Monthly scans give you trend visibility. Weekly scans detect regressions quickly enough to act on them before they compound. The right cadence depends on how actively you are making content and structural changes.
+
+When you deploy a schema update or restructure a key page, running a scan within 48-72 hours gives you a feedback loop tight enough to iterate on.
+
+## What to do when your citation rank drops
+
+A drop in CitationRankScore usually traces back to one of three causes:
+
+1. **A structural regression** — schema was accidentally removed, a key page was restructured, or content was thinned. Check the evidence IDs for the queries where presence dropped.
+2. **Model behaviour shift** — an AI model updated its retrieval or weighting. Check whether the drop is isolated to one model or affects all of them. Cross-model drops suggest a structural issue; single-model drops suggest a model update.
+3. **Sampling variance** — small query sets can show noise. If your query set is under 10 queries, a one or two query swing can produce a 10-15 point score move that does not reflect a real change.
+
+## Getting started
+
+Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to see your current AI visibility score and get evidence-backed recommendations for your specific page structure. Signal tier users can run CitationRankScore scans directly with custom query sets to begin building a reproducible citation tracking workflow.`,
+  },
+  {
+    slug: 'mention-juice-score-source-credibility-ai-visibility-2026',
+    title: "Mention Juice Score: Why 50 Low-Quality Mentions Are Worth Less Than 3 Wikipedia References",
+    description:
+      'Not all brand mentions carry equal weight in AI model training and retrieval. The Mention Juice Score quantifies credibility-weighted mention presence across 19 sources. Here is why source authority, recency, and spam filtering matter more than mention volume.',
+    category: 'aeo',
+    tags: ['AEO', 'Visibility', 'Brand Mentions', 'Authority'],
+    publishedAt: '2026-04-15',
+    readMinutes: 9,
+    keyPoints: [
+      'Why mention volume is a misleading metric for AI visibility',
+      'How source credibility weights are assigned across 19 platforms',
+      'The spam and duplicate filtering logic that removes false signal',
+      'How sentiment and recency multipliers affect your final score',
+      'Practical Reddit strategy for generating high-credibility mentions',
+    ],
+    content: `## Why mention counting gets AI visibility wrong
+
+Brand mention tracking tools report volume. They count how many times your brand name appeared online this week. That number is widely reported, tracked in dashboards, and treated as a proxy for brand presence.
+
+It is the wrong metric for AI visibility.
+
+AI models do not count mentions. They weight them. A single thread on Hacker News where your product is discussed in technical depth carries more weight in model training data than 500 low-effort product listings on directories that were created in bulk. A Wikipedia article that references your brand carries more weight than 200 tweets. Three thoughtful Stack Overflow answers that mention your tool carry more weight than a page-three Google News story.
+
+The difference matters because AI models are trained and tuned on corpora where source quality is implicitly encoded through signals like PageRank, domain authority, editorial standards, and community engagement. Sources that consistently produce high-quality signal accumulate influence in model training — and that influence transfers to citation decisions at inference time.
+
+## How the Mention Juice Score works
+
+The Mention Juice Score assigns a credibility weight to each source where a brand mention can occur, then applies a recency multiplier and a sentiment multiplier to compute a weighted score. The formula is:
+
+\`\`\`
+mention_juice = Σ(weight × sentiment_mult × recency_mult) / max_possible × 100
+\`\`\`
+
+A volume bonus (log₂ scale, max +15 points) rewards brands with broad legitimate coverage without allowing volume to dominate quality.
+
+## Source credibility tiers
+
+The 19 sources tracked are grouped into credibility tiers based on their historical influence as training data signal sources:
+
+**Tier 1 — Maximum credibility (weight 0.80–1.0)**
+- Wikipedia (1.0) — the highest-weight source. Wikipedia articles directly influence knowledge graph entries and are heavily represented in model training corpora.
+- Reddit (0.85) — community-validated content with voting mechanisms that filter low-quality posts. Long-form technical discussions on Reddit carry significant weight.
+- Hacker News (0.80) — a skilled technical audience with aggressive quality filtering. An HN front-page mention is worth more than most press coverage.
+- Stack Overflow (0.80) — cited development resources with direct technical credibility.
+- GitHub (0.75) — repositories, discussions, and issues that document real-world tool usage and developer adoption.
+
+**Tier 2 — Strong credibility (weight 0.50–0.75)**
+- Google News (0.70) — editorial media coverage with existing authority signals.
+- Product Hunt (0.65) — product launches with community engagement and discovery mechanisms.
+- Dev.to (0.60) — technical practitioner content with real usage examples.
+- Medium (0.50) — quality variance is high; weight reflects median signal value.
+
+**Tier 3 — Moderate credibility (weight 0.25–0.49)**
+- YouTube (0.45) — demonstrated tool walkthroughs carry meaningful weight, particularly for technical products.
+- Quora (0.40) — answered questions with some quality filtering.
+- Lobsters (0.40) — a curated technical community with high entry filtering.
+- Bluesky (0.35) — emerging platform with growing practitioner presence.
+- Twitter/X (0.30) — high noise ratio reduces per-mention weight.
+- Mastodon (0.25) — decentralised signal with smaller but engaged technical communities.
+
+**Tier 4 — Low credibility / filtered (weight < 0.25)**
+- Lemmy (0.20), GitHub Discussions (0.20) — considered but weighted low.
+- DDG/Bing dork aggregations (0.12) — bulk directory content, subject to spam filtering.
+
+Sources with weight below 0.15 are automatically excluded from score calculation as spam risk.
+
+## Why spam filtering changes everything
+
+The most common way to game mention volume is bulk directory listing — creating hundreds of identical or near-identical brand listings across low-authority directories, forum spam, or duplicated press release syndication.
+
+The Mention Juice Score applies two filtering mechanisms:
+
+**Spam filter**: any source with base weight below 0.15 is excluded entirely. This removes bulk dork aggregations that capture directory-level content.
+
+**Duplicate filter**: mentions are deduplicated by exact URL match and a near-duplicate check on the first 80 characters of the mention snippet. A single press release syndicated to 200 directories is counted once, not 200 times.
+
+After filtering, what remains is the signal that actually influences model behaviour — not the noise that inflates volume dashboards.
+
+## Recency and sentiment multipliers
+
+Two additional adjustments are applied per mention:
+
+**Recency multipliers**: AI model relevance decays with time. Fresh coverage is weighted higher because it reflects current positioning, current use cases, and current market context.
+- Under 7 days: ×1.2 (recency bonus)
+- Under 30 days: ×1.0 (full weight)
+- Under 90 days: ×0.85
+- Under 365 days: ×0.65
+- Older than 1 year: ×0.45
+
+**Sentiment multipliers**: positive mentions contribute to brand authority signals; negative mentions reduce them.
+- Positive: ×1.2
+- Neutral: ×1.0
+- Negative: ×0.4
+
+A year-old negative Reddit thread about a support failure contributes approximately 0.40 × 0.45 = 0.18× the weight of a current positive Wikipedia reference. Volume-based tracking would count them equally.
+
+## Score tier interpretation
+
+| Score | Tier | What it means |
+|-------|------|---------------|
+| ≥ 75 | Dominant | Strong cross-platform authority with consistent credible coverage |
+| 50–74 | Strong | Good foundation; gaps in Tier 1 sources limit ceiling |
+| 20–49 | Moderate | Sparse high-credibility coverage; volume present but low weight |
+| < 20 | Weak | Minimal weighted signal; AI models have limited training exposure |
+
+## Reddit strategy for AI visibility
+
+Reddit consistently appears in analysis of what drives AI citation presence because it scores 0.85 — the second-highest weight in the model. More importantly, Reddit content has specific properties that align with how AI models use training data:
+
+**Long-form technical discussions** produce more extractable signal than short posts. A 500-word comment explaining how and why a tool solved a specific problem gives a model a concrete, attributable claim to cite.
+
+**Upvote-weighted visibility** means that community-validated answers carry implicit quality signals. The training pipeline weights content that achieved community recognition more heavily.
+
+**Ask HN / Ask Reddit threads** mimic exactly the query format AI models see at inference time. A thread titled "What's the best tool for X?" that mentions your brand in a highly-upvoted answer is a direct training proxy for the query "what's the best tool for X?"
+
+The practical implication is that authentic participation in communities where your brand is genuinely relevant — answering questions, contributing to technical discussions, building in public — produces higher Mention Juice scores than any PR campaign targeting low-authority directories.
+
+## What to do with a weak MentionJuice score
+
+A low score typically indicates one or more of:
+
+**No Tier 1 coverage** — the brand has no Wikipedia presence, no Hacker News discussion, no Stack Overflow mentions, and no Reddit threads of substance. The fix is building genuine community presence where the brand is professionally relevant, not manufacturing coverage.
+
+**Stale coverage** — coverage exists but is more than a year old. Recency multipliers reduce its contribution significantly. The fix is generating fresh activity: publishing technical content, doing product launches or updates with community announcement, engaging in current discussion threads.
+
+**High volume, low credibility** — many mentions exist but they are concentrated in Tier 4 sources. The fix is quality-focused outreach: a single Product Hunt launch, a genuine HN Show HN post, or a detailed case study published on Dev.to is worth more than hundreds of directory listings.
+
+Run a MentionJuice scan at [aivis.biz](https://aivis.biz) to see your current credibility-weighted mention score and identify which source tiers are missing from your present coverage.`,
+  },
+  {
+    slug: 'mcp-query-validation-evidence-id-extraction-ai-rank-2026',
+    title: "MCP Query Validation and Evidence ID Extraction: Find Exactly Where You Rank Across AI Models",
+    description:
+      'The validate_queries_evidence MCP tool runs test queries across live AI models and extracts signed evidence IDs showing where your brand appears — and at what position — in each model response. This is how you build a verifiable audit trail for AI citation rank.',
+    category: 'implementation',
+    tags: ['AEO', 'Visibility', 'MCP', 'Technical'],
+    publishedAt: '2026-04-15',
+    readMinutes: 9,
+    keyPoints: [
+      'How the MCP validate_queries_evidence tool works end-to-end',
+      'What an evidence ID encodes and why it is deterministic',
+      'How brand detection handles numbered lists and prose responses',
+      'Position scoring: rank 1 = 100 points, decay by 5 per position',
+      'How to integrate citation rank data into agent workflows',
+    ],
+    content: `## What the validate_queries_evidence MCP tool does
+
+The \`validate_queries_evidence\` tool is available to Alignment and Signal tier users through the AiVIS MCP server at \`/api/mcp/call\`. It accepts a brand name, a brand URL, and a set of test queries, then runs each query across live AI models and extracts structured evidence from every response.
+
+The output is a CitationRankScore — a probabilistic 0-100 score representing your brand's AI citation strength — plus a full evidence record for every query × model combination tested.
+
+This is not a simulated score. It is computed from actual model responses at the time of the call.
+
+## MCP call structure
+
+\`\`\`json
+{
+  "name": "validate_queries_evidence",
+  "arguments": {
+    "brand": "Acme Corp",
+    "url": "https://acmecorp.com",
+    "queries": [
+      "best project management tools for remote teams",
+      "alternatives to Asana for small teams",
+      "how to manage sprints without JIRA",
+      "lightweight kanban tools 2026"
+    ]
+  }
+}
+\`\`\`
+
+The tool accepts 1 to 20 queries per call. Each query is run against the AI models allocated to your tier:
+- **Alignment tier**: GPT-5 Nano (1 model per query)
+- **Signal tier**: GPT-5 Nano + Claude Haiku 4.5 + Gemini 2.5 Flash (3 models per query)
+
+Signal tier coverage gives you cross-model validation — the ability to see whether a citation is consistent across model families or isolated to one.
+
+## How brand detection works in model responses
+
+AI model responses take two forms: ranked lists and prose.
+
+**Numbered list parsing**: The tool parses numbered list items using the pattern \`/^\\s*(\\d+)[.)]\\s+(.+)/\`. When your brand appears in a numbered list, it records the exact position (1-indexed). Position 1 in a list of recommended tools is captured as \`rank = 1\`.
+
+**Prose detection**: For responses where the brand appears in running text rather than a list, a position estimate of 10 is used — acknowledging the presence without assuming a specific competitive rank. This is a conservative estimate that gives partial credit for prose mentions.
+
+In both cases, a normalization step (stripping common suffixes like "Inc", "Ltd", "LLC", punctuation, and whitespace) allows flexible matching. The brand "Acme Corp" will match "Acme", "Acme Corp.", "ACME CORPORATION" in a response. Domain matching provides an additional resolution path for cases where the response uses the URL rather than the brand name.
+
+## What an evidence ID encodes
+
+Each evidence ID is a deterministic 32-character hex string computed as:
+
+\`\`\`
+sha256(query | model_id | brand | response_excerpt[:50])[:32]
+\`\`\`
+
+Deterministic means: given the same inputs, the same evidence ID is always produced. This has two practical consequences:
+
+1. **Cross-scan deduplication**: if you run the same query against the same model twice and get the same result, the evidence IDs match. You can detect whether a citation is stable across time or whether model behaviour is shifting.
+
+2. **Audit trailability**: an evidence ID can be stored, shared, and verified independently of the full response text. A stakeholder report can include evidence IDs as citations for the claims made about citation rank — they are references, not assertions.
+
+The evidence record for each result contains:
+
+\`\`\`typescript
+{
+  query: string;
+  model: string;           // 'chatgpt' | 'claude' | 'google_ai'
+  found: boolean;
+  position: number;        // 1-indexed (10 for prose; 0 if not found)
+  rank_score: number;      // max(0, 100 - (position-1) × 5)
+  confidence: number;      // 0.9 if position ≤ 5, 0.7 otherwise, 0.3 if not found
+  evidence_id: string;     // deterministic SHA-256 prefix
+  excerpt: string;         // the text segment where brand was found
+}
+\`\`\`
+
+## The CitationRankScore formula
+
+The final score combines two factors:
+
+\`\`\`
+citation_rank_score = mean_rank_score_when_found × (found_count / total_checks) × 100
+\`\`\`
+
+Where:
+- \`mean_rank_score_when_found\`: average of rank_scores across all query×model combinations that returned a positive citation. Rank score = max(0, 100 - (position - 1) × 5).
+- \`found_count / total_checks\`: the presence rate. If 3 queries × 3 models = 9 total checks, and 5 returned a citation, presence rate = 5/9 = 0.556.
+
+Example: a brand cited at positions 1, 2, 3 in 3 out of 9 checks:
+- Mean rank score: (100 + 95 + 90) / 3 = 95
+- Presence rate: 3/9 = 0.333
+- CitationRankScore: 95 × 0.333 × 100 = 31.6
+
+A brand at position 1 in 100% of checks scores 100. A brand at position 5 in 100% of checks scores 80. A brand at position 5 in 50% of checks scores 40.
+
+## Score tier labels
+
+| Range | Label |
+|-------|-------|
+| ≥ 80 | Dominant Presence |
+| 60–79 | Strong Presence |
+| 40–59 | Moderate Presence |
+| 20–39 | Weak Presence |
+| < 20 | Minimal / Undetected |
+
+## Using validate_queries_evidence in an agent workflow
+
+The tool integrates naturally into AI agent workflows that perform site audits, competitive analysis, or brand monitoring. A typical agent workflow:
+
+1. **Run audit**: \"run_audit\" → get the visibility score and structural recommendations
+2. **Validate citation presence**: \"validate_queries_evidence\" → get the CitationRankScore and evidence IDs
+3. **Get brand mention credibility**: POST to \`/api/mentions/juice\` → get MentionJuiceScore
+4. **Cross-reference**: compare structural score, citation rank, and mention juice to identify the highest-leverage intervention
+
+When all three scores are low, the priority is structural — schema, entity clarity, content organisation. When structural is strong but citation rank is low, the gap is external signal — community presence, third-party mentions, knowledge graph entries. When citation rank is strong but mention juice is low, the risk is quality decay — bulk mentions accumulating from low-credibility sources that dilute the weighted score over time.
+
+## Querying the stored history
+
+Every \`validate_queries_evidence\` call that completes successfully saves a snapshot to \`citation_rank_snapshots\`. You can retrieve the latest snapshot and history via the REST API or MCP:
+
+\`\`\`
+GET /api/citations/rank-score/snapshot?url=https://acmecorp.com
+GET /api/citations/rank-score/history?url=https://acmecorp.com&limit=20
+\`\`\`
+
+The history endpoint returns a time series of CitationRankScore values with metadata (model count, queries tested, found count, tier). Charting this over time turns point-in-time scans into a trend signal.
+
+## Confidence scores and what to do with them
+
+Each evidence result includes a confidence value: 0.9 for positions 1–5, 0.7 for positions 6+, and 0.3 for not-found results.
+
+Confidence reflects position certainty, not ranking confidence. Position 1 in a numbered list is high-confidence. A prose mention estimated at position 10 is lower-confidence because the actual competitive rank cannot be determined from unstructured text.
+
+When you see a cluster of 0.7-confidence results for the same query across multiple models, it signals that your brand is appearing in AI responses but not in the primary ranked positions — a structural optimisation problem, not an absence problem. The fix is content restructuring to make your positioning clearer, not content creation to establish presence.
+
+When you see 0.3 confidence (not found) consistently across all models for a specific query, that query represents a gap in your AI citation surface. Evaluate whether it is a gap worth addressing based on how closely the query matches your actual product positioning.
+
+## Getting started
+
+Signal tier users can call \`validate_queries_evidence\` via the MCP server at \`/api/mcp/call\` or via the REST API at \`POST /api/citations/rank-score\`. Start with the 5 to 10 queries most representative of how your target audience discovers products in your category. Run the scan, review the evidence results, and identify the query × model combinations where presence is weakest.
+
+Those gaps are your citation optimisation roadmap. Use the structural recommendations from your AiVIS audit at [aivis.biz](https://aivis.biz) to address the root causes that reduce citation rank across models.`,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {

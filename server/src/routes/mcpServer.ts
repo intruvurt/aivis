@@ -23,6 +23,7 @@ import { getUserById } from '../models/User.js';
 import { enforceEffectiveTier } from '../services/entitlementGuard.js';
 import { processQueuedAudit } from '../services/mcpAuditProcessor.js';
 import { ensureDefaultWorkspaceForUser } from '../services/tenantService.js';
+import { computeCitationRankScore } from '../services/citationRankScoreService.js';
 
 const router = Router();
 
@@ -251,6 +252,30 @@ const TOOLS: MCPTool[] = [
         },
       },
       required: ['url'],
+    },
+    requiredScope: 'write:audits',
+  },
+  {
+    name: 'validate_queries_evidence',
+    description: 'Run a set of queries against live AI models and extract evidence IDs showing exactly where a brand appears (or doesn\'t) in each model response. Returns a probabilistic CitationRankScore, per-query model coverage, ranked positions, and signed evidence IDs for audit trails. Signal tier required.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        brand: {
+          type: 'string',
+          description: 'Brand name to search for in AI model responses (e.g. \'Acme Corp\')',
+        },
+        url: {
+          type: 'string',
+          description: 'Canonical brand URL — used for snapshot persistence and identity matching',
+        },
+        queries: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Test queries to run across AI models (1–20). Example: ["best project management tools", "alternatives to Notion"]',
+        },
+      },
+      required: ['brand', 'url', 'queries'],
     },
     requiredScope: 'write:audits',
   },
@@ -491,6 +516,61 @@ const executors: Record<string, ToolExecutor> = {
       message: queries.length
         ? 'Citation test started. Poll the status_endpoint for results.'
         : 'Citation test created. Provide queries via the citation test API to execute.',
+    };
+  },
+
+  async validate_queries_evidence(params, userId, _workspaceId) {
+    const { brand, url: rawUrl, queries } = params;
+
+    if (!brand || typeof brand !== 'string' || brand.trim().length < 2) {
+      throw new Error('brand is required (min 2 characters)');
+    }
+    if (!Array.isArray(queries) || queries.length === 0) {
+      throw new Error('queries array is required (min 1 item)');
+    }
+    if (queries.length > 20) throw new Error('Maximum 20 queries per call');
+
+    const normalized = normalizePublicHttpUrl(String(rawUrl));
+    if (!normalized.ok) throw new Error(normalized.error);
+
+    const pool = getPool();
+    const { rows: userRows } = await pool.query(
+      `SELECT tier FROM users WHERE id = $1 LIMIT 1`,
+      [userId],
+    );
+    const tier = userRows[0]?.tier || 'alignment';
+    const rankTier: 'alignment' | 'signal' = tier === 'signal' || tier === 'scorefix' ? 'signal' : 'alignment';
+
+    const apiKey =
+      process.env.OPENROUTER_API_KEY ||
+      process.env.OPEN_ROUTER_API_KEY ||
+      null;
+    if (!apiKey) throw new Error('AI provider not configured on the server');
+
+    const cleanBrand = brand.trim().slice(0, 100);
+    const cleanQueries: string[] = queries
+      .map((q: any) => String(q || '').trim().slice(0, 200))
+      .filter((q: string) => q.length > 3)
+      .slice(0, 20);
+
+    const result = await computeCitationRankScore(
+      cleanBrand,
+      normalized.url,
+      cleanQueries,
+      rankTier,
+      apiKey,
+    );
+
+    return {
+      brand: cleanBrand,
+      url: normalized.url,
+      citation_rank_score: result.citation_rank_score,
+      tier_label: result.tier_label,
+      queries_tested: result.queries_tested,
+      models_tested: result.models_tested,
+      found_count: result.found_count,
+      evidence_results: result.evidence_results,
+      computed_at: result.computed_at,
     };
   },
 };

@@ -181,7 +181,7 @@ const TOOLS: WebMcpTool[] = [
       required: ['audit_id'],
     },
     outputDescription:
-      'Full audit with visibility_score, category_grades, recommendations, content_analysis, ai_platform_scores, keyword_intelligence, technical_signals, schema_markup, evidence_manifest, triple_check_summary, analyzed_at',
+      'Full dual-layer; AI + Python systematic analysis report with visibility_score, category_grades, recommendations, content_analysis, ai_platform_scores, keyword_intelligence, technical_signals, schema_markup, evidence_manifest, triple_check_summary, analyzed_at',
   },
   {
     name: 'export_report',

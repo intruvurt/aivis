@@ -102,6 +102,9 @@ Allow: /blogs/your-website-can-rank-and-still-disappear
 Allow: /blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15
 Allow: /blogs/why-every-ai-visibility-audit-needs-an-evidence-trail
 Allow: /blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment
+Allow: /blogs/ai-citation-tracking-real-probabilistic-fix-2026
+Allow: /blogs/mention-juice-score-source-credibility-ai-visibility-2026
+Allow: /blogs/mcp-query-validation-evidence-id-extraction-ai-rank-2026
 
 # ── Compare pages ──
 Allow: /compare

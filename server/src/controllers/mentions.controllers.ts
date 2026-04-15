@@ -10,6 +10,13 @@ import {
   saveMentionKPISnapshot,
   getMentionKPIHistory,
 } from '../services/mentionTracker.js';
+import {
+  computeMentionJuice,
+  saveMentionJuiceSnapshot,
+  getLatestMentionJuiceSnapshot,
+  getMentionJuiceHistory,
+  type MentionRow,
+} from '../services/mentionJuiceService.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
 
 /**
@@ -182,5 +189,121 @@ export async function getMentionKPIHistoryHandler(req: Request, res: Response) {
   } catch (err: any) {
     console.error('[MentionKPIHistory] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Failed to fetch KPI history' });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MentionJuice endpoints
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * POST /api/mentions/juice
+ * Compute the MentionJuice Score for a brand. Runs a live mention scan
+ * internally (or accepts pre-fetched mentions) and applies credibility
+ * weighting by source authority.
+ *
+ * Body: { brand: string, domain?: string }
+ */
+export async function computeMentionJuiceHandler(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { brand, domain } = req.body || {};
+    if (!brand || typeof brand !== 'string' || brand.trim().length < 2) {
+      return res.status(400).json({ error: 'brand is required (min 2 characters)' });
+    }
+
+    const user = (req as any).user;
+    let gate: Awaited<ReturnType<typeof gateToolAction>>;
+    try {
+      gate = await gateToolAction(userId, 'mention_juice', user.tier || 'observer');
+    } catch (gateErr: any) {
+      console.error('[MentionJuice] gateToolAction failed:', gateErr?.message);
+      return res.status(500).json({ error: 'MentionJuice temporarily unavailable. Please try again.' });
+    }
+    if (!gate.allowed) {
+      return res.status(402).json({
+        error: gate.reason,
+        code: 'CREDITS_REQUIRED',
+        creditCost: gate.creditCost,
+        creditsRemaining: gate.creditsRemaining,
+      });
+    }
+
+    const cleanBrand = brand.trim().slice(0, 100);
+    const cleanDomain = (domain || '').trim().slice(0, 200).replace(/^https?:\/\//, '').replace(/\/+$/, '');
+
+    // Run live scan
+    const scanResult = await trackBrandMentions(cleanBrand, cleanDomain);
+
+    // Map scan rows to MentionRow shape
+    const mentionRows: MentionRow[] = scanResult.mentions.map((m: any) => ({
+      source: m.source,
+      url: m.url,
+      title: m.title || '',
+      snippet: m.snippet || m.content || '',
+      sentiment: m.sentiment as MentionRow['sentiment'],
+      published_at: m.published_at || null,
+    }));
+
+    const juiceResult = computeMentionJuice(cleanBrand, cleanDomain, mentionRows);
+
+    // Persist (non-fatal)
+    saveMentionJuiceSnapshot(userId, juiceResult).catch((err: any) =>
+      console.warn('[MentionJuice] Snapshot save failed (non-fatal):', err?.message),
+    );
+
+    return res.json({ success: true, ...juiceResult });
+  } catch (err: any) {
+    console.error('[MentionJuice] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'MentionJuice computation failed' });
+  }
+}
+
+/**
+ * GET /api/mentions/juice/snapshot?brand=XYZ
+ * Return the latest persisted MentionJuice snapshot.
+ */
+export async function getMentionJuiceSnapshotHandler(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const brand = String(req.query.brand || '').trim();
+    if (!brand) return res.status(400).json({ error: 'brand query param is required' });
+
+    const snapshot = await getLatestMentionJuiceSnapshot(userId, brand);
+    if (!snapshot) {
+      return res.status(404).json({ error: 'No MentionJuice snapshot found for this brand' });
+    }
+
+    return res.json({ success: true, ...snapshot });
+  } catch (err: any) {
+    console.error('[MentionJuiceSnapshot] Error:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch MentionJuice snapshot' });
+  }
+}
+
+/**
+ * GET /api/mentions/juice/history?brand=XYZ&limit=30
+ * Return historical MentionJuice score trend.
+ */
+export async function getMentionJuiceHistoryHandler(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const brand = String(req.query.brand || '').trim();
+    if (!brand) return res.status(400).json({ error: 'brand query param is required' });
+
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit || '30'), 10) || 30, 1), 90);
+
+    const history = await getMentionJuiceHistory(userId, brand, limit);
+
+    return res.json({ success: true, brand, history });
+  } catch (err: any) {
+    console.error('[MentionJuiceHistory] Error:', err?.message);
+    return res.status(500).json({ error: 'Failed to fetch MentionJuice history' });
   }
 }

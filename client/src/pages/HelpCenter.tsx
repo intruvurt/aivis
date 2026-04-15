@@ -298,6 +298,354 @@ const CATEGORIES: HelpCategory[] = [
       },
     ],
   },
+  {
+    id: 'aeo-content',
+    label: 'AEO & Content Strategy',
+    icon: Target,
+    description: 'Answer Engine Optimization fundamentals, content formats, and AI-extractable writing.',
+    articles: [
+      {
+        q: 'What is Answer Engine Optimization (AEO)?',
+        a: 'Process of structuring content to appear directly in AI-generated answers from ChatGPT, Perplexity, Claude, and Google AI. Goes beyond ranking by requiring schema markup, entity clarity, and direct answer formatting that search ranking alone does not provide.',
+        tags: ['aeo', 'answer engine', 'optimization', 'definition'],
+      },
+      {
+        q: 'How is AEO different from traditional SEO?',
+        a: 'SEO targets Google\'s link-graph ranking algorithm. AEO targets AI extraction and attribution. A page ranking number one on Google can be completely invisible in AI-generated answers if it lacks structured data and clear entity signals that AI models rely on for citation decisions.',
+        tags: ['seo', 'aeo', 'difference', 'ranking'],
+      },
+      {
+        q: 'Which AI platforms should I optimize for first?',
+        a: 'Start with Perplexity (live retrieval, widely used for research queries) and Google AI Overview (dominant market share). Then extend to ChatGPT browsing and Claude. Organization schema, FAQ markup, and clean H1-H6 structure produce consistent citation benefits across all four platforms simultaneously.',
+        tags: ['perplexity', 'chatgpt', 'claude', 'google', 'platforms', 'priority'],
+      },
+      {
+        q: 'What content formats get cited most often in AI answers?',
+        a: 'FAQ blocks (mapped to FAQPage JSON-LD), numbered how-to sections (HowTo schema), definition paragraphs (one sentence, entity-dense), and comparison tables. These map directly to the answer patterns AI models extract. Long essays without structural formatting are rarely cited as direct answers.',
+        tags: ['content formats', 'faq', 'how-to', 'schema', 'extractable'],
+      },
+      {
+        q: 'Does content length affect AI citation rates?',
+        a: 'Depth matters more than length. A 400-word FAQ page with JSON-LD markup and entity-clear definitions often outperforms a 3,000-word essay without structured formatting. AI models extract specific answers from structured content, not documents — word count is not a citation signal.',
+        tags: ['length', 'word count', 'depth', 'citation', 'format'],
+      },
+      {
+        q: 'Does content freshness affect whether AI engines cite me?',
+        a: 'Yes. Retrieval-based models like Perplexity weight recency heavily. Including datePublished and dateModified in your Article schema helps confirm freshness to retrieval systems. ChatGPT browsing also factors recency. Stale content without updated timestamps gets deprioritized in live retrieval queries over fresher competing sources.',
+        tags: ['freshness', 'date', 'schema', 'perplexity', 'recency', 'dateModified'],
+      },
+      {
+        q: 'What is a findability goal in AiVIS?',
+        a: 'A natural-language query describing what you want to appear for in AI answers. Example: "best project management tool for remote startups." AiVIS scores how well your content aligns to each goal you enter, showing a coverage percentage and listing which goals have no matching content on your site.',
+        tags: ['findability', 'goal', 'query', 'coverage', 'alignment'],
+      },
+      {
+        q: 'How do I write content AI can extract as a direct answer?',
+        a: 'State the answer in the first two sentences of every section. Use the question itself as the heading (H2 or H3). Avoid burying answers in JavaScript-rendered components that the scraper cannot reach. Eliminate background context paragraphs that force reading before reaching the actual extractable answer.',
+        tags: ['writing', 'direct answer', 'extraction', 'headings', 'structure'],
+      },
+      {
+        q: 'What are semantic clusters and why do they matter for AI citation?',
+        a: 'Groups of semantically related terms and entities that AI models use to validate topical authority. A page covering one narrow topic deeply is cited more reliably than a page broadly touching many unrelated topics. Deep topical coverage on a single subject increases your probability of being used as the primary cited source.',
+        tags: ['semantic', 'clusters', 'topical authority', 'entity', 'depth'],
+      },
+      {
+        q: 'How often should I update content to stay citation-ready?',
+        a: 'Every 3-6 months at minimum, or whenever your industry data changes. AiVIS scheduled rescans (Alignment+) automate this by running weekly or monthly audits and alerting you when citation-readiness signals decay before they visibly impact your live mention rate or visibility score.',
+        tags: ['update', 'freshness', 'scheduled rescan', 'decay', 'maintenance'],
+      },
+    ],
+  },
+  {
+    id: 'schema-structured-data',
+    label: 'Schema & Structured Data',
+    icon: FileText,
+    description: 'JSON-LD types, validation, CMS support, and schema implementation guidance.',
+    articles: [
+      {
+        q: 'What JSON-LD schema types matter most for AI visibility?',
+        a: 'Organization (critical — hard-blocker if absent), WebPage, FAQPage, HowTo, and Article are highest-impact. Organization schema lets AI correctly attribute content to a named business entity. FAQPage and HowTo encode your most extractable answers in machine-readable format that AI models prioritize for direct answer extraction.',
+        tags: ['json-ld', 'organization', 'faqpage', 'howto', 'article', 'schema types'],
+      },
+      {
+        q: 'How do I add FAQ schema to my website?',
+        a: 'Create a JSON-LD script block with @type FAQPage containing a mainEntity array. Each item needs @type Question with a question name and acceptedAnswer text value. Place it in the page head or before the closing body tag. AiVIS Score Fix auto-generates ready-to-paste FAQ schema blocks for your existing page content.',
+        tags: ['faqpage', 'json-ld', 'implementation', 'mainEntity', 'how to add'],
+      },
+      {
+        q: 'Does my CMS automatically add the right JSON-LD schema?',
+        a: 'Most CMSes do not add Organization or FAQPage schema by default. WordPress requires Yoast or RankMath plugins configured correctly. Webflow and Framer need manual code embeds. Squarespace and Wix have extremely limited schema support. AiVIS Score Fix generates correct schema blocks tailored to your actual page content for any CMS.',
+        tags: ['cms', 'wordpress', 'webflow', 'squarespace', 'wix', 'plugin', 'schema'],
+      },
+      {
+        q: 'What is the difference between JSON-LD, Microdata, and RDFa?',
+        a: 'JSON-LD is a separate script block — easy to add, maintain, and validate independently of your HTML. Microdata and RDFa embed attributes directly into HTML elements. All three are supported by Google and AI engines, but JSON-LD is the recommended and universally most maintainable format for new schema implementations.',
+        tags: ['json-ld', 'microdata', 'rdfa', 'formats', 'difference'],
+      },
+      {
+        q: 'Can I have more than one JSON-LD block on the same page?',
+        a: 'Yes. Multiple separate JSON-LD script blocks and single @graph arrays are both valid. AiVIS reads and validates every JSON-LD block individually during an audit, checking each for completeness, correct property names, and all required fields for that specific @type found on the page.',
+        tags: ['multiple', 'json-ld', 'graph', 'blocks', 'validation'],
+      },
+      {
+        q: 'Why does AiVIS flag my schema as invalid or incomplete?',
+        a: 'Common schema errors include: missing @context declaration, wrong @type casing, incorrect property names (sameAs vs SameAs), missing required fields like name or url on Organization, and structural nesting errors. Score Fix generates corrected schema with all required properties resolved, ready to directly replace your broken implementation.',
+        tags: ['invalid', 'schema error', 'context', 'type', 'property', 'scorefix'],
+      },
+      {
+        q: 'What is Organization schema and why does AiVIS treat it as mandatory?',
+        a: 'Organization schema declares your business identity to AI engines: name, url, logo, contact point, and sameAs links to verified external profiles. Without it, AI models cannot reliably attribute content to your named brand. AiVIS applies a hard-blocker score cap of 50 when Organization is absent because unattributed content is effectively uncitable.',
+        tags: ['organization', 'identity', 'mandatory', 'hard-blocker', 'cap', 'sameAs', 'brand'],
+      },
+      {
+        q: 'How does HowTo schema increase AI citation rates?',
+        a: 'HowTo schema maps numbered instructions to structured machine-readable steps. Perplexity and Google AI Overview extract these steps directly into how-to answer blocks, significantly increasing the probability your content appears as a step-by-step cited guide rather than as unstructured prose that gets paraphrased without attribution.',
+        tags: ['howto', 'steps', 'perplexity', 'google', 'citation', 'how-to guide'],
+      },
+      {
+        q: 'What is BreadcrumbList schema and does it help with AI visibility?',
+        a: 'BreadcrumbList defines your page hierarchy for crawlers, signaling where a page sits within your content structure. While primarily a Google ranking signal, it also confirms page context and topical relationship to AI models evaluating whether your content is authoritative on a specific subject relative to its parent category.',
+        tags: ['breadcrumb', 'hierarchy', 'context', 'schema', 'structure'],
+      },
+      {
+        q: 'How do I validate my schema after adding it?',
+        a: 'Use Google\'s Rich Results Test, Schema.org validator, or validator.schema.org for initial checks. AiVIS re-validates all schema blocks on every audit automatically. After applying Score Fix patches, trigger a rescan to get a new evidence-backed validation report showing exactly which schema types are now complete and which properties were corrected.',
+        tags: ['validate', 'rich results', 'schema.org', 'testing', 'scorefix', 'rescan'],
+      },
+    ],
+  },
+  {
+    id: 'score-improvement',
+    label: 'How-To: Improving Your Score',
+    icon: BarChart3,
+    description: 'Practical steps to raise your visibility score across every audit category.',
+    articles: [
+      {
+        q: 'What is the fastest change I can make to improve my visibility score?',
+        a: 'Fix your meta title (under 60 characters, entity-rich) and meta description (120-160 characters, factual) first — both require no developer work and are re-scraped immediately on your next audit. Adding missing Organization JSON-LD schema is the next highest-impact fix and routinely adds 10-20 points in AiVIS scoring.',
+        tags: ['fast fix', 'meta title', 'meta description', 'organization schema', 'quick win'],
+      },
+      {
+        q: 'What visibility score do I need to reliably get cited by AI engines?',
+        a: 'AiVIS research indicates 65+ correlates with consistent Perplexity citation. 80+ produces reliable citation across ChatGPT, Claude, and Google AI Overview simultaneously. Below 40, AI citation is rare and typically coincidental. Improving from 40 to 65 usually requires parallel schema fixes and content restructuring.',
+        tags: ['score target', '65', '80', 'citation threshold', 'perplexity', 'chatgpt'],
+      },
+      {
+        q: 'How do I fix a blocked AI crawler warning in my audit?',
+        a: 'Open your robots.txt file and check for any Disallow rules targeting GPTBot, ClaudeBot, Google-Extended, or PerplexityBot. Remove or whitelist those rules. Also verify your meta robots tag contains no noindex or nosnippet directives. Rerun your AiVIS audit after fixing to confirm the warning clears and your score cap lifts.',
+        tags: ['robots.txt', 'gptbot', 'claudebot', 'perplexitybot', 'blocked', 'noindex'],
+      },
+      {
+        q: 'How do I improve my Content Depth score?',
+        a: 'Add a FAQ section with at least three specific Q&A pairs, expand thin paragraphs to 80+ words each, include at least one numbered how-to section, and add structured bulleted lists to key content blocks. Avoid hiding primary content inside JavaScript components that require user interaction to render — the scraper will not see it.',
+        tags: ['content depth', 'faq', 'paragraphs', 'how-to', 'javascript', 'scraper'],
+      },
+      {
+        q: 'My Heading Structure score is low. What should I change?',
+        a: 'Confirm a single H1 tag matches your page\'s primary topic statement. Use H2 for major sections and H3 for subsections without ever skipping levels (no H1 → H3 jumps). Replace generic headings like "Our Approach" with keyword-aligned questions or factual statements. Headings are the primary extraction anchor AI models use to understand page structure.',
+        tags: ['headings', 'h1', 'h2', 'h3', 'structure', 'hierarchy', 'extraction'],
+      },
+      {
+        q: 'What meta description length performs best for AI extraction?',
+        a: '120-160 characters works best. Write it as a single factual sentence that includes your brand name, primary topic, and a specific claim or benefit. Avoid generic phrases like "Welcome to our site" or "Learn more here." Entity-rich meta descriptions are extracted by AI crawlers as a primary compressed summary signal before the page body is processed.',
+        tags: ['meta description', 'length', '160 characters', 'entity', 'summary'],
+      },
+      {
+        q: 'Why did my score drop after I updated my website?',
+        a: 'Common causes: a CMS plugin update overwrote your JSON-LD schema, JavaScript rendering now hides content blocks from the static scraper, robots.txt was reset during a CMS migration, or an H1 tag was accidentally removed. Use AiVIS audit history to diff before-and-after evidence points and identify exactly which signal changed.',
+        tags: ['score drop', 'cms update', 'schema overwritten', 'robots.txt reset', 'history', 'diff'],
+      },
+      {
+        q: 'Does page load speed directly affect my AiVIS score?',
+        a: 'Not directly — AiVIS uses scrape-based evidence, not Lighthouse performance metrics. However, if JavaScript renders your critical content dynamically and the scraper cannot access it, your Content Depth, Heading Structure, and AI Readability scores all drop because those signals simply do not appear in the scraped evidence output.',
+        tags: ['page speed', 'lighthouse', 'javascript', 'scraper', 'dynamic content'],
+      },
+      {
+        q: 'How do I improve my AI Readability score specifically?',
+        a: 'Write in plain language with sentences under 25 words. Use active voice, provide direct answers at the start of each section, and avoid legal-style hedging or technical jargon without definitions. Pages dense with passive voice, nested conditionals, or qualification-heavy language consistently score below 40 on AI Readability in AiVIS audits.',
+        tags: ['ai readability', 'plain language', 'active voice', 'jargon', 'sentence length'],
+      },
+      {
+        q: 'What does the score improvement chart on the Analytics page show?',
+        a: 'It charts your visibility score over time across all audits, showing category-by-category deltas with each run, trend direction, and a leaderboard comparison against tracked competitors when competitor tracking is active. Use it to validate that specific fixes are measurably improving individual categories rather than causing score regressions elsewhere.',
+        tags: ['analytics', 'chart', 'trend', 'delta', 'competitors', 'history'],
+      },
+    ],
+  },
+  {
+    id: 'citation-brand',
+    label: 'Citation Testing & Brand Visibility',
+    icon: Eye,
+    description: 'How citation tests work, mention rates, false positives, and brand citation strategy.',
+    articles: [
+      {
+        q: 'How does the AiVIS citation test actually work under the hood?',
+        a: 'AiVIS generates 3-5 natural-language search queries from your URL and industry, submits each query to ChatGPT, Perplexity, Claude, and Google AI in parallel, parses the AI-generated responses for brand mentions and excerpts, then stores results with mention quality scores and a per-platform breakdown for trend analysis.',
+        tags: ['citation test', 'how it works', 'queries', 'platforms', 'parallel', 'mention'],
+      },
+      {
+        q: 'What mention rate is considered strong for a brand in AI answers?',
+        a: 'Industry average is below 15%. A mention rate above 30% across two or more AI platforms is strong performance. Rates above 60% on a single platform indicate your brand is being used as a primary reference source for that query category — which is the target for authority-based content and citation strategies.',
+        tags: ['mention rate', 'benchmark', '15%', '30%', '60%', 'strong', 'average'],
+      },
+      {
+        q: 'Why isn\'t my brand mentioned even though I rank well on Google?',
+        a: 'Ranking and citation are separate mechanisms. AI citation depends on machine-readable schema, entity resolution, content extractability, and whether your brand exists in the AI model\'s training data or real-time retrieval index in a citable format. High domain authority and PageRank have no direct bearing on AI citation rates.',
+        tags: ['not cited', 'ranking', 'domain authority', 'schema', 'retrieval', 'entity'],
+      },
+      {
+        q: 'What is a false positive in citation test results?',
+        a: 'A false positive occurs when an AI response includes your brand name in a negative, tangential, or generic context unrelated to a real recommendation. AiVIS detects these through a citation revalidation service that applies contextual gates — negative mention detection, substantive support checks, and quality thresholds — to stored citation excerpts automatically.',
+        tags: ['false positive', 'negative context', 'revalidation', 'gates', 'quality threshold'],
+      },
+      {
+        q: 'How can I increase my brand mention rate in AI answers?',
+        a: 'Strengthen Organization schema with complete sameAs links to LinkedIn, Crunchbase, and G2. Publish FAQ content that uses your brand name in direct answer positions. Earn mentions from high-authority off-page sources AI models reference. Then rerun AiVIS citation tests to measure the before-and-after delta in your mention rate across each platform.',
+        tags: ['increase mentions', 'organization schema', 'sameAs', 'off-page', 'FAQ content', 'delta'],
+      },
+      {
+        q: 'Can I test specific queries I care about instead of auto-generated ones?',
+        a: 'Yes. On the Citations page when starting a new test, enter custom queries manually alongside or instead of auto-generated suggestions. This lets you test brand-specific use cases like "best tool for X" comparisons or queries where competitors dominate your space, directly measuring your citation gap on the queries that matter most commercially.',
+        tags: ['custom queries', 'manual', 'competitor', 'citation gap', 'specific queries'],
+      },
+      {
+        q: 'What AI platforms does AiVIS test citations against?',
+        a: 'ChatGPT via the OpenAI API, Perplexity via its live retrieval API, Claude via the Anthropic API, and Google AI Overview via a simulated query path. Each platform produces different citation behavior and mention patterns, which is why AiVIS tests all four separately and reports per-platform rather than averaging results.',
+        tags: ['chatgpt', 'perplexity', 'claude', 'google', 'platforms', 'api', 'per-platform'],
+      },
+      {
+        q: 'What is the mention quality score and how is it calculated?',
+        a: 'A 0-100 score assigned to each citation result. Factors include: excerpt length and specificity, whether your brand appears as a primary recommendation versus buried in a list of many, competitive context, URL attribution presence, and whether the mention context is positive, neutral, or incidental. Results below 15 are auto-routed to the citation revalidation service.',
+        tags: ['mention quality', 'score', 'calculation', '0-100', 'revalidation', 'excerpt'],
+      },
+      {
+        q: 'How does AiVIS track citation trends over time?',
+        a: 'Every citation test result is stored with a timestamp. The Citations page charts mention rate, average quality score, and platform breakdown across all test runs chronologically. You can compare tests run weeks or months apart to detect gradual citation decay. Drop alerts trigger automatically when rate falls more than 15% between consecutive runs.',
+        tags: ['trends', 'timeline', 'chronological', 'citation decay', 'drop alert', '15%'],
+      },
+      {
+        q: 'What is a citation drop alert and what triggers it?',
+        a: 'An automated notification that fires when your mention rate drops significantly between two consecutive citation test cycles. AiVIS compares the most recent test against the previous one and alerts you with the previous rate, current rate, and drop magnitude so you can investigate which queries or platforms drove the decline.',
+        tags: ['drop alert', 'notification', 'rate drop', 'consecutive', 'magnitude', 'investigate'],
+      },
+    ],
+  },
+  {
+    id: 'ai-llm-tech',
+    label: 'AI & LLM Technology',
+    icon: BookOpen,
+    description: 'How AI models work, training cutoffs, entity resolution, hallucinations, and RAG.',
+    articles: [
+      {
+        q: 'Why do different AI models cite different sources for the same query?',
+        a: 'Each model has a different training dataset, training cutoff date, and retrieval mechanism. Perplexity uses live web retrieval. ChatGPT relies on training data plus optional browsing. Claude prioritizes context window accuracy. A source prominent in one model\'s training corpus may be completely unknown to another model with a different cutoff or retrieval index.',
+        tags: ['models differ', 'training data', 'cutoff', 'retrieval', 'chatgpt', 'perplexity', 'claude'],
+      },
+      {
+        q: 'What is a training cutoff and how does it affect my visibility?',
+        a: 'The date after which an AI model stopped ingesting new training data. Sites that launched, changed significantly, or published new content after a model\'s cutoff will not appear in non-retrieval-based answers from that model. Perplexity and Bing Chat are less affected because they use real-time retrieval to supplement training knowledge continuously.',
+        tags: ['training cutoff', 'launch date', 'perplexity', 'bing', 'real-time retrieval', 'new content'],
+      },
+      {
+        q: 'How do AI models decide which sources to cite in their answers?',
+        a: 'Multiple factors: source quality and reputation in training data, retrieval ranking at query time for browsing-enabled models, entity resolution confidence (can the model identify your brand from context?), content structure clarity, and schema completeness. Well-structured pages with clear Organization schema and explicit topical claims are cited more reliably across all tested models.',
+        tags: ['citation decision', 'source quality', 'entity resolution', 'schema', 'browsing', 'factors'],
+      },
+      {
+        q: 'What is GEO (Generative Engine Optimization) and how does it differ from AEO?',
+        a: 'GEO specifically targets AI systems that generate answers — Perplexity, ChatGPT, Google AI Overview, Claude. AEO is the broader practice of optimizing for answer engines generally, which includes voice search and featured snippets. In practice the two overlap heavily, as both require structured data, entity clarity, and extractable content for reliable citation.',
+        tags: ['geo', 'generative engine', 'aeo', 'difference', 'perplexity', 'voice search'],
+      },
+      {
+        q: 'Does my website need to be in Google\'s index to be cited by AI engines?',
+        a: 'Not universally. Perplexity and Bing Chat maintain independent retrieval indices. However, Google AI Overview and ChatGPT browsing are heavily influenced by Google\'s crawl and index. Strong Google indexation remains a prerequisite for most AI citation pathways, so confirming you are indexed should be verified before focusing exclusively on schema optimization.',
+        tags: ['google index', 'indexed', 'perplexity', 'bing', 'chatgpt browsing', 'prerequisite'],
+      },
+      {
+        q: 'What is entity resolution and why does it affect my AI citation rate?',
+        a: 'The process by which an AI model links your brand name to a known entity in its knowledge graph. If "AiVIS," "aivis.biz," and "AI Visibility Audit System" are not consistently defined across your schema and off-page profiles, models may treat them as separate unrelated entities, lowering attribution confidence and reducing citation frequency across all platforms.',
+        tags: ['entity resolution', 'knowledge graph', 'brand name', 'consistency', 'attribution confidence'],
+      },
+      {
+        q: 'What is a hallucination in AI and can it create false information about my brand?',
+        a: 'A hallucination is when an AI model generates claims not grounded in actual source data. For brands, this can mean the model invents details about your product or confuses you with a similar competitor. AiVIS citation testing detects hallucinated or false-context mentions through its revalidation service and automatically flags them as false positives.',
+        tags: ['hallucination', 'false information', 'brand confusion', 'false positive', 'revalidation'],
+      },
+      {
+        q: 'Can I make AI models stop citing my competitors and start citing me instead?',
+        a: 'You cannot suppress competitor citations directly. But you can outperform them structurally: stronger entity clarity, more comprehensive FAQ and HowTo schema, broader off-page mentions across trusted sources, and higher citation test performance give AI models statistically more reasons to cite you over them. The strategy is becoming a better-verified source, not removing a competing one.',
+        tags: ['competitors', 'outperform', 'entity clarity', 'schema', 'strategy', 'suppress'],
+      },
+      {
+        q: 'What is retrieval-augmented generation (RAG) and why does it matter for my site?',
+        a: 'RAG is an architecture where AI models query external sources in real-time to supplement their static training knowledge. Perplexity, Bing Chat, and Google AI Overview all use RAG-style retrieval. Being indexed, structurally readable, and schema-complete is essential for appearing in RAG-powered answers because retrieval quality directly determines citation frequency.',
+        tags: ['rag', 'retrieval-augmented generation', 'perplexity', 'bing chat', 'real-time', 'indexed'],
+      },
+      {
+        q: 'How do Perplexity, ChatGPT, and Claude differ in how they attribute sources?',
+        a: 'Perplexity uses live retrieval and shows numbered source citations inline with every answer. ChatGPT with browsing enabled shows source URLs but often omits them for training-knowledge-based responses. Claude is most conservative, prioritizing accuracy over attribution. Google AI Overview integrates citations from its trusted organic search index rather than arbitrary web retrieval.',
+        tags: ['perplexity', 'chatgpt', 'claude', 'attribution', 'inline citations', 'differences'],
+      },
+    ],
+  },
+  {
+    id: 'api-integrations',
+    label: 'API & Integrations',
+    icon: ArrowRight,
+    description: 'API keys, OAuth, webhooks, MCP Console, CI/CD integration, and rate limits.',
+    articles: [
+      {
+        q: 'How do I generate an AiVIS API key?',
+        a: 'Go to Settings → API and Integrations → Generate API Key. Keys are prefixed with avis_ and tied to your account tier. Alignment+ tiers have API access enabled. API keys are shown only once at generation — store them immediately in a secrets manager or environment variable because they cannot be retrieved again after leaving the page.',
+        tags: ['api key', 'generate', 'avis_', 'settings', 'secrets manager', 'alignment'],
+      },
+      {
+        q: 'What can I do with the AiVIS REST API?',
+        a: 'Run audits programmatically, retrieve full audit history, pull analytics data, access reverse-engineer tool outputs, query competitor tracking records, and manage scheduled rescans — all via standard HTTP requests. The complete OpenAPI 3.0.3 specification is available at /api/v1/openapi.json for importing into Postman, Insomnia, or any API client.',
+        tags: ['rest api', 'audit', 'analytics', 'openapi', 'postman', 'programmatic'],
+      },
+      {
+        q: 'Does AiVIS support OAuth 2.0 for third-party integrations?',
+        a: 'Yes, OAuth 2.0 per RFC 6749 is supported. Available scopes are read:audits, read:analytics, and write:audits. Register your OAuth client through the API to receive a client_id and secret, then use the standard authorize and token exchange flow to obtain short-lived avist_ access tokens for third-party integrations.',
+        tags: ['oauth', 'oauth 2.0', 'rfc 6749', 'scopes', 'avist_', 'third-party'],
+      },
+      {
+        q: 'How do I integrate AiVIS into my CI/CD deploy pipeline?',
+        a: 'Use your avis_ API key to POST to /api/v1/audits after each deployment completes. Configure a webhook at Settings → Webhooks to receive a score-change notification when the post-deploy audit finishes. This creates a continuous visibility verification loop where every code deploy automatically triggers an audit and flags score regressions before they compound.',
+        tags: ['ci/cd', 'deploy', 'pipeline', 'webhook', 'regression', 'automation'],
+      },
+      {
+        q: 'What is the MCP Server Console and who should use it?',
+        a: 'The MCP Console exposes 15+ AiVIS tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent\'s tool interface. Requires Alignment+ tier.',
+        tags: ['mcp', 'model context protocol', 'claude desktop', 'cursor', 'windsurf', 'coding agent'],
+      },
+      {
+        q: 'How do I connect Claude Desktop to AiVIS via MCP?',
+        a: 'Navigate to Help → MCP Console, copy your MCP endpoint URL and authorization token. Add them to your Claude Desktop configuration file under mcpServers with a descriptive name. Save and restart Claude Desktop. All AiVIS tools then appear as native capabilities inside every Claude conversation without switching context.',
+        tags: ['claude desktop', 'mcp config', 'endpoint', 'token', 'mcpServers', 'setup'],
+      },
+      {
+        q: 'How do webhooks work in AiVIS and how do I set one up?',
+        a: 'Webhooks deliver real-time JSON payloads to your server when platform events occur — audit completed, score dropped, citation alert triggered, rescan finished. Configure them at Settings → Webhooks by providing your target URL. AiVIS sends POST requests with an HMAC-SHA256 signature in the X-Signature header for cryptographic payload verification.',
+        tags: ['webhooks', 'events', 'payload', 'hmac', 'x-signature', 'real-time', 'setup'],
+      },
+      {
+        q: 'How do I verify that an AiVIS webhook payload has not been tampered with?',
+        a: 'Every webhook request includes an X-Signature header containing an HMAC-SHA256 hash of the raw request body signed with your webhook secret. Compute the same hash server-side using your stored secret and compare byte-by-byte. Reject any payload where signatures do not match to prevent replay attacks and request forgery from untrusted sources.',
+        tags: ['webhook verification', 'hmac-sha256', 'x-signature', 'replay attack', 'forgery', 'security'],
+      },
+      {
+        q: 'Can I schedule automated audits via the AiVIS API?',
+        a: 'Yes. Scheduled rescans (Alignment+ tiers) support daily, weekly, and monthly intervals configurable from the dashboard or via the API. POST to /api/v1/audits with a schedule parameter to set up recurring runs. Results are delivered via webhook or retrievable at GET /api/v1/audits with status and date-range filtering available.',
+        tags: ['scheduled', 'automated audits', 'daily', 'weekly', 'monthly', 'api scheduling'],
+      },
+      {
+        q: 'What rate limits apply to the AiVIS external API?',
+        a: 'Tier-based limits apply. Alignment: 500 API requests per month. Signal: 5,000 requests per month. Score Fix: 2,000 requests per month. Requests exceeding the limit receive a 429 Too Many Requests response with a Retry-After header showing the next reset time. Scan quotas are tracked separately and displayed in Settings alongside API usage.',
+        tags: ['rate limits', '429', 'retry-after', 'alignment', 'signal', 'scorefix', 'monthly quota'],
+      },
+    ],
+  },
 ];
 
 const QUICK_LINKS = [

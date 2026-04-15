@@ -164,11 +164,10 @@ export async function sendAgreementOtpEmail(email: string, code: string, slug: s
 </body>
 </html>`.trim();
 
-  try {
-    await resendSend({ to: email, subject, html: emailHtml, text: textBody });
-  } catch (err) {
-    console.error(`[AgreementEmail] OTP send failed for ${email}:`, err);
-  }
+  // Let errors propagate — the caller (agreementRoutes.ts) catches and returns a 502
+  // with a user-facing message. Swallowing the error here was causing silent failures
+  // where the API returned { sent: true } but no email was ever delivered.
+  await resendSend({ to: email, subject, html: emailHtml, text: textBody });
 }
 
 /**

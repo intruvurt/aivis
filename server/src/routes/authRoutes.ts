@@ -60,7 +60,7 @@ function getFrontendBase(req: express.Request): string {
   if (explicit && process.env.NODE_ENV === 'production') {
     console.error(
       `[Auth] FRONTEND_URL "${explicit}" has no http(s):// scheme — falling back to req-derived base. ` +
-      'Fix this by setting FRONTEND_URL=https://yourdomain.com in your environment.'
+      'Fix this by setting FRONTEND_URL=https://aivis.biz in your environment.'
     );
   }
   const host = req.hostname || req.get('host') || '';
@@ -673,7 +673,7 @@ router.post(
   '/reset-password/confirm',
   [
     body('token').notEmpty().withMessage('Reset token is required'),
-    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+    body('password').isLength({ min: 10 }).withMessage('Password must be at least 10 characters'),
   ],
   confirmResetPassword
 );

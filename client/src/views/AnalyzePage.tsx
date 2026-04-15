@@ -35,8 +35,45 @@ import PlatformShiftBanner from "../components/PlatformShiftBanner";
 import FeatureInstruction from "../components/FeatureInstruction";
 import ConversionCTA from "../components/ConversionCTA";
 import { normalizePublicUrlInput } from "../utils/targetKey";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 const normalizeUrl = normalizePublicUrlInput;
+
+const ANALYZE_FAQ = [
+  {
+    question: "What is an AI visibility audit?",
+    answer: "An AI visibility audit measures how well a website can be read, extracted, and cited by AI answer engines such as ChatGPT, Perplexity, Claude, and Google AI Overviews. It tests whether your content is structured, entity-clear, and evidence-dense enough for AI systems to trust and quote. Unlike traditional SEO audits that focus on keyword ranking, an AI visibility audit scores citation readiness, extraction clarity, trust signals, and machine-readable structure.",
+  },
+  {
+    question: "Why isn't my site showing up in AI-generated answers?",
+    answer: "Most websites fail AI visibility checks for one or more of these reasons: weak entity clarity (AI cannot resolve what the business is or who it serves), missing FAQ and answer blocks (questions are buried in long prose instead of concise extractable sections), incomplete or mismatched JSON-LD schema (machine-readable signals contradict visible content), thin evidence (claims without proof, examples, or citations), and no trust language such as methodology disclosures or verifiable credentials. AiVIS identifies exactly which blockers apply to your site and ranks them by impact.",
+  },
+  {
+    question: "What do the audit scores mean?",
+    answer: "The overall visibility score is a composite out of 100 that combines entity clarity, heading structure, answer block quality, evidence depth, schema alignment, internal link integrity, freshness signals, and trust markers. Scores below 50 indicate critical extractability blockers. Scores 50-74 indicate structural gaps that reduce citation probability. Scores 75-89 are competitive but have addressable weak points. Scores 90 and above indicate strong AI readiness with minor polish opportunities.",
+  },
+  {
+    question: "Which AI platforms does AiVIS check against?",
+    answer: "AiVIS audits evaluate citation readiness across the four major AI answer surfaces: ChatGPT (OpenAI), Perplexity AI, Claude (Anthropic), and Google AI Overviews (formerly SGE). Each platform has different extraction thresholds, citation criteria, and entity resolution preferences. The audit scores are calibrated against observable citation behavior across all four platforms so improvements transfer across the ecosystem rather than optimizing for a single engine.",
+  },
+  {
+    question: "How long does an audit take?",
+    answer: "Most audits complete in 30-60 seconds. The pipeline fetches the live page, extracts visible content and structured data, runs multi-signal technical checks, and sends the evidence package through an AI analysis chain that scores each dimension and generates prioritized recommendations. Observer (free) tier uses a single AI model. Signal tier runs a Triple-Check Pipeline with three independent models for higher scoring confidence.",
+  },
+  {
+    question: "What is the difference between AI visibility and traditional SEO?",
+    answer: "Traditional SEO optimizes for keyword-match ranking algorithms that score pages on backlinks, anchor text, and keyword density. AI visibility optimization prepares content for probabilistic extraction: answering specific questions concisely, structuring content with clear entity-subject-predicate relationships, aligning JSON-LD schema to visible claims, and providing evidence that answer engines can surface as cited facts. A page can rank on page one of Google and score near zero for AI visibility if its content is not structured for machine extraction.",
+  },
+  {
+    question: "How often should I re-audit?",
+    answer: "After any significant content update, template redesign, schema change, or navigation restructure, re-auditing within 48 hours lets you confirm whether the changes improved extraction clarity. For competitive markets, monthly re-audits track drift versus competitors being cited in your category. AiVIS stores audit history so you can compare scores over time and measure whether implemented fixes actually moved the needle.",
+  },
+  {
+    question: "Is the audit score tied to my server technology or CMS?",
+    answer: "No. The audit evaluates the rendered HTML that AI crawlers actually see, not the technology stack behind it. Scores reflect content structure, semantic markup, entity clarity, and evidence density — factors that apply equally to WordPress, Webflow, Next.js, custom builds, and static sites. The only technical factors scored are those visible to an HTTP client: headers, schema markup, canonical tags, robots directives, and rendering fidelity.",
+  },
+];
 
 const validateUrl = (input: string): boolean => {
   try {
@@ -242,6 +279,14 @@ const AnalyzePage: React.FC = () => {
     title: "Analyze",
     description: "Run an AI visibility audit on any website. Get evidence-backed scoring and actionable recommendations.",
     path: "/analyze",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/analyze",
+        name: "AI Visibility Audit Tool | AiVIS",
+        description: "Run an evidence-backed AI visibility audit on any website. Score citation readiness, extraction clarity, entity signals, and trust markers across ChatGPT, Perplexity, Claude, and Google AI Overviews.",
+      }),
+      buildFaqSchema(ANALYZE_FAQ, { path: "/analyze" }),
+    ],
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -1321,6 +1366,14 @@ const AnalyzePage: React.FC = () => {
               </div>
             </div>
           </section>
+        )}
+
+        {!result && !loading && (
+          <PageQASection
+            items={ANALYZE_FAQ}
+            heading="Understanding AI visibility audits"
+            className="mt-6"
+          />
         )}
     </div>
   );

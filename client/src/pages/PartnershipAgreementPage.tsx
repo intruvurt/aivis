@@ -223,6 +223,43 @@ export default function PartnershipAgreementPage() {
   return (
     <PublicPageFrame icon={FileText} title="Partnership Terms" subtitle="AiVIS × Zeeniith" maxWidthClass="max-w-[980px]">
       <div className="space-y-5">
+
+        {/* Persistent intro — always visible before the agreement loads */}
+        {!agreement && !accessDenied && (
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[rgba(18,18,26,0.94)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="mb-5">
+              <span className="inline-block text-[0.78rem] text-[#d7ddff] bg-[rgba(124,92,255,0.15)] border border-[#7c5cff]/35 px-2.5 py-1 rounded-full mb-3">
+                Private — restricted access
+              </span>
+              <h2 className="text-lg font-semibold text-white mb-1">AiVIS × Zeeniith Referral & Delivery Partnership</h2>
+              <p className="text-white/60 text-sm leading-relaxed">
+                This is a private, legally-binding partnership agreement between <strong className="text-white/80">AiVIS (Intruvurt Labs)</strong> and <strong className="text-white/80">Zeeniith.in</strong> covering referral commission structure, development delivery obligations, client exclusivity protections, payment handling, and dispute resolution. Access is restricted to the named parties only.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+              <div className="rounded-xl bg-[#171722] border border-[#2a2f3a] p-4">
+                <span className="block text-[0.8rem] font-semibold text-[#7c5cff] mb-1.5">Step 1 — Verify identity</span>
+                <p className="text-white/55 text-xs leading-relaxed">Enter the email address registered as Party A or Party B in this contract to unlock the agreement.</p>
+              </div>
+              <div className="rounded-xl bg-[#171722] border border-[#2a2f3a] p-4">
+                <span className="block text-[0.8rem] font-semibold text-[#7c5cff] mb-1.5">Step 2 — Review terms</span>
+                <p className="text-white/55 text-xs leading-relaxed">Read the full commercial terms covering commission rates, delivery scope, client exclusivity, payment timelines, and IP rights.</p>
+              </div>
+              <div className="rounded-xl bg-[#171722] border border-[#2a2f3a] p-4">
+                <span className="block text-[0.8rem] font-semibold text-[#7c5cff] mb-1.5">Step 3 — Sign with OTP</span>
+                <p className="text-white/55 text-xs leading-relaxed">Request a 6-digit code sent to your registered email, enter your full legal name, and submit your binding signature.</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4 text-xs text-white/40 border-t border-[#2a2f3a] pt-4">
+              <span>Effective date: <strong className="text-white/60">April 1, 2026</strong></span>
+              <span>Jurisdiction: <strong className="text-white/60">Georgia, USA</strong></span>
+              <span>Signing verification: <strong className="text-white/60">Email OTP + legal name</strong></span>
+              <span>Tamper evidence: <strong className="text-white/60">SHA-256 hash lock</strong></span>
+              <span className="ml-auto">Questions? <strong className="text-white/60">partners@aivis.biz</strong></span>
+            </div>
+          </div>
+        )}
+
         {loading && (
           <div className="flex items-center justify-center py-20 text-white/50">
             <img src="/aivis-progress-spinner.png" alt="" className="w-5 h-5 animate-spin mr-3" /> Loading agreement...

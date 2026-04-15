@@ -38,6 +38,39 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
 import UpgradeWall from "../components/UpgradeWall";
 import { normalizePublicUrlInput } from "../utils/targetKey";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+
+const CITATIONS_FAQ = [
+  {
+    question: "What is an AI citation?",
+    answer: "An AI citation occurs when an answer engine such as ChatGPT, Perplexity, Claude, or Google AI Overviews references your website as the source of a specific claim, fact, or answer. Citations appear as hyperlinked attributions in generated answers and are the primary form of organic traffic from AI platforms. Unlike traditional backlinks, AI citations are awarded based on evidence density, entity clarity, and answer-block structure rather than domain authority alone.",
+  },
+  {
+    question: "Which AI platforms use citations in their answers?",
+    answer: "Perplexity AI cites sources in virtually every answer and is the most citation-transparent platform. ChatGPT with browsing and the GPT-4o web search mode returns attributed citations. Google AI Overviews cite supporting pages next to answer summaries. Claude's web search mode adds citation numbers. Each platform has different thresholds for citation eligibility, which is why testing across all four reveals gaps that single-platform monitoring misses.",
+  },
+  {
+    question: "Why is Perplexity citing my competitors instead of me?",
+    answer: "Perplexity selects sources based on a combination of topical relevance, extraction clarity, answer completeness, and freshness. If competitors are cited instead of you, the most common causes are: their pages have more direct question-answer pairs aligned to the query, their entity markup is more specific (clearer service category, audience, and geography), their evidence sections are denser with verifiable specifics, or their pages load and render faster for live crawls. The AiVIS citation test shows exactly which query types surface competitors and why.",
+  },
+  {
+    question: "What makes a web page citation-eligible for AI answer engines?",
+    answer: "Citation-eligible pages share five structural properties: they answer a specific question directly in the first 150 words of the answer section, they have unambiguous entity signals (business type, audience, service scope clearly stated), they carry aligned JSON-LD schema that matches visible content, they provide verifiable evidence such as examples, numbers, or methodological notes, and they have no extraction blockers such as JavaScript-only rendering, aggressive bot detection, or robots.txt restrictions on AI crawlers.",
+  },
+  {
+    question: "What is co-occurrence and why does it matter for AI citations?",
+    answer: "Co-occurrence is when your brand or entity appears in the same context as target topics across multiple sources. AI models train on web-scale text and learn entity associations through co-occurrence patterns. If your brand consistently appears alongside 'AI visibility', 'answer engine optimization', or 'citation readiness' across your own site, earned mentions, and third-party references, the model builds a stronger association that increases the probability of citation in relevant answer contexts.",
+  },
+  {
+    question: "How do I increase my citation rate across AI platforms?",
+    answer: "The highest-impact improvements are: restructuring long-form content into concise direct-answer blocks with clear question headings, adding FAQ schema with questions that mirror actual AI prompts, ensuring your entity is unambiguously defined in the first paragraph of every page, removing or fixing JavaScript rendering issues that prevent full content extraction, and building topical co-occurrence through consistent publication on the core topics where you want to be cited. AiVIS citation tests show which specific query types and platforms are blocking your brand.",
+  },
+  {
+    question: "What is the difference between a brand mention and a citation?",
+    answer: "A brand mention is any appearance of your brand name or URL in an AI-generated text, including indirect references or summaries that do not link to a source. A citation is a specific attribution with a direct link back to your page, typically shown as a numbered reference or hyperlink. Citations have higher traceable traffic value, but brand mentions influence the model's association strength and can raise citation probability over time as the model's training corpus updates.",
+  },
+];
 
 /* ── Tab IDs ─────────────────────────────────────────────────────────────── */
 type CitationTab = "engine" | "intelligence" | "entity" | "automation";
@@ -75,6 +108,14 @@ export default function CitationsPage() {
     title: "AI Citation Tracker",
     description: "Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude mention your brand.",
     path: "/citations",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/citations",
+        name: "AI Citation Tracker | AiVIS",
+        description: "Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude cite your brand in generated answers.",
+      }),
+      buildFaqSchema(CITATIONS_FAQ, { path: "/citations" }),
+    ],
   });
 
   React.useEffect(() => {
@@ -376,6 +417,12 @@ export default function CitationsPage() {
             )}
           </section>
         )}
+
+        <PageQASection
+          items={CITATIONS_FAQ}
+          heading="Understanding AI citations"
+          className="mt-6"
+        />
       </div>
     </div>
   );

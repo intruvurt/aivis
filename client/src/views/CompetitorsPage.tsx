@@ -21,8 +21,37 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { API_URL } from "../config";
 import apiFetch from "../utils/api";
 import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
+import PageQASection from "../components/PageQASection";
+import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
 const COMPETITOR_TARGET_URL_KEY = "aivis-competitor-target-url";
+
+const COMPETITORS_FAQ = [
+  {
+    question: "How does competitor AI visibility comparison work?",
+    answer: "AiVIS audits each competitor URL through the same multi-signal analysis pipeline used for your own site: entity clarity, structure, evidence depth, schema alignment, and answer-block quality. The comparison surfaces which structural factors give a competitor an advantage in AI-generated answers and identifies gaps where your content is weaker or missing entirely. This is not a simulated metric — it is an evidence-based comparison of machine-readable signals from both sites.",
+  },
+  {
+    question: "What signals give competitors an advantage in AI answers over my site?",
+    answer: "The most common competitive edges observed in AI citation analysis are: cleaner entity framing (the competitor's site resolves unambiguously to a specific service category), denser answer blocks (direct Q&A sections close to the top of key pages), stronger schema coverage (FAQPage, Service, Organization schema aligned to visible content), a richer internal link graph supporting the main entities, and more verifiable evidence such as case data, methodology notes, and concrete outcome examples.",
+  },
+  {
+    question: "Can I track multiple competitors at once?",
+    answer: "Yes. On Alignment and Signal tiers you can add multiple competitor URLs to your tracker. Each one is audited against the same criteria as your own site, and the comparison view shows side-by-side scores for all tracked competitors. Opportunity detection highlights specific categories where your score is below the median of tracked competitors, giving you a ranked priority list for improvement.",
+  },
+  {
+    question: "What does a visibility gap tell me?",
+    answer: "A visibility gap is the difference between your AI visibility score and a competitor's score on a specific dimension such as entity clarity, evidence depth, or schema alignment. A gap on entity clarity tells you that AI systems can resolve the competitor's core service offering more reliably than yours. A gap on evidence depth means the competitor's pages carry more verifiable facts and proof that answer engines can use as cited specifics. Each gap maps to concrete remediation steps.",
+  },
+  {
+    question: "How often does competitor data update?",
+    answer: "Competitor audits use the same live crawl pipeline as standard audits. Each time you run or schedule a competitor check, the system fetches fresh page content and recomputes all signals. Scores reflect the current live state of the competitor's pages and are not cached from prior runs beyond the standard 24-hour cache window.",
+  },
+  {
+    question: "Can a competitor block AiVIS from auditing their site?",
+    answer: "If a competitor explicitly disallows AI crawlers or the AiVIS scraper in their robots.txt, or deploys aggressive bot detection that blocks the headless browser, that audit will return limited signal data. This itself is a signal: pages that actively block AI crawlers cannot be cited by AI answer engines and will score low on the extraction and trust dimensions regardless.",
+  },
+];
 
 const VALUE_CARDS = [
   {
@@ -123,6 +152,14 @@ export default function CompetitorsPage() {
     description:
       "Track competitors and compare search answer-style visibility side by side to see who owns that answer space.",
     path: "/competitors",
+    structuredData: [
+      buildWebPageSchema({
+        path: "/competitors",
+        name: "Competitor AI Visibility Comparison | AiVIS",
+        description: "Compare your AI visibility scores against competitors. Identify structural gaps, evidence deficits, and schema mismatches that explain why competitors appear in AI answers where you do not.",
+      }),
+      buildFaqSchema(COMPETITORS_FAQ, { path: "/competitors" }),
+    ],
   });
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -625,6 +662,12 @@ export default function CompetitorsPage() {
           </>
         )}
       </div>
+
+      <PageQASection
+        items={COMPETITORS_FAQ}
+        heading="Understanding competitor AI visibility comparison"
+        className="mt-6"
+      />
     </div>
   );
 }

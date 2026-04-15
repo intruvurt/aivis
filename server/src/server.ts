@@ -3343,6 +3343,85 @@ app.get(
   },
 );
 
+// ── Public live findings — anonymised aggregate patterns from audit DB ──────
+app.get(
+  "/api/public/insights",
+  ipRateLimit({ maxRequests: 30, windowMs: 60_000 }),
+  async (_req: Request, res: Response) => {
+    try {
+      const pool = getPool();
+      // Combine user audits + analysis_cache (deduplicated by URL) so the numbers
+      // reflect the full platform corpus, not just logged-in scans.
+      const cte = `
+      WITH all_audits AS (
+        SELECT result FROM audits WHERE result IS NOT NULL
+        UNION ALL
+        SELECT result FROM analysis_cache
+        WHERE result IS NOT NULL
+          AND url NOT IN (SELECT DISTINCT url FROM audits WHERE url IS NOT NULL)
+      )`;
+      type InsightRow = {
+        total_audits: number;
+        no_schema_count: number;
+        no_faq_schema_count: number;
+        missing_h1_count: number;
+        thin_content_count: number;
+        no_org_schema_count: number;
+        ai_crawler_blocked_count: number;
+        avg_score: number;
+      };
+      const { rows } = await pool.query<InsightRow>(`
+        ${cte}
+        SELECT
+          COUNT(*)::int AS total_audits,
+          COUNT(*) FILTER (
+            WHERE COALESCE((result->'schema_markup'->>'json_ld_count')::int, 0) = 0
+          )::int AS no_schema_count,
+          COUNT(*) FILTER (
+            WHERE COALESCE((result->'schema_markup'->>'has_faq_schema')::text, 'false') = 'false'
+          )::int AS no_faq_schema_count,
+          COUNT(*) FILTER (
+            WHERE COALESCE((result->'content_analysis'->'headings'->>'h1')::int, 0) = 0
+          )::int AS missing_h1_count,
+          COUNT(*) FILTER (
+            WHERE COALESCE((result->'content_analysis'->>'word_count')::int, 0) < 300
+          )::int AS thin_content_count,
+          COUNT(*) FILTER (
+            WHERE COALESCE((result->'schema_markup'->>'has_organization_schema')::text, 'false') = 'false'
+          )::int AS no_org_schema_count,
+          COUNT(*) FILTER (
+            WHERE result->'domain_intelligence'->>'robots' ILIKE '%noindex%'
+              OR result->'domain_intelligence'->>'robots' ILIKE '%nofollow%'
+          )::int AS ai_crawler_blocked_count,
+          ROUND(AVG((result->>'visibility_score')::int) FILTER (
+            WHERE (result->>'visibility_score')::int > 0
+          ))::int AS avg_score
+        FROM all_audits
+      `);
+      const r: Partial<InsightRow> = rows[0] ?? {};
+      const total = Math.max(r.total_audits ?? 0, 1); // avoid /0
+      const pct = (n: number) => Math.round((n / total) * 100);
+      res.json({
+        success: true,
+        insights: {
+          total_audits: r.total_audits ?? 0,
+          avg_score: r.avg_score ?? 0,
+          pct_no_schema: pct(r.no_schema_count ?? 0),
+          pct_no_faq_schema: pct(r.no_faq_schema_count ?? 0),
+          pct_missing_h1: pct(r.missing_h1_count ?? 0),
+          pct_thin_content: pct(r.thin_content_count ?? 0),
+          pct_no_org_schema: pct(r.no_org_schema_count ?? 0),
+          pct_ai_crawler_blocked: pct(r.ai_crawler_blocked_count ?? 0),
+          sampled_at: new Date().toISOString(),
+        },
+      });
+    } catch (err: any) {
+      console.error("[insights] Public insights query failed:", err?.message);
+      res.status(500).json({ success: false, error: "Insights data unavailable" });
+    }
+  },
+);
+
 // ── Public proof data (anonymised score improvements) ──────────────
 app.get(
   "/api/public/proof",

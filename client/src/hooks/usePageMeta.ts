@@ -215,7 +215,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
 
     // Cleanup on unmount - restore defaults
     return () => {
-      document.title = `${SITE_NAME}: Evidence-backed site analysis for AI answers platform | See How AI Sees Your Website`;
+      document.title = `${SITE_NAME} | See How AI Sees Your Website`;
       setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
       setStructuredData(undefined);
     };

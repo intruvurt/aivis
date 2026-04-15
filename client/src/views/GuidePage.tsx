@@ -1,7 +1,8 @@
-import { AlertTriangle, ArrowRight, CheckCircle2, Clock3, FileSearch, FlaskConical, Hammer, Link2, Radar, RefreshCw, ShieldCheck, Target, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, CheckCircle2, Clock3, Database, ExternalLink, FileSearch, FlaskConical, Hammer, Link2, Loader2, Radar, RefreshCw, ShieldCheck, Target, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { buildBreadcrumbSchema } from '../lib/seoSchema';
+import { useLiveFindings } from '../hooks/useLiveFindings';
 
 const GUIDE_SECTIONS = [
   { id: 'start-here', label: 'Start Here' },
@@ -18,6 +19,8 @@ const GUIDE_SECTIONS = [
   { id: 'integration-workflows', label: 'Integrations' },
   { id: 'dofollow-badge', label: 'Dofollow Badge' },
   { id: 'by-symptom', label: 'By Symptom' },
+  { id: 'live-findings', label: 'Live Findings' },
+  { id: 'deep-dive-reading', label: 'Deep-Dive Reading' },
 ] as const;
 
 const HOW_TO_STEPS = [
@@ -29,7 +32,79 @@ const HOW_TO_STEPS = [
   { name: 'Scale to adjacent pages', text: 'After one page improves, apply the same pattern to 2–3 related pages.' },
 ];
 
+// ── Internal link map: guide step → related blog posts / pages ──────────────
+const DEEP_DIVE_LINKS: {
+  step: string;
+  items: { label: string; to: string; type: 'blog' | 'app' | 'page' }[];
+}[] = [
+  {
+    step: 'Understand why AI skips sites',
+    items: [
+      { label: 'Why AI doesn\'t cite websites', to: '/blogs/why-ai-doesnt-cite-websites', type: 'blog' },
+      { label: 'AEO 2026: citation readiness', to: '/blogs/answer-engine-optimization-2026-why-citation-readiness-matters', type: 'blog' },
+      { label: 'Zero-trust visibility principle', to: '/blogs/zero-trust-ai-visibility-never-assume-ai-engines-can-find-cite-your-site', type: 'blog' },
+    ],
+  },
+  {
+    step: 'Run your first audit',
+    items: [
+      { label: 'How LLMs parse your content', to: '/blogs/how-llms-parse-your-content-technical-breakdown', type: 'blog' },
+      { label: 'SSFR scoring engine explained', to: '/blogs/ssfr-evidence-framework-the-scoring-engine-behind-aivis', type: 'blog' },
+      { label: 'Free tools without an account', to: '/blogs/free-tools-schema-validator-robots-checker-content-extractability', type: 'blog' },
+    ],
+  },
+  {
+    step: 'Read and interpret results',
+    items: [
+      { label: 'AiVIS full technical breakdown', to: '/blogs/how-aivis-works-under-the-hood-full-technical-breakdown', type: 'blog' },
+      { label: 'Why AI visibility tools differ from SEO', to: '/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure', type: 'blog' },
+      { label: 'Analytics dashboard', to: '/app/analytics', type: 'app' },
+    ],
+  },
+  {
+    step: 'Execute fixes (structure → extractability → trust)',
+    items: [
+      { label: 'How to get cited by ChatGPT, Perplexity, Gemini', to: '/blogs/how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide', type: 'blog' },
+      { label: 'Score Fix AutoPR — AI-opened pull requests', to: '/blogs/score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility', type: 'blog' },
+      { label: 'Open Score Fix tool', to: '/app/score-fix', type: 'app' },
+    ],
+  },
+  {
+    step: 'Retest and prove improvement',
+    items: [
+      { label: '7-step roadmap: audit → live citations in 30 days', to: '/blogs/7-step-implementation-roadmap-audit-to-live-citations-30-days', type: 'blog' },
+      { label: 'Scheduled rescans + autopilot monitoring', to: '/blogs/scheduled-rescans-and-autopilot-monitoring-set-it-and-track-it', type: 'blog' },
+      { label: 'Open Reports', to: '/app/reports', type: 'app' },
+    ],
+  },
+  {
+    step: 'Avoid common failure patterns',
+    items: [
+      { label: 'Your site ranks but still disappears', to: '/blogs/your-website-can-rank-and-still-disappear', type: 'blog' },
+      { label: 'Not competing for clicks anymore', to: '/blogs/your-website-is-not-competing-for-clicks-anymore', type: 'blog' },
+      { label: 'From invisible to cited — case study', to: '/blogs/from-invisible-to-cited-case-study-brand-citation-growth', type: 'blog' },
+    ],
+  },
+  {
+    step: 'Set up integrations and automation',
+    items: [
+      { label: 'MCP audit workflows for dev teams', to: '/blogs/how-mcp-audit-workflows-change-everything-for-dev-teams', type: 'blog' },
+      { label: 'AiVIS API access explained', to: '/blogs/aivis-api-access-explained-build-on-the-visibility-layer', type: 'blog' },
+      { label: 'WebMCP: browser agent surface', to: '/blogs/webmcp-third-party-tool-calling-aivis-the-headless-audit-engine', type: 'blog' },
+    ],
+  },
+  {
+    step: 'Track brand visibility and citations',
+    items: [
+      { label: 'Citation testing explained', to: '/blogs/citation-testing-explained-how-to-verify-ai-models-can-find-you', type: 'blog' },
+      { label: 'Competitor tracking — find structural gaps', to: '/blogs/competitor-tracking-find-the-structural-gaps-and-win', type: 'blog' },
+      { label: 'Brand mention tracking', to: '/blogs/brand-mention-tracking-where-ai-discovers-new-sources', type: 'blog' },
+    ],
+  },
+];
+
 export default function GuidePage() {
+  const { findings, loading: findingsLoading } = useLiveFindings();
   usePageMeta({
     title: 'Guide',
     fullTitle: 'AiVIS Guide - AI Visibility Execution Playbook',
@@ -373,6 +448,96 @@ export default function GuidePage() {
         </div>
       </section>
 
+      {/* ── Live Findings from audit DB ── */}
+      <section id="live-findings" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <div className="flex items-center gap-2.5 mb-1">
+          <Database className="h-4 w-4 text-cyan-400" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Live from the audit database</span>
+          {findingsLoading && <Loader2 className="h-3 w-3 animate-spin text-white/30" />}
+        </div>
+        <h2 className="text-xl brand-title">What the data actually shows</h2>
+        <p className="mt-2 text-sm text-white/65 max-w-2xl">
+          Patterns aggregated across every URL audited on the platform — updated in real-time. Use these to calibrate how common your issues are.
+        </p>
+        {findings ? (
+          <>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  stat: `${findings.pct_no_schema}%`,
+                  label: 'of sites have zero JSON-LD schema',
+                  sub: 'invisible to AI knowledge-graph extraction',
+                  color: 'text-rose-400',
+                },
+                {
+                  stat: `${findings.pct_no_faq_schema}%`,
+                  label: 'have no FAQ schema',
+                  sub: 'direct Q&A not surfaced to answer engines',
+                  color: 'text-amber-400',
+                },
+                {
+                  stat: `${findings.pct_missing_h1}%`,
+                  label: 'missing a proper H1',
+                  sub: 'AI cannot confirm the page topic',
+                  color: 'text-orange-400',
+                },
+                {
+                  stat: `${findings.pct_no_org_schema}%`,
+                  label: 'lack Organization schema',
+                  sub: 'entity identity signal absent',
+                  color: 'text-violet-400',
+                },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
+                  <div className={`text-3xl font-extrabold tabular-nums ${item.color}`}>{item.stat}</div>
+                  <div className="mt-1 text-xs font-semibold text-white/80">{item.label}</div>
+                  <div className="mt-0.5 text-[11px] text-white/45">{item.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {[
+                {
+                  stat: `${findings.pct_thin_content}%`,
+                  label: 'under 300 words',
+                  sub: 'too thin for AI retrieval',
+                  color: 'text-yellow-400',
+                },
+                {
+                  stat: `${findings.avg_score}`,
+                  label: 'avg visibility score',
+                  sub: `across ${findings.total_audits.toLocaleString()} audited URLs`,
+                  color: 'text-cyan-400',
+                },
+                {
+                  stat: `${findings.pct_ai_crawler_blocked}%`,
+                  label: 'with noindex/nofollow signals',
+                  sub: 'actively suppressing AI access',
+                  color: 'text-rose-300',
+                },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
+                  <div className={`text-2xl font-extrabold tabular-nums ${item.color}`}>{item.stat}</div>
+                  <div className="mt-1 text-xs font-semibold text-white/80">{item.label}</div>
+                  <div className="mt-0.5 text-[11px] text-white/45">{item.sub}</div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[10px] text-white/30">
+              Sampled {new Date(findings.sampled_at).toLocaleString()} · data is anonymised, no PII stored.
+            </p>
+          </>
+        ) : !findingsLoading ? (
+          <p className="mt-4 text-sm text-white/40">Audit database stats temporarily unavailable.</p>
+        ) : (
+          <div className="mt-5 grid gap-3 sm:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-24 rounded-xl border border-white/10 bg-charcoal-deep animate-pulse" />
+            ))}
+          </div>
+        )}
+      </section>
+
       <section id="battle-tested-rules" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
         <h2 className="text-xl brand-title">8) Battle-tested rules that keep teams from wasting cycles</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -528,6 +693,48 @@ export default function GuidePage() {
               <ArrowRight className="h-3.5 w-3.5 shrink-0 text-orange-300" />
               {item.label}
             </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Deep-Dive Reading: guide step → blog/page crosslinks ── */}
+      <section id="deep-dive-reading" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <div className="flex items-center gap-2.5 mb-1">
+          <BookOpen className="h-4 w-4 text-violet-400" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Internal linking</span>
+        </div>
+        <h2 className="text-xl brand-title">Deep-dive reading by guide step</h2>
+        <p className="mt-2 text-sm text-white/65 max-w-2xl">
+          Every guide section has a direct body of evidence behind it. These links go deeper on the mechanism, the data, or the tooling.
+        </p>
+        <div className="mt-5 space-y-6">
+          {DEEP_DIVE_LINKS.map((group) => (
+            <div key={group.step}>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-2">{group.step}</h3>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {group.items.map((item) => (
+                  item.type === 'app' ? (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2.5 text-xs text-white/75 hover:border-white/25 hover:text-white transition"
+                    >
+                      <span>{item.label}</span>
+                      <ArrowRight className="h-3 w-3 shrink-0 text-cyan-400" />
+                    </Link>
+                  ) : (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2.5 text-xs text-white/75 hover:border-white/25 hover:text-white transition"
+                    >
+                      <span>{item.label}</span>
+                      <ExternalLink className="h-3 w-3 shrink-0 text-violet-400" />
+                    </Link>
+                  )
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>

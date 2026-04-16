@@ -2430,6 +2430,11 @@ export async function runMigrations(): Promise<void> {
         `CREATE INDEX IF NOT EXISTS idx_public_report_links_slug ON public_report_links(slug)`,
       );
 
+      // Share links are now permanent — drop the NOT NULL constraint on expires_at
+      _q(
+        `ALTER TABLE public_report_links ALTER COLUMN expires_at DROP NOT NULL`,
+      );
+
       // ─── IndexNow Submissions ─────────────────────────────────────────────────
       _q(`
       CREATE TABLE IF NOT EXISTS indexnow_submissions (

@@ -12,10 +12,9 @@ export type PublicReportTokenPayload = {
   exp: number;
 };
 
+/** @deprecated Expiration days are no longer used — all share links are permanent. */
 function normalizeShareLinkExpirationDays(value: unknown): number {
-  const numeric = typeof value === 'number' ? value : Number(value);
-  if (numeric === 0 || numeric === 7 || numeric === 14 || numeric === 30 || numeric === 90) return numeric;
-  return 30;
+  return 0;
 }
 
 function base64UrlDecode(input: string): string {
@@ -109,8 +108,7 @@ function verifyLegacyPublicReportToken(token: string): PublicReportTokenPayload 
 
   const payload = JSON.parse(base64UrlDecode(payloadPart)) as PublicReportTokenPayload;
   if (!payload?.auditId || typeof payload.auditId !== 'string') return null;
-  if (!payload?.exp || typeof payload.exp !== 'number') return null;
-  if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+  // Share links are now permanent — exp claim is ignored
   return payload;
 }
 
@@ -132,8 +130,7 @@ export function verifyPublicReportToken(token: string): PublicReportTokenPayload
     const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8');
     const payload = JSON.parse(plaintext) as PublicReportTokenPayload;
     if (!payload?.auditId || typeof payload.auditId !== 'string') return null;
-    if (!payload?.exp || typeof payload.exp !== 'number') return null;
-    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+    // Share links are now permanent — exp claim is ignored
     return payload;
   } catch {
     return null;
@@ -146,11 +143,10 @@ export async function createOrRefreshPublicReportLink(args: {
   workspaceId?: string | null;
   targetUrl: string;
   scanOrdinal?: number;
-  shareLinkExpirationDays?: number;
 }): Promise<{
   token: string;
   slug: string;
-  expiresAt: string;
+  expiresAt: string | null;
   sharePath: string;
   legacySharePath: string;
   publicUrl: string;
@@ -160,13 +156,10 @@ export async function createOrRefreshPublicReportLink(args: {
     throw new Error('Public report signing secret is not configured');
   }
 
-  const shareLinkExpirationDays = args.shareLinkExpirationDays ?? await getShareLinkExpirationDaysPreference(args.userId);
-  const ageSecs = shareLinkExpirationDays === 0
-    ? 60 * 60 * 24 * 3650
-    : Math.min(Math.max(1, shareLinkExpirationDays), 365) * 60 * 60 * 24;
-  const exp = Math.floor(Date.now() / 1000) + ageSecs;
+  // All share links are permanent — no expiration
+  const exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 36500; // ~100 years
   const token = signPublicReportToken({ auditId: args.auditId, exp });
-  const expiresAt = new Date(exp * 1000).toISOString();
+  const expiresAt: string | null = null;
   const pool = getPool();
 
   const { rows: existingRows } = await pool.query(
@@ -190,6 +183,8 @@ export async function createOrRefreshPublicReportLink(args: {
        updated_at = NOW()`,
     [args.auditId, args.userId, args.workspaceId || null, slug, token, expiresAt]
   );
+
+  const shareLinkExpirationDays = 0; // permanent
 
   const sharePath = `/reports/public/${slug}`;
   return {
@@ -232,9 +227,7 @@ export async function resolvePublicReportReference(reference: string): Promise<{
   if (!match?.audit_id) return null;
 
   const expiresAt = match.expires_at ? new Date(match.expires_at).toISOString() : null;
-  if (expiresAt && new Date(expiresAt).getTime() < Date.now()) {
-    return null;
-  }
+  // Share links are now permanent — expiry checks removed
 
   await pool.query(
     `UPDATE public_report_links

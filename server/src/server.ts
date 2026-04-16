@@ -9066,12 +9066,10 @@ app.post(
         url: rawUrl,
         analyzedAt,
         auditId,
-        expiration_days: rawExpirationDays,
       } = (req.body || {}) as {
         url?: string;
         analyzedAt?: string;
         auditId?: string;
-        expiration_days?: number;
       };
 
       if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -9231,11 +9229,6 @@ app.post(
         workspaceId: workspaceId || null,
         targetUrl: rawUrl.trim(),
         scanOrdinal,
-        shareLinkExpirationDays: [0, 7, 14, 30, 90].includes(
-          Number(rawExpirationDays),
-        )
-          ? Number(rawExpirationDays)
-          : undefined,
       });
 
       fireMeasurementEvent("share_link_created", req, {
@@ -9254,7 +9247,8 @@ app.post(
         scan_count_for_target: matchingTargetAudits.length,
         scan_label: scanLabel,
         target_key: targetKey,
-        share_link_expiration_days: shareLink.shareLinkExpirationDays,
+        share_link_expiration_days: 0,
+        permanent: true,
         public_view: {
           tier: shareLinkUiTier,
           redacted: shareLinkUiTier === "observer",

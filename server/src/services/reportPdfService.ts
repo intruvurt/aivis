@@ -88,8 +88,8 @@ export function buildAuditReportHtml(args: {
 
   const categoryCards = categoryGrades.length
     ? categoryGrades
-        .map(
-          (grade) => `
+      .map(
+        (grade) => `
             <div class="card compact">
               <div class="row between">
                 <div class="label">${escapeHtml(grade.label)}</div>
@@ -98,14 +98,14 @@ export function buildAuditReportHtml(args: {
               <div class="meta">Score ${escapeHtml(grade.score)}/100</div>
               <div class="body small">${escapeHtml(grade.summary)}</div>
             </div>`
-        )
-        .join('')
+      )
+      .join('')
     : '<div class="empty">No category grades were returned for this audit.</div>';
 
   const findingCards = findings.length
     ? findings
-        .map(
-          (finding) => `
+      .map(
+        (finding) => `
             <div class="card compact">
               <div class="row wrap gap-sm">
                 <span class="tag">${escapeHtml(finding.area)}</span>
@@ -114,14 +114,14 @@ export function buildAuditReportHtml(args: {
               <div class="body title">${escapeHtml(finding.found)}</div>
               <div class="body small">${escapeHtml(finding.note)}</div>
             </div>`
-        )
-        .join('')
+      )
+      .join('')
     : '<div class="empty">No evidence findings were returned for this audit.</div>';
 
   const recommendationCards = recommendations.length
     ? recommendations
-        .map(
-          (rec) => `
+      .map(
+        (rec) => `
             <div class="card compact">
               <div class="row wrap gap-sm">
                 <span class="tag">${escapeHtml(rec.priority || 'medium')}</span>
@@ -130,23 +130,23 @@ export function buildAuditReportHtml(args: {
               <div class="body title">${escapeHtml(rec.title)}</div>
               <div class="body small">${escapeHtml(rec.description)}</div>
             </div>`
-        )
-        .join('')
+      )
+      .join('')
     : '<div class="empty">No recommendations were returned for this audit.</div>';
 
   const platformCards = platformScores.length
     ? platformScores
-        .map(([name, value]) => `
+      .map(([name, value]) => `
           <div class="card compact">
             <div class="label">${escapeHtml(name.replace(/_/g, ' '))}</div>
             <div class="metric">${escapeHtml(value)}/100</div>
           </div>`)
-        .join('')
+      .join('')
     : '<div class="empty">No platform score breakdown available.</div>';
 
   const strictGateRows = Array.isArray(strictRubric?.gates)
     ? strictRubric.gates
-        .map((gate: any) => `
+      .map((gate: any) => `
           <tr>
             <td>${escapeHtml(gate?.label)}</td>
             <td>${escapeHtml(String(gate?.status || '').toUpperCase())}</td>
@@ -154,12 +154,12 @@ export function buildAuditReportHtml(args: {
             <td>${escapeHtml(gate?.threshold_pass)}</td>
           </tr>
         `)
-        .join('')
+      .join('')
     : '';
 
   const strictFixpacks = Array.isArray(strictRubric?.required_fixpacks)
     ? strictRubric.required_fixpacks
-        .map((pack: any) => `
+      .map((pack: any) => `
           <div class="card compact">
             <div class="row between">
               <div class="label">${escapeHtml(pack?.label)}</div>
@@ -168,7 +168,7 @@ export function buildAuditReportHtml(args: {
             <div class="body small">Targets: ${escapeHtml(Array.isArray(pack?.target_gate_ids) ? pack.target_gate_ids.join(', ') : '')}</div>
           </div>
         `)
-        .join('')
+      .join('')
     : '';
 
   return `
@@ -411,10 +411,17 @@ export function buildAuditReportHtml(args: {
 export async function renderPdfFromHtml(html: string): Promise<Buffer> {
   let browser: any = null;
   try {
-    const puppeteer = await import('puppeteer');
+    const puppeteer = await import('puppeteer-core');
+    let executablePath: string | undefined = process.env.PUPPETEER_EXECUTABLE_PATH;
+    if (!executablePath) {
+      try {
+        const { default: chromium } = await import('@sparticuz/chromium');
+        executablePath = await chromium.executablePath() || undefined;
+      } catch { /* fallback */ }
+    }
     browser = await puppeteer.default.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      ...(executablePath ? { executablePath } : {}),
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
     });
 
@@ -429,7 +436,7 @@ export async function renderPdfFromHtml(html: string): Promise<Buffer> {
     return Buffer.from(pdf);
   } catch (error) {
     if (browser) {
-      try { await browser.close(); } catch {}
+      try { await browser.close(); } catch { }
     }
     throw error;
   }

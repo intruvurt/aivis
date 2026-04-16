@@ -1,17 +1,15 @@
 // server/src/services/scraper.ts
 /// <reference lib="dom" />
-import puppeteer, { Browser, Page } from 'puppeteer';
-import { existsSync, readdirSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
+import puppeteer, { Browser, Page } from 'puppeteer-core';
+import { existsSync } from 'fs';
 import { URL } from 'url';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 
 /* ── capture-size caps (bytes of text kept per field) ────────────────── */
-const MAX_HTML_CAPTURE_CHARS  = 250_000;
-const MAX_BODY_CAPTURE_CHARS  =  50_000;
-const MAX_JSONLD_BLOCK_CHARS  =  80_000;
-const MAX_SITEMAP_CHARS       =  50_000;
+const MAX_HTML_CAPTURE_CHARS = 250_000;
+const MAX_BODY_CAPTURE_CHARS = 50_000;
+const MAX_JSONLD_BLOCK_CHARS = 80_000;
+const MAX_SITEMAP_CHARS = 50_000;
 
 export type StructuredData = {
   jsonLdCount: number;
@@ -487,9 +485,10 @@ let browserInstance: Browser | null = null;
 /**
  * Resolve Chrome executable path.
  *
+ * Priority: env var → system paths → @sparticuz/chromium (bundled, no download) → Puppeteer default.
  * IMPORTANT: avoid slow shelling-out in production. Render containers can hang on execSync.
  */
-function resolveChromePath(): string | undefined {
+async function resolveChromePath(): Promise<string | undefined> {
   if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
 
   const candidates = [
@@ -506,31 +505,20 @@ function resolveChromePath(): string | undefined {
     }
   }
 
-  // Probe Puppeteer cache directory for installed Chrome binary
-  const cacheDir = process.env.PUPPETEER_CACHE_DIR || join(homedir(), '.cache', 'puppeteer');
-  const chromeCacheDir = join(cacheDir, 'chrome');
-  if (existsSync(chromeCacheDir)) {
-    try {
-      const versions = readdirSync(chromeCacheDir);
-      for (const ver of versions) {
-        // Linux: chrome-linux64/chrome, Mac: chrome-mac-arm64/...  
-        const linuxBin = join(chromeCacheDir, ver, 'chrome-linux64', 'chrome');
-        if (existsSync(linuxBin)) {
-          console.log(`[Scraper] Using Chrome from Puppeteer cache: ${linuxBin}`);
-          return linuxBin;
-        }
-        const macBin = join(chromeCacheDir, ver, 'chrome-mac-arm64', 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing');
-        if (existsSync(macBin)) {
-          console.log(`[Scraper] Using Chrome from Puppeteer cache: ${macBin}`);
-          return macBin;
-        }
-      }
-    } catch (e) {
-      console.warn('[Scraper] Failed to scan Chrome cache dir:', e);
+  // @sparticuz/chromium: binary bundled inside the npm package, no separate download needed.
+  // Works in Railway containers and AWS Lambda alike.
+  try {
+    const { default: chromium } = await import('@sparticuz/chromium');
+    const execPath = await chromium.executablePath();
+    if (execPath && existsSync(execPath)) {
+      console.log(`[Scraper] Using @sparticuz/chromium: ${execPath}`);
+      return execPath;
     }
+  } catch (e) {
+    console.warn('[Scraper] @sparticuz/chromium not available:', (e as any)?.message);
   }
 
-  console.warn('[Scraper] Chrome executable not found in system paths or cache; relying on Puppeteer default');
+  console.warn('[Scraper] Chrome executable not found; relying on puppeteer-core default (may fail)');
   return undefined;
 }
 
@@ -549,7 +537,7 @@ async function getBrowser(): Promise<Browser> {
       if (browserInstance && browserInstance.connected) return browserInstance;
 
       console.log('[Scraper] Launching Puppeteer browser...');
-      const executablePath = resolveChromePath();
+      const executablePath = await resolveChromePath();
       const launchTimeoutMs = Number(process.env.PUPPETEER_LAUNCH_TIMEOUT_MS || 4500);
 
       const browser = await withTimeout(
@@ -783,7 +771,7 @@ function parseJsonLdStrings(raws: string[]): StructuredData {
             rawParsed.push(p2);
             collectTypes(p2);
           }
-        } catch {}
+        } catch { }
       }
     }
   }
@@ -841,7 +829,7 @@ async function fetchFallback(url: string, timeoutMs: number): Promise<ScrapeResu
         }
         data.aiCrawlerAccess = access;
       }
-    } catch {}
+    } catch { }
 
     return { url, data };
   } finally {
@@ -937,10 +925,10 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
                 (window as any).__aivis_lcp = Math.max((window as any).__aivis_lcp || 0, v);
               }
             }
-          } catch {}
+          } catch { }
         });
         po.observe({ type: 'largest-contentful-paint', buffered: true } as any);
-      } catch {}
+      } catch { }
     });
 
     await page.setUserAgent(
@@ -1111,12 +1099,12 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
     try {
       const lcpMs = await withTimeout(page.evaluate(() => (window as any).__aivis_lcp || 0), 800, 'LCP eval');
       data.lcpMs = typeof lcpMs === 'number' ? Math.round(lcpMs) : 0;
-    } catch {}
+    } catch { }
 
     // Close page early
     try {
       await withTimeout(page.close(), 800, 'Puppeteer close');
-    } catch {}
+    } catch { }
     page = null;
 
     try {
@@ -1144,7 +1132,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
         }
         data.aiCrawlerAccess = access;
       }
-    } catch {}
+    } catch { }
 
     try {
       const h2s: string[] = data.headings?.h2 || [];
@@ -1174,7 +1162,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
       data.hasTldr = !!tldrText;
       data.tldrText = tldrText || undefined;
       data.tldrPosition = tldrText ? 'top' : 'none';
-    } catch {}
+    } catch { }
 
     console.log(`[Scraper]  Puppeteer scraped in ${Date.now() - startTime}ms`);
 
@@ -1221,7 +1209,7 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
   } finally {
     // Ensure page is always closed to prevent Puppeteer page leaks
     if (page) {
-      try { await page.close(); } catch {}
+      try { await page.close(); } catch { }
       page = null;
     }
   }

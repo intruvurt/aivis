@@ -46,7 +46,7 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS – Evidence-backed site analysis for AI answers Platform | ChatGPT, Perplexity, Google AI',
+    name: 'AiVIS | AI Visibility Audit | Evidence-Backed Scores  | ChatGPT, Perplexity, Google AI',
     description: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
@@ -202,7 +202,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-8">
-                <img src="/images/aivis-logo-hero.png" alt="AiVIS - Evidence-backed site analysis for AI answers Audits" className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
+                <img src="/images/aivis-logo-hero.png" alt="AiVIS | AI Visibility Audit | Evidence-Backed Scores " className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">

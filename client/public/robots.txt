@@ -1,4 +1,4 @@
-# AiVIS.biz -> evidence-backed site analysis for AI answers
+# AiVIS.biz — AI Visibility Audit
 # https://aivis.biz
 
 User-agent: *

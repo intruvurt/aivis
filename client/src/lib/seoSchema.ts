@@ -24,14 +24,13 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: 'AiVIS',
-    legalName: 'Intruvurt Labs',
-    alternateName: 'Evidence-backed AI answer audit and fix system',
+    alternateName: 'AI Visibility Intelligence System',
     url: `${BASE_URL}/`,
     description:
-      'AiVIS builds evidence-backed systems that audit and fix how AI answer engines interpret and cite website content.',
+      'AiVIS audits and fixes how AI answer engines interpret, extract, and cite website content using evidence-backed analysis.',
     founder: {
       '@type': 'Person',
-      name: 'Renomase',
+      name: 'Ryan Mason',
     },
     logo: {
       '@type': 'ImageObject',
@@ -108,7 +107,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'fix protocol generation',
     ],
     areaServed: 'Worldwide',
-    slogan: 'AiVIS — fix what AI gets wrong about your site',
+    slogan: 'Fix how AI systems interpret and cite your website',
   };
 }
 
@@ -125,7 +124,7 @@ export function buildAuthorRef(): Record<string, unknown> {
   };
 }
 
-export function buildWebSiteSchema(name = 'AiVIS — evidence-backed AI answer audit and fix system'): Record<string, unknown> {
+export function buildWebSiteSchema(name = 'AiVIS — AI visibility audit and fix system'): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

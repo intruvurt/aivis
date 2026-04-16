@@ -30,7 +30,7 @@ export default function BadgeEmbedPage() {
 
   const snippet = useMemo(
     () =>
-      `<!-- AiVIS Visibility Badge -->\n<a href="${clickUrl}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS">\n  <img src="${badgeImageUrl}" alt="Audited by AiVIS – Evidence-backed site analysis for AI answers" width="150" height="42" style="border:0;" loading="lazy" />\n</a>\n<img src="${trackPixelUrl}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`,
+      `<!-- AiVIS Visibility Badge -->\n<a href="${clickUrl}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS">\n  <img src="${badgeImageUrl}" alt="Audited by AiVIS – AI Visibility Audit" width="150" height="42" style="border:0;" loading="lazy" />\n</a>\n<img src="${trackPixelUrl}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`,
     [clickUrl, badgeImageUrl, trackPixelUrl],
   );
 
@@ -80,7 +80,7 @@ export default function BadgeEmbedPage() {
             <a href={clickUrl} target="_blank" rel="dofollow noopener" title="AI Visibility Audit by AiVIS">
               <img
                 src="/aivis-footer-badge-dofollow.png"
-                alt="Audited by AiVIS – Evidence-backed site analysis for AI answers"
+                alt="Audited by AiVIS – AI Visibility Audit"
                 width={150}
                 height={42}
                 className="h-auto"

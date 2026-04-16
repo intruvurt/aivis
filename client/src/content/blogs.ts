@@ -1,4 +1,4 @@
-import { BLOG_READY_GENERATED_ENTRIES } from './blogReady.generated';
+﻿import { BLOG_READY_GENERATED_ENTRIES } from './blogReady.generated';
 
 export type BlogCategory = 'aeo' | 'seo' | 'geo' | 'eeat' | 'technology' | 'strategy' | 'case-study' | 'implementation';
 export type BlogTag = 'AEO' | 'SEO' | 'GEO' | 'EEAT' | 'AI-Tech' | 'Citations' | 'Visibility' | 'Schema' | 'Extraction' | 'Foundational' | 'Advanced' | 'Case Study' | 'Strategy' | 'Technical' | 'Implementation';
@@ -52,7 +52,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['AEO', 'Visibility', 'Foundational', 'Citations'],
     keywords: ['AI visibility', 'extraction readiness', 'AI extraction', 'foundational'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Strategy'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -81,7 +81,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['Strategy', 'Visibility', 'Foundational'],
     keywords: ['distribution', 'discoverability', 'SaaS strategy', 'product-market fit'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Product Strategy', 'Growth', 'Discoverability'],
       experience: '8+ years in product strategy',
@@ -109,7 +109,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['AEO', 'Citations', 'Advanced', 'Schema'],
     keywords: ['citation readiness', 'AEO', 'answer engines', 'extractability', 'GenAI'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'AI Citations', 'Content Architecture'],
       credentials: ['Founded AiVIS', 'Citation Readiness Research'],
@@ -143,7 +143,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['SEO', 'AEO', 'Visibility', 'Foundational'],
     keywords: ['SEO vs AEO', 'AI visibility', 'ranking', 'extractability'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['SEO', 'Answer Engine Optimization', 'AI Ranking'],
       experience: '8+ years in evolving search landscape',
@@ -172,7 +172,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['EEAT', 'Citations', 'Advanced', 'Extraction'],
     keywords: ['EEAT', 'author authority', 'expertise', 'citations', 'trustworthiness'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['E-E-A-T Strategy', 'Author Authority', 'Citation Optimization'],
       credentials: ['Founded AiVIS', 'AI Citation Research'],
@@ -204,7 +204,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['AI-Tech', 'Extraction', 'Advanced', 'Technical'],
     keywords: ['LLMs', 'content parsing', 'extraction logic', 'AI ranking', 'token efficiency'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['AI Engineering', 'LLM Extraction', 'Content Systems'],
       credentials: ['Founded AiVIS'],
@@ -238,7 +238,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['GEO', 'Schema', 'Advanced', 'Technical'],
     keywords: ['geo targeting', 'local SEO', 'location markup', 'jurisdiction', 'regional'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Geo-Targeting', 'Local AI Visibility', 'Schema Markup'],
       experience: '6+ years in location-based search',
@@ -266,7 +266,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['Case Study', 'Citations', 'Advanced', 'Strategy'],
     keywords: ['case study', 'citation rate', 'ROI', 'AI visibility improvement', 'implementation'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Citation Strategy', 'Content Optimization', 'Case Study Analysis'],
       credentials: ['Founded AiVIS'],
@@ -299,7 +299,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['Visibility', 'Strategy', 'Advanced', 'Implementation'],
     keywords: ['Google Search Console', 'GSC', 'monitoring', 'metrics', 'analytics'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Analytics', 'GSC Integration', 'Metrics Strategy'],
       experience: '8+ years in data-driven SEO',
@@ -327,7 +327,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['Implementation', 'Strategy', 'Foundational', 'Citations'],
     keywords: ['implementation', 'roadmap', 'execution', 'citations', 'timeline'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Implementation Strategy', 'Execution', 'Project Management'],
       credentials: ['Founded AiVIS'],
@@ -360,10 +360,10 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['SEO', 'Strategy', 'Advanced', 'Visibility'],
     keywords: ['Google Search Console', 'GSC 2026', 'AI Mode', 'Discover', 'search strategy', 'performance analytics'],
     author: {
-      name: 'R. Mason / Intruvurt Labs',
+      name: 'R. Mason / AiVIS',
       title: 'SEO Strategy & AI Search Visibility',
       expertise: ['Google Search Console', 'Search Strategy', 'AI-Driven Analytics', 'Data Interpretation'],
-      credentials: ['Intruvurt Labs Research', 'GSC Deep Dive Analyst'],
+      credentials: ['AiVIS Research', 'GSC Deep Dive Analyst'],
       experience: '8+ years in search data analysis and strategy',
     },
     keyPoints: [
@@ -396,10 +396,10 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['AEO', 'SEO', 'AI-Tech', 'Visibility', 'Advanced'],
     keywords: ['zero-click search', 'AI answer engines', 'AI visibility', 'trust economy', 'structured data', 'citation readiness'],
     author: {
-      name: 'R. Mason / Intruvurt Labs',
+      name: 'R. Mason / AiVIS',
       title: 'AI Visibility Research',
       expertise: ['AI Search Strategy', 'AEO', 'Machine Readability', 'Search Infrastructure'],
-      credentials: ['Intruvurt Labs', 'AI Visibility Systems'],
+      credentials: ['AiVIS', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     keyPoints: [
@@ -671,7 +671,7 @@ The only question now is whether your website is upstream - or already stranded 
     tags: ['AI-Tech', 'AEO', 'SEO', 'GEO', 'Visibility', 'Advanced'],
     keywords: ['WebMCP', 'Model Context Protocol', 'SEO vs AEO', 'GEO', 'AI agents', 'machine readability', 'structured tools', 'AI visibility protocol'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['WebMCP Architecture', 'Answer Engine Optimization', 'AI Agent Integration', 'Machine Readability'],
       credentials: ['Founded AiVIS', 'WebMCP Implementation'],
@@ -858,7 +858,7 @@ The only question is whether you have any tools worth calling.`,
     tags: ['AI-Tech', 'Implementation', 'Technical', 'Advanced', 'Visibility'],
     keywords: ['AiVIS API', 'API access', 'WebMCP', 'API keys', 'developer integration', 'visibility API', 'audit API', 'AI agent tools'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['API Architecture', 'WebMCP Implementation', 'Developer Experience', 'Platform Engineering'],
       credentials: ['Founded AiVIS', 'API & WebMCP Design'],
@@ -1060,9 +1060,9 @@ It is infrastructure you build on.`,
     keywords: ['aivis features', 'ai answer audit', 'aivis tools', 'tier comparison', 'platform overview', 'citation testing', 'triple check ai', 'mcp server'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS / Intruvurt Labs',
+      title: 'Founder, AiVIS',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['Intruvurt Labs', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS', 'AiVIS Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Most platforms give you a marketing page with a comparison table and leave it at that.
@@ -1236,9 +1236,9 @@ AiVIS is a structured AI visibility system with five pressure points - crawlabil
     keywords: ['aivis vs seo tools', 'aeo platform comparison', 'ai visibility audit', 'answer engine optimization', 'citation readiness', 'machine readability'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS / Intruvurt Labs',
+      title: 'Founder, AiVIS',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['Intruvurt Labs', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS', 'AiVIS Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Let me be blunt about something.
@@ -1412,9 +1412,9 @@ AiVIS was built for this internet. Not the one that came before it.`,
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS / Intruvurt Labs',
+      title: 'Founder, AiVIS',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems', 'Citation Engineering'],
-      credentials: ['Intruvurt Labs', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS', 'AiVIS Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `When someone asks ChatGPT "what is the best tool for improving website visibility in AI answers," the response right now almost always mentions Semrush, Ahrefs, or Moz.
@@ -1624,9 +1624,9 @@ Make sure yours is one of them.`,
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS / Intruvurt Labs',
+      title: 'Founder, AiVIS',
       expertise: ['AI Citation Engineering', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['Intruvurt Labs', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS', 'AiVIS Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Every AI answer engine - ChatGPT, Perplexity, Gemini, Claude, Copilot - selects sources to cite during answer generation. The selection is not random. It is not based on PageRank. It is based on a set of structural signals that determine whether your content is extractable, trustworthy, and relevant to the query.
@@ -1800,7 +1800,7 @@ Build the structure. Verify the citations. Compound the advantage.`,
     tags: ['AI-Tech', 'Visibility', 'Technical', 'AEO', 'Schema'],
     keywords: ['how aivis works', 'ai answer audit system', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['AI Visibility Systems', 'Answer Engine Optimization', 'Platform Architecture'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -1942,7 +1942,7 @@ Run your first audit at [aivis.ing](https://aivis.ing) and see what the machines
     tags: ['Strategy', 'Visibility', 'AEO', 'Citations', 'Advanced'],
     keywords: ['aivis for agencies', 'smb visibility', 'ai answer engine optimization', 'agency seo tools', 'citation tracking'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Agency Strategy'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -2079,7 +2079,7 @@ Run your first audit at [aivis.ing](https://aivis.ing). It takes 30 seconds and 
     tags: ['Implementation', 'Strategy', 'Advanced', 'Visibility'],
     keywords: ['team workspace', 'agency management', 'multi-tenant', 'role-based access', 'client isolation'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Platform Architecture', 'Agency Operations', 'Multi-Tenant Systems'],
       credentials: ['Founded AiVIS'],
@@ -2178,7 +2178,7 @@ Try it out at [aivis.biz/app/team](https://aivis.biz/app/team).`,
     tags: ['Citations', 'AEO', 'Implementation', 'Visibility', 'Technical'],
     keywords: ['citation testing', 'ai citation verification', 'duckduckgo', 'bing', 'perplexity citations', 'brand verification'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Citation Verification', 'AI Retrieval Systems', 'Search Engine Architecture'],
       credentials: ['Founded AiVIS'],
@@ -2302,7 +2302,7 @@ Try it at [aivis.ing](https://aivis.ing). The first 3 audits are free.`,
     tags: ['Strategy', 'Visibility', 'AEO', 'Citations', 'Advanced'],
     keywords: ['competitor tracking', 'competitive analysis', 'ai visibility comparison', 'opportunity detection', 'structural gaps'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Competitive Intelligence', 'AI Visibility Strategy', 'Answer Engine Optimization'],
       credentials: ['Founded AiVIS'],
@@ -2394,7 +2394,7 @@ Add your first competitor at [aivis.ing/competitors](https://aivis.ing/competito
     tags: ['Strategy', 'Visibility', 'Citations', 'AEO', 'Advanced'],
     keywords: ['brand mention tracking', 'ai source discovery', 'reddit mentions', 'hacker news', 'product hunt', 'community signals'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Brand Discovery', 'AI Training Pipelines', 'Community Signal Analysis'],
       credentials: ['Founded AiVIS'],
@@ -2486,7 +2486,7 @@ Brand mention tracking is available for Alignment tier and above. Start scanning
     tags: ['AI-Tech', 'Technical', 'Visibility', 'Schema', 'Extraction'],
     keywords: ['ssfr framework', 'evidence scoring', 'source signal fact relationship', 'deterministic audit', 'machine readability'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Evidence-Based Scoring', 'AI Extractability', 'Machine Readability Frameworks'],
       credentials: ['Founded AiVIS'],
@@ -2590,7 +2590,7 @@ See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit 
     tags: ['AI-Tech', 'Implementation', 'Technical', 'Visibility', 'Schema'],
     keywords: ['score fix', 'autopr', 'automated github pr', 'ai remediation', 'code fix', 'mcp integration'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Automated Remediation', 'MCP Integration', 'AI Code Generation'],
       credentials: ['Founded AiVIS'],
@@ -2693,7 +2693,7 @@ Score Fix is available as a 250-credit pack at [aivis.ing/pricing](https://aivis
     tags: ['Strategy', 'Advanced', 'Visibility', 'AEO', 'Technical'],
     keywords: ['reverse engineering', 'competitor decompile', 'ghost audit', 'ai simulation', 'structural analysis'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Competitive Intelligence', 'Reverse Engineering', 'AI Simulation'],
       credentials: ['Founded AiVIS'],
@@ -2772,7 +2772,7 @@ Try the reverse engineering tools at [aivis.ing/reverse-engineer](https://aivis.
     tags: ['Implementation', 'Schema', 'Technical', 'Foundational', 'Extraction'],
     keywords: ['free schema validator', 'robots checker', 'content extractability', 'free seo tools', 'ai visibility tools'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Developer Tools', 'Schema Markup', 'Web Standards'],
       credentials: ['Founded AiVIS'],
@@ -2873,7 +2873,7 @@ Start with the free tools. See what the machines see. Then decide if you want th
     tags: ['Implementation', 'Strategy', 'Advanced', 'Visibility'],
     keywords: ['scheduled rescans', 'autopilot monitoring', 'score tracking', 'delta tracking', 'ai visibility monitoring'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Monitoring Systems', 'Automated Workflows', 'Visibility Operations'],
       credentials: ['Founded AiVIS'],
@@ -2970,7 +2970,7 @@ Set up your first scheduled rescan at [aivis.ing](https://aivis.ing). It starts 
       'minified variable name',
     ],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['React Architecture', 'Build Systems', 'Production Debugging'],
       credentials: ['Founded AiVIS'],
@@ -3248,7 +3248,7 @@ The real lesson: production builds are a different runtime. Test against the run
     tags: ['AI-Tech', 'Strategy', 'Visibility', 'Foundational'],
     keywords: ['guidebot', 'BIX', 'AI assistant', 'platform assistant', 'bounded AI', 'context-aware', 'AI visibility', 'AiVIS'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['AI Architecture', 'Platform UX', 'Bounded AI Systems'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -3412,7 +3412,7 @@ That is what boundaries in excess looks like in practice.`,
     tags: ['AI-Tech', 'Technical', 'Implementation', 'AEO'],
     keywords: ['MCP audit workflow', 'Claude Desktop audit', 'AI visibility pipeline', 'automated audit', 'model context protocol', 'AiVIS MCP'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['MCP Integrations', 'AI Audit Pipelines', 'Developer Workflows'],
       credentials: ['Founded AiVIS', 'MCP Implementation Research'],
@@ -3502,7 +3502,7 @@ That is the operational shift MCP enables. Not smarter AI. Just tighter loops.`,
     tags: ['Visibility', 'Implementation', 'Strategy', 'Technical'],
     keywords: ['team workspace audit', 'shared AI visibility', 'collaborative audit workflow', 'AiVIS team', 'multi-user audit', 'workspace audit management'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Team Collaboration Systems', 'Audit Workflow Design', 'Visibility Operations'],
       credentials: ['Founded AiVIS'],
@@ -3580,7 +3580,7 @@ That is what shared workspaces solve. Not the technical problem. The organizatio
     tags: ['AI-Tech', 'Technical', 'Advanced', 'Citations'],
     keywords: ['WebMCP', 'AiVIS API', 'third party tool calling', 'headless audit', 'audit API integration', 'AI agent audit', 'Zapier audit workflow'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['API Design', 'AI Agent Tooling', 'WebMCP Standards'],
       credentials: ['Founded AiVIS', 'MCP Implementation Research'],
@@ -3668,10 +3668,10 @@ That is the practical argument for third-party tool calling on AiVIS. Not becaus
     tags: ['AEO', 'Visibility', 'Citations', 'Strategy'],
     keywords: ['AI visibility', 'AI answers', 'citation readiness', 'answer engines', 'machine readability', 'AEO'],
     author: {
-      name: 'R. Mason / Intruvurt Labs',
+      name: 'R. Mason / AiVIS',
       title: 'AI Visibility Research',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Architecture'],
-      credentials: ['Intruvurt Labs', 'AI Visibility Systems'],
+      credentials: ['AiVIS', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     keyPoints: [
@@ -3704,10 +3704,10 @@ That is the practical argument for third-party tool calling on AiVIS. Not becaus
     tags: ['AEO', 'Visibility', 'Citations', 'Strategy', 'Foundational'],
     keywords: ['AI visibility', 'ranking vs citation', 'answer engine optimization', 'invisible to AI', 'citation gap', 'AEO strategy'],
     author: {
-      name: 'R. Mason / Intruvurt Labs',
+      name: 'R. Mason / AiVIS',
       title: 'AI Visibility Research',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Architecture'],
-      credentials: ['Intruvurt Labs', 'AI Visibility Systems'],
+      credentials: ['AiVIS', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     content: `You check your Google rankings and everything looks fine. Position 3 for your primary keyword. Decent traffic. Good bounce rate. But when someone asks ChatGPT, Claude, or Perplexity a question your page answers perfectly, you are nowhere.
@@ -3819,7 +3819,7 @@ The time to fix the ranking-citation gap is now, while the window is still open 
     tags: ['Strategy', 'Visibility', 'Foundational'],
     keywords: ['AiVIS Starter tier', 'AI visibility pricing', '$15 AI audit', 'paid AI model', 'evidence-backed audit', 'AiVIS plans'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Product Strategy'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -3917,7 +3917,7 @@ Read more about <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-v
     tags: ['AI-Tech', 'Citations', 'Advanced', 'Visibility'],
     keywords: ['evidence trail', 'BRAG evidence', 'AI audit evidence', 'evidence-backed recommendations', 'audit transparency', 'structural proof'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'AI Diagnostics', 'Evidence-Based Auditing'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -4008,7 +4008,7 @@ Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15"
     tags: ['Strategy', 'Visibility', 'Foundational'],
     keywords: ['AiVIS plans comparison', 'Observer vs Starter', 'Starter vs Alignment', 'AI visibility pricing', 'which AiVIS plan', 'AiVIS tier comparison'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Answer Engine Optimization', 'Product Strategy', 'AI Discoverability'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -4159,7 +4159,7 @@ All plans support annual billing with discounts ranging from 22% (Starter) to 23
     tags: ['AEO', 'Visibility', 'Strategy', 'Foundational'],
     keywords: ['AI visibility', 'machine readability', 'answer engines', 'AI search', 'website structure', 'AI citations', 'AI trust signals', 'SEO vs AEO', 'AI understanding'],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['AI Visibility', 'Machine Readability', 'Answer Engine Optimization', 'Web Infrastructure'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -4340,7 +4340,7 @@ Curious how your site looks to AI systems? Run a free audit at [AiVIS.biz](https
       'AI answer engines',
     ],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: ['Brand Authority', 'AI Mention Tracking', 'Entity Clarity', 'Answer Engine Optimization'],
       credentials: ['Founded AiVIS', 'AI Visibility Research'],
@@ -4471,7 +4471,7 @@ If you want to know whether your brand is actually being mentioned, cited, and u
       'robots.txt AI crawlers', 'citation revalidation', 'brand mention tracking',
     ],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: [
         'Answer Engine Optimization', 'AI Citations', 'Zero Trust Content Strategy',
@@ -4581,7 +4581,7 @@ Run your first AiVIS audit to start the citation verification loop and find out 
       'how to get cited by AI', '968 audits', 'SEO vs AEO',
     ],
     author: {
-      name: 'Intruvurt',
+      name: 'R. Mason',
       title: 'Founder, AiVIS',
       expertise: [
         'Answer Engine Optimization', 'AI Citation Strategy', 'Structured Data',
@@ -5145,10 +5145,10 @@ Stop estimating where your brand appears in AI answers — measure it. Signal ti
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {
-  name: 'R. Mason / Intruvurt Labs',
+  name: 'R. Mason / AiVIS',
   title: 'AI Visibility Research',
   expertise: ['AI Search Strategy', 'Answer Engine Optimization', 'Machine Readability'],
-  credentials: ['Intruvurt Labs Editorial Team'],
+  credentials: ['AiVIS Editorial Team'],
   experience: '8+ years in search and AI content systems',
 };
 

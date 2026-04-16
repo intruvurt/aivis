@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck, Clock, Lock, Mail, KeyRound, UserCheck } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
@@ -233,7 +233,7 @@ export default function PartnershipAgreementPage() {
               </span>
               <h2 className="text-lg font-semibold text-white mb-1">AiVIS × Zeeniith Referral & Delivery Partnership</h2>
               <p className="text-white/60 text-sm leading-relaxed">
-                This is a private, legally-binding partnership agreement between <strong className="text-white/80">AiVIS (Intruvurt Labs)</strong> and <strong className="text-white/80">Zeeniith.in</strong> covering referral commission structure, development delivery obligations, client exclusivity protections, payment handling, and dispute resolution. Access is restricted to the named parties only.
+                This is a private, legally-binding partnership agreement between <strong className="text-white/80">AiVIS (AiVIS)</strong> and <strong className="text-white/80">Zeeniith.in</strong> covering referral commission structure, development delivery obligations, client exclusivity protections, payment handling, and dispute resolution. Access is restricted to the named parties only.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">

@@ -46,13 +46,13 @@ export default function PublicReportPage() {
         datePublished: audit.created_at,
         publisher: {
           '@type': 'Organization',
-          name: 'AiVIS by Intruvurt Labs',
+          name: 'AiVIS',
           url: 'https://aivis.biz',
         },
         mainEntity: {
           '@type': 'Review',
           reviewBody: `AI Visibility audit for ${domain} — scored ${audit.visibility_score} out of 100.`,
-          author: { '@type': 'Organization', name: 'AiVIS by Intruvurt Labs' },
+          author: { '@type': 'Organization', name: 'AiVIS' },
           itemReviewed: { '@type': 'WebSite', url: audit.url, name: domain },
           reviewRating: {
             '@type': 'Rating',

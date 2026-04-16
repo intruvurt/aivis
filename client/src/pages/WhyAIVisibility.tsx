@@ -33,7 +33,7 @@ const WhyAIVisibility = () => {
         author: {
           '@type': 'Person',
           '@id': 'https://aivis.biz/#author',
-          name: 'Intruvurt Labs',
+          name: 'Ryan Mason',
           url: 'https://aivis.biz/about',
         },
         publisher: {
@@ -54,7 +54,7 @@ const WhyAIVisibility = () => {
         },
         inLanguage: 'en-US',
         about: [
-          { '@type': 'Thing', name: 'Evidence-backed site analysis for AI answers Platform' },
+          { '@type': 'Thing', name: 'AI Visibility Audit' },
           { '@type': 'Thing', name: 'Zero-Click Searches' },
           { '@type': 'Thing', name: 'AI Citation Optimization' },
         ],
@@ -431,7 +431,7 @@ const WhyAIVisibility = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-charcoal-light/30 border border-white/10 rounded-xl p-6">
             <p className="text-xs uppercase tracking-wide text-white/80 font-semibold mb-2">Related Reading</p>
-            <h3 className="text-xl font-bold text-white mb-2">Evidence-backed site analysis for AI answers Platform in 2026</h3>
+            <h3 className="text-xl font-bold text-white mb-2">AI Visibility Auditing in 2026</h3>
             <p className="text-sm text-white/55 mb-4">
               Get the practical 2026 framework: AEO, geo-adaptive relevance, content infrastructure,
               and Q/A-structured blocks designed for AI extraction and citation.
@@ -462,7 +462,7 @@ const WhyAIVisibility = () => {
               Ready to See How AI Views Your Site?
             </h2>
             <p className="text-white/55 max-w-xl mx-auto">
-              Run a free audit and get evidence-backed insights into your Evidence-backed site analysis for AI answers. No fluff, no invented scores, just facts.
+              Run a free audit and get evidence-backed insights into how AI systems interpret and cite your website. No fluff, no invented scores, just facts.
             </p>
           </div>
           <Link

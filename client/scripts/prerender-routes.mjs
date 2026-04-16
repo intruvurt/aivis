@@ -230,15 +230,15 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
-		description: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.',
-		ogTitle: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
-		ogDescription: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website. Evidence-backed findings and prioritized fixes.',
+		title: 'AiVIS | AI Visibility Audit — Evidence-Backed Scores',
+		description: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, not assumptions.',
+		ogTitle: 'AiVIS | AI Visibility Audit — Evidence-Backed Scores',
+		ogDescription: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
 	{
 		path: '/landing',
-		title: 'AiVIS Landing | Evidence-backed site analysis for AI answers Platform',
+		title: 'AiVIS Landing | AI Visibility Audit',
 		description: 'Measure whether AI can read, trust and cite your site with a live evidence-backed AiVIS audit.',
 	},
 	{
@@ -547,7 +547,7 @@ const routes = [
 	{
 		path: '/about',
 		title: 'About AiVIS | Intruvurt Labs',
-		description: 'About AiVIS and Intruvurt Labs: the Evidence-backed site analysis for AI answers platform focused on answer-engine readiness and evidence-backed fixes.',
+		description: 'About AiVIS and Intruvurt Labs: the AI visibility audit platform focused on answer-engine readiness and evidence-backed fixes.',
 	},
 	{
 		path: '/press',
@@ -618,7 +618,7 @@ const routes = [
 	{
 		path: '/changelog',
 		title: 'Changelog | AI Visibility Platform',
-		description: 'A permanent ledger of every update, fix, and improvement shipped to Evidence-backed site analysis for AI answers Platform.',
+		description: 'A permanent ledger of every update, fix, and improvement shipped to AiVIS.',
 	},
 	{
 		path: '/tools/schema-validator',
@@ -724,7 +724,7 @@ const routes = [
 	{
 		path: '/partnership-terms',
 		title: 'Referral and Delivery Partnership Terms | AI Visibility',
-		description: 'Official partnership terms for referral and delivery partnerships with AI Visibility Evidence-backed site analysis for AI answers.',
+		description: 'Official partnership terms for referral and delivery partnerships with AiVIS AI Visibility Audit.',
 	},
 	{
 		path: '/conversational-query-playbook-2026',

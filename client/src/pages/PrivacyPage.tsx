@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -8,7 +8,7 @@ import PublicPageFrame from "../components/PublicPageFrame";
 export default function PrivacyPage() {
   usePageMeta({
     title: 'Privacy Policy',
-    description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+    description: 'How AiVIS collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
     path: '/privacy',
     structuredData: [
       buildWebPageSchema({ path: '/privacy', name: 'AiVIS Privacy Policy', description: 'Data collection, usage, and protection practices for the AiVIS platform.' }),
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
   const emailCls = "text-white/85 hover:text-white";
 
   return (
-    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How Intruvurt Labs collects, uses, and protects your data on the AiVIS platform" maxWidthClass="max-w-4xl">
+    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How AiVIS collects, uses, and protects your data" maxWidthClass="max-w-4xl">
       <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
           {/* ── Summary ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
-            <p>AiVIS is operated by <strong className="text-white">Intruvurt Labs</strong>, a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
+            <p>AiVIS is operated by <strong className="text-white">AiVIS</strong> (a product of Intruvurt Labs, LLC), a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
             <p className="mt-2">We collect only the data necessary to operate a multi-model AI answer audit system. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
             <p className="mt-2">This Privacy Policy should be read alongside our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/disclosures" className={linkCls}>Consumer Disclosures</Link>.</p>
           </section>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
             </ul>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
-            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. Intruvurt Labs never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
+            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. AiVIS never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.4 Device and Technical Data</h3>
             <ul className="list-disc list-inside space-y-1 ml-2">
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white">Caching:</strong> Results are cached in our PostgreSQL database (Neon) for performance. Cache duration varies by tier.</li>
             </ol>
             <p className="mt-2"><strong className="text-white">What is sent to AI models:</strong> Page content and structural data only. Your email address, password, payment information, and account details are never transmitted to AI model providers.</p>
-            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. Intruvurt Labs holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
+            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. AiVIS holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
           </section>
 
           {/* ── 4 Third-Party Services ── */}
@@ -261,7 +261,7 @@ export default function PrivacyPage() {
               <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
             </ul>
             <p className="mt-3">We respond to privacy inquiries within 30 calendar days.</p>
-            <p className="mt-4 text-white/60 text-sm">Intruvurt Labs · Georgia, USA</p>
+            <p className="mt-4 text-white/60 text-sm">AiVIS · Georgia, USA</p>
           </section>
         </div>
     </PublicPageFrame>

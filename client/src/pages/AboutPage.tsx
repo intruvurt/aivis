@@ -127,8 +127,8 @@ const ABOUT_STRUCTURED_DATA = [
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About AiVIS.biz; Evidence-backed site analysis for AI answers & Remediation Platform',
-    description: 'AiVIS.biz citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason, Head of Intruvurt Labs.',
+    name: 'About AiVIS.biz — AI Visibility Audit & Remediation Platform',
+    description: 'AiVIS.biz citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason.',
   }),
   buildBreadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -138,18 +138,18 @@ const ABOUT_STRUCTURED_DATA = [
 
 export default function AboutPage() {
   usePageMeta({
-    title: 'About Intruvurt Labs | AiVIS \u2013 Evidence-backed site analysis for AI answers Platform',
-    description: 'Intruvurt Labs: enterprise AI citation engine and visibility auditing platform. Founded December 2025. Ryan Mason, Head of Intruvurt Labs.',
+    title: 'About AiVIS | AI Visibility Audit & Fix Platform',
+    description: 'AiVIS audits and fixes how AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude interpret and cite your website. Evidence-backed audits, not assumptions.',
     path: '/about',
-    ogTitle: 'About AiVIS \u2013 Built by Intruvurt Labs',
-    ogDescription: 'Intruvurt Labs builds enterprise-grade Evidence-backed site analysis for AI answers tools. Named founder: Ryan Mason. US Federal Registration Pending.',
+    ogTitle: 'About AiVIS – AI Visibility Audit & Fix Platform',
+    ogDescription: 'AiVIS runs evidence-backed AI visibility audits that show exactly what AI systems can read, interpret, and cite from your website.',
     structuredData: ABOUT_STRUCTURED_DATA,
   });
   return (
     <PublicPageFrame
       icon={Info}
       title="About AiVIS"
-      subtitle="Enterprise-grade AI visibility evidence-backed auditing and Auto ScoreFix PR platform."
+      subtitle="Fix how AI systems interpret and cite your website. Evidence-backed audits and Auto ScoreFix PRs."
       backTo="/"
       maxWidthClass="max-w-6xl"
     >
@@ -311,7 +311,7 @@ export default function AboutPage() {
                   />
                   <div>
                     <h3 className="text-lg font-bold text-blue-200">Ryan Mason</h3>
-                    <p className="text-sm text-white/50">Head of AiVIS, Intruvurt Labs</p>
+                    <p className="text-sm text-white/50">Founder & Head of AiVIS</p>
                   </div>
                 </div>
 
@@ -574,7 +574,7 @@ export default function AboutPage() {
       {/* Footer */}
       <footer className="px-4 py-8 border-t border-white/8">
         <p className="text-[10px] text-white/35 text-center leading-relaxed">
-          Intruvurt Labs &bull; Evidence-backed AI answer audit and fix system
+          AiVIS &bull; Fix how AI systems interpret and cite your website
           <br />
           US Federal Registration Pending &bull; Security posture from live controls only
         </p>

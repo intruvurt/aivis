@@ -1,0 +1,213 @@
+src/api.ts(5,84): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/auth/neonAuthClient.ts(2,34): error TS2307: Cannot find module '@neondatabase/neon-js/auth' or its corresponding type declarations.
+src/auth/neonAuthClient.ts(3,68): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/auth/neonAuthClient.ts(4,36): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/auth/neonAuthClient.ts(36,20): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(42,51): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(62,31): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(121,35): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(128,42): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(195,52): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(202,25): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(320,12): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(358,49): error TS2304: Cannot find name 'UserProfile'.
+src/auth/neonAuthClient.ts(386,36): error TS2304: Cannot find name 'UserProfile'.
+src/components/AdvancedFeaturesPanel.tsx(37,68): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AdvancedFeaturesPanel.tsx(38,36): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AIAnswerReality.tsx(2,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AppSidebar.tsx(13,54): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AuditReportCard.tsx(32,8): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AuditReportCard.tsx(33,43): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AuditReportCard.tsx(34,61): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AutoScoreFixModal.tsx(14,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/AutoScoreFixWidget.tsx(11,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/CompetitorComparison.tsx(17,61): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/CompetitorComparison.tsx(333,38): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/ComprehensiveAnalysis.tsx(28,103): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/ComprehensiveAnalysis.tsx(29,27): error TS2307: Cannot find module '@shared/entitlements' or its corresponding type declarations.
+src/components/CryptoIntelligencePanel.tsx(17,41): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/DocumentGenerator.tsx(5,128): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/DropAlertBanner.tsx(27,54): error TS2339: Property 'dismissed' does not exist on type 'CitationDropAlert'.
+src/components/EntityFingerprintPanel.tsx(21,74): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/EvidenceReviewPanel.tsx(11,15): error TS2305: Module '"../../../shared/types"' has no exported member 'CitationEvidence'.
+src/components/FixImpactSimulator.tsx(2,37): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/GuideBot.tsx(32,43): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/GuideBot.tsx(33,67): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/GuideBot.tsx(48,33): error TS2304: Cannot find name 'SpeechRecognition'.
+src/components/GuideBot.tsx(67,36): error TS2552: Cannot find name 'SpeechRecognitionEvent'. Did you mean 'SpeechRecognitionResult'?
+src/components/QueryPackManager.tsx(12,15): error TS2305: Module '"../../../shared/types"' has no exported member 'QueryPack'.
+src/components/RecommendationList.tsx(2,50): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/RevCiteModal.tsx(5,15): error TS2305: Module '"../../../shared/types"' has no exported member 'CitationEvidence'.
+src/components/RevCiteModal.tsx(5,33): error TS2305: Module '"../../../shared/types"' has no exported member 'RevCiteSuggestion'.
+src/components/SSFRPanel.tsx(5,15): error TS2305: Module '"../../../shared/types"' has no exported member 'SSFRAuditResult'.
+src/components/TextSummaryView.tsx(3,52): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/ThreatIntelBanner.tsx(14,40): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/TopNav.tsx(13,47): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/components/WritingAuditPanel.tsx(3,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/constants/marketingClaims.ts(1,46): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/content/blogs.ts(4726,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "aeo"; tags: ("Citations" | "Advanced" | "AEO" | "AI-Tech")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/content/blogs.ts(4857,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "aeo"; tags: ("AEO" | "Strategy" | "Visibility" | "AI-Tech")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/content/blogs.ts(4991,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "implementation"; tags: ("Citations" | "Technical" | "AEO" | "Implementation")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/hooks/useGuideBotChat.ts(8,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/hooks/useSupportTickets.ts(9,8): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/lib/auth.ts(1,34): error TS2307: Cannot find module '@neondatabase/neon-js/auth' or its corresponding type declarations.
+src/lib/security/sanitize.ts(3,25): error TS2503: Cannot find namespace 'DOMPurify'.
+src/lib/security/sanitize.ts(10,24): error TS2503: Cannot find namespace 'DOMPurify'.
+src/pages/AgencyPage.tsx(31,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/AgencyPage.tsx(32,36): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/AuditDetails.tsx(9,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/AuditReport.tsx(31,103): error TS2339: Property 'score' does not exist on type 'unknown'.
+src/pages/AuditReport.tsx(32,25): error TS2339: Property 'confidence' does not exist on type 'unknown'.
+src/pages/AuditReport.tsx(34,41): error TS2339: Property 'confidence' does not exist on type 'unknown'.
+src/pages/BillingPage.tsx(11,83): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/DomainRatingPage.tsx(7,79): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/GscConsolePage.tsx(12,54): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/HelpCenter.tsx(39,91): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/HelpCenter.tsx(40,124): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/McpConsolePage.tsx(12,54): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/MethodologyPage.tsx(6,64): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/PartnershipPaymentPage.tsx(232,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(277,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(292,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(303,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(319,6): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PlatformWorkflowPage.tsx(144,20): error TS2307: Cannot find module 'motion/react' or its corresponding type declarations.
+src/pages/PublicReportPage.tsx(4,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/ServerHeadersPage.tsx(11,15): error TS2305: Module '"../../../shared/types"' has no exported member 'ServerHeadersCheckResult'.
+src/pages/ServerHeadersPage.tsx(644,75): error TS2322: Type 'unknown' is not assignable to type 'ReactI18NextChildren | Iterable<ReactI18NextChildren>'.
+src/pages/SnapshotPage.tsx(12,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/pages/TeamPage.tsx(127,42): error TS2339: Property 'hasInviteManagement' does not exist on type 'TierLimits'.
+src/pages/TeamPage.tsx(509,27): error TS2339: Property 'hasCitationTesting' does not exist on type 'TierLimits'.
+src/pages/TeamPage.tsx(514,27): error TS2339: Property 'hasCompetitorTracking' does not exist on type 'TierLimits'.
+src/providers/BrandingProvider.tsx(13,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/providers/BrandingProvider.tsx(14,36): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/services/analyticsService.ts(2,24): error TS2307: Cannot find module 'json2csv' or its corresponding type declarations.
+src/stores/analysisStore.ts(49,9): error TS2352: Conversion of type 'Record<string, unknown>' to type 'AnalysisResponse' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Record<string, unknown>' is missing the following properties from type 'AnalysisResponse': visibility_score, ai_platform_scores, recommendations, schema_markup, and 10 more.
+src/utils/insightGenerator.ts(2,55): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/utils/validation.test.ts(20,38): error TS2339: Property 'error' does not exist on type 'ValidateUrlResult'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/utils/validation.test.ts(26,38): error TS2339: Property 'error' does not exist on type 'ValidateUrlResult'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/utils/validation.test.ts(32,38): error TS2339: Property 'error' does not exist on type 'ValidateUrlResult'.
+  Property 'error' does not exist on type '{ valid: true; url: string; }'.
+src/views/AnalyticsPage.tsx(35,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/AnalyzePage.tsx(30,52): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/AnalyzePage.tsx(695,47): error TS2345: Argument of type 'string' is not assignable to parameter of type '"security" | "schema" | "technical" | "dns" | "crawl" | "extract" | "ai1" | "ai2" | "ai3" | "compile" | "finalize"'.
+src/views/AnswerPresencePage.tsx(11,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/AnswerPresencePage.tsx(97,22): error TS2304: Cannot find name 'ANSWER_PRESENCE_FAQ'.
+src/views/AnswerPresencePage.tsx(316,16): error TS2304: Cannot find name 'ANSWER_PRESENCE_FAQ'.
+src/views/BrandIntegrityPage.tsx(10,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/BrandIntegrityPage.tsx(114,22): error TS2304: Cannot find name 'BRAND_INTEGRITY_FAQ'.
+src/views/BrandIntegrityPage.tsx(451,16): error TS2304: Cannot find name 'BRAND_INTEGRITY_FAQ'.
+src/views/CitationsPage.tsx(36,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/CompetitorsPage.tsx(8,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/Dashboard.tsx(11,50): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/NicheDiscoveryPage.tsx(5,67): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/PromptIntelligencePage.tsx(10,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/PromptIntelligencePage.tsx(91,22): error TS2552: Cannot find name 'PROMPT_INTELLIGENCE_FAQ'. Did you mean 'PromptIntelligencePage'?
+src/views/PromptIntelligencePage.tsx(332,16): error TS2552: Cannot find name 'PROMPT_INTELLIGENCE_FAQ'. Did you mean 'PromptIntelligencePage'?
+src/views/ReportsPage.tsx(30,39): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/ReportsPage.tsx(31,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/ReportsPage.tsx(698,31): error TS2339: Property 'score_0_100' does not exist on type 'unknown'.
+src/views/ReportsPage.tsx(699,21): error TS2339: Property 'score_0_100' does not exist on type 'unknown'.
+src/views/ReportsPage.tsx(701,32): error TS2339: Property 'status' does not exist on type 'unknown'.
+src/views/ReverseEngineerPage.tsx(45,34): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/ScoreFixPage.tsx(9,35): error TS2307: Cannot find module '@/components/ui/Card' or its corresponding type declarations.
+src/views/ScoreFixPage.tsx(504,15): error TS2322: Type 'LiveRecommendation[]' is not assignable to type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }[]'.
+  Type 'LiveRecommendation' is not assignable to type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }'.
+    Property 'title' is optional in type 'LiveRecommendation' but required in type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }'.
+src/views/SiteCrawlPage.tsx(4,68): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+src/views/SiteCrawlPage.tsx(5,36): error TS2307: Cannot find module '@shared/types' or its corresponding type declarations.
+../server/src/controllers/assistantController.ts(987,29): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/authRequired.ts(72,32): error TS2339: Property 'trial_ends_at' does not exist on type 'User'.
+../server/src/middleware/authRequired.ts(72,63): error TS2339: Property 'trial_ends_at' does not exist on type 'User'.
+../server/src/middleware/authRequired.ts(84,9): error TS2551: Property 'userId' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'. Did you mean 'user'?
+../server/src/middleware/authRequired.ts(85,9): error TS2339: Property 'tier' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/incrementUsage.ts(6,30): error TS2551: Property 'userId' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'. Did you mean 'user'?
+../server/src/middleware/incrementUsage.ts(15,11): error TS2339: Property 'usageSkipIncrement' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/incrementUsage.ts(16,11): error TS2339: Property 'usingPackCredits' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(40,9): error TS2339: Property 'monthlyLimit' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(41,9): error TS2339: Property 'currentUsage' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(53,11): error TS2339: Property 'currentUsage' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(54,11): error TS2339: Property 'monthlyLimit' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(60,11): error TS2339: Property 'currentUsage' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(61,11): error TS2339: Property 'monthlyLimit' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/usageGate.ts(62,11): error TS2339: Property 'usingPackCredits' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/workspacePermission.ts(19,20): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/workspacePermission.ts(36,26): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/workspaceRequired.ts(31,9): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/middleware/workspaceRequired.ts(37,9): error TS2339: Property 'organization' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/complianceRoutes.ts(51,26): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/complianceRoutes.ts(94,26): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/complianceRoutes.ts(115,29): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/complianceRoutes.ts(181,35): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(132,36): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(245,67): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(246,74): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(247,52): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(248,57): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(249,65): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(416,67): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(527,26): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(528,29): error TS2339: Property 'organization' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(562,26): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(563,29): error TS2339: Property 'organization' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(680,65): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(706,66): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(711,66): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(721,90): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(731,90): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(742,69): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(763,24): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(791,11): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(806,11): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(818,67): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(833,24): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(846,99): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(861,99): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(875,54): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(885,54): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(899,81): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(909,81): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(923,56): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(942,56): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(970,72): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(977,72): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(991,82): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1005,69): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1014,67): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1033,89): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1053,89): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1064,79): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1138,58): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1148,61): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1171,44): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1196,58): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1214,24): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1257,58): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1265,103): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1309,54): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1336,51): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/featureRoutes.ts(1375,11): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/githubAppRoutes.ts(248,34): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/githubAppRoutes.ts(290,34): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/githubAppRoutes.ts(304,34): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/githubAppRoutes.ts(328,34): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/routes/githubAppRoutes.ts(363,34): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(8489,42): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(8568,31): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9064,31): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9654,13): error TS2339: Property 'usageSkipIncrement' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9697,15): error TS2339: Property 'usageSkipIncrement' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9704,37): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9762,16): error TS2339: Property 'usageSkipIncrement' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(9762,43): error TS2339: Property 'usingPackCredits' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(10578,35): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(12227,33): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(12511,35): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/server.ts(13625,33): error TS2339: Property 'workspace' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+../server/src/services/engines/entityEngine.ts(96,8): error TS2339: Property 'replace' does not exist on type 'never'.
+../server/src/services/engines/trustEngine.ts(37,16): error TS2339: Property 'includes' does not exist on type 'never'.
+../server/src/services/engines/trustEngine.ts(37,47): error TS2339: Property 'includes' does not exist on type 'never'.
+../server/src/services/engines/trustEngine.ts(38,24): error TS2339: Property 'toLowerCase' does not exist on type 'never'.

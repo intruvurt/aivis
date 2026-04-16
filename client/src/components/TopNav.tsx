@@ -338,9 +338,9 @@ export default function TopNav() {
 
           <span
             className="hidden min-[1700px]:inline-flex items-center px-3 py-1 rounded-md border border-white/10 bg-charcoal/40 text-[10px] xl:text-[11px] text-white/70 tracking-[0.08em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
-            title="Evidence-backed site analysis for AI answers Platform"
+            title="AI Visibility Audit — Evidence-Backed Scores"
           >
-            Evidence-backed site analysis for AI answers Platform
+            AI Visibility Audit — Evidence-Backed Scores
           </span>
         </div>
 

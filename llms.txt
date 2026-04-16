@@ -1,15 +1,15 @@
 # AiVIS
 
+> Fix how AI systems interpret and cite your website.  
 > Evidence-backed AI answer audit and fix system.  
-> AI cites what it can extract and trust, not what you intended.  
-> Fix what AI gets wrong about your site.  
+> Every result is tied to real on-page evidence, not assumptions.  
 > Built by Intruvurt Labs.
 
 Canonical domain: https://aivis.biz/  
 Support: support@aivis.biz  
 License: Proprietary SaaS
 
-AiVIS audits how AI answer engines extract, interpret, and cite website content — then delivers evidence-backed fixes tied to the exact signals that produced the finding. Every recommendation maps to crawl-observable evidence through the BRAG (Based Retrieval and Auditable Grading) protocol.
+AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website — then delivers evidence-backed fixes tied to the exact signals that produced the finding. Every recommendation maps to crawl-observable evidence through the BRAG (Based Retrieval and Auditable Grading) protocol.
 
 AiVIS is a diagnostic and fix system. It is not a rank tracker, not a backlink tool, and not a guarantee of indexing or citation by any third-party system.
 

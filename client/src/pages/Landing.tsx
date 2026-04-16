@@ -112,7 +112,7 @@ LANDING_STRUCTURED_DATA.push(
 LANDING_STRUCTURED_DATA.push(
   buildProductSchema({
     name: 'AiVIS — Evidence-backed AI answer audit and fix system',
-    description: 'AiVIS audits how AI systems read, trust, and cite your site. Every result is tied to real page evidence, with fix-ready outputs to improve extraction and citation accuracy.',
+    description: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, with fix-ready outputs to improve extraction and citation accuracy.',
     url: 'https://aivis.biz/',
     image: 'https://aivis.biz/og-image.png',
     brand: 'AiVIS',
@@ -264,7 +264,7 @@ const Landing = () => {
   usePageMeta({
     title: 'AiVIS — AI Visibility Audit: Does ChatGPT Cite Your Brand?',
     description:
-      'Find out if ChatGPT, Claude, and Perplexity cite your site — or ignore it. Free AI visibility audit in seconds. Evidence-backed score with prioritized fixes included.',
+      'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence — not assumptions.',
     path: '/landing',
     ogTitle: 'AiVIS — Does AI Cite Your Brand, or Ignore It?',
     structuredData: LANDING_STRUCTURED_DATA,
@@ -399,11 +399,11 @@ const Landing = () => {
             </h1>
 
             <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl mx-auto">
-              AI doesn&apos;t mention you — it cites what it can extract and trust.
+              Fix how AI systems interpret and cite your website.
             </p>
 
             <p className="text-sm text-white/40 mb-8 max-w-xl mx-auto leading-relaxed">
-              AiVIS scans your live page, shows exactly what AI systems misread or ignore, and gives you fix-ready outputs tied to real evidence. No guesses. No black box.
+              AiVIS runs a live page analysis and maps how AI models interpret your content. Every result is tied to real on-page evidence, not assumptions about your domain.
             </p>
 
             {/* ── URL INPUT FORM ── */}
@@ -454,7 +454,7 @@ const Landing = () => {
 
             {/* Trust microcopy */}
             <p className="text-xs text-white/35 mb-4">No login for first result · No credit card · 5 free checks per hour</p>
-            <p className="text-xs text-white/30 mb-6">Built from live audits across real sites by <a href="/about" className="underline decoration-white/20 hover:text-white/50 transition-colors">Intruvurt Labs</a></p>
+            <p className="text-xs text-white/30 mb-6">Built from live audits across real sites by <a href="/about" className="underline decoration-white/20 hover:text-white/50 transition-colors">AiVIS</a></p>
 
             {/* What you'll see strip */}
             {!scanning && !previewResult && (

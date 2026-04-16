@@ -22,7 +22,7 @@ const linkGroups = [
       { label: "Guide", to: "/guide" },
       { label: "FAQ", to: "/faq" },
       { label: "Help Center", to: "/help" },
-      { label: "Substack", to: "https://substack.com/@intruvurtlabs", external: true },
+      { label: "Substack", to: "https://dobleduche.substack.com/", external: true },
     ],
   },
   {
@@ -57,7 +57,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              Evidence-backed site analysis for AI answers Platform. Measure how AI search engines understand, cite, and recommend your website.
+              Fix how AI systems interpret and cite your website. Evidence-backed audits for ChatGPT, Perplexity AI, Google AI Overviews, and Claude.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
               <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
@@ -126,7 +126,7 @@ export default function Footer() {
           </div>
 
           <p className="text-[11px] text-white/25">
-            © {currentYear} Intruvurt Labs · AiVIS. All rights reserved.
+            © {currentYear} AiVIS. All rights reserved.
           </p>
         </div>
       </div>

@@ -1485,7 +1485,7 @@ function BrandingPanel() {
             type="text"
             value={tagline}
             onChange={(e) => setTagline(e.target.value)}
-            placeholder="Evidence-backed site analysis for AI answers"
+            placeholder="AI Visibility Audit"
             className={`w-full text-sm px-3 py-2 rounded-lg bg-charcoal/70 ${appInputSurfaceClass}`}
           />
         </div>

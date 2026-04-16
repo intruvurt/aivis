@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, FileText } from "lucide-react";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -16,7 +16,7 @@ export default function CompliancePage() {
         path: "/compliance",
         name: "AiVIS Compliance & Security",
         description:
-          "Compliance and security operating posture for AiVIS by Intruvurt Labs.",
+          "Compliance and security operating posture for AiVIS by AiVIS.",
       }),
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
@@ -33,7 +33,7 @@ export default function CompliancePage() {
           <p className="text-sm text-white/75 leading-relaxed">
             This page is the authoritative, machine-readable record of AiVIS's security posture, data-handling
             controls, jurisdictional operating terms, and current certification status. AiVIS is an AI Visibility
-            Intelligence System built and operated by Intruvurt Labs, a company incorporated under the laws of
+            Intelligence System built and operated by AiVIS, a company incorporated under the laws of
             the State of Georgia, United States (postal code 30501). Every statement on this page is
             evidence-backed and deliberately scoped to what can be independently verified. We do not publish
             forward-looking compliance claims that lack a corresponding attestation.
@@ -79,7 +79,7 @@ export default function CompliancePage() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">Jurisdiction</h2>
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">
-            <li>AiVIS is operated by Intruvurt Labs, a Georgia (USA) based company.</li>
+            <li>AiVIS is operated by Intruvurt Labs, LLC, a Georgia (USA) based company.</li>
             <li>Governing law: State of Georgia, United States (postal code 30501).</li>
             <li>Disputes are subject to the exclusive jurisdiction of courts located in Georgia, USA.</li>
             <li>Full jurisdictional terms are documented in the <Link to="/terms" className="text-white/85 hover:text-white underline">Terms of Service</Link>.</li>

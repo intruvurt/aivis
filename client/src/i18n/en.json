@@ -19,8 +19,8 @@
     "upgrade": "Upgrade"
   },
   "hero": {
-    "title": "Evidence-backed site analysis for AI answers Platform",
-    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix - down to the pull request.",
+    "title": "Fix how AI systems interpret and cite your website",
+    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.",
     "cta": "Start Audit",
     "ctaSecondary": "View Methodology"
   },

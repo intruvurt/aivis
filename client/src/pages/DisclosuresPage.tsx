@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -28,7 +28,7 @@ export default function DisclosuresPage() {
           {/* ── Preamble ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">About This Document</h2>
-            <p>This page provides consumer-facing disclosures and transparency notices about the AiVIS platform operated by Intruvurt Labs. It supplements our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/privacy" className={linkCls}>Privacy Policy</Link> with specific information about how the platform works, what it can and cannot do, and the boundaries of its outputs.</p>
+            <p>This page provides consumer-facing disclosures and transparency notices about the AiVIS platform operated by AiVIS. It supplements our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/privacy" className={linkCls}>Privacy Policy</Link> with specific information about how the platform works, what it can and cannot do, and the boundaries of its outputs.</p>
             <p className="mt-2">These disclosures are written in plain language to help you make informed decisions about using the Service.</p>
           </section>
 
@@ -151,7 +151,7 @@ export default function DisclosuresPage() {
               <li><strong className="text-white">Sentry</strong> - Error monitoring. Sentry outages do not affect Service functionality but may delay our awareness of issues.</li>
               <li><strong className="text-white">Resend</strong> - Email delivery. Resend outages may delay transactional emails (verification, reports, notifications).</li>
             </ul>
-            <p className="mt-2">Intruvurt Labs does not guarantee the uptime or performance of third-party providers. We monitor these dependencies and implement fallback chains where feasible (e.g., the AI provider fallback chain includes up to 6 models for free-tier analyses).</p>
+            <p className="mt-2">AiVIS does not guarantee the uptime or performance of third-party providers. We monitor these dependencies and implement fallback chains where feasible (e.g., the AI provider fallback chain includes up to 6 models for free-tier analyses).</p>
           </section>
 
           {/* ── 9 Webhooks ── */}
@@ -185,9 +185,9 @@ export default function DisclosuresPage() {
             <h2 className="text-xl font-semibold text-white mb-3">11. Model Selection and Cost Transparency</h2>
             <p>The AI models used in your analysis depend on your subscription tier:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to Intruvurt Labs.</li>
-              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to Intruvurt Labs.</li>
-              <li><strong className="text-white">Signal ($149/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to Intruvurt Labs.</li>
+              <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to AiVIS.</li>
+              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to AiVIS.</li>
+              <li><strong className="text-white">Signal ($149/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to AiVIS.</li>
             </ul>
             <p className="mt-2">Model names, providers, and routing are subject to change as model availability and pricing evolves on upstream platforms. The analysis response includes model attribution metadata so you can verify which models processed your request.</p>
           </section>
@@ -210,7 +210,7 @@ export default function DisclosuresPage() {
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Exported reports capture the analysis state at the time of export. They are not dynamically updated.</li>
               <li>Shared links provide read-only access to a specific audit and may expire based on your tier's sharing policy.</li>
-              <li>You are responsible for the distribution of exported reports and shared links. Once shared, Intruvurt Labs cannot control who accesses the content.</li>
+              <li>You are responsible for the distribution of exported reports and shared links. Once shared, AiVIS cannot control who accesses the content.</li>
               <li>GDPR data exports (JSON format) are available via account settings or by emailing <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a>.</li>
             </ul>
           </section>
@@ -223,7 +223,7 @@ export default function DisclosuresPage() {
               <li>Generated code changes are <strong className="text-white">suggestions</strong>, not guaranteed fixes. Always review auto-generated pull requests before merging.</li>
               <li>Automated remediation targets structural issues (missing markup, heading fixes, metadata additions). It does not rewrite content, redesign pages, or refactor application logic.</li>
               <li>Score Fix credits are non-refundable once any credits have been consumed.</li>
-              <li>Generated PRs require GitHub App authorization. Intruvurt Labs accesses only the repositories you explicitly authorize.</li>
+              <li>Generated PRs require GitHub App authorization. AiVIS accesses only the repositories you explicitly authorize.</li>
             </ul>
           </section>
 
@@ -238,7 +238,7 @@ export default function DisclosuresPage() {
           {/* ── 16 Email ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">16. Email Delivery</h2>
-            <p>Transactional emails (verification, password reset, analysis reports, billing receipts) and optional marketing emails are delivered through Resend. Intruvurt Labs does not guarantee email delivery. Factors outside our control include:</p>
+            <p>Transactional emails (verification, password reset, analysis reports, billing receipts) and optional marketing emails are delivered through Resend. AiVIS does not guarantee email delivery. Factors outside our control include:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Recipient spam filters, quarantine rules, or mailbox full conditions.</li>
               <li>Email provider reputation filtering or temporary blocks.</li>
@@ -289,7 +289,7 @@ export default function DisclosuresPage() {
               <li>Privacy: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
               <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
             </ul>
-            <p className="mt-4 text-white/60 text-sm">Intruvurt Labs · Georgia, USA</p>
+            <p className="mt-4 text-white/60 text-sm">AiVIS · Georgia, USA</p>
           </section>
         </div>
     </PublicPageFrame>

@@ -22,14 +22,14 @@ async function initDOMPurify() {
   if (purify) return purify;
 
   try {
-    const { JSDOM } = await import("jsdom");
-    const window = new JSDOM("").window;
+    const { parseHTML } = await import("linkedom");
+    const { window } = parseHTML("<!DOCTYPE html><html><head></head><body></body></html>");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     purify = DOMPurify(window as any);
     return purify;
   } catch (err) {
     console.warn(
-      "[DOMPurify] Failed to initialize JSDOM, using in-memory fallback:",
+      "[DOMPurify] Failed to initialize linkedom, using in-memory fallback:",
       (err as any)?.message,
     );
     // Fallback: assign module-level purify so sanitizeHtmlServer doesn't crash on null

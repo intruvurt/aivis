@@ -795,6 +795,7 @@ export default function PricingPage() {
           ratingValue: "4.8",
           reviewCount: "47",
           bestRating: "5",
+          worstRating: "1",
         },
         offers: [
           {

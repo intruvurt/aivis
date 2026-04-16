@@ -10938,6 +10938,11 @@ For each recommendation:
       // Cap primary model at 20s to guarantee ≥20s for the fallback chain.
       // Without this cap the primary's 30s axios default eats the entire budget.
       const PRIMARY_MODEL_CAP_MS = 20_000;
+      // Cap each fallback provider at 15s so no single fallback hogs the budget.
+      // With a ~43s AI budget: primary 20s + fallback1 15s = 35s → 8s left for fallback2.
+      // Without this cap, a single slow fallback consumes the remaining ~23s, leaving
+      // zero budget for faster providers (e.g. Claude Haiku after two OpenAI timeouts).
+      const FALLBACK_PROVIDER_CAP_MS = 15_000;
 
       let activeDeadlineTimer: ReturnType<typeof setTimeout> | null = null;
       const makeDeadlinePromise = (label: string, budgetMs: number) =>
@@ -10981,7 +10986,8 @@ For each recommendation:
             break;
           }
           // Primary model (pi=0) is capped at PRIMARY_MODEL_CAP_MS so fallbacks
-          // always have meaningful time budget. Fallbacks get the remaining budget.
+          // always have meaningful time budget. Each fallback is capped at
+          // FALLBACK_PROVIDER_CAP_MS so no single slow provider hogs the budget.
           const rawBudgetMs = Math.max(
             MIN_FALLBACK_BUDGET_MS,
             providerBudgetMs,
@@ -10989,7 +10995,7 @@ For each recommendation:
           const effectiveBudgetMs =
             pi === 0
               ? Math.min(rawBudgetMs, PRIMARY_MODEL_CAP_MS)
-              : rawBudgetMs;
+              : Math.min(rawBudgetMs, FALLBACK_PROVIDER_CAP_MS);
 
           try {
             ai1Raw = await Promise.race([

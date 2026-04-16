@@ -2590,6 +2590,25 @@ export async function runMigrations(): Promise<void> {
         `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS details JSONB`,
       );
 
+      // ── Fix evidence_ids column type: legacy schema created it as UUID[] but
+      //    the rule engine stores string keys (e.g. 'organization_schema'), not UUIDs.
+      //    Convert to JSONB so JSON.stringify(r.evidence_ids) inserts cleanly.
+      _q(`
+        DO $$ BEGIN
+          IF EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'audit_rule_results'
+              AND column_name = 'evidence_ids'
+              AND data_type = 'ARRAY'
+          ) THEN
+            ALTER TABLE audit_rule_results
+              ALTER COLUMN evidence_ids DROP DEFAULT,
+              ALTER COLUMN evidence_ids TYPE JSONB USING COALESCE(to_jsonb(evidence_ids), '[]'::jsonb),
+              ALTER COLUMN evidence_ids SET DEFAULT '[]'::jsonb;
+          END IF;
+        END $$
+      `);
+
       // ─── SSFR Fixpacks ─────────────────────────────────────────────────────
       _q(`
       CREATE TABLE IF NOT EXISTS audit_fixpacks (

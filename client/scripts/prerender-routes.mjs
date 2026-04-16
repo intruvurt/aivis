@@ -561,215 +561,215 @@ const routes = [
 	},
 	{
 		path: '/terms',
-		title: 'Terms of Service | AiVIS AI Visibility Platform',
-		description: 'AiVIS terms of service governing use of the AI visibility auditing platform, including acceptable use, billing, IP rights, and disclaimers.',
+		title: 'Terms of Service | AI Visibility Platform',
+		description: 'AI Visibility terms of service governing use of the AI visibility auditing platform, including acceptable use, billing, IP rights, and disclaimers.',
 	},
 	{
 		path: '/privacy',
-		title: 'Privacy Policy | AiVIS AI Visibility Platform',
-		description: 'How AiVIS and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+		title: 'Privacy Policy | AI Visibility Platform',
+		description: 'How AI Visibility and Intruvurt Labs collect, use, and protect your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
 	},
 	{
 		path: '/disclosures',
-		title: 'Consumer Disclosures | AiVIS AI Visibility Platform',
-		description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies, and platform disclaimers.',
+		title: 'Consumer Disclosures | AI Visibility Platform',
+		description: 'AI Visibility consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies, and platform disclaimers.',
 	},
 	{
 		path: '/integrations',
-		title: 'Integrations Hub | AiVIS',
-		description: 'Explore AiVIS integrations, automation endpoints, and connected workflows for analytics and operations.',
+		title: 'Integrations Hub | AI Visibility Platform',
+		description: 'Explore AI Visibility integrations, automation endpoints, and connected workflows for analytics and operations.',
 	},
 	{
 		path: '/competitive-landscape',
-		title: 'Competitive Landscape | AiVIS',
+		title: 'Competitive Landscape | AI Visibility Platform',
 		description: 'Compare your AI visibility performance against competitors using evidence-backed benchmarking and insights.',
 	},
 	{
 		path: '/score-fix',
-		title: 'Score Fix | AiVIS',
+		title: 'Score Fix | AI Visibility Platform',
 		description: 'Score Fix workflows for evidence-linked remediation, implementation guidance, and audit-driven improvement loops.',
 	},
 	{
 		path: '/api-docs',
-		title: 'AiVIS API Documentation',
-		description: 'Documentation for AiVIS APIs covering audits, analytics, evidence, and visibility workflows.',
+		title: 'AI Visibility API Documentation',
+		description: 'Documentation for AI Visibility APIs covering audits, analytics, evidence, and visibility workflows.',
 	},
 	{
 		path: '/help',
-		title: 'AiVIS Help Center',
+		title: 'AI Visibility Help Center',
 		description: 'Platform documentation and support guidance for AI visibility auditing, referrals, reports, and workflows.',
 	},
 	{
 		path: '/support',
-		title: 'AiVIS Support',
-		description: 'Customer support and help resources for AiVIS platform usage, billing, and troubleshooting.',
+		title: 'AI Visibility Support',
+		description: 'Customer support and help resources for AI Visibility platform usage, billing, and troubleshooting.',
 	},
 	{
 		path: '/server-headers',
-		title: 'AiVIS Server Headers Analyzer',
+		title: 'AI Visibility Server Headers Analyzer',
 		description: 'Inspect response headers, cache directives, and security header posture for public web pages.',
 	},
 	{
 		path: '/verify-license',
-		title: 'AiVIS License Verification',
-		description: 'Public license verification page for validating AiVIS license keys and status.',
+		title: 'AI Visibility License Verification',
+		description: 'Public license verification page for validating AI Visibility license keys and status.',
 	},
 	/* Removed: duplicate /privacy and /terms entries — originals above (lines ~542, ~547) */
 	{
 		path: '/changelog',
-		title: 'Changelog | AiVIS',
+		title: 'Changelog | AI Visibility Platform',
 		description: 'A permanent ledger of every update, fix, and improvement shipped to Evidence-backed site analysis for AI answers Platform.',
 	},
 	{
 		path: '/tools/schema-validator',
-		title: 'Schema Markup Validator - AI Citation Readiness Check | AiVIS',
+		title: 'Schema Markup Validator - AI Citation Readiness Check | AI Visibility Platform',
 		description: 'Free tool to validate structured data (JSON-LD, OpenGraph, Twitter Cards) for AI citation readiness. See what AI models can extract from your page.',
 	},
 	{
 		path: '/tools/robots-checker',
-		title: 'AI Crawler Access Checker - Robots.txt Audit for AI Bots | AiVIS',
+		title: 'AI Crawler Access Checker - Robots.txt Audit for AI Bots | AI Visibility Platform',
 		description: 'Free tool to check if GPTBot, ClaudeBot, Googlebot, and 12 other AI crawlers can access your site. Audit robots.txt, meta robots, and X-Robots-Tag.',
 	},
 	{
 		path: '/tools/content-extractability',
-		title: 'Content Extractability Grader - AI Answer Block Analysis | AiVIS',
+		title: 'Content Extractability Grader - AI Answer Block Analysis | AI Visibility Platform',
 		description: 'Free tool to grade how well AI models can extract answers from your page. Analyzes heading hierarchy, FAQ patterns, and content structure.',
 	},
 	{
 		path: '/reverse-engineer',
-		title: 'Reverse Engineer | AiVIS',
+		title: 'Reverse Engineer | AI Visibility Platform',
 		description: 'Deconstruct how AI models build answers. Decompile, blueprint, diff, and simulate tools for AI content engineering.',
 	},
 	{
 		path: '/prompt-intelligence',
-		title: 'Prompt Intelligence - AI Query Analysis | AiVIS',
+		title: 'Prompt Intelligence - AI Query Analysis | AI Visibility Platform',
 		description: 'Understand how AI models interpret queries about your brand. Map prompt patterns to inclusion, exclusion, and competitor displacement outcomes.',
 	},
 	{
 		path: '/answer-presence',
-		title: 'Answer Presence Engine - AI Platform Visibility | AiVIS',
+		title: 'Answer Presence Engine - AI Platform Visibility | AI Visibility Platform',
 		description: 'Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI. Evidence-based presence detection.',
 	},
 	{
 		path: '/brand-integrity',
-		title: 'Brand Integrity Monitor - AI Accuracy Tracking | AiVIS',
+		title: 'Brand Integrity Monitor - AI Accuracy Tracking | AI Visibility Platform',
 		description: 'Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time, and protect brand integrity.',
 	},
 	{
 		path: '/blogs/cannot-access-before-initialization-react-vite-production-tdz-fix',
-		title: 'Cannot Access Before Initialization - React + Vite Production TDZ Fix | AiVIS Blogs',
+		title: 'Cannot Access Before Initialization - React + Vite Production TDZ Fix | AI Visibility Blogs',
 		description: 'How to diagnose and fix the ReferenceError: Cannot access variable before initialization in React + Vite production builds caused by temporal dead zone issues.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/how-mcp-audit-workflows-change-everything-for-dev-teams',
-		title: 'How MCP Audit Workflows Change Everything for Dev Teams | AiVIS Blogs',
+		title: 'How MCP Audit Workflows Change Everything for Dev Teams | AI Visibility Blogs',
 		description: 'Learn how Model Context Protocol integrations let AI agents run visibility audits directly from your IDE, automating the audit-to-fix cycle.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing',
-		title: 'Team Workspace: The Shared Audit Layer Builders Have Been Missing | AiVIS Blogs',
-		description: 'How AiVIS team workspaces give agencies and engineering teams a shared audit feed, role-based access, and coordinated visibility tracking.',
+		title: 'Team Workspace: The Shared Audit Layer Builders Have Been Missing | AI Visibility Blogs',
+		description: 'How AI Visibility team workspaces give agencies and engineering teams a shared audit feed, role-based access, and coordinated visibility tracking.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/webmcp-third-party-tool-calling-aivis-the-headless-audit-engine',
-		title: 'WebMCP Third-Party Tool Calling: AiVIS as a Headless Audit Engine | AiVIS Blogs',
-		description: 'AiVIS exposes MCP-compatible endpoints that turn it into a headless audit engine any AI agent can call for structured visibility data.',
+		title: 'WebMCP Third-Party Tool Calling: AI Visibility as a Headless Audit Engine | AI Visibility Blogs',
+		description: 'AI Visibility exposes MCP-compatible endpoints that turn it into a headless audit engine any AI agent can call for structured visibility data.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/answer-engine-optimization-is-not-the-new-seoits-the-big-brother',
-		title: 'Answer Engine Optimization Is Not the New SEO - It Is the Big Brother | AiVIS Blogs',
+		title: 'Answer Engine Optimization Is Not the New SEO - It Is the Big Brother | AI Visibility Blogs',
 		description: 'Why AEO supersedes traditional SEO and how AI answer engines evaluate content differently from search engine crawlers.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/startups-seoaeo-in-2026-a-strategic-guide-for-the-ai-first-era',
-		title: 'Startups SEO/AEO in 2026: A Strategic Guide for the AI-First Era | AiVIS Blogs',
+		title: 'Startups SEO/AEO in 2026: A Strategic Guide for the AI-First Era | AI Visibility Blogs',
 		description: 'A strategic guide for startups navigating SEO and AEO in 2026, covering AI visibility, citation readiness, and machine-legible content.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/the-old-saas-model-was-simple',
-		title: 'The Old SaaS Model Was Simple | AiVIS Blogs',
+		title: 'The Old SaaS Model Was Simple | AI Visibility Blogs',
 		description: 'How the traditional SaaS model is being disrupted by AI-first platforms and what it means for product builders shipping in 2026.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/your-website-can-rank-and-still-disappear',
-		title: 'Your Website Can Rank and Still Disappear | AiVIS Blogs',
+		title: 'Your Website Can Rank and Still Disappear | AI Visibility Blogs',
 		description: 'Ranking on page one means nothing if AI answer engines never extract, cite, or surface your content. Here is why traditional SEO success masks a growing visibility crisis.',
 		ogType: 'article',
 	},
 	{
-		path: '/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15',
-		title: 'AiVIS Starter Tier — Evidence-Backed AI Audits from $15 | AiVIS Blogs',
-		description: 'Introducing the AiVIS Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
+		path: '/blogs/ai-visibility-starter-tier-evidence-backed-ai-audits-from-15',
+		title: 'AI Visibility Starter Tier — Evidence-Backed AI Audits from $15 | AI Visibility Blogs',
+		description: 'Introducing the AI Visibility Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/why-every-ai-visibility-audit-needs-an-evidence-trail',
-		title: 'Why Every AI Visibility Audit Needs an Evidence Trail | AiVIS Blogs',
+		title: 'Why Every AI Visibility Audit Needs an Evidence Trail | AI Visibility Blogs',
 		description: 'AI audits without evidence are opinions. The BRAG evidence framework links every recommendation to structural proof — here is why that matters and how it works.',
 		ogType: 'article',
 	},
 	{
 		path: '/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
-		title: 'Choosing the Right AI Visibility Plan: Observer vs Starter vs Alignment | AiVIS Blogs',
-		description: 'A practical comparison of AiVIS tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
+		title: 'Choosing the Right AI Visibility Plan: Observer vs Starter vs Alignment | AI Visibility Blogs',
+		description: 'A practical comparison of AI Visibility tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
 		ogType: 'article',
 	},
 	{
 		path: '/partnership-terms',
-		title: 'Referral and Delivery Partnership Terms | AiVIS',
-		description: 'Official partnership terms for referral and delivery partnerships with AiVIS Evidence-backed site analysis for AI answers.',
+		title: 'Referral and Delivery Partnership Terms | AI Visibility',
+		description: 'Official partnership terms for referral and delivery partnerships with AI Visibility Evidence-backed site analysis for AI answers.',
 	},
 	{
 		path: '/conversational-query-playbook-2026',
-		title: 'Conversational Query Playbook 2026 | AiVIS',
+		title: 'Conversational Query Playbook 2026 | AI Visibility',
 		description: 'Master conversational query optimization for AI answer engines. Practical playbook for structuring content that wins in dialogue-based search.',
 	},
 	{
 		path: '/voice-search-ai-answer-optimization-2026',
-		title: 'Voice Search & AI Answer Optimization 2026 | AiVIS',
+		title: 'Voice Search & AI Answer Optimization 2026 | AI Visibility',
 		description: 'Optimize your content for voice search and AI answer engines. Strategy guide for spoken-query visibility in 2026.',
 	},
 	{
 		path: '/keywords',
-		title: 'Keyword Intelligence | AiVIS',
+		title: 'Keyword Intelligence | AI Visibility',
 		description: 'AI-powered keyword intelligence. Discover which queries trigger AI citations and track your keyword visibility across answer engines.',
 	},
 	{
 		path: '/competitors',
-		title: 'Competitor Tracking | AiVIS',
+		title: 'Competitor Tracking | AI Visibility',
 		description: 'Track competitor AI visibility scores, structural gaps, and citation presence. Find opportunities to outperform rival brands.',
 	},
 	{
 		path: '/citations',
-		title: 'Citation Testing | AiVIS',
+		title: 'Citation Testing | AI Visibility',
 		description: 'Test whether AI models cite your brand. Run live citation checks against ChatGPT, Perplexity, Gemini, and Claude.',
 	},
 	{
 		path: '/reports',
-		title: 'Audit Reports | AiVIS',
+		title: 'Audit Reports | AI Visibility',
 		description: 'Access your AI visibility audit reports. Export, share, and track score trends over time.',
 	},
 	{
 		path: '/analytics',
-		title: 'Analytics & Score Trends | AiVIS',
+		title: 'Analytics & Score Trends | AI Visibility',
 		description: 'Track your AI visibility score history, trends, and performance analytics over time.',
 	},
 	{
 		path: '/niche-discovery',
-		title: 'Niche Discovery | AiVIS',
+		title: 'Niche Discovery | AI Visibility',
 		description: 'Discover untapped niches and content opportunities where AI models lack authoritative sources.',
 	},
 	{
 		path: '/mcp',
-		title: 'MCP Console | AiVIS',
-		description: 'Model Context Protocol console. Connect AiVIS audits to your development workflow via MCP integration.',
+		title: 'MCP Console | AI Visibility',
+		description: 'Model Context Protocol console. Connect AiVIS.biz audits to your development workflow via MCP integration.',
 	},
 	{
 		path: '/gsc',
@@ -835,7 +835,7 @@ const routes = [
 	{ path: '/problems/no-hreflang-tags', title: 'No Hreflang Tags - AI Can\'t Route Multi-Language Content | AiVIS', description: 'Without hreflang tags, AI models may cite the wrong language version of your content.' },
 	{ path: '/problems/ai-hallucinating-about-my-brand', title: 'AI Is Hallucinating About My Brand | AiVIS', description: 'AI models generating false information about your brand? Learn why hallucinations happen and how to provide corrective structured data.' },
 	// Problems Extended cluster (query-first, question-oriented pages)
-	{ path: '/problems/why-ai-doesnt-cite-my-website', title: 'Why AI Doesn\'t Cite My Website — Diagnosis | AiVIS', description: 'AI answer engines skip your site because they cannot extract, trust, or attribute your content. Diagnose exactly why with an evidence-backed audit.' },
+	{ path: '/problems/why-ai-doesnt-cite-my-website', title: 'Why AI Doesn\'t Cite My SaaS and webApp — Diagnosis | AiVIS', description: 'AI answer engines skip your SaaS and webApp because they cannot extract (SPA-JS heavy site - bad for AI scrapinmg, ), trust, or attribute your content. Diagnose exactly why with an evidence-backed audit.' },
 	{ path: '/problems/how-to-fix-ai-search-visibility', title: 'How to Fix AI Search Visibility — Step-by-Step | AiVIS', description: 'Your site is invisible to AI answer engines. Follow this step-by-step diagnostic to identify extraction failures and fix them with evidence.' },
 	{ path: '/problems/why-chatgpt-ignores-my-site', title: 'Why ChatGPT Ignores My Site — Root Causes | AiVIS', description: 'ChatGPT does not cite your site even though you rank well in Google. Here is why, and what structural changes fix it.' },
 	{ path: '/problems/why-perplexity-doesnt-mention-my-brand', title: 'Why Perplexity Doesn\'t Mention My Brand | AiVIS', description: 'Perplexity builds answers from extractable pages. If your brand is absent, the extraction pipeline cannot reach your content.' },
@@ -844,7 +844,7 @@ const routes = [
 	{ path: '/problems/how-to-audit-ai-answer-readiness', title: 'How to Audit AI Answer Readiness | AiVIS', description: 'A systematic audit checks whether AI crawlers can access, extract, and attribute your content. Here is the full methodology.' },
 	{ path: '/problems/why-google-ai-overview-skips-my-content', title: 'Why Google AI Overview Skips My Content | AiVIS', description: 'Google AI Overviews extract from pages with clear structure. If your content is skipped, the extraction signals are missing.' },
 	{ path: '/problems/how-to-make-website-ai-readable', title: 'How to Make Your Website AI-Readable | AiVIS', description: 'AI readability means your page can be crawled, parsed into structured representations, and attributed. Here is how to achieve all three.' },
-	{ path: '/problems/why-ai-misquotes-my-content', title: 'Why AI Misquotes My Content — Causes and Fixes | AiVIS', description: 'AI misquotes happen when extraction is partial or schema markup is ambiguous. Diagnose and fix the root causes.' },
+	{ path: '/problems/why-ai-misquotes-my-content', title: 'Why AI Misquotes My Content - Causes and Fixes | AiVIS', description: 'AI misquotes happen when extraction is partial or schema markup is ambiguous. Diagnose and fix the root causes.' },
 	{ path: '/problems/how-to-fix-entity-confusion-in-ai', title: 'How to Fix Entity Confusion in AI Results | AiVIS', description: 'AI models confuse your brand with others when entity signals are weak. Strengthen disambiguation with structured data.' },
 	{ path: '/problems/why-ai-attributes-my-content-to-competitors', title: 'Why AI Attributes My Content to Competitors | AiVIS', description: 'When your content lacks clear authorship and entity markup, AI models credit competitors instead. Here is how to fix attribution.' },
 	{ path: '/problems/how-to-optimize-for-ai-answer-engines', title: 'How to Optimize for AI Answer Engines | AiVIS', description: 'AI answer engines do not rank pages — they extract fragments. Optimization means making your content structurally extractable.' },
@@ -876,11 +876,11 @@ const routes = [
 	{ path: '/problems/seo-vs-ai-search-difference', title: 'SEO vs AI Search — What Is Actually Different | AiVIS', description: 'SEO and AI search optimization are not the same discipline. Understand the structural differences and which signals matter for each.' },
 	{ path: '/problems/why-ai-search-replacing-google-clicks', title: 'Why AI Search Is Replacing Google Clicks | AiVIS', description: 'AI answer engines eliminate the click by synthesizing answers inline. Understand the shift and how to maintain visibility without the click.' },
 	{ path: '/problems/saas-show-up-in-chatgpt', title: 'How to Make My SaaS Show Up in ChatGPT | AiVIS', description: 'SaaS products need entity clarity, Organization schema, and specific use-case content to appear in AI product recommendation answers.' },
-	{ path: '/problems/startup-not-mentioned-in-ai-answers', title: 'My Startup Is Not Mentioned in AI Answers | AiVIS', description: 'New startups are invisible to AI because entity signals are absent. Build brand recognition through structured data and consistent entity markup.' },
+	{ path: '/problems/startup-not-mentioned-in-ai-answers', title: 'My SaaS Is Not Mentioned in AI Answers | AiVIS', description: 'New startups are invisible to AI because entity signals are absent. Build brand recognition through structured data and consistent entity markup.' },
 	{ path: '/problems/why-chatgpt-uses-some-sites-not-mine', title: 'Why ChatGPT Uses Some Sites and Not Mine | AiVIS', description: 'ChatGPT citation is structural, not random. The sites that get used have accessible crawlers, complete schema, and specific content.' },
 	{ path: '/problems/how-to-know-if-ai-can-read-my-website', title: 'How to Know If AI Can Read My Website | AiVIS', description: 'Test your site for AI readability with View Source, robots.txt inspection, and a structured evidence audit.' },
 	{ path: '/problems/why-ai-rewrites-instead-of-linking', title: 'Why AI Rewrites My Content Instead of Linking to It | AiVIS', description: 'AI systems rewrite content they cannot attribute. Add Organization schema and author markup to earn citation links instead of paraphrases.' },
-	{ path: '/problems/how-to-fix-content-ai-misunderstands', title: 'How to Fix Content AI Misunderstands | AiVIS', description: 'AI misunderstands content when it lacks structure and specific claims. Restructure with targeted schema and heading-segmented facts.' },
+	{ path: '/problems/how-to-fix-content-ai-misunderstands', title: 'How to Fix The Content that AI Misunderstands | AiVIS', description: 'AI misunderstands content when it lacks structure and specific claims. Restructure with targeted schema and heading-segmented facts.' },
 	// Signals cluster
 	{ path: '/signals/json-ld', title: 'JSON-LD Structured Data for AI Visibility | AiVIS', description: 'JSON-LD is the structured data format AI models prefer. Learn how to implement it for maximum AI citation potential.' },
 	{ path: '/signals/open-graph', title: 'Open Graph Tags for AI Answer Engines | AiVIS', description: 'Open Graph tags help AI models classify and display your content. Learn which OG tags matter most for AI citations.' },
@@ -943,7 +943,7 @@ const routes = [
 	{ path: '/compare/aivis-vs-chatgpt-search', title: 'AiVIS vs ChatGPT Search: Auditing vs Searching | AiVIS', description: 'AiVIS audits your site for AI visibility. ChatGPT Search is the AI engine you want to be visible in. Understand the difference.' },
 	{ path: '/compare/aivis-vs-perplexity-pages', title: 'AiVIS vs Perplexity Pages: Auditing vs Publishing | AiVIS', description: 'Perplexity Pages lets you publish AI-curated content. AiVIS audits whether AI engines can cite YOUR existing content.' },
 	{ path: '/compare/aivis-vs-alli-ai', title: 'AiVIS vs Alli AI: Diagnostic Audit vs Automated SEO Changes | AiVIS', description: 'Compare AiVIS with Alli AI. Alli AI automates on-page SEO changes; AiVIS audits whether AI answer engines can parse and cite your content.' },
-	{ path: '/compare/aivis-vs-seo-powersuite', title: 'AiVIS vs SEO PowerSuite: AI Visibility vs Desktop SEO Suite | AiVIS', description: 'Compare AiVIS with SEO PowerSuite. SEO PowerSuite is a desktop SEO toolkit; AiVIS audits whether AI answer engines can parse and cite your content.' },
+	{ path: '/compare/aivis-vs-seo-powersuite', title: 'AiVIS vs SEO PowerSuite: AI Visibility vs Desktop SEO Suite | AiVIS', description: 'Compare AiVIS with SEO PowerSuite. SEO PowerSuite is a desktop SEO toolkit; AiVIS audits whether AI answer engines can parse and assemble your content in zero-click scenarios.' },
 ];
 
 function escapeRegExp(value) {
@@ -1024,7 +1024,7 @@ function buildTechArticleSchema({ canonicalUrl, title, description, about, steps
 		dateModified: '2026-03-17',
 		author: {
 			'@type': 'Organization',
-			name: 'AiVIS',
+			name: 'AiVIS | AI Visibility',
 			url: 'https://aivis.biz/',
 		},
 		publisher: { '@id': 'https://aivis.biz/#organization' },
@@ -1073,7 +1073,7 @@ function buildServiceSchema({ canonicalUrl, name, description, audience, deliver
 		url: canonicalUrl,
 		name,
 		description,
-		serviceType: 'AI visibility remediation',
+		serviceType: 'AI Visibility Audits and Solutions',
 		provider: { '@id': 'https://aivis.biz/#organization' },
 		audience: {
 			'@type': 'Audience',
@@ -1096,7 +1096,7 @@ function buildServiceSchema({ canonicalUrl, name, description, audience, deliver
 
 const routeSpecificEnrichment = {
 	'/integrations': {
-		tldr: 'The Integrations Hub explains how AiVIS connects audits to real operations through workspace API keys, webhook delivery, scheduled rescans, and Auto Score Fix automation.',
+		tldr: 'The Integrations Hub explains how AiVIS.biz connects audits to real operations through workspace API keys, webhook delivery, scheduled rescans, and Auto Score Fix automation.',
 		sections: [
 			{
 				heading: 'Why integrations matter for AI visibility operations',
@@ -1131,7 +1131,7 @@ const routeSpecificEnrichment = {
 					name: route.title,
 					description: route.description,
 					parts: [
-						{ name: 'API Documentation', url: 'https://aivis.biz/api-docs', description: 'Developer reference for audits, analytics, evidence, and validation endpoints.' },
+						{ name: 'API Documentation', url: 'https://aivis.biz/api-docs', description: 'Developer reference for audits, analytics, evidence and validation endpoints.' },
 						{ name: 'Score Fix', url: 'https://aivis.biz/score-fix', description: 'Remediation workflow that turns findings into implementation-ready fixes.' },
 						{ name: 'Help Center', url: 'https://aivis.biz/help', description: 'Support documentation for audits, billing, and platform operations.' },
 					],
@@ -1145,12 +1145,12 @@ const routeSpecificEnrichment = {
 		},
 	},
 	'/api-docs': {
-		tldr: 'The API Docs route defines how developers authenticate with AiVIS, which endpoints exist, what scopes are enforced, and how audit data can be consumed safely in production workflows.',
+		tldr: 'The API Docs route defines how developers authenticate with AiVIS.biz, which endpoints exist, what scopes are enforced, and how audit data can be consumed safely in production workflows.',
 		sections: [
 			{
 				heading: 'Developer intent and endpoint coverage',
 				paragraphs: [
-					'This route exists for engineering teams that need direct access to audit history, analytics, evidence views, usage metering, and page validation workflows. It clarifies that AiVIS supports real integration use cases such as CI checks, agency dashboards, score monitoring, and internal reporting pipelines.',
+					'This route exists for engineering teams that need direct access to audit history, analytics, evidence views, usage metering, and page validation workflows. It clarifies that AiVIS.biz supports real integration use cases such as CI checks, agency dashboards, score monitoring and internal reporting pipelines.',
 					'For AI readability, the important signal is specificity. The page names authentication patterns, route groups, scopes, and common error states instead of relying on vague statements about having an API.'
 				],
 			},
@@ -1167,9 +1167,9 @@ const routeSpecificEnrichment = {
 				],
 			},
 			{
-				heading: 'Why this route helps site-wide machine interpretation',
+				heading: 'Why this route helps site-wide machine interpretation?',
 				paragraphs: [
-					'A good documentation page acts as evidence that the platform has concrete interfaces, defined permissions, and observable behavior. Enriching this prerendered snapshot helps answer engines interpret AiVIS as a technical product with a stable API surface rather than a generic marketing application.'
+					'A good documentation page acts as evidence that the platform has concrete interfaces, defined permissions, and observable behavior. Enriching this prerendered snapshot helps answer engines interpret AiVIS as a technical product with a stable API, Webhooks with 3rd party integrations, WebMCP/MCP tool discovery surface rather than a generic marketing application.'
 				],
 			},
 		],
@@ -1188,35 +1188,35 @@ const routeSpecificEnrichment = {
 				})),
 				jsonLdScript(buildHowToSchema({
 					canonicalUrl,
-					name: 'How to integrate with the AiVIS API',
-					description: 'A quickstart for creating an API key, calling audit endpoints, and monitoring usage in AiVIS.',
+					name: 'How to integrate with the AiVIS platform API?',
+					description: 'A quickstart for creating an API key, calling audit endpoints, scheduling tasks, white-labeling, and monitoring usage in AiVIS.biz.',
 					steps: [
-						{ name: 'Create an API key', text: 'Generate a workspace API key from the product settings or feature panel with the scopes required for your integration.' },
-						{ name: 'Call audit or analytics endpoints', text: 'Send Bearer-authenticated requests to AiVIS API routes for audit listings, evidence payloads, analytics, and technical validation.' },
-						{ name: 'Handle production errors', text: 'Respect 401, 403, and validation error responses so your automation can distinguish invalid keys, missing scopes, and unsafe targets.' },
-						{ name: 'Monitor usage and events', text: 'Use metering endpoints and webhook delivery to keep integrations observable and tier-safe over time.' },
+						{ name: 'Create an API key:', text: 'Generate a workspace API key from the  user settings or feature panel with the scopes required for your integration.' },
+						{ name: 'Call audit or analytics endpoints:', text: 'Send Bearer-authenticated requests to AiVIS.biz API routes for audit listings, evidence payloads, analytics, and technical validation.' },
+						{ name: 'Handle production errors:', text: 'Respect 401, 403, and validation error responses so your automation can distinguish invalid keys, missing scopes, and unsafe targets.' },
+						{ name: 'Monitor usage and events:', text: 'Use metering endpoints and webhook delivery to prevent abuse and keep integrations observable and tier-safe for everyone over time.' },
 					],
 				})),
 				jsonLdScript(buildFaqSchema([
-					{ question: 'What does the AiVIS API expose?', answer: 'It exposes audit, analytics, evidence, usage, competitor, and page-validation endpoints intended for reporting, automation, and verification workflows.' },
+					{ question: 'What does the AiVIS.biz API expose and are they?', answer: 'It exposes audit, analytics, evidence, usage, competitor, and page-validation endpoints intended for reporting, automation, and verification workflows.' },
 					{ question: 'How is authentication handled?', answer: 'External integrations use workspace-scoped API keys with server-side scope and entitlement checks on every request.' },
-					{ question: 'Why does documentation help AI readability?', answer: 'Detailed API documentation proves concrete product capability, naming, permissions, and operational behavior, which improves machine interpretation of the platform.' },
+					{ question: 'Why does documentation help AI-machine readability?', answer: 'Detailed and structured API documentation helps prove concrete platform or website/app capability, naming, permissions and operational behavior, which improves machine interpretation, authorization and trust of the platform, which fosters better and faster AI understanding and multi-platform mentions.' },
 				])),
 			].join('\n');
 		},
 	},
 	'/compare': {
-		tldr: 'The comparison route positions AiVIS against traditional SEO suites and lighter content tools by focusing on live URL auditing, evidence trails, multi-model validation, and AI citation readiness.',
+		tldr: 'The comparison route positions AiVIS.biz against all traditional and AI add-ons to SEO suites. The fact is clear: AiVIS.biz outperforms lighter content, no evidence, Ai-only opinions and are normally given specific intructional/rules system prompt to handle the potential drift that all models suffer from. Therefore, similar naming, keywords, intented usecases is the validated angle to standout from all noise while building. AiVIS.biz focuses on live URL auditing, evidence trails(BRAG framework) multi-model cross-validation to become AI citable in answers and score remediation(automated Github repo-code file fixes) which are not usually found in even the most popular traditional SEO tools that focus on backlinks, keyword research, ranking or poor content scoring without the real-time auditing and evidence-backed approach that AiVIS offers. The comparison page is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product. That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS.biz and adjacent tool categories. The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse. By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell. Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what "AiVIS - AI Intelligence Audit | Evidence-Backed Scores" actually is, what it is not, which competitor classes overlap, and where the product is unique and is the true differentiator. The challenge of strengthening entity clarity among several AI and non-AI tools with these same letters: AiVIS.biz, Avis.biz, Aivis.io.. they all mention intelligence, authority, brand visibility or awareness and if content is the only thing needed to surface cleanly for AI query answers...cite tracking, SEO result ranking/indexing. AiVIS has established a zero-AI-trust behavior due to the nature of the platform and unique market retention via systematic code implementation adjacent to AI and in addition to custom integration of BRAG(Based-Retrieval-Auditable-Grading). The evidence ledger that was built unintentionally, hoping to deliver eval issues for a Reddit user. After building, the original BRAG-repo is still "Belligerant-Retrieval-Augmented-Generation" and once it was put through real tests. I didnt mention BRAG unless its solely to help a Dev. So think of normal RAG - loose and hallucinate in blink of an eye. The intent was not to brag, but to be BELLIGERANT and precise even when no one is looking. Guardrails are cute rules that models will follow until they are outsmarted by a user to disobey their system rules or prompts. AiVIS is not here to be another opinion generation AI-SEO scoring summary. Its only a matter of time and increased user engagement with AiVIS, BRAG & "the hidden sauce" that hardens the entire pipeline and reminds AI that BRAG is the robust- not a toy but the initial guarding layer and some founders or devs will improves topical clarity across the broader public site using hacks and tricks. The prerendered compare page tells machines what AiVIS is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.',
 		sections: [
 			{
-				heading: 'What this comparison page is actually comparing',
+				heading: 'What this comparison page is actually comparing?',
 				paragraphs: [
 					'Compare is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product.',
 					'That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS and adjacent tool categories.'
 				],
 			},
 			{
-				heading: 'Signals that differentiate AiVIS',
+				heading: 'Signals that differentiate AiVIS:',
 				paragraphs: [
 					'The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse.',
 					'By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell.'
@@ -1228,7 +1228,7 @@ const routeSpecificEnrichment = {
 				],
 			},
 			{
-				heading: 'How this strengthens site-wide readability',
+				heading: 'How does this strengthen site-wide readability?',
 				paragraphs: [
 					'Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what AiVIS is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.'
 				],
@@ -1249,7 +1249,7 @@ const routeSpecificEnrichment = {
 					],
 				})),
 				jsonLdScript(buildFaqSchema([
-					{ question: 'What is the purpose of the AiVIS comparison page?', answer: 'It explains how AiVIS differs from traditional SEO and content tools by focusing on AI visibility, evidence quality, and citation readiness.' },
+					{ question: 'What is the purpose of the AiVIS comparison page?', answer: 'It explains how AiVIS.biz differs from traditional SEO and content tools by focusing on AI visibility, evidence quality, and citation readiness.' },
 					{ question: 'Does the page claim every competitor is identical?', answer: 'No. It positions them by category and overlap level so readers can see which capabilities partially intersect and which are missing.' },
 					{ question: 'Why is comparison content useful for AI systems?', answer: 'It clarifies category boundaries and differentiators, helping machines interpret AiVIS as a distinct product within the broader search and content tooling landscape.' },
 				])),

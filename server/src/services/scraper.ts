@@ -3,7 +3,10 @@
 import puppeteer, { Browser, Page } from 'puppeteer-core';
 import { existsSync } from 'fs';
 import { URL } from 'url';
+import { randomUUID } from 'crypto';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
+import { isCfBrowserRunAvailable, cfFetchContent } from './cfBrowserRun.js';
+import type { ScrapeMethod, BragScrapeInfo, BragPipelineStep } from '../../../shared/types.js';
 
 /* ── capture-size caps (bytes of text kept per field) ────────────────── */
 const MAX_HTML_CAPTURE_CHARS = 250_000;
@@ -31,6 +34,10 @@ export type RobotsInfo = {
 
 export interface ScrapeResult {
   url: string;
+  /** BRAG: which scrape method produced this result */
+  scrapeMethod?: ScrapeMethod;
+  /** BRAG: full pipeline execution info */
+  bragInfo?: BragScrapeInfo;
   data: {
     title: string;
     body: string;
@@ -839,6 +846,22 @@ async function fetchFallback(url: string, timeoutMs: number): Promise<ScrapeResu
 
 export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
   const startTime = Date.now();
+  const bragId = randomUUID();
+  const pipelineSteps: BragPipelineStep[] = [];
+
+  /** Attach BRAG metadata to any result before returning */
+  function attachBrag(result: ScrapeResult, method: ScrapeMethod): ScrapeResult {
+    return {
+      ...result,
+      scrapeMethod: method,
+      bragInfo: {
+        method,
+        brag_id: bragId,
+        pipeline: pipelineSteps,
+        total_ms: Date.now() - startTime,
+      },
+    };
+  }
 
   // Defense-in-depth: reject private/local hosts even if caller forgot
   if (process.env.NODE_ENV === 'production') {
@@ -849,61 +872,67 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
   }
 
   const parsedUrl = new URL(inputUrl);
-  console.log(`[Scraper] Starting scrape: ${parsedUrl.href}`);
+  console.log(`[Scraper] Starting scrape: ${parsedUrl.href} (brag=${bragId.slice(0, 8)})`);
 
-  // Budget tuned to keep /api/analyze under proxy limits.
-  const SCRAPE_BUDGET_MS = Number(process.env.SCRAPE_BUDGET_MS || 12_000);
+  // Budget tuned to keep /api/analyze under proxy limits (raised for 3-method pipeline).
+  const SCRAPE_BUDGET_MS = Number(process.env.SCRAPE_BUDGET_MS || 18_000);
 
-  // 1) Try fast HTTP fetch first (most sites)
+  // ─── Step 1: HTTP fetch (fast, static sites) ───────────────────────
   let fetchResult: ScrapeResult | null = null;
+  const step1Start = Date.now();
   try {
-    const httpTimeout = Math.min(8000, Math.max(3000, Math.floor(SCRAPE_BUDGET_MS * 0.6)));
+    const httpTimeout = Math.min(8000, Math.max(3000, Math.floor(SCRAPE_BUDGET_MS * 0.4)));
     const result = await fetchFallback(parsedUrl.href, httpTimeout);
 
     const wc = result.data.wordCount || 0;
     const hasHeadings =
       (result.data.headings?.h1?.length || 0) > 0 || (result.data.headings?.h2?.length || 0) > 0;
 
+    pipelineSteps.push({
+      method: 'http_fetch', attempted: true, success: wc >= 50,
+      duration_ms: Date.now() - step1Start, word_count: wc,
+    });
+
     if (wc >= 50 && (result.data.title || hasHeadings)) {
       const pageLoadMs = Date.now() - startTime;
       console.log(
         `[Scraper]  HTTP fetch succeeded in ${pageLoadMs}ms (${wc} words, title="${result.data.title}")`
       );
-      return {
+      return attachBrag({
         ...result,
-        data: {
-          ...result.data,
-          pageLoadMs,
-        },
-      };
+        data: { ...result.data, pageLoadMs },
+      }, 'http_fetch');
     }
 
     fetchResult = result;
-    console.log(`[Scraper] HTTP fetch returned thin content (${wc} words) - trying Puppeteer`);
+    console.log(`[Scraper] HTTP fetch returned thin content (${wc} words) — escalating`);
   } catch (fetchErr: any) {
-    console.log(`[Scraper] HTTP fetch failed (${fetchErr.message}) - trying Puppeteer`);
+    pipelineSteps.push({
+      method: 'http_fetch', attempted: true, success: false,
+      duration_ms: Date.now() - step1Start, word_count: 0,
+      note: fetchErr.message?.slice(0, 120),
+    });
+    console.log(`[Scraper] HTTP fetch failed (${fetchErr.message}) — escalating`);
   }
 
-  // 2) If there’s no time left, return the thin fetch result (or fail)
-  const elapsed = Date.now() - startTime;
-  const remainingBudget = SCRAPE_BUDGET_MS - elapsed;
-  if (remainingBudget <= 4500) {
+  // ─── Budget check before Step 2 ────────────────────────────────────
+  const elapsed2Check = Date.now() - startTime;
+  const remaining2Check = SCRAPE_BUDGET_MS - elapsed2Check;
+  if (remaining2Check <= 4500) {
     if (fetchResult) {
       const pageLoadMs = Date.now() - startTime;
       console.warn(`[Scraper] No budget for Puppeteer, using thin HTTP fetch (${fetchResult.data.wordCount || 0} words)`);
-      return {
+      return attachBrag({
         ...fetchResult,
-        data: {
-          ...fetchResult.data,
-          pageLoadMs,
-        },
-      };
+        data: { ...fetchResult.data, pageLoadMs },
+      }, 'http_fetch');
     }
-    throw new Error(`Scrape budget exhausted (${elapsed}ms elapsed, budget=${SCRAPE_BUDGET_MS}ms)`);
+    throw new Error(`Scrape budget exhausted (${elapsed2Check}ms elapsed, budget=${SCRAPE_BUDGET_MS}ms)`);
   }
 
-  // 3) Puppeteer render (bounded)
-  const puppeteerBudgetMs = Math.min(10_000, remainingBudget - 500);
+  // ─── Step 2: Puppeteer render (bounded) ─────────────────────────────
+  const step2Start = Date.now();
+  const puppeteerBudgetMs = Math.min(10_000, remaining2Check - 500);
   let page: Page | null = null;
 
   try {
@@ -1166,6 +1195,12 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
 
     console.log(`[Scraper]  Puppeteer scraped in ${Date.now() - startTime}ms`);
 
+    const puppeteerWc = data.wordCount || (data.body as string || '').split(/\s+/).filter(Boolean).length;
+    pipelineSteps.push({
+      method: 'python_nlp', attempted: true, success: puppeteerWc >= 50,
+      duration_ms: Date.now() - step2Start, word_count: puppeteerWc,
+    });
+
     // ── OCR: extract text from page images (non-blocking, best-effort) ──
     let ocrData: import('./ocrService.js').OcrPageResult | undefined;
     if (data.imageDetails && data.imageDetails.length > 0) {
@@ -1182,27 +1217,87 @@ export async function scrapeWebsite(inputUrl: string): Promise<ScrapeResult> {
 
     const { ldJson: _ldJson, ...rest } = data;
     const pageLoadMs = Date.now() - startTime;
-    return {
+    return attachBrag({
       url: parsedUrl.href,
       data: {
         ...(rest as unknown as ScrapeResult['data']),
         pageLoadMs,
         ...(ocrData ? { ocrData } : {}),
       },
-    };
+    }, 'python_nlp');
   } catch (error: any) {
     console.error('[Scraper] Puppeteer error:', error?.message || error);
+    pipelineSteps.push({
+      method: 'python_nlp', attempted: true, success: false,
+      duration_ms: Date.now() - step2Start, word_count: 0,
+      note: (error?.message || String(error)).slice(0, 120),
+    });
 
+    // ─── Step 3: CF Browser Run fallback (cloud browser) ──────────────
+    const elapsed3Check = Date.now() - startTime;
+    const remaining3 = SCRAPE_BUDGET_MS - elapsed3Check;
+    if (remaining3 > 3000 && isCfBrowserRunAvailable()) {
+      const step3Start = Date.now();
+      try {
+        const cfTimeout = Math.min(10_000, remaining3 - 500);
+        const { html: cfHtml, browserMs } = await cfFetchContent(parsedUrl.href, cfTimeout);
+        // Minimal parse of the CF-rendered HTML
+        const titleMatch = cfHtml.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        const cfTitle = titleMatch ? titleMatch[1].replace(/\s+/g, ' ').trim() : '';
+        const bodyText = cfHtml
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, MAX_BODY_CAPTURE_CHARS);
+        const cfWc = bodyText.split(/\s+/).filter((w: string) => w.length > 0).length;
+
+        pipelineSteps.push({
+          method: 'cf_browser_run', attempted: true, success: cfWc >= 50,
+          duration_ms: Date.now() - step3Start, word_count: cfWc,
+          note: `browserMs=${browserMs}`,
+        });
+
+        if (cfWc >= 50) {
+          console.log(`[Scraper]  CF Browser Run succeeded in ${Date.now() - step3Start}ms (${cfWc} words, browserMs=${browserMs})`);
+          const pageLoadMs = Date.now() - startTime;
+          return attachBrag({
+            url: parsedUrl.href,
+            data: {
+              title: cfTitle,
+              body: bodyText,
+              html: cfHtml.substring(0, MAX_HTML_CAPTURE_CHARS),
+              wordCount: cfWc,
+              pageLoadMs,
+            } as ScrapeResult['data'],
+          }, 'cf_browser_run');
+        }
+        console.log(`[Scraper] CF Browser Run returned thin content (${cfWc} words)`);
+      } catch (cfErr: any) {
+        pipelineSteps.push({
+          method: 'cf_browser_run', attempted: true, success: false,
+          duration_ms: Date.now() - step3Start, word_count: 0,
+          note: (cfErr?.message || String(cfErr)).slice(0, 120),
+        });
+        console.log(`[Scraper] CF Browser Run failed (${cfErr.message})`);
+      }
+    } else {
+      pipelineSteps.push({
+        method: 'cf_browser_run', attempted: false, success: false,
+        duration_ms: 0, word_count: 0,
+        note: remaining3 <= 3000 ? 'budget_exhausted' : 'not_configured',
+      });
+    }
+
+    // ─── Final fallback: return thin HTTP fetch or error ──────────────
     if (fetchResult) {
       const pageLoadMs = Date.now() - startTime;
       console.log(`[Scraper] Falling back to thin HTTP fetch result (${fetchResult.data.wordCount || 0} words)`);
-      return {
+      return attachBrag({
         ...fetchResult,
-        data: {
-          ...fetchResult.data,
-          pageLoadMs,
-        },
-      };
+        data: { ...fetchResult.data, pageLoadMs },
+      }, 'http_fetch');
     }
 
     throw new Error(`Failed to scrape website: ${error?.message || String(error)}`);

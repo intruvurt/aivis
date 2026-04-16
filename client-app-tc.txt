@@ -1,0 +1,88 @@
+src/api.ts(5,41): error TS2305: Module '"@shared/types"' has no exported member 'ServerHeadersCheckResult'.
+src/api.ts(5,67): error TS2305: Module '"@shared/types"' has no exported member 'QueryPack'.
+src/components/AuditReportCard.tsx(522,116): error TS2339: Property 'ai2_critique' does not exist on type 'TripleCheckSummary'.
+src/components/AuditReportCard.tsx(522,160): error TS2339: Property 'ai3_verdict' does not exist on type 'TripleCheckSummary'.
+src/components/AuditReportCard.tsx(524,39): error TS2339: Property 'ai2_critique' does not exist on type 'TripleCheckSummary'.
+src/components/AuditReportCard.tsx(524,56): error TS2339: Property 'ai3_verdict' does not exist on type 'TripleCheckSummary'.
+src/components/AuditReportCard.tsx(545,36): error TS2339: Property 'final_score' does not exist on type 'TripleCheckSummary'.
+src/components/DocumentGenerator.tsx(46,14): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(48,32): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(51,12): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(55,16): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(57,14): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(62,34): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(114,14): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(114,40): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(116,12): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(428,12): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(431,80): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(433,14): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(441,14): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(445,18): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(450,97): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(561,12): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(561,38): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DocumentGenerator.tsx(565,16): error TS2339: Property 'ai_model_scores' does not exist on type 'AnalysisResponse'.
+src/components/DropAlertBanner.tsx(27,54): error TS2339: Property 'dismissed' does not exist on type 'CitationDropAlert'.
+src/components/EvidenceReviewPanel.tsx(11,15): error TS2305: Module '"../../../shared/types"' has no exported member 'CitationEvidence'.
+src/components/GuideBot.tsx(48,33): error TS2304: Cannot find name 'SpeechRecognition'.
+src/components/GuideBot.tsx(59,42): error TS2339: Property 'SpeechRecognition' does not exist on type 'Window & typeof globalThis'.
+src/components/GuideBot.tsx(59,70): error TS2339: Property 'webkitSpeechRecognition' does not exist on type 'Window & typeof globalThis'.
+src/components/GuideBot.tsx(67,36): error TS2552: Cannot find name 'SpeechRecognitionEvent'. Did you mean 'SpeechRecognitionResult'?
+src/components/GuideBot.tsx(231,37): error TS2339: Property 'ticket_number' does not exist on type 'SupportTicket'.
+src/components/QueryPackManager.tsx(12,15): error TS2305: Module '"../../../shared/types"' has no exported member 'QueryPack'.
+src/components/RecommendationList.tsx(232,54): error TS2339: Property 'verification_status' does not exist on type 'Recommendation'.
+src/components/RecommendationList.tsx(238,55): error TS2339: Property 'verification_status' does not exist on type 'Recommendation'.
+src/components/RecommendationList.tsx(355,140): error TS2339: Property 'verification_status' does not exist on type 'Recommendation'.
+src/components/RecommendationList.tsx(356,49): error TS2339: Property 'verification_status' does not exist on type 'Recommendation'.
+src/components/RecommendationList.tsx(358,31): error TS2339: Property 'verified_evidence_count' does not exist on type 'Recommendation'.
+src/components/RecommendationList.tsx(358,66): error TS2339: Property 'total_evidence_refs' does not exist on type 'Recommendation'.
+src/components/RevCiteModal.tsx(5,15): error TS2305: Module '"../../../shared/types"' has no exported member 'CitationEvidence'.
+src/components/RevCiteModal.tsx(5,33): error TS2305: Module '"../../../shared/types"' has no exported member 'RevCiteSuggestion'.
+src/components/SSFRPanel.tsx(5,15): error TS2305: Module '"../../../shared/types"' has no exported member 'SSFRAuditResult'.
+src/components/TextSummaryView.tsx(27,7): error TS2367: This comparison appears to be unintentional because the types 'TextSummaryDepth' and '"full"' have no overlap.
+src/components/TextSummaryView.tsx(42,18): error TS2367: This comparison appears to be unintentional because the types 'TextSummaryDepth' and '"full"' have no overlap.
+src/components/ThreatIntelBanner.tsx(14,15): error TS2305: Module '"@shared/types"' has no exported member 'UrlRiskAssessment'.
+src/components/WritingAuditPanel.tsx(73,21): error TS2339: Property 'writing_audit' does not exist on type 'AnalysisResponse'.
+src/content/blogs.ts(4726,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "aeo"; tags: ("Advanced" | "Citations" | "AEO" | "AI-Tech")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/content/blogs.ts(4857,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "aeo"; tags: ("AEO" | "Strategy" | "Visibility" | "AI-Tech")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/content/blogs.ts(4991,3): error TS2739: Type '{ slug: string; title: string; description: string; category: "implementation"; tags: ("Technical" | "Citations" | "AEO" | "Implementation")[]; publishedAt: string; readMinutes: number; keyPoints: string[]; content: string; }' is missing the following properties from type 'BlogEntry': path, keywords, author, sourceMediumUrl
+src/hooks/useSupportTickets.ts(7,3): error TS2305: Module '"@shared/types"' has no exported member 'SupportTicketMessage'.
+src/hooks/useSupportTickets.ts(8,3): error TS2305: Module '"@shared/types"' has no exported member 'CreateSupportTicketInput'.
+src/lib/auth.ts(1,34): error TS2307: Cannot find module '@neondatabase/neon-js/auth' or its corresponding type declarations.
+src/pages/AgencyPage.tsx(330,31): error TS2345: Argument of type '"agency"' is not assignable to parameter of type 'CanonicalTier'.
+src/pages/AuditReport.tsx(31,103): error TS2339: Property 'score' does not exist on type 'unknown'.
+src/pages/AuditReport.tsx(32,25): error TS2339: Property 'confidence' does not exist on type 'unknown'.
+src/pages/AuditReport.tsx(34,41): error TS2339: Property 'confidence' does not exist on type 'unknown'.
+src/pages/HelpCenter.tsx(774,41): error TS2339: Property 'ticket_number' does not exist on type 'SupportTicket'.
+src/pages/HelpCenter.tsx(888,81): error TS2339: Property 'ticket_number' does not exist on type 'SupportTicket'.
+src/pages/HelpCenter.tsx(2233,106): error TS2339: Property 'ticket_number' does not exist on type 'SupportTicket'.
+src/pages/HelpCenter.tsx(2418,98): error TS2339: Property 'ticket_number' does not exist on type 'SupportTicket'.
+src/pages/HelpCenter.tsx(2442,44): error TS2339: Property 'resolved_at' does not exist on type 'SupportTicket'.
+src/pages/HelpCenter.tsx(2445,72): error TS2339: Property 'resolved_at' does not exist on type 'SupportTicket'.
+src/pages/PartnershipPaymentPage.tsx(232,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(277,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(292,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(303,8): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PartnershipPaymentPage.tsx(319,6): error TS2739: Type '{ children: Element; }' is missing the following properties from type 'PublicPageFrameProps': icon, title, subtitle
+src/pages/PlatformWorkflowPage.tsx(144,20): error TS2307: Cannot find module 'motion/react' or its corresponding type declarations.
+src/pages/PublicReportPage.tsx(265,27): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/pages/PublicReportPage.tsx(267,39): error TS2339: Property 'text_summary' does not exist on type 'AnalysisResponse'.
+src/pages/ServerHeadersPage.tsx(11,15): error TS2305: Module '"../../../shared/types"' has no exported member 'ServerHeadersCheckResult'.
+src/pages/ServerHeadersPage.tsx(644,75): error TS2322: Type 'unknown' is not assignable to type 'ReactI18NextChildren | Iterable<ReactI18NextChildren>'.
+src/pages/TeamPage.tsx(127,42): error TS2339: Property 'hasInviteManagement' does not exist on type 'TierLimits'.
+src/pages/TeamPage.tsx(509,27): error TS2339: Property 'hasCitationTesting' does not exist on type 'TierLimits'.
+src/pages/TeamPage.tsx(514,27): error TS2339: Property 'hasCompetitorTracking' does not exist on type 'TierLimits'.
+src/services/analyticsService.ts(2,24): error TS2307: Cannot find module 'json2csv' or its corresponding type declarations.
+src/stores/analysisStore.ts(49,9): error TS2352: Conversion of type 'Record<string, unknown>' to type 'AnalysisResponse' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'Record<string, unknown>' is missing the following properties from type 'AnalysisResponse': visibility_score, ai_platform_scores, recommendations, schema_markup, and 10 more.
+src/views/AnalyzePage.tsx(695,47): error TS2345: Argument of type 'string' is not assignable to parameter of type '"schema" | "technical" | "security" | "dns" | "crawl" | "extract" | "ai1" | "ai2" | "ai3" | "compile" | "finalize"'.
+src/views/AnswerPresencePage.tsx(97,22): error TS2304: Cannot find name 'ANSWER_PRESENCE_FAQ'.
+src/views/AnswerPresencePage.tsx(316,16): error TS2304: Cannot find name 'ANSWER_PRESENCE_FAQ'.
+src/views/BrandIntegrityPage.tsx(114,22): error TS2304: Cannot find name 'BRAND_INTEGRITY_FAQ'.
+src/views/BrandIntegrityPage.tsx(451,16): error TS2304: Cannot find name 'BRAND_INTEGRITY_FAQ'.
+src/views/PromptIntelligencePage.tsx(91,22): error TS2552: Cannot find name 'PROMPT_INTELLIGENCE_FAQ'. Did you mean 'PromptIntelligencePage'?
+src/views/PromptIntelligencePage.tsx(332,16): error TS2552: Cannot find name 'PROMPT_INTELLIGENCE_FAQ'. Did you mean 'PromptIntelligencePage'?
+src/views/ScoreFixPage.tsx(504,15): error TS2322: Type 'LiveRecommendation[]' is not assignable to type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }[]'.
+  Type 'LiveRecommendation' is not assignable to type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }'.
+    Property 'title' is optional in type 'LiveRecommendation' but required in type '{ title: string; description: string; priority: string; category?: string; implementation?: string; evidence_ids?: string[]; }'.

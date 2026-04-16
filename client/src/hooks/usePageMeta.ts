@@ -199,7 +199,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('og:image:type', 'image/png', true);
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
-    setMeta('og:image:alt', 'AiVIS | AI Visibility Audit | Evidence-Backed Scores ', true);
+    setMeta('og:image:alt', 'AiVIS | AI Visibility Audit — Evidence-Backed Scores', true);
 
     // Twitter
     setMeta('twitter:card', 'summary_large_image');
@@ -208,7 +208,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('twitter:title', ogTitle || title);
     setMeta('twitter:description', ogDescription || description);
     setMeta('twitter:image', DEFAULT_SHARE_IMAGE);
-    setMeta('twitter:image:alt', 'AiVIS | AI Visibility Audit | Evidence-Backed Scores ');
+    setMeta('twitter:image:alt', 'AiVIS | AI Visibility Audit — Evidence-Backed Scores');
 
     // Per-page structured data
     setStructuredData(structuredData);

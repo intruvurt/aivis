@@ -68,6 +68,9 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
 
     const effectiveTier = await enforceEffectiveTier(user);
 
+    // Detect active trial: user has trial_ends_at in the future and no confirmed stripe subscription
+    const isTrialing = !!(user.trial_ends_at && new Date(user.trial_ends_at) > new Date() && !user.stripe_subscription_id);
+
     // Auto-elevate role to 'admin' for allowlisted emails
     const allowlisted = getAllowlistedElevatedEmails();
     const effectiveRole = (allowlisted.has(String(user.email || '').trim().toLowerCase()))
@@ -77,7 +80,7 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
     // Set both formats for compatibility:
     // – req.user           = full DB user (used by route handlers, getMe, etc.)
     // – req.userId / .tier = flat fields (used by usageGate, incrementUsage)
-    req.user = { ...user, tier: effectiveTier as any, role: effectiveRole as any };
+    req.user = { ...user, tier: effectiveTier as any, role: effectiveRole as any, isTrialing };
     req.userId = user.id;
     req.tier = effectiveTier;
 

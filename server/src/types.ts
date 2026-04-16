@@ -161,7 +161,7 @@ export interface TierLimits {
 export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   observer: {
     scansPerMonth: 3,
-    pagesPerScan: 3,
+    pagesPerScan: 2,
     competitors: 0,
     cacheDays: 7,
     hasExports: false,
@@ -174,7 +174,7 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   },
   starter: {
     scansPerMonth: 15,
-    pagesPerScan: 3,
+    pagesPerScan: 8,
     competitors: 0,
     cacheDays: 14,
     hasExports: true,
@@ -187,7 +187,7 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   },
   alignment: {
     scansPerMonth: 60,
-    pagesPerScan: 50,         // multi-page crawl
+    pagesPerScan: 35,         // multi-page crawl
     competitors: 1,
     cacheDays: 30,
     hasExports: true,
@@ -200,7 +200,7 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   },
   signal: {
     scansPerMonth: 200,
-    pagesPerScan: 250,        // deep crawl
+    pagesPerScan: 100,        // deep crawl
     competitors: 10,
     cacheDays: 90,
     hasExports: true,
@@ -213,7 +213,7 @@ export const TIER_LIMITS: Record<CanonicalTier, TierLimits> = {
   },
   scorefix: {
     scansPerMonth: 15,
-    pagesPerScan: 500,
+    pagesPerScan: 220,
     competitors: 5,
     cacheDays: 90,
     hasExports: true,

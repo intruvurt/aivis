@@ -251,7 +251,7 @@ export function annualMonthlyPrice(tier: 'starter' | 'alignment' | 'signal'): nu
 
 export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
   observer: {
-    scansPerMonth: PRICING.observer.limits.scans, pagesPerScan: 3, competitors: PRICING.observer.limits.competitors, cacheDays: 7,
+    scansPerMonth: PRICING.observer.limits.scans, pagesPerScan: 2, competitors: PRICING.observer.limits.competitors, cacheDays: 7,
     hasExports: false, hasForceRefresh: false, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: false, hasReportHistory: false, hasShareableLink: false,
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
@@ -265,7 +265,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
   },
   starter: {
-    scansPerMonth: PRICING.starter.limits.scans, pagesPerScan: 3, competitors: PRICING.starter.limits.competitors, cacheDays: 14,
+    scansPerMonth: PRICING.starter.limits.scans, pagesPerScan: 8, competitors: PRICING.starter.limits.competitors, cacheDays: 14,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: false, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
@@ -279,7 +279,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 1,
   },
   alignment: {
-    scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 50, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
+    scansPerMonth: PRICING.alignment.limits.scans, pagesPerScan: 35, competitors: PRICING.alignment.limits.competitors, cacheDays: 30,
     hasExports: true, hasForceRefresh: true, hasApiAccess: false, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
@@ -293,7 +293,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 3,
   },
   signal: {
-    scansPerMonth: PRICING.signal.limits.scans, pagesPerScan: 250, competitors: PRICING.signal.limits.competitors, cacheDays: 90,
+    scansPerMonth: PRICING.signal.limits.scans, pagesPerScan: 100, competitors: PRICING.signal.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -307,7 +307,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
   },
   scorefix: {
-    scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 500, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
+    scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 220, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
@@ -331,6 +331,27 @@ export function getTierLimitsForUser(tier: CanonicalTier | LegacyTier): TierLimi
 
 /** Alias for getTierLimitsForUser */
 export const getTierLimits = getTierLimitsForUser;
+
+/**
+ * Get feature limits adjusted for trial users (50% of numeric caps).
+ * Boolean features remain unchanged; only numeric limits are halved.
+ */
+export function getTrialAdjustedLimits(tier: CanonicalTier | LegacyTier): TierLimits {
+  const base = getTierLimitsForUser(tier);
+  return {
+    ...base,
+    scansPerMonth: Math.max(1, Math.floor(base.scansPerMonth * TRIAL_LIMIT_MODIFIER)),
+    pagesPerScan: Math.max(1, Math.floor(base.pagesPerScan * TRIAL_LIMIT_MODIFIER)),
+    maxScheduledRescans: Math.floor(base.maxScheduledRescans * TRIAL_LIMIT_MODIFIER),
+    maxApiKeys: Math.floor(base.maxApiKeys * TRIAL_LIMIT_MODIFIER),
+    maxWebhooks: Math.floor(base.maxWebhooks * TRIAL_LIMIT_MODIFIER),
+    maxReportDeliveries: Math.floor(base.maxReportDeliveries * TRIAL_LIMIT_MODIFIER),
+    maxTeamMembers: Math.floor(base.maxTeamMembers * TRIAL_LIMIT_MODIFIER),
+    maxStoredAudits: Math.floor(base.maxStoredAudits * TRIAL_LIMIT_MODIFIER),
+    maxApiRequestsPerMonth: Math.floor(base.maxApiRequestsPerMonth * TRIAL_LIMIT_MODIFIER),
+    maxProjects: Math.floor(base.maxProjects * TRIAL_LIMIT_MODIFIER),
+  };
+}
 
 /* ── Tier pricing (derived from PRICING) ────────────────────────────────── */
 export type TierBillingModel = 'free' | 'subscription' | 'one_time';
@@ -767,6 +788,8 @@ export interface AnalysisResponse {
   seo_diagnostics?: SeoDiagnostics;
   /** Strict rubric scoring system with gates and fixpacks */
   strict_rubric?: StrictRubricSystem;
+  /** BRAG: scrape method pipeline info and badge */
+  scrape_info?: BragScrapeInfo;
   /** User-supplied findability goal strings */
   findability_goals?: string[];
   /** Goal alignment result comparing content against findability goals */
@@ -1238,6 +1261,56 @@ export interface ModelAnalysis {
 export const BRAG_ACRONYM = 'BRAG';
 export const BRAG_EXPANSION = 'Based-Retrieval-Auditable-Grading';
 export const BRAG_TRAIL_LABEL = 'BRAG Trail';
+
+/* ── BRAG Scrape Method Pipeline ────────────────────────────────────────── */
+
+/** Scrape method used to collect evidence for the audit */
+export type ScrapeMethod = 'http_fetch' | 'python_nlp' | 'cf_browser_run';
+
+export const SCRAPE_METHOD_LABELS: Readonly<Record<ScrapeMethod, string>> = {
+  http_fetch: 'HTTP Fetch',
+  python_nlp: 'Python NLP',
+  cf_browser_run: 'CF Browser Run',
+};
+
+export const SCRAPE_METHOD_BADGE_COLORS: Readonly<Record<ScrapeMethod, { bg: string; text: string; border: string }>> = {
+  http_fetch: { bg: '#064e3b', text: '#6ee7b7', border: '#10b981' },
+  python_nlp: { bg: '#1e1b4b', text: '#a5b4fc', border: '#6366f1' },
+  cf_browser_run: { bg: '#7c2d12', text: '#fdba74', border: '#f97316' },
+};
+
+/** Pipeline execution order for scrape methods */
+export const SCRAPE_PIPELINE_ORDER: readonly ScrapeMethod[] = [
+  'http_fetch',
+  'python_nlp',
+  'cf_browser_run',
+] as const;
+
+/** BRAG scrape info attached to every analysis response */
+export interface BragScrapeInfo {
+  /** Which scrape method produced the final evidence */
+  method: ScrapeMethod;
+  /** Unique BRAG ID for this scrape run (uuid) */
+  brag_id: string;
+  /** Methods attempted in order, with outcome */
+  pipeline: BragPipelineStep[];
+  /** Total scrape pipeline time in ms */
+  total_ms: number;
+}
+
+export interface BragPipelineStep {
+  method: ScrapeMethod;
+  attempted: boolean;
+  success: boolean;
+  duration_ms: number;
+  /** Word count from this method (0 if failed/skipped) */
+  word_count: number;
+  /** Reason for failure or skip */
+  note?: string;
+}
+
+/** Free trial modifier: trial users get 50% of their tier's numeric limits */
+export const TRIAL_LIMIT_MODIFIER = 0.5;
 
 /* ── Text summary depth helper ──────────────────────────────────────────── */
 export type TextSummaryDepth = 'minimal' | 'brief' | 'standard' | 'detailed';

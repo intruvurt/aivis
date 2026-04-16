@@ -9865,6 +9865,8 @@ app.post(
 
       emitProgress(requestId, "extract", 25);
       const sd = scraped.data;
+      // Extract BRAG scrape info for the response
+      const scrapeInfo = scraped.bragInfo || undefined;
       if (!sd)
         return res.status(500).json({
           error: "Failed to scrape website",
@@ -10524,6 +10526,7 @@ app.post(
           analyzed_at: new Date().toISOString(),
           processing_time_ms: Date.now() - startTime,
           cached: false,
+          scrape_info: scrapeInfo,
           triple_check_enabled: false,
           model_count: 0,
           triple_check_summary: {
@@ -11706,6 +11709,7 @@ For each recommendation:
           analyzed_at: new Date().toISOString(),
           processing_time_ms: elapsedTotal,
           cached: false,
+          scrape_info: scrapeInfo,
           triple_check_enabled: false,
           triple_check_summary: {
             ai1_score: deterministicFinalScore,
@@ -12134,6 +12138,7 @@ For each recommendation:
         analyzed_at: new Date().toISOString(),
         processing_time_ms: processingTime,
         cached: false,
+        scrape_info: scrapeInfo,
         triple_check_enabled: tripleCheckResult.enabled,
         triple_check_summary: {
           ai1_score: ai1Score,

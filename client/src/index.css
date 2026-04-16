@@ -15,16 +15,16 @@
   --font-app: "DM Sans", "Caveat", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --app-corner-radius: 0.75rem;
 
-  /* ── Modern dark palette ──────────────────────── */
-  --charcoal-1: 11 15 26;    /* #0b0f1a - deep base */
-  --charcoal-2: 17 24 39;    /* #111827 - raised surface */
-  --charcoal-3: 26 34 52;    /* #1a2234 - overlay */
-  --charcoal-4: 30 41 59;    /* #1e293b - hover */
+  /* ── Modern dark palette (widened contrast steps) ── */
+  --charcoal-1: 10 13 23;    /* #0a0d17 - deep base */
+  --charcoal-2: 20 28 46;    /* #141c2e - raised surface */
+  --charcoal-3: 32 42 64;    /* #202a40 - overlay */
+  --charcoal-4: 40 52 78;    /* #28344e - hover */
 
   /* Shell (body gradient) */
-  --shell-0: 20 28 46;
-  --shell-1: 15 22 38;
-  --shell-2: 11 15 26;
+  --shell-0: 24 33 54;
+  --shell-1: 16 22 38;
+  --shell-2: 10 13 23;
 
   /* Light glass surfaces (kept for edge cases) */
   --shell-3: 255 255 255;
@@ -32,7 +32,7 @@
   /* Borders / text */
   --shell-border: 255 255 255;
   --shell-text:   255 255 255;
-  --shell-muted:  148 163 184;
+  --shell-muted:  165 180 200;
 
   /* Steel accent palette */
   --steel:       215 225 240;

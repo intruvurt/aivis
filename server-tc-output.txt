@@ -1,4 +1,196 @@
-
-> aivis-server@1.0.0 typecheck
-> tsc -p tsconfig.build.json --noEmit
-
+src/controllers/aiController.ts(9,20): error TS18048: 'req.user' is possibly 'undefined'.
+src/controllers/aiController.ts(11,25): error TS2693: 'Audit' only refers to a type, but is being used as a value here.
+src/controllers/aiController.ts(109,25): error TS2693: 'Audit' only refers to a type, but is being used as a value here.
+src/controllers/aiController.ts(112,28): error TS18046: 'error' is of type 'unknown'.
+src/controllers/auditController.ts(1,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' has no default export. Did you mean to use 'import { Audit } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' instead?
+src/controllers/auditController.ts(2,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Website"' has no default export. Did you mean to use 'import { Website } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Website"' instead?
+src/controllers/auditController.ts(9,35): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/auditController.ts(9,40): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/auditController.ts(37,7): error TS18047: 'user' is possibly 'null'.
+src/controllers/auditController.ts(37,12): error TS2339: Property 'usageCount' does not exist on type 'User'.
+src/controllers/auditController.ts(38,7): error TS18047: 'user' is possibly 'null'.
+src/controllers/auditController.ts(38,12): error TS2339: Property 'lastResetDate' does not exist on type 'User'.
+src/controllers/auditController.ts(39,13): error TS18047: 'user' is possibly 'null'.
+src/controllers/auditController.ts(39,18): error TS2339: Property 'save' does not exist on type 'User'.
+src/controllers/auditController.ts(68,5): error TS18047: 'user' is possibly 'null'.
+src/controllers/auditController.ts(68,10): error TS2339: Property 'usageCount' does not exist on type 'User'.
+src/controllers/auditController.ts(69,11): error TS18047: 'user' is possibly 'null'.
+src/controllers/auditController.ts(69,16): error TS2339: Property 'save' does not exist on type 'User'.
+src/controllers/auditController.ts(116,30): error TS18046: 'error' is of type 'unknown'.
+src/controllers/auditController.ts(134,33): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/auditController.ts(134,38): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/auditController.ts(141,13): error TS2339: Property 'status' does not exist on type '{ userId: any; }'.
+src/controllers/auditController.ts(172,36): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/auditController.ts(172,41): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/auditController.ts(201,41): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/auditController.ts(201,46): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/brandController.ts(1,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Brand"' has no default export. Did you mean to use 'import { Brand } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Brand"' instead?
+src/controllers/brandController.ts(4,32): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/brandController.ts(4,37): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/brandController.ts(40,35): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/brandController.ts(40,40): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/brandController.ts(58,9): error TS18046: 'error' is of type 'unknown'.
+src/controllers/brandController.ts(74,35): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/brandController.ts(74,40): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/brandController.ts(114,35): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/brandController.ts(114,40): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/brandController.ts(141,36): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/controllers/brandController.ts(141,41): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/controllers/citations.controllers.ts(1398,7): error TS2322: Type '{ https: boolean; hardening_score: number; missing_header_count: number; } | undefined' is not assignable to type '{ https: boolean; hardening_score: number; missing_header_count: number; }'.
+  Type 'undefined' is not assignable to type '{ https: boolean; hardening_score: number; missing_header_count: number; }'.
+src/controllers/citations.controllers.ts(1399,7): error TS2322: Type '{ level: "high" | "medium" | "low"; reasons: string[]; } | undefined' is not assignable to type '{ level: "high" | "medium" | "low"; reasons: string[]; }'.
+  Type 'undefined' is not assignable to type '{ level: "high" | "medium" | "low"; reasons: string[]; }'.
+src/controllers/citations.controllers.ts(1400,7): error TS2322: Type '{ detected_niche: "general"; required_signals: string[]; present_signals: string[]; missing_signals: string[]; } | undefined' is not assignable to type '{ detected_niche: string; required_signals: string[]; present_signals: string[]; missing_signals: string[]; }'.
+  Type 'undefined' is not assignable to type '{ detected_niche: string; required_signals: string[]; present_signals: string[]; missing_signals: string[]; }'.
+src/middleware/authRequired.ts(72,32): error TS2339: Property 'trial_ends_at' does not exist on type 'User'.
+src/middleware/authRequired.ts(72,63): error TS2339: Property 'trial_ends_at' does not exist on type 'User'.
+src/models/Audit.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/models/Brand.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/models/Website.tsx(1,22): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../services/postgresql.js'?
+src/routes/aiOrchestratorRoutes.ts(2,37): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/aiRoutes.ts(2,32): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/auditRoutes.ts(8,8): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/brand.ts(2,79): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/exportRoutes.ts(4,28): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/exportRoutes.ts(5,8): error TS2613: Module '"C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' has no default export. Did you mean to use 'import { Audit } from "C:/Users/Ma$e/Desktop/aivis/aivis/server/src/models/Audit"' instead?
+src/routes/exportRoutes.ts(5,19): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/routes/exportRoutes.ts(19,25): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/routes/exportRoutes.ts(39,30): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/routes/exportRoutes.ts(54,30): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/routes/exportRoutes.ts(64,27): error TS7006: Parameter 'auditDoc' implicitly has an 'any' type.
+src/routes/exportRoutes.ts(111,22): error TS18048: 'req.user' is possibly 'undefined'.
+src/routes/exportRoutes.ts(155,22): error TS18048: 'req.user' is possibly 'undefined'.
+src/routes/exportRoutes.ts(223,22): error TS18048: 'req.user' is possibly 'undefined'.
+src/routes/exportRoutes.ts(263,22): error TS18048: 'req.user' is possibly 'undefined'.
+src/routes/exportRoutes.ts(323,23): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/routes/exportRoutes.ts(366,22): error TS18048: 'req.user' is possibly 'undefined'.
+src/services/githubAppService.ts(53,5): error TS2322: Type 'QueryResult<QueryResultRow>' is not assignable to type '{ rows: T[]; }'.
+  Types of property 'rows' are incompatible.
+    Type 'QueryResultRow[]' is not assignable to type 'T[]'.
+      Type 'QueryResultRow' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'QueryResultRow'.
+src/services/githubAppService.ts(57,5): error TS2322: Type 'QueryResult<QueryResultRow>' is not assignable to type '{ rows: T[]; }'.
+  Types of property 'rows' are incompatible.
+    Type 'QueryResultRow[]' is not assignable to type 'T[]'.
+      Type 'QueryResultRow' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'QueryResultRow'.
+src/services/workspaceActivityService.ts(29,5): error TS2322: Type 'QueryResult<QueryResultRow>' is not assignable to type '{ rows: T[]; }'.
+  Types of property 'rows' are incompatible.
+    Type 'QueryResultRow[]' is not assignable to type 'T[]'.
+      Type 'QueryResultRow' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'QueryResultRow'.
+src/services/workspaceActivityService.ts(33,5): error TS2322: Type 'QueryResult<QueryResultRow>' is not assignable to type '{ rows: T[]; }'.
+  Types of property 'rows' are incompatible.
+    Type 'QueryResultRow[]' is not assignable to type 'T[]'.
+      Type 'QueryResultRow' is not assignable to type 'T'.
+        'T' could be instantiated with an arbitrary type which could be unrelated to 'QueryResultRow'.
+src/tailwind.config.ts(218,20): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+src/tailwind.config.ts(253,16): error TS7031: Binding element 'addUtilities' implicitly has an 'any' type.
+src/tailwind.config.ts(253,30): error TS7031: Binding element 'theme' implicitly has an 'any' type.
+src/test-analyze.ts(50,9): error TS18046: 'error' is of type 'unknown'.
+src/test-analyze.ts(51,32): error TS18046: 'error' is of type 'unknown'.
+src/test-analyze.ts(52,31): error TS18046: 'error' is of type 'unknown'.
+src/test-analyze.ts(53,16): error TS18046: 'error' is of type 'unknown'.
+src/test-analyze.ts(55,31): error TS18046: 'error' is of type 'unknown'.
+src/test-analyze.ts(57,31): error TS18046: 'error' is of type 'unknown'.
+src/utils/contentExtractor.ts(7,32): error TS7006: Parameter 'html' implicitly has an 'any' type.
+src/utils/contentExtractor.ts(7,38): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/utils/contentExtractor.ts(23,5): error TS2322: Type 'string' is not assignable to type 'null'.
+src/utils/contentExtractor.ts(44,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/utils/contentExtractor.ts(68,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ h1: never[]; h2: never[]; h3: never[]; h4: never[]; h5: never[]; h6: never[]; }'.
+  No index signature with a parameter of type 'string' was found on type '{ h1: never[]; h2: never[]; h3: never[]; h4: never[]; h5: never[]; h6: never[]; }'.
+src/utils/contentExtractor.ts(92,35): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/utils/contentExtractor.ts(93,35): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/utils/contentExtractor.ts(117,7): error TS2322: Type 'string' is not assignable to type 'null'.
+src/utils/contentExtractor.ts(137,44): error TS2345: Argument of type '{ href: string; hreflang: string | undefined; }' is not assignable to parameter of type 'never'.
+src/utils/contentExtractor.ts(175,5): error TS2322: Type 'string' is not assignable to type 'null'.
+src/utils/contentExtractor.ts(176,31): error TS18047: 'extractedData.bodyText' is possibly 'null'.
+src/utils/contentExtractor.ts(189,49): error TS18046: 'error' is of type 'unknown'.
+src/utils/db.ts(1,18): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/db.ts(9,29): error TS7006: Parameter 'text' implicitly has an 'any' type.
+src/utils/db.ts(9,35): error TS7006: Parameter 'params' implicitly has an 'any' type.
+src/utils/forensicPipeline.ts(1,41): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(2,48): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(3,32): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(4,40): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(5,39): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(6,100): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(7,31): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/forensicPipeline.ts(83,64): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/utils/pricingUtils.tsx(82,35): error TS7006: Parameter 'tier' implicitly has an 'any' type.
+src/utils/pricingUtils.tsx(83,10): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ Free: { scansPerMonth: number; allowExport: boolean; allowShare: boolean; allowCompetitor: boolean; allowAPI: boolean; allowWebhook: boolean; allowWhiteLabel: boolean; allowBulk: boolean; allowRescan: boolean; teamSeats: number; maxProjects: number; }; ... 4 more ...; Agency: { ...; }; }'.
+src/utils/pricingUtils.tsx(86,33): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/utils/pricingUtils.tsx(86,39): error TS7006: Parameter 'action' implicitly has an 'any' type.
+src/utils/scoringEngine.ts(171,9): error TS7034: Variable 'recommendations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/utils/scoringEngine.ts(201,10): error TS7005: Variable 'recommendations' implicitly has an 'any[]' type.
+src/utils/stripe.ts(3,5): error TS7034: Variable 'stripeInstance' implicitly has type 'any' in some locations where its type cannot be determined.
+src/utils/stripe.ts(6,8): error TS7005: Variable 'stripeInstance' implicitly has an 'any' type.
+src/utils/stripe.ts(15,50): error TS7006: Parameter 'tenantId' implicitly has an 'any' type.
+src/utils/stripe.ts(15,60): error TS7006: Parameter 'email' implicitly has an 'any' type.
+src/utils/stripe.ts(36,41): error TS7006: Parameter 'accountId' implicitly has an 'any' type.
+src/utils/stripe.ts(36,52): error TS7006: Parameter 'refreshUrl' implicitly has an 'any' type.
+src/utils/stripe.ts(36,64): error TS7006: Parameter 'returnUrl' implicitly has an 'any' type.
+src/utils/stripe.ts(54,60): error TS7006: Parameter 'brand' implicitly has an 'any' type.
+src/utils/stripe.ts(54,67): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/utils/stripe.ts(54,73): error TS7006: Parameter 'priceId' implicitly has an 'any' type.
+src/utils/stripe.ts(54,82): error TS7006: Parameter 'amount' implicitly has an 'any' type.
+src/utils/technicalChecker.ts(1,31): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/technicalChecker.ts(6,40): error TS7006: Parameter 'crawlData' implicitly has an 'any' type.
+src/utils/technicalChecker.ts(6,51): error TS7006: Parameter 'extractedData' implicitly has an 'any' type.
+src/utils/technicalChecker.ts(6,66): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/utils/technicalChecker.ts(162,7): error TS2322: Type 'string[]' is not assignable to type 'never[]'.
+  Type 'string' is not assignable to type 'never'.
+src/utils/technicalChecker.ts(181,7): error TS2322: Type 'string[]' is not assignable to type 'never[]'.
+  Type 'string' is not assignable to type 'never'.
+src/utils/technicalChecker.ts(199,61): error TS7006: Parameter 'ld' implicitly has an 'any' type.
+src/utils/technicalChecker.ts(218,47): error TS18046: 'error' is of type 'unknown'.
+src/utils/urlValidator.ts(3,31): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/urlValidator.ts(8,22): error TS7006: Parameter 'ip' implicitly has an 'any' type.
+src/utils/urlValidator.ts(10,40): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/utils/urlValidator.ts(29,41): error TS7006: Parameter 'inputUrl' implicitly has an 'any' type.
+src/utils/urlValidator.ts(49,55): error TS18046: 'error' is of type 'unknown'.
+src/utils/urlValidator.ts(88,53): error TS18046: 'error' is of type 'unknown'.
+src/utils/urlValidator.ts(172,38): error TS18046: 'error' is of type 'unknown'.
+src/utils/urlValidator.ts(176,52): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(4,31): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+src/utils/webCrawler.ts(9,40): error TS7006: Parameter 'baseUrl' implicitly has an 'any' type.
+src/utils/webCrawler.ts(60,53): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(107,54): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(115,46): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(125,36): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/utils/webCrawler.ts(197,23): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(199,9): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(205,16): error TS18046: 'error' is of type 'unknown'.
+src/utils/webCrawler.ts(215,39): error TS18046: 'error' is of type 'unknown'.
+src/vite.config.ts(17,13): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'Plugin<any>[]' is not assignable to type 'PluginOption'.
+      Type 'Plugin<any>[]' is not assignable to type 'PluginOption[]'.
+        Type 'Plugin<any>' is not assignable to type 'PluginOption'.
+          Type 'import("C:/Users/Ma$e/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).Plugin<any>' is not assignable to type 'import("C:/Users/Ma$e/Desktop/aivis/aivis/server/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).Plugin<any>'.
+            Types of property 'hotUpdate' are incompatible.
+              Type 'ObjectHook<(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>> | undefined' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+                Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+                  Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type '(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>'.
+                    The 'this' types of each signature are incompatible.
+                      Type 'MinimalPluginContext & { environment: DevEnvironment; }' is not assignable to type 'HotUpdatePluginContext'.
+                        Types of property 'environment' are incompatible.
+                          Property 'options' is missing in type 'import("C:/Users/Ma$e/Desktop/aivis/aivis/server/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).DevEnvironment' but required in type 'import("C:/Users/Ma$e/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).DevEnvironment'.
+src/vitest.config.ts(6,13): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'Plugin<any>[]' is not assignable to type 'PluginOption'.
+      Type 'Plugin<any>[]' is not assignable to type 'PluginOption[]'.
+        Type 'Plugin<any>' is not assignable to type 'PluginOption'.
+          Type 'import("C:/Users/Ma$e/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).Plugin<any>' is not assignable to type 'import("C:/Users/Ma$e/Desktop/aivis/aivis/server/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).Plugin<any>'.
+            Types of property 'hotUpdate' are incompatible.
+              Type 'ObjectHook<(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>> | undefined' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+                Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+                  Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type '(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>'.
+                    The 'this' types of each signature are incompatible.
+                      Type 'MinimalPluginContext & { environment: DevEnvironment; }' is not assignable to type 'HotUpdatePluginContext'.
+                        Types of property 'environment' are incompatible.
+                          Property 'options' is missing in type 'import("C:/Users/Ma$e/Desktop/aivis/aivis/server/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).DevEnvironment' but required in type 'import("C:/Users/Ma$e/node_modules/vite/dist/node/index", { with: { "resolution-mode": "import" } }).DevEnvironment'.
+src/vitest.setup.ts(3,25): error TS2307: Cannot find module '@testing-library/react' or its corresponding type declarations.

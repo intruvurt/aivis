@@ -25,11 +25,72 @@ import type {
   AnalysisExecutionClass,
   AnalysisResponse,
   AuditGrade,
+  BragScrapeInfo,
   CategoryGrade,
   ContentHighlight,
   AuditVersion,
 } from "@shared/types";
 import { getAnalysisExecutionClass } from "@shared/types";
+import { SCRAPE_METHOD_LABELS, SCRAPE_PIPELINE_ORDER } from "@shared/types";
+
+// ─── BRAG scrape method badge ───────────────────────────────────────────────
+
+const BRAG_METHOD_STYLES: Record<string, string> = {
+  http_fetch: "bg-emerald-500/10 border-emerald-500/25 text-emerald-400",
+  python_nlp: "bg-indigo-500/10 border-indigo-500/25 text-indigo-400",
+  cf_browser_run: "bg-orange-500/10 border-orange-500/25 text-orange-400",
+};
+
+function BragBadge({ info }: { info: BragScrapeInfo }) {
+  const [expanded, setExpanded] = useState(false);
+  const style = BRAG_METHOD_STYLES[info.method] ?? BRAG_METHOD_STYLES.http_fetch;
+  const shortId = info.brag_id.slice(0, 8);
+
+  return (
+    <div className="mt-2 space-y-1">
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${style}`}
+      >
+        <FileSearch className="w-3 h-3" />
+        {SCRAPE_METHOD_LABELS[info.method]} &bull; BRAG&nbsp;
+        <span className="font-mono opacity-70">{shortId}</span>
+        {expanded ? (
+          <ChevronUp className="w-3 h-3 ml-0.5" />
+        ) : (
+          <ChevronDown className="w-3 h-3 ml-0.5" />
+        )}
+      </button>
+      {expanded && (
+        <div className="ml-1 pl-3 border-l border-white/10 space-y-0.5">
+          {SCRAPE_PIPELINE_ORDER.map((m) => {
+            const step = info.pipeline.find((s) => s.method === m);
+            if (!step || !step.attempted) return null;
+            const ok = step.success;
+            return (
+              <p key={m} className="text-[11px] text-white/55 flex items-center gap-1.5">
+                {ok ? (
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                ) : (
+                  <XCircle className="w-3 h-3 text-red-400 shrink-0" />
+                )}
+                <span>
+                  {SCRAPE_METHOD_LABELS[m]} — {step.duration_ms}ms
+                  {step.word_count > 0 && ` • ${step.word_count.toLocaleString()} words`}
+                  {step.note && ` • ${step.note}`}
+                </span>
+              </p>
+            );
+          })}
+          <p className="text-[10px] text-white/40 font-mono mt-0.5">
+            Total: {info.total_ms}ms &bull; {info.brag_id}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── Grade styling ──────────────────────────────────────────────────────────
 
@@ -525,6 +586,8 @@ const AuditReportCard: React.FC<AuditReportCardProps> = ({ result, hideHero, hid
                   {(result.processing_time_ms / 1000).toFixed(1)}s
                 </p>
               )}
+              {/* ─── BRAG Scrape Badge ─── */}
+              {result.scrape_info && <BragBadge info={result.scrape_info} />}
             </div>
           </div>
         </div>

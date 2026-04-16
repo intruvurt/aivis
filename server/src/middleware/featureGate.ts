@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import {
   TIER_LIMITS,
+  TRIAL_LIMIT_MODIFIER,
   meetsMinimumTier,
   uiTierFromCanonical,
   type CanonicalTier,
@@ -148,18 +149,21 @@ export function getTierFeatures(tier: string): Record<GatedFeature, boolean> {
 /**
  * Get full entitlements for a tier (features + limits)
  */
-export function getTierEntitlements(tier: string) {
+export function getTierEntitlements(tier: string, isTrialing = false) {
   const normalizedTier = uiTierFromCanonical(tier as CanonicalTier | LegacyTier);
   const limits = TIER_LIMITS[normalizedTier];
   const features = getTierFeatures(tier);
 
+  const trialMod = isTrialing ? TRIAL_LIMIT_MODIFIER : 1;
+
   return {
     tier: normalizedTier,
+    isTrialing,
     features,
     limits: {
-      scansPerMonth: limits.scansPerMonth,
-      pagesPerScan: limits.pagesPerScan,
-      competitors: limits.competitors,
+      scansPerMonth: Math.max(1, Math.floor(limits.scansPerMonth * trialMod)),
+      pagesPerScan: Math.max(1, Math.floor(limits.pagesPerScan * trialMod)),
+      competitors: Math.max(0, Math.floor(limits.competitors * trialMod)),
       cacheDays: limits.cacheDays,
     },
   };
@@ -220,16 +224,22 @@ export function checkLimit(limitKey: 'pagesPerScan' | 'competitors', requestedVa
     const tier = user.tier || 'observer';
     const normalizedTier = uiTierFromCanonical(tier as CanonicalTier | LegacyTier);
     const limits = TIER_LIMITS[normalizedTier];
-    const maxAllowed = limits[limitKey];
+    let maxAllowed = limits[limitKey];
+
+    // Trial users get 50% of the limit (rounded down, minimum 1)
+    if (user.isTrialing && typeof maxAllowed === 'number') {
+      maxAllowed = Math.max(1, Math.floor(maxAllowed * TRIAL_LIMIT_MODIFIER));
+    }
 
     if (requestedValue > maxAllowed) {
       return res.status(403).json({
-        error: `Your plan allows up to ${maxAllowed} ${limitKey === 'pagesPerScan' ? 'pages per scan' : 'competitor comparisons'}`,
+        error: `Your plan allows up to ${maxAllowed} ${limitKey === 'pagesPerScan' ? 'pages per scan' : 'competitor comparisons'}${user.isTrialing ? ' (trial)' : ''}`,
         code: 'LIMIT_EXCEEDED',
         limit: limitKey,
         requested: requestedValue,
         allowed: maxAllowed,
         currentTier: normalizedTier,
+        isTrialing: !!user.isTrialing,
         upgradeUrl: '/pricing',
       });
     }
@@ -258,7 +268,7 @@ export function attachEntitlements(req: Request, _res: Response, next: NextFunct
 
   if (user) {
     const tier = user.tier || 'observer';
-    (req as any).entitlements = getTierEntitlements(tier);
+    (req as any).entitlements = getTierEntitlements(tier, !!user.isTrialing);
   }
 
   next();

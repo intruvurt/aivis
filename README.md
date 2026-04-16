@@ -77,7 +77,7 @@ Example:
 
 ```json
 {
-  "ev_title": "Ai Visibility Intelligence Platform",
+  "ev_title": "AI Visibility Intelligence Platform",
   "ev_h1": "Measure AI Visibility",
   "ev_schema": { "@type": "SoftwareApplication" }
 }

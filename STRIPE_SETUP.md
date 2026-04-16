@@ -108,7 +108,7 @@ STRIPE_SIGNAL_YEARLY_PRICE_ID=price_...
 # Frontend URL (for CORS and redirects)
 FRONTEND_URL=https://yourdomain.com
 # OR for development
-FRONTEND_URL=https://aivis.biz  # Ai Search Visibility & Monitoring frontend
+FRONTEND_URL=https://aivis.biz  # AI Search Visibility & Monitoring frontend
 ```
 
 ---

@@ -36,7 +36,7 @@ export default function CompetitiveLandscapePage() {
           </p>
           <h1 className="text-3xl md:text-4xl brand-title-lg mb-4">{TITLE}</h1>
           <p className="text-white/75 leading-relaxed max-w-3xl">
-            Ai visibility is no longer a side project. It is a dedicated category with its own
+            AI visibility is no longer a side project. It is a dedicated category with its own
             tools, tradeoffs, and gaps. This article maps where AiVIS sits in that landscape so you
             can decide when to use it, when to pair it with other platforms, and where it is
             deliberately opinionated.

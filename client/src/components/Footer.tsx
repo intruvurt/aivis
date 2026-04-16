@@ -53,7 +53,7 @@ export default function Footer() {
             <div className="flex items-center gap-2.5 mb-4">
               <img src="/aivis-logo.png" alt="AiVIS" className="h-8 w-8 rounded-lg object-contain" />
               <span className="text-lg font-bold tracking-tight text-white">
-                Ai<span className="text-cyan-400">VIS</span>
+                AI<span className="text-cyan-400">VIS</span>
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">

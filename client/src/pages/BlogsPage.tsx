@@ -128,7 +128,7 @@ export default function BlogsPage() {
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-orange-300 group-hover:text-orange-200 mb-2 line-clamp-3">{entry.title}</h3>
-                  <p className="text-sm text-white/70 mb-3 line-clamp-2">{entry.description}</p>
+                  <p className="text-sm text-white/70 mb-3 line-clamp-4">{entry.description}</p>
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {entry.tags.slice(0, 3).map((tag) => (
                       <span key={tag} className="inline-flex text-xs px-2 py-1 rounded bg-orange-900/30 text-orange-300 border border-orange-900/50">
@@ -282,7 +282,7 @@ export default function BlogsPage() {
                 <h2 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-400 mb-2 line-clamp-2">
                   {entry.title}
                 </h2>
-                <p className="text-sm text-white/75 mb-4 leading-relaxed line-clamp-3">{entry.description}</p>
+                <p className="text-sm text-white/75 mb-4 leading-relaxed line-clamp-5">{entry.description}</p>
 
                 {/* Tags */}
                 {entry.tags.length > 0 && (

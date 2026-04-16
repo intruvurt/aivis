@@ -244,11 +244,11 @@
         "@type": "SoftwareApplication",
         "@id": "https://aivis.biz/#software-application",
         "name": "AiVIS",
-        "alternateName": "Evidence-backed site analysis for AI answers Systems",
+        "alternateName": "AI Visibility System",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "url": "https://aivis.biz",
-        "description": "Evidence-backed AI visibility scoring across content depth, schema, metadata and citability. Returns 0\u2013100 score with category grades and prioritized fixes.",
+        "description": "Evidence-backed AI visibility scoring across content depth, schema, metadata and citability. Returns 0-100 score with category grades and prioritized fixes.",
         "creator": { "@id": "https://aivis.biz/#organization" },
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "featureList": [
@@ -329,8 +329,8 @@
         "@context": "https://schema.org",
         "@type": "Article",
         "@id": "https://aivis.biz/#homepage-article",
-        "headline": "AiVIS AI Visibility AEO/SEO/GEO Audit Overview",
-        "description": "Overview of how AiVIS audits machine readability, trust and citation readiness for answer engines.",
+        "headline": "AiVIS - Auditing how AI systems read, trust and cite a website",
+        "description": "Overview of how AiVIS assesses machine readability, trust and citation readiness for answer, generative and search engines.",
         "datePublished": "2026-03-17T00:00:00-05:00",
         "dateModified": "2026-04-10T00:00:00-05:00",
         "image": ["https://aivis.biz/og-image2.png"],
@@ -353,9 +353,9 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "@id": "https://aivis.biz/#website",
-        "name": "AiVIS",
+        "name": "AiVIS - AI Visibility Audit",
         "url": "https://aivis.biz",
-        "description": "AiVIS is an Evidence-backed site analysis for AI answers platform that audits AEO/SEO/GEO - how answer engines read, trust and cite a website. Get a 0\u2013100 visibility score with evidence-backed findings and prioritized fixes.",
+        "description": "AiVIS is an Evidence-backed site analysis for AI answers platform that audits AEO/SEO/GEO - how answer engines read, trust and cite a website. Get a 0-100 visibility score with evidence-backed findings and prioritized fixes.",
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "potentialAction": {
           "@type": "SearchAction",
@@ -374,17 +374,17 @@
           {
             "@type": "Question",
             "name": "What is AI search visibility and why does it matter?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AI search visibility is the degree to which an AI system; such as ChatGPT, Perplexity, Claude or Google AI Overviews; can parse, trust and cite your website content in generated answers. A page that scores poorly for AI search visibility is unlikely to appear as a source or citation in AI generated responses, regardless of its traditional search ranking. AI search visibility depends on structured data quality, heading clarity, content depth, metadata completeness and machine readable formatting." }
+            "acceptedAnswer": { "@type": "Answer", "text": "AI search visibility is the degree to which an AI system; such as ChatGPT, Perplexity, Claude or Google Gemini Overviews; can parse, trust and cite your website content in generated answers. A page that scores poorly for AI search visibility is unlikely to appear as a source or citation in AI generated responses, regardless of its traditional search ranking. AI search visibility depends on structured data quality, heading clarity, content depth, metadata completeness and machine readable formatting." }
           },
           {
             "@type": "Question",
             "name": "How does AiVIS calculate a search visibility score?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. The 0\u2013100 search visibility score is a weighted composite across six categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%). Each finding is tied back to real page evidence." }
+            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. The 0-100 search visibility score is a weighted composite across six categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%). Each finding is tied back to real page evidence." }
           },
           {
             "@type": "Question",
-            "name": "What is the difference between AiVIS.biz and traditional SEO tools?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Traditional SEO tools optimize for search engine crawlers and ranking signals like backlinks or keyword density. AiVIS.biz focuses specifically on answer engine readiness; whether AI systems can extract, trust and cite your content in generated responses. AiVIS.biz evaluates machine readability, entity clarity, schema coverage and citability rather than link authority. Every recommendation is evidence-linked, meaning it references the specific crawled signal that triggered it, not a generic checklist. The platform also tracks brand presence across citation sources and discussion platforms: Answer Engine Optimization (AEO)." }
+            "name": "What is the difference between AiVIS and traditional SEO tools?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Traditional SEO tools optimize for search engine crawlers and ranking signals like backlinks or keyword density. AiVIS focuses specifically on answer engine readiness; whether AI systems can extract, trust and cite your content in generated responses. AiVIS evaluates machine readability, entity clarity, schema coverage and citability rather than link authority. Every recommendation is evidence-linked, meaning it references the specific crawled signal that triggered it, not a generic checklist. The platform also tracks brand presence across citation sources and discussion platforms: Answer Engine Optimization (AEO)." }
           },
           {
             "@type": "Question",
@@ -393,8 +393,8 @@
           },
           {
             "@type": "Question",
-            "name": "What plans does AiVIS.biz offer and what is included?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS.biz offers five tiers. Observer (free) includes 3 scans per month powered by open-weight AI models. Starter ($15/month) includes 15 scans per month with full recommendations, implementation code, PDF exports, and shareable links. Alignment (Core, $49/month) includes 60 scans per month with paid AI models, competitor tracking, brand mention scanning, reverse engineering tools, and WebMCP access. Signal (Pro, $149/month) includes 200 scans per month with a triple-check pipeline, citation testing, niche ranking, scheduled citation tests, team workspaces with 25 seats, full MCP/API access, and white-label reports. Score Fix (AutoFix PR, $299 one-time) uses higher capacity models and generates automated GitHub PRs with 250 credits." }
+            "name": "What plans does AiVIS offer and what is included?",
+            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS offers five tiers. Observer (free) includes 3 scans per month powered by open-weight AI models. Starter ($15/month) includes 15 scans per month with full recommendations, implementation code, PDF exports, and shareable links. Alignment (Core, $49/month) includes 60 scans per month with paid AI models, competitor tracking, brand mention scanning, reverse engineering tools, and WebMCP access. Signal (Pro, $149/month) includes 200 scans per month with a triple-check pipeline, citation testing, niche ranking, scheduled citation tests, team workspaces with 25 seats, full MCP/API access, and white-label reports. Score Fix (AutoFix PR, $299 one-time) uses higher capacity models and generates automated GitHub PRs with 250 credits." }
           }
         ]
       }
@@ -496,14 +496,14 @@
         <section id="tldr" style="margin:0 0 20px;padding:12px 16px;border-left:3px solid #06b6d4;background:rgba(6,182,212,0.06)">
           <h2 style="font-size:16px;margin:0 0 6px;color:#e2e8f0">Summary:</h2>
           <p style="color:#94a3b8;line-height:1.6;margin:0">
-            AiVIS audits whether AI answer engines — ChatGPT, Perplexity, Google AI, and Claude —
+            AI Visibility audits whether AI answer engines — ChatGPT, Perplexity, Google AI, and Claude —
             can read, trust, and cite your website. Enter any URL to get a 0-100 visibility score
             with evidence-backed findings, category grades, and prioritised fixes.
             Every recommendation is grounded in real page evidence, not synthetic benchmarks.
           </p>
         </section>
         <p style="color:#94a3b8;line-height:1.6">
-          AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website.
+          AI Visibility is an Evidence-backed site analysis for AI answers platform that audits how answer engines read, trust and cite a website.
           It interprets your site's structure, trust signals and citation readiness based on real page evidence, not inferred summaries.
           Get a 0-100 visibility score with evidence-backed findings and prioritized fixes. Free trial available.
         </p>
@@ -513,19 +513,19 @@
           AI visibility is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links.
           It depends on content depth, heading clarity, schema coverage, metadata quality and machine readable formatting.
           A page can rank first in traditional search and still be invisible to answer engines if these signals are missing.
-          Ranking alone does not earn citation. AiVIS measures the extractability, trust signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer.
+          Ranking alone does not earn citation. AI Visibility measures the extractability, trust signal alignment and citation readiness of your content by analyzing what answer engines actually need to formulate a reliable answer.
           Learn more about the <a href="/methodology" style="color:#06b6d4">audit methodology</a> behind the scoring.
         </p>
         <p style="color:#94a3b8;line-height:1.6">
           According to a <a href="https://sparktoro.com/blog/2026-zero-click-search-study/" style="color:#06b6d4">2026 SparkToro study</a>, 58.5% of Google searches now end in zero clicks.
           AI answer engines like ChatGPT, Perplexity and Google AI Overviews compose responses by retrieving, synthesizing and citing web sources directly.
           Pages that lack structured data, clear entity definitions or sufficient content depth are systematically excluded from these generated answers.
-          AiVIS scores visibility across six weighted categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%).
+          AI Visibility scores visibility across six weighted categories: Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%), and Heading Structure and H1 (12%).
         </p>
 
         <h2 style="font-size:22px;margin:28px 0 10px">Evidence-backed audit intelligence</h2>
         <h3 style="font-size:18px;margin:16px 0 8px">Full page interpretation</h3>
-        <p style="color:#94a3b8;line-height:1.6">AiVIS reads your page the way an answer engine does and shows where meaning breaks or becomes unclear.</p>
+        <p style="color:#94a3b8;line-height:1.6">AI Visibility reads your page the way an answer engine does and shows where meaning breaks or becomes unclear.</p>
         <h3 style="font-size:18px;margin:16px 0 8px">Evidence IDs linked findings</h3>
         <p style="color:#94a3b8;line-height:1.6">Every issue is tied to a real part of your page so you can see what caused it and how to fix it.</p>
         <h3 style="font-size:18px;margin:16px 0 8px">Clear consistent scoring logic</h3>

@@ -98,7 +98,7 @@ Each element becomes traceable:
 
 ```json
 {
-  "ev_h1": "Ai Visibility Intelligence Platform",
+  "ev_h1": "AI Visibility Intelligence Platform",
   "ev_schema": { "@type": "SoftwareApplication" }
 }
 

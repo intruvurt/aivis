@@ -45,7 +45,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     description:
       'The origin story behind AiVIS: why traditional web publishing misses AI extraction requirements and how evidence-backed auditing closes that gap.',
     excerpt:
-      'How I discovered that 73% of websites lack the structural requirements for accurate AI extraction - and why that became the founding problem for AiVIS.',
+      'How I discovered that the majority of websites fail the structural requirements for accurate AI extraction - and why that became the founding problem for AiVIS.',
     publishedAt: '2026-03-15',
     readMinutes: 7,
     category: 'aeo',
@@ -74,7 +74,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     title: 'Before You Build Another SaaS, Run This 30-Second Reality Check',
     description:
       'A practical filter for founders: test distribution and discoverability assumptions before writing another feature sprint.',
-    excerpt: 'Why 90% of SaaS teams ignore the discovery and discoverability risk that kills more products than bad code.',
+    excerpt: 'Why most SaaS teams ignore the discovery and discoverability risk that kills more products than bad code.',
     publishedAt: '2026-03-14',
     readMinutes: 5,
     category: 'strategy',
@@ -181,7 +181,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
       'AI systems crawl Author.about, social profiles, and byline metadata to assess authority.',
       'E-E-A-T signals (expertise, experience, authoritativeness, trustworthiness) now filter citation eligibility.',
       'Your author contact info and verified credentials must be machine-readable (schema).',
-      'Companies without clear author attribution see 40%+ lower citation rates in LLM outputs.',
+      'Companies without clear author attribution consistently show lower citation rates in LLM outputs - a pattern verified through AiVIS citation testing across multiple AI answer engines.',
     ],
     relatedPostSlugs: [
       'answer-engine-optimization-2026-why-citation-readiness-matters',
@@ -255,11 +255,11 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
   {
     slug: 'from-invisible-to-cited-case-study-brand-citation-growth',
     path: '/blogs/from-invisible-to-cited-case-study-brand-citation-growth',
-    title: 'From Invisible to Cited - Real Case Study: How [Brand] Moved from 0 to 87% Citation Rate',
+    title: 'From Invisible to Cited - How AiVIS Went from 0 Citations to Consistent AI Answer Presence',
     description:
-      'An in-depth case study showing how a B2B SaaS company restructured their content schema, FAQ depth, and author credibility signals to achieve industry-leading AI citation rates.',
+      'A transparent case study showing how AiVIS restructured its own content schema, FAQ depth, and author credibility signals to achieve measurable AI citation improvements - tracked through the Cite Ledger.',
     excerpt:
-      'Starting from zero citations in ChatGPT and Claude, this company reached citation in 87% of relevant queries in 90 days. Here\'s exactly what changed.',
+      'Starting from zero citations in ChatGPT and Claude, AiVIS applied its own audit methodology and tracked every structural change through the Cite Ledger. Here is what changed and what the evidence showed.',
     publishedAt: '2026-03-08',
     readMinutes: 14,
     category: 'case-study',
@@ -272,14 +272,15 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
       credentials: ['Founded AiVIS'],
     },
     keyPoints: [
-      'Baseline: 0% citations despite #1-5 rankings on 120+ keywords.',
-      'Intervention: Restructured all 28 core product pages with FAQPage + HowTo schema.',
-      'Result: 87% citation rate within 90 days; citation traffic exceeded organic by month 2.',
-      'Key learnings: Schema density, answer-block clarity, and author credibility were the 3x levers.',
+      'Baseline: Zero AI citations despite strong SERP rankings - verified through citation testing across ChatGPT, Claude, and Perplexity.',
+      'Intervention: Restructured core product pages with FAQPage + HowTo schema, added entity-clear author markup, and deployed BRAG-audited heading hierarchies.',
+      'Result: Consistent AI answer presence tracked through the Cite Ledger with evidence IDs linking each structural change to citation outcomes.',
+      'Key learnings: Schema density, answer-block clarity, and author credibility were the primary levers - each measured through the SSFR evidence framework.',
     ],
     relatedPostSlugs: [
       'answer-engine-optimization-2026-why-citation-readiness-matters',
       'building-author-authority-for-citations-e-e-a-t-in-ai-era',
+      'ssfr-evidence-framework-the-scoring-engine-behind-aivis',
     ],
     sourceMediumUrl: 'https://intruvurt.medium.com/case-study-citation-growth',
     tier: 'free',
@@ -1081,11 +1082,11 @@ Observer is the free tier. Three audits per month. Single-page scans. No competi
 
 Starter is the entry paid tier at $15 per month. Fifteen audits per month. Full recommendations with implementation code. PDF exports. Shareable links. Content highlights. Force-refresh audits. Thirty-day report history.
 
-Alignment is the core paid tier at $49 per month. Sixty audits per month. Five-page multi-page crawls. Three competitors tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled monthly rescans. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
+Alignment is the core paid tier at $49 per month. Sixty audits per month. Thirty-five-page multi-page crawls. One competitor tracked. Exports in CSV, JSON, and PDF. Force-refresh audits. Report history. Shareable links. Scheduled weekly or monthly rescans with up to 2 schedules. One API key and two webhooks. MCP Server access with OpenAPI spec and OAuth 2.0 support. And three Alignment-exclusive tools: Mention Digests, Reverse Engineer, and Niche Discovery.
 
-Signal is the premium tier at $149 per month, or $116 per month billed annually at $1,394 per year. Two hundred audits per month. Fifteen-page crawls. Eight competitors. Ninety-day cache retention. Up to five API keys and eight webhooks. Up to ten scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
+Signal is the premium tier at $149 per month, or $116 per month billed annually at $1,394 per year. Two hundred audits per month. Hundred-page crawls. Ten competitors. Ninety-day cache retention. Up to ten API keys and twenty webhooks. Up to twenty scheduled rescans at any frequency. White-label reports. And the five Signal-exclusive capabilities: Triple-Check AI Pipeline, Citation Testing, Alert Integrations, Automation Workflows, and Priority Queue.
 
-Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Twenty-five-page crawls. Ten competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
+Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit pack containing 250 credits. Each automated GitHub PR costs 10 to 25 credits depending on fix complexity. Two-hundred-twenty-page crawls. Five competitors. All Signal features inherited. Plus three scorefix-exclusive tools: Automated PR Generation, Batch Remediation, and Evidence-Linked PRs.
 
 **The Visibility Audit Engine**
 
@@ -1107,19 +1108,19 @@ Score Fix uses the same three-stage structure but with the same high-quality mod
 
 **Multi-Page SEO Crawl**
 
-Alignment and above get multi-page crawling. Instead of auditing a single URL, the crawler follows internal links and audits multiple pages in a single scan. Alignment crawls up to 5 pages. Signal crawls 15. Score Fix crawls 25.
+Alignment and above get multi-page crawling. Instead of auditing a single URL, the crawler follows internal links and audits multiple pages in a single scan. Alignment crawls up to 35 pages. Signal crawls 100. Score Fix crawls 220.
 
 Each page in the crawl gets its own visibility score, schema analysis, and recommendations. The aggregate view shows site-wide patterns - which pages drag the score down, which ones carry it.
 
 **Competitor Tracking**
 
-Alignment tracks 3 competitors. Signal tracks 8. Score Fix tracks 10.
+Alignment tracks 1 competitor. Signal tracks 10. Score Fix tracks 5.
 
 Competitor tracking runs the same audit pipeline against competitor URLs and generates comparative intelligence. You see where they outperform you on schema quality, keyword coverage, technical signals, and overall visibility score. The Opportunity Detection engine surfaces gaps where a competitor scores higher and recommends specific fixes.
 
 **Brand Mention Tracking**
 
-Alignment and above get mention scanning across 9 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo dork search, Bing dork search, Google News, GitHub, Quora, and Product Hunt. No paid APIs. No API keys needed.
+Alignment and above get mention scanning across 19 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo dork search, Bing dork search, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. No paid APIs. No API keys needed.
 
 Mention Digests aggregate these signals into a timeline view showing where your brand appears in public conversation and how that presence changes over time.
 
@@ -1165,17 +1166,17 @@ Credits are consumed per PR based on complexity. Simple schema patches cost 10 c
 
 **Scheduled Rescans**
 
-Alignment gets monthly rescans with up to 2 schedules. Signal gets daily, weekly, biweekly, or monthly rescans with up to 10 schedules. Score Fix gets 15 schedules at any frequency.
+Alignment gets weekly or monthly rescans with up to 2 schedules. Signal gets daily, weekly, biweekly, or monthly rescans with up to 20 schedules. Score Fix gets 5 schedules at any frequency.
 
 Scheduled rescans maintain longitudinal visibility data. The analytics dashboard shows score trends over time, and webhook integrations can trigger alerts when a rescan detects regression.
 
 **API Access**
 
-Alignment gets 1 API key. Signal gets 5. Score Fix gets 10.
+Alignment gets 1 API key. Signal gets 10. Score Fix gets 2.
 
 The API exposes the full audit pipeline programmatically. Trigger scans, retrieve results, pull analytics, compare competitors - all through authenticated REST endpoints with OpenAPI spec documentation. OAuth 2.0 support for enterprise integrations.
 
-Webhooks push audit results, score changes, and competitive alerts to your endpoints. Alignment gets 2 webhooks. Signal gets 8. Score Fix gets 10.
+Webhooks push audit results, score changes, and competitive alerts to your endpoints. Alignment gets 2 webhooks. Signal gets 20. Score Fix gets 5.
 
 **MCP Server**
 
@@ -1210,7 +1211,7 @@ AiVIS is a structured AI visibility system with five pressure points - crawlabil
       'Citation testing verifies real-world AI search presence across three free search engines.',
       'Score Fix generates evidence-linked GitHub PRs that trace every code change back to a specific audit finding.',
       'MCP Server access lets AI agents programmatically invoke AiVIS tools through the Model Context Protocol.',
-      'Brand mention tracking scans 9 free sources without paid APIs to detect where your brand appears in public conversation.',
+      'Brand mention tracking scans 19 free sources without paid APIs to detect where your brand appears in public conversation.',
     ],
     relatedPostSlugs: [
       'webmcp-is-the-protocol-seo-aeo-geo-never-had',
@@ -1313,7 +1314,7 @@ Most platforms stop at the audit. They give you recommendations and wish you luc
 
 Other platforms that track brand mentions charge for access to social media APIs or news aggregation services. Those APIs change pricing, get rate-limited, or disappear entirely.
 
-AiVIS scans 9 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, and Product Hunt. No paid APIs. No vendor lock-in. The system uses direct web scraping and public search interfaces.
+AiVIS scans 19 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. No paid APIs. No vendor lock-in. The system uses direct web scraping and public search interfaces.
 
 When your brand appears in a Hacker News discussion or a Reddit thread, you know about it. Without paying a third-party data broker for the privilege.
 
@@ -1974,7 +1975,7 @@ Most SEO tools give you a score based on crawl data and link metrics. AiVIS give
 
 **Citation Testing.** This is the feature that changed the game. After running an audit and implementing recommendations, you can verify whether those changes actually resulted in citations. AiVIS tests brand presence across DuckDuckGo, Bing, and DDG Instant Answer in parallel. Three independent search engines. No paid APIs. Real verification.
 
-**Brand Mention Tracking.** AiVIS scans nine free sources where AI models discover new content: Reddit, Hacker News, Mastodon, DuckDuckGo dork results, Bing dork results, Google News, GitHub, Quora, and Product Hunt. These platforms feed the training and retrieval pipelines that models use for source selection. If your client is getting mentioned on Reddit but not credited in AI answers, the mention tracker tells you where the signal exists and where the citation gap is.
+**Brand Mention Tracking.** AiVIS.biz scans nineteen free sources where AI models discover new content: Reddit, Hacker News, Mastodon, DuckDuckGo dork results, Bing dork results, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. These platforms feed the training and retrieval pipelines that models use for source selection. If your client is getting mentioned on Reddit but not credited in AI answers, the mention tracker tells you where the signal exists and where the citation gap is.
 
 **SSFR Evidence Framework.** Every audit breaks down into Source, Signal, Fact, and Relationship evidence. This gives agencies a granular view of exactly which structural elements are strong and which are holding the client back. No ambiguous "your SEO is 73% good" numbers. Specific evidence categories with specific pass and fail results.
 
@@ -2000,7 +2001,7 @@ Step four. Run citation tests. This is where you prove the investment delivered 
 
 Step five. Set up competitor tracking for the 3 to 5 main rivals. Run comparison audits. Identify the structural dimensions where you are behind and where you are ahead. Build your content strategy around closing the gaps that matter most for AI citation.
 
-Step six. Monitor brand mentions. The mention tracker runs across nine platforms. When a new mention appears on Reddit or Hacker News, you know about it. When that mention eventually feeds into an AI model's retrieval index, you have the timeline of how discovery happened.
+Step six. Monitor brand mentions. The mention tracker runs across nineteen platforms. When a new mention appears on Reddit or Hacker News, you know about it. When that mention eventually feeds into an AI model's retrieval index, you have the timeline of how discovery happened.
 
 Step seven. For agencies, set up scheduled rescans. AiVIS autopilot rescans your tracked URLs on a cadence you choose. Score changes trigger notifications. You never have to manually check whether a client's visibility degraded.
 
@@ -2385,7 +2386,7 @@ Add your first competitor at [aivis.ing/competitors](https://aivis.ing/competito
     path: '/blogs/brand-mention-tracking-where-ai-discovers-new-sources',
     title: 'Brand Mention Tracking: Where AI Models Discover New Sources',
     description:
-      'AI models learn about new brands from community platforms. AiVIS scans nine free sources to show you where your brand signal lives and where it is missing.',
+      'AI models learn about new brands from community platforms. AiVIS scans 19 free sources to show you where your brand signal lives and where it is missing.',
     excerpt:
       'Reddit, Hacker News, Product Hunt. These are not just community platforms. They are the discovery layer that feeds AI answer engines.',
     publishedAt: '2026-03-24',
@@ -2404,9 +2405,9 @@ Add your first competitor at [aivis.ing/competitors](https://aivis.ing/competito
 
 Reddit threads. Hacker News discussions. Product Hunt launches. GitHub repositories. Quora answers. These are not just community channels for engagement. They are the training data and retrieval sources that AI models use to learn about new brands, products, and authorities.
 
-AiVIS brand mention tracking monitors nine of these platforms to show you where your brand signal exists and where it does not.
+AiVIS brand mention tracking monitors 19 of these platforms to show you where your brand signal exists and where it does not.
 
-## The Nine Sources
+## The 19 Sources
 
 The mention tracker scans across:
 
@@ -2428,7 +2429,29 @@ The mention tracker scans across:
 
 **Product Hunt.** Product launches and discussions. A strong Product Hunt presence signals that real users have evaluated and discussed your product.
 
-All nine sources are free. No API keys required. No third-party subscriptions. AiVIS scrapes them directly.
+All nineteen sources are free. No API keys required. No third-party subscriptions. AiVIS scrapes them directly.
+
+**Stack Overflow.** Developer Q&A platform. When your product is referenced in accepted answers, AI models with Stack Overflow in their retrieval index surface you for technical queries.
+
+**Wikipedia.** The knowledge graph backbone. AI models heavily weight Wikipedia references for entity resolution and authority verification.
+
+**Dev.to.** Developer blogging platform. Technical content here feeds coding assistant models and developer-focused AI answers.
+
+**Medium.** The largest general-purpose publishing platform. Articles mentioning your brand contribute to the broader retrieval corpus that AI models index.
+
+**YouTube.** Video descriptions, transcripts, and titles. AI models with multimodal retrieval index YouTube metadata for product and tutorial queries.
+
+**Lobsters.** Curated technology discussion board. Smaller but high-signal - mentions here carry weight similar to Hacker News for technical products.
+
+**Bluesky.** Decentralized social network (AT Protocol). Growing source for real-time discourse that AI retrieval systems increasingly index.
+
+**Twitter/X.** Despite API changes, public posts remain indexed by AI retrieval pipelines. Brand mentions in high-engagement threads contribute to source confidence.
+
+**Lemmy.** Federated Reddit alternative. As decentralized platforms grow, AI models diversify their source base to include Lemmy communities.
+
+**GitHub Discussions.** Beyond code repositories - GitHub Discussions host product feedback, feature requests, and community support threads that AI models index for software-related queries.
+
+All 19 sources are free. No API keys required. No third-party subscriptions. AiVIS scrapes them directly.
 
 ## Why Mentions Matter for AI Visibility
 
@@ -2458,7 +2481,7 @@ Fourth, monitor over time. Set up regular scans. When new mentions appear, check
 
 Brand mention tracking is available for Alignment tier and above. Start scanning at [aivis.ing](https://aivis.ing).`,
     keyPoints: [
-      'AiVIS scans nine free platforms (Reddit, HN, Mastodon, DDG/Bing dorks, Google News, GitHub, Quora, Product Hunt) for brand mentions.',
+      'AiVIS scans 19 free platforms (Reddit, HN, Mastodon, DDG/Bing dorks, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions) for brand mentions.',
       'AI models discover new sources through community platforms and use corroboration across multiple sources to evaluate citation confidence.',
       'Timeline and history views show mention discovery patterns with timestamps, sources, and sentiment.',
       'Correlating mention presence with citation test results reveals whether the gap is discovery or structural extractability.',
@@ -4540,7 +4563,7 @@ Zero Trust extends the authentication perimeter beyond your internal network. AI
 
 AI models weight off-page authority signals heavily in citation decisions. A brand discussed in Reddit threads, mentioned in Hacker News comments, listed on Stack Overflow, and published on LinkedIn carries implicit verification weight that a brand mentioned only on its own site does not. These co-occurrence signals confirm to AI models that the entity is real, contextually relevant, and worth citing in answers about the topic — not a self-promotional source inflating its own importance.
 
-AiVIS Brand Mention Tracking scans 9 free sources including Reddit, Hacker News, Mastodon, Google News, GitHub, Quora, and Product Hunt for mentions of your brand. The Citation Testing feature verifies whether your brand actually appears when AI models answer relevant queries. Together they close the loop between off-page authority building and in-answer citation performance — the same way Zero Trust logs and verifies every access event, not just successful logins.
+AiVIS Brand Mention Tracking scans 19 free sources including Reddit, Hacker News, Mastodon, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions for mentions of your brand. The Citation Testing feature verifies whether your brand actually appears when AI models answer relevant queries. Together they close the loop between off-page authority building and in-answer citation performance — the same way Zero Trust logs and verifies every access event, not just successful logins.
 
 Continuous Verification: The Scheduled Rescan Loop
 

@@ -25,6 +25,7 @@ interface UserPreferences {
   // Display Settings
   theme: ThemeMode;
   compactMode: boolean;
+  touchMode: 'auto' | 'on' | 'off';
   showAnimations: boolean;
   fontSize: FontSize;
   
@@ -71,6 +72,7 @@ interface SettingsState extends UserPreferences {
   // Actions
   setTheme: (theme: ThemeMode) => void;
   setCompactMode: (enabled: boolean) => void;
+  setTouchMode: (mode: 'auto' | 'on' | 'off') => void;
   setShowAnimations: (enabled: boolean) => void;
   setFontSize: (size: FontSize) => void;
   setDefaultAnalysisDepth: (depth: AnalysisDepth) => void;
@@ -101,6 +103,7 @@ const defaultPreferences: UserPreferences = {
   // Display
   theme: 'system',
   compactMode: false,
+  touchMode: 'auto' as const,
   showAnimations: true,
   fontSize: 'medium',
   
@@ -175,6 +178,15 @@ export const useSettingsStore = create<SettingsState>()(
       },
       
       setCompactMode: (compactMode) => set({ compactMode }),
+
+      setTouchMode: (touchMode) => {
+        set({ touchMode });
+        if (typeof document !== 'undefined') {
+          const shouldEnable = touchMode === 'on' ||
+            (touchMode === 'auto' && window.matchMedia('(pointer: coarse)').matches);
+          document.documentElement.classList.toggle('touch-mode', shouldEnable);
+        }
+      },
       
       setShowAnimations: (showAnimations) => {
         set({ showAnimations });
@@ -272,7 +284,7 @@ export const useSettingsStore = create<SettingsState>()(
         // Reset document classes
         if (typeof document !== 'undefined') {
           document.documentElement.classList.remove(
-            'light', 'dark', 'no-animations', 
+            'light', 'dark', 'no-animations', 'touch-mode',
             'text-sm', 'text-base', 'text-lg'
           );
           const effectiveTheme = getSystemTheme();
@@ -297,6 +309,7 @@ export const useSettingsStore = create<SettingsState>()(
         // Only persist user preferences and profile, not methods
         theme: state.theme,
         compactMode: state.compactMode,
+        touchMode: state.touchMode,
         showAnimations: state.showAnimations,
         fontSize: state.fontSize,
         defaultAnalysisDepth: state.defaultAnalysisDepth,

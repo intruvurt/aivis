@@ -34,6 +34,11 @@ function applySettingsToDOM(state: ReturnType<typeof useSettingsStore.getState>)
 
   // --- Compact mode ---
   root.classList.toggle('compact', state.compactMode);
+
+  // --- Touch mode ---
+  const enableTouch = state.touchMode === 'on' ||
+    (state.touchMode === 'auto' && typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches);
+  root.classList.toggle('touch-mode', enableTouch);
 }
 
 /**
@@ -45,11 +50,12 @@ export function useInitializeSettings() {
   const fontSize = useSettingsStore((s) => s.fontSize);
   const showAnimations = useSettingsStore((s) => s.showAnimations);
   const compactMode = useSettingsStore((s) => s.compactMode);
+  const touchMode = useSettingsStore((s) => s.touchMode);
 
   // Apply on mount + whenever any visual preference changes
   useEffect(() => {
     applySettingsToDOM(useSettingsStore.getState());
-  }, [theme, fontSize, showAnimations, compactMode]);
+  }, [theme, fontSize, showAnimations, compactMode, touchMode]);
 
   // System dark-mode media query listener
   useEffect(() => {

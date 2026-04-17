@@ -376,6 +376,7 @@ const SettingsPage: React.FC = () => {
       theme: state.theme,
       fontSize: state.fontSize,
       compactMode: state.compactMode,
+      touchMode: state.touchMode,
       showAnimations: state.showAnimations,
       profile: state.profile,
     };
@@ -399,6 +400,7 @@ const SettingsPage: React.FC = () => {
         if (parsed.theme !== undefined) s.setTheme(parsed.theme);
         if (parsed.fontSize !== undefined) s.setFontSize(parsed.fontSize);
         if (parsed.compactMode !== undefined) s.setCompactMode(parsed.compactMode);
+        if (parsed.touchMode !== undefined) s.setTouchMode(parsed.touchMode);
         if (parsed.showAnimations !== undefined) s.setShowAnimations(parsed.showAnimations);
         if (parsed.profile) s.updateProfile(parsed.profile);
         toast.success("Settings imported");
@@ -1333,6 +1335,20 @@ const SettingsPage: React.FC = () => {
                       notifySaved();
                     }}
                   />
+                </SettingRow>
+                <SettingRow label="Touch Mode" description="Enlarge tap targets and spacing for tablet/touch devices">
+                  <select
+                    value={s.touchMode}
+                    onChange={(e) => {
+                      s.setTouchMode(e.target.value as 'auto' | 'on' | 'off');
+                      notifySaved();
+                    }}
+                    className="h-9 rounded-lg border border-white/10 bg-charcoal px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                  >
+                    <option value="auto">Auto-detect</option>
+                    <option value="on">Always on</option>
+                    <option value="off">Always off</option>
+                  </select>
                 </SettingRow>
                 <SettingRow label="Show Animations" description="Enable smooth transitions and effects">
                   <Toggle

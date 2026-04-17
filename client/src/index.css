@@ -1857,3 +1857,228 @@ nav button[class*="rounded-lg"][class*="text-white"] {
   color: rgba(100,116,139,1);
   text-transform: capitalize;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   TOUCH-FIRST COMPATIBILITY LAYER
+   Pure CSS surface — does NOT modify BRAG pipeline, ML scoring,
+   or DOM-anchoring logic. Uses @media (pointer: coarse) and the
+   `.touch-mode` class for opt-in scaling.
+════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Touch density mode (CSS variable scaling) ─────────────── */
+:root {
+  --density-scale: 1;
+  --touch-target-min: 44px;
+}
+html.touch-mode {
+  --density-scale: 1.15;
+}
+
+/* ── 2. Hit-target enforcement ────────────────────────────────── *
+ * On coarse-pointer devices, ensure tappable elements meet the
+ * 44×44 px Apple/WCAG minimum. Uses transparent padding so the
+ * visual weight of the layout stays unchanged.                    */
+@media (pointer: coarse) {
+  /* Buttons, links styled as buttons, and role="button" */
+  button,
+  [role="button"],
+  a[class*="px-"],
+  a[class*="py-"],
+  a.inline-flex,
+  summary {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Audit tabs - slightly enlarge for easier tapping */
+  .audit-tab {
+    padding: 0.75rem 1.125rem;
+    min-height: var(--touch-target-min);
+  }
+
+  /* Score cards - add breathing room */
+  .score-card {
+    padding: calc(1.25rem * var(--density-scale));
+  }
+
+  /* Sidebar links */
+  .aurora-sidebar-link {
+    padding: 0.625rem 0.75rem;
+    min-height: var(--touch-target-min);
+  }
+
+  /* Model badges / small pills */
+  .model-badge,
+  .score-badge-excellent,
+  .score-badge-good,
+  .score-badge-moderate,
+  .score-badge-poor,
+  .score-badge-critical {
+    min-height: 32px;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+
+  /* Social share buttons */
+  .social-share-btn {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Hamburger menu button */
+  .aurora-menu-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/* ── 3. iOS / Android zoom prevention ─────────────────────────── *
+ * Inputs with font-size < 16px trigger auto-zoom on iOS Safari.
+ * Force 16px minimum on touch devices.                           */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  textarea,
+  select {
+    font-size: max(1rem, 16px) !important;
+  }
+}
+
+/* ── 4. Hover-reveal → touch fallback ─────────────────────────── *
+ * Elements hidden behind :hover (opacity-0 → group-hover:opacity-100)
+ * must be accessible on touch. On coarse pointers, disable the
+ * hide-on-nohover and show them persistently, but at reduced opacity
+ * so they don't overwhelm the layout.                            */
+@media (hover: none) {
+  /* Remove buttons hidden behind group-hover (e.g. ServerHeadersPage) */
+  .group [class*="opacity-0"][class*="group-hover:opacity"] {
+    opacity: 0.6 !important;
+  }
+
+  /* Card hover elevation - apply permanently on touch */
+  .card-charcoal,
+  .card-smoke,
+  .score-card {
+    /* Give touch users the "hovered" visual by default */
+    border-color: rgba(255,255,255,0.10);
+  }
+
+  /* Action button prominent - no translateY on touch (prevents jank) */
+  .action-button-prominent:active {
+    transform: translateY(-1px);
+    border-color: rgba(249,115,22,0.8);
+  }
+  .action-button-prominent:hover {
+    transform: none;
+  }
+
+  /* CTA primary - use :active instead of :hover for feedback */
+  .btn-cta-primary:active {
+    box-shadow:
+      0 6px 22px rgba(249,115,22,0.60),
+      0 0 0 1px rgba(251,191,36,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+
+  /* CTA secondary */
+  .btn-cta-secondary:active {
+    background: rgba(34,211,238,0.16);
+    box-shadow: 0 4px 18px rgba(34,211,238,0.25);
+  }
+
+  /* Sidebar link active state */
+  .aurora-sidebar-link:active {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.9);
+    border-color: rgba(255,255,255,0.06);
+  }
+}
+
+/* ── 5. Touch-mode density scaling ────────────────────────────── *
+ * When .touch-mode is toggled on <html>, scale up spacing/padding
+ * in high-density dashboard views for easier tapping.            */
+html.touch-mode .score-card {
+  padding: calc(1.25rem * var(--density-scale));
+}
+html.touch-mode .audit-tab {
+  padding: calc(0.625rem * var(--density-scale)) calc(1rem * var(--density-scale));
+}
+html.touch-mode .aurora-sidebar-link {
+  padding: calc(0.475rem * var(--density-scale)) calc(0.625rem * var(--density-scale));
+  gap: calc(0.625rem * var(--density-scale));
+}
+html.touch-mode .card-charcoal > div,
+html.touch-mode .card-smoke > div {
+  padding: calc(1rem * var(--density-scale));
+}
+html.touch-mode .model-badge {
+  padding: calc(0.1875rem * var(--density-scale)) calc(0.5rem * var(--density-scale));
+}
+
+/* ── 6. Scroll-snap utility (for swipeable card rows) ─────────── */
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  scroll-padding: 1rem;
+}
+.snap-x-mandatory::-webkit-scrollbar {
+  display: none;
+}
+.snap-x-mandatory > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Proximity variant (less strict) */
+.snap-x-proximity {
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  scroll-padding: 1rem;
+}
+.snap-x-proximity::-webkit-scrollbar {
+  height: 4px;
+}
+.snap-x-proximity > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── 7. Touch feedback utilities ──────────────────────────────── */
+@media (pointer: coarse) {
+  /* Tap highlight for interactive cards */
+  .touch-feedback {
+    -webkit-tap-highlight-color: rgba(249,115,22,0.12);
+    touch-action: manipulation;
+  }
+
+  /* Disable pull-to-refresh on embedded views */
+  .no-overscroll {
+    overscroll-behavior: contain;
+  }
+
+  /* Prevent accidental text selection during scroll */
+  .touch-scroll-safe {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-x pan-y;
+  }
+
+  /* Re-enable selection for content areas */
+  .touch-scroll-safe p,
+  .touch-scroll-safe span,
+  .touch-scroll-safe pre,
+  .touch-scroll-safe code {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* ── Reduced motion: disable snap smooth scrolling ── */
+@media (prefers-reduced-motion: reduce) {
+  .snap-x-mandatory,
+  .snap-x-proximity {
+    scroll-behavior: auto;
+  }
+}

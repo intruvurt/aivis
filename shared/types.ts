@@ -790,6 +790,8 @@ export interface AnalysisResponse {
   strict_rubric?: StrictRubricSystem;
   /** BRAG: scrape method pipeline info and badge */
   scrape_info?: BragScrapeInfo;
+  /** BRAG validation gate result — cite ledger + validated findings */
+  brag_validation?: BragValidationResult;
   /** User-supplied findability goal strings */
   findability_goals?: string[];
   /** Goal alignment result comparing content against findability goals */
@@ -1261,6 +1263,79 @@ export interface ModelAnalysis {
 export const BRAG_ACRONYM = 'BRAG';
 export const BRAG_EXPANSION = 'Based-Retrieval-Auditable-Grading';
 export const BRAG_TRAIL_LABEL = 'BRAG Trail';
+
+/* ── BRAG Validation Gate types ─────────────────────────────────────────── */
+
+/** Source that produced the BRAG finding */
+export type BragFindingSource = 'rule' | 'ai' | 'python';
+
+/** A single validated BRAG finding — the atomic unit of truth. */
+export interface BragFinding {
+  /** Deterministic BRAG ID: BRAG-{source}-{sha256_12} */
+  brag_id: string;
+  /** Which system produced this finding */
+  source: BragFindingSource;
+  /** Rule ID if source=rule (e.g. "C02", "M01") */
+  rule_id?: string;
+  /** Human-readable title */
+  title: string;
+  /** Severity level */
+  severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
+  /** Whether this is a hard blocker that caps the score */
+  is_hard_blocker: boolean;
+  /** Evidence key(s) this finding is grounded in */
+  evidence_keys: string[];
+  /** Evidence status values */
+  evidence_statuses: string[];
+  /** Truncated evidence value for audit trail */
+  evidence_value?: string;
+  /** Validation confidence 0.0-1.0 */
+  confidence: number;
+  /** Scoring family for grouping */
+  family?: string;
+  /** Remediation guidance */
+  remediation?: string;
+}
+
+/** One link in the CITE LEDGER hash chain */
+export interface CiteLedgerEntry {
+  /** Position in the chain */
+  sequence: number;
+  /** BRAG ID of the finding this entry covers */
+  brag_id: string;
+  /** SHA-256 hash of the finding content */
+  content_hash: string;
+  /** Previous entry's chain hash (genesis = 64 zeroes) */
+  previous_hash: string;
+  /** SHA-256(previous_hash + content_hash) */
+  chain_hash: string;
+  /** ISO 8601 timestamp */
+  timestamp: string;
+}
+
+/** Full result returned by the BRAG validation gate */
+export interface BragValidationResult {
+  /** Audit run this validation belongs to */
+  audit_id: string;
+  /** Target URL */
+  url: string;
+  /** When the gate ran */
+  validated_at: string;
+  /** Validated findings — only these surface to the user */
+  findings: BragFinding[];
+  /** Claims that failed validation — suppressed from user view */
+  rejected_count: number;
+  /** Cryptographic hash chain for tamper detection */
+  cite_ledger: CiteLedgerEntry[];
+  /** Score derived purely from validated findings: 100 − Σ deductions */
+  derived_score: number;
+  /** Number of validated findings */
+  finding_count: number;
+  /** Root hash of the cite ledger chain */
+  root_hash: string;
+  /** Gate implementation version */
+  gate_version: string;
+}
 
 /* ── BRAG Scrape Method Pipeline ────────────────────────────────────────── */
 

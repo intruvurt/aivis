@@ -26,6 +26,7 @@ from .nlp_analyzer import NLPAnalyzer
 from .evidence_ledger import EvidenceLedger
 from .document_parser import DocumentParser
 from .content_fingerprint import ContentFingerprinter
+from .brag_validator import BragValidator
 
 # ---------------------------------------------------------------------------
 # App
@@ -54,6 +55,7 @@ nlp = NLPAnalyzer()
 ledger = EvidenceLedger()
 doc_parser = DocumentParser()
 fingerprinter = ContentFingerprinter()
+brag_gate = BragValidator()
 
 
 # ---------------------------------------------------------------------------
@@ -122,6 +124,17 @@ class OcrCrossCheckRequest(BaseModel):
     ocr_texts: list[str] = Field(default_factory=list)
     scraped_word_count: int = 0
     ocr_word_count: int = 0
+    internal_key: str | None = None
+
+
+class BragValidateRequest(BaseModel):
+    """BRAG Validation Gate — validate all findings against evidence."""
+    audit_id: str
+    url: str
+    evidence_items: list[dict[str, Any]] = Field(default_factory=list)
+    rule_results: list[dict[str, Any]] = Field(default_factory=list)
+    ai_recommendations: list[dict[str, Any]] = Field(default_factory=list)
+    scrape_summary: dict[str, Any] | None = None
     internal_key: str | None = None
 
 

@@ -96,6 +96,7 @@ const PublicReportPage = React.lazy(() => import("./pages/PublicReportPage"));
 const CompliancePage = React.lazy(() => import("./pages/CompliancePage"));
 const ChangelogPage = React.lazy(() => import("./pages/ChangelogPage"));
 const PressPage = React.lazy(() => import("./pages/PressPage"));
+const TripleCheckMethodologyPage = React.lazy(() => import("./pages/TripleCheckMethodologyPage"));
 const InviteAcceptPage = React.lazy(() => import("./pages/InviteAcceptPage"));
 const AgencyPage = React.lazy(() => import("./pages/AgencyPage"));
 const SnapshotPage = React.lazy(() => import("./pages/SnapshotPage"));
@@ -223,6 +224,7 @@ export default function App() {
             <Route path="/compliance" element={<CompliancePage />} />
             <Route path="/disclosures" element={<DisclosuresPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
+            <Route path="/triple-check-methodology" element={<TripleCheckMethodologyPage />} />
             <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
             <Route path="/partnership-payments" element={<PartnershipPaymentPage />} />
             <Route path="/r/:code" element={<ReferralRedirect />} />

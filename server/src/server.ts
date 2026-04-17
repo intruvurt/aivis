@@ -266,7 +266,8 @@ import {
   buildDeterministicResponseAdditions,
   attachDeterministicToAudit,
 } from "./services/audit/deterministicPipeline.js";
-import { loadEvidenceForRun } from "./services/audit/evidenceLedger.js";
+import { loadEvidenceForRun, extractEvidenceFromScrapedData } from "./services/audit/evidenceLedger.js";
+import { evaluateRules, computeScore as computeRuleScore, persistRuleResults, persistScoreSnapshot } from "./services/audit/ruleEngine.js";
 import {
   extractEvidenceFromScrape,
   enrichEvidenceFromAnalysis,
@@ -9870,6 +9871,13 @@ app.post(
           request_id: requestId,
         });
 
+      // ── Triple-Check Stage 1: Structured Evidence Extraction + Rule Engine ──
+      // Build the typed evidence ledger from scraped data (30 evidence items + contradiction detection).
+      // Then run the 30-rule deterministic rule engine pre-AI to establish evidence-derived score bounds.
+      const evidenceLedger = extractEvidenceFromScrapedData(requestId, scraped);
+      const ruleResults = evaluateRules(evidenceLedger.items, evidenceLedger.contradictions.length);
+      const ruleSnapshot = computeRuleScore(ruleResults);
+
       const normalizedTier = normalizedRequestTier;
       const isTripleCheck =
         normalizedTier === "signal" || normalizedTier === "scorefix";
@@ -11587,6 +11595,13 @@ For each recommendation:
         );
       }
 
+      // ── Rule engine hard blocker cap (deterministic override) ──
+      // If the 30-rule engine detected hard blockers (e.g. AI crawlers blocked,
+      // missing title, missing JSON-LD), enforce the score cap regardless of AI output.
+      if (ruleSnapshot.scoreCap !== null && finalVisibilityScore > ruleSnapshot.scoreCap) {
+        finalVisibilityScore = ruleSnapshot.scoreCap;
+      }
+
       // Keep AI3 raw recommendation for diagnostics/transparency, but do not let it override
       // the evidence-weighted final score directly.
       if (tripleCheckResult.enabled) {
@@ -12126,6 +12141,14 @@ For each recommendation:
         },
         mock_data_scan: mockDataScan,
         evidence_manifest: evidenceManifest,
+        rule_engine: {
+          score: ruleSnapshot.finalScore,
+          hard_blocker_count: ruleSnapshot.hardBlockerCount,
+          score_cap: ruleSnapshot.scoreCap,
+          family_scores: ruleSnapshot.familyScores,
+          contradiction_count: evidenceLedger.contradictions.length,
+          score_version: ruleSnapshot.scoreVersion,
+        },
         ...(privateExposureScanResult
           ? { private_exposure_scan: privateExposureScanResult }
           : {}),
@@ -12684,6 +12707,18 @@ For each recommendation:
 
           // ── Background Python deep analysis + cryptographic evidence ledger ──
           if (dbAuditId && scraped) {
+            // Persist rule engine results + score snapshot (fire-and-forget)
+            backgroundWithTimeout(
+              `rule-engine:${requestId}`,
+              (async () => {
+                await persistRuleResults(dbAuditId!, ruleResults);
+                await persistScoreSnapshot(dbAuditId!, userId, targetUrl, ruleSnapshot);
+                console.log(
+                  `[${requestId}] Rule engine persisted: score=${ruleSnapshot.finalScore}, blockers=${ruleSnapshot.hardBlockerCount}, cap=${ruleSnapshot.scoreCap ?? "none"}`,
+                );
+              })(),
+            );
+
             backgroundWithTimeout(
               `deep-analysis:${requestId}`,
               (async () => {

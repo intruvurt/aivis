@@ -269,10 +269,10 @@ const routes = [
 	},
 	{
 		path: '/methodology',
-		title: 'AiVIS Methodology | How AI Visibility Scoring Works',
-		description: 'How AiVIS scores AI visibility: 6-category evidence model covering content, schema, headings, metadata and technical SEO with BRAG trail docs.',
-		ogTitle: 'AiVIS Methodology - Evidence Grounded AI Visibility Scoring',
-		ogDescription: 'The complete scoring framework behind AiVIS audits: dimension weights, validation logic, BRAG trail protocol and how scores translate to real citation improvements.',
+		title: 'AiVIS Methodology | CITE LEDGER & BRAG Evidence Protocol',
+		description: 'How AiVIS audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the BRAG Trail protocol that ground every finding in crawl-observable data.',
+		ogTitle: 'AiVIS Methodology — CITE LEDGER & BRAG Evidence Protocol',
+		ogDescription: 'CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ.',
 		ogType: 'article',
 	},
 	{

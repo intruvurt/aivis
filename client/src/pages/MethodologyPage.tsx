@@ -160,6 +160,51 @@ const pipelineSteps = [
   },
 ] as const;
 
+/* ─── CITE LEDGER evidence pipeline ──────────────────────────────────── */
+
+const citeLedgerPhases = [
+  {
+    phase: "Extraction",
+    input: "Raw DOM / HTML",
+    transformation:
+      "Denoising — ML identifies non-content elements (ads, sidebars, boilerplate) based on patterns learned from previous audit removals. Elements that were consistently excluded in historical audits are deprioritized automatically.",
+    output: "Cleaned Data Packet",
+  },
+  {
+    phase: "Alignment",
+    input: "Cleaned Packet",
+    transformation:
+      "Semantic Mapping — ML aligns extracted text to known entity schemas found in historically successful citations. Extracted fragments are matched against structural patterns that produced citable evidence in prior audits.",
+    output: "Structured JSON-LD",
+  },
+  {
+    phase: "Validation",
+    input: "Structured Data",
+    transformation:
+      "Hallucination Scoring — Cross-references the citation coordinates with the stable DOM anchor. Every structured claim is validated against the immutable extraction snapshot to confirm it was actually observed on the page.",
+    output: "Citable Evidence",
+  },
+] as const;
+
+const citeLedgerPrinciples = [
+  {
+    title: "Lock the upstream",
+    text: "The SERP fetch → Cloudflare Render path is the only source of truth. No extraction bypasses, no manual content injection. The pipeline is deterministic from crawl to evidence.",
+  },
+  {
+    title: "Audit-integrated scoring",
+    text: "ML scoring runs after DOM stabilization but before citation finalization. Evidence that passes the reliability threshold (≥ 0.98) earns a citation handle. Evidence below the threshold is flagged as volatile and excluded from the citable record.",
+  },
+  {
+    title: "Fix-cycle training",
+    text: "Every manual correction to a citation produces a delta between the scraped value and the fixed value. That delta is fed back into the ML model to refine future extraction — turning each audit-fix cycle into a training signal.",
+  },
+  {
+    title: "Deterministic mapping",
+    text: "Every citation contains a unique hash that resolves back to the original rendered HTML source. The audit trail is fully reversible: from final citation handle → structured evidence → cleaned extraction → raw DOM snapshot.",
+  },
+] as const;
+
 /* ─── Methodology FAQ ────────────────────────────────────────────────── */
 
 const methodologyFaq = [
@@ -202,6 +247,11 @@ const methodologyFaq = [
     question: "Does AiVIS guarantee citation by ChatGPT, Perplexity, or other models?",
     answer:
       "No. AiVIS measures structural readiness for citation — whether a page provides the signals AI models need to extract and cite content accurately. Actual citation depends on query relevance, competitive content, and model-specific behavior. AiVIS improves the probability of accurate citation, not the certainty of it.",
+  },
+  {
+    question: "What is the CITE LEDGER?",
+    answer:
+      "The CITE LEDGER is the structured record each AiVIS audit produces — the transformation layer that converts BRAG-scraped evidence into deterministic, citable ground truth. It uses an ML-driven pipeline with three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle.",
   },
 ] as const;
 
@@ -274,20 +324,20 @@ const failureModes = [
 
 export default function MethodologyPage() {
   usePageMeta({
-    title: "AiVIS Methodology | How AI Answer Audit Scoring Works",
+    title: "AiVIS Methodology | CITE LEDGER & BRAG Evidence Protocol",
     description:
-      `How AiVIS audits AI answer readiness: six weighted dimensions covering content extraction, schema coverage, AI readability, metadata, and technical access. Every finding is grounded in the ${BRAG_PROTOCOL_LABEL}.`,
+      `How AiVIS audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the ${BRAG_PROTOCOL_LABEL} that ground every finding in crawl-observable data.`,
     path: "/methodology",
-    ogTitle: "AiVIS Methodology — Evidence-backed AI Answer Audit Scoring",
+    ogTitle: "AiVIS Methodology — CITE LEDGER & BRAG Evidence Protocol",
     ogDescription:
-      `The complete scoring framework behind AiVIS audits: six dimension weights, ${BRAG_PROTOCOL_LABEL}, triple-check pipeline, score bands, and methodology FAQ.`,
+      `Complete scoring framework: CITE LEDGER pipeline, ${BRAG_PROTOCOL_LABEL}, six dimension weights, triple-check consensus, and methodology FAQ.`,
     ogType: "article",
     structuredData: [
       buildWebPageSchema({
         path: "/methodology",
-        name: "AiVIS Methodology — How AI Answer Audit Scoring Works",
+        name: "AiVIS Methodology — CITE LEDGER & BRAG Evidence Protocol",
         description:
-          "Complete audit scoring framework: six weighted dimensions, BRAG evidence protocol, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
+          "CITE LEDGER evidence pipeline, BRAG protocol, six weighted dimensions, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
       }),
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
@@ -456,6 +506,91 @@ export default function MethodologyPage() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── CITE LEDGER: from BRAG evidence to citable data ──────────── */}
+      <section id="cite-ledger" className="mt-12 scroll-mt-24">
+        <h2 className="text-2xl font-semibold tracking-tight text-white">CITE LEDGER — from BRAG evidence to citable data</h2>
+        <p className="mt-3 text-base leading-7 text-white/64">
+          BRAG ({BRAG_EXPANSION}) is the evidence protocol. <strong className="text-white/88">CITE LEDGER</strong> is the structured record each audit produces — the transformation layer that converts messy scraped content into deterministic, citable ground truth. ML is not used as a generator. It operates as a <em>deterministic filter</em>: its job is to reject any scraped evidence that does not meet the structural requirements for a valid citation.
+        </p>
+
+        {/* Audit-Fix ML Feedback Loop */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-white mb-2">The audit-fix ML feedback loop</h3>
+          <p className="text-sm leading-6 text-white/56 mb-5">
+            The ML model is trained on audit failures (where citations were rejected or incorrect) and manual fixes (human corrections to data). Each phase transforms the data closer to citation-ready state.
+          </p>
+          <div className="space-y-3">
+            {citeLedgerPhases.map((phase) => (
+              <article key={phase.phase} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-5">
+                  <div className="shrink-0">
+                    <span className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-200">{phase.phase}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/45 mb-2">
+                      <span><span className="font-medium text-white/55">Input:</span> {phase.input}</span>
+                      <span><span className="font-medium text-white/55">Output:</span> {phase.output}</span>
+                    </div>
+                    <p className="text-sm leading-6 text-white/64">{phase.transformation}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Evidence transformation */}
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-white mb-2">Transforming scraped evidence into citations</h3>
+          <p className="text-sm leading-6 text-white/56 mb-5">
+            For data to be citable, it must transition from subjective interpretation to objective reference. The pipeline enforces this through three layers.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-300/70 mb-2">Upstream</p>
+              <h4 className="text-base font-semibold text-white">Immutable capture</h4>
+              <p className="mt-2 text-sm leading-6 text-white/64">The system captures the DOM snapshot and Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the immutable base layer of every CITE LEDGER record.</p>
+            </article>
+            <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300/70 mb-2">ML Auditor</p>
+              <h4 className="text-base font-semibold text-white">Stability classification</h4>
+              <p className="mt-2 text-sm leading-6 text-white/64">A classifier trained on citable vs. non-citable data evaluates DOM element stability. If an element's ID or class varies too much across audit logs, the ML flags it as volatile and requests a more stable anchor.</p>
+            </article>
+            <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300/70 mb-2">Downstream</p>
+              <h4 className="text-base font-semibold text-white">Reliability scoring</h4>
+              <p className="mt-2 text-sm leading-6 text-white/64">ML generates a reliability score from 0.0 to 1.0. Only data scoring above 0.98 earns a citation handle — a unique, auditable reference that resolves back to the original rendered source.</p>
+            </article>
+          </div>
+        </div>
+
+        {/* Implementation principles */}
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-white mb-4">Pipeline principles</h3>
+          <div className="space-y-3">
+            {citeLedgerPrinciples.map((principle, i) => (
+              <article key={principle.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+                <div className="flex items-start gap-4">
+                  <span className="text-xs font-mono font-bold text-white/22 shrink-0 pt-0.5 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-base font-semibold text-white">{principle.title}</h4>
+                    <p className="mt-2 text-sm leading-6 text-white/64">{principle.text}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Callout */}
+        <div className="mt-6 rounded-3xl border border-cyan-400/20 bg-cyan-400/[0.04] p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300/70 mb-3">Design constraint</p>
+          <p className="text-sm leading-7 text-white/80">
+            ML in the CITE LEDGER pipeline is a <strong className="text-white">deterministic filter</strong>, not a generator. Its job is to say "no" to any scraped evidence that does not perfectly align with the structure required for a valid citation. By the time data reaches the user, it is not just scraped information — it is a verified asset backed by the history of the system's audits and fixes.
+          </p>
         </div>
       </section>
 

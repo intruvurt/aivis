@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AiVIS Methodology | How AI Visibility Scoring Works</title>
-  <meta name="description" content="How AiVIS scores AI visibility: a 6-category evidence-grounded model covering content depth, schema quality, heading integrity, metadata, technical SEO, and machine readability. Includes scoring formula, dimension weights, and BRAG trail documentation." />
-  <meta property="og:title" content="AiVIS Methodology - Evidence Grounded AI Visibility Scoring" />
-  <meta property="og:description" content="The complete scoring framework behind AiVIS audits: dimension weights, validation logic, BRAG trail protocol, and how scores translate to real citation improvements." />
+  <title>AiVIS Methodology | CITE LEDGER &amp; BRAG Evidence Protocol</title>
+  <meta name="description" content="How AiVIS audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the BRAG Trail protocol that ground every finding in crawl-observable data." />
+  <meta property="og:title" content="AiVIS Methodology — CITE LEDGER &amp; BRAG Evidence Protocol" />
+  <meta property="og:description" content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ." />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://aivis.biz/methodology" />
   <meta property="og:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AiVIS Methodology - Evidence Grounded AI Visibility Scoring" />
-  <meta name="twitter:description" content="The complete scoring framework behind AiVIS audits: dimension weights, validation logic, BRAG trail protocol, and how scores translate to real citation improvements." />
+  <meta name="twitter:title" content="AiVIS Methodology — CITE LEDGER &amp; BRAG Evidence Protocol" />
+  <meta name="twitter:description" content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ." />
   <meta name="twitter:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://aivis.biz/methodology" />
@@ -24,8 +24,8 @@
       {
         "@type": "TechArticle",
         "@id": "https://aivis.biz/methodology#article",
-        "headline": "AiVIS Methodology: Evidence-Grounded AI Visibility Scoring",
-        "description": "The complete scoring framework behind AiVIS audits: 6 weighted dimensions, validation logic, BRAG trail protocol, and how scores translate to citation improvements in answer engines.",
+        "headline": "AiVIS Methodology: CITE LEDGER & BRAG Evidence Protocol",
+        "description": "CITE LEDGER evidence pipeline, BRAG protocol, six weighted dimensions, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
         "url": "https://aivis.biz/methodology",
         "datePublished": "2026-03-15T00:00:00-05:00",
         "dateModified": "2026-03-17T00:00:00-05:00",
@@ -78,6 +78,14 @@
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Pages scoring 70 or above are generally citation-ready. Pages between 50-69 are parseable but deprioritized. Pages below 50 face structural barriers that prevent consistent citation regardless of content quality. Most competitive queries are won by pages scoring 75 or higher."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the CITE LEDGER?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The CITE LEDGER is the structured record each AiVIS audit produces — the transformation layer that converts BRAG-scraped evidence into deterministic, citable ground truth. It uses an ML-driven pipeline with three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle."
             }
           }
         ]
@@ -446,6 +454,86 @@
     Improving all six dimensions together is the only reliable path to consistent citation
     across answer engines.
   </p>
+
+  <h2 id="cite-ledger">CITE LEDGER — from BRAG evidence to citable data</h2>
+  <p>
+    BRAG (Based-Retrieval-Auditable-Grading) is the evidence protocol. <strong>CITE LEDGER</strong>
+    is the structured record each audit produces — the transformation layer that converts messy
+    scraped content into deterministic, citable ground truth. ML in this pipeline operates as
+    a <strong>deterministic filter</strong>: its job is to reject any scraped evidence that
+    does not meet the structural requirements for a valid citation.
+  </p>
+
+  <h3>The audit-fix ML feedback loop</h3>
+  <p>
+    The ML model is trained on audit failures (where citations were rejected or incorrect) and
+    manual fixes (human corrections to data). Each phase transforms the data closer to
+    citation-ready state.
+  </p>
+
+  <table class="dim-table" aria-label="CITE LEDGER ML pipeline phases">
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Input</th>
+        <th>ML Transformation</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Extraction</td>
+        <td>Raw DOM / HTML</td>
+        <td>Denoising — ML identifies non-content elements (ads, sidebars, boilerplate) based on patterns learned from previous audit removals.</td>
+        <td>Cleaned Data Packet</td>
+      </tr>
+      <tr>
+        <td>Alignment</td>
+        <td>Cleaned Packet</td>
+        <td>Semantic Mapping — ML aligns extracted text to known entity schemas found in historically successful citations.</td>
+        <td>Structured JSON-LD</td>
+      </tr>
+      <tr>
+        <td>Validation</td>
+        <td>Structured Data</td>
+        <td>Hallucination Scoring — Cross-references the citation coordinates with the stable DOM anchor to confirm the data was actually observed on the page.</td>
+        <td>Citable Evidence</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Transforming scraped evidence into citations</h3>
+  <p>
+    For data to be citable, it must transition from subjective interpretation to objective
+    reference. The pipeline enforces this through three layers:
+  </p>
+  <p>
+    <strong>Upstream — Immutable capture.</strong> The system captures the DOM snapshot and
+    Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the
+    immutable base layer of every CITE LEDGER record.
+  </p>
+  <p>
+    <strong>ML Auditor — Stability classification.</strong> A classifier trained on citable
+    vs. non-citable data evaluates DOM element stability. If an element's ID or class varies
+    too much across audit logs, the ML flags it as volatile and requests a more stable anchor.
+  </p>
+  <p>
+    <strong>Downstream — Reliability scoring.</strong> ML generates a reliability score from
+    0.0 to 1.0. Only data scoring above 0.98 earns a citation handle — a unique, auditable
+    reference that resolves back to the original rendered source.
+  </p>
+
+  <h3>Pipeline principles</h3>
+  <div class="pipeline-steps">
+    <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>Lock the upstream</strong><span>The SERP fetch → Cloudflare Render path is the only source of truth. No extraction bypasses, no manual content injection. The pipeline is deterministic from crawl to evidence.</span></div></div>
+    <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>Audit-integrated scoring</strong><span>ML scoring runs after DOM stabilization but before citation finalization. Evidence that passes the reliability threshold (≥ 0.98) earns a citation handle. Evidence below the threshold is flagged as volatile and excluded from the citable record.</span></div></div>
+    <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>Fix-cycle training</strong><span>Every manual correction to a citation produces a delta between the scraped value and the fixed value. That delta is fed back into the ML model to refine future extraction — turning each audit-fix cycle into a training signal.</span></div></div>
+    <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>Deterministic mapping</strong><span>Every citation contains a unique hash that resolves back to the original rendered HTML source. The audit trail is fully reversible: from final citation handle → structured evidence → cleaned extraction → raw DOM snapshot.</span></div></div>
+  </div>
+
+  <div class="callout callout-info">
+    <p><strong>Design constraint:</strong> ML in the CITE LEDGER pipeline is a deterministic filter, not a generator. Its job is to say "no" to any scraped evidence that does not perfectly align with the structure required for a valid citation. By the time data reaches the user, it is not just scraped information — it is a verified asset backed by the history of the system's audits and fixes.</p>
+  </div>
 
   <h2>Related documentation</h2>
   <p>

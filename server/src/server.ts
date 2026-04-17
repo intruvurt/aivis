@@ -37,6 +37,7 @@ import competitorRoutes from "./routes/competitors.js";
 import citationRoutes from "./routes/citations.js";
 import mentionRoutes from "./routes/mentions.js";
 import entityRoutes from "./routes/entity.js";
+import citeLedgerRoutes from "./routes/citeLedger.js";
 import AutoScoreFixRoutes from "./routes/autoScoreFixRoutes.js";
 import reverseEngineerApi from "./routes/reverseEngineerApi.js";
 import schemaGeneratorRoutes from "./routes/schemaGeneratorRoutes.js";
@@ -269,6 +270,7 @@ import {
 import { loadEvidenceForRun, extractEvidenceFromScrapedData } from "./services/audit/evidenceLedger.js";
 import { evaluateRules, computeScore as computeRuleScore, persistRuleResults, persistScoreSnapshot } from "./services/audit/ruleEngine.js";
 import { runBragValidationGate, persistBragTrail, persistCiteLedger } from "./services/bragGate.js";
+import { runCiteLedgerPipeline } from "./services/citeLedgerService.js";
 import {
   extractEvidenceFromScrape,
   enrichEvidenceFromAnalysis,
@@ -1614,6 +1616,7 @@ app.use("/api/competitors", competitorRoutes);
 app.use("/api/citations", citationRoutes);
 app.use("/api/mentions", mentionRoutes);
 app.use("/api/entity", entityRoutes);
+app.use("/api/cite-ledger", citeLedgerRoutes);
 app.use("/api/auto-score-fix", AutoScoreFixRoutes);
 app.use("/api/github-app", githubAppRoutes);
 app.use("/api/reverse-engineer", reverseEngineerApi);
@@ -12904,6 +12907,23 @@ For each recommendation:
                     `[${requestId}] BRAG trail persisted: ${bragValidation!.finding_count} findings, root_hash=${bragValidation!.root_hash.slice(0, 12)}…`,
                   );
                 })(),
+              );
+            }
+
+            // ── Cite Ledger Pipeline: entity resolution + drift tracking ──
+            {
+              const domain = (() => { try { return new URL(targetUrl).hostname; } catch { return targetUrl; } })();
+              backgroundWithTimeout(
+                `cite-ledger:${requestId}`,
+                runCiteLedgerPipeline({
+                  userId,
+                  domain,
+                  url: targetUrl,
+                  auditRunId: dbAuditId!,
+                  score: finalVisibilityScore,
+                  evidenceCount: presentEvidenceCount,
+                  scoreSource: pipelineScoreSource,
+                }),
               );
             }
 

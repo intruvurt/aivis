@@ -183,8 +183,9 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
       setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
     }
 
-    // Canonical URL
-    const canonicalUrl = !path || path === '/' ? BASE_URL : `${BASE_URL}${path}`;
+    // Canonical URL — strip trailing slashes for consistency (Google treats /path and /path/ as distinct URLs)
+    const normalizedPath = path && path !== '/' ? path.replace(/\/+$/, '') : path;
+    const canonicalUrl = !normalizedPath || normalizedPath === '/' ? BASE_URL : `${BASE_URL}${normalizedPath}`;
     setCanonical(canonicalUrl);
 
     // Open Graph

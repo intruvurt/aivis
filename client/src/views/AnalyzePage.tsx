@@ -879,7 +879,7 @@ const AnalyzePage: React.FC = () => {
 
             <div className="mt-4 mb-5 overflow-hidden rounded-2xl border border-white/10">
               <img
-                src="/structured.jpeg"
+                src="/images/structured.jpeg"
                 alt="Structured content extraction during audit"
                 className="h-32 w-full object-cover object-center opacity-85"
                 loading="lazy"

@@ -131,6 +131,15 @@ function ScrollToTop() {
   return null;
 }
 
+/** Strip trailing slashes client-side so Google indexes the canonical (no-slash) version */
+function TrailingSlashRedirect() {
+  const { pathname, search, hash } = useLocation();
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    return <Navigate to={`${pathname.replace(/\/+$/, '')}${search}${hash}`} replace />;
+  }
+  return null;
+}
+
 function AuthRouteGate() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const location = useLocation();
@@ -185,6 +194,7 @@ export default function App() {
       />
       <CookieConsent />
       <ScrollToTop />
+      <TrailingSlashRedirect />
 
       {!isHydrated ? null : (
         <React.Suspense fallback={<PageLoadingSpinner />}>

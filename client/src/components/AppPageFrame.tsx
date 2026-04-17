@@ -18,7 +18,7 @@ export default function AppPageFrame({
   maxWidthClass = "max-w-7xl",
 }: AppPageFrameProps) {
   return (
-    <div className={`mx-auto w-full ${maxWidthClass} space-y-6 text-white`}>
+    <div className={`mx-auto w-full ${maxWidthClass} space-y-6 text-white animate-fade-up`}>
       <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(12,18,33,0.92))] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.28)] sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">

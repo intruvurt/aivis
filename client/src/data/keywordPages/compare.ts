@@ -1181,4 +1181,358 @@ export const comparePages: KeywordPage[] = [
     ctaText: "Audit your AI visibility",
     ctaLink: "/app/analyze",
   },
+  {
+    slug: "aivis-vs-semrush",
+    cluster: "compare",
+    title: "AiVIS vs Semrush: AI Citation Audit vs SEO Suite",
+    metaTitle: "AiVIS vs Semrush — AI Visibility Audit vs SEO Analytics | AiVIS",
+    metaDescription:
+      "Compare AiVIS with Semrush. Semrush tracks keyword rankings and backlinks; AiVIS audits whether AI answer engines can parse, extract, and cite your content.",
+    primaryKeyword: "aivis vs semrush",
+    secondaryKeyword: "ai citation audit vs seo tool",
+    hook: "Semrush is the industry standard for keyword research, backlink analysis, and competitive SEO intelligence. AiVIS solves a fundamentally different problem: whether ChatGPT, Perplexity, Claude, and Google AI Overviews can actually read, interpret, and cite your website content.",
+    sections: [
+      {
+        heading: "What Semrush Tracks vs What AiVIS Audits",
+        content: [
+          "Semrush measures keyword positions, organic traffic estimates, backlink profiles, site audits for technical SEO, and PPC intelligence — all optimized for Google's traditional search results.",
+          "AiVIS audits 30+ structural signals that AI answer engines evaluate before citing a source: JSON-LD schema coverage, crawler access for GPTBot and ClaudeBot, heading hierarchy, content extractability, llms.txt presence, and entity clarity.",
+        ],
+      },
+      {
+        heading: "Why Ranking #1 Doesn't Mean AI Visibility",
+        content: [
+          "A site can rank #1 for every target keyword in Semrush and still be invisible to AI models. If your content renders via JavaScript that AI crawlers can't execute, or your robots.txt blocks GPTBot, AI answer engines will never see your pages.",
+          "Semrush was built before AI answer engines existed. It doesn't check schema depth, AI crawler access, or structured data completeness — the signals that determine whether you get cited in AI-generated answers.",
+        ],
+      },
+      {
+        heading: "Can You Use Both?",
+        content: [
+          "Absolutely. Semrush and AiVIS are complementary. Use Semrush for keyword intelligence, backlink monitoring, and traditional ranking. Use AiVIS for AI citation readiness, schema validation, and AI crawler access auditing.",
+          "The CITE LEDGER evidence approach in AiVIS identifies structural gaps that no traditional SEO tool checks — because traditional tools weren't designed for the AI answer engine layer.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does Semrush check AI visibility?",
+        answer:
+          "No. Semrush focuses on Google Search rankings, keyword positions, and backlink profiles. It does not audit AI-specific signals like JSON-LD schema, llms.txt, or whether AI crawlers like GPTBot can access your pages.",
+      },
+      {
+        question: "Is AiVIS a Semrush replacement?",
+        answer:
+          "No. AiVIS is not a keyword tracker or backlink tool. It audits AI citation readiness — a different visibility layer. Use Semrush for SEO intelligence and AiVIS for AI answer engine visibility.",
+      },
+      {
+        question: "Which tool should I use first?",
+        answer:
+          "If your traffic still comes primarily from Google's blue links, start with Semrush. If you've noticed declining click-throughs because AI overviews are answering user queries directly, run an AiVIS audit to see what AI models can and cannot see on your site.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "What is AI visibility?", to: "/why-ai-visibility" },
+      { label: "Schema signals", to: "/signals/json-ld" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Audit your AI visibility now",
+    ctaLink: "/app/analyze",
+  },
+  {
+    slug: "aivis-vs-ahrefs",
+    cluster: "compare",
+    title: "AiVIS vs Ahrefs: AI Visibility Audit vs Backlink Intelligence",
+    metaTitle: "AiVIS vs Ahrefs — AI Citation Readiness vs SEO Link Analysis | AiVIS",
+    metaDescription:
+      "Compare AiVIS with Ahrefs. Ahrefs excels at backlink analysis and keyword explorer; AiVIS audits whether AI answer engines can structurally cite your content.",
+    primaryKeyword: "aivis vs ahrefs",
+    secondaryKeyword: "ai visibility audit vs backlink tool",
+    hook: "Ahrefs is the gold standard for backlink intelligence, content explorer, and keyword difficulty scores. AiVIS operates on a completely different axis: auditing whether your pages are structurally ready to be cited by AI answer engines like ChatGPT, Perplexity, and Claude.",
+    sections: [
+      {
+        heading: "Backlink Authority vs AI Citation Readiness",
+        content: [
+          "Ahrefs measures link authority, referring domains, anchor text distribution, and organic keyword positions. These metrics determine how Google's traditional algorithm ranks your pages.",
+          "AiVIS measures whether AI models can parse your pages at all — JSON-LD schema depth, AI crawler access, heading structure, content extractability, and entity clarity. A page with 10,000 backlinks is still invisible to AI if it blocks GPTBot or renders entirely via JavaScript.",
+        ],
+      },
+      {
+        heading: "Content Explorer vs CITE LEDGER",
+        content: [
+          "Ahrefs Content Explorer finds high-performing content by traffic, backlinks, and social shares. AiVIS CITE LEDGER verifies whether your content is structurally interpretable by AI models — every finding linked to a specific evidence ID through the BRAG framework.",
+          "These are two different lenses on content value: Ahrefs measures how well content performs in traditional search, AiVIS measures how well content can be extracted and cited by AI.",
+        ],
+      },
+      {
+        heading: "Using Ahrefs and AiVIS Together",
+        content: [
+          "They complement each other perfectly. Use Ahrefs to identify your highest-authority pages, then run those same URLs through AiVIS to check whether AI models can actually cite them.",
+          "Many sites discover that their best-performing pages in Ahrefs are completely invisible to AI — missing schema markup, blocking AI crawlers, or relying on JavaScript rendering that models cannot execute.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does Ahrefs check AI crawl access?",
+        answer:
+          "No. Ahrefs checks Googlebot crawl data but does not audit access for GPTBot, ClaudeBot, or other AI-specific crawlers. AiVIS checks whether AI crawlers can reach your pages.",
+      },
+      {
+        question: "Can Ahrefs detect schema gaps?",
+        answer:
+          "Ahrefs site audit checks basic technical SEO issues but does not validate JSON-LD schema depth, llms.txt presence, or AI-specific structured data requirements.",
+      },
+      {
+        question: "Should I cancel Ahrefs for AiVIS?",
+        answer:
+          "No. They solve different problems. Ahrefs is for backlink intelligence and keyword research. AiVIS is for AI citation readiness. Most sites need both.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "AI crawler access", to: "/signals/robots-txt" },
+      { label: "Content extractability", to: "/tools/content-extractability" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Audit your AI citation readiness",
+    ctaLink: "/app/analyze",
+  },
+  {
+    slug: "aivis-vs-otterly",
+    cluster: "compare",
+    title: "AiVIS vs Otterly: Evidence-Linked Audit vs AI Monitoring",
+    metaTitle: "AiVIS vs Otterly — BRAG Evidence Audit vs AI Monitoring Dashboard | AiVIS",
+    metaDescription:
+      "Compare AiVIS with Otterly. Otterly monitors AI search mentions; AiVIS audits the structural signals that determine whether AI models can cite you at all.",
+    primaryKeyword: "aivis vs otterly",
+    secondaryKeyword: "ai audit vs ai monitoring",
+    hook: "Otterly tracks whether your brand appears in AI-generated answers. AiVIS audits why or why not — checking the structural signals that AI models evaluate before deciding to cite a source.",
+    sections: [
+      {
+        heading: "Monitoring vs Root-Cause Auditing",
+        content: [
+          "Otterly provides a monitoring dashboard that tracks your brand's presence across AI answer engines. It tells you where you appear and how often.",
+          "AiVIS goes upstream: it audits the page-level structural signals — schema markup, crawl access, heading hierarchy, content extractability — that determine whether AI models will cite you. Monitoring tells you the symptom; AiVIS diagnoses the cause.",
+        ],
+      },
+      {
+        heading: "Evidence Methodology",
+        content: [
+          "AiVIS anchors every finding to a specific evidence ID through BRAG (Based-Retrieval-Auditable-Grading). Each recommendation is tied to something observable on the page — not a heuristic or a best guess.",
+          "Otterly reports visibility presence without linking findings to page-level structural evidence. AiVIS tells you exactly what to fix and where, with code-level specificity.",
+        ],
+      },
+      {
+        heading: "When You Need Which",
+        content: [
+          "If you need to know whether AI mentions your brand today, Otterly provides that data. If you need to know why AI misses your content and what to fix structurally, AiVIS provides the evidence-backed audit.",
+          "For a complete AI visibility workflow: use AiVIS to fix structural problems first, then Otterly to monitor the results over time.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does Otterly tell me what to fix?",
+        answer:
+          "Otterly focuses on monitoring and tracking AI mentions. AiVIS provides specific, evidence-linked fix recommendations with code examples and structural remediation steps.",
+      },
+      {
+        question: "Does AiVIS monitor AI mentions?",
+        answer:
+          "AiVIS includes brand mention tracking across 19 free sources, but its core function is structural auditing and citation readiness — not ongoing mention monitoring.",
+      },
+      {
+        question: "Can I use both?",
+        answer:
+          "Yes. Fix your structural issues with AiVIS first, then monitor your AI presence with Otterly. They solve consecutive steps of the same problem.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "Brand mention tracking", to: "/mentions" },
+      { label: "CITE LEDGER methodology", to: "/methodology" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Get your evidence-backed audit",
+    ctaLink: "/app/analyze",
+  },
+  {
+    slug: "aivis-vs-reaudit",
+    cluster: "compare",
+    title: "AiVIS vs ReAudit: CITE LEDGER vs Automated SEO Auditing",
+    metaTitle: "AiVIS vs ReAudit — AI Citation Audit vs Automated SEO Reports | AiVIS",
+    metaDescription:
+      "Compare AiVIS with ReAudit. ReAudit automates traditional SEO audits; AiVIS audits AI-specific signals that determine citation readiness for ChatGPT, Perplexity, and Claude.",
+    primaryKeyword: "aivis vs reaudit",
+    secondaryKeyword: "ai citation audit vs seo audit",
+    hook: "ReAudit automates traditional SEO auditing and reporting. AiVIS audits a different signal set entirely — the structural factors that AI answer engines evaluate when deciding whether to cite your content.",
+    sections: [
+      {
+        heading: "Traditional Audit vs AI Visibility Audit",
+        content: [
+          "ReAudit checks traditional SEO signals: broken links, missing meta tags, crawl errors, page speed, and similar technical issues that affect Google rankings.",
+          "AiVIS audits AI-specific signals: JSON-LD schema depth, AI crawler access (GPTBot, ClaudeBot), llms.txt, heading structure for extractability, entity clarity, and content structure that AI models need to generate cited answers.",
+        ],
+      },
+      {
+        heading: "Evidence-Linked Findings",
+        content: [
+          "AiVIS uses the BRAG (Based-Retrieval-Auditable-Grading) framework to tie every recommendation to observable page evidence. Each finding has an evidence ID that maps to specific elements on your page.",
+          "This means you don't get generic recommendations — you get precise, page-specific findings with code-level fix instructions and verifiable evidence trails.",
+        ],
+      },
+      {
+        heading: "Complementary Use",
+        content: [
+          "ReAudit covers traditional SEO hygiene. AiVIS covers AI citation readiness. A site can pass every traditional SEO audit and still be invisible to AI if it lacks structured data or blocks AI crawlers.",
+          "Run ReAudit for your SEO baseline, then AiVIS to ensure AI models can actually interpret and cite your content.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does ReAudit check AI visibility?",
+        answer:
+          "No. ReAudit focuses on traditional SEO signals. It does not check JSON-LD schema depth, AI crawler access, llms.txt, or any of the structural factors AI models use to decide citation eligibility.",
+      },
+      {
+        question: "Is AiVIS an SEO audit tool?",
+        answer:
+          "AiVIS is an AI visibility audit tool. It checks signals specific to AI answer engines, not traditional Google ranking factors. The overlap with SEO tools is minimal because the signal sets are different.",
+      },
+      {
+        question: "Which should I run first?",
+        answer:
+          "Fix traditional SEO hygiene first with ReAudit, then audit AI readiness with AiVIS. AI models still need basic page accessibility, but they also require structured data and signals that traditional SEO tools don't check.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "What is CITE LEDGER?", to: "/methodology" },
+      { label: "Schema validator", to: "/tools/schema-validator" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Audit your AI citation readiness",
+    ctaLink: "/app/analyze",
+  },
+  {
+    slug: "aivis-vs-profound",
+    cluster: "compare",
+    title: "AiVIS vs Profound: Structural Audit vs AI Search Analytics",
+    metaTitle: "AiVIS vs Profound — Evidence-Backed Audit vs AI Search Intelligence | AiVIS",
+    metaDescription:
+      "Compare AiVIS with Profound. Profound provides AI search analytics and keyword tracking; AiVIS audits the structural page signals that determine AI citation eligibility.",
+    primaryKeyword: "aivis vs profound",
+    secondaryKeyword: "ai visibility audit vs ai search analytics",
+    hook: "Profound tracks how your brand performs in AI search results — keyword visibility, share of voice, and competitive positioning. AiVIS goes to the structural root: auditing whether your pages have the signals AI models need before they can cite you at all.",
+    sections: [
+      {
+        heading: "Analytics vs Root-Cause Auditing",
+        content: [
+          "Profound measures downstream outcomes: where you appear in AI search, how often, and for which queries. AiVIS measures upstream causes: whether your pages have the structural foundation that makes citation possible.",
+          "If Profound shows you're invisible in AI answers, AiVIS shows you exactly why — down to specific missing schema, blocked crawlers, or structural gaps with evidence IDs attached to each finding.",
+        ],
+      },
+      {
+        heading: "BRAG Evidence vs Performance Metrics",
+        content: [
+          "AiVIS findings are grounded in the BRAG framework (Based-Retrieval-Auditable-Grading). Every recommendation links to observable page evidence — not aggregated performance metrics or estimated visibility scores.",
+          "Profound gives you performance data to track. AiVIS gives you structural fixes to implement. The data flows in opposite directions: one measures results, the other diagnoses causes.",
+        ],
+      },
+      {
+        heading: "Using Both in a Workflow",
+        content: [
+          "Use AiVIS to audit and fix your structural AI readiness. Use Profound to measure whether those fixes translate into improved AI search visibility over time.",
+          "This creates a closed loop: AiVIS identifies problems → you implement fixes → Profound measures the impact → AiVIS re-audits to find the next layer of improvements.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does Profound tell me what to fix?",
+        answer:
+          "Profound focuses on AI search analytics and visibility tracking. It does not audit page-level structural signals or provide evidence-linked fix recommendations like AiVIS does.",
+      },
+      {
+        question: "Does AiVIS track AI search performance?",
+        answer:
+          "AiVIS focuses on page-level auditing and citation readiness. It includes citation testing and mention tracking, but its core function is structural diagnosis, not ongoing search analytics.",
+      },
+      {
+        question: "Which tool gives faster results?",
+        answer:
+          "AiVIS gives you immediate, actionable findings from a single URL audit. Profound requires ongoing data collection to build visibility trends. Start with AiVIS for structural fixes, add Profound for performance tracking.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "Citation testing", to: "/citations" },
+      { label: "AI visibility methodology", to: "/methodology" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Get your evidence-backed audit",
+    ctaLink: "/app/analyze",
+  },
+  {
+    slug: "aivis-vs-rankscale",
+    cluster: "compare",
+    title: "AiVIS vs RankScale: AI Citation Audit vs Rank Tracking",
+    metaTitle: "AiVIS vs RankScale — CITE LEDGER Audit vs AI Rank Monitoring | AiVIS",
+    metaDescription:
+      "Compare AiVIS with RankScale. RankScale tracks AI ranking positions; AiVIS audits the structural signals that determine whether AI models can cite your content.",
+    primaryKeyword: "aivis vs rankscale",
+    secondaryKeyword: "ai citation audit vs rank tracker",
+    hook: "RankScale monitors AI search ranking positions. AiVIS audits the structural foundation that determines whether ranking is even possible — schema coverage, AI crawler access, content extractability, and 30+ other citation-readiness signals.",
+    sections: [
+      {
+        heading: "Rank Tracking vs Structural Auditing",
+        content: [
+          "RankScale monitors where your pages appear in AI-generated search results and tracks position changes over time. It's a measurement tool for AI search outcomes.",
+          "AiVIS audits the page-level signals that causally determine those outcomes: JSON-LD schema, heading hierarchy, crawler access, entity clarity, and content structure. Without these signals in place, there's nothing for a rank tracker to track.",
+        ],
+      },
+      {
+        heading: "Evidence-Based Diagnostics",
+        content: [
+          "When you don't rank, RankScale tells you that you don't rank. AiVIS tells you why — with specific evidence IDs tied to each finding through the BRAG framework.",
+          "Each AiVIS recommendation maps to something observable on your page: a missing schema property, a blocked AI crawler, a heading structure gap. You know exactly what to fix and can verify the fix was implemented.",
+        ],
+      },
+      {
+        heading: "Complementary Workflow",
+        content: [
+          "Use AiVIS to establish your structural foundation and fix citation readiness issues. Then use RankScale to monitor whether those structural fixes produce ranking improvements over time.",
+          "AiVIS is the diagnostic step; RankScale is the monitoring step. Both are needed for a complete AI visibility workflow.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Does RankScale audit page structure?",
+        answer:
+          "No. RankScale focuses on tracking AI search ranking positions. It does not audit JSON-LD schema, AI crawler access, llms.txt, or other structural signals that determine citation eligibility.",
+      },
+      {
+        question: "Does AiVIS track rankings?",
+        answer:
+          "AiVIS includes citation testing that checks whether AI models cite your content, but it is not a position-tracking tool. Its focus is structural auditing and evidence-linked diagnostics.",
+      },
+      {
+        question: "Which should I start with?",
+        answer:
+          "Start with AiVIS. There's no point tracking rankings for pages that lack the structural signals AI models need to cite them. Fix the foundation first, then track the results.",
+      },
+    ],
+    internalLinks: [
+      { label: "Run a free audit", to: "/app/analyze" },
+      { label: "What is CITE LEDGER?", to: "/methodology" },
+      { label: "Competitor tracking", to: "/competitors" },
+      { label: "All comparisons", to: "/compare" },
+    ],
+    ctaText: "Audit your structural AI readiness",
+    ctaLink: "/app/analyze",
+  },
 ];

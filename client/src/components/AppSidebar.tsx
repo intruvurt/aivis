@@ -134,7 +134,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
           <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
           <div className="min-w-0">
             <p className="aurora-sidebar-title">AiVIS</p>
-            <p className="aurora-sidebar-subtitle">AI Evidence-backed Visibility Engine</p>
+            <p className="aurora-sidebar-subtitle">CITE LEDGER | Evidence-Linked Scores</p>
           </div>
         </NavLink>
         {/* Mobile close button */}

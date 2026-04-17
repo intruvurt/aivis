@@ -24,7 +24,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: 'AiVIS',
-    alternateName: 'CITE LEDGER — BRAG Evidence-Linked Scores',
+    alternateName: 'AiVIS - CITE LEDGER | Evidence-Linked Scores',
     url: `${BASE_URL}/`,
     description:
       'AiVIS CITE LEDGER verifies how AI answer engines interpret, extract, and cite website content using BRAG (Based-Retrieval-Auditable-Grading) evidence-linked analysis.',

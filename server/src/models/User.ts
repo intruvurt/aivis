@@ -47,6 +47,13 @@ export interface User {
   stripe_customer_id?: string | null;
   stripe_subscription_id?: string | null;
 
+  // Trial
+  trial_ends_at?: Date | null;
+  trial_used?: boolean;
+  trial_tier?: string | null;
+  trial_started_at?: Date | null;
+  trial_converted?: boolean;
+
   // Timestamps
   created_at: Date;
   updated_at: Date;
@@ -59,6 +66,7 @@ const SAFE_COLUMNS = `id, email, is_verified, verification_token_expires, name, 
   org_verified, org_verification_confidence, org_verification_reasons,
   login_attempts, locked_until, last_login,
   stripe_customer_id, stripe_subscription_id,
+  trial_ends_at, trial_used, trial_tier, trial_started_at, trial_converted,
   created_at, updated_at`;
 
 function normalizeEmail(email: string) {

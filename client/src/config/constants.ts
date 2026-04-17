@@ -1,1 +1,1 @@
-export const SITE_NAME = "AiVIS — evidence-backed AI answer audit and fix system";
+export const SITE_NAME = "AiVIS - CITE LEDGER | Evidence-Linked Scores";

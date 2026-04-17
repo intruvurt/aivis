@@ -1173,6 +1173,35 @@ export async function runMigrations(): Promise<void> {
               computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
             `CREATE INDEX IF NOT EXISTS idx_crs_user_url ON citation_rank_snapshots(user_id, url, computed_at DESC)`,
+            // ── Fix: public_report_links.expires_at must allow NULL (permanent links) ──
+            `ALTER TABLE public_report_links ALTER COLUMN expires_at DROP NOT NULL`,
+            // ── Fix: evidence_ids column type mismatch (UUID[] → JSONB) to match fresh-DB schema ──
+            `ALTER TABLE audit_rule_results ALTER COLUMN evidence_ids TYPE JSONB USING COALESCE(to_jsonb(evidence_ids), '[]'::jsonb)`,
+            `ALTER TABLE audit_rule_results ALTER COLUMN evidence_ids SET DEFAULT '[]'::jsonb`,
+            // ── Fix: alert_subscriptions + alert_notifications missing on existing DBs ──
+            `CREATE TABLE IF NOT EXISTS alert_subscriptions (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id VARCHAR(255) NOT NULL,
+              channel VARCHAR(20) NOT NULL,
+              channel_config JSONB NOT NULL DEFAULT '{}',
+              alert_types TEXT[] NOT NULL DEFAULT '{}',
+              enabled BOOLEAN NOT NULL DEFAULT TRUE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (user_id, channel)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_alert_sub_user ON alert_subscriptions(user_id)`,
+            `CREATE TABLE IF NOT EXISTS alert_notifications (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              user_id VARCHAR(255) NOT NULL,
+              alert_type VARCHAR(50) NOT NULL,
+              title TEXT NOT NULL,
+              body TEXT NOT NULL,
+              metadata JSONB NOT NULL DEFAULT '{}',
+              read_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_alert_notif_user ON alert_notifications(user_id, created_at DESC)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

@@ -189,7 +189,7 @@ export default function AboutPage() {
           </FadeUp>
           <FadeUp delay={0.15}>
             <p className="text-base md:text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
-              Evidence-backed AI answer audit and fix system built for freelancers, agencies, and organizations that demand proof of extraction readiness.
+              Evidence-linked AI citation audit platform built for freelancers, agencies, and organizations that demand proof of extraction readiness.
             </p>
           </FadeUp>
           <FadeUp delay={0.2}>

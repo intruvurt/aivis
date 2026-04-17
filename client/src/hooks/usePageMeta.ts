@@ -26,7 +26,7 @@ interface PageMeta {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'AiVIS | cite ledger for AI answers';
+const SITE_NAME = 'AiVIS - CITE LEDGER | Evidence-Linked Scores';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 

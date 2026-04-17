@@ -15,6 +15,8 @@ import {
   AlertCircle, AlertTriangle, CheckCircle2, ChevronRight, Clock3,
   Download, GitPullRequest, RefreshCw, Zap, Target, ArrowRight,
 } from "lucide-react";
+import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useCountUp } from "../hooks/useCountUp";
 import DocumentGenerator from "./DocumentGenerator";
 import CryptoIntelligencePanel from "./CryptoIntelligencePanel";
 import ThreatIntelBanner from "./ThreatIntelBanner";
@@ -88,6 +90,8 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   const [showAllIssues, setShowAllIssues] = React.useState(false);
   const [autoFixOpen, setAutoFixOpen] = React.useState(false);
   const [expandedFixId, setExpandedFixId] = React.useState<string | null>(null);
+  const scrollRef = useScrollReveal<HTMLDivElement>();
+  const animatedScore = useCountUp(result.visibility_score, 900);
 
   // Tier
   const normalizedTier: CanonicalTier | LegacyTier =
@@ -180,7 +184,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   // ── Render ─────────────────────────────────────────────────────
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_392px] gap-0 items-start">
+    <div ref={scrollRef} className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_392px] gap-0 items-start">
 
       {/* ═══════ MAIN CONTENT ═══════ */}
       <main className="min-w-0 overflow-y-auto space-y-6 pb-8">
@@ -228,11 +232,11 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         </section>
 
         {/* 2. SCORE BLOCK - one big card, left-aligned */}
-        <section className="rounded-[22px] border border-white/10 bg-white/[0.04] p-6">
+        <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.04] p-6">
           <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-6">
             <div className="flex flex-col justify-center">
-              <div className="text-[60px] font-semibold leading-none tracking-tight text-white">
-                {result.visibility_score}
+              <div className="text-[60px] font-semibold leading-none tracking-tight text-white animate-score-pop">
+                {animatedScore}
               </div>
               <div className={`mt-2 text-sm font-medium ${level.color}`}>{level.label}</div>
               {totalLift > 0 && <div className="mt-2 text-sm text-emerald-300">+{totalLift} pts available</div>}
@@ -243,7 +247,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                 <span className="text-white/70">{result.visibility_score} / 100</span>
               </div>
               <div className="h-3 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 transition-all duration-700" style={{ width: `${result.visibility_score}%` }} />
+                <div className="h-full rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 bar-grow-origin animate-bar-grow" style={{ width: `${result.visibility_score}%` }} />
               </div>
               <div className="mt-3 flex items-center justify-between text-xs text-white/32">
                 <span>Needs Work</span><span>Moderate</span><span>Strong</span><span>Excellent</span>
@@ -254,8 +258,8 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 3. METRICS ROW - 4 cards inline */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {metricCards.map((card) => (
-            <div key={card.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+          {metricCards.map((card, i) => (
+            <div key={card.label} className="reveal card-lift rounded-2xl border border-white/10 bg-white/[0.04] p-4" data-delay={i + 1}>
               <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/34">{card.label}</div>
               <div className="mt-2 text-xl font-semibold text-white">{card.value}</div>
               <div className="mt-2 text-sm text-white/42">{card.hint}</div>
@@ -275,16 +279,16 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 4. CATEGORY GRID - up to 6 cards, 3 cols */}
         {categories.length > 0 && (
-          <section>
+          <section className="reveal">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-tight text-white">Score by Category</h2>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {categories.map((cat) => {
+              {categories.map((cat, i) => {
                 const tone = toneClasses(cat.score);
                 const fixCount = cat.improvements?.length ?? 0;
                 return (
-                  <div key={cat.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                  <div key={cat.label} className="reveal card-lift rounded-2xl border border-white/10 bg-white/[0.04] p-4" data-delay={i + 1}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-sm font-medium text-white/80">{cat.label}</div>
                       <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${tone.badge}`}>{tone.label}</span>
@@ -293,7 +297,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                       <span className="text-2xl font-semibold text-white">{cat.score}</span>
                     </div>
                     <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                      <div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${cat.score}%` }} />
+                      <div className={`h-full rounded-full bar-grow-origin animate-bar-grow ${tone.bar}`} style={{ width: `${cat.score}%` }} />
                     </div>
                     <p className="mt-2 text-[11px] text-white/40">{fixCount} fix{fixCount !== 1 ? "es" : ""} suggested</p>
                   </div>
@@ -307,7 +311,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {result.threat_intel && <ThreatIntelBanner data={result.threat_intel} />}
 
         {/* 5. PRIORITY ISSUES - TABLE rows */}
-        <section className="rounded-[22px] border border-white/10 bg-white/[0.04]">
+        <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.04]">
           <div className="border-b border-white/10 px-5 py-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight text-white">Priority Issues</h2>
             <span className="text-[11px] text-white/35">{issueRows.length} total</span>

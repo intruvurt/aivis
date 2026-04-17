@@ -5142,6 +5142,205 @@ Stop estimating where your brand appears in AI answers — measure it. Signal ti
 
 **[Start your citation audit →](https://aivis.biz)**`,
   },
+  {
+    slug: 'google-crawler-ip-ranges-moved-what-broke-and-how-to-fix-it',
+    path: '/blogs/google-crawler-ip-ranges-moved-what-broke-and-how-to-fix-it',
+    title: 'Google\'s Crawler IP Ranges Moved: What Broke and How to Fix It',
+    description:
+      'Google quietly migrated its crawler IP range JSON files from /search/apis/ipranges/ to /crawling/ipranges/ and renamed googlebot.json to common-crawlers.json. The old URLs now return 200 OK with no IP data. Here\'s what happened, why it matters, and how to update your systems.',
+    excerpt:
+      'The old Google crawler IP endpoints stopped returning real data on 7 April 2026, but they didn\'t 404 — they returned 200 OK with a JSON message. If your firewall, WAF, or bot verification pulls from them, you may already be running on empty allowlists.',
+    publishedAt: '2026-04-17',
+    readMinutes: 11,
+    category: 'technology',
+    tags: ['Technical', 'AI-Tech', 'SEO', 'Implementation'],
+    keywords: [
+      'Google crawler IP ranges',
+      'googlebot.json',
+      'common-crawlers.json',
+      'crawler IP migration',
+      'bot verification',
+      'WAF allowlist',
+      'Googlebot IP',
+      'Google crawling infrastructure',
+      'IP range validation',
+      'schema validation',
+    ],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS',
+      expertise: ['AI Crawling Infrastructure', 'Bot Verification', 'Technical SEO'],
+      credentials: ['Founded AiVIS', 'Crawling Infrastructure Research'],
+      experience: '8+ years in search infrastructure and AI visibility',
+    },
+    keyPoints: [
+      'Google moved crawler IP range files from /search/apis/ipranges/ to /crawling/ipranges/ — and renamed googlebot.json to common-crawlers.json.',
+      'The old URLs return 200 OK with an "Action needed" JSON message instead of IP prefixes. No redirect, no 404.',
+      'One file (user-triggered-agents.json) still returns real but stale data from 2026-03-03 at the old URL — a different failure mode.',
+      'Systems using loose JSON parsing may silently ingest empty allowlists. Strict schemas will crash — which is actually the better outcome.',
+      'The fix is straightforward: update 5 endpoint URLs and add response schema validation to catch future changes.',
+    ],
+    relatedPostSlugs: [
+      'answer-engine-optimization-2026-why-citation-readiness-matters',
+      'why-traditional-seo-tactics-fail-for-ai-visibility',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+    content: `On 31 March 2026, Google announced that the JSON files listing their crawler IP ranges were moving from \`/search/apis/ipranges/\` to \`/crawling/ipranges/\` on developers.google.com. The reasoning made sense: these ranges cover crawlers used by Shopping, AdSense, Gemini, and other products beyond Search, so a \`/crawling/\` path better reflects their scope.
+
+What the blog post didn't mention is that \`googlebot.json\` has also been renamed to \`common-crawlers.json\`. Updating the directory path alone isn't enough.
+
+To complicate matters, the transition happened faster than expected. While Google promised a 6-month transition period, the old endpoints are already returning unexpected responses. If your systems pull from them automatically, they may be ingesting invalid data or failing silently.
+
+## What actually happened
+
+On 7 April at 09:42:16 UTC, eight days after the announcement, the old URLs stopped returning IP ranges data.
+
+The old URLs didn't redirect, and they didn't break. Instead, they quietly started returning a 200 response with a completely different JSON payload. For example, the response to the old \`user-triggered-fetchers.json\` endpoint was the following:
+
+\`\`\`json
+{
+  "Action needed": "update the location you're fetching from to https://developers.google.com/static/crawling/ipranges/user-triggered-fetchers.json"
+}
+\`\`\`
+
+This matters because of how different HTTP status codes behave in practice.
+
+A **301 or 308 redirect** is transparent. Most HTTP clients and automated scripts follow redirects by default, so systems can continue working without any changes. A **404 or 410** is disruptive, but disruption is useful: it triggers alerts, teams investigate, and the issue gets resolved quickly.
+
+A **200 response with valid but non-standard JSON** that contains no IP data is a harder problem to catch. Without proper data validation, an automated script might fetch the URL, receive a successful response, parse the JSON without complaint, find no IP prefixes, and continue with nothing to work with.
+
+## A second inconsistency
+
+While investigating the old endpoints, a second issue was found.
+
+Most of the old URLs now return the "Action needed" JSON message. But one file behaves differently: \`user-triggered-agents.json\`, which covers Google's new Google-Agent crawler (associated with Project Mariner).
+
+The old URL for this file still returns actual IP range data. It returns real prefixes, valid JSON, and no error message.
+
+The problem is that the data is stale.
+
+The old endpoint serves data with a creation timestamp of \`2026-03-03T10:00:00\`, containing just **4 IP prefixes**. The new endpoint has data from \`2026-04-07T14:45:58\` with **18 prefixes**, including entirely new IPv4 ranges in the 74.125.232.x block and more granular IPv6 allocations.
+
+Depending on which file you're fetching, the old URLs either give you a polite JSON message with no IP data at all, or they give you real data that's over five weeks out of date. Neither outcome is correct.
+
+## What this means for your infrastructure
+
+If any part of your infrastructure fetches Google's crawler IP ranges automatically, it's worth checking immediately.
+
+That includes:
+
+- **Firewall allowlists** that permit known Googlebot IPs
+- **WAF rules** that use these ranges for bot classification
+- **Bot verification scripts** that check incoming requests against Google's published IPs
+- **CDN configurations** with origin protection rules
+- **Log analysis pipelines** that tag or filter traffic by crawler type
+
+If your systems were pulling from the old URLs between 7 April and whenever you make the switch, there's likely a window where stale or empty IP data was ingested. After updating your endpoints, do a one-time refresh to cover any gaps from that period.
+
+## The failure mode depends on your language
+
+The severity depends on how your code handles the response.
+
+If you're using **strict data schemas** (common in Go or Java), your system will likely crash outright when it tries to deserialize the unexpected JSON structure. That's actually the better outcome, because at least you'll know something's wrong.
+
+If you're using **loosely typed languages or flexible parsing**, the failure is far more subtle. Your script will parse the response successfully, find no IP prefixes, and carry on with an empty allowlist in production. There's no error and no warning. You might not notice until crawl rates drop, indexing stalls, or your bot classification reports start showing inconsistencies.
+
+## How to fix it
+
+The migration path is simple. Update every reference from the old directory to the new one:
+
+| Old path | New path |
+|----------|----------|
+| \`/search/apis/ipranges/googlebot.json\` | \`/crawling/ipranges/common-crawlers.json\` |
+| \`/search/apis/ipranges/special-crawlers.json\` | \`/crawling/ipranges/special-crawlers.json\` |
+| \`/search/apis/ipranges/user-triggered-fetchers.json\` | \`/crawling/ipranges/user-triggered-fetchers.json\` |
+| \`/search/apis/ipranges/user-triggered-fetchers-google.json\` | \`/crawling/ipranges/user-triggered-fetchers-google.json\` |
+| \`/search/apis/ipranges/user-triggered-agents.json\` | \`/crawling/ipranges/user-triggered-agents.json\` |
+
+All file names stay the same **except for googlebot.json**, which has been renamed to **common-crawlers.json**. Only the directory path changes. The base URL remains \`https://developers.google.com/static/\`.
+
+## Add schema validation
+
+Beyond updating the URLs, add schema validation to whatever system consumes these files. A basic key-existence check is a start, but validating the full response structure ensures any unexpected changes are caught before they reach production.
+
+Here's a TypeScript validation example as a starting point:
+
+\`\`\`typescript
+type IpPrefix = { ipv4Prefix: string } | { ipv6Prefix: string };
+
+interface ResponseData {
+  creationTime: string;
+  prefixes: IpPrefix[];
+}
+
+function isValidIpPrefix(prefix: unknown): prefix is IpPrefix {
+  if (typeof prefix !== 'object' || prefix === null) return false;
+  if ('ipv4Prefix' in prefix && 'ipv6Prefix' in prefix) return false;
+  const value =
+    'ipv4Prefix' in prefix
+      ? prefix.ipv4Prefix
+      : 'ipv6Prefix' in prefix
+        ? prefix.ipv6Prefix
+        : undefined;
+  return typeof value === 'string' && value !== '';
+}
+
+function ensureValidResponse(data: unknown): asserts data is ResponseData {
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('creationTime' in data) ||
+    typeof data.creationTime !== 'string' ||
+    !('prefixes' in data) ||
+    !Array.isArray(data.prefixes) ||
+    !data.prefixes.every(isValidIpPrefix)
+  ) {
+    throw new Error('Unexpected response data from Google IP ranges endpoint');
+  }
+}
+\`\`\`
+
+This turns a silent failure into a loud one. If the response format changes again, or if any endpoint returns something your system doesn't expect, it will flag it immediately rather than quietly ingesting bad data.
+
+## Why this matters for AI visibility
+
+If you run a platform that audits websites — or if your infrastructure uses Googlebot IP verification to decide what gets crawled, indexed, or allowed through — this migration has direct consequences for your visibility pipeline.
+
+A bot verification layer running on stale or empty IP data cannot correctly classify crawl traffic. That means:
+
+- **Legitimate Googlebot requests may be blocked** by firewalls that no longer recognize the IPs.
+- **Bot classification in analytics** may misattribute Google crawlers as unknown traffic.
+- **Crawl budget analysis** based on log parsing will produce incorrect results if Google's actual IP ranges aren't matched.
+
+For sites optimizing for AI answer engines (ChatGPT, Perplexity, Gemini, Claude), correct crawler identification is upstream of everything. If you can't distinguish Googlebot from random traffic, you can't measure crawl frequency, you can't detect crawl drops, and you can't verify that your structured data changes are being picked up.
+
+## Timeline
+
+| Date | Event |
+|------|-------|
+| 11 February 2026, 00:00 UTC | Google announces the IP ranges URL migration on the Changelog page. Old URLs described as remaining available. The updated docs also reveal that googlebot.json was renamed to common-crawlers.json — not explicitly mentioned in the changelog. |
+| 31 March 2026, 00:00 UTC | Google announces the migration in a blog post on the Search Central Blog. Old URLs described as remaining available with redirects "within 6 months." No mention of the googlebot.json rename. |
+| 7 April 2026, 09:42 UTC | Old URLs stop returning IP range data. They begin serving a 200 OK JSON response with an "Action needed" message instead. |
+| 8 April 2026, ~06:00 UTC | The inconsistent behaviour of user-triggered-agents.json is discovered at the old URL (stale data vs. "Action needed" message on other files). |
+| 8 April 2026, 09:45 UTC | Google rolls back the breaking change: the old URLs again return the same IP ranges data available at the new URLs. However, user-triggered-agents.json at the old URL still returns stale data. |
+
+## What to do next
+
+This is likely a transitional state. Google may still introduce proper HTTP redirects, or the "Action needed" response might be their way of giving teams a clear signal to move.
+
+In the meantime:
+
+1. **Update your endpoints** — switch all 5 URLs to the new \`/crawling/ipranges/\` paths, including the \`googlebot.json\` → \`common-crawlers.json\` rename.
+2. **Add schema validation** — validate the response structure before ingesting IP data. A future change that breaks the schema should crash loudly, not fail silently.
+3. **Check for data gaps** — if your systems pulled from the old URLs between 7 April and your migration date, do a one-time refresh to cover the gap.
+4. **Audit your bot verification** — if you use Google's IP ranges for Googlebot verification, confirm your allowlists are current. Stale lists mean misclassified traffic.
+
+The goal is the same as any infrastructure dependency: fail fast on unexpected changes, and never let a 200 OK with a polite message become a silent production failure.
+
+**[Run an AI visibility audit →](https://aivis.biz)**`,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {

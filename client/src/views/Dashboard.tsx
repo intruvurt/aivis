@@ -8,6 +8,8 @@ import ConversionCTA from "../components/ConversionCTA";
 import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
 import { useAuthStore } from "../stores/authStore";
 import useFeatureStatus from "../hooks/useFeatureStatus";
+import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useCountUp } from "../hooks/useCountUp";
 import { apiFetch } from "../utils/api";
 import { TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -29,7 +31,7 @@ const DASHBOARD_FAQ = [
   },
   {
     question: "How many scans do I get and when do they reset?",
-    answer: "Your monthly scan allocation resets on your billing cycle date. The exact count depends on your plan: Observer (free) gets 3 scans per month, Starter gets 15, Alignment gets 60, and Signal gets 110. Each scan runs the full AI visibility pipeline against one URL. Credits are not carried over between months. You can monitor your remaining scans in the dashboard header usage indicator at any time.",
+    answer: "Your monthly scan allocation resets on your billing cycle date. The exact count depends on your plan: Observer (free) gets 3 scans per month, Starter gets 15, Alignment gets 60, and Signal gets 200. Each scan runs the full AI visibility pipeline against one URL. Credits are not carried over between months. You can monitor your remaining scans in the dashboard header usage indicator at any time.",
   },
   {
     question: "Can I scan the same URL multiple times?",
@@ -220,6 +222,8 @@ export default function Dashboard() {
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [tab, setTab] = useState<"overview" | "activity">("overview");
+  const scrollRef = useScrollReveal<HTMLDivElement>();
+  const animatedScore = useCountUp(primaryAudit?.overallScore ?? 0, 850);
 
   const recentScans = useMemo(() => sortedAudits.slice(0, 8), [sortedAudits]);
 
@@ -238,6 +242,7 @@ export default function Dashboard() {
         </Link>
       }
     >
+      <div ref={scrollRef}>
       <FeatureInstruction
         headline="Getting started with your dashboard"
         steps={[
@@ -293,12 +298,12 @@ export default function Dashboard() {
       )}
 
       {primaryAudit && typeof primaryAudit.overallScore === "number" && (
-        <section className="rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
+        <section className="reveal rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict <InfoTip text="Your most recent AI visibility score. Run audits regularly to track improvement." /></p>
               <div className="mt-3 flex items-end gap-4">
-                <div className="text-5xl font-semibold tracking-tight text-white">{primaryAudit.overallScore}</div>
+                <div className="text-5xl font-semibold tracking-tight text-white animate-score-pop">{animatedScore}</div>
                 <div className="pb-1 text-sm text-cyan-100/80">{primaryVerdict}</div>
               </div>
               <p className="mt-3 text-sm text-white/70">
@@ -360,8 +365,8 @@ export default function Dashboard() {
 
       {tab === "activity" && (
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => (
-          <article key={metric.label} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        {metrics.map((metric, i) => (
+          <article key={metric.label} className="reveal card-lift rounded-3xl border border-white/10 bg-white/[0.03] p-5" data-delay={i + 1}>
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/46">{metric.label}</p>
               <metric.icon className="h-4 w-4 text-cyan-200" />
@@ -374,7 +379,7 @@ export default function Dashboard() {
 
       {/* ── Recent scans ──────────────────────────────────────────────── */}
       {tab === "activity" && canLoadHistory && recentScans.length > 0 && (
-        <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+        <section className="reveal rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
           <h2 className="text-lg font-semibold text-white">Recent scans</h2>
           <p className="mt-1 text-sm text-white/56">Your latest audited URLs. Copy the report link or open the full analysis.</p>
 
@@ -521,6 +526,7 @@ export default function Dashboard() {
         heading="Understanding AI visibility for your site"
         className="mt-6"
       />
+      </div>
     </AppPageFrame>
   );
 }

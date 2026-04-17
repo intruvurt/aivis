@@ -169,4 +169,4 @@ Start with a mention scan. See which platforms know you exist. Then build from t
 
 *Previous issue: [Your Website Is Invisible to AI and You Don't Even Know It](https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web)*
 
-*The platform: [AiVIS | AI Visibility Audit |AiVIS.biz - CITE LEDGER | Evidence-Backed Scores ](https://aivis.biz)*
+*The platform: [AiVIS | AI Visibility Audit |AiVIS.biz - CITE LEDGER |AiVIS - CITE LEDGER | Evidence-Linked Scores ](https://aivis.biz)*

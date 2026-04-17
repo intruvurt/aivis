@@ -78,6 +78,52 @@ export default {
       backgroundImage: {
         "score-ring": "conic-gradient(var(--ring-color) calc(var(--ring-pct) * 1%), transparent 0)",
       },
+      // ── Subtle motion utilities ──
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "slide-in-right": {
+          "0%": { opacity: "0", transform: "translateX(16px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        "bar-grow": {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
+        },
+        "score-pop": {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "60%": { opacity: "1", transform: "scale(1.04)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.5s ease-out both",
+        "fade-up-d1": "fade-up 0.5s ease-out 0.07s both",
+        "fade-up-d2": "fade-up 0.5s ease-out 0.14s both",
+        "fade-up-d3": "fade-up 0.5s ease-out 0.21s both",
+        "fade-up-d4": "fade-up 0.5s ease-out 0.28s both",
+        "fade-up-d5": "fade-up 0.5s ease-out 0.35s both",
+        "fade-in": "fade-in 0.4s ease-out both",
+        "scale-in": "scale-in 0.4s ease-out both",
+        "slide-in-right": "slide-in-right 0.45s ease-out both",
+        "bar-grow": "bar-grow 0.8s ease-out 0.3s both",
+        "score-pop": "score-pop 0.6s ease-out both",
+        "shimmer": "shimmer 2.4s linear infinite",
+      },
     },
   },
   plugins: [],

@@ -342,20 +342,23 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
 
     if (tier.key === "observer") {
       ensureFeature("Citation gap diagnosis", /citation gap|keyword intelligence/i);
+      ensureFeature("Bix AI assistant (5 messages/day)", /bix ai assistant/i);
     }
 
     if (tier.key === "starter") {
       ensureFeature("All recommendations with implementation code", /all recommendations|implementation code/i);
       ensureFeature("Content highlights", /content highlights/i);
       ensureFeature("PDF export", /pdf export/i);
+      ensureFeature("Bix AI assistant (8 messages/day)", /bix ai assistant/i);
     }
 
     if (tier.key === "alignment") {
       ensureFeature("Decision query gap analysis", /decision query gap|analytics dashboard/i);
-      ensureFeature("Brand mention tracking (17 sources)", /brand mention/i);
+      ensureFeature("Brand mention tracking (19 sources)", /brand mention/i);
       ensureFeature("Private exposure scan", /private exposure/i);
       ensureFeature("Competitor advantage signals", /competitor advantage|niche url/i);
       ensureFeature("MCP Server access", /mcp server/i);
+      ensureFeature("Bix AI assistant (10 messages/day)", /bix ai assistant/i);
     }
 
     if (tier.key === "signal") {
@@ -375,6 +378,7 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
         "Signal+ team workflow automation (Notion/Airtable/CRM via Zapier)",
         /workflow automation|signal\+/i
       );
+      ensureFeature("Bix AI assistant (30 messages/day)", /bix ai assistant/i);
     }
 
     if (tier.key === "scorefix") {

@@ -14,7 +14,7 @@ const SIGNAL_FEATURES = [
   "Competitor tracking + gap analysis",
   "Brand mention monitoring (19 sources)",
   "Advanced PDF & shareable report exports",
-  "110 AI visibility scans per month",
+  "200 AI visibility scans per month",
 ];
 
 export default function FreeTrialModal({ onClose }: Props) {

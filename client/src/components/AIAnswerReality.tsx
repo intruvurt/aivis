@@ -64,11 +64,11 @@ const AIAnswerReality: React.FC<AIAnswerRealityProps> = ({
 
       {/* Platform visibility grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        {PLATFORMS.map((platform) => {
+        {PLATFORMS.map((platform, i) => {
           const score = scores[platform.key];
           const vis = visibilityLabel(score);
           return (
-            <div key={platform.key} className={`rounded-2xl border ${vis.bg} p-3.5 text-center`}>
+            <div key={platform.key} className={`reveal card-lift rounded-2xl border ${vis.bg} p-3.5 text-center`} data-delay={i + 1}>
               <div className="text-lg mb-1">{platform.icon}</div>
               <div className="text-sm font-medium text-white/80">{platform.name}</div>
               <div className={`text-2xl font-semibold mt-1 ${vis.tone}`}>{score}</div>

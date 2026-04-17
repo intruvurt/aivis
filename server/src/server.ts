@@ -9905,7 +9905,7 @@ app.post(
           note: `score_cap=${ruleSnapshot.scoreCap ?? 'none'}, hard_blockers=${ruleSnapshot.hardBlockerCount}`,
         },
       ];
-      let pipelineScoreSource: 'evidence' | 'ai_fallback' | 'deterministic' = 'evidence';
+      let pipelineScoreSource: 'evidence' | 'ai_fallback' | 'deterministic' | 'hard_guard_zero' = 'evidence';
 
       // ── Evidence-first guardrail ──
       // If evidence extraction yielded zero "present" items, no scoring can be
@@ -12091,7 +12091,7 @@ For each recommendation:
             word_count: sd.body?.split(/\s+/).length || 0,
             title: sd.title || '',
             meta_description: sd.meta?.description || '',
-            json_ld_blocks: sd.jsonLd || [],
+            json_ld_blocks: sd.structuredData?.raw || [],
           },
         });
 
@@ -12183,6 +12183,19 @@ For each recommendation:
           tripleCheckResult.ai3_model,
         ],
       });
+
+      // ── Hard Guard: score > 0 requires evidence ────────────────────────
+      // This invariant prevents the root architectural bug: scoring without evidence.
+      const presentEvidenceCount = evidenceLedger.items.filter(
+        (e: { status: string }) => e.status === 'present',
+      ).length;
+      if (finalVisibilityScore > 0 && presentEvidenceCount === 0) {
+        console.error(
+          `[${requestId}] HARD GUARD VIOLATION: score=${finalVisibilityScore} with 0 evidence items. Forcing score to 0.`,
+        );
+        finalVisibilityScore = 0;
+        pipelineScoreSource = 'hard_guard_zero';
+      }
 
       const result = attachTruthSignals({
         visibility_score: finalVisibilityScore,

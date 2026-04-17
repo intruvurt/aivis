@@ -1347,7 +1347,7 @@ export interface PipelineState {
   /** Whether the pipeline completed all stages */
   completed: boolean;
   /** If score was derived purely from evidence (true) or fell back to AI (false) */
-  score_source: 'evidence' | 'ai_fallback' | 'deterministic';
+  score_source: 'evidence' | 'ai_fallback' | 'deterministic' | 'hard_guard_zero';
   /** Total pipeline wall-clock time in ms */
   total_ms: number;
 }

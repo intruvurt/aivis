@@ -757,11 +757,15 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // NOTE: subquery is inlined directly (not interpolated via template literal) to prevent
     // any risk of accidental SQL injection if this pattern were ever copy-pasted with user input.
     await client.query('DELETE FROM brag_trail WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM cite_ledger WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM fixpack_assets WHERE fixpack_id IN (SELECT id FROM fixpacks WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM fixpacks WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM audit_fixpacks WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM audit_rule_results WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM audit_evidence WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    // Also clear audit_evidence rows linked by audit_run_id (SSFR pipeline path)
+    await client.query('DELETE FROM audit_evidence WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM audit_score_snapshots WHERE user_id = $1', [userId]);
     await client.query('DELETE FROM audits WHERE user_id = $1', [userId]);
 
     // ── Phase 3b: SET NULL tables that orphan user data ───────────────────
@@ -788,6 +792,11 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // serp_snapshots has direct user_id FK (ON DELETE CASCADE), belt-and-suspenders
     await client.query('DELETE FROM serp_snapshots WHERE user_id = $1', [userId]);
 
+    // ── Phase 3e: Evidence-first entity system (drift_scores CASCADE via entities) ──
+    await client.query('DELETE FROM drift_scores WHERE entity_id IN (SELECT id FROM entities WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM job_queue_log WHERE entity_id IN (SELECT id FROM entities WHERE user_id = $1)', [userId]);
+    await client.query('DELETE FROM entities WHERE user_id = $1', [userId]);
+
     // ── Phase 4: License chain (no user FK) ───────────────────────────────
     await client.query(`DELETE FROM license_verifications WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
     await client.query(`DELETE FROM license_activations WHERE license_id IN (SELECT id FROM licenses WHERE email = (SELECT email FROM users WHERE id = $1))`, [userId]);
@@ -796,11 +805,12 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // ── Phase 5: Delete user row - ON DELETE CASCADE handles remaining 60+ tables ──
     // Explicitly covered above: scheduled_platform_notifications, trial_email_log,
     // rate_limit_events, verification_runs, github_app_installations, brag_trail,
-    // fixpack_assets, fixpacks, audit_fixpacks, audit_rule_results, audit_evidence,
-    // audits, citation_niche_rankings, audit_score_timeline, alert_subscriptions,
-    // alert_notifications, fix_outcomes, badge_events, workspace_activity_log,
-    // license_verifications, license_activations, licenses, brand_mentions,
-    // mention_kpi_snapshots, serp_snapshots. (25 tables explicitly + 60+ via cascade)
+    // cite_ledger, fixpack_assets, fixpacks, audit_fixpacks, audit_rule_results,
+    // audit_evidence, audit_score_snapshots, audits, citation_niche_rankings,
+    // audit_score_timeline, alert_subscriptions, alert_notifications, fix_outcomes,
+    // badge_events, workspace_activity_log, license_verifications, license_activations,
+    // licenses, brand_mentions, mention_kpi_snapshots, serp_snapshots, drift_scores,
+    // job_queue_log, entities. (30 tables explicitly + 60+ via cascade)
     await client.query('DELETE FROM users WHERE id = $1', [userId]);
 
     await client.query('COMMIT');

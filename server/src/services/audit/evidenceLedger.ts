@@ -970,8 +970,8 @@ export async function persistEvidenceItems(
   for (const item of items) {
     await pool.query(
       `INSERT INTO audit_evidence
-         (audit_run_id, url, category, key, label, value_json, source, selector, attribute, status, confidence, notes_json)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+         (audit_run_id, url, category, key, label, value_json, source, selector, attribute, status, confidence, notes_json, evidence_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         auditRunId,
         url,
@@ -985,6 +985,7 @@ export async function persistEvidenceItems(
         item.status,
         item.confidence,
         JSON.stringify(item.notes),
+        item.evidence_id,
       ],
     );
   }
@@ -993,7 +994,7 @@ export async function persistEvidenceItems(
 export async function loadEvidenceForRun(auditRunId: string): Promise<EvidenceItem[]> {
   const pool = getPool();
   const result = await pool.query(
-    `SELECT category, key, label, value_json, source, selector, attribute, status, confidence, notes_json
+    `SELECT category, key, label, value_json, source, selector, attribute, status, confidence, notes_json, evidence_id
      FROM audit_evidence
      WHERE audit_run_id = $1
      ORDER BY created_at ASC`,
@@ -1001,6 +1002,7 @@ export async function loadEvidenceForRun(auditRunId: string): Promise<EvidenceIt
   );
 
   return result.rows.map((row: Record<string, unknown>) => ({
+    evidence_id: typeof row.evidence_id === 'string' ? row.evidence_id : '',
     category: String(row.category),
     key: String(row.key),
     label: String(row.label),

@@ -687,6 +687,7 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS entity_id TEXT`,
             `ALTER TABLE audit_evidence ALTER COLUMN category DROP NOT NULL`,
             `ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`,
             `ALTER TABLE audit_evidence ALTER COLUMN label DROP NOT NULL`,
@@ -1203,6 +1204,35 @@ export async function runMigrations(): Promise<void> {
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
             `CREATE INDEX IF NOT EXISTS idx_alert_notif_user ON alert_notifications(user_id, created_at DESC)`,
+            // ── Evidence-first architecture: entities, drift_scores, job_queue_log ──
+            `CREATE TABLE IF NOT EXISTS entities (
+              id TEXT PRIMARY KEY,
+              name TEXT NOT NULL,
+              domain TEXT,
+              user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_entities_user ON entities(user_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_entities_domain ON entities(domain)`,
+            `CREATE TABLE IF NOT EXISTS drift_scores (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+              score INTEGER NOT NULL DEFAULT 0,
+              evidence_count INTEGER NOT NULL DEFAULT 0,
+              score_source VARCHAR(40) NOT NULL DEFAULT 'evidence',
+              computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_drift_scores_entity ON drift_scores(entity_id, computed_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS job_queue_log (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              url TEXT NOT NULL,
+              entity_id TEXT REFERENCES entities(id) ON DELETE SET NULL,
+              status VARCHAR(20) NOT NULL DEFAULT 'queued',
+              error_message TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              completed_at TIMESTAMPTZ
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_job_queue_status ON job_queue_log(status, created_at DESC)`,
           ];
           let patchOk = 0;
           let patchFail = 0;
@@ -2549,6 +2579,7 @@ export async function runMigrations(): Promise<void> {
       );
       _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`);
       _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`);
+      _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS entity_id TEXT`);
       _q(`ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`);
 
       // ─── SSFR Rule Results ──────────────────────────────────────────────────
@@ -3342,6 +3373,8 @@ export async function runMigrations(): Promise<void> {
       _q(
         `CREATE UNIQUE INDEX IF NOT EXISTS idx_cite_ledger_run_seq ON cite_ledger(audit_run_id, sequence)`,
       );
+      _q(`ALTER TABLE cite_ledger ADD COLUMN IF NOT EXISTS entity_id TEXT`);
+      _q(`ALTER TABLE cite_ledger ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`);
 
       _q(`
       CREATE TABLE IF NOT EXISTS trial_email_log (
@@ -4438,6 +4471,42 @@ export async function runMigrations(): Promise<void> {
     `);
       _q(`CREATE INDEX IF NOT EXISTS idx_dataset_audit_proofs_entry ON dataset_audit_proofs(entry_id)`);
       _q(`CREATE INDEX IF NOT EXISTS idx_dataset_audit_proofs_hash ON dataset_audit_proofs(audit_hash)`);
+
+      // ── Evidence-first architecture: entities, drift_scores, job_queue_log ──
+      _q(`
+      CREATE TABLE IF NOT EXISTS entities (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        domain TEXT,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_entities_user ON entities(user_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_entities_domain ON entities(domain)`);
+      _q(`
+      CREATE TABLE IF NOT EXISTS drift_scores (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+        score INTEGER NOT NULL DEFAULT 0,
+        evidence_count INTEGER NOT NULL DEFAULT 0,
+        score_source VARCHAR(40) NOT NULL DEFAULT 'evidence',
+        computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_drift_scores_entity ON drift_scores(entity_id, computed_at DESC)`);
+      _q(`
+      CREATE TABLE IF NOT EXISTS job_queue_log (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url TEXT NOT NULL,
+        entity_id TEXT REFERENCES entities(id) ON DELETE SET NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'queued',
+        error_message TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )
+    `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_job_queue_status ON job_queue_log(status, created_at DESC)`);
 
       // Execute all migrations in a single round-trip
       if (_ddl.length > 0) {

@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSwipeGesture } from "../hooks/useSwipeGesture";
 import { Bot, Layers3, Loader2, Play, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
 import AppPageFrame from "../components/AppPageFrame";
@@ -35,6 +36,10 @@ const defaultPrompts = [
 export default function AiAuditPage() {
   const [prompts, setPrompts] = useState(defaultPrompts);
   const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const stageContentRef = useRef<HTMLElement>(null);
+  const swipeNext = useCallback(() => setActiveStageIndex((i) => Math.min(i + 1, prompts.length - 1)), [prompts.length]);
+  const swipePrev = useCallback(() => setActiveStageIndex((i) => Math.max(i - 1, 0)), []);
+  useSwipeGesture(stageContentRef, { onSwipeLeft: swipeNext, onSwipeRight: swipePrev });
   const [blueprint, setBlueprint] = useState("");
   const [buildSpecs, setBuildSpecs] = useState<any[]>([]);
   const [auditId, setAuditId] = useState<string | null>(null);
@@ -108,7 +113,7 @@ export default function AiAuditPage() {
           </div>
         </aside>
 
-        <section className="space-y-4">
+        <section ref={stageContentRef} className="space-y-4">
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-center gap-2 text-sm font-medium text-white"><Layers3 className="h-4 w-4 text-cyan-200" /> Active stage editor</div>
             <h2 className="mt-3 text-xl font-semibold text-white">{activeStage.stage}</h2>

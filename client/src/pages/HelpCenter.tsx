@@ -1,5 +1,6 @@
 // client/src/pages/HelpCenter.tsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useSwipeGesture } from '../hooks/useSwipeGesture';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { buildBreadcrumbSchema, buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
@@ -720,6 +721,11 @@ export default function HelpCenter() {
 
   // Tab state
   const [activeTab, setActiveTab] = useState<HelpTab>('knowledge');
+  const tabContentRef = useRef<HTMLElement>(null);
+  const swipeTabs: HelpTab[] = ['knowledge', 'guides', 'tickets'];
+  const swipeTabNext = useCallback(() => setActiveTab((t) => { const i = swipeTabs.indexOf(t); return i >= 0 && i < swipeTabs.length - 1 ? swipeTabs[i + 1] : t; }), []);
+  const swipeTabPrev = useCallback(() => setActiveTab((t) => { const i = swipeTabs.indexOf(t); return i > 0 ? swipeTabs[i - 1] : t; }), []);
+  useSwipeGesture(tabContentRef, { onSwipeLeft: swipeTabNext, onSwipeRight: swipeTabPrev });
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set(['getting-started']));
@@ -891,7 +897,7 @@ export default function HelpCenter() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main ref={tabContentRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatePresence mode="wait">
           {/* ──────────────── Knowledge Base Tab ──────────────── */}
           {activeTab === 'knowledge' && (

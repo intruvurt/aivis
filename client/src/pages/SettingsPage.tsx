@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import { useSwipeGesture } from "../hooks/useSwipeGesture";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useSettingsStore } from "../stores/settingsStore";
@@ -173,6 +174,11 @@ const SettingsPage: React.FC = () => {
   const { status: featureStatus, loading: featureStatusLoading } = useFeatureStatus();
   const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
+  const settingsContentRef = useRef<HTMLDivElement>(null);
+  const sectionIds = sections.map((sec) => sec.id);
+  const swipeSectionNext = useCallback(() => setActiveSection((cur) => { const i = sectionIds.indexOf(cur); return i >= 0 && i < sectionIds.length - 1 ? sectionIds[i + 1] : cur; }), []);
+  const swipeSectionPrev = useCallback(() => setActiveSection((cur) => { const i = sectionIds.indexOf(cur); return i > 0 ? sectionIds[i - 1] : cur; }), []);
+  useSwipeGesture(settingsContentRef, { onSwipeLeft: swipeSectionNext, onSwipeRight: swipeSectionPrev });
   const settingsImportInputRef = useRef<HTMLInputElement>(null);
   const avatarUploadInputRef = useRef<HTMLInputElement>(null);
   const orgLogoUploadInputRef = useRef<HTMLInputElement>(null);
@@ -751,7 +757,7 @@ const SettingsPage: React.FC = () => {
           </div>
 
           {/* ─── RIGHT: Content ─── */}
-          <div className="flex-1 min-w-0 space-y-6">
+          <div ref={settingsContentRef} className="flex-1 min-w-0 space-y-6">
             {/* ============================== USAGE & PLAN ============================== */}
             {activeSection === "usage" && (
               <>

@@ -13,6 +13,7 @@ import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
 import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
+import Spinner from '../components/Spinner';
 import PageQASection from "../components/PageQASection";
 import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 
@@ -425,7 +426,7 @@ export default function GscConsolePage() {
       >
         {connectionLoading ? (
           <div className="flex items-center gap-3 py-4 justify-center text-white/40 text-sm">
-            <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" /> Checking GSC connection…
+            <Spinner className="h-5 w-5" /> Checking GSC connection…
           </div>
         ) : connectionStatus?.connected ? (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

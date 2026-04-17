@@ -5,6 +5,7 @@ import { CheckCircle2, XCircle, Loader2, Users } from 'lucide-react';
 import { API_URL } from '../config';
 import { useAuthStore } from '../stores/authStore';
 import toast from 'react-hot-toast';
+import Spinner from '../components/Spinner';
 
 export default function InviteAcceptPage() {
   const { token } = useParams<{ token: string }>();
@@ -66,7 +67,7 @@ export default function InviteAcceptPage() {
       >
         {state === 'loading' && (
           <>
-            <img src="/aivis-progress-spinner.png" alt="" className="w-10 h-10 animate-spin mx-auto" />
+            <Spinner className="w-10 h-10 mx-auto" />
             <h2 className="text-xl font-bold text-white">Accepting invitation…</h2>
             <p className="text-sm text-white/60">Please wait</p>
           </>

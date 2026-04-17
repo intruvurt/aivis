@@ -194,6 +194,8 @@ export default function PressPage() {
               width={64}
               height={64}
               className="rounded-lg object-cover shrink-0"
+              loading="lazy"
+              decoding="async"
             />
             <div className="min-w-0">
               <p className="text-lg font-semibold text-white/90 group-hover:text-white transition-colors">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from '../components/Spinner';
 import {
   Area,
   Bar,
@@ -971,7 +972,7 @@ export default function AnalyticsPage() {
 
         {token && hasAccess && loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-3 text-white/50">
-            <img src="/aivis-progress-spinner.png" alt="" className="h-8 w-8 animate-spin" />
+            <Spinner className="h-8 w-8" />
             <p className="text-sm">Loading analytics…</p>
           </div>
         )}

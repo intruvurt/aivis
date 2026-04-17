@@ -12,6 +12,7 @@ import {
   Globe, ChevronDown, ChevronRight, ExternalLink, AlertTriangle,
   CheckCircle2, XCircle, Loader2, Clock, FileText, Link2,
 } from "lucide-react";
+import Spinner from '../components/Spinner';
 
 /* ── Helpers ──────────────────────────────────────────── */
 
@@ -350,7 +351,7 @@ export default function SiteCrawlPage() {
           {/* ── Loading State ─── */}
           {(loading || detailLoading) && (
             <div className="flex items-center justify-center gap-3 py-12 text-white/50">
-              <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
+              <Spinner className="h-5 w-5" />
               <span className="text-sm">{loading ? "Crawling pages…" : "Loading crawl…"}</span>
             </div>
           )}
@@ -372,7 +373,7 @@ export default function SiteCrawlPage() {
               <h2 className="text-sm font-medium text-white/60">Crawl History</h2>
               {historyLoading ? (
                 <div className="flex items-center gap-2 py-4 text-white/40 text-sm">
-                  <img src="/aivis-progress-spinner.png" alt="" className="h-4 w-4 animate-spin" /> Loading…
+                  <Spinner className="h-4 w-4" /> Loading…
                 </div>
               ) : history.length === 0 ? (
                 <p className="text-sm text-white/30 py-4">No crawls yet. Start your first crawl above.</p>

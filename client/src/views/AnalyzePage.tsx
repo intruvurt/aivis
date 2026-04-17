@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import Spinner from '../components/Spinner';
 import {
   Zap,
   Globe,
@@ -1036,7 +1037,7 @@ const AnalyzePage: React.FC = () => {
                   >
                     {loading ? (
                       <>
-                        <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
+                        <Spinner className="h-5 w-5" />
                         Analyzing how AI reads your site…
                       </>
                     ) : (

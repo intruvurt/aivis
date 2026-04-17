@@ -35,6 +35,7 @@ const BrandIntegrityPage = React.lazy(() => import("./views/BrandIntegrityPage")
 const ScoreFixPage = React.lazy(() => import("./views/ScoreFixPage"));
 const SiteCrawlPage = React.lazy(() => import("./views/SiteCrawlPage"));
 const PipelinePage = React.lazy(() => import("./views/PipelinePage"));
+const DatasetStudioPage = React.lazy(() => import("./views/DatasetStudioPage"));
 
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const Profile = React.lazy(() => import("./pages/Profile"));
@@ -283,6 +284,7 @@ export default function App() {
             <Route path="score-fix" element={<ScoreFixPage />} />
             <Route path="site-crawl" element={<SiteCrawlPage />} />
             <Route path="pipeline" element={<PipelinePage />} />
+            <Route path="dataset" element={<DatasetStudioPage />} />
             <Route path="benchmarks" element={<AiVisibilityBenchmark />} />
             <Route path="workflow" element={<PlatformWorkflowPage />} />
             <Route path="mcp" element={<McpConsolePage />} />

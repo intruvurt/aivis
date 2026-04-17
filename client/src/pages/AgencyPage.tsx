@@ -10,6 +10,7 @@
  */
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from '../components/Spinner';
 import {
   AlertTriangle,
   BarChart2,
@@ -597,7 +598,7 @@ export default function AgencyPage() {
       <div className="aurora-card overflow-hidden">
         {loading && !projects.length ? (
           <div className="flex items-center justify-center py-16">
-            <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
+            <Spinner className="w-6 h-6" />
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-16">

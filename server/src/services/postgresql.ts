@@ -4344,6 +4344,50 @@ export async function runMigrations(): Promise<void> {
         `CREATE INDEX IF NOT EXISTS idx_entity_snapshots_run ON entity_snapshots(run_id)`,
       );
 
+      /* ── Dataset Pipeline (Audit-Verified) ── */
+      _q(`
+      CREATE TABLE IF NOT EXISTS dataset_entries (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
+        vertical VARCHAR(30) NOT NULL CHECK (vertical IN ('ai_governance','incident_response','agentic_interaction')),
+        stage VARCHAR(20) NOT NULL DEFAULT 'ingested' CHECK (stage IN ('ingested','annotated','synthesized','audited')),
+        origin VARCHAR(12) NOT NULL DEFAULT 'real' CHECK (origin IN ('real','synthetic')),
+        source_url TEXT NOT NULL DEFAULT '',
+        title TEXT NOT NULL DEFAULT '',
+        content TEXT NOT NULL DEFAULT '',
+        labels JSONB NOT NULL DEFAULT '{}'::jsonb,
+        ground_truth JSONB,
+        audit_hash VARCHAR(64),
+        provenance_jsonld JSONB,
+        confidence FLOAT NOT NULL DEFAULT 0,
+        human_reviewed BOOLEAN NOT NULL DEFAULT FALSE,
+        tags TEXT[] NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_entries_user ON dataset_entries(user_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_entries_vertical ON dataset_entries(vertical)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_entries_stage ON dataset_entries(stage)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_entries_origin ON dataset_entries(origin)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_entries_audit_hash ON dataset_entries(audit_hash) WHERE audit_hash IS NOT NULL`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS dataset_audit_proofs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        entry_id UUID NOT NULL REFERENCES dataset_entries(id) ON DELETE CASCADE,
+        audit_hash VARCHAR(64) NOT NULL,
+        algorithm VARCHAR(10) NOT NULL DEFAULT 'sha256',
+        content_snapshot TEXT NOT NULL,
+        labels_snapshot TEXT NOT NULL,
+        provenance_jsonld JSONB NOT NULL DEFAULT '{}'::jsonb,
+        issued_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (entry_id, audit_hash)
+      )
+    `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_audit_proofs_entry ON dataset_audit_proofs(entry_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_dataset_audit_proofs_hash ON dataset_audit_proofs(audit_hash)`);
+
       // Execute all migrations in a single round-trip
       if (_ddl.length > 0) {
         console.log(

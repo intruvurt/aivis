@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import apiFetch from "../utils/api";
 import { API_URL } from "../config";
+import Spinner from '../components/Spinner';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -71,7 +72,7 @@ const ResetPassword = () => {
   if (validating) {
     return (
       <div id="src_pages_ResetPassword_validating" className="flex flex-1 items-center justify-center">
-        <img src="/aivis-progress-spinner.png" alt="" id="src_pages_ResetPassword_spinner" className="h-12 w-12 animate-spin" />
+        <Spinner className="h-12 w-12" />
       </div>
     );
   }

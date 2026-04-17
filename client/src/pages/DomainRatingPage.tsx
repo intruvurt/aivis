@@ -7,6 +7,7 @@ import { authorityCheck } from "../api";
 import type { AuthorityCheckResponse, AuthorityPlatform, ContentNature } from "@shared/types";
 import PageQASection from "../components/PageQASection";
 import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+import Spinner from '../components/Spinner';
 
 const DOMAIN_RATING_FAQ = [
   {
@@ -203,7 +204,7 @@ export default function DomainRatingPage() {
       {/* Loading state */}
       {loading && (
         <div className="flex flex-col items-center gap-4 py-16">
-          <img src="/aivis-progress-spinner.png" alt="" className="h-10 w-10 animate-spin" />
+          <Spinner className="h-10 w-10" />
           <p className="text-sm text-white/50">Scanning platforms… this may take 30–60 seconds.</p>
         </div>
       )}

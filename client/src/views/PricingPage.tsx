@@ -78,6 +78,8 @@ const TIER_ICONS: Record<string, ReactNode> = {
       src="/images/tier-alignment-sm.png"
       alt="Alignment"
       className="w-8 h-8 object-contain tier-icon-brand"
+      loading="lazy"
+      decoding="async"
     />
   ),
   signal: (
@@ -85,6 +87,8 @@ const TIER_ICONS: Record<string, ReactNode> = {
       src="/images/tier-signal-sm.png"
       alt="Signal"
       className="w-8 h-8 object-contain tier-icon-brand"
+      loading="lazy"
+      decoding="async"
     />
   ),
   scorefix: (
@@ -92,6 +96,8 @@ const TIER_ICONS: Record<string, ReactNode> = {
       src="/images/tier-scorefix-sm.png"
       alt="AutoFix PR"
       className="w-8 h-8 object-contain tier-icon-brand"
+      loading="lazy"
+      decoding="async"
     />
   ),
 };

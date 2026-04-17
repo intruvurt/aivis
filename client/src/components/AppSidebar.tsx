@@ -6,7 +6,7 @@ import {
   Users, FlaskConical, Brain, Wrench, Globe, Shield,
   Settings, CreditCard, Zap, Cpu, ArrowLeftRight,
   Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
-  FileSearch, BookOpen, Languages,
+  FileSearch, BookOpen, Languages, Database,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
@@ -61,6 +61,7 @@ const toolsNav: NavItem[] = [
 
 const agencyNav: NavItem[] = [
   { to: "/app/badge", labelKey: "sidebar.badge", icon: Award },
+  { to: "/app/dataset", labelKey: "sidebar.datasetStudio", icon: Database, minTier: "signal" },
   { to: "/app/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
   { to: "/app/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
 ];

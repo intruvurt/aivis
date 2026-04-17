@@ -18,6 +18,7 @@ import { API_URL } from '../config';
 import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
 import apiFetch from '../utils/api';
 import { toSafeHref } from '../utils/safeHref';
+import Spinner from './Spinner';
 
 interface Competitor {
   id: string;
@@ -383,7 +384,7 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
   if (loading) {
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-8 text-center">
-        <img src="/aivis-progress-spinner.png" alt="" className="inline-block h-8 w-8 animate-spin" />
+        <Spinner className="inline-block h-8 w-8" />
         <p className="mt-4 text-sm text-white/55">Loading competitors...</p>
       </div>
     );

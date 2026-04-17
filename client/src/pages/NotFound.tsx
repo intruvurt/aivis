@@ -17,6 +17,8 @@ export default function NotFound() {
           src="/404.png"
           alt="404 Page Not Found"
           className="w-full max-w-lg mx-auto drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]"
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = "none";
           }}

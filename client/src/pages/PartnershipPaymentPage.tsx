@@ -13,6 +13,7 @@ import {
   Clock,
   Plus,
 } from "lucide-react";
+import Spinner from '../components/Spinner';
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { API_URL } from "../config";
@@ -291,7 +292,7 @@ export default function PartnershipPaymentPage() {
     return (
       <PublicPageFrame>
         <div className="flex items-center justify-center py-20">
-          <img src="/aivis-progress-spinner.png" alt="" className="w-8 h-8 animate-spin" />
+          <Spinner className="w-8 h-8" />
         </div>
       </PublicPageFrame>
     );

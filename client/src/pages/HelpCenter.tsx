@@ -6,6 +6,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { buildBreadcrumbSchema, buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PUBLIC_APP_ORIGIN } from '../config';
+import Spinner from '../components/Spinner';
 import {
   Search,
   Mail,
@@ -2200,7 +2201,7 @@ export default function HelpCenter() {
 
                   {ticketsLoading && tickets.length === 0 ? (
                     <div className="text-center py-16">
-                      <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin mx-auto" />
+                      <Spinner className="w-6 h-6 mx-auto" />
                       <p className="text-white/40 text-sm mt-3">Loading tickets...</p>
                     </div>
                   ) : tickets.length === 0 ? (
@@ -2387,7 +2388,7 @@ export default function HelpCenter() {
                         className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-semibold hover:bg-cyan-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       >
                         {ticketsLoading ? (
-                          <img src="/aivis-progress-spinner.png" alt="" className="w-4 h-4 animate-spin" />
+                          <Spinner className="w-4 h-4" />
                         ) : (
                           <Send className="w-4 h-4" />
                         )}

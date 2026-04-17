@@ -2177,3 +2177,106 @@ export interface NERRunSummary {
   /** Non-target ORG + PRODUCT entities co-mentioned alongside the brand */
   co_mentioned_count: number;
 }
+/* ========================= Dataset Pipeline (Audit-Verified) ========================= */
+
+/** Vertical domain focus for high-value datasets */
+export type DatasetVertical = 'ai_governance' | 'incident_response' | 'agentic_interaction';
+
+/** Pipeline stage an entry has reached */
+export type DatasetEntryStage = 'ingested' | 'annotated' | 'synthesized' | 'audited';
+
+/** Whether an entry is real (scraped) or synthetic (ML-generated edge case) */
+export type DatasetEntryOrigin = 'real' | 'synthetic';
+
+export const DATASET_VERTICALS: Readonly<Record<DatasetVertical, {
+  name: string;
+  description: string;
+  primarySources: string[];
+  schemaType: string;
+}>> = {
+  ai_governance: {
+    name: 'AI Governance',
+    description: 'AI-related torts, regulations, insurance acts, and compliance frameworks',
+    primarySources: ['justia.com', 'law.cornell.edu', 'eur-lex.europa.eu'],
+    schemaType: 'LegalDocument',
+  },
+  incident_response: {
+    name: 'Incident Response',
+    description: 'Annotated telemetry from data breaches and cybersecurity incidents',
+    primarySources: ['nvd.nist.gov', 'cve.mitre.org', 'cisa.gov'],
+    schemaType: 'SecurityIncident',
+  },
+  agentic_interaction: {
+    name: 'Agentic Interaction',
+    description: 'Logs of human-LLM interaction patterns for trust and verification research',
+    primarySources: ['arxiv.org', 'dl.acm.org', 'openreview.net'],
+    schemaType: 'InteractionLog',
+  },
+};
+
+/** A single dataset entry with provenance + audit trail */
+export interface DatasetEntry {
+  id: string;
+  vertical: DatasetVertical;
+  stage: DatasetEntryStage;
+  origin: DatasetEntryOrigin;
+  /** Source URL or identifier for provenance */
+  source_url: string;
+  /** Human-readable title */
+  title: string;
+  /** Raw extracted content */
+  content: string;
+  /** ML-applied labels (Contextual Integrity annotation) */
+  labels: Record<string, string | number | boolean>;
+  /** Ground-truth fix annotations from the ML auditor */
+  ground_truth: Record<string, string | number | boolean> | null;
+  /** SHA-256 verification hash of content + labels */
+  audit_hash: string | null;
+  /** JSON-LD provenance metadata */
+  provenance_jsonld: Record<string, unknown> | null;
+  /** Confidence score from the ML annotator (0-1) */
+  confidence: number;
+  /** Whether a human has reviewed this entry */
+  human_reviewed: boolean;
+  /** Tags for filtering */
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+/** Summary of a dataset vertical's pipeline status */
+export interface DatasetVerticalSummary {
+  vertical: DatasetVertical;
+  total_entries: number;
+  by_stage: Record<DatasetEntryStage, number>;
+  by_origin: Record<DatasetEntryOrigin, number>;
+  audited_percentage: number;
+  human_reviewed_count: number;
+  avg_confidence: number;
+  last_ingestion_at: string | null;
+}
+
+/** Request payload for ingesting new entries */
+export interface DatasetIngestRequest {
+  vertical: DatasetVertical;
+  source_url: string;
+  title?: string;
+}
+
+/** Request for generating synthetic edge cases */
+export interface DatasetSynthesizeRequest {
+  vertical: DatasetVertical;
+  count: number;
+  seed_entry_ids?: string[];
+}
+
+/** Audit proof attached to a verified entry */
+export interface DatasetAuditProof {
+  entry_id: string;
+  audit_hash: string;
+  algorithm: 'sha256';
+  content_snapshot: string;
+  labels_snapshot: string;
+  provenance_jsonld: Record<string, unknown>;
+  issued_at: string;
+}

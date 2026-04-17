@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { QueryPack } from "../../../shared/types";
+import Spinner from './Spinner';
 import {
   createQueryPack,
   listQueryPacks,
@@ -223,7 +224,7 @@ export default function QueryPackManager({
 
           {loading ? (
             <div className="flex justify-center items-center py-8">
-              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
+              <Spinner className="w-6 h-6" />
             </div>
           ) : packs.length === 0 ? (
             <div className="text-center py-8">

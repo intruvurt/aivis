@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Activity, ArrowRight, BarChart3, Check, ClipboardList, Clock3, Copy, Gauge, Globe, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import Spinner from '../components/Spinner';
 import AppPageFrame from "../components/AppPageFrame";
 import ConversionCTA from "../components/ConversionCTA";
 import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
@@ -464,7 +465,7 @@ export default function Dashboard() {
 
         {loading ? (
           <div className="flex items-center justify-center py-14 text-white/60">
-            <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
+            <Spinner className="h-5 w-5" />
           </div>
         ) : audits.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-white/12 bg-white/[0.02] px-6 py-12 text-center text-sm text-white/58">

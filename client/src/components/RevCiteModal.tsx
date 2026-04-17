@@ -4,6 +4,7 @@ import ModalPanel from "./ModalPanel";
 import toast from "react-hot-toast";
 import type { CitationEvidence, RevCiteSuggestion } from "../../../shared/types";
 import { getRevCiteSuggestions } from "../api";
+import Spinner from './Spinner';
 
 interface RevCiteModalProps {
   evidence: CitationEvidence;
@@ -74,7 +75,7 @@ export default function RevCiteModal({ evidence, isOpen, onClose }: RevCiteModal
 
           {loading ? (
             <div className="flex justify-center items-center py-8">
-              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
+              <Spinner className="w-6 h-6" />
             </div>
           ) : error ? (
             <div className="flex items-center gap-2 p-4 rounded-xl border border-white/10 bg-charcoal text-white/60">

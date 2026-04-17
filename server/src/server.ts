@@ -235,6 +235,7 @@ import agreementRoutes from "./routes/agreementRoutes.js";
 import paypalRoutes from "./routes/paypalRoutes.js";
 import badgeRoutes from "./routes/badgeRoutes.js";
 import trackingRoutes from "./routes/trackingRoutes.js";
+import datasetRoutes from "./routes/datasetRoutes.js";
 import {
   startTrialExpiryLoop,
   stopTrialExpiryLoop,
@@ -1639,6 +1640,7 @@ app.use("/api/fix-engine", autoVisibilityFixRoutes);
 app.use("/api/self-healing", selfHealingRoutes);
 app.use("/api/pipeline", pipelineRoutes);
 app.use("/api/tracking", trackingRoutes);
+app.use("/api/dataset", datasetRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/growth", growthEngineRoutes);
 app.use("/api/orgs", orgRoutes);

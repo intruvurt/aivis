@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Spinner from './Spinner';
 import {
   Target,
   TrendingUp,
@@ -295,7 +296,7 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
   if (loading) {
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-8 text-center">
-        <img src="/aivis-progress-spinner.png" alt="" className="inline-block h-8 w-8 animate-spin" />
+        <Spinner className="inline-block h-8 w-8" />
         <p className="mt-4 text-sm text-white/55">Loading comparison...</p>
       </div>
     );

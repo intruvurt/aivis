@@ -7,6 +7,7 @@ import ShareButtons from "../components/ShareButtons";
 import { auditService } from "../services/auditService";
 import { usePageMeta } from "../hooks/usePageMeta";
 import type { AnalysisResponse } from "@shared/types";
+import Spinner from '../components/Spinner';
 
 /** Normalise both "passed via location.state" and "fetched from GET /audits/:id" into a usable AnalysisResponse-shaped object. */
 function normaliseAudit(raw: Record<string, any>): Record<string, any> {
@@ -94,7 +95,7 @@ export default function AuditDetails() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-white/60">
-        <img src="/aivis-progress-spinner.png" alt="" className="h-6 w-6 animate-spin" />
+        <Spinner className="h-6 w-6" />
       </div>
     );
   }

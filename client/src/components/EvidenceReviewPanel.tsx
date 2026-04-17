@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import type { CitationEvidence } from "../../../shared/types";
 import { getCitationEvidence, curateEvidence, getRevCiteSuggestions } from "../api";
 import RevCiteModal from "./RevCiteModal";
+import Spinner from './Spinner';
 
 interface EvidenceReviewPanelProps {
   testId: string;
@@ -114,7 +115,7 @@ export default function EvidenceReviewPanel({ testId, isOpen, onClose }: Evidenc
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <img src="/aivis-progress-spinner.png" alt="" className="w-6 h-6 animate-spin" />
+              <Spinner className="w-6 h-6" />
             </div>
           ) : evidences.length === 0 ? (
             <div className="text-center py-8">

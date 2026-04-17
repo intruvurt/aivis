@@ -13,6 +13,7 @@ import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
 import UpgradeWall from "../components/UpgradeWall";
 import FeatureInstruction from "../components/FeatureInstruction";
 import apiFetch from "../utils/api";
+import Spinner from '../components/Spinner';
 import { API_URL } from "../config";
 
 /* ── Types ─────────────────────────────────────────────────────── */
@@ -390,7 +391,7 @@ export default function McpConsolePage() {
                 : "bg-white/5 border-white/10"
             }`}>
               {connectionStatus === "testing" ? (
-                <img src="/aivis-progress-spinner.png" alt="" className="h-5 w-5 animate-spin" />
+                <Spinner className="h-5 w-5" />
               ) : connectionStatus === "connected" ? (
                 <CheckCircle2 className="h-5 w-5 text-emerald-400" />
               ) : connectionStatus === "failed" ? (
@@ -640,7 +641,7 @@ export default function McpConsolePage() {
 
         {tools.length === 0 && connectionStatus === "testing" && (
           <div className="flex items-center justify-center gap-2 py-8 text-sm text-white/40">
-            <img src="/aivis-progress-spinner.png" alt="" className="h-4 w-4 animate-spin" />
+            <Spinner className="h-4 w-4" />
             Loading tools…
           </div>
         )}

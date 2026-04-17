@@ -3,6 +3,7 @@ import { FileText, Check, Shield, AlertTriangle, Loader2, Download, ShieldCheck,
 import { usePageMeta } from "../hooks/usePageMeta";
 import PublicPageFrame from "../components/PublicPageFrame";
 import { API_URL } from "../config";
+import Spinner from '../components/Spinner';
 
 const AGREEMENT_SLUG = "aivis-zeeniith-referral-delivery-2026";
 
@@ -262,7 +263,7 @@ export default function PartnershipAgreementPage() {
 
         {loading && (
           <div className="flex items-center justify-center py-20 text-white/50">
-            <img src="/aivis-progress-spinner.png" alt="" className="w-5 h-5 animate-spin mr-3" /> Loading agreement...
+            <Spinner className="w-5 h-5 mr-3" /> Loading agreement...
           </div>
         )}
 
@@ -613,7 +614,7 @@ export default function PartnershipAgreementPage() {
               {/* Partnership branding */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-6 pt-6 border-t border-[#2a2f3a]">
                 <a href="https://aivis.biz" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                  <img src="/aivis-logo.png" alt="AiVIS" className="h-10 w-10 rounded-xl" />
+                  <img src="/aivis-logo.png" alt="AiVIS" className="h-10 w-10 rounded-xl" loading="lazy" decoding="async" />
                   <div>
                     <p className="font-semibold text-white group-hover:text-cyan-300 transition-colors">AiVIS</p>
                     <p className="text-xs text-white/40">aivis.biz</p>
@@ -621,7 +622,7 @@ export default function PartnershipAgreementPage() {
                 </a>
                 <span className="text-white/20 text-2xl select-none hidden sm:block">&times;</span>
                 <a href="https://zeeniith.in" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                  <img src="https://zeeniith.in/favicon.ico" alt="Zeeniith" className="h-10 w-10 rounded-xl" />
+                  <img src="https://zeeniith.in/favicon.ico" alt="Zeeniith" className="h-10 w-10 rounded-xl" loading="lazy" decoding="async" />
                   <div>
                     <p className="font-semibold text-white group-hover:text-emerald-300 transition-colors">Zeeniith</p>
                     <p className="text-xs text-white/40">zeeniith.in</p>

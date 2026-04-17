@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import compression from "vite-plugin-compression";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,7 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Gzip pre-compression for static hosting (Cloudflare, Vercel serve .gz automatically)
+    ...(mode === "production"
+      ? [
+        compression({ algorithm: "gzip", threshold: 1024 }),
+        compression({ algorithm: "brotliCompress", ext: ".br", threshold: 1024 }),
+      ]
+      : []),
+  ],
 
   server: {
     host: true,
@@ -45,7 +55,8 @@ export default defineConfig(({ mode }) => ({
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
 
-          if (id.includes("/react-dom/")) return "react-dom";
+          // Consolidate all react-dom subpath exports into one chunk
+          if (id.includes("/react-dom")) return "react-dom";
           if (id.includes("/react-router/") || id.includes("/react-router-dom/")) return "router";
           if (id.includes("/framer-motion/")) return "motion";
           if (id.includes("/recharts/")) return "recharts";
@@ -54,8 +65,9 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("/lucide-react/")) return "icons";
           if (id.includes("/@sentry/")) return "sentry";
           if (id.includes("/i18next/") || id.includes("/react-i18next/")) return "i18n";
+          // Consolidate react core (react, scheduler) into one chunk
+          if (id.includes("/react/") || id.includes("/scheduler/")) return "react-core";
 
-          // Everything else (react, scheduler, etc.) in vendor to avoid circular chunks
           return "vendor";
         }
       }

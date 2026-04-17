@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import Spinner from '../components/Spinner';
 import {
   ArrowLeft,
   FileText,
@@ -1963,7 +1964,7 @@ export default function ReportsPage() {
                       )}
                       {report.status === "processing" && (
                         <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-charcoal-light flex items-center justify-center">
-                          <img src="/aivis-progress-spinner.png" alt="" className="w-5 h-5 animate-spin" />
+                          <Spinner className="w-5 h-5" />
                         </div>
                       )}
 

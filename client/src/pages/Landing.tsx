@@ -56,9 +56,9 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS — Evidence-backed AI answer audit and fix system',
+    name: 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores',
     description:
-      'AiVIS is an evidence-backed AI answer audit and fix system that analyzes how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence.',
+      'AiVIS CITE LEDGER verifies how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence through BRAG (Based-Retrieval-Auditable-Grading).',
   }),
   buildBreadcrumbSchema([{ name: 'Landing', path: '/landing' }]),
   buildItemListSchema([
@@ -71,7 +71,7 @@ const LANDING_STRUCTURED_DATA = [
   buildSoftwareApplicationSchema({
     name: 'AiVIS',
     description:
-      'AiVIS is an evidence-backed AI answer audit and fix system that analyzes how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence.',
+      'AiVIS CITE LEDGER verifies how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence through BRAG (Based-Retrieval-Auditable-Grading).',
     offers: [
       { name: 'Observer', price: '0' },
       { name: 'Full Audit + Recommendations', price: '15' },
@@ -84,19 +84,19 @@ const LANDING_STRUCTURED_DATA = [
 
 // Built after FAQ_ITEMS are defined — appended to LANDING_STRUCTURED_DATA below
 const FAQ_ITEMS = [
-  { q: 'What is AiVIS and what does it audit?', a: 'AiVIS measures AI visibility — how well AI answer engines like ChatGPT, Perplexity, Google AI and Claude can read, extract, trust and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
-  { q: 'How is AI visibility different from traditional SEO?', a: 'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content — thin structure, missing schema or poor heading hierarchy means you get skipped, regardless of domain authority.' },
-  { q: 'What is BRAG and why does AiVIS use it?', a: 'BRAG stands for Based Retrieval and Auditable Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives an evidence identifier that can be traced, verified and rechecked across scan cycles.' },
+  { q: 'What is AiVIS and what does it audit?', a: 'AiVIS CITE LEDGER verifies how well AI answer engines like ChatGPT, Perplexity, Google AI and Claude can read, extract, trust and cite your page content. It fetches your live page and scores six evidence-linked categories using BRAG (Based-Retrieval-Auditable-Grading).' },
+  { q: 'Why does citation verification matter more than traditional ranking?', a: 'Traditional search rewards backlinks and keywords. AI answer engines synthesize responses from structured content — thin structure, missing schema or poor heading hierarchy means you get skipped or misrepresented, regardless of domain authority. CITE LEDGER verifies the citation layer that traditional tools do not measure.' },
+  { q: 'What is BRAG and why does AiVIS use it?', a: 'BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives an evidence identifier that can be traced, verified and rechecked across scan cycles. No hallucination — just proof.' },
   {
     q: 'Which AI systems does AiVIS analyze for?',
     a: 'AiVIS is built around the structural signals that affect how major answer engines read and reproduce pages. Core analysis focuses on systems such as ChatGPT, Perplexity, Google AI Overviews, and Claude, with higher tiers using a multi-model review pipeline for stronger validation.',
   },
   { q: 'What happens to unused monthly audits?', a: 'Monthly audit credits reset at billing cycle start and do not roll over.' },
-  { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors.' },
-  { q: 'Who should use AiVIS?', a: 'AiVIS is built for SEO managers, content teams at SaaS companies, startup founders, digital agencies and anyone who needs to understand why their content is not being used by AI answer engines. If your site depends on being found, trusted and reused by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where visibility breaks and what to fix.' },
-  { q: 'How does AiVIS differ from Ahrefs or Semrush?', a: 'Ahrefs and Semrush track keyword rankings, backlinks and traditional search performance. AiVIS measures something different: whether AI answer engines can structurally extract and cite your content. It scans your live page with a headless browser, runs multi-model AI analysis and returns evidence-backed findings — none of which traditional SEO tools cover.' },
-  { q: 'What are the six scoring categories?', a: 'AiVIS scores Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags and Open Graph (13%) and Heading Structure (12%). Each category receives a letter grade (A–F) with specific findings backed by evidence IDs.' },
-  { q: 'Can I track how my score changes over time?', a: 'Yes. Every audit is saved to your history. Alignment and Signal tiers include score trend charts, competitor comparisons and scheduled rescans so you can measure the impact of each fix you apply.' },
+  { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or hallucination.' },
+  { q: 'Who should use AiVIS?', a: 'AiVIS CITE LEDGER is built for content teams, SaaS companies, startup founders, digital agencies and anyone who needs to verify why their content is not being cited by AI answer engines. If your site depends on being found, trusted and cited by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where citation breaks and what to fix.' },
+  { q: 'How does AiVIS differ from Ahrefs or Semrush?', a: 'Ahrefs and Semrush track keyword rankings, backlinks and traditional search performance. AiVIS CITE LEDGER measures something different: whether AI answer engines can structurally extract and cite your content. It scans your live page with a headless browser, runs multi-model AI analysis and returns evidence-linked findings through BRAG — none of which traditional tools cover.' },
+  { q: 'What are the six scoring categories?', a: 'AiVIS scores Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical Foundations (15%), Meta Tags and Open Graph (13%) and Heading Structure (12%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.' },
+  { q: 'Can I track how my score changes over time?', a: 'Yes. Every audit is saved to your history. Alignment and Signal tiers include score trend charts, competitor comparisons and scheduled rescans so you can measure the impact of each fix you apply. The CITE LEDGER tracks your citation readiness over time.' },
   { q: 'Is there a free trial?', a: 'The Observer tier is free forever with 3 audits per month. No credit card required. You also get one free preview scan on the homepage without creating an account — so you can see what AiVIS finds before committing.' },
 ] as const;
 
@@ -111,8 +111,8 @@ LANDING_STRUCTURED_DATA.push(
 // Product schema with AggregateRating and Review (real case study data: 15 → 52)
 LANDING_STRUCTURED_DATA.push(
   buildProductSchema({
-    name: 'AiVIS — Evidence-backed AI answer audit and fix system',
-    description: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, with fix-ready outputs to improve extraction and citation accuracy.',
+    name: 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores',
+    description: 'AiVIS CITE LEDGER verifies how ChatGPT, Perplexity AI, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG, with fix-ready outputs to improve extraction and citation accuracy.',
     url: 'https://aivis.biz/',
     image: 'https://aivis.biz/og-image.png',
     brand: 'AiVIS',
@@ -184,7 +184,7 @@ function NeuralCityIllustration() {
       <line x1="380" y1="60" x2="455" y2="100" stroke="rgba(139,92,246,0.22)" strokeWidth="0.6" strokeDasharray="4,3" />
       <text x="200" y="10" fontSize="6" fill="rgba(34,211,238,0.65)" fontFamily="monospace" letterSpacing="1">AIVIS.BIZ</text>
       <text x="150" y="383" fontSize="5" fill="rgba(34,211,238,0.3)" fontFamily="monospace" letterSpacing="2">
-        EVIDENCE-BACKED AI ANSWER ANALYSIS
+        BRAG EVIDENCE-LINKED CITATION VERIFICATION
       </text>
     </svg>
   );
@@ -262,11 +262,11 @@ const TIERS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AiVIS — AI Visibility Audit: Does ChatGPT Cite Your Brand?',
+    title: 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores',
     description:
-      'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence — not assumptions.',
+      'AiVIS CITE LEDGER verifies how ChatGPT, Perplexity, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG — no hallucination, no assumptions.',
     path: '/landing',
-    ogTitle: 'AiVIS — Does AI Cite Your Brand, or Ignore It?',
+    ogTitle: 'AiVIS | CITE LEDGER — Get Cited Fixes',
     structuredData: LANDING_STRUCTURED_DATA,
   });
 
@@ -389,21 +389,21 @@ const Landing = () => {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
             <h1 id="hero-headline" data-speakable className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] text-white mb-6 tracking-tight">
               <span className="block">AiVIS</span>
-              <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">evidence-backed</span>
+              <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">CITE LEDGER</span>
               <span className="block bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                AI answer audit
+                BRAG evidence-linked scores
               </span>
               <span className="block bg-gradient-to-r from-violet-300 via-white to-cyan-300 bg-clip-text text-transparent">
-                and fix system
+                get cited fixes
               </span>
             </h1>
 
             <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl mx-auto">
-              Fix how AI systems interpret and cite your website.
+              Verify how AI systems interpret and cite your website. Every finding is evidence-linked.
             </p>
 
             <p className="text-sm text-white/40 mb-8 max-w-xl mx-auto leading-relaxed">
-              AiVIS runs a live page analysis and maps how AI models interpret your content. Every result is tied to real on-page evidence, not assumptions about your domain.
+              AiVIS CITE LEDGER runs a live page analysis and maps how AI models interpret your content. Every result is tied to real on-page evidence through BRAG — Based-Retrieval-Auditable-Grading.
             </p>
 
             {/* ── URL INPUT FORM ── */}
@@ -576,12 +576,12 @@ const Landing = () => {
       {/* ── TLDR / SUMMARY ── */}
       <section id="tldr" className="py-10 bg-[#0b0f1a]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 id="summary" className="text-lg font-semibold text-white/80 mb-3" data-speakable>What AiVIS exposes</h2>
+          <h2 id="summary" className="text-lg font-semibold text-white/80 mb-3" data-speakable>What CITE LEDGER exposes</h2>
           <p className="feature-summary text-white/55 text-sm sm:text-base leading-relaxed" data-speakable>
             AI answer engines don&apos;t just skip your site — they rewrite what you say, drop your name,
-            and cite competitors instead. AiVIS scans your live page, measures the distortion across
+            and cite competitors instead. AiVIS CITE LEDGER scans your live page, measures the distortion across
             ChatGPT, Perplexity, Google AI and Claude, and traces every finding to a real page element
-            using BRAG evidence identifiers. You don&apos;t get opinions. You get proof.
+            using BRAG evidence identifiers. No hallucination. No assumptions. Just proof.
           </p>
         </div>
       </section>
@@ -646,7 +646,7 @@ const Landing = () => {
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/25 bg-cyan-500/8 text-cyan-300 text-xs font-semibold uppercase tracking-widest mb-4">How it works</span>
             <h2 id="how-it-works" className="text-3xl sm:text-4xl font-bold text-white mb-3" data-speakable>Four layers. One audit.</h2>
-            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">Every finding traces back to a real element on your page through BRAG — Based Retrieval and Auditable Grading. No black boxes. No guessing.</p>
+            <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">Every finding traces back to a real element on your page through BRAG — Based-Retrieval-Auditable-Grading. No black boxes. No guessing.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {([

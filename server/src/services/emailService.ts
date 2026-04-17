@@ -12,11 +12,11 @@ const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL 
 // ─── Brand constants for email templates ──────────────────────────────────────
 const BRAND = {
   name: 'AiVIS',
-  tagline: 'AI Visibility & Citation Readiness Auditor',
+  tagline: 'CITE LEDGER — BRAG Evidence-Linked Scores',
   logoUrl: 'https://aivis.biz/aivis-logo.png',
   siteUrl: 'https://aivis.biz',
   supportEmail: 'support@aivis.biz',
-  company: 'Intruvurt Labs',
+  company: 'AiVIS',
   location: 'Georgia, USA',
   year: new Date().getFullYear(),
 } as const;
@@ -844,11 +844,10 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your account is verified and ready to go.</p>
 
               <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                AiVIS is the <strong style="color:#22d3ee;">Evidence-backed site analysis for AI answers Platform</strong> - the only platform
-                that measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude
-                can understand, cite, and recommend your website. This is not traditional SEO. This is the citation layer -
-                whether your content is structured, deep, and trustworthy enough for AI systems to confidently include in
-                their generated answers.
+                AiVIS is the <strong style="color:#22d3ee;">CITE LEDGER</strong> — the verification platform
+                that proves whether AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude
+                can understand, cite, and recommend your website. Every finding is evidence-linked
+                through BRAG (Based-Retrieval-Auditable-Grading) — no hallucination, no assumptions.
               </p>
 
               <!-- Divider -->
@@ -865,11 +864,11 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                     <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);text-align:center;line-height:32px;font-size:14px;font-weight:700;color:#fff;">1</div>
                   </td>
                   <td>
-                    <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Run your first AI visibility audit</p>
+                    <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Run your first citation audit</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Head to your <a href="${dashboardUrl}" style="color:#22d3ee;text-decoration:underline;">Dashboard</a>
                       and paste any URL into the analyzer. AiVIS will crawl the live page in real time and score it across
-                      six AI-visibility categories using frontier AI models. Your first scan takes about 15–25 seconds.
+                      six evidence-linked categories using frontier AI models. Your first scan takes about 15–25 seconds.
                       You get 3 free scans per month on the Observer plan.
                     </p>
                   </td>
@@ -883,12 +882,12 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                     <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);text-align:center;line-height:32px;font-size:14px;font-weight:700;color:#fff;">2</div>
                   </td>
                   <td>
-                    <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Understand your AI Visibility Score</p>
+                    <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Understand your CITE LEDGER Score</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Your score (0–100) tells you how well AI platforms can parse and recommend your site. It's graded A through F
                       across six categories: <strong style="color:#cbd5e1;">Content Depth</strong>, <strong style="color:#cbd5e1;">Heading Structure</strong>,
                       <strong style="color:#cbd5e1;">Schema &amp; Structured Data</strong>, <strong style="color:#cbd5e1;">Meta Tags</strong>,
-                      <strong style="color:#cbd5e1;">Technical SEO</strong>, and <strong style="color:#cbd5e1;">AI Readability &amp; Citability</strong>.
+                      <strong style="color:#cbd5e1;">Technical Foundations</strong>, and <strong style="color:#cbd5e1;">AI Readability &amp; Citability</strong>.
                       Most websites score C or D on their first audit - that's normal and exactly why you're here.
                     </p>
                   </td>
@@ -962,7 +961,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Heading Structure</strong> - H1 presence, H2/H3 hierarchy, keyword alignment</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Schema &amp; Structured Data</strong> - JSON-LD markup types and completeness</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Meta Tags &amp; Open Graph</strong> - title, description, OG/Twitter cards</td></tr>
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Technical SEO</strong> - HTTPS, canonical tags, internal/external links</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Technical Foundations</strong> - HTTPS, canonical tags, internal/external links</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">AI Readability &amp; Citability</strong> - FAQ structure, definitions, extractability</td></tr>
                     </table>
                   </td>
@@ -981,7 +980,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                 <tr>
                   <td style="padding:20px 24px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Competitor Tracking</strong> - benchmark your AI visibility against any competitor in real time</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Competitor Tracking</strong> - benchmark your citation readiness against any competitor in real time</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Citation Testing</strong> - run live queries against ChatGPT, Perplexity, and Claude to see if they mention your brand</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Reverse Engineering</strong> - deconstruct how AI models build answers, then engineer your content to match</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#f59e0b;">Triple-Check AI</strong> - Signal tier scans are validated by 3 independent AI models, eliminating single-model bias</td></tr>
@@ -1013,9 +1012,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr><td style="padding:4px 0;font-size:14px;"><a href="${guideUrl}" style="color:#22d3ee;text-decoration:underline;">Getting Started Guide</a> <span style="color:#64748b;">- 8-step walkthrough of every feature</span></td></tr>
                 <tr><td style="padding:4px 0;font-size:14px;"><a href="${faqUrl}" style="color:#22d3ee;text-decoration:underline;">FAQ (27 answers)</a> <span style="color:#64748b;">- scoring methodology, grading, and platform details</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why AI Visibility Matters</a> <span style="color:#64748b;">- the case for optimizing for AI search engines</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${aeoUrl}" style="color:#22d3ee;text-decoration:underline;">AEO Playbook 2026</a> <span style="color:#64748b;">- answer engine optimization strategies and tactics</span></td></tr>
-                <tr><td style="padding:4px 0;font-size:14px;"><a href="${geoUrl}" style="color:#22d3ee;text-decoration:underline;">GEO &amp; AI Ranking 2026</a> <span style="color:#64748b;">- how generative AI ranking works</span></td></tr>
+                <tr><td style="padding:4px 0;font-size:14px;"><a href="${whyUrl}" style="color:#22d3ee;text-decoration:underline;">Why Citation Verification Matters</a> <span style="color:#64748b;">- the case for proving AI can cite your content</span></td></tr>
                 <tr><td style="padding:4px 0;font-size:14px;"><a href="${insightsUrl}" style="color:#22d3ee;text-decoration:underline;">Insights Hub</a> <span style="color:#64748b;">- deep dives, research, and analysis</span></td></tr>
                 <tr><td style="padding:4px 0;font-size:14px;"><a href="${pricingUrl}" style="color:#22d3ee;text-decoration:underline;">Plans &amp; Pricing</a> <span style="color:#64748b;">- see what each tier unlocks</span></td></tr>
               </table>
@@ -1029,7 +1026,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
           </tr>`;
 
   return emailWrap(
-    `Welcome to ${BRAND.name} - How to Use the Evidence-backed site analysis for AI answers Platform`,
+    `Welcome to ${BRAND.name} | CITE LEDGER — BRAG Evidence-Linked Scores`,
     emailHeader() + body + emailFooter(email),
     `You received this because you verified your email at aivis.biz`
   );
@@ -1057,7 +1054,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your ${tierName} plan resets on ${resetFormatted}.</p>
 
               <p style="margin:0 0 24px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                You hit your monthly audit limit; which means you're actively using AiVIS to improve your AI visibility.
+                You hit your monthly audit limit; which means you're actively using AiVIS CITE LEDGER to improve your citation readiness.
                 That's a good sign. The fact that you need more scans means your site is in active optimization, and that's
                 exactly where the higher tiers pay for themselves.
               </p>

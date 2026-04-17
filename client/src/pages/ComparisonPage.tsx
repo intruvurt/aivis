@@ -124,7 +124,7 @@ export default function ComparisonPage() {
               <tbody>
                 <tr className="border-b border-white/10/60 bg-charcoal/30">
                   <td className="py-3 pr-4 font-semibold text-white">AiVIS</td>
-                  <td className="py-3 pr-4 text-white/80">AI Visibility Audit Platform</td>
+                  <td className="py-3 pr-4 text-white/80">AiVIS | CITE LEDGER </td>
                   <td className="py-3 pr-4 text-white/80">Yes</td>
                   <td className="py-3 pr-4 text-white/80">Yes (Signal + Score Fix)</td>
                   <td className="py-3 pr-4 text-white/80">Yes (BRAG)</td>

@@ -166,7 +166,7 @@ export default function SiteCrawlPage() {
 
   usePageMeta({
     title: "Site Crawl",
-    description: "Crawl and audit multiple pages across your website for SEO and AI visibility issues.",
+    description: "Crawl and audit multiple pages across your website for structural and AI citation issues.",
     path: "/site-crawl",
   });
 
@@ -263,7 +263,7 @@ export default function SiteCrawlPage() {
       {!hasAccess ? (
         <UpgradeWall
           feature="Site Crawl"
-          description="Crawl and audit multiple pages across your website to find structural SEO and AI visibility issues at scale."
+          description="Crawl and audit multiple pages across your website to find structural and AI citation issues at scale."
           requiredTier="alignment"
           icon={<Globe className="h-12 w-12 text-white/80" />}
           featurePreview={[

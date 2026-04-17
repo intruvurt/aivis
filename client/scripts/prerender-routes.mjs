@@ -183,6 +183,7 @@ if (!fs.existsSync(indexPath)) {
 }
 
 const baseHtml = fs.readFileSync(indexPath, 'utf8');
+const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const HOME_EXTRA_HEAD = `
 		<script type="application/ld+json">
 			{
@@ -230,9 +231,9 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS | AI Visibility Audit — Evidence-Backed Scores',
+		title: 'AiVIS | AI Visibility Audit —AiVIS.biz - CITE LEDGER | Evidence-Backed Scores',
 		description: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, not assumptions.',
-		ogTitle: 'AiVIS | AI Visibility Audit — Evidence-Backed Scores',
+		ogTitle: 'AiVIS | AI Visibility Audit —AiVIS.biz - CITE LEDGER | Evidence-Backed Scores',
 		ogDescription: 'AiVIS analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
@@ -547,7 +548,7 @@ const routes = [
 	{
 		path: '/about',
 		title: 'About AiVIS | Intruvurt Labs',
-		description: 'About AiVIS and Intruvurt Labs: the AI visibility audit platform focused on answer-engine readiness and evidence-backed fixes.',
+		description: 'About AiVIS and Intruvurt Labs: the AiVIS | CITE LEDGER  focused on answer-engine readiness and evidence-backed fixes.',
 	},
 	{
 		path: '/press',
@@ -963,6 +964,15 @@ function escapeHtml(value) {
 		.replaceAll("'", '&#39;');
 }
 
+function escapeJson(value) {
+	return String(value)
+		.replace(/\\/g, '\\\\')
+		.replace(/"/g, '\\"')
+		.replace(/\n/g, '\\n')
+		.replace(/\r/g, '\\r')
+		.replace(/\t/g, '\\t');
+}
+
 function normalizeMetaDescription(value, maxLength = 160) {
 	const compact = String(value || '').replace(/\s+/g, ' ').trim();
 	if (!compact) return '';
@@ -1095,6 +1105,31 @@ function buildServiceSchema({ canonicalUrl, name, description, audience, deliver
 }
 
 const routeSpecificEnrichment = {
+	'/': {
+		tldr: 'AiVIS is the CITE LEDGER for AI answers. It audits how AI answer engines — ChatGPT, Perplexity, Claude, and Google AI — read, trust, and cite your website. Enter any URL to get a 0–100 score with BRAG evidence-linked findings, category grades, and prioritized fixes.',
+		sections: [
+			{
+				heading: 'What is CITE LEDGER',
+				paragraphs: [
+					'CITE LEDGER is the verification layer that checks whether AI systems can extract, attribute, and cite your content. A page can rank first in traditional search and still be invisible to answer engines if structural signals are missing.',
+					'AiVIS measures extractability, trust signal alignment, and citation readiness across six weighted categories: Content Depth (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical Foundations (15%), Meta Tags and Open Graph (13%), and Heading Structure (12%).',
+				],
+			},
+			{
+				heading: 'What is BRAG',
+				id: 'brag',
+				paragraphs: [
+					'BRAG stands for Based-Retrieval-Auditable-Grading. Every finding is tied to verifiable page evidence using stable evidence identifiers. If something cannot be proven from the live page, it is not included in the score.',
+				],
+			},
+			{
+				heading: 'Who should use AiVIS',
+				paragraphs: [
+					'AiVIS is built for founders, marketers, developers, and agencies who need to understand why their content is not being cited by AI answer engines. If AI models are ignoring, misquoting, or attributing your content to competitors, the CITE LEDGER shows you exactly why.',
+				],
+			},
+		],
+	},
 	'/integrations': {
 		tldr: 'The Integrations Hub explains how AiVIS.biz connects audits to real operations through workspace API keys, webhook delivery, scheduled rescans, and Auto Score Fix automation.',
 		sections: [
@@ -1206,7 +1241,7 @@ const routeSpecificEnrichment = {
 		},
 	},
 	'/compare': {
-		tldr: 'The comparison route positions AiVIS.biz against all traditional and AI add-ons to SEO suites. The fact is clear: AiVIS.biz outperforms lighter content, no evidence, Ai-only opinions and are normally given specific intructional/rules system prompt to handle the potential drift that all models suffer from. Therefore, similar naming, keywords, intented usecases is the validated angle to standout from all noise while building. AiVIS.biz focuses on live URL auditing, evidence trails(BRAG framework) multi-model cross-validation to become AI citable in answers and score remediation(automated Github repo-code file fixes) which are not usually found in even the most popular traditional SEO tools that focus on backlinks, keyword research, ranking or poor content scoring without the real-time auditing and evidence-backed approach that AiVIS offers. The comparison page is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product. That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS.biz and adjacent tool categories. The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse. By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell. Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what "AiVIS - AI Intelligence Audit | Evidence-Backed Scores" actually is, what it is not, which competitor classes overlap, and where the product is unique and is the true differentiator. The challenge of strengthening entity clarity among several AI and non-AI tools with these same letters: AiVIS.biz, Avis.biz, Aivis.io.. they all mention intelligence, authority, brand visibility or awareness and if content is the only thing needed to surface cleanly for AI query answers...cite tracking, SEO result ranking/indexing. AiVIS has established a zero-AI-trust behavior due to the nature of the platform and unique market retention via systematic code implementation adjacent to AI and in addition to custom integration of BRAG(Based-Retrieval-Auditable-Grading). The evidence ledger that was built unintentionally, hoping to deliver eval issues for a Reddit user. After building, the original BRAG-repo is still "Belligerant-Retrieval-Augmented-Generation" and once it was put through real tests. I didnt mention BRAG unless its solely to help a Dev. So think of normal RAG - loose and hallucinate in blink of an eye. The intent was not to brag, but to be BELLIGERANT and precise even when no one is looking. Guardrails are cute rules that models will follow until they are outsmarted by a user to disobey their system rules or prompts. AiVIS is not here to be another opinion generation AI-SEO scoring summary. Its only a matter of time and increased user engagement with AiVIS, BRAG & "the hidden sauce" that hardens the entire pipeline and reminds AI that BRAG is the robust- not a toy but the initial guarding layer and some founders or devs will improves topical clarity across the broader public site using hacks and tricks. The prerendered compare page tells machines what AiVIS is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.',
+		tldr: 'The comparison route positions AiVIS.biz against all traditional and AI add-ons to SEO suites. The fact is clear: AiVIS.biz outperforms lighter content, no evidence, Ai-only opinions and are normally given specific intructional/rules system prompt to handle the potential drift that all models suffer from. Therefore, similar naming, keywords, intented usecases is the validated angle to standout from all noise while building. AiVIS.biz focuses on live URL auditing, evidence trails(BRAG framework) multi-model cross-validation to become AI citable in answers and score remediation(automated Github repo-code file fixes) which are not usually found in even the most popular traditional SEO tools that focus on backlinks, keyword research, ranking or poor content scoring without the real-time auditing and evidence-backed approach that AiVIS offers. The comparison page is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product. That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS.biz and adjacent tool categories. The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse. By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell. Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what "AiVIS - AI Intelligence Audit |AiVIS.biz - CITE LEDGER | Evidence-Backed Scores" actually is, what it is not, which competitor classes overlap, and where the product is unique and is the true differentiator. The challenge of strengthening entity clarity among several AI and non-AI tools with these same letters: AiVIS.biz, Avis.biz, Aivis.io.. they all mention intelligence, authority, brand visibility or awareness and if content is the only thing needed to surface cleanly for AI query answers...cite tracking, SEO result ranking/indexing. AiVIS has established a zero-AI-trust behavior due to the nature of the platform and unique market retention via systematic code implementation adjacent to AI and in addition to custom integration of BRAG(Based-Retrieval-Auditable-Grading). The evidence ledger that was built unintentionally, hoping to deliver eval issues for a Reddit user. After building, the original BRAG-repo is still "Belligerant-Retrieval-Augmented-Generation" and once it was put through real tests. I didnt mention BRAG unless its solely to help a Dev. So think of normal RAG - loose and hallucinate in blink of an eye. The intent was not to brag, but to be BELLIGERANT and precise even when no one is looking. Guardrails are cute rules that models will follow until they are outsmarted by a user to disobey their system rules or prompts. AiVIS is not here to be another opinion generation AI-SEO scoring summary. Its only a matter of time and increased user engagement with AiVIS, BRAG & "the hidden sauce" that hardens the entire pipeline and reminds AI that BRAG is the robust- not a toy but the initial guarding layer and some founders or devs will improves topical clarity across the broader public site using hacks and tricks. The prerendered compare page tells machines what AiVIS is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.',
 		sections: [
 			{
 				heading: 'What this comparison page is actually comparing?',
@@ -1769,13 +1804,13 @@ function prerenderHtml(route) {
 	// and WebSite blocks along with WebPage, leaving only 2 JSON-LD blocks in output.
 	html = html.replace(
 		/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"@type":\s*"WebPage"(?:(?!<\/script>)[\s\S])*?<\/script>/,
-		`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "WebPage",\n        "@id": "${canonicalUrl}#webpage",\n        "name": "${route.title}",\n        "url": "${canonicalUrl}",\n        "description": "${normalizedDescription}",\n        "isPartOf": { "@id": "https://aivis.biz/#website" },\n        "about": { "@id": "https://aivis.biz/#software-application" },\n        "publisher": { "@id": "https://aivis.biz/#organization" },\n        "inLanguage": "en-US",\n        "dateModified": "2026-03-15",\n        "primaryImageOfPage": {\n          "@type": "ImageObject",\n          "url": "https://aivis.biz/og-image2.png"\n        }\n      }\n    </script>`
+		`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "WebPage",\n        "@id": "${canonicalUrl}#webpage",\n        "name": "${escapeJson(route.title)}",\n        "url": "${canonicalUrl}",\n        "description": "${escapeJson(normalizedDescription)}",\n        "isPartOf": { "@id": "https://aivis.biz/#website" },\n        "about": { "@id": "https://aivis.biz/#software-application" },\n        "publisher": { "@id": "https://aivis.biz/#organization" },\n        "inLanguage": "en-US",\n        "dateModified": "${BUILD_DATE}",\n        "primaryImageOfPage": {\n          "@type": "ImageObject",\n          "url": "https://aivis.biz/og-image2.png"\n        }\n      }\n    </script>`
 	);
 
 	if (route.path !== '/') {
 		html = html.replace(
 			'</head>',
-			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "@id": "${canonicalUrl}#breadcrumb",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeHtml(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
+			`<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "BreadcrumbList",\n        "@id": "${canonicalUrl}#breadcrumb",\n        "itemListElement": [\n          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },\n          { "@type": "ListItem", "position": 2, "name": "${escapeJson(route.title)}", "item": "${canonicalUrl}" }\n        ]\n      }\n    </script>\n  </head>`
 		);
 	}
 
@@ -1801,6 +1836,31 @@ function prerenderHtml(route) {
 				html = updateTag(html, /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/>/,  `<meta name="twitter:image" content="${imgUrl}" />`);
 			}
 			html = html.replace('</head>', `${articleMeta}</head>`);
+
+			// Inject Article JSON-LD schema for blog posts
+			const articleSchema = {
+				'@context': 'https://schema.org',
+				'@type': 'Article',
+				'@id': `${canonicalUrl}#article`,
+				headline: route.title,
+				description: normalizeMetaDescription(route.description),
+				datePublished: blogMeta.publishedAt
+					? `${blogMeta.publishedAt}T00:00:00Z`
+					: BUILD_DATE,
+				dateModified: BUILD_DATE,
+				author: {
+					'@type': 'Person',
+					name: blogMeta.authorName || 'Ryan Mason',
+					'@id': 'https://aivis.biz/#author',
+				},
+				publisher: { '@id': 'https://aivis.biz/#organization' },
+				mainEntityOfPage: canonicalUrl,
+				image: blogMeta.featuredImageUrl || 'https://aivis.biz/og-image2.png',
+			};
+			html = html.replace(
+				'</head>',
+				`${jsonLdScript(articleSchema)}\n</head>`
+			);
 		}
 	}
 
@@ -1810,14 +1870,14 @@ function prerenderHtml(route) {
 		html = html.replace('</head>', `${extraHead}\n  </head>`);
 	}
 
-	if (route.path !== '/') {
-		html = html.replace(/<body>[\s\S]*<\/body>/, renderRouteBody(route, canonicalUrl));
-	}
+	html = html.replace(/<body>[\s\S]*<\/body>/, renderRouteBody(route, canonicalUrl));
 
 	return `<!-- prerendered-route:${route.path} -->\n${html}`;
 }
 
+const PRERENDER_SKIP = new Set(['/mcp', '/referrals', '/team', '/gsc', '/analytics', '/reports']);
 for (const route of routes) {
+	if (PRERENDER_SKIP.has(route.path)) continue;
 	const html = prerenderHtml(route);
 	const targetDir = route.path === '/' ? distDir : path.join(distDir, route.path.replace(/^\//, ''));
 	fs.mkdirSync(targetDir, { recursive: true });

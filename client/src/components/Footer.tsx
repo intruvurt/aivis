@@ -57,7 +57,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              Fix how AI systems interpret and cite your website. Evidence-backed audits for ChatGPT, Perplexity AI, Google AI Overviews, and Claude.
+              CITE LEDGER — BRAG evidence-linked scores for ChatGPT, Perplexity AI, Google AI Overviews, and Claude. Verify how AI cites your website.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
               <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">

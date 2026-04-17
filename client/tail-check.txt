@@ -1,0 +1,3 @@
+[33mCircular chunk: vendor -> sentry -> vendor. Please adjust the manual chunk logic for these chunks.[39m
+[33mCircular chunk: vendor -> react-dom -> vendor. Please adjust the manual chunk logic for these chunks.[39m
+

@@ -95,7 +95,7 @@ const proofCards = [
 const faq = [
   {
     q: "What is Score Fix AutoFix PR?",
-    a: "Score Fix AutoFix PR is the remediation layer after an AI visibility audit. When the remediation pipeline is configured, it connects to your GitHub repo and generates pull requests with structural, content, schema, and internal-link changes designed to improve extraction clarity and citation readiness. When the pipeline is unavailable, it still presents the evidence-linked plan and setup requirements.",
+    a: "Score Fix AutoFix PR is the remediation layer after an AI citation audit. When the remediation pipeline is configured, it connects to your GitHub repo and generates pull requests with structural, content, schema, and internal-link changes designed to improve extraction clarity and citation readiness. When the pipeline is unavailable, it still presents the evidence-linked plan and setup requirements.",
   },
   {
     q: "How many credits does each fix cost?",
@@ -533,7 +533,7 @@ export default function ScoreFixPage() {
                 SCORE FIX
               </div>
               <h1 className="mt-3 max-w-4xl text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl lg:leading-[1.08]">
-                Score Fix AutoFix PR - Automated GitHub Remediation for AI Visibility
+                Score Fix AutoFix PR — Automated GitHub Remediation for Citation Readiness
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300 sm:text-[15px]">
                 Score Fix turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can open GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural improvements. Each remediation job costs 10-25 credits depending on complexity.

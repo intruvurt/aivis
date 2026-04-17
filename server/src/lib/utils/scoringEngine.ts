@@ -321,7 +321,7 @@ export function generateRisks(
       severity: 'critical',
       category: 'AI Visibility',
       description: 'No structured data (Schema.org markup) found',
-      impact: 'AI systems cannot understand your content context, entities, or relationships. Severely limits Evidence-backed site analysis for AI answers and rich results eligibility.',
+      impact: 'AI systems cannot understand your content context, entities, or relationships. Severely limits AI visibility, citation eligibility, and rich results.',
       recommendation: 'Implement JSON-LD structured data for Organization, WebSite, Article, Product, or relevant schema types. Use Google\'s Structured Data Testing Tool to validate.',
       evidence: 'No JSON-LD or microdata detected in page source'
     });

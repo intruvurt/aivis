@@ -71,7 +71,7 @@ const REVERSE_ENGINEER_FAQ = [
   },
   {
     question: "Who should use the Reverse Engineer tools?",
-    answer: "These tools are for teams who need to understand AI answer behavior at a technical level: content strategists who want to reverse-engineer what makes cited pages succeed, developers implementing AEO (answer engine optimization) improvements, agencies auditing multiple client sites, and product teams maintaining AI-visible documentation. The tools work best after running a standard AI visibility audit, because the audit findings provide the entity and evidence baseline that the decompiler and blueprint tools operate against.",
+    answer: "These tools are for teams who need to understand AI answer behavior at a technical level: content strategists who want to reverse-engineer what makes cited pages succeed, developers implementing citation readiness improvements, agencies auditing multiple client sites, and product teams maintaining AI-visible documentation. The tools work best after running a standard CITE LEDGER audit, because the audit findings provide the entity and evidence baseline that the decompiler and blueprint tools operate against.",
   },
 ];
 

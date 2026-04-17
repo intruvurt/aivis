@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 
 interface PageMeta {
-  /** Page title - will be suffixed with " | AiVIS | AI Visibility Audit" */
+  /** Page title - will be suffixed with " | AiVIS | CITE LEDGER" */
   title: string;
   /** Meta description for search engines and AI crawlers */
   description: string;
@@ -26,7 +26,7 @@ interface PageMeta {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'AiVIS | AI Visibility Audit';
+const SITE_NAME = 'AiVIS | cite ledger for AI answers';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 
@@ -199,7 +199,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('og:image:type', 'image/png', true);
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
-    setMeta('og:image:alt', 'AiVIS — Fix how AI systems interpret and cite your website', true);
+    setMeta('og:image:alt', 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores', true);
 
     // Twitter
     setMeta('twitter:card', 'summary_large_image');
@@ -208,7 +208,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
     setMeta('twitter:title', ogTitle || title);
     setMeta('twitter:description', ogDescription || description);
     setMeta('twitter:image', DEFAULT_SHARE_IMAGE);
-    setMeta('twitter:image:alt', 'AiVIS — Fix how AI systems interpret and cite your website');
+    setMeta('twitter:image:alt', 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores');
 
     // Per-page structured data
     setStructuredData(structuredData);

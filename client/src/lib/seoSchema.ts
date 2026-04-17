@@ -24,10 +24,10 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: 'AiVIS',
-    alternateName: 'AI Visibility Intelligence System',
+    alternateName: 'CITE LEDGER — BRAG Evidence-Linked Scores',
     url: `${BASE_URL}/`,
     description:
-      'AiVIS audits and fixes how AI answer engines interpret, extract, and cite website content using evidence-backed analysis.',
+      'AiVIS CITE LEDGER verifies how AI answer engines interpret, extract, and cite website content using BRAG (Based-Retrieval-Auditable-Grading) evidence-linked analysis.',
     founder: {
       '@type': 'Person',
       name: 'Ryan Mason',
@@ -91,23 +91,24 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'https://dev.to/aivisbiz/i-audited-500-websites-json-ld-is-the-1-factor-for-ai-citation-29m4',
     ],
     knowsAbout: [
-      'AI answer auditing',
-      'answer engine optimization',
-      'generative engine optimization',
+      'AI citation verification',
+      'BRAG evidence framework',
+      'evidence-linked audit',
       'AI citation readiness',
       'structured data extraction',
       'machine readability',
-      'BRAG evidence framework',
-      'evidence-backed analysis',
+      'CITE LEDGER',
+      'Based-Retrieval-Auditable-Grading',
       'AI answer decompile',
       'entity disambiguation',
       'AI extraction failure diagnosis',
       'answer distortion measurement',
       'AI content misattribution detection',
       'fix protocol generation',
+      'anti-hallucination verification',
     ],
     areaServed: 'Worldwide',
-    slogan: 'Fix how AI systems interpret and cite your website',
+    slogan: 'BRAG Evidence-Linked Scores — Get Cited Fixes',
   };
 }
 
@@ -124,7 +125,7 @@ export function buildAuthorRef(): Record<string, unknown> {
   };
 }
 
-export function buildWebSiteSchema(name = 'AiVIS — AI visibility audit and fix system'): Record<string, unknown> {
+export function buildWebSiteSchema(name = 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores'): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

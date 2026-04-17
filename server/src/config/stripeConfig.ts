@@ -126,7 +126,7 @@ export const STRIPE_PRICING = {
 
   // PRO TIER (legacy starter subscription)
   pro: {
-    name: 'Evidence-backed site analysis for AI answers Platform – Pro',
+    name: 'AiVIS – Pro',
     lookupKey: 'pro_monthly',
     priceId: process.env.STRIPE_PRO_PRICE_ID,
     amountCents: 4900,
@@ -140,7 +140,7 @@ export const STRIPE_PRICING = {
 
   // BUSINESS TIER - $149/month (Signal)
   business: {
-    name: 'Evidence-backed site analysis for AI answers Platform – Business',
+    name: 'AiVIS – Business',
     lookupKey: 'business_monthly',
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
     amountCents: 2900,

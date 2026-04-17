@@ -151,7 +151,7 @@ router.get('/embed', (req: Request, res: Response) => {
 
   const snippet = `<!-- AiVIS Visibility Badge -->
 <a href="${clickHref}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS">
-  <img src="${badgeSrc}" alt="Audited by AiVIS – Evidence-backed site analysis for AI answers" width="150" height="42" style="border:0;" loading="lazy" />
+  <img src="${badgeSrc}" alt="Audited by AiVIS — AI visibility audit and fix platform" width="150" height="42" style="border:0;" loading="lazy" />
 </a>
 <img src="${trackSrc}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`;
 

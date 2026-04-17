@@ -587,10 +587,10 @@ async function buildSiteFileContext(intent: FileFetchIntent): Promise<string | n
  * ──────────────────────────────────────────────────────────────────────────── */
 const PLATFORM_KNOWLEDGE = `
 ## What is AiVIS?
-AiVIS (Evidence-backed site analysis for AI answers Platform) is a real-time Evidence-backed site analysis for AI answers platform. It measures how well AI search engines ~ ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot - can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
+AiVIS is a real-time AI visibility audit and fix platform. It measures how well AI search engines — ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot — can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
 
 Website: https://aivis.biz
-Company: Intruvurt Labs - registration pending, B2B service provider in Georgia (Atlanta).
+Company: AiVIS — B2B service provider in Georgia (Atlanta).
 
 ## How an Analysis Works
 1. User enters a URL on the Dashboard.

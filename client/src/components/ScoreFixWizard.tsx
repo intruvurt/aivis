@@ -336,7 +336,7 @@ function Step2Preview({
       type: 'deterministic',
       lines: [
         { kind: 'add', text: '+ Organization + SoftwareApplication schema injected' },
-        { kind: 'add', text: `+ Defines ${domain} as AI visibility audit platform` },
+        { kind: 'add', text: `+ Defines ${domain} as AiVIS | CITE LEDGER ` },
         { kind: 'add', text: '+ Author, datePublished, sameAs social links wired in' },
       ],
     },

@@ -73,7 +73,7 @@ const MILESTONES = [
     date: "Dec 2025",
     title: "Platform Launch",
     description:
-      "AiVIS launched as the first evidence-backed AI visibility audit platform with real crawl data, evidence ledger, and multi-model triple-check scoring.",
+      "AiVIS launched as the first evidence-backed AiVIS | CITE LEDGER  with real crawl data, evidence ledger, and multi-model triple-check scoring.",
   },
 ];
 
@@ -98,7 +98,7 @@ export default function PressPage() {
     path: "/press",
     ogTitle: "Press - AiVIS AI Visibility Audit",
     ogDescription:
-      "Press resources and public milestones for AiVIS, the AI visibility audit platform. TechCrunch Startup Battlefield Top 200 nominee.",
+      "Press resources and public milestones for AiVIS, the AiVIS | CITE LEDGER . TechCrunch Startup Battlefield Top 200 nominee.",
     structuredData: PRESS_STRUCTURED_DATA,
   });
 
@@ -119,7 +119,7 @@ export default function PressPage() {
             AiVIS in the Press
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            The first evidence-backed AI visibility audit platform — built
+            The first evidence-backed AiVIS | CITE LEDGER  — built
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>

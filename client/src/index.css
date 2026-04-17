@@ -12,7 +12,7 @@
 }
 
 :root {
-  --font-app: "DM Sans", "Caveat", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-app: "DM Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --app-corner-radius: 0.75rem;
 
   /* ── Modern dark palette (widened contrast steps) ── */

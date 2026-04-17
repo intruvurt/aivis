@@ -9,9 +9,9 @@ const PRESS_STRUCTURED_DATA = [
   buildOrganizationSchema(),
   buildWebPageSchema({
     path: "/press",
-    name: "Press – AiVIS AI Visibility Audit",
+    name: "Press – AiVIS.biz AI Visibility Audit",
     description:
-      "Press resources, media coverage, and public milestones for AiVIS.",
+      "Press resources, media coverage, and public milestones for AiVIS.biz.",
   }),
   buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -55,9 +55,9 @@ const FEATURED_POSTS = [
   {
     date: "Apr 2026",
     platform: "LinkedIn",
-    title: "AiVIS audits how AI systems read a website",
+    title: "AiVIS.biz audits how AI systems read a website",
     description:
-      "Founder post walking through the origin story — why most websites are invisible to AI answer engines and how AiVIS was built to surface the structural gaps they miss.",
+      "Founder post walking through the origin story — why most websites are invisible to AI answer engines and how AiVIS.biz was built to surface the structural gaps they miss.",
     url: "https://www.linkedin.com/posts/web4aidev_aivis-audits-how-ai-systems-read-a-website-share-7447000684455071745-tDOK",
   },
 ];
@@ -67,19 +67,19 @@ const MILESTONES = [
     date: "2026",
     title: "TechCrunch Startup Battlefield - Top 200 Nominee",
     description:
-      "AiVIS selected as a Top 200 nominee for TechCrunch Startup Battlefield 2026, competing in the AI/ML category for AI visibility auditing and citation-readiness.",
+      "AiVIS.biz selected as a Top 200 nominee for TechCrunch Startup Battlefield 2026, competing in the AI/ML category for AI visibility auditing and citation-readiness.",
   },
   {
     date: "Dec 2025",
     title: "Platform Launch",
     description:
-      "AiVIS launched as the first evidence-backed AiVIS | CITE LEDGER  with real crawl data, evidence ledger, and multi-model triple-check scoring.",
+      "AiVIS.biz launched as the first evidence-backed AiVIS.biz | CITE LEDGER  with real crawl data, evidence ledger, and multi-model triple-check scoring.",
   },
 ];
 
 const MEDIA_KIT = [
-  { label: "Company Name", value: "AiVIS" },
-  { label: "Product", value: "AiVIS.biz \u2014 AI Visibility Audit" },
+  { label: "Company Name", value: "AiVIS.biz" },
+  { label: "Product", value: "AiVIS.biz.biz \u2014 AI Visibility Audit" },
   { label: "Founded", value: "December 2025" },
   { 
     label: "Founder", 
@@ -94,11 +94,11 @@ export default function PressPage() {
   usePageMeta({
     title: "Press & Media",
     description:
-      "Press resources, media coverage, and public milestones for AiVIS. TechCrunch Startup Battlefield Top 200 nominee.",
+      "Press resources, media coverage, and public milestones for AiVIS.biz. TechCrunch Startup Battlefield Top 200 nominee.",
     path: "/press",
-    ogTitle: "Press - AiVIS AI Visibility Audit",
+    ogTitle: "Press - AiVIS.biz AI Visibility Audit",
     ogDescription:
-      "Press resources and public milestones for AiVIS, the AiVIS | CITE LEDGER . TechCrunch Startup Battlefield Top 200 nominee.",
+      "Press resources and public milestones for AiVIS.biz, the AiVIS.biz | CITE LEDGER . TechCrunch Startup Battlefield Top 200 nominee.",
     structuredData: PRESS_STRUCTURED_DATA,
   });
 
@@ -116,10 +116,10 @@ export default function PressPage() {
             Top 200 · TechCrunch Startup Battlefield 2026
           </span>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
-            AiVIS in the Press
+            AiVIS.biz in the Press
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            The first evidence-backed AiVIS | CITE LEDGER  — built
+            The first evidence-backed AiVIS.biz | CITE LEDGER  — built
             for agencies, developers, and operators who need proof, not
             dashboards.
           </p>
@@ -190,7 +190,7 @@ export default function PressPage() {
           >
             <img
               src="https://ph-files.imgix.net/c949b139-9ecd-41b9-80be-2a4723cb752e.png?auto=format&fit=crop&w=80&h=80"
-              alt="AiVIS on Product Hunt"
+              alt="AiVIS.biz on Product Hunt"
               width={64}
               height={64}
               className="rounded-lg object-cover shrink-0"
@@ -199,7 +199,7 @@ export default function PressPage() {
             />
             <div className="min-w-0">
               <p className="text-lg font-semibold text-white/90 group-hover:text-white transition-colors">
-                AiVIS – AI Visibility Audit
+                AiVIS.biz – AI Visibility Audit
               </p>
               <p className="mt-1 text-sm text-white/60">
                 See exactly what AI gets wrong about your website
@@ -236,7 +236,7 @@ export default function PressPage() {
               to="/about"
               className="inline-flex items-center gap-1.5 text-sm text-[#6A911E] hover:text-[#5A8018]"
             >
-              About AiVIS
+              About AiVIS.biz
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>
             <Link

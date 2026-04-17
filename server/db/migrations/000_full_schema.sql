@@ -1,5 +1,5 @@
 -- ============================================
--- AiVIS - Full Database Schema
+-- AiVIS.biz - Full Database Schema
 -- Run this against your Neon PostgreSQL database
 -- ============================================
 

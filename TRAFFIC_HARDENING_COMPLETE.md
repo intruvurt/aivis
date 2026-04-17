@@ -2,7 +2,7 @@
 
 ## Summary of Changes
 
-Your AiVIS platform now has **production-grade traffic hardening** with 5 layers of protection:
+Your AiVIS.biz platform now has **production-grade traffic hardening** with 5 layers of protection:
 
 ---
 

@@ -6,7 +6,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 export default function PaymentSuccessPage() {
   usePageMeta({
     title: 'Payment Successful',
-    description: 'Your AiVIS plan upgrade was successful. New features are now active.',
+    description: 'Your AiVIS.biz plan upgrade was successful. New features are now active.',
     noIndex: true,
   });
   const [searchParams] = useSearchParams();

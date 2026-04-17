@@ -1,6 +1,6 @@
-# AiVIS Client
+# AiVIS.biz Client
 
-This package is the frontend for the AiVIS product flow.
+This package is the frontend for the AiVIS.biz product flow.
 
 It is not a generic SEO dashboard. The client is built to help users scan a public site, understand what AI systems miss, review evidence, trigger remediation, and measure what changes after another scan.
 
@@ -138,7 +138,7 @@ Important implementation files:
 
 ## Evidence-first rule
 
-AiVIS uses an evidence-first product model.
+AiVIS.biz uses an evidence-first product model.
 
 - Findings should connect back to real evidence.
 - Recommendations should stay grounded in the analyzed page.
@@ -242,7 +242,7 @@ Related
 
 Final note
 
-AiVIS is built to show whether a site can actually be read trusted and cited by AI systems
+AiVIS.biz is built to show whether a site can actually be read trusted and cited by AI systems
 
 The product is not just about audits
 

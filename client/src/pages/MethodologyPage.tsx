@@ -29,7 +29,7 @@ const dimensions = [
     weight: "20 %",
     icon: FileCode2,
     signals:
-      "JSON-LD presence, type appropriateness (Organization, Article, FAQ, Product, HowTo), relationship completeness, entity references, and schema validity. AiVIS evaluates over 18 schema.org types.",
+      "JSON-LD presence, type appropriateness (Organization, Article, FAQ, Product, HowTo), relationship completeness, entity references, and schema validity. AiVIS.biz evaluates over 18 schema.org types.",
     whyItMatters:
       "Structured data is the only machine-readable declaration of what a page is, who published it, and when. Without JSON-LD, AI models must infer entity identity from context — and they frequently infer incorrectly.",
   },
@@ -136,7 +136,7 @@ const bragSteps = [
 const pipelineSteps = [
   {
     title: "Crawl and extraction",
-    text: "The target URL is fetched via a headless browser that executes JavaScript. AiVIS extracts the full HTML structure, all JSON-LD blocks, meta tags, Open Graph data, heading hierarchy, robots directives, canonical signals, and raw text content. This extraction baseline is the foundation for every downstream finding.",
+    text: "The target URL is fetched via a headless browser that executes JavaScript. AiVIS.biz extracts the full HTML structure, all JSON-LD blocks, meta tags, Open Graph data, heading hierarchy, robots directives, canonical signals, and raw text content. This extraction baseline is the foundation for every downstream finding.",
   },
   {
     title: "Dimension scoring",
@@ -144,7 +144,7 @@ const pipelineSteps = [
   },
   {
     title: "Evidence mapping",
-    text: "Low-scoring items are mapped to concrete page evidence — the specific HTML element, the missing JSON-LD property, or the malformed meta tag. AiVIS does not generate recommendations from generic best-practice databases. Every finding is grounded in what was actually observed on the page.",
+    text: "Low-scoring items are mapped to concrete page evidence — the specific HTML element, the missing JSON-LD property, or the malformed meta tag. AiVIS.biz does not generate recommendations from generic best-practice databases. Every finding is grounded in what was actually observed on the page.",
   },
   {
     title: "AI model analysis",
@@ -209,14 +209,14 @@ const citeLedgerPrinciples = [
 
 const methodologyFaq = [
   {
-    question: "What does the AiVIS score actually measure?",
+    question: "What does the AiVIS.biz score actually measure?",
     answer:
-      "The AiVIS score measures how confidently AI answer engines can parse, trust, extract from, and cite a page. It is a weighted composite across six evidence-backed dimensions: content depth (20%), schema coverage (20%), AI readability (20%), technical SEO (15%), metadata quality (13%), and heading structure (12%). The score is not a generic SEO grade — it is specific to AI extraction fidelity.",
+      "The AiVIS.biz score measures how confidently AI answer engines can parse, trust, extract from, and cite a page. It is a weighted composite across six evidence-backed dimensions: content depth (20%), schema coverage (20%), AI readability (20%), technical SEO (15%), metadata quality (13%), and heading structure (12%). The score is not a generic SEO grade — it is specific to AI extraction fidelity.",
   },
   {
     question: `What is the ${BRAG_TRAIL_LABEL}?`,
     answer:
-      `${BRAG_ACRONYM} stands for ${BRAG_EXPANSION}. It is the evidence protocol that ensures every finding and recommendation in an AiVIS audit maps back to a crawl-observable signal. The protocol eliminates speculative recommendations and makes every finding independently verifiable.`,
+      `${BRAG_ACRONYM} stands for ${BRAG_EXPANSION}. It is the evidence protocol that ensures every finding and recommendation in an AiVIS.biz audit maps back to a crawl-observable signal. The protocol eliminates speculative recommendations and makes every finding independently verifiable.`,
   },
   {
     question: "What score is usually required to be citation-ready?",
@@ -229,9 +229,9 @@ const methodologyFaq = [
       "Deterministic findings are crawl-verifiable — the evidence exists directly in page source. Advisory findings are surfaced by AI model analysis and represent likely issues that cannot be confirmed from the crawl alone. Both are useful, but advisory findings carry lower confidence and should be evaluated case by case.",
   },
   {
-    question: "How does AiVIS differ from traditional SEO audit tools?",
+    question: "How does AiVIS.biz differ from traditional SEO audit tools?",
     answer:
-      "Traditional SEO tools measure rank position, backlink profiles, and keyword density. AiVIS measures whether AI answer engines can structurally extract, trust, and accurately cite a page. The audit surfaces extraction failures — missing schema, blocked crawlers, entity ambiguity, shallow content — not ranking signals.",
+      "Traditional SEO tools measure rank position, backlink profiles, and keyword density. AiVIS.biz measures whether AI answer engines can structurally extract, trust, and accurately cite a page. The audit surfaces extraction failures — missing schema, blocked crawlers, entity ambiguity, shallow content — not ranking signals.",
   },
   {
     question: "What is the triple-check pipeline?",
@@ -241,17 +241,17 @@ const methodologyFaq = [
   {
     question: "Can the score change without any page modifications?",
     answer:
-      "AI model behavior and extraction patterns evolve. A page that was once well-extracted may score differently as model architecture changes. AiVIS stores baseline snapshots to track this drift — if a score changes without page modifications, the delta report shows which model-side factors shifted.",
+      "AI model behavior and extraction patterns evolve. A page that was once well-extracted may score differently as model architecture changes. AiVIS.biz stores baseline snapshots to track this drift — if a score changes without page modifications, the delta report shows which model-side factors shifted.",
   },
   {
-    question: "Does AiVIS guarantee citation by ChatGPT, Perplexity, or other models?",
+    question: "Does AiVIS.biz guarantee citation by ChatGPT, Perplexity, or other models?",
     answer:
-      "No. AiVIS measures structural readiness for citation — whether a page provides the signals AI models need to extract and cite content accurately. Actual citation depends on query relevance, competitive content, and model-specific behavior. AiVIS improves the probability of accurate citation, not the certainty of it.",
+      "No. AiVIS.biz measures structural readiness for citation — whether a page provides the signals AI models need to extract and cite content accurately. Actual citation depends on query relevance, competitive content, and model-specific behavior. AiVIS.biz improves the probability of accurate citation, not the certainty of it.",
   },
   {
     question: "What is the CITE LEDGER?",
     answer:
-      "The CITE LEDGER is the structured record each AiVIS audit produces — the transformation layer that converts BRAG-scraped evidence into deterministic, citable ground truth. It uses an ML-driven pipeline with three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle.",
+      "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded in a sequential, tamper-evident SHA-256 hash chain where each entry carries a BRAG ID, content hash, and chain hash linking it to its predecessor. The pipeline uses three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle.",
   },
 ] as const;
 
@@ -324,18 +324,18 @@ const failureModes = [
 
 export default function MethodologyPage() {
   usePageMeta({
-    title: "AiVIS Methodology | CITE LEDGER & BRAG Evidence Protocol",
+    title: "AiVIS.biz Methodology | CITE LEDGER & BRAG Evidence Protocol",
     description:
-      `How AiVIS audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the ${BRAG_PROTOCOL_LABEL} that ground every finding in crawl-observable data.`,
+      `How AiVIS.biz audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the ${BRAG_PROTOCOL_LABEL} that ground every finding in crawl-observable data.`,
     path: "/methodology",
-    ogTitle: "AiVIS Methodology — CITE LEDGER & BRAG Evidence Protocol",
+    ogTitle: "AiVIS.biz Methodology — CITE LEDGER & BRAG Evidence Protocol",
     ogDescription:
       `Complete scoring framework: CITE LEDGER pipeline, ${BRAG_PROTOCOL_LABEL}, six dimension weights, triple-check consensus, and methodology FAQ.`,
     ogType: "article",
     structuredData: [
       buildWebPageSchema({
         path: "/methodology",
-        name: "AiVIS Methodology — CITE LEDGER & BRAG Evidence Protocol",
+        name: "AiVIS.biz Methodology — CITE LEDGER & BRAG Evidence Protocol",
         description:
           "CITE LEDGER evidence pipeline, BRAG protocol, six weighted dimensions, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
       }),
@@ -353,7 +353,7 @@ export default function MethodologyPage() {
   return (
     <PublicPageFrame
       icon={FlaskConical}
-      title="How AiVIS audits AI answer readiness"
+      title="How AiVIS.biz audits AI answer readiness"
       subtitle="Scoring methodology, evidence protocol, and the pipeline that turns extraction analysis into actionable fixes."
       backTo="/"
       maxWidthClass="max-w-5xl"
@@ -362,29 +362,29 @@ export default function MethodologyPage() {
       <section className="space-y-6">
         {/* Answer-extractable direct definition */}
         <div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/[0.04] p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300/70 mb-3">What the AiVIS score measures</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300/70 mb-3">What the AiVIS.biz score measures</p>
           <p className="text-base leading-7 text-white/88 font-medium">
-            The AiVIS score measures whether an AI answer engine can structurally access, parse, trust, and cite a page. It is not an SEO score. It does not measure rankings, backlinks, or keyword density. It measures extraction fidelity: can an AI model reproduce your content accurately when reconstructing an answer?
+            The AiVIS.biz score measures whether an AI answer engine can structurally access, parse, trust, and cite a page. It is not an SEO score. It does not measure rankings, backlinks, or keyword density. It measures extraction fidelity: can an AI model reproduce your content accurately when reconstructing an answer?
           </p>
         </div>
 
         <div className="space-y-4">
           <p className="text-base leading-7 text-white/64">
-            AI answer engines do not rank pages — they extract fragments, compress them into internal representations, and reconstruct answers. A page that ranks #1 in Google may score below 30 in AiVIS if the extraction pipeline fails silently.
+            AI answer engines do not rank pages — they extract fragments, compress them into internal representations, and reconstruct answers. A page that ranks #1 in Google may score below 30 in AiVIS.biz if the extraction pipeline fails silently.
           </p>
           <p className="text-base leading-7 text-white/64">
-            Every AiVIS finding traces back to a crawl-observable signal: an HTML element, JSON-LD block, meta tag, or server header. The audit score is a weighted composite across six dimensions, each targeting a distinct failure point in the AI extraction pipeline.
+            Every AiVIS.biz finding traces back to a crawl-observable signal: an HTML element, JSON-LD block, meta tag, or server header. The audit score is a weighted composite across six dimensions, each targeting a distinct failure point in the AI extraction pipeline.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-center gap-2 text-sm font-medium text-white"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Evidence-grounded</div>
-            <p className="mt-3 text-sm leading-6 text-white/64">Every recommendation is tied back to crawl evidence. If AiVIS cannot observe it on the page, it does not claim it as a finding.</p>
+            <p className="mt-3 text-sm leading-6 text-white/64">Every recommendation is tied back to crawl evidence. If AiVIS.biz cannot observe it on the page, it does not claim it as a finding.</p>
           </article>
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-center gap-2 text-sm font-medium text-white"><Sparkles className="h-4 w-4 text-orange-300" /> Extraction-first</div>
-            <p className="mt-3 text-sm leading-6 text-white/64">A page can rank #1 in Google and score below 40 in AiVIS. Traditional search ranking and AI extraction fidelity are independent problems with independent fixes.</p>
+            <p className="mt-3 text-sm leading-6 text-white/64">A page can rank #1 in Google and score below 40 in AiVIS.biz. Traditional search ranking and AI extraction fidelity are independent problems with independent fixes.</p>
           </article>
         </div>
       </section>
@@ -396,7 +396,7 @@ export default function MethodologyPage() {
           <span className="text-xs text-white/35 border border-white/10 rounded-full px-3 py-1">Aggregate only · No individual data exposed</span>
         </div>
         <p className="mb-5 text-sm leading-6 text-white/56">
-          These figures are computed from audits run through AiVIS. They reflect structural patterns across the full audited page set and are used to calibrate score band thresholds and dimension weightings. Individual results vary significantly.
+          These figures are computed from audits run through AiVIS.biz. They reflect structural patterns across the full audited page set and are used to calibrate score band thresholds and dimension weightings. Individual results vary significantly.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {platformStats.map((stat) => (
@@ -478,7 +478,7 @@ export default function MethodologyPage() {
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-white">{BRAG_TRAIL_LABEL} protocol</h2>
           <p className="mt-3 text-sm leading-7 text-white/56">
-            {BRAG_ACRONYM} ({BRAG_EXPANSION}) is the evidence framework that governs every AiVIS audit. It enforces a chain of traceability from raw page observation to final recommendation — eliminating the gap between "best practice advice" and "evidence-backed diagnosis."
+            {BRAG_ACRONYM} ({BRAG_EXPANSION}) is the evidence framework that governs every AiVIS.biz audit. It enforces a chain of traceability from raw page observation to final recommendation — eliminating the gap between "best practice advice" and "evidence-backed diagnosis."
           </p>
           <div className="mt-5 space-y-4">
             {bragSteps.map((step) => (
@@ -513,7 +513,7 @@ export default function MethodologyPage() {
       <section id="cite-ledger" className="mt-12 scroll-mt-24">
         <h2 className="text-2xl font-semibold tracking-tight text-white">CITE LEDGER — from BRAG evidence to citable data</h2>
         <p className="mt-3 text-base leading-7 text-white/64">
-          BRAG ({BRAG_EXPANSION}) is the evidence protocol. <strong className="text-white/88">CITE LEDGER</strong> is the structured record each audit produces — the transformation layer that converts messy scraped content into deterministic, citable ground truth. ML is not used as a generator. It operates as a <em>deterministic filter</em>: its job is to reject any scraped evidence that does not meet the structural requirements for a valid citation.
+          <strong className="text-white/88">CITE LEDGER</strong> is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. BRAG ({BRAG_EXPANSION}) is the evidence protocol. CITE LEDGER is the structured record each audit produces — the transformation layer that converts messy scraped content into deterministic, citable ground truth. ML is not used as a generator. It operates as a <em>deterministic filter</em>: its job is to reject any scraped evidence that does not meet the structural requirements for a valid citation.
         </p>
 
         {/* Audit-Fix ML Feedback Loop */}
@@ -599,7 +599,7 @@ export default function MethodologyPage() {
         <h2 className="text-2xl font-semibold tracking-tight text-white">How AI answer engines extract a page</h2>
         <div className="mt-5 space-y-5">
           <p className="text-base leading-7 text-white/64">
-            AI and traditional search indexing are not the same pipeline. AI answer engines compress pages into internal representations and reconstruct answers from those representations — they do not surface links to keyword-matched pages. Each step below is a failure point the AiVIS score is designed to detect.
+            AI and traditional search indexing are not the same pipeline. AI answer engines compress pages into internal representations and reconstruct answers from those representations — they do not surface links to keyword-matched pages. Each step below is a failure point the AiVIS.biz score is designed to detect.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
@@ -628,7 +628,7 @@ export default function MethodologyPage() {
             </article>
           </div>
           <p className="text-sm leading-7 text-white/50">
-            Every AiVIS scoring dimension maps to a specific failure point in this extraction chain. Content depth affects compression quality (step 4). Schema coverage affects entity disambiguation (step 3). AI readability affects reconstruction fidelity (step 5). Technical SEO affects access (step 1). Metadata affects classification (step 2). Heading structure affects extraction segmentation (step 4).
+            Every AiVIS.biz scoring dimension maps to a specific failure point in this extraction chain. Content depth affects compression quality (step 4). Schema coverage affects entity disambiguation (step 3). AI readability affects reconstruction fidelity (step 5). Technical SEO affects access (step 1). Metadata affects classification (step 2). Heading structure affects extraction segmentation (step 4).
           </p>
         </div>
       </section>
@@ -650,28 +650,28 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* ── What AiVIS does not measure ──────────────────────────────── */}
+      {/* ── What AiVIS.biz does not measure ──────────────────────────────── */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold tracking-tight text-white">What AiVIS does not measure</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-white">What AiVIS.biz does not measure</h2>
         <p className="mt-3 text-base leading-7 text-white/60">
-          AiVIS does one thing: measure AI extraction readiness. It does not do the following.
+          AiVIS.biz does one thing: measure AI extraction readiness. It does not do the following.
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="text-base font-semibold text-white/80">Not a rank tracker</h3>
-            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS does not measure or predict position in traditional search engine result pages. The score reflects AI extraction readiness, not Google ranking performance.</p>
+            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS.biz does not measure or predict position in traditional search engine result pages. The score reflects AI extraction readiness, not Google ranking performance.</p>
           </article>
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="text-base font-semibold text-white/80">Not a backlink tool</h3>
-            <p className="mt-2 text-sm leading-6 text-white/56">Backlink volume and domain authority are not inputs to the AiVIS score. A page with zero backlinks but excellent structured data and clear claims will outscore a page with strong backlinks but invisible content.</p>
+            <p className="mt-2 text-sm leading-6 text-white/56">Backlink volume and domain authority are not inputs to the AiVIS.biz score. A page with zero backlinks but excellent structured data and clear claims will outscore a page with strong backlinks but invisible content.</p>
           </article>
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="text-base font-semibold text-white/80">Not a citation guarantee</h3>
-            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS measures structural readiness for citation. Whether a specific AI model cites a specific page depends on query relevance, competitive content, and model-specific retrieval behavior — factors outside any audit tool's control.</p>
+            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS.biz measures structural readiness for citation. Whether a specific AI model cites a specific page depends on query relevance, competitive content, and model-specific retrieval behavior — factors outside any audit tool's control.</p>
           </article>
           <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="text-base font-semibold text-white/80">Not a compliance audit</h3>
-            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS does not provide legal, regulatory, or compliance advice. Schema validity checking is a structural assessment, not a legal review.</p>
+            <p className="mt-2 text-sm leading-6 text-white/56">AiVIS.biz does not provide legal, regulatory, or compliance advice. Schema validity checking is a structural assessment, not a legal review.</p>
           </article>
         </div>
       </section>

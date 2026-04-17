@@ -114,9 +114,9 @@ const enforcementItems = [
 
 const faqItems = [
   {
-    question: "What is the AiVIS Triple-Check Methodology?",
+    question: "What is the AiVIS.biz Triple-Check Methodology?",
     answer:
-      "The AiVIS Triple-Check Methodology is a three-stage verification protocol that validates every audit finding against crawl-observable evidence. Stage 1 (Extraction) captures signals from the target URL. Stage 2 (Verification) binds those signals to deterministic rules and AI analysis, validating evidence provenance. Stage 3 (Consistency) runs a multi-model consensus pipeline where three independent AI models score, critique, and validate the audit — reducing single-model bias. Each stage maps to specific functions in the AiVIS pipeline and produces independently verifiable outputs.",
+      "The AiVIS.biz Triple-Check Methodology is a three-stage verification protocol that validates every audit finding against crawl-observable evidence. Stage 1 (Extraction) captures signals from the target URL. Stage 2 (Verification) binds those signals to deterministic rules and AI analysis, validating evidence provenance. Stage 3 (Consistency) runs a multi-model consensus pipeline where three independent AI models score, critique, and validate the audit — reducing single-model bias. Each stage maps to specific functions in the AiVIS.biz pipeline and produces independently verifiable outputs.",
   },
   {
     question: "How does the Triple-Check pipeline differ from single-model analysis?",
@@ -149,7 +149,7 @@ const faqItems = [
       "The full three-stage pipeline is available on the Signal tier ($149/mo) and Score Fix tier ($299 one-time). Starter and Alignment tiers receive Stage 1 (Extraction) and Stage 2 (Verification) with single-model AI analysis. All tiers receive deterministic rule scoring and the full evidence manifest — the Triple-Check adds multi-model consensus validation on top of that foundation.",
   },
   {
-    question: "How does AiVIS ensure the Triple-Check pipeline is reproducible?",
+    question: "How does AiVIS.biz ensure the Triple-Check pipeline is reproducible?",
     answer:
       "Every audit result includes the evidence_manifest, pipeline stage completion flags, model identifiers, and integrity metadata (buildAnalysisIntegrity). The complete result is persisted to both Redis and PostgreSQL. Re-auditing the same URL produces a new extraction against the current page state, and score deltas are computed against the stored baseline — not against a re-calculated reconstruction.",
   },
@@ -159,18 +159,18 @@ const faqItems = [
 
 export default function TripleCheckMethodologyPage() {
   usePageMeta({
-    title: "Triple-Check Methodology | AiVIS Verification Protocol",
+    title: "Triple-Check Methodology | AiVIS.biz Verification Protocol",
     description:
-      "The AiVIS Triple-Check Methodology is a three-stage verification protocol — Extraction, Verification, Consistency — that validates every audit finding against crawl-observable evidence using three independent AI models.",
+      "The AiVIS.biz Triple-Check Methodology is a three-stage verification protocol — Extraction, Verification, Consistency — that validates every audit finding against crawl-observable evidence using three independent AI models.",
     path: "/triple-check-methodology",
-    ogTitle: "Triple-Check Methodology — AiVIS Verification Protocol",
+    ogTitle: "Triple-Check Methodology — AiVIS.biz Verification Protocol",
     ogDescription:
-      "Three-stage verification protocol: Extraction (signal capture), Verification (evidence binding), Consistency (multi-model drift validation). Each stage maps to named functions in the AiVIS pipeline.",
+      "Three-stage verification protocol: Extraction (signal capture), Verification (evidence binding), Consistency (multi-model drift validation). Each stage maps to named functions in the AiVIS.biz pipeline.",
     ogType: "article",
     structuredData: [
       buildWebPageSchema({
         path: "/triple-check-methodology",
-        name: "Triple-Check Methodology — AiVIS Verification Protocol",
+        name: "Triple-Check Methodology — AiVIS.biz Verification Protocol",
         description:
           "Three-stage verification protocol mapping Extraction, Verification, and Consistency stages to named pipeline functions. Includes enforcement constraints, graceful degradation rules, and structured FAQ.",
         speakableCssSelectors: [
@@ -206,7 +206,7 @@ export default function TripleCheckMethodologyPage() {
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6" data-speakable="protocol-summary">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50 mb-3">Protocol definition</p>
           <p className="text-base leading-7 text-white/88 font-medium">
-            The AiVIS Triple-Check Methodology is a three-stage verification protocol that validates every audit finding against crawl-observable evidence. Stage 1 captures signals from the target URL. Stage 2 binds those signals to deterministic rules and AI analysis. Stage 3 runs multi-model consensus — three independent AI models score, critique, and validate the audit to reduce single-model bias. Each stage maps to named functions in the AiVIS pipeline and produces independently verifiable outputs.
+            The AiVIS.biz Triple-Check Methodology is a three-stage verification protocol that validates every audit finding against crawl-observable evidence. Stage 1 captures signals from the target URL. Stage 2 binds those signals to deterministic rules and AI analysis. Stage 3 runs multi-model consensus — three independent AI models score, critique, and validate the audit to reduce single-model bias. Each stage maps to named functions in the AiVIS.biz pipeline and produces independently verifiable outputs.
           </p>
         </div>
 

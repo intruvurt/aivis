@@ -8,10 +8,10 @@ import PublicPageFrame from "../components/PublicPageFrame";
 export default function PrivacyPage() {
   usePageMeta({
     title: 'Privacy Policy',
-    description: 'How AiVIS collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+    description: 'How AiVIS.biz collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
     path: '/privacy',
     structuredData: [
-      buildWebPageSchema({ path: '/privacy', name: 'AiVIS Privacy Policy', description: 'Data collection, usage, and protection practices for the AiVIS platform.' }),
+      buildWebPageSchema({ path: '/privacy', name: 'AiVIS.biz Privacy Policy', description: 'Data collection, usage, and protection practices for the AiVIS.biz platform.' }),
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy' }]),
     ],
   });
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
   const emailCls = "text-white/85 hover:text-white";
 
   return (
-    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How AiVIS collects, uses, and protects your data" maxWidthClass="max-w-4xl">
+    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How AiVIS.biz collects, uses, and protects your data" maxWidthClass="max-w-4xl">
       <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
           {/* ── Summary ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
-            <p>AiVIS is operated by <strong className="text-white">AiVIS</strong> (a product of Intruvurt Labs, LLC), a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
+            <p>AiVIS.biz is operated by <strong className="text-white">AiVIS.biz</strong> (a product of Intruvurt Labs, LLC), a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
             <p className="mt-2">We collect only the data necessary to operate a multi-model AI answer audit system. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
             <p className="mt-2">This Privacy Policy should be read alongside our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/disclosures" className={linkCls}>Consumer Disclosures</Link>.</p>
           </section>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
             </ul>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
-            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. AiVIS never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
+            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. AiVIS.biz never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.4 Device and Technical Data</h3>
             <ul className="list-disc list-inside space-y-1 ml-2">
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white">Caching:</strong> Results are cached in our PostgreSQL database (Neon) for performance. Cache duration varies by tier.</li>
             </ol>
             <p className="mt-2"><strong className="text-white">What is sent to AI models:</strong> Page content and structural data only. Your email address, password, payment information, and account details are never transmitted to AI model providers.</p>
-            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. AiVIS holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
+            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. AiVIS.biz holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
           </section>
 
           {/* ── 4 Third-Party Services ── */}
@@ -221,13 +221,13 @@ export default function PrivacyPage() {
           {/* ── 10 Children ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">10. Children's Privacy</h2>
-            <p>AiVIS is not intended for users under 16 years of age. We do not knowingly collect personal information from children. If you believe a child has created an account, contact us at <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a> and we will delete the account and associated data promptly.</p>
+            <p>AiVIS.biz is not intended for users under 16 years of age. We do not knowingly collect personal information from children. If you believe a child has created an account, contact us at <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a> and we will delete the account and associated data promptly.</p>
           </section>
 
           {/* ── 11 International ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">11. International Data Transfers</h2>
-            <p>AiVIS is operated from the United States. If you access the Service from outside the US, your personal data will be transferred to and processed in the United States.</p>
+            <p>AiVIS.biz is operated from the United States. If you access the Service from outside the US, your personal data will be transferred to and processed in the United States.</p>
             <p className="mt-2">For transfers from the European Economic Area, we rely on Standard Contractual Clauses (SCCs) or equivalent safeguards as required by applicable law. Our sub-processors (Render, Neon, Sentry, Stripe, Resend) maintain their own data transfer mechanisms.</p>
           </section>
 
@@ -261,7 +261,7 @@ export default function PrivacyPage() {
               <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
             </ul>
             <p className="mt-3">We respond to privacy inquiries within 30 calendar days.</p>
-            <p className="mt-4 text-white/60 text-sm">AiVIS · Georgia, USA</p>
+            <p className="mt-4 text-white/60 text-sm">AiVIS.biz · Georgia, USA</p>
           </section>
         </div>
     </PublicPageFrame>

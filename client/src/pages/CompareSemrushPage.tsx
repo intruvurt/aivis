@@ -6,17 +6,17 @@ import { buildBreadcrumbSchema } from "../lib/seoSchema";
 
 export default function CompareSemrushPage() {
   usePageMeta({
-    title: "AiVIS vs Semrush: AI Visibility Audit vs SEO Suite (2026 Comparison)",
+    title: "AiVIS.biz vs Semrush: AI Visibility Audit vs SEO Suite (2026 Comparison)",
     description:
-      "Semrush measures search engine rankings. AiVIS measures whether AI answer engines can read, trust, and cite your website. Detailed feature comparison for 2026.",
+      "Semrush measures search engine rankings. AiVIS.biz measures whether AI answer engines can read, trust, and cite your website. Detailed feature comparison for 2026.",
     path: "/compare/aivis-vs-semrush",
     structuredData: [
       {
         "@context": "https://schema.org",
         "@type": "Article",
-        headline: "AiVIS vs Semrush: AI Citation Readiness vs SEO Rankings",
+        headline: "AiVIS.biz vs Semrush: AI Citation Readiness vs SEO Rankings",
         description:
-          "Semrush tracks keyword rankings across 140+ databases. AiVIS audits whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. These are different measurement layers.",
+          "Semrush tracks keyword rankings across 140+ databases. AiVIS.biz audits whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. These are different measurement layers.",
         author: { "@id": "https://aivis.biz/#author" },
         publisher: { "@id": "https://aivis.biz/#organization" },
         datePublished: "2026-03-24",
@@ -28,18 +28,18 @@ export default function CompareSemrushPage() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "Is AiVIS a Semrush alternative?",
+            name: "Is AiVIS.biz a Semrush alternative?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
+              text: "AiVIS.biz is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS.biz measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
             },
           },
           {
             "@type": "Question",
-            name: "Can AiVIS replace Semrush for SEO?",
+            name: "Can AiVIS.biz replace Semrush for SEO?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification across AI answer engines. Use both for complete coverage.",
+              text: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS.biz is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification across AI answer engines. Use both for complete coverage.",
             },
           },
           {
@@ -63,7 +63,7 @@ export default function CompareSemrushPage() {
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
         { name: "Comparison", path: "/compare" },
-        { name: "AiVIS vs Semrush", path: "/compare/aivis-vs-semrush" },
+        { name: "AiVIS.biz vs Semrush", path: "/compare/aivis-vs-semrush" },
       ]),
     ],
   });
@@ -78,12 +78,12 @@ export default function CompareSemrushPage() {
           </p>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
-            AiVIS vs Semrush
+            AiVIS.biz vs Semrush
           </h1>
 
           <p className="text-lg text-white/75 mb-8 leading-relaxed">
             <strong className="text-white">Semrush measures search engine rankings.</strong>{" "}
-            <strong className="text-white">AiVIS measures whether AI answer engines can read, trust, and cite your website.</strong>{" "}
+            <strong className="text-white">AiVIS.biz measures whether AI answer engines can read, trust, and cite your website.</strong>{" "}
             These are different problems requiring different measurement layers. This page explains exactly where each tool excels and where the gap between them matters.
           </p>
 
@@ -98,14 +98,14 @@ export default function CompareSemrushPage() {
             </p>
           </section>
 
-          {/* ── What AiVIS Measures ── */}
+          {/* ── What AiVIS.biz Measures ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS Measures</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS.biz Measures</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              AiVIS is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. It audits five structural dimensions: crawlability, extractability, trust signals, scoring consistency via multi-model validation, and operational follow-through with automated code fixes.
+              AiVIS.biz is not an SEO tool. CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. It audits five structural dimensions: crawlability, extractability, trust signals, scoring consistency via multi-model validation, and operational follow-through with automated code fixes.
             </p>
             <p className="text-white/70 leading-relaxed">
-              Where Semrush tells you how you rank in Google, AiVIS tells you whether AI systems can understand your content well enough to include it in generated answers. The output is a visibility score with evidence-linked recommendations and, on the Score Fix tier, automated GitHub pull requests that implement the fixes.
+              Where Semrush tells you how you rank in Google, AiVIS.biz tells you whether AI systems can understand your content well enough to include it in generated answers. The output is a visibility score with evidence-linked recommendations and, on the Score Fix tier, automated GitHub pull requests that implement the fixes.
             </p>
           </section>
 
@@ -117,7 +117,7 @@ export default function CompareSemrushPage() {
                 <thead className="bg-white/[0.06]">
                   <tr>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/80 border-r border-r-white/10">Capability</th>
-                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS</th>
+                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS.biz</th>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/70">Semrush</th>
                   </tr>
                 </thead>
@@ -158,7 +158,7 @@ export default function CompareSemrushPage() {
 
           {/* ── When to Use Each ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">When to Use Semrush vs AiVIS</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">When to Use Semrush vs AiVIS.biz</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/[0.06] p-5">
                 <h3 className="text-lg font-bold text-blue-300 mb-2">Use Semrush When</h3>
@@ -171,7 +171,7 @@ export default function CompareSemrushPage() {
                 </ul>
               </div>
               <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/[0.06] p-5">
-                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS When</h3>
+                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS.biz When</h3>
                 <ul className="space-y-2 text-sm text-white/70">
                   <li>You need to know if AI systems can parse and cite your content</li>
                   <li>You want validated audit findings across multiple AI models</li>
@@ -182,7 +182,7 @@ export default function CompareSemrushPage() {
               </div>
             </div>
             <p className="text-sm text-white/55 mt-4">
-              The practical recommendation: keep Semrush for search rankings. Add AiVIS for AI citation readiness. Both layers matter. One without the other leaves you blind to half the discovery landscape.
+              The practical recommendation: keep Semrush for search rankings. Add AiVIS.biz for AI citation readiness. Both layers matter. One without the other leaves you blind to half the discovery landscape.
             </p>
           </section>
 
@@ -193,7 +193,7 @@ export default function CompareSemrushPage() {
               Semrush was built for a world where users click blue links. AI answer engines bypass that model entirely - they synthesize answers from extracted content. The signals they evaluate to select sources are fundamentally different from Google ranking factors.
             </p>
             <p className="text-white/70 leading-relaxed">
-              Content extractability, answer block density, entity graph coherence, and cross-platform citation presence have no equivalent in traditional SEO metrics. This is not a criticism of Semrush. It was not designed to measure what AI systems evaluate because AI answer engines did not exist when it was built. AiVIS was built specifically for this measurement layer.
+              Content extractability, answer block density, entity graph coherence, and cross-platform citation presence have no equivalent in traditional SEO metrics. This is not a criticism of Semrush. It was not designed to measure what AI systems evaluate because AI answer engines did not exist when it was built. AiVIS.biz was built specifically for this measurement layer.
             </p>
           </section>
 
@@ -203,20 +203,20 @@ export default function CompareSemrushPage() {
             <div className="space-y-4">
               {[
                 {
-                  q: "Is AiVIS a Semrush alternative?",
-                  a: "AiVIS is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
+                  q: "Is AiVIS.biz a Semrush alternative?",
+                  a: "AiVIS.biz is not a direct Semrush replacement. Semrush measures search engine rankings, backlinks, and keyword positions. AiVIS.biz measures AI citation readiness - whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. They solve different problems for the same audience.",
                 },
                 {
-                  q: "Can AiVIS replace Semrush for SEO?",
-                  a: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification. Use both for complete coverage.",
+                  q: "Can AiVIS.biz replace Semrush for SEO?",
+                  a: "No. Semrush excels at traditional SEO - keyword research, rank tracking, backlink analysis, and SERP feature monitoring. AiVIS.biz is not an SEO tool. It audits AI visibility: content extractability, entity clarity, schema completeness, and citation verification. Use both for complete coverage.",
                 },
                 {
                   q: "Does Semrush measure AI visibility?",
                   a: "Semrush tracks AI Overviews in Google search results and provides AI content suggestions. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, run multi-model validation, or generate automated code fixes for structural gaps.",
                 },
                 {
-                  q: "Do I need both Semrush and AiVIS?",
-                  a: "If you care about both search engine rankings and AI answer engine citations, yes. Semrush tells you how Google sees you. AiVIS tells you how ChatGPT, Perplexity, Claude, and Gemini see you. The signals are different. The measurement layers are complementary.",
+                  q: "Do I need both Semrush and AiVIS.biz?",
+                  a: "If you care about both search engine rankings and AI answer engine citations, yes. Semrush tells you how Google sees you. AiVIS.biz tells you how ChatGPT, Perplexity, Claude, and Gemini see you. The signals are different. The measurement layers are complementary.",
                 },
               ].map((faq, i) => (
                 <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
@@ -242,7 +242,7 @@ export default function CompareSemrushPage() {
           </section>
 
           <section className="mt-10">
-            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS.biz with other tools</h3>
             <div className="flex flex-wrap gap-3">
               <Link to="/compare/ahrefs" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Ahrefs</Link>
               <Link to="/compare/rankscale" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs RankScale</Link>
@@ -253,7 +253,7 @@ export default function CompareSemrushPage() {
           </section>
 
           <p className="text-xs text-white/40 mt-6">
-            Semrush is a trademark of Semrush Inc. This comparison reflects publicly available feature information as of March 2026. AiVIS is not affiliated with Semrush.
+            Semrush is a trademark of Semrush Inc. This comparison reflects publicly available feature information as of March 2026. AiVIS.biz is not affiliated with Semrush.
           </p>
         </div>
       </section>

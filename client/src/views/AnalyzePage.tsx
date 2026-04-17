@@ -48,15 +48,15 @@ const ANALYZE_FAQ = [
   },
   {
     question: "Why isn't my site showing up in AI-generated answers?",
-    answer: "Most websites fail AI visibility checks for one or more of these reasons: weak entity clarity (AI cannot resolve what the business is or who it serves), missing FAQ and answer blocks (questions are buried in long prose instead of concise extractable sections), incomplete or mismatched JSON-LD schema (machine-readable signals contradict visible content), thin evidence (claims without proof, examples, or citations), and no trust language such as methodology disclosures or verifiable credentials. AiVIS identifies exactly which blockers apply to your site and ranks them by impact.",
+    answer: "Most websites fail AI visibility checks for one or more of these reasons: weak entity clarity (AI cannot resolve what the business is or who it serves), missing FAQ and answer blocks (questions are buried in long prose instead of concise extractable sections), incomplete or mismatched JSON-LD schema (machine-readable signals contradict visible content), thin evidence (claims without proof, examples, or citations), and no trust language such as methodology disclosures or verifiable credentials. AiVIS.biz identifies exactly which blockers apply to your site and ranks them by impact.",
   },
   {
     question: "What do the audit scores mean?",
     answer: "The overall visibility score is a composite out of 100 that combines entity clarity, heading structure, answer block quality, evidence depth, schema alignment, internal link integrity, freshness signals, and trust markers. Scores below 50 indicate critical extractability blockers. Scores 50-74 indicate structural gaps that reduce citation probability. Scores 75-89 are competitive but have addressable weak points. Scores 90 and above indicate strong AI readiness with minor polish opportunities.",
   },
   {
-    question: "Which AI platforms does AiVIS check against?",
-    answer: "AiVIS audits evaluate citation readiness across the four major AI answer surfaces: ChatGPT (OpenAI), Perplexity AI, Claude (Anthropic), and Google AI Overviews (formerly SGE). Each platform has different extraction thresholds, citation criteria, and entity resolution preferences. The audit scores are calibrated against observable citation behavior across all four platforms so improvements transfer across the ecosystem rather than optimizing for a single engine.",
+    question: "Which AI platforms does AiVIS.biz check against?",
+    answer: "AiVIS.biz audits evaluate citation readiness across the four major AI answer surfaces: ChatGPT (OpenAI), Perplexity AI, Claude (Anthropic), and Google AI Overviews (formerly SGE). Each platform has different extraction thresholds, citation criteria, and entity resolution preferences. The audit scores are calibrated against observable citation behavior across all four platforms so improvements transfer across the ecosystem rather than optimizing for a single engine.",
   },
   {
     question: "How long does an audit take?",
@@ -68,7 +68,7 @@ const ANALYZE_FAQ = [
   },
   {
     question: "How often should I re-audit?",
-    answer: "After any significant content update, template redesign, schema change, or navigation restructure, re-auditing within 48 hours lets you confirm whether the changes improved extraction clarity. For competitive markets, monthly re-audits track drift versus competitors being cited in your category. AiVIS stores audit history so you can compare scores over time and measure whether implemented fixes actually moved the needle.",
+    answer: "After any significant content update, template redesign, schema change, or navigation restructure, re-auditing within 48 hours lets you confirm whether the changes improved extraction clarity. For competitive markets, monthly re-audits track drift versus competitors being cited in your category. AiVIS.biz stores audit history so you can compare scores over time and measure whether implemented fixes actually moved the needle.",
   },
   {
     question: "Is the audit score tied to my server technology or CMS?",
@@ -283,7 +283,7 @@ const AnalyzePage: React.FC = () => {
     structuredData: [
       buildWebPageSchema({
         path: "/analyze",
-        name: "AI Visibility Audit Tool | AiVIS",
+        name: "AI Visibility Audit Tool | AiVIS.biz",
         description: "Run an evidence-backed AI visibility audit on any website. Score citation readiness, extraction clarity, entity signals, and trust markers across ChatGPT, Perplexity, Claude, and Google AI Overviews.",
       }),
       buildFaqSchema(ANALYZE_FAQ, { path: "/analyze" }),

@@ -102,7 +102,7 @@ export default function RobotsCheckerPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/tools/robots-checker",
-        name: "AI Crawler Access Checker \u2014 Robots.txt Audit | AiVIS",
+        name: "AI Crawler Access Checker \u2014 Robots.txt Audit | AiVIS.biz",
         description: "Check if GPTBot, ClaudeBot, PerplexityBot, and other AI crawlers can access your site. Free robots.txt and meta robots audit tool.",
       }),
       buildFaqSchema(ROBOTS_FAQ, { path: "/tools/robots-checker" }),

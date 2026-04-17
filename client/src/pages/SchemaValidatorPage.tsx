@@ -87,7 +87,7 @@ export default function SchemaValidatorPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/tools/schema-validator",
-        name: "Schema Markup Validator \u2014 AI Citation Readiness Check | AiVIS",
+        name: "Schema Markup Validator \u2014 AI Citation Readiness Check | AiVIS.biz",
         description: "Validate JSON-LD, OpenGraph, and Twitter Cards for AI citation readiness. Free tool to check what AI models can extract from your page's structured data.",
       }),
       buildFaqSchema(SCHEMA_FAQ, { path: "/tools/schema-validator" }),

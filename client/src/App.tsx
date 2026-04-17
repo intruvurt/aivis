@@ -104,6 +104,20 @@ const KeywordPageTemplate = React.lazy(() => import("./pages/KeywordPageTemplate
 const KeywordClusterIndex = React.lazy(() => import("./pages/KeywordClusterIndex"));
 const BadgeEmbedPage = React.lazy(() => import("./pages/BadgeEmbedPage"));
 
+/* ── Taxonomy pages (About → Methodology → Evidence) ── */
+const AboutAivisPage = React.lazy(() => import("./pages/taxonomy/AboutAivisPage"));
+const WhatIsAivisPage = React.lazy(() => import("./pages/taxonomy/WhatIsAivisPage"));
+const WhyAivisExistsPage = React.lazy(() => import("./pages/taxonomy/WhyAivisExistsPage"));
+const CiteLedgerPage = React.lazy(() => import("./pages/taxonomy/CiteLedgerPage"));
+const WhatIsCiteLedgerPage = React.lazy(() => import("./pages/taxonomy/WhatIsCiteLedgerPage"));
+const TripleCheckProtocolPage = React.lazy(() => import("./pages/taxonomy/TripleCheckProtocolPage"));
+const BragEvidenceTrailsPage = React.lazy(() => import("./pages/taxonomy/BragEvidenceTrailsPage"));
+const EntityResolutionModelPage = React.lazy(() => import("./pages/taxonomy/EntityResolutionModelPage"));
+const LedgerIndexPage = React.lazy(() => import("./pages/taxonomy/LedgerIndexPage"));
+const CitationReportsPage = React.lazy(() => import("./pages/taxonomy/CitationReportsPage"));
+const DriftAnalysisPage = React.lazy(() => import("./pages/taxonomy/DriftAnalysisPage"));
+const QueryResultsLogPage = React.lazy(() => import("./pages/taxonomy/QueryResultsLogPage"));
+
 /* ── Scroll to top on route change ─────────────────────── */
 function ScrollToTop() {
   const { pathname, hash, search } = useLocation();
@@ -225,6 +239,25 @@ export default function App() {
             <Route path="/disclosures" element={<DisclosuresPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/triple-check-methodology" element={<TripleCheckMethodologyPage />} />
+
+            {/* ── Taxonomy: About layer ── */}
+            <Route path="/about-aivis" element={<AboutAivisPage />} />
+            <Route path="/what-is-aivis" element={<WhatIsAivisPage />} />
+            <Route path="/why-aivis-exists" element={<WhyAivisExistsPage />} />
+
+            {/* ── Taxonomy: Methodology layer ── */}
+            <Route path="/methodology/cite-ledger" element={<CiteLedgerPage />} />
+            <Route path="/what-is-cite-ledger" element={<WhatIsCiteLedgerPage />} />
+            <Route path="/methodology/triple-check-protocol" element={<TripleCheckProtocolPage />} />
+            <Route path="/methodology/brag-evidence-trails" element={<BragEvidenceTrailsPage />} />
+            <Route path="/methodology/entity-resolution-model" element={<EntityResolutionModelPage />} />
+
+            {/* ── Taxonomy: Evidence layer ── */}
+            <Route path="/evidence/ledger-index" element={<LedgerIndexPage />} />
+            <Route path="/evidence/citation-reports" element={<CitationReportsPage />} />
+            <Route path="/evidence/drift-analysis" element={<DriftAnalysisPage />} />
+            <Route path="/evidence/query-results-log" element={<QueryResultsLogPage />} />
+
             <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
             <Route path="/partnership-payments" element={<PartnershipPaymentPage />} />
             <Route path="/r/:code" element={<ReferralRedirect />} />

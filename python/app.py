@@ -1,4 +1,4 @@
-"""AiVIS Deep Analysis Engine - FastAPI microservice.
+"""AiVIS.biz Deep Analysis Engine - FastAPI microservice.
 
 Provides NLP-powered content analysis, cryptographic evidence ledger,
 enhanced document parsing, and content fingerprinting.
@@ -33,7 +33,7 @@ from .brag_validator import BragValidator
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="AiVIS Deep Analysis Engine",
+    title="AiVIS.biz Deep Analysis Engine",
     version="1.0.0",
     docs_url="/docs" if os.getenv("PYTHON_ENV") != "production" else None,
     redoc_url=None,

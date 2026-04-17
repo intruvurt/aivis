@@ -39,7 +39,7 @@ const WhyAIVisibility = () => {
         publisher: {
           '@type': 'Organization',
           '@id': 'https://aivis.biz/#organization',
-          name: 'AiVIS',
+          name: 'AiVIS.biz',
           url: 'https://aivis.biz/',
           logo: {
             '@type': 'ImageObject',

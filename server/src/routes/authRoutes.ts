@@ -467,7 +467,7 @@ router.get('/github/callback', async (req, res) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/vnd.github+json',
-        'User-Agent': 'AiVIS-Auth',
+        'User-Agent': 'AiVIS.biz-Auth',
       },
     });
     const profile: any = await profileRes.json().catch(() => ({}));
@@ -476,7 +476,7 @@ router.get('/github/callback', async (req, res) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/vnd.github+json',
-        'User-Agent': 'AiVIS-Auth',
+        'User-Agent': 'AiVIS.biz-Auth',
       },
     });
     const emailsPayload: any[] = await emailsRes.json().catch(() => []);

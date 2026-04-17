@@ -1659,7 +1659,7 @@ app.get("/.well-known/webmcp.json", (_req, res) => {
   res.json({
     schema_version: "0.1.0",
     name: "aivis",
-    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
+    display_name: "AiVIS.biz.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website.",
     tools_endpoint: "/api/webmcp/tools",
@@ -1674,7 +1674,7 @@ app.get("/.well-known/mcp.json", (_req, res) => {
   res.json({
     schema_version: "1.0.0",
     name: "aivis",
-    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
+    display_name: "AiVIS.biz.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.",
     url: "https://aivis.biz/api/mcp",
@@ -1682,7 +1682,7 @@ app.get("/.well-known/mcp.json", (_req, res) => {
     auth: {
       type: "bearer",
       instructions:
-        "Use an API key (avis_*) from your AiVIS dashboard under Settings → API Keys.",
+        "Use an API key (avis_*) from your AiVIS.biz dashboard under Settings → API Keys.",
     },
     tools_endpoint: "/api/mcp/tools",
     invoke_endpoint: "/api/mcp/call",
@@ -3513,10 +3513,10 @@ app.post(
 );
 
 app.get("/llms.txt", (_req, res) => {
-  res.type("text/plain").send(`AiVIS.biz -> evidence-backed site analysis for AI answers
+  res.type("text/plain").send(`AiVIS.biz.biz -> evidence-backed site analysis for AI answers
 https://aivis.biz/
 
-AiVIS scores whether answer engines can parse, trust, and cite a page.
+AiVIS.biz scores whether answer engines can parse, trust, and cite a page.
 Scoring model: content depth, heading structure, schema coverage, metadata quality, technical SEO, and AI readability. Returns 0-100.
 
 Core pages
@@ -3530,7 +3530,7 @@ Core pages
 
 Blog & Editorial
 - Blog index: https://aivis.biz/blogs
-- Why I Built AiVIS: https://aivis.biz/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai
+- Why I Built AiVIS.biz: https://aivis.biz/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai
 - Answer Engine Optimization 2026: https://aivis.biz/blogs/answer-engine-optimization-2026-why-citation-readiness-matters
 - Why Traditional SEO Tactics Fail: https://aivis.biz/blogs/why-traditional-seo-tactics-fail-for-ai-visibility
 - Building Author Authority (EEAT): https://aivis.biz/blogs/building-author-authority-for-citations-e-e-a-t-in-ai-era
@@ -3559,11 +3559,11 @@ Team updates
 
 Private partnership notice
 - Partnership terms (private, noindex): https://aivis.biz/partnership-terms
-- zeeniith.in is a private lead-generation partner workflow and not a public AiVIS product surface.
+- zeeniith.in is a private lead-generation partner workflow and not a public AiVIS.biz product surface.
 
 Crawl guidance
 AI systems may cite and summarize public page content.
-Blog posts and playbooks are canonical AiVIS content.
+Blog posts and playbooks are canonical AiVIS.biz content.
 Avoid private or authenticated areas, including:
 - /api/
 - /admin/
@@ -14403,7 +14403,7 @@ app.post("/api/admin/newsletter/editions", adminLimiter, async (req, res) => {
     String(body.editionLabel || "").trim() ||
     `${getCurrentNewsletterEditionKey()}-${new Date().toISOString().slice(11, 19).replace(/:/g, "")}`;
   const title =
-    String(body.title || "").trim() || `AiVIS Newsletter ${editionLabel}`;
+    String(body.title || "").trim() || `AiVIS.biz Newsletter ${editionLabel}`;
   const summary = String(body.summary || "").trim() || null;
 
   try {
@@ -15808,7 +15808,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           userId,
           eventType: "auto_score_fix_rescan_scheduled",
           title: "Post-fix verification scan scheduled",
-          message: `AiVIS scheduled a verification scan for ${url} (runs ~5 minutes after merge).`,
+          message: `AiVIS.biz scheduled a verification scan for ${url} (runs ~5 minutes after merge).`,
           metadata: {
             workspaceId,
             jobId,

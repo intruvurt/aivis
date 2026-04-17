@@ -1,6 +1,6 @@
-# AiVIS.biz — AI Visibility Audit | CITE LEDGER
+# AiVIS.biz.biz — AI Visibility Audit | CITE LEDGER
 # https://aivis.biz
-# Auto-generated 2026-04-17 — 242 public routes
+# Auto-generated 2026-04-17 — 254 public routes
 
 User-agent: *
 Allow: /
@@ -8,6 +8,7 @@ Allow: /
 # ── Core pages ──
 Allow: /
 Allow: /about
+Allow: /about-aivis
 Allow: /aeo-playbook-2026
 Allow: /ai-search-visibility-2026
 Allow: /analyze
@@ -25,6 +26,10 @@ Allow: /competitors
 Allow: /compliance
 Allow: /conversational-query-playbook-2026
 Allow: /disclosures
+Allow: /evidence/citation-reports
+Allow: /evidence/drift-analysis
+Allow: /evidence/ledger-index
+Allow: /evidence/query-results-log
 Allow: /faq
 Allow: /geo-ai-ranking-2026
 Allow: /glossary
@@ -35,6 +40,10 @@ Allow: /integrations
 Allow: /keywords
 Allow: /landing
 Allow: /methodology
+Allow: /methodology/brag-evidence-trails
+Allow: /methodology/cite-ledger
+Allow: /methodology/entity-resolution-model
+Allow: /methodology/triple-check-protocol
 Allow: /niche-discovery
 Allow: /partnership-terms
 Allow: /press
@@ -48,7 +57,10 @@ Allow: /support
 Allow: /terms
 Allow: /verify-license
 Allow: /voice-search-ai-answer-optimization-2026
+Allow: /what-is-aivis
+Allow: /what-is-cite-ledger
 Allow: /why-ai-visibility
+Allow: /why-aivis-exists
 Allow: /workflow
 
 # ── Tools ──

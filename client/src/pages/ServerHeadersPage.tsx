@@ -162,7 +162,7 @@ export default function ServerHeadersPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/server-headers",
-        name: "Server Headers Check \u2014 HTTP Security & Caching Analysis | AiVIS",
+        name: "Server Headers Check \u2014 HTTP Security & Caching Analysis | AiVIS.biz",
         description: "Inspect HTTP response headers for security policy (HSTS, CSP, X-Frame-Options), caching, and server behavior affecting AI crawler access and citation eligibility.",
       }),
       buildFaqSchema(SERVER_HEADERS_FAQ, { path: "/server-headers" }),

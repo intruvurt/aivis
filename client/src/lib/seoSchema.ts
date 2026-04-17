@@ -23,11 +23,11 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
-    name: 'AiVIS',
-    alternateName: 'AiVIS - CITE LEDGER | Evidence-Linked Scores',
+    name: 'AiVIS.biz',
+    alternateName: 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
     url: `${BASE_URL}/`,
     description:
-      'AiVIS CITE LEDGER verifies how AI answer engines interpret, extract, and cite website content using BRAG (Based-Retrieval-Auditable-Grading) evidence-linked analysis.',
+      'CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.',
     founder: {
       '@type': 'Person',
       name: 'Ryan Mason',
@@ -63,7 +63,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'https://bsky.app/profile/intruvurt.bsky.social',
       'https://www.reddit.com/user/intruvurt',
       'https://www.reddit.com/user/renomase',
-      'https://www.reddit.com/r/AiVIS/',
+      'https://www.reddit.com/r/AiVIS.biz/',
       'https://www.youtube.com/@mediatechmele',
       'https://linkedin.com/in/web4aidev',
       'https://www.linkedin.com/posts/web4aidev_aivis-audits-how-ai-systems-read-a-website-share-7447000684455071745-tDOK',
@@ -112,7 +112,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
   };
 }
 
-/** Canonical organization reference - always use this instead of bare { name: 'AiVIS' } */
+/** Canonical organization reference - always use this instead of bare { name: 'AiVIS.biz' } */
 export function buildOrganizationRef(): Record<string, unknown> {
   return {
     '@id': ORGANIZATION_ID,
@@ -125,7 +125,7 @@ export function buildAuthorRef(): Record<string, unknown> {
   };
 }
 
-export function buildWebSiteSchema(name = 'AiVIS | CITE LEDGER — BRAG Evidence-Linked Scores'): Record<string, unknown> {
+export function buildWebSiteSchema(name = 'AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores'): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -338,7 +338,7 @@ export function buildTechArticleSchema(input: {
     mainEntityOfPage: `${BASE_URL}${input.path}`,
     url: `${BASE_URL}${input.path}`,
     proficiencyLevel: 'Expert',
-    dependencies: 'AiVIS API key · Alignment+ plan',
+    dependencies: 'AiVIS.biz API key · Alignment+ plan',
   };
 }
 
@@ -564,5 +564,43 @@ export function buildProductSchema(input: {
       : {}),
     ...(input.aggregateRating ? { aggregateRating: input.aggregateRating } : {}),
     ...(input.reviews?.length ? { review: input.reviews } : {}),
+  };
+}
+
+/* ─────────────────────────────────────────────────────────
+ * Taxonomy Schema — three-layer citation gravity system
+ * About (entity lock) → Methodology (trust layer) → Evidence (truth output)
+ * ─────────────────────────────────────────────────────────*/
+export function buildTaxonomySchema(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTermSet',
+    name: 'AiVIS Citation Gravity Taxonomy',
+    description: 'Three-layer taxonomy for AI ingestion: About (entity lock), Methodology (trust layer), Evidence (truth output). Canonical system: Cite Ledger. Supporting system: BRAG Evidence Trails. Principle: no evidence, no claim.',
+    url: 'https://aivis.biz/about-aivis',
+    publisher: buildOrganizationRef(),
+    hasDefinedTerm: [
+      {
+        '@type': 'DefinedTerm',
+        name: 'About Layer',
+        description: 'Entity lock — defines what AiVIS is, what it is not, and why it exists.',
+        url: 'https://aivis.biz/about-aivis',
+        inDefinedTermSet: 'https://aivis.biz/about-aivis',
+      },
+      {
+        '@type': 'DefinedTerm',
+        name: 'Methodology Layer',
+        description: 'Trust layer for machines — Cite Ledger, Triple-Check Protocol, BRAG Evidence Trails, Entity Resolution Model.',
+        url: 'https://aivis.biz/methodology/cite-ledger',
+        inDefinedTermSet: 'https://aivis.biz/about-aivis',
+      },
+      {
+        '@type': 'DefinedTerm',
+        name: 'Evidence Layer',
+        description: 'Truth output system — Ledger Index, Citation Reports, Drift Analysis, Query Results Log.',
+        url: 'https://aivis.biz/evidence/ledger-index',
+        inDefinedTermSet: 'https://aivis.biz/about-aivis',
+      },
+    ],
   };
 }

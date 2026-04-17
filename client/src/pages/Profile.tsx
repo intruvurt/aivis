@@ -75,7 +75,7 @@ export default function ProfilePage() {
     try {
       await navigator.clipboard.writeText(inviteLink);
       setInviteCopied(true);
-      setInviteCopyMessage('Invite link copied - thanks for sharing AiVIS.');
+      setInviteCopyMessage('Invite link copied - thanks for sharing AiVIS.biz.');
       window.setTimeout(() => setInviteCopied(false), 2000);
     } catch {
       setInviteCopied(false);

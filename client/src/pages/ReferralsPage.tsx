@@ -34,10 +34,10 @@ export default function ReferralsPage() {
 
   usePageMeta({
     title: 'Referrals',
-    description: 'Invite colleagues to AiVIS and earn bonus scan credits. Grow your team’s AI visibility together.',
+    description: 'Invite colleagues to AiVIS.biz and earn bonus scan credits. Grow your team’s AI visibility together.',
     path: '/referrals',
     structuredData: [
-      buildWebPageSchema({ path: '/referrals', name: 'AiVIS Referral Program', description: 'Earn bonus credits by referring others to the AiVIS evidence-backed audit system.' }),
+      buildWebPageSchema({ path: '/referrals', name: 'AiVIS.biz Referral Program', description: 'Earn bonus credits by referring others to the AiVIS.biz evidence-backed audit system.' }),
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Referrals', path: '/referrals' }]),
     ],
   });
@@ -155,16 +155,16 @@ export default function ReferralsPage() {
 
   const handleEmailInvite = () => {
     if (!inviteLink || !summary) return;
-    const subject = encodeURIComponent('Try AiVIS - AI Evidence-backed Visibility Audit Platform');
+    const subject = encodeURIComponent('Try AiVIS.biz - AI Evidence-backed Visibility Audit Platform');
     const body = encodeURIComponent(
-      `I've been using AiVIS to audit how AI sees websites.\n\nSign up with my referral link and we both earn ${summary.constants.creditsToReferred} bonus scan credits:\n${inviteLink}\n\nIt scores your site for machine readability, structured data, and citation readiness across ChatGPT, Perplexity, Claude and Google AI.`
+      `I've been using AiVIS.biz to audit how AI sees websites.\n\nSign up with my referral link and we both earn ${summary.constants.creditsToReferred} bonus scan credits:\n${inviteLink}\n\nIt scores your site for machine readability, structured data, and citation readiness across ChatGPT, Perplexity, Claude and Google AI.`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`, '_self');
   };
 
   const handleTwitterShare = () => {
     if (!inviteLink) return;
-    const text = encodeURIComponent(`I'm using AiVIS to audit how AI sees my website. Check it out; we both earn bonus credits:\n${inviteLink}`);
+    const text = encodeURIComponent(`I'm using AiVIS.biz to audit how AI sees my website. Check it out; we both earn bonus credits:\n${inviteLink}`);
     window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener');
   };
 

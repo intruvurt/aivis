@@ -1,5 +1,5 @@
 $content = @'
-// Landing — AiVIS
+// Landing — AiVIS.biz
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,8 +46,8 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS | AI Visibility Audit |AiVIS.biz - CITE LEDGER |AiVIS - CITE LEDGER | Evidence-Linked Scores  | ChatGPT, Perplexity, Google AI',
-    description: 'AiVIS is an Evidence-backed site analysis for AI answers platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
+    name: 'AiVIS.biz | AI Visibility Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores  | ChatGPT, Perplexity, Google AI',
+    description: 'AiVIS.biz is an Evidence-backed site analysis for AI answers platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),
   buildItemListSchema([
@@ -58,7 +58,7 @@ const LANDING_STRUCTURED_DATA = [
     { name: 'Score Fix [AutoFix PR] – 250 credits – $299 one-time', path: '/pricing#scorefix' },
   ]),
   buildSoftwareApplicationSchema({
-    name: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
+    name: 'AiVIS.biz.biz -> evidence-backed site analysis for AI answers',
     description: 'Evidence-backed site analysis for AI answers platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer [Free]', price: '0' },
@@ -156,10 +156,10 @@ const CREDIT_COSTS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'Evidence-backed site analysis for AI answers | AiVIS',
+    title: 'Evidence-backed site analysis for AI answers | AiVIS.biz',
     description: 'Evidence-backed site analysis for AI answers assembling in ChatGPT, Perplexity, Google AI and Claude. BRAG scoring with implementation-ready fixes.',
     path: '/landing',
-    ogTitle: 'AiVIS - Measure How AI Sees Your Site',
+    ogTitle: 'AiVIS.biz - Measure How AI Sees Your Site',
     structuredData: LANDING_STRUCTURED_DATA,
   });
 
@@ -202,7 +202,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-8">
-                <img src="/images/aivis-logo-hero.png" alt="AiVIS | AI Visibility Audit |AiVIS.biz - CITE LEDGER |AiVIS - CITE LEDGER | Evidence-Linked Scores " className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
+                <img src="/images/aivis-logo-hero.png" alt="AiVIS.biz | AI Visibility Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores " className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">
@@ -217,7 +217,7 @@ const Landing = () => {
                 <span className="bg-gradient-to-r from-amber-300 to-white bg-clip-text text-transparent">your site</span>
               </h1>
               <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl">
-                AiVIS audits your live page against the signals that determine whether ChatGPT, Perplexity, Google AI and Claude include you in their answers. Every finding is tied to evidence scraped from your real page — not inferred from your domain.
+                AiVIS.biz audits your live page against the signals that determine whether ChatGPT, Perplexity, Google AI and Claude include you in their answers. Every finding is tied to evidence scraped from your real page — not inferred from your domain.
               </p>
               <p className="text-sm text-white/40 font-mono mb-8 max-w-xl">
                 Pages with FAQPage schema are cited in AI Overviews 3.2× more than unstructured equivalents. Pages with correct H1-H3, H4-H6 hierarchy score 28 points higher on average. Start with structure.
@@ -404,7 +404,7 @@ const Landing = () => {
             ))}
           </ol>
           <div className="mt-10 pt-8 border-t border-white/10">
-            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4">AiVIS does NOT measure</h3>
+            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-4">AiVIS.biz does NOT measure</h3>
             <ul className="space-y-2">
               {['Live ChatGPT or Perplexity traffic to your site','Google SERP rankings or traditional SEO authority signals','Backlinks, domain age or historical content performance'].map((i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm text-white/50"><span className="text-red-400 mt-0.5">✕</span><span>{i}</span></li>
@@ -482,10 +482,10 @@ const Landing = () => {
           </div>
           <dl className="space-y-5">
             {([
-              { q:'What is AiVIS and what does it audit?', a:'AiVIS measures AI visibility — how well AI answer engines like ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
+              { q:'What is AiVIS.biz and what does it audit?', a:'AiVIS.biz measures AI visibility — how well AI answer engines like ChatGPT, Perplexity, Google AI, and Claude can read, extract, trust, and cite your page content. It fetches your live page and scores six evidence-backed categories.' },
               { q:'How is AI visibility different from traditional SEO?', a:'Traditional SEO targets keyword rankings and backlinks. AI answer engines synthesize responses from structured content — thin structure, missing schema, or poor heading hierarchy means you get skipped, regardless of domain authority.' },
               { q:'Is the Score Fix output a real feature or a marketing preview?', a:'The Score Fix Pack is a real paid output. Signal and Score Fix subscribers receive an evidence-linked JSON-LD patch, H1 rewrite suggestion, and FAQ block generated from their actual audit findings.' },
-              { q:'Does AiVIS work across all AI platforms?', a:'Yes. AiVIS scores visibility for ChatGPT, Perplexity AI, Google AI Overviews, and Claude individually (0–100). Signal and Score Fix run a 3-model triple-check pipeline for higher accuracy.' },
+              { q:'Does AiVIS.biz work across all AI platforms?', a:'Yes. AiVIS.biz scores visibility for ChatGPT, Perplexity AI, Google AI Overviews, and Claude individually (0–100). Signal and Score Fix run a 3-model triple-check pipeline for higher accuracy.' },
               { q:'What happens to unused monthly audits?', a:'Monthly audit credits reset at billing cycle start and do not roll over. Annual Signal and Score Fix subscribers earn redeemable credits toward features within their tier.' },
             ] as const).map(({ q, a }) => (
               <div key={q} className="border border-white/10 bg-[#111827]/50 rounded-2xl p-6 hover:border-white/18 transition-colors">
@@ -503,7 +503,7 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_30%,rgba(139,92,246,0.07),transparent)]" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
-            <img src="/images/aivis-logo-hero.png" alt="AiVIS" className="h-16 sm:h-20 w-auto object-contain mx-auto mix-blend-screen brightness-110 saturate-125" />
+            <img src="/images/aivis-logo-hero.png" alt="AiVIS.biz" className="h-16 sm:h-20 w-auto object-contain mx-auto mix-blend-screen brightness-110 saturate-125" />
           </div>
           <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
             Know your{' '}

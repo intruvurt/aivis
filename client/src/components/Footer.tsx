@@ -51,13 +51,13 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2 sm:col-span-4 lg:col-span-2 lg:pr-8">
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/aivis-logo.png" alt="AiVIS" className="h-8 w-8 rounded-lg object-contain" />
+              <img src="/aivis-logo.png" alt="AiVIS.biz" className="h-8 w-8 rounded-lg object-contain" />
               <span className="text-lg font-bold tracking-tight text-white">
                 AI<span className="text-cyan-400">VIS</span>
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              CITE LEDGER — BRAG evidence-linked scores for ChatGPT, Perplexity AI, Google AI Overviews, and Claude. Verify how AI cites your website.
+              CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
               <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
@@ -126,7 +126,7 @@ export default function Footer() {
           </div>
 
           <p className="text-[11px] text-white/25">
-            © {currentYear} AiVIS. All rights reserved.
+            © {currentYear} AiVIS.biz. All rights reserved.
           </p>
         </div>
       </div>

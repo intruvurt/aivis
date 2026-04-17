@@ -45,7 +45,7 @@ const scoreColor = (s: number) => s >= 60 ? 'text-emerald-400' : s >= 35 ? 'text
 const ringColor = (s: number) => s >= 60 ? 'border-emerald-400/40 bg-emerald-500/10' : s >= 35 ? 'border-amber-400/40 bg-amber-500/10' : 'border-red-400/40 bg-red-500/10';
 
 const SampleReport = () => {
-  usePageMeta({ title: 'Sample Report', description: 'See what a real AiVIS AI visibility audit looks like. Score breakdown, evidence-backed findings, and priority fixes.' });
+  usePageMeta({ title: 'Sample Report', description: 'See what a real AiVIS.biz AI visibility audit looks like. Score breakdown, evidence-backed findings, and priority fixes.' });
 
   return (
     <div className="min-h-screen bg-[#060607] text-white">
@@ -53,7 +53,7 @@ const SampleReport = () => {
       <div className="border-b border-white/8 bg-[#0a0a0f]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link to="/" className="text-white/60 hover:text-white text-sm transition-colors">← Back to AiVIS</Link>
+            <Link to="/" className="text-white/60 hover:text-white text-sm transition-colors">← Back to AiVIS.biz</Link>
             <span className="px-3 py-1 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-xs font-bold uppercase tracking-widest">Sample Report</span>
           </div>
         </div>

@@ -88,7 +88,7 @@ export function useGuideBotChat(currentPath: string) {
     async (text: string): Promise<boolean> => {
       if (!text.trim() || isLoading) return false;
       if (!token) {
-        setError('Please log in to use AiVIS Guide.');
+        setError('Please log in to use AiVIS.biz Guide.');
         return false;
       }
 
@@ -150,12 +150,11 @@ export function useGuideBotChat(currentPath: string) {
           if (parsed.code === 'ASSISTANT_LIMIT_REACHED') {
             const hasSignalPlus = meetsMinimumTier((user?.tier as any) || 'observer', 'signal');
             setError(
-              `Daily limit reached (${parsed.used}/${parsed.limit}). ${
-                hasSignalPlus ? '' : 'Upgrade for more messages!'
+              `Daily limit reached (${parsed.used}/${parsed.limit}). ${hasSignalPlus ? '' : 'Upgrade for more messages!'
               }`
             );
           } else if (parsed.code === 'EMAIL_NOT_VERIFIED') {
-            setError('Please verify your email to use AiVIS Guide. Check your inbox for the verification link.');
+            setError('Please verify your email to use AiVIS.biz Guide. Check your inbox for the verification link.');
           } else if (parsed.code === 'USER_NOT_FOUND' || parsed.code === 'NO_USER') {
             setError('Your session is out of sync. Please sign out and log back in.');
           } else if (parsed.code === 'NO_TOKEN' || parsed.code === 'INVALID_TOKEN') {

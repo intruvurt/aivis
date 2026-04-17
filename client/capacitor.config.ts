@@ -1,6 +1,6 @@
 const config = {
   appId: 'biz.aivis.app',
-  appName: 'AiVIS ~ AI Visibility Audit',
+  appName: 'AiVIS.biz ~ AI Visibility Audit',
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {

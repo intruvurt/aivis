@@ -41,11 +41,11 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
   {
     slug: 'why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai',
     path: '/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai',
-    title: 'Why I Built AiVIS When I Realized Most Websites Are Invisible To AI',
+    title: 'Why I Built AiVIS.biz When I Realized Most Websites Are Invisible To AI',
     description:
-      'The origin story behind AiVIS: why traditional web publishing misses AI extraction requirements and how evidence-backed auditing closes that gap.',
+      'The origin story behind AiVIS.biz: why traditional web publishing misses AI extraction requirements and how evidence-backed auditing closes that gap.',
     excerpt:
-      'How I discovered that the majority of websites fail the structural requirements for accurate AI extraction - and why that became the founding problem for AiVIS.',
+      'How I discovered that the majority of websites fail the structural requirements for accurate AI extraction - and why that became the founding problem for AiVIS.biz.',
     publishedAt: '2026-03-15',
     readMinutes: 7,
     category: 'aeo',
@@ -53,15 +53,15 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['AI visibility', 'extraction readiness', 'AI extraction', 'foundational'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Strategy'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in SEO, AI ranking strategy',
     },
     keyPoints: [
       'AI systems prioritize machine-readable structure over visual polish.',
       'Citation readiness requires schema quality, entity clarity, and answer-block depth.',
-      'AiVIS was built to provide evidence-linked diagnostics and actionable fixes.',
+      'AiVIS.biz was built to provide evidence-linked diagnostics and actionable fixes.',
     ],
     sourceMediumUrl:
       'https://intruvurt.medium.com/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai-ac7ad86ccbf8',
@@ -82,7 +82,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['distribution', 'discoverability', 'SaaS strategy', 'product-market fit'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Product Strategy', 'Growth', 'Discoverability'],
       experience: '8+ years in product strategy',
     },
@@ -110,9 +110,9 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['citation readiness', 'AEO', 'answer engines', 'extractability', 'GenAI'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'AI Citations', 'Content Architecture'],
-      credentials: ['Founded AiVIS', 'Citation Readiness Research'],
+      credentials: ['Founded AiVIS.biz', 'Citation Readiness Research'],
       experience: '8+ years in next-generation SEO',
     },
     keyPoints: [
@@ -144,7 +144,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['SEO vs AEO', 'AI visibility', 'ranking', 'extractability'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['SEO', 'Answer Engine Optimization', 'AI Ranking'],
       experience: '8+ years in evolving search landscape',
     },
@@ -173,15 +173,15 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['EEAT', 'author authority', 'expertise', 'citations', 'trustworthiness'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['E-E-A-T Strategy', 'Author Authority', 'Citation Optimization'],
-      credentials: ['Founded AiVIS', 'AI Citation Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Citation Research'],
     },
     keyPoints: [
       'AI systems crawl Author.about, social profiles, and byline metadata to assess authority.',
       'E-E-A-T signals (expertise, experience, authoritativeness, trustworthiness) now filter citation eligibility.',
       'Your author contact info and verified credentials must be machine-readable (schema).',
-      'Companies without clear author attribution consistently show lower citation rates in LLM outputs - a pattern verified through AiVIS citation testing across multiple AI answer engines.',
+      'Companies without clear author attribution consistently show lower citation rates in LLM outputs - a pattern verified through AiVIS.biz citation testing across multiple AI answer engines.',
     ],
     relatedPostSlugs: [
       'answer-engine-optimization-2026-why-citation-readiness-matters',
@@ -205,9 +205,9 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['LLMs', 'content parsing', 'extraction logic', 'AI ranking', 'token efficiency'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Engineering', 'LLM Extraction', 'Content Systems'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in AI-driven content analysis',
     },
     keyPoints: [
@@ -239,7 +239,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['geo targeting', 'local SEO', 'location markup', 'jurisdiction', 'regional'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Geo-Targeting', 'Local AI Visibility', 'Schema Markup'],
       experience: '6+ years in location-based search',
     },
@@ -255,11 +255,11 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
   {
     slug: 'from-invisible-to-cited-case-study-brand-citation-growth',
     path: '/blogs/from-invisible-to-cited-case-study-brand-citation-growth',
-    title: 'From Invisible to Cited - How AiVIS Went from 0 Citations to Consistent AI Answer Presence',
+    title: 'From Invisible to Cited - How AiVIS.biz Went from 0 Citations to Consistent AI Answer Presence',
     description:
-      'A transparent case study showing how AiVIS restructured its own content schema, FAQ depth, and author credibility signals to achieve measurable AI citation improvements - tracked through the Cite Ledger.',
+      'A transparent case study showing how AiVIS.biz restructured its own content schema, FAQ depth, and author credibility signals to achieve measurable AI citation improvements - tracked through the Cite Ledger.',
     excerpt:
-      'Starting from zero citations in ChatGPT and Claude, AiVIS applied its own audit methodology and tracked every structural change through the Cite Ledger. Here is what changed and what the evidence showed.',
+      'Starting from zero citations in ChatGPT and Claude, AiVIS.biz applied its own audit methodology and tracked every structural change through the Cite Ledger. Here is what changed and what the evidence showed.',
     publishedAt: '2026-03-08',
     readMinutes: 14,
     category: 'case-study',
@@ -267,9 +267,9 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['case study', 'citation rate', 'ROI', 'AI visibility improvement', 'implementation'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Citation Strategy', 'Content Optimization', 'Case Study Analysis'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
     },
     keyPoints: [
       'Baseline: Zero AI citations despite strong SERP rankings - verified through citation testing across ChatGPT, Claude, and Perplexity.',
@@ -293,7 +293,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     description:
       'Learn how to correlate GSC performance data (impressions, clicks, position) with AI citation metrics to identify gaps and opportunities.',
     excerpt:
-      'GSC shows your Google ranking health; AiVIS shows your AI extraction readiness. Here\'s how to read both together.',
+      'GSC shows your Google ranking health; AiVIS.biz shows your AI extraction readiness. Here\'s how to read both together.',
     publishedAt: '2026-03-07',
     readMinutes: 9,
     category: 'implementation',
@@ -301,7 +301,7 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['Google Search Console', 'GSC', 'monitoring', 'metrics', 'analytics'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Analytics', 'GSC Integration', 'Metrics Strategy'],
       experience: '8+ years in data-driven SEO',
     },
@@ -329,9 +329,9 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     keywords: ['implementation', 'roadmap', 'execution', 'citations', 'timeline'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Implementation Strategy', 'Execution', 'Project Management'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
     },
     keyPoints: [
       'Week 1: Audit all content pages; identify citation-blocking issues.',
@@ -361,10 +361,10 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['SEO', 'Strategy', 'Advanced', 'Visibility'],
     keywords: ['Google Search Console', 'GSC 2026', 'AI Mode', 'Discover', 'search strategy', 'performance analytics'],
     author: {
-      name: 'R. Mason / AiVIS',
+      name: 'R. Mason / AiVIS.biz',
       title: 'SEO Strategy & AI Search Visibility',
       expertise: ['Google Search Console', 'Search Strategy', 'AI-Driven Analytics', 'Data Interpretation'],
-      credentials: ['AiVIS Research', 'GSC Deep Dive Analyst'],
+      credentials: ['AiVIS.biz Research', 'GSC Deep Dive Analyst'],
       experience: '8+ years in search data analysis and strategy',
     },
     keyPoints: [
@@ -397,10 +397,10 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tags: ['AEO', 'SEO', 'AI-Tech', 'Visibility', 'Advanced'],
     keywords: ['zero-click search', 'AI answer engines', 'AI visibility', 'trust economy', 'structured data', 'citation readiness'],
     author: {
-      name: 'R. Mason / AiVIS',
+      name: 'R. Mason / AiVIS.biz',
       title: 'AI Visibility Research',
       expertise: ['AI Search Strategy', 'AEO', 'Machine Readability', 'Search Infrastructure'],
-      credentials: ['AiVIS', 'AI Visibility Systems'],
+      credentials: ['AiVIS.biz', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     keyPoints: [
@@ -673,15 +673,15 @@ The only question now is whether your website is upstream - or already stranded 
     keywords: ['WebMCP', 'Model Context Protocol', 'SEO vs AEO', 'GEO', 'AI agents', 'machine readability', 'structured tools', 'AI visibility protocol'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['WebMCP Architecture', 'Answer Engine Optimization', 'AI Agent Integration', 'Machine Readability'],
-      credentials: ['Founded AiVIS', 'WebMCP Implementation'],
+      credentials: ['Founded AiVIS.biz', 'WebMCP Implementation'],
       experience: '8+ years in AI visibility and search systems',
     },
     keyPoints: [
       'SEO, AEO, and GEO all optimize content presentation but none provide a structured protocol for machine agents to interact with your data.',
       'WebMCP exposes typed tools that AI agents can discover, authenticate against, and invoke without scraping or guessing.',
-      'AiVIS implements WebMCP to let Claude, Cursor, and other MCP clients run visibility audits, pull reports, and generate remediation plans through natural language.',
+      'AiVIS.biz implements WebMCP to let Claude, Cursor, and other MCP clients run visibility audits, pull reports, and generate remediation plans through natural language.',
       'The shift from optimizing pages to exposing callable tools changes the entire relationship between websites and AI systems.',
       'Businesses adopting WebMCP now are building the integration surface AI agents will depend on for the next decade.',
     ],
@@ -751,7 +751,7 @@ This is the difference between leaving a note on the counter and picking up the 
 
 What This Looks Like in Practice
 
-AiVIS implements 12 WebMCP tools organized across three capability phases.
+AiVIS.biz implements 12 WebMCP tools organized across three capability phases.
 
 Phase 1 covers core analysis. An AI agent can call scan_url to trigger a full visibility audit on any public URL. It gets back an audit ID, a visibility score, category breakdowns, and a link to the full report. It can call get_audit_report to pull the complete evidence chain: content analysis, schema evaluation, technical signals, AI platform scores, keyword intelligence, and every recommendation the system generated.
 
@@ -777,13 +777,13 @@ All three are publishing strategies. You put information out into the world and 
 
 WebMCP replaces hope with a handshake.
 
-When Claude Desktop connects to AiVIS through WebMCP, there is no guessing. The agent discovers available tools. It authenticates. It invokes specific capabilities with defined parameters. It receives structured responses it can reason about.
+When Claude Desktop connects to AiVIS.biz through WebMCP, there is no guessing. The agent discovers available tools. It authenticates. It invokes specific capabilities with defined parameters. It receives structured responses it can reason about.
 
 You go from "I marked up my page and hopefully AI will figure it out" to "AI agents can programmatically access everything they need, right now, in the format they expect."
 
 That is not an optimization. That is a protocol.
 
-The Integration Gap AiVIS Closes
+The Integration Gap AiVIS.biz Closes
 
 Most visibility platforms give you a score and a checklist.
 
@@ -791,7 +791,7 @@ Check your title tags. Add FAQ schema. Fix your robots.txt. Improve response tim
 
 None of that is wrong. But it sits in the same passive paradigm. You fix your content. You re-publish. You wait.
 
-AiVIS closes the loop by making your visibility data machine-actionable from the start.
+AiVIS.biz closes the loop by making your visibility data machine-actionable from the start.
 
 When your visibility audit runs, every finding maps to structured evidence. Every recommendation traces back to a specific diagnostic. Every score connects to a rubric an AI agent can query programmatically.
 
@@ -827,7 +827,7 @@ But none of them let AI agents interact with your site as a structured service.
 
 WebMCP does.
 
-And AiVIS is the first platform that implements it end to end. From audit execution to evidence retrieval to competitive analysis to remediation planning, everything is callable, authenticated, and typed.
+And AiVIS.biz is the first platform that implements it end to end. From audit execution to evidence retrieval to competitive analysis to remediation planning, everything is callable, authenticated, and typed.
 
 If your visibility strategy still ends at "publish and wait for the crawler," it is time to look at what the next wave actually requires.
 
@@ -848,31 +848,31 @@ The only question is whether you have any tools worth calling.`,
   {
     slug: 'aivis-api-access-explained-build-on-the-visibility-layer',
     path: '/blogs/aivis-api-access-explained-build-on-the-visibility-layer',
-    title: 'AiVIS API Access Explained: Build on the Visibility Layer',
+    title: 'AiVIS.biz API Access Explained: Build on the Visibility Layer',
     description:
-      'Full breakdown of AiVIS API and WebMCP access: how to generate keys, authenticate requests, pull audit data, trigger scans, and integrate audit intelligence into your own stack.',
+      'Full breakdown of AiVIS.biz API and WebMCP access: how to generate keys, authenticate requests, pull audit data, trigger scans, and integrate audit intelligence into your own stack.',
     excerpt:
       'Your visibility data should not be trapped inside a dashboard. Here is how to pull it into your own tools, pipelines, and AI agents.',
     publishedAt: '2026-03-24',
     readMinutes: 9,
     category: 'implementation',
     tags: ['AI-Tech', 'Implementation', 'Technical', 'Advanced', 'Visibility'],
-    keywords: ['AiVIS API', 'API access', 'WebMCP', 'API keys', 'developer integration', 'visibility API', 'audit API', 'AI agent tools'],
+    keywords: ['AiVIS.biz API', 'API access', 'WebMCP', 'API keys', 'developer integration', 'visibility API', 'audit API', 'AI agent tools'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['API Architecture', 'WebMCP Implementation', 'Developer Experience', 'Platform Engineering'],
-      credentials: ['Founded AiVIS', 'API & WebMCP Design'],
+      credentials: ['Founded AiVIS.biz', 'API & WebMCP Design'],
       experience: '8+ years in platform engineering and API design',
     },
     keyPoints: [
-      'AiVIS exposes two integration surfaces: a traditional REST API for developers and WebMCP for AI agents, both authenticated through scoped API keys.',
+      'AiVIS.biz exposes two integration surfaces: a traditional REST API for developers and WebMCP for AI agents, both authenticated through scoped API keys.',
       'API keys are generated in Settings with granular scopes: read:audits, write:audits, read:analytics, and read:score-fix.',
       'WebMCP tools are discoverable via /.well-known/webmcp.json, letting Claude, Cursor, and other MCP clients auto-detect capabilities.',
       'Tier gating controls access: Alignment unlocks WebMCP, Signal unlocks REST API, and all tiers share the same usage pools.',
       'Every API response maps directly to the structured evidence model used internally, so integrations get the same data quality as the dashboard.',
     ],
-    content: `One of the first questions developers ask after running their first AiVIS audit is: "Can I hit this from my own code?"
+    content: `One of the first questions developers ask after running their first AiVIS.biz audit is: "Can I hit this from my own code?"
 
 Yes. And you should.
 
@@ -880,15 +880,15 @@ Because visibility data trapped inside a dashboard is visibility data that never
 
 If your audit intelligence lives in a tab you check once a week, you are already behind.
 
-This is the full breakdown of how AiVIS API access works, who gets access, what you can do with it, and how to get started today.
+This is the full breakdown of how AiVIS.biz API access works, who gets access, what you can do with it, and how to get started today.
 
 Two Integration Surfaces, One Auth System
 
-AiVIS gives you two ways to integrate programmatically.
+AiVIS.biz gives you two ways to integrate programmatically.
 
 The first is a traditional REST API. Standard JSON endpoints. Predictable request/response patterns. Built for developers writing Python scripts, Node services, or internal tools that need to pull audit data on a schedule.
 
-The second is WebMCP. This is the Model Context Protocol surface. Built for AI agents. Claude Desktop, Cursor, and any MCP-compatible client can discover and invoke AiVIS tools through structured, typed interactions.
+The second is WebMCP. This is the Model Context Protocol surface. Built for AI agents. Claude Desktop, Cursor, and any MCP-compatible client can discover and invoke AiVIS.biz tools through structured, typed interactions.
 
 Both surfaces use the same authentication: Bearer tokens via API keys.
 
@@ -960,9 +960,9 @@ WebMCP: When Your AI Agent Needs Access
 
 REST API is for your code. WebMCP is for your AI.
 
-If you are using Claude Desktop, Cursor, or any client that supports the Model Context Protocol, you can connect AiVIS as a native tool source.
+If you are using Claude Desktop, Cursor, or any client that supports the Model Context Protocol, you can connect AiVIS.biz as a native tool source.
 
-The setup starts with your API key (same key, same auth) and a client configuration that points to the AiVIS WebMCP discovery endpoint at /.well-known/webmcp.json.
+The setup starts with your API key (same key, same auth) and a client configuration that points to the AiVIS.biz WebMCP discovery endpoint at /.well-known/webmcp.json.
 
 Once connected, your AI agent automatically discovers all available tools. It can scan URLs, pull audit reports, compare competitors, check citation presence, and generate remediation plans. All through natural language.
 
@@ -1049,11 +1049,11 @@ It is infrastructure you build on.`,
   {
     slug: 'aivis-platform-source-of-truth-every-feature-and-tool-explained',
     path: '/blogs/aivis-platform-source-of-truth-every-feature-and-tool-explained',
-    title: 'AiVIS Platform Source of Truth: Every Feature and Tool Explained',
+    title: 'AiVIS.biz Platform Source of Truth: Every Feature and Tool Explained',
     description:
-      'The definitive reference for everything AiVIS does - every tier, every tool, every pipeline, every integration - explained in operational detail.',
+      'The definitive reference for everything AiVIS.biz does - every tier, every tool, every pipeline, every integration - explained in operational detail.',
     excerpt:
-      'A complete walkthrough of the AiVIS platform: what each feature does, which tier unlocks it, and how the tools connect into a practical visibility workflow.',
+      'A complete walkthrough of the AiVIS.biz platform: what each feature does, which tier unlocks it, and how the tools connect into a practical visibility workflow.',
     publishedAt: '2026-03-24',
     readMinutes: 14,
     category: 'technology',
@@ -1061,22 +1061,22 @@ It is infrastructure you build on.`,
     keywords: ['aivis features', 'ai answer audit', 'aivis tools', 'tier comparison', 'platform overview', 'citation testing', 'triple check ai', 'mcp server'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['AiVIS', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS.biz', 'AiVIS.biz Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Most platforms give you a marketing page with a comparison table and leave it at that.
 
 This is different.
 
-This is the complete operational reference for every feature, tool, and pipeline inside AiVIS - what it does, why it exists, and which tier unlocks it. No vague feature names. No aspirational roadmap items. Just what the platform ships today.
+This is the complete operational reference for every feature, tool, and pipeline inside AiVIS.biz - what it does, why it exists, and which tier unlocks it. No vague feature names. No aspirational roadmap items. Just what the platform ships today.
 
 If you want to know exactly what you are paying for, or exactly what you are missing, this is the document.
 
 **The Five Tiers**
 
-AiVIS runs on five canonical tiers. Every entitlement, every feature gate, every model allocation flows from these five keys.
+AiVIS.biz runs on five canonical tiers. Every entitlement, every feature gate, every model allocation flows from these five keys.
 
 Observer is the free tier. Three audits per month. Single-page scans. No competitors. No exports. No API. The visibility score, keyword intelligence, schema audit, heading analysis, and core recommendations all work at full fidelity. You see the same audit quality as paid users - just fewer of them, with no automation layer.
 
@@ -1090,7 +1090,7 @@ Score Fix is the AutoFix PR remediation tier. Not a subscription - a $299 credit
 
 **The Visibility Audit Engine**
 
-The core of AiVIS is the audit. Every scan runs through the same pipeline: URL validation, Puppeteer-based scraping, AI model analysis, optional triple-check validation, caching, and structured JSON response.
+The core of AiVIS.biz is the audit. Every scan runs through the same pipeline: URL validation, Puppeteer-based scraping, AI model analysis, optional triple-check validation, caching, and structured JSON response.
 
 The audit produces a visibility score from 0 to 100. This score reflects five pressure points: crawlability, extractability, trust signals, scoring consistency, and operational follow-through. It is not a vanity metric. It measures whether AI systems can understand, trust, and cite your content.
 
@@ -1180,7 +1180,7 @@ Webhooks push audit results, score changes, and competitive alerts to your endpo
 
 **MCP Server**
 
-Alignment and above get MCP Server access - the Model Context Protocol endpoint that lets AI agents discover and invoke AiVIS tools directly. Twelve callable tools organized across three capability phases.
+Alignment and above get MCP Server access - the Model Context Protocol endpoint that lets AI agents discover and invoke AiVIS.biz tools directly. Twelve callable tools organized across three capability phases.
 
 This is the WebMCP layer: instead of passively waiting for AI systems to interpret your content, you expose typed, authenticated tools that agents can call on demand.
 
@@ -1192,7 +1192,7 @@ Shareable links are available on all tiers. Observer links include redacted data
 
 **Document Upload Analysis**
 
-Alignment and above can upload documents for pre-publication auditing. Instead of pointing AiVIS at a live URL, you upload a draft - HTML, PDF, or document file - and the system audits it before it goes live.
+Alignment and above can upload documents for pre-publication auditing. Instead of pointing AiVIS.biz at a live URL, you upload a draft - HTML, PDF, or document file - and the system audits it before it goes live.
 
 Mobile users can browse files from their device's file system, capture photos of printed content, or select from Google Drive, iCloud, or Dropbox through the native system file picker.
 
@@ -1204,13 +1204,13 @@ The dashboard computes real metrics from actual audit data - not placeholder gra
 
 **The Architecture in One Sentence**
 
-AiVIS is a structured AI visibility system with five pressure points - crawlability, extractability, trust, scoring consistency, and operational follow-through - and every feature exists to improve at least one of those without breaking the others.`,
+AiVIS.biz is a structured AI visibility system with five pressure points - crawlability, extractability, trust, scoring consistency, and operational follow-through - and every feature exists to improve at least one of those without breaking the others.`,
     keyPoints: [
       'Five canonical tiers with explicit feature gates and no ambiguity about what each includes.',
       'Triple-Check AI Pipeline validates audit accuracy through three independent model passes.',
       'Citation testing verifies real-world AI search presence across three free search engines.',
       'Score Fix generates evidence-linked GitHub PRs that trace every code change back to a specific audit finding.',
-      'MCP Server access lets AI agents programmatically invoke AiVIS tools through the Model Context Protocol.',
+      'MCP Server access lets AI agents programmatically invoke AiVIS.biz tools through the Model Context Protocol.',
       'Brand mention tracking scans 19 free sources without paid APIs to detect where your brand appears in public conversation.',
     ],
     relatedPostSlugs: [
@@ -1225,11 +1225,11 @@ AiVIS is a structured AI visibility system with five pressure points - crawlabil
   {
     slug: 'why-aivis-is-different-from-every-other-seo-aeo-platform',
     path: '/blogs/why-aivis-is-different-from-every-other-seo-aeo-platform',
-    title: 'Why AiVIS Is Different From Every Other SEO and AEO Platform',
+    title: 'Why AiVIS.biz Is Different From Every Other SEO and AEO Platform',
     description:
-      'AiVIS is not an SEO tool with AI branding. It is a fundamentally different system built for a fundamentally different internet. Here is why the architecture matters.',
+      'AiVIS.biz is not an SEO tool with AI branding. It is a fundamentally different system built for a fundamentally different internet. Here is why the architecture matters.',
     excerpt:
-      'Every SEO and AEO tool on the market optimizes for rankings. AiVIS audits whether AI systems can understand, trust, and cite your content - and then fixes the gaps automatically.',
+      'Every SEO and AEO tool on the market optimizes for rankings. AiVIS.biz audits whether AI systems can understand, trust, and cite your content - and then fixes the gaps automatically.',
     publishedAt: '2026-03-24',
     readMinutes: 12,
     category: 'strategy',
@@ -1237,9 +1237,9 @@ AiVIS is a structured AI visibility system with five pressure points - crawlabil
     keywords: ['aivis vs seo tools', 'aeo platform comparison', 'ai visibility audit', 'answer engine optimization', 'citation readiness', 'machine readability'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['AiVIS', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS.biz', 'AiVIS.biz Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Let me be blunt about something.
@@ -1252,7 +1252,7 @@ None of them answer the question that actually matters now:
 
 Can AI systems understand your content well enough to cite it?
 
-That is the question AiVIS was built to answer. And the way it answers it is architecturally different from anything else on the market.
+That is the question AiVIS.biz was built to answer. And the way it answers it is architecturally different from anything else on the market.
 
 **The Problem With SEO Tools in an AI World**
 
@@ -1276,7 +1276,7 @@ Tracking whether you showed up in an answer is like tracking whether it rained. 
 
 **The Five Pressure Points**
 
-AiVIS audits five dimensions that determine whether AI systems will use your content:
+AiVIS.biz audits five dimensions that determine whether AI systems will use your content:
 
 Crawlability - can machines reach and parse your content without obstruction? Blocked resources, JavaScript-rendered content that fails to hydrate, broken canonical tags, malformed sitemaps - these prevent AI systems from ever seeing your content in the first place.
 
@@ -1284,7 +1284,7 @@ Extractability - once machines reach your content, can they extract structured m
 
 Trust - does your content carry the signals that AI systems use to evaluate reliability? Author entities, E-E-A-T signals, citation presence, factual claim consistency, cross-reference alignment - these determine whether extracted information gets promoted or discarded during answer synthesis.
 
-Scoring consistency - does the audit produce stable, reproducible results? AiVIS's Triple-Check Pipeline runs three independent AI models in sequence. The second model critiques the first. The third validates the final result. The output you see is not one model's opinion. It is a consensus.
+Scoring consistency - does the audit produce stable, reproducible results? AiVIS.biz's Triple-Check Pipeline runs three independent AI models in sequence. The second model critiques the first. The third validates the final result. The output you see is not one model's opinion. It is a consensus.
 
 Operational follow-through - does the platform actually help you fix what it finds? Score Fix generates real GitHub pull requests with evidence-linked code changes. Not a checklist. Not a PDF recommendations report. Actual patches pushed to your repository with audit trail references.
 
@@ -1294,7 +1294,7 @@ No other platform audits all five.
 
 Most audit tools run one model, one pass, one result. You get whatever that model happened to generate. If the model hallucinated a recommendation or miscounted your schema elements, that error propagates unchecked into your audit report.
 
-AiVIS's Signal tier runs a three-stage pipeline. AI1 generates the primary analysis. AI2 runs a peer critique - it can adjust the score, add missing recommendations, and challenge findings it disagrees with. AI3 validates the final output and has the authority to override.
+AiVIS.biz's Signal tier runs a three-stage pipeline. AI1 generates the primary analysis. AI2 runs a peer critique - it can adjust the score, add missing recommendations, and challenge findings it disagrees with. AI3 validates the final output and has the authority to override.
 
 If AI2 or AI3 fail, the system degrades gracefully. You still get the AI1 result. The model count in the response tells you exactly how many stages completed.
 
@@ -1304,17 +1304,17 @@ This is the difference between a single opinion and a reviewed verdict.
 
 Here is something no other platform does well: verifying that your structural improvements actually produce results in live search.
 
-AiVIS runs citation tests across three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer. No paid search APIs. No API keys. The system checks whether your target URL or brand name appears in actual search results for your target queries.
+AiVIS.biz runs citation tests across three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer. No paid search APIs. No API keys. The system checks whether your target URL or brand name appears in actual search results for your target queries.
 
 The audit tells you what to fix. Citation testing tells you whether the fix worked.
 
-Most platforms stop at the audit. They give you recommendations and wish you luck. AiVIS checks the receipts.
+Most platforms stop at the audit. They give you recommendations and wish you luck. AiVIS.biz checks the receipts.
 
 **Mention Tracking Without API Dependencies**
 
 Other platforms that track brand mentions charge for access to social media APIs or news aggregation services. Those APIs change pricing, get rate-limited, or disappear entirely.
 
-AiVIS scans 19 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. No paid APIs. No vendor lock-in. The system uses direct web scraping and public search interfaces.
+AiVIS.biz scans 19 free sources: Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. No paid APIs. No vendor lock-in. The system uses direct web scraping and public search interfaces.
 
 When your brand appears in a Hacker News discussion or a Reddit thread, you know about it. Without paying a third-party data broker for the privilege.
 
@@ -1324,9 +1324,9 @@ This is the architectural difference that matters most long-term.
 
 Every other platform is a dashboard. You log in, run a scan, look at results, and leave.
 
-AiVIS exposes a Model Context Protocol server. AI agents can discover your AiVIS tools through a standard endpoint and invoke them programmatically. Your CI/CD pipeline can check visibility scores before deploy. Your Slack workspace can receive alerts when competitor schema quality changes. A planning agent can pull your audit evidence and generate a prioritized fix list during a sprint review.
+AiVIS.biz exposes a Model Context Protocol server. AI agents can discover your AiVIS.biz tools through a standard endpoint and invoke them programmatically. Your CI/CD pipeline can check visibility scores before deploy. Your Slack workspace can receive alerts when competitor schema quality changes. A planning agent can pull your audit evidence and generate a prioritized fix list during a sprint review.
 
-This is not a dashboard with an API bolted on. The MCP layer turns AiVIS from a tool you visit into infrastructure your systems consume.
+This is not a dashboard with an API bolted on. The MCP layer turns AiVIS.biz from a tool you visit into infrastructure your systems consume.
 
 SEO tools do not have this. AEO tools do not have this. The protocol layer is what separates a platform from an ecosystem.
 
@@ -1364,18 +1364,18 @@ SEO tools optimize for rankings on a results page that fewer people click.
 
 AEO tools observe whether AI systems happen to mention you.
 
-AiVIS audits whether AI systems can structurally understand your content, validates that finding across multiple models, tests whether the improvements produce real citations, and generates code-level fixes that ship to your repository.
+AiVIS.biz audits whether AI systems can structurally understand your content, validates that finding across multiple models, tests whether the improvements produce real citations, and generates code-level fixes that ship to your repository.
 
 It is not the same category of tool. It solves a different problem at a different architectural layer.
 
 The internet moved from destinations to extraction. The platforms that matter now are the ones built for the extraction layer from day one.
 
-AiVIS was built for this internet. Not the one that came before it.`,
+AiVIS.biz was built for this internet. Not the one that came before it.`,
     keyPoints: [
-      'SEO tools measure ranking factors. AiVIS audits extractability, trust, and citation readiness - the signals AI systems actually use.',
+      'SEO tools measure ranking factors. AiVIS.biz audits extractability, trust, and citation readiness - the signals AI systems actually use.',
       'Triple-Check Pipeline runs three AI models in sequence for consensus-grade audit accuracy.',
       'Citation testing verifies real-world results across three search engines with no paid APIs.',
-      'MCP Server turns AiVIS from a dashboard into infrastructure AI agents can programmatically consume.',
+      'MCP Server turns AiVIS.biz from a dashboard into infrastructure AI agents can programmatically consume.',
       'Score Fix generates evidence-linked GitHub PRs - actual code changes, not recommendation PDFs.',
       'Pricing has explicit documented feature gates with no hidden paywalls or vague enterprise tiers.',
     ],
@@ -1413,9 +1413,9 @@ AiVIS was built for this internet. Not the one that came before it.`,
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Visibility Infrastructure', 'Answer Engine Optimization', 'Machine Readability Systems', 'Citation Engineering'],
-      credentials: ['AiVIS', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS.biz', 'AiVIS.biz Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `When someone asks ChatGPT "what is the best tool for improving website visibility in AI answers," the response right now almost always mentions Semrush, Ahrefs, or Moz.
@@ -1510,9 +1510,9 @@ Measuring AI visibility requires evaluating a different stack of signals:
 
 No traditional SEO tool measures all six. Not because they failed. Because these were not the problems those tools were built to solve.
 
-## How AiVIS Measures AI Visibility
+## How AiVIS.biz Measures AI Visibility
 
-AiVIS was built specifically for this measurement layer. It is not an SEO tool with AI features added. It is an AI visibility auditing system designed from scratch for the extraction economy.
+AiVIS.biz was built specifically for this measurement layer. It is not an SEO tool with AI features added. It is an AI visibility auditing system designed from scratch for the extraction economy.
 
 Here is what it measures and how:
 
@@ -1520,15 +1520,15 @@ Here is what it measures and how:
 
 **Triple-Check Pipeline.** The Signal tier runs three independent AI models in sequence. AI1 generates the primary analysis. AI2 runs a peer critique, adjusting scores and adding missed findings. AI3 validates the final result with override authority. You get a consensus, not a single model's opinion. If any model in the chain fails, the system degrades gracefully - you still get results.
 
-**Live citation testing.** AiVIS runs your target queries against three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer - and verifies whether your brand or URL appears. No paid search APIs. No API keys. Real verification that your improvements produced real citations.
+**Live citation testing.** AiVIS.biz runs your target queries against three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer - and verifies whether your brand or URL appears. No paid search APIs. No API keys. Real verification that your improvements produced real citations.
 
 **Mention tracking across 17 sources.** Reddit, Hacker News, Mastodon, DuckDuckGo site search, Bing site search, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, and Twitter/X. Direct web scraping, no paid data brokers. When your brand appears in a community discussion, you know about it.
 
 **Automated remediation.** Score Fix does not hand you a recommendations PDF. It generates GitHub pull requests with the actual code changes - schema patches, heading fixes, FAQ block insertions, meta corrections - each linked to the specific audit finding that identified the gap.
 
-**MCP protocol layer.** AiVIS exposes a Model Context Protocol server so AI agents, CI/CD pipelines, and automation platforms can invoke audit tools programmatically. This turns it from a dashboard you visit into infrastructure your systems consume.
+**MCP protocol layer.** AiVIS.biz exposes a Model Context Protocol server so AI agents, CI/CD pipelines, and automation platforms can invoke audit tools programmatically. This turns it from a dashboard you visit into infrastructure your systems consume.
 
-## AiVIS vs Semrush vs Ahrefs: What Each Tool Is Best At
+## AiVIS.biz vs Semrush vs Ahrefs: What Each Tool Is Best At
 
 This is not about replacement. These tools serve different measurement layers. The comparison matters because understanding the gap between them is how you build complete coverage.
 
@@ -1538,9 +1538,9 @@ This is not about replacement. These tools serve different measurement layers. T
 
 **Use Moz when** you need domain authority benchmarking, local SEO management, on-page grading against traditional ranking factors, and accessible SEO education resources. Moz remains strong for practitioners who want clear, actionable traditional SEO guidance.
 
-**Use AiVIS when** you need to measure whether AI systems can parse, trust, and cite your content. Use it to audit extractability, validate findings across multiple AI models, verify citations in live search, track brand mentions across community platforms, and automatically generate code-level fixes for structural gaps.
+**Use AiVIS.biz when** you need to measure whether AI systems can parse, trust, and cite your content. Use it to audit extractability, validate findings across multiple AI models, verify citations in live search, track brand mentions across community platforms, and automatically generate code-level fixes for structural gaps.
 
-The tools overlap in a few areas - both Ahrefs and AiVIS track brand mentions, for example. But the measurement target is different. Ahrefs measures backlink-driven authority. AiVIS measures structural citability for AI answer engines.
+The tools overlap in a few areas - both Ahrefs and AiVIS.biz track brand mentions, for example. But the measurement target is different. Ahrefs measures backlink-driven authority. AiVIS.biz measures structural citability for AI answer engines.
 
 ## The Questions Your Current Tools Cannot Answer
 
@@ -1587,7 +1587,7 @@ Make sure yours is one of them.`,
     keyPoints: [
       'Semrush, Ahrefs, and Moz measure traditional search ranking factors - backlinks, keywords, domain authority - not AI citation readiness.',
       'AI answer engines evaluate extractability, entity clarity, answer block density, and trust signals - metrics no traditional SEO tool was built to measure.',
-      'AiVIS audits five pressure points specific to AI visibility: crawlability, extractability, trust, scoring consistency, and operational follow-through.',
+      'AiVIS.biz audits five pressure points specific to AI visibility: crawlability, extractability, trust, scoring consistency, and operational follow-through.',
       'Triple-Check Pipeline validates audit findings across three independent AI models for consensus-grade accuracy.',
       'Live citation testing verifies whether structural improvements produce real citations in search - not just recommendations.',
       'The practical recommendation: keep your SEO tools for rankings, add an AI visibility layer for citation readiness. Both layers matter.',
@@ -1625,9 +1625,9 @@ Make sure yours is one of them.`,
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Citation Engineering', 'Answer Engine Optimization', 'Machine Readability Systems'],
-      credentials: ['AiVIS', 'AiVIS Platform Architect'],
+      credentials: ['AiVIS.biz', 'AiVIS.biz Platform Architect'],
       experience: '8+ years in search and AI content systems',
     },
     content: `Every AI answer engine - ChatGPT, Perplexity, Gemini, Claude, Copilot - selects sources to cite during answer generation. The selection is not random. It is not based on PageRank. It is based on a set of structural signals that determine whether your content is extractable, trustworthy, and relevant to the query.
@@ -1648,7 +1648,7 @@ The signals that increase ChatGPT citation probability:
 
 **Named entity consistency.** Your brand name, product name, and author identity should appear consistently across the page. Inconsistent naming creates ambiguity in the entity graph the model builds during retrieval.
 
-**Factual claim density.** Sentences that contain specific numbers, dates, named technologies, or measurable outcomes are treated as higher-value citations than vague assertions. "AiVIS audits pages across five structural dimensions" is more citable than "our tool comprehensively checks your website."
+**Factual claim density.** Sentences that contain specific numbers, dates, named technologies, or measurable outcomes are treated as higher-value citations than vague assertions. "AiVIS.biz audits pages across five structural dimensions" is more citable than "our tool comprehensively checks your website."
 
 **Schema markup.** Article schema, FAQPage schema, Organization schema - these do not just improve Google display. They provide structured metadata that ChatGPT's retrieval system uses during source evaluation.
 
@@ -1666,7 +1666,7 @@ The signals that increase Perplexity citation probability:
 
 **Freshness weighting.** Perplexity weights recent content more heavily, especially for time-sensitive queries. Pages with recent publish or modification dates get priority in citation selection.
 
-**Named entities in headings.** Queries containing specific tool names, brand names, or technical terms match more strongly against headings that contain those same entities. This is why comparison headings ("Semrush vs AiVIS" or "How AiVIS Measures AI Visibility") attract citations for named-entity queries.
+**Named entities in headings.** Queries containing specific tool names, brand names, or technical terms match more strongly against headings that contain those same entities. This is why comparison headings ("Semrush vs AiVIS.biz" or "How AiVIS.biz Measures AI Visibility") attract citations for named-entity queries.
 
 ## How Gemini and Google AI Overviews Select Sources
 
@@ -1680,7 +1680,7 @@ Google's Gemini and AI Overviews use passage-level semantic matching combined wi
 
 **Breadcrumb clarity.** Clear site architecture signals help Gemini understand the topical positioning of each page within your site's knowledge graph.
 
-**Source diversity.** AI Overviews deliberately select 3-5 diverse sources that together cover the query with minimal overlap. This means specialization wins - if AiVIS owns "AI visibility scoring" as a concept, it gets cited for that specific aspect even when competing against higher-authority domains for the broader query.
+**Source diversity.** AI Overviews deliberately select 3-5 diverse sources that together cover the query with minimal overlap. This means specialization wins - if AiVIS.biz owns "AI visibility scoring" as a concept, it gets cited for that specific aspect even when competing against higher-authority domains for the broader query.
 
 ## How Claude Evaluates Content
 
@@ -1730,7 +1730,7 @@ Structural optimization without verification is guesswork. You need to confirm t
 
 **Manual testing.** For your 20 most important queries, ask ChatGPT, Perplexity, and Gemini directly. Note which sources get cited. Track weekly.
 
-**Automated citation testing.** AiVIS runs citation tests across three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer - to verify whether your brand or URL appears for target queries. No paid APIs required. The audit tells you what to fix. Citation testing tells you whether the fix worked.
+**Automated citation testing.** AiVIS.biz runs citation tests across three independent search engines in parallel - DuckDuckGo HTML, Bing HTML, and DDG Instant Answer - to verify whether your brand or URL appears for target queries. No paid APIs required. The audit tells you what to fix. Citation testing tells you whether the fix worked.
 
 **Mention tracking.** Monitor community platforms where AI models discover new sources - Reddit, Hacker News, Product Hunt, GitHub. Getting mentioned in these communities feeds the training and retrieval pipelines that models use for future source selection.
 
@@ -1790,7 +1790,7 @@ Build the structure. Verify the citations. Compound the advantage.`,
   {
     slug: 'how-aivis-works-under-the-hood-full-technical-breakdown',
     path: '/blogs/how-aivis-works-under-the-hood-full-technical-breakdown',
-    title: 'How AiVIS Works Under the Hood: Full Technical Breakdown',
+    title: 'How AiVIS.biz Works Under the Hood: Full Technical Breakdown',
     description:
       'A complete walkthrough of what happens between entering a URL and receiving a visibility score. Crawl pipeline, AI model chain, evidence framework, and citation verification explained.',
     excerpt:
@@ -1802,16 +1802,16 @@ Build the structure. Verify the citations. Compound the advantage.`,
     keywords: ['how aivis works', 'ai answer audit system', 'audit pipeline', 'ai scoring', 'ssfr framework', 'citation testing'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Visibility Systems', 'Answer Engine Optimization', 'Platform Architecture'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in search, AI ranking strategy, and platform engineering',
     },
     content: `You press analyze. Thirty seconds later a number shows up. Somewhere between 0 and 100 your website has been judged by an AI system that decided how visible you are to machines that generate answers for millions of people every day.
 
-Most platforms stop there. Score, some suggestions, move on. AiVIS is different because the score is the last thing that happens. Everything before it is what actually matters.
+Most platforms stop there. Score, some suggestions, move on. AiVIS.biz is different because the score is the last thing that happens. Everything before it is what actually matters.
 
-This is the full breakdown of what happens under the hood when you run an audit on AiVIS.
+This is the full breakdown of what happens under the hood when you run an audit on AiVIS.biz.
 
 ## Step 1: The Crawl
 
@@ -1836,7 +1836,7 @@ This raw crawl data becomes the input for everything else.
 
 ## Step 2: The SSFR Evidence Framework
 
-Before any AI model touches your data, AiVIS runs its deterministic evidence framework. SSFR stands for Source, Signal, Fact, Relationship. It is a 27-rule evaluation engine that extracts and scores four categories of machine-readable evidence from your crawl data.
+Before any AI model touches your data, AiVIS.biz runs its deterministic evidence framework. SSFR stands for Source, Signal, Fact, Relationship. It is a 27-rule evaluation engine that extracts and scores four categories of machine-readable evidence from your crawl data.
 
 **Source evidence** measures whether your page identifies itself properly. Does it have Organization schema? Is the author entity defined with credentials? Are publication dates present in both visible content and structured data? Source evidence tells AI models who created this content and whether that entity is verifiable.
 
@@ -1846,7 +1846,7 @@ Before any AI model touches your data, AiVIS runs its deterministic evidence fra
 
 **Relationship evidence** maps how your page connects to the broader web. Internal linking patterns, external citations to authoritative sources, breadcrumb structure, and entity consistency across your site. AI models use relationship signals to determine whether a source is a standalone claim or part of a verified knowledge network.
 
-Each of these 27 rules produces a pass, partial, or fail result. The composite SSFR score determines how much of your content is machine-extractable before we even ask an AI model to evaluate you.
+Each of these 27 rules produces a pass, partial, or fail result. The composite SSFR score determines how much of your content is machine-extractable before we even ask an AI model to evaluate you. Every finding produced by SSFR is assigned a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a> and appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the tamper-evident hash chain that links each entry to the previous through SHA-256 chain hashes.
 
 ## Step 3: The AI Analysis Pipeline
 
@@ -1860,13 +1860,13 @@ After SSFR, the crawl data and evidence scores flow into the AI model pipeline. 
 
 AI1 generates the primary analysis with the full prompt. AI2 receives the AI1 output and runs a peer critique, checking scores, challenging recommendations, and adding anything the first model missed. AI3 validates the final result, confirms or adjusts the score, and locks in the output. Three separate model calls, three separate perspectives, one final result.
 
-This is not just running the same thing three times. Each stage has a different role, different prompt, and different token budget. AI2 can shift the score within a bounded range. AI3 can override if the first two disagree. The system degrades gracefully if AI2 or AI3 fail. You always get at least the AI1 result.
+This is not just running the same thing three times. Each stage has a different role, different prompt, and different token budget. AI2 can shift the score within a bounded range. AI3 can override if the first two disagree. The system degrades gracefully if AI2 or AI3 fail. You always get at least the AI1 result. Every stage writes its findings to the <a href="/methodology/cite-ledger">Cite Ledger</a> with a verifiable <a href="/methodology/brag-evidence-trails">BRAG trail</a>, so the full audit chain is reproducible.
 
 **Score Fix (AutoFix PR tier)** runs the same triple-check architecture but with the same high-quality models and looser timeout budgets. GPT-5 Mini primary with Claude Sonnet 4.6 critique and Grok 4.1 Fast validation. This tier also powers automated GitHub PR generation where the AI analysis feeds directly into code-level fixes.
 
 ## Step 4: Platform-Specific Scoring
 
-Inside the AI analysis, AiVIS generates individual scores for each major AI answer platform. These are not just subdivisions of the main score. Each platform evaluates content differently.
+Inside the AI analysis, AiVIS.biz generates individual scores for each major AI answer platform. These are not just subdivisions of the main score. Each platform evaluates content differently.
 
 **ChatGPT** prioritizes clean answer blocks, direct responses in the first paragraph of each section, and consistent entity naming. It rewards pages where the answer to a question appears immediately after the heading.
 
@@ -1880,7 +1880,7 @@ These platform scores are not theoretical. They reflect the actual extraction an
 
 ## Step 5: Citation Verification
 
-For Signal tier and above, AiVIS goes beyond analysis and into verification. Citation testing runs your brand name or URL through three independent search engines in parallel: DuckDuckGo HTML, Bing HTML, and DDG Instant Answer API.
+For Signal tier and above, AiVIS.biz goes beyond analysis and into verification. Citation testing runs your brand name or URL through three independent search engines in parallel: DuckDuckGo HTML, Bing HTML, and DDG Instant Answer API.
 
 No paid APIs. No search engine partnerships. Just raw verification of whether your brand appears in the same results that AI models use for their retrieval-augmented generation. If Perplexity cannot find you on DuckDuckGo, it cannot cite you. If Google's AI Overviews cannot find you in Bing's index, your structured data achievements are theoretical.
 
@@ -1906,13 +1906,13 @@ Every recommendation traces back to evidence. Not vibes. Not guesses. Specific s
 
 Most visibility tools run a crawler, apply some heuristics, and hand you a number. The number might be accurate for traditional SEO signals. It tells you nothing about whether an AI model can extract, trust, and cite your content.
 
-AiVIS was built from the ground up for the AI answer engine era. The SSFR framework exists because AI citation is an evidence problem, not a ranking problem. The triple-check pipeline exists because one model's opinion is not enough when your visibility score determines whether your business gets recommended to the next thousand people who ask a relevant question.
+AiVIS.biz was built from the ground up for the AI answer engine era. The SSFR framework exists because AI citation is an evidence problem, not a ranking problem. The triple-check pipeline exists because one model's opinion is not enough when your visibility score determines whether your business gets recommended to the next thousand people who ask a relevant question.
 
 The crawl is real. The evidence is deterministic. The AI analysis is multi-perspective. The citations are verified against live search indexes. That is the pipeline. That is what happens in 30 seconds.
 
 Run your first audit at [aivis.ing](https://aivis.ing) and see what the machines see when they look at your site.`,
     keyPoints: [
-      'AiVIS runs a full headless browser crawl that captures rendered DOM, structured data, headers, and security signals.',
+      'AiVIS.biz runs a full headless browser crawl that captures rendered DOM, structured data, headers, and security signals.',
       'The SSFR framework evaluates 27 deterministic rules across Source, Signal, Fact, and Relationship evidence before any AI model is involved.',
       'Signal tier uses a triple-check AI pipeline: primary analysis, peer critique, and validation gate from three separate models.',
       'Platform-specific scores reflect actual extraction patterns for ChatGPT, Claude, Perplexity, and Gemini.',
@@ -1932,28 +1932,28 @@ Run your first audit at [aivis.ing](https://aivis.ing) and see what the machines
   {
     slug: 'why-agencies-and-smbs-are-switching-to-aivis-for-real-visibility',
     path: '/blogs/why-agencies-and-smbs-are-switching-to-aivis-for-real-visibility',
-    title: 'Why Agencies and SMBs Are Switching to AiVIS for Real Visibility',
+    title: 'Why Agencies and SMBs Are Switching to AiVIS.biz for Real Visibility',
     description:
-      'The gap between traditional SEO tools and what AI answer engines actually need is costing businesses citations every day. AiVIS closes that gap for agencies managing multiple clients and SMBs competing against bigger brands.',
+      'The gap between traditional SEO tools and what AI answer engines actually need is costing businesses citations every day. AiVIS.biz closes that increasing gap for agencies managing multiple clients and SMBs competing against bigger brands.',
     excerpt:
-      'Your SEO tool says you are ranking. The AI answering your customer\'s question says you do not exist. That disconnect is the reason agencies and SMBs are moving to AiVIS.',
+      'Your SEO tool says you are ranking. The AI answering your customer\'s question says you do not exist. That disconnect is the reason agencies and SMBs are moving to AiVIS.biz.',
     publishedAt: '2026-03-24',
     readMinutes: 9,
     category: 'strategy',
-    tags: ['Strategy', 'Visibility', 'AEO', 'Citations', 'Advanced'],
-    keywords: ['aivis for agencies', 'smb visibility', 'ai answer engine optimization', 'agency seo tools', 'citation tracking'],
+    tags: ['Strategy', 'discovery', 'evidence', 'query', 'mention-monitoring', 'AEO', 'Citations', 'Advanced'],
+    keywords: ['aivis.biz  for agencies', 'smb visibility', 'ai answer engine optimization', 'agency seo tools', 'citation tracking'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Agency Strategy'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
-      experience: '8+ years in SEO, AI ranking strategy, and agency operations',
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
+      experience: '8+ years in HTML, BLOGGING, AI annotation, AI dataset management, AI ranking strategy, and agency operations',
     },
     content: `Here is the reality nobody in the SEO industry wants to say out loud. Your client ranks on page one. Their meta description is sharp. Their backlink profile is clean. And when a potential customer asks ChatGPT or Perplexity about the exact problem your client solves, their brand does not get mentioned. Not once.
 
 That is not a ranking problem. That is a visibility problem. And the entire traditional SEO toolkit was not designed for it.
 
-This is the gap that is pushing agencies and SMBs to AiVIS. Not because they want another dashboard. Because they need to know whether their content exists in the world where most discovery is about to happen.
+This is the gap that is pushing agencies and SMBs to AiVIS.biz. Not because they want another dashboard. Because they need to know whether their content exists in the world where most discovery is about to happen.
 
 ## The Shift Agencies Cannot Ignore
 
@@ -1963,17 +1963,17 @@ If your client is not one of those three to five brands, your entire SEO strateg
 
 Agencies running 10, 20, 50 client accounts need a tool that answers a different question than "where do we rank." They need to answer "do AI models know we exist and are they willing to cite us."
 
-That is what AiVIS measures.
+That is what AiVIS.biz measures.
 
-## What Makes AiVIS Different for Agency Workflows
+## What Makes AiVIS.biz Different for Agency Workflows
 
-Most SEO tools give you a score based on crawl data and link metrics. AiVIS gives you a score based on whether an AI model can actually extract, trust, and cite your content. The difference is fundamental.
+Most SEO tools give you a score based on crawl data and link metrics. AiVIS.biz gives you a score based on whether an AI model can actually extract, trust, and cite your content. The difference is fundamental.
 
-**Team Workspaces.** Agencies manage multiple brands. AiVIS supports multi-tenant workspaces where each team member gets role-based access. Owners and admins manage the workspace. Members run audits. Viewers review results. Every audit is scoped to the active workspace so client data stays isolated.
+**Team Workspaces.** Agencies manage multiple brands. AiVIS.biz supports multi-tenant workspaces where each team member gets role-based access. Owners and admins manage the workspace. Members run audits. Viewers review results. Every audit is scoped to the active workspace so client data stays isolated.
 
-**Competitor Tracking.** For each client you can add competitor URLs and run side-by-side comparisons. AiVIS shows you the structural gap between your client and their competitors. Not just keyword overlap. Structural differences in schema completeness, answer block density, entity clarity, and citation strength. Opportunity detection highlights specific dimensions where your client can win.
+**Competitor Tracking.** For each client you can add competitor URLs and run side-by-side comparisons. AiVIS.biz shows you the structural gap between your client and their competitors. Not just keyword overlap. Structural differences in schema completeness, answer block density, entity clarity, and citation strength. Opportunity detection highlights specific dimensions where your client can win.
 
-**Citation Testing.** This is the feature that changed the game. After running an audit and implementing recommendations, you can verify whether those changes actually resulted in citations. AiVIS tests brand presence across DuckDuckGo, Bing, and DDG Instant Answer in parallel. Three independent search engines. No paid APIs. Real verification.
+**Citation Testing.** This is the feature that changed the game. After running an audit and implementing recommendations, you can verify whether those changes actually resulted in citations. AiVIS.biz tests brand presence across DuckDuckGo, Bing, and DDG Instant Answer in parallel. Three independent search engines. No paid APIs. Real verification.
 
 **Brand Mention Tracking.** AiVIS.biz scans nineteen free sources where AI models discover new content: Reddit, Hacker News, Mastodon, DuckDuckGo dork results, Bing dork results, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. These platforms feed the training and retrieval pipelines that models use for source selection. If your client is getting mentioned on Reddit but not credited in AI answers, the mention tracker tells you where the signal exists and where the citation gap is.
 
@@ -1987,7 +1987,7 @@ A boutique accounting firm with perfectly structured FAQ schema, clean author en
 
 The playing field is structural, not financial. You do not need a massive domain authority. You need machine-readable content that answers the question better than anyone else.
 
-AiVIS tells you exactly what "better" looks like for each page.
+AiVIS.biz tells you exactly what "better" looks like for each page.
 
 ## The Full Workflow When You Actually Use It
 
@@ -2003,11 +2003,11 @@ Step five. Set up competitor tracking for the 3 to 5 main rivals. Run comparison
 
 Step six. Monitor brand mentions. The mention tracker runs across nineteen platforms. When a new mention appears on Reddit or Hacker News, you know about it. When that mention eventually feeds into an AI model's retrieval index, you have the timeline of how discovery happened.
 
-Step seven. For agencies, set up scheduled rescans. AiVIS autopilot rescans your tracked URLs on a cadence you choose. Score changes trigger notifications. You never have to manually check whether a client's visibility degraded.
+Step seven. For agencies, set up scheduled rescans. AiVIS.biz autopilot rescans your tracked URLs on a cadence you choose. Score changes trigger notifications. You never have to manually check whether a client's visibility degraded.
 
 ## What Agencies Report After Switching
 
-The consistent pattern we hear from agencies using AiVIS is that it changed the conversation with clients. Instead of showing ranking position charts that the client does not really understand, they show citation presence data. "Your brand was cited in 3 out of 5 AI answer engines for this query last month. After implementing our recommendations, you are cited in 5 out of 5."
+The consistent pattern we hear from agencies using AiVIS.biz is that it changed the conversation with clients. Instead of showing ranking position charts that the client does not really understand, they show citation presence data. "Your brand was cited in 3 out of 5 AI answer engines for this query last month. After implementing our recommendations, you are cited in 5 out of 5."
 
 That is a result a client can feel. Not a number on a dashboard. A direct measurement of whether the work produced the outcome.
 
@@ -2015,7 +2015,7 @@ The second pattern is competitive differentiation. Agencies offering AI visibili
 
 ## The Tools That Actually Matter
 
-AiVIS includes three free standalone tools that any business can use right now without even creating an account.
+AiVIS.biz includes three free standalone tools that any business can use right now without even creating an account.
 
 **Schema Validator.** Drop in a URL. Get a full breakdown of every JSON-LD block, microdata, and OpenGraph tag on the page. See exactly what AI models can extract from your structured data.
 
@@ -2043,11 +2043,11 @@ Every tier builds on the one before it. No feature is arbitrarily locked. The ti
 
 The market is moving in one direction. AI answer engines are becoming the primary discovery interface for most commercial queries. The brands that invest in structural visibility now compound that advantage over months and years as AI models learn to cite them consistently.
 
-AiVIS exists because that investment needs measurement, verification, and actionable guidance. Not vibes. Not guesses. Evidence.
+AiVIS.biz exists because that investment needs measurement, verification, and actionable guidance. Not vibes. Not guesses. Evidence.
 
 If you manage client visibility for a living, or if you run a business that depends on being found, this is the tool that tells you the truth about where you stand.
 
-Run your first audit at [aivis.ing](https://aivis.ing). It takes 30 seconds and it is free.`,
+Run your first audit at [aivis.biz](https://aivis.biz). It takes 30 seconds and it is free.`,
     keyPoints: [
       'AI answer engines cite 3-5 sources per query. If your brand is not structurally extractable, traditional rankings deliver zero value for those interactions.',
       'Team workspaces with role-based access let agencies scope audits per client while maintaining data isolation.',
@@ -2069,30 +2069,30 @@ Run your first audit at [aivis.ing](https://aivis.ing). It takes 30 seconds and 
   {
     slug: 'team-workspaces-how-aivis-handles-multi-client-agency-operations',
     path: '/blogs/team-workspaces-how-aivis-handles-multi-client-agency-operations',
-    title: 'Team Workspaces: How AiVIS Handles Multi-Client Agency Operations',
+    title: 'Team Workspaces: How AiVIS.biz Handles Multi-Client Agency Operations',
     description:
       'A deep dive into the new team workspace layer. Role-based access, workspace scoping, invite management, and how agencies can isolate audit data per client.',
     excerpt:
-      'Managing visibility for 20 clients used to mean 20 logins or one messy dashboard. AiVIS team workspaces fix that properly.',
+      'Managing visibility for 20 clients used to mean 20 logins or one messy dashboard. AiVIS.biz team workspaces fix that properly.',
     publishedAt: '2026-03-24',
     readMinutes: 7,
     category: 'implementation',
     tags: ['Implementation', 'Strategy', 'Advanced', 'Visibility'],
     keywords: ['team workspace', 'agency management', 'multi-tenant', 'role-based access', 'client isolation'],
     author: {
-      name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      name: 'Ryan Mason',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Platform Architecture', 'Agency Operations', 'Multi-Tenant Systems'],
-      credentials: ['Founded AiVIS'],
-      experience: '8+ years in platform engineering and SEO tooling',
+      credentials: ['Founded AiVIS.biz'],
+      experience: '8+ years in platform engineering and Annotation, Dataset, SEO tooling',
     },
     content: `If you run an agency, you know the drill. You have 15 clients. Each one needs audits. Each one has different team members who need access. Each one has data that should never bleed into another client's view. And every tool you have tried either gives you one giant account where everything is visible to everyone, or forces you to manage separate logins for each client.
 
-AiVIS team workspaces solve this by building multi-tenancy into the core of the platform. Not bolted on. Not a shared folder with permissions. A real workspace layer where every audit, every competitor, every citation test, and every mention scan is scoped to a workspace.
+AiVIS.biz team workspaces solve this by building multi-tenancy into the core of the platform. Not bolted on. Not a shared folder with permissions. A real workspace layer where every audit, every competitor, every citation test, and every mention scan is scoped to a workspace.
 
 ## How Workspaces Actually Work
 
-When you sign up for AiVIS you get a personal workspace automatically. This is your default context. Every audit you run, every competitor you track, every citation you test lives under your personal workspace.
+When you sign up for AiVIS.biz you get a personal workspace automatically. This is your default context. Every audit you run, every competitor you track, every citation you test lives under your personal workspace.
 
 When you create a team workspace, you give it an organization name and a workspace name. That workspace gets its own UUID. Every API call from the workspace injects an X-Workspace-Id header so the server knows exactly which context you are operating in. There is no ambiguity. There is no accidental cross-contamination.
 
@@ -2114,7 +2114,7 @@ The role system is enforced server-side. It is not just a UI filter. The API val
 
 ## Invite Flow
 
-Inviting someone to a workspace works through email. You enter their email address, pick a role, and send the invite. They receive an email with a link. If they already have an AiVIS account, the workspace appears in their switcher after they accept. If they do not have an account yet, they sign up first and the invite resolves on login.
+Inviting someone to a workspace works through email. You enter their email address, pick a role, and send the invite. They receive an email with a link. If they already have an AiVIS.biz account, the workspace appears in their switcher after they accept. If they do not have an account yet, they sign up first and the invite resolves on login.
 
 Invites expire after a configurable period. Admins and owners can see pending invites and revoke them. The invite list shows status, role, creation date, and expiration.
 
@@ -2142,7 +2142,7 @@ For the API-first users, the external API v1 endpoints also respect workspace co
 
 ## How to Set It Up
 
-One. Log into AiVIS. Two. Click "New Workspace" in the team page. Three. Enter your organization name and workspace name. Four. Invite team members with their email and desired role. Five. Switch to the new workspace using the top nav switcher. Six. Run your first audit.
+One. Log into AiVIS.biz. Two. Click "New Workspace" in the team page. Three. Enter your organization name and workspace name. Four. Invite team members with their email and desired role. Five. Switch to the new workspace using the top nav switcher. Six. Run your first audit.
 
 That is it. No configuration files. No admin panels to navigate. No support tickets. The workspace is live immediately and every feature works within its scope.
 
@@ -2176,13 +2176,13 @@ Try it out at [aivis.biz/app/team](https://aivis.biz/app/team).`,
     publishedAt: '2026-03-24',
     readMinutes: 7,
     category: 'implementation',
-    tags: ['Citations', 'AEO', 'Implementation', 'Visibility', 'Technical'],
-    keywords: ['citation testing', 'ai citation verification', 'duckduckgo', 'bing', 'perplexity citations', 'brand verification'],
+    tags: ['Citations', 'Mentions', 'Authority', 'AEO', 'Implementation', 'Visibility', 'Technical Schema', 'Advanced JSON-LD', 'Structured Data', 'Search Engine Optimization'],
+    keywords: ['citation testing', 'ai citation verification', 'articles and code docs analysis', 'duckduckgo', 'bing', 'perplexity citations', 'brand verification'],
     author: {
-      name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      name: 'R. Mason',  //R. Mason is Ryan Mason - Technical Founder of AiVIS.biz CITE LEDGER
+      title: 'Founder, AiVIS.biz',
       expertise: ['Citation Verification', 'AI Retrieval Systems', 'Search Engine Architecture'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research', 'Search Engine Analysis'],
       experience: '8+ years in search infrastructure and AI systems',
     },
     content: `You ran the audit. You fixed the schema. You restructured your headings. You added FAQPage markup. Your visibility score went from 42 to 78. That is real progress.
@@ -2195,7 +2195,7 @@ Citation testing is how you close that gap.
 
 ## What Citation Testing Actually Does
 
-When you run a citation test in AiVIS, you provide a query and your brand name or URL. The system then searches for that query across three independent search engines in parallel.
+When you run a citation test in AiVIS.biz, you provide a query and your brand name or URL. The system then searches for that query across three independent search engines in parallel.
 
 **DuckDuckGo HTML.** A full scrape of DuckDuckGo search results for your query. The system looks for your brand name, URL, or domain in the results page.
 
@@ -2213,13 +2213,13 @@ Perplexity uses a combination of its own crawler and web search APIs. If your br
 
 ChatGPT's browsing mode uses Bing. If Bing cannot find you, ChatGPT browsing cannot cite you.
 
-Google's AI Overviews use Google's own index, but the structural requirements for getting surfaced in an AI Overview versus a traditional result are different. AiVIS tests the search layer that feeds the broadest range of AI retrieval systems.
+Google's AI Overviews use Google's own index, but the structural requirements for getting surfaced in an AI Overview versus a traditional result are different. AiVIS.biz tests the search layer that feeds the broadest range of AI retrieval systems.
 
 By testing three engines, you get a comprehensive view of citation coverage. If you appear on all three, your citation potential is high. If you appear on one but not the others, you have a coverage gap to investigate.
 
 ## How to Use Citation Testing
 
-Navigate to the citations section in AiVIS. Enter a query that someone would naturally ask when looking for what you offer. Something like "best email marketing tool for small businesses" or "how to set up schema markup for local SEO."
+Navigate to the citations section in AiVIS.biz. Enter a query that someone would naturally ask when looking for what you offer. Something like "best email marketing tool for small businesses" or "how to set up schema markup for local SEO."
 
 Then enter your brand name or domain. Run the test.
 
@@ -2231,7 +2231,7 @@ If the score went up but citations did not appear, you have a different problem.
 
 ## Citation Intelligence for Deeper Analysis
 
-Beyond basic pass-fail testing, AiVIS Signal tier includes citation intelligence features that give you ongoing monitoring.
+Beyond basic pass-fail testing, AiVIS.biz Signal tier includes citation intelligence features that give you ongoing monitoring.
 
 **Trend sparklines** show citation presence over time for your tracked queries. You can see whether citations are growing, stable, or declining.
 
@@ -2292,7 +2292,7 @@ Try it at [aivis.ing](https://aivis.ing). The first 3 audits are free.`,
   {
     slug: 'competitor-tracking-find-the-structural-gaps-and-win',
     path: '/blogs/competitor-tracking-find-the-structural-gaps-and-win',
-    title: 'Competitor Tracking on AiVIS: Find the Structural Gaps and Win',
+    title: 'Competitor Tracking on AiVIS.biz: Find the Structural Gaps and Win',
     description:
       'Side-by-side visibility audits, opportunity detection, and structural gap analysis. How to use competitor tracking to overtake rivals in AI answer engine citations.',
     excerpt:
@@ -2304,20 +2304,20 @@ Try it at [aivis.ing](https://aivis.ing). The first 3 audits are free.`,
     keywords: ['competitor tracking', 'competitive analysis', 'ai visibility comparison', 'opportunity detection', 'structural gaps'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Competitive Intelligence', 'AI Visibility Strategy', 'Answer Engine Optimization'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in SEO competitive analysis and AI systems',
     },
     content: `Someone is being cited by ChatGPT for the query your business should own. Someone is appearing in Perplexity's answers for comparison searches in your vertical. Someone is getting recommended by Gemini when a potential customer asks which tool to use.
 
 If it is not you, the question is not "what are they doing better." The question is "what specific structural differences between their page and mine cause the AI to choose them."
 
-That is what competitor tracking on AiVIS answers.
+That is what competitor tracking on AiVIS.biz answers.
 
 ## How Competitor Tracking Works
 
-From the competitors section, you add rival URLs. AiVIS runs full visibility audits on those URLs using the same pipeline that audits your own pages. Headless browser crawl, SSFR evidence framework, AI analysis, the full thing.
+From the competitors section, you add rival URLs. AiVIS.biz runs full visibility audits on those URLs using the same pipeline that audits your own pages. Headless browser crawl, SSFR evidence framework, AI analysis, the full thing.
 
 Then it compares. Side by side. Not just overall score versus overall score. The comparison breaks down across multiple structural dimensions.
 
@@ -2339,7 +2339,7 @@ The comparison does not just show you where you are behind. It identifies specif
 
 If your competitor has a strong schema game but weak answer block density, and you already have decent answer blocks, the opportunity is to match their schema and overtake them on the combined structural profile.
 
-AiVIS ranks opportunities by potential impact. The dimensions that carry the most weight for AI citation selection are highlighted. You do not have to guess which gap to close first.
+AiVIS.biz ranks opportunities by potential impact. The dimensions that carry the most weight for AI citation selection are highlighted. You do not have to guess which gap to close first.
 
 ## Color-Coded Scoring
 
@@ -2386,7 +2386,7 @@ Add your first competitor at [aivis.ing/competitors](https://aivis.ing/competito
     path: '/blogs/brand-mention-tracking-where-ai-discovers-new-sources',
     title: 'Brand Mention Tracking: Where AI Models Discover New Sources',
     description:
-      'AI models learn about new brands from community platforms. AiVIS scans 19 free sources to show you where your brand signal lives and where it is missing.',
+      'AI models learn about new brands from community platforms. AiVIS.biz scans 19 free sources to show you where your brand signal lives and where it is missing.',
     excerpt:
       'Reddit, Hacker News, Product Hunt. These are not just community platforms. They are the discovery layer that feeds AI answer engines.',
     publishedAt: '2026-03-24',
@@ -2396,16 +2396,16 @@ Add your first competitor at [aivis.ing/competitors](https://aivis.ing/competito
     keywords: ['brand mention tracking', 'ai source discovery', 'reddit mentions', 'hacker news', 'product hunt', 'community signals'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Brand Discovery', 'AI Training Pipelines', 'Community Signal Analysis'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in search and digital brand presence',
     },
     content: `There is a step in the AI citation pipeline that most people skip because they do not know it exists. Before an AI answer engine can cite your brand, it has to know your brand exists. And the way most AI models discover new sources is not through your website. It is through the platforms where real people talk about real tools and real solutions.
 
 Reddit threads. Hacker News discussions. Product Hunt launches. GitHub repositories. Quora answers. These are not just community channels for engagement. They are the training data and retrieval sources that AI models use to learn about new brands, products, and authorities.
 
-AiVIS brand mention tracking monitors 19 of these platforms to show you where your brand signal exists and where it does not.
+AiVIS.biz brand mention tracking monitors 19 of these platforms to show you where your brand signal exists and where it does not.
 
 ## The 19 Sources
 
@@ -2429,7 +2429,7 @@ The mention tracker scans across:
 
 **Product Hunt.** Product launches and discussions. A strong Product Hunt presence signals that real users have evaluated and discussed your product.
 
-All nineteen sources are free. No API keys required. No third-party subscriptions. AiVIS scrapes them directly.
+All nineteen sources are free. No API keys required. No third-party subscriptions. AiVIS.biz scrapes them directly.
 
 **Stack Overflow.** Developer Q&A platform. When your product is referenced in accepted answers, AI models with Stack Overflow in their retrieval index surface you for technical queries.
 
@@ -2451,7 +2451,7 @@ All nineteen sources are free. No API keys required. No third-party subscription
 
 **GitHub Discussions.** Beyond code repositories - GitHub Discussions host product feedback, feature requests, and community support threads that AI models index for software-related queries.
 
-All 19 sources are free. No API keys required. No third-party subscriptions. AiVIS scrapes them directly.
+All 19 sources are free. No API keys required. No third-party subscriptions. AiVIS.biz scrapes them directly.
 
 ## Why Mentions Matter for AI Visibility
 
@@ -2481,7 +2481,7 @@ Fourth, monitor over time. Set up regular scans. When new mentions appear, check
 
 Brand mention tracking is available for Alignment tier and above. Start scanning at [aivis.ing](https://aivis.ing).`,
     keyPoints: [
-      'AiVIS scans 19 free platforms (Reddit, HN, Mastodon, DDG/Bing dorks, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions) for brand mentions.',
+      'AiVIS.biz scans 19 free platforms (Reddit, HN, Mastodon, DDG/Bing dorks, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions) for brand mentions.',
       'AI models discover new sources through community platforms and use corroboration across multiple sources to evaluate citation confidence.',
       'Timeline and history views show mention discovery patterns with timestamps, sources, and sentiment.',
       'Correlating mention presence with citation test results reveals whether the gap is discovery or structural extractability.',
@@ -2498,7 +2498,7 @@ Brand mention tracking is available for Alignment tier and above. Start scanning
   {
     slug: 'ssfr-evidence-framework-the-scoring-engine-behind-aivis',
     path: '/blogs/ssfr-evidence-framework-the-scoring-engine-behind-aivis',
-    title: 'The SSFR Evidence Framework: The Scoring Engine Behind Every AiVIS Audit',
+    title: 'The SSFR Evidence Framework: The Scoring Engine Behind Every AiVIS.biz Audit',
     description:
       'Source, Signal, Fact, Relationship. The 27-rule deterministic evidence engine that evaluates machine readability before any AI model gets involved.',
     excerpt:
@@ -2510,14 +2510,14 @@ Brand mention tracking is available for Alignment tier and above. Start scanning
     keywords: ['ssfr framework', 'evidence scoring', 'source signal fact relationship', 'deterministic audit', 'machine readability'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Evidence-Based Scoring', 'AI Extractability', 'Machine Readability Frameworks'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in search scoring systems and AI infrastructure',
     },
     content: `When you look at a web page, you see content. When an AI model looks at a web page, it sees evidence. Or the absence of it.
 
-The SSFR framework is the deterministic scoring engine that runs before any AI model evaluates your page in an AiVIS audit. It answers one question: how much of this page's content is actually machine-extractable and trustworthy?
+The SSFR framework is the deterministic scoring engine that runs before any AI model evaluates your page in an AiVIS.biz audit. It answers one question: how much of this page's content is actually machine-extractable and trustworthy?
 
 SSFR stands for Source, Signal, Fact, Relationship. These are the four categories of evidence that AI answer engines evaluate when deciding whether to cite a source; 27 rules across four categories. No opinions. No model randomness. Deterministic pass-or-fail evaluation.
 
@@ -2577,9 +2577,9 @@ Each rule contributes to its category score. The four category scores combine in
 
 A page with high SSFR scores gives the AI model strong structural evidence to work with, producing more accurate and specific recommendations. A page with low SSFR scores means the AI model has to infer more, which produces vaguer output.
 
-The SSFR breakdown is visible in every audit report. You can see exactly which rules passed and which failed. Every recommendation in the report traces back to a specific SSFR finding. Not a guess. Not a heuristic. A deterministic rule that evaluated a specific structural element of your page.
+The SSFR breakdown is visible in every audit report. You can see exactly which rules passed and which failed. Every recommendation in the report traces back to a specific SSFR finding backed by a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a>. Not a guess. Not a heuristic. A deterministic rule that evaluated a specific structural element of your page. Each finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the append-only hash chain that makes every audit reproducible and tamper-evident.
 
-This is what makes AiVIS different from tools that run a crawler and assign a magic number. The number comes from evidence. The evidence is transparent. The fixes are specific.
+This is what makes AiVIS.biz different from tools that run a crawler and assign a magic number. The number comes from evidence. The evidence is transparent. The fixes are specific.
 
 See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit free.`,
     keyPoints: [
@@ -2604,7 +2604,7 @@ See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit 
     path: '/blogs/score-fix-autopr-how-ai-opens-pull-requests-to-fix-your-visibility',
     title: 'Score Fix AutoFix PR: How AI Opens Pull Requests to Fix Your Visibility',
     description:
-      'Most audit tools tell you what to fix. AiVIS Score Fix generates the actual code changes and opens a GitHub PR. Here is how automated remediation works.',
+      'Most audit tools tell you what to fix. AiVIS.biz Score Fix generates the actual code changes and opens a GitHub PR. Here is how automated remediation works.',
     excerpt:
       'You got the audit. You see the problems. Now what if the platform opened a PR with the actual fix instead of just telling you what is wrong?',
     publishedAt: '2026-03-24',
@@ -2614,9 +2614,9 @@ See your SSFR breakdown at [aivis.ing](https://aivis.ing). Run your first audit 
     keywords: ['score fix', 'autopr', 'automated github pr', 'ai remediation', 'code fix', 'mcp integration'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Automated Remediation', 'MCP Integration', 'AI Code Generation'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in development tooling and AI-assisted engineering',
     },
     content: `Every audit tool in the market does the same thing. Scan your site. Generate a list of problems. Hand you a PDF. Done.
@@ -2627,7 +2627,7 @@ Score Fix AutoFix PR changes this entire dynamic. Instead of telling you what is
 
 ## How It Works
 
-The process starts after a regular AiVIS audit. You have your visibility score, your SSFR evidence breakdown, and your recommendations. For pages where the recommended fixes involve code changes like adding schema markup, fixing heading hierarchy, or updating meta tags, Score Fix takes over.
+The process starts after a regular AiVIS.biz audit. You have your visibility score, your SSFR evidence breakdown, and your recommendations. For pages where the recommended fixes involve code changes like adding schema markup, fixing heading hierarchy, or updating meta tags, Score Fix takes over.
 
 The system connects to your GitHub repository via secure token authentication. It reads the relevant source files, generates the code changes based on the audit recommendations, creates a new branch, commits the changes, and opens a pull request with a description explaining what was changed and why.
 
@@ -2717,16 +2717,16 @@ Score Fix is available as a 250-credit pack at [aivis.ing/pricing](https://aivis
     keywords: ['reverse engineering', 'competitor decompile', 'ghost audit', 'ai simulation', 'structural analysis'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Competitive Intelligence', 'Reverse Engineering', 'AI Simulation'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in competitive analysis and search systems',
     },
     content: `Competitor tracking tells you the scores. Reverse engineering tells you why.
 
 When you need to understand exactly why a competitor's page gets cited and yours does not, the reverse engineering suite breaks their page structure into its component parts. No guessing. No inference from public metrics. Direct structural decomposition.
 
-AiVIS includes three reverse engineering tools: Decompile, Ghost Audit, and Simulate.
+AiVIS.biz includes three reverse engineering tools: Decompile, Ghost Audit, and Simulate.
 
 ## Decompile
 
@@ -2754,7 +2754,7 @@ Simulate takes the analysis further by modeling how different AI platforms would
 
 How would ChatGPT chunk and cite this content? Which sections would Perplexity select for its answer blocks? What would Gemini's source selection criteria favor or penalize on this page?
 
-The simulation is informed by the same research that powers AiVIS platform-specific scoring. It is a prediction model, not a guarantee, but it gives you directional insight into why one page gets cited on Perplexity while another gets cited on ChatGPT and a third gets passed over entirely.
+The simulation is informed by the same research that powers AiVIS.biz platform-specific scoring. It is a prediction model, not a guarantee, but it gives you directional insight into why one page gets cited on Perplexity while another gets cited on ChatGPT and a third gets passed over entirely.
 
 ## Putting It Together
 
@@ -2796,14 +2796,14 @@ Try the reverse engineering tools at [aivis.ing/reverse-engineer](https://aivis.
     keywords: ['free schema validator', 'robots checker', 'content extractability', 'free seo tools', 'ai visibility tools'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Developer Tools', 'Schema Markup', 'Web Standards'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in web standards and search tooling',
     },
     content: `Not everyone needs a full AI visibility audit right away. Sometimes you just want to check one thing. Is my schema markup correct? Can AI crawlers access my pages? Is my content actually machine-readable?
 
-AiVIS offers three standalone tools that answer these questions. No account required. No paywall. No email gate. Just enter a URL and get results.
+AiVIS.biz offers three standalone tools that answer these questions. No account required. No paywall. No email gate. Just enter a URL and get results.
 
 ## Schema Validator
 
@@ -2897,16 +2897,16 @@ Start with the free tools. See what the machines see. Then decide if you want th
     keywords: ['scheduled rescans', 'autopilot monitoring', 'score tracking', 'delta tracking', 'ai visibility monitoring'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Monitoring Systems', 'Automated Workflows', 'Visibility Operations'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in monitoring infrastructure and SEO operations',
     },
     content: `Visibility is not something you fix once. Websites change. Competitors improve. Search indexes refresh. AI models update their source evaluation. A score that was 85 last month might be 72 today because a CMS update broke your heading hierarchy or a deployment accidentally removed your JSON-LD blocks.
 
 If you are not monitoring, you are finding out too late.
 
-AiVIS scheduled rescans and autopilot monitoring solve this by running recurring audits on your tracked URLs at a cadence you choose. Every rescan produces a score. Every score gets compared to the previous one. Every meaningful delta triggers a notification.
+AiVIS.biz scheduled rescans and autopilot monitoring solve this by running recurring audits on your tracked URLs at a cadence you choose. Every rescan produces a score. Every score gets compared to the previous one. Every meaningful delta triggers a notification.
 
 ## How Rescans Work
 
@@ -2994,9 +2994,9 @@ Set up your first scheduled rescan at [aivis.ing](https://aivis.ing). It starts 
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['React Architecture', 'Build Systems', 'Production Debugging'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in production React and build tooling',
     },
     content: `Your React app works in dev. TypeScript passes. No circular dependencies. Then you deploy and the entire application crashes with a cryptic error pointing at a variable name you have never seen in your codebase.
@@ -3262,32 +3262,32 @@ The real lesson: production builds are a different runtime. Test against the run
     path: '/blogs/bix-boundaries-in-excess-how-guidebot-redefines-ai-platform-assistants',
     title: 'BIX - Boundaries in Excess: How GuideBot Redefines AI Platform Assistants',
     description:
-      'Meet BIX, the GuideBot behind AiVIS. Learn how a bounded, context-aware assistant helps users navigate AI visibility audits, tier features, and platform strategy without overstepping into hallucination territory.',
+      'Meet BIX, the GuideBot behind AiVIS.biz. Learn how a bounded, context-aware assistant helps users navigate AI visibility audits, tier features, and platform strategy without overstepping into hallucination territory.',
     excerpt:
       'Most platform chatbots either do too little or hallucinate too much. BIX sits in a different category: an assistant with real boundaries that still delivers outsized value.',
     publishedAt: '2025-06-08',
     readMinutes: 10,
     category: 'technology',
     tags: ['AI-Tech', 'Strategy', 'Visibility', 'Foundational'],
-    keywords: ['guidebot', 'BIX', 'AI assistant', 'platform assistant', 'bounded AI', 'context-aware', 'AI visibility', 'AiVIS'],
+    keywords: ['guidebot', 'BIX', 'AI assistant', 'platform assistant', 'bounded AI', 'context-aware', 'AI visibility', 'AiVIS.biz'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Architecture', 'Platform UX', 'Bounded AI Systems'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in AI systems and platform engineering',
     },
     content: `# BIX - Boundaries in Excess: How GuideBot Redefines AI Platform Assistants
 
 Most AI assistants on SaaS platforms fall into one of two failure modes. They either parrot documentation with zero situational awareness, or they hallucinate confidently about features that do not exist. Both modes erode trust. Both modes waste the user's time.
 
-BIX - the GuideBot powering AiVIS - was built to avoid both traps. Not by being less capable, but by being more bounded. This post explains how BIX works, what it can and cannot do, and why "boundaries in excess" is actually the design philosophy that makes it useful.
+BIX - the GuideBot powering AiVIS.biz - was built to avoid both traps. Not by being less capable, but by being more bounded. This post explains how BIX works, what it can and cannot do, and why "boundaries in excess" is actually the design philosophy that makes it useful.
 
 ---
 
 ## What Is BIX?
 
-BIX is the AI-powered assistant embedded in the AiVIS platform. When you open the Guide panel on any page of the dashboard, BIX is the intelligence behind the responses. It knows your current page context, your subscription tier, your audit history, and the platform's real capabilities.
+BIX is the AI-powered assistant embedded in the AiVIS.biz platform. When you open the Guide panel on any page of the dashboard, BIX is the intelligence behind the responses. It knows your current page context, your subscription tier, your audit history, and the platform's real capabilities.
 
 BIX is not a general-purpose chatbot. It does not answer questions about the weather, write poetry, or pretend to be something it is not. It is a scoped, context-aware assistant that helps users get more value from their AI visibility audits.
 
@@ -3350,7 +3350,7 @@ These boundaries are just as important:
 
 - **BIX will not generate code** for you. If you need implementation help, it will point you to the relevant documentation or MCP integration guide.
 - **BIX will not make up features**. If a capability does not exist on the platform, BIX will say so clearly rather than improvising an answer.
-- **BIX will not access external websites**. It operates within the AiVIS platform context only. External URL analysis happens through the audit engine, not through the assistant.
+- **BIX will not access external websites**. It operates within the AiVIS.biz platform context only. External URL analysis happens through the audit engine, not through the assistant.
 - **BIX will not override tier restrictions**. It explains what is available at your tier and what requires an upgrade, but it cannot bypass access controls.
 - **BIX will not provide medical, legal, or financial advice**. It is an AI visibility assistant, not a general-purpose oracle.
 
@@ -3400,7 +3400,7 @@ BIX is not an AI assistant that tries to be everything. It is an AI assistant th
 
 In a market saturated with general-purpose chatbots that confidently produce wrong answers, a bounded assistant that earns trust through precision is not a limitation - it is a competitive advantage.
 
-If you have not tried BIX yet, open the Guide panel on any page of your AiVIS dashboard. Ask it about your latest audit score. Ask it what you should fix first. Ask it what your tier includes. You will notice something unusual: every answer is specific, actionable, and verifiable.
+If you have not tried BIX yet, open the Guide panel on any page of your AiVIS.biz dashboard. Ask it about your latest audit score. Ask it what you should fix first. Ask it what your tier includes. You will notice something unusual: every answer is specific, actionable, and verifiable.
 
 That is what boundaries in excess looks like in practice.`,
     keyPoints: [
@@ -3433,27 +3433,27 @@ That is what boundaries in excess looks like in practice.`,
     readMinutes: 9,
     category: 'technology',
     tags: ['AI-Tech', 'Technical', 'Implementation', 'AEO'],
-    keywords: ['MCP audit workflow', 'Claude Desktop audit', 'AI visibility pipeline', 'automated audit', 'model context protocol', 'AiVIS MCP'],
+    keywords: ['MCP audit workflow', 'Claude Desktop audit', 'AI visibility pipeline', 'automated audit', 'model context protocol', 'AiVIS.biz MCP'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['MCP Integrations', 'AI Audit Pipelines', 'Developer Workflows'],
-      credentials: ['Founded AiVIS', 'MCP Implementation Research'],
+      credentials: ['Founded AiVIS.biz', 'MCP Implementation Research'],
       experience: '8+ years in AI systems and developer tooling',
     },
     content: `Most teams treat audits like dentist visits. Something breaks, traffic drops, the CEO sends a Slack about why ChatGPT isn't mentioning them anymore, and then someone runs a scan.
 
 That is not a workflow. That is a postmortem.
 
-MCP changes the frame entirely. The Model Context Protocol lets AI assistants like Claude connect directly to external tools, your codebase, and live data sources. When AiVIS is wired into that loop, auditing stops being an event and starts being a state.
+MCP changes the frame entirely. The Model Context Protocol lets AI assistants like Claude connect directly to external tools, your codebase, and live data sources. When AiVIS.biz is wired into that loop, auditing stops being an event and starts being a state.
 
 **What MCP actually does here**
 
-MCP gives Claude structured access to AiVIS audit results without you having to copy and paste a JSON blob or describe your scores to it. The model can call the audit API, read the response, identify the gap between current structure and what a citation-ready page needs, and return a grounded fix.
+MCP gives Claude structured access to AiVIS.biz audit results without you having to copy and paste a JSON blob or describe your scores to it. The model can call the audit API, read the response, identify the gap between current structure and what a citation-ready page needs, and return a grounded fix.
 
 No hallucination about schema format. No generic "add JSON-LD" advice. The model sees your actual scores.
 
-The AiVIS MCP spec exposes three primary operation surfaces: running a new audit by URL, pulling historical audit data for a domain, and reading the structured gap report. That is enough for a capable model to close a real issue in one session.
+The AiVIS.biz MCP spec exposes three primary operation surfaces: running a new audit by URL, pulling historical audit data for a domain, and reading the structured gap report. That is enough for a capable model to close a real issue in one session.
 
 **The remediation loop before MCP**
 
@@ -3470,7 +3470,7 @@ That cycle takes days when it should take minutes.
 
 **The remediation loop with MCP**
 
-1. Claude calls the AiVIS audit endpoint directly via MCP.
+1. Claude calls the AiVIS.biz audit endpoint directly via MCP.
 2. Reads the visibility score, schema gaps, and missing structured data fields.
 3. Returns the specific fix: the exact JSON-LD block, the corrected FAQ schema, the missing entity markup.
 4. You apply it and trigger a re-audit in the same session.
@@ -3483,11 +3483,11 @@ Schema gaps are the most fixable visibility problems. They are not traffic probl
 
 A visibility score of 35 is not a content quality problem. It is a machine-readability problem. And machine-readability problems have deterministic fixes. MCP-connected auditing gets you to those fixes faster because the model can see the gap directly.
 
-**Connecting AiVIS as an MCP server**
+**Connecting AiVIS.biz as an MCP server**
 
-AiVIS ships as a compatible MCP server for Claude Desktop and other MCP-capable clients. You configure the endpoint in your Claude config, authenticate with your AiVIS API key, and the audit data is immediately available as a callable tool.
+AiVIS.biz ships as a compatible MCP server for Claude Desktop and other MCP-capable clients. You configure the endpoint in your Claude config, authenticate with your AiVIS.biz API key, and the audit data is immediately available as a callable tool.
 
-The integration does not route your data through a third party. The audit runs on AiVIS infrastructure, the result comes back to your local model client, and the fix stays in your session. Nothing is persisted externally that was not already in your audit history.
+The integration does not route your data through a third party. The audit runs on AiVIS.biz infrastructure, the result comes back to your local model client, and the fix stays in your session. Nothing is persisted externally that was not already in your audit history.
 
 **What teams are actually doing with this**
 
@@ -3497,10 +3497,10 @@ A page that loses JSON-LD on a deploy does not stay broken for three months anym
 
 That is the operational shift MCP enables. Not smarter AI. Just tighter loops.`,
     keyPoints: [
-      'MCP lets Claude call AiVIS audit endpoints directly, eliminating the manual copy-paste cycle.',
+      'MCP lets Claude call AiVIS.biz audit endpoints directly, eliminating the manual copy-paste cycle.',
       'The remediation loop compresses from days to a single 10-minute session.',
       'Schema gaps are deterministic problems with deterministic fixes. MCP surfaces both in one pass.',
-      'AiVIS ships as an MCP-compatible server for Claude Desktop and other model clients.',
+      'AiVIS.biz ships as an MCP-compatible server for Claude Desktop and other model clients.',
       'Automated audit triggers on deployment prevent visibility regressions from compounding.',
     ],
     relatedPostSlugs: [
@@ -3514,7 +3514,7 @@ That is the operational shift MCP enables. Not smarter AI. Just tighter loops.`,
   {
     slug: 'team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing',
     path: '/blogs/team-workspace-aivis-the-shared-audit-layer-builders-have-been-missing',
-    title: 'Team Workspaces on AiVIS: The Shared Audit Layer Builders Have Been Missing',
+    title: 'Team Workspaces on AiVIS.biz: The Shared Audit Layer Builders Have Been Missing',
     description:
       'Solo audits die in Notion. Shared workspaces move your team from findings to shipped fixes without the usual coordination overhead.',
     excerpt:
@@ -3523,12 +3523,12 @@ That is the operational shift MCP enables. Not smarter AI. Just tighter loops.`,
     readMinutes: 7,
     category: 'implementation',
     tags: ['Visibility', 'Implementation', 'Strategy', 'Technical'],
-    keywords: ['team workspace audit', 'shared AI visibility', 'collaborative audit workflow', 'AiVIS team', 'multi-user audit', 'workspace audit management'],
+    keywords: ['team workspace audit', 'shared AI visibility', 'collaborative audit workflow', 'AiVIS.biz team', 'multi-user audit', 'workspace audit management'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Team Collaboration Systems', 'Audit Workflow Design', 'Visibility Operations'],
-      credentials: ['Founded AiVIS'],
+      credentials: ['Founded AiVIS.biz'],
       experience: '8+ years in distributed team tooling and content systems',
     },
     content: `Here is what actually happens when visibility work lives in individual accounts.
@@ -3545,9 +3545,9 @@ First: accountability becomes visible. The team audit feed shows who ran what, w
 
 Second: patterns surface faster. One audit is an event. Twenty audits across ten URLs over six weeks is a pattern. Shared workspaces accumulate data that individual accounts fragment. Pattern data is what lets you identify which category of fix will move the aggregate score fastest.
 
-**How the AiVIS team workspace actually works**
+**How the AiVIS.biz team workspace actually works**
 
-The team workspace on AiVIS is structured around three operational layers.
+The team workspace on AiVIS.biz is structured around three operational layers.
 
 The first is the member layer. Owners and admins control who has access, what role they have, and whether they can invite others. Roles are not cosmetic. Viewers see audit results but cannot run new scans. Members can run audits. Admins can manage the workspace.
 
@@ -3592,7 +3592,7 @@ That is what shared workspaces solve. Not the technical problem. The organizatio
   {
     slug: 'webmcp-third-party-tool-calling-aivis-the-headless-audit-engine',
     path: '/blogs/webmcp-third-party-tool-calling-aivis-the-headless-audit-engine',
-    title: 'WebMCP and Third-Party Tool Calling on AiVIS: Treating Your Audit Tool Like an API-First Intelligence Layer',
+    title: 'WebMCP and Third-Party Tool Calling on AiVIS.biz: Treating Your Audit Tool Like an API-First Intelligence Layer',
     description:
       'What happens when you stop treating your audit tool as a dashboard and start treating it as a callable data source for AI agents, Zapier zaps, and custom tooling.',
     excerpt:
@@ -3601,19 +3601,19 @@ That is what shared workspaces solve. Not the technical problem. The organizatio
     readMinutes: 10,
     category: 'technology',
     tags: ['AI-Tech', 'Technical', 'Advanced', 'Citations'],
-    keywords: ['WebMCP', 'AiVIS API', 'third party tool calling', 'headless audit', 'audit API integration', 'AI agent audit', 'Zapier audit workflow'],
+    keywords: ['WebMCP', 'AiVIS.biz API', 'third party tool calling', 'headless audit', 'audit API integration', 'AI agent audit', 'Zapier audit workflow'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['API Design', 'AI Agent Tooling', 'WebMCP Standards'],
-      credentials: ['Founded AiVIS', 'MCP Implementation Research'],
+      credentials: ['Founded AiVIS.biz', 'MCP Implementation Research'],
       experience: '8+ years in API-driven systems and AI tooling',
     },
     content: `The dashboard is not the point.
 
 Every audit tool has a dashboard. Scores, charts, recommendations. You log in, check the numbers, close the tab, and the data stays in the tool. Nothing happens downstream. Nothing connects.
 
-The insight that drives AiVIS's architecture is that the useful thing is not the dashboard. It is the structured data underneath it. The JSON audit payload with precise visibility scores, schema gap lists, keyword intelligence vectors, and technical signal readings. That is the part that can do real work when you surface it outside the dashboard.
+The insight that drives AiVIS.biz's architecture is that the useful thing is not the dashboard. It is the structured data underneath it. The JSON audit payload with precise visibility scores, schema gap lists, keyword intelligence vectors, and technical signal readings. That is the part that can do real work when you surface it outside the dashboard.
 
 WebMCP and third-party tool calling are how you get the data out and into the systems that act on it.
 
@@ -3621,19 +3621,19 @@ WebMCP and third-party tool calling are how you get the data out and into the sy
 
 WebMCP is a web-native implementation of the Model Context Protocol that lets browser-based and server-side AI agents call remote tools over standard HTTP. Where traditional MCP runs as a local process connected to a desktop client, WebMCP exposes the same interface over an authenticated endpoint, making it callable from any AI agent that can make HTTP requests.
 
-For AiVIS, this means AI agents running in browser contexts, cloud functions, or managed agent runtimes can call the audit API directly as a structured tool call. The agent sends a URL and receives a structured audit result. Not a human-readable summary. The actual scored JSON with all fields populated.
+For AiVIS.biz, this means AI agents running in browser contexts, cloud functions, or managed agent runtimes can call the audit API directly as a structured tool call. The agent sends a URL and receives a structured audit result. Not a human-readable summary. The actual scored JSON with all fields populated.
 
 **Three integration patterns that actually get used**
 
-The first pattern is model-native tool calling. You configure AiVIS as a tool in your agent's toolset. When the agent needs to assess a page's AI visibility before making a content recommendation, it calls the audit tool mid-conversation. The result feeds back into the agent's reasoning context. The recommendation the agent returns is grounded in real audit data, not generic SEO advice.
+The first pattern is model-native tool calling. You configure AiVIS.biz as a tool in your agent's toolset. When the agent needs to assess a page's AI visibility before making a content recommendation, it calls the audit tool mid-conversation. The result feeds back into the agent's reasoning context. The recommendation the agent returns is grounded in real audit data, not generic SEO advice.
 
-The second pattern is Zapier-mediated automation. The AiVIS webhook can trigger a Zapier workflow on audit completion. That workflow can update a project management board, post a Slack alert with the score and top recommendation, create a JIRA ticket for schema fixes if the score drops below a threshold, or route the audit result to a Google Sheet tracking visibility trends across URLs. No code required for any of this.
+The second pattern is Zapier-mediated automation. The AiVIS.biz webhook can trigger a Zapier workflow on audit completion. That workflow can update a project management board, post a Slack alert with the score and top recommendation, create a JIRA ticket for schema fixes if the score drops below a threshold, or route the audit result to a Google Sheet tracking visibility trends across URLs. No code required for any of this.
 
-The third pattern is custom direct API integration. Teams with engineering capacity can call the AiVIS REST API from their own services. The audit result is a structured JSON payload. You can ingest it into your data warehouse, feed it into a score-tracking service, compare it against historical baselines, or trigger CI/CD checks that fail a deployment if the visibility score for a critical URL degrades.
+The third pattern is custom direct API integration. Teams with engineering capacity can call the AiVIS.biz REST API from their own services. The audit result is a structured JSON payload. You can ingest it into your data warehouse, feed it into a score-tracking service, compare it against historical baselines, or trigger CI/CD checks that fail a deployment if the visibility score for a critical URL degrades.
 
 **What the audit payload actually contains**
 
-When a third-party system calls the AiVIS audit endpoint, it does not get a score and a gradient bar. It gets a complete structured analysis.
+When a third-party system calls the AiVIS.biz audit endpoint, it does not get a score and a gradient bar. It gets a complete structured analysis.
 
 The payload includes: the headline visibility score from 0 to 100, a full breakdown by audit dimension (schema quality, technical signals, content extractability, trust indicators), a keyword intelligence object with topical keywords and AI platform scores, a list of 8 to 12 prioritized recommendations with severity and fix guidance, and metadata about the audit including model chain used and processing time.
 
@@ -3641,7 +3641,7 @@ That is a complete data contract, not a summary. Third-party systems can work wi
 
 **The headless audit pattern for CI/CD**
 
-The most operationally advanced teams are running AiVIS audits as part of their deployment pipeline. The pattern works like this: before a content deploy or site change goes live, an automated audit runs against the affected URLs. If any URL's visibility score drops by more than a defined threshold from its last cached audit, the check fails and the deploy is blocked pending review.
+The most operationally advanced teams are running AiVIS.biz audits as part of their deployment pipeline. The pattern works like this: before a content deploy or site change goes live, an automated audit runs against the affected URLs. If any URL's visibility score drops by more than a defined threshold from its last cached audit, the check fails and the deploy is blocked pending review.
 
 This is not overkill for teams that care about AI visibility. Schema markup can break on a deploy. JSON-LD can get stripped by templating engines. An hreflang update can change entity resolution in ways that affect extractability. Catching these regressions before they compound is worth the overhead.
 
@@ -3661,10 +3661,10 @@ AI visibility problems are not static. A schema change, a CMS update, or a CDN m
 
 When your audit data is callable from agents, automations, and pipelines, regressions get caught in the same cycle they occur. The fix can ship before the problem shows up in citation rates.
 
-That is the practical argument for third-party tool calling on AiVIS. Not because dashboards are bad. Because the data is more useful when it moves.`,
+That is the practical argument for third-party tool calling on AiVIS.biz. Not because dashboards are bad. Because the data is more useful when it moves.`,
     keyPoints: [
       'The audit payload, not the dashboard, is the valuable output. Third-party tool calling surfaces it where it matters.',
-      'WebMCP enables browser-native and cloud AI agents to call AiVIS as a structured tool over standard HTTP.',
+      'WebMCP enables browser-native and cloud AI agents to call AiVIS.biz as a structured tool over standard HTTP.',
       'Three core integration patterns: model-native tool calling, Zapier automation, and direct API integration.',
       'The full audit payload includes scored dimensions, keyword intelligence, recommendations, and model metadata.',
       'CI/CD audit checks catch visibility regressions before they compound in production.',
@@ -3682,7 +3682,7 @@ That is the practical argument for third-party tool calling on AiVIS. Not becaus
     path: '/blogs/your-website-is-not-competing-for-clicks-anymore',
     title: 'Your Website Is Not Competing for Clicks Anymore. It Is Competing to Be Included.',
     description:
-      'Why AI visibility audits matter now, what most sites still get wrong, and how AiVIS already helps expose the gap between ranking and being understood by answer engines.',
+      'Why AI visibility audits matter now, what most sites still get wrong, and how AiVIS.biz already helps expose the gap between ranking and being understood by answer engines.',
     excerpt:
       'The internet is splitting between websites that are merely online and websites that are actually interpretable. That difference is where attention starts leaking.',
     publishedAt: '2026-03-27',
@@ -3691,10 +3691,10 @@ That is the practical argument for third-party tool calling on AiVIS. Not becaus
     tags: ['AEO', 'Visibility', 'Citations', 'Strategy'],
     keywords: ['AI visibility', 'AI answers', 'citation readiness', 'answer engines', 'machine readability', 'AEO'],
     author: {
-      name: 'R. Mason / AiVIS',
+      name: 'R. Mason / AiVIS.biz',
       title: 'AI Visibility Research',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Architecture'],
-      credentials: ['AiVIS', 'AI Visibility Systems'],
+      credentials: ['AiVIS.biz', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     keyPoints: [
@@ -3727,10 +3727,10 @@ That is the practical argument for third-party tool calling on AiVIS. Not becaus
     tags: ['AEO', 'Visibility', 'Citations', 'Strategy', 'Foundational'],
     keywords: ['AI visibility', 'ranking vs citation', 'answer engine optimization', 'invisible to AI', 'citation gap', 'AEO strategy'],
     author: {
-      name: 'R. Mason / AiVIS',
+      name: 'R. Mason / AiVIS.biz',
       title: 'AI Visibility Research',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Content Architecture'],
-      credentials: ['AiVIS', 'AI Visibility Systems'],
+      credentials: ['AiVIS.biz', 'AI Visibility Systems'],
       experience: '8+ years in search and AI content systems',
     },
     content: `You check your Google rankings and everything looks fine. Position 3 for your primary keyword. Decent traffic. Good bounce rate. But when someone asks ChatGPT, Claude, or Perplexity a question your page answers perfectly, you are nowhere.
@@ -3780,7 +3780,7 @@ These are fixable problems. But you cannot fix what you cannot see.
 
 ## How to See the Gap
 
-An AI visibility audit tests what answer engines actually evaluate. AiVIS runs your URL through the same structural checks that determine extractability:
+An AI visibility audit tests what answer engines actually evaluate. AiVIS.biz runs your URL through the same structural checks that determine extractability:
 
 1. Schema coverage and quality scoring
 2. Heading hierarchy and question-format density
@@ -3831,26 +3831,26 @@ The time to fix the ranking-citation gap is now, while the window is still open 
   {
     slug: 'aivis-starter-tier-evidence-backed-ai-audits-from-15',
     path: '/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15',
-    title: 'AiVIS Starter Tier — Evidence-Backed AI Audits from $15',
+    title: 'AiVIS.biz Starter Tier — Evidence-Backed AI Audits from $15',
     description:
-      'Introducing the AiVIS Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
+      'Introducing the AiVIS.biz Starter tier: 15 scans per month, paid AI model, full recommendations with implementation code, PDF export, and shareable links — all for $15/month.',
     excerpt:
       'The gap between a free audit and a $49 plan was too wide. Starter closes it with paid-model accuracy, implementation code, and export features at $15/month.',
     publishedAt: '2026-04-10',
     readMinutes: 6,
     category: 'strategy',
     tags: ['Strategy', 'Visibility', 'Foundational'],
-    keywords: ['AiVIS Starter tier', 'AI visibility pricing', '$15 AI audit', 'paid AI model', 'evidence-backed audit', 'AiVIS plans'],
+    keywords: ['AiVIS.biz Starter tier', 'AI visibility pricing', '$15 AI audit', 'paid AI model', 'evidence-backed audit', 'AiVIS.biz plans'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Product Strategy'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in SEO, AI ranking strategy',
     },
     content: `## Why We Built the Starter Tier
 
-When we launched <a href="/pricing">AiVIS pricing</a>, the jump from Observer (free, 3 scans/month) to Alignment ($49/month) left a gap. Freelancers running a handful of client sites, solo founders validating product pages, and content creators optimising a personal brand all needed more than 3 scans — but not 60. They needed a paid AI model, not the free-tier fallback. And they needed the full fix plan, not a truncated summary.
+When we launched <a href="/pricing">AiVIS.biz pricing</a>, the jump from Observer (free, 3 scans/month) to Alignment ($49/month) left a gap. Freelancers running a handful of client sites, solo founders validating product pages, and content creators optimising a personal brand all needed more than 3 scans — but not 60. They needed a paid AI model, not the free-tier fallback. And they needed the full fix plan, not a truncated summary.
 
 Starter fills that gap.
 
@@ -3903,7 +3903,7 @@ These features are available on <a href="/pricing">Alignment ($49/month)</a> and
 
 If you are on Observer, go to your <a href="/app/billing">billing settings</a> and select Starter. Your scan limit updates immediately. Any remaining Observer scans for the month carry over.
 
-If you are evaluating AiVIS for the first time, <a href="/register">create a free account</a> and upgrade from the dashboard.
+If you are evaluating AiVIS.biz for the first time, <a href="/register">create a free account</a> and upgrade from the dashboard.
 
 ## The Evidence Trail Matters
 
@@ -3933,7 +3933,7 @@ Read more about <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-v
     description:
       'AI audits without evidence are opinions. The BRAG evidence framework links every recommendation to structural proof — here is why that matters and how it works.',
     excerpt:
-      'Most AI audit tools give you a score and a list of suggestions. AiVIS gives you evidence IDs, verified counts, and benchmark scores that trace every recommendation back to structural proof.',
+      'Most AI audit tools give you a score and a list of suggestions. AiVIS.biz gives you evidence IDs, verified counts, and benchmark scores that trace every recommendation back to structural proof.',
     publishedAt: '2026-04-10',
     readMinutes: 8,
     category: 'technology',
@@ -3941,9 +3941,9 @@ Read more about <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-v
     keywords: ['evidence trail', 'BRAG evidence', 'AI audit evidence', 'evidence-backed recommendations', 'audit transparency', 'structural proof'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'AI Diagnostics', 'Evidence-Based Auditing'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in SEO, AI ranking strategy',
     },
     content: `## The Problem with Black-Box Audits
@@ -3956,9 +3956,9 @@ An audit, by definition, traces findings back to verifiable evidence. Financial 
 
 ## What the BRAG Evidence Framework Does
 
-BRAG (Based Retrieval and Auditable Grading) is the evidence framework that AiVIS uses to link every recommendation to structural proof extracted from the scanned page.
+BRAG (Based Retrieval and Auditable Grading) is the evidence framework that AiVIS.biz uses to link every recommendation to structural proof extracted from the scanned page.
 
-When AiVIS scans a URL, it does not generate recommendations from a prompt and hope they are relevant. The pipeline works in stages:
+When AiVIS.biz scans a URL, it does not generate recommendations from a prompt and hope they are relevant. The pipeline works in stages:
 
 1. **Structural extraction** — Puppeteer crawls the page and extracts every machine-readable signal: <a href="/signals/json-ld">JSON-LD schemas</a>, meta tags, <a href="/signals/heading-hierarchy">heading hierarchy</a>, internal links, <a href="/signals/robots-txt">robots.txt</a> rules, <a href="/signals/llms-txt">llms.txt</a> presence, <a href="/signals/sitemap-xml">sitemap.xml</a> coverage, and content blocks.
 
@@ -3966,11 +3966,11 @@ When AiVIS scans a URL, it does not generate recommendations from a prompt and h
 
 3. **AI analysis** — the evidence-tagged signals are sent to the AI model (free-tier models for <a href="/pricing">Observer</a>, GPT-5 Nano for <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> and Alignment, triple-check pipeline for <a href="/pricing">Signal</a>). The model generates recommendations that reference specific evidence IDs.
 
-4. **Evidence manifest** — the final result includes an evidence manifest: a structured record of every evidence item, its category, the recommendation it supports, and whether it was verified against the actual page content.
+4. **Evidence manifest** — the final result includes an evidence manifest: a structured record of every evidence item, its category, the recommendation it supports, and whether it was verified against the actual page content. Every validated finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — a tamper-evident hash chain where each entry links to the previous through SHA-256 chain hashes.
 
 ## What You See in an Audit Result
 
-Every AiVIS audit result includes:
+Every AiVIS.biz audit result includes:
 
 - **Evidence IDs on recommendations** — each recommendation lists the evidence items that support it. Click an evidence ID to see the raw structural signal.
 - **Verified evidence count** — the number of evidence items that were verified against the page. A recommendation backed by 3 verified evidence items is stronger than one backed by 1.
@@ -3987,7 +3987,7 @@ When you are prioritising fixes, evidence counts help you triage. A recommendati
 
 ## Evidence Across Tiers
 
-All AiVIS tiers preserve the core evidence trail:
+All AiVIS.biz tiers preserve the core evidence trail:
 
 - **<a href="/pricing">Observer</a> (free)** — evidence IDs and verified evidence count on every recommendation, plus the evidence benchmark score.
 - **<a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> ($15/mo)** — full evidence trail plus the evidence manifest (the complete structured record of all evidence items).
@@ -3998,7 +3998,7 @@ All AiVIS tiers preserve the core evidence trail:
 
 The AI visibility space is young. Most tools launched in 2025 or 2026. Trust is earned by transparency, not marketing claims. When an audit platform shows you exactly which signals it found, which ones it verified, and how each recommendation connects to structural proof — that is a platform you can build decisions on.
 
-AiVIS publishes its <a href="/methodology">scoring methodology</a>, its <a href="/signals/json-ld">signal definitions</a>, and its <a href="/blogs/how-aivis-works-under-the-hood-full-technical-breakdown">technical architecture</a>. The evidence trail is not a feature add-on. It is the foundation.
+AiVIS.biz publishes its <a href="/methodology">scoring methodology</a>, its <a href="/signals/json-ld">signal definitions</a>, and its <a href="/blogs/how-aivis-works-under-the-hood-full-technical-breakdown">technical architecture</a>. The evidence trail is not a feature add-on. It is the foundation.
 
 Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">the Starter tier</a> that makes evidence-backed audits accessible from $15/month, or <a href="/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment">compare all plans</a> to find the right fit.`,
     keyPoints: [
@@ -4006,7 +4006,7 @@ Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15"
       'BRAG (Based Retrieval and Auditable Grading) links every recommendation to specific evidence IDs, verified counts, and an evidence benchmark score.',
       'The evidence manifest provides a complete record of all evidence items, their categories, and the recommendations they support.',
       'Evidence counts help triage fixes: recommendations backed by multiple verified signals across dimensions are higher priority.',
-      'All AiVIS tiers preserve core evidence (IDs, counts, benchmark). Paid tiers add the full manifest and deep artifacts.',
+      'All AiVIS.biz tiers preserve core evidence (IDs, counts, benchmark). Paid tiers add the full manifest and deep artifacts.',
     ],
     relatedPostSlugs: [
       'aivis-starter-tier-evidence-backed-ai-audits-from-15',
@@ -4022,24 +4022,24 @@ Read about <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15"
     path: '/blogs/choosing-the-right-ai-visibility-plan-observer-vs-starter-vs-alignment',
     title: 'Choosing the Right AI Visibility Plan: Observer vs Starter vs Alignment',
     description:
-      'A practical comparison of AiVIS tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
+      'A practical comparison of AiVIS.biz tiers — what each plan includes, who it is for, and how to decide which level of AI visibility auditing you need.',
     excerpt:
       'Observer is free. Starter is $15. Alignment is $49. Signal is $149. Here is exactly what you get at each level and how to choose the right one.',
     publishedAt: '2026-04-10',
     readMinutes: 7,
     category: 'strategy',
     tags: ['Strategy', 'Visibility', 'Foundational'],
-    keywords: ['AiVIS plans comparison', 'Observer vs Starter', 'Starter vs Alignment', 'AI visibility pricing', 'which AiVIS plan', 'AiVIS tier comparison'],
+    keywords: ['AiVIS.biz plans comparison', 'Observer vs Starter', 'Starter vs Alignment', 'AI visibility pricing', 'which AiVIS.biz plan', 'AiVIS.biz tier comparison'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Answer Engine Optimization', 'Product Strategy', 'AI Discoverability'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in SEO, AI ranking strategy',
     },
     content: `## The 5-Tier Model
 
-AiVIS uses a 5-tier model designed around usage patterns, not artificial feature gates. Each tier unlocks capabilities that match a specific workflow:
+AiVIS.biz uses a 5-tier model designed around usage patterns, not artificial feature gates. Each tier unlocks capabilities that match a specific workflow:
 
 | Tier | Price | Scans/mo | AI Model | Key Capability |
 |------|-------|----------|----------|----------------|
@@ -4053,7 +4053,7 @@ AiVIS uses a 5-tier model designed around usage patterns, not artificial feature
 
 **$0/month, 3 scans**
 
-Observer is for evaluation. Run your homepage through an <a href="/analyze">AI visibility audit</a>, see the score, read the recommendations, and decide whether the structural issues AiVIS identifies are real. The audit uses free AI models (Gemma 4 via OpenRouter) so there is no cost to AiVIS per scan.
+Observer is for evaluation. Run your homepage through an <a href="/analyze">AI visibility audit</a>, see the score, read the recommendations, and decide whether the structural issues AiVIS.biz identifies are real. The audit uses free AI models (Gemma 4 via OpenRouter) so there is no cost to AiVIS.biz per scan.
 
 **What you get:**
 - AI visibility score (0–100) across 6 dimensions
@@ -4135,7 +4135,7 @@ Signal is for organisations that need the highest audit accuracy and citation ve
 
 **$299 one-time, 250 credits**
 
-<a href="/score-fix">Score Fix</a> is not a subscription tier — it is an add-on that automates the fix process. Connect your GitHub repository, select the recommendations you want to implement, and AiVIS generates pull requests with the actual code patches.
+<a href="/score-fix">Score Fix</a> is not a subscription tier — it is an add-on that automates the fix process. Connect your GitHub repository, select the recommendations you want to implement, and AiVIS.biz generates pull requests with the actual code patches.
 
 **Best for:** Development teams that want to skip manual implementation and ship fixes directly from the audit results.
 
@@ -4145,7 +4145,7 @@ Signal is for organisations that need the highest audit accuracy and citation ve
 
 **Move to Starter if** you want the full fix plan: implementation code, exports, shareable links, and 15 scans/month. This is enough for a small portfolio or a focused optimisation sprint.
 
-**Move to Alignment if** you need competitive analysis, keyword intelligence, or multi-page crawls. This is the breakpoint where AiVIS becomes a platform, not just an audit tool.
+**Move to Alignment if** you need competitive analysis, keyword intelligence, or multi-page crawls. This is the breakpoint where AiVIS.biz becomes a platform, not just an audit tool.
 
 **Move to Signal if** you need citation verification, multi-model consensus, or enterprise-grade audit accuracy.
 
@@ -4153,7 +4153,7 @@ All plans support annual billing with discounts ranging from 22% (Starter) to 23
 
 <a href="/pricing">Compare all plans →</a>`,
     keyPoints: [
-      'AiVIS uses a 5-tier model: Observer (free), Starter ($15), Alignment ($49), Signal ($149), and Score Fix ($299 one-time).',
+      'AiVIS.biz uses a 5-tier model: Observer (free), Starter ($15), Alignment ($49), Signal ($149), and Score Fix ($299 one-time).',
       'Observer is for evaluation — 3 free scans with basic recommendations. Starter adds paid-model accuracy and the full fix plan.',
       'Alignment adds competitive intelligence: competitor tracking, keyword research, brand mentions, and multi-page crawl.',
       'Signal adds multi-model consensus (triple-check pipeline) and citation testing across 10 platforms.',
@@ -4183,9 +4183,9 @@ All plans support annual billing with discounts ranging from 22% (Starter) to 23
     keywords: ['AI visibility', 'machine readability', 'answer engines', 'AI search', 'website structure', 'AI citations', 'AI trust signals', 'SEO vs AEO', 'AI understanding'],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Visibility', 'Machine Readability', 'Answer Engine Optimization', 'Web Infrastructure'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in web infrastructure, SaaS, and AI visibility systems',
     },
     keyPoints: [
@@ -4364,9 +4364,9 @@ Curious how your site looks to AI systems? Run a free audit at [AiVIS.biz](https
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['Brand Authority', 'AI Mention Tracking', 'Entity Clarity', 'Answer Engine Optimization'],
-      credentials: ['Founded AiVIS', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
       experience: '8+ years in SEO, AI ranking strategy',
     },
     content: `Most websites still operate under an old belief. Rank high enough, publish enough, build enough links, and visibility will follow.
@@ -4427,7 +4427,7 @@ A serious authority and mention tracking system should answer questions like the
 - Does your category identity stay consistent over time?
 - Which pages deserve fixes first to improve reuse and citation?
 
-This is where a platform like [AiVIS](https://aivis.biz/) becomes useful. It is not trying to flatter the user. It is trying to show what AI gets wrong, what it cannot confidently cite, and what structural clarity is missing from the site.
+This is where a platform like [AiVIS.biz](https://aivis.biz/) becomes useful. It is not trying to flatter the user. It is trying to show what AI gets wrong, what it cannot confidently cite, and what structural clarity is missing from the site.
 
 That turns authority from a vague marketing word into something measurable.
 
@@ -4457,7 +4457,7 @@ Having enough entity clarity and trust to be repeated in the answer itself.
 
 If you want to know whether your brand is actually being mentioned, cited, and understood where modern discovery is happening, stop guessing.
 
-[Run a real AI visibility check with AiVIS](https://aivis.biz/)`,
+[Run a real AI visibility check with AiVIS.biz](https://aivis.biz/)`,
     keyPoints: [
       'Brand authority is now determined by what AI systems can understand, repeat, and cite — not just what you publish.',
       'Mention tracking should measure repeatable visibility across live queries, not just one-time appearances.',
@@ -4495,18 +4495,18 @@ If you want to know whether your brand is actually being mentioned, cited, and u
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: [
         'Answer Engine Optimization', 'AI Citations', 'Zero Trust Content Strategy',
         'Structured Data', 'Entity Clarity', 'GEO',
       ],
-      credentials: ['Founded AiVIS', 'AI Visibility Research', 'Cloudflare Zero Trust Architecture'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research', 'Cloudflare Zero Trust Architecture'],
       experience: '8+ years in SEO, AEO, and next-generation discoverability strategy',
     },
     keyPoints: [
       'AI citation does not inherit from Google rankings — structured schema, entity clarity, and content extractability are independent prerequisites.',
       'Zero Trust applied to content means: never assume you are being cited. Test it, verify it, and schedule rescans to confirm it holds.',
-      'Organization JSON-LD is the identity layer — its absence triggers a hard-blocker cap of 50 in AiVIS scoring regardless of all other signals.',
+      'Organization JSON-LD is the identity layer — its absence triggers a hard-blocker cap of 50 in AiVIS.biz scoring regardless of all other signals.',
       'Blocked AI crawlers (GPTBot, ClaudeBot, PerplexityBot) in robots.txt are self-defeating and cap scores at 35.',
       'Off-page authority signals (Reddit, Hacker News, LinkedIn, G2) contribute to citation confidence in retrieval-based models.',
       'Continuous verification via scheduled rescans and citation drop alerts prevents silent decay of AI visibility over time.',
@@ -4531,13 +4531,13 @@ AI answer engines do not inherit trust from Google rankings. When ChatGPT, Perpl
 
 A page that ranks number one for a competitive keyword may answer both questions with a silent "no" if it lacks JSON-LD schema, clear entity attribution, or machine-readable structure. The AI will either cite a competitor with better structural signals or generate an answer without attributing anyone.
 
-This is not a hypothetical. AiVIS data across thousands of audits shows that sites ranking in the top five organic positions for their primary keywords have citation rates below 15% in AI answer engines when their structured data is absent or broken. Structurally optimized pages with complete Organization schema and FAQ markup achieve citation rates three to four times higher across equivalent query sets.
+This is not a hypothetical. AiVIS.biz data across thousands of audits shows that sites ranking in the top five organic positions for their primary keywords have citation rates below 15% in AI answer engines when their structured data is absent or broken. Structurally optimized pages with complete Organization schema and FAQ markup achieve citation rates three to four times higher across equivalent query sets.
 
 The Six Verification Layers
 
 Applying Zero Trust to AI visibility means continuously verifying six layers of evidence on every page, every time you publish or update. Each layer has a measurable failure mode that keeps high-ranking sites invisible to AI engines.
 
-- **Schema and Structured Data**: Organization JSON-LD is the identity layer. Without it, AI cannot attribute your content to a named business. FAQPage and HowTo schema encode your most extractable answers in a format AI models prioritize. Missing Organization schema is a hard-blocker in AiVIS that caps your score at 50 regardless of every other signal.
+- **Schema and Structured Data**: Organization JSON-LD is the identity layer. Without it, AI cannot attribute your content to a named business. FAQPage and HowTo schema encode your most extractable answers in a format AI models prioritize. Missing Organization schema is a hard-blocker in AiVIS.biz that caps your score at 50 regardless of every other signal.
 
 - **Content Depth and Answer Density**: AI models extract fact-forward content. Write the direct answer in the first one or two sentences of every section. Paragraphs that require background context before reaching the point are routinely bypassed. Minimum viable answer density is one extractable answer per major heading.
 
@@ -4545,9 +4545,9 @@ Applying Zero Trust to AI visibility means continuously verifying six layers of 
 
 - **Meta Tags and Open Graph**: Meta descriptions are not a click-through rate signal alone. They are the first compressed representation of your page that any system — AI crawlers included — processes. A 155-character description containing your business name, primary topic, and a factual claim outperforms a generic welcome message in AI extraction contexts every time.
 
-- **Crawlability and AI Crawlers**: Blocking GPTBot, ClaudeBot, or PerplexityBot in your robots.txt shuts out the crawler before the AI can verify your identity. Many sites accidentally add these rules during a CMS migration or robots.txt reset. AiVIS detects blocked AI crawlers on every audit and flags them as a hard-blocker capping scores at 35.
+- **Crawlability and AI Crawlers**: Blocking GPTBot, ClaudeBot, or PerplexityBot in your robots.txt shuts out the crawler before the AI can verify your identity. Many sites accidentally add these rules during a CMS migration or robots.txt reset. AiVIS.biz detects blocked AI crawlers on every audit and flags them as a hard-blocker capping scores at 35.
 
-- **AI Readability**: Dense passive voice, deeply nested conditionals, and legal-language paragraphs increase the cognitive load on extraction models. AI Readability in AiVIS measures whether your content is short, direct, and entity-dense enough for reliable extraction. Pages scoring below 40 on this dimension are rarely cited as direct answers, regardless of schema completeness.
+- **AI Readability**: Dense passive voice, deeply nested conditionals, and legal-language paragraphs increase the cognitive load on extraction models. AI Readability in AiVIS.biz measures whether your content is short, direct, and entity-dense enough for reliable extraction. Pages scoring below 40 on this dimension are rarely cited as direct answers, regardless of schema completeness.
 
 Entity Clarity: The Identity Verification Problem
 
@@ -4555,7 +4555,7 @@ Zero Trust security requires a verified identity for every access request. AI ci
 
 If your business card says "Acme Web Services," your LinkedIn headline says "Acme Web Services Inc.," and your Organization schema says "Acme," you have three non-convergent entity signals. AI models that attempt entity resolution across these sources will lower their confidence in your entity and either cite a competitor with a cleaner identity graph or strip the attribution from their answer entirely.
 
-Entity clarity means your name, domain, description, logo, and sameAs links to verified external profiles — LinkedIn, Crunchbase, G2, Wikipedia where applicable — are consistent everywhere they appear. AiVIS evaluates this through the Entity Clarity dimension in the Citation Audit and through Organization schema validation in every visibility audit. Inconsistent naming across even two sources measurably reduces citation frequency in retrieval-based AI models.
+Entity clarity means your name, domain, description, logo, and sameAs links to verified external profiles — LinkedIn, Crunchbase, G2, Wikipedia where applicable — are consistent everywhere they appear. AiVIS.biz evaluates this through the Entity Clarity dimension in the Citation Audit and through Organization schema validation in every visibility audit. Inconsistent naming across even two sources measurably reduces citation frequency in retrieval-based AI models.
 
 Authority Verification Beyond Your Domain
 
@@ -4563,13 +4563,13 @@ Zero Trust extends the authentication perimeter beyond your internal network. AI
 
 AI models weight off-page authority signals heavily in citation decisions. A brand discussed in Reddit threads, mentioned in Hacker News comments, listed on Stack Overflow, and published on LinkedIn carries implicit verification weight that a brand mentioned only on its own site does not. These co-occurrence signals confirm to AI models that the entity is real, contextually relevant, and worth citing in answers about the topic — not a self-promotional source inflating its own importance.
 
-AiVIS Brand Mention Tracking scans 19 free sources including Reddit, Hacker News, Mastodon, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions for mentions of your brand. The Citation Testing feature verifies whether your brand actually appears when AI models answer relevant queries. Together they close the loop between off-page authority building and in-answer citation performance — the same way Zero Trust logs and verifies every access event, not just successful logins.
+AiVIS.biz Brand Mention Tracking scans 19 free sources including Reddit, Hacker News, Mastodon, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions for mentions of your brand. The Citation Testing feature verifies whether your brand actually appears when AI models answer relevant queries. Together they close the loop between off-page authority building and in-answer citation performance — the same way Zero Trust logs and verifies every access event, not just successful logins.
 
 Continuous Verification: The Scheduled Rescan Loop
 
 The final Zero Trust principle is that verification is not a one-time event. It is continuous. A page that was citation-ready last month may no longer be citation-ready after a CMS update overwrites your schema. A model's training cutoff shifts. A competitor publishes better FAQ content. A robots.txt rule gets inadvertently added in a config sync. Your mention rate drops before you notice.
 
-AiVIS implements continuous verification through scheduled rescans (Alignment+ tiers), automated citation drop alerts, and the citation revalidation service that re-evaluates stored citation results on a six-hour loop. The visibility score history on your Analytics page is your continuous verification log — evidence that your citation signals are holding across time, not a report you check once after launch and forget.
+AiVIS.biz implements continuous verification through scheduled rescans (Alignment+ tiers), automated citation drop alerts, and the citation revalidation service that re-evaluates stored citation results on a six-hour loop. The visibility score history on your Analytics page is your continuous verification log — evidence that your citation signals are holding across time, not a report you check once after launch and forget.
 
 Citation decay is silent. Treat it as you would an expired certificate or a leaked credential: something that must be caught and corrected before it causes visible damage, not after.
 
@@ -4581,7 +4581,7 @@ The brands that will dominate AI answer engines over the next three years are no
 
 Zero Trust your content strategy. Verify every signal. Authenticate every claim. Schedule the rescan.
 
-Run your first AiVIS audit to start the citation verification loop and find out exactly which of the six layers is holding you back.`,
+Run your first AiVIS.biz audit to start the citation verification loop and find out exactly which of the six layers is holding you back.`,
   },
   {
     slug: 'why-ai-doesnt-cite-websites',
@@ -4605,12 +4605,12 @@ Run your first AiVIS audit to start the citation verification loop and find out 
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: [
         'Answer Engine Optimization', 'AI Citation Strategy', 'Structured Data',
         'Content Architecture', 'GEO', 'E-E-A-T',
       ],
-      credentials: ['Founded AiVIS', '968+ Website Audits', 'AI Visibility Research'],
+      credentials: ['Founded AiVIS.biz', '968+ Website Audits', 'AI Visibility Research'],
       experience: '8+ years in SEO, AEO, and AI-readability research across 968+ live audits',
     },
     keyPoints: [
@@ -4742,9 +4742,9 @@ Not directly. Backlinks are a link-graph signal used by search engine ranking al
 
 How long does it take to improve AI visibility after fixing schema?
 
-Schema fixes — adding Organisation, FAQPage, and Article JSON-LD with correct properties — can be deployed in a single release and show measurable score improvement in your next AiVIS audit immediately after. Content restructuring (heading fixes, FAQ section additions) typically takes one to two editing sessions per page depending on existing content depth.
+Schema fixes — adding Organisation, FAQPage, and Article JSON-LD with correct properties — can be deployed in a single release and show measurable score improvement in your next AiVIS.biz audit immediately after. Content restructuring (heading fixes, FAQ section additions) typically takes one to two editing sessions per page depending on existing content depth.
 
-Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to receive an evidence-backed score showing exactly which structural signals are failing on your site — with fixes generated specifically for your page content.`,
+Run a free AiVIS.biz audit at [aivis.biz](https://aivis.biz) to receive an evidence-backed score showing exactly which structural signals are failing on your site — with fixes generated specifically for your page content.`,
   },
   {
     slug: 'ai-citation-tracking-real-probabilistic-fix-2026',
@@ -4873,7 +4873,7 @@ A drop in CitationRankScore usually traces back to one of three causes:
 
 ## Start measuring what your analytics can't see
 
-Your dashboard has no record of whether AI models are citing you — AiVIS does. Run a free audit at [aivis.biz](https://aivis.biz) and get your current visibility score with evidence-backed recommendations. Upgrade to Signal to run CitationRankScore scans with your own query set and get the per-query, per-model breakdown your competitors haven't started tracking yet.
+Your dashboard has no record of whether AI models are citing you — AiVIS.biz does. Run a free audit at [aivis.biz](https://aivis.biz) and get your current visibility score with evidence-backed recommendations. Upgrade to Signal to run CitationRankScore scans with your own query set and get the per-query, per-model breakdown your competitors haven't started tracking yet.
 
 **[Run your free audit →](https://aivis.biz)**`,
   },
@@ -5007,7 +5007,7 @@ A low score typically indicates one or more of:
 
 ## Find out which source tiers are costing you the most
 
-Volume is not your problem — credibility weight is. Run a free AiVIS audit at [aivis.biz](https://aivis.biz) to get your MentionJuice score across all 19 tracked sources. See exactly which Tier 1 gaps are holding your AI visibility back and get a prioritised action plan to close them.
+Volume is not your problem — credibility weight is. Run a free AiVIS.biz audit at [aivis.biz](https://aivis.biz) to get your MentionJuice score across all 19 tracked sources. See exactly which Tier 1 gaps are holding your AI visibility back and get a prioritised action plan to close them.
 
 **[Check your Mention Juice score →](https://aivis.biz)**`,
   },
@@ -5029,7 +5029,7 @@ Volume is not your problem — credibility weight is. Run a free AiVIS audit at 
     ],
     content: `## What the validate_queries_evidence MCP tool does
 
-The \`validate_queries_evidence\` tool is available to Alignment and Signal tier users through the AiVIS MCP server at \`/api/mcp/call\`. It accepts a brand name, a brand URL, and a set of test queries, then runs each query across live AI models and extracts structured evidence from every response.
+The \`validate_queries_evidence\` tool is available to Alignment and Signal tier users through the AiVIS.biz MCP server at \`/api/mcp/call\`. It accepts a brand name, a brand URL, and a set of test queries, then runs each query across live AI models and extracts structured evidence from every response.
 
 The output is a CitationRankScore — a probabilistic 0-100 score representing your brand's AI citation strength — plus a full evidence record for every query × model combination tested.
 
@@ -5191,9 +5191,9 @@ Stop estimating where your brand appears in AI answers — measure it. Signal ti
     ],
     author: {
       name: 'R. Mason',
-      title: 'Founder, AiVIS',
+      title: 'Founder, AiVIS.biz',
       expertise: ['AI Crawling Infrastructure', 'Bot Verification', 'Technical SEO'],
-      credentials: ['Founded AiVIS', 'Crawling Infrastructure Research'],
+      credentials: ['Founded AiVIS.biz', 'Crawling Infrastructure Research'],
       experience: '8+ years in search infrastructure and AI visibility',
     },
     keyPoints: [
@@ -5364,13 +5364,145 @@ The goal is the same as any infrastructure dependency: fail fast on unexpected c
 
 **[Run an AI visibility audit →](https://aivis.biz)**`,
   },
+
+  // ── Brand positioning & market trajectory ────────────────────────────
+  {
+    slug: 'why-aivis-is-built-on-evidence-not-opinions',
+    path: '/blogs/why-aivis-is-built-on-evidence-not-opinions',
+    title: 'Why AiVIS.biz Is Built on Evidence, Not Opinions: Data Transparency in AI Visibility',
+    description:
+      'How AiVIS.biz differentiates from traditional SEO tools by anchoring every audit finding to verifiable evidence through the Cite Ledger, BRAG trails, and deterministic scoring.',
+    excerpt:
+      'Most visibility tools give you a number and expect you to trust it. AiVIS.biz gives you a number, then shows you every piece of evidence behind it.',
+    publishedAt: '2026-04-17',
+    readMinutes: 8,
+    category: 'strategy',
+    tags: ['AEO', 'Visibility', 'Strategy', 'Citations', 'Foundational'],
+    keywords: [
+      'ai visibility evidence',
+      'cite ledger',
+      'data transparency marketing',
+      'evidence-backed audit',
+      'brag trail',
+      'marketing accountability',
+      'ai answer engine attribution',
+      'verifiable scoring',
+    ],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS.biz',
+      expertise: ['Evidence-Based Scoring', 'AI Visibility Strategy', 'Data Transparency'],
+      credentials: ['Founded AiVIS.biz'],
+      experience: '8+ years in search scoring systems and AI infrastructure',
+    },
+    content: `Most visibility tools work the same way. They crawl your page, run some heuristics, and hand you a score. If you ask where the score came from, you get a vague reference to "our proprietary algorithm." If you ask why one page scored higher than another, you get a support article that restates the same vague reference with more words.
+
+That model worked when the only consumer of your score was a human marketer deciding where to spend next quarter's budget. It does not work when the consumers are AI answer engines deciding, in real time, whether to cite your content in a response seen by thousands of people.
+
+AiVIS.biz was built to close that gap. Every score, every recommendation, every finding traces back to a specific piece of structural evidence extracted from your page. Not an opinion. Not a heuristic guess. A deterministic, reproducible observation recorded in a tamper-evident chain.
+
+## The problem with opaque scores
+
+When an AI model like ChatGPT, Perplexity, Claude, or Gemini evaluates whether to cite a source, it does not care about your domain authority number. It cares about whether it can extract structured, verifiable information from your page. Can it identify the author? Can it parse the schema? Does the content answer the query in a format it can chunk and attribute?
+
+Traditional SEO tools were never designed to answer those questions. They measure backlinks, keyword density, and page speed — signals that matter for traditional search ranking but tell you nothing about whether an AI model can actually read your content and trust it enough to cite it.
+
+The result is a generation of website operators optimizing for a scoring system that AI answer engines do not use. High domain authority, poor AI extractability. Good PageSpeed score, zero structured data. The numbers look great. The citations never come.
+
+## Evidence-backed scoring: what it means in practice
+
+AiVIS.biz produces a 0 to 100 visibility score. That score is not a black box. It is the composite output of three layers of evidence:
+
+### 1. Deterministic evidence (SSFR framework)
+
+Before any AI model is involved, 27 deterministic rules evaluate your page across four categories: <a href="/blogs/ssfr-evidence-framework-the-scoring-engine-behind-aivis">Source, Signal, Fact, and Relationship evidence</a>. Each rule produces a pass, partial, or fail. There is no model randomness in this layer. Run the same page twice, get the same result.
+
+Source evidence checks whether your page identifies its creator with verifiable schema. Signal evidence evaluates technical trust indicators like HTTPS, heading hierarchy, and security headers. Fact evidence measures the density of specific, extractable claims versus vague assertions. Relationship evidence maps how your page connects to the rest of the web through internal links, external citations, breadcrumbs, and entity consistency.
+
+Every SSFR finding is assigned a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a> — a unique identifier generated from the finding's source and content hash. That trail links the finding to the specific structural element on your page that triggered it.
+
+### 2. Multi-model AI analysis
+
+After SSFR, the crawl data and evidence scores flow into the AI analysis pipeline. For <a href="/pricing">Signal tier</a> audits, this means a <a href="/methodology/triple-check-protocol">triple-check pipeline</a>: three independent AI models that analyze, critique, and validate your visibility posture.
+
+The first model generates the primary analysis. The second receives that output and runs a peer critique, adjusting scores within a bounded range and challenging recommendations. The third validates the final result, confirming or overriding the composite score.
+
+Each stage writes its findings to the <a href="/methodology/cite-ledger">Cite Ledger</a> with a chain hash linking it to the previous entry. The full audit chain is reproducible from the first crawl observation to the final score.
+
+### 3. Citation verification
+
+For Signal tier and above, AiVIS.biz runs your brand through three independent search engines in parallel — DuckDuckGo HTML, Bing HTML, and DDG Instant Answer API — to verify whether your content actually appears in the search results that AI models use for retrieval-augmented generation.
+
+This is the difference between "your site is optimized" and "your site actually gets cited." If Perplexity cannot find you on DuckDuckGo, it cannot cite you. Optimization without verification is a theory, not a result.
+
+## The Cite Ledger: why traceability changes everything
+
+The <a href="/methodology/cite-ledger">Cite Ledger</a> is the infrastructure layer that makes evidence-backed scoring possible. It is an append-only, tamper-evident record where every audit finding is stored with:
+
+- A **sequence number** establishing chronological order
+- A **BRAG ID** linking the entry to the specific finding and its evidence
+- A **content hash** (SHA-256) of the finding payload
+- A **chain hash** linking this entry to the previous one
+
+The first entry in any ledger uses a genesis hash (64 zero characters). Every subsequent entry's chain hash is derived from the previous entry's content hash. If any entry is modified, the chain breaks. If any entry is removed, the sequence gap is detectable.
+
+This is not blockchain. It is a hash chain — simpler, faster, and purpose-built for audit traceability. The goal is not decentralization. The goal is that when AiVIS.biz tells you your FAQ section lacks FAQPage schema, you can trace that finding back to the exact crawl observation, the exact SSFR rule that flagged it, and the exact evidence payload that was evaluated.
+
+No other AI visibility tool provides this level of finding traceability. Most cannot even tell you which model produced a given recommendation.
+
+## Why data transparency matters now
+
+Marketing organizations are under increasing pressure from three directions:
+
+**AI answer engines are replacing traditional search for high-intent queries.** When someone asks "what is the best project management tool for remote teams," the answer increasingly comes from an AI model, not a list of ten blue links. If your structured data is incomplete, your author entity is undefined, and your content is not chunked in a way that AI models can extract, you are invisible in this new channel — regardless of your traditional SEO metrics.
+
+**Privacy and compliance regulations demand auditable attribution.** Teams need to show where their performance data comes from, how scores are calculated, and whether the methodology is reproducible. An opaque "proprietary algorithm" score is a compliance liability, not an asset.
+
+**Trust in marketing metrics is declining.** After years of vanity metrics, inflated reach numbers, and attribution models that credit everything and explain nothing, organizations want measurement systems they can verify. A score backed by a tamper-evident evidence chain is fundamentally different from a score backed by "trust us."
+
+## What this means for agencies and teams
+
+If you run an agency managing client visibility, evidence-backed auditing changes the conversation:
+
+- **Client reporting becomes defensible.** Every recommendation you deliver traces back to a specific structural finding. If a client asks "why should we add FAQPage schema," you point to the BRAG-evidence-faq_schema_missing finding, not a blog post about best practices.
+- **Progress is measurable.** Run an audit, implement fixes, re-audit. The score delta is tied to specific evidence changes, not model randomness. You can show exactly which structural improvements moved the needle.
+- **Competitor analysis is apples-to-apples.** When you audit a competitor URL through the same pipeline, you get the same evidence framework applied to their page. Gaps are structural, not subjective.
+
+For in-house teams, the same logic applies. Your visibility score is not a number your vendor invented. It is a composite of 27 deterministic rules, multi-model AI analysis, and verified citation testing — all recorded in an auditable chain.
+
+## The market is moving toward accountability
+
+The demand for transparent, auditable measurement systems is not unique to AI visibility. It is a broader shift across marketing technology. Organizations are choosing tools that show their work over tools that hide behind proprietary labels.
+
+AiVIS.biz was built for this shift. Not as a replacement for traditional analytics or CRM platforms, but as a complementary layer that answers the questions those tools cannot: Is my content machine-readable? Can AI models extract and attribute my information correctly? Is my entity identity stable across AI systems, or is it being merged with competitors?
+
+These are evidence problems. They deserve evidence-based answers.
+
+**See your evidence at [aivis.ing](https://aivis.ing). Run your first audit free.**`,
+    keyPoints: [
+      'AiVIS.biz produces a 0-100 visibility score backed by a tamper-evident Cite Ledger — every finding traces to specific structural evidence, not opaque heuristics.',
+      'The SSFR framework runs 27 deterministic rules across Source, Signal, Fact, and Relationship evidence before any AI model is involved.',
+      'Signal tier audits use a triple-check pipeline: three independent AI models that analyze, critique, and validate the result.',
+      'The Cite Ledger is an append-only hash chain where each entry links to the previous through SHA-256 chain hashes, making the full audit reproducible.',
+      'Citation verification runs brands through three independent search engines to confirm AI models can actually find and cite the content.',
+      'Data transparency and auditable attribution are replacing opaque proprietary algorithms as the standard for marketing measurement.',
+    ],
+    relatedPostSlugs: [
+      'how-aivis-works-under-the-hood-full-technical-breakdown',
+      'ssfr-evidence-framework-the-scoring-engine-behind-aivis',
+      'why-every-ai-visibility-audit-needs-an-evidence-trail',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {
-  name: 'R. Mason / AiVIS',
+  name: 'R. Mason / AiVIS.biz',
   title: 'AI Visibility Research',
   expertise: ['AI Search Strategy', 'Answer Engine Optimization', 'Machine Readability'],
-  credentials: ['AiVIS Editorial Team'],
+  credentials: ['AiVIS.biz Editorial Team'],
   experience: '8+ years in search and AI content systems',
 };
 

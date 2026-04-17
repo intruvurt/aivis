@@ -105,7 +105,7 @@ export default function useNotifications() {
       oscillator.start(context.currentTime);
       oscillator.stop(context.currentTime + 0.2);
       oscillator.onended = () => {
-        if (typeof context.close === "function") context.close().catch(() => {});
+        if (typeof context.close === "function") context.close().catch(() => { });
       };
     } catch {
       // keep notification flow silent on audio failures
@@ -174,7 +174,7 @@ export default function useNotifications() {
             Notification.permission === "granted"
           ) {
             try {
-              const browserNotice = new Notification(item.title || "AiVIS Notification", {
+              const browserNotice = new Notification(item.title || "AiVIS.biz Notification", {
                 body: item.message || "You have a new update.",
                 tag: `aivis-notification-${item.id}`,
                 silent: true,
@@ -374,7 +374,7 @@ export default function useNotifications() {
       let show = true;
       blinkIntervalRef.current = setInterval(() => {
         document.title = show
-          ? `(${unreadCount}) New notification — AiVIS`
+          ? `(${unreadCount}) New notification — AiVIS.biz`
           : originalTitleRef.current;
         show = !show;
       }, 1200);

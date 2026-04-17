@@ -284,7 +284,7 @@ from origin 'https://aivis.biz' has been blocked by CORS policy
 2. Environment → add `FRONTEND_URL=https://aivis.biz`
 3. Save and wait for redeploy
 
-### "Could not reach AiVIS API" Error
+### "Could not reach AiVIS.biz API" Error
 
 ```javascript
 // Frontend error message shows this

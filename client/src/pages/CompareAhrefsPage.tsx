@@ -6,17 +6,17 @@ import { buildBreadcrumbSchema } from "../lib/seoSchema";
 
 export default function CompareAhrefsPage() {
   usePageMeta({
-    title: "AiVIS vs Ahrefs: AI Visibility Audit vs Backlink Intelligence (2026 Comparison)",
+    title: "AiVIS.biz vs Ahrefs: AI Visibility Audit vs Backlink Intelligence (2026 Comparison)",
     description:
-      "Ahrefs maps backlinks and keyword rankings. AiVIS audits whether AI answer engines can extract, trust, and cite your content. Full 2026 feature comparison.",
+      "Ahrefs maps backlinks and keyword rankings. AiVIS.biz audits whether AI answer engines can extract, trust, and cite your content. Full 2026 feature comparison.",
     path: "/compare/aivis-vs-ahrefs",
     structuredData: [
       {
         "@context": "https://schema.org",
         "@type": "Article",
-        headline: "AiVIS vs Ahrefs: AI Citation Readiness vs Backlink Intelligence",
+        headline: "AiVIS.biz vs Ahrefs: AI Citation Readiness vs Backlink Intelligence",
         description:
-          "Ahrefs tracks the web's largest backlink index and keyword data. AiVIS audits whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. These are different measurement layers.",
+          "Ahrefs tracks the web's largest backlink index and keyword data. AiVIS.biz audits whether ChatGPT, Perplexity, Claude, and Gemini can extract, trust, and cite your content. These are different measurement layers.",
         author: { "@id": "https://aivis.biz/#author" },
         publisher: { "@id": "https://aivis.biz/#organization" },
         datePublished: "2026-03-24",
@@ -28,10 +28,10 @@ export default function CompareAhrefsPage() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "Is AiVIS an Ahrefs alternative?",
+            name: "Is AiVIS.biz an Ahrefs alternative?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "AiVIS is not a direct Ahrefs replacement. Ahrefs excels at backlink analysis, keyword research, and SERP tracking. AiVIS measures a different layer entirely: whether AI answer engines can parse, extract, and cite your content. They are complementary, not competitive.",
+              text: "AiVIS.biz is not a direct Ahrefs replacement. Ahrefs excels at backlink analysis, keyword research, and SERP tracking. AiVIS.biz measures a different layer entirely: whether AI answer engines can parse, extract, and cite your content. They are complementary, not competitive.",
             },
           },
           {
@@ -44,10 +44,10 @@ export default function CompareAhrefsPage() {
           },
           {
             "@type": "Question",
-            name: "What does AiVIS measure that Ahrefs cannot?",
+            name: "What does AiVIS.biz measure that Ahrefs cannot?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "AiVIS measures AI citation readiness: content extractability, entity clarity, answer block density, schema completeness for machine consumption, and live citation verification across search engines. It validates findings across three AI models using a Triple-Check pipeline. These are signals that AI answer engines evaluate when choosing which sources to cite.",
+              text: "AiVIS.biz measures AI citation readiness: content extractability, entity clarity, answer block density, schema completeness for machine consumption, and live citation verification across search engines. It validates findings across three AI models using a Triple-Check pipeline. These are signals that AI answer engines evaluate when choosing which sources to cite.",
             },
           },
         ],
@@ -55,7 +55,7 @@ export default function CompareAhrefsPage() {
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
         { name: "Comparison", path: "/compare" },
-        { name: "AiVIS vs Ahrefs", path: "/compare/aivis-vs-ahrefs" },
+        { name: "AiVIS.biz vs Ahrefs", path: "/compare/aivis-vs-ahrefs" },
       ]),
     ],
   });
@@ -70,12 +70,12 @@ export default function CompareAhrefsPage() {
           </p>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
-            AiVIS vs Ahrefs
+            AiVIS.biz vs Ahrefs
           </h1>
 
           <p className="text-lg text-white/75 mb-8 leading-relaxed">
             <strong className="text-white">Ahrefs maps the web&rsquo;s link graph and keyword landscape.</strong>{" "}
-            <strong className="text-white">AiVIS audits whether AI answer engines can read, trust, and cite your content.</strong>{" "}
+            <strong className="text-white">CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines.</strong>{" "}
             These tools operate on different measurement layers. Backlink authority matters for Google rankings. Content extractability and entity clarity matter for AI citations. This comparison explains exactly where each tool contributes.
           </p>
 
@@ -90,14 +90,14 @@ export default function CompareAhrefsPage() {
             </p>
           </section>
 
-          {/* ── What AiVIS Measures ── */}
+          {/* ── What AiVIS.biz Measures ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS Measures</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS.biz Measures</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              AiVIS is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. It audits content extractability (can an AI model parse your page into usable knowledge?), entity clarity (does your brand, author, and organization schema form a coherent graph?), answer block density (is your content structured in citable answer fragments?), and cross-platform citation presence (are you actually showing up in AI-generated answers?).
+              AiVIS.biz is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. It audits content extractability (can an AI model parse your page into usable knowledge?), entity clarity (does your brand, author, and organization schema form a coherent graph?), answer block density (is your content structured in citable answer fragments?), and cross-platform citation presence (are you actually showing up in AI-generated answers?).
             </p>
             <p className="text-white/70 leading-relaxed">
-              The output is a quantified visibility score validated across multiple AI models using a Triple-Check pipeline, plus evidence-linked recommendations. On the Score Fix tier, AiVIS generates GitHub pull requests that implement the structural fixes automatically.
+              The output is a quantified visibility score validated across multiple AI models using a Triple-Check pipeline, plus evidence-linked recommendations. On the Score Fix tier, AiVIS.biz generates GitHub pull requests that implement the structural fixes automatically.
             </p>
           </section>
 
@@ -109,7 +109,7 @@ export default function CompareAhrefsPage() {
                 <thead className="bg-white/[0.06]">
                   <tr>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/80 border-r border-r-white/10">Capability</th>
-                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS</th>
+                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS.biz</th>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/70">Ahrefs</th>
                   </tr>
                 </thead>
@@ -150,7 +150,7 @@ export default function CompareAhrefsPage() {
 
           {/* ── When to Use Each ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">When to Use Ahrefs vs AiVIS</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">When to Use Ahrefs vs AiVIS.biz</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-orange-400/20 bg-orange-500/[0.06] p-5">
                 <h3 className="text-lg font-bold text-orange-300 mb-2">Use Ahrefs When</h3>
@@ -163,7 +163,7 @@ export default function CompareAhrefsPage() {
                 </ul>
               </div>
               <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/[0.06] p-5">
-                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS When</h3>
+                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS.biz When</h3>
                 <ul className="space-y-2 text-sm text-white/70">
                   <li>You need to know if AI systems can parse and cite your content</li>
                   <li>You want validated audit findings across multiple AI models</li>
@@ -174,7 +174,7 @@ export default function CompareAhrefsPage() {
               </div>
             </div>
             <p className="text-sm text-white/55 mt-4">
-              Ahrefs sees links. AiVIS sees structure. Both matter. One tells you how Google values your pages. The other tells you whether AI answer engines can use them as source material.
+              Ahrefs sees links. AiVIS.biz sees structure. Both matter. One tells you how Google values your pages. The other tells you whether AI answer engines can use them as source material.
             </p>
           </section>
 
@@ -185,7 +185,7 @@ export default function CompareAhrefsPage() {
               Ahrefs was built for the link-based web. Its core insight is that backlinks are votes of confidence and authority. That model works for search engines that use links as ranking signals.
             </p>
             <p className="text-white/70 leading-relaxed">
-              AI answer engines like ChatGPT, Perplexity, and Claude do not rank pages by backlink count. They evaluate whether content can be extracted into structured knowledge, whether the entity graph is coherent, whether claims are verifiable, and whether the content answers the question directly. These are structural signals that no backlink tool measures. AiVIS was built to measure exactly this.
+              AI answer engines like ChatGPT, Perplexity, and Claude do not rank pages by backlink count. They evaluate whether content can be extracted into structured knowledge, whether the entity graph is coherent, whether claims are verifiable, and whether the content answers the question directly. These are structural signals that no backlink tool measures. AiVIS.biz was built to measure exactly this.
             </p>
           </section>
 
@@ -195,16 +195,16 @@ export default function CompareAhrefsPage() {
             <div className="space-y-4">
               {[
                 {
-                  q: "Is AiVIS an Ahrefs alternative?",
-                  a: "No. Ahrefs is a backlink and keyword research platform. AiVIS is an AiVIS | CITE LEDGER . They measure different things. Use Ahrefs for link intelligence. Use AiVIS for AI citation readiness.",
+                  q: "Is AiVIS.biz an Ahrefs alternative?",
+                  a: "No. Ahrefs is a backlink and keyword research platform. AiVIS.biz is an AiVIS.biz | CITE LEDGER . They measure different things. Use Ahrefs for link intelligence. Use AiVIS.biz for AI citation readiness.",
                 },
                 {
                   q: "Does Ahrefs measure AI visibility?",
                   a: "Ahrefs tracks traditional search metrics - backlinks, referring domains, keyword rankings, and SERP features. It does not audit content extractability for AI answer engines, verify citations across ChatGPT or Perplexity, or measure entity clarity for machine consumption.",
                 },
                 {
-                  q: "Can I use both Ahrefs and AiVIS?",
-                  a: "Yes. This is the recommended approach. Ahrefs covers the link-based SEO layer. AiVIS covers AI citation readiness. Together they give you visibility into both search engine rankings and AI answer engine citations.",
+                  q: "Can I use both Ahrefs and AiVIS.biz?",
+                  a: "Yes. This is the recommended approach. Ahrefs covers the link-based SEO layer. AiVIS.biz covers AI citation readiness. Together they give you visibility into both search engine rankings and AI answer engine citations.",
                 },
                 {
                   q: "What is the difference between backlinks and AI citation readiness?",
@@ -234,7 +234,7 @@ export default function CompareAhrefsPage() {
           </section>
 
           <section className="mt-10">
-            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS.biz with other tools</h3>
             <div className="flex flex-wrap gap-3">
               <Link to="/compare/semrush" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Semrush</Link>
               <Link to="/compare/rankscale" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs RankScale</Link>
@@ -245,7 +245,7 @@ export default function CompareAhrefsPage() {
           </section>
 
           <p className="text-xs text-white/40 mt-6">
-            Ahrefs is a trademark of Ahrefs Pte. Ltd. This comparison reflects publicly available feature information as of March 2026. AiVIS is not affiliated with Ahrefs.
+            Ahrefs is a trademark of Ahrefs Pte. Ltd. This comparison reflects publicly available feature information as of March 2026. AiVIS.biz is not affiliated with Ahrefs.
           </p>
         </div>
       </section>

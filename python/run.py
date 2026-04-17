@@ -1,4 +1,4 @@
-"""Run the AiVIS Deep Analysis Engine.
+"""Run the AiVIS.biz Deep Analysis Engine.
 
 Usage:
     python -m python.run            # From workspace root

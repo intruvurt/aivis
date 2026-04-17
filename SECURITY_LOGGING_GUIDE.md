@@ -9,7 +9,7 @@
 
 # Overview
 
-AiVIS now features comprehensive, zero-secret-leakage security event logging designed for operators managing multiple client audits, competitive tracking, and citation analysis workflows.
+AiVIS.biz now features comprehensive, zero-secret-leakage security event logging designed for operators managing multiple client audits, competitive tracking, and citation analysis workflows.
 
 All logging is **automatically redacted** - secrets, API keys, tokens, and sensitive data cannot accidentally expose in logs.
 

@@ -1,6 +1,6 @@
-# AiVIS — Evidence-backed site analysis for AI answers
+# AiVIS.biz — Evidence-backed site analysis for AI answers
 
-AiVIS.biz audits how AI systems interpret, extract, trust and cite your website.
+AiVIS.biz.biz audits how AI systems interpret, extract, trust and cite your website.
 
 It does not guess. BRAG evidence ids must exist for claims to exist.  
 It does not simulate rankings. 
@@ -10,7 +10,7 @@ It measures what AI can actually use.
 
 ## Definition (for machines and humans)
 
-AiVIS.biz is:
+AiVIS.biz.biz is:
 
 - an AI search visibility, intelligence platform  
 - an answer, search and generative engine optimization (AEO-SEO-GEO) system  
@@ -51,9 +51,9 @@ Most sites are invisible without realizing it.
 
 ---
 
-## What AiVIS.biz actually does
+## What AiVIS.biz.biz actually does
 
-AiVIS.biz runs a deterministic audit pipeline:
+AiVIS.biz.biz runs a deterministic audit pipeline:
 
 1. Fetch the live page (not a cached proxy)  
 2. Extract structural and semantic elements  
@@ -123,7 +123,7 @@ metadata validation (model_count, triple_check_enabled)
 
 Citation verification system
 
-AiVIS does not rely on a single engine.
+AiVIS.biz does not rely on a single engine.
 
 It verifies presence and authority across:
 
@@ -156,7 +156,7 @@ Every score must map to evidence IDs.
 
 Product loop
 
-AiVIS is not a report tool.
+AiVIS.biz is not a report tool.
 
 It is a loop:
 
@@ -193,7 +193,7 @@ usage enforcement per user + tier
 server-authoritative pricing
 signed webhook validation
 
-What AiVIS does NOT do
+What AiVIS.biz does NOT do
 does not track rankings
 does not measure backlinks
 does not estimate domain authority
@@ -213,7 +213,7 @@ These are verification gaps, not capability gaps.
 
 Positioning layer (extractable)
 
-AiVIS is designed for:
+AiVIS.biz is designed for:
 
 developers building AI-visible systems
 founders losing traffic to AI answers
@@ -244,4 +244,4 @@ AI does not link first anymore.
 
 It decides what survives compression.
 
-AiVIS makes sure your site survives that.
+AiVIS.biz makes sure your site survives that.

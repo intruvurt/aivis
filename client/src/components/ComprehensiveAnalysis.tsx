@@ -380,6 +380,31 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
           <section className="rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
+            {/* ── BRAG Validation Gate Summary ── */}
+            {result.brag_validation && (
+              <div className="mb-5 rounded-xl border border-cyan-400/15 bg-cyan-400/[0.04] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-cyan-200">
+                    BRAG Gate v{result.brag_validation.gate_version?.replace(/^brag-gate-|-v\d+$/g, '') || '1'}
+                  </span>
+                  <span className="text-sm font-medium text-white/80">
+                    {result.brag_validation.finding_count === 0
+                      ? "No issues detected — site is optimally configured"
+                      : `${result.brag_validation.finding_count} validated finding${result.brag_validation.finding_count === 1 ? '' : 's'}`}
+                  </span>
+                  {result.brag_validation.rejected_count > 0 && (
+                    <span className="text-[11px] text-white/40">
+                      ({result.brag_validation.rejected_count} unverified claim{result.brag_validation.rejected_count === 1 ? '' : 's'} suppressed)
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-4 text-xs text-white/55">
+                  <span>Derived Score: <strong className="text-white/90">{result.brag_validation.derived_score}</strong></span>
+                  <span>Cite Ledger: <strong className="text-white/70 font-mono">{result.brag_validation.root_hash?.slice(0, 16)}…</strong></span>
+                  <span>Chain Length: <strong className="text-white/70">{result.brag_validation.cite_ledger?.length ?? 0}</strong></span>
+                </div>
+              </div>
+            )}
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold tracking-tight text-white">Evidence-Backed Fixes</h2>

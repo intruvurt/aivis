@@ -268,6 +268,7 @@ import {
 } from "./services/audit/deterministicPipeline.js";
 import { loadEvidenceForRun, extractEvidenceFromScrapedData } from "./services/audit/evidenceLedger.js";
 import { evaluateRules, computeScore as computeRuleScore, persistRuleResults, persistScoreSnapshot } from "./services/audit/ruleEngine.js";
+import { runBragValidationGate, persistBragTrail, persistCiteLedger } from "./services/bragGate.js";
 import {
   extractEvidenceFromScrape,
   enrichEvidenceFromAnalysis,
@@ -9878,6 +9879,83 @@ app.post(
       const ruleResults = evaluateRules(evidenceLedger.items, evidenceLedger.contradictions.length);
       const ruleSnapshot = computeRuleScore(ruleResults);
 
+      // ── Pipeline state tracker ──
+      // Tracks each sequential stage for transparency and failure visibility.
+      const pipelineStages: import("../../shared/types.js").PipelineStageRecord[] = [
+        {
+          stage: 'scrape',
+          status: 'completed',
+          started_at: new Date(startTime).toISOString(),
+          completed_at: new Date().toISOString(),
+          duration_ms: Date.now() - startTime,
+          item_count: sd.wordCount || 0,
+        },
+        {
+          stage: 'evidence',
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          item_count: evidenceLedger.items.length,
+          note: `${evidenceLedger.items.filter(i => i.status === 'present').length} present, ${evidenceLedger.contradictions.length} contradictions`,
+        },
+        {
+          stage: 'rules',
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          item_count: ruleResults.length,
+          note: `score_cap=${ruleSnapshot.scoreCap ?? 'none'}, hard_blockers=${ruleSnapshot.hardBlockerCount}`,
+        },
+      ];
+      let pipelineScoreSource: 'evidence' | 'ai_fallback' | 'deterministic' = 'evidence';
+
+      // ── Evidence-first guardrail ──
+      // If evidence extraction yielded zero "present" items, no scoring can be
+      // evidence-derived. Return score 0 immediately — no exceptions.
+      const presentEvidence = evidenceLedger.items.filter(i => i.status === 'present');
+      if (presentEvidence.length === 0) {
+        console.warn(`[${requestId}] Evidence-first guardrail: 0 present evidence items — returning score 0`);
+        pipelineStages.push({
+          stage: 'ai_analysis', status: 'skipped', note: 'No evidence to score',
+        });
+        pipelineStages.push({
+          stage: 'brag_gate', status: 'skipped', note: 'No evidence to validate',
+        });
+        pipelineStages.push({
+          stage: 'finalize', status: 'completed', completed_at: new Date().toISOString(),
+        });
+        const processingTime = Date.now() - startTime;
+        return res.status(200).json({
+          visibility_score: 0,
+          ai_platform_scores: { chatgpt: 0, perplexity: 0, google_ai: 0, claude: 0 },
+          recommendations: [],
+          schema_markup: { json_ld_count: 0, has_organization_schema: false, has_faq_schema: false, schema_types: [] },
+          content_analysis: {} as any,
+          summary: `No extractable evidence found for ${parsedTargetUrl.hostname}. The page may be JavaScript-rendered, behind authentication, or otherwise inaccessible.`,
+          key_takeaways: ['No evidence could be extracted from this page'],
+          topical_keywords: [],
+          brand_entities: [],
+          domain_intelligence: {} as any,
+          technical_signals: {} as any,
+          crypto_intelligence: { has_crypto_signals: false, summary: 'No content available', detected_assets: [], keywords: [], wallet_addresses: [], sentiment: 'neutral' as const, risk_notes: [], chain_networks: [], onchain_enriched: false, experimental: true as const },
+          url: targetUrl,
+          analyzed_at: new Date().toISOString(),
+          processing_time_ms: processingTime,
+          cached: false,
+          scrape_info: scrapeInfo,
+          triple_check_enabled: false,
+          model_count: 0,
+          evidence_manifest: { total_items: evidenceLedger.items.length, present_count: 0, absent_count: evidenceLedger.items.filter(i => i.status === 'absent').length, partial_count: evidenceLedger.items.filter(i => i.status === 'partial').length, error_count: evidenceLedger.items.filter(i => i.status === 'error').length },
+          rule_engine: { score: ruleSnapshot.finalScore, hard_blocker_count: ruleSnapshot.hardBlockerCount, score_cap: ruleSnapshot.scoreCap, family_scores: ruleSnapshot.familyScores, contradiction_count: evidenceLedger.contradictions.length, score_version: ruleSnapshot.scoreVersion },
+          pipeline_state: {
+            stages: pipelineStages,
+            completed: true,
+            score_source: 'evidence',
+            total_ms: processingTime,
+          },
+          pipeline_mode: 'evidence_zero',
+          request_id: requestId,
+        });
+      }
+
       const normalizedTier = normalizedRequestTier;
       const isTripleCheck =
         normalizedTier === "signal" || normalizedTier === "scorefix";
@@ -11154,6 +11232,16 @@ For each recommendation:
             evidenceBounds,
           );
 
+      // Record AI analysis stage completion in pipeline state
+      pipelineStages.push({
+        stage: 'ai_analysis',
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+        duration_ms: Date.now() - startTime,
+        item_count: aiAnalysis.recommendations?.length || 0,
+        note: `ai1_score=${ai1Score}, model=${providers[0]?.model || 'unknown'}`,
+      });
+
       // ─────────────────────────────────────────────────────────────────────
       // Triple-Check Pipeline (Signal + Score Fix tiers)
       //   AI2 = Claude Sonnet 4.6 peer critique   (score adjustment −15 to +10)
@@ -11978,6 +12066,64 @@ For each recommendation:
         });
       }
 
+      // ── BRAG Validation Gate — single source of truth for scoring ──
+      // Every finding (rule engine + AI recommendations) must pass through
+      // the BRAG gate to earn a BRAG ID. Only BRAG-validated findings surface
+      // to the user. Score is derived purely from validated findings:
+      //   0 BRAG findings → score 100 (nothing is wrong)
+      //   N findings → score = max(0, 100 − Σ severity_weights)
+      let bragValidation: import("../../shared/types.js").BragValidationResult | null = null;
+      try {
+        bragValidation = await runBragValidationGate({
+          auditId: requestId,
+          url: targetUrl,
+          evidenceItems: evidenceLedger.items,
+          ruleResults,
+          aiRecommendations: finalizedRecommendationBundle.recommendations.map((rec: any) => ({
+            title: rec.title || '',
+            description: rec.description || '',
+            priority: rec.priority || 'medium',
+            evidence_ids: rec.evidence_ids || [],
+            category: rec.category || '',
+            implementation: rec.implementation || '',
+          })),
+          scrapeSummary: {
+            word_count: sd.body?.split(/\s+/).length || 0,
+            title: sd.title || '',
+            meta_description: sd.meta?.description || '',
+            json_ld_blocks: sd.jsonLd || [],
+          },
+        });
+
+        // BRAG-derived score IS the final visibility score — evidence is the single source of truth.
+        // The AI-derived score (evidenceAnchoredScore) is kept for diagnostics only.
+        if (bragValidation) {
+          finalVisibilityScore = Math.round(bragValidation.derived_score);
+          pipelineScoreSource = 'evidence';
+        }
+
+        pipelineStages.push({
+          stage: 'brag_gate',
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          item_count: bragValidation.finding_count,
+          note: `derived_score=${bragValidation.derived_score}, rejected=${bragValidation.rejected_count}, ledger_len=${bragValidation.cite_ledger.length}`,
+        });
+
+        console.log(
+          `[${requestId}] BRAG gate: ${bragValidation.finding_count} findings, ${bragValidation.rejected_count} rejected, derived_score=${bragValidation.derived_score}, gate=${bragValidation.gate_version}`,
+        );
+      } catch (bragErr: unknown) {
+        const bragMsg = bragErr instanceof Error ? bragErr.message : String(bragErr);
+        console.warn(`[${requestId}] BRAG gate failed (non-fatal, score from AI fallback): ${bragMsg}`);
+        pipelineScoreSource = 'ai_fallback';
+        pipelineStages.push({
+          stage: 'brag_gate',
+          status: 'failed',
+          note: `BRAG gate error: ${bragMsg.slice(0, 200)}`,
+        });
+      }
+
       const seoDiagnostics = computeSeoDiagnostics(
         sd,
         schemaMarkup,
@@ -12204,6 +12350,20 @@ For each recommendation:
         strict_rubric: strictRubric,
         cache_tier: normalizedRequestTier,
         pipeline_mode: "live_ai",
+        ...(bragValidation ? { brag_validation: bragValidation } : {}),
+        pipeline_state: (() => {
+          pipelineStages.push({
+            stage: 'finalize',
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+          });
+          return {
+            stages: pipelineStages,
+            completed: true,
+            score_source: pipelineScoreSource,
+            total_ms: Date.now() - startTime,
+          };
+        })(),
         ...(llmReadabilityResult
           ? { llm_readability: llmReadabilityResult }
           : {}),
@@ -12718,6 +12878,21 @@ For each recommendation:
                 );
               })(),
             );
+
+            // ── Persist BRAG validation trail + cite ledger (fire-and-forget) ──
+            if (bragValidation && bragValidation.finding_count > 0) {
+              backgroundWithTimeout(
+                `brag-trail:${requestId}`,
+                (async () => {
+                  const pool = getPool();
+                  await persistBragTrail(pool, dbAuditId!, bragValidation!);
+                  await persistCiteLedger(pool, dbAuditId!, bragValidation!.cite_ledger);
+                  console.log(
+                    `[${requestId}] BRAG trail persisted: ${bragValidation!.finding_count} findings, root_hash=${bragValidation!.root_hash.slice(0, 12)}…`,
+                  );
+                })(),
+              );
+            }
 
             backgroundWithTimeout(
               `deep-analysis:${requestId}`,

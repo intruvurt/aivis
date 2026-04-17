@@ -686,6 +686,7 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`,
+            `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`,
             `ALTER TABLE audit_evidence ALTER COLUMN category DROP NOT NULL`,
             `ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`,
             `ALTER TABLE audit_evidence ALTER COLUMN label DROP NOT NULL`,
@@ -2547,6 +2548,7 @@ export async function runMigrations(): Promise<void> {
         `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS confidence NUMERIC(5,2) DEFAULT 1.0`,
       );
       _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS notes JSONB`);
+      _q(`ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`);
       _q(`ALTER TABLE audit_evidence ALTER COLUMN key DROP NOT NULL`);
 
       // ─── SSFR Rule Results ──────────────────────────────────────────────────
@@ -3319,6 +3321,26 @@ export async function runMigrations(): Promise<void> {
       );
       _q(
         `CREATE INDEX IF NOT EXISTS idx_brag_trail_created ON brag_trail(created_at DESC)`,
+      );
+
+      // ── Cite Ledger — cryptographic hash chain for BRAG validation trail ──
+      _q(`
+      CREATE TABLE IF NOT EXISTS cite_ledger (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_run_id UUID NOT NULL,
+        sequence INTEGER NOT NULL,
+        brag_id VARCHAR(80) NOT NULL,
+        content_hash VARCHAR(128) NOT NULL,
+        previous_hash VARCHAR(128) NOT NULL,
+        chain_hash VARCHAR(128) NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE INDEX IF NOT EXISTS idx_cite_ledger_run ON cite_ledger(audit_run_id)`,
+      );
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_cite_ledger_run_seq ON cite_ledger(audit_run_id, sequence)`,
       );
 
       _q(`

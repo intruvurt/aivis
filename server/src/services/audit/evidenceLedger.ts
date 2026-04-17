@@ -1,19 +1,37 @@
 /**
- * Evidence Ledger - extracts ~15 evidence categories from ScrapeResult.
+ * Evidence Ledger - extracts ~30 evidence categories from ScrapeResult.
  *
  * Every evidence item has:
- *   category, key, label, value_json, status, confidence, notes[]
+ *   evidence_id, category, key, label, value_json, status, confidence, notes[]
+ *
+ * evidence_id is a deterministic hash generated at extraction time:
+ *   EV-{sha256(auditRunId + key + status).slice(0,12)}
+ * This ensures IDs exist before scoring, before DB, before BRAG gate.
  *
  * This module never throws. If extraction fails for a category,
  * the item is emitted with status='error' and a note explaining why.
  */
 
+import { createHash } from 'crypto';
 import { getPool } from '../postgresql.js';
 import type { ScrapeResult, StructuredData, RobotsInfo } from '../scraper.js';
+
+// ─── Evidence ID generation ───────────────────────────────────────────────────
+
+/** Deterministic evidence ID: EV-{sha256(auditRunId + key + status)[0:12]} */
+function generateEvidenceId(auditRunId: string, key: string, status: string): string {
+  const hash = createHash('sha256')
+    .update(`${auditRunId}:${key}:${status}`)
+    .digest('hex')
+    .slice(0, 12);
+  return `EV-${hash}`;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface EvidenceItem {
+  /** Deterministic ID generated at extraction time: EV-{hash} */
+  evidence_id: string;
   category: string;
   key: string;
   label: string;
@@ -25,6 +43,9 @@ export interface EvidenceItem {
   confidence: number;
   notes: string[];
 }
+
+/** Evidence item before ID assignment — used internally by helper functions */
+type RawEvidenceItem = Omit<EvidenceItem, 'evidence_id'>;
 
 export interface EvidenceLedger {
   auditRunId: string;
@@ -47,97 +68,103 @@ export function extractEvidenceFromScrapedData(
   scrapeResult: ScrapeResult,
 ): EvidenceLedger {
   const d = scrapeResult.data;
-  const items: EvidenceItem[] = [];
+  const rawItems: RawEvidenceItem[] = [];
 
   // 1. Title
-  items.push(textEvidence('meta', 'title', 'Page title', d.title, 'head > title'));
+  rawItems.push(textEvidence('meta', 'title', 'Page title', d.title, 'head > title'));
 
   // 2. Meta description
-  items.push(textEvidence('meta', 'meta_description', 'Meta description', d.meta?.description, 'meta[name=description]'));
+  rawItems.push(textEvidence('meta', 'meta_description', 'Meta description', d.meta?.description, 'meta[name=description]'));
 
   // 3. OG title
-  items.push(textEvidence('meta', 'og_title', 'Open Graph title', d.meta?.ogTitle, 'meta[property=og:title]'));
+  rawItems.push(textEvidence('meta', 'og_title', 'Open Graph title', d.meta?.ogTitle, 'meta[property=og:title]'));
 
   // 4. OG description
-  items.push(textEvidence('meta', 'og_description', 'Open Graph description', d.meta?.ogDescription, 'meta[property=og:description]'));
+  rawItems.push(textEvidence('meta', 'og_description', 'Open Graph description', d.meta?.ogDescription, 'meta[property=og:description]'));
 
   // 5. Canonical URL
-  items.push(textEvidence('indexability', 'canonical', 'Canonical URL', d.canonical, 'link[rel=canonical]'));
+  rawItems.push(textEvidence('indexability', 'canonical', 'Canonical URL', d.canonical, 'link[rel=canonical]'));
 
   // 6. Headings structure
-  items.push(headingsEvidence(d.headings));
+  rawItems.push(headingsEvidence(d.headings));
 
   // 7. Word count
-  items.push(numericEvidence('content', 'word_count', 'Word count', d.wordCount, undefined, d.wordCount != null && d.wordCount >= 300));
+  rawItems.push(numericEvidence('content', 'word_count', 'Word count', d.wordCount, undefined, d.wordCount != null && d.wordCount >= 300));
 
   // 8. Structured data / JSON-LD
-  items.push(structuredDataEvidence(d.structuredData));
+  rawItems.push(structuredDataEvidence(d.structuredData));
 
   // 9. Robots / AI crawler access
-  items.push(robotsEvidence(d.robots));
+  rawItems.push(robotsEvidence(d.robots));
 
   // 10. llms.txt
-  items.push(llmsTxtEvidence(d.llmsTxt));
+  rawItems.push(llmsTxtEvidence(d.llmsTxt));
 
   // 11. Internal / external links
-  items.push(linksEvidence(d.links));
+  rawItems.push(linksEvidence(d.links));
 
   // 12. Images count
-  items.push(numericEvidence('content', 'image_count', 'Image count', d.images));
+  rawItems.push(numericEvidence('content', 'image_count', 'Image count', d.images));
 
   // 13. Question H2s (FAQ-style headings)
-  items.push(questionH2Evidence(d.questionH2Count, d.questionH2s));
+  rawItems.push(questionH2Evidence(d.questionH2Count, d.questionH2s));
 
   // 14. TL;DR block
-  items.push(tldrEvidence(d.hasTldr, d.tldrText, d.tldrPosition));
+  rawItems.push(tldrEvidence(d.hasTldr, d.tldrText, d.tldrPosition));
 
   // 15. Performance - LCP
-  items.push(numericEvidence('performance', 'lcp_ms', 'Largest Contentful Paint (ms)', d.lcpMs));
+  rawItems.push(numericEvidence('performance', 'lcp_ms', 'Largest Contentful Paint (ms)', d.lcpMs));
 
   // 16. Page load time
-  items.push(numericEvidence('performance', 'page_load_ms', 'Page load time (ms)', d.pageLoadMs));
+  rawItems.push(numericEvidence('performance', 'page_load_ms', 'Page load time (ms)', d.pageLoadMs));
 
   // 17. Sitemap
-  items.push(sitemapEvidence(d.sitemap));
+  rawItems.push(sitemapEvidence(d.sitemap));
 
   // 18. Image alt text coverage
-  items.push(imageAltEvidence(d.images, d.imagesWithAlt));
+  rawItems.push(imageAltEvidence(d.images, d.imagesWithAlt));
 
   // 19. Lang attribute
-  items.push(textEvidence('meta', 'lang', 'HTML lang attribute', d.lang, 'html[lang]'));
+  rawItems.push(textEvidence('meta', 'lang', 'HTML lang attribute', d.lang, 'html[lang]'));
 
   // 20. OG image
-  items.push(textEvidence('meta', 'og_image', 'Open Graph image', d.meta?.ogImage, 'meta[property=og:image]'));
+  rawItems.push(textEvidence('meta', 'og_image', 'Open Graph image', d.meta?.ogImage, 'meta[property=og:image]'));
 
   // 21. Twitter card
-  items.push(textEvidence('meta', 'twitter_card', 'Twitter card type', d.meta?.twitterCard, 'meta[name=twitter:card]'));
+  rawItems.push(textEvidence('meta', 'twitter_card', 'Twitter card type', d.meta?.twitterCard, 'meta[name=twitter:card]'));
 
   // 22. Hreflang tags
-  items.push(hreflangEvidence(d.hreflang));
+  rawItems.push(hreflangEvidence(d.hreflang));
 
   // 23. Granular AI crawler access
-  items.push(aiCrawlerAccessEvidence(d.aiCrawlerAccess));
+  rawItems.push(aiCrawlerAccessEvidence(d.aiCrawlerAccess));
 
   // 24. JSON-LD property completeness
-  items.push(jsonLdCompletenessEvidence(d.structuredData));
+  rawItems.push(jsonLdCompletenessEvidence(d.structuredData));
 
   // 25. Ecommerce platform detection
-  items.push(ecommercePlatformEvidence(d.html || ''));
+  rawItems.push(ecommercePlatformEvidence(d.html || ''));
 
   // 26. Product / ProductGroup schema
-  items.push(ecommerceProductSchemaEvidence(d.structuredData));
+  rawItems.push(ecommerceProductSchemaEvidence(d.structuredData));
 
   // 27. Offer / price schema
-  items.push(ecommerceOfferSchemaEvidence(d.structuredData));
+  rawItems.push(ecommerceOfferSchemaEvidence(d.structuredData));
 
   // 28. AggregateRating schema (reviews)
-  items.push(ecommerceRatingSchemaEvidence(d.structuredData));
+  rawItems.push(ecommerceRatingSchemaEvidence(d.structuredData));
 
   // 29. BreadcrumbList schema depth
-  items.push(ecommerceBreadcrumbEvidence(d.structuredData, d.html || ''));
+  rawItems.push(ecommerceBreadcrumbEvidence(d.structuredData, d.html || ''));
 
   // 30. Merchant / cart signals (HTML patterns)
-  items.push(ecommerceMerchantSignalsEvidence(d.html || ''));
+  rawItems.push(ecommerceMerchantSignalsEvidence(d.html || ''));
+
+  // Assign deterministic evidence IDs — IDs exist before DB, before scoring, before BRAG gate
+  const items: EvidenceItem[] = rawItems.map((raw) => ({
+    ...raw,
+    evidence_id: generateEvidenceId(auditRunId, raw.key, raw.status),
+  }));
 
   // Detect contradictions across evidence
   const contradictions = detectContradictions(items);
@@ -221,7 +248,7 @@ function textEvidence(
   label: string,
   value: string | undefined | null,
   selector?: string,
-): EvidenceItem {
+): RawEvidenceItem {
   const present = typeof value === 'string' && value.trim().length > 0;
   const notes: string[] = [];
   if (present && value!.length < 10) notes.push('Very short - may be too brief for AI extraction.');
@@ -245,7 +272,7 @@ function numericEvidence(
   value: number | undefined | null,
   selector?: string,
   passes?: boolean,
-): EvidenceItem {
+): RawEvidenceItem {
   const present = typeof value === 'number' && !isNaN(value);
   return {
     category,
@@ -259,7 +286,7 @@ function numericEvidence(
   };
 }
 
-function headingsEvidence(headings?: { h1: string[]; h2: string[]; h3: string[] }): EvidenceItem {
+function headingsEvidence(headings?: { h1: string[]; h2: string[]; h3: string[] }): RawEvidenceItem {
   const notes: string[] = [];
   const h1Count = headings?.h1?.length ?? 0;
   const h2Count = headings?.h2?.length ?? 0;
@@ -283,7 +310,7 @@ function headingsEvidence(headings?: { h1: string[]; h2: string[]; h3: string[] 
   };
 }
 
-function structuredDataEvidence(sd?: StructuredData): EvidenceItem {
+function structuredDataEvidence(sd?: StructuredData): RawEvidenceItem {
   const notes: string[] = [];
   const count = sd?.jsonLdCount ?? 0;
   const types = sd?.uniqueTypes ?? [];
@@ -310,7 +337,7 @@ function structuredDataEvidence(sd?: StructuredData): EvidenceItem {
   };
 }
 
-function robotsEvidence(robots?: RobotsInfo): EvidenceItem {
+function robotsEvidence(robots?: RobotsInfo): RawEvidenceItem {
   const notes: string[] = [];
   const fetched = robots?.fetched ?? false;
   const allows = robots?.allows ?? {};
@@ -344,7 +371,7 @@ function robotsEvidence(robots?: RobotsInfo): EvidenceItem {
   };
 }
 
-function llmsTxtEvidence(llms?: { fetched: boolean; present: boolean; raw?: string }): EvidenceItem {
+function llmsTxtEvidence(llms?: { fetched: boolean; present: boolean; raw?: string }): RawEvidenceItem {
   const notes: string[] = [];
   const present = llms?.present ?? false;
 
@@ -362,7 +389,7 @@ function llmsTxtEvidence(llms?: { fetched: boolean; present: boolean; raw?: stri
   };
 }
 
-function linksEvidence(links?: { internal: number; external: number }): EvidenceItem {
+function linksEvidence(links?: { internal: number; external: number }): RawEvidenceItem {
   const notes: string[] = [];
   const internal = links?.internal ?? 0;
   const external = links?.external ?? 0;
@@ -381,7 +408,7 @@ function linksEvidence(links?: { internal: number; external: number }): Evidence
   };
 }
 
-function questionH2Evidence(count?: number, h2s?: string[]): EvidenceItem {
+function questionH2Evidence(count?: number, h2s?: string[]): RawEvidenceItem {
   const notes: string[] = [];
   const present = typeof count === 'number' && count > 0;
 
@@ -403,7 +430,7 @@ function tldrEvidence(
   hasTldr?: boolean,
   text?: string,
   position?: 'top' | 'mid' | 'bottom' | 'none',
-): EvidenceItem {
+): RawEvidenceItem {
   const notes: string[] = [];
   const present = hasTldr === true;
 
@@ -424,7 +451,7 @@ function tldrEvidence(
 
 // ─── New evidence helpers ─────────────────────────────────────────────────────
 
-function sitemapEvidence(sitemap?: { fetched: boolean; present: boolean; urlCount?: number }): EvidenceItem {
+function sitemapEvidence(sitemap?: { fetched: boolean; present: boolean; urlCount?: number }): RawEvidenceItem {
   const notes: string[] = [];
   const present = sitemap?.present ?? false;
 
@@ -443,7 +470,7 @@ function sitemapEvidence(sitemap?: { fetched: boolean; present: boolean; urlCoun
   };
 }
 
-function imageAltEvidence(totalImages?: number, withAlt?: number): EvidenceItem {
+function imageAltEvidence(totalImages?: number, withAlt?: number): RawEvidenceItem {
   const notes: string[] = [];
   const total = totalImages ?? 0;
   const alt = withAlt ?? 0;
@@ -465,7 +492,7 @@ function imageAltEvidence(totalImages?: number, withAlt?: number): EvidenceItem 
   };
 }
 
-function hreflangEvidence(hreflangs?: string[]): EvidenceItem {
+function hreflangEvidence(hreflangs?: string[]): RawEvidenceItem {
   const notes: string[] = [];
   const tags = hreflangs ?? [];
   const present = tags.length > 0;
@@ -484,7 +511,7 @@ function hreflangEvidence(hreflangs?: string[]): EvidenceItem {
   };
 }
 
-function aiCrawlerAccessEvidence(access?: Record<string, boolean>): EvidenceItem {
+function aiCrawlerAccessEvidence(access?: Record<string, boolean>): RawEvidenceItem {
   const notes: string[] = [];
   if (!access) {
     return {
@@ -517,7 +544,7 @@ function aiCrawlerAccessEvidence(access?: Record<string, boolean>): EvidenceItem
 }
 
 /** Check JSON-LD entities for required properties completeness */
-function jsonLdCompletenessEvidence(sd?: StructuredData): EvidenceItem {
+function jsonLdCompletenessEvidence(sd?: StructuredData): RawEvidenceItem {
   const notes: string[] = [];
   if (!sd || sd.jsonLdCount === 0) {
     return {
@@ -586,7 +613,7 @@ function jsonLdCompletenessEvidence(sd?: StructuredData): EvidenceItem {
 
 // ─── Ecommerce evidence helpers ───────────────────────────────────────────────
 
-function ecommercePlatformEvidence(html: string): EvidenceItem {
+function ecommercePlatformEvidence(html: string): RawEvidenceItem {
   const lower = html.toLowerCase();
   let platform = 'none';
   if (lower.includes('shopify')) platform = 'shopify';
@@ -616,7 +643,7 @@ function ecommercePlatformEvidence(html: string): EvidenceItem {
   };
 }
 
-function ecommerceProductSchemaEvidence(sd?: StructuredData): EvidenceItem {
+function ecommerceProductSchemaEvidence(sd?: StructuredData): RawEvidenceItem {
   const types = sd?.uniqueTypes ?? [];
   const raw = sd?.raw ?? [];
   const hasProduct = types.some((t) => /^Product$|^ProductGroup$/i.test(t));
@@ -654,7 +681,7 @@ function ecommerceProductSchemaEvidence(sd?: StructuredData): EvidenceItem {
   };
 }
 
-function ecommerceOfferSchemaEvidence(sd?: StructuredData): EvidenceItem {
+function ecommerceOfferSchemaEvidence(sd?: StructuredData): RawEvidenceItem {
   const types = sd?.uniqueTypes ?? [];
   const raw = sd?.raw ?? [];
   const hasOffer = types.some((t) => /^Offer$|^AggregateOffer$/i.test(t));
@@ -697,7 +724,7 @@ function ecommerceOfferSchemaEvidence(sd?: StructuredData): EvidenceItem {
   };
 }
 
-function ecommerceRatingSchemaEvidence(sd?: StructuredData): EvidenceItem {
+function ecommerceRatingSchemaEvidence(sd?: StructuredData): RawEvidenceItem {
   const types = sd?.uniqueTypes ?? [];
   const raw = sd?.raw ?? [];
   const hasRating = types.some((t) => /^AggregateRating$/i.test(t));
@@ -728,7 +755,7 @@ function ecommerceRatingSchemaEvidence(sd?: StructuredData): EvidenceItem {
   };
 }
 
-function ecommerceBreadcrumbEvidence(sd?: StructuredData, html?: string): EvidenceItem {
+function ecommerceBreadcrumbEvidence(sd?: StructuredData, html?: string): RawEvidenceItem {
   const types = sd?.uniqueTypes ?? [];
   const raw = sd?.raw ?? [];
   const hasSchemaBreadcrumb = types.some((t) => /^BreadcrumbList$/i.test(t));
@@ -767,7 +794,7 @@ function ecommerceBreadcrumbEvidence(sd?: StructuredData, html?: string): Eviden
   };
 }
 
-function ecommerceMerchantSignalsEvidence(html: string): EvidenceItem {
+function ecommerceMerchantSignalsEvidence(html: string): RawEvidenceItem {
   const lower = html.toLowerCase();
   const signals: string[] = [];
 
@@ -823,8 +850,9 @@ export function buildSerpEvidenceItems(opts: {
   serp?: SerpEvidenceInput;
   kg?: KgEvidenceInput;
   brand?: string;
+  auditRunId?: string;
 }): EvidenceItem[] {
-  const items: EvidenceItem[] = [];
+  const rawItems: RawEvidenceItem[] = [];
   const { serp, kg } = opts;
 
   // SERP organic position
@@ -835,7 +863,7 @@ export function buildSerpEvidenceItems(opts: {
     if (found) notes.push(`Brand appears at organic position ${pos} in SERP.`);
     else notes.push('Brand not found in SERP organic results (positions 1-10 checked).');
 
-    items.push({
+    rawItems.push({
       category: 'authority',
       key: 'serp_organic_position',
       label: 'SERP organic position',
@@ -851,7 +879,7 @@ export function buildSerpEvidenceItems(opts: {
     if (serp.hasFeaturedSnippet) featuredNotes.push('Site owns a featured snippet — highest AI citation priority signal.');
     else featuredNotes.push('No featured snippet. Structured Q&A content can help claim one.');
 
-    items.push({
+    rawItems.push({
       category: 'authority',
       key: 'serp_featured_snippet',
       label: 'SERP featured snippet',
@@ -867,7 +895,7 @@ export function buildSerpEvidenceItems(opts: {
     if (serp.hasKnowledgePanel) kpNotes.push('Knowledge panel present — entity is recognized by Google\'s Knowledge Graph.');
     else kpNotes.push('No knowledge panel. Adding Organization/Person schema and claiming entities can help.');
 
-    items.push({
+    rawItems.push({
       category: 'authority',
       key: 'serp_knowledge_panel',
       label: 'SERP knowledge panel',
@@ -880,7 +908,7 @@ export function buildSerpEvidenceItems(opts: {
 
     // PAA coverage
     if (Array.isArray(serp.paaQuestions) && serp.paaQuestions.length > 0) {
-      items.push({
+      rawItems.push({
         category: 'authority',
         key: 'serp_paa_questions',
         label: 'SERP "People Also Ask" questions',
@@ -905,7 +933,7 @@ export function buildSerpEvidenceItems(opts: {
       kgNotes.push('Brand entity not found in Google Knowledge Graph. This reduces AI citability.');
     }
 
-    items.push({
+    rawItems.push({
       category: 'authority',
       key: 'kg_entity_confirmed',
       label: 'Google Knowledge Graph entity',
@@ -923,7 +951,11 @@ export function buildSerpEvidenceItems(opts: {
     });
   }
 
-  return items;
+  const runId = opts.auditRunId || 'serp';
+  return rawItems.map((raw) => ({
+    ...raw,
+    evidence_id: generateEvidenceId(runId, raw.key, raw.status),
+  }));
 }
 
 // ─── Persistence ──────────────────────────────────────────────────────────────

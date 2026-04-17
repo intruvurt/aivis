@@ -486,6 +486,8 @@ export interface Recommendation {
   resources?: string[];
   /** BRAG: IDs of scraped evidence fields that justify this recommendation */
   evidence_ids?: string[];
+  /** BRAG validation gate ID — only present if this recommendation passed the gate */
+  brag_id?: string;
   /** Consequence framing: what happens if user ignores this (survival language) */
   consequenceStatement?: string;
   /** Estimated % visibility loss if not fixed (e.g. "18-32%") */
@@ -792,6 +794,8 @@ export interface AnalysisResponse {
   scrape_info?: BragScrapeInfo;
   /** BRAG validation gate result — cite ledger + validated findings */
   brag_validation?: BragValidationResult;
+  /** Pipeline execution state — ordered stages and score derivation source */
+  pipeline_state?: PipelineState;
   /** User-supplied findability goal strings */
   findability_goals?: string[];
   /** Goal alignment result comparing content against findability goals */
@@ -1311,6 +1315,41 @@ export interface CiteLedgerEntry {
   chain_hash: string;
   /** ISO 8601 timestamp */
   timestamp: string;
+}
+
+/* ── Pipeline State ─────────────────────────────────────────────────────────── */
+
+/** Sequential pipeline stages — each must complete before the next starts */
+export type PipelineStageName =
+  | 'scrape'          // Fetch + render page
+  | 'evidence'        // Extract evidence ledger items
+  | 'rules'           // Run 30-rule deterministic engine
+  | 'ai_analysis'     // AI model(s) produce category grades + recommendations
+  | 'brag_gate'       // BRAG validation gate — score derivation + cite ledger
+  | 'finalize';       // Assemble response
+
+export interface PipelineStageRecord {
+  stage: PipelineStageName;
+  status: 'pending' | 'completed' | 'failed' | 'skipped';
+  started_at?: string;
+  completed_at?: string;
+  duration_ms?: number;
+  /** Human-readable note on failure or skip reason */
+  note?: string;
+  /** Count of items produced (evidence items, findings, etc.) */
+  item_count?: number;
+}
+
+/** Full pipeline state included in every analysis response */
+export interface PipelineState {
+  /** Ordered stages in execution sequence */
+  stages: PipelineStageRecord[];
+  /** Whether the pipeline completed all stages */
+  completed: boolean;
+  /** If score was derived purely from evidence (true) or fell back to AI (false) */
+  score_source: 'evidence' | 'ai_fallback' | 'deterministic';
+  /** Total pipeline wall-clock time in ms */
+  total_ms: number;
 }
 
 /** Full result returned by the BRAG validation gate */

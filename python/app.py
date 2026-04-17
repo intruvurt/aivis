@@ -398,3 +398,38 @@ async def ocr_crosscheck(req: OcrCrossCheckRequest):
         "recommendation": recommendation,
         "processing_time_ms": elapsed_ms,
     }
+
+
+# ---------------------------------------------------------------------------
+# BRAG Validation Gate — single source of truth for scoring
+# ---------------------------------------------------------------------------
+
+@app.post("/validate/brag")
+async def validate_brag(req: BragValidateRequest):
+    """Run the BRAG validation gate over all findings.
+
+    Every finding (AI-generated, rule-engine, or Python cross-check) must
+    pass through this gate to earn a BRAG ID. Findings without evidence
+    are rejected and suppressed from the user-facing response.
+
+    Scoring contract:
+      - 0 validated BRAG findings → score 100 (nothing is wrong)
+      - Each validated finding reduces score by its severity weight
+      - Score = max(0, 100 − Σ deductions)
+    """
+    _check_key(req.internal_key)
+
+    start = time.monotonic()
+
+    result = brag_gate.validate(
+        audit_id=req.audit_id,
+        url=req.url,
+        evidence_items=req.evidence_items,
+        rule_results=req.rule_results,
+        ai_recommendations=req.ai_recommendations,
+        scrape_summary=req.scrape_summary,
+    )
+
+    result["processing_time_ms"] = int((time.monotonic() - start) * 1000)
+
+    return result

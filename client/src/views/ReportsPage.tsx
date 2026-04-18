@@ -1969,10 +1969,10 @@ export default function ReportsPage() {
                           </span>
                           {report.seoSummary && (
                             <span className="flex items-center gap-1.5">
-                              <span className="px-1.5 py-0.5 rounded bg-emerald-900/30 border border-emerald-500/30 text-emerald-300">✓ {report.seoSummary.pass}</span>
-                              <span className="px-1.5 py-0.5 rounded bg-amber-900/30 border border-amber-500/30 text-amber-300">⚠ {report.seoSummary.warn}</span>
-                              <span className="px-1.5 py-0.5 rounded bg-red-900/30 border border-red-500/30 text-red-300">✗ {report.seoSummary.fail}</span>
-                              <InfoTip text="Pass = evidence criteria met. Warn = improvement opportunity. Fail = blocking issue that hurts AI visibility." />
+                              <span title="Evidence Criteria Passed" className="px-1.5 py-0.5 rounded bg-emerald-900/30 border border-emerald-500/30 text-emerald-300">✓ {report.seoSummary.pass}</span>
+                              <span title="Improvement Opportunities" className="px-1.5 py-0.5 rounded bg-amber-900/30 border border-amber-500/30 text-amber-300">⚠ {report.seoSummary.warn}</span>
+                              <span title="Blocking Issues" className="px-1.5 py-0.5 rounded bg-red-900/30 border border-red-500/30 text-red-300">✗ {report.seoSummary.fail}</span>
+                              <InfoTip text="Evidence Criteria Passed · Improvement Opportunities · Blocking Issues — signals that affect AI citation readiness." />
                             </span>
                           )}
                         </div>

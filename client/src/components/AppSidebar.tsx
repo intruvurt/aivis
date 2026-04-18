@@ -107,7 +107,16 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
               <Icon className={`w-[13px] h-[13px] ${iconClass}`} />
             </span>
             <span className="truncate">{t(item.labelKey)}</span>
-            {locked && <span className="aurora-sidebar-lock">{item.minTier}</span>}
+            {locked && (
+              <span className="aurora-sidebar-lock">
+                {item.minTier === "observer" ? "Free" :
+                 item.minTier === "starter" ? "Starter+" :
+                 item.minTier === "alignment" ? "Alignment+" :
+                 item.minTier === "signal" ? "Signal+" :
+                 item.minTier === "scorefix" ? "Score Fix" :
+                 item.minTier}
+              </span>
+            )}
           </NavLink>
         );
       })}
@@ -131,9 +140,9 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
       {/* Brand */}
       <div className="aurora-sidebar-brand">
         <NavLink to="/app" className="flex items-center gap-2 min-w-0 flex-1" onClick={onClose}>
-          <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
+          <img src={LOGO_URL} alt="AiVIS.biz" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
           <div className="min-w-0">
-            <p className="aurora-sidebar-title">AiVIS</p>
+            <p className="aurora-sidebar-title">AiVIS.biz</p>
             <p className="aurora-sidebar-subtitle">CITE LEDGER | Evidence-Linked Scores</p>
           </div>
         </NavLink>

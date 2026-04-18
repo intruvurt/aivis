@@ -16,12 +16,12 @@ export default function WhyAivisExistsPage() {
         name: "Why AiVIS Exists — The Problem Space",
         description:
           "AI answer engines hallucinate sources, merge entities, and lose citations. AiVIS exists to measure these failures.",
-        url: "https://aivis.biz/why-aivis-exists",
+        path: "/why-aivis-exists",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Why AiVIS Exists", url: "https://aivis.biz/why-aivis-exists" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Why AiVIS Exists", path: "/why-aivis-exists" },
       ]),
     ],
   });

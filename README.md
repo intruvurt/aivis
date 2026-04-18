@@ -3,7 +3,7 @@
 AiVIS.biz audits how AI systems interpret, extract, trust and cite your website.
 
 It does not guess. BRAG evidence ids must exist for claims to exist.  
-It does not simulate rankings. 
+It does not simulate rankings.
 It measures what AI can actually use.
 
 ---
@@ -165,12 +165,13 @@ scan → evidence → verify → fix → rescan → measure
 This loop is the product.
 
 Canonical tiers (server-authoritative)
-Tier	Purpose
-observer	entry detection
-starter	full recommendations
-alignment	structured optimization
-signal	verification + scaling
-scorefix	implementation + remediation
+| Tier | Purpose |
+| --- | --- |
+| observer | entry detection |
+| starter | full recommendations |
+| alignment | structured optimization |
+| signal | verification + scaling |
+| scorefix | implementation + remediation |
 
 Contracts live in shared/types.ts
 

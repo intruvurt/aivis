@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2025-07-18
+
+### ✨ Added
+
+#### Seven-Dimension Scoring Engine
+- **Security & trust dimension** — new seventh scoring category at 10% weight, evaluating HTTPS enforcement, certificate validity, HSTS presence, CSP configuration, and mixed-content signals
+- **Hard-blocker caps** — missing robots.txt caps score at 30, blocked AI crawlers at 35, missing organization schema at 50, missing title tag at 40, missing JSON-LD at 50
+- **Fix class taxonomy** — evidence keys map to nine fix classes: CONTENT_REWRITE, HEADING_RESTRUCTURE, SCHEMA_INSERT, SCHEMA_REPAIR, META_REWRITE, CRAWLABILITY_REPAIR, TECHNICAL_CONFIG_PATCH, INTERNAL_LINK_PATCH, LLMS_TXT_CREATE
+
+#### Platform Capabilities Documented in llms.txt
+- **Site crawl** — multi-page domain audit at `/app/site-crawl` with per-page SEO diagnostics (2–220 pages by tier, max depth 4)
+- **MCP and WebMCP server** — JSON-RPC 2.0 with 15+ tools at `/.well-known/mcp.json` and `/.well-known/webmcp.json` (Alignment+)
+- **OAuth 2.0 and External API v1** — RFC 6749 auth flow, API key (`avis_*`) and token (`avist_*`) authentication, three scopes (Alignment+)
+- **Google Search Console integration** — OAuth property sync, keyword snapshots, query opportunity analysis (Alignment+)
+- **Self-healing automation** — manual, assisted, and autonomous fix modes with multi-channel alerts (Alignment+/Signal+)
+- **Pipeline orchestration** — scan → score → classify → fixpacks with approval workflow and rescan verification (Alignment+)
+- **Portfolio and agency management** — multi-project tracking, daily automation, bulk-fix jobs (Alignment+/Signal+)
+- **Growth engine** — lead generation, outreach preview, viral snippet generation, daily digest (Alignment+)
+- **Citation rank scoring** — niche authority, co-occurrence analysis, drop alerts (Signal+)
+- **Datasets pipeline** — training data ingestion, annotation, synthesis (Signal+)
+- **Deploy verification hooks** — auto-rescan on deployment with score delta tracking (all tiers)
+- **Free public tools** — schema validator, robots checker, content extractability grader (no auth required)
+- **Multi-workspace and organizations** — RBAC (member/admin/owner), invitations, activity logs (Starter+)
+
+### 🔄 Changed
+- **llms.txt** — comprehensive update adding 15 feature sections, expanded pricing details, new FAQ entries for deterministic scoring, MCP server, self-healing, and site crawl
+- **Scoring dimension count** — updated from six to seven across all documentation (llms.txt, FAQ, citation context)
+- **Pricing section** — enriched with per-tier crawl limits, feature access, and export formats
+- **Answer engine citation context** — expanded framing list with MCP, API, self-healing, pipeline, and deploy verification
+- **Bot identification** — documented scraper user-agent (`ai-visible-engine-bot/1.0`) and 30+ AI crawler checks
+
+---
+
 ## [2.0.0] - 2025-07-12
 
 ### ✨ Added

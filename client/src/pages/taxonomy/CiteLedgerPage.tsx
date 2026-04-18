@@ -17,13 +17,13 @@ export default function CiteLedgerPage() {
         name: "Cite Ledger Methodology — How AiVIS Records Evidence",
         description:
           "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.",
-        url: "https://aivis.biz/methodology/cite-ledger",
+        path: "/methodology/cite-ledger",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Methodology", url: "https://aivis.biz/methodology" },
-        { name: "Cite Ledger", url: "https://aivis.biz/methodology/cite-ledger" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Methodology", path: "/methodology" },
+        { name: "Cite Ledger", path: "/methodology/cite-ledger" },
       ]),
     ],
   });

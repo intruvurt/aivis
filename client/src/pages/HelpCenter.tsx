@@ -76,7 +76,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What does the visibility score mean?',
-        a: '0-19 Critical (AI will ignore you), 20-39 Poor, 40-59 Fair, 60-79 Good, 80-100 Excellent. Most sites score 30-50 on their first audit. The six category grades (Content Depth, Heading Structure, Schema, Meta Tags, Technical SEO, AI Readability) each contribute to the overall score.',
+        a: '0-19 Critical (AI will ignore you), 20-39 Poor, 40-59 Fair, 60-79 Good, 80-100 Excellent. Most sites score 30-50 on their first audit. The seven scoring dimensions (Schema & Structured Data 20%, Content Depth 18%, Technical SEO 15%, Meta Tags & Open Graph 15%, AI Readability 12%, Heading Structure 10%, Security & Trust 10%) each contribute to the overall score. Hard-blocker caps apply when critical signals are missing.',
         tags: ['score', 'visibility', 'categories', 'grades'],
       },
       {

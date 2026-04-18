@@ -4,8 +4,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "json-ld",
     cluster: "signals",
-    title: "JSON-LD Structured Data for AI Visibility",
-    metaTitle: "JSON-LD Structured Data for AI Visibility | AiVIS",
+    title: "What JSON-LD Does My Site Need for AI Citations?",
+    metaTitle: "What JSON-LD Does My Site Need for AI Answer Engine Citations?",
     metaDescription:
       "JSON-LD is the structured data format AI models prefer. Learn how to implement it for maximum AI citation potential.",
     primaryKeyword: "json ld ai visibility",
@@ -53,8 +53,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "open-graph",
     cluster: "signals",
-    title: "Open Graph Tags for AI Answer Engines",
-    metaTitle: "Open Graph Tags for AI Visibility | AiVIS",
+    title: "Do Open Graph Tags Help AI Engines Cite My Content?",
+    metaTitle: "Do Open Graph Tags Help AI Answer Engines Cite My Content?",
     metaDescription: "Open Graph tags help AI models classify and display your content. Learn which OG tags matter most for AI citations.",
     primaryKeyword: "open graph ai visibility",
     secondaryKeyword: "og tags ai citations",
@@ -62,7 +62,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "How AI Uses Open Graph", content: ["AI models read og:title, og:description, og:type, and og:url as fast-classification signals. They help models decide whether a page is worth deep-parsing.", "Citation engines like Perplexity use og:image and og:title for result formatting — affecting how your content appears in AI-generated answers."] },
       { heading: "Essential OG Tags", content: ["og:title — your page's headline for AI. Should match or closely align with your H1.", "og:description — a 150-160 character summary. AI models use this for content classification.", "og:type — 'article' for content pages, 'website' for your homepage. Tells AI what kind of content to expect.", "og:url — the canonical URL. Helps AI models deduplicate when they encounter the same content at different URLs."] },
-      { heading: "OG Tag Best Practices", content: ["Set unique OG tags for every page. Generic or missing OG tags force AI to auto-classify, which is less accurate.", "Ensure og:title and og:description are distinct from each other and from your regular title and meta description — they serve different contexts.", "Validate with an AiVIS audit to catch duplicates, empties, and missing required OG tags."] },
+      { heading: "OG Tag Best Practices", content: ["Set unique OG tags for every page. Generic or missing OG tags force AI to auto-classify, which is less accurate.", "Ensure og:title and og:description are distinct from each other and from your regular title and meta description — they serve different contexts.", "Validate with an AiVIS.biz audit to catch duplicates, empties, and missing required OG tags."] },
     ],
     faqs: [
       { question: "Are OG tags the same as meta tags?", answer: "OG tags are a specific type of meta tag in the <head> section. They use the 'property' attribute (property='og:title') instead of 'name'." },
@@ -81,8 +81,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "meta-descriptions",
     cluster: "signals",
-    title: "Meta Descriptions for AI Visibility",
-    metaTitle: "Meta Descriptions That AI Models Actually Use | AiVIS",
+    title: "Do AI Answer Engines Actually Read Meta Descriptions?",
+    metaTitle: "Do AI Answer Engines Actually Use My Meta Descriptions?",
     metaDescription: "Write meta descriptions that help AI models accurately summarize and cite your content. Best practices for AI-era descriptions.",
     primaryKeyword: "meta descriptions ai visibility",
     secondaryKeyword: "meta description ai citations",
@@ -95,7 +95,7 @@ export const signalPages: KeywordPage[] = [
     faqs: [
       { question: "Do AI models always use meta descriptions?", answer: "Not always — but they're heavily weighted as content summaries. Missing descriptions force AI to extract their own, often less accurately." },
       { question: "Should my meta description match my OG description?", answer: "They can be different. Your meta description targets search engines; your og:description targets social platforms and AI. Optimize each for its context." },
-      { question: "How do I check all my meta descriptions?", answer: "Run an AiVIS audit — it flags missing, duplicate, and truncated descriptions across your crawled pages." },
+      { question: "How do I check all my meta descriptions?", answer: "Run an AiVIS.biz audit — it flags missing, duplicate, and truncated descriptions across your crawled pages." },
     ],
     internalLinks: [
       { label: "Run a free audit", to: "/app/analyze" },
@@ -109,8 +109,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "canonical-urls",
     cluster: "signals",
-    title: "Canonical URLs and AI Citation Accuracy",
-    metaTitle: "Canonical URLs for AI Visibility | AiVIS",
+    title: "How Do Canonical URLs Affect AI Answer Engine Citations?",
+    metaTitle: "How Do Canonical URLs Affect AI Citations?",
     metaDescription: "Canonical URLs tell AI models which version of your content is authoritative. Essential for deduplication and citation accuracy.",
     primaryKeyword: "canonical urls ai visibility",
     secondaryKeyword: "canonical tags ai citations",
@@ -123,7 +123,7 @@ export const signalPages: KeywordPage[] = [
     faqs: [
       { question: "Do all pages need canonical tags?", answer: "Yes — even unique pages benefit from self-referencing canonicals. They confirm authority and prevent URL parameter variants from creating duplicates." },
       { question: "Can canonicals point to a different domain?", answer: "Yes — cross-domain canonicals tell AI that the authoritative version lives on another domain. Use for syndicated or republished content." },
-      { question: "How do I check my canonical tags?", answer: "View page source and search for rel=canonical, or run an AiVIS audit which validates canonical implementation across all crawled pages." },
+      { question: "How do I check my canonical tags?", answer: "View page source and search for rel=canonical, or run an AiVIS.biz audit which validates canonical implementation across all crawled pages." },
     ],
     internalLinks: [
       { label: "Run a free audit", to: "/app/analyze" },
@@ -137,8 +137,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "robots-txt",
     cluster: "signals",
-    title: "robots.txt Configuration for AI Crawlers",
-    metaTitle: "robots.txt for AI Crawlers — GPTBot, ClaudeBot, PerplexityBot | AiVIS",
+    title: "How Should I Configure robots.txt for AI Crawlers?",
+    metaTitle: "How to Configure robots.txt for GPTBot, ClaudeBot, and PerplexityBot",
     metaDescription: "Configure your robots.txt to control which AI crawlers can access your content. Allow citations without opening everything.",
     primaryKeyword: "robots txt ai crawlers",
     secondaryKeyword: "gptbot claudebot robots txt",
@@ -146,7 +146,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "AI Crawler User-Agents", content: ["GPTBot (OpenAI), ClaudeBot (Anthropic), PerplexityBot (Perplexity), Google-Extended (Google AI), and Bytespider (ByteDance) are the major AI crawlers.", "Each respects robots.txt rules for their specific user-agent. You can allow some while blocking others based on your data policy."] },
       { heading: "Recommended Configuration", content: ["For maximum AI visibility: allow GPTBot, ClaudeBot, and PerplexityBot on all public content pages.", "Block admin paths, login pages, user account pages, and checkout flows. AI crawlers don't need access to these.", "Add a Sitemap directive pointing to your XML sitemap so crawlers know where to find your content."] },
-      { heading: "Testing Your robots.txt", content: ["Visit yourdomain.com/robots.txt to verify the file is accessible and contains the rules you expect.", "Run an AiVIS audit to validate that your robots.txt rules actually allow AI access to your important content pages."] },
+      { heading: "Testing Your robots.txt", content: ["Visit yourdomain.com/robots.txt to verify the file is accessible and contains the rules you expect.", "Run an AiVIS.biz audit to validate that your robots.txt rules actually allow AI access to your important content pages."] },
     ],
     faqs: [
       { question: "Should I block AI crawlers?", answer: "Only if you have a specific reason to (data licensing, privacy). Blocking AI crawlers means your content won't appear in AI-generated answers." },
@@ -165,8 +165,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "sitemap-xml",
     cluster: "signals",
-    title: "XML Sitemap Optimization for AI Discovery",
-    metaTitle: "XML Sitemap for AI Crawlers | AiVIS",
+    title: "Does My XML Sitemap Help AI Answer Engines Find My Content?",
+    metaTitle: "Does My XML Sitemap Help AI Answer Engines Find My Content?",
     metaDescription: "Your XML sitemap is the roadmap AI crawlers use to discover your content. Optimize it for AI-specific discovery patterns.",
     primaryKeyword: "xml sitemap ai visibility",
     secondaryKeyword: "sitemap ai crawlers",
@@ -193,8 +193,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "llms-txt",
     cluster: "signals",
-    title: "llms.txt — Describe Your Site for AI Models",
-    metaTitle: "llms.txt — The AI Visibility File | AiVIS",
+    title: "What Is llms.txt and Why Do AI Models Need It?",
+    metaTitle: "What Is llms.txt and Why Do AI Models Need It?",
     metaDescription: "llms.txt is a new standard for describing your site directly to AI language models. Learn how to create and deploy one.",
     primaryKeyword: "llms txt",
     secondaryKeyword: "llms txt ai models",
@@ -221,8 +221,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "schema-org",
     cluster: "signals",
-    title: "Schema.org Markup for AI Engines",
-    metaTitle: "Schema.org Markup for AI Visibility | AiVIS",
+    title: "Which Schema.org Types Help AI Engines Cite My Site?",
+    metaTitle: "Which Schema.org Types Help AI Answer Engines Cite My Site?",
     metaDescription: "Schema.org provides the vocabulary AI models use to understand your content. Learn which types matter most for AI citations.",
     primaryKeyword: "schema org ai visibility",
     secondaryKeyword: "schema markup ai",
@@ -230,7 +230,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "What is Schema.org?", content: ["Schema.org is a shared vocabulary for structured data on the web, maintained by Google, Microsoft, Yahoo, and Yandex. It defines types (Article, Organization, Product) and properties (name, author, datePublished) that AI models understand."] },
       { heading: "Priority Schema Types for AI", content: ["Organization: your publisher identity. Essential for entity recognition and trust.", "Article: for editorial content. Connects content to authors, dates, and topics.", "FAQPage: marks Q&A content for direct extraction by AI answer engines.", "Product: for e-commerce. Provides verified pricing, availability, and features.", "BreadcrumbList: shows hierarchical position, helping AI understand content relationships."] },
-      { heading: "Implementation Best Practices", content: ["Use JSON-LD format for all Schema.org markup. It's the format AI models prefer and the easiest to maintain.", "Ensure schema data matches visible page content. AI models cross-reference schema claims against page text.", "Validate your schema output with Google's Rich Results Test and an AiVIS audit."] },
+      { heading: "Implementation Best Practices", content: ["Use JSON-LD format for all Schema.org markup. It's the format AI models prefer and the easiest to maintain.", "Ensure schema data matches visible page content. AI models cross-reference schema claims against page text.", "Validate your schema output with Google's Rich Results Test and an AiVIS.biz audit."] },
     ],
     faqs: [
       { question: "How many schema types should I use?", answer: "Start with Organization (site-wide) and Article or Product (per page type). Add FAQ, Breadcrumb, and Person as relevant." },
@@ -249,8 +249,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "heading-hierarchy",
     cluster: "signals",
-    title: "Heading Hierarchy (H1-H6) for AI Parsing",
-    metaTitle: "H1-H6 Heading Structure for AI Visibility | AiVIS",
+    title: "Does H1–H6 Heading Structure Help AI Models Parse My Content?",
+    metaTitle: "Does Heading Structure (H1–H6) Help AI Models Parse My Content?",
     metaDescription: "AI models use heading hierarchy to understand content structure. Get your H1-H6 tags right for better AI citations.",
     primaryKeyword: "heading hierarchy ai visibility",
     secondaryKeyword: "h1 h2 h3 structure ai",
@@ -277,8 +277,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "page-speed",
     cluster: "signals",
-    title: "Page Speed and AI Crawler Access",
-    metaTitle: "Page Speed for AI Crawlers | AiVIS",
+    title: "Does Page Speed Affect Whether AI Crawlers Index My Site?",
+    metaTitle: "Does Page Speed Affect Whether AI Crawlers Index My Site?",
     metaDescription: "AI crawlers timeout on slow pages. Optimize server response time to ensure crawlers can access and parse your content.",
     primaryKeyword: "page speed ai visibility",
     secondaryKeyword: "ttfb ai crawlers",
@@ -286,7 +286,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "AI Crawler Timeout Behavior", content: ["Most AI crawlers timeout after 5-10 seconds. TTFB (Time to First Byte) is the critical metric — crawlers need the HTML response to start within this window."] },
       { heading: "Speed Optimization for AI", content: ["Server response time: optimize database queries, use caching layers, and deploy CDNs to get TTFB under 2 seconds.", "Minimize HTML payload: defer non-critical CSS/JS. AI crawlers only need the HTML content, not your full application bundle.", "Edge rendering: use CDN edge functions or static site generation to serve pre-built HTML from locations near AI crawler origins."] },
-      { heading: "Measuring AI-Specific Speed", content: ["Standard performance tools measure browser load time with JavaScript execution. AI crawlers only care about raw HTTP response speed.", "Test with curl -o /dev/null -w '%{time_starttransfer}' your-url to measure TTFB as AI crawlers experience it.", "Run an AiVIS audit which measures response time from an AI crawler's perspective."] },
+      { heading: "Measuring AI-Specific Speed", content: ["Standard performance tools measure browser load time with JavaScript execution. AI crawlers only care about raw HTTP response speed.", "Test with curl -o /dev/null -w '%{time_starttransfer}' your-url to measure TTFB as AI crawlers experience it.", "Run an AiVIS.biz audit which measures response time from an AI crawler's perspective."] },
     ],
     faqs: [
       { question: "What's a good TTFB for AI crawlers?", answer: "Under 2 seconds is ideal. Under 5 seconds is acceptable. Over 10 seconds risks crawler timeout and content loss." },
@@ -305,8 +305,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "mobile-responsiveness",
     cluster: "signals",
-    title: "Mobile-First AI Indexing",
-    metaTitle: "Mobile-First Indexing and AI Visibility | AiVIS",
+    title: "Does Mobile-First Design Affect AI Answer Engine Visibility?",
+    metaTitle: "Does Mobile-First Design Affect AI Answer Engine Visibility?",
     metaDescription: "AI crawlers often use mobile user-agents. Ensure your mobile experience delivers the same content and structure as desktop.",
     primaryKeyword: "mobile first ai indexing",
     secondaryKeyword: "mobile responsive ai visibility",
@@ -314,7 +314,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "Mobile-First Crawling", content: ["Google and several AI crawlers default to mobile user-agents. They receive whatever your server sends for mobile requests — which may differ from desktop.", "Responsive design that serves identical HTML is ideal. Separate mobile sites (m.example.com) or dynamic serving can create content parity issues."] },
       { heading: "Mobile Content Parity", content: ["Ensure your mobile layout includes all JSON-LD schema, meta tags, and structured content present on desktop.", "Don't hide content behind 'Read more' toggles or mobile-specific collapsible sections — AI crawlers may not interact with these.", "Mobile pages should have the same heading hierarchy as desktop. Don't remove H2/H3 headings for space."] },
-      { heading: "Testing Mobile AI Visibility", content: ["Run an AiVIS audit with your URL to check what AI crawlers receive. Compare the audit findings with what you see on desktop.", "Use Chrome DevTools mobile emulation to inspect the HTML source your server delivers to mobile user-agents."] },
+      { heading: "Testing Mobile AI Visibility", content: ["Run an AiVIS.biz audit with your URL to check what AI crawlers receive. Compare the audit findings with what you see on desktop.", "Use Chrome DevTools mobile emulation to inspect the HTML source your server delivers to mobile user-agents."] },
     ],
     faqs: [
       { question: "Do AI crawlers request mobile pages?", answer: "Many do. Google uses mobile-first indexing, and several AI crawlers send mobile user-agent strings by default." },
@@ -333,8 +333,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "internal-linking",
     cluster: "signals",
-    title: "Internal Link Architecture for AI Discovery",
-    metaTitle: "Internal Linking for AI Visibility | AiVIS",
+    title: "How Does Internal Linking Help AI Models Discover My Content?",
+    metaTitle: "How Does Internal Linking Help AI Models Discover My Content?",
     metaDescription: "AI crawlers discover content by following internal links. Build a link architecture that guides AI to your most important pages.",
     primaryKeyword: "internal linking ai visibility",
     secondaryKeyword: "internal link architecture ai",
@@ -361,8 +361,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "content-freshness",
     cluster: "signals",
-    title: "Content Freshness Signals for AI",
-    metaTitle: "Content Freshness — How AI Models Judge Recency | AiVIS",
+    title: "How Do AI Models Judge Whether My Content Is Fresh?",
+    metaTitle: "How Do AI Models Judge Whether My Content Is Fresh Enough to Cite?",
     metaDescription: "AI models prioritize fresh content. Learn which freshness signals matter and how to maintain them for AI citation advantage.",
     primaryKeyword: "content freshness ai visibility",
     secondaryKeyword: "dateModified ai citations",
@@ -389,8 +389,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "author-entity",
     cluster: "signals",
-    title: "Author Entity Markup for AI Trust",
-    metaTitle: "Author Entity Markup — Build AI Trust | AiVIS",
+    title: "Does Author Entity Markup Help AI Models Trust My Content?",
+    metaTitle: "Does Author Entity Markup Help AI Models Trust My Content?",
     metaDescription: "Author entity markup connects content to verified identities. AI models use author signals for trust scoring and citation ranking.",
     primaryKeyword: "author entity markup ai",
     secondaryKeyword: "person schema ai visibility",
@@ -417,8 +417,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "faq-schema",
     cluster: "signals",
-    title: "FAQ Schema for AI Answer Placement",
-    metaTitle: "FAQ Schema — Get Cited in AI Answers | AiVIS",
+    title: "Can FAQ Schema Help My Content Get Cited in AI Answers?",
+    metaTitle: "Can FAQ Schema Help My Content Get Cited in AI Answers?",
     metaDescription: "FAQ schema is the highest-impact signal for AI answer inclusion. Mark up your Q&A content for direct extraction by AI models.",
     primaryKeyword: "faq schema ai answers",
     secondaryKeyword: "faqpage schema ai visibility",
@@ -445,8 +445,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "breadcrumb-schema",
     cluster: "signals",
-    title: "Breadcrumb Schema for AI Navigation",
-    metaTitle: "Breadcrumb Schema for AI Visibility | AiVIS",
+    title: "Does Breadcrumb Schema Help AI Models Navigate My Site?",
+    metaTitle: "Does Breadcrumb Schema Help AI Models Navigate My Site?",
     metaDescription: "Breadcrumb schema helps AI models understand your site's hierarchy and content relationships. Easy to add, high impact.",
     primaryKeyword: "breadcrumb schema ai",
     secondaryKeyword: "breadcrumblist schema ai visibility",
@@ -473,8 +473,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "alt-text",
     cluster: "signals",
-    title: "Image Alt Text for AI Understanding",
-    metaTitle: "Image Alt Text for AI Visibility | AiVIS",
+    title: "Does Image Alt Text Help AI Answer Engines Understand My Content?",
+    metaTitle: "Does Image Alt Text Help AI Answer Engines Understand My Content?",
     metaDescription: "AI language models can't see images — they read alt text. Write descriptive alt attributes for AI comprehension and citations.",
     primaryKeyword: "alt text ai visibility",
     secondaryKeyword: "image alt text ai",
@@ -482,7 +482,7 @@ export const signalPages: KeywordPage[] = [
     sections: [
       { heading: "Alt Text as AI Context", content: ["AI language models process text, not pixels. Your alt attribute is the only information they receive about an image's content and significance."] },
       { heading: "Writing AI-Effective Alt Text", content: ["Be specific and factual: 'Bar chart showing 40% traffic increase from Q1 to Q3 2025' not 'chart'.", "Include relevant context: what the image shows and why it matters to the surrounding content.", "For decorative images, use alt='' (empty string) to signal no informational value. Don't fill decorative images with keywords."] },
-      { heading: "Alt Text at Scale", content: ["For large sites, prioritize alt text on content images (charts, infographics, product photos) over stock photos.", "Create alt text guidelines for content creators: include what, why, and how much detail per image type.", "Run an AiVIS audit to identify images missing alt text automatically."] },
+      { heading: "Alt Text at Scale", content: ["For large sites, prioritize alt text on content images (charts, infographics, product photos) over stock photos.", "Create alt text guidelines for content creators: include what, why, and how much detail per image type.", "Run an AiVIS.biz audit to identify images missing alt text automatically."] },
     ],
     faqs: [
       { question: "How long should alt text be?", answer: "Typically 125 characters or less for accessibility. For AI, focus on accuracy over length — concise factual descriptions work best." },
@@ -501,8 +501,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "hreflang",
     cluster: "signals",
-    title: "Hreflang for Multi-Language AI Visibility",
-    metaTitle: "Hreflang Tags for AI Visibility | AiVIS",
+    title: "Do Hreflang Tags Help Multi-Language Sites Get Cited by AI?",
+    metaTitle: "Do Hreflang Tags Help Multi-Language Sites Get Cited by AI?",
     metaDescription: "Hreflang tags direct AI crawlers to the right language version of your content. Essential for multilingual AI visibility.",
     primaryKeyword: "hreflang ai visibility",
     secondaryKeyword: "multilingual ai citations",
@@ -529,8 +529,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "content-length",
     cluster: "signals",
-    title: "Content Depth and Completeness for AI",
-    metaTitle: "Content Depth for AI Citations | AiVIS",
+    title: "How Long Should My Content Be for AI to Cite It?",
+    metaTitle: "How Long Should Content Be for AI Answer Engines to Cite It?",
     metaDescription: "AI models prioritize comprehensive content. Learn the content depth signals that improve AI citation likelihood.",
     primaryKeyword: "content depth ai visibility",
     secondaryKeyword: "content length ai citations",
@@ -557,8 +557,8 @@ export const signalPages: KeywordPage[] = [
   {
     slug: "trust-signals",
     cluster: "signals",
-    title: "Trust and Authority Signals for AI",
-    metaTitle: "Trust Signals for AI Visibility | AiVIS",
+    title: "What Trust Signals Do AI Models Check Before Citing My Site?",
+    metaTitle: "What Trust Signals Do AI Models Check Before Citing a Website?",
     metaDescription: "AI models assess trustworthiness before citing. Build the authority signals that make your content citation-worthy.",
     primaryKeyword: "trust signals ai visibility",
     secondaryKeyword: "authority signals ai citations",

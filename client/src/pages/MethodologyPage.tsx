@@ -140,7 +140,7 @@ const pipelineSteps = [
   },
   {
     title: "Dimension scoring",
-    text: "Each of the six dimensions is scored independently against the extracted fields. Weights are applied after individual scoring, not before. This prevents a strong performance in one area from masking a critical failure in another.",
+    text: "Each of the seven dimensions is scored independently against the extracted fields. Weights are applied after individual scoring, not before. This prevents a strong performance in one area from masking a critical failure in another.",
   },
   {
     title: "Evidence mapping",
@@ -211,7 +211,7 @@ const methodologyFaq = [
   {
     question: "What does the AiVIS.biz score actually measure?",
     answer:
-      "The AiVIS.biz score measures how confidently AI answer engines can parse, trust, extract from, and cite a page. It is a weighted composite across six evidence-backed dimensions: content depth (20%), schema coverage (20%), AI readability (20%), technical SEO (15%), metadata quality (13%), and heading structure (12%). The score is not a generic SEO grade — it is specific to AI extraction fidelity.",
+      "The AiVIS.biz score measures how confidently AI answer engines can parse, trust, extract from, and cite a page. It is a weighted composite across seven evidence-backed dimensions: schema coverage (20%), content depth (18%), metadata quality (15%), technical SEO (15%), AI readability (12%), heading structure (10%), and security & trust (10%). The score is not a generic SEO grade — it is specific to AI extraction fidelity.",
   },
   {
     question: `What is the ${BRAG_TRAIL_LABEL}?`,

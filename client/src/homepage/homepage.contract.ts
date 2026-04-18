@@ -47,15 +47,16 @@ export const PLATFORM_TARGETS = [
     'Claude',
 ] as const;
 
-/* ── Scoring model (6 categories, weights sum to 100) ───────────────────── */
+/* ── Scoring model (7 categories, weights sum to 100) ───────────────────── */
 
 export const SCORING_CATEGORIES = [
-    { name: 'Content Depth and Quality', weight: 20 },
     { name: 'Schema and Structured Data', weight: 20 },
-    { name: 'AI Readability and Citability', weight: 20 },
+    { name: 'Content Depth and Quality', weight: 18 },
+    { name: 'Meta Tags and Open Graph', weight: 15 },
     { name: 'Technical SEO', weight: 15 },
-    { name: 'Meta Tags and Open Graph', weight: 13 },
-    { name: 'Heading Structure and H1', weight: 12 },
+    { name: 'AI Readability and Citability', weight: 12 },
+    { name: 'Heading Structure and H1', weight: 10 },
+    { name: 'Security and Trust', weight: 10 },
 ] as const;
 
 export const SCORE_RANGE = { min: 0, max: 100 } as const;

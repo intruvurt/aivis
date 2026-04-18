@@ -17,12 +17,12 @@ export default function WhatIsAivisPage() {
         name: "What Is AiVIS — AI Visibility Auditing System",
         description:
           "AiVIS audits whether AI answer engines can structurally understand, trust, and cite a web page.",
-        url: "https://aivis.biz/what-is-aivis",
+        path: "/what-is-aivis",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "What Is AiVIS", url: "https://aivis.biz/what-is-aivis" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "What Is AiVIS", path: "/what-is-aivis" },
       ]),
     ],
   });

@@ -16,13 +16,13 @@ export default function TripleCheckProtocolPage() {
         name: "Triple-Check Protocol — Multi-Model Verification",
         description:
           "The Triple-Check Protocol runs three independent AI models in sequence to ensure no single model's bias determines the audit outcome.",
-        url: "https://aivis.biz/methodology/triple-check-protocol",
+        path: "/methodology/triple-check-protocol",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Methodology", url: "https://aivis.biz/methodology" },
-        { name: "Triple-Check Protocol", url: "https://aivis.biz/methodology/triple-check-protocol" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Methodology", path: "/methodology" },
+        { name: "Triple-Check Protocol", path: "/methodology/triple-check-protocol" },
       ]),
     ],
   });

@@ -197,7 +197,7 @@ const VALUE_RAIL = [
     icon: ShieldCheck,
     title: "Diagnose, not just track",
     detail:
-      "Visibility dashboards show you a chart. AiVIS shows you the broken schema, the missing FAQ block and the exact line that needs to change.",
+      "Visibility dashboards show you a chart. AiVIS.biz shows you the broken schema, the missing FAQ block and the exact line that needs to change.",
   },
   {
     icon: Zap,
@@ -215,14 +215,14 @@ const VALUE_RAIL = [
 
 const PRICING_FAQ_ITEMS = [
   {
-    question: "Is AiVIS free to use?",
+    question: "Is AiVIS.biz free to use?",
     answer:
       "Yes. Observer is free and includes 3 audits per month, up to 3 pages per audit, top blockers and a limited evidence preview. No credit card is required to start.",
   },
   {
-    question: "How is AiVIS different from AI visibility dashboards like Semrush?",
+    question: "How is AiVIS.biz different from AI visibility dashboards like Semrush?",
     answer:
-      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores six evidence-backed dimensions, and - with AutoFix PR - opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
+      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS.biz goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores seven evidence-backed dimensions, and - with AutoFix PR - opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
   },
   {
     question: "What is the difference between Observer, Starter, Alignment, and Signal?",
@@ -252,7 +252,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "What payment methods are accepted?",
     answer:
-      "AiVIS accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.",
+      "AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.",
   },
 ] as const;
 
@@ -754,7 +754,7 @@ export default function PricingPage() {
         "Validate AI visibility quickly and share proof links with advisors or clients.",
     },
     {
-      role: "SEO Lead",
+      role: "AI Visibility Lead",
       fit: "Alignment / Signal",
       outcome:
         "Prioritize evidence-backed fixes and monitor score momentum sprint-to-sprint.",
@@ -784,7 +784,7 @@ export default function PricingPage() {
   usePageMeta({
     title: "Pricing",
     description:
-      "AiVIS plans: Observer free tier plus Alignment, Signal, and legacy Score Fix options with multi-model validation and team reporting.",
+      "AiVIS.biz plans: Observer free tier plus Alignment, Signal, and legacy Score Fix options with multi-model validation and team reporting.",
     path: "/pricing",
     ogTitle: "AI Visibility Audit Pricing Plans",
     structuredData: [
@@ -793,10 +793,10 @@ export default function PricingPage() {
         "@context": "https://schema.org",
         "@type": ["SoftwareApplication", "WebApplication"],
         "@id": "https://aivis.biz/#software-pricing",
-        name: "AiVIS",
+        name: "AiVIS.biz",
         url: "https://aivis.biz/pricing",
         description:
-          "AiVIS pricing for AI visibility audits across ChatGPT, Perplexity, Google AI, and Claude with tiered features for teams and agencies.",
+          "AiVIS.biz pricing for AI visibility audits across ChatGPT, Perplexity, Google AI, and Claude with tiered features for teams and agencies.",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         publisher: buildOrganizationRef(),
@@ -858,7 +858,7 @@ export default function PricingPage() {
         path: "/pricing",
         name: "AI Visibility Audit Pricing Plans",
         description:
-          "AiVIS plans: Observer free tier plus Alignment, Signal, and Score Fix AutoFix PR options with multi-model validation and team reporting.",
+          "AiVIS.biz plans: Observer free tier plus Alignment, Signal, and Score Fix AutoFix PR options with multi-model validation and team reporting.",
         mainEntityId: SOFTWARE_APPLICATION_ID,
       }),
       {
@@ -1043,7 +1043,7 @@ export default function PricingPage() {
               AI can read your site.<br />It just won't cite it.
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              AiVIS shows what AI can't verify, why competitors get cited instead, and what to fix first.
+              AiVIS.biz shows what AI can't verify, why competitors get cited instead, and what to fix first.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -1086,9 +1086,9 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
-          <h2 className="text-2xl font-bold text-white mb-3">You don’t need more SEO tools.</h2>
+          <h2 className="text-2xl font-bold text-white mb-3">You don’t need another SEO tool. You need a citation engine.</h2>
           <p className="text-white/75">You need to know:</p>
-          <p className="text-white/65">why AI ignores you · who is taking your citations · what to fix first</p>
+          <p className="text-white/65">why AI ignores you · who is taking your citations · what 7 dimensions to fix first</p>
         </div>
 
         <div id="plans" className="section-anchor flex justify-center mb-8">
@@ -1404,7 +1404,7 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-10">
-          <h3 className="text-lg font-semibold text-white/80 mb-4 text-center">Learn More About AiVIS</h3>
+          <h3 className="text-lg font-semibold text-white/80 mb-4 text-center">Learn More About AiVIS.biz</h3>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/methodology" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Methodology</Link>
             <Link to="/compliance" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Compliance</Link>

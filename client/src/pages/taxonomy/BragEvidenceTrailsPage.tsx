@@ -17,13 +17,13 @@ export default function BragEvidenceTrailsPage() {
         name: `${BRAG_TRAIL_LABEL} Methodology`,
         description:
           `${BRAG_ACRONYM} assigns a deterministic ID to every audit finding. Trails map citation relationships and measure drift.`,
-        url: "https://aivis.biz/methodology/brag-evidence-trails",
+        path: "/methodology/brag-evidence-trails",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Methodology", url: "https://aivis.biz/methodology" },
-        { name: BRAG_TRAIL_LABEL, url: "https://aivis.biz/methodology/brag-evidence-trails" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Methodology", path: "/methodology" },
+        { name: BRAG_TRAIL_LABEL, path: "/methodology/brag-evidence-trails" },
       ]),
     ],
   });

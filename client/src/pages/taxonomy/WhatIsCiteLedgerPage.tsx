@@ -55,12 +55,12 @@ export default function WhatIsCiteLedgerPage() {
       buildWebPageSchema({
         name: "What Is CITE LEDGER — Structured Attribution System by AiVIS",
         description: CANONICAL_DEFINITION,
-        url: `${BASE_URL}/what-is-cite-ledger`,
+        path: "/what-is-cite-ledger",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: `${BASE_URL}/` },
-        { name: "About AiVIS", url: `${BASE_URL}/about-aivis` },
-        { name: "What Is CITE LEDGER", url: `${BASE_URL}/what-is-cite-ledger` },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "What Is CITE LEDGER", path: "/what-is-cite-ledger" },
       ]),
       buildFaqSchema(FAQ_ITEMS, { path: "/what-is-cite-ledger" }),
       /* ── DefinedTerm schema — machine-readable definition ── */

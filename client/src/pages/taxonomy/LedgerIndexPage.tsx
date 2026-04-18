@@ -17,13 +17,13 @@ export default function LedgerIndexPage() {
         name: "Evidence Ledger Index — Cite Ledger Entries",
         description:
           "Machine-crawlable reference of all Cite Ledger entry types, evidence IDs, and traceability structures.",
-        url: "https://aivis.biz/evidence/ledger-index",
+        path: "/evidence/ledger-index",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Evidence", url: "https://aivis.biz/evidence/ledger-index" },
-        { name: "Ledger Index", url: "https://aivis.biz/evidence/ledger-index" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Evidence", path: "/evidence/ledger-index" },
+        { name: "Ledger Index", path: "/evidence/ledger-index" },
       ]),
     ],
   });

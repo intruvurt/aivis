@@ -17,13 +17,13 @@ export default function CitationReportsPage() {
         name: "Citation Reports — Where AiVIS Is Cited, Missing, or Merged",
         description:
           "Citation Reports group Cite Ledger outputs by outcome: correctly cited, missing, and merged.",
-        url: "https://aivis.biz/evidence/citation-reports",
+        path: "/evidence/citation-reports",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Evidence", url: "https://aivis.biz/evidence/ledger-index" },
-        { name: "Citation Reports", url: "https://aivis.biz/evidence/citation-reports" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Evidence", path: "/evidence/ledger-index" },
+        { name: "Citation Reports", path: "/evidence/citation-reports" },
       ]),
     ],
   });

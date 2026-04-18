@@ -30,6 +30,39 @@ export interface ChangelogEntry {
 
 const changelog: ChangelogEntry[] = [
   {
+    date: "2025-07-18",
+    title: "7-Dimension Scoring Engine + Hard-Blocker Caps",
+    description:
+      "The scoring engine now evaluates seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical SEO (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Hard-blocker caps flag critical gaps — missing robots.txt caps your score at 30, blocked AI crawlers at 35.",
+    why: "The previous six-category system missed security and trust signals that directly affect whether AI answer engines cite your content. The new seventh dimension and hard-blocker cap system produces scores that match real-world citation outcomes.",
+    audience: "all",
+    action: "Re-run your latest audit to see your updated 7-dimension score breakdown and any hard-blocker caps.",
+    category: "feature",
+    highlight: true,
+  },
+  {
+    date: "2025-07-18",
+    title: "AI Command Center Dashboard",
+    description:
+      "The Dashboard is now the AI Command Center — redesigned to surface the 7-dimension scoring, hard-blocker caps, and evidence-backed fix pipeline. Latest verdict, priority issues, and next-fix actions are front and center.",
+    why: "The old dashboard showed generic audit metrics without connecting them to the AI citation pipeline. The Command Center makes it clear what AI answer engines see and what to fix first.",
+    audience: "all",
+    action: "Open the AI Command Center to see your latest 7-dimension verdict.",
+    category: "feature",
+    highlight: true,
+  },
+  {
+    date: "2025-07-18",
+    title: "Site Crawl, MCP Server, API, and 15+ New Platform Capabilities",
+    description:
+      "Documented and surfaced: multi-page site crawl (2-220 pages by tier), MCP/WebMCP server (15+ JSON-RPC tools), OAuth 2.0 API, Google Search Console integration, self-healing automation, pipeline orchestration, portfolio management, growth engine, citation rank scoring, deploy verification hooks, and free public tools.",
+    why: "These capabilities existed but were hidden from users. Now every feature is documented, accessible from the sidebar, and explained in onboarding flows.",
+    audience: "all",
+    action: "Explore the new tools in the sidebar under Extensions and Platform sections.",
+    category: "feature",
+    highlight: true,
+  },
+  {
     date: today(),
     title: "Language Accessibility (i18n)",
     description:

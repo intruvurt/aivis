@@ -2,7 +2,7 @@ import type { KeywordPage } from "./types";
 
 /**
  * 25 "raw searcher intent" pages targeting emotional, frustrated, and
- * fix-intent queries from the AiVIS query bank. These are the queries
+ * fix-intent queries from the AiVIS.biz query bank. These are the queries
  * people actually type when confused, worried, or ready to act.
  *
  * Categories:
@@ -20,7 +20,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "site-not-showing-in-chatgpt",
         cluster: "problems",
         title: "Why Is My Site Not Showing in ChatGPT",
-        metaTitle: "Why Is My Site Not Showing in ChatGPT? | AiVIS",
+        metaTitle: "Why Is My Site Not Showing in ChatGPT? | AiVIS.biz",
         metaDescription:
             "Your site isn't showing in ChatGPT answers because GPTBot can't extract your content. Check crawler access, rendering, and schema in one audit.",
         primaryKeyword: "site not showing in chatgpt",
@@ -45,7 +45,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 heading: "How to fix it fast",
                 content: [
-                    "Run an AiVIS audit. It checks all three failure points — crawler access, rendering, and schema completeness — and tells you specifically what is broken and how to fix it.",
+                    "Run an AiVIS.biz audit. It checks all three failure points — crawler access, rendering, and schema completeness — and tells you specifically what is broken and how to fix it.",
                     "Observer tier is free. You get a score, your top 3 blockers, and exactly where the extraction pipeline breaks down for your URL.",
                 ],
             },
@@ -76,7 +76,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "chatgpt-not-mentioning-my-website",
         cluster: "problems",
         title: "ChatGPT Not Mentioning My Website — Why",
-        metaTitle: "ChatGPT Not Mentioning My Website | AiVIS",
+        metaTitle: "ChatGPT Not Mentioning My Website | AiVIS.biz",
         metaDescription:
             "ChatGPT skips sites with blocked crawlers, missing schema, or client-side rendering. Diagnose your exact block with an evidence-backed audit.",
         primaryKeyword: "chatgpt not mentioning my website",
@@ -97,7 +97,7 @@ export const problemRawPages: KeywordPage[] = [
                     "Is the content in the HTML at response time? (server-side rendering vs client-side)",
                     "Is there structured data to identify the publisher? (Organization JSON-LD)",
                     "Are the claims specific and verifiable? (content depth and structure)",
-                    "All four must be true for your site to appear reliably. AiVIS checks all four with BRAG Evidence IDs tracing each finding to your crawl results.",
+                    "All four must be true for your site to appear reliably. AiVIS.biz checks all four with BRAG Evidence IDs tracing each finding to your crawl results.",
                 ],
             },
         ],
@@ -127,7 +127,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "ai-ignores-my-website-content",
         cluster: "problems",
         title: "Why Does AI Ignore My Website Content",
-        metaTitle: "Why AI Ignores My Website Content | AiVIS",
+        metaTitle: "Why AI Ignores My Website Content | AiVIS.biz",
         metaDescription:
             "AI ignores website content it cannot extract, trust, or attribute. Diagnose the exact signal failures that make your content invisible to AI answers.",
         primaryKeyword: "why does ai ignore my website content",
@@ -177,7 +177,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "website-never-appears-in-ai-answers",
         cluster: "problems",
         title: "My Website Never Appears in AI Answers",
-        metaTitle: "My Website Never Appears in AI Answers — Why & Fix | AiVIS",
+        metaTitle: "My Website Never Appears in AI Answers — Why & Fix | AiVIS.biz",
         metaDescription:
             "If your website never appears in ChatGPT, Perplexity, or Google AI answers, the extraction pipeline is blocked. Find and fix the exact cause.",
         primaryKeyword: "website never appears in ai answers",
@@ -197,7 +197,7 @@ export const problemRawPages: KeywordPage[] = [
                     "1. Robots.txt audit — verify GPTBot, ClaudeBot, PerplexityBot are all allowed. This takes five minutes and unblocks everything downstream.",
                     "2. View Source check — right-click, View Source (not Inspect Element). If the body is empty, you need server-side rendering.",
                     "3. JSON-LD add — one Organization schema block with name, url, sameAs links is enough to establish entity identity.",
-                    "4. Full AiVIS audit — once the basics are in place, run a full extraction audit to find secondary and tertiary blockers across all six dimensions.",
+                    "4. Full AiVIS.biz audit — once the basics are in place, run a full extraction audit to find secondary and tertiary blockers across all seven dimensions.",
                 ],
             },
         ],
@@ -205,7 +205,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Is there a way to test if AI can reach my site without a paid tool?",
                 answer:
-                    "Yes. Check robots.txt manually, view page source to test for client-side rendering, and validate JSON-LD at schema.org/validator. AiVIS Observer tier is also free and automates all three checks.",
+                    "Yes. Check robots.txt manually, view page source to test for client-side rendering, and validate JSON-LD at schema.org/validator. AiVIS.biz Observer tier is also free and automates all three checks.",
             },
             {
                 question: "Does having a sitemap help AI find my content?",
@@ -227,7 +227,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "content-not-used-by-ai",
         cluster: "problems",
         title: "Why Is My Content Not Used by AI",
-        metaTitle: "Why Is My Content Not Used by AI? | AiVIS",
+        metaTitle: "Why Is My Content Not Used by AI? | AiVIS.biz",
         metaDescription:
             "AI doesn't use content it can't extract reliably. Find out exactly why your content is being passed over and what structural changes fix it.",
         primaryKeyword: "content not used by ai",
@@ -276,7 +276,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "chatgpt-gets-my-site-wrong",
         cluster: "problems",
         title: "Why Does ChatGPT Get My Site Wrong",
-        metaTitle: "Why Does ChatGPT Get My Website Wrong? | AiVIS",
+        metaTitle: "Why Does ChatGPT Get My Website Wrong? | AiVIS.biz",
         metaDescription:
             "ChatGPT fabricates or misrepresents your site when it can't find reliable entity data. Fix the structured data that gives ChatGPT the right answer.",
         primaryKeyword: "chatgpt gets my site wrong",
@@ -297,7 +297,7 @@ export const problemRawPages: KeywordPage[] = [
                     "sameAs links: LinkedIn, GitHub, Twitter/X, Product Hunt, Crunchbase — connects your domain to verified off-site identity.",
                     "foundingDate and description — prevents ChatGPT from applying stale training data about similar entities.",
                     "Consistent naming: the exact same entity name across every page, in JSON-LD, in body copy, and in metadata.",
-                    "AiVIS audits all of these and identifies which are missing, inconsistent, or incomplete.",
+                    "AiVIS.biz audits all of these and identifies which are missing, inconsistent, or incomplete.",
                 ],
             },
         ],
@@ -327,7 +327,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "ai-summarizing-my-site-incorrectly",
         cluster: "problems",
         title: "AI Is Summarizing My Site Incorrectly",
-        metaTitle: "AI Summarizing My Website Incorrectly — Fix It | AiVIS",
+        metaTitle: "AI Summarizing My Website Incorrectly — Fix It | AiVIS.biz",
         metaDescription:
             "When AI summarizes your site incorrectly, the extraction inputs are ambiguous. Fix entity signals, schema, and content structure to get accurate AI summaries.",
         primaryKeyword: "ai summarizing my site incorrectly",
@@ -348,7 +348,7 @@ export const problemRawPages: KeywordPage[] = [
                     "2. Keep your Organization schema description consistent with your meta description.",
                     "3. Remove or noindex outdated pages that may be feeding incorrect historical data.",
                     "4. Add dateModified to prompt recrawling after updates.",
-                    "Run an AiVIS audit to identify contradictions and inconsistencies across all signals.",
+                    "Run an AiVIS.biz audit to identify contradictions and inconsistencies across all signals.",
                 ],
             },
         ],
@@ -356,7 +356,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Why does AI summarize one of my pages correctly but another incorrectly?",
                 answer:
-                    "Different pages have different schema coverage, content depth, and heading structure. A page with full JSON-LD and clear headings will be summarized more accurately than a page with none. AiVIS audits individual pages so you can prioritize fixes.",
+                    "Different pages have different schema coverage, content depth, and heading structure. A page with full JSON-LD and clear headings will be summarized more accurately than a page with none. AiVIS.biz audits individual pages so you can prioritize fixes.",
             },
             {
                 question: "Can a competitors site be causing AI to misrepresent mine?",
@@ -378,9 +378,9 @@ export const problemRawPages: KeywordPage[] = [
         slug: "ai-not-picking-up-my-pages",
         cluster: "problems",
         title: "Why Is AI Not Picking Up My Pages",
-        metaTitle: "Why AI Isn't Picking Up My Pages | AiVIS",
+        metaTitle: "Why AI Isn't Picking Up My Pages | AiVIS.biz",
         metaDescription:
-            "AI crawlers fail to pick up pages that are blocked, client-rendered, or missing schema. Check all three with a free AiVIS audit.",
+            "AI crawlers fail to pick up pages that are blocked, client-rendered, or missing schema. Check all three with a free AiVIS.biz audit.",
         primaryKeyword: "ai not picking up my pages",
         secondaryKeyword: "ai not crawling my website",
         hook: "Your pages exist. They load fine in a browser. AI still does not use them. The browser experience and the AI crawl experience are not the same.",
@@ -398,7 +398,7 @@ export const problemRawPages: KeywordPage[] = [
                 heading: "Which pages to audit first",
                 content: [
                     "Start with your highest-value pages: primary service page, homepage, and one authoritative content page. If these fail extraction, everything downstream is irrelevant.",
-                    "AiVIS lets you audit any URL and tracks historical scores. Run baseline audits on your core pages, fix the blockers, and re-audit to measure improvement.",
+                    "AiVIS.biz lets you audit any URL and tracks historical scores. Run baseline audits on your core pages, fix the blockers, and re-audit to measure improvement.",
                 ],
             },
         ],
@@ -406,7 +406,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Does page indexation in Google guarantee AI will pick it up?",
                 answer:
-                    "No. Google indexation and AI extraction are completely independent processes. Use Google Search Console to verify Google indexation; use AiVIS to verify AI extraction readiness.",
+                    "No. Google indexation and AI extraction are completely independent processes. Use Google Search Console to verify Google indexation; use AiVIS.biz to verify AI extraction readiness.",
             },
             {
                 question: "Can a CDN prevent AI from picking up my pages?",
@@ -430,7 +430,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-chatgpt-decides-what-websites-to-use",
         cluster: "problems",
         title: "How Does ChatGPT Decide What Websites to Use",
-        metaTitle: "How ChatGPT Decides What Websites to Use | AiVIS",
+        metaTitle: "How ChatGPT Decides What Websites to Use | AiVIS.biz",
         metaDescription:
             "ChatGPT selects sources based on crawl access, extraction quality, entity clarity, and content specificity — not backlinks or domain authority.",
         primaryKeyword: "how does chatgpt decide what websites to use",
@@ -483,7 +483,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-ai-tools-choose-sources",
         cluster: "problems",
         title: "How Do AI Tools Choose Their Sources",
-        metaTitle: "How AI Tools Choose Their Sources — Explained | AiVIS",
+        metaTitle: "How AI Tools Choose Their Sources — Explained | AiVIS.biz",
         metaDescription:
             "AI answer engines choose sources based on extraction quality, not SEO ranking. Learn the exact signals that determine whether you get cited.",
         primaryKeyword: "how do ai tools choose sources",
@@ -518,7 +518,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Is there a way to be preferred over competitors in AI source selection?",
                 answer:
-                    "The competitive edge comes from completeness: more schema types, more specific content, stronger entity identity. AiVIS competitor tracking (Alignment tier) compares your extraction readiness against competitor domains.",
+                    "The competitive edge comes from completeness: more schema types, more specific content, stronger entity identity. AiVIS.biz competitor tracking (Alignment tier) compares your extraction readiness against competitor domains.",
             },
         ],
         internalLinks: [
@@ -535,7 +535,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "why-some-sites-get-cited-not-mine",
         cluster: "problems",
         title: "Why Some Sites Get Cited in AI Answers and Not Mine",
-        metaTitle: "Why Some Sites Get Cited in AI Answers and Not Mine | AiVIS",
+        metaTitle: "Why Some Sites Get Cited in AI Answers and Not Mine | AiVIS.biz",
         metaDescription:
             "Sites that get cited in AI answers have stronger extraction signals: crawler access, structured data, content specificity. Here's how to close the gap.",
         primaryKeyword: "why some sites get cited in ai answers not mine",
@@ -545,14 +545,14 @@ export const problemRawPages: KeywordPage[] = [
             {
                 heading: "What citations sites have that non-cited sites don't",
                 content: [
-                    "When AiVIS audits both sides of this comparison, the gap almost always comes down to three things: complete structured data, accessible crawler pathways, and specific content claims.",
+                    "When AiVIS.biz audits both sides of this comparison, the gap almost always comes down to three things: complete structured data, accessible crawler pathways, and specific content claims.",
                     "Cited sites typically have Organization JSON-LD with sameAs links, Article/FAQ schema on content pages, and content written in atomic, verifiable statements. Non-cited sites typically have no schema, blocked crawlers, or promotional content that lacks extractable specifics.",
                 ],
             },
             {
                 heading: "How to close the gap",
                 content: [
-                    "Run an AiVIS audit on your page and your competitor's page. The competitor analysis (Alignment tier) gives you a side-by-side extraction readiness comparison.",
+                    "Run an AiVIS.biz audit on your page and your competitor's page. The competitor analysis (Alignment tier) gives you a side-by-side extraction readiness comparison.",
                     "Identify where their structural signals are stronger. Then close each gap systematically — schema first, then rendering, then content depth.",
                     "Citation is competitive. You are not just convincing AI to include you — you are outperforming the competitor's extraction readiness on shared topics.",
                 ],
@@ -584,7 +584,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "what-makes-website-visible-to-ai-search",
         cluster: "problems",
         title: "What Makes a Website Visible to AI Search",
-        metaTitle: "What Makes a Website Visible to AI Search | AiVIS",
+        metaTitle: "What Makes a Website Visible to AI Search | AiVIS.biz",
         metaDescription:
             "AI search visibility depends on crawler access, structured data, server-side rendering, and content extractability — not rankings or domain authority.",
         primaryKeyword: "what makes a website visible to ai search",
@@ -592,14 +592,15 @@ export const problemRawPages: KeywordPage[] = [
         hook: "AI search visibility is not the same as Google search visibility. The signals are different. This is the complete picture.",
         sections: [
             {
-                heading: "The six dimensions AI search evaluates",
+                heading: "The seven dimensions AI search evaluates",
                 content: [
-                    "1. Content depth (20%): Does your page provide enough specific, verifiable claims for AI to extract something useful?",
-                    "2. Schema coverage (20%): Is JSON-LD present to declare entity identity and content type?",
-                    "3. AI readability (20%): Can the content be parsed structurally — headings, semantic HTML, atomic claims?",
+                    "1. Schema & Structured Data (20%): Is JSON-LD present to declare entity identity and content type?",
+                    "2. Content Depth & Quality (18%): Does your page provide enough specific, verifiable claims for AI to extract something useful?",
+                    "3. Meta Tags & Open Graph (15%): Meta title, meta description, Open Graph tags — complete and consistent.",
                     "4. Technical SEO (15%): HTTPS, canonical URLs, proper rendering, page speed.",
-                    "5. Metadata quality (13%): Meta title, meta description, Open Graph tags — complete and consistent.",
-                    "6. Heading structure (12%): Clear H1→H2→H3 hierarchy that segments content for extraction.",
+                    "5. AI Readability & Citability (12%): Can the content be parsed structurally — headings, semantic HTML, atomic claims?",
+                    "6. Heading Structure (10%): Clear H1→H2→H3 hierarchy that segments content for extraction.",
+                    "7. Security & Trust (10%): Robots.txt accessibility, AI crawler allowances, author entity verification, and link diversity.",
                 ],
             },
             {
@@ -620,7 +621,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "How is AI search visibility measured?",
                 answer:
-                    "AiVIS measures it across six scored dimensions, producing a composite 0–100 score with BRAG evidence IDs tracing each dimension to crawl observations.",
+                    "AiVIS.biz measures it across seven scored dimensions, producing a composite 0–100 score with BRAG evidence IDs tracing each dimension to crawl observations.",
             },
         ],
         internalLinks: [
@@ -637,7 +638,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-ai-models-read-websites",
         cluster: "problems",
         title: "How Do AI Models Read Websites",
-        metaTitle: "How AI Models Read Websites — Technical Explainer | AiVIS",
+        metaTitle: "How AI Models Read Websites — Technical Explainer | AiVIS.biz",
         metaDescription:
             "AI models don't read websites like humans. They extract signals from HTML: headings, schema, rendered text, and metadata. Here's the full process.",
         primaryKeyword: "how do ai models read websites",
@@ -673,7 +674,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Can I see what an AI crawler sees on my page?",
                 answer:
-                    "Use 'View Source' in your browser to see the raw HTML — that is the closest approximation of what an AI crawler receives. AiVIS replicates the crawl experience more precisely using a headless browser with AI crawler user-agents.",
+                    "Use 'View Source' in your browser to see the raw HTML — that is the closest approximation of what an AI crawler receives. AiVIS.biz replicates the crawl experience more precisely using a headless browser with AI crawler user-agents.",
             },
         ],
         internalLinks: [
@@ -692,7 +693,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-get-site-mentioned-in-chatgpt",
         cluster: "problems",
         title: "How to Get Your Site Mentioned in ChatGPT",
-        metaTitle: "How to Get Your Site Mentioned in ChatGPT | AiVIS",
+        metaTitle: "How to Get Your Site Mentioned in ChatGPT | AiVIS.biz",
         metaDescription:
             "Getting mentioned in ChatGPT requires GPTBot access, server-side rendering, and complete JSON-LD. Here's the full fix sequence.",
         primaryKeyword: "how to get my site mentioned in chatgpt",
@@ -713,7 +714,7 @@ export const problemRawPages: KeywordPage[] = [
                     "Add Article schema with datePublished, author, and publisher to your top content pages.",
                     "Add FAQ schema to any page with question-answer format. ChatGPT heavily extracts FAQs for direct inclusion in answers.",
                     "Write specific, verifiable statements instead of marketing language. ChatGPT prefers factual claims over promotional copy.",
-                    "Run an AiVIS audit to find secondary blockers after the three primary issues are fixed.",
+                    "Run an AiVIS.biz audit to find secondary blockers after the three primary issues are fixed.",
                 ],
             },
         ],
@@ -743,7 +744,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-make-ai-cite-my-website",
         cluster: "problems",
         title: "How to Make AI Cite My Website",
-        metaTitle: "How to Make AI Cite My Website — Complete Guide | AiVIS",
+        metaTitle: "How to Make AI Cite My Website — Complete Guide | AiVIS.biz",
         metaDescription:
             "AI citation requires three things: crawl access, extractable structure, and declared entity identity. Here is exactly how to achieve all three.",
         primaryKeyword: "how to make ai cite my website",
@@ -793,7 +794,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-make-content-show-in-ai-results",
         cluster: "problems",
         title: "How to Make My Content Show in AI Results",
-        metaTitle: "How to Make Content Show in AI Results | AiVIS",
+        metaTitle: "How to Make Content Show in AI Results | AiVIS.biz",
         metaDescription:
             "AI results pull from extractable, attributed content. Structure your pages correctly and your content gets included — not paraphrased and credited elsewhere.",
         primaryKeyword: "how to make my content show in ai results",
@@ -813,7 +814,7 @@ export const problemRawPages: KeywordPage[] = [
                 content: [
                     "First: rewrite your top three pages. Replace vague benefit statements with specific factual claims. Add or restructure headings so each H2 answers a discrete question.",
                     "Second: add FAQ schema to every page with Q&A content. Takes 15 minutes per page and is the single highest-leverage schema change for AI result inclusion.",
-                    "Third: run an AiVIS audit to see the full extraction signal picture — schema coverage, rendering issues, heading structure, and metadata across all six dimensions.",
+                    "Third: run an AiVIS.biz audit to see the full extraction signal picture — schema coverage, rendering issues, heading structure, and metadata across all seven dimensions.",
                 ],
             },
         ],
@@ -843,7 +844,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-structure-content-for-ai-models",
         cluster: "problems",
         title: "How to Structure Content for AI Models",
-        metaTitle: "How to Structure Content for AI Models | AiVIS",
+        metaTitle: "How to Structure Content for AI Models | AiVIS.biz",
         metaDescription:
             "AI models extract from structured content: semantic headings, atomic claims, FAQ markup, and JSON-LD. This is the complete structure guide.",
         primaryKeyword: "how to structure content for ai models",
@@ -875,12 +876,12 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Should I write shorter content for AI or longer?",
                 answer:
-                    "Content depth matters (20% of AiVIS score), but length without structure is noise. Target 600+ words with clear headings, specific claims, and schema markup. Quality of structure over raw word count.",
+                    "Content depth matters (20% of AiVIS.biz score), but length without structure is noise. Target 600+ words with clear headings, specific claims, and schema markup. Quality of structure over raw word count.",
             },
             {
                 question: "Do I need to restructure my entire site for AI?",
                 answer:
-                    "No. Start with your highest-value pages. Apply the content structure to your primary service page, homepage, and top content page. Then expand. AiVIS tracks individual page scores so you can measure improvement page by page.",
+                    "No. Start with your highest-value pages. Apply the content structure to your primary service page, homepage, and top content page. Then expand. AiVIS.biz tracks individual page scores so you can measure improvement page by page.",
             },
         ],
         internalLinks: [
@@ -899,7 +900,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "seo-vs-ai-search-difference",
         cluster: "problems",
         title: "SEO vs AI Search: What's Actually Different",
-        metaTitle: "SEO vs AI Search — What's Different & What Transfers | AiVIS",
+        metaTitle: "SEO vs AI Search — What's Different & What Transfers | AiVIS.biz",
         metaDescription:
             "SEO and AI search optimization share some fundamentals but diverge on source selection criteria. Here's exactly what transfers and what doesn't.",
         primaryKeyword: "seo vs ai search what's different",
@@ -932,16 +933,16 @@ export const problemRawPages: KeywordPage[] = [
                     "No. They complement each other. A well-structured site optimized for both captures traditional search clicks and AI answer engine citations. The overlap is large enough that most AI optimizations also improve SEO.",
             },
             {
-                question: "Is AiVIS an SEO tool?",
+                question: "Is AiVIS.biz an SEO tool?",
                 answer:
-                    "AiVIS is an AI extraction readiness audit tool. It overlaps with SEO on technical signals but focuses specifically on whether AI models can access, extract, and attribute your content — not on Google rankings.",
+                    "AiVIS.biz is an AI extraction readiness audit tool. It overlaps with SEO on technical signals but focuses specifically on whether AI models can access, extract, and attribute your content — not on Google rankings.",
             },
         ],
         internalLinks: [
             { label: "Run a free audit", to: "/app/analyze" },
             { label: "What makes a website visible to AI search", to: "/problems/what-makes-website-visible-to-ai-search" },
             { label: "Methodology", to: "/methodology" },
-            { label: "AiVIS vs SEO tools", to: "/compare/aivis-vs-moz" },
+            { label: "AiVIS.biz vs SEO tools", to: "/compare/aivis-vs-moz" },
         ],
         ctaText: "See your AI search readiness",
         ctaLink: "/app/analyze",
@@ -951,7 +952,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "why-ai-search-replacing-google-clicks",
         cluster: "problems",
         title: "Why AI Search Is Replacing Google Clicks",
-        metaTitle: "Why AI Search Is Replacing Google Clicks | AiVIS",
+        metaTitle: "Why AI Search Is Replacing Google Clicks | AiVIS.biz",
         metaDescription:
             "AI answer engines synthesize answers instead of linking to results. Understand the shift and what it means for your site's traffic and visibility.",
         primaryKeyword: "why ai search is replacing google clicks",
@@ -971,7 +972,7 @@ export const problemRawPages: KeywordPage[] = [
                 content: [
                     "Strategy 1 — Be the cited source: When AI uses your content to build the answer, you appear as a source citation in Perplexity, ChatGPT, and Google AI Overview. Users who want depth click through. This is the citation optimization path.",
                     "Strategy 2 — Target queries AI answers poorly: Find long-tail, specific, or highly personalized queries that AI consistently answers inadequately. These still drive clicks because the AI answer is insufficient.",
-                    "AiVIS supports Strategy 1 with extraction readiness audits and citation testing, and Strategy 2 with niche discovery tools (Alignment tier).",
+                    "AiVIS.biz supports Strategy 1 with extraction readiness audits and citation testing, and Strategy 2 with niche discovery tools (Alignment tier).",
                 ],
             },
         ],
@@ -1003,7 +1004,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "saas-show-up-in-chatgpt",
         cluster: "problems",
         title: "How to Make My SaaS Show Up in ChatGPT",
-        metaTitle: "How to Make Your SaaS Show Up in ChatGPT | AiVIS",
+        metaTitle: "How to Make Your SaaS Show Up in ChatGPT | AiVIS.biz",
         metaDescription:
             "SaaS products need SoftwareApplication schema, feature-specific landing pages, and clear entity identity to appear in ChatGPT product recommendations.",
         primaryKeyword: "how to make my saas show up in chatgpt",
@@ -1024,7 +1025,7 @@ export const problemRawPages: KeywordPage[] = [
                     "Add SoftwareApplication JSON-LD to your product home page: name, description, applicationCategory, offers/price, featureList.",
                     "Create specific use-case landing pages for your primary categories. ChatGPT recommendation context matches against 'best tool for [specific use case]' — vague 'all-in-one' positioning extracts poorly.",
                     "Claim and complete your Product Hunt, G2, Capterra, and Crunchbase listings with consistent naming. Add sameAs links from your Organization schema to all profiles.",
-                    "Run an AiVIS audit on your product pages — SaaS pages often fail on schema coverage and content specificity.",
+                    "Run an AiVIS.biz audit on your product pages — SaaS pages often fail on schema coverage and content specificity.",
                 ],
             },
         ],
@@ -1037,7 +1038,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "How do I know if ChatGPT currently recommends my competitor instead of me?",
                 answer:
-                    "AiVIS citation testing (Signal tier) queries AI models for your primary use cases and reports which brands appear, in what position, and compared to your domain.",
+                    "AiVIS.biz citation testing (Signal tier) queries AI models for your primary use cases and reports which brands appear, in what position, and compared to your domain.",
             },
         ],
         internalLinks: [
@@ -1054,7 +1055,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "startup-not-mentioned-in-ai-answers",
         cluster: "problems",
         title: "Why My Startup Is Not Mentioned in AI Answers",
-        metaTitle: "Why My Startup Isn't in AI Answers — Fix It | AiVIS",
+        metaTitle: "Why My Startup Isn't in AI Answers — Fix It | AiVIS.biz",
         metaDescription:
             "Startups are absent from AI answers because of weak entity signals, not weak products. Fix Organization schema, sameAs links, and content structure.",
         primaryKeyword: "startup not mentioned in ai answers",
@@ -1075,7 +1076,7 @@ export const problemRawPages: KeywordPage[] = [
                     "2. sameAs profiles to build: LinkedIn Company, Twitter/X, GitHub, Product Hunt (for tech), Crunchbase or AngelList, Wikipedia if applicable.",
                     "3. One authoritative feature/product landing page per primary use case. Write specific claims, not broad positioning.",
                     "4. llms.txt at your site root: explicitly declare your product category, founder, and canonical use cases. AI models can read this to build entity context without relying solely on content parsing.",
-                    "5. AiVIS audit to identify specific extraction gaps in your current site.",
+                    "5. AiVIS.biz audit to identify specific extraction gaps in your current site.",
                 ],
             },
         ],
@@ -1107,7 +1108,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "why-chatgpt-uses-some-sites-not-mine",
         cluster: "problems",
         title: "Why Does ChatGPT Use Some Websites as Sources But Not Mine",
-        metaTitle: "Why ChatGPT Uses Some Websites as Sources But Not Mine | AiVIS",
+        metaTitle: "Why ChatGPT Uses Some Websites as Sources But Not Mine | AiVIS.biz",
         metaDescription:
             "ChatGPT uses sites that pass all four extraction stages: crawler access, rendered content, structured data, and specific claims. Here's the gap diagnosis.",
         primaryKeyword: "why does chatgpt use some websites as sources but not mine",
@@ -1124,7 +1125,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 heading: "How to find your gap vs a specific competitor",
                 content: [
-                    "Run an AiVIS audit on your page. Then (on Alignment tier) run a competitor audit on the page that is getting cited. The side-by-side comparison shows exactly where their extraction signals are stronger.",
+                    "Run an AiVIS.biz audit on your page. Then (on Alignment tier) run a competitor audit on the page that is getting cited. The side-by-side comparison shows exactly where their extraction signals are stronger.",
                     "In most cases, the gap is narrower than it appears. One missing schema type, one robots.txt entry, one rendering fix — and the extraction quality equalizes or surpasses.",
                 ],
             },
@@ -1133,10 +1134,10 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Does the site that gets cited always have better content?",
                 answer:
-                    "Not always. In AiVIS's audit data, structurally strong sites with moderate content often outrank structurally weak sites with brilliant content. Extraction readiness is more deterministic than content quality in the AI pipeline.",
+                    "Not always. In AiVIS.biz's audit data, structurally strong sites with moderate content often outrank structurally weak sites with brilliant content. Extraction readiness is more deterministic than content quality in the AI pipeline.",
             },
             {
-                question: "Can I use AiVIS to audit the competitor who is being cited instead of me?",
+                question: "Can I use AiVIS.biz to audit the competitor who is being cited instead of me?",
                 answer:
                     "Yes. Alignment tier includes competitor tracking and side-by-side extraction readiness comparison across shared topic pages.",
             },
@@ -1155,9 +1156,9 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-know-if-ai-can-read-my-website",
         cluster: "problems",
         title: "How to Know If AI Can Read My Website Correctly",
-        metaTitle: "How to Know If AI Can Read Your Website | AiVIS",
+        metaTitle: "How to Know If AI Can Read Your Website | AiVIS.biz",
         metaDescription:
-            "Test if AI can read your website with manual checks (robots.txt, View Source) and an AiVIS audit across all six extraction dimensions.",
+            "Test if AI can read your website with manual checks (robots.txt, View Source) and an AiVIS.biz audit across all seven extraction dimensions.",
         primaryKeyword: "how to know if ai can read my website",
         secondaryKeyword: "test ai website readability",
         hook: "You cannot see what AI sees on your site. Here is how to check — quickly, specifically, and without guessing.",
@@ -1174,7 +1175,7 @@ export const problemRawPages: KeywordPage[] = [
             {
                 heading: "After manual checks: run a full audit",
                 content: [
-                    "Manual checks cover the four most critical failure points. But there are 50+ extraction signals across six dimensions. An AiVIS audit checks all of them in under two minutes, assigns a composite score, and provides prioritized fix recommendations with BRAG evidence IDs.",
+                    "Manual checks cover the four most critical failure points. But there are 50+ extraction signals across seven dimensions. An AiVIS.biz audit checks all of them in under two minutes, assigns a composite score, and provides prioritized fix recommendations with BRAG evidence IDs.",
                     "Observer tier is free. Enter any URL and get your extraction readiness assessment with your top blockers identified.",
                 ],
             },
@@ -1183,12 +1184,12 @@ export const problemRawPages: KeywordPage[] = [
             {
                 question: "Is there a way to simulate exactly what GPTBot sees?",
                 answer:
-                    "AiVIS uses a headless Chromium browser with AI crawler user-agents to fetch pages, simulating the AI crawl experience more closely than standard tools. The rendering and extraction simulation is the closest proxy to actual GPTBot behavior.",
+                    "AiVIS.biz uses a headless Chromium browser with AI crawler user-agents to fetch pages, simulating the AI crawl experience more closely than standard tools. The rendering and extraction simulation is the closest proxy to actual GPTBot behavior.",
             },
             {
                 question: "My View Source shows some content, but not all of it — what does that mean?",
                 answer:
-                    "Partial server-side rendering means some content is available to AI crawlers but some is not. The content missing from View Source is JavaScript-rendered and invisible to most AI crawlers. Run an AiVIS audit to see exactly which content is and isn't extractable.",
+                    "Partial server-side rendering means some content is available to AI crawlers but some is not. The content missing from View Source is JavaScript-rendered and invisible to most AI crawlers. Run an AiVIS.biz audit to see exactly which content is and isn't extractable.",
             },
         ],
         internalLinks: [
@@ -1205,7 +1206,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "why-ai-rewrites-instead-of-linking",
         cluster: "problems",
         title: "Why Does AI Rewrite My Content Instead of Linking to It",
-        metaTitle: "Why AI Rewrites Content Instead of Linking | AiVIS",
+        metaTitle: "Why AI Rewrites Content Instead of Linking | AiVIS.biz",
         metaDescription:
             "AI models rewrite and paraphrase by design. To get cited with attribution instead of paraphrased without credit, you need specific entity signals.",
         primaryKeyword: "why does ai rewrite my content instead of linking it",
@@ -1254,7 +1255,7 @@ export const problemRawPages: KeywordPage[] = [
         slug: "how-to-fix-content-ai-misunderstands",
         cluster: "problems",
         title: "How to Fix Content That AI Misunderstands",
-        metaTitle: "Fix Content That AI Misunderstands | AiVIS",
+        metaTitle: "Fix Content That AI Misunderstands | AiVIS.biz",
         metaDescription:
             "AI misunderstands content when extraction signals are ambiguous. Fix headings, schema, entity declarations, and content specificity for accurate AI interpretation.",
         primaryKeyword: "how to fix content that ai misunderstands",
@@ -1275,7 +1276,7 @@ export const problemRawPages: KeywordPage[] = [
                 content: [
                     "Heading fix: Each H2 should address a single, specific sub-topic. If your H2 is 'Our Features', replace it with what the feature does: 'Automated extraction audit in under 2 minutes'.",
                     "Schema fix: Add complete Organization JSON-LD with legalName and sameAs. Add Article schema with datePublished and author to content pages.",
-                    "Language fix: Replace benefit statements with specific, verifiable function descriptions. Run the page through an AiVIS audit — the content depth dimension measures this.",
+                    "Language fix: Replace benefit statements with specific, verifiable function descriptions. Run the page through an AiVIS.biz audit — the content depth dimension measures this.",
                     "Entity clarity fix: Use the exact same entity name in schema, in body copy, and in meta tags. Consistency is the disambiguation signal.",
                 ],
             },

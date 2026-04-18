@@ -2,7 +2,7 @@ import { redactSensitive } from '../lib/safeLogging.js';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const RESEND_KEY_VALID = RESEND_API_KEY.length > 0 && !RESEND_API_KEY.includes('replace_with') && RESEND_API_KEY.startsWith('re_');
-const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS.biz <noreply@mailer.aivis.biz>';
 // FRONTEND_URL may be comma-separated (dev). Take the first origin for email links.
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0]
@@ -11,18 +11,18 @@ const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL 
 
 // ─── Brand constants for email templates ──────────────────────────────────────
 const BRAND = {
-  name: 'AiVIS',
+  name: 'AiVIS.biz',
   tagline: 'CITE LEDGER — BRAG Evidence-Linked Scores',
   logoUrl: 'https://aivis.biz/aivis-logo.png',
   siteUrl: 'https://aivis.biz',
   supportEmail: 'support@aivis.biz',
-  company: 'AiVIS',
+  company: 'AiVIS.biz',
   location: 'Georgia, USA',
   year: new Date().getFullYear(),
 } as const;
 
 // Marketing / newsletter sender addresses
-const MARKETING_FROM = 'AiVIS Marketing <marketing@aivis.biz>';
+const MARKETING_FROM = 'AiVIS.biz Marketing <marketing@aivis.biz>';
 const MARKETING_REPLY_TO = 'kimsupport@aivis.biz';
 
 // Only treat as dev mode if explicitly running locally - default to production behavior
@@ -291,27 +291,28 @@ export async function sendWelcomeOnboardingEmail(email: string, userName: string
   try {
     await resendSend({
       to: email,
-      subject: `Welcome to AiVIS - Your AI Visibility Audit Guide`,
+      subject: `Welcome to AiVIS.biz - Your AI Visibility Audit Guide`,
       html: welcomeOnboardingHtml(email, userName),
       text: [
-        `Welcome to AiVIS, ${userName || 'there'}!`,
+        `Welcome to AiVIS.biz, ${userName || 'there'}!`,
         ``,
-        `Your account is verified and ready to go. AiVIS measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude can understand, extract, and cite your website.`,
+        `Your account is verified and ready to go. AiVIS.biz measures how well AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude can understand, extract, and cite your website.`,
         ``,
-        `HOW TO USE AiVIS:`,
+        `HOW TO USE AiVIS.biz:`,
         `1. Run your first audit - paste any URL at ${FRONTEND_URL}/ and click Analyze`,
-        `2. Understand your AI Visibility Score (0-100) across 6 categories`,
+        `2. Understand your AI Visibility Score (0-100) across 7 categories`,
         `3. Follow the 8-12 AI-generated recommendations ranked by priority`,
         `4. Track your progress over time on the Analytics page`,
         `5. Export PDF & CSV reports to share with your team`,
         ``,
-        `THE 6 CATEGORIES:`,
+        `THE 7 CATEGORIES:`,
         `- Content Depth & Quality`,
         `- Heading Structure`,
         `- Schema & Structured Data`,
         `- Meta Tags & Open Graph`,
         `- Technical SEO`,
         `- AI Readability & Citability`,
+        `- Security & Trust`,
         ``,
         `HELPFUL RESOURCES:`,
         `- Getting Started Guide: ${FRONTEND_URL}/guide`,
@@ -467,7 +468,7 @@ export function renderPlatformNewsletterEmail(args: PlatformNewsletterEmailArgs)
 
   const html = newsletterHtml(args);
   const text = [
-    `AiVIS Biweekly - ${args.editionLabel}`,
+    `AiVIS.biz Biweekly - ${args.editionLabel}`,
     `Hi ${firstName},`,
     '',
     `Your tier: ${args.tierLabel}`,
@@ -840,11 +841,11 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
           <!-- Body -->
           <tr>
             <td style="padding:40px;">
-              <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Welcome to AiVIS, ${greeting}.</h1>
+              <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Welcome to AiVIS.biz, ${greeting}.</h1>
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your account is verified and ready to go.</p>
 
               <p style="margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                AiVIS is the <strong style="color:#22d3ee;">CITE LEDGER</strong> — the verification platform
+                AiVIS.biz is the <strong style="color:#22d3ee;">CITE LEDGER</strong> — the verification platform
                 that proves whether AI search engines like ChatGPT, Perplexity, Google AI Overviews, and Claude
                 can understand, cite, and recommend your website. Every finding is evidence-linked
                 through BRAG (Based-Retrieval-Auditable-Grading) — no hallucination, no assumptions.
@@ -855,7 +856,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                 <tr><td style="border-top:1px solid #334155;"></td></tr>
               </table>
 
-              <h2 style="margin:0 0 20px;font-size:18px;font-weight:700;color:#ffffff;">How to use AiVIS - Step by step</h2>
+              <h2 style="margin:0 0 20px;font-size:18px;font-weight:700;color:#ffffff;">How to use AiVIS.biz - Step by step</h2>
 
               <!-- Step 1 -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
@@ -867,8 +868,8 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                     <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Run your first citation audit</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Head to your <a href="${dashboardUrl}" style="color:#22d3ee;text-decoration:underline;">Dashboard</a>
-                      and paste any URL into the analyzer. AiVIS will crawl the live page in real time and score it across
-                      six evidence-linked categories using frontier AI models. Your first scan takes about 15–25 seconds.
+                      and paste any URL into the analyzer. AiVIS.biz will crawl the live page in real time and score it across
+                      seven evidence-linked categories using frontier AI models. Your first scan takes about 15–25 seconds.
                       You get 3 free scans per month on the Observer plan.
                     </p>
                   </td>
@@ -885,9 +886,10 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                     <p style="margin:0 0 6px;color:#ffffff;font-size:15px;font-weight:600;">Understand your CITE LEDGER Score</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Your score (0–100) tells you how well AI platforms can parse and recommend your site. It's graded A through F
-                      across six categories: <strong style="color:#cbd5e1;">Content Depth</strong>, <strong style="color:#cbd5e1;">Heading Structure</strong>,
+                      across seven categories: <strong style="color:#cbd5e1;">Content Depth</strong>, <strong style="color:#cbd5e1;">Heading Structure</strong>,
                       <strong style="color:#cbd5e1;">Schema &amp; Structured Data</strong>, <strong style="color:#cbd5e1;">Meta Tags</strong>,
-                      <strong style="color:#cbd5e1;">Technical Foundations</strong>, and <strong style="color:#cbd5e1;">AI Readability &amp; Citability</strong>.
+                      <strong style="color:#cbd5e1;">Technical Foundations</strong>, <strong style="color:#cbd5e1;">AI Readability &amp; Citability</strong>,
+                      and <strong style="color:#cbd5e1;">Security &amp; Trust</strong>.
                       Most websites score C or D on their first audit - that's normal and exactly why you're here.
                     </p>
                   </td>
@@ -951,7 +953,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
               </table>
 
               <!-- What's scored -->
-              <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#ffffff;">The 6 categories AiVIS scores</h2>
+              <h2 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#ffffff;">The 7 categories AiVIS.biz scores</h2>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #334155;border-radius:12px;margin-bottom:28px;">
                 <tr>
@@ -963,6 +965,7 @@ function welcomeOnboardingHtml(email: string, userName: string): string {
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Meta Tags &amp; Open Graph</strong> - title, description, OG/Twitter cards</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Technical Foundations</strong> - HTTPS, canonical tags, internal/external links</td></tr>
                       <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">AI Readability &amp; Citability</strong> - FAQ structure, definitions, extractability</td></tr>
+                      <tr><td style="padding:5px 0;color:#cbd5e1;font-size:14px;line-height:1.6;"> &nbsp;<strong style="color:#22d3ee;">Security &amp; Trust</strong> - robots.txt, AI crawler access, author entity, sameAs links</td></tr>
                     </table>
                   </td>
                 </tr>
@@ -1054,7 +1057,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
               <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;font-weight:500;">Your ${tierName} plan resets on ${resetFormatted}.</p>
 
               <p style="margin:0 0 24px;color:#cbd5e1;font-size:15px;line-height:1.7;">
-                You hit your monthly audit limit; which means you're actively using AiVIS CITE LEDGER to improve your citation readiness.
+                You hit your monthly audit limit; which means you're actively using AiVIS.biz CITE LEDGER to improve your citation readiness.
                 That's a good sign. The fact that you need more scans means your site is in active optimization, and that's
                 exactly where the higher tiers pay for themselves.
               </p>
@@ -1093,7 +1096,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                     <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">Competitor tracking shows you exactly who's winning</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
                       Alignment and Signal tiers unlock <strong style="color:#cbd5e1;">Competitor Tracking</strong> - benchmark your AI visibility
-                      score against any competitor's page, side by side, across all six categories. You see exactly where they're ahead
+                      score against any competitor's page, side by side, across all seven categories. You see exactly where they're ahead
                       and what specific content changes would close the gap. This feature alone has helped early users identify
                       schema gaps and content opportunities they'd completely missed.
                     </p>
@@ -1110,7 +1113,7 @@ function usageCapHtml(email: string, userName: string, tierName: string, limit: 
                   <td>
                     <p style="margin:0 0 4px;color:#ffffff;font-size:15px;font-weight:600;">Citation testing proves whether AI actually mentions you</p>
                     <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
-                      Signal tier includes <strong style="color:#cbd5e1;">Citation Testing</strong> - you submit real queries and AiVIS checks
+                      Signal tier includes <strong style="color:#cbd5e1;">Citation Testing</strong> - you submit real queries and AiVIS.biz checks
                       whether ChatGPT, Perplexity, and Claude mention your brand, link to your site, or recommend you in their answers.
                       This is the ultimate validation: not just "is my content AI-ready" but "is AI actually citing me?"
                     </p>

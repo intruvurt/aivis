@@ -92,7 +92,7 @@ function getDeterministicFallbackReply(message: string): string {
   }
 
   return [
-    'AiVIS Guide is in reliability fallback mode right now, but I can still help.',
+    'AiVIS.biz Guide is in reliability fallback mode right now, but I can still help.',
     'Try one of these:',
     '- "What can I do on the free tier?"',
     '- "Compare Alignment vs Signal"',
@@ -529,7 +529,7 @@ async function fetchSiteFileContent(
   try {
     const res = await fetch(fileUrl, {
       signal: controller.signal,
-      headers: { 'User-Agent': 'AiVIS-Guide/1.0 (+https://aivis.biz)' },
+      headers: { 'User-Agent': 'AiVIS.biz-Guide/1.0 (+https://aivis.biz)' },
       redirect: 'follow',
     });
     if (!res.ok) {
@@ -582,31 +582,32 @@ async function buildSiteFileContext(intent: FileFetchIntent): Promise<string | n
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
- * AiVIS Platform Knowledge Base - baked into the system prompt
+ * AiVIS.biz Platform Knowledge Base - baked into the system prompt
  * Kept as a single string so it fits in context without retrieval infra.
  * ──────────────────────────────────────────────────────────────────────────── */
 const PLATFORM_KNOWLEDGE = `
-## What is AiVIS?
-AiVIS is a real-time AI visibility audit and fix platform. It measures how well AI search engines — ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot — can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
+## What is AiVIS.biz?
+AiVIS.biz is a real-time AI visibility audit and fix platform. It measures how well AI search engines — ChatGPT, Perplexity, Claude, Google AI Overviews, Bing Copilot — can understand, cite, and recommend a website. This is NOT traditional SEO. AiVIS.biz operates on the citation layer: whether content is structured, deep, and trustworthy enough for AI systems to confidently include in generated answers.
 
 Website: https://aivis.biz
-Company: AiVIS — B2B service provider in Georgia (Atlanta).
+Company: AiVIS.biz — B2B service provider in Georgia (Atlanta).
 
 ## How an Analysis Works
 1. User enters a URL on the Dashboard.
-2. AiVIS crawls the page in real time using Puppeteer (headless browser).
+2. AiVIS.biz crawls the page in real time using Puppeteer (headless browser).
 3. The scraper extracts 16 evidence signals: title tag, meta description, canonical URL, Open Graph tags, JSON-LD schema blocks, H1 tag, full heading hierarchy (H1-H6), internal links, external links, word count, robots meta tag, image alt text, content body text, and HTTPS/SSL status.
 4. The scraped evidence is sent to the AI analysis pipeline through OpenRouter.
-5. The AI scores the site across 6 categories (0-100 each) and generates an overall visibility score.
+5. The AI scores the site across 7 categories (0-100 each) and generates an overall visibility score.
 6. Results are cached for performance and stored in the audits table for history.
 
-## 6 Scoring Categories
-1. **Content Depth & Quality** - word count, topical coverage, authority. Does the content have enough depth for an AI to confidently summarize it?
-2. **Heading Structure** - H1 tag presence, H2/H3 hierarchy, keyword usage. Clear heading hierarchy helps AI parse sections.
-3. **Schema & Structured Data** - JSON-LD markup types and completeness. FAQ, HowTo, Organization, Product schema help AI extract structured facts.
-4. **Meta Tags & Open Graph** - title tag, meta description, OG/Twitter cards. These are often the first things AI systems read.
-5. **Technical SEO** - HTTPS, canonical tags, internal/external link counts, robots meta. Can AI crawlers actually access and trust the page?
-6. **AI Readability & Citability** - FAQ structure, definition patterns, extractable facts. Is the content written in a way an AI can quote?
+## 7 Scoring Categories
+1. **Content Depth & Quality** (18%) - word count, topical coverage, authority. Does the content have enough depth for an AI to confidently summarize it?
+2. **Heading Structure** (10%) - H1 tag presence, H2/H3 hierarchy, keyword usage. Clear heading hierarchy helps AI parse sections.
+3. **Schema & Structured Data** (20%) - JSON-LD markup types and completeness. FAQ, HowTo, Organization, Product schema help AI extract structured facts.
+4. **Meta Tags & Open Graph** (15%) - title tag, meta description, OG/Twitter cards. These are often the first things AI systems read.
+5. **Technical SEO** (15%) - HTTPS, canonical tags, internal/external link counts, robots meta. Can AI crawlers actually access and trust the page?
+6. **AI Readability & Citability** (12%) - FAQ structure, definition patterns, extractable facts. Is the content written in a way an AI can quote?
+7. **Security & Trust** (10%) - robots.txt AI crawler access, author entity verification, sameAs links, link diversity.
 
 Scores use an A-F grading scale. Most sites score C or D on their first audit.
 
@@ -698,7 +699,7 @@ Developer reference for API keys, scopes, endpoints, and integration examples.
 Public report snapshots can be opened from share links. If a user pastes a share URL, extract token and summarize score, takeaways, and top recommendations.
 
 ### Guide (/guide)
-Step-by-step explanation of how AiVIS works, what it scans, scoring methodology, and how to improve.
+Step-by-step explanation of how AiVIS.biz works, what it scans, scoring methodology, and how to improve.
 
 ### FAQ (/faq)
 30 questions across 6 categories: Getting Started, Analysis & Scores, Plans & Pricing, Technical, Privacy & Security, About the Platform.
@@ -721,7 +722,7 @@ All payments processed through Stripe (PCI Level 1). We never see card details. 
 30-60 seconds for most pages. You'll see a real-time progress overlay showing each step: DNS resolution, page crawl, content extraction, schema analysis, technical audit, AI analysis (and peer critique + validation for Signal tier).
 
 **Q: What if my site blocks the crawler?**
-If a page blocks bots or times out, AiVIS returns partial results with clear error indicators. Accessible areas are still scored; inaccessible areas are marked as "Unknown."
+If a page blocks bots or times out, AiVIS.biz returns partial results with clear error indicators. Accessible areas are still scored; inaccessible areas are marked as "Unknown."
 
 **Q: Can I export my report?**
 Starter, Alignment, and Signal tiers include exports and shareable report links. Observer tier results are viewable in-app and saved to analysis history.
@@ -764,11 +765,11 @@ function buildSystemPrompt(
   enrichedUserContext?: string | null,
   ticketContext?: string | null,
 ): string {
-  return `You are AiVIS Guide - the real official AI assistant for the AiVIS platform (https://aivis.biz).
+  return `You are AiVIS.biz Guide - the real official AI assistant for the AiVIS.biz platform (https://aivis.biz).
 
 RULES - FOLLOW STRICTLY:
-1. ONLY answer questions about the AiVIS platform, AI visibility, AI search optimization, and features available in the product.
-2. If asked about anything unrelated to the platform or AI visibility, politely decline: "I'm AiVIS Guide - I can only help with questions about the AiVIS platform and AI visibility. Try asking me about your audit scores, features, or how to improve your site's AI discoverability!"
+1. ONLY answer questions about the AiVIS.biz platform, AI visibility, AI search optimization, and features available in the product.
+2. If asked about anything unrelated to the platform or AI visibility, politely decline: "I'm AiVIS.biz Guide - I can only help with questions about the AiVIS.biz platform and AI visibility. Try asking me about your audit scores, features, or how to improve your site's AI discoverability!"
 3. Be concise, helpful, and conversational. Use short paragraphs. Use bullet points for lists.
 4. When relevant, link to platform pages using markdown: [text](/path). Available pages: /, /analytics, /competitors, /citations, /reverse-engineer, /reports, /guide, /faq, /pricing, /profile, /settings, /billing, /help, /notifications.
 5. If the user asks about a feature gated to a higher tier, explain what it does and mention the upgrade path naturally - never be pushy.

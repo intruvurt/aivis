@@ -17,13 +17,13 @@ export default function DriftAnalysisPage() {
         name: "Drift Analysis — Attribution Stability Over Time",
         description:
           "Drift Analysis measures citation decay, entity substitution, and evidence stability between audit runs.",
-        url: "https://aivis.biz/evidence/drift-analysis",
+        path: "/evidence/drift-analysis",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Evidence", url: "https://aivis.biz/evidence/ledger-index" },
-        { name: "Drift Analysis", url: "https://aivis.biz/evidence/drift-analysis" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Evidence", path: "/evidence/ledger-index" },
+        { name: "Drift Analysis", path: "/evidence/drift-analysis" },
       ]),
     ],
   });

@@ -17,11 +17,11 @@ export default function AboutAivisPage() {
         name: "About AiVIS — Canonical Identity Definition",
         description:
           "AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.",
-        url: "https://aivis.biz/about-aivis",
+        path: "/about-aivis",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
       ]),
       buildTaxonomySchema(),
     ],

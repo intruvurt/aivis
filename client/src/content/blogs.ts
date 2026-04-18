@@ -1,7 +1,7 @@
 ﻿import { BLOG_READY_GENERATED_ENTRIES } from './blogReady.generated';
 
 export type BlogCategory = 'aeo' | 'seo' | 'geo' | 'eeat' | 'technology' | 'strategy' | 'case-study' | 'implementation';
-export type BlogTag = 'AEO' | 'SEO' | 'GEO' | 'EEAT' | 'AI-Tech' | 'Citations' | 'Visibility' | 'Schema' | 'Extraction' | 'Foundational' | 'Advanced' | 'Case Study' | 'Strategy' | 'Technical' | 'Implementation';
+export type BlogTag = 'AEO' | 'SEO' | 'GEO' | 'EEAT' | 'AI-Tech' | 'Citations' | 'Visibility' | 'Schema' | 'Extraction' | 'Foundational' | 'Advanced' | 'Case Study' | 'Strategy' | 'Technical' | 'Implementation' | 'discovery' | 'evidence' | 'query' | 'mention-monitoring' | 'Mentions' | 'Authority' | 'Technical Schema' | 'Advanced JSON-LD' | 'Structured Data' | 'Search Engine Optimization';
 
 export interface AuthorEEAT {
   name: string;
@@ -4056,7 +4056,7 @@ AiVIS.biz uses a 5-tier model designed around usage patterns, not artificial fea
 Observer is for evaluation. Run your homepage through an <a href="/analyze">AI visibility audit</a>, see the score, read the recommendations, and decide whether the structural issues AiVIS.biz identifies are real. The audit uses free AI models (Gemma 4 via OpenRouter) so there is no cost to AiVIS.biz per scan.
 
 **What you get:**
-- AI visibility score (0–100) across 6 dimensions
+- AI visibility score (0–100) across 7 dimensions
 - Recommendations with evidence IDs and verified evidence counts
 - Evidence benchmark score
 - Basic result sharing (redacted)
@@ -4748,6 +4748,7 @@ Run a free AiVIS.biz audit at [aivis.biz](https://aivis.biz) to receive an evide
   },
   {
     slug: 'ai-citation-tracking-real-probabilistic-fix-2026',
+    path: '/blogs/ai-citation-tracking-real-probabilistic-fix-2026',
     title: "Your Analytics Are Blind to AI Citations. Here's the Metric That Changes That.",
     description:
       'Analytics cannot see AI citations — there is no click event when a model cites you. Learn the probabilistic approach that tracks your brand position across ChatGPT, Claude, and Gemini with a repeatable, evidence-backed workflow.',
@@ -4755,6 +4756,15 @@ Run a free AiVIS.biz audit at [aivis.biz](https://aivis.biz) to receive an evide
     tags: ['AEO', 'Citations', 'Advanced', 'AI-Tech'],
     publishedAt: '2026-04-15',
     readMinutes: 10,
+    keywords: ['ai citation tracking', 'citation rank score', 'ai visibility analytics', 'probabilistic citation monitoring', 'chatgpt citation tracking'],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS.biz',
+      expertise: ['Answer Engine Optimization', 'AI Citation Analysis', 'Evidence-backed Auditing'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
+      experience: '8+ years in AI annotation, AI dataset management, AI ranking strategy',
+    },
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
     keyPoints: [
       'Why standard analytics tools cannot track AI citations',
       'What probabilistic citation scoring measures and how it works',
@@ -4879,6 +4889,7 @@ Your dashboard has no record of whether AI models are citing you — AiVIS.biz d
   },
   {
     slug: 'mention-juice-score-source-credibility-ai-visibility-2026',
+    path: '/blogs/mention-juice-score-source-credibility-ai-visibility-2026',
     title: "Your Brand Mention Count Is Lying to You About AI Visibility",
     description:
       'Mention volume is a vanity metric. AI models weight sources by credibility — one Wikipedia reference outweighs hundreds of directory listings. See how Mention Juice Score measures what actually drives AI citation strength.',
@@ -4886,6 +4897,15 @@ Your dashboard has no record of whether AI models are citing you — AiVIS.biz d
     tags: ['AEO', 'Visibility', 'Strategy', 'AI-Tech'],
     publishedAt: '2026-04-15',
     readMinutes: 9,
+    keywords: ['mention juice score', 'brand mention credibility', 'ai visibility metrics', 'source credibility weighting', 'mention tracking'],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS.biz',
+      expertise: ['Answer Engine Optimization', 'AI Discoverability', 'Brand Mention Analysis'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
+      experience: '8+ years in AI annotation, AI dataset management, AI ranking strategy',
+    },
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
     keyPoints: [
       'Why mention volume is a misleading metric for AI visibility',
       'How source credibility weights are assigned across 19 platforms',
@@ -5013,6 +5033,7 @@ Volume is not your problem — credibility weight is. Run a free AiVIS.biz audit
   },
   {
     slug: 'mcp-query-validation-evidence-id-extraction-ai-rank-2026',
+    path: '/blogs/mcp-query-validation-evidence-id-extraction-ai-rank-2026',
     title: "See Exactly Where Your Brand Ranks in AI Answers — Query by Query, Model by Model",
     description:
       'Stop guessing where your brand appears in ChatGPT, Claude, and Gemini. Run real queries, get real positions, and get a signed evidence trail for every result. Citation rank — not estimated, verified.',
@@ -5020,6 +5041,15 @@ Volume is not your problem — credibility weight is. Run a free AiVIS.biz audit
     tags: ['AEO', 'Technical', 'Implementation', 'Citations'],
     publishedAt: '2026-04-15',
     readMinutes: 9,
+    keywords: ['mcp query validation', 'evidence id extraction', 'ai brand ranking', 'citation rank score', 'ai answer position tracking'],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS.biz',
+      expertise: ['MCP Integration', 'Citation Verification', 'AI Retrieval Systems'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
+      experience: '8+ years in search infrastructure and AI systems',
+    },
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
     keyPoints: [
       'How the MCP validate_queries_evidence tool works end-to-end',
       'What an evidence ID encodes and why it is deterministic',

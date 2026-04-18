@@ -31,7 +31,7 @@ import {
 export const HOMEPAGE_FAQ_ITEMS = [
     {
         q: 'What is AiVIS.biz and what does it audit?',
-        a: `${CITE_LEDGER_DEFINITION} It fetches your live page and scores six evidence-linked categories using BRAG (Based-Retrieval-Auditable-Grading).`,
+        a: `${CITE_LEDGER_DEFINITION} It fetches your live page and scores seven evidence-linked categories using BRAG (Based-Retrieval-Auditable-Grading).`,
     },
     {
         q: 'Why does citation verification matter more than traditional ranking?',
@@ -59,8 +59,8 @@ export const HOMEPAGE_FAQ_ITEMS = [
         a: `Ahrefs and Semrush track keyword rankings, backlinks and traditional search performance. ${BRAND.name} ${BRAND.product} measures something different: whether AI answer engines can structurally extract and cite your content. It scans your live page with a headless browser, runs multi-model AI analysis and returns evidence-linked findings through BRAG — none of which traditional tools cover.`,
     },
     {
-        q: 'What are the six scoring categories?',
-        a: `${BRAND.name} scores Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical Foundations (15%), Meta Tags and Open Graph (13%) and Heading Structure (12%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.`,
+        q: 'What are the seven scoring categories?',
+        a: `${BRAND.name} scores Schema and Structured Data (20%), Content Depth and Quality (18%), Meta Tags and Open Graph (15%), Technical SEO (15%), AI Readability and Citability (12%), Heading Structure (10%) and Security and Trust (10%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.`,
     },
     {
         q: 'Can I track how my score changes over time?',

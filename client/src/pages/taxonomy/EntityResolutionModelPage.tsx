@@ -16,13 +16,13 @@ export default function EntityResolutionModelPage() {
         name: "Entity Resolution Model — How AiVIS Maintains Identity",
         description:
           "The Entity Resolution Model ensures AiVIS maintains a stable, non-mergeable identity across AI answer engines.",
-        url: "https://aivis.biz/methodology/entity-resolution-model",
+        path: "/methodology/entity-resolution-model",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Methodology", url: "https://aivis.biz/methodology" },
-        { name: "Entity Resolution Model", url: "https://aivis.biz/methodology/entity-resolution-model" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Methodology", path: "/methodology" },
+        { name: "Entity Resolution Model", path: "/methodology/entity-resolution-model" },
       ]),
     ],
   });

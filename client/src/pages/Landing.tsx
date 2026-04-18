@@ -112,9 +112,9 @@ interface PreviewScanResult {
 }
 
 const PROGRESS_STEPS = [
-  'Fetching page',
-  'Reading structure',
-  'Checking trust signals',
+  'Fetching live page',
+  'Extracting structure',
+  'Evaluating 7 dimensions',
   'Scoring citation readiness',
 ] as const;
 
@@ -501,7 +501,7 @@ const Landing = () => {
           <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
             {[
               { label: 'AI engines measured', value: '4', accent: 'text-cyan-300' },
-              { label: 'Distortion categories', value: '6', accent: 'text-red-300' },
+              { label: 'Scoring dimensions', value: '7', accent: 'text-red-300' },
               { label: 'Evidence framework', value: 'BRAG', accent: 'text-emerald-300' },
               { label: 'Sites audited', value: platformStats?.completedAudits ? `${Number(platformStats.completedAudits).toLocaleString()}+` : '-', accent: 'text-amber-300' },
             ].map(({ label, value, accent }) => (
@@ -594,9 +594,9 @@ const Landing = () => {
                   </div>
                 </div>
               )},
-              { step: '2', accent: 'border-violet-400/20 bg-violet-400/5', color: 'text-violet-300', title: 'BRAG Engine + AI pipeline', desc: 'Multi-model analysis scores 6 distortion categories. Signal tier runs triple-check with 3 independent models.', visual: (
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {['Content Depth', 'Schema', 'AI Readability', 'Technical SEO', 'Meta Tags', 'Headings'].map((cat) => (
+              { step: '2', accent: 'border-violet-400/20 bg-violet-400/5', color: 'text-violet-300', title: 'BRAG Engine + AI pipeline', desc: 'Multi-model analysis scores 7 evidence-backed dimensions. Signal tier runs triple-check with 3 independent models.', visual: (
+                <div className="mt-3 grid grid-cols-4 gap-2">
+                  {['Content Depth', 'Schema', 'AI Readability', 'Technical SEO', 'Meta Tags', 'Headings', 'Security & Trust'].map((cat) => (
                     <div key={cat} className="rounded-lg border border-white/8 bg-[#0d1117] p-2 text-center">
                       <div className="text-xs text-white/40">{cat}</div>
                       <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${50 + Math.random() * 40}%` }} /></div>
@@ -717,6 +717,7 @@ const Landing = () => {
                 { cat: 'AI Readability', before: 15, after: 55, color: 'from-red-400 to-emerald-400', fix: 'Added FAQ schema with 4 Q&A pairs' },
                 { cat: 'Meta Tags', before: 30, after: 50, color: 'from-amber-400 to-emerald-400', fix: 'Fixed missing Open Graph tags' },
                 { cat: 'Technical SEO', before: 20, after: 45, color: 'from-red-400 to-emerald-400', fix: 'Added canonical URL + robots meta' },
+                { cat: 'Security & Trust', before: 10, after: 40, color: 'from-red-400 to-emerald-400', fix: 'Added HSTS + author entity + sameAs links' },
               ] as const).map((row) => (
                 <div key={row.cat} className="flex items-center gap-3">
                   <span className="text-xs text-white/50 w-28 sm:w-32 shrink-0">{row.cat}</span>
@@ -886,9 +887,9 @@ const Landing = () => {
             {([
               { icon: '🧠', title: 'Multi-model AI pipeline', desc: 'Up to 3 independent models score every audit. Signal tier runs triple-check consensus so no single model bias distorts your results.' },
               { icon: '🔍', title: 'BRAG evidence system', desc: 'Every finding links to a real page element via a unique evidence ID — so you can verify exactly what triggered each distortion and each fix.' },
-              { icon: '📊', title: '6-category distortion scoring', desc: 'Content Depth, Schema, AI Readability, Technical SEO, Meta Tags and Headings — each weighted and measured against your live page.' },
+              { icon: '📊', title: '7-dimension evidence scoring', desc: 'Schema (20%), Content Depth (18%), Technical SEO (15%), Meta Tags (15%), AI Readability (12%), Headings (10%), Security & Trust (10%) — each weighted and measured against your live page.' },
               { icon: '⚡', title: 'Live page scanning', desc: 'A headless browser pulls your live page data: JSON-LD, headings, meta tags, Open Graph, robots directives and canonical URLs — nothing cached or guessed.' },
-              { icon: '🏢', title: 'Competitor intelligence', desc: 'Track rivals, expose opportunity gaps, compare AI visibility scores and monitor brand mentions across 17 sources including Reddit and Hacker News.' },
+              { icon: '🏢', title: 'Competitor intelligence', desc: 'Track rivals, expose opportunity gaps, compare AI visibility scores and monitor brand mentions across 19 sources including Reddit, Hacker News and Bluesky.' },
               { icon: '🔗', title: 'Citation testing', desc: 'Test whether ChatGPT, Perplexity and Google AI actually cite your domain — with real query evidence, not simulated results.' },
             ] as const).map((cap) => (
               <motion.div key={cap.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
@@ -921,9 +922,9 @@ const Landing = () => {
               <div className="grid grid-cols-2 gap-3">
                 {([
                   { value: '100+', label: 'Keyword pages', accent: 'text-cyan-300' },
-                  { value: '17', label: 'Mention sources', accent: 'text-violet-300' },
+                  { value: '19', label: 'Mention sources', accent: 'text-violet-300' },
                   { value: '3', label: 'Citation engines', accent: 'text-emerald-300' },
-                  { value: '6', label: 'Scoring categories', accent: 'text-amber-300' },
+                  { value: '7', label: 'Scoring dimensions', accent: 'text-amber-300' },
                 ] as const).map(({ value, label, accent }) => (
                   <div key={label} className="rounded-xl border border-white/8 bg-white/[0.02] p-3 text-center">
                     <div className={`text-2xl font-black ${accent}`}>{value}</div>

@@ -4,8 +4,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "why-ai-cant-read-my-site",
     cluster: "problems",
-    title: "Why AI Can't Read My Website",
-    metaTitle: "Why AI Can't Read My Website — Common Causes | AiVIS",
+    title: "Why Can't AI Answer Engines Read My Website?",
+    metaTitle: "Why Can't AI Answer Engines Read My Website? Common Causes",
     metaDescription:
       "Find out why ChatGPT, Perplexity, and Claude can't find or cite your website. Diagnose the most common AI visibility failures.",
     primaryKeyword: "why ai can't read my website",
@@ -38,7 +38,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "How do I check if AI can read my website?",
         answer:
-          "Run a free AiVIS audit on your URL. It crawls your site like an AI model and reports exactly which signals are present, missing, or broken.",
+          "Run a free AiVIS.biz audit on your URL. It crawls your site like an AI model and reports exactly which signals are present, missing, or broken.",
       },
       {
         question: "Can I fix AI visibility without redesigning my site?",
@@ -63,8 +63,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "missing-structured-data",
     cluster: "problems",
-    title: "Missing Structured Data Kills AI Citations",
-    metaTitle: "Missing Structured Data — Why AI Skips Your Content | AiVIS",
+    title: "Why Does Missing Structured Data Kill My AI Citations?",
+    metaTitle: "Why Does Missing Structured Data Make AI Skip My Content?",
     metaDescription:
       "No JSON-LD or schema markup? AI models can't properly cite or attribute your content. Learn what structured data AI needs and how to add it.",
     primaryKeyword: "missing structured data ai",
@@ -90,7 +90,7 @@ export const problemPages: KeywordPage[] = [
         heading: "Adding Structured Data to Your Site",
         content: [
           "Add JSON-LD in a <script type='application/ld+json'> tag in your page's <head>. Don't use Microdata or RDFa — JSON-LD is the format AI models prefer.",
-          "Test your schema output with Google's Rich Results Test and validate with an AiVIS audit to ensure AI crawlers receive the markup correctly.",
+          "Test your schema output with Google's Rich Results Test and validate with an AiVIS.biz audit to ensure AI crawlers receive the markup correctly.",
         ],
       },
     ],
@@ -123,8 +123,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "javascript-rendering-blocks-ai",
     cluster: "problems",
-    title: "JavaScript Rendering Blocks AI Crawlers",
-    metaTitle: "JavaScript Rendering Blocks AI Crawlers | AiVIS",
+    title: "Does JavaScript Rendering Block AI Crawlers from My Site?",
+    metaTitle: "Does JavaScript Rendering Block AI Crawlers from Reading My Site?",
     metaDescription:
       "AI crawlers don't execute JavaScript. If your site renders client-side, your content is invisible to ChatGPT, Perplexity, and other AI models.",
     primaryKeyword: "javascript rendering ai visibility",
@@ -165,7 +165,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "Can I check if my JavaScript content is visible to AI?",
         answer:
-          "Yes — run an AiVIS audit. It crawls your page without JavaScript execution and shows exactly what AI models see.",
+          "Yes — run an AiVIS.biz audit. It crawls your page without JavaScript execution and shows exactly what AI models see.",
       },
       {
         question: "Is server-side rendering required for AI visibility?",
@@ -185,13 +185,13 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "no-schema-markup",
     cluster: "problems",
-    title: "No Schema Markup Detected on Your Site",
-    metaTitle: "No Schema Markup Detected — Fix Your AI Visibility | AiVIS",
+    title: "What Happens When My Site Has No Schema Markup?",
+    metaTitle: "No Schema Markup Detected — How to Fix AI Visibility",
     metaDescription:
       "Your site has zero schema markup. AI models can parse your text but can't verify, attribute, or cite it reliably without structured data.",
     primaryKeyword: "no schema markup",
     secondaryKeyword: "add schema markup for ai",
-    hook: "An AiVIS audit found no schema markup on your site. This means AI models can read your text but have no structured way to verify authorship, classify content, or generate reliable citations.",
+    hook: "An AiVIS.biz audit found no schema markup on your site. This means AI models can read your text but have no structured way to verify authorship, classify content, or generate reliable citations.",
     sections: [
       {
         heading: "What Zero Schema Means for AI",
@@ -231,7 +231,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "Will adding schema immediately improve AI visibility?",
         answer:
-          "Improvement depends on crawl timing, but schema gives AI models immediate verifiable structure. Run a follow-up AiVIS audit to confirm deployment.",
+          "Improvement depends on crawl timing, but schema gives AI models immediate verifiable structure. Run a follow-up AiVIS.biz audit to confirm deployment.",
       },
     ],
     internalLinks: [
@@ -246,8 +246,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "broken-open-graph",
     cluster: "problems",
-    title: "Broken Open Graph Tags Hurt AI Visibility",
-    metaTitle: "Broken Open Graph Tags — Fix for AI Engines | AiVIS",
+    title: "Do Broken Open Graph Tags Hurt My AI Visibility?",
+    metaTitle: "Do Broken Open Graph Tags Hurt AI Answer Engine Visibility?",
     metaDescription:
       "Broken or missing Open Graph tags prevent AI models from classifying and displaying your content correctly. Diagnose and fix OG issues.",
     primaryKeyword: "broken open graph tags",
@@ -274,7 +274,7 @@ export const problemPages: KeywordPage[] = [
         content: [
           "Audit your HTML source (not DOM) for duplicate OG meta tags. Remove competing plugins or disable OG output from all but your primary SEO tool.",
           "Set og:type to 'article' for blog posts and content pages. Use 'website' only for your homepage and app pages.",
-          "Validate OG tags with an AiVIS audit — it checks for duplicates, empties, and missing required fields.",
+          "Validate OG tags with an AiVIS.biz audit — it checks for duplicates, empties, and missing required fields.",
         ],
       },
     ],
@@ -307,8 +307,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "missing-meta-descriptions",
     cluster: "problems",
-    title: "Missing Meta Descriptions Block AI Citations",
-    metaTitle: "Missing Meta Descriptions — AI Can't Summarize Your Pages | AiVIS",
+    title: "Do Missing Meta Descriptions Block AI from Citing My Pages?",
+    metaTitle: "Do Missing Meta Descriptions Block AI Answer Engine Citations?",
     metaDescription:
       "Pages without meta descriptions force AI models to auto-generate summaries, often inaccurately. Fix missing descriptions to control your AI narrative.",
     primaryKeyword: "missing meta descriptions",
@@ -333,7 +333,7 @@ export const problemPages: KeywordPage[] = [
         heading: "Fixing Missing Descriptions",
         content: [
           "Write unique, accurate descriptions for every important page. Target 150-160 characters. Include your primary keyword and a clear value statement.",
-          "Prioritize pages that rank in AI citations or receive organic traffic. Use AiVIS audit data to identify high-impact gaps.",
+          "Prioritize pages that rank in AI citations or receive organic traffic. Use AiVIS.biz audit data to identify high-impact gaps.",
           "For large sites, use your CMS's bulk editing tools to systematically fill in descriptions across content types.",
         ],
       },
@@ -367,8 +367,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "thin-content",
     cluster: "problems",
-    title: "Thin Content Kills AI Citation Chances",
-    metaTitle: "Thin Content — Why AI Models Won't Cite You | AiVIS",
+    title: "Does Thin Content Kill My Chances of AI Citations?",
+    metaTitle: "Does Thin Content Prevent AI Models from Citing My Site?",
     metaDescription:
       "Thin pages with minimal content are skipped by AI models for citations. Learn the minimum content depth for AI visibility.",
     primaryKeyword: "thin content ai visibility",
@@ -392,7 +392,7 @@ export const problemPages: KeywordPage[] = [
       {
         heading: "Fixing Thin Content",
         content: [
-          "Identify thin pages with an AiVIS audit — it flags pages that fall below AI visibility thresholds for content depth.",
+          "Identify thin pages with an AiVIS.biz audit — it flags pages that fall below AI visibility thresholds for content depth.",
           "Expand pages to 800+ words with structured headings, specific details, and FAQ sections. Quality matters more than word count.",
           "Consolidate thin pages that cover similar topics into comprehensive resources, then redirect the old URLs.",
         ],
@@ -427,8 +427,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "duplicate-content",
     cluster: "problems",
-    title: "Duplicate Content Confuses AI Models",
-    metaTitle: "Duplicate Content — How It Confuses AI Citations | AiVIS",
+    title: "Does Duplicate Content Confuse AI Models Trying to Cite Me?",
+    metaTitle: "Does Duplicate Content Confuse AI Citation Models?",
     metaDescription:
       "Duplicate content across your site forces AI models to choose between versions, often citing neither. Fix canonicalization for AI visibility.",
     primaryKeyword: "duplicate content ai visibility",
@@ -468,7 +468,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "How do I find duplicate content?",
         answer:
-          "Run an AiVIS audit which checks for canonical tags and duplicate signals. Also check Google Search Console for duplicate page issues.",
+          "Run an AiVIS.biz audit which checks for canonical tags and duplicate signals. Also check Google Search Console for duplicate page issues.",
       },
       {
         question: "Do canonical tags affect AI citations?",
@@ -488,8 +488,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "slow-page-load",
     cluster: "problems",
-    title: "Slow Page Load Blocks AI Crawlers",
-    metaTitle: "Slow Page Load Kills AI Visibility | AiVIS",
+    title: "Does Slow Page Load Block AI Crawlers from My Site?",
+    metaTitle: "Does Slow Page Load Block AI Crawlers from Indexing My Site?",
     metaDescription:
       "AI crawlers have strict timeouts. Slow pages get abandoned before content is parsed. Speed up your site for AI visibility.",
     primaryKeyword: "slow page load ai visibility",
@@ -516,7 +516,7 @@ export const problemPages: KeywordPage[] = [
         content: [
           "Optimize your server response to deliver the initial HTML in under 2 seconds. Use caching, CDNs, and efficient database queries.",
           "Defer all non-critical JavaScript and CSS. AI crawlers only need the HTML — ensure it arrives first and contains all essential content.",
-          "Run an AiVIS audit to test load time from the perspective of an AI crawler, not a browser with caching and JavaScript execution.",
+          "Run an AiVIS.biz audit to test load time from the perspective of an AI crawler, not a browser with caching and JavaScript execution.",
         ],
       },
     ],
@@ -549,8 +549,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "blocked-by-robots-txt",
     cluster: "problems",
-    title: "Blocked by robots.txt — AI Can't Crawl You",
-    metaTitle: "robots.txt Blocking AI Crawlers | AiVIS",
+    title: "Is My robots.txt Blocking AI Crawlers from My Content?",
+    metaTitle: "Is My robots.txt Blocking AI Crawlers from Indexing My Content?",
     metaDescription:
       "Your robots.txt may be blocking GPTBot, ClaudeBot, and other AI crawlers without you realizing it. Check and fix your crawler rules.",
     primaryKeyword: "robots txt blocking ai",
@@ -576,7 +576,7 @@ export const problemPages: KeywordPage[] = [
         content: [
           "If you want AI visibility, explicitly allow AI crawlers. Add specific Allow rules for GPTBot, ClaudeBot, and PerplexityBot.",
           "Keep blocking admin paths, login pages, and private content. AI visibility doesn't mean opening everything.",
-          "After updating robots.txt, run an AiVIS audit to confirm AI crawlers can now reach your key content pages.",
+          "After updating robots.txt, run an AiVIS.biz audit to confirm AI crawlers can now reach your key content pages.",
         ],
       },
     ],
@@ -609,8 +609,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "no-canonical-urls",
     cluster: "problems",
-    title: "No Canonical URLs Set — AI Can't Determine Authority",
-    metaTitle: "No Canonical URLs — AI Citation Confusion | AiVIS",
+    title: "What Happens When I Don't Set Canonical URLs for AI?",
+    metaTitle: "No Canonical URLs Set — Why AI Can't Determine My Page Authority",
     metaDescription:
       "Without canonical URLs, AI models see duplicates everywhere. Set canonicals to tell AI which page is authoritative.",
     primaryKeyword: "no canonical urls",
@@ -654,7 +654,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "How do I check my canonical tags?",
         answer:
-          "View your page source and search for rel=canonical. Or run an AiVIS audit which checks canonical implementation across your site.",
+          "View your page source and search for rel=canonical. Or run an AiVIS.biz audit which checks canonical implementation across your site.",
       },
     ],
     internalLinks: [
@@ -669,8 +669,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "missing-sitemap",
     cluster: "problems",
-    title: "Missing or Broken Sitemap Hurts AI Discovery",
-    metaTitle: "Missing Sitemap — AI Crawlers Can't Find Your Pages | AiVIS",
+    title: "Does a Missing Sitemap Hurt AI Discovery of My Pages?",
+    metaTitle: "Does a Missing or Broken Sitemap Hurt AI Page Discovery?",
     metaDescription:
       "Without a valid XML sitemap, AI crawlers may miss important pages on your site. Fix your sitemap for better AI discovery.",
     primaryKeyword: "missing sitemap ai",
@@ -729,8 +729,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "no-llms-txt",
     cluster: "problems",
-    title: "No llms.txt File — AI Models Don't Know Your Site",
-    metaTitle: "No llms.txt File — Tell AI Models Who You Are | AiVIS",
+    title: "What Happens When My Site Has No llms.txt File?",
+    metaTitle: "No llms.txt File — AI Models Don't Know Who You Are",
     metaDescription:
       "The llms.txt standard lets you describe your site directly to AI models. Without it, you're leaving context on the table.",
     primaryKeyword: "no llms txt file",
@@ -789,8 +789,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "poor-heading-structure",
     cluster: "problems",
-    title: "Poor Heading Structure Confuses AI Parsing",
-    metaTitle: "Poor H1-H6 Heading Structure — AI Can't Parse Your Content | AiVIS",
+    title: "Does Poor Heading Structure Confuse AI Content Parsing?",
+    metaTitle: "Does Poor H1–H6 Heading Structure Confuse AI Content Parsing?",
     metaDescription:
       "AI models use heading hierarchy to understand content structure. Broken or missing headings make your content harder to cite.",
     primaryKeyword: "poor heading structure ai",
@@ -816,7 +816,7 @@ export const problemPages: KeywordPage[] = [
         content: [
           "One H1 per page, clearly stating the primary topic. H2s for major sections, H3s for subsections. Never skip levels.",
           "Ensure headings match their content — an H2 that says 'Our Services' should be followed by sections about your services.",
-          "Run an AiVIS audit to see how AI models interpret your heading hierarchy and identify structural issues.",
+          "Run an AiVIS.biz audit to see how AI models interpret your heading hierarchy and identify structural issues.",
         ],
       },
     ],
@@ -849,8 +849,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "images-without-alt-text",
     cluster: "problems",
-    title: "Images Without Alt Text — Invisible to AI",
-    metaTitle: "Images Without Alt Text — AI Can't See Your Visuals | AiVIS",
+    title: "Are My Images Invisible to AI Without Alt Text?",
+    metaTitle: "Are Images Without Alt Text Invisible to AI Answer Engines?",
     metaDescription:
       "AI models rely on alt text to understand images. Missing alt attributes make your visual content completely invisible to AI systems.",
     primaryKeyword: "images without alt text ai",
@@ -908,8 +908,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "no-author-attribution",
     cluster: "problems",
-    title: "No Author Attribution — AI Can't Verify Your Expertise",
-    metaTitle: "No Author Attribution — Why AI Won't Cite Unattributed Content | AiVIS",
+    title: "Does Missing Author Attribution Stop AI from Citing Me?",
+    metaTitle: "Does Missing Author Attribution Stop AI Models from Citing My Content?",
     metaDescription:
       "Content without author attribution lacks the trust signal AI models need for citations. Add author schema and bylines for AI visibility.",
     primaryKeyword: "no author attribution ai",
@@ -968,8 +968,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "missing-faq-schema",
     cluster: "problems",
-    title: "Missing FAQ Schema — Your Q&A Is Invisible to AI",
-    metaTitle: "Missing FAQ Schema — AI Can't Find Your Answers | AiVIS",
+    title: "Is My FAQ Content Invisible to AI Without FAQ Schema?",
+    metaTitle: "Is FAQ Content Invisible to AI Answer Engines Without FAQ Schema?",
     metaDescription:
       "You have FAQ content on your pages but no FAQ schema markup. AI models can't identify Q&A sections without structured data.",
     primaryKeyword: "missing faq schema",
@@ -1028,8 +1028,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "broken-internal-links",
     cluster: "problems",
-    title: "Broken Internal Links Hurt AI Crawling",
-    metaTitle: "Broken Internal Links — AI Crawlers Hit Dead Ends | AiVIS",
+    title: "Do Broken Internal Links Stop AI Crawlers from Reaching My Content?",
+    metaTitle: "Do Broken Internal Links Stop AI Crawlers from Reaching My Content?",
     metaDescription:
       "Broken internal links prevent AI crawlers from discovering important content. Fix broken links to improve AI site coverage.",
     primaryKeyword: "broken internal links ai",
@@ -1046,7 +1046,7 @@ export const problemPages: KeywordPage[] = [
       {
         heading: "Finding Broken Links",
         content: [
-          "Run an AiVIS audit to identify pages that return errors when AI crawlers follow internal links.",
+          "Run an AiVIS.biz audit to identify pages that return errors when AI crawlers follow internal links.",
           "Check for links to deleted pages, renamed URLs without redirects, and hardcoded URLs that changed during site updates.",
         ],
       },
@@ -1068,7 +1068,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "How do I find all broken links on my site?",
         answer:
-          "Run an AiVIS audit which checks link health, or use a dedicated crawler tool to scan your entire site for 404 and 500 response codes.",
+          "Run an AiVIS.biz audit which checks link health, or use a dedicated crawler tool to scan your entire site for 404 and 500 response codes.",
       },
       {
         question: "Should I use 301 or 302 redirects?",
@@ -1088,8 +1088,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "no-hreflang-tags",
     cluster: "problems",
-    title: "No Hreflang Tags — AI Can't Route Multi-Language Content",
-    metaTitle: "No Hreflang Tags — AI Language Mismatch | AiVIS",
+    title: "Do Missing Hreflang Tags Cause AI Language Mismatch?",
+    metaTitle: "Do Missing Hreflang Tags Cause AI Answer Engine Language Mismatch?",
     metaDescription:
       "Without hreflang tags, AI models may cite the wrong language version of your content. Fix hreflang for multilingual AI visibility.",
     primaryKeyword: "no hreflang tags ai",
@@ -1115,7 +1115,7 @@ export const problemPages: KeywordPage[] = [
         content: [
           "Add hreflang link tags in the <head> of every page that has language alternatives. Each page must reference all other versions, including itself.",
           "Include an x-default hreflang for your primary/default language version.",
-          "Validate with an AiVIS audit to ensure all hreflang relationships are reciprocal and correctly formatted.",
+          "Validate with an AiVIS.biz audit to ensure all hreflang relationships are reciprocal and correctly formatted.",
         ],
       },
     ],
@@ -1148,8 +1148,8 @@ export const problemPages: KeywordPage[] = [
   {
     slug: "ai-hallucinating-about-my-brand",
     cluster: "problems",
-    title: "AI Is Hallucinating About My Brand",
-    metaTitle: "AI Hallucinating About Your Brand — How to Fix It | AiVIS",
+    title: "Why Is AI Hallucinating About My Brand and How Do I Fix It?",
+    metaTitle: "Why Is AI Hallucinating About My Brand? How to Fix It",
     metaDescription:
       "AI models generating false information about your brand? Learn why hallucinations happen and how to provide corrective structured data.",
     primaryKeyword: "ai hallucinating about my brand",
@@ -1177,7 +1177,7 @@ export const problemPages: KeywordPage[] = [
           "Add comprehensive Organization and Brand schema to your homepage with every verifiable fact about your company.",
           "Create a detailed llms.txt file that provides curated, accurate context about your brand for AI models.",
           "Publish authoritative content on your own site answering the questions AI models commonly get wrong about your brand.",
-          "Monitor AI responses about your brand with AiVIS citation testing to catch hallucinations early.",
+          "Monitor AI responses about your brand with AiVIS.biz citation testing to catch hallucinations early.",
         ],
       },
     ],
@@ -1190,7 +1190,7 @@ export const problemPages: KeywordPage[] = [
       {
         question: "How do I find AI hallucinations about my brand?",
         answer:
-          "Use AiVIS's citation testing feature to ask AI models about your brand and compare their responses to your actual information.",
+          "Use AiVIS.biz's citation testing feature to ask AI models about your brand and compare their responses to your actual information.",
       },
       {
         question: "Should I contact AI providers about wrong information?",

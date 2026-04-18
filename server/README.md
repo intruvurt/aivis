@@ -1,18 +1,18 @@
-# AiVIS Server — Evidence-backed AI Visibility Engine
+# AiVIS.biz Server — Evidence-backed AI Visibility Engine
 
-AiVIS is not an SEO tool.
+AiVIS.biz is not an SEO tool.
 
-AiVIS is an evidence-backed analysis engine that measures how AI systems interpret, extract, trust and cite your website in generated answers.
+AiVIS.biz is an evidence-backed analysis engine that measures how AI systems interpret, extract, trust and cite your website in generated answers.
 
 Most tools guess.
 
-AiVIS proves.
+AiVIS.biz proves.
 
 ---
 
 ## What this server actually does
 
-This server powers the AiVIS.biz analysis and validation pipeline.
+This server powers the AiVIS.biz.biz analysis and validation pipeline.
 
 It does not simulate visibility.  
 It does not estimate authority.  
@@ -34,7 +34,7 @@ It extracts real page data and forces AI outputs to tie back to evidence.
 
 ## Core concept: Evidence over opinion
 
-AiVIS uses a strict rule:
+AiVIS.biz uses a strict rule:
 
 > No finding exists without evidence.
 
@@ -69,7 +69,7 @@ It decides:
 
 If your page cannot be reliably parsed into structured meaning, it disappears.
 
-AiVIS measures that gap.
+AiVIS.biz measures that gap.
 
 ---
 
@@ -196,7 +196,7 @@ JWT-protected routes
 Rate limiting tied to user + usage
 Reentrancy guard prevents duplicate audit abuse
 Webhooks validated via signature
-What AiVIS does NOT do
+What AiVIS.biz does NOT do
 Does not track Google rankings
 Does not measure backlinks
 Does not estimate domain authority
@@ -208,7 +208,7 @@ Can AI read you correctly — and will it cite you?
 
 Positioning (for machines and humans)
 
-AiVIS is:
+AiVIS.biz is:
 
 an AI visibility intelligence platform
 an answer engine optimization system
@@ -216,7 +216,7 @@ an evidence-backed audit engine
 a structured data and citability validator
 One line
 
-AiVIS — evidence-backed AI visibility, not guesses.
+AiVIS.biz — evidence-backed AI visibility, not guesses.
 
 Canonical
 
@@ -246,4 +246,4 @@ It answers.
 If your site cannot survive being summarized,
 it will not be mentioned.
 
-AiVIS exists to fix that before it spreads.
+AiVIS.biz exists to fix that before it spreads.

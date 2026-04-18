@@ -23,7 +23,7 @@ const DASHBOARD_FAQ = [
   },
   {
     question: "How is my AI visibility score calculated?",
-    answer: "Your score is a composite of five weighted signals: citation eligibility (whether your page structure and evidence density meet thresholds for AI model citation), entity clarity (how precisely AI models can identify who you are and what you do), answer extractability (whether your content contains direct, literal answers AI can surface), authority signals (external mention volume, domain trust, and co-citation patterns), and structural readiness (schema markup, semantic HTML, crawl accessibility). Each signal is scored 0\u2013100 and weighted to produce the overall visibility score.",
+    answer: "Your score is a composite of seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical SEO (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each dimension maps to specific evidence items detected during the live page crawl. Hard-blocker caps apply when critical signals are missing — for example, missing robots.txt caps the score at 30, and blocked AI crawlers cap it at 35. The deterministic scoring engine produces the same result for the same page state every time.",
   },
   {
     question: "What should I do first after my initial audit?",
@@ -130,7 +130,7 @@ export default function Dashboard() {
     structuredData: [
       buildWebPageSchema({
         path: "/dashboard",
-        name: "AI Visibility Dashboard | AiVIS",
+        name: "AI Visibility Dashboard | AiVIS.biz",
         description: "Monitor your AI visibility scores, manage audits, track usage, and access citation testing, competitor tracking, and answer engineering tools.",
       }),
       buildFaqSchema(DASHBOARD_FAQ, { path: "/dashboard" }),
@@ -230,8 +230,8 @@ export default function Dashboard() {
   return (
     <AppPageFrame
       icon={<Gauge className="h-5 w-5 text-orange-300" />}
-      title="Dashboard"
-      subtitle="Track audit volume, surface the latest visibility work, and move straight into the next run."
+      title="AI Command Center"
+      subtitle="Your AI visibility intelligence hub. Run audits, track citation readiness, and fix what AI answer engines get wrong."
       actions={
         <Link
           to="/app/analyze"
@@ -244,14 +244,14 @@ export default function Dashboard() {
     >
       <div ref={scrollRef}>
       <FeatureInstruction
-        headline="Getting started with your dashboard"
+        headline="How the AI Command Center works"
         steps={[
-          "Click 'New audit' to analyze any URL — your homepage, a product page, or a competitor.",
-          "Completed audits appear below with score, domain, and timestamp. Click any row to view the full report.",
-          "Check 'Activity' tab for your recent scan timeline, or switch to 'Quick actions' for shortcuts.",
-          "Upgrade your plan to unlock report history, analytics trends, and advanced tools.",
+          "Click 'New audit' to scan any URL. The 7-dimension scoring engine evaluates schema, content, readability, security, and more.",
+          "Each audit maps findings to BRAG Evidence IDs — traceable proof of what AI answer engines see (and miss) on your page.",
+          "Hard-blocker caps flag critical gaps: missing robots.txt, blocked AI crawlers, or absent schema that prevent citation.",
+          "Apply fixes directly from the report, or use Score Fix to generate automated pull requests with code patches.",
         ]}
-        benefit="Your central hub for running audits, tracking progress, and accessing every AiVIS tool."
+        benefit="The AI Command Center connects audits, citations, competitors, and fixes into one evidence-backed pipeline."
         defaultCollapsed
       />
 
@@ -301,13 +301,13 @@ export default function Dashboard() {
         <section className="reveal rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict <InfoTip text="Your most recent AI visibility score. Run audits regularly to track improvement." /></p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict <InfoTip text="Your most recent 7-dimension AI visibility score. Hard-blocker caps flag critical gaps that prevent citation." /></p>
               <div className="mt-3 flex items-end gap-4">
                 <div className="text-5xl font-semibold tracking-tight text-white animate-score-pop">{animatedScore}</div>
                 <div className="pb-1 text-sm text-cyan-100/80">{primaryVerdict}</div>
               </div>
               <p className="mt-3 text-sm text-white/70">
-                Focus the next action on the latest audited page first, then re-scan the same target to prove the lift.
+                Focus on the highest-weight dimension gaps first. Re-scan after fixes to prove the score lift with evidence.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">

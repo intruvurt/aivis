@@ -1,10 +1,10 @@
-# AiVIS MCP Server
+# AiVIS.biz MCP Server
 
-Production-ready Model Context Protocol server for AiVIS.
+Production-ready Model Context Protocol server for AiVIS.biz.
 
 ## What is MCP?
 
-Model Context Protocol is an open-source standard for AI agents (like Claude) to access tools and data. This server exposes AiVIS audit, analytics, and competitor analysis tools to Claude Desktop, Cursor, and other MCP-compatible clients.
+Model Context Protocol is an open-source standard for AI agents (like Claude) to access tools and data. This server exposes AiVIS.biz audit, analytics, and competitor analysis tools to Claude Desktop, Cursor, and other MCP-compatible clients.
 
 ## Features
 
@@ -62,7 +62,7 @@ Add to `~/.config/Claude/claude_desktop_config.json` (macOS/Linux) or `%APPDATA%
 }
 ```
 
-Restart Claude. AiVIS tools should appear.
+Restart Claude. AiVIS.biz tools should appear.
 
 ### Via HTTP (For Custom Integrations)
 
@@ -131,7 +131,7 @@ npm run mcp:test
 The server:
 
 1. Authenticates via `AIVIS_API_KEY` environment variable
-2. Makes HTTP requests to the AiVIS backend (`AIVIS_BASE_URL`)
+2. Makes HTTP requests to the AiVIS.biz backend (`AIVIS_BASE_URL`)
 3. Exposes tools via MCP protocol (stdio transport)
 4. Streams results back to the client
 
@@ -181,6 +181,6 @@ Monthly scan limits are enforced separately (see tier limits).
 
 ## Support
 
-- **Docs:** https://aivis.biz/docs/mcp
-- **Issues:** support@aivis.biz
-- **Status:** https://status.aivis.biz
+- **Docs:** <https://aivis.biz/docs/mcp>
+- **Issues:** <support@aivis.biz>
+- **Status:** <https://status.aivis.biz>

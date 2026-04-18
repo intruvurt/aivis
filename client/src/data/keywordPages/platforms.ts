@@ -4,8 +4,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "wordpress",
     cluster: "platforms",
-    title: "WordPress AI Visibility Audit",
-    metaTitle: "WordPress AI Visibility Audit | AiVIS",
+    title: "Why Can't AI Answer Engines Cite My WordPress Site?",
+    metaTitle: "Why Can't AI Cite My WordPress Site? | AiVIS.biz",
     metaDescription:
       "Audit your WordPress site for AI answer-engine readiness. Find schema gaps, crawl blocks, and citation failures specific to WordPress.",
     primaryKeyword: "wordpress ai visibility",
@@ -32,7 +32,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use a single authoritative SEO plugin (Yoast, Rank Math, or SEOPress) and disable schema output from all other plugins to prevent conflicts.",
           "Add an llms.txt file to your root directory describing your site for AI models. WordPress doesn't generate this natively — create it as a static file or use a custom rewrite rule.",
-          "Test your pages with AiVIS to see exactly which signals are present, missing, or malformed. The audit checks 30+ machine-readability factors automatically.",
+          "Test your pages with AiVIS.biz to see exactly which signals are present, missing, or malformed. The audit checks 30+ machine-readability factors automatically.",
         ],
       },
     ],
@@ -50,7 +50,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I check if AI crawlers can access my WordPress site?",
         answer:
-          "Run a free AiVIS audit on your URL. It checks robots.txt rules, rendered HTML, structured data, and 30+ signals that determine whether AI systems can parse and cite your content.",
+          "Run a free AiVIS.biz audit on your URL. It checks robots.txt rules, rendered HTML, structured data, and 30+ signals that determine whether AI systems can parse and cite your content.",
       },
     ],
     internalLinks: [
@@ -65,8 +65,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "shopify",
     cluster: "platforms",
-    title: "Shopify AI Visibility Audit",
-    metaTitle: "Shopify AI Visibility Audit | AiVIS",
+    title: "How to Get Your Shopify Store Cited by AI Answer Engines",
+    metaTitle: "How to Get Shopify Cited by ChatGPT & Perplexity | AiVIS.biz",
     metaDescription:
       "Discover why AI models skip your Shopify store. Audit product schema, crawl access, and citation readiness for Shopify sites.",
     primaryKeyword: "shopify ai visibility",
@@ -106,7 +106,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "Can AI models read Shopify product pages?",
         answer:
-          "It depends on your theme. Themes that render product descriptions via JavaScript are invisible to most AI crawlers. Check with an AiVIS audit.",
+          "It depends on your theme. Themes that render product descriptions via JavaScript are invisible to most AI crawlers. Check with an AiVIS.biz audit.",
       },
       {
         question: "How do I add llms.txt to Shopify?",
@@ -126,8 +126,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "wix",
     cluster: "platforms",
-    title: "Wix AI Visibility Audit",
-    metaTitle: "Wix AI Visibility Audit | AiVIS",
+    title: "Why AI Models Can't Read My Wix Website",
+    metaTitle: "Why AI Models Can't Read My Wix Website | AiVIS.biz",
     metaDescription:
       "Find out why AI models can't cite your Wix site. Audit JavaScript rendering, schema, and crawl signals for Wix.",
     primaryKeyword: "wix ai visibility",
@@ -153,7 +153,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use Wix's SEO panel to manually set meta descriptions, Open Graph fields, and canonical URLs for every important page.",
           "Consider Wix Velo (custom code) to inject JSON-LD schema into page headers. This lets you add FAQ, Article, or Organization schema that Wix doesn't generate natively.",
-          "Run an AiVIS audit to see exactly what AI crawlers receive when they fetch your Wix pages. The gap between what you see in the editor and what crawlers receive is often significant.",
+          "Run an AiVIS.biz audit to see exactly what AI crawlers receive when they fetch your Wix pages. The gap between what you see in the editor and what crawlers receive is often significant.",
         ],
       },
     ],
@@ -171,7 +171,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I improve my Wix site's AI visibility?",
         answer:
-          "Start with an AiVIS audit to identify gaps. Then optimize meta tags, add custom JSON-LD via Velo, and ensure your content renders server-side.",
+          "Start with an AiVIS.biz audit to identify gaps. Then optimize meta tags, add custom JSON-LD via Velo, and ensure your content renders server-side.",
       },
     ],
     internalLinks: [
@@ -186,8 +186,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "squarespace",
     cluster: "platforms",
-    title: "Squarespace AI Visibility Audit",
-    metaTitle: "Squarespace AI Visibility Audit | AiVIS",
+    title: "Why Doesn't ChatGPT Cite My Squarespace Site?",
+    metaTitle: "Why Doesn't ChatGPT Cite My Squarespace Site? | AiVIS.biz",
     metaDescription:
       "Audit your Squarespace site for AI citation readiness. Check schema, crawl access, and structured data gaps specific to Squarespace.",
     primaryKeyword: "squarespace ai visibility",
@@ -214,7 +214,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use Squarespace's Code Injection feature (Business plan+) to add custom JSON-LD in the page header. Target FAQ, Organization, and Breadcrumb schema.",
           "Manually optimize every page's SEO title and description — Squarespace defaults are often too generic for AI parsing.",
-          "Run an AiVIS audit to see your current AI readiness score and get specific fix recommendations ranked by impact.",
+          "Run an AiVIS.biz audit to see your current AI readiness score and get specific fix recommendations ranked by impact.",
         ],
       },
     ],
@@ -247,8 +247,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "webflow",
     cluster: "platforms",
-    title: "Webflow AI Visibility Audit",
-    metaTitle: "Webflow AI Visibility Audit | AiVIS",
+    title: "How to Make AI Answer Engines Cite Your Webflow Site",
+    metaTitle: "How to Make AI Cite Your Webflow Site | AiVIS.biz",
     metaDescription:
       "Audit your Webflow site for AI readability. Discover schema gaps, custom code opportunities, and citation-blocking issues on Webflow.",
     primaryKeyword: "webflow ai visibility",
@@ -308,8 +308,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "next-js",
     cluster: "platforms",
-    title: "Next.js AI Visibility Audit",
-    metaTitle: "Next.js AI Visibility Audit | AiVIS",
+    title: "Why Can't AI Crawlers Read My Next.js App?",
+    metaTitle: "Why Can't AI Crawlers Read My Next.js App? | AiVIS.biz",
     metaDescription:
       "Ensure your Next.js app is visible to AI answer engines. Audit SSR, metadata API, and structured data configuration for Next.js.",
     primaryKeyword: "next.js ai visibility",
@@ -370,8 +370,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "gatsby",
     cluster: "platforms",
-    title: "Gatsby AI Visibility Audit",
-    metaTitle: "Gatsby AI Visibility Audit | AiVIS",
+    title: "Can AI Answer Engines Cite Gatsby Static Sites?",
+    metaTitle: "Can AI Answer Engines Cite Gatsby Sites? | AiVIS.biz",
     metaDescription:
       "Audit your Gatsby site for AI answer-engine readiness. Check static HTML output, schema plugins, and crawler access for Gatsby.",
     primaryKeyword: "gatsby ai visibility",
@@ -398,7 +398,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Install gatsby-plugin-sitemap and gatsby-plugin-robots-txt. Configure robots.txt to explicitly allow AI crawler user-agents.",
           "Add a reusable SEO component that injects page-specific JSON-LD (Article, FAQ, Organization) into the document head using React Helmet or Gatsby Head API.",
-          "Audit your site with AiVIS to validate that static output contains all required signals — what your dev server renders may differ from the production build.",
+          "Audit your site with AiVIS.biz to validate that static output contains all required signals — what your dev server renders may differ from the production build.",
         ],
       },
     ],
@@ -431,8 +431,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "drupal",
     cluster: "platforms",
-    title: "Drupal AI Visibility Audit",
-    metaTitle: "Drupal AI Visibility Audit | AiVIS",
+    title: "How to Make Your Drupal Site Visible to AI Answer Engines",
+    metaTitle: "How to Make Drupal Visible to AI Answer Engines | AiVIS.biz",
     metaDescription:
       "Audit your Drupal site for AI citation readiness. Discover schema module gaps, crawl configuration issues, and structured data fixes for Drupal.",
     primaryKeyword: "drupal ai visibility",
@@ -459,7 +459,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Install and configure the Schema.org Metatag module to emit JSON-LD for your primary content types (Article, FAQ, Organization, LocalBusiness).",
           "Use Drupal's robots.txt module to explicitly allow AI crawlers (GPTBot, ClaudeBot) and ensure your sitemap module generates a clean XML sitemap.",
-          "Audit regularly — Drupal module updates can silently change output. Run an AiVIS audit after every major deployment.",
+          "Audit regularly — Drupal module updates can silently change output. Run an AiVIS.biz audit after every major deployment.",
         ],
       },
     ],
@@ -477,7 +477,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I audit my Drupal site for AI?",
         answer:
-          "Run a free AiVIS audit on your site URL. The audit checks all 30+ AI visibility signals and provides Drupal-specific fix recommendations.",
+          "Run a free AiVIS.biz audit on your site URL. The audit checks all 30+ AI visibility signals and provides Drupal-specific fix recommendations.",
       },
     ],
     internalLinks: [
@@ -492,8 +492,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "ghost",
     cluster: "platforms",
-    title: "Ghost CMS AI Visibility Audit",
-    metaTitle: "Ghost CMS AI Visibility Audit | AiVIS",
+    title: "Why AI Models Skip Ghost CMS Blogs",
+    metaTitle: "Why AI Models Skip Ghost CMS Blogs | AiVIS.biz",
     metaDescription:
       "Audit your Ghost blog for AI visibility. Check structured data, crawl access, and citation readiness specific to Ghost CMS.",
     primaryKeyword: "ghost cms ai visibility",
@@ -538,7 +538,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I improve my Ghost blog's AI visibility?",
         answer:
-          "Add custom JSON-LD via code injection, optimize your theme's meta output, and run an AiVIS audit to identify specific gaps and prioritized fixes.",
+          "Add custom JSON-LD via code injection, optimize your theme's meta output, and run an AiVIS.biz audit to identify specific gaps and prioritized fixes.",
       },
     ],
     internalLinks: [
@@ -553,8 +553,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "hubspot",
     cluster: "platforms",
-    title: "HubSpot AI Visibility Audit",
-    metaTitle: "HubSpot CMS AI Visibility Audit | AiVIS",
+    title: "Can ChatGPT and Perplexity Read My HubSpot Pages?",
+    metaTitle: "Can AI Read My HubSpot Pages? | AiVIS.biz",
     metaDescription:
       "Audit your HubSpot site for AI answer-engine readiness. Discover CMS limitations, schema gaps, and crawl issues for HubSpot.",
     primaryKeyword: "hubspot ai visibility",
@@ -581,7 +581,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Create custom HubSpot modules that inject JSON-LD schema into page templates. Use HubL variables to populate dynamic fields.",
           "Ensure blog posts have rich standalone content — not just fragments that depend on embedded CTAs or forms for substance.",
-          "Run an AiVIS audit to identify exact gaps in your HubSpot site's AI readiness and get prioritized fix recommendations.",
+          "Run an AiVIS.biz audit to identify exact gaps in your HubSpot site's AI readiness and get prioritized fix recommendations.",
         ],
       },
     ],
@@ -604,7 +604,7 @@ export const platformPages: KeywordPage[] = [
     ],
     internalLinks: [
       { label: "Run a free audit", to: "/app/analyze" },
-      { label: "AiVIS vs HubSpot SEO", to: "/compare/vs-hubspot-seo" },
+      { label: "AiVIS.biz vs HubSpot SEO", to: "/compare/vs-hubspot-seo" },
       { label: "Schema.org guide", to: "/signals/schema-org" },
       { label: "Content depth", to: "/signals/content-length" },
     ],
@@ -614,8 +614,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "framer",
     cluster: "platforms",
-    title: "Framer AI Visibility Audit",
-    metaTitle: "Framer AI Visibility Audit | AiVIS",
+    title: "Why AI Answer Engines Can't Cite Framer Websites",
+    metaTitle: "Why AI Can't Cite Framer Websites | AiVIS.biz",
     metaDescription:
       "Audit your Framer site for AI visibility. Check rendering, schema gaps, and crawl access for Framer-built websites.",
     primaryKeyword: "framer ai visibility",
@@ -642,7 +642,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use Framer's custom code injection to add JSON-LD schema in the page head. This requires writing schema manually for each page type.",
           "Ensure all important text content is in static elements, not exclusively in animated or interactive components.",
-          "Run an AiVIS audit to see what AI models actually receive when they crawl your Framer site — the visual output and the machine-readable output are often very different.",
+          "Run an AiVIS.biz audit to see what AI models actually receive when they crawl your Framer site — the visual output and the machine-readable output are often very different.",
         ],
       },
     ],
@@ -675,8 +675,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "bubble",
     cluster: "platforms",
-    title: "Bubble.io AI Visibility Audit",
-    metaTitle: "Bubble.io AI Visibility Audit | AiVIS",
+    title: "Why AI Models Can't Parse Bubble.io Apps",
+    metaTitle: "Why AI Models Can't Parse Bubble.io Apps | AiVIS.biz",
     metaDescription:
       "Discover why AI models can't parse your Bubble.io app. Audit rendering, schema, and crawl access for no-code apps.",
     primaryKeyword: "bubble io ai visibility",
@@ -702,7 +702,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use Bubble's SEO/metatag plugin to set basic Open Graph tags and descriptions for key pages.",
           "If you need public-facing AI-visible content on your Bubble domain, consider a prerendering service that serves static HTML to known crawler user-agents.",
-          "Run an AiVIS audit to see exactly what AI crawlers receive when they visit your Bubble app — the gap is often an eye-opener.",
+          "Run an AiVIS.biz audit to see exactly what AI crawlers receive when they visit your Bubble app — the gap is often an eye-opener.",
         ],
       },
     ],
@@ -735,8 +735,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "weebly",
     cluster: "platforms",
-    title: "Weebly AI Visibility Audit",
-    metaTitle: "Weebly AI Visibility Audit | AiVIS",
+    title: "How to Fix AI Answer Engine Visibility on Weebly",
+    metaTitle: "How to Fix AI Visibility on Weebly | AiVIS.biz",
     metaDescription:
       "Audit your Weebly site for AI readability. Check structured data, crawl access, and meta tag configuration for Weebly.",
     primaryKeyword: "weebly ai visibility",
@@ -763,7 +763,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "If AI visibility is important for your business, consider migrating to a platform with better schema support (WordPress, Webflow, or Ghost).",
           "For quick wins on Weebly: optimize every page's title and description, use proper heading hierarchy, and ensure all images have alt text.",
-          "Run an AiVIS audit to benchmark your current score and understand exactly what's missing before deciding on your next steps.",
+          "Run an AiVIS.biz audit to benchmark your current score and understand exactly what's missing before deciding on your next steps.",
         ],
       },
     ],
@@ -796,8 +796,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "joomla",
     cluster: "platforms",
-    title: "Joomla AI Visibility Audit",
-    metaTitle: "Joomla AI Visibility Audit | AiVIS",
+    title: "Why AI Answer Engines Skip Joomla Websites",
+    metaTitle: "Why AI Answer Engines Skip Joomla Sites | AiVIS.biz",
     metaDescription:
       "Audit your Joomla site for AI answer-engine readiness. Check extensions, schema output, and crawl configuration for Joomla.",
     primaryKeyword: "joomla ai visibility",
@@ -824,7 +824,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use a single authoritative SEO extension (like JCH Optimize or sh404SEF) and configure it to emit Article, FAQ, and Organization JSON-LD.",
           "Update your template to use semantic HTML5 elements and proper heading hierarchy.",
-          "Customize robots.txt to explicitly allow AI crawler user-agents and run regular AiVIS audits to catch configuration drift.",
+          "Customize robots.txt to explicitly allow AI crawler user-agents and run regular AiVIS.biz audits to catch configuration drift.",
         ],
       },
     ],
@@ -857,8 +857,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "magento",
     cluster: "platforms",
-    title: "Magento AI Visibility Audit",
-    metaTitle: "Magento / Adobe Commerce AI Visibility Audit | AiVIS",
+    title: "How to Get Your Magento Store Cited by AI",
+    metaTitle: "How to Get Magento Cited by AI Answer Engines | AiVIS.biz",
     metaDescription:
       "Audit your Magento or Adobe Commerce store for AI answer-engine readiness. Check product schema, crawl access, and structured data.",
     primaryKeyword: "magento ai visibility",
@@ -903,7 +903,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I audit my Magento store for AI?",
         answer:
-          "Run an AiVIS audit on your key product and category URLs. Check for schema completeness, crawl access, and content rendering issues.",
+          "Run an AiVIS.biz audit on your key product and category URLs. Check for schema completeness, crawl access, and content rendering issues.",
       },
     ],
     internalLinks: [
@@ -918,8 +918,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "bigcommerce",
     cluster: "platforms",
-    title: "BigCommerce AI Visibility Audit",
-    metaTitle: "BigCommerce AI Visibility Audit | AiVIS",
+    title: "Can AI Answer Engines Cite BigCommerce Stores?",
+    metaTitle: "Can AI Cite BigCommerce Stores? | AiVIS.biz",
     metaDescription:
       "Audit your BigCommerce store for AI readiness. Check product schema, crawl access, and structured data specific to BigCommerce.",
     primaryKeyword: "bigcommerce ai visibility",
@@ -946,7 +946,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Add JSON-LD for Collection/Category pages via BigCommerce's Script Manager or theme template customization.",
           "Invest in blog content that targets AI answer queries about your product category — this builds citation-worthy authority.",
-          "Run regular AiVIS audits after theme updates to catch schema regressions before they impact your AI visibility.",
+          "Run regular AiVIS.biz audits after theme updates to catch schema regressions before they impact your AI visibility.",
         ],
       },
     ],
@@ -979,8 +979,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "cargo",
     cluster: "platforms",
-    title: "Cargo.site AI Visibility Audit",
-    metaTitle: "Cargo.site AI Visibility Audit | AiVIS",
+    title: "Can AI Crawlers Read Cargo Portfolio Sites?",
+    metaTitle: "Can AI Crawlers Read Cargo Sites? | AiVIS.biz",
     metaDescription:
       "Audit your Cargo portfolio site for AI visibility. Discover rendering issues, missing schema, and crawl gaps.",
     primaryKeyword: "cargo site ai visibility",
@@ -1006,7 +1006,7 @@ export const platformPages: KeywordPage[] = [
         content: [
           "Use Cargo's available SEO settings to set unique titles and descriptions for every project page.",
           "If AI visibility matters for client acquisition, consider a companion blog or landing page on a more configurable platform that links to your Cargo portfolio.",
-          "Run an AiVIS audit to see your baseline score and understand the specific gaps in your Cargo site's AI readability.",
+          "Run an AiVIS.biz audit to see your baseline score and understand the specific gaps in your Cargo site's AI readability.",
         ],
       },
     ],
@@ -1039,8 +1039,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "notion-sites",
     cluster: "platforms",
-    title: "Notion Sites AI Visibility Audit",
-    metaTitle: "Notion Sites AI Visibility Audit | AiVIS",
+    title: "Why ChatGPT Doesn't Cite Notion Sites",
+    metaTitle: "Why ChatGPT Doesn't Cite Notion Sites | AiVIS.biz",
     metaDescription:
       "Audit your published Notion site for AI readability. Check rendering, structured data, and crawl access for Notion-powered websites.",
     primaryKeyword: "notion sites ai visibility",
@@ -1100,8 +1100,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "carrd",
     cluster: "platforms",
-    title: "Carrd AI Visibility Audit",
-    metaTitle: "Carrd AI Visibility Audit | AiVIS",
+    title: "How to Make AI Cite Your Carrd Landing Page",
+    metaTitle: "How to Make AI Cite Your Carrd Page | AiVIS.biz",
     metaDescription:
       "Audit your Carrd landing page for AI visibility. Check meta tags, rendering, and structured data for single-page Carrd sites.",
     primaryKeyword: "carrd ai visibility",
@@ -1160,8 +1160,8 @@ export const platformPages: KeywordPage[] = [
   {
     slug: "react-spa",
     cluster: "platforms",
-    title: "React SPA AI Visibility Audit",
-    metaTitle: "React Single-Page App AI Visibility Audit | AiVIS",
+    title: "Why AI Can't Read React Single-Page Applications",
+    metaTitle: "Why AI Can't Read React SPAs | AiVIS.biz",
     metaDescription:
       "Find out why AI models can't read your React SPA. Audit client-side rendering, missing schema, and crawl issues for React apps.",
     primaryKeyword: "react spa ai visibility",
@@ -1206,7 +1206,7 @@ export const platformPages: KeywordPage[] = [
       {
         question: "How do I test if my React app is visible to AI?",
         answer:
-          "Run an AiVIS audit. It fetches your URL like an AI crawler and reports exactly what it sees — including whether content is rendered or just JavaScript.",
+          "Run an AiVIS.biz audit. It fetches your URL like an AI crawler and reports exactly what it sees — including whether content is rendered or just JavaScript.",
       },
     ],
     internalLinks: [

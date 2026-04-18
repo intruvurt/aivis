@@ -1,11 +1,9 @@
-/**
- * SECURITY LOGGING IMPLEMENTATION
- * 
- * Enterprise-Grade Threat Detection for SMB/Agencies/SEO Operators
- * 
- * Last Updated: March 12, 2026
- * Version: 1.0
- */
+# Security Logging Implementation
+
+Enterprise-Grade Threat Detection for SMB/Agencies/SEO Operators
+
+Last Updated: March 12, 2026
+Version: 1.0
 
 # Overview
 
@@ -17,9 +15,9 @@ All logging is **automatically redacted** - secrets, API keys, tokens, and sensi
 
 This logging layer materially reduces accidental secret leakage risk, but it is not a legal/compliance guarantee by itself.
 
-- Redaction applies to known patterns and structured logging paths; custom serializers or external sinks can still introduce risk if misconfigured.
-- Security logging does not replace access control, key rotation, penetration testing, or data retention policies.
-- Development fallbacks (for example console email fallback without provider credentials) are operational aids and must not be represented as production-grade delivery evidence.
+* Redaction applies to known patterns and structured logging paths; custom serializers or external sinks can still introduce risk if misconfigured.
+* Security logging does not replace access control, key rotation, penetration testing, or data retention policies.
+* Development fallbacks (for example console email fallback without provider credentials) are operational aids and must not be represented as production-grade delivery evidence.
 - For incident response evidence, retain immutable downstream logs (SIEM/vendor retention) in addition to app-console output.
 
 ---

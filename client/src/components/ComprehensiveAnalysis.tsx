@@ -78,6 +78,7 @@ const GATE_LABELS: Record<string, string> = {
   gate_citation_readiness: "Citation Readiness",
   gate_heading_structure: "Heading Structure",
   gate_ai_readability: "AI Readability",
+  gate_security_trust: "Security & Trust",
 };
 
 function humanizeGateId(id: string): string {
@@ -277,7 +278,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           />
         )}
 
-        {/* 4. CATEGORY GRID - up to 6 cards, 3 cols */}
+        {/* 4. CATEGORY GRID - up to 7 cards */}
         {categories.length > 0 && (
           <section className="reveal">
             <div className="mb-4 flex items-center justify-between">

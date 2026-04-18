@@ -16,13 +16,13 @@ export default function QueryResultsLogPage() {
         name: "Query Results Log — Raw SERP and AI Output Traces",
         description:
           "Raw SERP snapshots and AI answer traces, timestamped and linked to Cite Ledger entries.",
-        url: "https://aivis.biz/evidence/query-results-log",
+        path: "/evidence/query-results-log",
       }),
       buildBreadcrumbSchema([
-        { name: "Home", url: "https://aivis.biz/" },
-        { name: "About AiVIS", url: "https://aivis.biz/about-aivis" },
-        { name: "Evidence", url: "https://aivis.biz/evidence/ledger-index" },
-        { name: "Query Results Log", url: "https://aivis.biz/evidence/query-results-log" },
+        { name: "Home", path: "/" },
+        { name: "About AiVIS", path: "/about-aivis" },
+        { name: "Evidence", path: "/evidence/ledger-index" },
+        { name: "Query Results Log", path: "/evidence/query-results-log" },
       ]),
     ],
   });

@@ -1,4 +1,4 @@
-# AiVIS Deep Analysis Engine (Python)
+# AiVIS.biz Deep Analysis Engine (Python)
 
 FastAPI microservice providing NLP-powered content analysis, cryptographic evidence ledger, enhanced document parsing, and content fingerprinting.
 
@@ -6,7 +6,7 @@ FastAPI microservice providing NLP-powered content analysis, cryptographic evide
 
 The Python service runs alongside the Node.js backend as an **optional** microservice. If unavailable, the Node pipeline continues without deep analysis (graceful degradation).
 
-```
+```text
                 ┌──────────────┐
   Browser ───▶  │  Node API    │───▶ AI providers (OpenRouter)
                 │  :3001       │
@@ -19,7 +19,7 @@ The Python service runs alongside the Node.js backend as an **optional** microse
 ## Services
 
 | Endpoint | Purpose |
-|----------|---------|
+| -------- | ------- |
 | `GET /health` | Health check (Node polls this) |
 | `POST /analyze/content` | NLP analysis: readability, entities, semantic density, AI citability |
 | `POST /analyze/document` | Parse + analyze uploaded PDF/DOCX/HTML/Markdown |
@@ -71,7 +71,7 @@ uvicorn app:app --reload --port 3002
 ## Environment Variables
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | `PYTHON_PORT` | `3002` | Service port |
 | `PYTHON_HOST` | `127.0.0.1` | Bind address |
 | `PYTHON_ENV` | `development` | `production` disables docs |

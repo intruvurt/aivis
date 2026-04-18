@@ -10,7 +10,7 @@ const SUGGESTION_POOLS: Record<string, string[]> = {
     'Show my milestones & credits',
     'Fetch robots.txt for my site',
     'How do I improve my AI visibility?',
-    'What are the 6 scoring categories?',
+    'What are the 7 scoring categories?',
     'Schedule audit for my site',
     'What can Bix do?',
   ],
@@ -82,10 +82,10 @@ const SUGGESTION_POOLS: Record<string, string[]> = {
   ],
   '/guide': [
     'Walk me through the audit steps',
-    'What are the 6 scoring categories?',
+    'What are the 7 scoring categories?',
     'What is the triple-check pipeline?',
     'Explain the scoring methodology',
-    'What does AiVIS scan exactly?',
+    'What does AiVIS.biz scan exactly?',
     'How do recommendations work?',
   ],
   '/help': [
@@ -175,7 +175,7 @@ export function getSuggestions(path: string): string[] {
 
 /** Static fallback for when you just need deterministic suggestions */
 export const DEFAULT_SUGGESTIONS = [
-  'What is AiVIS?',
+  'What is AiVIS.biz?',
   'How does the audit work?',
   'Show me live pricing and tier differences',
   'Read results from this share URL',
@@ -240,7 +240,7 @@ const GREETINGS: Record<string, string> = {
 };
 
 const DEFAULT_GREETING =
-  " Hi! I'm BIX — your AiVIS platform agent. Send me a URL to audit, ask any platform question, open a support ticket, or tell me what to do!";
+  " Hi! I'm BIX — your AiVIS.biz platform agent. Send me a URL to audit, ask any platform question, open a support ticket, or tell me what to do!";
 
 export function getGreeting(path: string): string {
   return GREETINGS[path] || GREETINGS[path.replace(/^\/app/, '')] || DEFAULT_GREETING;

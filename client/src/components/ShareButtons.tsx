@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Share2, Twitter, Linkedin, Link2, Check, Facebook } from "lucide-react";
+import { Share2, Link2, Check } from "lucide-react";
 import toast from "react-hot-toast";
 import { PUBLIC_APP_ORIGIN } from "../config";
 import apiFetch from "../utils/api";
@@ -238,7 +238,7 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
         className={`${shareBtnBase} brand-border-cyan`}
         title="Share on X / Twitter"
       >
-        <Twitter className="w-3.5 h-3.5 text-cyan-300" /> X
+        X
       </button>
 
       {/* LinkedIn */}
@@ -248,7 +248,7 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
         className={`${shareBtnBase} brand-border-violet`}
         title="Share on LinkedIn"
       >
-        <Linkedin className="w-3.5 h-3.5 text-violet-300" /> LinkedIn
+        LinkedIn
       </button>
 
       {/* Facebook */}
@@ -258,7 +258,7 @@ export default function ShareButtons({ url, score, title, analyzedAt, scanCount,
         className={`${shareBtnBase} brand-border-amber`}
         title="Share on Facebook"
       >
-        <Facebook className="w-3.5 h-3.5 text-amber-300" /> Facebook
+        Facebook
       </button>
 
       {/* Copy link */}

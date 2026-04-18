@@ -21,7 +21,6 @@ import {
   ExternalLink,
   FileText,
   GitBranch,
-  Github,
   Layers,
   Loader2,
   Lock,
@@ -336,7 +335,7 @@ function Step2Preview({
       type: 'deterministic',
       lines: [
         { kind: 'add', text: '+ Organization + SoftwareApplication schema injected' },
-        { kind: 'add', text: `+ Defines ${domain} as AiVIS | CITE LEDGER ` },
+        { kind: 'add', text: `+ Defines ${domain} as AiVIS.biz | CITE LEDGER ` },
         { kind: 'add', text: '+ Author, datePublished, sameAs social links wired in' },
       ],
     },
@@ -570,7 +569,7 @@ function Step3Connect({
             <p className="text-xs text-white/40">
               Needs <code className="text-white/60">repo</code> scope.{' '}
               <a
-                href="https://github.com/settings/tokens/new?scopes=repo&description=AiVIS+ScoreFix"
+                href="https://github.com/settings/tokens/new?scopes=repo&description=AiVIS.biz+ScoreFix"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-amber-300 underline hover:no-underline"
@@ -584,7 +583,7 @@ function Step3Connect({
               disabled={saving || !githubToken.trim()}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-600 disabled:opacity-50"
             >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Github className="h-4 w-4" />}
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitBranch className="h-4 w-4" />}
               {saving ? 'Connecting…' : 'Connect GitHub'}
             </button>
           </div>
@@ -933,7 +932,7 @@ function Step5Diff({
             rel="noopener noreferrer"
             className="ml-auto flex items-center gap-1 text-xs text-sky-400 hover:underline"
           >
-            <Github className="h-3.5 w-3.5" />
+            <GitBranch className="h-3.5 w-3.5" />
             View PR
             <ExternalLink className="h-3 w-3" />
           </a>
@@ -1039,7 +1038,7 @@ function Step6Deploy({
       {/* PR instructions */}
       <div className="rounded-2xl border border-sky-500/15 bg-sky-500/5 p-5 space-y-3">
         <div className="flex items-center gap-2 text-sky-300 font-semibold">
-          <Github className="h-5 w-5" />
+          <GitBranch className="h-5 w-5" />
           Merge the pull request on GitHub
         </div>
         {prUrl ? (

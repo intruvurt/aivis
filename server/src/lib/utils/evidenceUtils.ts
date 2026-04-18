@@ -71,10 +71,25 @@ export interface NormalizedEvidenceItem {
   rawEvidence: string | null;
 }
 
+export interface NormalizeEvidenceContext {
+  auditId?: string;
+  model?: string;
+  provider?: string;
+  requestId?: string;
+  source?: string;
+  sourceModel?: string;
+  url?: string;
+  verificationTimestamp?: string;
+  verifiedBy?: string;
+}
+
 /**
  * Validate and normalize an array of raw evidence items
  */
-export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEvidenceItem[] {
+export function normalizeEvidenceArray(
+  evidenceArray: unknown,
+  context: NormalizeEvidenceContext = {},
+): NormalizedEvidenceItem[] {
   if (!Array.isArray(evidenceArray)) return [];
 
   const UNKNOWN_EVIDENCE_WARN_THRESHOLD = 3;
@@ -85,21 +100,36 @@ export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEviden
     const hasProof = raw.length > 0;
     if (!hasProof) unknownEvidenceCount++;
 
-    const provider = typeof item?.provider === 'string' ? item.provider.trim() : '';
+    const provider =
+      typeof item?.provider === 'string'
+        ? item.provider.trim()
+        : typeof context.provider === 'string'
+          ? context.provider.trim()
+          : '';
     const model =
       typeof item?.model === 'string'
         ? item.model.trim()
         : typeof item?.sourceModel === 'string'
-        ? item.sourceModel.trim()
-        : '';
+          ? item.sourceModel.trim()
+          : typeof context.model === 'string'
+            ? context.model.trim()
+            : typeof context.sourceModel === 'string'
+              ? context.sourceModel.trim()
+              : '';
     const explicitVerifier =
       typeof item?.verifiedBy === 'string'
         ? item.verifiedBy.trim()
         : typeof item?.verifier === 'string'
-        ? item.verifier.trim()
-        : '';
+          ? item.verifier.trim()
+          : typeof context.verifiedBy === 'string'
+            ? context.verifiedBy.trim()
+            : '';
     const verificationTimestamp =
-      typeof item?.verificationTimestamp === 'string' ? item.verificationTimestamp.trim() : '';
+      typeof item?.verificationTimestamp === 'string'
+        ? item.verificationTimestamp.trim()
+        : typeof context.verificationTimestamp === 'string'
+          ? context.verificationTimestamp.trim()
+          : '';
 
     const verifierLabel =
       explicitVerifier ||
@@ -115,7 +145,12 @@ export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEviden
       finding: typeof item?.finding === 'string' ? item.finding : 'No finding specified',
       evidence: buildEvidence({
         proof: hasProof ? raw : null,
-        source: typeof item?.source === 'string' ? item.source : 'AI Analysis',
+        source:
+          typeof item?.source === 'string'
+            ? item.source
+            : typeof context.source === 'string'
+              ? context.source
+              : 'AI Analysis',
         verifiedBy: verifierWithTimestamp,
         description: hasProof ? raw : 'Evidence data not available for this finding',
       }),
@@ -129,8 +164,19 @@ export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEviden
   });
 
   if (unknownEvidenceCount >= UNKNOWN_EVIDENCE_WARN_THRESHOLD) {
+    const firstContext = {
+      ...context,
+      ...((evidenceArray.find((item) => item && typeof item === 'object') ?? {}) as Record<string, unknown>),
+    } as Record<string, unknown>;
+    const contextBits = [
+      typeof firstContext.auditId === 'string' ? `audit=${firstContext.auditId}` : null,
+      typeof firstContext.requestId === 'string' ? `request=${firstContext.requestId}` : null,
+      typeof firstContext.url === 'string' ? `url=${firstContext.url}` : null,
+      typeof firstContext.model === 'string' ? `model=${firstContext.model}` : null,
+      typeof firstContext.sourceModel === 'string' ? `sourceModel=${firstContext.sourceModel}` : null,
+    ].filter((value): value is string => Boolean(value));
     console.warn(
-      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalized.length} items have no verifiable proof.`,
+      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalized.length} items have no verifiable proof${contextBits.length ? ` (${contextBits.join(', ')})` : ''}.`,
     );
   }
 

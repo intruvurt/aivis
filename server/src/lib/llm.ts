@@ -22,7 +22,8 @@ function withTimeout(ms: number) {
 function baseUrlFor(provider: Provider): string {
   if (provider === "openrouter") return "https://openrouter.ai/api/v1";
   const raw = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
-  return raw.replace(/\/$/, "") + "/v1";
+  const normalized = raw.replace(/\/$/, "");
+  return /\/v1$/i.test(normalized) ? normalized : `${normalized}/v1`;
 }
 
 function modelFor(provider: Provider): string {
@@ -78,9 +79,8 @@ export async function pickProvider(): Promise<Provider> {
   }
 
   // auto: try ollama, else openrouter
-  const ollamaHealth = (
-    process.env.OLLAMA_BASE_URL || "http://localhost:11434"
-  ).replace(/\/$/, "");
+  const ollamaBase = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
+  const ollamaHealth = ollamaBase.replace(/\/v1\/?$/i, "").replace(/\/$/, "");
   const ok = await canReach(ollamaHealth);
   return ok ? "ollama" : "openrouter";
 }

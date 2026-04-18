@@ -4,8 +4,8 @@ import { useAuthStore } from "../stores/authStore";
 import { apiFetch } from "../utils/api";
 import usePageVisible from "./usePageVisible";
 
-const FEATURE_STATUS_CACHE_TTL_MS = 30_000;
-const FEATURE_STATUS_POLL_MS = 90_000;
+const FEATURE_STATUS_CACHE_TTL_MS = 60_000;
+const FEATURE_STATUS_POLL_MS = 180_000;
 
 let sharedFeatureStatusCache: FeatureStatusData | null = null;
 let sharedFeatureStatusCacheAt = 0;
@@ -170,7 +170,7 @@ export default function useFeatureStatus() {
           await fetchStatus(true);
           pollMs = FEATURE_STATUS_POLL_MS; // reset on success
         } catch {
-          pollMs = Math.min(pollMs * 2, 180_000); // backoff on failure, max 3 min
+          pollMs = Math.min(pollMs * 2, 300_000); // backoff on failure, max 5 min
         }
         schedulePoll();
       }, pollMs);

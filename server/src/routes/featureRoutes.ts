@@ -98,7 +98,7 @@ interface CacheEntry<T = unknown> { data: T; ts: number; }
 const featureStatusCache = new Map<string, CacheEntry>();
 const notificationsCache = new Map<string, CacheEntry>();
 
-const FEATURE_CACHE_TTL = 15_000;  // 15 s
+const FEATURE_CACHE_TTL = 60_000; // 60 s
 const NOTIF_CACHE_TTL = 8_000;   // 8 s
 
 function readCache<T>(cache: Map<string, CacheEntry>, key: string, ttl: number): T | null {

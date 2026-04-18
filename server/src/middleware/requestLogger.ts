@@ -1,5 +1,5 @@
 /**
- * Request logging middleware for AiVIS
+ * Request logging middleware for AiVIS.biz
  *
  * Logs all incoming requests with:
  * - Method, path, and status code
@@ -155,10 +155,12 @@ export function createRequestLogger() {
         ? parseInt(res.get("content-length") as string, 10)
         : 0;
 
+      const requestPath = req.originalUrl || req.path;
+
       const log: RequestLog = {
         timestamp: new Date().toISOString(),
         method: req.method,
-        path: req.path,
+        path: requestPath,
         ip,
         userId,
         statusCode: res.statusCode,
@@ -178,7 +180,7 @@ export function createRequestLogger() {
               ? "[WARN]"
               : "[SLOW]";
         console.log(
-          `${level} ${req.method} ${req.path} - ${res.statusCode} (${responseTimeMs}ms) - IP: ${ip}${userId ? ` - User: ${userId}` : ""}`,
+          `${level} ${req.method} ${requestPath} - ${res.statusCode} (${responseTimeMs}ms) - IP: ${ip}${userId ? ` - User: ${userId}` : ""}`,
         );
       }
 

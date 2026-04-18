@@ -8,10 +8,11 @@
  * @returns {Object} Structured evidence object
  */
 export function buildEvidence({ proof, source, verifiedBy = null, description }: { proof: string | null; source?: string | null; verifiedBy?: string | null; description?: string | null }) {
-  if (proof) {
+  const hasProof = typeof proof === 'string' && proof.trim().length > 0;
+  if (hasProof) {
     return {
       status: 'verified',
-      proof,
+      proof: proof.trim(),
       source: source || null,
       verifiedBy: verifiedBy || null,
       description: description || null,
@@ -22,6 +23,7 @@ export function buildEvidence({ proof, source, verifiedBy = null, description }:
       status: 'unknown',
       proof: null,
       source: source || null,
+      verifiedBy: verifiedBy || null,
       description: description || 'No verifiable evidence was found.',
       timestamp: new Date().toISOString()
     };
@@ -43,7 +45,7 @@ export function attachEvidenceToClaim(claim: any, evidenceObj: any) {
  * @param {Array} evidenceArray - Array of evidence items
  * @returns {Array} Normalized evidence array with structured objects
  */
-export function normalizeEvidenceArray(evidenceArray: any[]) {
+export function normalizeEvidenceArray(evidenceArray: any[], context: any = {}) {
   if (!Array.isArray(evidenceArray)) {
     return [];
   }
@@ -55,21 +57,35 @@ export function normalizeEvidenceArray(evidenceArray: any[]) {
     const hasProof = item.evidence && item.evidence.trim().length > 0;
     if (!hasProof) unknownEvidenceCount++;
 
-    const provider = typeof item?.provider === 'string' ? item.provider.trim() : '';
+    const provider = typeof item?.provider === 'string'
+      ? item.provider.trim()
+      : typeof context?.provider === 'string'
+        ? context.provider.trim()
+        : '';
     const model =
       typeof item?.model === 'string'
         ? item.model.trim()
         : typeof item?.sourceModel === 'string'
           ? item.sourceModel.trim()
-          : '';
+          : typeof context?.model === 'string'
+            ? context.model.trim()
+            : typeof context?.sourceModel === 'string'
+              ? context.sourceModel.trim()
+              : '';
     const explicitVerifier =
       typeof item?.verifiedBy === 'string'
         ? item.verifiedBy.trim()
         : typeof item?.verifier === 'string'
           ? item.verifier.trim()
-          : '';
+          : typeof context?.verifiedBy === 'string'
+            ? context.verifiedBy.trim()
+            : '';
     const verificationTimestamp =
-      typeof item?.verificationTimestamp === 'string' ? item.verificationTimestamp.trim() : '';
+      typeof item?.verificationTimestamp === 'string'
+        ? item.verificationTimestamp.trim()
+        : typeof context?.verificationTimestamp === 'string'
+          ? context.verificationTimestamp.trim()
+          : '';
 
     const verifierLabel =
       explicitVerifier ||
@@ -85,7 +101,7 @@ export function normalizeEvidenceArray(evidenceArray: any[]) {
       finding: item.finding || 'No finding specified',
       evidence: buildEvidence({
         proof: hasProof ? item.evidence : null,
-        source: item.source || 'AI Analysis',
+        source: item.source || context?.source || 'AI Analysis',
         verifiedBy: verifierWithTimestamp,
         description: hasProof ? item.evidence : 'Evidence data not available for this finding'
       }),
@@ -96,8 +112,19 @@ export function normalizeEvidenceArray(evidenceArray: any[]) {
   });
 
   if (unknownEvidenceCount >= UNKNOWN_EVIDENCE_WARN_THRESHOLD) {
+    const firstContext = {
+      ...(context || {}),
+      ...(evidenceArray.find((item) => item && typeof item === 'object') || {}),
+    };
+    const contextBits = [
+      typeof firstContext.auditId === 'string' ? `audit=${firstContext.auditId}` : null,
+      typeof firstContext.requestId === 'string' ? `request=${firstContext.requestId}` : null,
+      typeof firstContext.url === 'string' ? `url=${firstContext.url}` : null,
+      typeof firstContext.model === 'string' ? `model=${firstContext.model}` : null,
+      typeof firstContext.sourceModel === 'string' ? `sourceModel=${firstContext.sourceModel}` : null,
+    ].filter(Boolean);
     console.warn(
-      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalizedEvidence.length} items have no verifiable proof.`,
+      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalizedEvidence.length} items have no verifiable proof${contextBits.length ? ` (${contextBits.join(', ')})` : ''}.`,
     );
   }
 

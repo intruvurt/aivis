@@ -23,7 +23,7 @@ export const createAudit = async (req, res) => {
     // Enforce usage limits
     const user = await User.findById(userId);
     const usageCheck = checkUsageLimit(user, "scan");
-    
+
     if (!usageCheck.allowed) {
       return res.status(403).json({
         success: false,
@@ -51,7 +51,7 @@ export const createAudit = async (req, res) => {
     }
 
     let website = await Website.findOne({ domain, userId });
-    
+
     if (!website) {
       website = await Website.create({
         url,
@@ -90,6 +90,7 @@ export const createAudit = async (req, res) => {
           audit.overallScore = pipelineResult.scores.overall;
           audit.categoryScores = pipelineResult.scores;
           audit.visibilityStatus = pipelineResult.visibilityStatus;
+          const verificationTimestamp = new Date().toISOString();
           audit.evidence = normalizeEvidenceArray(
             pipelineResult.allEvidence.map(ev => ({
               category: "Forensic Analysis",
@@ -97,7 +98,14 @@ export const createAudit = async (req, res) => {
               evidence: ev.description || "",
               impact: "medium",
               recommendation: "Review evidence details"
-            }))
+            })),
+            {
+              auditId: String(audit._id),
+              source: 'Forensic Pipeline',
+              url,
+              verificationTimestamp,
+              verifiedBy: 'Forensic Pipeline v1.0',
+            }
           );
           audit.risks = pipelineResult.risks;
           audit.recommendations = pipelineResult.recommendations;
@@ -217,8 +225,18 @@ export const updateAuditStatus = async (req, res) => {
     if (overallScore !== undefined) audit.overallScore = overallScore;
     if (visibilityStatus) audit.visibilityStatus = visibilityStatus;
     if (evidence) {
+      const verificationTimestamp = new Date().toISOString();
       // Normalize evidence to ensure structured format
-      audit.evidence = normalizeEvidenceArray(evidence);
+      audit.evidence = normalizeEvidenceArray(evidence, {
+        auditId: String(audit._id),
+        model: typeof req.body?.model === 'string' ? req.body.model : undefined,
+        provider: typeof aiProvider === 'string' ? aiProvider : undefined,
+        source: typeof req.body?.source === 'string' ? req.body.source : undefined,
+        sourceModel: typeof req.body?.sourceModel === 'string' ? req.body.sourceModel : undefined,
+        url: audit.url,
+        verificationTimestamp,
+        verifiedBy: typeof aiProvider === 'string' ? aiProvider : undefined,
+      });
     }
     if (summary) audit.summary = summary;
     if (aiProvider) audit.aiProvider = aiProvider;

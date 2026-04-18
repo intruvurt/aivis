@@ -88,8 +88,17 @@ Format your response as JSON with this structure:
       };
     }
 
+    const verificationTimestamp = new Date().toISOString();
+
     // Normalize evidence array to include structured evidence objects
-    const normalizedEvidence = normalizeEvidenceArray(analysisData.evidence || []);
+    const normalizedEvidence = normalizeEvidenceArray(analysisData.evidence || [], {
+      auditId: String(audit._id),
+      provider: typeof aiResponse?.provider === 'string' ? aiResponse.provider : undefined,
+      model: typeof aiResponse?.model === 'string' ? aiResponse.model : undefined,
+      source: 'AI Analysis',
+      url: audit.url,
+      verificationTimestamp,
+    });
 
     audit.status = "completed";
     audit.overallScore = analysisData.overallScore;

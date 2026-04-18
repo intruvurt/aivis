@@ -16,7 +16,7 @@ export function buildReferralInviteMessage(args: ShareReferralArgs): { link: str
   const link = buildReferralInviteLink(args.referralCode);
   const requiredAudits = Math.max(1, Number(args.requiredAuditsForReward || 5));
   const paidMultiplier = Math.max(1, Number(args.paidRewardMultiplier || 3));
-  const message = `I use AiVIS.biz to validate AI search answers, citation and brand mentions, technical SEO, brand or domain credibility and global authority accurately. Sign up with my invite link and unlock +${args.creditsToReferred} credits for you and +${args.creditsToReferrer} for me once eligibility is met (${requiredAudits}+ audits), with ${paidMultiplier}x rewards on paid upgrades.`;
+  const message = `I use AiVIS.biz to validate AI search answers, citation and brand mentions, technical trust signals, brand or domain credibility and global authority accurately. Sign up with my invite link and unlock +${args.creditsToReferred} credits for you and +${args.creditsToReferrer} for me once eligibility is met (${requiredAudits}+ audits), with ${paidMultiplier}x rewards on paid upgrades.`;
   return { link, message };
 }
 
@@ -31,7 +31,7 @@ export async function shareReferralInvite(args: ShareReferralArgs): Promise<"sha
   try {
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       await navigator.share({
-        title: "Join AiVIS",
+        title: "Join AiVIS.biz",
         text: message,
         url: link,
       });

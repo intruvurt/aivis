@@ -80,7 +80,7 @@ function recommendationToInsight(rec: Recommendation, result: AnalysisResponse, 
     impact: String(rec.impact || "Moderate improvement"),
     detailedAnalysis: `This recommendation is generated from your latest live audit results and should be treated as a real implementation item.\n\nMeasured audit context: ${measuredContext}.\n\nCategory: ${rec.category}${rec.evidence_ids?.length ? `\nEvidence IDs: ${rec.evidence_ids.join(", ")}` : ""}`,
     actionSteps: implementationSteps.length > 0 ? implementationSteps : ["Implement the change described above and rerun the audit to verify score/category improvement."],
-    expectedOutcome: "Improves the related audit category and increases the likelihood of stronger AI/SEO visibility on subsequent re-audits.",
+    expectedOutcome: "Improves the related audit category and increases the likelihood of stronger AI visibility on subsequent re-audits.",
     timeframe: rec.estimatedTimeMinutes ? `${rec.estimatedTimeMinutes} min` : undefined,
     difficulty: difficultyMap[rec.difficulty] || "medium",
     resources: rec.evidence_ids?.length
@@ -463,7 +463,7 @@ Result: AI categorizes your site as a Schema authority → citations increase ex
       id: "technical-performance",
       icon: createElement(Zap, { className: "w-5 h-5" }),
       title: "Optimize Technical Performance (Medium Priority)",
-      description: "Improve page speed, mobile experience, and technical SEO fundamentals for better AI crawlability.",
+      description: "Improve page speed, mobile experience, and technical trust fundamentals for better AI crawlability.",
       color: "cyan",
       priority: "medium",
       impact: "Fast, technically sound sites are crawled more frequently and indexed more comprehensively by AI search engines. Performance affects both direct ranking and how often your updated content is discovered.",
@@ -509,7 +509,7 @@ Priority note: Fix content gaps (thin pages, missing schemas) first. Once conten
           description: "Compress images without visible quality loss"
         },
         {
-          title: "Technical SEO Checklist",
+          title: "Technical Trust Checklist",
           description: "Comprehensive list of technical optimizations"
         }
       ]

@@ -184,6 +184,21 @@ if (!fs.existsSync(indexPath)) {
 
 const baseHtml = fs.readFileSync(indexPath, 'utf8');
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
+
+// ── Prerendered footer for all pages — satisfies Google OAuth branding requirements ──
+const PRERENDER_FOOTER = `<footer style="max-width:840px;margin:32px auto 0;padding:24px 20px;border-top:1px solid rgba(0,0,0,0.10);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#6b7280;font-size:13px;line-height:1.6;">
+	<p style="margin:0 0 8px;font-weight:600;color:#111827;">AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER</p>
+	<p style="margin:0 0 12px;">AiVIS.biz is an AI visibility and citation readiness platform that audits how AI answer engines — ChatGPT, Perplexity, Google AI Overviews, and Claude — read, interpret, and cite your website. Every finding is tied to verifiable on-page evidence through BRAG (Based-Retrieval-Auditable-Grading) evidence identifiers.</p>
+	<nav style="margin:0 0 12px;" aria-label="Footer links">
+		<a href="https://aivis.biz/privacy" style="color:#1d4ed8;margin-right:16px;">Privacy Policy</a>
+		<a href="https://aivis.biz/terms" style="color:#1d4ed8;margin-right:16px;">Terms of Service</a>
+		<a href="https://aivis.biz/about" style="color:#1d4ed8;margin-right:16px;">About</a>
+		<a href="https://aivis.biz/disclosures" style="color:#1d4ed8;margin-right:16px;">Disclosures</a>
+		<a href="mailto:support@aivis.biz" style="color:#1d4ed8;">Contact</a>
+	</nav>
+	<p style="margin:0;font-size:11px;color:#9ca3af;">&copy; ${new Date().getFullYear()} AiVIS.biz. All rights reserved.</p>
+</footer>`;
+
 const HOME_EXTRA_HEAD = `
 		<script type="application/ld+json">
 			{
@@ -1136,7 +1151,7 @@ const routeSpecificEnrichment = {
 				heading: 'What is CITE LEDGER',
 				paragraphs: [
 					'CITE LEDGER is the verification layer that checks whether AI systems can extract, attribute, and cite your content. A page can rank first in traditional search and still be invisible to answer engines if structural signals are missing.',
-					'AiVIS.biz measures extractability, trust signal alignment, and citation readiness across six weighted categories: Content Depth (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical Foundations (15%), Meta Tags and Open Graph (13%), and Heading Structure (12%).',
+					'AiVIS.biz measures extractability, trust signal alignment, and citation readiness across seven weighted dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical SEO (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Hard-blocker caps prevent inflated scores when critical signals are missing.',
 				],
 			},
 			{
@@ -1664,6 +1679,7 @@ function renderBlogBody(route, canonicalUrl) {
 					<p style="margin:8px 0 0;color:#6b7280;font-size:13px;">Published on <a href="https://aivis.biz/blogs" style="color:#1d4ed8;">AiVIS.biz Blogs</a> · <a href="${canonicalUrl}" style="color:#1d4ed8;">${canonicalUrl}</a></p>
 				</footer>
 			</article>
+			${PRERENDER_FOOTER}
 		</div>
 	</body>`;
 }
@@ -1709,6 +1725,7 @@ function renderKeywordPageBody(route, canonicalUrl) {
 					<p style="margin:0;color:#6b7280;font-size:13px;"><a href="${canonicalUrl}" style="color:#1d4ed8;">${canonicalUrl}</a></p>
 				</footer>
 			</main>
+			${PRERENDER_FOOTER}
 		</div>
 	</body>`;
 }
@@ -1779,6 +1796,7 @@ function renderRouteBody(route, canonicalUrl) {
 				</section>
 				${detailSections.map((section) => renderSection(section)).join('')}
 			</main>
+			${PRERENDER_FOOTER}
 		</div>
 	</body>`;
 }

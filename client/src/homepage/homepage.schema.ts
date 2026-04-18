@@ -60,7 +60,7 @@ export const HOMEPAGE_FAQ_ITEMS = [
     },
     {
         q: 'What are the seven scoring categories?',
-        a: `${BRAND.name} scores Schema and Structured Data (20%), Content Depth and Quality (18%), Meta Tags and Open Graph (15%), Technical SEO (15%), AI Readability and Citability (12%), Heading Structure (10%) and Security and Trust (10%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.`,
+        a: `${BRAND.name} scores Schema and Structured Data (20%), Content Depth and Quality (18%), Meta Tags and Open Graph (15%), Technical Trust (15%), AI Readability and Citability (12%), Heading Structure (10%) and Security and Trust (10%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.`,
     },
     {
         q: 'Can I track how my score changes over time?',

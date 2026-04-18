@@ -1,6 +1,7 @@
 // SampleReport — public page showing a realistic sample audit
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { getScoreColor, getScoreBand } from '../utils/scoreUtils';
 
 // Realistic sample data modeled on a mid-range site
 const SAMPLE = {
@@ -16,7 +17,7 @@ const SAMPLE = {
     { name: 'Schema & Structured Data', score: 18, weight: '20%', detail: 'Basic JSON-LD present but missing Organization, FAQ, and author entities.' },
     { name: 'Content Depth', score: 42, weight: '18%', detail: 'Word count adequate but lacks question-format headings and TL;DR blocks.' },
     { name: 'Meta & Open Graph', score: 55, weight: '15%', detail: 'Title and meta description present. Missing Open Graph image and Twitter card.' },
-    { name: 'Technical SEO', score: 48, weight: '15%', detail: 'Canonical URL set. Sitemap exists but missing hreflang for multi-language.' },
+    { name: 'Technical Trust', score: 48, weight: '15%', detail: 'Canonical URL set. Sitemap exists but missing hreflang for multi-language.' },
     { name: 'AI Readability', score: 22, weight: '12%', detail: 'AI crawlers blocked in robots.txt. No llms.txt file. Content not extractable.' },
     { name: 'Security & Trust', score: 60, weight: '10%', detail: 'HTTPS active. No sameAs links to authoritative profiles.' },
     { name: 'Heading Structure', score: 35, weight: '10%', detail: 'H1 present but generic. Sub-headings lack question format.' },
@@ -41,8 +42,11 @@ const severityColor = {
   low: 'text-white/50 bg-white/5 border-white/10',
 };
 
-const scoreColor = (s: number) => s >= 60 ? 'text-emerald-400' : s >= 35 ? 'text-amber-400' : 'text-red-400';
-const ringColor = (s: number) => s >= 60 ? 'border-emerald-400/40 bg-emerald-500/10' : s >= 35 ? 'border-amber-400/40 bg-amber-500/10' : 'border-red-400/40 bg-red-500/10';
+const scoreColorLocal = (s: number) => getScoreColor(s);
+const ringColor = (s: number) => {
+  const b = getScoreBand(s);
+  return `border-${b.band === 'excellent' ? 'emerald' : b.band === 'good' ? 'green' : b.band === 'fair' ? 'amber' : b.band === 'poor' ? 'orange' : 'red'}-400/40 bg-${b.band === 'excellent' ? 'emerald' : b.band === 'good' ? 'green' : b.band === 'fair' ? 'amber' : b.band === 'poor' ? 'orange' : 'red'}-500/10`;
+};
 
 const SampleReport = () => {
   usePageMeta({ title: 'Sample Report', description: 'See what a real AiVIS.biz AI visibility audit looks like. Score breakdown, evidence-backed findings, and priority fixes.' });
@@ -63,7 +67,7 @@ const SampleReport = () => {
         {/* Score header */}
         <div className="flex items-center gap-6 mb-8">
           <div className={`w-24 h-24 rounded-full border-4 ${ringColor(SAMPLE.score)} flex items-center justify-center shrink-0`}>
-            <span className={`text-4xl font-black ${scoreColor(SAMPLE.score)}`}>{SAMPLE.score}</span>
+            <span className={`text-4xl font-black ${scoreColorLocal(SAMPLE.score)}`}>{SAMPLE.score}</span>
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">{SAMPLE.status_line}</h1>
@@ -90,10 +94,10 @@ const SampleReport = () => {
             <div key={cat.name} className="rounded-xl border border-white/10 bg-[#111827]/50 p-4">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-semibold text-white">{cat.name}</h3>
-                <span className={`text-lg font-bold ${scoreColor(cat.score)}`}>{cat.score}</span>
+                <span className={`text-lg font-bold ${scoreColorLocal(cat.score)}`}>{cat.score}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/10 mb-2">
-                <div className={`h-full rounded-full ${cat.score >= 60 ? 'bg-emerald-400' : cat.score >= 35 ? 'bg-amber-400' : 'bg-red-400'}`} style={{ width: `${cat.score}%` }} />
+                <div className={`h-full rounded-full ${getScoreBand(cat.score).barColor}`} style={{ width: `${cat.score}%` }} />
               </div>
               <p className="text-xs text-white/45">{cat.detail}</p>
               <p className="text-[10px] text-white/25 mt-1">Weight: {cat.weight}</p>

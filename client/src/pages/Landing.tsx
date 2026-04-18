@@ -119,14 +119,18 @@ const PROGRESS_STEPS = [
 ] as const;
 
 function getScoreColor(score: number): string {
-  if (score >= 70) return 'text-emerald-400';
+  if (score >= 80) return 'text-emerald-400';
+  if (score >= 60) return 'text-green-400';
   if (score >= 40) return 'text-amber-400';
+  if (score >= 20) return 'text-orange-400';
   return 'text-red-400';
 }
 
 function getScoreRingColor(score: number): string {
-  if (score >= 70) return 'border-emerald-400/40 bg-emerald-400/10';
+  if (score >= 80) return 'border-emerald-400/40 bg-emerald-400/10';
+  if (score >= 60) return 'border-green-400/40 bg-green-400/10';
   if (score >= 40) return 'border-amber-400/40 bg-amber-400/10';
+  if (score >= 20) return 'border-orange-400/40 bg-orange-400/10';
   return 'border-red-400/40 bg-red-400/10';
 }
 
@@ -596,7 +600,7 @@ const Landing = () => {
               )},
               { step: '2', accent: 'border-violet-400/20 bg-violet-400/5', color: 'text-violet-300', title: 'BRAG Engine + AI pipeline', desc: 'Multi-model analysis scores 7 evidence-backed dimensions. Signal tier runs triple-check with 3 independent models.', visual: (
                 <div className="mt-3 grid grid-cols-4 gap-2">
-                  {['Content Depth', 'Schema', 'AI Readability', 'Technical SEO', 'Meta Tags', 'Headings', 'Security & Trust'].map((cat) => (
+                  {['Content Depth', 'Schema', 'AI Readability', 'Technical Trust', 'Meta Tags', 'Headings', 'Security & Trust'].map((cat) => (
                     <div key={cat} className="rounded-lg border border-white/8 bg-[#0d1117] p-2 text-center">
                       <div className="text-xs text-white/40">{cat}</div>
                       <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500" style={{ width: `${50 + Math.random() * 40}%` }} /></div>
@@ -716,7 +720,7 @@ const Landing = () => {
                 { cat: 'Content Depth', before: 25, after: 50, color: 'from-amber-400 to-emerald-400', fix: 'Expanded thin content sections' },
                 { cat: 'AI Readability', before: 15, after: 55, color: 'from-red-400 to-emerald-400', fix: 'Added FAQ schema with 4 Q&A pairs' },
                 { cat: 'Meta Tags', before: 30, after: 50, color: 'from-amber-400 to-emerald-400', fix: 'Fixed missing Open Graph tags' },
-                { cat: 'Technical SEO', before: 20, after: 45, color: 'from-red-400 to-emerald-400', fix: 'Added canonical URL + robots meta' },
+                { cat: 'Technical Trust', before: 20, after: 45, color: 'from-red-400 to-emerald-400', fix: 'Added canonical URL + robots meta' },
                 { cat: 'Security & Trust', before: 10, after: 40, color: 'from-red-400 to-emerald-400', fix: 'Added HSTS + author entity + sameAs links' },
               ] as const).map((row) => (
                 <div key={row.cat} className="flex items-center gap-3">
@@ -887,7 +891,7 @@ const Landing = () => {
             {([
               { icon: '🧠', title: 'Multi-model AI pipeline', desc: 'Up to 3 independent models score every audit. Signal tier runs triple-check consensus so no single model bias distorts your results.' },
               { icon: '🔍', title: 'BRAG evidence system', desc: 'Every finding links to a real page element via a unique evidence ID — so you can verify exactly what triggered each distortion and each fix.' },
-              { icon: '📊', title: '7-dimension evidence scoring', desc: 'Schema (20%), Content Depth (18%), Technical SEO (15%), Meta Tags (15%), AI Readability (12%), Headings (10%), Security & Trust (10%) — each weighted and measured against your live page.' },
+              { icon: '📊', title: '7-dimension evidence scoring', desc: 'Schema (20%), Content Depth (18%), Technical Trust (15%), Meta Tags (15%), AI Readability (12%), Headings (10%), Security & Trust (10%) — each weighted and measured against your live page.' },
               { icon: '⚡', title: 'Live page scanning', desc: 'A headless browser pulls your live page data: JSON-LD, headings, meta tags, Open Graph, robots directives and canonical URLs — nothing cached or guessed.' },
               { icon: '🏢', title: 'Competitor intelligence', desc: 'Track rivals, expose opportunity gaps, compare AI visibility scores and monitor brand mentions across 19 sources including Reddit, Hacker News and Bluesky.' },
               { icon: '🔗', title: 'Citation testing', desc: 'Test whether ChatGPT, Perplexity and Google AI actually cite your domain — with real query evidence, not simulated results.' },

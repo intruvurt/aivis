@@ -20,7 +20,7 @@ interface Branding {
   footer_text?: string;
 }
 
-const DEFAULT_EXPORT_BRAND_NAME = 'AiVIS';
+const DEFAULT_EXPORT_BRAND_NAME = 'AiVIS.biz';
 const DEFAULT_EXPORT_LOGO_URL = '/aivis-logo.png';
 const ENTERPRISE_EXPORT_LOGO_URL = '/full-logo.png';
 const BRANDED_EXPORT_CREDIT_COST = 1;
@@ -177,7 +177,7 @@ function generateCSV(result: AnalysisResponse): string {
   }
 
   // Technical Details
-  rows.push(["Technical SEO Details"]);
+  rows.push(["Technical Trust Details"]);
   rows.push(["Check", "Status"]);
   rows.push(["HTTPS Enforced", result.technical_signals?.https_enabled ? "Yes" : "No"]);
   rows.push(["Canonical Tag", result.technical_signals?.has_canonical ? "Present" : "Missing"]);
@@ -217,11 +217,11 @@ function generateHTMLReport(
     : '';
 
   const enterpriseLogoHeaderHTML = includeEnterpriseAivisBranding
-    ? `<div style="margin-top: 12px;"><img src="${ENTERPRISE_EXPORT_LOGO_URL}" alt="AiVIS" style="height: 32px; width: auto;" /></div>`
+    ? `<div style="margin-top: 12px;"><img src="${ENTERPRISE_EXPORT_LOGO_URL}" alt="AiVIS.biz" style="height: 32px; width: auto;" /></div>`
     : '';
 
   const enterpriseLogoFooterHTML = includeEnterpriseAivisBranding
-    ? `<div style="margin-bottom: 10px;"><img src="${ENTERPRISE_EXPORT_LOGO_URL}" alt="AiVIS" style="height: 28px; width: auto;" /></div>`
+    ? `<div style="margin-bottom: 10px;"><img src="${ENTERPRISE_EXPORT_LOGO_URL}" alt="AiVIS.biz" style="height: 28px; width: auto;" /></div>`
     : '';
 
   return `
@@ -699,7 +699,7 @@ function generateHTMLReport(
   ` : ''}
 
   <div class="section">
-    <h2 class="section-title">Technical SEO Checklist</h2>
+    <h2 class="section-title">Technical Trust Checklist</h2>
     <table class="technical-table">
       <thead>
         <tr>
@@ -736,7 +736,7 @@ function generateHTMLReport(
     ${enterpriseLogoFooterHTML}
     <p><strong>${brandName}</strong> - Professional SEO & AI Search Analysis</p>
     <p>${brandFooter || 'This report provides actionable insights for improving your visibility in AI-powered search engines.'}</p>
-    ${brandName !== DEFAULT_EXPORT_BRAND_NAME ? '<p style="font-size: 11px; color: #9ca3af; margin-top: 8px;">Powered by AiVIS</p>' : ''}
+    ${brandName !== DEFAULT_EXPORT_BRAND_NAME ? '<p style="font-size: 11px; color: #9ca3af; margin-top: 8px;">Powered by AiVIS.biz</p>' : ''}
   </div>
 </body>
 </html>
@@ -988,7 +988,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-white/80 font-bold">•</span>
-            <span>Technical SEO checklist with pass/fail status</span>
+            <span>Technical trust checklist with pass/fail status</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-white/80 font-bold">•</span>

@@ -31,6 +31,7 @@ import { getAnalysisExecutionClass, type AnalysisResponse, type CanonicalTier, t
 import { canAccess } from "@shared/entitlements";
 import { Link } from "react-router-dom";
 import CollapsibleSection from "./CollapsibleSection";
+import { getScoreBand, getCitationVerdict, getExecutionBadge } from "../utils/scoreUtils";
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -42,9 +43,8 @@ interface ComprehensiveAnalysisProps {
 // ── Helpers ──────────────────────────────────────────────────────
 
 function toneClasses(score: number) {
-  if (score >= 80) return { bar: "bg-emerald-400", badge: "bg-emerald-400/10 text-emerald-300 border border-emerald-400/20", label: "Excellent" };
-  if (score >= 65) return { bar: "bg-amber-400", badge: "bg-amber-400/10 text-amber-300 border border-amber-400/20", label: "Moderate" };
-  return { bar: "bg-rose-400", badge: "bg-rose-400/10 text-rose-300 border border-rose-400/20", label: "Weak" };
+  const b = getScoreBand(score);
+  return { bar: b.barColor, badge: b.badgeClass, label: b.label };
 }
 
 function severityClasses(sev: string) {
@@ -55,17 +55,11 @@ function severityClasses(sev: string) {
 }
 
 function scoreLevel(score: number) {
-  if (score >= 80) return { label: "Strong Visibility", color: "text-emerald-300" };
-  if (score >= 65) return { label: "Moderate Gaps", color: "text-amber-300" };
-  if (score >= 40) return { label: "Needs Work", color: "text-rose-300" };
-  return { label: "Critical Gaps", color: "text-rose-400" };
+  return getCitationVerdict(score);
 }
 
 function executionBadge(cls: string) {
-  if (cls === "LIVE") return { label: "LIVE PIPELINE", cn: "border-emerald-500/35 bg-emerald-500/10 text-emerald-300" };
-  if (cls === "DETERMINISTIC_FALLBACK") return { label: "FALLBACK", cn: "border-amber-500/35 bg-amber-500/10 text-amber-300" };
-  if (cls === "SCRAPE_ONLY") return { label: "SCRAPE-ONLY", cn: "border-red-500/35 bg-red-500/10 text-red-300" };
-  return { label: "UPLOAD", cn: "border-cyan-500/35 bg-cyan-500/10 text-cyan-300" };
+  return getExecutionBadge(cls);
 }
 
 const GATE_LABELS: Record<string, string> = {
@@ -244,14 +238,14 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             </div>
             <div className="flex flex-col justify-center">
               <div className="mb-3 flex items-center justify-between text-sm">
-                <span className="text-white/55">AI Visibility Score</span>
+                <span className="text-white/55">CITE LEDGER Score</span>
                 <span className="text-white/70">{result.visibility_score} / 100</span>
               </div>
               <div className="h-3 overflow-hidden rounded-full bg-white/10">
                 <div className="h-full rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 bar-grow-origin animate-bar-grow" style={{ width: `${result.visibility_score}%` }} />
               </div>
               <div className="mt-3 flex items-center justify-between text-xs text-white/32">
-                <span>Needs Work</span><span>Moderate</span><span>Strong</span><span>Excellent</span>
+                <span>Critical</span><span>Poor</span><span>Fair</span><span>Good</span><span>Excellent</span>
               </div>
             </div>
           </div>
@@ -627,8 +621,8 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
           <div className="mb-3 text-sm font-semibold text-white">Verdict</div>
           <p className="text-sm text-white/65 mb-3">
-            Score <strong className="text-white">{result.visibility_score}/100</strong> - {level.label}.{" "}
-            Citation readiness: <strong className="text-white">{result.visibility_score >= 70 ? "Moderate" : "Weak"}</strong>.
+            CITE LEDGER score <strong className="text-white">{result.visibility_score}/100</strong> — {level.label}.{" "}
+            Citation readiness: <strong className="text-white">{getCitationVerdict(result.visibility_score).label}</strong>.
           </p>
           {issueRows.length > 0 && (
             <>

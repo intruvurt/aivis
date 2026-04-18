@@ -50,6 +50,7 @@ import {
   type RulePassRate,
 } from "../utils/analyticsUtils";
 import { CHART_PALETTE, PLATFORM_PALETTE } from "../constants/uiPalette";
+import { getScoreBand as _getScoreBand } from "../utils/scoreUtils";
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 
 type RangeKey = "7d" | "30d" | "90d" | "all";
@@ -117,11 +118,8 @@ function checkFocusHint(check: string): string {
 }
 
 function scoreBand(score: number): { label: string; color: string; fill: string } {
-  if (score >= 80) return { label: "Excellent", color: "#34d399", fill: P.bandExcellent ?? "#34d39920" };
-  if (score >= 60) return { label: "Good",      color: "#22d3ee", fill: P.bandGood ?? "#22d3ee20" };
-  if (score >= 40) return { label: "Fair",      color: "#fbbf24", fill: P.bandFair ?? "#fbbf2420" };
-  if (score >= 20) return { label: "Poor",      color: "#f97316", fill: P.bandPoor ?? "#f9731620" };
-  return             { label: "Critical",  color: "#fb7185", fill: P.bandCritical ?? "#fb718520" };
+  const b = _getScoreBand(score);
+  return { label: b.label, color: b.hex, fill: b.fillSoft };
 }
 
 function platformFill(platform: string): string {
@@ -691,7 +689,7 @@ export default function AnalyticsPage() {
     structuredData: [
       buildWebPageSchema({
         path: '/analytics',
-        name: 'AI Visibility Analytics — Score Trends & Platform Performance | AiVIS',
+        name: 'AI Visibility Analytics — Score Trends & Platform Performance | AiVIS.biz',
         description: 'Track AI visibility score trends across ChatGPT, Perplexity, Claude, and Google AIO. Monitor citation rates, entity recognition, evidence scores, and cross-platform performance over time.',
       }),
       buildFaqSchema(ANALYTICS_FAQ, { path: '/analytics' }),

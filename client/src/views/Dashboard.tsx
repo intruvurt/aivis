@@ -23,7 +23,7 @@ const DASHBOARD_FAQ = [
   },
   {
     question: "How is my AI visibility score calculated?",
-    answer: "Your score is a composite of seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical SEO (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each dimension maps to specific evidence items detected during the live page crawl. Hard-blocker caps apply when critical signals are missing — for example, missing robots.txt caps the score at 30, and blocked AI crawlers cap it at 35. The deterministic scoring engine produces the same result for the same page state every time.",
+    answer: "Your score is a composite of seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each dimension maps to specific evidence items detected during the live page crawl. Hard-blocker caps apply when critical signals are missing — for example, missing robots.txt caps the score at 30, and blocked AI crawlers cap it at 35. The deterministic scoring engine produces the same result for the same page state every time.",
   },
   {
     question: "What should I do first after my initial audit?",

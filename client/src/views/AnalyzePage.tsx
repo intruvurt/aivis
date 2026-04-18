@@ -52,7 +52,7 @@ const ANALYZE_FAQ = [
   },
   {
     question: "What do the audit scores mean?",
-    answer: "The overall visibility score is a composite out of 100 that combines entity clarity, heading structure, answer block quality, evidence depth, schema alignment, internal link integrity, freshness signals, and trust markers. Scores below 50 indicate critical extractability blockers. Scores 50-74 indicate structural gaps that reduce citation probability. Scores 75-89 are competitive but have addressable weak points. Scores 90 and above indicate strong AI readiness with minor polish opportunities.",
+    answer: "The overall visibility score is a composite out of 100 that combines seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Scores below 20 indicate critical extractability blockers (grade F). Scores 20-39 are Poor (grade D) — significant structural barriers. Scores 40-59 are Fair (grade C) — parseable but deprioritized. Scores 60-79 are Good (grade B) — citation-ready with minor gaps. Scores 80 and above are Excellent (grade A) — consistently citable across major AI engines.",
   },
   {
     question: "Which AI platforms does AiVIS.biz check against?",

@@ -9,6 +9,7 @@ import apiFetch from "../utils/api";
 import { API_URL } from "../config";
 import { usePageMeta } from "../hooks/usePageMeta";
 import toast from "react-hot-toast";
+import { getScoreColor } from "../utils/scoreUtils";
 
 /* ─── Types ─────────────────────────────────────── */
 
@@ -47,15 +48,15 @@ const CONSENT_LABELS: Record<string, { label: string; desc: string }> = {
   },
   terms: {
     label: "Terms of Service",
-    desc: "Acceptance of the AiVIS Terms of Service.",
+    desc: "Acceptance of the AiVIS.biz Terms of Service.",
   },
   privacy: {
     label: "Privacy Policy",
-    desc: "Acknowledgment of the AiVIS Privacy Policy.",
+    desc: "Acknowledgment of the AiVIS.biz Privacy Policy.",
   },
   consumer_disclaimer: {
     label: "Consumer Disclaimer",
-    desc: "Acknowledgment that AiVIS provides technical diagnostics, not legal advice.",
+    desc: "Acknowledgment that AiVIS.biz provides technical diagnostics, not legal advice.",
   },
 };
 
@@ -80,9 +81,7 @@ function formatTs(ts: string) {
 
 function scoreColor(score: number | null): string {
   if (score === null) return "text-white/50";
-  if (score >= 70) return "text-emerald-400";
-  if (score >= 45) return "text-amber-400";
-  return "text-red-400";
+  return getScoreColor(score);
 }
 
 function statusBadge(status: ConsentRecord["status"]) {
@@ -593,7 +592,7 @@ function ExportTab() {
 export default function ComplianceDashboardPage() {
   usePageMeta({
     title: "Compliance Dashboard",
-    description: "Audit logs, consent tracking, and GDPR data export for your AiVIS account.",
+    description: "Audit logs, consent tracking, and GDPR data export for your AiVIS.biz account.",
     path: "/app/compliance-dashboard",
   });
 

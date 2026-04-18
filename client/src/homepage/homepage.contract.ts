@@ -53,7 +53,7 @@ export const SCORING_CATEGORIES = [
     { name: 'Schema and Structured Data', weight: 20 },
     { name: 'Content Depth and Quality', weight: 18 },
     { name: 'Meta Tags and Open Graph', weight: 15 },
-    { name: 'Technical SEO', weight: 15 },
+    { name: 'Technical Trust', weight: 15 },
     { name: 'AI Readability and Citability', weight: 12 },
     { name: 'Heading Structure and H1', weight: 10 },
     { name: 'Security and Trust', weight: 10 },

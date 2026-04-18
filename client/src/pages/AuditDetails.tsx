@@ -8,6 +8,7 @@ import { auditService } from "../services/auditService";
 import { usePageMeta } from "../hooks/usePageMeta";
 import type { AnalysisResponse } from "@shared/types";
 import Spinner from '../components/Spinner';
+import { getScoreColor as scoreColor } from "../utils/scoreUtils";
 
 /** Normalise both "passed via location.state" and "fetched from GET /audits/:id" into a usable AnalysisResponse-shaped object. */
 function normaliseAudit(raw: Record<string, any>): Record<string, any> {
@@ -30,19 +31,13 @@ function normaliseAudit(raw: Record<string, any>): Record<string, any> {
   };
 }
 
-function scoreColor(score: number) {
-  if (score >= 80) return "text-emerald-300";
-  if (score >= 50) return "text-amber-300";
-  return "text-rose-300";
-}
-
 export default function AuditDetails() {
   const { id } = useParams();
   const location = useLocation();
   const passedResult = (location.state as any)?.result as AnalysisResponse | undefined;
 
   usePageMeta({
-    title: "Audit Details — AiVIS",
+    title: "Audit Details — AiVIS.biz",
     description: "View detailed AI visibility audit results and recommendations.",
     path: `/app/audits/${id ?? ""}`,
   });

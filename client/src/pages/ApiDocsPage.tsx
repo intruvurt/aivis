@@ -9,19 +9,20 @@ export default function ApiDocsPage() {
   usePageMeta({
     title: "API Docs | Auth, Endpoints, Quickstart",
     description:
-      "Developer docs for AiVIS API: quickstart, API key auth, endpoint reference, scopes, error handling, and integration examples.",
+      "Developer docs for AiVIS.biz API: quickstart, API key auth, endpoint reference, scopes, error handling, and integration examples.",
     path: "/api-docs",
     structuredData: [
       buildTechArticleSchema({
-        title: 'AiVIS API Documentation',
-        description: 'Developer docs for AiVIS REST API: quickstart, API key authentication, endpoint reference, scopes, error codes, and integration examples.',
+        title: 'AiVIS.biz API Documentation',
+        description: 'Developer docs for AiVIS.biz REST API: quickstart, API key authentication, endpoint reference, scopes, error codes, and integration examples.',
         path: '/api-docs',
-        datePublished: '2026-01-01',
+        proficiencyLevel: 'Expert',
+        dependencies: 'AiVIS.biz API key · Alignment+ plan',
       }),
       buildWebPageSchema({
         path: '/api-docs',
-        name: 'AiVIS API Docs | Developer Reference',
-        description: 'Complete reference documentation for the AiVIS AI visibility auditing API.',
+        name: 'AiVIS.biz API Docs | Developer Reference',
+        description: 'Complete reference documentation for the AiVIS.biz AI visibility auditing API.',
       }),
       buildBreadcrumbSchema([
         { name: 'Home', path: '/' },
@@ -85,16 +86,16 @@ export default function ApiDocsPage() {
   ];
 
   return (
-    <PublicPageFrame icon={Code2} title="API Documentation" subtitle="Auth, endpoints, scopes, and integration quickstart for the AiVIS REST API" maxWidthClass="max-w-6xl">
+    <PublicPageFrame icon={Code2} title="API Documentation" subtitle="Auth, endpoints, scopes, and integration quickstart for the AiVIS.biz REST API" maxWidthClass="max-w-6xl">
       <section>
         <div className="rounded-2xl border border-white/12 bg-charcoal-light/40 p-6 sm:p-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-300/40 bg-emerald-500/12 text-emerald-200 text-xs font-semibold tracking-[0.08em] uppercase">
             <Activity className="w-3.5 h-3.5" />
             Developer API
           </div>
-          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">AiVIS API Documentation</h1>
+          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">AiVIS.biz API Documentation</h1>
           <p className="mt-3 text-white/75 max-w-3xl leading-relaxed">
-            Everything needed to integrate with the real AiVIS API: quickstart, API key auth, scopes, endpoint behavior, and
+            Everything needed to integrate with the real AiVIS.biz API: quickstart, API key auth, scopes, endpoint behavior, and
             production safe error handling.
           </p>
 
@@ -214,7 +215,7 @@ export default function ApiDocsPage() {
         {/* ── Integration Discovery ────────────────────────────────── */}
         <div className="mt-10 mb-2">
           <h2 className="text-2xl font-bold tracking-tight">Integration Discovery</h2>
-          <p className="mt-1 text-sm text-white/60">Three ways for third-party tools and AI agents to find and connect with AiVIS automatically.</p>
+          <p className="mt-1 text-sm text-white/60">Three ways for third-party tools and AI agents to find and connect with AiVIS.biz automatically.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -268,7 +269,7 @@ POST /api/oauth/revoke       # Revoke token`}
               <h3 className="text-base font-semibold">MCP Server</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS tools natively - audit, analytics, evidence, and validation.
+              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS.biz tools natively - audit, analytics, evidence, and validation.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
 {`GET  /api/mcp            # Server info

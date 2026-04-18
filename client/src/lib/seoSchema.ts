@@ -322,11 +322,13 @@ export function buildTechArticleSchema(input: {
   path: string;
   datePublished?: string;
   dateModified?: string;
+  proficiencyLevel?: string;
+  dependencies?: string;
 }): Record<string, unknown> {
-  const published = toSchemaDateTime(input.datePublished ?? '2026-01-01');
+  const published = toSchemaDateTime(input.datePublished ?? new Date().toISOString().slice(0, 10));
   const modified = toSchemaDateTime(input.dateModified ?? published);
 
-  return {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
     headline: input.title,
@@ -337,9 +339,10 @@ export function buildTechArticleSchema(input: {
     publisher: buildOrganizationRef(),
     mainEntityOfPage: `${BASE_URL}${input.path}`,
     url: `${BASE_URL}${input.path}`,
-    proficiencyLevel: 'Expert',
-    dependencies: 'AiVIS.biz API key · Alignment+ plan',
   };
+  if (input.proficiencyLevel) schema.proficiencyLevel = input.proficiencyLevel;
+  if (input.dependencies) schema.dependencies = input.dependencies;
+  return schema;
 }
 
 export interface HowToStepInput {

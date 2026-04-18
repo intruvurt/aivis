@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, ArrowRight, Sparkles, Search, BadgeCheck, Link2, Workflow, ClipboardList } from "lucide-react";
 import useFeatureStatus from "../hooks/useFeatureStatus";
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useAuthStore } from "../stores/authStore";
 import { API_URL } from "../config";
 import apiFetch from "../utils/api";
@@ -132,9 +133,9 @@ const scoreModel = [
 
 const SITE_URL = "https://aivis.biz";
 const PAGE_URL = `${SITE_URL}/score-fix`;
-const PAGE_TITLE = "Score Fix AutoFix PR | AiVIS - CITE LEDGER | Evidence-Linked Scores";
+const PAGE_TITLE = "Score Fix AutoFix PR | AiVIS.biz - CITE LEDGER | Evidence-Linked Scores";
 const PAGE_DESCRIPTION =
-  "Score Fix AutoFix PR from AiVIS turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can generate GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per remediation job.";
+  "Score Fix AutoFix PR from AiVIS.biz turns audit findings into evidence-linked remediation. When the automation pipeline is configured, it can generate GitHub pull requests with schema patches, H1 rewrites, FAQ blocks, and structural fixes - 10-25 credits per remediation job.";
 const OG_IMAGE = `${SITE_URL}/og/aivis-score-fix.jpg`;
 
 const scoreFixFaqEntities = faq.map((item) => ({
@@ -188,30 +189,6 @@ const scoreFixJsonLd = {
   ],
 };
 
-function upsertMeta(selector: string, attributes: Record<string, string>) {
-  let element = document.head.querySelector(selector) as HTMLMetaElement | null;
-  if (!element) {
-    element = document.createElement("meta");
-    document.head.appendChild(element);
-  }
-
-  Object.entries(attributes).forEach(([key, value]) => {
-    element?.setAttribute(key, value);
-  });
-}
-
-function upsertLink(selector: string, attributes: Record<string, string>) {
-  let element = document.head.querySelector(selector) as HTMLLinkElement | null;
-  if (!element) {
-    element = document.createElement("link");
-    document.head.appendChild(element);
-  }
-
-  Object.entries(attributes).forEach(([key, value]) => {
-    element?.setAttribute(key, value);
-  });
-}
-
 const sectionFade = {
   initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
@@ -264,79 +241,12 @@ export default function ScoreFixPage() {
   const [liveVisibilityScore, setLiveVisibilityScore] = useState(0);
   const [scoreFixStatus, setScoreFixStatus] = useState<ScoreFixStatus | null>(null);
 
-  useEffect(() => {
-    document.title = PAGE_TITLE;
-
-    upsertMeta('meta[name="description"]', {
-      name: "description",
-      content: PAGE_DESCRIPTION,
-    });
-
-    upsertMeta('meta[name="robots"]', {
-      name: "robots",
-      content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
-    });
-
-    upsertLink('link[rel="canonical"]', {
-      rel: "canonical",
-      href: PAGE_URL,
-    });
-
-    upsertMeta('meta[property="og:type"]', {
-      property: "og:type",
-      content: "website",
-    });
-
-    upsertMeta('meta[property="og:site_name"]', {
-      property: "og:site_name",
-      content: "Aivis",
-    });
-
-    upsertMeta('meta[property="og:title"]', {
-      property: "og:title",
-      content: PAGE_TITLE,
-    });
-
-    upsertMeta('meta[property="og:description"]', {
-      property: "og:description",
-      content: PAGE_DESCRIPTION,
-    });
-
-    upsertMeta('meta[property="og:url"]', {
-      property: "og:url",
-      content: PAGE_URL,
-    });
-
-    upsertMeta('meta[property="og:image"]', {
-      property: "og:image",
-      content: OG_IMAGE,
-    });
-
-    upsertMeta('meta[property="og:image:alt"]', {
-      property: "og:image:alt",
-      content: "Aivis AI Visibility Score Fix page preview",
-    });
-
-    upsertMeta('meta[name="twitter:card"]', {
-      name: "twitter:card",
-      content: "summary_large_image",
-    });
-
-    upsertMeta('meta[name="twitter:title"]', {
-      name: "twitter:title",
-      content: PAGE_TITLE,
-    });
-
-    upsertMeta('meta[name="twitter:description"]', {
-      name: "twitter:description",
-      content: PAGE_DESCRIPTION,
-    });
-
-    upsertMeta('meta[name="twitter:image"]', {
-      name: "twitter:image",
-      content: OG_IMAGE,
-    });
-  }, []);
+  usePageMeta({
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    path: "/score-fix",
+    structuredData: scoreFixJsonLd,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -924,11 +834,11 @@ export const scoreFixSeo = {
     url: PAGE_URL,
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
-    siteName: "AiVIS",
+    siteName: "AiVIS.biz",
     images: [
       {
         url: OG_IMAGE,
-        alt: "AiVIS AI Visibility Score Fix page preview",
+        alt: "AiVIS.biz AI Visibility Score Fix page preview",
       },
     ],
   },

@@ -10,13 +10,13 @@ export default function AboutAivisPage() {
   usePageMeta({
     title: "About AiVIS — Canonical Identity Definition",
     description:
-      "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a verifiable evidence chain of audited findings. No evidence, no claim.",
+      "AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™, a structured attribution layer that records parsing, validation, and citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry that ties each audit finding to verifiable on-page signals. Together, these systems define citation readiness by quantifying extractability, entity clarity, and trust alignment, producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers, based on traceable evidence from source content.",
     path: "/about-aivis",
     structuredData: [
       buildWebPageSchema({
         name: "About AiVIS — Canonical Identity Definition",
         description:
-          "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a verifiable evidence chain of audited findings.",
+          "AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.",
         url: "https://aivis.biz/about-aivis",
       }),
       buildBreadcrumbSchema([

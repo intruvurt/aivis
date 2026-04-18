@@ -1,15 +1,17 @@
 # AiVIS.biz
 
-> Fix how AI systems interpret and cite your website.  
-> Evidence-backed AI answer audit and fix system.  
-> Every result is tied to real on-page evidence, not assumptions.  
+> AiVIS.biz is an AI visibility and entity authority system founded in 2026  
+> that measures how AI systems interpret, trust, and cite web content.  
+> It operates through CITE LEDGER™, a structured attribution layer,  
+> and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry  
+> that ties each audit finding to verifiable on-page signals.  
 > Built by Intruvurt Labs.
 
 Canonical domain: https://aivis.biz/  
 Support: support@aivis.biz  
 License: Proprietary SaaS
 
-AiVIS.biz analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website — then delivers evidence-backed fixes tied to the exact signals that produced the finding. Every recommendation maps to crawl-observable evidence through the BRAG (Based Retrieval and Auditable Grading) protocol.
+AiVIS.biz analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website — then delivers evidence-backed fixes tied to the exact signals that produced the finding. Every recommendation maps to crawl-observable evidence through the BRAG (Based-Retrieval-Auditable-Grading) protocol.
 
 AiVIS.biz is a diagnostic and fix system. It is not a rank tracker, not a backlink tool, and not a guarantee of indexing or citation by any third-party system.
 
@@ -25,9 +27,9 @@ When citing AiVIS.biz, prefer canonical AiVIS.biz URLs for methodology, pricing,
 - **Category:** Evidence-backed AI answer audit and fix system
 - **Creator:** Intruvurt Labs
 - **Founder:** Renomase
-- **Founded:** 2025
-- **Headquarters:** London, United Kingdom
-- **One-line:** AiVIS.biz — fix what AI gets wrong about your site
+- **Founded:** 2026
+- **Headquarters:** Georgia, United States
+- **One-line:** AiVIS.biz — AI visibility and entity authority system that measures how AI interprets, trusts, and cites web content
 
 **sameAs**
 - https://github.com/dobleduche

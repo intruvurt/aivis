@@ -103,7 +103,7 @@ const ABOUT_STRUCTURED_DATA = [
     name: 'Ryan Mason',
     jobTitle: 'AI Visibility Engineer',
     url: `${BASE_URL}/about`,
-    description: 'AiVIS author profile for AI visibility engineering, machine readability, and citation-readiness strategy.',
+    description: 'AiVIS.biz author profile for AI visibility engineering, machine readability, and citation-readiness strategy.',
     worksForId: ORGANIZATION_ID,
     knowsAbout: [
       'AI visibility',
@@ -116,7 +116,7 @@ const ABOUT_STRUCTURED_DATA = [
       'https://linkedin.com/in/web4aidev',
       'https://twitter.com/intruvurt',
       'https://www.reddit.com/user/intruvurt/',
-      'https://www.reddit.com/r/AiVIS/',
+      'https://www.reddit.com/r/AiVIS.biz/',
       'https://stackoverflow.com/users/29677022/intruvurt',
       'https://intruvurt.medium.com',
       'https://dobleduche.substack.com',
@@ -128,7 +128,7 @@ const ABOUT_STRUCTURED_DATA = [
   buildWebPageSchema({
     path: '/about',
     name: 'About AiVIS.biz — AI Visibility Audit & Remediation Platform',
-    description: 'AiVIS.biz citation engine and AI visibility auditing platform. Founded December 2025. Named founder: Ryan Mason.',
+    description: 'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.',
   }),
   buildBreadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -138,18 +138,18 @@ const ABOUT_STRUCTURED_DATA = [
 
 export default function AboutPage() {
   usePageMeta({
-    title: 'About AiVIS | AI Visibility Audit & Fix Platform',
-    description: 'AiVIS audits and fixes how AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude interpret and cite your website. Evidence-backed audits, not assumptions.',
+    title: 'About AiVIS.biz | AI Visibility Audit & Fix Platform',
+    description: 'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™, a structured attribution layer that records parsing, validation, and citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry that ties each audit finding to verifiable on-page signals. Together, these systems define citation readiness by quantifying extractability, entity clarity, and trust alignment, producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers, based on traceable evidence from source content.',
     path: '/about',
-    ogTitle: 'About AiVIS – AI Visibility Audit & Fix Platform',
-    ogDescription: 'AiVIS runs evidence-backed AI visibility audits that show exactly what AI systems can read, interpret, and cite from your website.',
+    ogTitle: 'About AiVIS.biz – AI Visibility Audit & Fix Platform',
+    ogDescription: 'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.',
     structuredData: ABOUT_STRUCTURED_DATA,
   });
   return (
     <PublicPageFrame
       icon={Info}
-      title="About AiVIS"
-      subtitle="Fix how AI systems interpret and cite your website. Evidence-backed audits and Auto ScoreFix PRs."
+      title="About AiVIS.biz"
+      subtitle="AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content."
       backTo="/"
       maxWidthClass="max-w-6xl"
     >
@@ -173,13 +173,13 @@ export default function AboutPage() {
             <div className="flex items-center justify-center gap-3 mb-4">
               <img
                 src="/aivis-logo.png"
-                alt="AiVIS"
+                alt="AiVIS.biz"
                 width={36}
                 height={36}
                 className="h-9 w-9 shrink-0 rounded-lg object-contain"
                 loading="lazy"
               />
-              <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
+              <span className="text-xl font-bold text-white tracking-tight">AiVIS.biz</span>
             </div>
           </FadeUp>
           <FadeUp delay={0.1}>
@@ -189,7 +189,7 @@ export default function AboutPage() {
           </FadeUp>
           <FadeUp delay={0.15}>
             <p className="text-base md:text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
-              Evidence-linked AI citation audit platform built for freelancers, agencies, and organizations that demand proof of extraction readiness.
+              AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™, a structured attribution layer that records parsing, validation, and citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry that ties each audit finding to verifiable on-page signals. Together, these systems define citation readiness by quantifying extractability, entity clarity, and trust alignment, producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers, based on traceable evidence from source content.
             </p>
           </FadeUp>
           <FadeUp delay={0.2}>
@@ -233,11 +233,11 @@ export default function AboutPage() {
         </section>
       </SlideIn>
 
-      {/* ── Why AiVIS exists ── */}
+      {/* ── Why AiVIS.biz exists ── */}
       <SlideIn from="left" delay={0.05}>
         <section className="mx-auto max-w-2xl px-4 py-8 text-center">
           <p className="text-lg text-white/80 font-semibold mb-3">
-            AiVIS exists for one reason.
+            AiVIS.biz exists for one reason.
           </p>
           <p className="text-base text-white/65 leading-relaxed mb-3">
             To show what AI can actually read, trust and cite from your site.
@@ -303,7 +303,7 @@ export default function AboutPage() {
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src="/founder.png"
-                    alt="Ryan Mason, AiVIS founder"
+                    alt="Ryan Mason, AiVIS.biz founder"
                     width={56}
                     height={56}
                     className="w-14 h-14 rounded-full object-cover border border-blue-400/20 shadow-lg shadow-blue-500/10"
@@ -311,7 +311,7 @@ export default function AboutPage() {
                   />
                   <div>
                     <h3 className="text-lg font-bold text-blue-200">Ryan Mason</h3>
-                    <p className="text-sm text-white/50">Founder & Head of AiVIS</p>
+                    <p className="text-sm text-white/50">Founder & Head of AiVIS.biz</p>
                   </div>
                 </div>
 
@@ -332,7 +332,7 @@ export default function AboutPage() {
                     { label: "Dev.to", href: "https://dev.to/aivisbiz" },
                     { label: "YouTube", href: "https://www.youtube.com/@mediatechmele" },
                     { label: "Reddit", href: "https://www.reddit.com/user/intruvurt/" },
-                    { label: "r/AiVIS", href: "https://www.reddit.com/user/renomase/" },
+                    { label: "r/AiVIS.biz", href: "https://www.reddit.com/user/renomase/" },
                     { label: "Stack Overflow", href: "https://stackoverflow.com/users/29677022/intruvurt" },
                   ].map((l) => (
                     <a
@@ -373,7 +373,7 @@ export default function AboutPage() {
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src="/marketer.png"
-                    alt="Danielle C. M, AiVIS Marketing"
+                    alt="Danielle C. M, AiVIS.biz Marketing"
                     width={56}
                     height={56}
                     className="w-14 h-14 rounded-full object-cover border border-cyan-400/20 shadow-lg shadow-cyan-500/10"
@@ -506,7 +506,7 @@ export default function AboutPage() {
         <section className="px-4 py-8">
           <h2 className="text-xl font-bold mb-3 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Recognition</h2>
           <p className="text-sm text-white/60 leading-relaxed max-w-3xl">
-            In 2026, AiVIS was nominated for TechCrunch Startup Battlefield Top 200 &mdash; an early signal that the problem of AI visibility and the way we are solving it are starting to get recognized.
+            In 2026, AiVIS.biz was nominated for TechCrunch Startup Battlefield Top 200 &mdash; an early signal that the problem of AI visibility and the way we are solving it are starting to get recognized.
           </p>
         </section>
       </FadeUp>
@@ -518,7 +518,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
             {[
               { icon: HelpCircle, label: "Help Center", to: "/help", desc: "FAQs & docs" },
-              { icon: BookOpen, label: "Guide", to: "/guide", desc: "How to use AiVIS" },
+              { icon: BookOpen, label: "Guide", to: "/guide", desc: "How to use AiVIS.biz" },
               { icon: BarChart3, label: "Methodology", to: "/methodology", desc: "How we score" },
               { icon: FileText, label: "FAQ", to: "/faq", desc: "Quick answers" },
             ].map((link, i) => (
@@ -559,7 +559,7 @@ export default function AboutPage() {
             <p className="text-lg md:text-xl text-white/80 font-semibold mb-2">
               If your site isn&apos;t being cited, it&apos;s already being replaced.
             </p>
-            <p className="text-base text-white/55 mb-6">AiVIS shows why &mdash; and gives you a way to fix it.</p>
+            <p className="text-base text-white/55 mb-6">AiVIS.biz shows why &mdash; and gives you a way to fix it.</p>
             <a
               href="/analyze"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-400/20 transition-all text-sm font-medium"
@@ -574,7 +574,7 @@ export default function AboutPage() {
       {/* Footer */}
       <footer className="px-4 py-8 border-t border-white/8">
         <p className="text-[10px] text-white/35 text-center leading-relaxed">
-          AiVIS &bull; Fix how AI systems interpret and cite your website
+          AiVIS.biz &bull; Fix how AI systems interpret and cite your website
           <br />
           US Federal Registration Pending &bull; Security posture from live controls only
         </p>

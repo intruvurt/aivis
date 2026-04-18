@@ -57,7 +57,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines.
+              AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
               <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">

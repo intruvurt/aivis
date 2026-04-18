@@ -1,5 +1,5 @@
 /**
- * Stripe Configuration for AiVIS
+ * Stripe Configuration for AiVIS.biz
  * 
  * This file contains all Stripe-related configuration including:
  * - Price IDs and lookup keys
@@ -126,7 +126,7 @@ export const STRIPE_PRICING = {
 
   // PRO TIER (legacy starter subscription)
   pro: {
-    name: 'AiVIS – Pro',
+    name: 'AiVIS.biz – Pro',
     lookupKey: 'pro_monthly',
     priceId: process.env.STRIPE_PRO_PRICE_ID,
     amountCents: 4900,
@@ -140,7 +140,7 @@ export const STRIPE_PRICING = {
 
   // BUSINESS TIER - $149/month (Signal)
   business: {
-    name: 'AiVIS – Business',
+    name: 'AiVIS.biz – Business',
     lookupKey: 'business_monthly',
     priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
     amountCents: 2900,

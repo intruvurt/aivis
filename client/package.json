@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "blog:sync": "node ./scripts/sync-blog-ready.mjs",
-    "build": "vite build && node ./scripts/prerender-routes.mjs",
+    "build": "node ./scripts/validate-route-intelligence.mjs && vite build && node ./scripts/prerender-routes.mjs",
     "preview": "vite preview",
     "mobile:assets": "npm exec --yes -- @capacitor/assets generate --assetPath resources",
     "mobile:prepare": "node ./scripts/mobile-prepare.cjs",

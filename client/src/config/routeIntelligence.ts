@@ -163,6 +163,12 @@ interface RouteGuideRule {
     guide: RouteGuide;
 }
 
+interface PublicRouteGuideRule {
+    match: "exact" | "prefix";
+    path: string;
+    guide: RouteGuide;
+}
+
 const ROUTE_GUIDES: RouteGuideRule[] = [
     {
         match: "exact",
@@ -193,6 +199,23 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
                 "Analyze one canonical URL per run.",
                 "Capture evidence and blocker list.",
                 "Send fixes to implementation queue.",
+            ],
+            primaryActionPath: "/app/reports",
+            primaryActionLabel: "Open Reports",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/snapshot",
+        guide: {
+            title: "Snapshot Capture",
+            section: "Core",
+            summary: "Capture a point-in-time evidence state so score movement and drift can be measured objectively.",
+            nextStep: "Store a baseline before major content or schema changes, then compare after deployment.",
+            instructions: [
+                "Capture baseline before changes.",
+                "Ship implementation updates.",
+                "Compare before vs after deltas.",
             ],
             primaryActionPath: "/app/reports",
             primaryActionLabel: "Open Reports",
@@ -283,6 +306,23 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
             ],
             primaryActionPath: "/app/analyze",
             primaryActionLabel: "Re-analyze",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/site-crawl",
+        guide: {
+            title: "Site Crawl",
+            section: "Core",
+            summary: "Scan page-level technical and extractability issues across your site to find systemic blockers.",
+            nextStep: "Prioritize recurring blockers across templates, then fix globally before rerunning crawl + audit.",
+            instructions: [
+                "Group issues by template type.",
+                "Fix highest-frequency blockers first.",
+                "Verify reduction in crawl errors.",
+            ],
+            primaryActionPath: "/app/score-fix",
+            primaryActionLabel: "Route to Score Fix",
         },
     },
     {
@@ -498,6 +538,24 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
     },
     {
         match: "exact",
+        path: "/app/gsc",
+        guide: {
+            title: "GSC Console",
+            section: "Platform",
+            summary: "Correlate search-console signals with AI visibility evidence to detect indexing vs comprehension gaps.",
+            nextStep: "Use GSC coverage/performance anomalies to prioritize pages for entity and extractability hardening.",
+            instructions: [
+                "Review coverage and indexing anomalies.",
+                "Map anomalies to low-visibility routes.",
+                "Send selected pages into remediation.",
+            ],
+            primaryActionPath: "/app/analytics",
+            primaryActionLabel: "Open Analytics",
+            minTier: "alignment",
+        },
+    },
+    {
+        match: "exact",
         path: "/app/integrations",
         guide: {
             title: "Integrations Hub",
@@ -512,6 +570,40 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
             primaryActionPath: "/app/api-docs",
             primaryActionLabel: "Review API Docs",
             minTier: "signal",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/agency",
+        guide: {
+            title: "Agency Workspace",
+            section: "Agency",
+            summary: "Operate multi-client execution with consistent evidence workflows and standardized remediation loops.",
+            nextStep: "Enforce the same analyze-evidence-fix-verify cadence across all managed accounts.",
+            instructions: [
+                "Use a shared workflow per client.",
+                "Track blockers and closure rate.",
+                "Report score movement with evidence.",
+            ],
+            primaryActionPath: "/app/workflow",
+            primaryActionLabel: "Open Workflow",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/badge",
+        guide: {
+            title: "Badge Embed",
+            section: "Agency",
+            summary: "Publish live trust/visibility badges to expose current evidence status externally.",
+            nextStep: "Embed the badge on key pages and keep it synced with verified report data.",
+            instructions: [
+                "Generate embed configuration.",
+                "Place badge on high-trust pages.",
+                "Confirm updates reflect latest runs.",
+            ],
+            primaryActionPath: "/app/reports",
+            primaryActionLabel: "Open Reports",
         },
     },
     {
@@ -581,6 +673,91 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
             ],
             primaryActionPath: "/pricing",
             primaryActionLabel: "View Pricing",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/profile",
+        guide: {
+            title: "Profile",
+            section: "Account",
+            summary: "Manage account identity details used across workspace ownership, reporting, and communication.",
+            nextStep: "Keep profile and organization metadata current to maintain consistent audit attribution.",
+            instructions: [
+                "Review account identity fields.",
+                "Update organization metadata.",
+                "Confirm report attribution accuracy.",
+            ],
+            primaryActionPath: "/app/settings",
+            primaryActionLabel: "Open Settings",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/referrals",
+        guide: {
+            title: "Referrals",
+            section: "Account",
+            summary: "Track referral performance and partner-driven account growth tied to platform usage.",
+            nextStep: "Review referral conversion quality and focus on channels with strongest activation outcomes.",
+            instructions: [
+                "Review referral source quality.",
+                "Measure conversion and activation.",
+                "Scale highest-performing channels.",
+            ],
+            primaryActionPath: "/app/billing",
+            primaryActionLabel: "Open Billing",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/compliance-dashboard",
+        guide: {
+            title: "Compliance Dashboard",
+            section: "Account",
+            summary: "Monitor compliance posture for operational, policy, and governance requirements.",
+            nextStep: "Resolve open compliance findings before large-scale publishing or automation rollouts.",
+            instructions: [
+                "Review open compliance checks.",
+                "Assign owners per finding.",
+                "Verify closure evidence.",
+            ],
+            primaryActionPath: "/app/team",
+            primaryActionLabel: "Assign Owners",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/notifications",
+        guide: {
+            title: "Notifications",
+            section: "Account",
+            summary: "Configure alerting for audit failures, drift signals, and remediation events.",
+            nextStep: "Set high-signal alerts only so teams respond quickly without notification fatigue.",
+            instructions: [
+                "Enable critical drift alerts.",
+                "Route alerts to accountable owners.",
+                "Tune noisy channels weekly.",
+            ],
+            primaryActionPath: "/app/settings",
+            primaryActionLabel: "Tune Settings",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/admin",
+        guide: {
+            title: "Admin Console",
+            section: "Account",
+            summary: "Administer system-level controls for cache, operations, and platform governance.",
+            nextStep: "Use admin actions with auditability and rollback awareness to avoid production regressions.",
+            instructions: [
+                "Review pending admin tasks.",
+                "Execute controlled operations only.",
+                "Validate system health post-action.",
+            ],
+            primaryActionPath: "/app/compliance-dashboard",
+            primaryActionLabel: "Open Compliance",
         },
     },
     {
@@ -729,6 +906,18 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
     },
     {
         match: "prefix",
+        path: "/tools/",
+        guide: {
+            title: "Platform Tools",
+            section: "Platform Tools",
+            summary: "Use focused diagnostics to isolate technical blockers before full audit reruns.",
+            nextStep: "Run the targeted tool, apply fixes, then verify through a full audit pass.",
+            primaryActionPath: "/app/analyze",
+            primaryActionLabel: "Run Full Audit",
+        },
+    },
+    {
+        match: "prefix",
         path: "/app/",
         guide: {
             title: "Platform Workspace",
@@ -741,11 +930,192 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
     },
 ];
 
+const PUBLIC_ROUTE_GUIDES: PublicRouteGuideRule[] = [
+    {
+        match: "exact",
+        path: "/pricing",
+        guide: {
+            title: "Pricing",
+            section: "Public",
+            summary: "Choose the tier that matches your operational execution depth and automation needs.",
+            nextStep: "Match required workflows to tier gates, then start with one audit-to-fix loop.",
+            primaryActionPath: "/auth?mode=signup",
+            primaryActionLabel: "Start Free",
+        },
+    },
+    {
+        match: "exact",
+        path: "/guide",
+        guide: {
+            title: "Implementation Guide",
+            section: "Resources",
+            summary: "Step-by-step operational guidance for running evidence-first AI visibility workflows.",
+            nextStep: "Follow one complete run: analyze, evidence review, remediation, and verification.",
+            primaryActionPath: "/app/analyze",
+            primaryActionLabel: "Run Audit",
+        },
+    },
+    {
+        match: "exact",
+        path: "/help",
+        guide: {
+            title: "Help Center",
+            section: "Resources",
+            summary: "Troubleshoot product workflows and remove blockers in implementation.",
+            nextStep: "Use task-based guides and route unresolved issues into support.",
+            primaryActionPath: "/guide",
+            primaryActionLabel: "Open Guide",
+        },
+    },
+    {
+        match: "exact",
+        path: "/api-docs",
+        guide: {
+            title: "Public API Documentation",
+            section: "Resources",
+            summary: "Explore endpoint contracts, authentication, and integration patterns.",
+            nextStep: "Implement one deterministic flow first, then expand to automation.",
+            primaryActionPath: "/integrations",
+            primaryActionLabel: "Open Integrations",
+        },
+    },
+    {
+        match: "exact",
+        path: "/methodology",
+        guide: {
+            title: "Methodology",
+            section: "Evidence",
+            summary: "Understand scoring, evidence weighting, and attribution reliability principles.",
+            nextStep: "Use methodology definitions to interpret score changes with confidence.",
+            primaryActionPath: "/methodology/cite-ledger",
+            primaryActionLabel: "Read CITE LEDGER",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/methodology/",
+        guide: {
+            title: "Methodology Reference",
+            section: "Evidence",
+            summary: "Detailed protocol pages for CITE LEDGER, triple-check, BRAG, and entity resolution.",
+            nextStep: "Translate protocol rules directly into your implementation workflow.",
+            primaryActionPath: "/app/reports",
+            primaryActionLabel: "Open Reports",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/evidence/",
+        guide: {
+            title: "Evidence Library",
+            section: "Evidence",
+            summary: "Browse ledger artifacts, citation outcomes, and drift logs used to support visibility claims.",
+            nextStep: "Use evidence examples to harden your own audit and remediation process.",
+            primaryActionPath: "/app/citations",
+            primaryActionLabel: "Run Citation Test",
+        },
+    },
+    {
+        match: "exact",
+        path: "/blogs",
+        guide: {
+            title: "Blog Library",
+            section: "Resources",
+            summary: "Operational content on AI visibility systems, retrieval behavior, and implementation patterns.",
+            nextStep: "Pick one playbook and execute it in your current sprint.",
+            primaryActionPath: "/app/workflow",
+            primaryActionLabel: "Open Workflow",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/blogs/",
+        guide: {
+            title: "Article",
+            section: "Resources",
+            summary: "Actionable implementation article with direct relevance to evidence-first execution.",
+            nextStep: "Apply the documented steps to one live URL and verify score movement.",
+            primaryActionPath: "/app/analyze",
+            primaryActionLabel: "Analyze URL",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/platforms",
+        guide: {
+            title: "Platform Pages",
+            section: "Resources",
+            summary: "Platform-specific diagnostics and guidance for answer-engine visibility readiness.",
+            nextStep: "Map your platform constraints to the recommended implementation path.",
+            primaryActionPath: "/tools/content-extractability",
+            primaryActionLabel: "Run Extractability Check",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/problems",
+        guide: {
+            title: "Problem Library",
+            section: "Resources",
+            summary: "Root-cause pages for common AI visibility failures and technical trust gaps.",
+            nextStep: "Identify your dominant failure mode and apply the corresponding fix path.",
+            primaryActionPath: "/app/score-fix",
+            primaryActionLabel: "Open Score Fix",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/signals",
+        guide: {
+            title: "Signal Library",
+            section: "Resources",
+            summary: "Reference pages for technical and semantic signals that drive extractability and citation confidence.",
+            nextStep: "Audit weakest signals first, then verify improvements with a fresh run.",
+            primaryActionPath: "/app/analyze",
+            primaryActionLabel: "Run Audit",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/industries",
+        guide: {
+            title: "Industry Playbooks",
+            section: "Resources",
+            summary: "Sector-specific implementation views for evidence-first visibility programs.",
+            nextStep: "Adapt one industry playbook to your entity and query cluster model.",
+            primaryActionPath: "/app/pipeline",
+            primaryActionLabel: "Open Pipeline",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/compare",
+        guide: {
+            title: "Competitive Comparison",
+            section: "Resources",
+            summary: "Compare tool and workflow approaches against an evidence-first operating model.",
+            nextStep: "Extract the winning operational pattern and apply it in your own runbook.",
+            primaryActionPath: "/app/competitors",
+            primaryActionLabel: "Compare Competitors",
+        },
+    },
+];
+
 export function getRouteGuide(pathname: string): RouteGuide | null {
     const exact = ROUTE_GUIDES.find((rule) => rule.match === "exact" && rule.path === pathname);
     if (exact) return exact.guide;
 
     const prefix = ROUTE_GUIDES.find((rule) => rule.match === "prefix" && pathname.startsWith(rule.path));
+    if (prefix) return prefix.guide;
+
+    return null;
+}
+
+export function getPublicRouteGuide(pathname: string): RouteGuide | null {
+    const exact = PUBLIC_ROUTE_GUIDES.find((rule) => rule.match === "exact" && rule.path === pathname);
+    if (exact) return exact.guide;
+
+    const prefix = PUBLIC_ROUTE_GUIDES.find((rule) => rule.match === "prefix" && pathname.startsWith(rule.path));
     if (prefix) return prefix.guide;
 
     return null;

@@ -9,6 +9,7 @@ The architecture is implemented in code through:
 - `client/src/config/routeIntelligence.ts` (single source of truth for app navigation groups and route guidance)
 - `client/src/components/RouteGuideBar.tsx` (global page-context strip)
 - `client/src/components/AppShell.tsx` (injects context strip for all `/app/*` and `/tools/*` pages)
+- `client/src/components/PublicLayout.tsx` (injects context strip for mapped public routes)
 - `client/src/components/AppSidebar.tsx` (driven by the same route map)
 
 ## Product Operating Flow
@@ -27,8 +28,10 @@ This is the baseline loop for every customer tier.
 
 - `/app` Command Center
 - `/app/analyze` Run AI Visibility Audit
+- `/app/snapshot` point-in-time baseline capture
 - `/app/reports` Evidence Reports
 - `/app/score-fix` Score Fix execution
+- `/app/site-crawl` full-site blocker scan
 
 ### Evidence
 
@@ -55,9 +58,11 @@ This is the baseline loop for every customer tier.
 - `/tools/language-checker` locale/language signal checks
 - `/app/domain-rating` domain quality scoring (Alignment+)
 - `/app/mcp` MCP console (Alignment+)
+- `/app/gsc` Search Console correlation and indexing diagnostics (Alignment+)
 
 ### Agency
 
+- `/app/agency` agency operations workspace
 - `/app/badge` embed badge
 - `/app/dataset` dataset studio (Signal+)
 - `/app/api-docs` API docs (Signal+)
@@ -70,10 +75,39 @@ This is the baseline loop for every customer tier.
 
 ### Account
 
+- `/app/profile`
+- `/app/referrals`
 - `/app/billing`
 - `/app/settings`
 - `/app/compliance-dashboard`
+- `/app/notifications`
+- `/app/admin`
 - `/app/help`
+
+## Entity-Locked Generation System UX
+
+The new system is represented directly in product flow and route intent.
+
+### Layer A: Entity Core
+
+- stable anchors: `AiVIS`, `CITE LEDGER`, `Answer Engines`, `BRAG scoring`
+- UI implication: entity names are treated as immutable system references
+
+### Layer B: Topic Kernels
+
+- finite kernel set mapped to problem classes and retrieval behaviors
+- UI implication: kernels are selected and tracked in `/app/keywords`, `/app/prompt-intelligence`, and `/app/niche-discovery`
+
+### Layer C: Structural Mutations
+
+- deterministic output shapes (field report, failure analysis, debugging narrative, and similar)
+- UI implication: mutation operations are executed in `/app/pipeline` and validated in `/app/dataset`
+
+### Execution Controls
+
+- anti-duplication is modeled as semantic fingerprinting at dataset level
+- publication and verification loop runs through `/app/workflow` and `/app/reports`
+- every stage maps back to evidence and verification before scale deployment
 
 ## Global UX Constraints
 
@@ -98,4 +132,5 @@ This is the baseline loop for every customer tier.
 3. Add nav entry and route guide rule in `client/src/config/routeIntelligence.ts`.
 4. Add/verify translation label key used by sidebar.
 5. Confirm lock tier behavior (if applicable).
-6. Run build and verify no route crashes.
+6. Confirm route guide copy explains purpose, next step, and executable primary action.
+7. Run build and verify no route crashes.

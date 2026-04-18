@@ -1,10 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import TopNav from "./TopNav";
 import Footer from "./Footer";
 import ScrollToTopButton from "./ScrollToTopButton";
+import RouteGuideBar from "./RouteGuideBar";
+import { getPublicRouteGuide } from "../config/routeIntelligence";
 
 export default function PublicLayout() {
+  const location = useLocation();
+  const routeGuide = getPublicRouteGuide(location.pathname);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#060a14] text-white">
       <a
@@ -15,6 +20,7 @@ export default function PublicLayout() {
       </a>
       <TopNav />
       <main id="main-content" className="flex-1 relative">
+        {routeGuide ? <RouteGuideBar guide={routeGuide} /> : null}
         <Outlet />
       </main>
       <Footer />

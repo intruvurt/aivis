@@ -17,7 +17,7 @@ export default function RouteGuideBar({ guide }: RouteGuideBarProps) {
 
       <div className="route-guide-main">
         <div className="route-guide-copy">
-          <h1 className="route-guide-title">{guide.title}</h1>
+          <h2 className="route-guide-title">{guide.title}</h2>
           <p className="route-guide-summary">{guide.summary}</p>
           <p className="route-guide-next">
             <Sparkles className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />

@@ -11,18 +11,13 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
 import { PRICING, annualMonthlyPrice } from '../../../shared/types';
 import {
-  buildOrganizationSchema,
-  buildWebSiteSchema,
-  buildWebPageSchema,
-  buildBreadcrumbSchema,
-  buildItemListSchema,
-  buildSoftwareApplicationSchema,
-  buildFaqSchema,
-  buildAggregateRatingSchema,
-  buildReviewSchema,
-  buildProductSchema,
-  buildDefinedTermSetSchema,
-} from '../lib/seoSchema';
+  META,
+  OG,
+  HERO,
+  generateHomepageStructuredData,
+  HOMEPAGE_FAQ_ITEMS,
+  HomepageGuard,
+} from '../homepage';
 
 interface PlatformStats {
   status: string; db: string; uptime: number;
@@ -51,95 +46,9 @@ const paymentService = {
   },
 };
 
-const LANDING_STRUCTURED_DATA = [
-  buildOrganizationSchema(),
-  buildWebSiteSchema(),
-  buildWebPageSchema({
-    path: '/landing',
-    name: 'AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores',
-    description:
-      'AiVIS.biz CITE LEDGER verifies how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence through BRAG (Based-Retrieval-Auditable-Grading).',
-  }),
-  buildBreadcrumbSchema([{ name: 'Landing', path: '/landing' }]),
-  buildItemListSchema([
-    { name: 'Observer — Detection audit (free)', path: '/pricing#observer' },
-    { name: 'Starter — Full audit + recommendations — $15/mo', path: '/pricing#starter' },
-    { name: 'Alignment — Structured optimization — $49/mo', path: '/pricing#alignment' },
-    { name: 'Signal — Verified AI answer pipeline — $149/mo', path: '/pricing#signal' },
-    { name: 'Score Fix — Evidence-based fix pack — $299', path: '/pricing#scorefix' },
-  ]),
-  buildSoftwareApplicationSchema({
-    name: 'AiVIS.biz',
-    description:
-      'AiVIS.biz CITE LEDGER verifies how AI models extract, trust, and cite website content. It identifies extraction failures and delivers fix-ready outputs tied to real page evidence through BRAG (Based-Retrieval-Auditable-Grading).',
-    offers: [
-      { name: 'Observer', price: '0' },
-      { name: 'Full Audit + Recommendations', price: '15' },
-      { name: 'Structured Optimization System', price: '49' },
-      { name: 'Verified AI Answer Pipeline', price: '149' },
-      { name: 'Evidence-Based Fix Pack', price: '299' },
-    ],
-  }),
-];
+const LANDING_STRUCTURED_DATA = generateHomepageStructuredData();
 
-// Built after FAQ_ITEMS are defined — appended to LANDING_STRUCTURED_DATA below
-const FAQ_ITEMS = [
-  { q: 'What is AiVIS.biz and what does it audit?', a: 'CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. It fetches your live page and scores six evidence-linked categories using BRAG (Based-Retrieval-Auditable-Grading).' },
-  { q: 'Why does citation verification matter more than traditional ranking?', a: 'Traditional search rewards backlinks and keywords. AI answer engines synthesize responses from structured content — thin structure, missing schema or poor heading hierarchy means you get skipped or misrepresented, regardless of domain authority. CITE LEDGER tracks how AI models interpret, reference, and cite your content — the citation layer that traditional tools do not measure.' },
-  { q: 'What is BRAG and why does AiVIS.biz use it?', a: 'BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives an evidence identifier that can be traced, verified and rechecked across scan cycles. No hallucination — just proof.' },
-  {
-    q: 'Which AI systems does AiVIS.biz analyze for?',
-    a: 'AiVIS.biz is built around the structural signals that affect how major answer engines read and reproduce pages. Core analysis focuses on systems such as ChatGPT, Perplexity, Google AI Overviews, and Claude, with higher tiers using a multi-model review pipeline for stronger validation.',
-  },
-  { q: 'What happens to unused monthly audits?', a: 'Monthly audit credits reset at billing cycle start and do not roll over.' },
-  { q: 'What is citation readiness?', a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or hallucination.' },
-  { q: 'Who should use AiVIS.biz?', a: 'AiVIS.biz CITE LEDGER is built for content teams, SaaS companies, startup founders, digital agencies and anyone who needs to verify why their content is not being cited by AI answer engines. If your site depends on being found, trusted and cited by ChatGPT, Perplexity, Claude or Google AI, the audit shows exactly where citation breaks and what to fix.' },
-  { q: 'How does AiVIS.biz differ from Ahrefs or Semrush?', a: 'Ahrefs and Semrush track keyword rankings, backlinks and traditional search performance. AiVIS.biz CITE LEDGER measures something different: whether AI answer engines can structurally extract and cite your content. It scans your live page with a headless browser, runs multi-model AI analysis and returns evidence-linked findings through BRAG — none of which traditional tools cover.' },
-  { q: 'What are the six scoring categories?', a: 'AiVIS.biz scores Content Depth and Quality (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical Foundations (15%), Meta Tags and Open Graph (13%) and Heading Structure (12%). Each category receives a letter grade (A–F) with specific findings backed by BRAG evidence IDs.' },
-  { q: 'Can I track how my score changes over time?', a: 'Yes. Every audit is saved to your history. Alignment and Signal tiers include score trend charts, competitor comparisons and scheduled rescans so you can measure the impact of each fix you apply. The CITE LEDGER tracks your citation readiness over time.' },
-  { q: 'Is there a free trial?', a: 'The Observer tier is free forever with 3 audits per month. No credit card required. You also get one free preview scan on the homepage without creating an account — so you can see what AiVIS.biz finds before committing.' },
-] as const;
-
-// Append FAQ schema now that FAQ_ITEMS is defined
-LANDING_STRUCTURED_DATA.push(
-  buildFaqSchema(
-    FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a })),
-    { path: '/' }
-  )
-);
-
-// Product schema with AggregateRating and Review (real case study data: 15 → 52)
-LANDING_STRUCTURED_DATA.push(
-  buildProductSchema({
-    name: 'AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores',
-    description: 'AiVIS.biz CITE LEDGER verifies how ChatGPT, Perplexity AI, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG, with fix-ready outputs to improve extraction and citation accuracy.',
-    url: 'https://aivis.biz/',
-    image: 'https://aivis.biz/og-image.png',
-    brand: 'AiVIS.biz',
-    offers: [
-      { name: 'Detection Audit (Free)', price: '0', description: `${PRICING.observer.limits.scans} audits per month — free forever` },
-      { name: 'Full Audit + Recommendations', price: String(PRICING.starter.billing.monthly), description: `${PRICING.starter.limits.scans} audits/month with all recommendations, implementation code, and PDF exports` },
-      { name: 'Structured Optimization System', price: String(PRICING.alignment.billing.monthly), description: `${PRICING.alignment.limits.scans} audits/month with competitor tracking, citation workflows and report exports` },
-      { name: 'Verified AI Answer Pipeline', price: String(PRICING.signal.billing.monthly), description: `${PRICING.signal.limits.scans} audits/month with 3-model consensus scoring, advanced citation testing and brand mention monitoring` },
-    ],
-    aggregateRating: buildAggregateRatingSchema({
-      ratingValue: '4.6',
-      bestRating: '5',
-      worstRating: '1',
-      ratingCount: '48',
-      reviewCount: '12',
-    }),
-    reviews: [
-      buildReviewSchema({
-        author: 'Early Adopter',
-        reviewBody: 'Ran my first audit and scored 15. Applied the three recommended fixes — JSON-LD schema, H1 rewrite and FAQ block — and re-scanned at 52. The evidence IDs made it obvious what was broken.',
-        ratingValue: '5',
-        bestRating: '5',
-        datePublished: '2026-03-15',
-      }),
-    ],
-  })
-);
+const FAQ_ITEMS = HOMEPAGE_FAQ_ITEMS;
 
 // ─── Futuristic urban neural SVG ────────────────────────────────────────────
 function NeuralCityIllustration() {
@@ -262,11 +171,10 @@ const TIERS = [
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
-    title: 'AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores',
-    description:
-      'AiVIS.biz CITE LEDGER verifies how ChatGPT, Perplexity, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG — no hallucination, no assumptions.',
+    title: META.title,
+    description: META.description,
     path: '/landing',
-    ogTitle: 'AiVIS.biz | CITE LEDGER — Get Cited Fixes',
+    ogTitle: OG.title,
     structuredData: LANDING_STRUCTURED_DATA,
   });
 
@@ -364,6 +272,7 @@ const Landing = () => {
   };
 
   return (
+    <HomepageGuard>
     <div className="min-h-screen bg-[#060607]">
 
       {/* ── PLATFORM ACCENT BANNER ── */}
@@ -388,22 +297,22 @@ const Landing = () => {
         <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="text-center">
             <h1 id="hero-headline" data-speakable className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] text-white mb-6 tracking-tight">
-              <span className="block">AiVIS.biz</span>
-              <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">CITE LEDGER</span>
+              <span className="block">{HERO.headline[0]}</span>
+              <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">{HERO.headline[1]}</span>
               <span className="block bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                BRAG evidence-linked scores
+                {HERO.headline[2]}
               </span>
               <span className="block bg-gradient-to-r from-violet-300 via-white to-cyan-300 bg-clip-text text-transparent">
-                get cited fixes
+                {HERO.headline[3]}
               </span>
             </h1>
 
             <p className="text-lg text-white/60 mb-4 leading-relaxed max-w-xl mx-auto">
-              Verify how AI systems interpret and cite your website. Every finding is evidence-linked.
+              {HERO.subHeadline}
             </p>
 
             <p className="text-sm text-white/40 mb-8 max-w-xl mx-auto leading-relaxed">
-              AiVIS.biz CITE LEDGER runs a live page analysis and maps how AI models interpret your content. Every result is tied to real on-page evidence through BRAG — Based-Retrieval-Auditable-Grading.
+              {HERO.description}
             </p>
 
             {/* ── URL INPUT FORM ── */}
@@ -413,7 +322,7 @@ const Landing = () => {
                   type="text"
                   value={previewUrl}
                   onChange={(e) => setPreviewUrl(e.target.value)}
-                  placeholder="yourdomain.com"
+                  placeholder={HERO.inputPlaceholder}
                   disabled={scanning}
                   className="w-full px-4 py-3.5 pr-10 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 disabled:opacity-50 transition-all"
                 />
@@ -445,7 +354,7 @@ const Landing = () => {
                   </>
                 ) : (
                   <>
-                    See what AI gets wrong
+                    {HERO.ctaText}
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                   </>
                 )}
@@ -1073,6 +982,7 @@ const Landing = () => {
         </div>
       </section>
     </div>
+    </HomepageGuard>
   );
 };
 

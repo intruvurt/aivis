@@ -924,6 +924,18 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
         },
     },
     {
+        match: "exact",
+        path: "/tools",
+        guide: {
+            title: "Platform Tools",
+            section: "Platform Tools",
+            summary: "Use focused diagnostics to isolate technical blockers before full audit reruns.",
+            nextStep: "Run the targeted tool, apply fixes, then verify through a full audit pass.",
+            primaryActionPath: "/app/analyze",
+            primaryActionLabel: "Run Full Audit",
+        },
+    },
+    {
         match: "prefix",
         path: "/tools/",
         guide: {
@@ -933,6 +945,18 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
             nextStep: "Run the targeted tool, apply fixes, then verify through a full audit pass.",
             primaryActionPath: "/app/analyze",
             primaryActionLabel: "Run Full Audit",
+        },
+    },
+    {
+        match: "exact",
+        path: "/audit/:id",
+        guide: {
+            title: "Audit Detail",
+            section: "Evidence",
+            summary: "Deep evidence view for one run: findings, gaps, drift, and action recommendations.",
+            nextStep: "Use this as the source of truth for implementation tickets and re-audit criteria.",
+            primaryActionPath: "/app/reports",
+            primaryActionLabel: "Back to Reports",
         },
     },
     {

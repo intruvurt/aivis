@@ -2,10 +2,12 @@
 import type { Evidence } from '../../../../shared/types/evidence.js';
 
 export interface ScoreComponents {
-  content: number;
-  technical: number;
-  ux: number;
-  aiOptimization: number;
+  contentDepth: number;
+  schema: number;
+  aiReadability: number;
+  technicalSEO: number;
+  metaTags: number;
+  headingStructure: number;
 }
 
 export interface ComputedScores {
@@ -30,36 +32,40 @@ export function computeScores(
   evidence: Evidence[],
   discoveryData: any,
   technicalData: any,
-  contentData: any
+  contentData: any,
+  extractedData?: any
 ): ComputedScores {
-  // Technical SEO Score (0-100)
-  const technicalScore = calculateTechnicalScore(technicalData, discoveryData);
+  const _ = evidence;
+  void _;
 
-  // Content Quality Score (0-100)
-  const contentScore = calculateContentScore(contentData, technicalData);
+  // Public methodology-aligned components.
+  const contentDepthScore = calculateContentDepthScore(contentData);
+  const schemaScore = calculateSchemaScore(technicalData, contentData);
+  const aiReadabilityScore = calculateAIReadabilityScore(technicalData, contentData, extractedData);
+  const technicalSEOScore = calculateTechnicalSEOScore(technicalData, discoveryData);
+  const metaTagsScore = calculateMetaTagsScore(technicalData, extractedData);
+  const headingStructureScore = calculateHeadingStructureScore(contentData);
 
-  // UX & Performance Score (0-100)
-  const uxScore = calculateUXScore(technicalData, contentData);
-
-  // AI Optimization Score (0-100)
-  const aiOptimizationScore = calculateAIOptimizationScore(technicalData, contentData);
-
-  // Weighted overall score
-  // Technical and AI optimization are most critical for Evidence-backed site analysis for AI answers Platform
+  // Weights are aligned with published methodology:
+  // Content Depth 20%, Schema 20%, AI Readability 20%, Technical SEO 15%, Meta Tags 13%, Heading Structure 12%
   const overall = Math.round(
-    technicalScore * 0.30 +
-    contentScore * 0.25 +
-    uxScore * 0.20 +
-    aiOptimizationScore * 0.25
+    contentDepthScore * 0.20 +
+    schemaScore * 0.20 +
+    aiReadabilityScore * 0.20 +
+    technicalSEOScore * 0.15 +
+    metaTagsScore * 0.13 +
+    headingStructureScore * 0.12
   );
 
   return {
     overall,
     components: {
-      technical: technicalScore,
-      content: contentScore,
-      ux: uxScore,
-      aiOptimization: aiOptimizationScore
+      contentDepth: contentDepthScore,
+      schema: schemaScore,
+      aiReadability: aiReadabilityScore,
+      technicalSEO: technicalSEOScore,
+      metaTags: metaTagsScore,
+      headingStructure: headingStructureScore,
     }
   };
 }
@@ -68,7 +74,7 @@ export function computeScores(
  * Calculate Technical SEO Score
  * Evaluates: HTTPS, canonical tags, redirects, compression, caching, robots.txt, sitemap
  */
-function calculateTechnicalScore(technicalData: any, discoveryData: any): number {
+function calculateTechnicalSEOScore(technicalData: any, discoveryData: any): number {
   let score = 100;
   const penalties: { [key: string]: number } = {};
 
@@ -115,9 +121,9 @@ function calculateTechnicalScore(technicalData: any, discoveryData: any): number
     penalties['no_caching'] = 7;
   }
 
-  // Low: Missing viewport meta tag (-5)
+  // Low: Missing viewport meta tag (-8)
   if (!technicalData?.viewport?.present) {
-    penalties['no_viewport'] = 5;
+    penalties['no_viewport'] = 8;
   }
 
   // Apply all penalties
@@ -131,7 +137,7 @@ function calculateTechnicalScore(technicalData: any, discoveryData: any): number
  * Calculate Content Quality Score
  * Evaluates: word count, heading structure, metadata, structured content
  */
-function calculateContentScore(contentData: any, technicalData: any): number {
+function calculateContentDepthScore(contentData: any): number {
   let score = 100;
   const penalties: { [key: string]: number } = {};
 
@@ -142,30 +148,6 @@ function calculateContentScore(contentData: any, technicalData: any): number {
   // Low word count but not critical (300-500 words) (-10)
   else if (contentData?.wordCount && contentData.wordCount < 500) {
     penalties['low_word_count'] = 10;
-  }
-
-  // High: Missing or multiple H1 tags (-15)
-  const h1Count = contentData?.headingStructure?.h1Count ?? 0;
-  if (h1Count === 0) {
-    penalties['no_h1'] = 15;
-  } else if (h1Count > 1) {
-    penalties['multiple_h1'] = 12;
-  }
-
-  // Medium: Poor heading structure (-10)
-  const totalHeadings = contentData?.headingStructure?.totalHeadings ?? 0;
-  if (totalHeadings < 3) {
-    penalties['poor_heading_structure'] = 10;
-  }
-
-  // Medium: No H2 tags (poor content organization) (-8)
-  if ((contentData?.headingStructure?.h2Count ?? 0) === 0 && contentData?.wordCount > 300) {
-    penalties['no_h2_tags'] = 8;
-  }
-
-  // Medium: Missing Open Graph tags (-12)
-  if (!technicalData?.openGraph?.present || technicalData?.openGraph?.tags?.length === 0) {
-    penalties['no_opengraph'] = 12;
   }
 
   // Low: Missing entity signals (-8)
@@ -193,32 +175,30 @@ function calculateContentScore(contentData: any, technicalData: any): number {
  * Calculate UX & Performance Score
  * Evaluates: mobile optimization, performance indicators
  */
-function calculateUXScore(technicalData: any, contentData: any): number {
+function calculateHeadingStructureScore(contentData: any): number {
   let score = 100;
   const penalties: { [key: string]: number } = {};
 
-  // Critical: No viewport meta tag (not mobile-optimized) (-30)
-  if (!technicalData?.viewport?.present) {
-    penalties['not_mobile_optimized'] = 30;
+  const h1Count = contentData?.headingStructure?.h1Count ?? 0;
+  const h2Count = contentData?.headingStructure?.h2Count ?? 0;
+  const totalHeadings = contentData?.headingStructure?.totalHeadings ?? 0;
+
+  // Critical heading gap
+  if (h1Count === 0) {
+    penalties['no_h1'] = 40;
+  } else if (h1Count > 1) {
+    penalties['multiple_h1'] = 24;
   }
 
-  // High: No compression (slow load times) (-20)
-  if (!technicalData?.compression?.enabled) {
-    penalties['no_compression_ux'] = 20;
+  if (totalHeadings < 3 && (contentData?.wordCount ?? 0) > 300) {
+    penalties['poor_heading_structure'] = 20;
   }
 
-  // Medium: No caching configured (-15)
-  if (!technicalData?.caching?.configured) {
-    penalties['no_caching_ux'] = 15;
+  if (h2Count === 0 && (contentData?.wordCount ?? 0) > 300) {
+    penalties['no_h2_tags'] = 16;
   }
 
-  // Medium: Redirect chains (slower UX) (-10)
-  if (technicalData?.redirects?.hasRedirects && technicalData?.redirects?.count > 0) {
-    penalties['redirects_ux'] = Math.min(technicalData.redirects.count * 5, 15);
-  }
-
-  // Low: Very long content without proper structure (-10)
-  if (contentData?.wordCount > 2000 && (contentData?.headingStructure?.totalHeadings ?? 0) < 5) {
+  if ((contentData?.wordCount ?? 0) > 2000 && totalHeadings < 5) {
     penalties['long_unstructured_content'] = 10;
   }
 
@@ -232,30 +212,38 @@ function calculateUXScore(technicalData: any, contentData: any): number {
  * Calculate AI Optimization Score
  * Evaluates: structured data, semantic markup, entity clarity, AI-readable content
  */
-function calculateAIOptimizationScore(technicalData: any, contentData: any): number {
+function calculateSchemaScore(technicalData: any, contentData: any): number {
   let score = 100;
   const penalties: { [key: string]: number } = {};
 
-  // Critical: No structured data/schema (-30)
   if (!technicalData?.schema?.present || technicalData?.schema?.types?.length === 0) {
-    penalties['no_structured_data'] = 30;
+    penalties['no_structured_data'] = 45;
   }
 
-  // High: Poor entity signals (-20)
   if (!contentData?.entitySignals || contentData.entitySignals.length === 0) {
     penalties['weak_entity_signals'] = 20;
   } else if (contentData.entitySignals.length < 2) {
     penalties['limited_entity_signals'] = 10;
   }
 
-  // High: No clear heading hierarchy (-15)
+  const totalPenalty = Object.values(penalties).reduce((sum, p) => sum + p, 0);
+  score = Math.max(0, score - totalPenalty);
+
+  return Math.round(score);
+}
+
+function calculateAIReadabilityScore(technicalData: any, contentData: any, extractedData?: any): number {
+  let score = 100;
+  const penalties: { [key: string]: number } = {};
+
+  // High: No clear heading hierarchy
   const h1Count = contentData?.headingStructure?.h1Count ?? 0;
   const h2Count = contentData?.headingStructure?.h2Count ?? 0;
   if (h1Count !== 1 || h2Count < 2) {
     penalties['unclear_hierarchy'] = 15;
   }
 
-  // Medium: Missing Open Graph (AI indexing signals) (-12)
+  // Medium: Missing Open Graph (AI context signals)
   if (!technicalData?.openGraph?.present) {
     penalties['no_og_tags'] = 12;
   }
@@ -265,13 +253,13 @@ function calculateAIOptimizationScore(technicalData: any, contentData: any): num
     penalties['insufficient_content_ai'] = 15;
   }
 
-  // Medium: No Twitter Cards (limited social AI indexing) (-8)
+  // Low: No Twitter Cards
   if (!technicalData?.twitterCards?.present) {
     penalties['no_twitter_cards'] = 8;
   }
 
-  // Low: No hreflang tags (if international site) (-5)
-  if (!technicalData?.hreflang?.present || technicalData?.hreflang?.count === 0) {
+  // Penalize hreflang only when international intent is likely.
+  if (hasInternationalSignals(technicalData, extractedData) && (!technicalData?.hreflang?.present || technicalData?.hreflang?.count === 0)) {
     penalties['no_hreflang'] = 5;
   }
 
@@ -279,6 +267,53 @@ function calculateAIOptimizationScore(technicalData: any, contentData: any): num
   score = Math.max(0, score - totalPenalty);
 
   return Math.round(score);
+}
+
+function calculateMetaTagsScore(technicalData: any, extractedData?: any): number {
+  let score = 100;
+  const penalties: { [key: string]: number } = {};
+
+  const title = typeof extractedData?.title === 'string' ? extractedData.title.trim() : '';
+  if (!title) {
+    penalties['missing_title'] = 30;
+  }
+
+  const metaTags = extractedData?.metaTags && typeof extractedData.metaTags === 'object'
+    ? extractedData.metaTags
+    : {};
+
+  const description = typeof metaTags.description === 'string' ? metaTags.description.trim() : '';
+  if (!description) {
+    penalties['missing_meta_description'] = 24;
+  }
+
+  if (!technicalData?.openGraph?.present || technicalData?.openGraph?.tags?.length === 0) {
+    penalties['missing_og'] = 16;
+  }
+
+  if (!technicalData?.twitterCards?.present || technicalData?.twitterCards?.tags?.length === 0) {
+    penalties['missing_twitter_cards'] = 10;
+  }
+
+  const totalPenalty = Object.values(penalties).reduce((sum, p) => sum + p, 0);
+  score = Math.max(0, score - totalPenalty);
+
+  return Math.round(score);
+}
+
+function hasInternationalSignals(technicalData: any, extractedData?: any): boolean {
+  const alternateLinks = Array.isArray(extractedData?.links?.alternate)
+    ? extractedData.links.alternate
+    : [];
+  const hasAlternateLocales = alternateLinks.some(
+    (link: any) => typeof link?.hreflang === 'string' && link.hreflang.trim().length > 0,
+  );
+
+  const ogLocaleAlternate = typeof extractedData?.metaTags?.['og:locale:alternate'] === 'string'
+    ? extractedData.metaTags['og:locale:alternate'].trim()
+    : '';
+
+  return hasAlternateLocales || ogLocaleAlternate.length > 0 || (technicalData?.hreflang?.count ?? 0) > 1;
 }
 
 /**

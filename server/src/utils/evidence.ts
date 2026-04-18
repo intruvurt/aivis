@@ -48,16 +48,45 @@ export function normalizeEvidenceArray(evidenceArray: any[]) {
     return [];
   }
 
-  return evidenceArray.map(item => {
+  const UNKNOWN_EVIDENCE_WARN_THRESHOLD = 3;
+  let unknownEvidenceCount = 0;
+
+  const normalizedEvidence = evidenceArray.map(item => {
     const hasProof = item.evidence && item.evidence.trim().length > 0;
-    
+    if (!hasProof) unknownEvidenceCount++;
+
+    const provider = typeof item?.provider === 'string' ? item.provider.trim() : '';
+    const model =
+      typeof item?.model === 'string'
+        ? item.model.trim()
+        : typeof item?.sourceModel === 'string'
+          ? item.sourceModel.trim()
+          : '';
+    const explicitVerifier =
+      typeof item?.verifiedBy === 'string'
+        ? item.verifiedBy.trim()
+        : typeof item?.verifier === 'string'
+          ? item.verifier.trim()
+          : '';
+    const verificationTimestamp =
+      typeof item?.verificationTimestamp === 'string' ? item.verificationTimestamp.trim() : '';
+
+    const verifierLabel =
+      explicitVerifier ||
+      [provider, model].filter((part: string) => part.length > 0).join(' / ') ||
+      'AI Provider';
+
+    const verifierWithTimestamp = verificationTimestamp
+      ? `${verifierLabel} @ ${verificationTimestamp}`
+      : verifierLabel;
+
     return {
       category: item.category || 'General',
       finding: item.finding || 'No finding specified',
       evidence: buildEvidence({
         proof: hasProof ? item.evidence : null,
         source: item.source || 'AI Analysis',
-        verifiedBy: 'AI Provider',
+        verifiedBy: verifierWithTimestamp,
         description: hasProof ? item.evidence : 'Evidence data not available for this finding'
       }),
       impact: item.impact || 'unknown',
@@ -65,4 +94,12 @@ export function normalizeEvidenceArray(evidenceArray: any[]) {
       rawEvidence: item.evidence || null
     };
   });
+
+  if (unknownEvidenceCount >= UNKNOWN_EVIDENCE_WARN_THRESHOLD) {
+    console.warn(
+      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalizedEvidence.length} items have no verifiable proof.`,
+    );
+  }
+
+  return normalizedEvidence;
 }

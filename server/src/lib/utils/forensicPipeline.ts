@@ -68,7 +68,7 @@ export type PipelineResult = {
   stages: PipelineStages;
   allEvidence: Evidence[];
   scores: ComputedScores;
-  visibilityStatus?: string;
+  visibilityStatus?: 'visible' | 'risky' | 'invisible';
   risks: unknown[];
   recommendations: {
     priority: 'high' | 'medium' | 'low';
@@ -174,7 +174,17 @@ export async function runForensicPipeline(
     success: false,
     stages: {},
     allEvidence: [],
-    scores: { overall: 0, components: { content: 0, technical: 0, ux: 0, aiOptimization: 0 } },
+    scores: {
+      overall: 0,
+      components: {
+        contentDepth: 0,
+        schema: 0,
+        aiReadability: 0,
+        technicalSEO: 0,
+        metaTags: 0,
+        headingStructure: 0,
+      },
+    },
     risks: [],
     recommendations: [],
     errors: [],
@@ -252,7 +262,8 @@ export async function runForensicPipeline(
       result.allEvidence as any[],
       stage2.discoveryData,
       stage5.technicalData,
-      stage6.contentData
+      stage6.contentData,
+      stage4.extractedData,
     );
 
     result.scores = computedScores;

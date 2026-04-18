@@ -74,18 +74,22 @@ const featureToLimitKey: Partial<Record<GatedFeature, keyof TierLimits>> = {
   evidenceLinkedPRs: 'hasEvidenceLinkedPRs',
 };
 
+const minimumTierByFeature: Partial<Record<GatedFeature, CanonicalTier>> = {
+  citationTesting: 'signal',
+  documentUpload: 'alignment',
+  reverseEngineer: 'alignment',
+  authorityCheck: 'alignment',
+};
+
 /**
  * Check if a user's tier has access to a specific feature
  */
 export function hasFeatureAccess(tier: string, feature: GatedFeature): boolean {
   const normalizedTier = uiTierFromCanonical(tier as CanonicalTier | LegacyTier);
   const tierForMatch = normalizedTier as CanonicalTier | LegacyTier;
-  if (feature === 'citationTesting') {
-    return meetsMinimumTier(tierForMatch, 'signal');
-  }
-
-  if (feature === 'documentUpload' || feature === 'reverseEngineer' || feature === 'authorityCheck') {
-    return meetsMinimumTier(tierForMatch, 'alignment');
+  const minimumTier = minimumTierByFeature[feature];
+  if (minimumTier) {
+    return meetsMinimumTier(tierForMatch, minimumTier);
   }
 
   const limits = TIER_LIMITS[normalizedTier];

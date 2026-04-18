@@ -27,7 +27,7 @@ function baseUrlFor(provider: Provider): string {
 
 function modelFor(provider: Provider): string {
   if (provider === "openrouter")
-    return process.env.OPEN_ROUTER_MODEL || "openai/gpt-5-nano";
+    return process.env.OPEN_ROUTER_MODEL || "openai/gpt-4o-mini";
   return process.env.OLLAMA_MODEL || "llama3.1:8b";
 }
 
@@ -56,7 +56,7 @@ function headersFor(provider: Provider): Record<string, string> {
 }
 
 // Quick reachability check for auto mode (fast fail)
-async function canReach(url: string, timeoutMs = 1500): Promise<boolean> {
+async function canReach(url: string, timeoutMs = 600): Promise<boolean> {
   try {
     const { controller, clear } = withTimeout(timeoutMs);
     const res = await fetch(url, { method: "GET", signal: controller.signal });
@@ -72,12 +72,36 @@ export async function pickProvider(): Promise<Provider> {
   if (pref === "openrouter") return "openrouter";
   if (pref === "ollama") return "ollama";
 
+  // In hosted environments, prefer OpenRouter immediately when a key is present.
+  if (process.env.OPEN_ROUTER_API_KEY && process.env.PREFER_LOCAL_LLM !== "true") {
+    return "openrouter";
+  }
+
   // auto: try ollama, else openrouter
   const ollamaHealth = (
     process.env.OLLAMA_BASE_URL || "http://localhost:11434"
   ).replace(/\/$/, "");
   const ok = await canReach(ollamaHealth);
   return ok ? "ollama" : "openrouter";
+}
+
+function shouldRetryStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function shouldRetryError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const message = err.message.toLowerCase();
+  return (
+    message.includes("abort") ||
+    message.includes("timeout") ||
+    message.includes("network") ||
+    message.includes("fetch failed")
+  );
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function chatCompletion(
@@ -97,29 +121,54 @@ export async function chatCompletion(
     response_format: { type: "json_object" as const },
   };
 
-  const { controller, clear } = withTimeout(
-    opts.timeoutMs ?? DEFAULT_TIMEOUT_MS,
-  );
+  const maxAttempts = 2;
+  let lastError: Error | null = null;
 
-  const res = await fetch(`${baseURL}/chat/completions`, {
-    method: "POST",
-    headers: headersFor(provider),
-    body: JSON.stringify(payload),
-    signal: controller.signal,
-  }).finally(clear);
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const { controller, clear } = withTimeout(
+      opts.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+    );
 
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    const msg = txt
-      ? `LLM error (${res.status}): ${txt.slice(0, 500)}`
-      : `LLM error (${res.status})`;
-    throw new Error(msg);
+    try {
+      const res = await fetch(`${baseURL}/chat/completions`, {
+        method: "POST",
+        headers: headersFor(provider),
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      }).finally(clear);
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        const msg = txt
+          ? `LLM error (${res.status}): ${txt.slice(0, 500)}`
+          : `LLM error (${res.status})`;
+
+        if (attempt < maxAttempts && shouldRetryStatus(res.status)) {
+          await sleep(300 * attempt);
+          continue;
+        }
+
+        throw new Error(msg);
+      }
+
+      const data: any = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error("LLM returned empty content");
+      }
+
+      return String(content);
+    } catch (err) {
+      if (attempt < maxAttempts && shouldRetryError(err)) {
+        await sleep(300 * attempt);
+        continue;
+      }
+      lastError = err instanceof Error ? err : new Error(String(err));
+      break;
+    }
   }
 
-  const data: any = await res.json();
-  const content = data?.choices?.[0]?.message?.content;
-  if (!content) throw new Error("LLM returned empty content");
-  return String(content);
+  throw lastError ?? new Error("LLM request failed after retries");
 }
 
 export function safeJsonFromModel(text: string): any {

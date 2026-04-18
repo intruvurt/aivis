@@ -52,6 +52,12 @@ export interface RawEvidenceItem {
   finding?: unknown;
   evidence?: unknown;
   source?: unknown;
+  verifiedBy?: unknown;
+  verifier?: unknown;
+  model?: unknown;
+  provider?: unknown;
+  sourceModel?: unknown;
+  verificationTimestamp?: unknown;
   impact?: unknown;
   recommendation?: unknown;
 }
@@ -71,9 +77,38 @@ export interface NormalizedEvidenceItem {
 export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEvidenceItem[] {
   if (!Array.isArray(evidenceArray)) return [];
 
-  return evidenceArray.map((item: RawEvidenceItem) => {
+  const UNKNOWN_EVIDENCE_WARN_THRESHOLD = 3;
+  let unknownEvidenceCount = 0;
+
+  const normalized = evidenceArray.map((item: RawEvidenceItem) => {
     const raw = typeof item?.evidence === 'string' ? item.evidence.trim() : '';
     const hasProof = raw.length > 0;
+    if (!hasProof) unknownEvidenceCount++;
+
+    const provider = typeof item?.provider === 'string' ? item.provider.trim() : '';
+    const model =
+      typeof item?.model === 'string'
+        ? item.model.trim()
+        : typeof item?.sourceModel === 'string'
+        ? item.sourceModel.trim()
+        : '';
+    const explicitVerifier =
+      typeof item?.verifiedBy === 'string'
+        ? item.verifiedBy.trim()
+        : typeof item?.verifier === 'string'
+        ? item.verifier.trim()
+        : '';
+    const verificationTimestamp =
+      typeof item?.verificationTimestamp === 'string' ? item.verificationTimestamp.trim() : '';
+
+    const verifierLabel =
+      explicitVerifier ||
+      [provider, model].filter((part) => part.length > 0).join(' / ') ||
+      'AI Provider';
+
+    const verifierWithTimestamp = verificationTimestamp
+      ? `${verifierLabel} @ ${verificationTimestamp}`
+      : verifierLabel;
 
     return {
       category: typeof item?.category === 'string' ? item.category : 'General',
@@ -81,7 +116,7 @@ export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEviden
       evidence: buildEvidence({
         proof: hasProof ? raw : null,
         source: typeof item?.source === 'string' ? item.source : 'AI Analysis',
-        verifiedBy: 'AI Provider',
+        verifiedBy: verifierWithTimestamp,
         description: hasProof ? raw : 'Evidence data not available for this finding',
       }),
       impact: typeof item?.impact === 'string' ? item.impact : 'unknown',
@@ -92,4 +127,12 @@ export function normalizeEvidenceArray(evidenceArray: unknown): NormalizedEviden
       rawEvidence: hasProof ? raw : null,
     };
   });
+
+  if (unknownEvidenceCount >= UNKNOWN_EVIDENCE_WARN_THRESHOLD) {
+    console.warn(
+      `[evidence] High unknown evidence ratio: ${unknownEvidenceCount}/${normalized.length} items have no verifiable proof.`,
+    );
+  }
+
+  return normalized;
 }

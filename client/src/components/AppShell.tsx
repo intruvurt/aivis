@@ -13,7 +13,7 @@ const GuideBot = React.lazy(() => import("./GuideBot"));
 function OutletErrorFallback() {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-2xl">⚠️</div>
+      <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-2xl">⚠️</div>
       <h2 className="text-lg font-semibold text-white">Page failed to load</h2>
       <p className="text-white/50 text-sm max-w-xs">This can happen on slow connections or after a deployment. Try reloading.</p>
       <button

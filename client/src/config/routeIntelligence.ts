@@ -64,6 +64,7 @@ export const APP_NAV_GROUPS: NavGroup[] = [
         iconBg: "bg-violet-500/10",
         items: [
             { to: "/app/analytics", labelKey: "sidebar.analytics", iconName: "BarChart3" },
+            { to: "/app/evidence", labelKey: "sidebar.evidenceRegistry", iconName: "Database", minTier: "alignment" },
             { to: "/app/citations", labelKey: "sidebar.citations", iconName: "FlaskConical", minTier: "alignment" },
             { to: "/app/competitors", labelKey: "sidebar.competitors", iconName: "Users", minTier: "alignment" },
             { to: "/app/benchmarks", labelKey: "sidebar.benchmarks", iconName: "Layers" },
@@ -253,6 +254,24 @@ const ROUTE_GUIDES: RouteGuideRule[] = [
             ],
             primaryActionPath: "/app/reports",
             primaryActionLabel: "Compare Reports",
+        },
+    },
+    {
+        match: "exact",
+        path: "/app/evidence",
+        guide: {
+            title: "Evidence Registry",
+            section: "Evidence",
+            summary: "Review verified patterns extracted from audits, including mandatory SEO blockers and citation opportunities.",
+            nextStep: "Filter by category, prioritize verified patterns, and route top blockers into Score Fix.",
+            instructions: [
+                "Review verified patterns first.",
+                "Prioritize mandatory SEO failures.",
+                "Convert patterns into implementation tasks.",
+            ],
+            primaryActionPath: "/app/score-fix",
+            primaryActionLabel: "Open Score Fix",
+            minTier: "alignment",
         },
     },
     {

@@ -670,7 +670,7 @@ export default function ReportsPage() {
     }
 
     if (positiveSignals.length === 0 && riskSignals.length === 0) {
-      positiveSignals.push("Score stayed flat with no material SEO diagnostic movement detected.");
+      positiveSignals.push("Score stayed flat with no material mandatory SEO movement detected.");
     }
 
     // Gate-level delta - only populated when both audits have strict_rubric loaded
@@ -1351,12 +1351,12 @@ export default function ReportsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search reports"
-              className="w-full min-w-0 pl-9 pr-3 py-2 rounded-lg border border-white/10 bg-white/[0.04] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/30"
+              className="w-full min-w-0 pl-9 pr-3 py-2 rounded-lg border border-slate-700 bg-slate-900 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-400"
             />
           </div>
 
           <div className="flex min-w-0 flex-wrap items-center gap-2 lg:justify-end">
-            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10">
+            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700">
               <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <select
                 value={sortBy}
@@ -1370,7 +1370,7 @@ export default function ReportsPage() {
               </select>
             </div>
 
-            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10">
+            <div className="flex min-w-0 items-center gap-2 px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700">
               <select
                 value={scoreRange}
                 onChange={(e) => setScoreRange(e.target.value as typeof scoreRange)}
@@ -1384,7 +1384,7 @@ export default function ReportsPage() {
               </select>
             </div>
 
-            <div className="flex max-w-full flex-wrap items-center gap-1 rounded-lg bg-white/[0.04] p-1">
+            <div className="flex max-w-full flex-wrap items-center gap-1 rounded-lg bg-slate-900 p-1 border border-slate-700">
               {(["all", "completed", "processing"] as const).map((f) => (
                 <button
                   key={f}
@@ -1406,7 +1406,7 @@ export default function ReportsPage() {
               className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
                 consolidateByUrl
                   ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
-                  : "bg-white/[0.04] text-slate-400 border-white/10 hover:text-white"
+                  : "bg-slate-900 text-slate-400 border-slate-700 hover:text-white"
               }`}
               type="button"
               title="Consolidate duplicate URLs"

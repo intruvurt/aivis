@@ -52,7 +52,7 @@ const CITATIONS_FAQ = [
   },
   {
     question: "Why is Perplexity citing my competitors instead of me?",
-    answer: "Perplexity selects sources based on a combination of topical relevance, extraction clarity, answer completeness, and freshness. If competitors are cited instead of you, the most common causes are: their pages have more direct question-answer pairs aligned to the query, their entity markup is more specific (clearer service category, audience, and geography), their evidence sections are denser with verifiable specifics, or their pages load and render faster for live crawls. The AiVIS citation test shows exactly which query types surface competitors and why.",
+    answer: "Perplexity selects sources based on a combination of topical relevance, extraction clarity, answer completeness, and freshness. If competitors are cited instead of you, the most common causes are: their pages have more direct question-answer pairs aligned to the query, their entity markup is more specific (clearer service category, audience, and geography), their evidence sections are denser with verifiable specifics, or their pages load and render faster for live crawls. The AiVIS.biz citation test shows exactly which query types surface competitors and why.",
   },
   {
     question: "What makes a web page citation-eligible for AI answer engines?",
@@ -64,7 +64,7 @@ const CITATIONS_FAQ = [
   },
   {
     question: "How do I increase my citation rate across AI platforms?",
-    answer: "The highest-impact improvements are: restructuring long-form content into concise direct-answer blocks with clear question headings, adding FAQ schema with questions that mirror actual AI prompts, ensuring your entity is unambiguously defined in the first paragraph of every page, removing or fixing JavaScript rendering issues that prevent full content extraction, and building topical co-occurrence through consistent publication on the core topics where you want to be cited. AiVIS citation tests show which specific query types and platforms are blocking your brand.",
+    answer: "The highest-impact improvements are: restructuring long-form content into concise direct-answer blocks with clear question headings, adding FAQ schema with questions that mirror actual AI prompts, ensuring your entity is unambiguously defined in the first paragraph of every page, removing or fixing JavaScript rendering issues that prevent full content extraction, and building topical co-occurrence through consistent publication on the core topics where you want to be cited. AiVIS.biz citation tests show which specific query types and platforms are blocking your brand.",
   },
   {
     question: "What is the difference between a brand mention and a citation?",
@@ -111,7 +111,7 @@ export default function CitationsPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/citations",
-        name: "AI Citation Tracker | AiVIS",
+        name: "AI Citation Tracker | AiVIS.biz",
         description: "Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude cite your brand in generated answers.",
       }),
       buildFaqSchema(CITATIONS_FAQ, { path: "/citations" }),
@@ -169,7 +169,7 @@ export default function CitationsPage() {
           </h1>
           <p className="mt-1 text-sm text-slate-400">Generate citation queries from any URL and test where AI platforms mention you.</p>
         </div>
-        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-wide text-slate-400">
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] uppercase tracking-wide text-slate-400">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
           {userTier}
         </span>

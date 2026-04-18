@@ -148,7 +148,7 @@ export default function AnswerPresencePage() {
             <h2 className="text-lg font-bold text-white mb-4">Platforms monitored</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {AI_PLATFORMS.map((platform) => (
-                <div key={platform.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
+                <div key={platform.name} className="rounded-xl border border-slate-700 bg-slate-900 p-4 text-center">
                   <p className={`font-bold text-sm ${platform.color}`}>{platform.name}</p>
                   <p className="text-white/40 text-[11px] mt-1">{platform.desc}</p>
                 </div>
@@ -161,7 +161,7 @@ export default function AnswerPresencePage() {
             <h2 className="text-lg font-bold text-white mb-4">Presence signals detected</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {PRESENCE_SIGNALS.map((signal) => (
-                <div key={signal.label} className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <div key={signal.label} className="flex gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4">
                   <signal.icon className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-white font-semibold text-sm">{signal.label}</p>
@@ -175,7 +175,7 @@ export default function AnswerPresencePage() {
           {/* Value cards */}
           <div className="mt-10 grid sm:grid-cols-2 gap-6">
             {VALUE_CARDS.map((card) => (
-              <div key={card.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+              <div key={card.title} className="rounded-xl border border-slate-700 bg-slate-900 p-6">
                 <card.icon className="w-8 h-8 text-cyan-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">{card.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{card.detail}</p>
@@ -225,7 +225,7 @@ export default function AnswerPresencePage() {
         {/* Platform overview */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {AI_PLATFORMS.map((platform) => (
-            <div key={platform.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div key={platform.name} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
               <p className={`font-bold text-sm ${platform.color}`}>{platform.name}</p>
               <p className="text-white/40 text-[11px] mt-1">{platform.desc}</p>
             </div>
@@ -242,7 +242,7 @@ export default function AnswerPresencePage() {
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 placeholder="Enter URL to scan for AI answer presence..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-white/[0.04] text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/25 transition"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-white/30 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/25 transition"
               />
             </div>
             <button
@@ -282,7 +282,7 @@ export default function AnswerPresencePage() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {WORKFLOW_STEPS.map((step) => (
-              <div key={step.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <div key={step.step} className="rounded-xl border border-slate-700 bg-slate-900 p-5">
                 <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-sm font-bold mb-3">
                   {step.step}
                 </div>

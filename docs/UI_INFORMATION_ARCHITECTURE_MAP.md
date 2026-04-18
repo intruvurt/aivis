@@ -123,7 +123,8 @@ The new system is represented directly in product flow and route intent.
 2. Keep route guidance actionable and operation-focused (not marketing copy).
 3. Keep primary actions executable links to real pages (no placeholders).
 4. Do not add dead-end pages to the sidebar.
-5. Validate all changes via client build before merge.
+5. Route coverage is enforced at build time via `client/scripts/validate-route-intelligence.mjs`.
+6. Validate all changes via client build before merge.
 
 ## Execution Checklist For New User-Facing Pages
 

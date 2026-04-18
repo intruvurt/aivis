@@ -84,7 +84,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   useEffect(() => { setActiveIdx(-1); }, [results]);
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[#0c1221]/95 backdrop-blur-md border-b border-white/[0.08]" role="banner" aria-label="App toolbar">
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-slate-950 border-b border-slate-800" role="banner" aria-label="App toolbar">
       {/* Left - hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Mobile menu button */}
@@ -112,7 +112,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             aria-activedescendant={activeIdx >= 0 ? `gsr-${activeIdx}` : undefined}
             role="combobox"
             autoComplete="off"
-            className="w-full h-8 pl-9 pr-3 rounded-lg bg-white/[0.06] border border-white/[0.09] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/40 focus:bg-white/[0.08] transition-all"
+            className="w-full h-8 pl-9 pr-3 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-orange-400 focus:bg-slate-900 transition-colors"
           />
           {isOpen && results.length > 0 && (
             <ul
@@ -126,7 +126,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
                   id={`gsr-${i}`}
                   role="option"
                   aria-selected={i === activeIdx}
-                  className={`flex items-center gap-2.5 px-3 py-2 cursor-pointer text-sm transition-colors ${i === activeIdx ? "bg-white/[0.08] text-white" : "text-slate-300 hover:bg-white/[0.06] hover:text-white"}`}
+                  className={`flex items-center gap-2.5 px-3 py-2 cursor-pointer text-sm transition-colors ${i === activeIdx ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}
                   onMouseDown={() => goTo(r)}
                   onMouseEnter={() => setActiveIdx(i)}
                 >
@@ -168,7 +168,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
               navigate("/app/analyze");
             }
           }}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-700/30 border border-blue-400/20"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-orange-400 text-slate-950 text-xs font-semibold hover:bg-orange-300 transition-colors border border-orange-300"
         >
           <Search className="w-3.5 h-3.5" />
           {t('topbar.runAudit', 'Run Audit')}
@@ -177,7 +177,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Documentation */}
         <Link
           to="/app/api-docs"
-          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           title={t('topbar.documentation', 'Documentation')}
           aria-label={t('topbar.documentation', 'Documentation')}
         >
@@ -187,25 +187,25 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Notifications */}
         <Link
           to="/app/notifications"
-          className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           aria-label={unreadCount > 0 ? t('topbar.notificationsUnread', 'Notifications ({{count}} unread)', { count: unreadCount }) : t('topbar.notifications', 'Notifications')}
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0c1221]" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-400 ring-2 ring-slate-950" />
           )}
         </Link>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-white/[0.08] mx-1" aria-hidden="true" />
+        <div className="w-px h-6 bg-slate-700 mx-1" aria-hidden="true" />
 
         {/* User */}
         <Link
           to="/app/settings"
-          className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          className="flex items-center gap-2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           aria-label={t('settings.title', 'User settings')}
         >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600/30 to-indigo-600/20 border border-blue-500/25 flex items-center justify-center text-[11px] font-bold text-blue-300">
+          <div className="w-7 h-7 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-[11px] font-bold text-slate-200">
             {avatarUrl ? (
               <img src={avatarUrl} alt="User avatar" className="h-full w-full rounded-lg object-cover" />
             ) : (
@@ -218,7 +218,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Logout */}
         <button
           onClick={() => { logout(); navigate("/"); }}
-          className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.06] transition-colors"
+          className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
           title={t('topbar.signOut', 'Sign out')}
           aria-label={t('topbar.signOut', 'Sign out')}
         >

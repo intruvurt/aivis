@@ -32,6 +32,7 @@ import { canAccess } from "@shared/entitlements";
 import { Link } from "react-router-dom";
 import CollapsibleSection from "./CollapsibleSection";
 import { getScoreBand, getCitationVerdict, getExecutionBadge } from "../utils/scoreUtils";
+import { ComprehensiveScoreDisplay } from "./design/ComprehensiveScoreDisplay";
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -181,6 +182,28 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   const evidencePreview = (result.evidence_fix_plan?.issues ?? [])
     .filter(i => i.evidence_excerpt)
     .slice(0, 3);
+  const seoDiagnostics = (result as any).seo_diagnostics as Record<string, { status?: "pass" | "warn" | "fail" }> | undefined;
+  const seoStatusCounts = seoDiagnostics
+    ? Object.values(seoDiagnostics).reduce(
+        (acc, item) => {
+          const st = item?.status;
+          if (st === "pass") acc.pass += 1;
+          else if (st === "warn") acc.warn += 1;
+          else if (st === "fail") acc.fail += 1;
+          return acc;
+        },
+        { pass: 0, warn: 0, fail: 0 }
+      )
+    : { pass: 0, warn: 0, fail: 0 };
+  const technicalSeoScore = Math.max(0, Math.min(15, seoStatusCounts.pass * 3 + seoStatusCounts.warn));
+  const technicalSeoStatus: "pass" | "fail" = seoStatusCounts.fail === 0 && (seoStatusCounts.pass > 0 || seoStatusCounts.warn > 0) ? "pass" : "fail";
+  const registryScore = Math.min(10, Math.max(0, Math.round((evidenceCount * 2 + Math.max(0, 6 - gapCount)) / 2)));
+  const scoreMetrics = [
+    { label: "Verified Evidence", current: Math.min(30, evidenceCount * 3), max: 30, color: "#a78bfa", status: "review" as const, description: "Evidence-backed findings tied to CITE LEDGER traces." },
+    { label: "Attribution Gaps", current: Math.min(20, Math.max(0, 20 - gapCount * 2)), max: 20, color: "#ec4899", status: "action" as const, description: "Higher score means fewer high/critical attribution blockers." },
+    { label: "Drift Signals", current: Math.max(0, Math.min(25, 25 - driftCount * 3)), max: 25, color: "#f97316", status: "warning" as const, description: "Lower drift increases citation stability across answer engines." },
+    { label: "Registry Alignment", current: registryScore, max: 10, color: "#06b6d4", status: "pass" as const, description: "Match quality against proven evidence registry patterns." },
+  ];
   const upgradeSuggestions = [
     { id: "reverse-engineer", title: "Reverse Engineer Tool", description: "Use decompile + model diff to rebuild stronger section structure.", requirement: "alignment" as const, to: "/app/reverse-engineer", show: contentWordCount < 800 || recommendationCount >= 4 },
     { id: "competitors", title: "Competitor Gap Tracking", description: "Compare your score against direct competitors.", requirement: "alignment" as const, to: "/app/competitors", show: result.visibility_score < 70 || schemaCount === 0 },
@@ -222,17 +245,17 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
 
           <div className="flex shrink-0 items-center gap-3">
-            <Link to="/app/analyze" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white/72 transition hover:bg-white/[0.06]">
+            <Link to="/app/analyze" className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-slate-800">
               <RefreshCw className="h-4 w-4" /> Re-audit
             </Link>
-            <button className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white/72 transition hover:bg-white/[0.06]">
+            <button className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-slate-800">
               <Download className="h-4 w-4" /> Export
             </button>
             {hasAlignment && (
               <button
                 type="button"
                 onClick={() => setAutoFixOpen(true)}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]"
+                className="inline-flex items-center gap-2 rounded-xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
               >
                 <GitPullRequest className="h-4 w-4" /> Fix Automatically
               </button>
@@ -240,55 +263,29 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           </div>
         </section>
 
-        {/* 2. SCORE BLOCK - one big card, left-aligned */}
-        <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.04] p-6">
-          <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-6">
-            <div className="flex flex-col justify-center">
-              <div className="text-[60px] font-semibold leading-none tracking-tight text-white animate-score-pop">
-                {animatedScore}
-              </div>
-              <div className={`mt-2 text-sm font-medium ${level.color}`}>{level.label}</div>
-              {totalLift > 0 && <div className="mt-2 text-sm text-emerald-300">+{totalLift} pts available</div>}
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="mb-3 flex items-center justify-between text-sm">
-                <span className="text-white/55">CITE LEDGER Score</span>
-                <span className="text-white/70">{result.visibility_score} / 100</span>
-              </div>
-              <div className="h-3 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 bar-grow-origin animate-bar-grow" style={{ width: `${result.visibility_score}%` }} />
-              </div>
-              <div className="mt-3 flex items-center justify-between text-xs text-white/32">
-                <span>Critical</span><span>Poor</span><span>Fair</span><span>Good</span><span>Excellent</span>
-              </div>
-            </div>
-          </div>
-          {/* Evidence Summary Row */}
-          <div className="mt-5 grid grid-cols-3 gap-3 border-t border-white/[0.07] pt-4">
-            <div className="rounded-xl bg-emerald-500/[0.07] border border-emerald-400/15 p-3 text-center">
-              <div className="text-2xl font-bold text-emerald-400">{evidenceCount}</div>
-              <div className="mt-1 text-[11px] uppercase tracking-wider text-emerald-300/60">Verified Evidence</div>
-            </div>
-            <div className="rounded-xl bg-amber-500/[0.07] border border-amber-400/15 p-3 text-center">
-              <div className="text-2xl font-bold text-amber-400">{gapCount}</div>
-              <div className="mt-1 text-[11px] uppercase tracking-wider text-amber-300/60">Attribution Gaps</div>
-            </div>
-            <div className="rounded-xl bg-rose-500/[0.07] border border-rose-400/15 p-3 text-center">
-              <div className="text-2xl font-bold text-rose-400">{driftCount}</div>
-              <div className="mt-1 text-[11px] uppercase tracking-wider text-rose-300/60">Drift Signals</div>
-            </div>
-          </div>
+        {/* 2. SCORE BLOCK - transparent scoring with technical SEO split */}
+        <section className="reveal">
+          <ComprehensiveScoreDisplay
+            overallScore={animatedScore}
+            maxScore={100}
+            metrics={scoreMetrics}
+            technicalSeoScore={technicalSeoScore}
+            technicalSeoStatus={technicalSeoStatus}
+            visibilityWithoutSeo={Math.max(0, result.visibility_score - technicalSeoScore)}
+            roadmapScore={Math.min(100, result.visibility_score + Math.max(0, 100 - result.visibility_score))}
+          />
+          {totalLift > 0 && <div className="mt-3 text-sm text-emerald-300">+{totalLift} pts available from prioritized fixes</div>}
         </section>
 
         {/* 2b. EVIDENCE PREVIEW — top evidence backing the score */}
         {evidencePreview.length > 0 && (
-          <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
+          <section className="reveal rounded-[22px] border border-slate-700 bg-slate-900 p-5">
             <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40">
               Evidence Backing This Score
             </h3>
             <div className="space-y-3">
               {evidencePreview.map((iss, i) => (
-                <div key={iss.id} className="flex gap-3 rounded-xl bg-white/[0.03] border border-white/[0.06] p-3">
+                <div key={iss.id} className="flex gap-3 rounded-xl bg-slate-900 border border-slate-700 p-3">
                   <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-emerald-400/25 bg-emerald-500/10 text-[10px] font-bold text-emerald-400">
                     E{i + 1}
                   </div>
@@ -305,7 +302,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {/* 3. METRICS ROW - 4 cards inline */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {metricCards.map((card, i) => (
-            <div key={card.label} className="reveal card-lift rounded-2xl border border-white/10 bg-white/[0.04] p-4" data-delay={i + 1}>
+            <div key={card.label} className="reveal card-lift rounded-2xl border border-slate-700 bg-slate-900 p-4" data-delay={i + 1}>
               <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/34">{card.label}</div>
               <div className="mt-2 text-xl font-semibold text-white">{card.value}</div>
               <div className="mt-2 text-sm text-white/42">{card.hint}</div>
@@ -334,7 +331,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                 const tone = toneClasses(cat.score);
                 const fixCount = cat.improvements?.length ?? 0;
                 return (
-                  <div key={cat.label} className="reveal card-lift rounded-2xl border border-white/10 bg-white/[0.04] p-4" data-delay={i + 1}>
+                  <div key={cat.label} className="reveal card-lift rounded-2xl border border-slate-700 bg-slate-900 p-4" data-delay={i + 1}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-sm font-medium text-white/80">{cat.label}</div>
                       <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${tone.badge}`}>{tone.label}</span>
@@ -357,7 +354,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         {result.threat_intel && <ThreatIntelBanner data={result.threat_intel} />}
 
         {/* 5. PRIORITY ISSUES - TABLE rows */}
-        <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.04]">
+        <section className="reveal rounded-[22px] border border-slate-700 bg-slate-900">
           <div className="border-b border-white/10 px-5 py-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight text-white">Priority Issues</h2>
             <span className="text-[11px] text-white/35">{issueRows.length} total</span>
@@ -371,7 +368,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
           {/* Table rows */}
           <div className="divide-y divide-white/10">
             {visibleIssues.map((issue) => (
-              <div key={issue.id} className="grid grid-cols-1 sm:grid-cols-[100px_minmax(0,1fr)_minmax(0,220px)_110px] items-start gap-4 px-5 py-4 transition hover:bg-white/[0.025]">
+              <div key={issue.id} className="grid grid-cols-1 sm:grid-cols-[100px_minmax(0,1fr)_minmax(0,220px)_110px] items-start gap-4 px-5 py-4 transition hover:bg-slate-800/70">
                 <div>
                   <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-medium ${severityClasses(issue.severity)}`}>
                     {(issue.severity || "MED").toUpperCase()}
@@ -398,12 +395,12 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                     <button
                       type="button"
                       onClick={() => setAutoFixOpen(true)}
-                      className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.06]"
+                      className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800"
                     >
                       Fix this
                     </button>
                   ) : (
-                    <Link to="/app/score-fix" className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.06]">View fix</Link>
+                    <Link to="/app/score-fix" className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800">View fix</Link>
                   )}
                 </div>
               </div>
@@ -425,7 +422,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         )}
 
         {Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
-          <section className="rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
+          <section className="rounded-[22px] border border-slate-700 bg-slate-900 p-5">
             {/* ── BRAG Validation Gate Summary ── */}
             {result.brag_validation && (
               <div className="mb-5 rounded-xl border border-cyan-400/15 bg-cyan-400/[0.04] p-4">
@@ -472,7 +469,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* GEO / SSFR Truth Layer */}
         {(geoSignalProfile || contradictionReport) && (
-          <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
+          <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-5">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <p className="text-xs uppercase tracking-wider text-white/50 font-semibold">GEO / SSFR Truth Layer</p>
               {contradictionReport && (
@@ -488,7 +485,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             {strictRubric?.required_fixpacks?.length > 0 && (
               <div className="space-y-2">
                 {strictRubric.required_fixpacks.map((pack: any) => (
-                  <div key={pack.id} className="rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
+                  <div key={pack.id} className="rounded-lg border border-slate-700 bg-slate-900 p-2.5">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <p className="text-xs font-medium text-white/75 truncate">{pack.label}</p>
                       <span className="text-[10px] text-emerald-400 font-semibold">+{pack.estimated_score_lift_min}–{pack.estimated_score_lift_max}</span>
@@ -503,14 +500,14 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* Upgrade suggestions */}
         {upgradeSuggestions.length > 0 && (
-          <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
+          <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-5">
             <div className="flex items-center gap-3 mb-3">
               <Target className="w-4 h-4 text-white/60" />
               <h3 className="text-sm font-semibold text-white">Unlock deeper intelligence</h3>
             </div>
             <div className="space-y-3">
               {upgradeSuggestions.map((item) => (
-                <div key={item.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div key={item.id} className="rounded-xl border border-slate-700 bg-slate-900 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white">{item.title}</p>
                     <p className="text-xs text-white/55 mt-1">{item.description}</p>
@@ -559,7 +556,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         </div>
 
         {/* 2. Fix flow - detect → plan → PR → verify */}
-        <div className="mb-6 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs">
+        <div className="mb-6 flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-xs">
           <div className="flex flex-col items-center gap-1 text-cyan-300"><CheckCircle2 className="h-4 w-4" /><span>Scan</span></div>
           <div className="h-px flex-1 bg-white/10" />
           <div className="flex flex-col items-center gap-1 text-white/40"><Clock3 className="h-4 w-4" /><span>Expose</span></div>
@@ -571,7 +568,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 3. Active fix card - top priority */}
         {topFix && (
-          <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 mb-5">
+          <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-4 mb-5">
             <div className="mb-2 flex items-center gap-2">
               <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.12em] ${severityClasses(topFix.severity)}`}>
                 {(topFix.severity || "MED").toUpperCase()}
@@ -591,7 +588,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
             <button
               type="button"
               onClick={() => setAutoFixOpen(true)}
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.01]"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
             >
               <GitPullRequest className="h-4 w-4" /> Fix this automatically
             </button>
@@ -600,14 +597,14 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 4. Secondary fixes */}
         {secondaryFixes.length > 0 && (
-          <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 mb-5">
+          <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-4 mb-5">
             <div className="mb-3 text-sm font-semibold text-white">Next Highest ROI Fixes</div>
             <div className="space-y-3">
               {secondaryFixes.map((fix) => (
                 <div key={fix.id}>
                   <button
                     onClick={() => setExpandedFixId(expandedFixId === fix.id ? null : fix.id)}
-                    className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.025] px-3 py-3 text-left transition hover:bg-white/[0.05]"
+                    className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-left transition hover:bg-slate-800"
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5">
@@ -621,7 +618,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
                     <ChevronRight className={`h-4 w-4 shrink-0 text-white/30 transition-transform ${expandedFixId === fix.id ? "rotate-90" : ""}`} />
                   </button>
                   {expandedFixId === fix.id && (
-                    <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-xs leading-5 text-white/65">
+                    <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-xs leading-5 text-white/65">
                       {fix.fix ? (
                         <>
                           <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-300/70">Fix</div>
@@ -640,7 +637,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
 
         {/* 5. Fix plan summary */}
         {result.evidence_fix_plan && result.evidence_fix_plan.issues.length > 0 && (
-          <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 mb-5">
+          <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-4 mb-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-[10px] uppercase tracking-[0.14em] text-white/35">Fix Plan</p>
               <span className="text-[11px] text-white/35">
@@ -669,7 +666,7 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
         )}
 
         {/* 6. Verdict summary */}
-        <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
+        <div className="rounded-[22px] border border-slate-700 bg-slate-900 p-4">
           <div className="mb-3 text-sm font-semibold text-white">Verdict</div>
           <p className="text-sm text-white/65 mb-3">
             CITE LEDGER score <strong className="text-white">{result.visibility_score}/100</strong> — {level.label}.{" "}

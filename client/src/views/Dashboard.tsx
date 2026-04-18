@@ -256,12 +256,12 @@ export default function Dashboard() {
       />
 
       {/* ── Tab bar ─────────────────────────────────────────────────── */}
-      <div className="inline-flex rounded-2xl border border-white/10 bg-charcoal-deep p-1">
+      <div className="inline-flex rounded-2xl border border-slate-700 bg-slate-950 p-1">
         <button
           type="button"
           onClick={() => setTab("overview")}
           className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
-            tab === "overview" ? "bg-cyan-400/15 text-cyan-100" : "text-white/60 hover:text-white"
+            tab === "overview" ? "bg-orange-400/20 text-orange-100" : "text-white/60 hover:text-white"
           }`}
         >
           Overview
@@ -270,7 +270,7 @@ export default function Dashboard() {
           type="button"
           onClick={() => setTab("activity")}
           className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
-            tab === "activity" ? "bg-cyan-400/15 text-cyan-100" : "text-white/60 hover:text-white"
+            tab === "activity" ? "bg-orange-400/20 text-orange-100" : "text-white/60 hover:text-white"
           }`}
         >
           Activity
@@ -278,7 +278,7 @@ export default function Dashboard() {
       </div>
 
       {platformStats && platformStats.total_audits > 0 && (
-        <section className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.03] to-white/[0.05] p-4 sm:p-5">
+        <section className="rounded-3xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-orange-300" />
@@ -314,7 +314,7 @@ export default function Dashboard() {
               {primaryAudit._id && (
                 <Link
                   to={`/app/audits/${primaryAudit._id}`}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
                 >
                   Open latest report
                   <ArrowRight className="h-4 w-4" />
@@ -345,7 +345,7 @@ export default function Dashboard() {
               {priorityPages[0]._id && (
                 <Link
                   to={`/app/audits/${priorityPages[0]._id}`}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.1]"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
                 >
                   Open report
                   <ArrowRight className="h-4 w-4" />
@@ -366,7 +366,7 @@ export default function Dashboard() {
       {tab === "activity" && (
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric, i) => (
-          <article key={metric.label} className="reveal card-lift rounded-3xl border border-white/10 bg-white/[0.03] p-5" data-delay={i + 1}>
+          <article key={metric.label} className="reveal card-lift rounded-3xl border border-slate-700 bg-slate-900 p-5" data-delay={i + 1}>
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/46">{metric.label}</p>
               <metric.icon className="h-4 w-4 text-cyan-200" />
@@ -379,7 +379,7 @@ export default function Dashboard() {
 
       {/* ── Recent scans ──────────────────────────────────────────────── */}
       {tab === "activity" && canLoadHistory && recentScans.length > 0 && (
-        <section className="reveal rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+        <section className="reveal rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
           <h2 className="text-lg font-semibold text-white">Recent scans</h2>
           <p className="mt-1 text-sm text-white/56">Your latest audited URLs. Copy the report link or open the full analysis.</p>
 
@@ -394,7 +394,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={id || audit.url}
-                  className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3 transition hover:bg-white/[0.04]"
+                  className="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 transition hover:bg-slate-800"
                 >
                   {/* color dot */}
                   <span className={`h-3 w-3 shrink-0 rounded-full ${color}`} />
@@ -456,7 +456,7 @@ export default function Dashboard() {
       )}
 
       {tab === "activity" && (
-      <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+      <section className="rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-white">Priority pages</h2>
@@ -473,7 +473,7 @@ export default function Dashboard() {
             <Spinner className="h-5 w-5" />
           </div>
         ) : audits.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-white/12 bg-white/[0.02] px-6 py-12 text-center text-sm text-white/58">
+          <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-900 px-6 py-12 text-center text-sm text-white/58">
             {canLoadHistory
               ? "No audits yet. Run your first audit to start building a visibility history."
               : "Run your first audit to see what AI can verify now. Alignment adds retained report history, evidence trails, and rescan comparison."}
@@ -481,7 +481,7 @@ export default function Dashboard() {
         ) : (
           <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
             <table className="min-w-full divide-y divide-white/10 text-left text-sm">
-              <thead className="bg-white/[0.03] text-white/46">
+              <thead className="bg-slate-900 text-white/46">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Site</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
@@ -497,7 +497,7 @@ export default function Dashboard() {
                       <div className="max-w-[26rem] truncate font-medium text-white">{audit.url || "Untitled audit"}</div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium capitalize text-white/72">
+                      <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-medium capitalize text-white/72">
                         {audit.status || "pending"}
                       </span>
                     </td>

@@ -22,6 +22,7 @@ const PartnershipPaymentPage = React.lazy(() => import("./pages/PartnershipPayme
 const ReferralRedirect = React.lazy(() => import("./pages/ReferralRedirect"));
 const AuthPage = React.lazy(() => import("./views/AuthPage"));
 const AnalyticsPage = React.lazy(() => import("./views/AnalyticsPage"));
+const EvidenceRegistryPage = React.lazy(() => import("./views/EvidenceRegistryPage"));
 const KeywordsPage = React.lazy(() => import("./views/KeywordsPage"));
 const CompetitorsPage = React.lazy(() => import("./views/CompetitorsPage"));
 const NicheDiscoveryPage = React.lazy(() => import("./views/NicheDiscoveryPage"));
@@ -317,6 +318,7 @@ export default function App() {
             <Route path="analyze" element={<AnalyzePage />} />
             <Route path="snapshot" element={<SnapshotPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="evidence" element={<EvidenceRegistryPage />} />
             <Route path="keywords" element={<KeywordsPage />} />
             <Route path="competitors" element={<CompetitorsPage />} />
             <Route path="niche-discovery" element={<NicheDiscoveryPage />} />
@@ -361,6 +363,7 @@ export default function App() {
           {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
           <Route path="/analyze" element={<Navigate to="/app/analyze" replace />} />
           <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+          <Route path="/evidence" element={<Navigate to="/app/evidence" replace />} />
           <Route path="/keywords" element={<Navigate to="/app/keywords" replace />} />
           <Route path="/competitors" element={<Navigate to="/app/competitors" replace />} />
           <Route path="/citations" element={<Navigate to="/app/citations" replace />} />

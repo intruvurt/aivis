@@ -108,7 +108,7 @@ export default function BrandIntegrityPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/brand-integrity",
-        name: "Brand Integrity Monitor | AiVIS",
+        name: "Brand Integrity Monitor | AiVIS.biz",
         description: "Monitor what AI platforms and public sources say about your brand. Detect misrepresentations, track accuracy over time across 19 sources including Reddit, Hacker News, Google News, and GitHub.",
       }),
       buildFaqSchema(BRAND_INTEGRITY_FAQ, { path: "/brand-integrity" }),
@@ -192,7 +192,7 @@ export default function BrandIntegrityPage() {
             <h2 className="text-lg font-bold text-white mb-4">19 sources monitored</h2>
             <div className="grid grid-cols-3 gap-3">
               {MENTION_SOURCES.map((source) => (
-                <div key={source.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
+                <div key={source.name} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                   <p className="text-white text-sm font-semibold">{source.name}</p>
                   <p className="text-white/40 text-[10px] mt-0.5">{source.desc}</p>
                 </div>
@@ -205,7 +205,7 @@ export default function BrandIntegrityPage() {
             <h2 className="text-lg font-bold text-white mb-4">Integrity signals</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {INTEGRITY_SIGNALS.map((signal) => (
-                <div key={signal.label} className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <div key={signal.label} className="flex gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4">
                   <signal.icon className={`w-5 h-5 ${signal.color} flex-shrink-0 mt-0.5`} />
                   <div>
                     <p className="text-white font-semibold text-sm">{signal.label}</p>
@@ -219,7 +219,7 @@ export default function BrandIntegrityPage() {
           {/* Value cards */}
           <div className="mt-10 grid sm:grid-cols-2 gap-6">
             {VALUE_CARDS.map((card) => (
-              <div key={card.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+              <div key={card.title} className="rounded-xl border border-slate-700 bg-slate-900 p-6">
                 <card.icon className="w-8 h-8 text-emerald-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">{card.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{card.detail}</p>
@@ -269,7 +269,7 @@ export default function BrandIntegrityPage() {
         {/* Source badges */}
         <div className="flex flex-wrap gap-2 mb-8">
           {MENTION_SOURCES.map((source) => (
-            <span key={source.name} className="px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.04] text-white/60 text-xs font-medium">
+            <span key={source.name} className="px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900 text-white/60 text-xs font-medium">
               {source.name}
             </span>
           ))}
@@ -285,8 +285,8 @@ export default function BrandIntegrityPage() {
                 value={brandInput}
                 onChange={(e) => setBrandInput(e.target.value)}
                 enterKeyHint="go"
-                placeholder="Brand name (e.g. AiVIS, Stripe, Notion)..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-white/[0.04] text-white placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/25 transition"
+                placeholder="Brand name (e.g. AiVIS.biz, Stripe, Notion)..."
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-white/30 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/25 transition"
               />
             </div>
           </div>
@@ -298,7 +298,7 @@ export default function BrandIntegrityPage() {
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 placeholder="Domain (optional, e.g. aivis.biz)..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-white/[0.04] text-white placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/25 transition"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-white/30 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/25 transition"
               />
             </div>
             <button
@@ -325,19 +325,19 @@ export default function BrandIntegrityPage() {
           <div ref={resultsRef} className="mb-10">
             {/* Summary stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Total Mentions</p>
                 <p className="text-white text-2xl font-bold">{scanResult.mentions?.length ?? 0}</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Sources Found</p>
                 <p className="text-white text-2xl font-bold">{scanResult.sources_checked?.length ?? 0}</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Brand Name</p>
                 <p className="text-emerald-300 text-lg font-bold truncate">{scanResult.brand || "-"}</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
                 <p className="text-white/40 text-xs font-medium uppercase tracking-wider mb-1">Scan Status</p>
                 <p className="text-emerald-400 text-sm font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4" /> Complete
@@ -353,7 +353,7 @@ export default function BrandIntegrityPage() {
                   Brand Mentions ({scanResult.mentions.length})
                 </h2>
                 {scanResult.mentions.map((mention: any, i: number) => (
-                  <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-emerald-400/20 transition">
+                  <div key={i} className="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-orange-400/30 transition">
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] font-bold uppercase">
                         {mention.source || "unknown"}
@@ -381,7 +381,7 @@ export default function BrandIntegrityPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 rounded-xl border border-white/10 bg-white/[0.03]">
+              <div className="text-center py-12 rounded-xl border border-slate-700 bg-slate-900">
                 <AlertTriangle className="w-8 h-8 text-amber-400/50 mx-auto mb-3" />
                 <p className="text-white/60 text-sm">No brand mentions found across scanned sources.</p>
                 <p className="text-white/40 text-xs mt-1">This may indicate your brand has low public discussion presence.</p>
@@ -409,7 +409,7 @@ export default function BrandIntegrityPage() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {WORKFLOW_STEPS.map((step) => (
-              <div key={step.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <div key={step.step} className="rounded-xl border border-slate-700 bg-slate-900 p-5">
                 <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 text-sm font-bold mb-3">
                   {step.step}
                 </div>

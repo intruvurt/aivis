@@ -899,7 +899,7 @@ export default function AnalyticsPage() {
             <BarChart3 className="w-5 h-5 text-slate-400" />
             Analytics
             {hasData && (
-              <span className="ml-1 text-xs font-medium px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300">
+              <span className="ml-1 text-xs font-medium px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
                 {data.totalAnalyses} scans
               </span>
             )}
@@ -908,12 +908,12 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex rounded-xl p-1 gap-0.5 bg-white/[0.05] border border-white/[0.08]">
+          <div className="flex rounded-xl p-1 gap-0.5 bg-slate-900 border border-slate-700">
             {(["7d", "30d", "90d", "all"] as RangeKey[]).map((r) => (
               <button key={r} onClick={() => setRange(r)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   range === r
-                    ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400'
+                    ? 'bg-orange-400/20 border border-orange-400/40 text-orange-200'
                     : 'text-slate-500 hover:text-white'
                 }`}>
                 {r === "all" ? "All time" : `Last ${r}`}
@@ -921,7 +921,7 @@ export default function AnalyticsPage() {
             ))}
           </div>
           <button onClick={fetchAnalytics} disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-50 hover:bg-white/10 bg-white/[0.06] border border-white/10">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-50 hover:bg-slate-800 bg-slate-900 border border-slate-700">
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh
           </button>
         </div>
@@ -1661,16 +1661,16 @@ export default function AnalyticsPage() {
               <div className="space-y-6">
                 <SectionTitle title="Deep Insights" tone="rose" sub="Recommendations, schema adoption, content signals & score volatility" />
                 {/* Recommendation Insights */}
-                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
                   <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-4">
                     <Zap className="w-4 h-4 text-amber-400" /> Recommendation Insights
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-2xl font-bold text-white">{data.recommendationInsights.total}</p>
                       <p className="text-[11px] text-white/50">Total Recommendations</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-2xl font-bold text-cyan-400">{data.recommendationInsights.avgPerAudit}</p>
                       <p className="text-[11px] text-white/50">Avg per Audit</p>
                     </div>
@@ -1679,7 +1679,7 @@ export default function AnalyticsPage() {
                     <div className="space-y-2">
                       <p className="text-xs text-white/40 font-medium">Top Recommendation Categories</p>
                       {data.recommendationInsights.topCategories.map((cat) => (
-                        <div key={cat.category} className="flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 py-2">
+                        <div key={cat.category} className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">
                           <span className="text-xs text-white/70 capitalize">{cat.category}</span>
                           <span className="text-xs font-bold text-cyan-400">{cat.count}</span>
                         </div>
@@ -1689,16 +1689,16 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Schema Markup Adoption */}
-                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
                   <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-4">
                     <Layers className="w-4 h-4 text-violet-400" /> Schema Markup Adoption
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-2xl font-bold text-white">{data.schemaInsights.coveragePct}%</p>
                       <p className="text-[11px] text-white/50">Sites with Schema</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-2xl font-bold text-violet-400">{data.schemaInsights.avgJsonLd}</p>
                       <p className="text-[11px] text-white/50">Avg JSON-LD Blocks</p>
                     </div>
@@ -1707,7 +1707,7 @@ export default function AnalyticsPage() {
                     <div className="space-y-2">
                       <p className="text-xs text-white/40 font-medium">Detected Schema Types</p>
                       {data.schemaInsights.topTypes.map((t) => (
-                        <div key={t.type} className="flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 py-2">
+                        <div key={t.type} className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">
                           <span className="text-xs text-white/70">{t.type}</span>
                           <span className="text-xs font-bold text-violet-400">{t.count}</span>
                         </div>
@@ -1717,34 +1717,34 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Content & Technical Signals */}
-                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
                   <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-4">
                     <BarChart3 className="w-4 h-4 text-emerald-400" /> Content &amp; Technical Signals
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-lg font-bold text-white">{data.contentAndTech.avgWordCount.toLocaleString()}</p>
                       <p className="text-[10px] text-white/50">Avg Words</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-lg font-bold text-emerald-400">{data.contentAndTech.httpsPct}%</p>
                       <p className="text-[10px] text-white/50">HTTPS</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-lg font-bold text-cyan-400">{data.contentAndTech.avgResponseTimeMs}ms</p>
                       <p className="text-[10px] text-white/50">Avg Response</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-lg font-bold text-amber-400">{data.contentAndTech.slowestResponseMs}ms</p>
                       <p className="text-[10px] text-white/50">Slowest</p>
                     </div>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-sm text-white/60">Word Count Range</p>
                       <p className="text-xs text-white/40">{data.contentAndTech.minWordCount.toLocaleString()} - {data.contentAndTech.maxWordCount.toLocaleString()}</p>
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                    <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-center">
                       <p className="text-sm text-white/60">Fastest Response</p>
                       <p className="text-xs text-white/40">{data.contentAndTech.fastestResponseMs}ms</p>
                     </div>
@@ -1753,14 +1753,14 @@ export default function AnalyticsPage() {
 
                 {/* Score Volatility */}
                 {data.scoreVolatility.length > 0 && (
-                  <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                  <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
                     <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-4">
                       <Activity className="w-4 h-4 text-rose-400" /> Score Volatility
                     </h3>
                     <p className="text-xs text-white/40 mb-3">Domains with 2+ audits, ranked by score standard deviation.</p>
                     <div className="space-y-2">
                       {data.scoreVolatility.map((v) => (
-                        <div key={v.domain} className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 py-2">
+                        <div key={v.domain} className="flex items-center justify-between gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">
                           <div className="flex items-center gap-2 min-w-0">
                             <span className="text-xs text-white/70 truncate">{v.domain}</span>
                             <span className="text-[10px] text-white/30">{v.audits} audits</span>

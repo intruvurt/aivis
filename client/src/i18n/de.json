@@ -125,7 +125,8 @@
     "help": "Hilfe",
     "resources": "RESSOURCEN",
     "blog": "Blog",
-    "guide": "Anleitung"
+    "guide": "Anleitung",
+    "evidenceRegistry": "Evidenzregister"
   },
   "settings": {
     "title": "Einstellungen",

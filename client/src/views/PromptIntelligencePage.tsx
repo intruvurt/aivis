@@ -155,7 +155,7 @@ export default function PromptIntelligencePage() {
           {/* Value proposition cards */}
           <div className="mt-12 grid sm:grid-cols-2 gap-6">
             {VALUE_CARDS.map((card) => (
-              <div key={card.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+              <div key={card.title} className="rounded-xl border border-slate-700 bg-slate-900 p-6">
                 <card.icon className="w-8 h-8 text-violet-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">{card.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{card.detail}</p>
@@ -205,7 +205,7 @@ export default function PromptIntelligencePage() {
         {/* Quick stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {QUICK_STATS.map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div key={stat.label} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <stat.icon className="w-4 h-4 text-violet-400" />
                 <span className="text-white/40 text-xs font-medium uppercase tracking-wider">{stat.label}</span>
@@ -227,7 +227,7 @@ export default function PromptIntelligencePage() {
                 onChange={(e) => setUrlInput(e.target.value)}
                 enterKeyHint="go"
                 placeholder="Enter URL to analyze prompt patterns..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/15 bg-white/[0.04] text-white placeholder-white/30 focus:outline-none focus:border-violet-400/50 focus:ring-1 focus:ring-violet-400/25 transition"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-white/30 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/25 transition"
               />
             </div>
             <button
@@ -259,7 +259,7 @@ export default function PromptIntelligencePage() {
             </h2>
             <div className="space-y-3">
               {queryResults.map((q: any, i: number) => (
-                <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-violet-400/20 transition">
+                <div key={i} className="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-orange-400/30 transition">
                   <div className="flex items-start gap-3">
                     <span className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-500/20 text-violet-300 text-xs font-bold flex items-center justify-center mt-0.5">
                       {i + 1}
@@ -267,7 +267,7 @@ export default function PromptIntelligencePage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-medium">{typeof q === "string" ? q : q.query || q.text || JSON.stringify(q)}</p>
                       {q.category && (
-                        <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-white/[0.06] text-white/50 text-[10px] font-medium uppercase tracking-wider">
+                        <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-slate-800 text-white/50 text-[10px] font-medium uppercase tracking-wider">
                           {q.category}
                         </span>
                       )}
@@ -298,7 +298,7 @@ export default function PromptIntelligencePage() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {WORKFLOW_STEPS.map((step) => (
-              <div key={step.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <div key={step.step} className="rounded-xl border border-slate-700 bg-slate-900 p-5">
                 <div className="w-8 h-8 rounded-full bg-violet-500/20 border border-violet-400/30 flex items-center justify-center text-violet-300 text-sm font-bold mb-3">
                   {step.step}
                 </div>

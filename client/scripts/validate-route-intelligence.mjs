@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = process.cwd();
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(scriptDir, "..");
 const appPath = path.join(root, "src", "App.tsx");
 const routeMapPath = path.join(root, "src", "config", "routeIntelligence.ts");
 
@@ -83,7 +85,9 @@ const appPaths = collectRoutePaths(appSection, "/app", true);
 
 // Routes intentionally excluded from guide enforcement.
 const excludedPaths = new Set([
+  "/tools", // parent container route only
   "/app/audits/:id", // covered by /app/audits/ prefix guide
+  "/audit/:id", // legacy redirect route
 ]);
 
 const requiredPaths = [...new Set([...toolsPaths, ...appPaths])].filter((p) => !excludedPaths.has(p));

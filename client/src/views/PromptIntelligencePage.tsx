@@ -73,6 +73,14 @@ const TIER_PATH = [
   },
 ];
 
+  const PROMPT_INTELLIGENCE_FAQ = [
+    { question: "What is Prompt Intelligence?", answer: "Prompt Intelligence tests how AI models respond to different query phrasings about your brand. It maps which prompt types trigger inclusion, exclusion, or competitor displacement in AI-generated answers." },
+    { question: "Which AI platforms are analyzed?", answer: "Prompt Intelligence runs query variants across ChatGPT, Perplexity, Claude, and Google AI to map cross-platform prompt patterns and brand mention rates." },
+    { question: "What tier do I need to access Prompt Intelligence?", answer: "Prompt Intelligence is available on the Alignment plan and above. It generates realistic prompt variants from your page content and runs them across AI platforms to detect coverage gaps." },
+    { question: "How does entity extraction work?", answer: "Prompt Intelligence scrapes your page content to extract entities, keywords, and brand signals, then builds query variants aligned to informational, transactional, comparison, and problem-solving intent types." },
+    { question: "How do I close prompt coverage gaps?", answer: "Review the query types where your brand is absent or displaced, then build content that addresses those intent patterns — schema claims, FAQ blocks, and entity disambiguation aligned to the missing prompt categories." },
+  ];
+
 export default function PromptIntelligencePage() {
   const navigate = useNavigate();
   const { token, isAuthenticated, user } = useAuthStore();
@@ -85,7 +93,7 @@ export default function PromptIntelligencePage() {
     structuredData: [
       buildWebPageSchema({
         path: "/prompt-intelligence",
-        name: "Prompt Intelligence — AI Query Pattern Analysis | AiVIS",
+        name: "Prompt Intelligence — AI Query Pattern Analysis | AiVIS.biz",
         description: "Test how AI models respond to different query phrasings about your brand. Map prompt variant patterns to citation inclusion, exclusion, and competitor displacement outcomes.",
       }),
       buildFaqSchema(PROMPT_INTELLIGENCE_FAQ, { path: "/prompt-intelligence" }),

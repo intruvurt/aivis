@@ -20,7 +20,7 @@
   },
   "hero": {
     "title": "Fix how AI systems interpret and cite your website",
-    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.",
+    "signedOutSubtitle": "Most AI visibility tools stop at a dashboard. AiVIS.biz diagnoses why AI skips your site, traces it to specific page failures, and ships the fix — down to the pull request.",
     "cta": "Start Audit",
     "ctaSecondary": "View Methodology"
   },
@@ -102,7 +102,7 @@
     "competitors": "Competitors",
     "benchmarks": "Benchmarks",
     "keywords": "Keywords",
-    "queryGaps": "Query Gaps",
+    "queryGaps": "Prompt Intelligence",
     "answerPresence": "Answer Presence",
     "reverseEngineer": "Reverse Engineer",
     "brandIntegrity": "Brand Integrity",
@@ -185,6 +185,6 @@
     "resources": "Resources",
     "legal": "Legal",
     "contact": "Contact",
-    "copyright": "© {{year}} AiVIS. All rights reserved."
+    "copyright": "© {{year}} AiVIS.biz. All rights reserved."
   }
 }

@@ -167,6 +167,20 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
   const secondaryFixes = issueRows.slice(1, 4);
 
   // Upgrade suggestions
+
+  // Evidence summary (CITE LEDGER proof layer)
+  const evidenceCount = issueRows.filter(r => r.evidenceIds.length > 0).length;
+  const gapCount = issueRows.filter(r => {
+    const s = (r.severity ?? "").toUpperCase();
+    return s === "CRITICAL" || s === "HIGH";
+  }).length;
+  const driftCount =
+    (result.contradiction_report as any)?.contradiction_flags?.length ??
+    (result.contradiction_report as any)?.total_flags ??
+    0;
+  const evidencePreview = (result.evidence_fix_plan?.issues ?? [])
+    .filter(i => i.evidence_excerpt)
+    .slice(0, 3);
   const upgradeSuggestions = [
     { id: "reverse-engineer", title: "Reverse Engineer Tool", description: "Use decompile + model diff to rebuild stronger section structure.", requirement: "alignment" as const, to: "/app/reverse-engineer", show: contentWordCount < 800 || recommendationCount >= 4 },
     { id: "competitors", title: "Competitor Gap Tracking", description: "Compare your score against direct competitors.", requirement: "alignment" as const, to: "/app/competitors", show: result.visibility_score < 70 || schemaCount === 0 },
@@ -249,7 +263,44 @@ const ComprehensiveAnalysis: React.FC<ComprehensiveAnalysisProps> = ({ result, t
               </div>
             </div>
           </div>
+          {/* Evidence Summary Row */}
+          <div className="mt-5 grid grid-cols-3 gap-3 border-t border-white/[0.07] pt-4">
+            <div className="rounded-xl bg-emerald-500/[0.07] border border-emerald-400/15 p-3 text-center">
+              <div className="text-2xl font-bold text-emerald-400">{evidenceCount}</div>
+              <div className="mt-1 text-[11px] uppercase tracking-wider text-emerald-300/60">Verified Evidence</div>
+            </div>
+            <div className="rounded-xl bg-amber-500/[0.07] border border-amber-400/15 p-3 text-center">
+              <div className="text-2xl font-bold text-amber-400">{gapCount}</div>
+              <div className="mt-1 text-[11px] uppercase tracking-wider text-amber-300/60">Attribution Gaps</div>
+            </div>
+            <div className="rounded-xl bg-rose-500/[0.07] border border-rose-400/15 p-3 text-center">
+              <div className="text-2xl font-bold text-rose-400">{driftCount}</div>
+              <div className="mt-1 text-[11px] uppercase tracking-wider text-rose-300/60">Drift Signals</div>
+            </div>
+          </div>
         </section>
+
+        {/* 2b. EVIDENCE PREVIEW — top evidence backing the score */}
+        {evidencePreview.length > 0 && (
+          <section className="reveal rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40">
+              Evidence Backing This Score
+            </h3>
+            <div className="space-y-3">
+              {evidencePreview.map((iss, i) => (
+                <div key={iss.id} className="flex gap-3 rounded-xl bg-white/[0.03] border border-white/[0.06] p-3">
+                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-emerald-400/25 bg-emerald-500/10 text-[10px] font-bold text-emerald-400">
+                    E{i + 1}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="line-clamp-2 text-sm text-white/65">{iss.evidence_excerpt}</p>
+                    <p className="mt-1 truncate font-mono text-[10px] text-white/25">{iss.id}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 3. METRICS ROW - 4 cards inline */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">

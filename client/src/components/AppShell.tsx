@@ -25,6 +25,9 @@ function OutletErrorFallback() {
   );
 }
 
+// key={location.pathname} on the JSX element forces React to unmount+remount
+// this class component on every navigation, resetting hasError to false so a
+// crash on one route never permanently blocks subsequent routes.
 class OutletErrorBoundary extends React.Component<React.PropsWithChildren, { hasError: boolean }> {
   constructor(props: React.PropsWithChildren) {
     super(props);
@@ -81,7 +84,7 @@ export default function AppShell() {
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
-          <OutletErrorBoundary>
+          <OutletErrorBoundary key={location.pathname}>
             <Suspense fallback={<PageLoadingIndicator />}>
               <Outlet />
             </Suspense>

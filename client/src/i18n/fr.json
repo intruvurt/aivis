@@ -20,7 +20,7 @@
   },
   "hero": {
     "title": "Moteur de Visibilité IA",
-    "signedOutSubtitle": "La plupart des outils de visibilité IA se limitent à un tableau de bord. AiVIS diagnostique pourquoi l'IA ignore votre site, retrace les défaillances spécifiques et livre le correctif - jusqu'au pull request.",
+    "signedOutSubtitle": "La plupart des outils de visibilité IA se limitent à un tableau de bord. AiVIS.biz diagnostique pourquoi l'IA ignore votre site, retrace les défaillances spécifiques et livre le correctif - jusqu'au pull request.",
     "cta": "Lancer l'Audit",
     "ctaSecondary": "Voir la Méthodologie"
   },
@@ -103,7 +103,7 @@
     "competitors": "Concurrents",
     "benchmarks": "Benchmarks",
     "keywords": "Mots-clés",
-    "queryGaps": "Lacunes de Requêtes",
+    "queryGaps": "Intelligence Requêtes",
     "answerPresence": "Présence dans les Réponses",
     "reverseEngineer": "Rétro-ingénierie",
     "brandIntegrity": "Intégrité de Marque",
@@ -185,6 +185,6 @@
     "resources": "Ressources",
     "legal": "Mentions légales",
     "contact": "Contact",
-    "copyright": "© {{year}} AiVIS. Tous droits réservés."
+    "copyright": "© {{year}} AiVIS.biz. Tous droits réservés."
   }
 }

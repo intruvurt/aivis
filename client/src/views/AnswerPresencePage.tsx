@@ -79,6 +79,14 @@ const TIER_PATH = [
   },
 ];
 
+const ANSWER_PRESENCE_FAQ = [
+  { question: "What is Answer Presence tracking?", answer: "Answer Presence tracks whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI. It detects direct mentions, citation links, contextual references, and competitor displacement." },
+  { question: "Which AI platforms are scanned?", answer: "Answer Presence scans across ChatGPT, Perplexity, Claude, and Google AI Overviews simultaneously to map your brand mention rate and citation inclusion across all major AI answer engines." },
+  { question: "What is competitor displacement?", answer: "Competitor displacement occurs when a competitor appears in the AI answer space where your brand should appear. Answer Presence detects and reports exactly which queries hand answers to competitors instead of you." },
+  { question: "What tier do I need for Answer Presence?", answer: "Answer Presence requires the Alignment plan. It runs AI answer scans across 4 platforms, detects mention rates, citation links, and competitor displacement patterns with actionable evidence for each finding." },
+  { question: "How do I improve my answer presence?", answer: "Re-analyze your page after implementing CITE LEDGER recommendations — primarily schema markup, entity clarity, content depth, and structured FAQ content. Answer Presence can re-test to confirm your brand now appears where it was previously absent." },
+];
+
 export default function AnswerPresencePage() {
   const navigate = useNavigate();
   const { token, isAuthenticated, user } = useAuthStore();
@@ -91,7 +99,7 @@ export default function AnswerPresencePage() {
     structuredData: [
       buildWebPageSchema({
         path: "/answer-presence",
-        name: "AI Answer Presence Engine | AiVIS",
+        name: "AI Answer Presence Engine | AiVIS.biz",
         description: "Track whether your brand appears in AI-generated answers across ChatGPT, Perplexity, Claude, and Google AI Overviews. Evidence-based citation and mention detection.",
       }),
       buildFaqSchema(ANSWER_PRESENCE_FAQ, { path: "/answer-presence" }),

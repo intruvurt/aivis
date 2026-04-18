@@ -1151,7 +1151,7 @@ const routeSpecificEnrichment = {
 				heading: 'What is CITE LEDGER',
 				paragraphs: [
 					'CITE LEDGER is the verification layer that checks whether AI systems can extract, attribute, and cite your content. A page can rank first in traditional search and still be invisible to answer engines if structural signals are missing.',
-					'AiVIS.biz measures extractability, trust signal alignment, and citation readiness across seven weighted dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical SEO (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Hard-blocker caps prevent inflated scores when critical signals are missing.',
+					'AiVIS.biz measures extractability, trust signal alignment, and citation readiness across seven weighted dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Hard-blocker caps prevent inflated scores when critical signals are missing.',
 				],
 			},
 			{

@@ -1,0 +1,488 @@
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+[Homepage Enforcement] Γ£ô Contract validated ΓÇö zero drift
+transforming...
+[32mΓ£ô[39m 4310 modules transformed.
+Circular chunk: vendor -> sentry -> vendor. Please adjust the manual chunk logic for these chunks.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                                              [39m[1m[2m 48.64 kB[22m[1m[22m[2m Γöé gzip:  12.05 kB[22m
+[2mdist/[22m[35massets/ServerHeadersPage-BRYetETF.css                   [39m[1m[2m  1.95 kB[22m[1m[22m[2m Γöé gzip:   0.69 kB[22m
+[2mdist/[22m[35massets/index-BR6LrTzI.css                               [39m[1m[2m191.52 kB[22m[1m[22m[2m Γöé gzip:  30.82 kB[22m
+[2mdist/[22m[36massets/constants-Cxu9thzZ.js                            [39m[1m[2m  0.07 kB[22m[1m[22m[2m Γöé gzip:   0.09 kB[22m
+[2mdist/[22m[36massets/safeHref-D-0Mbtdj.js                             [39m[1m[2m  0.31 kB[22m[1m[22m[2m Γöé gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/Card-7fpFzcdF.js                                 [39m[1m[2m  0.35 kB[22m[1m[22m[2m Γöé gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/formStyles-BMkdRVTu.js                           [39m[1m[2m  0.37 kB[22m[1m[22m[2m Γöé gzip:   0.23 kB[22m
+[2mdist/[22m[36massets/targetKey-_cccmIF5.js                            [39m[1m[2m  0.45 kB[22m[1m[22m[2m Γöé gzip:   0.29 kB[22m
+[2mdist/[22m[36massets/useSwipeGesture-BNTEi5b0.js                      [39m[1m[2m  0.62 kB[22m[1m[22m[2m Γöé gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/marketingClaims-f5EDQk4q.js                      [39m[1m[2m  0.67 kB[22m[1m[22m[2m Γöé gzip:   0.39 kB[22m
+[2mdist/[22m[36massets/AuditEngineIcon-DOcNs_tx.js                      [39m[1m[2m  0.67 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/ContentBlueprintIcon-BrInwvGi.js                 [39m[1m[2m  0.75 kB[22m[1m[22m[2m Γöé gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/platformNarrative-BKnK6cYX.js                    [39m[1m[2m  0.77 kB[22m[1m[22m[2m Γöé gzip:   0.49 kB[22m
+[2mdist/[22m[36massets/ScoreFixIcon-q8D7il9r.js                         [39m[1m[2m  0.81 kB[22m[1m[22m[2m Γöé gzip:   0.42 kB[22m
+[2mdist/[22m[36massets/ResetAuth-rxys99ql.js                            [39m[1m[2m  0.82 kB[22m[1m[22m[2m Γöé gzip:   0.45 kB[22m
+[2mdist/[22m[36massets/useCountUp-BidwZVps.js                           [39m[1m[2m  0.95 kB[22m[1m[22m[2m Γöé gzip:   0.51 kB[22m
+[2mdist/[22m[36massets/referralShare-B9iBH5Vq.js                        [39m[1m[2m  1.10 kB[22m[1m[22m[2m Γöé gzip:   0.63 kB[22m
+[2mdist/[22m[36massets/AppPageFrame-CCU6py0a.js                         [39m[1m[2m  1.18 kB[22m[1m[22m[2m Γöé gzip:   0.58 kB[22m
+[2mdist/[22m[36massets/ReferralRedirect-Ct6ob2D_.js                     [39m[1m[2m  1.23 kB[22m[1m[22m[2m Γöé gzip:   0.69 kB[22m
+[2mdist/[22m[36massets/PlatformShiftBanner-6TUuuPKR.js                  [39m[1m[2m  1.26 kB[22m[1m[22m[2m Γöé gzip:   0.57 kB[22m
+[2mdist/[22m[36massets/PaymentCanceledPage-BTmHXHvA.js                  [39m[1m[2m  1.34 kB[22m[1m[22m[2m Γöé gzip:   0.62 kB[22m
+[2mdist/[22m[36massets/PageQASection-BgRnI5gk.js                        [39m[1m[2m  1.35 kB[22m[1m[22m[2m Γöé gzip:   0.72 kB[22m
+[2mdist/[22m[36massets/PublicPageFrame-eikbIQHz.js                      [39m[1m[2m  1.38 kB[22m[1m[22m[2m Γöé gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/NotFound-xht7U2Iu.js                             [39m[1m[2m  1.65 kB[22m[1m[22m[2m Γöé gzip:   0.82 kB[22m
+[2mdist/[22m[36massets/analysisStore-DyAMTmcg.js                        [39m[1m[2m  1.65 kB[22m[1m[22m[2m Γöé gzip:   0.81 kB[22m
+[2mdist/[22m[36massets/PaymentSuccessPage-kOrY25MC.js                   [39m[1m[2m  1.97 kB[22m[1m[22m[2m Γöé gzip:   0.92 kB[22m
+[2mdist/[22m[36massets/useSupportTickets-a_edgky5.js                    [39m[1m[2m  2.08 kB[22m[1m[22m[2m Γöé gzip:   0.78 kB[22m
+[2mdist/[22m[36massets/KeywordClusterIndex-s5x6XQKG.js                  [39m[1m[2m  2.17 kB[22m[1m[22m[2m Γöé gzip:   0.95 kB[22m
+[2mdist/[22m[36massets/uiPalette-C9ckpjoh.js                            [39m[1m[2m  2.25 kB[22m[1m[22m[2m Γöé gzip:   0.76 kB[22m
+[2mdist/[22m[36massets/state-DrmlzkM_.js                                [39m[1m[2m  2.70 kB[22m[1m[22m[2m Γöé gzip:   1.33 kB[22m
+[2mdist/[22m[36massets/PlatformProofLoopCard-DRzGSSOl.js                [39m[1m[2m  2.77 kB[22m[1m[22m[2m Γöé gzip:   0.94 kB[22m
+[2mdist/[22m[36massets/scoreUtils-DmvHi8GV.js                           [39m[1m[2m  2.79 kB[22m[1m[22m[2m Γöé gzip:   0.94 kB[22m
+[2mdist/[22m[36massets/InviteAcceptPage-DEXFRuQ2.js                     [39m[1m[2m  2.89 kB[22m[1m[22m[2m Γöé gzip:   1.26 kB[22m
+[2mdist/[22m[36massets/ChangelogPage-B8uc8Oxs.js                        [39m[1m[2m  3.07 kB[22m[1m[22m[2m Γöé gzip:   1.34 kB[22m
+[2mdist/[22m[36massets/FeatureInstruction-B7OTIB5W.js                   [39m[1m[2m  3.23 kB[22m[1m[22m[2m Γöé gzip:   1.20 kB[22m
+[2mdist/[22m[36massets/ResetPassword-vxUi-UGn.js                        [39m[1m[2m  3.24 kB[22m[1m[22m[2m Γöé gzip:   1.27 kB[22m
+[2mdist/[22m[36massets/usePageMeta-DavCNXTG.js                          [39m[1m[2m  3.34 kB[22m[1m[22m[2m Γöé gzip:   1.36 kB[22m
+[2mdist/[22m[36massets/UpgradeWall-CjVu3heR.js                          [39m[1m[2m  3.37 kB[22m[1m[22m[2m Γöé gzip:   1.49 kB[22m
+[2mdist/[22m[36massets/GeoAIRanking2026-D24AAr7u.js                     [39m[1m[2m  3.49 kB[22m[1m[22m[2m Γöé gzip:   1.29 kB[22m
+[2mdist/[22m[36massets/api--WHEucVU.js                                  [39m[1m[2m  3.65 kB[22m[1m[22m[2m Γöé gzip:   1.16 kB[22m
+[2mdist/[22m[36massets/KeywordPageTemplate-BS0EAT9X.js                  [39m[1m[2m  3.69 kB[22m[1m[22m[2m Γöé gzip:   1.42 kB[22m
+[2mdist/[22m[36massets/AEOPlaybook2026-DjgB3DW-.js                      [39m[1m[2m  3.79 kB[22m[1m[22m[2m Γöé gzip:   1.37 kB[22m
+[2mdist/[22m[36massets/WhatIsAivisPage-8FUYiCO_.js                      [39m[1m[2m  4.20 kB[22m[1m[22m[2m Γöé gzip:   1.51 kB[22m
+[2mdist/[22m[36massets/WhyAivisExistsPage-CdwG8fZ-.js                   [39m[1m[2m  4.42 kB[22m[1m[22m[2m Γöé gzip:   1.72 kB[22m
+[2mdist/[22m[36massets/VerifyEmailPage-CfADWvqy.js                      [39m[1m[2m  4.46 kB[22m[1m[22m[2m Γöé gzip:   1.81 kB[22m
+[2mdist/[22m[36massets/VerifyLicensePage-BabDEkbs.js                    [39m[1m[2m  4.50 kB[22m[1m[22m[2m Γöé gzip:   1.59 kB[22m
+[2mdist/[22m[36massets/ConversionCTA-E08YppyO.js                        [39m[1m[2m  4.91 kB[22m[1m[22m[2m Γöé gzip:   1.51 kB[22m
+[2mdist/[22m[36massets/TripleCheckProtocolPage-Cy87sqsj.js              [39m[1m[2m  5.64 kB[22m[1m[22m[2m Γöé gzip:   2.00 kB[22m
+[2mdist/[22m[36massets/NotificationPreferencesPanel-BUGHZ-eG.js         [39m[1m[2m  5.80 kB[22m[1m[22m[2m Γöé gzip:   2.02 kB[22m
+[2mdist/[22m[36massets/CompareProfoundPage-DevEFU7p.js                  [39m[1m[2m  5.84 kB[22m[1m[22m[2m Γöé gzip:   1.64 kB[22m
+[2mdist/[22m[36massets/CitationReportsPage-CotH5qSz.js                  [39m[1m[2m  5.84 kB[22m[1m[22m[2m Γöé gzip:   1.90 kB[22m
+[2mdist/[22m[36massets/CompareReauditPage-C-_qHqBy.js                   [39m[1m[2m  5.90 kB[22m[1m[22m[2m Γöé gzip:   1.66 kB[22m
+[2mdist/[22m[36massets/ComparisonPage-BnVDABLm.js                       [39m[1m[2m  5.95 kB[22m[1m[22m[2m Γöé gzip:   1.78 kB[22m
+[2mdist/[22m[36massets/LedgerIndexPage-B07wTh7u.js                      [39m[1m[2m  6.00 kB[22m[1m[22m[2m Γöé gzip:   2.05 kB[22m
+[2mdist/[22m[36massets/SnapshotPage-D2ymLrkm.js                         [39m[1m[2m  6.02 kB[22m[1m[22m[2m Γöé gzip:   2.03 kB[22m
+[2mdist/[22m[36massets/ShareButtons-C9xl3IHn.js                         [39m[1m[2m  6.09 kB[22m[1m[22m[2m Γöé gzip:   2.55 kB[22m
+[2mdist/[22m[36massets/DriftAnalysisPage-YhoxFVXq.js                    [39m[1m[2m  6.32 kB[22m[1m[22m[2m Γöé gzip:   2.09 kB[22m
+[2mdist/[22m[36massets/EntityResolutionModelPage-C23Wttx7.js            [39m[1m[2m  6.46 kB[22m[1m[22m[2m Γöé gzip:   1.98 kB[22m
+[2mdist/[22m[36massets/CompareOtterlyPage-Doh1h7lC.js                   [39m[1m[2m  6.79 kB[22m[1m[22m[2m Γöé gzip:   1.86 kB[22m
+[2mdist/[22m[36massets/ConversationalQueryPlaybook2026-CEQCW3Wu.js      [39m[1m[2m  6.81 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
+[2mdist/[22m[36massets/QueryResultsLogPage-BtZt0QaV.js                  [39m[1m[2m  6.84 kB[22m[1m[22m[2m Γöé gzip:   1.99 kB[22m
+[2mdist/[22m[36massets/AboutAivisPage-Eo6lRvgn.js                       [39m[1m[2m  7.16 kB[22m[1m[22m[2m Γöé gzip:   2.27 kB[22m
+[2mdist/[22m[36massets/NotificationsPage-BOL_Rbml.js                    [39m[1m[2m  7.22 kB[22m[1m[22m[2m Γöé gzip:   2.36 kB[22m
+[2mdist/[22m[36massets/InsightsPage-C50ykyNr.js                         [39m[1m[2m  7.34 kB[22m[1m[22m[2m Γöé gzip:   2.32 kB[22m
+[2mdist/[22m[36massets/SampleReport-Cwa4zCRz.js                         [39m[1m[2m  7.57 kB[22m[1m[22m[2m Γöé gzip:   2.77 kB[22m
+[2mdist/[22m[36massets/insights-D00Z7SCc.js                             [39m[1m[2m  7.63 kB[22m[1m[22m[2m Γöé gzip:   2.87 kB[22m
+[2mdist/[22m[36massets/WhatIsCiteLedgerPage-DpGxT5jk.js                 [39m[1m[2m  7.74 kB[22m[1m[22m[2m Γöé gzip:   2.60 kB[22m
+[2mdist/[22m[36massets/BadgeEmbedPage-nnsLI7HV.js                       [39m[1m[2m  7.78 kB[22m[1m[22m[2m Γöé gzip:   2.51 kB[22m
+[2mdist/[22m[36massets/AISearchVisibility2026-jzRCZV9F.js               [39m[1m[2m  7.79 kB[22m[1m[22m[2m Γöé gzip:   2.60 kB[22m
+[2mdist/[22m[36massets/BragEvidenceTrailsPage-Dh_8gpJH.js               [39m[1m[2m  7.90 kB[22m[1m[22m[2m Γöé gzip:   2.31 kB[22m
+[2mdist/[22m[36massets/CiteLedgerPage-DntPEscD.js                       [39m[1m[2m  8.45 kB[22m[1m[22m[2m Γöé gzip:   2.44 kB[22m
+[2mdist/[22m[36massets/VoiceSearchAIAnswerOptimization2026-COTFuh9-.js  [39m[1m[2m  8.47 kB[22m[1m[22m[2m Γöé gzip:   2.31 kB[22m
+[2mdist/[22m[36massets/BlogPostPage-Bdyobg_s.js                         [39m[1m[2m  8.52 kB[22m[1m[22m[2m Γöé gzip:   3.00 kB[22m
+[2mdist/[22m[36massets/BlogsPage-D1e1f6cb.js                            [39m[1m[2m  8.84 kB[22m[1m[22m[2m Γöé gzip:   2.78 kB[22m
+[2mdist/[22m[36massets/PressPage-C0i3Vs7A.js                            [39m[1m[2m  9.31 kB[22m[1m[22m[2m Γöé gzip:   3.14 kB[22m
+[2mdist/[22m[36massets/CompliancePage-A6-zqoNc.js                       [39m[1m[2m  9.94 kB[22m[1m[22m[2m Γöé gzip:   2.74 kB[22m
+[2mdist/[22m[36massets/PipelinePage-BXKNJBcA.js                         [39m[1m[2m 10.14 kB[22m[1m[22m[2m Γöé gzip:   3.15 kB[22m
+[2mdist/[22m[36massets/seoSchema-BA7HHhjc.js                            [39m[1m[2m 10.22 kB[22m[1m[22m[2m Γöé gzip:   3.54 kB[22m
+[2mdist/[22m[36massets/AuditDetails-BteoMnV2.js                         [39m[1m[2m 11.05 kB[22m[1m[22m[2m Γöé gzip:   3.15 kB[22m
+[2mdist/[22m[36massets/AnswerPresencePage-iT_-gqUD.js                   [39m[1m[2m 11.34 kB[22m[1m[22m[2m Γöé gzip:   3.56 kB[22m
+[2mdist/[22m[36massets/SiteCrawlPage-CkCAfV8v.js                        [39m[1m[2m 11.70 kB[22m[1m[22m[2m Γöé gzip:   3.70 kB[22m
+[2mdist/[22m[36massets/PromptIntelligencePage-BxETGSVp.js               [39m[1m[2m 11.79 kB[22m[1m[22m[2m Γöé gzip:   3.86 kB[22m
+[2mdist/[22m[36massets/react-core-DfJT-LlT.js                           [39m[1m[2m 12.24 kB[22m[1m[22m[2m Γöé gzip:   4.74 kB[22m
+[2mdist/[22m[36massets/PartnershipPaymentPage-CRHL7pS7.js               [39m[1m[2m 13.27 kB[22m[1m[22m[2m Γöé gzip:   3.62 kB[22m
+[2mdist/[22m[36massets/ApiDocsPage-rdawH9hN.js                          [39m[1m[2m 13.48 kB[22m[1m[22m[2m Γöé gzip:   3.90 kB[22m
+[2mdist/[22m[36massets/AgencyPage-BZzCXayt.js                           [39m[1m[2m 13.96 kB[22m[1m[22m[2m Γöé gzip:   4.32 kB[22m
+[2mdist/[22m[36massets/Profile-DkqB554S.js                              [39m[1m[2m 14.10 kB[22m[1m[22m[2m Γöé gzip:   4.12 kB[22m
+[2mdist/[22m[36massets/CompareRankScalePage-DzalmWtE.js                 [39m[1m[2m 14.33 kB[22m[1m[22m[2m Γöé gzip:   3.95 kB[22m
+[2mdist/[22m[36massets/CompetitiveLandscapePage-B6gdjaMM.js             [39m[1m[2m 14.41 kB[22m[1m[22m[2m Γöé gzip:   4.39 kB[22m
+[2mdist/[22m[36massets/CompareAhrefsPage-D7qaoqGQ.js                    [39m[1m[2m 15.33 kB[22m[1m[22m[2m Γöé gzip:   4.46 kB[22m
+[2mdist/[22m[36massets/IntegrationsHubPage-C1x1kk_J.js                  [39m[1m[2m 15.45 kB[22m[1m[22m[2m Γöé gzip:   4.10 kB[22m
+[2mdist/[22m[36massets/CompareSemrushPage-DRdmuDr7.js                   [39m[1m[2m 15.74 kB[22m[1m[22m[2m Γöé gzip:   4.36 kB[22m
+[2mdist/[22m[36massets/DatasetStudioPage-oon8oqPt.js                    [39m[1m[2m 16.06 kB[22m[1m[22m[2m Γöé gzip:   4.37 kB[22m
+[2mdist/[22m[36massets/BrandIntegrityPage-CB0pCB3W.js                   [39m[1m[2m 16.36 kB[22m[1m[22m[2m Γöé gzip:   4.84 kB[22m
+[2mdist/[22m[36massets/WhyAIVisibility-Dt3h-34J.js                      [39m[1m[2m 16.60 kB[22m[1m[22m[2m Γöé gzip:   4.70 kB[22m
+[2mdist/[22m[36massets/ComplianceDashboardPage-DtvgcDsD.js              [39m[1m[2m 16.95 kB[22m[1m[22m[2m Γöé gzip:   4.94 kB[22m
+[2mdist/[22m[36massets/ReferralsPage-tl_8z-bo.js                        [39m[1m[2m 17.25 kB[22m[1m[22m[2m Γöé gzip:   4.71 kB[22m
+[2mdist/[22m[36massets/AiVisibilityBenchmark-DDRSsroT.js                [39m[1m[2m 17.26 kB[22m[1m[22m[2m Γöé gzip:   4.68 kB[22m
+[2mdist/[22m[36massets/Dashboard-B16WWYJ5.js                            [39m[1m[2m 18.57 kB[22m[1m[22m[2m Γöé gzip:   6.27 kB[22m
+[2mdist/[22m[36massets/ContentExtractabilityPage-DbRoB6EZ.js            [39m[1m[2m 19.72 kB[22m[1m[22m[2m Γöé gzip:   6.45 kB[22m
+[2mdist/[22m[36massets/RobotsCheckerPage-rs6uyytz.js                    [39m[1m[2m 19.83 kB[22m[1m[22m[2m Γöé gzip:   6.18 kB[22m
+[2mdist/[22m[36massets/TextSummaryView-CAfHAnSX.js                      [39m[1m[2m 19.84 kB[22m[1m[22m[2m Γöé gzip:   6.15 kB[22m
+[2mdist/[22m[36massets/SchemaValidatorPage-Cz5KygZs.js                  [39m[1m[2m 19.95 kB[22m[1m[22m[2m Γöé gzip:   6.35 kB[22m
+[2mdist/[22m[36massets/DomainRatingPage-DmJPInA6.js                     [39m[1m[2m 20.85 kB[22m[1m[22m[2m Γöé gzip:   6.95 kB[22m
+[2mdist/[22m[36massets/NicheDiscoveryPage-Bc-yoCJ1.js                   [39m[1m[2m 20.87 kB[22m[1m[22m[2m Γöé gzip:   5.44 kB[22m
+[2mdist/[22m[36massets/AboutPage-g44GaYKC.js                            [39m[1m[2m 21.80 kB[22m[1m[22m[2m Γöé gzip:   6.01 kB[22m
+[2mdist/[22m[36massets/LanguageCheckerPage-CgjmneJ8.js                  [39m[1m[2m 21.89 kB[22m[1m[22m[2m Γöé gzip:   6.60 kB[22m
+[2mdist/[22m[36massets/TermsPage-Lw49R_zv.js                            [39m[1m[2m 22.21 kB[22m[1m[22m[2m Γöé gzip:   6.95 kB[22m
+[2mdist/[22m[36massets/PartnershipAgreementPage-6W9f7snm.js             [39m[1m[2m 24.30 kB[22m[1m[22m[2m Γöé gzip:   6.13 kB[22m
+[2mdist/[22m[36massets/AuthPage-BRO1-lhC.js                             [39m[1m[2m 24.64 kB[22m[1m[22m[2m Γöé gzip:   6.34 kB[22m
+[2mdist/[22m[36massets/PrivacyPage-BEDqaT6A.js                          [39m[1m[2m 24.92 kB[22m[1m[22m[2m Γöé gzip:   6.58 kB[22m
+[2mdist/[22m[36massets/GscConsolePage-BVa909OL.js                       [39m[1m[2m 25.28 kB[22m[1m[22m[2m Γöé gzip:   7.84 kB[22m
+[2mdist/[22m[36massets/TripleCheckMethodologyPage-DMerqM8Z.js           [39m[1m[2m 26.47 kB[22m[1m[22m[2m Γöé gzip:   6.72 kB[22m
+[2mdist/[22m[36massets/DisclosuresPage-CubNNhjh.js                      [39m[1m[2m 26.52 kB[22m[1m[22m[2m Γöé gzip:   7.87 kB[22m
+[2mdist/[22m[36massets/PublicReportPage-oMEefNmY.js                     [39m[1m[2m 27.86 kB[22m[1m[22m[2m Γöé gzip:   7.67 kB[22m
+[2mdist/[22m[36massets/TeamPage-D46cyo_Z.js                             [39m[1m[2m 28.46 kB[22m[1m[22m[2m Γöé gzip:   6.13 kB[22m
+[2mdist/[22m[36massets/KeywordsPage-Bqy5clgk.js                         [39m[1m[2m 30.09 kB[22m[1m[22m[2m Γöé gzip:   9.17 kB[22m
+[2mdist/[22m[36massets/PlatformWorkflowPage-sG8N9I-Z.js                 [39m[1m[2m 32.93 kB[22m[1m[22m[2m Γöé gzip:   8.24 kB[22m
+[2mdist/[22m[36massets/motion-BtWMDxSW.js                               [39m[1m[2m 32.98 kB[22m[1m[22m[2m Γöé gzip:  11.39 kB[22m
+[2mdist/[22m[36massets/McpConsolePage-BaJH6XlW.js                       [39m[1m[2m 33.49 kB[22m[1m[22m[2m Γöé gzip:   7.34 kB[22m
+[2mdist/[22m[36massets/GuideBot-BherXAVm.js                             [39m[1m[2m 33.98 kB[22m[1m[22m[2m Γöé gzip:  10.63 kB[22m
+[2mdist/[22m[36massets/Admin-tRr4YNKV.js                                [39m[1m[2m 34.16 kB[22m[1m[22m[2m Γöé gzip:   7.69 kB[22m
+[2mdist/[22m[36massets/ServerHeadersPage-C-AINjkr.js                    [39m[1m[2m 35.16 kB[22m[1m[22m[2m Γöé gzip:   9.62 kB[22m
+[2mdist/[22m[36massets/BillingPage-DDIsx3cW.js                          [39m[1m[2m 36.50 kB[22m[1m[22m[2m Γöé gzip:   8.92 kB[22m
+[2mdist/[22m[36massets/router-C-nFNE-u.js                               [39m[1m[2m 37.25 kB[22m[1m[22m[2m Γöé gzip:  13.40 kB[22m
+[2mdist/[22m[36massets/PricingPage-CBB8PRwC.js                          [39m[1m[2m 37.97 kB[22m[1m[22m[2m Γöé gzip:  11.22 kB[22m
+[2mdist/[22m[36massets/GuidePage-Cj_PK4nP.js                            [39m[1m[2m 38.55 kB[22m[1m[22m[2m Γöé gzip:  10.05 kB[22m
+[2mdist/[22m[36massets/SettingsPage-BFhPdojo.js                         [39m[1m[2m 39.39 kB[22m[1m[22m[2m Γöé gzip:  10.38 kB[22m
+[2mdist/[22m[36massets/GlossaryPage-BjGnH3YZ.js                         [39m[1m[2m 39.76 kB[22m[1m[22m[2m Γöé gzip:  12.33 kB[22m
+[2mdist/[22m[36massets/AdvancedFeaturesPanel-Bau7vjGJ.js                [39m[1m[2m 43.86 kB[22m[1m[22m[2m Γöé gzip:  12.09 kB[22m
+[2mdist/[22m[36massets/MethodologyPage-C5MEPtMH.js                      [39m[1m[2m 44.36 kB[22m[1m[22m[2m Γöé gzip:  12.31 kB[22m
+[2mdist/[22m[36massets/icons-itbcWECe.js                                [39m[1m[2m 45.32 kB[22m[1m[22m[2m Γöé gzip:  14.63 kB[22m
+[2mdist/[22m[36massets/i18n-B5Rl-IOz.js                                 [39m[1m[2m 47.19 kB[22m[1m[22m[2m Γöé gzip:  15.45 kB[22m
+[2mdist/[22m[36massets/CompetitorsPage-CNxH0Nse.js                      [39m[1m[2m 49.47 kB[22m[1m[22m[2m Γöé gzip:  12.77 kB[22m
+[2mdist/[22m[36massets/ReportsPage-V9EzF03y.js                          [39m[1m[2m 52.66 kB[22m[1m[22m[2m Γöé gzip:  14.73 kB[22m
+[2mdist/[22m[36massets/CitationsPage-C9b8qX9w.js                        [39m[1m[2m 58.08 kB[22m[1m[22m[2m Γöé gzip:  15.24 kB[22m
+[2mdist/[22m[36massets/Landing-Cv2_VpO6.js                              [39m[1m[2m 60.46 kB[22m[1m[22m[2m Γöé gzip:  15.75 kB[22m
+[2mdist/[22m[36massets/chart-deps-DzsXqveD.js                           [39m[1m[2m 62.44 kB[22m[1m[22m[2m Γöé gzip:  20.60 kB[22m
+[2mdist/[22m[36massets/FAQ-bi4F7eXF.js                                  [39m[1m[2m 64.75 kB[22m[1m[22m[2m Γöé gzip:  23.29 kB[22m
+[2mdist/[22m[36massets/ScoreFixPage-Du2bmmG0.js                         [39m[1m[2m 64.93 kB[22m[1m[22m[2m Γöé gzip:  16.71 kB[22m
+[2mdist/[22m[36massets/sentry-ByXH7AcK.js                               [39m[1m[2m 77.42 kB[22m[1m[22m[2m Γöé gzip:  26.90 kB[22m
+[2mdist/[22m[36massets/AnalyticsPage-KdjVoVpu.js                        [39m[1m[2m 79.11 kB[22m[1m[22m[2m Γöé gzip:  19.47 kB[22m
+[2mdist/[22m[36massets/CitationTracker-g-_uDFWT.js                      [39m[1m[2m 81.29 kB[22m[1m[22m[2m Γöé gzip:  17.77 kB[22m
+[2mdist/[22m[36massets/ReverseEngineerPage-C0nslvZT.js                  [39m[1m[2m 82.43 kB[22m[1m[22m[2m Γöé gzip:  18.97 kB[22m
+[2mdist/[22m[36massets/HelpCenter-DFGSPwDO.js                           [39m[1m[2m120.29 kB[22m[1m[22m[2m Γöé gzip:  33.51 kB[22m
+[2mdist/[22m[36massets/AnalyzePage-Cl1SX-pK.js                          [39m[1m[2m166.72 kB[22m[1m[22m[2m Γöé gzip:  40.82 kB[22m
+[2mdist/[22m[36massets/react-dom-BLatOddV.js                            [39m[1m[2m180.43 kB[22m[1m[22m[2m Γöé gzip:  56.30 kB[22m
+[2mdist/[22m[36massets/vendor-BcQ9av_d.js                               [39m[1m[2m235.80 kB[22m[1m[22m[2m Γöé gzip:  81.43 kB[22m
+[2mdist/[22m[36massets/recharts-B8wdykF8.js                             [39m[1m[2m311.35 kB[22m[1m[22m[2m Γöé gzip:  78.50 kB[22m
+[2mdist/[22m[36massets/index-Crn3iELk.js                                [39m[1m[2m411.20 kB[22m[1m[22m[2m Γöé gzip: 106.15 kB[22m
+[2mdist/[22m[36massets/index-CeDvkBby.js                                [39m[1m[33m571.58 kB[39m[22m[2m Γöé gzip: 176.36 kB[22m
+
+(!) Some chunks are larger than 550 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[32mΓ£ô built in 45.65s[39m
+
+Γ£¿ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AEOPlaybook2026-DjgB3DW-.js.gz                       3.70kb / gzip: 1.34kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AboutAivisPage-Eo6lRvgn.js.gz                        7.00kb / gzip: 2.21kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AboutPage-g44GaYKC.js.gz                             21.28kb / gzip: 5.86kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AgencyPage-BZzCXayt.js.gz                            13.63kb / gzip: 4.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AISearchVisibility2026-jzRCZV9F.js.gz                7.61kb / gzip: 2.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Admin-tRr4YNKV.js.gz                                 33.36kb / gzip: 7.48kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AiVisibilityBenchmark-DDRSsroT.js.gz                 16.85kb / gzip: 4.56kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/analysisStore-DyAMTmcg.js.gz                         1.61kb / gzip: 0.79kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AdvancedFeaturesPanel-Bau7vjGJ.js.gz                 42.84kb / gzip: 11.77kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnswerPresencePage-iT_-gqUD.js.gz                    11.07kb / gzip: 3.47kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/api--WHEucVU.js.gz                                   3.57kb / gzip: 1.13kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ApiDocsPage-rdawH9hN.js.gz                           13.16kb / gzip: 3.80kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AppPageFrame-CCU6py0a.js.gz                          1.15kb / gzip: 0.56kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AuditDetails-BteoMnV2.js.gz                          10.79kb / gzip: 3.07kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BadgeEmbedPage-nnsLI7HV.js.gz                        7.60kb / gzip: 2.45kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AuthPage-BRO1-lhC.js.gz                              24.06kb / gzip: 6.17kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BlogPostPage-Bdyobg_s.js.gz                          8.32kb / gzip: 2.92kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BlogsPage-D1e1f6cb.js.gz                             8.63kb / gzip: 2.70kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BragEvidenceTrailsPage-Dh_8gpJH.js.gz                7.71kb / gzip: 2.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BillingPage-DDIsx3cW.js.gz                           35.64kb / gzip: 8.66kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ChangelogPage-B8uc8Oxs.js.gz                         3.00kb / gzip: 1.31kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BrandIntegrityPage-CB0pCB3W.js.gz                    15.97kb / gzip: 4.71kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationReportsPage-CotH5qSz.js.gz                   5.71kb / gzip: 1.85kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationsPage-C9b8qX9w.js.gz                         56.71kb / gzip: 14.83kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CiteLedgerPage-DntPEscD.js.gz                        8.25kb / gzip: 2.38kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareOtterlyPage-Doh1h7lC.js.gz                    6.63kb / gzip: 1.81kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareAhrefsPage-D7qaoqGQ.js.gz                     14.97kb / gzip: 4.35kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareProfoundPage-DevEFU7p.js.gz                   5.71kb / gzip: 1.60kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareReauditPage-C-_qHqBy.js.gz                    5.76kb / gzip: 1.62kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ComparisonPage-BnVDABLm.js.gz                        5.81kb / gzip: 1.73kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareSemrushPage-DRdmuDr7.js.gz                    15.37kb / gzip: 4.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompetitiveLandscapePage-B6gdjaMM.js.gz              14.07kb / gzip: 4.27kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ComplianceDashboardPage-DtvgcDsD.js.gz               16.56kb / gzip: 4.82kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompliancePage-A6-zqoNc.js.gz                        9.71kb / gzip: 2.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ConversionCTA-E08YppyO.js.gz                         4.80kb / gzip: 1.47kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ConversationalQueryPlaybook2026-CEQCW3Wu.js.gz       6.65kb / gzip: 2.26kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompetitorsPage-CNxH0Nse.js.gz                       48.31kb / gzip: 12.44kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareRankScalePage-DzalmWtE.js.gz                  13.99kb / gzip: 3.85kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DatasetStudioPage-oon8oqPt.js.gz                     15.69kb / gzip: 4.26kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Dashboard-B16WWYJ5.js.gz                             18.13kb / gzip: 6.12kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DomainRatingPage-DmJPInA6.js.gz                      20.36kb / gzip: 6.77kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DisclosuresPage-CubNNhjh.js.gz                       25.90kb / gzip: 7.69kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DriftAnalysisPage-YhoxFVXq.js.gz                     6.17kb / gzip: 2.04kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/EntityResolutionModelPage-C23Wttx7.js.gz             6.31kb / gzip: 1.93kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GeoAIRanking2026-D24AAr7u.js.gz                      3.41kb / gzip: 1.26kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ContentExtractabilityPage-DbRoB6EZ.js.gz             19.25kb / gzip: 6.29kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GscConsolePage-BVa909OL.js.gz                        24.69kb / gzip: 7.63kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GlossaryPage-BjGnH3YZ.js.gz                          38.83kb / gzip: 12.03kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GuideBot-BherXAVm.js.gz                              33.18kb / gzip: 10.35kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GuidePage-Cj_PK4nP.js.gz                             37.64kb / gzip: 9.78kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-DcZL32Y1.js.gz                                 1.63kb / gzip: 0.89kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/FeatureInstruction-B7OTIB5W.js.gz                    3.15kb / gzip: 1.17kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-cZlgQwHF.js.gz                                 9.55kb / gzip: 3.65kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-B1a0d5bp.js.gz                                 20.14kb / gzip: 6.32kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/i18n-B5Rl-IOz.js.gz                                  46.08kb / gzip: 15.07kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-itbcWECe.js.gz                                 44.26kb / gzip: 14.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/insights-D00Z7SCc.js.gz                              7.45kb / gzip: 2.80kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/InsightsPage-C50ykyNr.js.gz                          7.17kb / gzip: 2.26kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-zSN1F0j4.css.gz                                30.67kb / gzip: 5.09kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/InviteAcceptPage-DEXFRuQ2.js.gz                      2.82kb / gzip: 1.23kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/IntegrationsHubPage-C1x1kk_J.js.gz                   15.09kb / gzip: 3.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordClusterIndex-s5x6XQKG.js.gz                   2.12kb / gzip: 0.93kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordPageTemplate-BS0EAT9X.js.gz                   3.60kb / gzip: 1.38kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordsPage-Bqy5clgk.js.gz                          29.38kb / gzip: 8.93kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/LedgerIndexPage-B07wTh7u.js.gz                       5.86kb / gzip: 2.00kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/LanguageCheckerPage-CgjmneJ8.js.gz                   21.38kb / gzip: 6.44kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Landing-Cv2_VpO6.js.gz                               59.04kb / gzip: 15.33kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/McpConsolePage-BaJH6XlW.js.gz                        32.71kb / gzip: 7.13kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/MethodologyPage-C5MEPtMH.js.gz                       43.32kb / gzip: 12.00kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotificationPreferencesPanel-BUGHZ-eG.js.gz          5.66kb / gzip: 1.97kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotFound-xht7U2Iu.js.gz                              1.61kb / gzip: 0.80kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NicheDiscoveryPage-Bc-yoCJ1.js.gz                    20.38kb / gzip: 5.30kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotificationsPage-BOL_Rbml.js.gz                     7.05kb / gzip: 2.30kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PageQASection-BgRnI5gk.js.gz                         1.32kb / gzip: 0.70kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PartnershipAgreementPage-6W9f7snm.js.gz              23.73kb / gzip: 5.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PartnershipPaymentPage-CRHL7pS7.js.gz                12.96kb / gzip: 3.52kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/motion-BtWMDxSW.js.gz                                32.20kb / gzip: 11.10kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PaymentCanceledPage-BTmHXHvA.js.gz                   1.31kb / gzip: 0.60kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PipelinePage-BXKNJBcA.js.gz                          9.91kb / gzip: 3.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformProofLoopCard-DRzGSSOl.js.gz                 2.70kb / gzip: 0.91kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PaymentSuccessPage-kOrY25MC.js.gz                    1.92kb / gzip: 0.89kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformShiftBanner-6TUuuPKR.js.gz                   1.23kb / gzip: 0.56kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PrivacyPage-BEDqaT6A.js.gz                           24.34kb / gzip: 6.42kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PressPage-C0i3Vs7A.js.gz                             9.09kb / gzip: 3.06kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PricingPage-CBB8PRwC.js.gz                           37.08kb / gzip: 10.91kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PromptIntelligencePage-BxETGSVp.js.gz                11.51kb / gzip: 3.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PublicPageFrame-eikbIQHz.js.gz                       1.34kb / gzip: 0.64kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Profile-DkqB554S.js.gz                               13.77kb / gzip: 4.02kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/QueryResultsLogPage-BtZt0QaV.js.gz                   6.68kb / gzip: 1.94kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformWorkflowPage-sG8N9I-Z.js.gz                  32.15kb / gzip: 8.04kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-core-DfJT-LlT.js.gz                            11.95kb / gzip: 4.63kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PublicReportPage-oMEefNmY.js.gz                      27.21kb / gzip: 7.46kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-DfJT-LlT.js.gz                                 12.00kb / gzip: 4.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-T_F1mocA.js.gz                                 11.64kb / gzip: 4.53kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/referralShare-B9iBH5Vq.js.gz                         1.07kb / gzip: 0.62kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReferralsPage-tl_8z-bo.js.gz                         16.85kb / gzip: 4.58kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReportsPage-V9EzF03y.js.gz                           51.43kb / gzip: 14.33kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ResetPassword-vxUi-UGn.js.gz                         3.16kb / gzip: 1.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReferralRedirect-Ct6ob2D_.js.gz                      1.20kb / gzip: 0.68kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-C6xl7VUV.js.gz                                32.13kb / gzip: 11.73kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/RobotsCheckerPage-rs6uyytz.js.gz                     19.36kb / gzip: 6.03kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-FWSsFnG6.js.gz                                35.38kb / gzip: 12.84kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-C-nFNE-u.js.gz                                36.38kb / gzip: 13.07kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SampleReport-Cwa4zCRz.js.gz                          7.39kb / gzip: 2.70kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SchemaValidatorPage-Cz5KygZs.js.gz                   19.48kb / gzip: 6.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/seoSchema-BA7HHhjc.js.gz                             9.98kb / gzip: 3.46kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/scoreUtils-DmvHi8GV.js.gz                            2.73kb / gzip: 0.92kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ServerHeadersPage-C-AINjkr.js.gz                     34.34kb / gzip: 9.37kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ServerHeadersPage-BRYetETF.css.gz                    1.90kb / gzip: 0.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SiteCrawlPage-CkCAfV8v.js.gz                         11.43kb / gzip: 3.61kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ShareButtons-C9xl3IHn.js.gz                          5.95kb / gzip: 2.49kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/state-DrmlzkM_.js.gz                                 2.63kb / gzip: 1.30kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SnapshotPage-D2ymLrkm.js.gz                          5.88kb / gzip: 1.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/state-D_cCd7KE.js.gz                                 2.60kb / gzip: 1.30kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TeamPage-D46cyo_Z.js.gz                              27.80kb / gzip: 5.95kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SettingsPage-BFhPdojo.js.gz                          38.46kb / gzip: 10.10kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TermsPage-Lw49R_zv.js.gz                             21.69kb / gzip: 6.78kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TripleCheckProtocolPage-Cy87sqsj.js.gz               5.50kb / gzip: 1.95kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TextSummaryView-CAfHAnSX.js.gz                       19.38kb / gzip: 6.00kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/uiPalette-C9ckpjoh.js.gz                             2.19kb / gzip: 0.74kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/UpgradeWall-CjVu3heR.js.gz                           3.29kb / gzip: 1.45kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/usePageMeta-DavCNXTG.js.gz                           3.26kb / gzip: 1.33kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TripleCheckMethodologyPage-DMerqM8Z.js.gz            25.85kb / gzip: 6.55kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/useSupportTickets-a_edgky5.js.gz                     2.03kb / gzip: 0.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VerifyEmailPage-CfADWvqy.js.gz                       4.36kb / gzip: 1.77kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-DOLd--0r.css.gz                               57.30kb / gzip: 10.09kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VerifyLicensePage-BabDEkbs.js.gz                     4.40kb / gzip: 1.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhatIsCiteLedgerPage-DpGxT5jk.js.gz                  7.55kb / gzip: 2.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhatIsAivisPage-8FUYiCO_.js.gz                       4.10kb / gzip: 1.47kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhyAivisExistsPage-CdwG8fZ-.js.gz                    4.32kb / gzip: 1.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhyAIVisibility-Dt3h-34J.js.gz                       16.21kb / gzip: 4.58kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/press/index.html.gz                                         1.01kb / gzip: 0.56kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/index.html.gz                                               47.50kb / gzip: 11.74kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/techcrunch-pitchbook.html.gz                                64.39kb / gzip: 12.75kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VoiceSearchAIAnswerOptimization2026-COTFuh9-.js.gz   8.27kb / gzip: 2.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnalyticsPage-KdjVoVpu.js.gz                         77.26kb / gzip: 18.95kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/chart-deps-B12fJHWW.js.gz                            61.02kb / gzip: 20.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/chart-deps-DzsXqveD.js.gz                            60.98kb / gzip: 20.07kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationTracker-g-_uDFWT.js.gz                       79.38kb / gzip: 17.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/FAQ-bi4F7eXF.js.gz                                   63.23kb / gzip: 22.73kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-CoM7eQ7o.js.gz                                 107.25kb / gzip: 23.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-BR6LrTzI.css.gz                                187.03kb / gzip: 29.55kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-DcQCBz3Z.css.gz                                161.51kb / gzip: 21.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReverseEngineerPage-C0nslvZT.js.gz                   80.50kb / gzip: 18.43kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ScoreFixPage-Du2bmmG0.js.gz                          63.40kb / gzip: 16.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/sentry-ByXH7AcK.js.gz                                75.61kb / gzip: 26.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnalyzePage-Cl1SX-pK.js.gz                           162.81kb / gzip: 39.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/HelpCenter-DFGSPwDO.js.gz                            117.47kb / gzip: 32.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-uPJNvMPT.js.gz                             176.26kb / gzip: 54.92kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-BLatOddV.js.gz                             176.20kb / gzip: 54.87kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-3CcXsgC8.js.gz                             176.22kb / gzip: 54.90kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/recharts-B8wdykF8.js.gz                              304.05kb / gzip: 76.47kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/recharts-C1-vTUAY.js.gz                              257.84kb / gzip: 66.00kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-BcQ9av_d.js.gz                                230.27kb / gzip: 79.39kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-C7dMFzGG.js.gz                                347.95kb / gzip: 92.35kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-Crn3iELk.js.gz                                 401.56kb / gzip: 103.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-Bv1_wZLK.js.gz                                500.17kb / gzip: 138.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-CeDvkBby.js.gz                                 558.18kb / gzip: 172.07kb
+
+
+
+Γ£¿ [vite-plugin-compression]:algorithm=brotliCompress - compressed file successfully: 
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AboutAivisPage-Eo6lRvgn.js.br                        7.00kb / brotliCompress: 1.83kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AISearchVisibility2026-jzRCZV9F.js.br                7.61kb / brotliCompress: 2.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AdvancedFeaturesPanel-Bau7vjGJ.js.br                 42.84kb / brotliCompress: 10.13kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AEOPlaybook2026-DjgB3DW-.js.br                       3.70kb / brotliCompress: 1.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AgencyPage-BZzCXayt.js.br                            13.63kb / brotliCompress: 3.70kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Admin-tRr4YNKV.js.br                                 33.36kb / brotliCompress: 6.57kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AiVisibilityBenchmark-DDRSsroT.js.br                 16.85kb / brotliCompress: 3.88kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/analysisStore-DyAMTmcg.js.br                         1.61kb / brotliCompress: 0.71kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnswerPresencePage-iT_-gqUD.js.br                    11.07kb / brotliCompress: 2.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AppPageFrame-CCU6py0a.js.br                          1.15kb / brotliCompress: 0.50kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/api--WHEucVU.js.br                                   3.57kb / brotliCompress: 0.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ApiDocsPage-rdawH9hN.js.br                           13.16kb / brotliCompress: 3.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AuditDetails-BteoMnV2.js.br                          10.79kb / brotliCompress: 2.71kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BadgeEmbedPage-nnsLI7HV.js.br                        7.60kb / brotliCompress: 2.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AuthPage-BRO1-lhC.js.br                              24.06kb / brotliCompress: 5.33kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BillingPage-DDIsx3cW.js.br                           35.64kb / brotliCompress: 7.60kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BlogPostPage-Bdyobg_s.js.br                          8.32kb / brotliCompress: 2.57kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BlogsPage-D1e1f6cb.js.br                             8.63kb / brotliCompress: 2.37kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BragEvidenceTrailsPage-Dh_8gpJH.js.br                7.71kb / brotliCompress: 1.88kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ChangelogPage-B8uc8Oxs.js.br                         3.00kb / brotliCompress: 1.15kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/BrandIntegrityPage-CB0pCB3W.js.br                    15.97kb / brotliCompress: 4.05kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationReportsPage-CotH5qSz.js.br                   5.71kb / brotliCompress: 1.59kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CiteLedgerPage-DntPEscD.js.br                        8.25kb / brotliCompress: 2.00kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareOtterlyPage-Doh1h7lC.js.br                    6.63kb / brotliCompress: 1.49kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareProfoundPage-DevEFU7p.js.br                   5.71kb / brotliCompress: 1.32kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationsPage-C9b8qX9w.js.br                         56.71kb / brotliCompress: 12.87kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareAhrefsPage-D7qaoqGQ.js.br                     14.97kb / brotliCompress: 3.65kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareReauditPage-C-_qHqBy.js.br                    5.76kb / brotliCompress: 1.35kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareSemrushPage-DRdmuDr7.js.br                    15.37kb / brotliCompress: 3.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ComparisonPage-BnVDABLm.js.br                        5.81kb / brotliCompress: 1.49kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompareRankScalePage-DzalmWtE.js.br                  13.99kb / brotliCompress: 3.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ComplianceDashboardPage-DtvgcDsD.js.br               16.56kb / brotliCompress: 4.13kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompetitiveLandscapePage-B6gdjaMM.js.br              14.07kb / brotliCompress: 3.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompliancePage-A6-zqoNc.js.br                        9.71kb / brotliCompress: 2.17kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ConversationalQueryPlaybook2026-CEQCW3Wu.js.br       6.65kb / brotliCompress: 1.88kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ConversionCTA-E08YppyO.js.br                         4.80kb / brotliCompress: 1.29kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ContentExtractabilityPage-DbRoB6EZ.js.br             19.25kb / brotliCompress: 5.27kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CompetitorsPage-CNxH0Nse.js.br                       48.31kb / brotliCompress: 10.81kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/CitationTracker-g-_uDFWT.js.br                       79.38kb / brotliCompress: 14.81kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Dashboard-B16WWYJ5.js.br                             18.13kb / brotliCompress: 5.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DatasetStudioPage-oon8oqPt.js.br                     15.69kb / brotliCompress: 3.80kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DriftAnalysisPage-YhoxFVXq.js.br                     6.17kb / brotliCompress: 1.70kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/EntityResolutionModelPage-C23Wttx7.js.br             6.31kb / brotliCompress: 1.59kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/FeatureInstruction-B7OTIB5W.js.br                    3.15kb / brotliCompress: 1.04kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DomainRatingPage-DmJPInA6.js.br                      20.36kb / brotliCompress: 5.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GeoAIRanking2026-D24AAr7u.js.br                      3.41kb / brotliCompress: 1.06kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/DisclosuresPage-CubNNhjh.js.br                       25.90kb / brotliCompress: 6.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GscConsolePage-BVa909OL.js.br                        24.69kb / brotliCompress: 6.59kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GlossaryPage-BjGnH3YZ.js.br                          38.83kb / brotliCompress: 10.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GuidePage-Cj_PK4nP.js.br                             37.64kb / brotliCompress: 8.37kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/GuideBot-BherXAVm.js.br                              33.18kb / brotliCompress: 9.12kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-cZlgQwHF.js.br                                 9.55kb / brotliCompress: 3.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-DcZL32Y1.js.br                                 1.63kb / brotliCompress: 0.79kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-B1a0d5bp.js.br                                 20.14kb / brotliCompress: 5.46kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/i18n-B5Rl-IOz.js.br                                  46.08kb / brotliCompress: 13.66kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/icons-itbcWECe.js.br                                 44.26kb / brotliCompress: 11.89kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-zSN1F0j4.css.br                                30.67kb / brotliCompress: 4.45kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/insights-D00Z7SCc.js.br                              7.45kb / brotliCompress: 2.25kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/InsightsPage-C50ykyNr.js.br                          7.17kb / brotliCompress: 1.98kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/IntegrationsHubPage-C1x1kk_J.js.br                   15.09kb / brotliCompress: 3.41kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/InviteAcceptPage-DEXFRuQ2.js.br                      2.82kb / brotliCompress: 1.07kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordClusterIndex-s5x6XQKG.js.br                   2.12kb / brotliCompress: 0.83kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordPageTemplate-BS0EAT9X.js.br                   3.60kb / brotliCompress: 1.22kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/KeywordsPage-Bqy5clgk.js.br                          29.38kb / brotliCompress: 7.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/LedgerIndexPage-B07wTh7u.js.br                       5.86kb / brotliCompress: 1.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Landing-Cv2_VpO6.js.br                               59.04kb / brotliCompress: 12.92kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/McpConsolePage-BaJH6XlW.js.br                        32.71kb / brotliCompress: 6.23kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/motion-BtWMDxSW.js.br                                32.20kb / brotliCompress: 10.06kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotificationPreferencesPanel-BUGHZ-eG.js.br          5.66kb / brotliCompress: 1.73kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotFound-xht7U2Iu.js.br                              1.61kb / brotliCompress: 0.69kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NotificationsPage-BOL_Rbml.js.br                     7.05kb / brotliCompress: 2.02kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/MethodologyPage-C5MEPtMH.js.br                       43.32kb / brotliCompress: 10.05kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/NicheDiscoveryPage-Bc-yoCJ1.js.br                    20.38kb / brotliCompress: 4.62kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PageQASection-BgRnI5gk.js.br                         1.32kb / brotliCompress: 0.57kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/LanguageCheckerPage-CgjmneJ8.js.br                   21.38kb / brotliCompress: 5.45kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PaymentCanceledPage-BTmHXHvA.js.br                   1.31kb / brotliCompress: 0.51kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PartnershipPaymentPage-CRHL7pS7.js.br                12.96kb / brotliCompress: 3.04kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PaymentSuccessPage-kOrY25MC.js.br                    1.92kb / brotliCompress: 0.78kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformShiftBanner-6TUuuPKR.js.br                   1.23kb / brotliCompress: 0.48kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformProofLoopCard-DRzGSSOl.js.br                 2.70kb / brotliCompress: 0.77kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PipelinePage-BXKNJBcA.js.br                          9.91kb / brotliCompress: 2.75kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PartnershipAgreementPage-6W9f7snm.js.br              23.73kb / brotliCompress: 5.15kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PressPage-C0i3Vs7A.js.br                             9.09kb / brotliCompress: 2.60kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PlatformWorkflowPage-sG8N9I-Z.js.br                  32.15kb / brotliCompress: 6.87kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PrivacyPage-BEDqaT6A.js.br                           24.34kb / brotliCompress: 5.23kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PricingPage-CBB8PRwC.js.br                           37.08kb / brotliCompress: 9.49kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PublicPageFrame-eikbIQHz.js.br                       1.34kb / brotliCompress: 0.55kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/Profile-DkqB554S.js.br                               13.77kb / brotliCompress: 3.48kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PromptIntelligencePage-BxETGSVp.js.br                11.51kb / brotliCompress: 3.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/QueryResultsLogPage-BtZt0QaV.js.br                   6.68kb / brotliCompress: 1.61kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-core-DfJT-LlT.js.br                            11.95kb / brotliCompress: 4.14kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-DfJT-LlT.js.br                                 12.00kb / brotliCompress: 4.18kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/PublicReportPage-oMEefNmY.js.br                      27.21kb / brotliCompress: 6.58kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-T_F1mocA.js.br                                 11.64kb / brotliCompress: 4.06kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReferralRedirect-Ct6ob2D_.js.br                      1.20kb / brotliCompress: 0.60kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AboutPage-g44GaYKC.js.br                             21.28kb / brotliCompress: 4.94kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReferralsPage-tl_8z-bo.js.br                         16.85kb / brotliCompress: 3.94kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/referralShare-B9iBH5Vq.js.br                         1.07kb / brotliCompress: 0.51kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ResetPassword-vxUi-UGn.js.br                         3.16kb / brotliCompress: 1.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReportsPage-V9EzF03y.js.br                           51.43kb / brotliCompress: 12.50kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-C-nFNE-u.js.br                                36.38kb / brotliCompress: 11.77kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-FWSsFnG6.js.br                                35.38kb / brotliCompress: 11.54kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SampleReport-Cwa4zCRz.js.br                          7.39kb / brotliCompress: 2.30kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/RobotsCheckerPage-rs6uyytz.js.br                     19.36kb / brotliCompress: 5.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/router-C6xl7VUV.js.br                                32.13kb / brotliCompress: 10.56kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/seoSchema-BA7HHhjc.js.br                             9.98kb / brotliCompress: 2.96kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/scoreUtils-DmvHi8GV.js.br                            2.73kb / brotliCompress: 0.78kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SchemaValidatorPage-Cz5KygZs.js.br                   19.48kb / brotliCompress: 5.13kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ServerHeadersPage-BRYetETF.css.br                    1.90kb / brotliCompress: 0.55kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ReverseEngineerPage-C0nslvZT.js.br                   80.50kb / brotliCompress: 15.49kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ShareButtons-C9xl3IHn.js.br                          5.95kb / brotliCompress: 2.14kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SiteCrawlPage-CkCAfV8v.js.br                         11.43kb / brotliCompress: 3.20kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ScoreFixPage-Du2bmmG0.js.br                          63.40kb / brotliCompress: 14.12kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/ServerHeadersPage-C-AINjkr.js.br                     34.34kb / brotliCompress: 7.97kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/state-DrmlzkM_.js.br                                 2.63kb / brotliCompress: 1.18kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/state-D_cCd7KE.js.br                                 2.60kb / brotliCompress: 1.18kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SnapshotPage-D2ymLrkm.js.br                          5.88kb / brotliCompress: 1.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TermsPage-Lw49R_zv.js.br                             21.69kb / brotliCompress: 5.31kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/SettingsPage-BFhPdojo.js.br                          38.46kb / brotliCompress: 8.80kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TripleCheckProtocolPage-Cy87sqsj.js.br               5.50kb / brotliCompress: 1.65kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TeamPage-D46cyo_Z.js.br                              27.80kb / brotliCompress: 5.21kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/uiPalette-C9ckpjoh.js.br                             2.19kb / brotliCompress: 0.66kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/usePageMeta-DavCNXTG.js.br                           3.26kb / brotliCompress: 1.15kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/UpgradeWall-CjVu3heR.js.br                           3.29kb / brotliCompress: 1.26kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TextSummaryView-CAfHAnSX.js.br                       19.38kb / brotliCompress: 5.08kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/useSupportTickets-a_edgky5.js.br                     2.03kb / brotliCompress: 0.64kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/TripleCheckMethodologyPage-DMerqM8Z.js.br            25.85kb / brotliCompress: 5.67kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-DOLd--0r.css.br                               57.30kb / brotliCompress: 8.73kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VerifyEmailPage-CfADWvqy.js.br                       4.36kb / brotliCompress: 1.55kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhatIsAivisPage-8FUYiCO_.js.br                       4.10kb / brotliCompress: 1.24kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VerifyLicensePage-BabDEkbs.js.br                     4.40kb / brotliCompress: 1.33kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/VoiceSearchAIAnswerOptimization2026-COTFuh9-.js.br   8.27kb / brotliCompress: 1.90kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhatIsCiteLedgerPage-DpGxT5jk.js.br                  7.55kb / brotliCompress: 2.14kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhyAivisExistsPage-CdwG8fZ-.js.br                    4.32kb / brotliCompress: 1.37kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/WhyAIVisibility-Dt3h-34J.js.br                       16.21kb / brotliCompress: 3.85kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/press/index.html.br                                         1.01kb / brotliCompress: 0.39kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/index.html.br                                               47.50kb / brotliCompress: 9.76kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/techcrunch-pitchbook.html.br                                64.39kb / brotliCompress: 10.57kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnalyticsPage-KdjVoVpu.js.br                         77.26kb / brotliCompress: 16.41kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/chart-deps-B12fJHWW.js.br                            61.02kb / brotliCompress: 17.72kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/chart-deps-DzsXqveD.js.br                            60.98kb / brotliCompress: 17.72kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/FAQ-bi4F7eXF.js.br                                   63.23kb / brotliCompress: 19.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/HelpCenter-DFGSPwDO.js.br                            117.47kb / brotliCompress: 27.18kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-CoM7eQ7o.js.br                                 107.25kb / brotliCompress: 19.28kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-BR6LrTzI.css.br                                187.03kb / brotliCompress: 22.47kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-DcQCBz3Z.css.br                                161.51kb / brotliCompress: 17.43kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/sentry-ByXH7AcK.js.br                                75.61kb / brotliCompress: 23.06kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/AnalyzePage-Cl1SX-pK.js.br                           162.81kb / brotliCompress: 33.44kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-3CcXsgC8.js.br                             176.22kb / brotliCompress: 47.38kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-uPJNvMPT.js.br                             176.26kb / brotliCompress: 47.39kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/react-dom-BLatOddV.js.br                             176.20kb / brotliCompress: 47.41kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/recharts-C1-vTUAY.js.br                              257.84kb / brotliCompress: 55.09kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/recharts-B8wdykF8.js.br                              304.05kb / brotliCompress: 63.58kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-BcQ9av_d.js.br                                230.27kb / brotliCompress: 70.34kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-Crn3iELk.js.br                                 401.56kb / brotliCompress: 83.48kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-Bv1_wZLK.js.br                                500.17kb / brotliCompress: 109.85kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/vendor-C7dMFzGG.js.br                                347.95kb / brotliCompress: 78.11kb
+dist/C:/Users/Ma$e/Desktop/aivis/aivis/client/assets/index-CeDvkBby.js.br                                 558.18kb / brotliCompress: 139.32kb
+
+

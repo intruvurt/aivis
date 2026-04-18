@@ -34,5 +34,6 @@
     "**/dist": true,
     "**/.cache": true,
     "**/coverage": true
-  }
+  },
+  "chat.agent.maxRequests": 500
 }

@@ -58,7 +58,7 @@ const LANDING_STRUCTURED_DATA = [
     { name: 'Score Fix [AutoFix PR] – 250 credits – $299 one-time', path: '/pricing#scorefix' },
   ]),
   buildSoftwareApplicationSchema({
-    name: 'AiVIS.biz.biz -> evidence-backed site analysis for AI answers',
+    name: 'AiVIS.biz -> evidence-backed site analysis for AI answers',
     description: 'Evidence-backed site analysis for AI answers platform — ChatGPT, Perplexity, Google AI, Claude. Evidence-backed scoring.',
     offers: [
       { name: 'Observer [Free]', price: '0' },
@@ -202,7 +202,7 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <div className="mb-8">
-                <img src="/images/aivis-logo-hero.png" alt="AiVIS.biz | AI Visibility Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores " className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
+                <img src="/images/aivis-logo-hero.png" alt="AiVIS.biz | AI Visibility Audit |AiVIS.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores " className="h-20 sm:h-24 lg:h-28 w-auto object-contain mix-blend-screen brightness-110 saturate-125" loading="eager" />
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold tracking-widest uppercase">

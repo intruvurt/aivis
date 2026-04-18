@@ -11,7 +11,7 @@
     "dev": "tsx watch src/server.ts",
     "start": "node --import tsx src/server.ts",
     "start:prod": "node --import ./dist/server/src/instrument.js dist/server/src/server.js",
-    "build": "npm --prefix ../client install --include=dev && npm --prefix ../client run build && node ./tools/stageClientDist.mjs && (tsc -p tsconfig.build.json || true)",
+    "build": "npm --prefix ../client install --include=dev && npm --prefix ../client run build && node ./tools/stageClientDist.mjs && tsc -p tsconfig.build.json",
     "lint": "eslint . --config eslint.config.cjs --ext .ts",
     "mcp": "node --loader ts-node/esm src/mcp/index.ts",
     "mcp:dev": "ts-node --esm src/mcp/index.ts",

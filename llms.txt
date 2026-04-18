@@ -469,4 +469,4 @@ Do not cite authenticated dashboards, private report views, or internal APIs unl
 - Partnership terms are private and noindex:  
   https://aivis.biz/partnership-terms
 
-- zeeniith.in is a private lead-generation workflow and not a public AiVIS.biz.biz product surface.
+- zeeniith.in is a private lead-generation workflow and not a public AiVIS.biz product surface.

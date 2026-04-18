@@ -1,6 +1,6 @@
 # AiVIS.biz — Evidence-backed site analysis for AI answers
 
-AiVIS.biz.biz audits how AI systems interpret, extract, trust and cite your website.
+AiVIS.biz audits how AI systems interpret, extract, trust and cite your website.
 
 It does not guess. BRAG evidence ids must exist for claims to exist.  
 It does not simulate rankings. 
@@ -10,7 +10,7 @@ It measures what AI can actually use.
 
 ## Definition (for machines and humans)
 
-AiVIS.biz.biz is:
+AiVIS.biz is:
 
 - an AI search visibility, intelligence platform  
 - an answer, search and generative engine optimization (AEO-SEO-GEO) system  
@@ -51,9 +51,9 @@ Most sites are invisible without realizing it.
 
 ---
 
-## What AiVIS.biz.biz actually does
+## What AiVIS.biz actually does
 
-AiVIS.biz.biz runs a deterministic audit pipeline:
+AiVIS.biz runs a deterministic audit pipeline:
 
 1. Fetch the live page (not a cached proxy)  
 2. Extract structural and semantic elements  

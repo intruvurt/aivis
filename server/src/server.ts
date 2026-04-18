@@ -1659,7 +1659,7 @@ app.get("/.well-known/webmcp.json", (_req, res) => {
   res.json({
     schema_version: "0.1.0",
     name: "aivis",
-    display_name: "AiVIS.biz.biz -> evidence-backed site analysis for AI answers",
+    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website.",
     tools_endpoint: "/api/webmcp/tools",
@@ -1674,7 +1674,7 @@ app.get("/.well-known/mcp.json", (_req, res) => {
   res.json({
     schema_version: "1.0.0",
     name: "aivis",
-    display_name: "AiVIS.biz.biz -> evidence-backed site analysis for AI answers",
+    display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.",
     url: "https://aivis.biz/api/mcp",
@@ -3513,7 +3513,7 @@ app.post(
 );
 
 app.get("/llms.txt", (_req, res) => {
-  res.type("text/plain").send(`AiVIS.biz.biz -> evidence-backed site analysis for AI answers
+  res.type("text/plain").send(`AiVIS.biz -> evidence-backed site analysis for AI answers
 https://aivis.biz/
 
 AiVIS.biz scores whether answer engines can parse, trust, and cite a page.
@@ -15378,13 +15378,14 @@ process.on("uncaughtException", (e) => {
 
 process.on("unhandledRejection", (reason) => {
   console.error(
-    "[unhandledRejection] Unhandled promise rejection (server kept alive):",
+    "[unhandledRejection] Unhandled promise rejection — initiating shutdown:",
     reason,
   );
   if (process.env.SENTRY_DSN)
     Sentry.captureException(
       reason instanceof Error ? reason : new Error(String(reason)),
     );
+  shutdown("UNHANDLED_REJECTION");
 });
 
 // ─── Admin: Request logs (diagnostics & traffic analysis) ───────────────────
@@ -15414,6 +15415,23 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
 
 // Start server
 (async function start() {
+  // ── Fail-fast: reject startup if critical env vars are missing ──────────
+  const missingVars: string[] = [];
+  if (!process.env.DATABASE_URL) missingVars.push("DATABASE_URL");
+  if (!process.env.JWT_SECRET) missingVars.push("JWT_SECRET");
+  if (!(process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY))
+    missingVars.push("OPENROUTER_API_KEY");
+  if (missingVars.length && NODE_ENV === "production") {
+    console.error(
+      `[Startup] FATAL: Missing required env vars: ${missingVars.join(", ")}. Aborting.`,
+    );
+    process.exit(1);
+  } else if (missingVars.length) {
+    console.warn(
+      `[Startup] WARNING: Missing env vars (non-fatal in ${NODE_ENV}): ${missingVars.join(", ")}`,
+    );
+  }
+
   let databaseReady = false;
   try {
     await runMigrations();

@@ -24,7 +24,7 @@ export const STRIPE_PRICING = {
     metadata: {
       tier_key: 'free',
       audits_per_month: PRICING.observer.limits.scans,
-      projects_max: 1,
+      projects_max: TIER_LIMITS.observer.maxProjects,
     },
   },
 
@@ -40,6 +40,7 @@ export const STRIPE_PRICING = {
       audits_per_month: PRICING.observer.limits.scans,
       competitors: PRICING.observer.limits.competitors,
       citation_queries: PRICING.observer.limits.citations,
+      projects_max: TIER_LIMITS.observer.maxProjects,
     },
   },
 
@@ -57,6 +58,9 @@ export const STRIPE_PRICING = {
       audits_per_month: PRICING.starter.limits.scans,
       competitors: PRICING.starter.limits.competitors,
       citation_queries: PRICING.starter.limits.citations,
+      projects_max: TIER_LIMITS.starter.maxProjects,
+      report_history: TIER_LIMITS.starter.hasReportHistory,
+      shareable_link: TIER_LIMITS.starter.hasShareableLink,
     },
   },
 
@@ -74,6 +78,8 @@ export const STRIPE_PRICING = {
       audits_per_month: PRICING.alignment.limits.scans,
       competitors: PRICING.alignment.limits.competitors,
       citation_queries: PRICING.alignment.limits.citations,
+      projects_max: TIER_LIMITS.alignment.maxProjects,
+      team_members: TIER_LIMITS.alignment.maxTeamMembers,
       mention_digests: true,
       reverse_engineer: true,
       niche_discovery: true,
@@ -94,6 +100,8 @@ export const STRIPE_PRICING = {
       audits_per_month: PRICING.signal.limits.scans,
       competitors: PRICING.signal.limits.competitors,
       citation_queries: PRICING.signal.limits.citations,
+      projects_max: TIER_LIMITS.signal.maxProjects,
+      team_members: TIER_LIMITS.signal.maxTeamMembers,
       api_access: true,
       white_label: true,
       triple_check: true,
@@ -115,43 +123,16 @@ export const STRIPE_PRICING = {
       audits_per_month: PRICING.scorefix.limits.scans,
       competitors: PRICING.scorefix.limits.competitors,
       citation_queries: PRICING.scorefix.limits.citations,
+      projects_max: TIER_LIMITS.scorefix.maxProjects,
+      team_members: TIER_LIMITS.scorefix.maxTeamMembers,
       api_access: true,
-      white_label: true,
+      white_label: TIER_LIMITS.scorefix.hasWhiteLabel,
       scorefix_mode: true,
       auto_pr: true,
       batch_remediation: true,
       evidence_linked_prs: true,
     },
   },
-
-  // PRO TIER (legacy starter subscription)
-  pro: {
-    name: 'AiVIS.biz – Pro',
-    lookupKey: 'pro_monthly',
-    priceId: process.env.STRIPE_PRO_PRICE_ID,
-    amountCents: 4900,
-    mode: 'subscription',
-    metadata: {
-      tier_key: 'pro',
-      audits_per_month: 300,
-      projects_max: 5,
-    },
-  },
-
-  // BUSINESS TIER - $149/month (Signal)
-  business: {
-    name: 'AiVIS.biz – Business',
-    lookupKey: 'business_monthly',
-    priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
-    amountCents: 2900,
-    mode: 'subscription',
-    metadata: {
-      tier_key: 'business',
-      audits_per_month: 600,
-      projects_max: 20,
-    },
-  },
-  // ENTERPRISE TIER - removed (not an active tier)
 };
 
 // ============================================================================
@@ -237,29 +218,12 @@ export function buildLineItems(tierKey: string, billingPeriod = 'monthly') {
     throw new Error(`Missing price ID for tier ${tierKey} with billing period ${billingPeriod}`);
   }
 
-  const lineItems = [];
-
-  // For whitelabel, add both setup fee and recurring
-  if (tierKey === 'whitelabel') {
-    if (config.setupPriceId) {
-      lineItems.push({
-        price: config.setupPriceId,
-        quantity: 1,
-      });
-    }
-    lineItems.push({
+  return [
+    {
       price: priceId,
       quantity: 1,
-    });
-  } else {
-    // Standard single line item
-    lineItems.push({
-      price: priceId,
-      quantity: 1,
-    });
-  }
-
-  return lineItems;
+    },
+  ];
 }
 
 /**
@@ -295,11 +259,6 @@ export function buildCheckoutOptions({ tierKey, userId, customerEmail, brandDoma
   // Add customer email if provided
   if (customerEmail) {
     options.customer_email = customerEmail;
-  }
-
-  // Add brand domain for white label purchases
-  if (tierKey === 'whitelabel' && brandDomain) {
-    options.metadata.brand_domain = brandDomain;
   }
 
   // For subscriptions, allow promotion codes and set billing
@@ -347,11 +306,11 @@ export function getTierLimits(tierKey: string) {
 
   return {
     auditsPerMonth: canonicalLimits.scansPerMonth,
-    projectsMax: config.metadata.projects_max,
+    projectsMax: canonicalLimits.maxProjects,
     includesSla: config.metadata.includes_sla || false,
-    whiteLabel: config.metadata.white_label || false,
+    whiteLabel: canonicalLimits.hasWhiteLabel,
     sourceCodeAccess: config.metadata.source_code_access || false,
-    customDomain: config.metadata.custom_domain || false,
+    customDomain: canonicalLimits.hasCustomDomain,
   };
 }
 

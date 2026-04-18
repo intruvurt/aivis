@@ -24,15 +24,46 @@ interface PublicAuditResponse {
   analysis_tier_display?: string;
 }
 
+function slugifyEntity(input: string): string {
+  return String(input || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+    .slice(0, 96);
+}
+
+function deriveEntitySlug(targetUrl: string): string {
+  try {
+    const parsed = new URL(/^https?:\/\//i.test(targetUrl) ? targetUrl : `https://${targetUrl}`);
+    const hostname = parsed.hostname.toLowerCase().replace(/^www\./, '');
+    const parts = hostname.split('.').filter(Boolean);
+    const base = parts.length >= 2 ? parts[parts.length - 2] : hostname;
+    return slugifyEntity(base || hostname || 'entity');
+  } catch {
+    return 'entity';
+  }
+}
+
 export default function PublicReportPage() {
-  const { shareId } = useParams<{ shareId: string }>();
+  const { shareId, entitySlug } = useParams<{ shareId: string; entitySlug?: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [audit, setAudit] = useState<PublicAuditResponse | null>(null);
   const [apiSource, setApiSource] = useState<'same-origin' | 'configured-fallback' | null>(null);
 
+  const resolvedEntitySlug = useMemo(() => {
+    if (entitySlug) return entitySlug;
+    if (audit?.url) return deriveEntitySlug(audit.url);
+    return null;
+  }, [audit?.url, entitySlug]);
+
   const pageMeta = useMemo(() => {
-    const basePath = shareId ? `/reports/public/${shareId}` : '/reports/public';
+    const basePath = shareId
+      ? entitySlug
+        ? `/entity/${entitySlug}/audit/${shareId}`
+        : `/reports/public/${shareId}`
+      : '/reports/public';
     if (audit) {
       let domain: string;
       try { domain = new URL(audit.url).hostname; } catch { domain = audit.url; }
@@ -79,7 +110,7 @@ export default function PublicReportPage() {
       path: basePath,
       ogTitle: 'Shared AI Visibility Report',
     };
-  }, [audit, shareId]);
+  }, [audit, entitySlug, shareId]);
 
   usePageMeta(pageMeta);
 
@@ -173,6 +204,14 @@ export default function PublicReportPage() {
           <p className="text-white/55 mt-2 text-sm">
             Readable content alone is not enough. AI must trust and select the source.
           </p>
+          {resolvedEntitySlug && (
+            <div className="mt-3">
+              <Link to={`/entity/${resolvedEntitySlug}`} className="inline-flex items-center gap-2 text-xs text-cyan-200 hover:text-cyan-100 transition-colors">
+                <FileText className="w-3.5 h-3.5" />
+                Open canonical entity node
+              </Link>
+            </div>
+          )}
           {audit?.analysis_tier_display && (
             <div className="mt-3 flex items-center gap-2">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${

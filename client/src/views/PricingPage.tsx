@@ -21,7 +21,7 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useTranslation } from "react-i18next";
 import { TIER_BRAND_PALETTE } from "../constants/uiPalette";
 import { SOFTWARE_APPLICATION_ID, buildFaqSchema, buildOrganizationRef, buildOrganizationSchema, buildWebPageSchema } from "../lib/seoSchema";
-import { PRICING } from "../../../shared/types";
+import { PRICING, TIER_LIMITS } from "../../../shared/types";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -125,69 +125,63 @@ const TIER_AUDIENCE: Record<string, string> = {
 
 const TIER_COPY: Record<string, { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }> = {
   observer: {
-    headline: "Detection audit",
-    body: "See what AI systems misread on your site — free forever.",
+    headline: "Free evidence-backed baseline",
+    body: "Run the CITE LEDGER pipeline on your most important pages and see what AI systems can actually extract.",
     includes: [
       `${PRICING.observer.limits.scans} audits/month`,
-      "up to 3 pages per audit",
-      "top 3 proven blockers",
-      "limited evidence preview",
+      "seven-dimension visibility score",
+      "BRAG evidence IDs on findings",
+      "prioritized recommendations",
     ],
-    cta: "See your AI blockers",
+    cta: "Start free",
   },
   starter: {
-    headline: "Full audit + recommendations",
-    body: "All recommendations with implementation code, content highlights, and fix-ready outputs — at an accessible price.",
+    headline: "Implementation-ready audits",
+    body: "Unlock full recommendations with implementation code, exports, and report history without jumping to an enterprise plan.",
     includes: [
       `${PRICING.starter.limits.scans} audits/month`,
       "all recommendations with implementation code",
-      "content highlights",
       "PDF export and shareable links",
-      "force-refresh to measure changes instantly",
-      "30-day report history",
+      "report history and score tracking",
+      "paid AI model pipeline",
     ],
-    cta: "Start fixing",
+    cta: "Get Starter",
   },
   alignment: {
-    headline: "Structured optimization system",
-    body: "Turn extraction failures into evidence-backed fixes so you stop guessing what matters.",
+    headline: "Competitive intelligence tier",
+    body: "Track competitors, monitor mentions, and use reverse-engineer workflows to understand why AI engines trust other sources more than yours.",
     includes: [
-      "full report",
-      "full evidence",
-      "prioritized fix plan",
-      "team collaboration",
-      "exportable reports",
-      "limited competitor intelligence",
       `${PRICING.alignment.limits.scans} audits/month`,
+      "competitor tracking and comparison",
+      "brand mention tracking across 19 sources",
+      "reverse-engineer tools and niche discovery",
+      "WebMCP and developer workflows",
     ],
-    cta: "Fix what’s blocking you",
+    cta: "Get Alignment",
   },
   signal: {
-    headline: "Verified AI answer pipeline",
-    body: "Triple-check consensus across 3 models. Monitor citations, competitors and extraction shifts over time.",
+    headline: "Operations and automation tier",
+    body: "Run the triple-check model pipeline, test citations, automate workflows, and coordinate audits across teams and client portfolios.",
     includes: [
-      "citation tracking",
-      "competitor intelligence",
-      "source gap detection",
-      "scheduled rescans",
-      "white-label exports",
-      "historical deltas",
-      "workflow alerts",
-      "full evidence ledger",
+      `${PRICING.signal.limits.scans} audits/month`,
+      "triple-check AI validation pipeline",
+      "citation testing and scheduled rescans",
+      `team workspaces (${TIER_LIMITS.signal.maxTeamMembers} seats)`,
+      "API access, webhooks, and white-label reporting",
     ],
-    cta: "Track your citations",
+    cta: "Get Signal",
   },
   scorefix: {
-    headline: "Evidence-based fix pack",
-    body: "Automated GitHub fix deployment. Ship fixes, not guesses. Scope scales based on complexity.",
+    headline: "Automated remediation pack",
+    body: "Everything in Signal plus evidence-linked GitHub PR generation so the platform can write the actual fix instead of just describing it.",
     includes: [
-      "exact remediation",
-      "PR-ready outputs",
-      "verification after fix",
-      "MCP integration",
-      "scope scales with issue complexity",
+      `${PRICING.scorefix.credits} AutoFix PR credits`,
+      "everything in Signal, plus automated remediation",
+      "evidence-linked GitHub pull requests",
+      "batch remediation workflows",
+      "credits do not expire",
     ],
-    cta: "Get the fix pack",
+    cta: "Get Score Fix",
     priceLabel: `$${PRICING.scorefix.billing.oneTime}`,
   },
 };
@@ -217,37 +211,47 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "Is AiVIS.biz free to use?",
     answer:
-      "Yes. Observer is free and includes 3 audits per month, up to 3 pages per audit, top blockers and a limited evidence preview. No credit card is required to start.",
+      "Yes. Observer is permanently free and includes 3 CITE LEDGER audits per month with evidence-backed scoring and prioritized findings. No credit card is required to start.",
   },
   {
-    question: "How is AiVIS.biz different from AI visibility dashboards like Semrush?",
+    question: "What is included in every plan?",
     answer:
-      "Tracking platforms show you market share charts and tell you if AI mentions your brand. AiVIS.biz goes deeper: it crawls your actual page, identifies the specific technical failures blocking citations (missing schema, weak headings, thin answer blocks), scores seven evidence-backed dimensions, and - with AutoFix PR - opens a GitHub PR that ships the fix. The difference is diagnosis and remediation vs. monitoring.",
+      "Every plan includes CITE LEDGER evidence-backed scoring, BRAG evidence IDs, and prioritized recommendations tied to real page signals. Higher tiers expand audit volume, automation, and collaboration rather than changing the scoring method itself.",
   },
   {
-    question: "What is the difference between Observer, Starter, Alignment, and Signal?",
+    question: "What is the difference between Alignment and Signal?",
     answer:
-      "Observer gives a verdict, top blockers, and a competitor gap preview. Starter unlocks all recommendations with implementation code, content highlights, PDF export and shareable links. Alignment adds competitor tracking, citation workflows and full evidence. Signal adds ongoing tracking, citation movement, source-gap detection, and alerts so teams can monitor what changes after each fix.",
+      `Alignment focuses on intelligence workflows: competitor tracking, brand mention scanning, reverse-engineer tools, and recurring rescans. Signal adds the triple-check AI validation pipeline, citation testing, API and webhook access, white-label reporting, and team workspaces with up to ${TIER_LIMITS.signal.maxTeamMembers} seats.`,
   },
   {
-    question: "What does multi-model AI validation mean?",
+    question: "What is the triple-check pipeline?",
     answer:
-      "Multi-model validation runs a triple-check AI pipeline: three independent models score, critique, and validate each audit. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Signal and Score Fix plans. Score Fix also adds automated GitHub PR generation via MCP, credit usage based on the complexity of the fix.",
+      "The triple-check pipeline runs three independent model passes on every audit. A primary model scores the site, a second model peer-critiques and can adjust the score within a bounded range, and a third model validates the final result. It is available on Signal and Score Fix.",
+  },
+  {
+    question: "What is Score Fix AutoFix PR?",
+    answer:
+      `Score Fix is a one-time purchase of ${PRICING.scorefix.credits} remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes. Credits do not expire.`,
+  },
+  {
+    question: "What does brand mention tracking scan?",
+    answer:
+      "Brand mention tracking scans 19 public sources including Reddit, Hacker News, Mastodon, DuckDuckGo and Bing site search, Google News RSS, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. It is available on Alignment and above.",
   },
   {
     question: "How does annual billing work?",
     answer:
-      "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Observer remains free. Alignment and Signal annual totals are shown at checkout and billing settings, and you can switch from monthly to annual at any time.",
+      "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Starter, Alignment, and Signal annual totals are shown at checkout and in billing settings, and you can switch from monthly to annual when eligible.",
   },
   {
     question: "Can I cancel at any time?",
     answer:
-      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Annual plan refund windows and terms are shown during checkout.",
+      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Score Fix is a one-time purchase with no subscription renewal.",
   },
   {
     question: "Do audits roll over if I don't use them all?",
     answer:
-      "No. Audit allowances reset at the start of each billing cycle. If your team consistently exceeds your allowance, upgrading to a higher tier is usually more cost-effective than staying on a constrained plan.",
+      "No. Audit allowances reset at the start of each billing cycle. Score Fix credits are the exception because they are purchased once and do not expire.",
   },
   {
     question: "What payment methods are accepted?",
@@ -784,7 +788,7 @@ export default function PricingPage() {
   usePageMeta({
     title: "Pricing",
     description:
-      "AiVIS.biz plans: Observer free tier plus Alignment, Signal, and legacy Score Fix options with multi-model validation and team reporting.",
+      "Five tiers from free to automated remediation. Compare Observer, Starter, Alignment, Signal, and Score Fix for AI visibility audits and CITE LEDGER evidence-backed scoring.",
     path: "/pricing",
     ogTitle: "AI Visibility Audit Pricing Plans",
     structuredData: [
@@ -796,7 +800,7 @@ export default function PricingPage() {
         name: "AiVIS.biz",
         url: "https://aivis.biz/pricing",
         description:
-          "AiVIS.biz pricing for AI visibility audits across ChatGPT, Perplexity, Google AI, and Claude with tiered features for teams and agencies.",
+          "AiVIS.biz pricing for AI visibility audits with evidence-backed scoring, competitive intelligence, citation testing, and automated remediation.",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         publisher: buildOrganizationRef(),
@@ -817,7 +821,18 @@ export default function PricingPage() {
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Live monthly audit allowance with evidence-backed scoring and core recommendations",
+              "Free tier with evidence-backed scoring, BRAG evidence IDs, and 3 audits per month.",
+          },
+          {
+            "@type": "Offer",
+            name: "Starter",
+            price: String(PRICING.starter.billing.monthly),
+            priceCurrency: "USD",
+            url: "https://aivis.biz/pricing#starter",
+            availability: "https://schema.org/InStock",
+            priceValidUntil: rollingPriceValidUntil,
+            description:
+              "Implementation-ready recommendations, exports, and shareable reporting for growing teams.",
           },
           {
             "@type": "Offer",
@@ -828,7 +843,7 @@ export default function PricingPage() {
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Higher monthly allowances with exports, competitor tracking, and advanced workflows",
+              "Competitor tracking, brand mention scanning, reverse-engineer tools, and recurring intelligence workflows.",
           },
           {
             "@type": "Offer",
@@ -839,7 +854,7 @@ export default function PricingPage() {
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Pro allowance with triple-check AI, citation tools, API access, and white-label reporting",
+              "Triple-check AI validation, citation testing, developer access, team workflows, and white-label reporting.",
           },
           {
             "@type": "Offer",
@@ -850,7 +865,7 @@ export default function PricingPage() {
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Automated GitHub PR remediation via MCP. Scope scales based on issue complexity.",
+              "One-time AutoFix PR credit pack with evidence-linked GitHub remediation and no expiry.",
           },
         ],
       },
@@ -858,7 +873,7 @@ export default function PricingPage() {
         path: "/pricing",
         name: "AI Visibility Audit Pricing Plans",
         description:
-          "AiVIS.biz plans: Observer free tier plus Alignment, Signal, and Score Fix AutoFix PR options with multi-model validation and team reporting.",
+          "Compare Observer, Starter, Alignment, Signal, and Score Fix plans for AI visibility audits, competitive intelligence, and automated remediation.",
         mainEntityId: SOFTWARE_APPLICATION_ID,
       }),
       {
@@ -1181,6 +1196,7 @@ export default function PricingPage() {
                 <tr className="border-b border-white/8 text-white/50">
                   <th className="px-5 py-3 font-medium">Capability</th>
                   <th className="px-3 py-3 font-medium text-center">Observer</th>
+                  <th className="px-3 py-3 font-medium text-center">Starter</th>
                   <th className="px-3 py-3 font-medium text-center">Alignment</th>
                   <th className="px-3 py-3 font-medium text-center">Signal</th>
                   <th className="px-3 py-3 font-medium text-center">Score Fix</th>
@@ -1188,21 +1204,22 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3/mo", "60/mo", "200/mo", "15"],
-                  ["Visibility score + recs", true, true, true, true],
-                  ["Citation gap diagnosis", true, true, true, true],
-                  ["Shareable report links", false, true, true, true],
-                  ["Export (PDF / JSON)", false, true, true, true],
-                  ["Competitor advantage signals", false, true, true, true],
-                  ["Brand mention tracking", false, true, true, true],
-                  ["Decision query gap analysis", false, true, true, true],
-                  ["API + OAuth access", false, false, true, true],
-                  ["Triple-check AI validation", false, false, true, true],
-                  ["Citation testing", false, true, true, true],
-                  ["MCP Server (AI agents)", false, false, true, true],
-                  ["Team seats", "0", "3", "10", "10"],
-                  ["White-label reports", false, false, true, false],
-                  ["Auto GitHub PRs via MCP", false, false, false, true],
+                  ["Audit allowance", "3/mo", "15/mo", "60/mo", "200/mo", `${PRICING.scorefix.credits} credits`],
+                  ["Visibility score + recs", true, true, true, true, true],
+                  ["BRAG evidence IDs", true, true, true, true, true],
+                  ["Implementation-ready guidance", false, true, true, true, true],
+                  ["Shareable report links", false, true, true, true, true],
+                  ["Export (PDF / JSON)", false, true, true, true, true],
+                  ["Competitor tracking", false, false, true, true, true],
+                  ["Brand mention tracking", false, false, true, true, true],
+                  ["Reverse-engineer workflows", false, false, true, true, true],
+                  ["API + OAuth access", false, false, false, true, true],
+                  ["Triple-check AI validation", false, false, false, true, true],
+                  ["Citation testing", false, false, false, true, true],
+                  ["MCP Server (AI agents)", false, false, true, true, true],
+                  ["Team seats", "0", "0", String(TIER_LIMITS.alignment.maxTeamMembers), String(TIER_LIMITS.signal.maxTeamMembers), String(TIER_LIMITS.scorefix.maxTeamMembers)],
+                  ["White-label reports", false, false, false, true, false],
+                  ["Auto GitHub PRs via MCP", false, false, false, false, true],
                 ].map(([label, ...vals], idx) => (
                   <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-3 text-white/80">{label}</td>

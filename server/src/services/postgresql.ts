@@ -1233,6 +1233,74 @@ export async function runMigrations(): Promise<void> {
               completed_at TIMESTAMPTZ
             )`,
             `CREATE INDEX IF NOT EXISTS idx_job_queue_status ON job_queue_log(status, created_at DESC)`,
+            // ── Entity OS Core: pgvector + enhanced entity identity schema ──────
+            // pgvector extension (non-fatal if unavailable on this host)
+            `CREATE EXTENSION IF NOT EXISTS vector`,
+            // Enhance the existing entities table with Entity OS Core columns
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS canonical_name TEXT`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS normalized_name TEXT`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS description TEXT`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS embedding vector(1536)`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS entity_type TEXT`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS collision_score FLOAT DEFAULT 0`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS clarity_score FLOAT DEFAULT 0`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS authority_score FLOAT DEFAULT 0`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active'`,
+            `ALTER TABLE entities ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`,
+            // Unique index on normalized_name for fast entity resolution
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_entities_normalized ON entities(normalized_name) WHERE normalized_name IS NOT NULL`,
+            // Entity Variants: name collision surface (same entity, different surface names across sources)
+            `CREATE TABLE IF NOT EXISTS entity_variants (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+            surface_name TEXT NOT NULL,
+            source_url TEXT,
+            context_snippet TEXT,
+            embedding vector(1536),
+            confidence FLOAT DEFAULT 0,
+            is_conflict BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+          )`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_variants_entity ON entity_variants(entity_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_variants_surface ON entity_variants(surface_name)`,
+            // Entity Evidence: CITE backbone — deduplicated cross-source evidence per entity
+            `CREATE TABLE IF NOT EXISTS entity_evidence (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+            evidence_type TEXT,
+            source TEXT,
+            snippet TEXT,
+            hash TEXT UNIQUE,
+            embedding vector(1536),
+            weight FLOAT DEFAULT 1.0,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+          )`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_evidence_entity ON entity_evidence(entity_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_evidence_hash ON entity_evidence(hash)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_evidence_type ON entity_evidence(evidence_type)`,
+            // Entity Collisions: moat table — semantic/name/category collision detection
+            `CREATE TABLE IF NOT EXISTS entity_collisions (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            entity_a TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+            entity_b TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+            collision_type TEXT,
+            severity FLOAT,
+            shared_signals JSONB DEFAULT '{}'::jsonb,
+            resolved BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+          )`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_collisions_a ON entity_collisions(entity_a)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_collisions_b ON entity_collisions(entity_b)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_collisions_type ON entity_collisions(collision_type)`,
+            // Composite unique: prevent duplicate collision pairs regardless of direction
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_entity_collisions_pair ON entity_collisions(LEAST(entity_a, entity_b), GREATEST(entity_a, entity_b), collision_type)`,
+            // Link audits to the Entity OS identity layer
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS entity_id TEXT REFERENCES entities(id) ON DELETE SET NULL`,
+            `CREATE INDEX IF NOT EXISTS idx_audits_entity_id ON audits(entity_id)`,
+            // HNSW vector indexes for embedding similarity search (non-fatal if pgvector absent)
+            `CREATE INDEX IF NOT EXISTS idx_entities_embedding ON entities USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_evidence_embedding ON entity_evidence USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_variants_embedding ON entity_variants USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

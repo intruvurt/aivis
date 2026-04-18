@@ -211,6 +211,10 @@ import {
   createOrRefreshPublicReportLink,
   resolvePublicReportReference,
 } from "./services/publicReportLinks.js";
+import {
+  getPublicEntityNode,
+  listPublicEntitySitemapEntries,
+} from "./services/publicEntityNodes.js";
 import trialRoutes from "./routes/trialRoutes.js";
 import openApiSpec from "./routes/openApiSpec.js";
 import oauthRoutes from "./routes/oauthRoutes.js";
@@ -9333,6 +9337,49 @@ app.post(
         success: false,
         error: String(err?.message || "Failed to ingest deploy hook"),
       });
+    }
+  },
+);
+
+app.get(
+  "/api/public/entities/:entitySlug",
+  ipRateLimit({ maxRequests: 30, windowMs: 60_000 }),
+  async (req: Request, res: Response) => {
+    try {
+      const entitySlug = String(req.params.entitySlug || "").trim().toLowerCase();
+      if (!entitySlug) {
+        return res.status(400).json({ error: "Missing entity slug" });
+      }
+
+      const payload = await getPublicEntityNode(entitySlug);
+      if (!payload) {
+        return res.status(404).json({ error: "Entity node not found" });
+      }
+
+      return res.json(payload);
+    } catch (err: any) {
+      console.error("[Entities] Public entity fetch error:", err);
+      return res.status(500).json({ error: "Failed to fetch public entity node" });
+    }
+  },
+);
+
+app.get(
+  "/sitemap-entities.xml",
+  ipRateLimit({ maxRequests: 20, windowMs: 60_000 }),
+  async (_req: Request, res: Response) => {
+    try {
+      const entries = await listPublicEntitySitemapEntries();
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries
+        .map((entry) => `  <url><loc>${entry.loc}</loc><lastmod>${entry.lastmod}</lastmod></url>`)
+        .join("\n")}\n</urlset>`;
+
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=300");
+      return res.status(200).send(xml);
+    } catch (err: any) {
+      console.error("[Entities] Sitemap generation error:", err);
+      return res.status(500).send("Failed to generate entity sitemap");
     }
   },
 );

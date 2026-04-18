@@ -17,6 +17,14 @@ import {
   acceptBlocklistSuggestionsHandler,
   getAnchorScoreHandler,
   getAuditRunsHandler,
+  ingestEntityHandler,
+  getEntityHealthHandler,
+  runEntityAuditHandler,
+  diagnoseEntityHandler,
+  clarifyEntityHandler,
+  reinforceEntityHandler,
+  simulateEntityHandler,
+  publishEntityHandler,
 } from '../controllers/entity.controllers.js';
 
 const router = Router();
@@ -52,5 +60,15 @@ router.post('/accept-blocklist', requireAlignmentOrHigher, acceptBlocklistSugges
 // ── Anchor score & audit runs ────────────────────────────────────────────────
 router.get('/anchor-score', requireAlignmentOrHigher, getAnchorScoreHandler);
 router.get('/audit-runs', requireAlignmentOrHigher, getAuditRunsHandler);
+
+// ── Entity OS surface ────────────────────────────────────────────────────────
+router.post('/ingest', requireAlignmentOrHigher, ingestEntityHandler);
+router.get('/:id/health', requireAlignmentOrHigher, getEntityHealthHandler);
+router.post('/:id/audit', requireAlignmentOrHigher, runEntityAuditHandler);
+router.post('/:id/diagnose', requireAlignmentOrHigher, diagnoseEntityHandler);
+router.post('/:id/clarify', requireAlignmentOrHigher, clarifyEntityHandler);
+router.post('/:id/reinforce', requireAlignmentOrHigher, reinforceEntityHandler);
+router.post('/:id/simulate', requireAlignmentOrHigher, simulateEntityHandler);
+router.post('/:id/publish', requireAlignmentOrHigher, publishEntityHandler);
 
 export default router;

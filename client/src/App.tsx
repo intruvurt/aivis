@@ -94,6 +94,7 @@ const GeoAIRanking2026 = React.lazy(() => import("./pages/GeoAIRanking2026"));
 const ConversationalQueryPlaybook2026 = React.lazy(() => import("./pages/ConversationalQueryPlaybook2026"));
 const VoiceSearchAIAnswerOptimization2026 = React.lazy(() => import("./pages/VoiceSearchAIAnswerOptimization2026"));
 const PublicReportPage = React.lazy(() => import("./pages/PublicReportPage"));
+const EntityNodePage = React.lazy(() => import("./pages/EntityNodePage"));
 const CompliancePage = React.lazy(() => import("./pages/CompliancePage"));
 const ChangelogPage = React.lazy(() => import("./pages/ChangelogPage"));
 const PressPage = React.lazy(() => import("./pages/PressPage"));
@@ -282,6 +283,8 @@ export default function App() {
             <Route path="/geo-ai-ranking-2026" element={<GeoAIRanking2026 />} />
             <Route path="/conversational-query-playbook-2026" element={<ConversationalQueryPlaybook2026 />} />
             <Route path="/voice-search-ai-answer-optimization-2026" element={<VoiceSearchAIAnswerOptimization2026 />} />
+            <Route path="/entity/:entitySlug" element={<EntityNodePage />} />
+            <Route path="/entity/:entitySlug/audit/:shareId" element={<PublicReportPage />} />
             <Route path="/reports/public/:shareId" element={<PublicReportPage />} />
             <Route path="/report/public/:shareId" element={<PublicReportPage />} />
             <Route path="/report/:shareId" element={<PublicReportPage />} />

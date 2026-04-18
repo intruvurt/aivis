@@ -6,17 +6,17 @@ import { buildBreadcrumbSchema } from "../lib/seoSchema";
 
 export default function CompareRankScalePage() {
   usePageMeta({
-    title: "AiVIS vs RankScale: AI Visibility Audit vs AI-Enhanced SEO (2026 Comparison)",
+    title: "AiVIS.biz vs RankScale: AI Visibility Audit vs AI-Enhanced SEO (2026 Comparison)",
     description:
-      "RankScale uses AI for content optimization within search rankings. AiVIS audits whether AI answer engines can extract, trust, and cite your content. 2026 comparison.",
+      "RankScale uses AI for content optimization within search rankings. AiVIS.biz audits whether AI answer engines can extract, trust, and cite your content. 2026 comparison.",
     path: "/compare/aivis-vs-rankscale",
     structuredData: [
       {
         "@context": "https://schema.org",
         "@type": "Article",
-        headline: "AiVIS vs RankScale: AI Citation Readiness vs AI-Enhanced SEO",
+        headline: "AiVIS.biz vs RankScale: AI Citation Readiness vs AI-Enhanced SEO",
         description:
-          "RankScale uses AI-generated content recommendations to improve search rankings. AiVIS audits whether AI answer engines can extract, trust, and cite your content. Different inputs, different outputs.",
+          "RankScale uses AI-generated content recommendations to improve search rankings. AiVIS.biz audits whether AI answer engines can extract, trust, and cite your content. Different inputs, different outputs.",
         author: { "@id": "https://aivis.biz/#author" },
         publisher: { "@id": "https://aivis.biz/#organization" },
         datePublished: "2026-03-24",
@@ -28,10 +28,10 @@ export default function CompareRankScalePage() {
         mainEntity: [
           {
             "@type": "Question",
-            name: "Is AiVIS a RankScale alternative?",
+            name: "Is AiVIS.biz a RankScale alternative?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "AiVIS and RankScale overlap in using AI for website optimization but serve different purposes. RankScale uses AI to generate content recommendations for search engine rankings. AiVIS uses AI to audit whether your content is structurally ready to be cited by AI answer engines like ChatGPT, Perplexity, and Claude. They optimize for different discovery channels.",
+              text: "AiVIS.biz and RankScale overlap in using AI for website optimization but serve different purposes. RankScale uses AI to generate content recommendations for search engine rankings. AiVIS.biz uses AI to audit whether your content is structurally ready to be cited by AI answer engines like ChatGPT, Perplexity, and Claude. They optimize for different discovery channels.",
             },
           },
           {
@@ -47,7 +47,7 @@ export default function CompareRankScalePage() {
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
         { name: "Comparison", path: "/compare" },
-        { name: "AiVIS vs RankScale", path: "/compare/aivis-vs-rankscale" },
+        { name: "AiVIS.biz vs RankScale", path: "/compare/aivis-vs-rankscale" },
       ]),
     ],
   });
@@ -62,12 +62,12 @@ export default function CompareRankScalePage() {
           </p>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">
-            AiVIS vs RankScale
+            AiVIS.biz vs RankScale
           </h1>
 
           <p className="text-lg text-white/75 mb-8 leading-relaxed">
             <strong className="text-white">RankScale uses AI to optimize content for search engine rankings.</strong>{" "}
-            <strong className="text-white">AiVIS audits whether AI answer engines can read, trust, and cite your website.</strong>{" "}
+            <strong className="text-white">AiVIS.biz audits whether AI answer engines can read, trust, and cite your website.</strong>{" "}
             Both platforms involve AI. One uses AI as a tool to improve ranking signals. The other measures whether AI systems can consume your content as a source. These are fundamentally different objectives.
           </p>
 
@@ -82,11 +82,11 @@ export default function CompareRankScalePage() {
             </p>
           </section>
 
-          {/* ── What AiVIS Does ── */}
+          {/* ── What AiVIS.biz Does ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS Does</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS.biz Does</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              AiVIS is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. Rather than using AI to write content that ranks in search engines, AiVIS uses AI to audit content for structural readiness across five dimensions: crawlability, extractability, trust signals, cross-model scoring consistency, and automated remediation.
+              AiVIS.biz is not an SEO tool. It is the first platform built specifically to measure and improve whether AI answer engines can read, trust, and cite your website. Rather than using AI to write content that ranks in search engines, AiVIS.biz uses AI to audit content for structural readiness across five dimensions: crawlability, extractability, trust signals, cross-model scoring consistency, and automated remediation.
             </p>
             <p className="text-white/70 leading-relaxed">
               The distinction matters because the signals AI answer engines evaluate are different from search engine ranking factors. Entity clarity, answer block density, schema completeness for machine consumption, and content verifiability have no direct equivalent in traditional SEO optimization tools.
@@ -101,7 +101,7 @@ export default function CompareRankScalePage() {
                 <thead className="bg-white/[0.06]">
                   <tr>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/80 border-r border-r-white/10">Capability</th>
-                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS</th>
+                    <th className="p-4 border-b border-white/10 font-semibold text-cyan-300 border-r border-r-white/10">AiVIS.biz</th>
                     <th className="p-4 border-b border-white/10 font-semibold text-white/70">RankScale</th>
                   </tr>
                 </thead>
@@ -119,7 +119,7 @@ export default function CompareRankScalePage() {
                     ["Competitor content analysis", "AI visibility comparison with opportunity scoring", "Top-ranking page analysis for content gaps", true, true],
                     ["MCP protocol", "AI agents can invoke audit tools programmatically", "Not available", true, false],
                     ["Schema completeness audit", "JSON-LD validation for machine consumption", "Not measured", true, false],
-                    ["Brand mention tracking", "9 free sources: Reddit, HN, Mastodon, GitHub, etc.", "Not available", true, false],
+                    ["Brand mention tracking", "19 free sources: Reddit, HN, Mastodon, GitHub, etc.", "Not available", true, false],
                     ["SERP ranking focus", "Not a focus (measures citation readiness, not ranking position)", "Primary focus on improving search rankings", false, true],
                     ["Free tier", "Observer: 3 audits/mo, full fidelity", "Free trial, paid plans for ongoing use", true, false],
                   ].map(([feature, aivis, rankscale, aivisYes, rankscaleYes], i) => (
@@ -142,7 +142,7 @@ export default function CompareRankScalePage() {
 
           {/* ── When to Use Each ── */}
           <section className="mb-10">
-            <h2 className="text-2xl font-bold mb-3 text-white">When to Use RankScale vs AiVIS</h2>
+            <h2 className="text-2xl font-bold mb-3 text-white">When to Use RankScale vs AiVIS.biz</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-purple-400/20 bg-purple-500/[0.06] p-5">
                 <h3 className="text-lg font-bold text-purple-300 mb-2">Use RankScale When</h3>
@@ -154,7 +154,7 @@ export default function CompareRankScalePage() {
                 </ul>
               </div>
               <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/[0.06] p-5">
-                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS When</h3>
+                <h3 className="text-lg font-bold text-cyan-300 mb-2">Use AiVIS.biz When</h3>
                 <ul className="space-y-2 text-sm text-white/70">
                   <li>You need to know if AI systems can parse and cite your content</li>
                   <li>You want validated audit findings across multiple AI models</li>
@@ -170,10 +170,10 @@ export default function CompareRankScalePage() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3 text-white">The Core Distinction</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              RankScale uses AI to help you create content. AiVIS uses AI to evaluate whether your content is ready to be used by AI. One is an AI-powered writing assistant focused on search rankings. The other is an AI-powered diagnostic engine focused on citation readiness.
+              RankScale uses AI to help you create content. AiVIS.biz uses AI to evaluate whether your content is ready to be used by AI. One is an AI-powered writing assistant focused on search rankings. The other is an AI-powered diagnostic engine focused on citation readiness.
             </p>
             <p className="text-white/70 leading-relaxed">
-              As AI answer engines become a primary discovery channel, optimizing content for search rankings alone is no longer sufficient. Content also needs to be structurally extractable, entity-coherent, and verifiable. That is the measurement layer AiVIS provides.
+              As AI answer engines become a primary discovery channel, optimizing content for search rankings alone is no longer sufficient. Content also needs to be structurally extractable, entity-coherent, and verifiable. That is the measurement layer AiVIS.biz provides.
             </p>
           </section>
 
@@ -183,16 +183,16 @@ export default function CompareRankScalePage() {
             <div className="space-y-4">
               {[
                 {
-                  q: "Is AiVIS a RankScale alternative?",
-                  a: "They overlap in using AI for optimization but serve different channels. RankScale optimizes content for search engine rankings. AiVIS audits content for AI answer engine citation readiness. You may benefit from both depending on your traffic sources.",
+                  q: "Is AiVIS.biz a RankScale alternative?",
+                  a: "They overlap in using AI for optimization but serve different channels. RankScale optimizes content for search engine rankings. AiVIS.biz audits content for AI answer engine citation readiness. You may benefit from both depending on your traffic sources.",
                 },
                 {
                   q: "What is the difference between AI-enhanced SEO and AI visibility?",
                   a: "AI-enhanced SEO uses AI models to write or optimize content that ranks better in search engines. AI visibility is whether your content is structurally extractable, entity-coherent, and verifiable enough for AI answer engines to cite as source material. One uses AI as a tool. The other measures whether AI systems can use your content.",
                 },
                 {
-                  q: "Can I use RankScale content and then audit it with AiVIS?",
-                  a: "Yes. You can use any content creation tool (RankScale, Clearscope, Surfer) to write optimized content, then use AiVIS to audit whether that content is structurally ready for AI answer engine citation. The creation and audit steps are complementary.",
+                  q: "Can I use RankScale content and then audit it with AiVIS.biz?",
+                  a: "Yes. You can use any content creation tool (RankScale, Clearscope, Surfer) to write optimized content, then use AiVIS.biz to audit whether that content is structurally ready for AI answer engine citation. The creation and audit steps are complementary.",
                 },
               ].map((faq, i) => (
                 <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
@@ -218,7 +218,7 @@ export default function CompareRankScalePage() {
           </section>
 
           <section className="mt-10">
-            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS with other tools</h3>
+            <h3 className="text-lg font-semibold text-white/80 mb-4">Compare AiVIS.biz with other tools</h3>
             <div className="flex flex-wrap gap-3">
               <Link to="/compare/ahrefs" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Ahrefs</Link>
               <Link to="/compare/semrush" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">vs Semrush</Link>
@@ -229,7 +229,7 @@ export default function CompareRankScalePage() {
           </section>
 
           <p className="text-xs text-white/40 mt-6">
-            RankScale is a trademark of its respective owner. This comparison reflects publicly available feature information as of March 2026. AiVIS is not affiliated with RankScale.
+            RankScale is a trademark of its respective owner. This comparison reflects publicly available feature information as of March 2026. AiVIS.biz is not affiliated with RankScale.
           </p>
         </div>
       </section>

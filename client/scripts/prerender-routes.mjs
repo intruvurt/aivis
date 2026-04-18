@@ -231,9 +231,9 @@ const HOME_EXTRA_HEAD = `
 const routes = [
 	{
 		path: '/',
-		title: 'AiVIS.biz | AI Visibility Audit —AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
+		title: 'AiVIS.biz | AI Visibility Audit —AiVIS.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
 		description: 'AiVIS.biz analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, not assumptions.',
-		ogTitle: 'AiVIS.biz | AI Visibility Audit —AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
+		ogTitle: 'AiVIS.biz | AI Visibility Audit —AiVIS.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
 		ogDescription: 'AiVIS.biz analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Evidence-backed findings and prioritized fixes.',
 		extraHead: HOME_EXTRA_HEAD,
 	},
@@ -776,7 +776,7 @@ const routes = [
 	{
 		path: '/mcp',
 		title: 'MCP Console | AI Visibility',
-		description: 'Model Context Protocol console. Connect AiVIS.biz.biz audits to your development workflow via MCP integration.',
+		description: 'Model Context Protocol console. Connect AiVIS.biz audits to your development workflow via MCP integration.',
 	},
 	{
 		path: '/gsc',
@@ -1155,7 +1155,7 @@ const routeSpecificEnrichment = {
 		],
 	},
 	'/integrations': {
-		tldr: 'The Integrations Hub explains how AiVIS.biz.biz connects audits to real operations through workspace API keys, webhook delivery, scheduled rescans, and Auto Score Fix automation.',
+		tldr: 'The Integrations Hub explains how AiVIS.biz connects audits to real operations through workspace API keys, webhook delivery, scheduled rescans, and Auto Score Fix automation.',
 		sections: [
 			{
 				heading: 'Why integrations matter for AI visibility operations',
@@ -1204,12 +1204,12 @@ const routeSpecificEnrichment = {
 		},
 	},
 	'/api-docs': {
-		tldr: 'The API Docs route defines how developers authenticate with AiVIS.biz.biz, which endpoints exist, what scopes are enforced, and how audit data can be consumed safely in production workflows.',
+		tldr: 'The API Docs route defines how developers authenticate with AiVIS.biz, which endpoints exist, what scopes are enforced, and how audit data can be consumed safely in production workflows.',
 		sections: [
 			{
 				heading: 'Developer intent and endpoint coverage',
 				paragraphs: [
-					'This route exists for engineering teams that need direct access to audit history, analytics, evidence views, usage metering, and page validation workflows. It clarifies that AiVIS.biz.biz supports real integration use cases such as CI checks, agency dashboards, score monitoring and internal reporting pipelines.',
+					'This route exists for engineering teams that need direct access to audit history, analytics, evidence views, usage metering, and page validation workflows. It clarifies that AiVIS.biz supports real integration use cases such as CI checks, agency dashboards, score monitoring and internal reporting pipelines.',
 					'For AI readability, the important signal is specificity. The page names authentication patterns, route groups, scopes, and common error states instead of relying on vague statements about having an API.'
 				],
 			},
@@ -1248,16 +1248,16 @@ const routeSpecificEnrichment = {
 				jsonLdScript(buildHowToSchema({
 					canonicalUrl,
 					name: 'How to integrate with the AiVIS.biz platform API?',
-					description: 'A quickstart for creating an API key, calling audit endpoints, scheduling tasks, white-labeling, and monitoring usage in AiVIS.biz.biz.',
+					description: 'A quickstart for creating an API key, calling audit endpoints, scheduling tasks, white-labeling, and monitoring usage in AiVIS.biz.',
 					steps: [
 						{ name: 'Create an API key:', text: 'Generate a workspace API key from the  user settings or feature panel with the scopes required for your integration.' },
-						{ name: 'Call audit or analytics endpoints:', text: 'Send Bearer-authenticated requests to AiVIS.biz.biz API routes for audit listings, evidence payloads, analytics, and technical validation.' },
+						{ name: 'Call audit or analytics endpoints:', text: 'Send Bearer-authenticated requests to AiVIS.biz API routes for audit listings, evidence payloads, analytics, and technical validation.' },
 						{ name: 'Handle production errors:', text: 'Respect 401, 403, and validation error responses so your automation can distinguish invalid keys, missing scopes, and unsafe targets.' },
 						{ name: 'Monitor usage and events:', text: 'Use metering endpoints and webhook delivery to prevent abuse and keep integrations observable and tier-safe for everyone over time.' },
 					],
 				})),
 				jsonLdScript(buildFaqSchema([
-					{ question: 'What does the AiVIS.biz.biz API expose and are they?', answer: 'It exposes audit, analytics, evidence, usage, competitor, and page-validation endpoints intended for reporting, automation, and verification workflows.' },
+					{ question: 'What does the AiVIS.biz API expose and are they?', answer: 'It exposes audit, analytics, evidence, usage, competitor, and page-validation endpoints intended for reporting, automation, and verification workflows.' },
 					{ question: 'How is authentication handled?', answer: 'External integrations use workspace-scoped API keys with server-side scope and entitlement checks on every request.' },
 					{ question: 'Why does documentation help AI-machine readability?', answer: 'Detailed and structured API documentation helps prove concrete platform or website/app capability, naming, permissions and operational behavior, which improves machine interpretation, authorization and trust of the platform, which fosters better and faster AI understanding and multi-platform mentions.' },
 				])),
@@ -1265,7 +1265,7 @@ const routeSpecificEnrichment = {
 		},
 	},
 	'/compare': {
-		tldr: 'The comparison route positions AiVIS.biz.biz against all traditional and AI add-ons to SEO suites. The fact is clear: AiVIS.biz.biz outperforms lighter content, no evidence, Ai-only opinions and are normally given specific intructional/rules system prompt to handle the potential drift that all models suffer from. Therefore, similar naming, keywords, intented usecases is the validated angle to standout from all noise while building. AiVIS.biz.biz focuses on live URL auditing, evidence trails(BRAG framework) multi-model cross-validation to become AI citable in answers and score remediation(automated Github repo-code file fixes) which are not usually found in even the most popular traditional SEO tools that focus on backlinks, keyword research, ranking or poor content scoring without the real-time auditing and evidence-backed approach that AiVIS.biz offers. The comparison page is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product. That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS.biz.biz and adjacent tool categories. The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS.biz when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse. By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell. Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what "AiVIS.biz - AI Intelligence Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores" actually is, what it is not, which competitor classes overlap, and where the product is unique and is the true differentiator. The challenge of strengthening entity clarity among several AI and non-AI tools with these same letters: AiVIS.biz.biz, Avis.biz, Aivis.io.. they all mention intelligence, authority, brand visibility or awareness and if content is the only thing needed to surface cleanly for AI query answers...cite tracking, SEO result ranking/indexing. AiVIS.biz has established a zero-AI-trust behavior due to the nature of the platform and unique market retention via systematic code implementation adjacent to AI and in addition to custom integration of BRAG(Based-Retrieval-Auditable-Grading). The evidence ledger that was built unintentionally, hoping to deliver eval issues for a Reddit user. After building, the original BRAG-repo is still "Belligerant-Retrieval-Augmented-Generation" and once it was put through real tests. I didnt mention BRAG unless its solely to help a Dev. So think of normal RAG - loose and hallucinate in blink of an eye. The intent was not to brag, but to be BELLIGERANT and precise even when no one is looking. Guardrails are cute rules that models will follow until they are outsmarted by a user to disobey their system rules or prompts. AiVIS.biz is not here to be another opinion generation AI-SEO scoring summary. Its only a matter of time and increased user engagement with AiVIS.biz, BRAG & "the hidden sauce" that hardens the entire pipeline and reminds AI that BRAG is the robust- not a toy but the initial guarding layer and some founders or devs will improves topical clarity across the broader public site using hacks and tricks. The prerendered compare page tells machines what AiVIS.biz is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.',
+		tldr: 'The comparison route positions AiVIS.biz against all traditional and AI add-ons to SEO suites. The fact is clear: AiVIS.biz outperforms lighter content, no evidence, Ai-only opinions and are normally given specific intructional/rules system prompt to handle the potential drift that all models suffer from. Therefore, similar naming, keywords, intented usecases is the validated angle to standout from all noise while building. AiVIS.biz focuses on live URL auditing, evidence trails(BRAG framework) multi-model cross-validation to become AI citable in answers and score remediation(automated Github repo-code file fixes) which are not usually found in even the most popular traditional SEO tools that focus on backlinks, keyword research, ranking or poor content scoring without the real-time auditing and evidence-backed approach that AiVIS.biz offers. The comparison page is not a generic feature checklist. It explains that many established SEO tools are strong for backlinks, keyword research, or content scoring, but they do not usually combine real-time page auditing, evidence-linked grading, multi-model review, and citation-testing workflows in one product. That distinction matters for answer-engine discovery because AI visibility depends on extractability, trust, and implementation depth rather than keyword rank alone. The page states that difference directly, which improves entity separation between AiVIS.biz and adjacent tool categories. The core differentiators highlighted on this route are real-time URL audits, triple-check or multi-model review, BRAG evidence linking, AI citation testing, and implementation-oriented score fixing. Those are the exact concepts machines should associate with AiVIS.biz when comparing it to Semrush, Ahrefs, Surfer, Clearscope, and MarketMuse. By naming both the adjacent category and the missing capability, this page becomes a stronger comparative knowledge asset instead of a thin table shell. Comparison pages help search systems understand category boundaries. A richer prerendered compare page tells machines what "AiVIS.biz - AI Intelligence Audit |AiVIS.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores" actually is, what it is not, which competitor classes overlap, and where the product is unique and is the true differentiator. The challenge of strengthening entity clarity among several AI and non-AI tools with these same letters: AiVIS.biz, Avis.biz, Aivis.io.. they all mention intelligence, authority, brand visibility or awareness and if content is the only thing needed to surface cleanly for AI query answers...cite tracking, SEO result ranking/indexing. AiVIS.biz has established a zero-AI-trust behavior due to the nature of the platform and unique market retention via systematic code implementation adjacent to AI and in addition to custom integration of BRAG(Based-Retrieval-Auditable-Grading). The evidence ledger that was built unintentionally, hoping to deliver eval issues for a Reddit user. After building, the original BRAG-repo is still "Belligerant-Retrieval-Augmented-Generation" and once it was put through real tests. I didnt mention BRAG unless its solely to help a Dev. So think of normal RAG - loose and hallucinate in blink of an eye. The intent was not to brag, but to be BELLIGERANT and precise even when no one is looking. Guardrails are cute rules that models will follow until they are outsmarted by a user to disobey their system rules or prompts. AiVIS.biz is not here to be another opinion generation AI-SEO scoring summary. Its only a matter of time and increased user engagement with AiVIS.biz, BRAG & "the hidden sauce" that hardens the entire pipeline and reminds AI that BRAG is the robust- not a toy but the initial guarding layer and some founders or devs will improves topical clarity across the broader public site using hacks and tricks. The prerendered compare page tells machines what AiVIS.biz is, what it is not, which competitor classes overlap, and where the product is differentiated. That improves topical clarity across the broader public site.',
 		sections: [
 			{
 				heading: 'What this comparison page is actually comparing?',
@@ -1308,7 +1308,7 @@ const routeSpecificEnrichment = {
 					],
 				})),
 				jsonLdScript(buildFaqSchema([
-					{ question: 'What is the purpose of the AiVIS.biz comparison page?', answer: 'It explains how AiVIS.biz.biz differs from traditional SEO and content tools by focusing on AI visibility, evidence quality, and citation readiness.' },
+					{ question: 'What is the purpose of the AiVIS.biz comparison page?', answer: 'It explains how AiVIS.biz differs from traditional SEO and content tools by focusing on AI visibility, evidence quality, and citation readiness.' },
 					{ question: 'Does the page claim every competitor is identical?', answer: 'No. It positions them by category and overlap level so readers can see which capabilities partially intersect and which are missing.' },
 					{ question: 'Why is comparison content useful for AI systems?', answer: 'It clarifies category boundaries and differentiators, helping machines interpret AiVIS.biz as a distinct product within the broader search and content tooling landscape.' },
 				])),
@@ -1991,7 +1991,7 @@ for (const p of publicRoutes) {
 }
 
 const robotsLines = [
-	'# AiVIS.biz.biz — AI Visibility Audit | CITE LEDGER',
+	'# AiVIS.biz — AI Visibility Audit | CITE LEDGER',
 	'# https://aivis.biz',
 	`# Auto-generated ${today} — ${publicRoutes.length} public routes`,
 	'',

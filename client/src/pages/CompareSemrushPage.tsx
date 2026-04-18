@@ -133,7 +133,7 @@ export default function CompareSemrushPage() {
                     ["Multi-model validation", "Triple-Check: 3 AI models, peer critique, validation gate", "Single-pass AI content suggestions", true, false],
                     ["AI Overview tracking", "Not a focus (measures the input, not SERP features)", "Tracks AI Overview presence in Google SERPs", false, true],
                     ["Automated code fixes", "Score Fix generates GitHub PRs with evidence-linked changes", "Not available", true, false],
-                    ["Brand mention tracking", "9 free sources: Reddit, HN, Mastodon, GitHub, etc.", "Brand Monitoring add-on (paid)", true, true],
+                    ["Brand mention tracking", "19 free sources: Reddit, HN, Mastodon, GitHub, etc.", "Brand Monitoring add-on (paid)", true, true],
                     ["MCP protocol", "AI agents can invoke tools programmatically", "Not available", true, false],
                     ["Schema completeness audit", "JSON-LD validation for machine consumption", "Basic technical SEO audit", true, false],
                     ["Trust signal evaluation", "Author E-E-A-T, policy pages, claim consistency", "Domain Authority metrics", true, true],

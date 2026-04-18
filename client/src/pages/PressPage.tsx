@@ -79,7 +79,7 @@ const MILESTONES = [
 
 const MEDIA_KIT = [
   { label: "Company Name", value: "AiVIS.biz" },
-  { label: "Product", value: "AiVIS.biz.biz \u2014 AI Visibility Audit" },
+  { label: "Product", value: "AiVIS.biz \u2014 AI Visibility Audit" },
   { label: "Founded", value: "December 2025" },
   { 
     label: "Founder", 

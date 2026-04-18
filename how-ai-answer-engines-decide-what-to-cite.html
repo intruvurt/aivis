@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══ SEO META ═══ -->
+  <title>How AI Answer Engines Decide What to Cite — And How AiVIS Measures It</title>
+  <meta name="description" content="AI answer engines like ChatGPT, Perplexity, and Claude now determine content discoverability through citation behavior. AiVIS measures this with CITE LEDGER technology — turning model interpretation into measurable visibility signals." />
+  <meta name="keywords" content="AI visibility audit, answer engine optimization, AEO, citation readiness, CITE LEDGER, AiVIS, AI citation intelligence, LLM content extraction, ChatGPT citations, Perplexity visibility" />
+  <meta name="author" content="Ryan Mason, AiVIS by Intruvurt Labs" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+  <link rel="canonical" href="https://aivis.biz/blogs/how-ai-answer-engines-decide-what-to-cite" />
+
+  <!-- ═══ OPEN GRAPH ═══ -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="How AI Answer Engines Decide What to Cite — And How AiVIS Measures It" />
+  <meta property="og:description" content="Citation behavior is the new ranking signal. AiVIS uses CITE LEDGER technology to map how ChatGPT, Perplexity, and Claude parse, trust, and cite your content." />
+  <meta property="og:url" content="https://aivis.biz/blogs/how-ai-answer-engines-decide-what-to-cite" />
+  <meta property="og:site_name" content="AiVIS.biz" />
+  <meta property="og:image" content="https://aivis.biz/og-image2.png" />
+  <meta property="article:published_time" content="2026-04-17T00:00:00Z" />
+  <meta property="article:author" content="Ryan Mason" />
+  <meta property="article:section" content="AI Visibility" />
+  <meta property="article:tag" content="AEO" />
+  <meta property="article:tag" content="AI citation" />
+  <meta property="article:tag" content="CITE LEDGER" />
+
+  <!-- ═══ TWITTER ═══ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@intruvurt" />
+  <meta name="twitter:title" content="How AI Answer Engines Decide What to Cite — And How AiVIS Measures It" />
+  <meta name="twitter:description" content="Citation behavior is the new ranking signal. AiVIS uses CITE LEDGER to map how AI models parse, trust, and cite your content." />
+  <meta name="twitter:image" content="https://aivis.biz/og-image2.png" />
+
+  <!-- ═══ JSON-LD STRUCTURED DATA ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": "https://aivis.biz/blogs/how-ai-answer-engines-decide-what-to-cite#article",
+    "headline": "How AI Answer Engines Decide What to Cite — And How AiVIS Measures It",
+    "description": "AI answer engines like ChatGPT, Perplexity, and Claude determine content discoverability through citation behavior. AiVIS measures this with CITE LEDGER technology, turning model interpretation into measurable visibility signals.",
+    "datePublished": "2026-04-17T00:00:00Z",
+    "dateModified": "2026-04-17T00:00:00Z",
+    "author": {
+      "@type": "Person",
+      "@id": "https://aivis.biz/#author",
+      "name": "Ryan Mason",
+      "url": "https://aivis.biz/about-aivis"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://aivis.biz/#organization",
+      "name": "AiVIS.biz",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://aivis.biz/aivis-logo.png"
+      }
+    },
+    "mainEntityOfPage": "https://aivis.biz/blogs/how-ai-answer-engines-decide-what-to-cite",
+    "image": "https://aivis.biz/og-image2.png",
+    "keywords": ["AI visibility", "answer engine optimization", "CITE LEDGER", "citation readiness", "AiVIS", "LLM citation", "AEO"],
+    "articleSection": "AI Visibility",
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Answer Engine Optimization",
+        "description": "The practice of optimizing web content so it can be understood, extracted, and cited by AI answer engines."
+      },
+      {
+        "@type": "Thing",
+        "name": "CITE LEDGER",
+        "description": "A structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines."
+      }
+    ],
+    "citation": [
+      {
+        "@type": "WebPage",
+        "name": "AiVIS Audit Methodology",
+        "url": "https://aivis.biz/methodology"
+      },
+      {
+        "@type": "WebPage",
+        "name": "CITE LEDGER Deep Dive",
+        "url": "https://aivis.biz/what-is-cite-ledger"
+      },
+      {
+        "@type": "WebPage",
+        "name": "BRAG Evidence Trails",
+        "url": "https://aivis.biz/methodology/brag-evidence-trails"
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is AI citation behavior?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI citation behavior is the process by which answer engines like ChatGPT, Perplexity, and Claude select, extract, and reference web content when generating responses. It depends on structural signals including schema markup, heading clarity, content depth, and entity disambiguation rather than traditional keyword ranking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is CITE LEDGER?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every structural signal extracted during an audit is recorded with a stable BRAG evidence ID and a timestamp."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does AiVIS measure AI visibility?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AiVIS crawls a target URL, extracts structural signals including headings, schema, metadata, and content, then scores them across six weighted categories: Content Depth (20%), Schema and Structured Data (20%), AI Readability and Citability (20%), Technical SEO (15%), Meta Tags (13%), and Heading Structure (12%). Every finding is tied to a BRAG evidence identifier so results are traceable, not assumed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is citation readiness more important than keyword ranking in 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI answer engines bypass the traditional search results page entirely. They synthesize answers from crawled content and cite sources directly in their responses. A page can rank first on Google and still be invisible in AI-generated answers if it lacks the structural signals models need to extract, trust, and attribute the content."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between SEO and AEO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SEO optimizes content for search engine crawlers and ranking signals like backlinks and keyword density. AEO (Answer Engine Optimization) optimizes content for AI answer engines that generate direct responses. SEO improves click-through from a results page. AEO improves whether your content is extracted, attributed, and cited in AI-generated answers at all."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },
+      { "@type": "ListItem", "position": 2, "name": "Blogs", "item": "https://aivis.biz/blogs" },
+      { "@type": "ListItem", "position": 3, "name": "How AI Answer Engines Decide What to Cite", "item": "https://aivis.biz/blogs/how-ai-answer-engines-decide-what-to-cite" }
+    ]
+  }
+  </script>
+
+  <!-- ═══ FONTS ═══ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;0,7..72,500;1,7..72,300;1,7..72,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #080c14;
+      --bg2:       #0d1220;
+      --bg3:       #111827;
+      --surface:   #151d2e;
+      --border:    rgba(99,179,237,0.12);
+      --border2:   rgba(99,179,237,0.06);
+      --cyan:      #06b6d4;
+      --cyan-dim:  rgba(6,182,212,0.15);
+      --cyan-glow: rgba(6,182,212,0.06);
+      --amber:     #f59e0b;
+      --amber-dim: rgba(245,158,11,0.12);
+      --text:      #e2e8f0;
+      --text-2:    #94a3b8;
+      --text-3:    #64748b;
+      --mono:      'DM Mono', monospace;
+      --head:      'Syne', sans-serif;
+      --body:      'Literata', Georgia, serif;
+      --radius:    6px;
+      --max:       740px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 17px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── HEADER BAR ── */
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border2);
+      max-width: 100%;
+      position: sticky;
+      top: 0;
+      background: rgba(8,12,20,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .site-bar a {
+      font-family: var(--head);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .site-bar-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .site-bar-right a {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+    .site-bar-right a:hover { color: var(--text-2); }
+
+    /* ── ARTICLE HEADER ── */
+    .article-header {
+      padding: 64px 0 48px;
+      border-bottom: 1px solid var(--border2);
+      margin-bottom: 48px;
+    }
+
+    .category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      border: 1px solid rgba(6,182,212,0.2);
+      padding: 4px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .category-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-family: var(--head);
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--cyan);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .meta-item {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-item strong { color: var(--text-2); font-weight: 500; }
+
+    .article-lede {
+      margin-top: 28px;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text-2);
+      font-weight: 300;
+      font-style: italic;
+      border-left: 3px solid var(--cyan);
+      padding-left: 20px;
+    }
+
+    /* ── TLDR BOX ── */
+    .tldr-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .tldr-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+    .tldr-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .tldr-box p {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      margin: 0;
+      font-family: var(--body);
+    }
+
+    /* ── BODY PROSE ── */
+    .prose h2 {
+      font-family: var(--head);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 52px 0 16px;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .prose h2 .anchor {
+      color: var(--cyan);
+      margin-right: 8px;
+      font-weight: 400;
+      opacity: 0.5;
+      font-size: 18px;
+    }
+
+    .prose h3 {
+      font-family: var(--head);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin: 32px 0 10px;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .prose p {
+      margin-bottom: 20px;
+      color: var(--text-2);
+    }
+
+    .prose strong { color: var(--text); font-weight: 600; }
+
+    .prose a {
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(6,182,212,0.3);
+      transition: border-color 0.2s;
+    }
+    .prose a:hover { border-color: var(--cyan); }
+
+    /* ── SIGNAL CARDS ── */
+    .signal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 28px 0;
+    }
+    @media (max-width: 520px) { .signal-grid { grid-template-columns: 1fr; } }
+
+    .signal-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      transition: border-color 0.2s;
+    }
+    .signal-card:hover { border-color: var(--border); }
+    .signal-card-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .signal-card-value {
+      font-family: var(--head);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .signal-card-desc {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+      font-family: var(--body);
+    }
+
+    /* ── DEFINITION BLOCK ── */
+    .definition-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 32px 0;
+      position: relative;
+    }
+    .definition-block::after {
+      content: 'DEFINITION';
+      position: absolute;
+      top: -9px;
+      left: 16px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--bg);
+      background: var(--cyan);
+      padding: 1px 8px;
+      border-radius: 2px;
+    }
+    .definition-term {
+      font-family: var(--head);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .definition-text {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── ORDERED STEP LIST ── */
+    .step-list {
+      margin: 28px 0;
+      counter-reset: steps;
+      list-style: none;
+    }
+    .step-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border2);
+    }
+    .step-list li:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      width: 28px;
+      height: 28px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content strong {
+      display: block;
+      font-family: var(--head);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .step-content span {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 14px;
+    }
+    .compare-table th {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .compare-table th:first-child { color: var(--cyan); }
+    .compare-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border2);
+      color: var(--text-2);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--bg2); }
+    .compare-table td:first-child {
+      font-family: var(--head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .check { color: var(--cyan); }
+    .cross { color: var(--text-3); }
+
+    /* ── SCORE METER ── */
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border2);
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-2);
+      width: 200px;
+      flex-shrink: 0;
+    }
+    .score-bar-wrap {
+      flex: 1;
+      height: 4px;
+      background: var(--bg3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .score-bar {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--cyan), rgba(6,182,212,0.4));
+      transition: width 1s ease;
+    }
+    .score-pct {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--cyan);
+      width: 36px;
+      text-align: right;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin: 32px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .callout-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .callout p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+    .callout strong { color: var(--amber); }
+
+    /* ── CODE INLINE ── */
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--cyan);
+      background: var(--cyan-glow);
+      border: 1px solid rgba(6,182,212,0.15);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── FAQ SECTION ── */
+    .faq-list { margin: 28px 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border2);
+      padding: 20px 0;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      font-family: var(--head);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .faq-a {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── CTA BLOCK ── */
+    .cta-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      margin: 56px 0 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    }
+    .cta-block h2 {
+      font-family: var(--head);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+    .cta-block p {
+      font-size: 15px;
+      color: var(--text-2);
+      margin: 0 0 24px;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cyan);
+      color: var(--bg);
+      font-family: var(--head);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.85; }
+    .cta-secondary {
+      display: block;
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    /* ── ARTICLE FOOTER ── */
+    .article-footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border2);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+    .back-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--cyan); }
+
+    /* ── READING PROGRESS ── */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--cyan);
+      z-index: 200;
+      transition: width 0.1s linear;
+    }
+
+    /* ── RELATED LINKS SECTION ── */
+    .related-section {
+      margin: 48px 0 0;
+      padding: 28px 0 0;
+      border-top: 1px solid var(--border2);
+    }
+    .related-section h3 {
+      font-family: var(--head);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .related-links {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .related-links li a {
+      font-family: var(--body);
+      font-size: 14px;
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(6,182,212,0.2);
+      transition: border-color 0.2s;
+      line-height: 1.6;
+    }
+    .related-links li a:hover { border-color: var(--cyan); }
+    .related-links li .link-desc {
+      display: block;
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 2px;
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ═══ SITE BAR ═══ -->
+<nav class="site-bar" aria-label="Site navigation">
+  <a href="https://aivis.biz">AiVIS</a>
+  <div class="site-bar-right">
+    <a href="https://aivis.biz/blogs">Blog</a>
+    <a href="https://aivis.biz/methodology">Methodology</a>
+    <a href="https://aivis.biz/pricing">Pricing</a>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ARTICLE ═══ -->
+<div class="wrapper">
+  <article itemscope itemtype="https://schema.org/Article">
+
+    <!-- HEADER -->
+    <header class="article-header">
+      <div class="category-tag" aria-label="Article category">Answer Engine Optimization</div>
+
+      <h1 itemprop="headline">
+        How AI Answer Engines Decide<br>
+        <em>What to Cite</em> — And How<br>
+        AiVIS Measures It
+      </h1>
+
+      <div class="article-meta">
+        <span class="meta-item">
+          <strong itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Ryan Mason</span>
+          </strong>
+        </span>
+        <span class="meta-item">
+          <time itemprop="datePublished" datetime="2026-04-17">April 17, 2026</time>
+        </span>
+        <span class="meta-item">9 min read</span>
+        <span class="meta-item">AiVIS · Intruvurt Labs</span>
+      </div>
+
+      <p class="article-lede" itemprop="description">
+        AI answer engines like ChatGPT, Perplexity, and Claude now determine content discoverability through citation behavior — not keyword ranking. AiVIS measures this using <a href="https://aivis.biz/what-is-cite-ledger">CITE LEDGER</a> technology, turning model interpretation into traceable, evidence-backed visibility signals.
+      </p>
+    </header>
+
+    <!-- TLDR -->
+    <div class="tldr-box" role="note" aria-label="Article summary">
+      <div class="tldr-label">TL;DR</div>
+      <p>A page can rank first on Google and still be invisible in AI-generated answers. AiVIS audits the six structural signals that determine whether AI models extract, trust, and cite your content — and records every finding in the <a href="https://aivis.biz/what-is-cite-ledger">CITE LEDGER</a>, a verifiable evidence registry tied to real page proof.</p>
+    </div>
+
+    <!-- PROSE -->
+    <div class="prose" itemprop="articleBody">
+
+      <h2><span class="anchor">#</span>The shift from ranking to citation</h2>
+
+      <p>For twenty years, visibility meant appearing on a search results page. A user typed a query, saw ten blue links, and clicked. Your job was to rank in the top three.</p>
+
+      <p>That model is unravelling. According to a 2026 SparkToro study, <strong>58.5% of Google searches now end without a click</strong>. AI answer engines — ChatGPT, Perplexity, Google AI Overviews, Claude — synthesize responses inline. The user gets an answer without ever visiting a source page. If your content is not cited in that answer, you are invisible to that user. Not ranked lower. Invisible.</p>
+
+      <p>The question has shifted from <em>"how do I rank?"</em> to <em>"how do I get cited?"</em> These are structurally different problems. The first is solved by backlinks and keyword density. The second is solved by <a href="https://aivis.biz/blogs/answer-engine-optimization-2026-why-citation-readiness-matters">citation readiness</a> — a set of structural signals that most websites have never been optimized for.</p>
+
+      <div class="callout">
+        <div class="callout-icon">⚠</div>
+        <p><strong>The citation gap:</strong> Most websites are built for traditional search crawlers. AI answer engines evaluate content differently — they need structured signals, entity clarity, and extractable formatting that keyword optimization alone does not provide. <a href="https://aivis.biz/why-ai-visibility">Understanding this gap</a> is the first step toward closing it.</p>
+      </div>
+
+      <h2><span class="anchor">#</span>How AI models actually evaluate content</h2>
+
+      <p>When an AI answer engine encounters your page, it runs a different evaluation than a search engine crawler. It is not counting keywords or checking backlink profiles. It is asking four questions — and your page needs to pass all of them to be considered citable.</p>
+
+      <ol class="step-list">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Can I access this?</strong>
+            <span>Is the content in the initial HTML payload, or locked behind JavaScript rendering? Most AI crawlers do not execute JS. If your page is a client-side SPA with no server-rendered or <a href="https://aivis.biz/blogs/how-llms-parse-your-content-technical-breakdown">pre-rendered content</a>, the crawler sees an empty shell.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Can I extract meaning from it?</strong>
+            <span>Does the page have clear heading hierarchy, structured sections, and sufficient content depth? AI models parse content into fragments. If the structure is broken, the fragments lose context — and the model moves on to the next source.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Can I verify what it claims?</strong>
+            <span>Does the page have <a href="https://aivis.biz/blogs/building-author-authority-for-citations-e-e-a-t-in-ai-era">schema markup, author attribution, and entity signals</a> that allow the model to attribute claims to a specific, verifiable source? Without these, the content is treated as anonymous and unattributable.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Is it safe to cite?</strong>
+            <span>Is the content specific enough, and the <a href="https://aivis.biz/methodology/entity-resolution-model">entity</a> clear enough, that the model can reference it without risk of misattribution? Vague or ambiguous content gets skipped in favor of clearer alternatives.</span>
+          </div>
+        </li>
+      </ol>
+
+      <p>Most websites fail at least one of these. Many fail all four. Traditional SEO tools <a href="https://aivis.biz/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure">do not measure any of them</a>.</p>
+
+      <h2><span class="anchor">#</span>What AiVIS actually measures</h2>
+
+      <p><a href="https://aivis.biz/what-is-aivis">AiVIS</a> is an AI visibility and citation intelligence platform. It crawls a target URL with a real browser, extracts structural signals, and scores them across six weighted categories that map directly to how answer engines evaluate content. The full <a href="https://aivis.biz/methodology">methodology</a> is documented and open for inspection.</p>
+
+      <div class="score-row">
+        <div class="score-label">Content Depth &amp; Quality</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:100%"></div></div>
+        <div class="score-pct">20%</div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Schema &amp; Structured Data</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:100%"></div></div>
+        <div class="score-pct">20%</div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">AI Readability &amp; Citability</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:100%"></div></div>
+        <div class="score-pct">20%</div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Technical SEO</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:75%"></div></div>
+        <div class="score-pct">15%</div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Meta Tags &amp; Open Graph</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:65%"></div></div>
+        <div class="score-pct">13%</div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">Heading Structure &amp; H1</div>
+        <div class="score-bar-wrap"><div class="score-bar" style="width:60%"></div></div>
+        <div class="score-pct">12%</div>
+      </div>
+
+      <p style="margin-top:20px;">Every finding is tied to a real element on the crawled page through a <strong><a href="https://aivis.biz/methodology/brag-evidence-trails">BRAG evidence identifier</a></strong> — a stable, traceable ID that links each issue to its source. Nothing is inferred or hallucinated. If a finding cannot be proven from page evidence, it is not included.</p>
+
+      <h2><span class="anchor">#</span>CITE LEDGER: the evidence registry</h2>
+
+      <div class="definition-block">
+        <div class="definition-term">CITE LEDGER</div>
+        <p class="definition-text">A structured attribution system developed by <a href="https://aivis.biz/about-aivis">AiVIS</a> that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every structural signal extracted during an audit is recorded with a stable BRAG evidence ID and a timestamp. Records are write-once — nothing is modified after creation. Drift is detected by comparing new extractions against existing ledger entries.</p>
+      </div>
+
+      <p>The <a href="https://aivis.biz/what-is-cite-ledger">CITE LEDGER</a> is what separates evidence-backed AI visibility analysis from opinion generation. When AiVIS shows you that your schema coverage is failing, it is not inferring this from a pattern match. It is reading the actual JSON-LD on your page, extracting it, writing the result to the ledger with a timestamp and evidence ID, and comparing it against what the scoring model expects to find.</p>
+
+      <p>When you re-audit after making fixes, the ledger does not overwrite the original record. It creates a new entry and calculates the delta. This means every improvement is measurable, traceable, and verifiable — not a dashboard number with no paper trail. You can inspect this directly through the <a href="https://aivis.biz/evidence/ledger-index">evidence ledger index</a> and the <a href="https://aivis.biz/evidence/drift-analysis">drift analysis</a> view.</p>
+
+      <h2><span class="anchor">#</span>AEO vs SEO — a structural comparison</h2>
+
+      <p>The confusion between traditional SEO and <a href="https://aivis.biz/glossary">Answer Engine Optimization (AEO)</a> is real. They share some vocabulary but optimize for fundamentally different systems. Understanding the distinction is critical for anyone navigating the shift from search-first to citation-first content strategy.</p>
+
+      <table class="compare-table" role="table" aria-label="SEO vs AEO comparison">
+        <thead>
+          <tr>
+            <th scope="col">Signal</th>
+            <th scope="col">Traditional SEO</th>
+            <th scope="col">AEO / AI Visibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Primary goal</td>
+            <td>Rank on results page</td>
+            <td>Be cited in generated answer</td>
+          </tr>
+          <tr>
+            <td>Key metric</td>
+            <td>Keyword position, CTR</td>
+            <td>Citation rate, extraction depth</td>
+          </tr>
+          <tr>
+            <td>Core signal</td>
+            <td>Backlinks, domain authority</td>
+            <td>Schema coverage, entity clarity</td>
+          </tr>
+          <tr>
+            <td>Content format</td>
+            <td>Keyword-optimized prose</td>
+            <td>Structured, extractable sections</td>
+          </tr>
+          <tr>
+            <td>JS rendering</td>
+            <td>Googlebot renders JS</td>
+            <td>Most AI crawlers do not render JS</td>
+          </tr>
+          <tr>
+            <td>Author signal</td>
+            <td>Optional, indirect</td>
+            <td>Required for attribution</td>
+          </tr>
+          <tr>
+            <td>Measurement tool</td>
+            <td>Semrush, Ahrefs, Moz</td>
+            <td>AiVIS, CITE LEDGER evidence trail</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Neither replaces the other. A page that ranks well but is never cited in AI answers is losing visibility to zero-click searches. A page that is AI-citation-ready but has no organic traffic has no audience to convert. The 2026 answer is both — but most teams have <a href="https://aivis.biz/blogs/why-traditional-seo-tactics-fail-for-ai-visibility">optimized only for the first</a>.</p>
+
+      <h2><span class="anchor">#</span>The repeatable audit workflow</h2>
+
+      <p>A single audit is a snapshot. AI models update their retrieval behavior, competitors publish new content, and your own pages change. AiVIS is designed for <a href="https://aivis.biz/platform-workflow">repeatable measurement</a>, not one-off diagnosis.</p>
+
+      <div class="signal-grid">
+        <div class="signal-card">
+          <div class="signal-card-label">Step 1</div>
+          <div class="signal-card-value">Baseline Audit</div>
+          <div class="signal-card-desc">Establish current visibility score and CITE LEDGER entry across all six categories</div>
+        </div>
+        <div class="signal-card">
+          <div class="signal-card-label">Step 2</div>
+          <div class="signal-card-value">Evidence Review</div>
+          <div class="signal-card-desc">Inspect BRAG evidence IDs tied to low-scoring findings — trace each issue to its source element</div>
+        </div>
+        <div class="signal-card">
+          <div class="signal-card-label">Step 3</div>
+          <div class="signal-card-value">Implement Fixes</div>
+          <div class="signal-card-desc">Apply evidence-backed remediation: schema markup, heading restructure, content depth, metadata</div>
+        </div>
+        <div class="signal-card">
+          <div class="signal-card-label">Step 4</div>
+          <div class="signal-card-value">Re-audit &amp; Compare</div>
+          <div class="signal-card-desc">Run a follow-up audit, compare CITE LEDGER deltas, confirm score movement per category</div>
+        </div>
+      </div>
+
+      <p>This loop — audit, fix, re-audit, compare — is how teams move from invisible to cited. It is measurable at every step because the ledger preserves every prior state. The <a href="https://aivis.biz/blogs/7-step-implementation-roadmap-audit-to-live-citations-30-days">full 7-step implementation roadmap</a> walks through this cycle in detail, from first audit to verifiable AI citations within 30 days.</p>
+
+      <h2><span class="anchor">#</span>What the Triple-Check Pipeline adds</h2>
+
+      <p>For teams on the <a href="https://aivis.biz/pricing">Signal tier</a>, AiVIS runs each audit through a <a href="https://aivis.biz/methodology/triple-check-protocol">Triple-Check Pipeline</a> — three independent AI models that analyze, cross-validate, and gate every score before it reaches the CITE LEDGER.</p>
+
+      <p>The first model performs deep structural analysis. The second runs peer critique — adjusting the score where the first model over- or under-weighted specific signals. The third acts as a validation gate, confirming or overriding the final score. The result is a consensus-verified visibility score, not a single model's opinion. Every step is logged, every adjustment is traceable, and the final output carries more signal density than any single-model audit can produce.</p>
+
+      <p>This matters because AI models disagree. A page that one model rates highly for entity clarity may be penalized by another for schema gaps. The Triple-Check approach surfaces these disagreements explicitly rather than hiding them behind a single number.</p>
+
+      <h2><span class="anchor">#</span>Frequently asked questions</h2>
+
+      <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">What is AI citation behavior?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">AI citation behavior is the process by which answer engines like ChatGPT, Perplexity, and Claude select, extract, and reference web content when generating responses. It depends on structural signals — schema markup, heading clarity, content depth, entity disambiguation — rather than traditional keyword ranking or backlink authority.</span>
+          </p>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">What is CITE LEDGER?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text"><a href="https://aivis.biz/what-is-cite-ledger">CITE LEDGER</a> is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every structural signal extracted during an audit is recorded with a stable BRAG evidence ID and a timestamp. Records are write-once — they cannot be modified. Drift between audits is measured by comparing new extractions against existing ledger entries.</span>
+          </p>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">Why is my site invisible to AI even though it ranks on Google?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">Google and AI answer engines use different evaluation criteria. Google's crawler renders JavaScript and weights backlinks and keyword signals. Most AI crawlers do not render JavaScript and instead rely on structured data, heading hierarchy, entity clarity, and content extractability. A page can rank first on Google and still fail all four AI citation criteria. See <a href="https://aivis.biz/why-ai-visibility">why AI visibility matters</a> for a deeper breakdown.</span>
+          </p>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">How does AiVIS differ from Semrush or Ahrefs?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">Semrush and Ahrefs measure backlinks, keyword rankings, and domain authority — signals that determine search engine position. AiVIS measures the structural signals AI models use to extract, verify, and cite content in generated answers. They optimize for different systems. For a detailed comparison, see <a href="https://aivis.biz/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure">what Semrush, Ahrefs, and Moz cannot measure</a>.</span>
+          </p>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">What is the single most impactful fix for AI visibility?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">Adding JSON-LD structured data — specifically Organization and FAQPage schema — is consistently the highest-impact single fix. In documented AiVIS audit cycles, adding JSON-LD has contributed 15–20 points to a page's visibility score in a single cycle by moving the Schema category from an F grade to a B grade. The <a href="https://aivis.biz/guide">AiVIS guide</a> walks through the implementation step by step.</span>
+          </p>
+        </div>
+
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-q" itemprop="name">What is the difference between SEO and AEO?</div>
+          <p class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">SEO optimizes content for search engine crawlers and ranking signals like backlinks and keyword density. AEO (Answer Engine Optimization) optimizes content for AI answer engines that generate direct responses. SEO improves click-through from a results page. AEO improves whether your content is extracted, attributed, and cited in AI-generated answers at all. See the <a href="https://aivis.biz/glossary">AiVIS glossary</a> for the full taxonomy.</span>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- RELATED READS -->
+      <div class="related-section">
+        <h3>Related reads from AiVIS</h3>
+        <ul class="related-links">
+          <li>
+            <a href="https://aivis.biz/blogs/answer-engine-optimization-2026-why-citation-readiness-matters">Answer Engine Optimization in 2026: Why Citation Readiness Matters More Than Ranking</a>
+            <span class="link-desc">The foundational AEO argument — why citation readiness is the core metric</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/how-llms-parse-your-content-technical-breakdown">How LLMs Parse Your Content — Technical Breakdown</a>
+            <span class="link-desc">Inside the extraction mechanics of ChatGPT, Claude, and Perplexity</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/from-invisible-to-cited-case-study-brand-citation-growth">From Invisible to Cited — Case Study</a>
+            <span class="link-desc">How AiVIS went from 0 citations to consistent AI answer presence</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/building-author-authority-for-citations-e-e-a-t-in-ai-era">Building Author Authority for Citations — E-E-A-T in the AI Era</a>
+            <span class="link-desc">Why author signals are required for citation eligibility</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/why-traditional-seo-tactics-fail-for-ai-visibility">Why Traditional SEO Tactics Fail for AI Visibility</a>
+            <span class="link-desc">The structural reasons backlink-first strategies do not translate</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/7-step-implementation-roadmap-audit-to-live-citations-30-days">The 7-Step Implementation Roadmap: Audit to Live Citations in 30 Days</a>
+            <span class="link-desc">Full execution workflow from first scan to verified citations</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/webmcp-is-the-protocol-seo-aeo-geo-never-had">WebMCP Is the Protocol SEO, AEO, and GEO Never Had</a>
+            <span class="link-desc">Machine-native integration layer for AI agent workflows</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure">AI Visibility Tools in 2026: What Semrush, Ahrefs, and Moz Cannot Measure</a>
+            <span class="link-desc">Competitive positioning — where traditional tools stop and AiVIS starts</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PLATFORM DEEP LINKS -->
+      <div class="related-section">
+        <h3>Platform &amp; methodology</h3>
+        <ul class="related-links">
+          <li>
+            <a href="https://aivis.biz/methodology">AiVIS Methodology</a>
+            <span class="link-desc">Full scoring system, category weights, and evidence protocol</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/what-is-cite-ledger">What Is the CITE LEDGER?</a>
+            <span class="link-desc">Canonical definition and evidence pipeline documentation</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/methodology/brag-evidence-trails">BRAG Evidence Trails</a>
+            <span class="link-desc">How every audit finding is anchored to verifiable page proof</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/methodology/triple-check-protocol">Triple-Check Protocol</a>
+            <span class="link-desc">Multi-model consensus validation for Signal tier audits</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/evidence/drift-analysis">Drift Analysis</a>
+            <span class="link-desc">Track citation score stability and structural regressions over time</span>
+          </li>
+          <li>
+            <a href="https://aivis.biz/about-aivis">About AiVIS</a>
+            <span class="link-desc">Platform origin, mission, and the problem statement</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <h2>See how AI models read your site</h2>
+        <p>Enter any URL and get a 0–100 visibility score with BRAG evidence-backed findings and prioritized fixes. Free tier available — no credit card required.</p>
+        <a href="https://aivis.biz" class="cta-btn">Run a Free Audit →</a>
+        <span class="cta-secondary">Observer tier: 3 free scans per month · aivis.biz</span>
+      </div>
+
+    </div><!-- /prose -->
+
+    <!-- ARTICLE FOOTER -->
+    <footer class="article-footer">
+      <div class="tag-list">
+        <span class="tag">AEO</span>
+        <span class="tag">AI Visibility</span>
+        <span class="tag">CITE LEDGER</span>
+        <span class="tag">Citation Readiness</span>
+        <span class="tag">Structured Data</span>
+        <span class="tag">AiVIS</span>
+        <span class="tag">BRAG</span>
+        <span class="tag">LLM Optimization</span>
+        <span class="tag">Triple-Check</span>
+      </div>
+      <a href="https://aivis.biz/blogs" class="back-link">← All posts</a>
+    </footer>
+
+  </article>
+</div>
+
+<script>
+  // Reading progress bar
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+  }, { passive: true });
+</script>
+
+</body>
+</html>

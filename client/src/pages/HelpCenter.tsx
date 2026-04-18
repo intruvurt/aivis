@@ -99,7 +99,7 @@ const CATEGORIES: HelpCategory[] = [
     linkTo: '/guide',
     articles: [
       {
-        q: 'What does AiVIS actually audit?',
+        q: 'What does AiVIS.biz actually audit?',
         a: 'The scraper extracts 14 evidence signals: title tag, meta description, canonical URL, Open Graph tags, JSON-LD schema blocks, H1-H6 headings, internal/external links, word count, robots meta, image alt text, content body, and HTTPS status.',
         tags: ['audit', 'scrape', 'evidence', 'signals'],
       },
@@ -167,7 +167,7 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'How does competitor tracking work?',
-        a: 'Add up to 3 (Alignment), 8 (Signal), or 10 (Score Fix) competitor URLs. Compare AI visibility scores side-by-side. See where competitors outperform you and what to prioritize.',
+        a: 'Add up to 1 (Alignment), 10 (Signal), or 5 (Score Fix) competitor URLs. Compare AI visibility scores side-by-side. See where competitors outperform you and what to prioritize.',
         tags: ['competitor', 'compare', 'tracking'],
       },
       {
@@ -192,17 +192,17 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is the MCP Server Console?',
-        a: 'The MCP (Model Context Protocol) Console lets you connect AI coding agents like Claude, Cursor, or Windsurf directly to your AiVIS account. Agents can run audits, pull reports, query analytics, and access all platform tools through their native tool interface. Requires Alignment or higher.',
+        a: 'The MCP (Model Context Protocol) Console lets you connect AI coding agents like Claude, Cursor, or Windsurf directly to your AiVIS.biz account. Agents can run audits, pull reports, query analytics, and access all platform tools through their native tool interface. Requires Alignment or higher.',
         tags: ['mcp', 'server', 'console', 'agent', 'cursor', 'claude', 'protocol'],
       },
       {
         q: 'What is GSC Intelligence?',
-        a: 'GSC Intelligence connects your Google Search Console data to AiVIS. It detects declining pages, surfaces low-CTR opportunities, identifies keyword cannibalization, and merges real search performance data with AI visibility audits. Requires Alignment or higher. Connect via Settings → Search Console.',
+        a: 'GSC Intelligence connects your Google Search Console data to AiVIS.biz. It detects declining pages, surfaces low-CTR opportunities, identifies keyword cannibalization, and merges real search performance data with AI visibility audits. Requires Alignment or higher. Connect via Settings → Search Console.',
         tags: ['gsc', 'google', 'search console', 'intelligence', 'ctr', 'keywords'],
       },
       {
         q: 'How does brand mention tracking work?',
-        a: 'AiVIS scans 9 free sources - Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, and Product Hunt - to find mentions of your brand. Each mention is timestamped and linked. View mention history and timeline on the Mentions page. Requires Alignment or higher.',
+        a: 'AiVIS.biz scans 19 free sources — Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions — to find mentions of your brand. Each mention is timestamped and linked. View mention history and timeline on the Mentions page. Requires Alignment or higher.',
         tags: ['mentions', 'brand', 'tracking', 'reddit', 'hacker news', 'mastodon'],
       },
       {
@@ -212,7 +212,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is the self-healing pipeline?',
-        a: 'The self-healing pipeline turns AiVIS from a scanner into a scan → diagnose → fix → verify → score-uplift machine. It chains evidence extraction, SSFR rule evaluation, deterministic scoring, fix classification, levelled fixpack generation, and optional rescan verification into a single automated workflow. Requires Alignment or higher.',
+        a: 'The self-healing pipeline turns AiVIS.biz from a scanner into a scan → diagnose → fix → verify → score-uplift machine. It chains evidence extraction, SSFR rule evaluation, deterministic scoring, fix classification, levelled fixpack generation, and optional rescan verification into a single automated workflow. Requires Alignment or higher.',
         tags: ['pipeline', 'self-healing', 'remediation', 'fixpack', 'rescan', 'scoring'],
       },
       {
@@ -227,7 +227,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is rescan verification?',
-        a: 'After fixes are applied, trigger a rescan from the pipeline run detail page. AiVIS re-scrapes the URL, re-scores it against the same 7 categories, and produces an uplift proof showing score-before, score-after, the delta, and per-category improvements. This lets you measure the real impact of every fix.',
+        a: 'After fixes are applied, trigger a rescan from the pipeline run detail page. AiVIS.biz re-scrapes the URL, re-scores it against the same 7 categories, and produces an uplift proof showing score-before, score-after, the delta, and per-category improvements. This lets you measure the real impact of every fix.',
         tags: ['rescan', 'verification', 'uplift', 'proof', 'delta', 'score'],
       },
       {
@@ -289,7 +289,7 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['delete', 'account', 'gdpr', 'data'],
       },
       {
-        q: 'Does AiVIS detect malicious websites?',
+        q: 'Does AiVIS.biz detect malicious websites?',
         a: 'Yes. Every audit includes a real-time threat intelligence audit that runs in parallel with the analysis. We check your URL against URLhaus (known malicious URLs from abuse.ch), Google Safe Browsing API v4 (social engineering, malware, unwanted software), and hostname heuristics (punycode/IDN attacks, risky TLDs like .tk/.ml/.cf, raw IP hosting). Results appear in a Threat Intel banner with risk levels from Low to Critical.',
         tags: ['threat', 'malicious', 'security', 'urlhaus', 'safe browsing', 'audit'],
       },
@@ -337,8 +337,8 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['freshness', 'date', 'schema', 'perplexity', 'recency', 'dateModified'],
       },
       {
-        q: 'What is a findability goal in AiVIS?',
-        a: 'A natural-language query describing what you want to appear for in AI answers. Example: "best project management tool for remote startups." AiVIS scores how well your content aligns to each goal you enter, showing a coverage percentage and listing which goals have no matching content on your site.',
+        q: 'What is a findability goal in AiVIS.biz?',
+        a: 'A natural-language query describing what you want to appear for in AI answers. Example: "best project management tool for remote startups." AiVIS.biz scores how well your content aligns to each goal you enter, showing a coverage percentage and listing which goals have no matching content on your site.',
         tags: ['findability', 'goal', 'query', 'coverage', 'alignment'],
       },
       {
@@ -353,7 +353,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How often should I update content to stay citation-ready?',
-        a: 'Every 3-6 months at minimum, or whenever your industry data changes. AiVIS scheduled rescans (Alignment+) automate this by running weekly or monthly audits and alerting you when citation-readiness signals decay before they visibly impact your live mention rate or visibility score.',
+        a: 'Every 3-6 months at minimum, or whenever your industry data changes. AiVIS.biz scheduled rescans (Alignment+) automate this by running weekly or monthly audits and alerting you when citation-readiness signals decay before they visibly impact your live mention rate or visibility score.',
         tags: ['update', 'freshness', 'scheduled rescan', 'decay', 'maintenance'],
       },
     ],
@@ -371,12 +371,12 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How do I add FAQ schema to my website?',
-        a: 'Create a JSON-LD script block with @type FAQPage containing a mainEntity array. Each item needs @type Question with a question name and acceptedAnswer text value. Place it in the page head or before the closing body tag. AiVIS Score Fix auto-generates ready-to-paste FAQ schema blocks for your existing page content.',
+        a: 'Create a JSON-LD script block with @type FAQPage containing a mainEntity array. Each item needs @type Question with a question name and acceptedAnswer text value. Place it in the page head or before the closing body tag. AiVIS.biz Score Fix auto-generates ready-to-paste FAQ schema blocks for your existing page content.',
         tags: ['faqpage', 'json-ld', 'implementation', 'mainEntity', 'how to add'],
       },
       {
         q: 'Does my CMS automatically add the right JSON-LD schema?',
-        a: 'Most CMSes do not add Organization or FAQPage schema by default. WordPress requires Yoast or RankMath plugins configured correctly. Webflow and Framer need manual code embeds. Squarespace and Wix have extremely limited schema support. AiVIS Score Fix generates correct schema blocks tailored to your actual page content for any CMS.',
+        a: 'Most CMSes do not add Organization or FAQPage schema by default. WordPress requires Yoast or RankMath plugins configured correctly. Webflow and Framer need manual code embeds. Squarespace and Wix have extremely limited schema support. AiVIS.biz Score Fix generates correct schema blocks tailored to your actual page content for any CMS.',
         tags: ['cms', 'wordpress', 'webflow', 'squarespace', 'wix', 'plugin', 'schema'],
       },
       {
@@ -386,17 +386,17 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'Can I have more than one JSON-LD block on the same page?',
-        a: 'Yes. Multiple separate JSON-LD script blocks and single @graph arrays are both valid. AiVIS reads and validates every JSON-LD block individually during an audit, checking each for completeness, correct property names, and all required fields for that specific @type found on the page.',
+        a: 'Yes. Multiple separate JSON-LD script blocks and single @graph arrays are both valid. AiVIS.biz reads and validates every JSON-LD block individually during an audit, checking each for completeness, correct property names, and all required fields for that specific @type found on the page.',
         tags: ['multiple', 'json-ld', 'graph', 'blocks', 'validation'],
       },
       {
-        q: 'Why does AiVIS flag my schema as invalid or incomplete?',
+        q: 'Why does AiVIS.biz flag my schema as invalid or incomplete?',
         a: 'Common schema errors include: missing @context declaration, wrong @type casing, incorrect property names (sameAs vs SameAs), missing required fields like name or url on Organization, and structural nesting errors. Score Fix generates corrected schema with all required properties resolved, ready to directly replace your broken implementation.',
         tags: ['invalid', 'schema error', 'context', 'type', 'property', 'scorefix'],
       },
       {
-        q: 'What is Organization schema and why does AiVIS treat it as mandatory?',
-        a: 'Organization schema declares your business identity to AI engines: name, url, logo, contact point, and sameAs links to verified external profiles. Without it, AI models cannot reliably attribute content to your named brand. AiVIS applies a hard-blocker score cap of 50 when Organization is absent because unattributed content is effectively uncitable.',
+        q: 'What is Organization schema and why does AiVIS.biz treat it as mandatory?',
+        a: 'Organization schema declares your business identity to AI engines: name, url, logo, contact point, and sameAs links to verified external profiles. Without it, AI models cannot reliably attribute content to your named brand. AiVIS.biz applies a hard-blocker score cap of 50 when Organization is absent because unattributed content is effectively uncitable.',
         tags: ['organization', 'identity', 'mandatory', 'hard-blocker', 'cap', 'sameAs', 'brand'],
       },
       {
@@ -411,7 +411,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How do I validate my schema after adding it?',
-        a: 'Use Google\'s Rich Results Test, Schema.org validator, or validator.schema.org for initial checks. AiVIS re-validates all schema blocks on every audit automatically. After applying Score Fix patches, trigger a rescan to get a new evidence-backed validation report showing exactly which schema types are now complete and which properties were corrected.',
+        a: 'Use Google\'s Rich Results Test, Schema.org validator, or validator.schema.org for initial checks. AiVIS.biz re-validates all schema blocks on every audit automatically. After applying Score Fix patches, trigger a rescan to get a new evidence-backed validation report showing exactly which schema types are now complete and which properties were corrected.',
         tags: ['validate', 'rich results', 'schema.org', 'testing', 'scorefix', 'rescan'],
       },
     ],
@@ -424,17 +424,17 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'What is the fastest change I can make to improve my visibility score?',
-        a: 'Fix your meta title (under 60 characters, entity-rich) and meta description (120-160 characters, factual) first — both require no developer work and are re-scraped immediately on your next audit. Adding missing Organization JSON-LD schema is the next highest-impact fix and routinely adds 10-20 points in AiVIS scoring.',
+        a: 'Fix your meta title (under 60 characters, entity-rich) and meta description (120-160 characters, factual) first — both require no developer work and are re-scraped immediately on your next audit. Adding missing Organization JSON-LD schema is the next highest-impact fix and routinely adds 10-20 points in AiVIS.biz scoring.',
         tags: ['fast fix', 'meta title', 'meta description', 'organization schema', 'quick win'],
       },
       {
         q: 'What visibility score do I need to reliably get cited by AI engines?',
-        a: 'AiVIS research indicates 65+ correlates with consistent Perplexity citation. 80+ produces reliable citation across ChatGPT, Claude, and Google AI Overview simultaneously. Below 40, AI citation is rare and typically coincidental. Improving from 40 to 65 usually requires parallel schema fixes and content restructuring.',
+        a: 'AiVIS.biz research indicates 65+ correlates with consistent Perplexity citation. 80+ produces reliable citation across ChatGPT, Claude, and Google AI Overview simultaneously. Below 40, AI citation is rare and typically coincidental. Improving from 40 to 65 usually requires parallel schema fixes and content restructuring.',
         tags: ['score target', '65', '80', 'citation threshold', 'perplexity', 'chatgpt'],
       },
       {
         q: 'How do I fix a blocked AI crawler warning in my audit?',
-        a: 'Open your robots.txt file and check for any Disallow rules targeting GPTBot, ClaudeBot, Google-Extended, or PerplexityBot. Remove or whitelist those rules. Also verify your meta robots tag contains no noindex or nosnippet directives. Rerun your AiVIS audit after fixing to confirm the warning clears and your score cap lifts.',
+        a: 'Open your robots.txt file and check for any Disallow rules targeting GPTBot, ClaudeBot, Google-Extended, or PerplexityBot. Remove or whitelist those rules. Also verify your meta robots tag contains no noindex or nosnippet directives. Rerun your AiVIS.biz audit after fixing to confirm the warning clears and your score cap lifts.',
         tags: ['robots.txt', 'gptbot', 'claudebot', 'perplexitybot', 'blocked', 'noindex'],
       },
       {
@@ -454,17 +454,17 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'Why did my score drop after I updated my website?',
-        a: 'Common causes: a CMS plugin update overwrote your JSON-LD schema, JavaScript rendering now hides content blocks from the static scraper, robots.txt was reset during a CMS migration, or an H1 tag was accidentally removed. Use AiVIS audit history to diff before-and-after evidence points and identify exactly which signal changed.',
+        a: 'Common causes: a CMS plugin update overwrote your JSON-LD schema, JavaScript rendering now hides content blocks from the static scraper, robots.txt was reset during a CMS migration, or an H1 tag was accidentally removed. Use AiVIS.biz audit history to diff before-and-after evidence points and identify exactly which signal changed.',
         tags: ['score drop', 'cms update', 'schema overwritten', 'robots.txt reset', 'history', 'diff'],
       },
       {
-        q: 'Does page load speed directly affect my AiVIS score?',
-        a: 'Not directly — AiVIS uses scrape-based evidence, not Lighthouse performance metrics. However, if JavaScript renders your critical content dynamically and the scraper cannot access it, your Content Depth, Heading Structure, and AI Readability scores all drop because those signals simply do not appear in the scraped evidence output.',
+        q: 'Does page load speed directly affect my AiVIS.biz score?',
+        a: 'Not directly — AiVIS.biz uses scrape-based evidence, not Lighthouse performance metrics. However, if JavaScript renders your critical content dynamically and the scraper cannot access it, your Content Depth, Heading Structure, and AI Readability scores all drop because those signals simply do not appear in the scraped evidence output.',
         tags: ['page speed', 'lighthouse', 'javascript', 'scraper', 'dynamic content'],
       },
       {
         q: 'How do I improve my AI Readability score specifically?',
-        a: 'Write in plain language with sentences under 25 words. Use active voice, provide direct answers at the start of each section, and avoid legal-style hedging or technical jargon without definitions. Pages dense with passive voice, nested conditionals, or qualification-heavy language consistently score below 40 on AI Readability in AiVIS audits.',
+        a: 'Write in plain language with sentences under 25 words. Use active voice, provide direct answers at the start of each section, and avoid legal-style hedging or technical jargon without definitions. Pages dense with passive voice, nested conditionals, or qualification-heavy language consistently score below 40 on AI Readability in AiVIS.biz audits.',
         tags: ['ai readability', 'plain language', 'active voice', 'jargon', 'sentence length'],
       },
       {
@@ -481,8 +481,8 @@ const CATEGORIES: HelpCategory[] = [
     description: 'How citation tests work, mention rates, false positives, and brand citation strategy.',
     articles: [
       {
-        q: 'How does the AiVIS citation test actually work under the hood?',
-        a: 'AiVIS generates 3-5 natural-language search queries from your URL and industry, submits each query to ChatGPT, Perplexity, Claude, and Google AI in parallel, parses the AI-generated responses for brand mentions and excerpts, then stores results with mention quality scores and a per-platform breakdown for trend analysis.',
+        q: 'How does the AiVIS.biz citation test actually work under the hood?',
+        a: 'AiVIS.biz generates 3-5 natural-language search queries from your URL and industry, submits each query to ChatGPT, Perplexity, Claude, and Google AI in parallel, parses the AI-generated responses for brand mentions and excerpts, then stores results with mention quality scores and a per-platform breakdown for trend analysis.',
         tags: ['citation test', 'how it works', 'queries', 'platforms', 'parallel', 'mention'],
       },
       {
@@ -497,12 +497,12 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is a false positive in citation test results?',
-        a: 'A false positive occurs when an AI response includes your brand name in a negative, tangential, or generic context unrelated to a real recommendation. AiVIS detects these through a citation revalidation service that applies contextual gates — negative mention detection, substantive support checks, and quality thresholds — to stored citation excerpts automatically.',
+        a: 'A false positive occurs when an AI response includes your brand name in a negative, tangential, or generic context unrelated to a real recommendation. AiVIS.biz detects these through a citation revalidation service that applies contextual gates — negative mention detection, substantive support checks, and quality thresholds — to stored citation excerpts automatically.',
         tags: ['false positive', 'negative context', 'revalidation', 'gates', 'quality threshold'],
       },
       {
         q: 'How can I increase my brand mention rate in AI answers?',
-        a: 'Strengthen Organization schema with complete sameAs links to LinkedIn, Crunchbase, and G2. Publish FAQ content that uses your brand name in direct answer positions. Earn mentions from high-authority off-page sources AI models reference. Then rerun AiVIS citation tests to measure the before-and-after delta in your mention rate across each platform.',
+        a: 'Strengthen Organization schema with complete sameAs links to LinkedIn, Crunchbase, and G2. Publish FAQ content that uses your brand name in direct answer positions. Earn mentions from high-authority off-page sources AI models reference. Then rerun AiVIS.biz citation tests to measure the before-and-after delta in your mention rate across each platform.',
         tags: ['increase mentions', 'organization schema', 'sameAs', 'off-page', 'FAQ content', 'delta'],
       },
       {
@@ -511,8 +511,8 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['custom queries', 'manual', 'competitor', 'citation gap', 'specific queries'],
       },
       {
-        q: 'What AI platforms does AiVIS test citations against?',
-        a: 'ChatGPT via the OpenAI API, Perplexity via its live retrieval API, Claude via the Anthropic API, and Google AI Overview via a simulated query path. Each platform produces different citation behavior and mention patterns, which is why AiVIS tests all four separately and reports per-platform rather than averaging results.',
+        q: 'What AI platforms does AiVIS.biz test citations against?',
+        a: 'ChatGPT via the OpenAI API, Perplexity via its live retrieval API, Claude via the Anthropic API, and Google AI Overview via a simulated query path. Each platform produces different citation behavior and mention patterns, which is why AiVIS.biz tests all four separately and reports per-platform rather than averaging results.',
         tags: ['chatgpt', 'perplexity', 'claude', 'google', 'platforms', 'api', 'per-platform'],
       },
       {
@@ -521,13 +521,13 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['mention quality', 'score', 'calculation', '0-100', 'revalidation', 'excerpt'],
       },
       {
-        q: 'How does AiVIS track citation trends over time?',
+        q: 'How does AiVIS.biz track citation trends over time?',
         a: 'Every citation test result is stored with a timestamp. The Citations page charts mention rate, average quality score, and platform breakdown across all test runs chronologically. You can compare tests run weeks or months apart to detect gradual citation decay. Drop alerts trigger automatically when rate falls more than 15% between consecutive runs.',
         tags: ['trends', 'timeline', 'chronological', 'citation decay', 'drop alert', '15%'],
       },
       {
         q: 'What is a citation drop alert and what triggers it?',
-        a: 'An automated notification that fires when your mention rate drops significantly between two consecutive citation test cycles. AiVIS compares the most recent test against the previous one and alerts you with the previous rate, current rate, and drop magnitude so you can investigate which queries or platforms drove the decline.',
+        a: 'An automated notification that fires when your mention rate drops significantly between two consecutive citation test cycles. AiVIS.biz compares the most recent test against the previous one and alerts you with the previous rate, current rate, and drop magnitude so you can investigate which queries or platforms drove the decline.',
         tags: ['drop alert', 'notification', 'rate drop', 'consecutive', 'magnitude', 'investigate'],
       },
     ],
@@ -565,12 +565,12 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is entity resolution and why does it affect my AI citation rate?',
-        a: 'The process by which an AI model links your brand name to a known entity in its knowledge graph. If "AiVIS," "aivis.biz," and "AI Visibility Audit System" are not consistently defined across your schema and off-page profiles, models may treat them as separate unrelated entities, lowering attribution confidence and reducing citation frequency across all platforms.',
+        a: 'The process by which an AI model links your brand name to a known entity in its knowledge graph. If "AiVIS.biz," "aivis.biz," and "AI Visibility Audit System" are not consistently defined across your schema and off-page profiles, models may treat them as separate unrelated entities, lowering attribution confidence and reducing citation frequency across all platforms.',
         tags: ['entity resolution', 'knowledge graph', 'brand name', 'consistency', 'attribution confidence'],
       },
       {
         q: 'What is a hallucination in AI and can it create false information about my brand?',
-        a: 'A hallucination is when an AI model generates claims not grounded in actual source data. For brands, this can mean the model invents details about your product or confuses you with a similar competitor. AiVIS citation testing detects hallucinated or false-context mentions through its revalidation service and automatically flags them as false positives.',
+        a: 'A hallucination is when an AI model generates claims not grounded in actual source data. For brands, this can mean the model invents details about your product or confuses you with a similar competitor. AiVIS.biz citation testing detects hallucinated or false-context mentions through its revalidation service and automatically flags them as false positives.',
         tags: ['hallucination', 'false information', 'brand confusion', 'false positive', 'revalidation'],
       },
       {
@@ -597,52 +597,52 @@ const CATEGORIES: HelpCategory[] = [
     description: 'API keys, OAuth, webhooks, MCP Console, CI/CD integration, and rate limits.',
     articles: [
       {
-        q: 'How do I generate an AiVIS API key?',
+        q: 'How do I generate an AiVIS.biz API key?',
         a: 'Go to Settings → API and Integrations → Generate API Key. Keys are prefixed with avis_ and tied to your account tier. Alignment+ tiers have API access enabled. API keys are shown only once at generation — store them immediately in a secrets manager or environment variable because they cannot be retrieved again after leaving the page.',
         tags: ['api key', 'generate', 'avis_', 'settings', 'secrets manager', 'alignment'],
       },
       {
-        q: 'What can I do with the AiVIS REST API?',
+        q: 'What can I do with the AiVIS.biz REST API?',
         a: 'Run audits programmatically, retrieve full audit history, pull analytics data, access reverse-engineer tool outputs, query competitor tracking records, and manage scheduled rescans — all via standard HTTP requests. The complete OpenAPI 3.0.3 specification is available at /api/v1/openapi.json for importing into Postman, Insomnia, or any API client.',
         tags: ['rest api', 'audit', 'analytics', 'openapi', 'postman', 'programmatic'],
       },
       {
-        q: 'Does AiVIS support OAuth 2.0 for third-party integrations?',
+        q: 'Does AiVIS.biz support OAuth 2.0 for third-party integrations?',
         a: 'Yes, OAuth 2.0 per RFC 6749 is supported. Available scopes are read:audits, read:analytics, and write:audits. Register your OAuth client through the API to receive a client_id and secret, then use the standard authorize and token exchange flow to obtain short-lived avist_ access tokens for third-party integrations.',
         tags: ['oauth', 'oauth 2.0', 'rfc 6749', 'scopes', 'avist_', 'third-party'],
       },
       {
-        q: 'How do I integrate AiVIS into my CI/CD deploy pipeline?',
+        q: 'How do I integrate AiVIS.biz into my CI/CD deploy pipeline?',
         a: 'Use your avis_ API key to POST to /api/v1/audits after each deployment completes. Configure a webhook at Settings → Webhooks to receive a score-change notification when the post-deploy audit finishes. This creates a continuous visibility verification loop where every code deploy automatically triggers an audit and flags score regressions before they compound.',
         tags: ['ci/cd', 'deploy', 'pipeline', 'webhook', 'regression', 'automation'],
       },
       {
         q: 'What is the MCP Server Console and who should use it?',
-        a: 'The MCP Console exposes 15+ AiVIS tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent\'s tool interface. Requires Alignment+ tier.',
+        a: 'The MCP Console exposes 15+ AiVIS.biz tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent\'s tool interface. Requires Alignment+ tier.',
         tags: ['mcp', 'model context protocol', 'claude desktop', 'cursor', 'windsurf', 'coding agent'],
       },
       {
-        q: 'How do I connect Claude Desktop to AiVIS via MCP?',
-        a: 'Navigate to Help → MCP Console, copy your MCP endpoint URL and authorization token. Add them to your Claude Desktop configuration file under mcpServers with a descriptive name. Save and restart Claude Desktop. All AiVIS tools then appear as native capabilities inside every Claude conversation without switching context.',
+        q: 'How do I connect Claude Desktop to AiVIS.biz via MCP?',
+        a: 'Navigate to Help → MCP Console, copy your MCP endpoint URL and authorization token. Add them to your Claude Desktop configuration file under mcpServers with a descriptive name. Save and restart Claude Desktop. All AiVIS.biz tools then appear as native capabilities inside every Claude conversation without switching context.',
         tags: ['claude desktop', 'mcp config', 'endpoint', 'token', 'mcpServers', 'setup'],
       },
       {
-        q: 'How do webhooks work in AiVIS and how do I set one up?',
-        a: 'Webhooks deliver real-time JSON payloads to your server when platform events occur — audit completed, score dropped, citation alert triggered, rescan finished. Configure them at Settings → Webhooks by providing your target URL. AiVIS sends POST requests with an HMAC-SHA256 signature in the X-Signature header for cryptographic payload verification.',
+        q: 'How do webhooks work in AiVIS.biz and how do I set one up?',
+        a: 'Webhooks deliver real-time JSON payloads to your server when platform events occur — audit completed, score dropped, citation alert triggered, rescan finished. Configure them at Settings → Webhooks by providing your target URL. AiVIS.biz sends POST requests with an HMAC-SHA256 signature in the X-Signature header for cryptographic payload verification.',
         tags: ['webhooks', 'events', 'payload', 'hmac', 'x-signature', 'real-time', 'setup'],
       },
       {
-        q: 'How do I verify that an AiVIS webhook payload has not been tampered with?',
+        q: 'How do I verify that an AiVIS.biz webhook payload has not been tampered with?',
         a: 'Every webhook request includes an X-Signature header containing an HMAC-SHA256 hash of the raw request body signed with your webhook secret. Compute the same hash server-side using your stored secret and compare byte-by-byte. Reject any payload where signatures do not match to prevent replay attacks and request forgery from untrusted sources.',
         tags: ['webhook verification', 'hmac-sha256', 'x-signature', 'replay attack', 'forgery', 'security'],
       },
       {
-        q: 'Can I schedule automated audits via the AiVIS API?',
+        q: 'Can I schedule automated audits via the AiVIS.biz API?',
         a: 'Yes. Scheduled rescans (Alignment+ tiers) support daily, weekly, and monthly intervals configurable from the dashboard or via the API. POST to /api/v1/audits with a schedule parameter to set up recurring runs. Results are delivered via webhook or retrievable at GET /api/v1/audits with status and date-range filtering available.',
         tags: ['scheduled', 'automated audits', 'daily', 'weekly', 'monthly', 'api scheduling'],
       },
       {
-        q: 'What rate limits apply to the AiVIS external API?',
+        q: 'What rate limits apply to the AiVIS.biz external API?',
         a: 'Tier-based limits apply. Alignment: 500 API requests per month. Signal: 5,000 requests per month. Score Fix: 2,000 requests per month. Requests exceeding the limit receive a 429 Too Many Requests response with a Retry-After header showing the next reset time. Scan quotas are tracked separately and displayed in Settings alongside API usage.',
         tags: ['rate limits', '429', 'retry-after', 'alignment', 'signal', 'scorefix', 'monthly quota'],
       },
@@ -706,12 +706,12 @@ const HELP_FAQ_ITEMS = CATEGORIES.flatMap((cat) =>
 
 export default function HelpCenter() {
   usePageMeta({
-    title: 'Help Center | AiVIS — AI Answer Audit System',
+    title: 'Help Center | AiVIS.biz — AI Answer Audit System',
     description: 'Answers to common questions about AI visibility audits, scoring, Score Fix, citations, pricing, and platform workflow.',
     path: '/help',
     structuredData: [
       { ...buildFaqSchema(HELP_FAQ_ITEMS), '@id': `${PUBLIC_APP_ORIGIN}/help#faq` },
-      buildWebPageSchema({ path: '/help', name: 'AiVIS Help Center', description: 'Platform documentation and frequently asked questions about AI visibility auditing.' }),
+      buildWebPageSchema({ path: '/help', name: 'AiVIS.biz Help Center', description: 'Platform documentation and frequently asked questions about AI visibility auditing.' }),
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Help Center', path: '/help' }]),
     ],
   });
@@ -1047,7 +1047,7 @@ export default function HelpCenter() {
                   <div className="flex-1">
                     <h3 className="text-base font-semibold text-white">Can&apos;t find what you need?</h3>
                     <p className="text-sm text-white/50 mt-1">
-                      Submit a support ticket and our team will respond within 24 hours. Or chat with AiVIS Guide for instant help.
+                      Submit a support ticket and our team will respond within 24 hours. Or chat with AiVIS.biz Guide for instant help.
                     </p>
                     <div className="flex flex-wrap gap-3 mt-4">
                       {isLoggedIn ? (

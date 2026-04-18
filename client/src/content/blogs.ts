@@ -5437,16 +5437,16 @@ This is the difference between "your site is optimized" and "your site actually 
 
 ## The Cite Ledger: why traceability changes everything
 
-The <a href="/methodology/cite-ledger">Cite Ledger</a> is the infrastructure layer that makes evidence-backed scoring possible. It is an append-only, tamper-evident record where every audit finding is stored with:
+The <a href="/methodology/cite-ledger">Cite Ledger</a> is the infrastructure layer that makes evidence-backed scoring possible. It is a write-once, verifiable record where every audit finding is stored with:
 
 - A **sequence number** establishing chronological order
 - A **BRAG ID** linking the entry to the specific finding and its evidence
-- A **content hash** (SHA-256) of the finding payload
-- A **chain hash** linking this entry to the previous one
+- A **content fingerprint** (SHA-256) of the finding payload
+- A **traceability link** connecting this entry to the previous one
 
-The first entry in any ledger uses a genesis hash (64 zero characters). Every subsequent entry's chain hash is derived from the previous entry's content hash. If any entry is modified, the chain breaks. If any entry is removed, the sequence gap is detectable.
+The first entry in any ledger uses a fixed seed value. Every subsequent entry's fingerprint is derived from the previous entry's content. If any entry is modified, the chain breaks. If any entry is removed, the sequence gap is detectable.
 
-This is not blockchain. It is a hash chain — simpler, faster, and purpose-built for audit traceability. The goal is not decentralization. The goal is that when AiVIS.biz tells you your FAQ section lacks FAQPage schema, you can trace that finding back to the exact crawl observation, the exact SSFR rule that flagged it, and the exact evidence payload that was evaluated.
+The goal is straightforward: when AiVIS.biz tells you your FAQ section lacks FAQPage schema, you can trace that finding back to the exact crawl observation, the exact SSFR rule that flagged it, and the exact evidence payload that was evaluated.
 
 No other AI visibility tool provides this level of finding traceability. Most cannot even tell you which model produced a given recommendation.
 
@@ -5458,7 +5458,7 @@ Marketing organizations are under increasing pressure from three directions:
 
 **Privacy and compliance regulations demand auditable attribution.** Teams need to show where their performance data comes from, how scores are calculated, and whether the methodology is reproducible. An opaque "proprietary algorithm" score is a compliance liability, not an asset.
 
-**Trust in marketing metrics is declining.** After years of vanity metrics, inflated reach numbers, and attribution models that credit everything and explain nothing, organizations want measurement systems they can verify. A score backed by a tamper-evident evidence chain is fundamentally different from a score backed by "trust us."
+**Trust in marketing metrics is declining.** After years of vanity metrics, inflated reach numbers, and attribution models that credit everything and explain nothing, organizations want measurement systems they can verify. A score backed by a verifiable evidence chain is fundamentally different from a score backed by "trust us."
 
 ## What this means for agencies and teams
 
@@ -5480,10 +5480,10 @@ These are evidence problems. They deserve evidence-based answers.
 
 **See your evidence at [aivis.ing](https://aivis.ing). Run your first audit free.**`,
     keyPoints: [
-      'AiVIS.biz produces a 0-100 visibility score backed by a tamper-evident Cite Ledger — every finding traces to specific structural evidence, not opaque heuristics.',
+      'AiVIS.biz produces a 0-100 visibility score backed by the Cite Ledger — every finding traces to specific structural evidence, not opaque heuristics.',
       'The SSFR framework runs 27 deterministic rules across Source, Signal, Fact, and Relationship evidence before any AI model is involved.',
       'Signal tier audits use a triple-check pipeline: three independent AI models that analyze, critique, and validate the result.',
-      'The Cite Ledger is an append-only hash chain where each entry links to the previous through SHA-256 chain hashes, making the full audit reproducible.',
+      'The Cite Ledger is a write-once evidence chain where each entry links to the previous through content fingerprints, making the full audit reproducible.',
       'Citation verification runs brands through three independent search engines to confirm AI models can actually find and cite the content.',
       'Data transparency and auditable attribution are replacing opaque proprietary algorithms as the standard for marketing measurement.',
     ],

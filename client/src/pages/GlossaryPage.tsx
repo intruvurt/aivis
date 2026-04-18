@@ -14,7 +14,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "AI Visibility Score",
     definition:
-      "A quantified metric (0–100) indicating how effectively a website's content can be discovered, extracted, and cited by AI answer engines like ChatGPT, Perplexity, Claude, and Gemini. AiVIS calculates this by auditing content extractability, entity clarity, schema completeness, trust signals, and answer block density.",
+      "A quantified metric (0–100) indicating how effectively a website's content can be discovered, extracted, and cited by AI answer engines like ChatGPT, Perplexity, Claude, and Gemini. AiVIS.biz calculates this by auditing content extractability, entity clarity, schema completeness, trust signals, and answer block density.",
     related: ["Content Extractability", "Entity Clarity", "Trust Signals"],
   },
   {
@@ -32,7 +32,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "BRAG Trail (Bibliography-Referenced Audit Graph)",
     definition:
-      "An evidence trail linking each audit finding to the specific page element, schema property, or structural pattern that generated it. BRAG trails allow users to verify why a recommendation was made. AiVIS attaches BRAG references to audit outputs so findings are traceable, not opaque.",
+      "An evidence trail linking each audit finding to the specific page element, schema property, or structural pattern that generated it. BRAG trails allow users to verify why a recommendation was made. AiVIS.biz attaches BRAG references to audit outputs so findings are traceable, not opaque.",
     related: ["Evidence Layer", "Triple-Check Validation"],
   },
   {
@@ -44,8 +44,14 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Citation Testing",
     definition:
-      "The process of verifying whether a brand or URL actually appears in results returned by search engines and AI answer systems. AiVIS runs citation tests across DuckDuckGo HTML, Bing HTML, and DDG Instant Answer API in parallel to provide evidence-backed verification rather than estimates.",
+      "The process of verifying whether a brand or URL actually appears in results returned by search engines and AI answer systems. AiVIS.biz runs citation tests across DuckDuckGo HTML, Bing HTML, and DDG Instant Answer API in parallel to provide evidence-backed verification rather than estimates.",
     related: ["Citation Surface", "Evidence Layer"],
+  },
+  {
+    term: "CITE LEDGER",
+    definition:
+      "A structured attribution system developed by AiVIS.biz that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor. The CITE LEDGER provides a permanent, auditable record of what was found, when it was found, and which evidence supported the finding.",
+    related: ["BRAG Trail (Bibliography-Referenced Audit Graph)", "Evidence Layer", "Evidence-Backed Scoring"],
   },
   {
     term: "Content Extractability",
@@ -68,13 +74,13 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)",
     definition:
-      "Google's quality evaluation framework that assesses content credibility. In the AI visibility context, E-E-A-T signals - author credentials, organizational authority, verifiable claims, and transparent sourcing - influence whether AI answer engines consider content trustworthy enough to cite. AiVIS audits structural E-E-A-T signals including author schema, organization schema, and policy page presence.",
+      "Google's quality evaluation framework that assesses content credibility. In the AI visibility context, E-E-A-T signals - author credentials, organizational authority, verifiable claims, and transparent sourcing - influence whether AI answer engines consider content trustworthy enough to cite. AiVIS.biz audits structural E-E-A-T signals including author schema, organization schema, and policy page presence.",
     related: ["Entity Clarity", "Trust Signals"],
   },
   {
     term: "Evidence Layer",
     definition:
-      "The component of an AI visibility audit that links each finding to verifiable evidence. Rather than presenting recommendations as opinions, the evidence layer shows exactly which page elements, schema properties, or structural gaps triggered each recommendation. AiVIS uses evidence layers to make audits reproducible and credible.",
+      "The component of an AI visibility audit that links each finding to verifiable evidence. Rather than presenting recommendations as opinions, the evidence layer shows exactly which page elements, schema properties, or structural gaps triggered each recommendation. AiVIS.biz uses evidence layers to make audits reproducible and credible.",
     related: ["BRAG Trail", "Triple-Check Validation"],
   },
   {
@@ -98,13 +104,13 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "MCP (Model Context Protocol)",
     definition:
-      "An open protocol that allows AI agents to invoke external tools programmatically. AiVIS exposes MCP endpoints so that AI coding agents, workflow automation systems, and custom integrations can trigger audits, retrieve results, and execute remediation without manual browser interaction.",
+      "An open protocol that allows AI agents to invoke external tools programmatically. AiVIS.biz exposes MCP endpoints so that AI coding agents, workflow automation systems, and custom integrations can trigger audits, retrieve results, and execute remediation without manual browser interaction.",
     related: ["Score Fix", "Automated Remediation"],
   },
   {
     term: "Multi-Model Validation",
     definition:
-      "The practice of running the same audit through multiple AI models to reduce single-model bias. AiVIS implements this via its Triple-Check pipeline, where three independent AI models analyze, critique, and validate findings before producing a final score. This catches hallucinations, scoring inconsistencies, and model-specific blind spots.",
+      "The practice of running the same audit through multiple AI models to reduce single-model bias. AiVIS.biz implements this via its Triple-Check pipeline, where three independent AI models analyze, critique, and validate findings before producing a final score. This catches hallucinations, scoring inconsistencies, and model-specific blind spots.",
     related: ["Triple-Check Validation", "AI Visibility Score"],
   },
   {
@@ -116,37 +122,37 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Schema Completeness",
     definition:
-      "The extent to which a website implements structured data (JSON-LD) covering its key entities: organization, authors, products, articles, FAQs, and breadcrumbs. Complete schema coverage gives AI systems explicit machine-readable context about what the site contains, who created it, and how content relates to the entity graph. AiVIS audits schema completeness as a core component of AI visibility.",
+      "The extent to which a website implements structured data (JSON-LD) covering its key entities: organization, authors, products, articles, FAQs, and breadcrumbs. Complete schema coverage gives AI systems explicit machine-readable context about what the site contains, who created it, and how content relates to the entity graph. AiVIS.biz audits schema completeness as a core component of AI visibility.",
     related: ["JSON-LD", "Entity Clarity", "Machine Readability"],
   },
   {
     term: "Score Fix (AutoFix PR)",
     definition:
-      "AiVIS's automated remediation tier that converts audit findings into executable GitHub pull requests. Score Fix analyzes the structural gaps identified during an audit, generates code changes (schema additions, heading corrections, content restructuring), and opens PRs with evidence-linked explanations. This closes the loop between diagnosis and implementation.",
+      "AiVIS.biz's automated remediation tier that converts audit findings into executable GitHub pull requests. Score Fix analyzes the structural gaps identified during an audit, generates code changes (schema additions, heading corrections, content restructuring), and opens PRs with evidence-linked explanations. This closes the loop between diagnosis and implementation.",
     related: ["Evidence Layer", "MCP", "Automated Remediation"],
   },
   {
     term: "Triple-Check Validation",
     definition:
-      "AiVIS's multi-stage audit pipeline where three independent AI models process the same content. AI1 performs the primary analysis and scoring. AI2 acts as a peer critic that can adjust scores and add missing recommendations. AI3 validates the final output for consistency and accuracy. This eliminates single-model bias and produces more reliable visibility scores.",
+      "AiVIS.biz's multi-stage audit pipeline where three independent AI models process the same content. AI1 performs the primary analysis and scoring. AI2 acts as a peer critic that can adjust scores and add missing recommendations. AI3 validates the final output for consistency and accuracy. This eliminates single-model bias and produces more reliable visibility scores.",
     related: ["Multi-Model Validation", "AI Visibility Score", "Evidence Layer"],
   },
   {
     term: "Trust Signals",
     definition:
-      "Structural indicators that help AI systems assess whether content is credible enough to cite. Trust signals include: named authors with verifiable credentials, organization schema with contact information, privacy policy and terms of service pages, HTTPS enforcement, consistent entity references, and transparent sourcing. AiVIS evaluates trust signals as one of five core audit dimensions.",
+      "Structural indicators that help AI systems assess whether content is credible enough to cite. Trust signals include: named authors with verifiable credentials, organization schema with contact information, privacy policy and terms of service pages, HTTPS enforcement, consistent entity references, and transparent sourcing. AiVIS.biz evaluates trust signals as one of five core audit dimensions.",
     related: ["E-E-A-T", "Entity Clarity", "Schema Completeness"],
   },
   {
     term: "Visibility Audit",
     definition:
-      "A comprehensive analysis of a website's readiness for AI answer engine discovery and citation. A visibility audit evaluates crawlability, content extractability, entity clarity, trust signals, and answer block structure. AiVIS produces visibility audits with quantified scores, evidence-linked recommendations, and (on paid tiers) multi-model validation and automated fixes.",
+      "A comprehensive analysis of a website's readiness for AI answer engine discovery and citation. A visibility audit evaluates crawlability, content extractability, entity clarity, trust signals, and answer block structure. AiVIS.biz produces visibility audits with quantified scores, evidence-linked recommendations, and (on paid tiers) multi-model validation and automated fixes.",
     related: ["AI Visibility Score", "Content Extractability", "Triple-Check Validation"],
   },
   {
     term: "Automated Remediation",
     definition:
-      "The process of automatically implementing fixes for structural issues identified during an AI visibility audit. Rather than only listing recommendations, automated remediation generates code changes - schema additions, heading restructures, entity annotations - and delivers them as pull requests. AiVIS's Score Fix tier provides this capability via GitHub MCP integration.",
+      "The process of automatically implementing fixes for structural issues identified during an AI visibility audit. Rather than only listing recommendations, automated remediation generates code changes - schema additions, heading restructures, entity annotations - and delivers them as pull requests. AiVIS.biz's Score Fix tier provides this capability via GitHub MCP integration.",
     related: ["Score Fix", "MCP", "Evidence Layer"],
   },
   {
@@ -158,25 +164,25 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Competitor Tracking (AI Visibility)",
     definition:
-      "Monitoring how competing websites perform on AI visibility metrics over time. AiVIS's competitor tracking compares extractability, entity clarity, and citation presence across competitors, identifying specific opportunities where structural improvements could shift citation share from competitors to your content.",
+      "Monitoring how competing websites perform on AI visibility metrics over time. AiVIS.biz's competitor tracking compares extractability, entity clarity, and citation presence across competitors, identifying specific opportunities where structural improvements could shift citation share from competitors to your content.",
     related: ["Citation Surface", "AI Visibility Score"],
   },
   {
     term: "Brand Mention Tracking",
     definition:
-      "Monitoring where a brand appears across web platforms including Reddit, Hacker News, Mastodon, GitHub, Quora, Product Hunt, and news sources. Brand mentions in community discussions, forums, and knowledge bases contribute to the entity presence that AI answer engines evaluate when selecting citation sources. AiVIS tracks mentions across 19 free sources without requiring API keys.",
+      "Monitoring where a brand appears across web platforms including Reddit, Hacker News, Mastodon, GitHub, Quora, Product Hunt, and news sources. Brand mentions in community discussions, forums, and knowledge bases contribute to the entity presence that AI answer engines evaluate when selecting citation sources. AiVIS.biz tracks mentions across 19 free sources without requiring API keys.",
     related: ["Citation Surface", "Entity Clarity", "Mention Velocity"],
   },
   {
     term: "AI Answer Assembly",
     definition:
-      "The internal process by which a language model constructs a response from retrieved fragments, parametric memory, and structural signals. Answer assembly determines which sources are quoted, paraphrased, or omitted. Understanding assembly mechanics is essential for diagnosing why a page is cited, distorted, or ignored. AiVIS reverse-engineering tools decompose answer assembly paths to expose citation logic.",
+      "The internal process by which a language model constructs a response from retrieved fragments, parametric memory, and structural signals. Answer assembly determines which sources are quoted, paraphrased, or omitted. Understanding assembly mechanics is essential for diagnosing why a page is cited, distorted, or ignored. AiVIS.biz reverse-engineering tools decompose answer assembly paths to expose citation logic.",
     related: ["Retrieval Pipeline", "Distortion Map", "Reverse Engineering (AI Answers)"],
   },
   {
     term: "Answer Distortion",
     definition:
-      "The measurable gap between what a web page actually states and what an AI answer engine reproduces when referencing that page. Distortion manifests as omission (missing key facts), misattribution (crediting the wrong source), entity confusion (conflating distinct entities), or rewriting (altering meaning). AiVIS quantifies answer distortion as a core dimension of the visibility score.",
+      "The measurable gap between what a web page actually states and what an AI answer engine reproduces when referencing that page. Distortion manifests as omission (missing key facts), misattribution (crediting the wrong source), entity confusion (conflating distinct entities), or rewriting (altering meaning). AiVIS.biz quantifies answer distortion as a core dimension of the visibility score.",
     related: ["Distortion Map", "Omission Detection", "Misattribution Detection"],
   },
   {
@@ -188,7 +194,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Audit Ledger",
     definition:
-      "A persistent, timestamped record of all visibility audits performed on a domain. The audit ledger tracks score progression, finding history, and remediation outcomes over time. It serves as the authoritative timeline for measuring whether structural changes improved AI extractability and citation presence. AiVIS maintains per-user audit ledgers with full evidence retention.",
+      "A persistent, timestamped record of all visibility audits performed on a domain. The audit ledger tracks score progression, finding history, and remediation outcomes over time. It serves as the authoritative timeline for measuring whether structural changes improved AI extractability and citation presence. AiVIS.biz maintains per-user audit ledgers with full evidence retention.",
     related: ["Visibility Audit", "Evidence Layer", "BRAG Trail"],
   },
   {
@@ -200,7 +206,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "BRAG Evidence ID",
     definition:
-      "A traceable identifier attached to each individual finding in an AiVIS audit. Every recommendation, score component, and structural gap links back to a BRAG Evidence ID that references the exact page element, schema property, or content fragment that triggered it. Evidence IDs make audits verifiable and reproducible rather than opaque.",
+      "A traceable identifier attached to each individual finding in an AiVIS.biz audit. Every recommendation, score component, and structural gap links back to a BRAG Evidence ID that references the exact page element, schema property, or content fragment that triggered it. Evidence IDs make audits verifiable and reproducible rather than opaque.",
     related: ["BRAG Trail", "Evidence Layer", "Evidence-Backed Scoring"],
   },
   {
@@ -230,13 +236,13 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Crypto & Web3 Visibility",
     definition:
-      "The specific AI visibility challenges facing cryptocurrency, blockchain, and decentralised web projects. Crypto entities face heightened entity confusion (token names conflating with common words), rapid content staleness (price and protocol changes), and trust signal deficits (anonymous teams, unverifiable claims). AiVIS addresses these with entity disambiguation auditing and structured schema recommendations tailored to Web3 naming conventions.",
+      "The specific AI visibility challenges facing cryptocurrency, blockchain, and decentralised web projects. Crypto entities face heightened entity confusion (token names conflating with common words), rapid content staleness (price and protocol changes), and trust signal deficits (anonymous teams, unverifiable claims). AiVIS.biz addresses these with entity disambiguation auditing and structured schema recommendations tailored to Web3 naming conventions.",
     related: ["Entity Clarity", "Entity Confusion", "Distortion Resistance"],
   },
   {
     term: "Distortion Map",
     definition:
-      "A visual and structural breakdown of how an AI answer engine misrepresents a page's content. A distortion map categorises errors into omission (key facts dropped), misattribution (wrong source credited), entity confusion (distinct entities merged), and semantic drift (meaning altered during paraphrase). AiVIS generates distortion maps as part of the evidence layer so users can see exactly where and how their content was distorted.",
+      "A visual and structural breakdown of how an AI answer engine misrepresents a page's content. A distortion map categorises errors into omission (key facts dropped), misattribution (wrong source credited), entity confusion (distinct entities merged), and semantic drift (meaning altered during paraphrase). AiVIS.biz generates distortion maps as part of the evidence layer so users can see exactly where and how their content was distorted.",
     related: ["Answer Distortion", "Omission Detection", "Misattribution Detection"],
   },
   {
@@ -248,7 +254,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Entity Confusion",
     definition:
-      "A distortion type where an AI answer engine conflates two or more distinct entities — merging a brand with a competitor, confusing an author with a similarly-named person, or attributing product features to the wrong company. Entity confusion is one of the most damaging forms of answer distortion because it erodes brand identity in AI-mediated discovery. AiVIS detects entity confusion through multi-model comparison and structured schema analysis.",
+      "A distortion type where an AI answer engine conflates two or more distinct entities — merging a brand with a competitor, confusing an author with a similarly-named person, or attributing product features to the wrong company. Entity confusion is one of the most damaging forms of answer distortion because it erodes brand identity in AI-mediated discovery. AiVIS.biz detects entity confusion through multi-model comparison and structured schema analysis.",
     related: ["Entity Clarity", "Entity Resolution (AI Context)", "Distortion Map"],
   },
   {
@@ -260,7 +266,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Evidence-Backed Scoring",
     definition:
-      "A scoring methodology where every point awarded or deducted is linked to a verifiable content signal, schema property, or structural finding. Evidence-backed scoring rejects opaque algorithms in favour of transparent, auditable scoring chains. Each component of the AiVIS visibility score traces to specific BRAG Evidence IDs, allowing users to understand exactly why they scored what they scored and what to fix.",
+      "A scoring methodology where every point awarded or deducted is linked to a verifiable content signal, schema property, or structural finding. Evidence-backed scoring rejects opaque algorithms in favour of transparent, auditable scoring chains. Each component of the AiVIS.biz visibility score traces to specific BRAG Evidence IDs, allowing users to understand exactly why they scored what they scored and what to fix.",
     related: ["BRAG Evidence ID", "Evidence Layer", "AI Visibility Score"],
   },
   {
@@ -272,7 +278,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Extraction Yield",
     definition:
-      "The percentage of a page's meaningful content that an AI retrieval system can usably extract during answer assembly. Low extraction yield means the AI system cannot parse most of the page's value — often due to JavaScript-rendered content, images without alt text, or unstructured prose without headings. AiVIS measures extraction yield as part of the content extractability dimension and recommends structural changes to increase it.",
+      "The percentage of a page's meaningful content that an AI retrieval system can usably extract during answer assembly. Low extraction yield means the AI system cannot parse most of the page's value — often due to JavaScript-rendered content, images without alt text, or unstructured prose without headings. AiVIS.biz measures extraction yield as part of the content extractability dimension and recommends structural changes to increase it.",
     related: ["Content Extractability", "Machine Readability", "Answer Block Density"],
   },
   {
@@ -284,7 +290,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Ghost Audit",
     definition:
-      "A stealth analysis that reveals how AI answer engines currently render a brand without the brand's direct involvement. Ghost audits query multiple AI models with brand-related prompts and capture how the brand is described, attributed, or omitted. This surfaces distortions that the brand may not be aware of — misattribution, entity confusion, or complete invisibility. AiVIS provides ghost auditing as a reverse-engineering tool for Alignment+ tiers.",
+      "A stealth analysis that reveals how AI answer engines currently render a brand without the brand's direct involvement. Ghost audits query multiple AI models with brand-related prompts and capture how the brand is described, attributed, or omitted. This surfaces distortions that the brand may not be aware of — misattribution, entity confusion, or complete invisibility. AiVIS.biz provides ghost auditing as a reverse-engineering tool for Alignment+ tiers.",
     related: ["Reverse Engineering (AI Answers)", "Answer Distortion", "Model Diff"],
   },
   {
@@ -296,7 +302,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "llms.txt",
     definition:
-      "A machine-readable summary file placed at a website's root (similar to robots.txt) that provides large language models with a concise, structured overview of the site's identity, purpose, key pages, and capabilities. llms.txt helps AI systems understand a domain's scope without crawling every page. AiVIS recommends and can auto-generate llms.txt as part of the fix protocol for improving AI discoverability.",
+      "A machine-readable summary file placed at a website's root (similar to robots.txt) that provides large language models with a concise, structured overview of the site's identity, purpose, key pages, and capabilities. llms.txt helps AI systems understand a domain's scope without crawling every page. AiVIS.biz recommends and can auto-generate llms.txt as part of the fix protocol for improving AI discoverability.",
     related: ["Machine Readability", "Crawl Budget (AI)", "Fix Protocol"],
   },
   {
@@ -314,7 +320,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Misattribution Detection",
     definition:
-      "Identifying instances where an AI answer engine credits content, data, or expertise to the wrong source. Misattribution is a high-impact distortion type because it redirects citation equity to competitors or unrelated entities. AiVIS detects misattribution through multi-model comparison, entity schema analysis, and citation test verification across search and AI systems.",
+      "Identifying instances where an AI answer engine credits content, data, or expertise to the wrong source. Misattribution is a high-impact distortion type because it redirects citation equity to competitors or unrelated entities. AiVIS.biz detects misattribution through multi-model comparison, entity schema analysis, and citation test verification across search and AI systems.",
     related: ["Answer Distortion", "Entity Confusion", "Citation Testing"],
   },
   {
@@ -326,13 +332,13 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Omission Detection",
     definition:
-      "Identifying when an AI answer engine drops key facts, features, or claims from a page during answer assembly. Omission is the most common form of answer distortion — AI systems often extract a partial summary that leaves out critical differentiators. AiVIS flags omissions by comparing source content against AI-generated representations, highlighting exactly which information was lost.",
+      "Identifying when an AI answer engine drops key facts, features, or claims from a page during answer assembly. Omission is the most common form of answer distortion — AI systems often extract a partial summary that leaves out critical differentiators. AiVIS.biz flags omissions by comparing source content against AI-generated representations, highlighting exactly which information was lost.",
     related: ["Answer Distortion", "Distortion Map", "Content Depth Scoring"],
   },
   {
     term: "Prompt Intelligence",
     definition:
-      "Understanding which user prompts and query patterns lead AI answer engines to cite (or skip) a given source. Prompt intelligence helps brands identify the query space where they are visible, invisible, or distorted. AiVIS uses prompt intelligence to power citation testing, ghost audits, and reverse-engineering tools that map the relationship between query intent and citation outcomes.",
+      "Understanding which user prompts and query patterns lead AI answer engines to cite (or skip) a given source. Prompt intelligence helps brands identify the query space where they are visible, invisible, or distorted. AiVIS.biz uses prompt intelligence to power citation testing, ghost audits, and reverse-engineering tools that map the relationship between query intent and citation outcomes.",
     related: ["Citation Testing", "Ghost Audit", "Reverse Engineering (AI Answers)"],
   },
   {
@@ -350,7 +356,7 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Reverse Engineering (AI Answers)",
     definition:
-      "The practice of decompiling AI-generated answers to understand how the answer engine assembled them — which sources were used, how content was transformed, and what was omitted or distorted. AiVIS provides reverse-engineering tools (decompile, ghost audit, model diff, simulate) that let users trace backwards from an AI answer to the structural signals that influenced it.",
+      "The practice of decompiling AI-generated answers to understand how the answer engine assembled them — which sources were used, how content was transformed, and what was omitted or distorted. AiVIS.biz provides reverse-engineering tools (decompile, ghost audit, model diff, simulate) that let users trace backwards from an AI answer to the structural signals that influenced it.",
     related: ["Ghost Audit", "Model Diff", "AI Answer Assembly"],
   },
   {
@@ -362,25 +368,25 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "SERP Overlap Signal",
     definition:
-      "The correlation between a page's performance in traditional search engine results pages (SERPs) and its citation presence in AI-generated answers. SERP overlap signals indicate whether search ranking strength translates to AI visibility. AiVIS uses SERP data (via SerpAPI for Alignment+ tiers) to enrich entity clarity and authority scoring with real-world ranking evidence.",
+      "The correlation between a page's performance in traditional search engine results pages (SERPs) and its citation presence in AI-generated answers. SERP overlap signals indicate whether search ranking strength translates to AI visibility. AiVIS.biz uses SERP data (via SerpAPI for Alignment+ tiers) to enrich entity clarity and authority scoring with real-world ranking evidence.",
     related: ["Citation Surface", "Topical Authority", "AI Visibility Score"],
   },
   {
     term: "Signal-to-Noise Ratio (Content)",
     definition:
-      "The ratio of substantive, citable content on a page to filler, boilerplate, or repetitive material. A high signal-to-noise ratio means AI systems can extract valuable knowledge fragments without wading through navigation chrome, cookie banners, or promotional copy. AiVIS evaluates signal-to-noise as part of content extractability, rewarding pages that present clear information with minimal distraction.",
+      "The ratio of substantive, citable content on a page to filler, boilerplate, or repetitive material. A high signal-to-noise ratio means AI systems can extract valuable knowledge fragments without wading through navigation chrome, cookie banners, or promotional copy. AiVIS.biz evaluates signal-to-noise as part of content extractability, rewarding pages that present clear information with minimal distraction.",
     related: ["Content Extractability", "Answer Block Density", "Extraction Yield"],
   },
   {
     term: "SSFR (Source-Signal-Fact-Relationship)",
     definition:
-      "A framework describing how AI answer engines evaluate content trustworthiness through four dimensions: Source identity (who published it), Signal strength (structural indicators of authority), Fact verifiability (whether claims can be cross-referenced), and Relationship coherence (how entities and claims connect). SSFR analysis underpins AiVIS's evidence-backed scoring model and explains why structurally equivalent content from different sources receives different citation treatment.",
+      "A framework describing how AI answer engines evaluate content trustworthiness through four dimensions: Source identity (who published it), Signal strength (structural indicators of authority), Fact verifiability (whether claims can be cross-referenced), and Relationship coherence (how entities and claims connect). SSFR analysis underpins AiVIS.biz's evidence-backed scoring model and explains why structurally equivalent content from different sources receives different citation treatment.",
     related: ["Evidence-Backed Scoring", "Trust Signals", "Entity Clarity"],
   },
   {
     term: "Structured Citation",
     definition:
-      "A citation in an AI-generated answer that includes verifiable source attribution — a named entity, URL, or explicit reference that allows the reader to trace the claim back to its origin. Structured citations are the goal of AI visibility optimisation. They contrast with unattributed paraphrasing, where AI incorporates content without crediting the source. AiVIS measures whether structural signals make structured citations more likely.",
+      "A citation in an AI-generated answer that includes verifiable source attribution — a named entity, URL, or explicit reference that allows the reader to trace the claim back to its origin. Structured citations are the goal of AI visibility optimisation. They contrast with unattributed paraphrasing, where AI incorporates content without crediting the source. AiVIS.biz measures whether structural signals make structured citations more likely.",
     related: ["Citation Readiness", "Citation Surface", "Evidence Trail"],
   },
   {
@@ -392,19 +398,19 @@ const GLOSSARY_TERMS: Term[] = [
   {
     term: "Topical Metrics",
     definition:
-      "Quantitative measures of a website's depth and breadth within specific subject domains. Topical metrics include subtopic coverage ratio, content depth scoring, internal cross-linking density, and entity mention frequency. AiVIS uses topical metrics to assess whether a site has sufficient structural depth to be treated as an authoritative source for domain-specific AI queries.",
+      "Quantitative measures of a website's depth and breadth within specific subject domains. Topical metrics include subtopic coverage ratio, content depth scoring, internal cross-linking density, and entity mention frequency. AiVIS.biz uses topical metrics to assess whether a site has sufficient structural depth to be treated as an authoritative source for domain-specific AI queries.",
     related: ["Topical Authority", "Content Depth Scoring", "AI Visibility Score"],
   },
   {
     term: "Triple-Check Orchestration",
     definition:
-      "The coordination layer that manages AiVIS's three-stage AI pipeline. Orchestration handles model selection, timeout budgets (57s total, 25s primary cap, 8s fallback floor), sequential stage execution (AI1 deep analysis → AI2 peer critique → AI3 validation gate), deadline propagation, and graceful degradation when individual models fail. Triple-check orchestration ensures the pipeline produces reliable, multi-perspective scores without single-point-of-failure risk.",
+      "The coordination layer that manages AiVIS.biz's three-stage AI pipeline. Orchestration handles model selection, timeout budgets (57s total, 25s primary cap, 8s fallback floor), sequential stage execution (AI1 deep analysis → AI2 peer critique → AI3 validation gate), deadline propagation, and graceful degradation when individual models fail. Triple-check orchestration ensures the pipeline produces reliable, multi-perspective scores without single-point-of-failure risk.",
     related: ["Triple-Check Validation", "Multi-Model Validation", "Evidence-Backed Scoring"],
   },
   {
     term: "Agency Workspace",
     definition:
-      "A multi-tenant environment within AiVIS designed for agencies managing AI visibility audits across multiple client domains. Agency workspaces provide isolated per-client audit ledgers, consolidated dashboards, cross-client benchmarking, and team-level access controls. They allow agencies to deliver AI visibility services at scale while maintaining client data separation and consistent reporting.",
+      "A multi-tenant environment within AiVIS.biz designed for agencies managing AI visibility audits across multiple client domains. Agency workspaces provide isolated per-client audit ledgers, consolidated dashboards, cross-client benchmarking, and team-level access controls. They allow agencies to deliver AI visibility services at scale while maintaining client data separation and consistent reporting.",
     related: ["Audit Ledger", "Visibility Audit", "Competitor Tracking (AI Visibility)"],
   },
 ];
@@ -437,7 +443,7 @@ export default function GlossaryPage() {
   }));
 
   usePageMeta({
-    title: "AI Visibility & AEO Glossary - Key Terms Defined | AiVIS",
+    title: "AI Visibility & AEO Glossary - Key Terms Defined | AiVIS.biz",
     description:
       "60+ in-depth definitions for AI visibility, answer engine optimization (AEO), distortion mapping, evidence-backed scoring, BRAG evidence trails, SSFR analysis, triple-check orchestration, and citation readiness. The definitive reference for AI answer assembly, entity clarity, and structural extractability.",
     path: "/glossary",
@@ -447,7 +453,7 @@ export default function GlossaryPage() {
         "@type": "DefinedTermSet",
         name: "AI Visibility & Answer Engine Optimization Glossary",
         description:
-          "Comprehensive glossary covering AI visibility, answer engine optimization (AEO), generative engine optimization (GEO), and AI citation readiness terminology. Published by AiVIS.",
+          "Comprehensive glossary covering AI visibility, answer engine optimization (AEO), generative engine optimization (GEO), and AI citation readiness terminology. Published by AiVIS.biz.",
         url: "https://aivis.biz/glossary",
         publisher: { "@id": "https://aivis.biz/#organization" },
         hasDefinedTerm: definedTermSchema,
@@ -539,7 +545,7 @@ export default function GlossaryPage() {
           {/* ── Category Claim Footer ── */}
           <div className="mt-10 rounded-xl border border-cyan-400/15 bg-cyan-500/[0.04] p-6">
             <p className="text-sm text-white/65 leading-relaxed">
-              <strong className="text-white">AiVIS</strong> is not an SEO tool. It is AI visibility infrastructure — the first platform built to measure and remediate how AI answer engines distort, misattribute, omit, and rewrite website content. This glossary defines the evidence-backed measurement methods, distortion diagnostics, and fix protocols that constitute the AI visibility category.
+              <strong className="text-white">AiVIS.biz</strong> is not an SEO tool. It is AI visibility infrastructure — the first platform built to measure and remediate how AI answer engines distort, misattribute, omit, and rewrite website content. This glossary defines the evidence-backed measurement methods, distortion diagnostics, and fix protocols that constitute the AI visibility category.
             </p>
           </div>
 

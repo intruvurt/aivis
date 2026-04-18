@@ -11,72 +11,44 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
 import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
+import { APP_NAV_GROUPS, formatTierGateLabel, type NavItem } from "../config/routeIntelligence";
 
 const LOGO_URL = "/aivis-logo.png";
-
-interface NavItem {
-  to: string;
-  labelKey: string;
-  icon: React.ComponentType<{ className?: string }>;
-  minTier?: "observer" | "starter" | "alignment" | "signal" | "scorefix";
-}
 
 interface AppSidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-const mainNav: NavItem[] = [
-  { to: "/app", labelKey: "sidebar.overview", icon: LayoutDashboard },
-  { to: "/app/analyze", labelKey: "sidebar.seeVisibility", icon: Search },
-  { to: "/app/reports", labelKey: "sidebar.reports", icon: FileText },
-  { to: "/app/score-fix", labelKey: "sidebar.scorefix", icon: Zap },
-];
-
-const evidenceNav: NavItem[] = [
-  { to: "/app/analytics", labelKey: "sidebar.analytics", icon: BarChart3 },
-  { to: "/app/citations", labelKey: "sidebar.citations", icon: FlaskConical, minTier: "alignment" },
-  { to: "/app/competitors", labelKey: "sidebar.competitors", icon: Users, minTier: "alignment" },
-  { to: "/app/benchmarks", labelKey: "sidebar.benchmarks", icon: Layers },
-];
-
-const extensionNav: NavItem[] = [
-  { to: "/app/keywords", labelKey: "sidebar.keywords", icon: Target },
-  { to: "/app/prompt-intelligence", labelKey: "sidebar.queryGaps", icon: Brain, minTier: "alignment" },
-  { to: "/app/answer-presence", labelKey: "sidebar.answerPresence", icon: Eye, minTier: "alignment" },
-  { to: "/app/reverse-engineer", labelKey: "sidebar.reverseEngineer", icon: ArrowLeftRight, minTier: "alignment" },
-  { to: "/app/brand-integrity", labelKey: "sidebar.brandIntegrity", icon: Shield, minTier: "alignment" },
-  { to: "/app/niche-discovery", labelKey: "sidebar.nicheDiscovery", icon: Globe },
-];
-
-const toolsNav: NavItem[] = [
-  { to: "/tools/schema-validator", labelKey: "sidebar.schemaValidator", icon: Shield },
-  { to: "/tools/server-headers", labelKey: "sidebar.serverHeaders", icon: Globe },
-  { to: "/tools/robots-checker", labelKey: "sidebar.aiCrawlers", icon: Cpu },
-  { to: "/tools/content-extractability", labelKey: "sidebar.contentExtractability", icon: FileSearch },
-  { to: "/tools/language-checker", labelKey: "sidebar.languageChecker", icon: Languages },
-  { to: "/app/domain-rating", labelKey: "sidebar.domainRating", icon: TrendingUp, minTier: "alignment" },
-  { to: "/app/mcp", labelKey: "sidebar.mcpConsole", icon: Wrench, minTier: "alignment" },
-];
-
-const agencyNav: NavItem[] = [
-  { to: "/app/badge", labelKey: "sidebar.badge", icon: Award },
-  { to: "/app/dataset", labelKey: "sidebar.datasetStudio", icon: Database, minTier: "signal" },
-  { to: "/app/api-docs", labelKey: "sidebar.apiDocs", icon: Code2, minTier: "signal" },
-  { to: "/app/integrations", labelKey: "sidebar.integrations", icon: Network, minTier: "signal" },
-];
-
-const accountNav: NavItem[] = [
-  { to: "/app/billing", labelKey: "sidebar.billing", icon: CreditCard },
-  { to: "/app/settings", labelKey: "sidebar.settings", icon: Settings },
-  { to: "/app/compliance-dashboard", labelKey: "sidebar.complianceDashboard", icon: Shield },
-  { to: "/app/help", labelKey: "sidebar.help", icon: HelpCircle },
-];
-
-const resourcesNav: NavItem[] = [
-  { to: "/blogs", labelKey: "sidebar.blog", icon: BookOpen },
-  { to: "/guide", labelKey: "sidebar.guide", icon: HelpCircle },
-];
+const ICON_BY_NAME = {
+  LayoutDashboard,
+  Search,
+  BarChart3,
+  FileText,
+  Target,
+  Users,
+  FlaskConical,
+  Brain,
+  Wrench,
+  Globe,
+  Shield,
+  Settings,
+  CreditCard,
+  Zap,
+  Cpu,
+  ArrowLeftRight,
+  Eye,
+  Layers,
+  HelpCircle,
+  Network,
+  Code2,
+  TrendingUp,
+  Award,
+  FileSearch,
+  BookOpen,
+  Languages,
+  Database,
+} as const;
 
 const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";
 
@@ -90,7 +62,7 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
       <p className="aurora-sidebar-heading">{title}</p>
       {items.map((item) => {
         const locked = item.minTier ? !meetsMinimumTier(tier, item.minTier) : false;
-        const Icon = item.icon;
+        const Icon = ICON_BY_NAME[item.iconName];
         return (
           <NavLink
             key={item.to}
@@ -109,12 +81,7 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
             <span className="truncate">{t(item.labelKey)}</span>
             {locked && (
               <span className="aurora-sidebar-lock">
-                {item.minTier === "observer" ? "Free" :
-                 item.minTier === "starter" ? "Starter+" :
-                 item.minTier === "alignment" ? "Alignment+" :
-                 item.minTier === "signal" ? "Signal+" :
-                 item.minTier === "scorefix" ? "Score Fix" :
-                 item.minTier}
+                {item.minTier ? formatTierGateLabel(item.minTier) : null}
               </span>
             )}
           </NavLink>
@@ -158,13 +125,16 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
       {/* Navigation */}
       <nav className="aurora-sidebar-nav">
-        <NavSection title={t("sidebar.core")} items={mainNav} onClose={onClose} iconClass="text-blue-400" iconBg="bg-blue-500/10" />
-        <NavSection title={t("sidebar.evidence")} items={evidenceNav} onClose={onClose} iconClass="text-violet-400" iconBg="bg-violet-500/10" />
-        <NavSection title={t("sidebar.extensions")} items={extensionNav} onClose={onClose} iconClass="text-emerald-400" iconBg="bg-emerald-500/10" />
-        <NavSection title={t("sidebar.platform")} items={toolsNav} onClose={onClose} iconClass="text-amber-400" iconBg="bg-amber-500/10" />
-        <NavSection title={t("sidebar.agency")} items={agencyNav} onClose={onClose} iconClass="text-indigo-400" iconBg="bg-indigo-500/10" />
-        <NavSection title={t("sidebar.resources")} items={resourcesNav} onClose={onClose} iconClass="text-cyan-400" iconBg="bg-cyan-500/10" />
-        <NavSection title={t("sidebar.account")} items={accountNav} onClose={onClose} iconClass="text-slate-400" iconBg="bg-slate-500/10" />
+        {APP_NAV_GROUPS.map((group) => (
+          <NavSection
+            key={group.key}
+            title={t(group.titleKey)}
+            items={group.items}
+            onClose={onClose}
+            iconClass={group.iconClass}
+            iconBg={group.iconBg}
+          />
+        ))}
       </nav>
 
       {/* CodeTrendy badge */}

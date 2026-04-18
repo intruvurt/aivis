@@ -5,6 +5,8 @@ import AppTopBar from "./AppTopBar";
 import Footer from "./Footer";
 import GlobalCommandPalette from "./GlobalCommandPalette";
 import TrialBanner from "./TrialBanner";
+import RouteGuideBar from "./RouteGuideBar";
+import { getRouteGuide } from "../config/routeIntelligence";
 
 const GuideBot = React.lazy(() => import("./GuideBot"));
 
@@ -63,6 +65,8 @@ export default function AppShell() {
     close();
   }, [location.pathname, close]);
 
+  const routeGuide = getRouteGuide(location.pathname);
+
   return (
     <div className="aurora-shell">
       <a
@@ -83,6 +87,7 @@ export default function AppShell() {
       <div className="aurora-main">
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
+        {routeGuide ? <RouteGuideBar guide={routeGuide} /> : null}
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
           <OutletErrorBoundary key={location.pathname}>
             <Suspense fallback={<PageLoadingIndicator />}>

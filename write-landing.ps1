@@ -46,7 +46,7 @@ const LANDING_STRUCTURED_DATA = [
   buildWebSiteSchema(),
   buildWebPageSchema({
     path: '/landing',
-    name: 'AiVIS.biz | AI Visibility Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores  | ChatGPT, Perplexity, Google AI',
+    name: 'AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER',
     description: 'AiVIS.biz is an Evidence-backed site analysis for AI answers platform that audits how answer engines read trust and cite a website using BRAG based retrieval and auditable grading tied to real page evidence',
   }),
   buildBreadcrumbSchema([{ name: 'Home', path: '/' }]),

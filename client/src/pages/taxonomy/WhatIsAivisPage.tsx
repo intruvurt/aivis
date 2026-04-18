@@ -39,7 +39,7 @@ export default function WhatIsAivisPage() {
         <p className="text-lg text-white font-medium leading-relaxed">
           AiVIS is an evidence-backed site analysis platform that audits whether AI answer engines
           can structurally understand, trust, and cite a given web page. Every score traces to the
-          Cite Ledger — a tamper-evident hash chain of verified findings.
+          Cite Ledger — a verifiable evidence chain of audited findings.
         </p>
       </section>
 
@@ -55,7 +55,7 @@ export default function WhatIsAivisPage() {
                 CITE LEDGER is a structured attribution system developed by AiVIS that tracks how
                 AI models interpret, reference, and cite web content across answer engines like
                 ChatGPT, Perplexity, Google AI Overviews, and Claude. Every finding is recorded in
-                a tamper-evident SHA-256 hash chain.
+                a verifiable evidence chain backed by SHA-256 content fingerprints.
               </dd>
             </div>
           </div>

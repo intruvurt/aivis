@@ -44,8 +44,8 @@ export default function CiteLedgerPage() {
           Perplexity, Google AI Overviews, and Claude.
         </p>
         <p className="text-slate-300 leading-relaxed">
-          Every validated audit finding is recorded in a sequential, tamper-evident SHA-256 hash
-          chain where each entry carries a {BRAG_ACRONYM} ID, content hash, and chain hash linking
+          Every validated audit finding is recorded in a sequential, verifiable evidence
+          chain where each entry carries a {BRAG_ACRONYM} ID, content fingerprint, and traceability link
           it to its predecessor. It serves as the single source of truth for all scores,
           recommendations, and evidence IDs. A finding that does not appear in the Cite Ledger
           does not exist in system logic.
@@ -75,7 +75,7 @@ export default function CiteLedgerPage() {
             {
               icon: <Lock className="w-5 h-5 text-green-400" />,
               title: "Entry appended",
-              desc: "The entry is appended to the ledger with its sequence number, BRAG ID, content hash, chain hash, and ISO-8601 timestamp. Once appended, the entry is immutable.",
+              desc: "The entry is appended to the ledger with its sequence number, BRAG ID, content fingerprint, evidence link, and ISO-8601 timestamp. Once appended, the entry is permanent.",
             },
           ].map((step, i) => (
             <li key={i} className="flex gap-4">
@@ -119,7 +119,7 @@ export default function CiteLedgerPage() {
       <section className="mb-10">
         <h2 className="text-2xl font-bold text-white mb-4">Storage Rules</h2>
         <ul className="space-y-3 text-slate-300 text-sm">
-          <li className="flex gap-2"><span className="text-green-400">●</span> <strong>Immutability:</strong> Once appended, no entry may be mutated or deleted.</li>
+          <li className="flex gap-2"><span className="text-green-400">●</span> <strong>Permanence:</strong> Once appended, no entry may be mutated or deleted.</li>
           <li className="flex gap-2"><span className="text-green-400">●</span> <strong>Traceability:</strong> Every entry's chain_hash links to its predecessor. Break any link and the chain invalidates downstream.</li>
           <li className="flex gap-2"><span className="text-green-400">●</span> <strong>Determinism:</strong> Given the same pipeline inputs, the same ledger sequence is produced.</li>
           <li className="flex gap-2"><span className="text-green-400">●</span> <strong>No evidence, no entry:</strong> Findings without validated evidence keys are rejected before ledger insertion.</li>

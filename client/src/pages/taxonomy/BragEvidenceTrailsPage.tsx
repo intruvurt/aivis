@@ -80,7 +80,7 @@ export default function BragEvidenceTrailsPage() {
               <Database className="w-4 h-4 text-cyan-400" /> Ledger Insertion
             </h3>
             <p className="text-slate-400 text-sm leading-relaxed">
-              After validation, the finding is written to the Cite Ledger as an immutable entry.
+              After validation, the finding is written to the Cite Ledger as a permanent entry.
               The {BRAG_ACRONYM} ID becomes the primary reference key. All downstream outputs
               (scores, recommendations, exports) reference findings by their {BRAG_ACRONYM} ID.
             </p>

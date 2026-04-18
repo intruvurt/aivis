@@ -75,7 +75,7 @@ const categories: FAQCategory[] = [
         question: "What is CITE LEDGER?",
         answer: [
           "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.",
-          "Every validated audit finding is recorded in a sequential, tamper-evident SHA-256 hash chain where each entry carries a BRAG ID, content hash, and chain hash linking it to its predecessor. If a finding cannot be traced to a CITE LEDGER entry, it does not exist in system logic.",
+          "Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor. If a finding cannot be traced to a CITE LEDGER entry, it does not exist in system logic.",
           "Traditional audit tools produce scores without provenance. CITE LEDGER solves that gap: every score, every recommendation, and every evidence ID traces to a verifiable crawl observation that can be independently reproduced.",
         ],
       },

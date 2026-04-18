@@ -223,7 +223,7 @@ export default function TripleCheckMethodologyPage() {
         </div>
 
         <p className="text-sm leading-6 text-white/56">
-          The pipeline executes sequentially: extraction before verification, verification before consistency. No stage can reference data that was not produced by a prior stage. The evidence manifest is constructed once during extraction and is immutable for the duration of the audit.
+          The pipeline executes sequentially: extraction before verification, verification before consistency. No stage can reference data that was not produced by a prior stage. The evidence manifest is constructed once during extraction and is locked for the duration of the audit.
         </p>
       </section>
 

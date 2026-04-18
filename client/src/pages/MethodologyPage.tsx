@@ -251,7 +251,7 @@ const methodologyFaq = [
   {
     question: "What is the CITE LEDGER?",
     answer:
-      "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded in a sequential, tamper-evident SHA-256 hash chain where each entry carries a BRAG ID, content hash, and chain hash linking it to its predecessor. The pipeline uses three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle.",
+      "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor. The pipeline uses three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle.",
   },
 ] as const;
 
@@ -551,8 +551,8 @@ export default function MethodologyPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-300/70 mb-2">Upstream</p>
-              <h4 className="text-base font-semibold text-white">Immutable capture</h4>
-              <p className="mt-2 text-sm leading-6 text-white/64">The system captures the DOM snapshot and Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the immutable base layer of every CITE LEDGER record.</p>
+              <h4 className="text-base font-semibold text-white">Evidence capture</h4>
+              <p className="mt-2 text-sm leading-6 text-white/64">The system captures the DOM snapshot and Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the permanent base layer of every CITE LEDGER record.</p>
             </article>
             <article className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300/70 mb-2">ML Auditor</p>

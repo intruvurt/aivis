@@ -48,7 +48,7 @@ const APP_PAGES: { label: string; path: string; keywords: string[] }[] = [
     { label: 'What Is AiVIS', path: '/what-is-aivis', keywords: ['what', 'aivis', 'definition', 'system'] },
     { label: 'Why AiVIS Exists', path: '/why-aivis-exists', keywords: ['why', 'problem', 'hallucination', 'entity merging'] },
     /* ── Taxonomy: Methodology ── */
-    { label: 'Cite Ledger', path: '/methodology/cite-ledger', keywords: ['cite', 'ledger', 'hash', 'chain', 'evidence', 'immutable'] },
+    { label: 'Cite Ledger', path: '/methodology/cite-ledger', keywords: ['cite', 'ledger', 'evidence', 'chain', 'traceability', 'attribution'] },
     { label: 'What Is CITE LEDGER', path: '/what-is-cite-ledger', keywords: ['cite', 'ledger', 'attribution', 'definition', 'what is'] },
     { label: 'Triple-Check Protocol', path: '/methodology/triple-check-protocol', keywords: ['triple', 'check', 'protocol', 'verification', 'multi-model'] },
     { label: 'BRAG Evidence Trails', path: '/methodology/brag-evidence-trails', keywords: ['brag', 'evidence', 'trail', 'finding', 'id'] },

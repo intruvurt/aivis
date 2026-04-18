@@ -66,7 +66,7 @@ export default function DriftAnalysisPage() {
       <section className="mb-10">
         <p className="text-slate-300 leading-relaxed">
           Drift Analysis compares Cite Ledger entries across audit runs for the same URL. Each run
-          produces a complete hash chain. By aligning entries by their {BRAG_ACRONYM} IDs and
+          produces a complete evidence chain. By aligning entries by their {BRAG_ACRONYM} IDs and
           evidence keys, AiVIS computes how citations, entity attributions, and structural signals
           change over time. All drift metrics trace back to {BRAG_TRAIL_LABEL} entries.
         </p>

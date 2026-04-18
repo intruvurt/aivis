@@ -16,7 +16,7 @@ export default function LedgerIndexPage() {
       buildWebPageSchema({
         name: "Evidence Ledger Index — Cite Ledger Entries",
         description:
-          "Machine-crawlable reference of all Cite Ledger entry types, evidence IDs, and chain hash structures.",
+          "Machine-crawlable reference of all Cite Ledger entry types, evidence IDs, and traceability structures.",
         url: "https://aivis.biz/evidence/ledger-index",
       }),
       buildBreadcrumbSchema([
@@ -99,14 +99,14 @@ export default function LedgerIndexPage() {
         </div>
       </section>
 
-      {/* ─── Hash chain example ──────────────────────────────────── */}
+      {/* ─── Evidence chain example ──────────────────────────────────── */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold text-white mb-4">Chain Hash Example</h2>
+        <h2 className="text-xl font-bold text-white mb-4">Evidence Chain Example</h2>
         <div className="bg-slate-900/50 border border-white/10 rounded-lg p-4 font-mono text-xs text-slate-400 space-y-2 overflow-x-auto">
           <div><span className="text-slate-500">seq 0:</span> chain_hash = SHA256(<span className="text-red-400">0000…0000</span> + content_hash_0)</div>
           <div><span className="text-slate-500">seq 1:</span> chain_hash = SHA256(<span className="text-cyan-400">chain_hash_0</span> + content_hash_1)</div>
           <div><span className="text-slate-500">seq 2:</span> chain_hash = SHA256(<span className="text-cyan-400">chain_hash_1</span> + content_hash_2)</div>
-          <div className="text-slate-600">…each entry chains to the previous, forming an immutable sequence.</div>
+          <div className="text-slate-600">…each entry chains to the previous, forming a permanent verifiable sequence.</div>
         </div>
       </section>
 

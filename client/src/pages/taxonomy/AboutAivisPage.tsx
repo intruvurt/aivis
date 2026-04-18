@@ -10,13 +10,13 @@ export default function AboutAivisPage() {
   usePageMeta({
     title: "About AiVIS — Canonical Identity Definition",
     description:
-      "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a tamper-evident hash chain of verified findings. No evidence, no claim.",
+      "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a verifiable evidence chain of audited findings. No evidence, no claim.",
     path: "/about-aivis",
     structuredData: [
       buildWebPageSchema({
         name: "About AiVIS — Canonical Identity Definition",
         description:
-          "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a tamper-evident hash chain of verified findings.",
+          "AiVIS is an evidence-backed AI visibility auditing system. Every score is derived from the Cite Ledger — a verifiable evidence chain of audited findings.",
         url: "https://aivis.biz/about-aivis",
       }),
       buildBreadcrumbSchema([
@@ -40,8 +40,8 @@ export default function AboutAivisPage() {
           AiVIS is an evidence-backed AI visibility auditing system. It measures whether AI answer
           engines can structurally understand, trust, and cite a given web page. Every visibility
           score, every recommendation, and every finding is derived from the Cite Ledger — a
-          tamper-evident hash chain where each entry links to the previous through SHA-256 chain
-          hashes. The system enforces a single invariant: no evidence, no claim.
+          verifiable evidence chain where each entry links to the previous, ensuring full
+          traceability. The system enforces a single invariant: no evidence, no claim.
         </p>
       </section>
 
@@ -55,8 +55,8 @@ export default function AboutAivisPage() {
           CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI
           models interpret, reference, and cite web content across answer engines like ChatGPT,
           Perplexity, Google AI Overviews, and Claude. Every validated finding is recorded in a
-          sequential, tamper-evident SHA-256 hash chain where each entry carries a {BRAG_ACRONYM} ID,
-          content hash, and chain hash linking it to its predecessor. The genesis entry uses 64
+          sequential, verifiable evidence chain where each entry carries a {BRAG_ACRONYM} ID,
+          content fingerprint, and traceability link connecting it to its predecessor. The genesis entry uses a fixed
           zero bytes as its predecessor.
         </p>
         <p className="text-slate-400 text-sm">

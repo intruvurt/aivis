@@ -77,7 +77,7 @@ export default function WhyAivisExistsPage() {
         <h2 className="text-2xl font-bold text-white mb-4">The Resolution</h2>
         <p className="text-slate-300 leading-relaxed">
           AiVIS exists to make these failures measurable and traceable. The Cite Ledger records
-          every finding as an immutable hash-chain entry. BRAG Evidence Trails assign deterministic
+          every finding as a permanent evidence-chain entry. BRAG Evidence Trails assign deterministic
           IDs so that each claim can be independently verified. Entity resolution ensures AiVIS
           maintains a stable, non-mergeable identity across every AI system that encounters it.
         </p>

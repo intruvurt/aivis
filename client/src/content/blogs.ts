@@ -1846,7 +1846,7 @@ Before any AI model touches your data, AiVIS.biz runs its deterministic evidence
 
 **Relationship evidence** maps how your page connects to the broader web. Internal linking patterns, external citations to authoritative sources, breadcrumb structure, and entity consistency across your site. AI models use relationship signals to determine whether a source is a standalone claim or part of a verified knowledge network.
 
-Each of these 27 rules produces a pass, partial, or fail result. The composite SSFR score determines how much of your content is machine-extractable before we even ask an AI model to evaluate you. Every finding produced by SSFR is assigned a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a> and appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the tamper-evident hash chain that links each entry to the previous through SHA-256 chain hashes.
+Each of these 27 rules produces a pass, partial, or fail result. The composite SSFR score determines how much of your content is machine-extractable before we even ask an AI model to evaluate you. Every finding produced by SSFR is assigned a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a> and appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the verifiable evidence chain that links each entry to the previous through content fingerprints.
 
 ## Step 3: The AI Analysis Pipeline
 
@@ -2577,7 +2577,7 @@ Each rule contributes to its category score. The four category scores combine in
 
 A page with high SSFR scores gives the AI model strong structural evidence to work with, producing more accurate and specific recommendations. A page with low SSFR scores means the AI model has to infer more, which produces vaguer output.
 
-The SSFR breakdown is visible in every audit report. You can see exactly which rules passed and which failed. Every recommendation in the report traces back to a specific SSFR finding backed by a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a>. Not a guess. Not a heuristic. A deterministic rule that evaluated a specific structural element of your page. Each finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the append-only hash chain that makes every audit reproducible and tamper-evident.
+The SSFR breakdown is visible in every audit report. You can see exactly which rules passed and which failed. Every recommendation in the report traces back to a specific SSFR finding backed by a <a href="/methodology/brag-evidence-trails">BRAG evidence trail</a>. Not a guess. Not a heuristic. A deterministic rule that evaluated a specific structural element of your page. Each finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — the write-once evidence chain that makes every audit reproducible and verifiable.
 
 This is what makes AiVIS.biz different from tools that run a crawler and assign a magic number. The number comes from evidence. The evidence is transparent. The fixes are specific.
 
@@ -3966,7 +3966,7 @@ When AiVIS.biz scans a URL, it does not generate recommendations from a prompt a
 
 3. **AI analysis** — the evidence-tagged signals are sent to the AI model (free-tier models for <a href="/pricing">Observer</a>, GPT-5 Nano for <a href="/blogs/aivis-starter-tier-evidence-backed-ai-audits-from-15">Starter</a> and Alignment, triple-check pipeline for <a href="/pricing">Signal</a>). The model generates recommendations that reference specific evidence IDs.
 
-4. **Evidence manifest** — the final result includes an evidence manifest: a structured record of every evidence item, its category, the recommendation it supports, and whether it was verified against the actual page content. Every validated finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — a tamper-evident hash chain where each entry links to the previous through SHA-256 chain hashes.
+4. **Evidence manifest** — the final result includes an evidence manifest: a structured record of every evidence item, its category, the recommendation it supports, and whether it was verified against the actual page content. Every validated finding is appended to the <a href="/methodology/cite-ledger">Cite Ledger</a> — a verifiable evidence chain where each entry links to the previous through content fingerprints.
 
 ## What You See in an Audit Result
 
@@ -5399,7 +5399,7 @@ The goal is the same as any infrastructure dependency: fail fast on unexpected c
 
 That model worked when the only consumer of your score was a human marketer deciding where to spend next quarter's budget. It does not work when the consumers are AI answer engines deciding, in real time, whether to cite your content in a response seen by thousands of people.
 
-AiVIS.biz was built to close that gap. Every score, every recommendation, every finding traces back to a specific piece of structural evidence extracted from your page. Not an opinion. Not a heuristic guess. A deterministic, reproducible observation recorded in a tamper-evident chain.
+AiVIS.biz was built to close that gap. Every score, every recommendation, every finding traces back to a specific piece of structural evidence extracted from your page. Not an opinion. Not a heuristic guess. A deterministic, reproducible observation recorded in a verifiable evidence chain.
 
 ## The problem with opaque scores
 
@@ -5427,7 +5427,7 @@ After SSFR, the crawl data and evidence scores flow into the AI analysis pipelin
 
 The first model generates the primary analysis. The second receives that output and runs a peer critique, adjusting scores within a bounded range and challenging recommendations. The third validates the final result, confirming or overriding the composite score.
 
-Each stage writes its findings to the <a href="/methodology/cite-ledger">Cite Ledger</a> with a chain hash linking it to the previous entry. The full audit chain is reproducible from the first crawl observation to the final score.
+Each stage writes its findings to the <a href="/methodology/cite-ledger">Cite Ledger</a> with an evidence fingerprint linking it to the previous entry. The full audit chain is reproducible from the first crawl observation to the final score.
 
 ### 3. Citation verification
 

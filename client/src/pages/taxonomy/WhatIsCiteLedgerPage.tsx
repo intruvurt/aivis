@@ -16,7 +16,7 @@ const CANONICAL_DEFINITION =
   "CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.";
 
 const TECHNICAL_DEFINITION =
-  "Every validated audit finding is recorded in a sequential, tamper-evident SHA-256 hash chain where each entry carries a BRAG ID, content hash, and chain hash linking it to its predecessor.";
+  "Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor.";
 
 /* ── FAQ items for JSON-LD ─────────────────────────────────────────── */
 const FAQ_ITEMS = [
@@ -27,7 +27,7 @@ const FAQ_ITEMS = [
   {
     question: "How does CITE LEDGER differ from a traditional audit report?",
     answer:
-      "Traditional audit reports present scores without provenance. CITE LEDGER records every finding in a tamper-evident hash chain so each score, recommendation, and evidence ID traces to a verifiable crawl observation. If a finding cannot be traced to a CITE LEDGER entry, it does not exist in system logic.",
+      "Traditional audit reports present scores without provenance. CITE LEDGER records every finding in a verifiable evidence chain so each score, recommendation, and evidence ID traces to a crawl observation that can be independently reproduced. If a finding cannot be traced to a CITE LEDGER entry, it does not exist in system logic.",
   },
   {
     question: "Who developed CITE LEDGER?",
@@ -106,8 +106,8 @@ export default function WhatIsCiteLedgerPage() {
         </p>
         <p className="text-slate-300 leading-relaxed">
           Most audit tools produce scores without provenance. CITE LEDGER was built to solve that
-          gap: every score, every recommendation, and every evidence ID traces to a tamper-evident
-          record that can be independently verified. If a finding cannot be traced to a CITE LEDGER
+          gap: every score, every recommendation, and every evidence ID traces to a verifiable
+          record that can be independently reproduced. If a finding cannot be traced to a CITE LEDGER
           entry, it does not exist in system logic.
         </p>
       </section>
@@ -130,11 +130,11 @@ export default function WhatIsCiteLedgerPage() {
             {
               icon: <Layers className="w-5 h-5 text-violet-400" />,
               title: "Chain linking",
-              desc: "Every entry's chain hash is derived from the previous entry's hash, creating a sequential, tamper-evident ledger. The genesis entry uses 64 zero bytes.",
+              desc: "Every entry's evidence fingerprint is derived from the previous entry, creating a sequential, verifiable ledger. The genesis entry uses a fixed seed value.",
             },
             {
               icon: <Lock className="w-5 h-5 text-green-400" />,
-              title: "Immutable record",
+              title: "Permanent record",
               desc: "Once appended, no entry is mutated or deleted. The full audit chain is reproducible and independently verifiable.",
             },
           ].map((step, i) => (

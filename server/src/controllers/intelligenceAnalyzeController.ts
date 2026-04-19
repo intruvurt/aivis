@@ -180,8 +180,10 @@ export async function intelligenceAnalyzeHandler(
 
     // ====================================================================
     // RECORD CITE LEDGER ENTRIES FROM EVIDENCE EXTRACTED BY ENGINES
+    // TODO: Implement once citeLedgerService.ts and CiteEntry type are defined
     // ====================================================================
 
+    /* Commented out: Awaiting citeLedgerService implementation
     if (savedAuditId) {
       try {
         const client = await getConnection();
@@ -308,6 +310,7 @@ export async function intelligenceAnalyzeHandler(
         // Non-critical - audit is already saved
       }
     }
+    */
 
     // ====================================================================
     // RESPONSE

@@ -12,6 +12,9 @@ const GUIDE_SECTIONS = [
   { id: 'execute-fixes', label: 'Execute Fixes' },
   { id: 'retest-and-prove', label: 'Retest + Proof' },
   { id: 'tool-routing', label: 'Full Tool Map' },
+  { id: 'vector-retrieval-system', label: 'Vector + Retrieval' },
+  { id: 'living-loop-entity-os', label: 'Living Loop' },
+  { id: 'monetization-architecture', label: 'Monetization' },
   { id: 'free-tools', label: 'Free Tools' },
   { id: 'battle-tested-rules', label: 'Battle-Tested Rules' },
   { id: 'common-failures', label: 'Common Failures' },
@@ -56,7 +59,7 @@ const DEEP_DIVE_LINKS: {
   {
     step: 'Read and interpret results',
     items: [
-      { label: 'AiVIS full technical breakdown', to: '/blogs/how-aivis-works-under-the-hood-full-technical-breakdown', type: 'blog' },
+      { label: 'AiVIS.biz full technical breakdown', to: '/blogs/how-aivis-works-under-the-hood-full-technical-breakdown', type: 'blog' },
       { label: 'Why AI visibility tools differ from SEO', to: '/blogs/ai-visibility-tools-2026-what-semrush-ahrefs-moz-cant-measure', type: 'blog' },
       { label: 'Analytics dashboard', to: '/app/analytics', type: 'app' },
     ],
@@ -89,7 +92,7 @@ const DEEP_DIVE_LINKS: {
     step: 'Set up integrations and automation',
     items: [
       { label: 'MCP audit workflows for dev teams', to: '/blogs/how-mcp-audit-workflows-change-everything-for-dev-teams', type: 'blog' },
-      { label: 'AiVIS API access explained', to: '/blogs/aivis-api-access-explained-build-on-the-visibility-layer', type: 'blog' },
+      { label: 'AiVIS.biz API access explained', to: '/blogs/aivis-api-access-explained-build-on-the-visibility-layer', type: 'blog' },
       { label: 'WebMCP: browser agent surface', to: '/blogs/webmcp-third-party-tool-calling-aivis-the-headless-audit-engine', type: 'blog' },
     ],
   },
@@ -103,11 +106,43 @@ const DEEP_DIVE_LINKS: {
   },
 ];
 
+const MONETIZATION_MODELS = [
+  {
+    model: 'Current: one-time Score Fix',
+    target: 'Fast tactical uplift projects',
+    pricing: '$299 one-time',
+    economics: 'Low friction entry; weaker recurring revenue predictability.',
+    operatingShape: 'Strong for urgent one-off remediation or PR-driven launches.',
+  },
+  {
+    model: 'Proposal: managed Score Fix subscription',
+    target: 'One-client operator lane (hands-on managed service)',
+    pricing: '$299 per month per managed client',
+    economics: 'Recurring MRR, better forecastability, stronger retention incentives.',
+    operatingShape: 'Best when paired with weekly self-healing runs and monthly proof packets.',
+  },
+  {
+    model: 'Hybrid: setup + recurring',
+    target: 'Higher-complexity accounts needing initial clean-up',
+    pricing: '$299 setup + $149–$299 monthly',
+    economics: 'Captures heavy onboarding work while preserving MRR.',
+    operatingShape: 'Good for agencies managing multiple domains and staged rollout plans.',
+  },
+] as const;
+
+const PLATFORM_MONETIZATION_LEVERS = [
+  'Managed Entity OS retainers (semantic boundary enforcement + monthly collision suppression)',
+  'API / MCP usage packs for teams automating audits in CI and agent workflows',
+  'Proof-as-a-Service exports: monthly C-suite packet with before/after deltas and evidence chain',
+  'Competitor intelligence subscriptions with recurring opportunity backlog generation',
+  'ScoreFix operation lanes: advisory, assisted, autonomous, each with distinct SLAs and margins',
+];
+
 export default function GuidePage() {
   const { findings, loading: findingsLoading } = useLiveFindings();
   usePageMeta({
     title: 'Guide',
-    fullTitle: 'AiVIS Guide - AI Visibility Execution Playbook',
+    fullTitle: 'AiVIS.biz Guide - AI Visibility Execution Playbook',
     description:
       'Practical tutorial for running AI visibility audits, interpreting results, applying fixes, and proving measurable improvements.',
     path: '/guide',
@@ -115,7 +150,7 @@ export default function GuidePage() {
       {
         '@context': 'https://schema.org',
         '@type': 'HowTo',
-        name: 'AiVIS AI Visibility Execution Guide',
+        name: 'AiVIS.biz AI Visibility Execution Guide',
         description: 'Step-by-step process to audit, remediate, and validate AI visibility improvements.',
         url: 'https://aivis.biz/guide',
         step: HOW_TO_STEPS.map((step, index) => ({
@@ -152,13 +187,13 @@ export default function GuidePage() {
         <div className="mb-4 flex items-center gap-2.5">
           <img
             src="/aivis-logo.png"
-            alt="AiVIS"
+            alt="AiVIS.biz"
             width={28}
             height={28}
             className="h-7 w-7 shrink-0 rounded-lg object-contain"
             loading="lazy"
           />
-          <span className="text-base font-bold text-white tracking-tight">AiVIS</span>
+          <span className="text-base font-bold text-white tracking-tight">AiVIS.biz</span>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
           <FlaskConical className="h-3.5 w-3.5 text-orange-300" />
@@ -166,12 +201,12 @@ export default function GuidePage() {
         </div>
         <h1 className="mt-4 text-3xl brand-title sm:text-4xl">AI Visibility Guide: no fluff, just execution</h1>
         <p className="mt-3 max-w-4xl text-sm leading-7 text-white/70">
-          This page is your operator manual for AiVIS. It focuses on what to do, in what order, and what evidence to keep so visibility improvements are real and repeatable.
+          This page is your operator manual for AiVIS.biz. It focuses on what to do, in what order, and what evidence to keep so visibility improvements are real and repeatable.
         </p>
         <div className="mt-5 rounded-xl border border-white/10 bg-charcoal-deep/40 overflow-hidden">
           <img
             src="/scan-data.png"
-            alt="AiVIS scan data visualization showing audit evidence extraction flow"
+            alt="AiVIS.biz scan data visualization showing audit evidence extraction flow"
             className="w-full h-auto max-h-56 object-cover object-center opacity-80"
             loading="lazy"
           />
@@ -425,8 +460,133 @@ export default function GuidePage() {
         </div>
       </section>
 
+      <section id="vector-retrieval-system" className="section-anchor section-accent-cyan mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">Vector databases in AiVIS.biz: what they are and why they matter</h2>
+        <p className="mt-3 text-sm text-white/75">
+          In this platform, a vector database is not a separate product category. It is the semantic memory layer that lets the system compare entities, variants, and evidence as geometric points. Traditional keyword logic asks, "Do strings match?". Vector logic asks, "Do meanings converge in embedding space?".
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
+            <h3 className="text-sm brand-title-muted">Storage model</h3>
+            <p className="mt-1 text-xs text-white/70">
+              embeddings live on entity, variant, and evidence rows. This creates a unified semantic retrieval surface instead of isolated tables with disconnected matching rules.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
+            <h3 className="text-sm brand-title-muted">Search model</h3>
+            <p className="mt-1 text-xs text-white/70">
+              nearest-neighbor retrieval uses cosine distance and local neighborhood windows. This enables low-latency semantic lookups for collision diagnostics.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
+            <h3 className="text-sm brand-title-muted">Operational model</h3>
+            <p className="mt-1 text-xs text-white/70">
+              only local neighborhoods are re-clustered when new evidence is ingested. This keeps geometry updates scalable without full corpus re-clustering.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">
+          <h3 className="text-sm brand-title-muted">How this compounds historical audit knowledge</h3>
+          <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
+            <li>Each audit contributes evidence vectors, not just one scalar score.</li>
+            <li>Drift history plus collision graph lets you track whether an entity boundary is improving or fragmenting over time.</li>
+            <li>Old audits remain useful because they provide longitudinal neighborhood structure, not just archived reports.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="living-loop-entity-os" className="section-anchor section-accent-violet mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">LLM retrieval systems: from rules to geometry</h2>
+        <p className="mt-3 text-sm text-white/75">
+          Retrieval in this system is now a staged loop: embed, retrieve neighborhood, cluster, detect collisions, then update entity state. That is how clarity becomes a continuous control system instead of a static report.
+        </p>
+        <div className="mt-4 overflow-x-auto rounded-xl border border-white/10">
+          <table className="min-w-full text-left text-xs text-white/75">
+            <thead className="bg-charcoal-deep text-white/65 uppercase tracking-wide">
+              <tr>
+                <th className="px-4 py-3">Stage</th>
+                <th className="px-4 py-3">Current capability</th>
+                <th className="px-4 py-3">Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t border-white/10">
+                <td className="px-4 py-3">Ingest</td>
+                <td className="px-4 py-3">Provider-backed embeddings for entity + variants; collision map generated on create.</td>
+                <td className="px-4 py-3">New entities are born with semantic context, not only metadata.</td>
+              </tr>
+              <tr className="border-t border-white/10">
+                <td className="px-4 py-3">Diagnose</td>
+                <td className="px-4 py-3">Local density clustering over unified vector points plus lexical cross-checks.</td>
+                <td className="px-4 py-3">Confusion is explained by neighborhood structure, not guessed from string overlap.</td>
+              </tr>
+              <tr className="border-t border-white/10">
+                <td className="px-4 py-3">Clarify + Publish</td>
+                <td className="px-4 py-3">Canonical definition, schema block, entity page, share links, index notifications.</td>
+                <td className="px-4 py-3">Semantic corrections become crawlable public artifacts that retrieval models can cite.</td>
+              </tr>
+              <tr className="border-t border-white/10">
+                <td className="px-4 py-3">Reinforce + Simulate</td>
+                <td className="px-4 py-3">Signal-amplifier templates + query simulation with citation/confusion likelihood.</td>
+                <td className="px-4 py-3">Teams can see the expected retrieval impact before broad rollout.</td>
+              </tr>
+              <tr className="border-t border-white/10">
+                <td className="px-4 py-3">State update</td>
+                <td className="px-4 py-3">clarity_score, collision_score, authority_score updated after every loop.</td>
+                <td className="px-4 py-3">The platform becomes a closed-loop identity stabilizer, not a one-time diagnostic tool.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="monetization-architecture" className="section-anchor section-accent-emerald mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
+        <h2 className="text-xl brand-title">Monetization architecture: old + new without losing product truth</h2>
+        <p className="mt-3 text-sm text-white/75">
+          Platform truth today can stay stable while go-to-market experiments evolve. The product can monetize retrieval operations, continuous remediation, and evidence-backed reporting as separate value layers.
+        </p>
+        <div className="mt-4 overflow-x-auto rounded-xl border border-white/10">
+          <table className="min-w-full text-left text-xs text-white/75">
+            <thead className="bg-charcoal-deep text-white/65 uppercase tracking-wide">
+              <tr>
+                <th className="px-4 py-3">Model</th>
+                <th className="px-4 py-3">Target</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Operating implication</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MONETIZATION_MODELS.map((item) => (
+                <tr key={item.model} className="border-t border-white/10">
+                  <td className="px-4 py-3 font-medium text-white/85">{item.model}</td>
+                  <td className="px-4 py-3">{item.target}</td>
+                  <td className="px-4 py-3">{item.pricing}</td>
+                  <td className="px-4 py-3">{item.operatingShape}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-500/5 p-4 text-xs text-amber-100/90">
+          <p>
+            Recommendation for your specific question: yes, a recurring ScoreFix lane at $299/month can work if it is positioned as a managed semantic operations service (weekly self-healing run + monthly uplift proof), not as a one-time patch.
+          </p>
+          <p className="mt-2 text-amber-100/75">
+            Note: this guide section is strategic planning content. Live billing truth in the app should only change when shared tier contracts and server pricing config are updated together.
+          </p>
+        </div>
+        <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">
+          <h3 className="text-sm brand-title-muted">Additional monetization levers unlocked by current pipeline</h3>
+          <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
+            {PLATFORM_MONETIZATION_LEVERS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section id="free-tools" className="section-anchor section-accent-cyan mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">7) Free tools you can use without an account</h2>
+        <h2 className="text-xl brand-title">10) Free tools you can use without an account</h2>
         <p className="mt-3 text-sm text-white/75">
           These standalone tools require no login and demonstrate the structural checks that drive AI visibility. If any show gaps, the full audit pipeline tells you everything else.
         </p>
@@ -539,7 +699,7 @@ export default function GuidePage() {
       </section>
 
       <section id="battle-tested-rules" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">8) Battle-tested rules that keep teams from wasting cycles</h2>
+        <h2 className="text-xl brand-title">11) Battle-tested rules that keep teams from wasting cycles</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {[
             'One URL, one cycle, one objective.',
@@ -558,7 +718,7 @@ export default function GuidePage() {
       </section>
 
       <section id="common-failures" className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">9) Common failure patterns (and fast corrections)</h2>
+        <h2 className="text-xl brand-title">12) Common failure patterns (and fast corrections)</h2>
         <div className="mt-4 space-y-3">
           {[
             {
@@ -585,7 +745,7 @@ export default function GuidePage() {
       </section>
 
       <section id="operating-cadence" className="section-anchor rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">10) 14-day operating cadence you can actually run</h2>
+        <h2 className="text-xl brand-title">13) 14-day operating cadence you can actually run</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
             <h3 className="text-sm brand-title-muted">
@@ -619,7 +779,7 @@ export default function GuidePage() {
       </section>
 
       <section id="integration-workflows" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">11) Integration workflows: Slack, Discord, Zapier, MCP</h2>
+        <h2 className="text-xl brand-title">14) Integration workflows: Slack, Discord, Zapier, MCP</h2>
         <p className="mt-3 text-sm text-white/75">
           Signal and Score Fix can auto-deliver completed audits. Use Slack/Discord for alerts, Zapier for system-to-system automation, and MCP Console for AI agent integrations.
         </p>
@@ -653,7 +813,7 @@ export default function GuidePage() {
 
       {/* ── 12 · By Symptom ── */}
       <section id="by-symptom" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">12) Find the guide by symptom</h2>
+        <h2 className="text-xl brand-title">15) Find the guide by symptom</h2>
         <p className="mt-3 text-sm text-white/75">
           If you are searching by problem rather than by workflow step, these pages diagnose each failure mode in detail with evidence-backed remediation paths.
         </p>
@@ -741,16 +901,16 @@ export default function GuidePage() {
 
       {/* ── 13 · Dofollow Backlink Badge ── */}
       <section id="dofollow-badge" className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8">
-        <h2 className="text-xl brand-title">13) Dofollow backlink badge</h2>
+        <h2 className="text-xl brand-title">16) Dofollow backlink badge</h2>
         <p className="mt-3 text-sm text-white/75">
-          Add the AiVIS badge to your website footer to earn a <strong className="text-cyan-300">high-quality dofollow backlink</strong> while showing visitors your site is AI-visibility audited. Every impression and click is tracked so you can measure referral impact.
+          Add the AiVIS.biz badge to your website footer to earn a <strong className="text-cyan-300">high-quality dofollow backlink</strong> while showing visitors your site is AI-visibility audited. Every impression and click is tracked so you can measure referral impact.
         </p>
         <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">
           <h3 className="text-sm brand-title-muted">How it works</h3>
           <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
             <li>Grab your personalised embed snippet from the <Link to="/badge" className="text-cyan-400 underline hover:text-cyan-300">Badge page</Link>.</li>
-            <li>Paste the HTML into your site footer — the badge image loads from AiVIS CDN.</li>
-            <li>A hidden 1×1 tracking pixel logs impressions; clicks redirect through a tracker before landing on AiVIS.</li>
+            <li>Paste the HTML into your site footer — the badge image loads from AiVIS.biz CDN.</li>
+            <li>A hidden 1×1 tracking pixel logs impressions; clicks redirect through a tracker before landing on AiVIS.biz.</li>
             <li>View real-time stats: total impressions, clicks, unique referring domains, and top referrers.</li>
           </ul>
         </div>

@@ -1,9 +1,10 @@
-/**
- * CITE LEDGER FRONTEND ARCHITECTURE
- *
- * Complete integration guide for ledger-first, cite-backed UI layer.
- * Every visible artifact must answer: "show me the cites"
- */
+/\*\*
+
+- CITE LEDGER FRONTEND ARCHITECTURE
+-
+- Complete integration guide for ledger-first, cite-backed UI layer.
+- Every visible artifact must answer: "show me the cites"
+  \*/
 
 # Cite Ledger Frontend - Architecture & Integration Guide
 
@@ -72,6 +73,7 @@ if (!refs || refs.length === 0) {
 ### 2. Component Layer
 
 #### CiteChain (Spine Component)
+
 - **Purpose**: Core reusable primitive
 - **Usage**: Every score, issue, fix, and layer expands via CiteChain
 - **Principle**: No refs → renders nothing
@@ -86,11 +88,13 @@ if (!refs || refs.length === 0) {
 ```
 
 #### Heatmap (Score Visualization)
+
 - **Purpose**: Three-layer score with cite expansion
 - **Principle**: Score is a compressed cite graph, not a number
 - **File**: `Heatmap.tsx`
 
 Clicking a layer expands to show backing cites:
+
 ```
 Crawl Analysis: 72%
 ├─ Cite 1: Schema extraction (92%)
@@ -99,6 +103,7 @@ Crawl Analysis: 72%
 ```
 
 #### IssuePanel & FixPanel (Evidence-First)
+
 - **Purpose**: Issues and fixes backed by evidence chains
 - **Principle**: Issue without cites → store rejects it
 - **Files**: `IssueFixPanels.tsx`
@@ -115,12 +120,14 @@ addIssue(issue) {
 ```
 
 #### CiteStream (Live Feed)
+
 - **Purpose**: Real-time evidence streaming
 - **Behavior**: Appends cites as they arrive, newest at top
 - **Style**: Terminal-like dark mode
 - **File**: `CiteStream.tsx`
 
 #### Advanced Features
+
 - **Replay**: Time slider to watch visibility evolve
 - **DiffMode**: Before/after cite delta visualization
 - **EntityGravity**: Which entities dominate citation weight
@@ -251,6 +258,7 @@ ForensicAuditView.css      # Main layout and orchestration
 ```
 
 Colors:
+
 - Excellent (80%+): Green (#10b981)
 - Good (60-79%): Orange (#ea580c)
 - Fair (40-59%): Yellow (#eab308)
@@ -306,6 +314,7 @@ reset()
 ## Dark Mode
 
 Terminal-like dark mode for CiteStream:
+
 ```
 Background: #0f172a
 Text: #e5e7eb
@@ -347,11 +356,13 @@ if (!refs || refs.length === 0) return null;
 ## What This Replaces
 
 Old findings-based model:
+
 ```
 Score (number) → Issues (list) → Fixes (code)
 ```
 
 New cite-ledger model:
+
 ```
 Cites → Score (graph compressed) → Issues (cite clusters) → Fixes (justified)
        ↑
@@ -362,4 +373,4 @@ The UI is no longer a viewer—it is a **live interpreter of the Cite Ledger**.
 
 ---
 
-**Constitutional principle**: *Every score becomes explainable. Every issue becomes traceable. Every fix becomes provable.*
+**Constitutional principle**: _Every score becomes explainable. Every issue becomes traceable. Every fix becomes provable._

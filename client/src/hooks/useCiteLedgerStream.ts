@@ -7,10 +7,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useCiteLedgerStore } from '../store/citeLedgerStore';
-import type {
-  CiteEntry,
-  CiteSourceType,
-} from '@shared/types';
+import type { CiteEntry, CiteSourceType } from '@shared/types';
 
 interface StreamMessage {
   type: 'cite:add' | 'score:update' | 'issue:add' | 'fix:add' | 'error' | 'complete';
@@ -183,7 +180,7 @@ export function useCiteLedgerStream(auditId: string | null) {
       recordTimelineEvent,
       setStreaming,
       validateCite,
-    ],
+    ]
   );
 
   /**
@@ -200,7 +197,7 @@ export function useCiteLedgerStream(auditId: string | null) {
     const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttemptsRef.current - 1);
 
     console.log(
-      `[CiteLedgerStream] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`,
+      `[CiteLedgerStream] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`
     );
 
     reconnectTimeoutRef.current = setTimeout(() => {

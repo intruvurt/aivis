@@ -1953,6 +1953,14 @@ function jsonLdScript(data) {
   return `<script type="application/ld+json">\n${JSON.stringify(data, null, 2)}\n</script>`;
 }
 
+function citeLedgerScript(data) {
+  // ── CITE LEDGER INJECTION ──
+  // Format: <script type="application/json" id="cite-ledger">
+  // Used for embedding raw JSON audit metadata in prerendered pages.
+  // Actual runtime data is populated server-side during audit requests.
+  return `<script type="application/json" id="cite-ledger">\n${JSON.stringify(data, null, 2)}\n</script>`;
+}
+
 function buildFaqSchema(items) {
   return {
     '@context': 'https://schema.org',
@@ -2079,45 +2087,52 @@ function buildServiceSchema({ canonicalUrl, name, description, audience, deliver
  * @returns {Object} Cite Ledger structure
  */
 function buildCiteLedgerBlock(canonicalUrl, pageTitle) {
+  // ── CITE LEDGER STRUCTURE ──────────────────────────────────────────
+  // Machine-readable evidence transcript for AI readability audits.
+  // Format: <script type="application/json" id="cite-ledger"> with structured signals
+  // Actual runtime audit data is populated server-side during analysis requests.
+  // This prerendered block establishes structural presence for crawlers.
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    '@id': `${canonicalUrl}#cite-ledger`,
-    name: 'Cite Ledger Output',
-    description:
-      'Evidence-linked AI visibility audit results. This dataset contains the verifiable signals extracted during crawl, the rules applied, and the resulting visibility score with all evidence identifiers traceable back to source.',
-    url: canonicalUrl,
-    about: {
-      '@type': 'Thing',
-      name: 'AI Citation Readiness',
-      description: 'Measures whether AI answer engines can extract, verify, and cite this page',
+    page: canonicalUrl,
+    title: pageTitle,
+    timestamp: BUILD_DATE,
+    // ── AUDIT DIMENSIONS (populated at runtime) ──
+    // Each dimension scored 0-100 with evidence references
+    scores: {
+      crawl_readiness: 0, // Can AI crawlers access this page?
+      schema_clarity: 0, // Is structured data valid and complete?
+      content_depth: 0, // Is content specific and extractable?
+      entity_clarity: 0, // Are entities disambiguated and attributed?
+      metadata_quality: 0, // Are titles, descriptions, OG tags complete?
+      authority_signals: 0, // Author, organization, trust markers present?
+      technical_trust: 0, // Security headers, SSL, rendering signals?
     },
-    includedInDataCatalog: {
-      '@type': 'DataCatalog',
-      name: 'AiVIS CITE LEDGER',
-      url: 'https://aivis.biz',
+    // ── EVIDENCE REFERENCES (BRAG trail) ──
+    // Links audit findings to observable on-page signals
+    evidence: {
+      cites: [], // Citation instances from analysis
+      entities: [], // Resolved entity references
+      signals: [], // Extracted crawl signals
+      rules_applied: [], // SSFR rules that evaluated this page
+      gating_failures: [], // Extraction barriers (if any)
     },
-    distribution: {
-      '@type': 'DataDownload',
-      contentUrl: canonicalUrl,
-      encodingFormat: 'text/html',
+    // ── AUDIT METADATA ──
+    audited_by: 'AiVIS.biz',
+    audit_version: '2.0', // Cite Ledger protocol version
+    protocol: 'BRAG', // Based-Retrieval-Auditable-Grading
+    experimental_features: [],
+    // ── CITE READINESS GATES ──
+    // Boolean gates that determine if this page meets citation thresholds
+    eligibility: {
+      crawl_accessible: false, // AI crawlers can reach it
+      schema_valid: false, // Structured data is correct
+      extractable: false, // Content is machine-readable
+      attributable: false, // Author/source is clear
+      meets_min_depth: false, // Content has sufficient detail
     },
-    // Placeholder structure - actual audit data populated server-side
-    creator: {
-      '@type': 'SoftwareApplication',
-      name: 'AiVIS.biz',
-      url: 'https://aivis.biz',
-    },
-    dateModified: BUILD_DATE,
-    inLanguage: 'en-US',
-    // Audit dimensions that will be populated:
-    // - schema_clarity_score
-    // - content_depth_score
-    // - technical_trust_score
-    // - metadata_completeness_score
-    // - extractability_score
-    // - heading_structure_score
-    // - security_and_trust_score
+    // ── RECOMMENDATIONS (populated server-side) ──
+    fixes: [],
+    next_actions: [],
   };
 }
 
@@ -3168,7 +3183,7 @@ function prerenderHtml(route) {
   // This signals that the site was audited for AI readability (not just generic SEO).
   // Even though audit data is populated server-side during runtime,
   // the structural presence tells machines: "This page has verifiable signals"
-  const citeLedgerJson = jsonLdScript(buildCiteLedgerBlock(canonicalUrl, route.title));
+  const citeLedgerJson = citeLedgerScript(buildCiteLedgerBlock(canonicalUrl, route.title));
 
   if (extraHead) {
     html = html.replace('</head>', `${extraHead}\n  ${citeLedgerJson}\n  </head>`);
@@ -3181,17 +3196,155 @@ function prerenderHtml(route) {
   return `<!-- prerendered-route:${route.path} -->\n${html}`;
 }
 
+// ── BUILD-TIME VALIDATION GATES ────────────────────────────────────────────
+// Hard-fail the build if:
+// 1. Any JSON-LD schema is syntactically invalid (prevents broken schema)
+// 2. Canonical URLs are not unique per route (prevents collapse)
+// 3. Cite Ledger is missing from pages that require it
+// Validation failures return detailed error info and exit(1) to block deployment.
+
+/** Validates JSON-LD blocks in HTML. Returns { valid: boolean, errors: string[] } */
+function validateJsonLd(html, routePath) {
+  const jsonLdBlocks = html.match(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g) || [];
+  const errors = [];
+  let blockIndex = 0;
+
+  for (const block of jsonLdBlocks) {
+    try {
+      const jsonText = block
+        .replace(/<script type="application\/ld\+json">\s*/, '')
+        .replace(/\s*<\/script>/, '');
+      JSON.parse(jsonText);
+      // Success: valid JSON
+    } catch (err) {
+      errors.push(
+        `  [Block ${blockIndex}] Failed to parse JSON-LD: ${err.message}\n    Context: ${block.slice(0, 150)}...`
+      );
+    }
+    blockIndex++;
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    blockCount: jsonLdBlocks.length,
+  };
+}
+
+/** Validates that each route has a unique canonical URL. Prevents collapse. */
+function validateCanonicals(htmlByRoute) {
+  const canonicalMap = new Map(); // canonical -> [routes]
+  const errors = [];
+
+  for (const [route, html] of htmlByRoute.entries()) {
+    // Extract canonical from html
+    const canonMatch = html.match(/<link rel="canonical" href="([^"]+)"\s*\/>/);
+    if (!canonMatch) {
+      errors.push(`  ${route} has no canonical link tag`);
+      continue;
+    }
+    const canonical = canonMatch[1];
+
+    if (!canonicalMap.has(canonical)) {
+      canonicalMap.set(canonical, []);
+    }
+    canonicalMap.get(canonical).push(route);
+  }
+
+  // Check for duplicates
+  for (const [canonical, routes] of canonicalMap.entries()) {
+    if (routes.length > 1) {
+      errors.push(
+        `  DUPLICATE CANONICAL: "${canonical}" appears in ${routes.length} routes: ${routes.join(', ')}`
+      );
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    uniqueCanonicals: canonicalMap.size,
+  };
+}
+
+/** Validates Cite Ledger presence in prerendered pages */
+function validateCiteLedgerPresence(html, routePath) {
+  const errors = [];
+
+  // Check for cite-ledger script tag with id="cite-ledger"
+  // Correct format: <script type="application/json" id="cite-ledger">
+  if (!html.includes('id="cite-ledger"')) {
+    // Allow some pages to skip cite-ledger (public static pages)
+    const skipCiteLedger = ['/badge', '/server-headers', '/verify-license'];
+    if (!skipCiteLedger.some((p) => routePath.startsWith(p))) {
+      errors.push(
+        `  ${routePath} missing Cite Ledger script block. Expected: <script type="application/json" id="cite-ledger">`
+      );
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
 const PRERENDER_SKIP = new Set(['/mcp', '/referrals', '/team', '/gsc', '/analytics', '/reports']);
+const htmlByRoute = new Map(); // For canonical dedup check
+let validationErrors = [];
+
 for (const route of routes) {
   if (PRERENDER_SKIP.has(route.path)) continue;
   const html = prerenderHtml(route);
-  const targetDir =
-    route.path === '/' ? distDir : path.join(distDir, route.path.replace(/^\//, ''));
-  fs.mkdirSync(targetDir, { recursive: true });
-  const targetPath = route.path === '/' ? indexPath : path.join(targetDir, 'index.html');
-  fs.writeFileSync(targetPath, html, 'utf8');
-  console.log(`[prerender] wrote ${targetPath}`);
+
+  // VALIDATION GATE 1: Check JSON-LD is valid
+  const jsonLdValidation = validateJsonLd(html, route.path);
+  if (!jsonLdValidation.valid) {
+    validationErrors.push(`❌ ${route.path}: Invalid JSON-LD schema`);
+    validationErrors.push(...jsonLdValidation.errors);
+  }
+
+  // VALIDATION GATE 2: Check Cite Ledger presence
+  const citeLedgerValidation = validateCiteLedgerPresence(html, route.path);
+  if (!citeLedgerValidation.valid) {
+    validationErrors.push(...citeLedgerValidation.errors);
+  }
+
+  // Store for canonical validation
+  htmlByRoute.set(route.path, html);
+
+  // Write file only if validations pass for this route
+  if (jsonLdValidation.valid && citeLedgerValidation.valid) {
+    const targetDir =
+      route.path === '/' ? distDir : path.join(distDir, route.path.replace(/^\//, ''));
+    fs.mkdirSync(targetDir, { recursive: true });
+    const targetPath = route.path === '/' ? indexPath : path.join(targetDir, 'index.html');
+    fs.writeFileSync(targetPath, html, 'utf8');
+    console.log(
+      `[prerender] ✅ wrote ${targetPath} (${jsonLdValidation.blockCount} JSON-LD blocks)`
+    );
+  }
 }
+
+// VALIDATION GATE 3: Check all canonicals are unique
+const canonicalValidation = validateCanonicals(htmlByRoute);
+if (!canonicalValidation.valid) {
+  validationErrors.push('❌ CANONICAL URL COLLISION DETECTED (collapse prevention failed):');
+  validationErrors.push(...canonicalValidation.errors);
+}
+
+// HARD-FAIL if any validation failed
+if (validationErrors.length > 0) {
+  console.error('\n🚨 BUILD VALIDATION GATE FAILED 🚨\n');
+  console.error('Schema and structural validation errors detected:\n');
+  validationErrors.forEach((msg) => console.error(msg));
+  console.error('\n✋ Build aborted. Fix validation errors before deployment.\n');
+  process.exit(1); // ← HARD EXIT: Build fails, deployment blocked
+}
+
+console.log(
+  `\n✅ VALIDATION PASSED: ${htmlByRoute.size} routes with valid JSON-LD, unique canonicals, and cite-ledger presence.\n`
+);
 
 // ── Sitemap auto-generation ────────────────────────────────────────────────
 // Generates sitemap.xml from the routes array so it is always in sync with

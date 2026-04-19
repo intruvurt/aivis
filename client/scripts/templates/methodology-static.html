@@ -564,31 +564,40 @@
     </style>
 
     <!-- CITE LEDGER (Layer 2): Evidence-backed audit system visibility -->
-    <script type="application/ld+json">
+    <script type="application/json" id="cite-ledger">
       {
-        "@context": "https://schema.org",
-        "@type": "Dataset",
-        "@id": "https://aivis.biz/methodology#cite-ledger",
-        "name": "Cite Ledger Output",
-        "description": "Evidence-linked AI visibility audit results. This dataset contains the verifiable signals extracted during crawl, the rules applied, and the resulting visibility score with all evidence identifiers traceable back to source.",
-        "url": "https://aivis.biz/methodology",
-        "about": {
-          "@type": "Thing",
-          "name": "AI Citation Readiness",
-          "description": "Measures whether AI answer engines can extract, verify, and cite this page"
+        "page": "https://aivis.biz/methodology",
+        "title": "AiVIS.biz Methodology | CITE LEDGER & BRAG Evidence Protocol",
+        "timestamp": "2026-04-19",
+        "scores": {
+          "crawl_readiness": 0,
+          "schema_clarity": 0,
+          "content_depth": 0,
+          "entity_clarity": 0,
+          "metadata_quality": 0,
+          "authority_signals": 0,
+          "technical_trust": 0
         },
-        "includedInDataCatalog": {
-          "@type": "DataCatalog",
-          "name": "AiVIS CITE LEDGER",
-          "url": "https://aivis.biz"
+        "evidence": {
+          "cites": [],
+          "entities": [],
+          "signals": [],
+          "rules_applied": [],
+          "gating_failures": []
         },
-        "creator": {
-          "@type": "SoftwareApplication",
-          "name": "AiVIS.biz",
-          "url": "https://aivis.biz"
+        "audited_by": "AiVIS.biz",
+        "audit_version": "2.0",
+        "protocol": "BRAG",
+        "experimental_features": [],
+        "eligibility": {
+          "crawl_accessible": false,
+          "schema_valid": false,
+          "extractable": false,
+          "attributable": false,
+          "meets_min_depth": false
         },
-        "dateModified": "2026-04-19",
-        "inLanguage": "en-US"
+        "fixes": [],
+        "next_actions": []
       }
     </script>
   </head>

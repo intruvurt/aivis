@@ -81,13 +81,16 @@ export function applySecurityMiddleware(app: Express): void {
 
     const directives = [
       "default-src 'self'",
-      `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https:`,
+      // script-src: nonce-based + strict-dynamic for dynamically loaded scripts + fallback https: for CDN
+      // Also explicitly allow analytics services (Google Analytics, Clarity, Cloudflare Insights)
+      `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "connect-src 'self' https:",
+      // connect-src: allow all https + API calls to analytics services
+      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com",
       "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
       "frame-src 'self' https: https://www.google.com https://js.stripe.com",
@@ -189,8 +192,9 @@ export async function sendHtmlWithNonce(
 ): Promise<void> {
   const nonce = (res.locals.nonce as string) ?? "";
   let html = await readFile(htmlPath, "utf-8");
-  // Inject nonce="..." into every <script …> opener (incl. ld+json - harmless)
-  html = html.replace(/<script(?=[\s>])/gi, `<script nonce="${nonce}"`);
+  // Inject nonce="..." into every <script …> opener with proper spacing
+  // Matches <script followed by space or > and replaces with <script nonce="..." (preserving the space/bracket)
+  html = html.replace(/<script(\s|>)/gi, `<script nonce="${nonce}"$1`);
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache");
   res.send(html);

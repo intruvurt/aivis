@@ -1,25 +1,33 @@
 /**
- * CITE LEDGER API ROUTES (STUB)
+ * CITE LEDGER API ROUTES (FULL STUB)
+ * ====================================================
+ * DISABLED: All routes temporarily stubbed pending implementation
  *
- * This file has been simplified as a stub.
- * The routes require implementation of:
+ * This file requires:
  * 1. CiteEntry type in shared/types.ts
- * 2. Function exports in citeLedgerService.ts:
- *    - createCiteEntry
- *    - getCiteEntry
- *    - getAuditCites
- *    - expandCiteWithProvenance
- *    - getCiteLedgerStats
- *    - verifyCiteIntegrity
+ * 2. citeLedgerService.ts with function implementations:
+ *    - createCiteEntry(client, entry)
+ *    - getCiteEntry(auditId, entryId)
+ *    - getAuditCites(auditId)
+ *    - expandCiteWithProvenance(entry)
+ *    - getCiteLedgerStats(userId)
+ *    - verifyCiteIntegrity(entry)
  *
- * For active implementation, see: citeLedger.ts
+ * TODO: Implement all routes once service functions are available
+ * Reference: citeLedger.ts (legacy implementation)
  */
 
 import { Router } from "express";
 
 export const citeLedgerRoutes = Router();
 
-// All routes disabled pending proper type and function implementations
-// See citeLedger.ts for active cite ledger API endpoints
+// ====================================================
+// ALL ROUTES DISABLED - PENDING IMPLEMENTATION
+// ====================================================
+// GET  /api/cite-ledger/:userId/stats          -> getCiteLedgerStats
+// GET  /api/cite-ledger/audit/:auditId         -> getAuditCites
+// GET  /api/cite-ledger/entry/:auditId/:entryId -> getCiteEntry + expandCiteWithProvenance
+// POST /api/cite-ledger/entry/:auditId/verify  -> verifyCiteIntegrity (batch)
+// GET  /api/cite-ledger/audit/:auditId/export  -> export citations as CSV/JSON
 
 export default citeLedgerRoutes;

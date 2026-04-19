@@ -12,6 +12,8 @@
  */
 
 import { type Plugin } from 'vite';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface ValidationViolation {
     type:
@@ -30,8 +32,10 @@ export interface ValidationViolation {
  */
 async function loadQueriesJson(): Promise<any[]> {
     try {
-        const queries = await import('./src/generated/queries.json', { assert: { type: 'json' } });
-        return Array.isArray(queries.default) ? queries.default : [];
+        const filePath = path.join(process.cwd(), 'src/generated/queries.json');
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const queries = JSON.parse(content);
+        return Array.isArray(queries) ? queries : [];
     } catch (err) {
         throw new Error('Failed to load queries.json — ensure build generates it first');
     }
@@ -204,6 +208,12 @@ export function queryRouteValidationPlugin(): Plugin {
     return {
         name: 'query-route-validation',
         async buildStart() {
+            // Skip validation in dev mode
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[Query Route Validation] ⊘ Skipped in dev mode');
+                return;
+            }
+
             try {
                 const violations = await validateQueryPages();
 

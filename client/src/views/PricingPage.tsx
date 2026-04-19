@@ -175,14 +175,13 @@ const TIER_COPY: Record<string, { headline: string; body: string; includes: stri
     headline: "Automated remediation pack",
     body: "Everything in Signal plus evidence-linked GitHub PR generation so the platform can write the actual fix instead of just describing it.",
     includes: [
-      `${PRICING.scorefix.credits} AutoFix PR credits`,
+      `${PRICING.scorefix.credits} AutoFix PR credits/month`,
       "everything in Signal, plus automated remediation",
       "evidence-linked GitHub pull requests",
       "batch remediation workflows",
-      "credits do not expire",
+      "monthly managed remediation cadence",
     ],
     cta: "Get Score Fix",
-    priceLabel: `$${PRICING.scorefix.billing.oneTime}`,
   },
 };
 
@@ -231,7 +230,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "What is Score Fix AutoFix PR?",
     answer:
-      `Score Fix is a one-time purchase of ${PRICING.scorefix.credits} remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes. Credits do not expire.`,
+      `Score Fix is a recurring managed remediation plan at $${PRICING.scorefix.billing.monthly}/month with ${PRICING.scorefix.credits} monthly remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes.`,
   },
   {
     question: "What does brand mention tracking scan?",
@@ -246,12 +245,12 @@ const PRICING_FAQ_ITEMS = [
   {
     question: "Can I cancel at any time?",
     answer:
-      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Score Fix is a one-time purchase with no subscription renewal.",
+      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period.",
   },
   {
     question: "Do audits roll over if I don't use them all?",
     answer:
-      "No. Audit allowances reset at the start of each billing cycle. Score Fix credits are the exception because they are purchased once and do not expire.",
+      "No. Audit allowances and Score Fix remediation credits reset at the start of each billing cycle.",
   },
   {
     question: "What payment methods are accepted?",
@@ -777,9 +776,9 @@ export default function PricingPage() {
     },
     {
       role: "Remediation Lead",
-      fit: "Score Fix (One-time)",
+      fit: "Score Fix (Managed)",
       outcome:
-        "Use a one-time remediation purchase for evidence-linked implementation and verification handoff.",
+        "Run recurring evidence-linked remediation with monthly verification handoff and proof packets.",
     },
   ] as const;
 
@@ -859,13 +858,13 @@ export default function PricingPage() {
           {
             "@type": "Offer",
             name: "Score Fix [AutoFix PR]",
-            price: String(PRICING.scorefix.billing.oneTime),
+            price: String(PRICING.scorefix.billing.monthly),
             priceCurrency: "USD",
             url: "https://aivis.biz/pricing#scorefix",
             availability: "https://schema.org/InStock",
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "One-time AutoFix PR credit pack with evidence-linked GitHub remediation and no expiry.",
+              "Recurring AutoFix PR remediation subscription with monthly credits and evidence-linked GitHub remediation.",
           },
         ],
       },
@@ -1204,7 +1203,7 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3/mo", "15/mo", "60/mo", "200/mo", `${PRICING.scorefix.credits} credits`],
+                  ["Audit allowance", "3/mo", "15/mo", "60/mo", "200/mo", `${PRICING.scorefix.credits} credits/mo`],
                   ["Visibility score + recs", true, true, true, true, true],
                   ["BRAG evidence IDs", true, true, true, true, true],
                   ["Implementation-ready guidance", false, true, true, true, true],

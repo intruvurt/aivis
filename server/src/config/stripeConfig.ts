@@ -111,13 +111,15 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SCOREFIX — one-time $299 remediation purchase
+  // SCOREFIX — $299/month managed remediation subscription
   scorefix: {
     name: PRICING.scorefix.name,
-    lookupKey: 'scorefix_onetime',
-    priceId: process.env.STRIPE_SCOREFIX_PRICE_ID || process.env.STRIPE_SCOREFIX_MONTHLY_PRICE_ID,
-    amountCents: PRICING.scorefix.billing.oneTime * 100,
-    mode: 'payment',
+    lookupKey: 'scorefix_monthly',
+    priceId: process.env.STRIPE_SCOREFIX_MONTHLY_PRICE_ID || process.env.STRIPE_SCOREFIX_PRICE_ID,
+    amountCents: PRICING.scorefix.billing.monthly * 100,
+    yearlyPriceId: process.env.STRIPE_SCOREFIX_YEARLY_PRICE_ID,
+    yearlyAmountCents: PRICING.scorefix.billing.yearly * 100,
+    mode: 'subscription',
     metadata: {
       tier_key: 'scorefix',
       audits_per_month: PRICING.scorefix.limits.scans,
@@ -234,11 +236,9 @@ export function buildCheckoutOptions({ tierKey, userId, customerEmail, brandDoma
   if (!config) {
     throw new Error(`Invalid tier: ${tierKey}`);
   }
-  const normalizedBillingPeriod = config.mode === 'payment'
-    ? 'one_time'
-    : String(billingPeriod || 'monthly').toLowerCase() === 'yearly'
-      ? 'yearly'
-      : 'monthly';
+  const normalizedBillingPeriod = String(billingPeriod || 'monthly').toLowerCase() === 'yearly'
+    ? 'yearly'
+    : 'monthly';
 
   const options: Record<string, any> = {
     payment_method_types: ['card'],

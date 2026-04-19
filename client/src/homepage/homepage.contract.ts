@@ -119,7 +119,7 @@ export function getTierSnapshot() {
         starter: { name: PRICING.starter.name, price: PRICING.starter.billing.monthly, scans: PRICING.starter.limits.scans },
         alignment: { name: PRICING.alignment.name, price: PRICING.alignment.billing.monthly, scans: PRICING.alignment.limits.scans },
         signal: { name: PRICING.signal.name, price: PRICING.signal.billing.monthly, scans: PRICING.signal.limits.scans },
-        scorefix: { name: PRICING.scorefix.name, price: (PRICING.scorefix.billing as { oneTime: number }).oneTime, credits: PRICING.scorefix.credits },
+        scorefix: { name: PRICING.scorefix.name, price: PRICING.scorefix.billing.monthly, credits: PRICING.scorefix.credits },
     } as const;
 }
 

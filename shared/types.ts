@@ -235,7 +235,7 @@ export const PRICING = {
   },
   scorefix: {
     name: 'ScoreFix AutoFix PR',
-    billing: { oneTime: 299 },
+    billing: { monthly: 299, yearly: 2868, yearlyDiscount: 0.2 },
     credits: 250,
     /** Output range (code lines) varies by issue complexity — internal only */
     output: { low: 1000, medium: 700, high: 400 },
@@ -368,7 +368,7 @@ export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>
   starter: { monthlyUsd: PRICING.starter.billing.monthly, yearlyUsd: PRICING.starter.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   alignment: { monthlyUsd: PRICING.alignment.billing.monthly, yearlyUsd: PRICING.alignment.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   signal: { monthlyUsd: PRICING.signal.billing.monthly, yearlyUsd: PRICING.signal.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
-  scorefix: { monthlyUsd: 0, yearlyUsd: 0, oneTimeUsd: PRICING.scorefix.billing.oneTime, billingModel: 'one_time' },
+  scorefix: { monthlyUsd: PRICING.scorefix.billing.monthly, yearlyUsd: PRICING.scorefix.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */

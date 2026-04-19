@@ -164,11 +164,11 @@ const TIERS = [
     features: [`${PRICING.signal.limits.scans} audits / month`, '3-model consensus scoring for higher accuracy', 'Deep competitor intelligence across multiple rivals', 'Advanced citation testing across 3 search engines', 'Monitor when AI engines mention your brand', 'API access and white-label reports for agencies', 'Scheduled rescans to track progress automatically'],
   },
   {
-    key: 'scorefix' as const, name: 'Score Fix', subtitle: 'One-time',
+    key: 'scorefix' as const, name: 'Score Fix', subtitle: 'Managed',
     monthlyPrice: -1, annualMonthlyPrice: -1,
-    scans: PRICING.scorefix.credits,
+    scans: PRICING.scorefix.limits.scans,
     color: 'border-amber-400/30 bg-[#1a1608]/60 ring-1 ring-amber-400/20', accentClass: 'text-amber-300', badge: 'AutoFix PR' as string | null,
-    features: [`${PRICING.scorefix.credits} credits`, 'AI-generated pull requests that fix visibility issues', 'Evidence-linked diffs tied to audit findings', 'Batch remediation across multiple pages', 'CI/CD integration for automated fixes'],
+    features: [`${PRICING.scorefix.credits} remediation credits / month`, 'AI-generated pull requests that fix visibility issues', 'Evidence-linked diffs tied to audit findings', 'Batch remediation across multiple pages', 'CI/CD integration for automated fixes'],
   },
 ];
 
@@ -834,26 +834,21 @@ const Landing = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {TIERS.map((plan) => {
               const isScoreFix = plan.key === 'scorefix';
-              const displayPrice = isScoreFix ? PRICING.scorefix.billing.oneTime : billingCycle === 'annual' ? plan.annualMonthlyPrice : plan.monthlyPrice;
+              const displayPrice = billingCycle === 'annual' ? plan.annualMonthlyPrice : plan.monthlyPrice;
               return (
                 <motion.div key={plan.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} {...(forceVisible && { animate: { opacity: 1, y: 0 } })} className={`rounded-2xl border p-6 flex flex-col ${plan.color}`}>
                   {plan.badge && <div className={`inline-block px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider mb-3 ${plan.accentClass} border-current opacity-80`}>{plan.badge}</div>}
                   <h3 className="text-xl font-bold text-white mb-0.5">{plan.name}</h3>
                   <p className={`text-xs uppercase tracking-widest ${plan.accentClass} mb-4 font-semibold`}>{plan.subtitle}</p>
                   <div className="mb-2">
-                    {plan.monthlyPrice === 0 ? <span className="text-4xl font-black text-white">Free</span> : isScoreFix ? (
-                      <div>
-                        <span className="text-4xl font-black text-white">${displayPrice}</span>
-                        <span className="text-white/45 text-sm"> one-time</span>
-                      </div>
-                    ) : (
+                    {plan.monthlyPrice === 0 ? <span className="text-4xl font-black text-white">Free</span> : (
                       <div>
                         <span className="text-4xl font-black text-white">${displayPrice}</span>
                         <span className="text-white/45 text-sm">/mo</span>
                         {billingCycle === 'annual' && <span className="ml-2 text-white/30 text-xs line-through">${plan.monthlyPrice}/mo</span>}
                       </div>
                     )}
-                    <p className="text-xs text-white/40 mt-1">{isScoreFix ? `${plan.scans} credits` : `${plan.scans} audits / month`}</p>
+                    <p className="text-xs text-white/40 mt-1">{isScoreFix ? `${PRICING.scorefix.credits} credits/month` : `${plan.scans} audits / month`}</p>
                   </div>
                   <ul className="space-y-2.5 mb-6 flex-1">
                     {plan.features.map((f) => (

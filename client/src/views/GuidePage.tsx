@@ -108,11 +108,11 @@ const DEEP_DIVE_LINKS: {
 
 const MONETIZATION_MODELS = [
   {
-    model: 'Current: one-time Score Fix',
-    target: 'Fast tactical uplift projects',
-    pricing: '$299 one-time',
-    economics: 'Low friction entry; weaker recurring revenue predictability.',
-    operatingShape: 'Strong for urgent one-off remediation or PR-driven launches.',
+    model: 'Current: managed Score Fix subscription',
+    target: 'Continuous semantic operations and remediation',
+    pricing: '$299/month',
+    economics: 'Recurring MRR, stronger retention signals, and predictable delivery cadence.',
+    operatingShape: 'Best when paired with weekly self-healing runs and monthly proof packets.',
   },
   {
     model: 'Proposal: managed Score Fix subscription',
@@ -569,10 +569,10 @@ export default function GuidePage() {
         </div>
         <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-500/5 p-4 text-xs text-amber-100/90">
           <p>
-            Recommendation for your specific question: yes, a recurring ScoreFix lane at $299/month can work if it is positioned as a managed semantic operations service (weekly self-healing run + monthly uplift proof), not as a one-time patch.
+            Recurring ScoreFix is now positioned as a managed semantic operations lane at $299/month, designed around weekly self-healing runs and monthly uplift proof.
           </p>
           <p className="mt-2 text-amber-100/75">
-            Note: this guide section is strategic planning content. Live billing truth in the app should only change when shared tier contracts and server pricing config are updated together.
+            This section reflects the live billing model and should remain synchronized with shared tier contracts and server pricing configuration.
           </p>
         </div>
         <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">

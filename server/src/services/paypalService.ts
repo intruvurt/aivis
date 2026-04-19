@@ -1,5 +1,5 @@
 /**
- * PayPal REST API service for AiVIS.
+ * PayPal REST API service for AiVIS.biz.
  *
  * Uses PayPal Orders v2 API for one-time payments and Subscriptions API
  * for recurring billing. Requires PAYPAL_API_KEY (client_id) and
@@ -101,19 +101,19 @@ export const PAYPAL_TIER_PRICING: Record<string, PayPalTierConfig> = {
     name: PRICING.alignment.name,
     amountUsd: PRICING.alignment.billing.monthly.toFixed(2),
     mode: 'subscription',
-    description: `AiVIS ${PRICING.alignment.name} plan – ${PRICING.alignment.limits.scans} audits/month`,
+    description: `AiVIS.biz ${PRICING.alignment.name} plan – ${PRICING.alignment.limits.scans} audits/month`,
   },
   signal: {
     name: PRICING.signal.name,
     amountUsd: PRICING.signal.billing.monthly.toFixed(2),
     mode: 'subscription',
-    description: `AiVIS ${PRICING.signal.name} plan – ${PRICING.signal.limits.scans} audits/month, Triple-Check AI`,
+    description: `AiVIS.biz ${PRICING.signal.name} plan – ${PRICING.signal.limits.scans} audits/month, Triple-Check AI`,
   },
   scorefix: {
     name: PRICING.scorefix.name,
-    amountUsd: PRICING.scorefix.billing.oneTime.toFixed(2),
-    mode: 'payment',
-    description: 'AiVIS Score Fix – one-time AI remediation package',
+    amountUsd: PRICING.scorefix.billing.monthly.toFixed(2),
+    mode: 'subscription',
+    description: `AiVIS.biz Score Fix – ${PRICING.scorefix.credits} remediation credits/month with automated PR workflows`,
   },
 };
 
@@ -152,7 +152,7 @@ export async function createPayPalOrder(
         },
       ],
       application_context: {
-        brand_name: 'AiVIS',
+        brand_name: 'AiVIS.biz',
         landing_page: 'LOGIN',
         user_action: 'PAY_NOW',
         return_url: returnUrl,
@@ -223,6 +223,7 @@ export async function capturePayPalOrder(
 const PAYPAL_PLAN_IDS: Record<string, string | undefined> = {
   alignment: process.env.PAYPAL_PLAN_ID_ALIGNMENT,
   signal: process.env.PAYPAL_PLAN_ID_SIGNAL,
+  scorefix: process.env.PAYPAL_PLAN_ID_SCOREFIX,
 };
 
 export interface CreateSubscriptionResult {
@@ -253,7 +254,7 @@ export async function createPayPalSubscription(
       plan_id: planId,
       custom_id: `${userId}|${tier}`,
       application_context: {
-        brand_name: 'AiVIS',
+        brand_name: 'AiVIS.biz',
         locale: 'en-US',
         user_action: 'SUBSCRIBE_NOW',
         return_url: returnUrl,

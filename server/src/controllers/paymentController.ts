@@ -527,29 +527,29 @@ export const getCurrentSubscription = async (req: Request, res: Response) => {
 
     const scanPacksWithBoost = canBuyScanPacks
       ? getScanPacksForTier(normalizedTier).map((pack) => ({
-          key: pack.key,
-          scans: pack.scans,
-          amountCents: pack.amountCents,
-          amountUsd: pack.amountCents / 100,
-          bonusPercent: scanPackBonusPercent,
-          effectiveScans: getEffectivePackScans(pack.scans, scanPackBonusPercent),
-        }))
+        key: pack.key,
+        scans: pack.scans,
+        amountCents: pack.amountCents,
+        amountUsd: pack.amountCents / 100,
+        bonusPercent: scanPackBonusPercent,
+        effectiveScans: getEffectivePackScans(pack.scans, scanPackBonusPercent),
+      }))
       : [];
 
     const totalAuditCreditsAvailable = Math.max(0, Number(usage.remainingThisMonth || 0) + Number(packCredits || 0));
 
     const initialTierBonus = latestInitialBonusGrant
       ? {
-          tier: String(latestInitialBonusGrant.tier_key || ''),
-          billingPeriod: String(latestInitialBonusGrant.billing_period || 'monthly'),
-          bonusPercent: Number(latestInitialBonusGrant.bonus_percent || 0),
-          baseCredits: Number(latestInitialBonusGrant.base_credits || 0),
-          bonusCredits: Number(latestInitialBonusGrant.bonus_credits || 0),
-          totalCreditsAdded: Number(latestInitialBonusGrant.total_credits_added || 0),
-          milestoneQualified: Boolean(latestInitialBonusGrant.milestone_qualified),
-          milestoneWindowMinutes: Number(latestInitialBonusGrant.milestone_window_minutes || MILESTONE_WINDOW_MINUTES),
-          grantedAt: latestInitialBonusGrant.created_at,
-        }
+        tier: String(latestInitialBonusGrant.tier_key || ''),
+        billingPeriod: String(latestInitialBonusGrant.billing_period || 'monthly'),
+        bonusPercent: Number(latestInitialBonusGrant.bonus_percent || 0),
+        baseCredits: Number(latestInitialBonusGrant.base_credits || 0),
+        bonusCredits: Number(latestInitialBonusGrant.bonus_credits || 0),
+        totalCreditsAdded: Number(latestInitialBonusGrant.total_credits_added || 0),
+        milestoneQualified: Boolean(latestInitialBonusGrant.milestone_qualified),
+        milestoneWindowMinutes: Number(latestInitialBonusGrant.milestone_window_minutes || MILESTONE_WINDOW_MINUTES),
+        grantedAt: latestInitialBonusGrant.created_at,
+      }
       : null;
 
     if (!payment?.stripe_subscription_id) {
@@ -1391,11 +1391,7 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       const limits = TIER_LIMITS[tier];
       const features: string[] = [];
 
-      features.push(
-        tier === 'scorefix'
-          ? `${limits.scansPerMonth} included audit credits (one-time)`
-          : `${limits.scansPerMonth} audits / month`
-      );
+      features.push(`${limits.scansPerMonth} audits / month`);
 
       if (tier === 'observer') {
         features.push('AI visibility score');
@@ -1470,13 +1466,11 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       const baselinePricing = CANONICAL_TIER_PRICING[tier];
       const monthlyAmount = config.amountCents ? config.amountCents / 100 : (baselinePricing.monthlyUsd || 0);
       const yearlyAmount = config.yearlyAmountCents ? config.yearlyAmountCents / 100 : (baselinePricing.yearlyUsd || 0);
-      const oneTimeAmount = config.mode === 'payment'
-        ? (config.amountCents ? config.amountCents / 100 : (baselinePricing.oneTimeUsd || 0))
-        : (baselinePricing.oneTimeUsd || 0);
-      const billingModel: TierBillingModel = config.mode === 'payment'
-        ? 'one_time'
-        : config.mode === 'subscription'
-          ? 'subscription'
+      const oneTimeAmount = baselinePricing.oneTimeUsd || 0;
+      const billingModel: TierBillingModel = config.mode === 'subscription'
+        ? 'subscription'
+        : config.mode === 'payment'
+          ? 'one_time'
           : baselinePricing.billingModel;
       const isPaid = billingModel !== 'free';
 

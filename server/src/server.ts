@@ -15539,9 +15539,9 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
           PRICING.signal.billing.yearly * 100,
         );
         check(
-          "scorefix one-time cents",
+          "scorefix monthly cents",
           STRIPE_PRICING.scorefix?.amountCents,
-          PRICING.scorefix.billing.oneTime * 100,
+          PRICING.scorefix.billing.monthly * 100,
         );
         if (driftErrors.length) {
           console.error(

@@ -1,7 +1,7 @@
 /**
  * OAuth 2.0 Authorization Code Flow
  *
- * Allows third-party applications to access AiVIS API on behalf of users.
+ * Allows third-party applications to access AiVIS.biz API on behalf of users.
  * Implements RFC 6749 Authorization Code Grant.
  *
  * Routes:

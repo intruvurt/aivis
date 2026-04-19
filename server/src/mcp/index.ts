@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * AiVIS MCP Server - Clean Standalone Implementation
+ * AiVIS.biz MCP Server - Clean Standalone Implementation
  *
- * Runs as a standalone Node process exposing AiVIS tools via Model Context Protocol.
+ * Runs as a standalone Node process exposing AiVIS.biz tools via Model Context Protocol.
  * Uses McpServer + registerTool() pattern with Zod input schemas and stable
  * response envelopes ({ok, data, meta, error}).
  *
@@ -352,7 +352,7 @@ server.tool(
 
 server.tool(
   'get_methodology',
-  'Get the AiVIS scoring methodology including category weights and evaluation criteria.',
+  'Get the AiVIS.biz scoring methodology including category weights and evaluation criteria.',
   {},
   async () => {
     try {
@@ -383,7 +383,7 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error(`AiVIS MCP Server v${SERVER_VERSION} running (stdio)`);
+  console.error(`AiVIS.biz MCP Server v${SERVER_VERSION} running (stdio)`);
 }
 
 main().catch((err) => {

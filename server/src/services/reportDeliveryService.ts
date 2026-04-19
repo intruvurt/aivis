@@ -223,7 +223,7 @@ function buildFilename(url: string, branded: boolean): string {
 async function postJson(target: string, payload: Record<string, any>) {
   const response = await fetch(target, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-AiVIS-Event': 'audit.report.ready' },
+    headers: { 'Content-Type': 'application/json', 'X-AiVIS.biz-Event': 'audit.report.ready' },
     body: JSON.stringify(payload),
   });
   if (!response.ok) {
@@ -232,7 +232,7 @@ async function postJson(target: string, payload: Record<string, any>) {
 }
 
 function buildAiVisibilityShareMessage(url: string, score: number): string {
-  return `AiVIS audited "${url}" and returned a "${score}/100" AI Visibility score.\nSee how ChatGPT and Perplexity likely interpret the site, what they may miss, and where the biggest visibility gaps are:`;
+  return `AiVIS.biz audited "${url}" and returned a "${score}/100" AI Visibility score.\nSee how ChatGPT and Perplexity likely interpret the site, what they may miss, and where the biggest visibility gaps are:`;
 }
 
 async function deliverWebhookTarget(args: {
@@ -290,7 +290,7 @@ async function deliverWebhookTarget(args: {
       blocks: [
         {
           type: 'header',
-          text: { type: 'plain_text', text: 'AiVIS audit report ready', emoji: true },
+          text: { type: 'plain_text', text: 'AiVIS.biz audit report ready', emoji: true },
         },
         {
           type: 'section',
@@ -313,7 +313,7 @@ async function deliverWebhookTarget(args: {
       content: `${shareMessage}${linkSuffix}`,
       embeds: [
         {
-          title: 'AiVIS audit report ready',
+          title: 'AiVIS.biz audit report ready',
           description: payload.result?.summary || 'Evidence-backed audit completed.',
           fields: [
             { name: 'URL', value: payload.url },

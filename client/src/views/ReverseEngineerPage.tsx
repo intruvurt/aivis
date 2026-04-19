@@ -54,12 +54,12 @@ const REVERSE_ENGINEER_FAQ = [
     answer: "Answer decompilation is the process of reverse-engineering how an AI model constructed a specific generated answer — identifying which source signals, entity associations, structural patterns, and evidence types it used to produce the response. Understanding the decompiled structure of a high-ranking AI answer tells you exactly what your content needs in order to be selected as a source or replicated as a model for similar answers. It shifts optimization from guessing to evidence-based replication.",
   },
   {
-    question: "How does AiVIS reverse-engineer AI-generated answers?",
+    question: "How does AiVIS.biz reverse-engineer AI-generated answers?",
     answer: "The Answer Decompiler takes a target URL or AI answer text and breaks it into structural components: entity claims (what the answer asserts about specific entities), evidence types (whether claims are backed by examples, numbers, comparisons, or methodology), citation patterns (how sources are attributed), intent alignment (which prompt type the answer was constructed for), and extraction quality markers (how easily the source content could be parsed). The output maps the answer's structure to a blueprint you can use to rebuild or improve your own content.",
   },
   {
     question: "What is the BRAG evidence framework?",
-    answer: "BRAG stands for Benchmark, Rationale, Authority, and Gap — the four evidence-quality dimensions that AiVIS uses to score whether a page's claims are backed by extractable proof. Benchmark evidence is specific, measurable data (numbers, rates, comparisons). Rationale evidence explains the 'why' behind claims (methodology, mechanism, causal logic). Authority evidence signals credibility (credentials, track record, verifiable history). Gap evidence explicitly addresses common objections or alternative interpretations. Pages with dense BRAG-aligned evidence are significantly more likely to be cited by AI answer engines because their claims can be surfaced as trustworthy specifics.",
+    answer: "BRAG stands for Benchmark, Rationale, Authority, and Gap — the four evidence-quality dimensions that AiVIS.biz uses to score whether a page's claims are backed by extractable proof. Benchmark evidence is specific, measurable data (numbers, rates, comparisons). Rationale evidence explains the 'why' behind claims (methodology, mechanism, causal logic). Authority evidence signals credibility (credentials, track record, verifiable history). Gap evidence explicitly addresses common objections or alternative interpretations. Pages with dense BRAG-aligned evidence are significantly more likely to be cited by AI answer engines because their claims can be surfaced as trustworthy specifics.",
   },
   {
     question: "What is the Content Blueprint tool?",
@@ -2370,7 +2370,7 @@ export default function ReverseEngineerPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/reverse-engineer",
-        name: "AI Answer Reverse Engineer — Decompile, Blueprint, Diff | AiVIS",
+        name: "AI Answer Reverse Engineer — Decompile, Blueprint, Diff | AiVIS.biz",
         description: "Reverse-engineer how AI models construct answers. Decompile answer structure, generate content blueprints, diff platform behavior, and simulate AI answer variants with the BRAG evidence framework.",
       }),
       buildFaqSchema(REVERSE_ENGINEER_FAQ, { path: "/reverse-engineer" }),

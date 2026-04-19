@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "AiVIS",
-  "short_name": "AiVIS",
+  "name": "AiVIS.biz",
+  "short_name": "AiVIS.biz",
   "description": "Fix how AI systems interpret and cite your website. Evidence-backed audits for ChatGPT, Perplexity AI, Google AI Overviews, and Claude.",
   "start_url": "/",
   "display": "standalone",
@@ -43,13 +43,13 @@
       "type": "image/png",
       "sizes": "1200x630",
       "form_factor": "wide",
-      "label": "AiVIS AI Visibility Audit - Desktop"
+      "label": "AiVIS.biz AI Visibility Audit - Desktop"
     },
     {
       "src": "/analyze.png?v=20260408",
       "type": "image/png",
       "sizes": "1024x1024",
-      "label": "AiVIS AI Visibility Audit - Mobile"
+      "label": "AiVIS.biz AI Visibility Audit - Mobile"
     }
   ]
 }

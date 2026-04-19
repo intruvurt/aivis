@@ -1,4 +1,4 @@
-# AiVIS analysis spectrum located
+# AiVIS.biz analysis spectrum located
 
 Core audit orchestration
 - `src/services/audit/auditOrchestrator.ts`

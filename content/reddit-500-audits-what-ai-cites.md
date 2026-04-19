@@ -2,13 +2,13 @@
 
 **Platform:** Reddit  
 **Target subs:** r/SEO, r/ChatGPT, r/artificial, r/webdev, r/marketing, r/juststart, r/Entrepreneur  
-**Format:** Long self-post (no link in title - link AiVIS in body text naturally)  
+**Format:** Long self-post (no link in title - link AiVIS.biz in body text naturally)  
 **Tone:** First-person builder, data-driven findings, helpful not promotional  
 **Estimated read time:** 12 min  
 
 ---
 
-I've been building a tool called [AiVIS](https://aivis.biz) for the past year and a half. It audits websites for AI citation readiness - meaning: can ChatGPT, Perplexity, Claude, and Google AI Overview actually parse, trust, and cite your content when someone asks a question your site should answer?
+I've been building a tool called [AiVIS.biz](https://aivis.biz) for the past year and a half. It audits websites for AI citation readiness - meaning: can ChatGPT, Perplexity, Claude, and Google AI Overview actually parse, trust, and cite your content when someone asks a question your site should answer?
 
 Over that time I've run somewhere north of 500 audits across SaaS products, e-commerce sites, local businesses, personal brands, news outlets, and B2B service pages. I've seen average scores as low as 12 (a well-known DTC brand with a fast, beautiful site that blocks every AI crawler) and as high as 94 (a boring-looking B2B consulting firm with pristine schema, 1,400-word service pages, and every FAQ formatted in Q&A heading pairs).
 
@@ -31,7 +31,7 @@ The reason this happens is usually one of two things:
 
 Check your own robots.txt right now. Go to yourdomain.com/robots.txt and look for `User-agent: GPTBot`, `User-agent: ClaudeBot`, `User-agent: PerplexityBot`. If they have a `Disallow: /` under them, you are invisible to those models. Period. Those models will never voluntarily crawl you, which means your content is not in their real-time index and won't get cited in time-sensitive answers.
 
-You can check this free using the [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) - it returns a letter grade (A through F) for each crawler separately. No account needed.
+You can check this free using the [AiVIS.biz Robots Checker](https://aivis.biz/tools/robots-checker) - it returns a letter grade (A through F) for each crawler separately. No account needed.
 
 ---
 
@@ -106,7 +106,7 @@ The reason: Google's ranking algorithm optimizes for a different signal set. AI 
 
 The two skill sets overlap somewhat (HTTPS, load speed, canonical URLs) but they diverge completely on schema markup, heading structure, content depth, and crawler access policy.
 
-This is the underlying reason I built AiVIS. People were trying to solve an AI visibility problem with SEO tools that don't measure AI visibility. You cannot optimize what you don't measure.
+This is the underlying reason I built AiVIS.biz. People were trying to solve an AI visibility problem with SEO tools that don't measure AI visibility. You cannot optimize what you don't measure.
 
 ---
 
@@ -159,7 +159,7 @@ None of this requires a developer. All three can be done with whatever CMS you'r
 
 ## Free Audit Tools You Can Use Right Now
 
-All of these are on AiVIS and require no account:
+All of these are on AiVIS.biz and require no account:
 
 - **Robots Checker** - [aivis.biz/tools/robots-checker](https://aivis.biz/tools/robots-checker) - graded A through F for each major AI crawler
 - **Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - checks JSON-LD, Open Graph, Twitter Cards, Microdata

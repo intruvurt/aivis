@@ -51,8 +51,8 @@ interface VerifyResult {
 
 export default function PartnershipAgreementPage() {
   usePageMeta({
-    title: "Referral and Delivery Partnership Terms | AiVIS.biz",
-    description: "Private commercial terms for AiVIS referral and delivery partnerships.",
+    title: "Referral and Delivery Partnership Terms | AiVIS.biz.biz",
+    description: "Private commercial terms for AiVIS.biz referral and delivery partnerships.",
     path: "/partnership-terms",
     noIndex: true,
   });
@@ -222,7 +222,7 @@ export default function PartnershipAgreementPage() {
   const showSigningForm = agreement && agreement.status !== "fully_signed" && agreement.status !== "expired" && agreement.status !== "revoked" && !isExpired;
 
   return (
-    <PublicPageFrame icon={FileText} title="Partnership Terms" subtitle="AiVIS × Zeeniith" maxWidthClass="max-w-[980px]">
+    <PublicPageFrame icon={FileText} title="Partnership Terms" subtitle="AiVIS.biz × Zeeniith" maxWidthClass="max-w-[980px]">
       <div className="space-y-5">
 
         {/* Persistent intro — always visible before the agreement loads */}
@@ -232,9 +232,9 @@ export default function PartnershipAgreementPage() {
               <span className="inline-block text-[0.78rem] text-[#d7ddff] bg-[rgba(124,92,255,0.15)] border border-[#7c5cff]/35 px-2.5 py-1 rounded-full mb-3">
                 Private — restricted access
               </span>
-              <h2 className="text-lg font-semibold text-white mb-1">AiVIS × Zeeniith Referral & Delivery Partnership</h2>
+              <h2 className="text-lg font-semibold text-white mb-1">AiVIS.biz × Zeeniith Referral & Delivery Partnership</h2>
               <p className="text-white/60 text-sm leading-relaxed">
-                This is a private, legally-binding partnership agreement between <strong className="text-white/80">AiVIS (AiVIS)</strong> and <strong className="text-white/80">Zeeniith.in</strong> covering referral commission structure, development delivery obligations, client exclusivity protections, payment handling, and dispute resolution. Access is restricted to the named parties only.
+                This is a private, legally-binding partnership agreement between <strong className="text-white/80">AiVIS.biz (AiVIS.biz)</strong> and <strong className="text-white/80">Zeeniith.in</strong> covering referral commission structure, development delivery obligations, client exclusivity protections, payment handling, and dispute resolution. Access is restricted to the named parties only.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
@@ -614,9 +614,9 @@ export default function PartnershipAgreementPage() {
               {/* Partnership branding */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-6 pt-6 border-t border-[#2a2f3a]">
                 <a href="https://aivis.biz" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                  <img src="/aivis-logo.png" alt="AiVIS" className="h-10 w-10 rounded-xl" loading="lazy" decoding="async" />
+                  <img src="/aivis-logo.png" alt="AiVIS.biz" className="h-10 w-10 rounded-xl" loading="lazy" decoding="async" />
                   <div>
-                    <p className="font-semibold text-white group-hover:text-cyan-300 transition-colors">AiVIS</p>
+                    <p className="font-semibold text-white group-hover:text-cyan-300 transition-colors">AiVIS.biz</p>
                     <p className="text-xs text-white/40">aivis.biz</p>
                   </div>
                 </a>

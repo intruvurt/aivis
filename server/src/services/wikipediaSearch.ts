@@ -34,7 +34,7 @@ export async function checkWikipediaPresence(
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'User-Agent': 'AiVIS-CitationTester/1.0 (+https://aivis.biz)',
+        'User-Agent': 'AiVIS.biz-CitationTester/1.0 (+https://aivis.biz)',
       },
       signal: controller.signal,
     });

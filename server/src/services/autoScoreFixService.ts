@@ -266,7 +266,7 @@ export async function fetchRepoTreePaths(
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
-      'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+      'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
     },
   });
   if (!res.ok) return [];
@@ -504,7 +504,7 @@ async function createGitHubPR(
     Accept: 'application/vnd.github+json',
     'Content-Type': 'application/json',
     'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+    'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
   };
 
   // 1. Get base branch SHA
@@ -596,7 +596,7 @@ async function createGitLabMR(
   const headers = {
     'PRIVATE-TOKEN': token,
     'Content-Type': 'application/json',
-    'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+    'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
   };
 
   const fixBranch = `aivis-scorefix-${Date.now()}`;
@@ -666,7 +666,7 @@ async function createBitbucketPR(
   const baseUrl = `https://api.bitbucket.org/2.0/repositories/${repoOwner}/${repoName}`;
   const headers = {
     Authorization: `Bearer ${token}`,
-    'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+    'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
   };
 
   const fixBranch = `aivis-scorefix-${Date.now()}`;
@@ -810,7 +810,7 @@ async function populateDiffsFromGitHub(
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+    'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
   };
   const baseUrl = `https://api.github.com/repos/${repoOwner}/${repoName}`;
 

@@ -1,13 +1,13 @@
 # How to Reverse Engineer What AI Models Want From Your Website
 
 **Platform:** Webflow Blog (first post)  
-**Author:** AiVIS / intruvurt  
+**Author:** AiVIS.biz / intruvurt  
 **Tags:** AI Visibility, Reverse Engineering, Competitive Analysis, Web Strategy, AI Optimization  
 **Subtitle/Hook:** You can't optimize for AI citation by guessing. But you can decompose exactly what AI models prefer, simulate your odds, and build to spec. Here's the toolkit that makes it possible.  
 **Topics:** AI answer decomposition, competitive ghosting, model preference analysis, visibility simulation, structured content strategy  
 **Estimated read time:** 12 min  
 **CMS Category:** AI Visibility  
-**Featured image alt text:** AiVIS reverse engineering tools dashboard showing answer decompiler, competitor ghost, model preference diff, and visibility simulator  
+**Featured image alt text:** AiVIS.biz reverse engineering tools dashboard showing answer decompiler, competitor ghost, model preference diff, and visibility simulator  
 
 ---
 
@@ -21,7 +21,7 @@ AI answer engines don't have playbooks. ChatGPT, Perplexity, Claude, and Google 
 
 The real question is: what specific structural patterns does each AI model prefer when deciding which sources to cite in its answers?
 
-That's what reverse engineering is for. And on [AiVIS](https://aivis.biz/reverse-engineer), we built 4 tools specifically designed to answer that question with data, not vibes.
+That's what reverse engineering is for. And on [AiVIS.biz](https://aivis.biz/reverse-engineer), we built 4 tools specifically designed to answer that question with data, not vibes.
 
 ---
 
@@ -33,7 +33,7 @@ Here's the scenario. You search "best project management tools for remote teams"
 
 The natural instinct is to look at those 5 products and try to copy what they're doing. But that's surface-level. What you need to understand is why the AI model structured its answer the way it did and what kind of source material would have been selected for each part of that answer.
 
-The Answer Decompiler on [AiVIS](https://aivis.biz/reverse-engineer) takes that answer text and extracts:
+The Answer Decompiler on [AiVIS.biz](https://aivis.biz/reverse-engineer) takes that answer text and extracts:
 
 - **Source types** - Authoritative references, how-to guides, FAQ collections, definitions, comparison tables, numbered lists, news articles, direct citations. Each section of the AI answer maps to a source type. This tells you what kind of page gets pulled for what kind of answer section.
 
@@ -69,7 +69,7 @@ Input a query like "enterprise data backup solutions comparison" and the Ghost g
 
 The Ghost gives you a page blueprint that, if built to spec, maximizes your structural fitness for that query across AI models. It's competitive analysis without needing a competitor to exist yet.
 
-You can run this alongside the [AiVIS Schema Validator](https://aivis.biz/tools/schema-validator) to verify your existing markup against what the Ghost recommends. The validator checks JSON-LD, Open Graph, Twitter Cards, and Microdata for free, no account required.
+You can run this alongside the [AiVIS.biz Schema Validator](https://aivis.biz/tools/schema-validator) to verify your existing markup against what the Ghost recommends. The validator checks JSON-LD, Open Graph, Twitter Cards, and Microdata for free, no account required.
 
 ---
 
@@ -107,7 +107,7 @@ Input your URL and the Simulator produces:
 
 For example, the Simulator might show that adding Organization schema to your page increases your GPT-4 citation probability from 12% to 31%, while adding FAQ schema increases it from 31% to 44%. The cumulative curve shows the diminishing returns so you can prioritize the highest-impact changes first.
 
-The probability estimates are calibrated against the 28 deterministic rules in the [SSFR scoring framework](https://aivis.biz/methodology) that powers every AiVIS audit. These rules check concrete structural properties: JSON-LD presence, heading hierarchy, content depth, AI crawler access, schema types, and more. The Simulator translates SSFR results into platform-specific probability estimates.
+The probability estimates are calibrated against the 28 deterministic rules in the [SSFR scoring framework](https://aivis.biz/methodology) that powers every AiVIS.biz audit. These rules check concrete structural properties: JSON-LD presence, heading hierarchy, content depth, AI crawler access, schema types, and more. The Simulator translates SSFR results into platform-specific probability estimates.
 
 ---
 
@@ -123,7 +123,7 @@ The 4 reverse engineering tools aren't independent features. They form a workflo
 
 **Step 4: Simulate** your current page and the changes needed. Get probability estimates and a prioritized implementation plan.
 
-After implementing changes, run a full [AiVIS audit](https://aivis.biz/analyze) to verify your SSFR score improved. The audit checks all 28 structural rules and gives you a letter grade (A through F) along with 8-12 specific recommendations.
+After implementing changes, run a full [AiVIS.biz audit](https://aivis.biz/analyze) to verify your SSFR score improved. The audit checks all 28 structural rules and gives you a letter grade (A through F) along with 8-12 specific recommendations.
 
 Set up [scheduled rescans](https://aivis.biz/analyze) to monitor your score over time. If a competitor makes structural changes that affect your relative position, the [competitor tracking](https://aivis.biz/competitors) system catches it. If your brand mentions change across platforms, the [mention tracker](https://aivis.biz/mentions) reports it. If your citation presence shifts in search results, the [citation tester](https://aivis.biz/citations) flags it.
 
@@ -143,7 +143,7 @@ The difference is that the signals are structural, not link-based. AI models don
 
 ## Start Without Spending Anything
 
-Before you touch the reverse engineering tools, check whether your basics are covered. Three free tools on AiVIS, no login required:
+Before you touch the reverse engineering tools, check whether your basics are covered. Three free tools on AiVIS.biz, no login required:
 
 **[Schema Validator](https://aivis.biz/tools/schema-validator)** checks your JSON-LD, Open Graph, Twitter Cards, and Microdata. If your Organization schema is missing, that's a hard blocker in SSFR scoring (caps your score at 75). Fix that first.
 
@@ -153,7 +153,7 @@ Before you touch the reverse engineering tools, check whether your basics are co
 
 If you pass all three with A or B grades, your foundation is solid and the reverse engineering tools will give you the strategic edge to move from "visible" to "cited."
 
-The free Observer tier at [AiVIS](https://aivis.biz/pricing) gives you 3 full audits per month. The reverse engineering tools are available on the Alignment tier ($49/month, 60 scans) which also includes competitor tracking across up to 3 competitors, brand mention monitoring across 9 sources, and niche discovery.
+The free Observer tier at [AiVIS.biz](https://aivis.biz/pricing) gives you 3 full audits per month. The reverse engineering tools are available on the Alignment tier ($49/month, 60 scans) which also includes competitor tracking across up to 3 competitors, brand mention monitoring across 9 sources, and niche discovery.
 
 For the full reverse engineering + citation testing + triple-check AI pipeline, the Signal tier ($149/month, 200 scans) covers everything.
 
@@ -167,6 +167,6 @@ This is the first post on our Webflow blog, and we'll be publishing deep dives o
 - What happens when you monitor brand mentions across 9 platforms for 90 days
 - Real before-and-after visibility scores from sites that implemented reverse engineering recommendations
 
-If you want to see where your site stands right now, [run a free audit on AiVIS](https://aivis.biz/analyze). 28 structural checks, deterministic scoring, and actionable recommendations. No guessing.
+If you want to see where your site stands right now, [run a free audit on AiVIS.biz](https://aivis.biz/analyze). 28 structural checks, deterministic scoring, and actionable recommendations. No guessing.
 
-[AiVIS.biz - Evidence-backed site analysis for AI answers Audits](https://aivis.biz)
+[AiVIS.biz.biz - Evidence-backed site analysis for AI answers Audits](https://aivis.biz)

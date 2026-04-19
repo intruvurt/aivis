@@ -1,7 +1,7 @@
 /**
  * MCP (Model Context Protocol) Server Endpoint
  *
- * Exposes AiVIS audit and analytics tools to AI agents via MCP-style
+ * Exposes AiVIS.biz audit and analytics tools to AI agents via MCP-style
  * JSON-RPC 2.0 over HTTP. Authentication via Bearer avis_* API key or
  * OAuth avist_* access token.
  *
@@ -424,7 +424,7 @@ const executors: Record<string, ToolExecutor> = {
       method: 'GET',
       redirect: 'follow',
       signal: AbortSignal.timeout(15000),
-      headers: { 'User-Agent': 'AiVIS-MCP/1.0 (+https://aivis.biz)', Accept: 'text/html' },
+      headers: { 'User-Agent': 'AiVIS.biz-MCP/1.0 (+https://aivis.biz)', Accept: 'text/html' },
     });
     const html = await response.text();
 
@@ -580,7 +580,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'aivis',
     version: '1.0.0',
-    description: 'AiVIS Evidence-backed site analysis for AI answers Platform - audit, evidence, analytics, and competitor tools for AI agents.',
+    description: 'AiVIS.biz Evidence-backed site analysis for AI answers Platform - audit, evidence, analytics, and competitor tools for AI agents.',
     protocol: 'mcp-http-v1',
     auth: ['Bearer avis_* (API key)', 'Bearer avist_* (OAuth token)'],
     endpoints: {
@@ -1188,7 +1188,7 @@ router.post('/remediation-plan', async (req: Request, res: Response) => {
 
 router.get('/methodology', async (_req: Request, res: Response) => {
   return res.json(envOk({
-    name: 'AiVIS Visibility Score',
+    name: 'AiVIS.biz Visibility Score',
     version: '2.0',
     description: 'Measures how well a webpage is structured for AI answer engine extraction, citation, and recommendation.',
     categories: {

@@ -579,7 +579,7 @@ function extractBrandSignalsFromHtml(html: string): BrandSignals {
 }
 
 interface BrandContext {
-  /** Primary brand name as it appears on the site (e.g. "AiVIS") */
+  /** Primary brand name as it appears on the site (e.g. "AiVIS.biz") */
   primaryName: string;
   /** Domain of the brand's website (e.g. "aivis.biz") */
   domain: string | null;
@@ -624,7 +624,7 @@ function buildBrandContext(
 
   // ─── Build all valid name variants ───────────────────────────────────
   const nameVariants: string[] = [];
-  nameVariants.push(primaryName);               // exact: "AiVIS"
+  nameVariants.push(primaryName);               // exact: "AiVIS.biz"
   nameVariants.push(primaryName.toUpperCase());  // ALLCAPS: "AIVIS"
   if (domain) nameVariants.push(domain);         // domain: "aivis.biz"
   if (brandSignals.schemaOrgName && brandSignals.schemaOrgName !== primaryName) {
@@ -633,7 +633,7 @@ function buildBrandContext(
   if (brandSignals.ogSiteName && brandSignals.ogSiteName !== primaryName) {
     nameVariants.push(brandSignals.ogSiteName);
   }
-  // Title segments (e.g. "Evidence-backed site analysis for AI answers Platform" from "AiVIS.biz -> evidence-backed site analysis for AI answers")
+  // Title segments (e.g. "Evidence-backed site analysis for AI answers Platform" from "AiVIS.biz.biz -> evidence-backed site analysis for AI answers")
   if (brandSignals.title) {
     const parts = brandSignals.title.split(/[\-|–·•:]/).map(p => p.trim()).filter(Boolean);
     for (const part of parts) {
@@ -725,7 +725,7 @@ function scoreBrandRelevance(
   // ─── Signal 2: Exact primary name (case-sensitive) ─────────────────
   if (blob.includes(ctx.primaryName)) score += 3;
   // ─── Signal 2b: Case-insensitive primary name match (weaker) ───────
-  // Catches "aivis" when brand is "AiVIS" — common in user-generated content
+  // Catches "aivis" when brand is "AiVIS.biz" — common in user-generated content
   else if (ctx.primaryName.length >= 3 && blobLower.includes(ctx.primaryName.toLowerCase())) score += 2;
 
   // ─── Signal 3: Name variant match ─────────────────────────────────
@@ -790,7 +790,7 @@ function scoreBrandRelevance(
 
   // ─── Signal 7: Compound-word disambiguation (negative) ────────────
   // If the brand name appears only as a substring of a longer compound word
-  // (e.g. "AivisSpeech" when brand is "AiVIS"), this is very likely a
+  // (e.g. "AivisSpeech" when brand is "AiVIS.biz"), this is very likely a
   // different entity. Apply a strong penalty.
   if (ctx.strictMatch && ctx.primaryName.length <= 12) {
     const nameLC = ctx.primaryName.toLowerCase();
@@ -829,7 +829,7 @@ function isBrandRelevantResult(
   const blob = `${result.title} ${result.snippet}`.toLowerCase();
   const hasDomainInUrl = ctx.domain ? result.href.toLowerCase().includes(ctx.domain) : false;
 
-  // For strict-match brands (short/mixed-case like "AiVIS"), always require
+  // For strict-match brands (short/mixed-case like "AiVIS.biz"), always require
   // niche keyword overlap for off-domain results to disambiguate from unrelated
   // entities sharing the same name (e.g. "AivisSpeech" TTS, "AIVIS" biomarker)
   if (ctx.strictMatch && ctx.nicheKeywords.length > 0 && !hasDomainInUrl) {
@@ -839,7 +839,7 @@ function isBrandRelevantResult(
 
   // When brand has niche context, require at least 1 niche keyword hit for
   // off-domain results — prevents false positives from unrelated entities
-  // that share a similar name (e.g. "AiVIS" visibility vs "Aivis" voice software)
+  // that share a similar name (e.g. "AiVIS.biz" visibility vs "Aivis" voice software)
   if (ctx.nicheKeywords.length >= 3 && !hasDomainInUrl) {
     const nicheHits = ctx.nicheKeywords.filter(kw => blob.includes(kw)).length;
     if (nicheHits === 0) return false;
@@ -1084,7 +1084,7 @@ export async function authorityGranularCheck(req: Request, res: Response) {
           batch.map(async (platform) => {
             const domain = PLATFORM_DOMAINS[platform];
             // Build probe queries — include niche context keywords for disambiguation
-            // so that a brand like "AiVIS" (AI visibility) doesn't match unrelated
+            // so that a brand like "AiVIS.biz" (AI visibility) doesn't match unrelated
             // projects like "AivisSpeech" (AI voice).
             const topNicheKw = brandCtx.nicheKeywords.slice(0, 2).join(' ');
             const primaryTerm = mode === 'url' ? (targetDomain || trimmedTarget) : trimmedTarget;

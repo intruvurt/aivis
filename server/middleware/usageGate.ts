@@ -8,7 +8,7 @@ import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier }
 
 /**
  * Get monthly scan limit based on user tier
- * AiVIS 3-Tier Model:
+ * AiVIS.biz 3-Tier Model:
  * - Observer (Free): 3 scans/month
  * - Alignment (Core): 30 scans/month
  * - Signal (Pro): 150 scans/month

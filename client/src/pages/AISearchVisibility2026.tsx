@@ -148,9 +148,9 @@ export default function AISearchVisibility2026() {
         </section>
 
         <section className="rounded-2xl border border-white/12/20 bg-charcoal/5 p-6">
-          <h2 className="text-xl brand-title mb-3">Run This Strategy in AiVIS</h2>
+          <h2 className="text-xl brand-title mb-3">Run This Strategy in AiVIS.biz</h2>
           <p className="text-white/75 mb-5">
-            Use AiVIS to measure AI overview inclusion, citation frequency, and recommendation gaps so your content infrastructure
+            Use AiVIS.biz to measure AI overview inclusion, citation frequency, and recommendation gaps so your content infrastructure
             improves with every iteration.
           </p>
           <div className="mb-5 text-sm text-white/75">

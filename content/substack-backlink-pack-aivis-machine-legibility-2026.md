@@ -1,11 +1,11 @@
-# AiVIS Substack Backlink Pack (2026)
+# AiVIS.biz Substack Backlink Pack (2026)
 
 ## Primary targets
 
 - Article A: `https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web`
 - Article B: `https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web`
 
-## Secondary support links (AiVIS)
+## Secondary support links (AiVIS.biz)
 
 - `https://aivis.biz/`
 - `https://aivis.biz/guide`
@@ -15,10 +15,10 @@
 
 ## Anchor text map (use varied anchors)
 ### Branded anchors
-- AiVIS
-- AiVIS audit
+- AiVIS.biz
+- AiVIS.biz audit
 - Evidence-backed site analysis for AI answers Audits
-- AiVIS machine legibility audit
+- AiVIS.biz machine legibility audit
 
 ### Partial-match anchors
 - why websites are invisible to AI
@@ -58,14 +58,14 @@ Examples:
 - Medium cover image asset: https://miro.medium.com/v2/resize:fit:720/format:webp/1*zYKvFjku9NjsifbhJLpV0w.png
 
 ## Additional intruvurt Medium content worth reusing
-- Core AiVIS / explainability piece: https://intruvurt.medium.com/ai-visible-c73312f1d5cb
+- Core AiVIS.biz / explainability piece: https://intruvurt.medium.com/ai-visible-c73312f1d5cb
 - Builder-to-visibility transition piece: https://intruvurt.medium.com/the-day-i-stopped-validating-and-started-becoming-findable-c9deb2886937
 - Demand validation / SaaS angle: https://intruvurt.medium.com/before-you-build-another-saas-run-this-30-second-reality-check-af7b1bb30bcc
 - Content/message alignment angle: https://intruvurt.medium.com/the-cost-of-being-misaligned-when-your-content-doesnt-match-your-essence-6751c06618bf
 - Reliability / systems thinking angle: https://intruvurt.medium.com/your-next-outage-could-be-the-last-one-you-ever-notice-2ad3b92226af
 
 ### Best reuse angles from the Medium archive
-- AiVIS / AI visibility / answer-engine discoverability:
+- AiVIS.biz / AI visibility / answer-engine discoverability:
 	- https://intruvurt.medium.com/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai-ac7ad86ccbf8
 	- https://intruvurt.medium.com/ai-visible-c73312f1d5cb
 	- https://intruvurt.medium.com/the-day-i-stopped-validating-and-started-becoming-findable-c9deb2886937
@@ -84,7 +84,7 @@ That changes everything.
 
 AI systems now summarize, compare, and filter before many clicks happen. If your site is structurally blurry-thin service pages, weak schema, buried proof, confused headings-you get skipped quietly.
 
-I wrote this after building AiVIS and watching this pattern repeat across real businesses:
+I wrote this after building AiVIS.biz and watching this pattern repeat across real businesses:
 https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web
 
 If your business depends on being found, compared, and recommended, machine legibility is now part of trust.
@@ -102,7 +102,7 @@ They’re failing because machines can’t read them cleanly.
 
 In AI-mediated discovery, blurry structure = lost trust distribution.
 
-Wrote this after building AiVIS + seeing it repeatedly:
+Wrote this after building AiVIS.biz + seeing it repeatedly:
 https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ### 4) X thread starter
@@ -147,10 +147,10 @@ Practical framing around structure, evidence, and machine trust:
 https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ### 9) Guest-post author bio backlink
-DobleDuche builds AiVIS (Evidence-backed site analysis for AI answers Audits) and writes about machine legibility, citation readiness, and answer-engine discoverability. Read more at: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
+DobleDuche builds AiVIS.biz (Evidence-backed site analysis for AI answers Audits) and writes about machine legibility, citation readiness, and answer-engine discoverability. Read more at: https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ### 10) Podcast show-notes backlink
-Referenced article: “Why I built AiVIS and why many websites are invisible to AI”
+Referenced article: “Why I built AiVIS.biz and why many websites are invisible to AI”
 https://open.substack.com/pub/dobleduche/p/i-built-aivisbiz-after-realizing?utm_campaign=post-expanded-share&utm_medium=web
 
 ## Outreach pitch templates
@@ -183,7 +183,7 @@ Happy to reciprocate with a citation in my next roundup.
 ### C) Founder newsletter swap
 Subject: resource swap on AI visibility + machine legibility
 
-I run AiVIS and recently published a piece on why websites disappear in AI answers despite strong businesses behind them.
+I run AiVIS.biz and recently published a piece on why websites disappear in AI answers despite strong businesses behind them.
 
 Would you be open to a newsletter resource swap this week?
 My piece: https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web

@@ -12,7 +12,7 @@ import Spinner from '../components/Spinner';
 const DOMAIN_RATING_FAQ = [
   {
     question: "What is the BRA (Brand Relevance Authority) rating?",
-    answer: "BRA is AiVIS's composite citation authority score for a domain or brand entity. It aggregates signals across 18 platforms: backlink profile authority (referring domain quality and volume), content nature classification (whether your content is informational, commercial, or transactional, which affects citation type probability), cross-platform mention frequency (how often your brand is referenced outside your own domain), and trust signal density (co-citation with established authoritative sources). BRA scores range from 0-100, with scores above 60 indicating citation-ready authority across most AI answer categories.",
+    answer: "BRA is AiVIS.biz's composite citation authority score for a domain or brand entity. It aggregates signals across 18 platforms: backlink profile authority (referring domain quality and volume), content nature classification (whether your content is informational, commercial, or transactional, which affects citation type probability), cross-platform mention frequency (how often your brand is referenced outside your own domain), and trust signal density (co-citation with established authoritative sources). BRA scores range from 0-100, with scores above 60 indicating citation-ready authority across most AI answer categories.",
   },
   {
     question: "How does domain authority affect AI citations specifically?",
@@ -24,7 +24,7 @@ const DOMAIN_RATING_FAQ = [
   },
   {
     question: "What are the 18 platforms checked by the domain rating tool?",
-    answer: "The AiVIS authority checker evaluates your domain and brand entity across: Moz Domain Authority, Ahrefs-equivalent link metrics, Majestic Trust/Citation Flow, Semrush Authority Score, Wikipedia entity presence, Wikidata entity record, LinkedIn company page, Google Knowledge Graph, Bing entity index, Reddit brand discussions, ProductHunt listing, GitHub presence (for tech brands), media mentions (news index), SchemaApp entity resolution, Crunchbase, G2/Capterra review presence, academic citing (Google Scholar), and government/EDU co-citation where applicable. Each platform that recognizes your entity adds a positive signal to the composite BRA score.",
+    answer: "The AiVIS.biz authority checker evaluates your domain and brand entity across: Moz Domain Authority, Ahrefs-equivalent link metrics, Majestic Trust/Citation Flow, Semrush Authority Score, Wikipedia entity presence, Wikidata entity record, LinkedIn company page, Google Knowledge Graph, Bing entity index, Reddit brand discussions, ProductHunt listing, GitHub presence (for tech brands), media mentions (news index), SchemaApp entity resolution, Crunchbase, G2/Capterra review presence, academic citing (Google Scholar), and government/EDU co-citation where applicable. Each platform that recognizes your entity adds a positive signal to the composite BRA score.",
   },
   {
     question: "How do I improve a low BRA score?",
@@ -103,14 +103,14 @@ function natureLabel(n: ContentNature): string {
 
 export default function DomainRatingPage() {
   usePageMeta({
-    title: "Domain Authority Checker \u2014 AiVIS BRA Rating",
+    title: "Domain Authority Checker \u2014 AiVIS.biz BRA Rating",
     description:
       "Measure your brand's citation authority across 18 platforms. See backlinks, content nature, authority scores, and trust signals in one evidence-backed report.",
     path: "/app/domain-rating",
     structuredData: [
       buildWebPageSchema({
         path: "/app/domain-rating",
-        name: "Domain Authority Checker \u2014 AiVIS BRA Rating",
+        name: "Domain Authority Checker \u2014 AiVIS.biz BRA Rating",
         description: "Measure your brand's citation authority across 18 platforms including Moz, Ahrefs, Wikipedia, LinkedIn, and Google Knowledge Graph. Free domain rating and trust signal check.",
       }),
       buildFaqSchema(DOMAIN_RATING_FAQ, { path: "/app/domain-rating" }),

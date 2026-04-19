@@ -202,7 +202,7 @@ async function validateUrl(rawUrl: string): Promise<{ valid: boolean; httpStatus
       method: 'HEAD',
       signal: controller.signal,
       redirect: 'follow',
-      headers: { 'User-Agent': 'AiVIS-NicheDiscovery/1.0' },
+      headers: { 'User-Agent': 'AiVIS.biz-NicheDiscovery/1.0' },
     });
 
     clearTimeout(timer);
@@ -217,7 +217,7 @@ async function validateUrl(rawUrl: string): Promise<{ valid: boolean; httpStatus
         method: 'GET',
         signal: controller.signal,
         redirect: 'follow',
-        headers: { 'User-Agent': 'AiVIS-NicheDiscovery/1.0', 'Range': 'bytes=0-0' },
+        headers: { 'User-Agent': 'AiVIS.biz-NicheDiscovery/1.0', 'Range': 'bytes=0-0' },
       });
 
       clearTimeout(timer);

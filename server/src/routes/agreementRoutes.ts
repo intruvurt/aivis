@@ -479,7 +479,7 @@ router.post('/:slug/extend', async (req: Request, res: Response) => {
   }
 });
 
-/* ── POST /seed - create the AiVIS × Zeeniith agreement (admin only) ──────── */
+/* ── POST /seed - create the AiVIS.biz × Zeeniith agreement (admin only) ──────── */
 router.post('/seed', async (req: Request, res: Response) => {
   if (!isValidAdminKey(req.headers['x-admin-key'] as string | undefined)) {
     return res.status(403).json({ error: 'Forbidden.' });
@@ -488,13 +488,13 @@ router.post('/seed', async (req: Request, res: Response) => {
   try {
     const agreement = await createAgreement({
       slug: 'aivis-zeeniith-referral-delivery-2026',
-      title: 'Referral and Delivery Partnership Terms - AiVIS × Zeeniith',
+      title: 'Referral and Delivery Partnership Terms - AiVIS.biz × Zeeniith',
       termsHtml: AIVIS_ZEENIITH_TERMS_HTML,
       partyA: {
         name: 'Ryan Mason',
         email: process.env.PARTY_A_EMAIL || 'partners@aivis.biz',
         phone: '706-907-5299',
-        org: 'AiVIS.biz / Intruvurt Labs',
+        org: 'AiVIS.biz.biz / Intruvurt Labs',
       },
       partyB: {
         name: 'Dharmik Suthar',
@@ -517,7 +517,7 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>Party A introduces clients and commercial opportunities. Party B provides the development, implementation, technical execution, testing, and delivery for accepted projects. These terms define ownership of leads, how compensation is earned, how payments are handled, and how both parties are protected.</p>
 
 <h2>2. Roles</h2>
-<p><strong>Party A (AiVIS.biz / Intruvurt Labs):</strong></p>
+<p><strong>Party A (AiVIS.biz.biz / Intruvurt Labs):</strong></p>
 <ul>
   <li>Sources and introduces leads and clients</li>
   <li>May support positioning, discovery, and sales conversations</li>
@@ -606,7 +606,7 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>These terms shall be governed by the laws of <strong>United States - Georgia, Hall Co.</strong>, unless replaced by a later written agreement signed by both parties.</p>
 
 <h2>16. Platform consistency and accountability</h2>
-<p>Both parties commit to maintaining their respective platforms (AiVIS and Zeeniith) in a functional, professional, and accessible state for clients referred under this agreement. If a referred client reports platform outages, broken functionality, misleading information, or unprofessional presentation on either party's platform, the responsible party must address the issue within 48 hours of notice. Repeated platform neglect (3 or more substantiated complaints within 90 days) constitutes a material breach.</p>
+<p>Both parties commit to maintaining their respective platforms (AiVIS.biz and Zeeniith) in a functional, professional, and accessible state for clients referred under this agreement. If a referred client reports platform outages, broken functionality, misleading information, or unprofessional presentation on either party's platform, the responsible party must address the issue within 48 hours of notice. Repeated platform neglect (3 or more substantiated complaints within 90 days) constitutes a material breach.</p>
 
 <h2>17. Protection against malicious conduct</h2>
 <p>Neither party shall engage in, facilitate, or knowingly tolerate any of the following through their platforms, services, or client-facing materials: scam, phishing, spyware, malware distribution, deceptive billing, identity misrepresentation, unauthorized data harvesting, or any conduct that could expose the other party to legal, regulatory, or reputational liability. Discovery of such conduct by either party is grounds for immediate termination of this agreement, forfeiture of unpaid commissions, and entitlement of the non-breaching party to pursue damages.</p>
@@ -615,22 +615,22 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>All client-facing communications, proposals, and marketing materials used in connection with leads generated under this agreement must be truthful, non-deceptive, and compliant with applicable consumer protection laws. Neither party shall use dark patterns, hidden fees, misleading urgency, fake testimonials, bait-and-switch pricing, or any form of B2C manipulation in the acquisition, closing, or servicing of referred clients. Violation of this clause constitutes a material breach.</p>
 
 <h2>19. Cross-referral protocol</h2>
-<p>The parties agree to a reciprocal, non-competing referral relationship. AiVIS specializes in AI visibility auditing, AI search optimization, and machine-legibility consulting. Zeeniith specializes in web development, IT troubleshooting, and technical consulting. When a referred client's needs fall outside the referring party's core competency, the referring party shall route the client to the other party through the agreed lead introduction process, and the standard commission terms apply. Neither party shall compete with the other in their designated specialization for referred clients.</p>
+<p>The parties agree to a reciprocal, non-competing referral relationship. AiVIS.biz specializes in AI visibility auditing, AI search optimization, and machine-legibility consulting. Zeeniith specializes in web development, IT troubleshooting, and technical consulting. When a referred client's needs fall outside the referring party's core competency, the referring party shall route the client to the other party through the agreed lead introduction process, and the standard commission terms apply. Neither party shall compete with the other in their designated specialization for referred clients.</p>
 
 <h2>20. Traffic referral model (not lead generation)</h2>
-<p>AiVIS operates as a traffic and exposure platform. It does not act as a broker, sales agent, or lead generator on behalf of Party B.</p>
-<p>All inquiries originate from user-initiated interactions within the AiVIS platform, including but not limited to banners, embedded content, or outbound links. AiVIS does not guarantee lead quality, intent, or conversion outcomes.</p>
+<p>AiVIS.biz operates as a traffic and exposure platform. It does not act as a broker, sales agent, or lead generator on behalf of Party B.</p>
+<p>All inquiries originate from user-initiated interactions within the AiVIS.biz platform, including but not limited to banners, embedded content, or outbound links. AiVIS.biz does not guarantee lead quality, intent, or conversion outcomes.</p>
 <p>Party B acknowledges that all traffic is provided on a non-exclusive, pass-through basis and is responsible for its own sales process, qualification, and conversion.</p>
 
 <h2>21. Attribution and tracking</h2>
-<p>All referral activity must be tracked using AiVIS-controlled mechanisms including:</p>
+<p>All referral activity must be tracked using AiVIS.biz-controlled mechanisms including:</p>
 <ul>
   <li>Unique tracking links</li>
   <li>Query parameters</li>
   <li>Redirect logging</li>
   <li>Timestamped click events</li>
 </ul>
-<p>AiVIS logs constitute the <strong>primary source of truth</strong> for referral delivery.</p>
+<p>AiVIS.biz logs constitute the <strong>primary source of truth</strong> for referral delivery.</p>
 <p>Party B is responsible for maintaining accurate internal records of:</p>
 <ul>
   <li>Inquiries received</li>
@@ -657,34 +657,34 @@ const AIVIS_ZEENIITH_TERMS_HTML = `
 <p>In the absence of verifiable records, any reasonable commission claim by Party A supported by referral and project evidence may be presumed valid pending rebuttal.</p>
 
 <h2>23. Performance threshold and termination</h2>
-<p>If AiVIS delivers a minimum of <strong>5 to 10</strong> tracked referral inquiries within a reasonable timeframe and:</p>
+<p>If AiVIS.biz delivers a minimum of <strong>5 to 10</strong> tracked referral inquiries within a reasonable timeframe and:</p>
 <ul>
   <li>Party B fails to convert any of them, or</li>
   <li>Party B cannot provide verifiable status for those inquiries, or</li>
   <li>Reporting is inconsistent, delayed, or disputed</li>
 </ul>
-<p>then AiVIS may determine, at its sole discretion, that the partnership is commercially unviable.</p>
+<p>then AiVIS.biz may determine, at its sole discretion, that the partnership is commercially unviable.</p>
 <p>Upon such determination:</p>
 <ul>
   <li>The agreement may be terminated immediately</li>
-  <li>All Party B links, banners, and content will be removed from the AiVIS platform</li>
+  <li>All Party B links, banners, and content will be removed from the AiVIS.biz platform</li>
   <li>No further obligations will remain on either party</li>
 </ul>
-<p>This termination is non-negotiable and carries no liability to AiVIS.</p>
+<p>This termination is non-negotiable and carries no liability to AiVIS.biz.</p>
 
 <h2>24. No guarantee of conversion</h2>
-<p>AiVIS makes no guarantees regarding:</p>
+<p>AiVIS.biz makes no guarantees regarding:</p>
 <ul>
   <li>Lead quality</li>
   <li>Conversion rate</li>
   <li>Revenue outcomes</li>
 </ul>
-<p>Party B accepts full responsibility for its ability to convert incoming traffic into customers. Failure to convert referred traffic does not constitute failure on the part of AiVIS.</p>
+<p>Party B accepts full responsibility for its ability to convert incoming traffic into customers. Failure to convert referred traffic does not constitute failure on the part of AiVIS.biz.</p>
 
 <h2>25. Anti-dispute clause</h2>
 <p>In the event of a dispute:</p>
 <ul>
-  <li>AiVIS tracking logs remain authoritative for referral delivery</li>
+  <li>AiVIS.biz tracking logs remain authoritative for referral delivery</li>
   <li>Party B must provide verifiable evidence for any claim of non-receipt, non-conversion, or non-payment</li>
   <li>Absence of Party B-side records defaults in favor of Party A's evidence</li>
 </ul>
@@ -824,7 +824,7 @@ router.post('/:slug/invoices/:invoiceId/pay', async (req: Request, res: Response
           },
         ],
         application_context: {
-          brand_name: 'AiVIS Partnership',
+          brand_name: 'AiVIS.biz Partnership',
           landing_page: 'LOGIN',
           user_action: 'PAY_NOW',
           return_url: returnUrl,

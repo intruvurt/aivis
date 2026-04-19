@@ -295,7 +295,7 @@ export async function runPrivateExposureScan(args: ScanArgs): Promise<PrivateExp
     method: 'GET',
     signal: AbortSignal.timeout(20_000),
     headers: {
-      'User-Agent': 'AiVIS-PrivateExposureScan/1.0 (+https://aivis.biz)',
+      'User-Agent': 'AiVIS.biz-PrivateExposureScan/1.0 (+https://aivis.biz)',
       Accept: 'text/html,application/xhtml+xml,application/json;q=0.8,*/*;q=0.7',
     },
   });
@@ -443,7 +443,7 @@ export async function runPrivateExposureScan(args: ScanArgs): Promise<PrivateExp
       const scriptResp = await fetch(scriptUrl, {
         method: 'GET',
         signal: AbortSignal.timeout(15_000),
-        headers: { 'User-Agent': 'AiVIS-PrivateExposureScan/1.0 (+https://aivis.biz)' },
+        headers: { 'User-Agent': 'AiVIS.biz-PrivateExposureScan/1.0 (+https://aivis.biz)' },
       });
       if (!scriptResp.ok) continue;
       scriptBody = await scriptResp.text();
@@ -550,7 +550,7 @@ export async function runPrivateExposureScan(args: ScanArgs): Promise<PrivateExp
       response = await fetch(absolute, {
         method: 'GET',
         signal: AbortSignal.timeout(10_000),
-        headers: { 'User-Agent': 'AiVIS-PrivateExposureScan/1.0 (+https://aivis.biz)' },
+        headers: { 'User-Agent': 'AiVIS.biz-PrivateExposureScan/1.0 (+https://aivis.biz)' },
       });
       bodyText = await response.text();
     } catch {

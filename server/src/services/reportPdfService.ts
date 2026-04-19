@@ -1,6 +1,6 @@
 import type { UserBranding } from './brandingService.js';
 
-const DEFAULT_BRAND_NAME = 'AiVIS';
+const DEFAULT_BRAND_NAME = 'AiVIS.biz';
 const DEFAULT_LOGO_URL = 'https://aivis.biz/aivis-logo.png';
 
 function escapeHtml(value: unknown): string {
@@ -70,7 +70,7 @@ export function buildAuditReportHtml(args: {
   const primary = branded ? String(branding?.primary_color || '#0ea5e9') : '#0ea5e9';
   const accent = branded ? String(branding?.accent_color || '#6366f1') : '#6366f1';
   const logo = branded ? String(branding?.logo_base64 || branding?.logo_url || DEFAULT_LOGO_URL) : DEFAULT_LOGO_URL;
-  const footer = branded ? String(branding?.footer_text || 'Generated with AiVIS').trim() : 'Generated with AiVIS';
+  const footer = branded ? String(branding?.footer_text || 'Generated with AiVIS.biz').trim() : 'Generated with AiVIS.biz';
 
   const categoryGrades = normalizeItems<any>(result?.category_grades).slice(0, 6);
   const findings = normalizeItems<any>(result?.content_highlights).slice(0, 5);

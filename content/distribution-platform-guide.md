@@ -1,4 +1,4 @@
-# Free Article Posting Platforms - AiVIS Distribution Guide
+# Free Article Posting Platforms - AiVIS.biz Distribution Guide
 
 **Purpose:** Where to post these 3 articles (and future content) for maximum exposure and citation authority.  
 **Tier:** Free or freemium only. No paid placements listed.  
@@ -18,7 +18,7 @@
 - r/marketing - brand visibility, citation strategy
 - r/juststart - founders building their first sites
 - r/Entrepreneur - platform-level strategy pieces
-- r/SideProject - launching AiVIS, product discussions
+- r/SideProject - launching AiVIS.biz, product discussions
 
 **Format rules:** No links in title. Paste full article as long self-post. Link your tool naturally in body text. Engage every comment in the first 2-3 hours - Reddit algorithm is time-velocity sensitive.
 
@@ -31,7 +31,7 @@
 - **Long self-post** - for the technical JSON-LD article (reframe as "Ask HN: how do you structure JSON-LD for AI crawlers in 2026?")
 - **Link post** - once articles are published elsewhere (Medium/Substack)
 
-**Note:** HN is aggressive about detecting promotional content. Lead with something technically interesting, not the product pitch. The JSON-LD article is the best fit because the code templates are genuinely useful independent of AiVIS.
+**Note:** HN is aggressive about detecting promotional content. Lead with something technically interesting, not the product pitch. The JSON-LD article is the best fit because the code templates are genuinely useful independent of AiVIS.biz.
 
 ---
 
@@ -75,11 +75,11 @@
 - Submit to Substack's recommendation algorithm by getting readers to "recommend" your newsletter from their own subscriptions
 
 ### LinkedIn Articles
-**Why:** LinkedIn articles have their own URL, their own indexing, and LinkedIn is one of the 18 platforms AiVIS tracks because AI models pull from LinkedIn.  
+**Why:** LinkedIn articles have their own URL, their own indexing, and LinkedIn is one of the 18 platforms AiVIS.biz tracks because AI models pull from LinkedIn.  
 **Format:** Publish the article directly as a LinkedIn article (not a post). LinkedIn's article format gets indexed separately from your feed updates. Also post a 200-word summary as a regular feed post with a link to the full article for reach.
 
 ### Quora
-**Why:** Quora is one of the 9 free sources AiVIS brand mention tracker scans because it's structured Q&A that maps directly to how AI models process queries.  
+**Why:** Quora is one of the 9 free sources AiVIS.biz brand mention tracker scans because it's structured Q&A that maps directly to how AI models process queries.  
 **Strategy:** Search for questions about "AI citation," "how to get cited by ChatGPT," "JSON-LD for SEO," "why isn't my website showing in AI answers." Write a 500-800 word substantive answer with a link to the full article for more detail.  
 **Key Quora spaces:** Digital Marketing, Search Engine Optimization, Artificial Intelligence, Web Development
 
@@ -92,7 +92,7 @@
 ## TIER 3 - Niche but High-Intent Communities
 
 ### Product Hunt Discussions
-**Not** a product launch submission (save that). The Discussions section lets you post questions and articles. Post something like "I've been studying how AI models decide who to cite. Here's what the data shows." Product Hunt's audience is product builders - exactly the audience AiVIS serves.
+**Not** a product launch submission (save that). The Discussions section lets you post questions and articles. Post something like "I've been studying how AI models decide who to cite. Here's what the data shows." Product Hunt's audience is product builders - exactly the audience AiVIS.biz serves.
 
 ### IndieHackers
 Indie Hackers has a large audience of bootstrapped founders. Post full articles in the "Products" or "Growth" sections. The "I built X because Y" format works extremely well here. The "I've run 500+ AI visibility audits" Reddit article is the best fit - it has the founder-data-sharing format that IH readers respond to.
@@ -162,7 +162,7 @@ After each article goes live, run through this:
 5. Cross-post to DEV.to or Hashnode with canonical tag
 6. Post in 1-2 relevant Reddit subs (long self-post format, no self-promotion tone)
 7. Reply to every comment within 24 hours on all platforms
-8. Check AiVIS Brand Mention Tracker after 2 weeks to see if the article is generating third-party mentions on any of the 9 tracked sources
+8. Check AiVIS.biz Brand Mention Tracker after 2 weeks to see if the article is generating third-party mentions on any of the 9 tracked sources
 
 ---
 

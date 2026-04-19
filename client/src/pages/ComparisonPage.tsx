@@ -61,18 +61,18 @@ const competitors = [
 ];
 
 const comparisonLinks: { name: string; path: string }[] = [
-  { name: "AiVIS vs Semrush", path: "/compare/aivis-vs-semrush" },
-  { name: "AiVIS vs Ahrefs", path: "/compare/aivis-vs-ahrefs" },
-  { name: "AiVIS vs RankScale", path: "/compare/aivis-vs-rankscale" },
-  { name: "AiVIS vs Otterly.AI", path: "/compare/aivis-vs-otterly" },
-  { name: "AiVIS vs Profound.ai", path: "/compare/aivis-vs-profound" },
-  { name: "AiVIS vs Reaudit", path: "/compare/aivis-vs-reaudit" },
+  { name: "AiVIS.biz vs Semrush", path: "/compare/aivis-vs-semrush" },
+  { name: "AiVIS.biz vs Ahrefs", path: "/compare/aivis-vs-ahrefs" },
+  { name: "AiVIS.biz vs RankScale", path: "/compare/aivis-vs-rankscale" },
+  { name: "AiVIS.biz vs Otterly.AI", path: "/compare/aivis-vs-otterly" },
+  { name: "AiVIS.biz vs Profound.ai", path: "/compare/aivis-vs-profound" },
+  { name: "AiVIS.biz vs Reaudit", path: "/compare/aivis-vs-reaudit" },
 ];
 
 export default function ComparisonPage() {
   usePageMeta({
-    title: "AiVIS vs Alternatives | AI Visibility Tool Comparison",
-    description: 'Compare AiVIS vs Semrush, Ahrefs, Surfer SEO, Clearscope, and MarketMuse for AI citation-readiness and answer engine visibility.',
+    title: "AiVIS.biz vs Alternatives | AI Visibility Tool Comparison",
+    description: 'Compare AiVIS.biz vs Semrush, Ahrefs, Surfer SEO, Clearscope, and MarketMuse for AI citation-readiness and answer engine visibility.',
     path: "/compare",
     structuredData: [
       buildItemListSchema(
@@ -80,8 +80,8 @@ export default function ComparisonPage() {
       ),
       buildWebPageSchema({
         path: '/compare',
-        name: 'AiVIS vs Alternatives | AI Visibility Tool Comparison',
-        description: 'Side-by-side comparison of AiVIS against traditional SEO and AI visibility tools.',
+        name: 'AiVIS.biz vs Alternatives | AI Visibility Tool Comparison',
+        description: 'Side-by-side comparison of AiVIS.biz against traditional SEO and AI visibility tools.',
       }),
       buildBreadcrumbSchema([
         { name: 'Home', path: '/' },
@@ -95,8 +95,8 @@ export default function ComparisonPage() {
       <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-12">
         <div className="card-charcoal rounded-2xl p-6 border border-white/10">
           <div className="mb-5">
-            <h1 className="text-2xl font-semibold text-white">AiVIS vs Top Alternatives</h1>
-            <p className="text-white/60 text-sm mt-1">Use this page for directional positioning only: what AiVIS audits that traditional SEO suites and lighter AI tools usually do not.</p>
+            <h1 className="text-2xl font-semibold text-white">AiVIS.biz vs Top Alternatives</h1>
+            <p className="text-white/60 text-sm mt-1">Use this page for directional positioning only: what AiVIS.biz audits that traditional SEO suites and lighter AI tools usually do not.</p>
           </div>
 
           <div className="mb-6 rounded-xl border border-white/10 bg-charcoal-light/40 p-3">
@@ -123,8 +123,8 @@ export default function ComparisonPage() {
               </thead>
               <tbody>
                 <tr className="border-b border-white/10/60 bg-charcoal/30">
-                  <td className="py-3 pr-4 font-semibold text-white">AiVIS</td>
-                  <td className="py-3 pr-4 text-white/80">AiVIS | CITE LEDGER </td>
+                  <td className="py-3 pr-4 font-semibold text-white">AiVIS.biz</td>
+                  <td className="py-3 pr-4 text-white/80">AiVIS.biz | CITE LEDGER </td>
                   <td className="py-3 pr-4 text-white/80">Yes</td>
                   <td className="py-3 pr-4 text-white/80">Yes (Signal + Score Fix)</td>
                   <td className="py-3 pr-4 text-white/80">Yes (BRAG)</td>

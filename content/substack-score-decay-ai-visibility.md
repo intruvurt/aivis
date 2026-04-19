@@ -40,7 +40,7 @@ You didn't get worse. They got better. But the citation outcome changed.
 
 AI models don't cite based on absolute quality thresholds. They cite based on relative quality comparisons across candidate pages for a given query. If every other site in your category upgrades their structural signals, your static 74 starts losing citation competitions you used to win.
 
-This is why [AiVIS Competitor Tracking](https://aivis.biz/competitors) exists on Alignment tier and above. You need to know when your competitors' scores are changing, not just your own. Tracking your own score in isolation gives you half the picture.
+This is why [AiVIS.biz Competitor Tracking](https://aivis.biz/competitors) exists on Alignment tier and above. You need to know when your competitors' scores are changing, not just your own. Tracking your own score in isolation gives you half the picture.
 
 The feature runs automatic rescans on competitor URLs and alerts you when their visibility signals improve beyond a threshold. It detects new schema types they've added, content depth increases, crawler access changes, and structural improvements. If your competitor just added FAQPage schema to their top 3 landing pages, you want to know that this week - not in six months when you notice you've stopped showing up in answers.
 
@@ -76,7 +76,7 @@ Their robots.txt still said allow. But the effective access changed under them w
 
 I've also seen Vercel deployments where a middleware rule added `noIndex` headers in production that shouldn't have been there - a config mistake from a staging environment that bled into production. Their sitemap showed hundreds of pages. Their crawlable index had 3.
 
-The only way to know your current effective crawler access - not what your robots.txt says, but what a crawler actually sees when it hits your domain - is to test it. [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker) pings your domain as each AI crawler and reports on the actual response chain, including redirect behavior, challenge detection, and security header conflicts.
+The only way to know your current effective crawler access - not what your robots.txt says, but what a crawler actually sees when it hits your domain - is to test it. [AiVIS.biz Robots Checker](https://aivis.biz/tools/robots-checker) pings your domain as each AI crawler and reports on the actual response chain, including redirect behavior, challenge detection, and security header conflicts.
 
 ---
 
@@ -122,7 +122,7 @@ One-off audits are a starting point. They tell you where you are on the day you 
 
 What actually prevents score decay is continuous monitoring with automated re-auditing that catches drift early.
 
-This is what [AiVIS Scheduled Rescans](https://aivis.biz/settings?section=advanced) does on Alignment tier and above. You configure which URLs to monitor - your homepage, your top 5 service pages, your most-cited blog posts - and set a rescan frequency (weekly, biweekly, or monthly depending on your tier). The system re-runs the full 28-point audit on each URL on your configured schedule and sends alerts when something meaningful changes.
+This is what [AiVIS.biz Scheduled Rescans](https://aivis.biz/settings?section=advanced) does on Alignment tier and above. You configure which URLs to monitor - your homepage, your top 5 service pages, your most-cited blog posts - and set a rescan frequency (weekly, biweekly, or monthly depending on your tier). The system re-runs the full 28-point audit on each URL on your configured schedule and sends alerts when something meaningful changes.
 
 "Meaningful" is calibrated. Minor fluctuations below a threshold don't trigger alerts. But when your score for a specific URL drops by more than 8 points, or when a new hard blocker appears, or when your structured data goes from valid to invalid - you hear about it in time to do something.
 

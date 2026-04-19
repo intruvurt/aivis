@@ -47,7 +47,7 @@ const BrandingContext = createContext<BrandingContextValue>({
 const BRAND_VAR_DEFAULTS = {
   "--brand-primary": "#6366f1",
   "--brand-accent": "#8b5cf6",
-  "--brand-name": "AiVIS",
+  "--brand-name": "AiVIS.biz",
 };
 
 function injectBrandVars(b: BrandingConfig | null) {

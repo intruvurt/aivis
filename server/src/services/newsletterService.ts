@@ -212,7 +212,7 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
     tips: [
       'Add FAQPage and HowTo schema to your highest-intent pages — these are prioritised by LLMs for answer extraction.',
       'Audit your robots.txt: blocking AI crawlers (GPTBot, ClaudeBot, PerplexityBot) drops you from training and retrieval pipelines.',
-      'Run an AiVIS audit on your top 5 landing pages to identify exactly which extraction signals are missing.',
+      'Run an AiVIS.biz audit on your top 5 landing pages to identify exactly which extraction signals are missing.',
     ],
     reads: [
       `Why citation readiness matters more than ranking → ${FRONTEND_URL_NL}/blogs/answer-engine-optimization-2026-why-citation-readiness-matters`,
@@ -229,7 +229,7 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
     ],
     tips: [
       'Every page should have at minimum: Organisation, WebSite, and the primary content schema (Article, Product, FAQPage, etc.).',
-      'Validate your JSON-LD with Google\'s Rich Results Test and check AiVIS schema category score for AI-specific gaps.',
+      'Validate your JSON-LD with Google\'s Rich Results Test and check AiVIS.biz schema category score for AI-specific gaps.',
       'Add author schema (Person with sameAs links) to every article — this directly impacts E-E-A-T scoring in AI systems.',
     ],
     reads: [
@@ -284,7 +284,7 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
     tips: [
       'Add PostalAddress and LocalBusiness schema to every location page, including lat/long coordinates.',
       'Use hreflang tags correctly across all language and region variants — AI crawlers respect these for regional disambiguation.',
-      'Test your local queries in AiVIS citation testing to see which AI models surface your regional pages vs. competitors.',
+      'Test your local queries in AiVIS.biz citation testing to see which AI models surface your regional pages vs. competitors.',
     ],
     reads: [
       `Geo-adaptive AI ranking guide → ${FRONTEND_URL_NL}/blogs/geo-adaptive-ai-ranking-location-intelligence-shapes-answers`,
@@ -300,9 +300,9 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
       'Model updates from OpenAI, Anthropic, and Google can shift citation eligibility without any changes to your site.',
     ],
     tips: [
-      'Re-audit your key pages at least biweekly to catch score drift early — use AiVIS scheduled rescans if available on your plan.',
+      'Re-audit your key pages at least biweekly to catch score drift early — use AiVIS.biz scheduled rescans if available on your plan.',
       'Track competitor scores alongside your own to identify when gap changes are driven by your improvements vs. their deterioration.',
-      'When your score drops without site changes, check the AiVIS changelog and AI model update announcements for systemic shifts.',
+      'When your score drops without site changes, check the AiVIS.biz changelog and AI model update announcements for systemic shifts.',
     ],
     reads: [
       `Score decay and AI visibility trends → ${FRONTEND_URL_NL}/blogs/score-decay-ai-visibility`,
@@ -320,7 +320,7 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
     tips: [
       'Map your top 20 organic keywords and test whether AI models cite you for those queries — the overlap is often shockingly low.',
       'Treat AI visibility as a parallel channel: track it with the same rigor you apply to Google Search Console data.',
-      'Prioritise pages where you rank well on Google but score poorly on AiVIS — those are your highest-leverage improvement targets.',
+      'Prioritise pages where you rank well on Google but score poorly on AiVIS.biz — those are your highest-leverage improvement targets.',
     ],
     reads: [
       `Why traditional SEO fails for AI visibility → ${FRONTEND_URL_NL}/blogs/why-traditional-seo-tactics-fail-for-ai-visibility`,
@@ -336,13 +336,13 @@ const NICHE_CONTENT_POOL: NicheBlock[] = [
       'The first mover in AI visibility wins disproportionately: LLMs develop citation habits that persist across model updates.',
     ],
     tips: [
-      'Add your top 3 competitors in AiVIS competitor tracking and monitor score movement weekly.',
+      'Add your top 3 competitors in AiVIS.biz competitor tracking and monitor score movement weekly.',
       'Focus on categories where competitors score higher: schema, content depth, and meta tags are the most actionable gaps.',
       'Use the reverse engineering tool to decompile AI answers for your target queries — see exactly which sources get cited and why.',
     ],
     reads: [
       `Reverse engineering AI models → ${FRONTEND_URL_NL}/blogs/reverse-engineer-ai-models`,
-      `Why I built AiVIS → ${FRONTEND_URL_NL}/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai`,
+      `Why I built AiVIS.biz → ${FRONTEND_URL_NL}/blogs/why-i-built-aivis-when-i-realized-most-websites-are-invisible-to-ai`,
       `Pricing & Plans → ${FRONTEND_URL_NL}/pricing`,
     ],
   },

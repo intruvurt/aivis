@@ -2,7 +2,7 @@
 
 ## Goal
 
-Make AiVIS more durable as a product and retention engine by strengthening three things at the same time:
+Make AiVIS.biz more durable as a product and retention engine by strengthening three things at the same time:
 
 1. the clarity and usefulness of the user experience
 2. the depth and repeatability of the audit and remediation pipeline
@@ -12,7 +12,7 @@ This roadmap assumes a world where traditional clicks continue to weaken and use
 
 ## Product position to preserve
 
-AiVIS should keep its core position clear:
+AiVIS.biz should keep its core position clear:
 
 - any public site can use it
 - it is especially valuable for brands, startups, local businesses, agencies, and solo entrepreneurs
@@ -70,7 +70,7 @@ Retention rationale:
 
 ### 4. Team workspace differentiation
 
-Objective: turn AiVIS into a shared operating layer rather than a solo audit utility.
+Objective: turn AiVIS.biz into a shared operating layer rather than a solo audit utility.
 
 Deliverables:
 
@@ -124,7 +124,7 @@ Retention rationale:
 
 ## Operational guardrails
 
-To stay future-proof, AiVIS should keep these rules intact:
+To stay future-proof, AiVIS.biz should keep these rules intact:
 
 - shared contracts define tier truth
 - the server stays authoritative for access and pricing

@@ -20,7 +20,7 @@ import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 const GSC_FAQ = [
   {
     question: "What is Search Console Intelligence and how is it different from Google Search Console?",
-    answer: "Google Search Console shows you raw performance data: impressions, clicks, CTR, and position for your pages in Google Search. AiVIS Search Console Intelligence takes that same data and runs it through a pattern analysis layer that identifies: pages with declining CTR that need answer-block optimization, queries where your page ranks highly but doesn't drive clicks (a sign that a featured snippet or AI Overview is intercepting traffic before the click), keyword clusters where your content ranks but competitors' AI-optimized content is outperforming you, and structural gaps between your GSC performance profile and AI citation readiness benchmarks.",
+    answer: "Google Search Console shows you raw performance data: impressions, clicks, CTR, and position for your pages in Google Search. AiVIS.biz Search Console Intelligence takes that same data and runs it through a pattern analysis layer that identifies: pages with declining CTR that need answer-block optimization, queries where your page ranks highly but doesn't drive clicks (a sign that a featured snippet or AI Overview is intercepting traffic before the click), keyword clusters where your content ranks but competitors' AI-optimized content is outperforming you, and structural gaps between your GSC performance profile and AI citation readiness benchmarks.",
   },
   {
     question: "What does 'declining CTR' in the GSC analysis mean for AI visibility?",
@@ -36,7 +36,7 @@ const GSC_FAQ = [
   },
   {
     question: "Does connecting Google Search Console require sharing login credentials?",
-    answer: "No. The AiVIS GSC integration uses Google's OAuth 2.0 flow — you authorize access through Google's official permission screen, and AiVIS receives a read-only access token that never touches your Google login credentials. AiVIS only reads performance data (queries, pages, CTR, impressions, position) and never modifies any Search Console settings or property data. You can revoke access from your Google account settings at any time independently of your AiVIS account.",
+    answer: "No. The AiVIS.biz GSC integration uses Google's OAuth 2.0 flow — you authorize access through Google's official permission screen, and AiVIS.biz receives a read-only access token that never touches your Google login credentials. AiVIS.biz only reads performance data (queries, pages, CTR, impressions, position) and never modifies any Search Console settings or property data. You can revoke access from your Google account settings at any time independently of your AiVIS.biz account.",
   },
 ];
 
@@ -96,13 +96,13 @@ const GSC_TOOLS = [
 
 export default function GscConsolePage() {
   usePageMeta({
-    title: "Search Console Intelligence | AiVIS",
+    title: "Search Console Intelligence | AiVIS.biz",
     description: "Connect Google Search Console to analyze real performance data, detect declining pages, find CTR opportunities, and generate evidence-backed recommendations.",
     path: "/gsc",
     structuredData: [
       buildWebPageSchema({
         path: "/gsc",
-        name: "Search Console Intelligence | AiVIS",
+        name: "Search Console Intelligence | AiVIS.biz",
         description: "Connect Google Search Console to detect declining CTR pages, AI Overview intercepts, and keyword opportunity gaps. Evidence-backed recommendations for AI visibility improvement.",
       }),
       buildFaqSchema(GSC_FAQ, { path: "/gsc" }),

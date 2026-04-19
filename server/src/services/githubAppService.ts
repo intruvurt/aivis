@@ -2,7 +2,7 @@
  * GitHub App Service
  *
  * Manages GitHub App authentication (JWT + installation tokens),
- * installation lifecycle, and repository access for AiVIS AutoFix Engine.
+ * installation lifecycle, and repository access for AiVIS.biz AutoFix Engine.
  *
  * GitHub App ≠ OAuth: acts as a system identity with fine-grained per-repo permissions.
  * Uses RS256 JWT signed with the app's private key to obtain short-lived installation tokens.
@@ -137,7 +137,7 @@ export async function getInstallationToken(installationId: number): Promise<stri
         Authorization: `Bearer ${jwt}`,
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'AiVIS-AutoFix-Engine/1.0',
+        'User-Agent': 'AiVIS.biz-AutoFix-Engine/1.0',
       },
     }
   );
@@ -287,7 +287,7 @@ export async function listInstallationRepos(
         Authorization: `Bearer ${token}`,
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'AiVIS-AutoFix-Engine/1.0',
+        'User-Agent': 'AiVIS.biz-AutoFix-Engine/1.0',
       },
     }
   );
@@ -326,7 +326,7 @@ export async function listInstallationBranches(
         Authorization: `Bearer ${token}`,
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'AiVIS-AutoFix-Engine/1.0',
+        'User-Agent': 'AiVIS.biz-AutoFix-Engine/1.0',
       },
     }
   );
@@ -392,7 +392,7 @@ export async function createPRViaApp(input: GitHubPRInput): Promise<{ pr_number:
     Accept: 'application/vnd.github+json',
     'Content-Type': 'application/json',
     'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'AiVIS-AutoFix-Engine/1.0',
+    'User-Agent': 'AiVIS.biz-AutoFix-Engine/1.0',
   };
 
   // 1. Get base branch SHA

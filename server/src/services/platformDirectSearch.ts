@@ -30,7 +30,7 @@ export function hasDirectApi(platform: AuthorityPlatform): boolean {
   return DIRECT_API_PLATFORMS.has(platform);
 }
 
-const UA = 'AiVIS-AuthorityCheck/1.0 (visibility audit; non-commercial)';
+const UA = 'AiVIS.biz-AuthorityCheck/1.0 (visibility audit; non-commercial)';
 const TIMEOUT_MS = 10_000;
 
 async function fetchJson<T>(url: string): Promise<T | null> {

@@ -33,7 +33,7 @@ import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
 const KEYWORDS_FAQ = [
   {
     question: "What is keyword intelligence for AI visibility?",
-    answer: "Keyword intelligence for AI visibility goes beyond traditional search volume metrics to identify which query types trigger AI-generated answers and which phrases are most likely to result in citations. AiVIS extracts keywords from your audit results and classifies them by intent, AI extractability, search volume range, and competitive difficulty. The goal is to surface the terms where structuring your content as direct answers would most increase your citation probability in AI platforms like ChatGPT, Perplexity, Claude, and Google AI Overviews.",
+    answer: "Keyword intelligence for AI visibility goes beyond traditional search volume metrics to identify which query types trigger AI-generated answers and which phrases are most likely to result in citations. AiVIS.biz extracts keywords from your audit results and classifies them by intent, AI extractability, search volume range, and competitive difficulty. The goal is to surface the terms where structuring your content as direct answers would most increase your citation probability in AI platforms like ChatGPT, Perplexity, Claude, and Google AI Overviews.",
   },
   {
     question: "How are AI-era keywords different from traditional SEO keywords?",
@@ -129,7 +129,7 @@ export default function KeywordsPage() {
     structuredData: [
       buildWebPageSchema({
         path: '/keywords',
-        name: 'AI Visibility Keyword Intelligence | AiVIS',
+        name: 'AI Visibility Keyword Intelligence | AiVIS.biz',
         description: 'Keyword intent analysis, AI extractability scoring, and opportunity detection from your AI visibility audit results. Identify which query types drive AI citations and which need answer-block restructuring.',
       }),
       buildFaqSchema(KEYWORDS_FAQ, { path: '/keywords' }),

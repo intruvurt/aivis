@@ -199,7 +199,7 @@ Produce a JSON response with this exact structure:
   "score_before": ${args.scoreBefore},
   "projected_score_lift": "e.g. +12 to +18 points",
   "evidence_count": <number of recommendations addressed>,
-  "pr_title": "fix: AiVIS Score Fix - evidence-backed visibility improvements for ${args.targetUrl}",
+  "pr_title": "fix: AiVIS.biz Score Fix - evidence-backed visibility improvements for ${args.targetUrl}",
   "pr_body": "<full PR description in markdown with evidence citations, before/after summary, and implementation notes>",
   "file_changes": [
     {

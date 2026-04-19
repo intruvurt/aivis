@@ -7,7 +7,7 @@ import { getAgreementBySlug, generateAgreementHtml } from './agreementService.js
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const RESEND_KEY_VALID = RESEND_API_KEY.length > 0 && !RESEND_API_KEY.includes('replace_with') && RESEND_API_KEY.startsWith('re_');
-const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS.biz <noreply@mailer.aivis.biz>';
 
 async function resendSend(payload: {
   to: string;
@@ -76,7 +76,7 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     '',
     'A signed HTML copy is attached to this email.',
     '',
-    '- AiVIS / Intruvurt Labs',
+    '- AiVIS.biz / Intruvurt Labs',
   ].join('\n');
 
   const emailHtml = `
@@ -99,7 +99,7 @@ export async function sendAgreementSignedEmail(slug: string): Promise<void> {
     </table>
     <p style="font-size:14px;color:#555">A signed HTML copy is attached. You can verify integrity at any time by visiting the agreement verification page.</p>
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-    <p style="font-size:12px;color:#999;margin:0">AiVIS / Intruvurt Labs - Georgia, USA</p>
+    <p style="font-size:12px;color:#999;margin:0">AiVIS.biz / Intruvurt Labs - Georgia, USA</p>
   </div>
 </body>
 </html>`.trim();
@@ -133,17 +133,17 @@ function escapeHtml(str: string): string {
  */
 export async function sendAgreementOtpEmail(email: string, code: string, slug: string, party: string): Promise<void> {
   const partyLabel = party === 'a' ? 'Party A' : 'Party B';
-  const subject = `Your signing verification code - AiVIS Partnership`;
+  const subject = `Your signing verification code - AiVIS.biz Partnership`;
 
   const textBody = [
-    `Your verification code for signing the AiVIS partnership agreement is: ${code}`,
+    `Your verification code for signing the AiVIS.biz partnership agreement is: ${code}`,
     '',
     `You are signing as ${partyLabel}.`,
     'This code expires in 10 minutes.',
     '',
     'If you did not request this, you can safely ignore this email.',
     '',
-    '- AiVIS / Intruvurt Labs',
+    '- AiVIS.biz / Intruvurt Labs',
   ].join('\n');
 
   const emailHtml = `
@@ -159,7 +159,7 @@ export async function sendAgreementOtpEmail(email: string, code: string, slug: s
     </div>
     <p style="font-size:13px;color:#888;margin:0">This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-    <p style="font-size:12px;color:#999;margin:0">AiVIS / Intruvurt Labs - Georgia, USA</p>
+    <p style="font-size:12px;color:#999;margin:0">AiVIS.biz / Intruvurt Labs - Georgia, USA</p>
   </div>
 </body>
 </html>`.trim();
@@ -178,7 +178,7 @@ export async function sendAgreementExpiryReminder(slug: string, daysRemaining: n
   if (!agreement || !agreement.valid_until) return;
 
   const expiryDate = new Date(agreement.valid_until).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const subject = `Partnership agreement expires in ${daysRemaining} days - AiVIS × ${escapeHtml(agreement.party_b_org ?? 'Partner')}`;
+  const subject = `Partnership agreement expires in ${daysRemaining} days - AiVIS.biz × ${escapeHtml(agreement.party_b_org ?? 'Partner')}`;
   const urgency = daysRemaining <= 7 ? 'urgent' : daysRemaining <= 14 ? 'important' : 'notice';
   const urgencyColor = urgency === 'urgent' ? '#dc2626' : urgency === 'important' ? '#d97706' : '#2563eb';
 
@@ -192,7 +192,7 @@ export async function sendAgreementExpiryReminder(slug: string, daysRemaining: n
       ? 'ACTION REQUIRED: Please discuss renewal immediately.'
       : 'Please plan for renewal or discuss next steps with your partner.',
     '',
-    '- AiVIS / Intruvurt Labs',
+    '- AiVIS.biz / Intruvurt Labs',
   ].join('\n');
 
   const emailHtml = `
@@ -214,7 +214,7 @@ export async function sendAgreementExpiryReminder(slug: string, daysRemaining: n
     </table>
     <p style="font-size:14px;color:#555">Please coordinate with your partner to discuss renewal, renegotiation, or natural expiration.</p>
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-    <p style="font-size:12px;color:#999;margin:0">AiVIS / Intruvurt Labs - Georgia, USA</p>
+    <p style="font-size:12px;color:#999;margin:0">AiVIS.biz / Intruvurt Labs - Georgia, USA</p>
   </div>
 </body>
 </html>`.trim();

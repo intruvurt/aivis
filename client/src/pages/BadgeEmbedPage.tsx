@@ -9,7 +9,7 @@ const SITE_URL = API_URL ? new URL(API_URL).origin : 'https://aivis.biz';
 export default function BadgeEmbedPage() {
   usePageMeta({
     title: 'Visibility Badge',
-    description: 'Embed the AiVIS visibility badge on your website to signal AI citation readiness and track impressions.',
+    description: 'Embed the AiVIS.biz visibility badge on your website to signal AI citation readiness and track impressions.',
     path: '/badge',
   });
 
@@ -30,7 +30,7 @@ export default function BadgeEmbedPage() {
 
   const snippet = useMemo(
     () =>
-      `<!-- AiVIS Visibility Badge -->\n<a href="${clickUrl}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS">\n  <img src="${badgeImageUrl}" alt="Audited by AiVIS – AI Visibility Audit" width="150" height="42" style="border:0;" loading="lazy" />\n</a>\n<img src="${trackPixelUrl}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`,
+      `<!-- AiVIS.biz Visibility Badge -->\n<a href="${clickUrl}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS.biz">\n  <img src="${badgeImageUrl}" alt="Audited by AiVIS.biz – AI Visibility Audit" width="150" height="42" style="border:0;" loading="lazy" />\n</a>\n<img src="${trackPixelUrl}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`,
     [clickUrl, badgeImageUrl, trackPixelUrl],
   );
 
@@ -63,7 +63,7 @@ export default function BadgeEmbedPage() {
         {/* Header */}
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            AiVIS Dofollow <span className="text-cyan-400">Backlink Badge</span>
+            AiVIS.biz Dofollow <span className="text-cyan-400">Backlink Badge</span>
           </h1>
           <p className="mt-3 text-sm text-gray-400 max-w-xl mx-auto">
             Add a professionally designed badge to your website footer. You earn a
@@ -77,10 +77,10 @@ export default function BadgeEmbedPage() {
         <div className="rounded-xl border border-white/10 bg-charcoal-deep/50 p-6 mb-8">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Preview</h2>
           <div className="flex items-center justify-center rounded-lg bg-[#0d0d10] border border-white/5 p-8">
-            <a href={clickUrl} target="_blank" rel="dofollow noopener" title="AI Visibility Audit by AiVIS">
+            <a href={clickUrl} target="_blank" rel="dofollow noopener" title="AI Visibility Audit by AiVIS.biz">
               <img
                 src="/aivis-footer-badge-dofollow.png"
-                alt="Audited by AiVIS – AI Visibility Audit"
+                alt="Audited by AiVIS.biz – AI Visibility Audit"
                 width={150}
                 height={42}
                 className="h-auto"
@@ -107,7 +107,7 @@ export default function BadgeEmbedPage() {
             {snippet}
           </pre>
           <p className="mt-3 text-xs text-gray-500">
-            Paste this snippet into your website footer HTML. The badge links back to AiVIS
+            Paste this snippet into your website footer HTML. The badge links back to AiVIS.biz
             with a <code className="text-cyan-400/80">rel="dofollow"</code> attribute and includes
             a 1×1 tracking pixel for impression counting.
           </p>
@@ -124,7 +124,7 @@ export default function BadgeEmbedPage() {
               <div>
                 <p className="text-sm font-medium text-white">Dofollow Link</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Search engines follow the link, passing authority to your site and AiVIS.
+                  Search engines follow the link, passing authority to your site and AiVIS.biz.
                 </p>
               </div>
             </div>

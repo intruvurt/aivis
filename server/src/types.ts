@@ -21,7 +21,7 @@
 /* ========================= Canonical tier system ========================= */
 
 /**
- * AiVIS 5-Tier Model
+ * AiVIS.biz 5-Tier Model
  * - observer: Free tier ("see how AI systems parse and interpret your site")
  * - starter: Starter tier ("all recommendations with implementation code and PDF exports")
  * - alignment: Core tier ("turn structural gaps into extractable evidence")

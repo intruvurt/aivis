@@ -1,5 +1,5 @@
 /**
- * PayPal payment routes for AiVIS.
+ * PayPal payment routes for AiVIS.biz.
  *
  * Provides an alternative payment method alongside Stripe.
  * Routes mirror the Stripe flow: create checkout → PayPal approval → capture/activate.

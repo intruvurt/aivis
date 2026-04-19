@@ -95,7 +95,7 @@ export default function ContentExtractabilityPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/tools/content-extractability",
-        name: "Content Extractability Grader \u2014 AI Answer Block Analysis | AiVIS",
+        name: "Content Extractability Grader \u2014 AI Answer Block Analysis | AiVIS.biz",
         description: "Grade how well AI models can extract answers from your page. Free analysis of heading hierarchy, FAQ structure, answer-block density, and content extractability for AI citations.",
       }),
       buildFaqSchema(CONTENT_EXTRACTABILITY_FAQ, { path: "/tools/content-extractability" }),

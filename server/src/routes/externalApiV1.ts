@@ -232,7 +232,7 @@ async function runPageValidation(targetUrl: string) {
     redirect: 'follow',
     signal: AbortSignal.timeout(15000),
     headers: {
-      'User-Agent': 'AiVIS-ExternalAPI/1.0 (+https://aivis.biz)',
+      'User-Agent': 'AiVIS.biz-ExternalAPI/1.0 (+https://aivis.biz)',
       'Accept': 'text/html,application/xhtml+xml',
     },
   });

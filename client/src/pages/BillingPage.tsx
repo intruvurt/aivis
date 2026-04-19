@@ -572,9 +572,9 @@ export default function BillingPage() {
 
   usePageMeta({
     title: 'Billing & Subscription',
-    description: 'Manage your AiVIS subscription, payment methods, invoices, and extra audit credit packs from one secure billing center.',
+    description: 'Manage your AiVIS.biz subscription, payment methods, invoices, and extra audit credit packs from one secure billing center.',
     path: '/billing',
-    ogTitle: 'AiVIS Billing Center',
+    ogTitle: 'AiVIS.biz Billing Center',
   });
 
   const navigate = useNavigate();
@@ -1072,7 +1072,7 @@ export default function BillingPage() {
         <div id="cost-comparison" className="section-anchor mt-6 rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 p-5">
           <h2 className="text-base font-semibold mb-1 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            How AiVIS Compares
+            How AiVIS.biz Compares
           </h2>
           <p className="text-xs text-white/50 mb-5">Estimated monthly cost for comparable AI visibility capabilities on other platforms - if they even offer them.</p>
 
@@ -1082,7 +1082,7 @@ export default function BillingPage() {
               <thead>
                 <tr className="border-b border-white/10 text-[10px] uppercase tracking-wider text-white/40">
                   <th className="pb-2 pr-3 font-medium">Capability</th>
-                  <th className="pb-2 px-3 font-medium text-center">AiVIS</th>
+                  <th className="pb-2 px-3 font-medium text-center">AiVIS.biz</th>
                   <th className="pb-2 px-3 font-medium text-center">Otterly.ai</th>
                   <th className="pb-2 px-3 font-medium text-center">Profound</th>
                   <th className="pb-2 px-3 font-medium text-center">Re:audit</th>
@@ -1145,19 +1145,19 @@ export default function BillingPage() {
           <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-3">
             <p className="text-[11px] text-white/55 leading-relaxed">
               <strong className="text-white/70">Bottom line:</strong>{" "}
-              To match what AiVIS Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
+              To match what AiVIS.biz Signal offers at $149/mo, you'd need multiple subscriptions totaling $300–$500+/mo - and you still wouldn't get MCP protocol access, reverse-engineering tools, brand mention tracking, niche discovery, or automated PR generation. Most platforms don't even offer multi-model validation or citation testing.
             </p>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
             <Link to="/compare/aivis-vs-otterly" className="inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full border border-white/10 bg-charcoal-light text-white/70 hover:text-white transition-colors">
-              AiVIS vs Otterly <ExternalLink className="w-3 h-3" />
+              AiVIS.biz vs Otterly <ExternalLink className="w-3 h-3" />
             </Link>
             <Link to="/compare/aivis-vs-profound" className="inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full border border-white/10 bg-charcoal-light text-white/70 hover:text-white transition-colors">
-              AiVIS vs Profound <ExternalLink className="w-3 h-3" />
+              AiVIS.biz vs Profound <ExternalLink className="w-3 h-3" />
             </Link>
             <Link to="/compare/aivis-vs-reaudit" className="inline-flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-full border border-white/10 bg-charcoal-light text-white/70 hover:text-white transition-colors">
-              AiVIS vs Re:audit <ExternalLink className="w-3 h-3" />
+              AiVIS.biz vs Re:audit <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
         </div>
@@ -1168,7 +1168,7 @@ export default function BillingPage() {
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             Secure Payment Connection
           </h2>
-          <p className="text-xs text-white/50 mb-3">Your billing is handled entirely through Stripe - AiVIS never sees or stores your card details.</p>
+          <p className="text-xs text-white/50 mb-3">Your billing is handled entirely through Stripe - AiVIS.biz never sees or stores your card details.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-start gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] p-3">
@@ -1188,7 +1188,7 @@ export default function BillingPage() {
             <div className="flex items-start gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] p-3">
               <ShieldCheck className="w-4 h-4 text-emerald-400/80 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-xs font-medium text-white/80">No card storage on AiVIS</p>
+                <p className="text-xs font-medium text-white/80">No card storage on AiVIS.biz</p>
                 <p className="text-[10px] text-white/45">Payment methods managed exclusively through Stripe portal</p>
               </div>
             </div>

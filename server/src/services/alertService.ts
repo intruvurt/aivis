@@ -131,7 +131,7 @@ export async function markAllNotificationsRead(userId: string): Promise<void> {
 
 async function dispatchEmail(toEmail: string, payload: AlertPayload): Promise<void> {
   const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-  const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
+  const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS.biz <noreply@mailer.aivis.biz>';
 
   if (!RESEND_API_KEY.startsWith('re_')) {
     console.log(`[AlertService] email fallback (no key): ${toEmail} - ${payload.title}`);
@@ -172,7 +172,7 @@ async function dispatchWebhook(url: string, payload: AlertPayload): Promise<void
 
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'User-Agent': 'AiVIS-AlertService/1.0' },
+    headers: { 'Content-Type': 'application/json', 'User-Agent': 'AiVIS.biz-AlertService/1.0' },
     body,
     signal: AbortSignal.timeout(8000),
   });
@@ -301,7 +301,7 @@ export async function sendTestAlert(channel: AlertChannel, channelConfig: Record
   const payload: AlertPayload = {
     type: 'score_improvement',
     title: 'Evidence-backed site analysis for AI answers Platform - Test Alert',
-    body: 'This is a test notification from AiVIS. Your alert channel is configured correctly.',
+    body: 'This is a test notification from AiVIS.biz. Your alert channel is configured correctly.',
   };
 
   switch (channel) {

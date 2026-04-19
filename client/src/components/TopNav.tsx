@@ -332,8 +332,8 @@ export default function TopNav() {
         <div className="flex items-center gap-2 shrink-0">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 py-1">
-            <img src={LOGO_URL} alt="AiVIS" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
-            <span className="text-[15px] font-bold text-white tracking-tight">AiVIS</span>
+            <img src={LOGO_URL} alt="AiVIS.biz" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
+            <span className="text-[15px] font-bold text-white tracking-tight">AiVIS.biz</span>
           </Link>
 
           <span

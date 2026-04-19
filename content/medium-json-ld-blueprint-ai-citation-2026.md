@@ -14,7 +14,7 @@ They're the ones with the clearest machine-readable identity declarations.
 
 Specifically: well-formed JSON-LD schema markup.
 
-After running AI visibility audits on hundreds of websites through [AiVIS](https://aivis.biz), I've found that JSON-LD quality is the single highest-leverage technical signal that determines citation eligibility. A site with mediocre content but excellent schema will consistently outperform a site with excellent content and mediocre or missing schema.
+After running AI visibility audits on hundreds of websites through [AiVIS.biz](https://aivis.biz), I've found that JSON-LD quality is the single highest-leverage technical signal that determines citation eligibility. A site with mediocre content but excellent schema will consistently outperform a site with excellent content and mediocre or missing schema.
 
 This post is going to give you the exact JSON-LD templates I've seen perform best, explain *why* each property matters to AI inference pipelines, and walk you through how to validate what you've built.
 
@@ -174,7 +174,7 @@ When Perplexity processes a query, its answer synthesis pipeline specifically lo
       "name": "How do I check if my website is blocking AI crawlers?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Check your robots.txt file at yourdomain.com/robots.txt and look for User-agent entries for GPTBot, ClaudeBot, PerplexityBot, and CCBot. If any of these have a Disallow: / rule, that crawler cannot access your content. Use the AiVIS Robots Checker at aivis.biz/tools/robots-checker for a graded assessment."
+        "text": "Check your robots.txt file at yourdomain.com/robots.txt and look for User-agent entries for GPTBot, ClaudeBot, PerplexityBot, and CCBot. If any of these have a Disallow: / rule, that crawler cannot access your content. Use the AiVIS.biz Robots Checker at aivis.biz/tools/robots-checker for a graded assessment."
       }
     },
     {
@@ -286,7 +286,7 @@ Never assume your schema is working correctly after implementation. Schema bugs 
 
 **Schema.org Validator** - schema.org/validator - validates against the full Schema.org vocabulary, which is broader than what Google enforces. Catches issues that Google's tool misses.
 
-**AiVIS Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - validates JSON-LD but also checks Open Graph, Twitter Card, and Microdata simultaneously in one pass. Specifically tests for the properties AI citation pipelines care about, not just what Google surfaces. Free, no account.
+**AiVIS.biz Schema Validator** - [aivis.biz/tools/schema-validator](https://aivis.biz/tools/schema-validator) - validates JSON-LD but also checks Open Graph, Twitter Card, and Microdata simultaneously in one pass. Specifically tests for the properties AI citation pipelines care about, not just what Google surfaces. Free, no account.
 
 **Browser DevTools quick check** - In Chrome, go to your page, open DevTools, go to Elements, and search for `application/ld+json`. You should see your JSON-LD blocks as static script tags. If you don't see them - if your schema is being injected by JavaScript after page load - Claude and other non-JS-executing scrapers cannot see it. Inline it in your server-rendered HTML.
 

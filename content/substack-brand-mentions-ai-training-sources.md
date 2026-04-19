@@ -10,7 +10,7 @@
 
 ---
 
-I've been building [AiVIS](https://aivis.biz/analyze) for over a year now and the question I keep getting is: "Where do AI models actually find information about my brand?"
+I've been building [AiVIS.biz](https://aivis.biz/analyze) for over a year now and the question I keep getting is: "Where do AI models actually find information about my brand?"
 
 Not where Google finds it. Where ChatGPT, Perplexity, Claude, and Google AI Overview find it.
 
@@ -24,25 +24,25 @@ Here's what I learned from watching it run across hundreds of brands.
 
 ## The 9 Sources and Why AI Models Care About Each One
 
-The [AiVIS Brand Mention Tracker](https://aivis.biz/mentions) runs scans across 9 platforms simultaneously. Each one matters for a different reason.
+The [AiVIS.biz Brand Mention Tracker](https://aivis.biz/mentions) runs scans across 9 platforms simultaneously. Each one matters for a different reason.
 
 ### 1. Reddit
 
 Reddit is probably the single most important third-party signal for AI citation. ChatGPT's training data includes massive Reddit archives. Perplexity actively crawls Reddit threads for real-time answers. When someone asks an AI model "what's the best tool for X" and your brand shows up in Reddit threads with upvotes and genuine discussion, that's a citation-ready signal.
 
-AiVIS queries Reddit's public JSON API to find posts and comments mentioning your brand. It distinguishes between direct promotion (you posting about yourself), organic problem-solving mentions (someone recommending you unprompted), and neutral references.
+AiVIS.biz queries Reddit's public JSON API to find posts and comments mentioning your brand. It distinguishes between direct promotion (you posting about yourself), organic problem-solving mentions (someone recommending you unprompted), and neutral references.
 
 ### 2. Hacker News
 
 HN is smaller than Reddit but disproportionately weighted by AI models because of the technical credibility of its user base. A front-page HN post about your product generates training signal that persists in model weights for years.
 
-AiVIS uses the Algolia-powered HN search API to find stories and discussion threads. If your brand has been discussed on HN, even once, that mention lives in every major model's training corpus.
+AiVIS.biz uses the Algolia-powered HN search API to find stories and discussion threads. If your brand has been discussed on HN, even once, that mention lives in every major model's training corpus.
 
 ### 3. GitHub
 
 Code repositories are a massive but underrated AI training source. Every major language model was trained on GitHub data. If your brand has repos, issues, discussions, or README references on GitHub, AI models have internalized that context.
 
-AiVIS hits GitHub's REST search API to find repository-level mentions. This is especially powerful for developer tools, SaaS products, and anything with a technical audience.
+AiVIS.biz hits GitHub's REST search API to find repository-level mentions. This is especially powerful for developer tools, SaaS products, and anything with a technical audience.
 
 ### 4. Mastodon
 
@@ -50,7 +50,7 @@ The fediverse is growing and AI models are paying attention. Mastodon's public A
 
 ### 5. DuckDuckGo Dork
 
-This is a web-wide sweep. AiVIS runs a `"your brand" -site:yourdomain.com` dork through DuckDuckGo HTML search. The `-site:` exclusion filters out your own pages, leaving only third-party mentions. Every result is a page where someone else is talking about you.
+This is a web-wide sweep. AiVIS.biz runs a `"your brand" -site:yourdomain.com` dork through DuckDuckGo HTML search. The `-site:` exclusion filters out your own pages, leaving only third-party mentions. Every result is a page where someone else is talking about you.
 
 This catches blog posts, forum threads, review sites, and niche directories that don't have their own API.
 
@@ -68,19 +68,19 @@ Google News RSS feeds capture press coverage and news mentions. AI models weight
 
 Quora is a direct Q&A platform, which means it maps almost perfectly to how AI models process queries. When someone asks "What is the best X?" on Quora and your brand appears in answers, that's structurally identical to how an AI model processes the same question.
 
-AiVIS finds Quora mentions via a `site:quora.com "your brand"` search through Bing.
+AiVIS.biz finds Quora mentions via a `site:quora.com "your brand"` search through Bing.
 
 ### 9. Product Hunt
 
 Product Hunt is a launch and discovery platform. For SaaS, developer tools, and consumer products, a Product Hunt presence signals that your brand exists in the product ecosystem, not just the content ecosystem. AI models that index Product Hunt pages will associate your brand with your product category.
 
-AiVIS itself is listed on Product Hunt — [check it out here](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit). That listing is part of the same trust signal this article describes: an independent product directory confirming the brand exists outside its own domain.
+AiVIS.biz itself is listed on Product Hunt — [check it out here](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit). That listing is part of the same trust signal this article describes: an independent product directory confirming the brand exists outside its own domain.
 
 ---
 
 ## What One Scan Actually Looks Like
 
-When you run a brand mention scan on [AiVIS](https://aivis.biz/mentions), all 9 sources run in parallel. You get back a unified timeline showing:
+When you run a brand mention scan on [AiVIS.biz](https://aivis.biz/mentions), all 9 sources run in parallel. You get back a unified timeline showing:
 
 - **Source breakdown** - which platforms mention you and how often
 - **Mention frequency** - are mentions increasing, flat, or declining
@@ -113,11 +113,11 @@ The other layers matter too:
 
 **Structural clarity** is whether an AI model can even parse your page. That's what the [SSFR scoring framework](https://aivis.biz/methodology) measures across 28 deterministic rules. JSON-LD, heading hierarchy, content depth, robots.txt access, AI crawler permissions. You can test the critical ones for free with the [Schema Validator](https://aivis.biz/tools/schema-validator), [Robots Checker](https://aivis.biz/tools/robots-checker), and [Content Extractability Tool](https://aivis.biz/tools/content-extractability).
 
-**Citation testing** is whether your brand actually appears when AI platforms answer queries in your niche. The [AiVIS Citation Tracker](https://aivis.biz/citations) tests this across 3 search engines (DuckDuckGo, Bing, DDG Instant Answer) running in parallel, simulating how ChatGPT, Perplexity, Claude, and Google AI would handle the query. Available on Signal tier and above.
+**Citation testing** is whether your brand actually appears when AI platforms answer queries in your niche. The [AiVIS.biz Citation Tracker](https://aivis.biz/citations) tests this across 3 search engines (DuckDuckGo, Bing, DDG Instant Answer) running in parallel, simulating how ChatGPT, Perplexity, Claude, and Google AI would handle the query. Available on Signal tier and above.
 
-**Competitive positioning** shows where you stand relative to competitors. [AiVIS Competitor Tracking](https://aivis.biz/competitors) runs head-to-head comparisons across schema coverage, content depth, heading structure, FAQ count, meta descriptions, and page speed. It finds specific opportunities where competitors have something you don't. Available on Alignment tier and above.
+**Competitive positioning** shows where you stand relative to competitors. [AiVIS.biz Competitor Tracking](https://aivis.biz/competitors) runs head-to-head comparisons across schema coverage, content depth, heading structure, FAQ count, meta descriptions, and page speed. It finds specific opportunities where competitors have something you don't. Available on Alignment tier and above.
 
-**Reverse engineering** is the deep layer. The [AiVIS Reverse Engineer](https://aivis.biz/reverse-engineer) suite has 4 tools: Answer Decompiler (breaks down AI answers into source types and structural patterns), Competitor Ghost (generates ideal page blueprints for any query), Model Preference Diff (compares how different AI models weight the same content), and Visibility Simulator (forecasts your citation probability across GPT-4, Claude, Perplexity, and Gemini with before-and-after simulations).
+**Reverse engineering** is the deep layer. The [AiVIS.biz Reverse Engineer](https://aivis.biz/reverse-engineer) suite has 4 tools: Answer Decompiler (breaks down AI answers into source types and structural patterns), Competitor Ghost (generates ideal page blueprints for any query), Model Preference Diff (compares how different AI models weight the same content), and Visibility Simulator (forecasts your citation probability across GPT-4, Claude, Perplexity, and Gemini with before-and-after simulations).
 
 Brand mentions connect to all of this. The structural checks confirm your page is readable. The citation tests confirm you're getting cited. The competitor analysis shows your relative position. And the mention tracker confirms that the broader internet treats you as a real entity. Together, they close the loop.
 
@@ -133,7 +133,7 @@ This means brand mention tracking isn't just about what's happening now. It's ab
 
 That's why monitoring matters. You need to know whether your mention footprint is growing or shrinking over time. A brand that was discussed actively 2 years ago but has gone quiet is losing ground to competitors who are generating fresh mentions.
 
-The [AiVIS analytics dashboard](https://aivis.biz/analytics) tracks your visibility score over time alongside these signals. Set up [scheduled rescans](https://aivis.biz/analyze) and the system monitors your position automatically. Alignment tier supports monthly rescans (up to 2 schedules). Signal tier supports daily, weekly, biweekly, or monthly (up to 10 schedules).
+The [AiVIS.biz analytics dashboard](https://aivis.biz/analytics) tracks your visibility score over time alongside these signals. Set up [scheduled rescans](https://aivis.biz/analyze) and the system monitors your position automatically. Alignment tier supports monthly rescans (up to 2 schedules). Signal tier supports daily, weekly, biweekly, or monthly (up to 10 schedules).
 
 ---
 
@@ -147,7 +147,7 @@ The fix isn't to spam these platforms. It's to create genuine presence where you
 2. Ship something worth discussing on Hacker News
 3. Maintain an active GitHub presence if you're technical
 4. Write substantive Quora answers in your expertise area
-5. Get your product on [Product Hunt](https://www.producthunt.com/) if you're launching something — this is exactly what [AiVIS did](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit) to establish product ecosystem presence
+5. Get your product on [Product Hunt](https://www.producthunt.com/) if you're launching something — this is exactly what [AiVIS.biz did](https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit) to establish product ecosystem presence
 
 These aren't SEO hacks. They're real presence signals that both humans and AI models interpret as credibility.
 
@@ -159,14 +159,14 @@ AI models don't live in a vacuum. They're synthesizing answers from a mesh of so
 
 If your brand doesn't exist across these platforms, you're asking AI to cite an entity it has no independent evidence for. That's a losing position.
 
-The fact that you can monitor all 9 for free (no API keys, all public data) on [AiVIS](https://aivis.biz/mentions) means there's no excuse not to at least know where you stand.
+The fact that you can monitor all 9 for free (no API keys, all public data) on [AiVIS.biz](https://aivis.biz/mentions) means there's no excuse not to at least know where you stand.
 
 Start with a mention scan. See which platforms know you exist. Then build from there.
 
-[Try AiVIS free at aivis.biz](https://aivis.biz)
+[Try AiVIS.biz free at aivis.biz](https://aivis.biz)
 
 ---
 
 *Previous issue: [Your Website Is Invisible to AI and You Don't Even Know It](https://open.substack.com/pub/dobleduche/p/i-used-to-build-websites-so-people?r=iut19&utm_campaign=post&utm_medium=web)*
 
-*The platform: [AiVIS | AI Visibility Audit |AiVIS.biz - CITE LEDGER |AiVIS - CITE LEDGER | Evidence-Linked Scores ](https://aivis.biz)*
+*The platform: [AiVIS.biz | AI Visibility Audit |AiVIS.biz.biz - CITE LEDGER |AiVIS.biz - CITE LEDGER | Evidence-Linked Scores ](https://aivis.biz)*

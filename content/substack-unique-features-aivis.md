@@ -4,15 +4,15 @@ Look, I'm not going to sugarcoat this. Most of you reading this right now have w
 
 And the wild part? Nobody is building real tools to fix that. Until now.
 
-I built [AiVIS](https://aivis.biz/analytics) because I got tired of watching brands dump money into SEO tools that measure the wrong things. Keyword rankings don't mean anything when an AI model is deciding whether to mention your brand in a conversation. That's a completely different game with completely different rules.
+I built [AiVIS.biz](https://aivis.biz/analytics) because I got tired of watching brands dump money into SEO tools that measure the wrong things. Keyword rankings don't mean anything when an AI model is deciding whether to mention your brand in a conversation. That's a completely different game with completely different rules.
 
-So let me walk you through what AiVIS actually does that no other platform on the market touches.
+So let me walk you through what AiVIS.biz actually does that no other platform on the market touches.
 
 ---
 
 ## 1. We Test Your Citations Across 4 Real AI Platforms
 
-This is not a gimmick. [AiVIS Citation Tracker](https://aivis.biz/citations) literally simulates how ChatGPT, Perplexity, Claude, and Google AI would respond to queries about your niche. Each simulation uses behavior-specific prompts built from studying how each platform actually crawls, indexes, and generates answers.
+This is not a gimmick. [AiVIS.biz Citation Tracker](https://aivis.biz/citations) literally simulates how ChatGPT, Perplexity, Claude, and Google AI would respond to queries about your niche. Each simulation uses behavior-specific prompts built from studying how each platform actually crawls, indexes, and generates answers.
 
 ChatGPT leans on Bing index data and entity resolution. Perplexity does real-time web crawls with semantic similarity matching. Claude processes server-rendered HTML converted to markdown (it doesn't execute JavaScript at all). Google AI pulls from 3-5 diverse sources and weighs E-E-A-T signals heavy.
 
@@ -26,7 +26,7 @@ Nobody else does this. Period.
 
 ## 2. The 18-Platform Authority Check
 
-Here's where things get serious. [AiVIS Citation Tracker](https://aivis.biz/citations) scans your brand presence across 18 high-authority platforms that AI models actually pull from when generating answers.
+Here's where things get serious. [AiVIS.biz Citation Tracker](https://aivis.biz/citations) scans your brand presence across 18 high-authority platforms that AI models actually pull from when generating answers.
 
 Reddit. LinkedIn. Wikipedia. GitHub. Hacker News. Stack Overflow. YouTube. Medium. Substack. TechCrunch. Product Hunt. G2. Trustpilot. Crunchbase. Blogger. Facebook. DevPost. Chrome Web Store.
 
@@ -44,7 +44,7 @@ No other tool gives you this view across this many platforms with this level of 
 
 Most AI audit tools run your site through one model and call it a day. That's lazy and unreliable.
 
-On [AiVIS](https://aivis.biz/methodology) Signal and Score Fix tiers, we run a 3-stage cross-validation pipeline:
+On [AiVIS.biz](https://aivis.biz/methodology) Signal and Score Fix tiers, we run a 3-stage cross-validation pipeline:
 
 **Stage 1** is the primary analysis. A full deep audit of your site's machine readability, structured data, content extractability, and citation readiness.
 
@@ -62,9 +62,9 @@ Find me another tool doing multi-model cross-validation on website audits. I'll 
 
 ## 4. Reverse Engineering Tools That Actually Decode AI Behavior
 
-This is the one that makes people's jaws drop. [AiVIS Reverse Engineer](https://aivis.biz/reverse-engineer) has 4 reverse engineering tools that let you look under the hood of how AI models think about content.
+This is the one that makes people's jaws drop. [AiVIS.biz Reverse Engineer](https://aivis.biz/reverse-engineer) has 4 reverse engineering tools that let you look under the hood of how AI models think about content.
 
-**Answer Decompiler.** Paste any AI-generated answer into AiVIS and it breaks it down into source types, structural patterns, semantic clusters, citation vectors, and a reconstruction blueprint. It literally tells you what kind of page would have generated that answer. So you can become that page.
+**Answer Decompiler.** Paste any AI-generated answer into AiVIS.biz and it breaks it down into source types, structural patterns, semantic clusters, citation vectors, and a reconstruction blueprint. It literally tells you what kind of page would have generated that answer. So you can become that page.
 
 **Competitor Ghost.** Give it a query and it generates the ideal AI-optimized page blueprint. Title, meta, H1, full section hierarchy with required entities and word counts, entity graph, answer density map, trust signals, schema recommendations, internal link patterns. It even gives you an estimated inclusion probability.
 
@@ -78,19 +78,19 @@ These tools don't exist anywhere else. Not on Ahrefs. Not on SEMrush. Not on any
 
 ## 5. Niche Ranking Engine with Cross-Platform Verification
 
-Want to know where you actually rank in your niche across AI platforms? [AiVIS Niche Discovery](https://aivis.biz/niche-discovery) generates a Top 100 list for any niche using its AI model chain, then checks if your brand appears.
+Want to know where you actually rank in your niche across AI platforms? [AiVIS.biz Niche Discovery](https://aivis.biz/niche-discovery) generates a Top 100 list for any niche using its AI model chain, then checks if your brand appears.
 
 But it doesn't stop there. If the initial parse doesn't find you (maybe your brand is abbreviated or spelled differently), it runs AI verification to catch alternate forms. Then it does citation verification across 4 platforms by asking GPT-5 Nano, Claude Haiku 4.5, DeepSeek V3.2, and Gemini 2.5 Flash whether they'd mention your brand in context.
 
 You get your exact rank, whether you're in the top 50 or top 100, the full rankings list, which model generated it, and per-platform citation verification with mention positions.
 
-Set it on a schedule and AiVIS monitors your niche ranking over time. If your mention rate drops, you get an email alert. This is real monitoring, not a static snapshot.
+Set it on a schedule and AiVIS.biz monitors your niche ranking over time. If your mention rate drops, you get an email alert. This is real monitoring, not a static snapshot.
 
 ---
 
 ## 6. Document Upload De-AI Analysis
 
-This one is personal for me. [AiVIS](https://aivis.biz/analyze) has a document upload feature that doesn't just audit your content for visibility. It runs a full writing audit that includes a de-AI score.
+This one is personal for me. [AiVIS.biz](https://aivis.biz/analyze) has a document upload feature that doesn't just audit your content for visibility. It runs a full writing audit that includes a de-AI score.
 
 Upload a blog post, article, ebook chapter, whatever. The system detects the content type automatically and scores your SEO title (0-100), opening hook (0-100), and de-AI authenticity (0-100, measuring how AI-written your content sounds to AI detectors and readers).
 
@@ -102,11 +102,11 @@ If you're publishing content and not running it through something like this, you
 
 ## 7. Competitor Tracking with Real Opportunity Detection
 
-Competitor tracking on [AiVIS Competitors](https://aivis.biz/competitors) is not just "hey here are your competitors' scores." It compares your audits head to head across schema types, JSON-LD coverage, content depth, heading structure, FAQ count, meta descriptions, canonical tags, viewport optimization, and page speed.
+Competitor tracking on [AiVIS.biz Competitors](https://aivis.biz/competitors) is not just "hey here are your competitors' scores." It compares your audits head to head across schema types, JSON-LD coverage, content depth, heading structure, FAQ count, meta descriptions, canonical tags, viewport optimization, and page speed.
 
 Then it finds opportunities. If a competitor has schema markup you don't, it tells you. If your content depth beats all tracked competitors, it tells you that too. Each opportunity comes with an impact estimate like "+3-8 points estimated."
 
-You can also turn on auto-discovery. AiVIS scans your audit history and finds URLs with overlapping topical keywords that are likely competitors you haven't tracked yet. Or pick from 7 pre-built niche packs (SaaS, Legal, Health, Ecommerce, etc.) to get started instantly.
+You can also turn on auto-discovery. AiVIS.biz scans your audit history and finds URLs with overlapping topical keywords that are likely competitors you haven't tracked yet. Or pick from 7 pre-built niche packs (SaaS, Legal, Health, Ecommerce, etc.) to get started instantly.
 
 Enable monitoring and your competitors get rescanned on whatever schedule you want. Daily, weekly, biweekly, monthly. You always know where you stand.
 
@@ -114,7 +114,7 @@ Enable monitoring and your competitors get rescanned on whatever schedule you wa
 
 ## 8. Evidence-Based Scoring (BRAG System)
 
-Every recommendation AiVIS gives you ties back to actual scraped evidence from your site. This is the BRAG system (Based Retrieval Audit Grading). Each finding has evidence IDs that link to real content on your pages.
+Every recommendation AiVIS.biz gives you ties back to actual scraped evidence from your site. This is the BRAG system (Based Retrieval Audit Grading). Each finding has evidence IDs that link to real content on your pages.
 
 The system computes verification status (verified, partial, or unverified) and evidence coverage percentage. So you know the difference between "the AI thinks you should do this" and "we found concrete proof on your site that this specific thing is broken."
 
@@ -124,7 +124,7 @@ No other audit tool shows you the receipts like this.
 
 ## The Bottom Line
 
-I built [AiVIS](https://aivis.biz/pricing) because the AI visibility problem is real and nobody was solving it properly. Traditional SEO tools measure search engine rankings. That's great for 2019. But in 2026, AI models are answering questions directly and choosing which brands to cite. If you're not optimized for that, you're invisible.
+I built [AiVIS.biz](https://aivis.biz/pricing) because the AI visibility problem is real and nobody was solving it properly. Traditional SEO tools measure search engine rankings. That's great for 2019. But in 2026, AI models are answering questions directly and choosing which brands to cite. If you're not optimized for that, you're invisible.
 
 The free Observer tier gives you 3 scans a month. No credit card. Just go see where you actually stand.
 
@@ -132,4 +132,4 @@ And if you want the triple-check pipeline, the reverse engineering tools, the 18
 
 Stop guessing. Start seeing what AI actually sees.
 
-[AiVIS.biz](https://aivis.biz)
+[AiVIS.biz.biz](https://aivis.biz)

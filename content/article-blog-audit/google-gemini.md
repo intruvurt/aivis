@@ -1,4 +1,4 @@
-To audit a blog or article under the **AiVIS Remediation Engine** spec, we move away from "keyword density" and toward **Information Supply Chain Integrity**. 
+To audit a blog or article under the **AiVIS.biz Remediation Engine** spec, we move away from "keyword density" and toward **Information Supply Chain Integrity**. 
 
 The audit treats an article as a **structured data source** for an LLM's RAG (Retrieval-Augmented Generation) pipeline. Here is the implementation spec for the `BlogAuditModule`.
 
@@ -138,7 +138,7 @@ export async function extractUniqueClaims(
   const uniqueCount = analyzedClaims.filter(c => c.isUnique).length;
   const infoGainScore = Math.round((uniqueCount / analyzedClaims.length) * 100);
 
-  // 3. Map to AiVIS Evidence Ledger
+  // 3. Map to AiVIS.biz Evidence Ledger
   const evidenceItems: EvidenceItem[] = analyzedClaims
     .filter(c => c.isUnique && c.type !== 'generic')
     .map((c, index) => ({

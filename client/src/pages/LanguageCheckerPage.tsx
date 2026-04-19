@@ -107,7 +107,7 @@ export default function LanguageCheckerPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/tools/language-checker",
-        name: "Language & Hreflang Checker \u2014 Multilingual AI Visibility | AiVIS",
+        name: "Language & Hreflang Checker \u2014 Multilingual AI Visibility | AiVIS.biz",
         description: "Audit html[lang], hreflang, x-default, charset, and RTL language signals for multilingual AI visibility. Free language and internationalization checker.",
       }),
       buildFaqSchema(LANGUAGE_CHECKER_FAQ, { path: "/tools/language-checker" }),

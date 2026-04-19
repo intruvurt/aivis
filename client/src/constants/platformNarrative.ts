@@ -1,10 +1,10 @@
 export const PLATFORM_NARRATIVE = {
   oneLiner:
-    "AiVIS tracks whether AI answers include you, cite you, describe you correctly, or hand the win to someone else.",
+    "AiVIS.biz tracks whether AI answers include you, cite you, describe you correctly, or hand the win to someone else.",
   stageClose:
-    "Google ranked pages. AI ranks understanding. AiVIS measures that gap.",
+    "Google ranked pages. AI ranks understanding. AiVIS.biz measures that gap.",
   disruption:
-    "AiVIS is not an SEO add-on. It is infrastructure for surviving the shift from searchable websites to AI-readable entities.",
+    "AiVIS.biz is not an SEO add-on. It is infrastructure for surviving the shift from searchable websites to AI-readable entities.",
   proofOfStruggle:
     "Built from the founder's firsthand struggle shipping real product in a search environment that no longer rewards pages the way it used to.",
   wowFactor:
@@ -12,9 +12,9 @@ export const PLATFORM_NARRATIVE = {
   sameSiteProof:
     "Same site. Same business. Different AI visibility outcome.",
   competitiveWedge:
-    "Visibility dashboards show you a chart. AiVIS shows you the broken schema, the missing FAQ block, and the PR that fixes it.",
+    "Visibility dashboards show you a chart. AiVIS.biz shows you the broken schema, the missing FAQ block, and the PR that fixes it.",
   categoryContrast:
-    "Tracking platforms tell you IF AI sees your brand. AiVIS tells you WHY it doesn't - and fixes it automatically.",
+    "Tracking platforms tell you IF AI sees your brand. AiVIS.biz tells you WHY it doesn't - and fixes it automatically.",
   pillars: [
     "Readable by answer engines",
     "Trustworthy enough to reuse",

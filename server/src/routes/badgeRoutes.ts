@@ -64,7 +64,7 @@ router.get('/img', async (req: Request, res: Response) => {
 
 /**
  * GET /api/badge/click
- * Click redirect: logs the click event, then 302s to the AiVIS homepage (or custom dest).
+ * Click redirect: logs the click event, then 302s to the AiVIS.biz homepage (or custom dest).
  */
 router.get('/click', async (req: Request, res: Response) => {
   const referer = req.headers.referer || req.headers.referrer as string | undefined;
@@ -149,9 +149,9 @@ router.get('/embed', (req: Request, res: Response) => {
   const trackSrc = `${SITE_URL}/api/badge/img${uid ? `?uid=${encodeURIComponent(uid)}` : ''}`;
   const clickHref = `${SITE_URL}/api/badge/click${uid ? `?uid=${encodeURIComponent(uid)}` : ''}`;
 
-  const snippet = `<!-- AiVIS Visibility Badge -->
-<a href="${clickHref}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS">
-  <img src="${badgeSrc}" alt="Audited by AiVIS — AI visibility audit and fix platform" width="150" height="42" style="border:0;" loading="lazy" />
+  const snippet = `<!-- AiVIS.biz Visibility Badge -->
+<a href="${clickHref}" target="_blank" rel="dofollow" title="AI Visibility Audit by AiVIS.biz">
+  <img src="${badgeSrc}" alt="Audited by AiVIS.biz — AI visibility audit and fix platform" width="150" height="42" style="border:0;" loading="lazy" />
 </a>
 <img src="${trackSrc}" alt="" width="1" height="1" style="position:absolute;opacity:0;pointer-events:none;" aria-hidden="true" />`;
 

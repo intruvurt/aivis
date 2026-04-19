@@ -10,7 +10,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-doesnt-cite-my-website",
         cluster: "problems",
         title: "Why AI Doesn't Cite My Website",
-        metaTitle: "Why AI Doesn't Cite My Website — Diagnosis | AiVIS",
+        metaTitle: "Why AI Doesn't Cite My Website — Diagnosis | AiVIS.biz",
         metaDescription:
             "AI answer engines skip your site because they cannot extract, trust, or attribute your content. Diagnose exactly why with an evidence-backed audit.",
         primaryKeyword: "why ai doesn't cite my website",
@@ -37,7 +37,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to diagnose citation failure",
                 content: [
-                    "Run an AiVIS audit on your URL. The audit crawls your page exactly as AI models do, evaluates six extraction-readiness dimensions, and identifies which signals are present, missing, or broken.",
+                    "Run an AiVIS.biz audit on your URL. The audit crawls your page exactly as AI models do, evaluates six extraction-readiness dimensions, and identifies which signals are present, missing, or broken.",
                     "Each finding includes a BRAG Evidence ID that traces the issue to the specific crawl observation. Fixes are prioritized by impact — start with the highest-confidence, highest-impact issues.",
                 ],
             },
@@ -67,7 +67,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-fix-ai-search-visibility",
         cluster: "problems",
         title: "How to Fix AI Search Visibility",
-        metaTitle: "How to Fix AI Search Visibility — Step by Step | AiVIS",
+        metaTitle: "How to Fix AI Search Visibility — Step by Step | AiVIS.biz",
         metaDescription:
             "Fix your AI search visibility with evidence-backed audits. Identify extraction failures, add missing signals, and make your content citable by AI answer engines.",
         primaryKeyword: "how to fix ai search visibility",
@@ -77,7 +77,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Step 1: Audit your current extraction readiness",
                 content: [
-                    "Before fixing anything, you need a baseline. Run an AiVIS audit to see exactly how AI models interpret your site right now. The audit scores six dimensions: content depth, schema coverage, AI readability, technical SEO, metadata quality, and heading structure.",
+                    "Before fixing anything, you need a baseline. Run an AiVIS.biz audit to see exactly how AI models interpret your site right now. The audit scores six dimensions: content depth, schema coverage, AI readability, technical SEO, metadata quality, and heading structure.",
                     "Each dimension targets a specific failure mode in the AI extraction pipeline. Your lowest-scoring dimensions reveal the highest-impact fixes.",
                 ],
             },
@@ -97,7 +97,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Step 4: Re-audit and track improvement",
                 content: [
-                    "After implementing fixes, re-audit to measure the delta. AiVIS stores your previous baseline, so you can see exactly which issues were resolved, which regressed, and what score improvement resulted from each change.",
+                    "After implementing fixes, re-audit to measure the delta. AiVIS.biz stores your previous baseline, so you can see exactly which issues were resolved, which regressed, and what score improvement resulted from each change.",
                 ],
             },
         ],
@@ -126,7 +126,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-chatgpt-ignores-my-site",
         cluster: "problems",
         title: "Why ChatGPT Ignores My Website",
-        metaTitle: "Why ChatGPT Ignores My Website — Fix It | AiVIS",
+        metaTitle: "Why ChatGPT Ignores My Website — Fix It | AiVIS.biz",
         metaDescription:
             "ChatGPT skips your site because GPTBot can't extract your content. Diagnose blocked crawlers, missing schema, and rendering issues with an evidence-backed audit.",
         primaryKeyword: "why chatgpt ignores my website",
@@ -144,14 +144,14 @@ export const problemExtendedPages: KeywordPage[] = [
                 heading: "Check if GPTBot can access your site",
                 content: [
                     "Open your robots.txt file and search for GPTBot. If you see 'Disallow: /' under the GPTBot user-agent, ChatGPT cannot crawl any page on your site. Many CDN security configurations (Cloudflare Bot Fight Mode, Sucuri WAF) also block GPTBot by default.",
-                    "An AiVIS audit checks GPTBot access as part of the technical SEO dimension and flags blocked crawlers as high-confidence findings.",
+                    "An AiVIS.biz audit checks GPTBot access as part of the technical SEO dimension and flags blocked crawlers as high-confidence findings.",
                 ],
             },
             {
                 heading: "Ensure your content is extractable",
                 content: [
                     "Even if GPTBot can access your page, it still needs to extract usable content. Client-side-only rendering produces an empty shell. Missing JSON-LD means the model cannot identify the publisher. Vague headings make it harder for the model to segment and attribute claims.",
-                    "AiVIS audits all six extraction dimensions and provides specific, code-level fix recommendations for each failure.",
+                    "AiVIS.biz audits all six extraction dimensions and provides specific, code-level fix recommendations for each failure.",
                 ],
             },
         ],
@@ -180,7 +180,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-perplexity-doesnt-mention-my-brand",
         cluster: "problems",
         title: "Why Perplexity Doesn't Mention My Brand",
-        metaTitle: "Why Perplexity Doesn't Mention My Brand | AiVIS",
+        metaTitle: "Why Perplexity Doesn't Mention My Brand | AiVIS.biz",
         metaDescription:
             "Perplexity cites sources with clear entity identity and extractable claims. If your brand is missing, diagnose the extraction failure with an evidence-backed audit.",
         primaryKeyword: "perplexity doesn't mention my brand",
@@ -204,7 +204,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to get cited by Perplexity",
                 content: [
-                    "Allow PerplexityBot in robots.txt. Add Organization, Article, and FAQ JSON-LD. Include datePublished and author metadata. Write content with specific, verifiable claims rather than generalized advice. Run an AiVIS audit to identify and fix the specific extraction failures.",
+                    "Allow PerplexityBot in robots.txt. Add Organization, Article, and FAQ JSON-LD. Include datePublished and author metadata. Write content with specific, verifiable claims rather than generalized advice. Run an AiVIS.biz audit to identify and fix the specific extraction failures.",
                 ],
             },
         ],
@@ -217,7 +217,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "Can I test if Perplexity would cite my content?",
                 answer:
-                    "AiVIS citation testing (Signal tier) evaluates whether your brand appears in AI answers and reports mention presence, position, and overlap with competitors.",
+                    "AiVIS.biz citation testing (Signal tier) evaluates whether your brand appears in AI answers and reports mention presence, position, and overlap with competitors.",
             },
         ],
         internalLinks: [
@@ -233,7 +233,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-get-cited-by-ai-models",
         cluster: "problems",
         title: "How to Get Cited by AI Answer Models",
-        metaTitle: "How to Get Cited by AI Models — Evidence-Backed Guide | AiVIS",
+        metaTitle: "How to Get Cited by AI Models — Evidence-Backed Guide | AiVIS.biz",
         metaDescription:
             "AI models cite content they can extract and trust. Learn the structural requirements for citation by ChatGPT, Perplexity, Gemini, and Claude.",
         primaryKeyword: "how to get cited by ai models",
@@ -266,7 +266,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "Is there a guaranteed way to be cited by AI?",
                 answer:
-                    "No. Citation depends on query relevance, competitive content, and model behavior. AiVIS measures structural readiness — providing the signals AI models need. The probability increases significantly, but no tool can guarantee citation.",
+                    "No. Citation depends on query relevance, competitive content, and model behavior. AiVIS.biz measures structural readiness — providing the signals AI models need. The probability increases significantly, but no tool can guarantee citation.",
             },
             {
                 question: "Which AI models are most likely to cite sources?",
@@ -287,7 +287,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-gives-wrong-information-about-my-company",
         cluster: "problems",
         title: "Why AI Gives Wrong Information About My Company",
-        metaTitle: "Why AI Gives Wrong Info About My Company | AiVIS",
+        metaTitle: "Why AI Gives Wrong Info About My Company | AiVIS.biz",
         metaDescription:
             "AI models hallucinate about your company because they cannot extract reliable entity data from your site. Fix entity confusion with an evidence-backed audit.",
         primaryKeyword: "ai wrong information about my company",
@@ -311,7 +311,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to fix it",
                 content: [
-                    "Add Organization JSON-LD with name, url, legalName, sameAs, and foundingDate. Use consistent naming across all pages. Add author attribution to content. Remove or noindex outdated content that could confuse models. Run an AiVIS audit to identify all entity clarity gaps.",
+                    "Add Organization JSON-LD with name, url, legalName, sameAs, and foundingDate. Use consistent naming across all pages. Add author attribution to content. Remove or noindex outdated content that could confuse models. Run an AiVIS.biz audit to identify all entity clarity gaps.",
                 ],
             },
         ],
@@ -324,7 +324,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "How do I know if AI is confusing my brand with another?",
                 answer:
-                    "AiVIS citation testing can detect entity confusion by evaluating whether your brand appears correctly in AI answers across multiple models.",
+                    "AiVIS.biz citation testing can detect entity confusion by evaluating whether your brand appears correctly in AI answers across multiple models.",
             },
         ],
         internalLinks: [
@@ -340,7 +340,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-audit-ai-answer-readiness",
         cluster: "problems",
         title: "How to Audit AI Answer Readiness",
-        metaTitle: "How to Audit AI Answer Readiness — Complete Guide | AiVIS",
+        metaTitle: "How to Audit AI Answer Readiness — Complete Guide | AiVIS.biz",
         metaDescription:
             "Audit whether AI models can extract and cite your content. Six evidence-backed dimensions, BRAG protocol, and actionable fix recommendations.",
         primaryKeyword: "audit ai answer readiness",
@@ -351,20 +351,20 @@ export const problemExtendedPages: KeywordPage[] = [
                 heading: "What an AI readiness audit measures",
                 content: [
                     "Unlike a traditional SEO audit focused on rankings and backlinks, an AI readiness audit evaluates extraction fidelity: can AI models access your page, parse the content, identify the publisher, and reproduce claims accurately?",
-                    "AiVIS audits six dimensions: content depth (20%), schema coverage (20%), AI readability (20%), technical SEO (15%), metadata quality (13%), and heading structure (12%). Each dimension targets a specific extraction failure mode.",
+                    "AiVIS.biz audits six dimensions: content depth (20%), schema coverage (20%), AI readability (20%), technical SEO (15%), metadata quality (13%), and heading structure (12%). Each dimension targets a specific extraction failure mode.",
                 ],
             },
             {
                 heading: "How the BRAG evidence protocol works",
                 content: [
-                    "Every finding in an AiVIS audit includes a BRAG Evidence ID (Based Retrieval and Auditable Grading). This ID links the finding to the source signal on your page, the extraction rule that triggered it, and the scoring dimension it affects.",
-                    "The protocol eliminates speculative recommendations. If AiVIS cannot observe a signal on the page, it does not generate a finding for it. Every recommendation maps to verified crawl evidence.",
+                    "Every finding in an AiVIS.biz audit includes a BRAG Evidence ID (Based Retrieval and Auditable Grading). This ID links the finding to the source signal on your page, the extraction rule that triggered it, and the scoring dimension it affects.",
+                    "The protocol eliminates speculative recommendations. If AiVIS.biz cannot observe a signal on the page, it does not generate a finding for it. Every recommendation maps to verified crawl evidence.",
                 ],
             },
             {
                 heading: "Running your first audit",
                 content: [
-                    "Enter any public URL into AiVIS. The system crawls the page via headless browser, extracts all structural signals, scores six dimensions, and delivers a composite score from 0 to 100 with prioritized fix recommendations.",
+                    "Enter any public URL into AiVIS.biz. The system crawls the page via headless browser, extracts all structural signals, scores six dimensions, and delivers a composite score from 0 to 100 with prioritized fix recommendations.",
                     "Observer tier (free) provides the score and top blockers. Starter and above provide all recommendations with implementation code and evidence detail.",
                 ],
             },
@@ -394,9 +394,9 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-google-ai-overview-skips-my-content",
         cluster: "problems",
         title: "Why Google AI Overview Skips My Content",
-        metaTitle: "Why Google AI Overview Skips My Content | AiVIS",
+        metaTitle: "Why Google AI Overview Skips My Content | AiVIS.biz",
         metaDescription:
-            "Google AI Overviews extract from pages with clear structure and entity signals. If your content is skipped, diagnose extraction failures with AiVIS.",
+            "Google AI Overviews extract from pages with clear structure and entity signals. If your content is skipped, diagnose extraction failures with AiVIS.biz.",
         primaryKeyword: "google ai overview skips my content",
         secondaryKeyword: "google ai overview optimization",
         hook: "Google AI Overviews synthesize answers from multiple sources. If your content never appears — even when you rank organically — the extraction pipeline is failing.",
@@ -417,7 +417,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to optimize for AI Overview",
                 content: [
-                    "Add FAQ schema for question-answer pairs. Use specific, descriptive headings that match common queries. Include datePublished and author metadata. Write atomic, factual claims rather than marketing language. Run an AiVIS audit to identify the specific gaps.",
+                    "Add FAQ schema for question-answer pairs. Use specific, descriptive headings that match common queries. Include datePublished and author metadata. Write atomic, factual claims rather than marketing language. Run an AiVIS.biz audit to identify the specific gaps.",
                 ],
             },
         ],
@@ -446,7 +446,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-make-website-ai-readable",
         cluster: "problems",
         title: "How to Make Your Website AI-Readable",
-        metaTitle: "How to Make Your Website AI-Readable | AiVIS",
+        metaTitle: "How to Make Your Website AI-Readable | AiVIS.biz",
         metaDescription:
             "AI readability means your content can be structurally extracted by AI models. Fix rendering, schema, headings, and content structure for AI extraction.",
         primaryKeyword: "make website ai readable",
@@ -476,7 +476,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Test with an extraction-focused audit",
                 content: [
-                    "Traditional SEO tools test for ranking signals. AiVIS tests for extraction readiness — whether AI models can access, parse, and cite your content. The audit scores six dimensions and provides specific code-level fixes.",
+                    "Traditional SEO tools test for ranking signals. AiVIS.biz tests for extraction readiness — whether AI models can access, parse, and cite your content. The audit scores six dimensions and provides specific code-level fixes.",
                 ],
             },
         ],
@@ -505,7 +505,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-misquotes-my-content",
         cluster: "problems",
         title: "Why AI Misquotes My Content",
-        metaTitle: "Why AI Misquotes My Content — Fix Extraction Errors | AiVIS",
+        metaTitle: "Why AI Misquotes My Content — Fix Extraction Errors | AiVIS.biz",
         metaDescription:
             "AI misquotes happen when extraction is partial or entity attribution fails. Diagnose and fix the structural causes with an evidence-backed audit.",
         primaryKeyword: "ai misquotes my content",
@@ -528,7 +528,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to reduce misquotation risk",
                 content: [
-                    "Write atomic, specific claims. Declare entity identity with Organization and Author schema. Add datePublished to timestamped content. Use clear headings that segment topics. Run an AiVIS audit to identify extraction points where ambiguity enters the pipeline.",
+                    "Write atomic, specific claims. Declare entity identity with Organization and Author schema. Add datePublished to timestamped content. Use clear headings that segment topics. Run an AiVIS.biz audit to identify extraction points where ambiguity enters the pipeline.",
                 ],
             },
         ],
@@ -557,7 +557,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-fix-entity-confusion-in-ai",
         cluster: "problems",
         title: "How to Fix Entity Confusion in AI Answers",
-        metaTitle: "Fix Entity Confusion in AI Answers | AiVIS",
+        metaTitle: "Fix Entity Confusion in AI Answers | AiVIS.biz",
         metaDescription:
             "AI confuses your brand with competitors because your entity signals are missing or ambiguous. Fix entity disambiguation with structured data and clear identity.",
         primaryKeyword: "fix entity confusion ai",
@@ -581,7 +581,7 @@ export const problemExtendedPages: KeywordPage[] = [
                 heading: "How to fix it",
                 content: [
                     "Add comprehensive Organization JSON-LD: name, legalName, url, sameAs (all verified profiles), foundingDate, founder, address. Add Person schema for content authors with sameAs links. Use the exact same entity name across every page. Add author metadata to every content page.",
-                    "AiVIS audits entity clarity as part of the schema coverage dimension and flags missing disambiguation signals.",
+                    "AiVIS.biz audits entity clarity as part of the schema coverage dimension and flags missing disambiguation signals.",
                 ],
             },
         ],
@@ -610,9 +610,9 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-attributes-my-content-to-competitors",
         cluster: "problems",
         title: "Why AI Attributes My Content to Competitors",
-        metaTitle: "Why AI Gives My Content to Competitors | AiVIS",
+        metaTitle: "Why AI Gives My Content to Competitors | AiVIS.biz",
         metaDescription:
-            "AI models attribute your claims to competitors when your entity signals are weaker than theirs. Diagnose and fix attribution failures with AiVIS.",
+            "AI models attribute your claims to competitors when your entity signals are weaker than theirs. Diagnose and fix attribution failures with AiVIS.biz.",
         primaryKeyword: "ai attributes content to competitors",
         secondaryKeyword: "ai competitor attribution",
         hook: "You wrote the content. A competitor gets the citation. This happens when your entity identity is weaker than your competitor's — and AI models default to the source with clearer attribution signals.",
@@ -633,13 +633,13 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to win back attribution",
                 content: [
-                    "Audit your pages and your competitor's pages with AiVIS to compare extraction readiness. Identify where their signals are stronger. Fix your Organization schema, add datePublished metadata, and ensure your content makes specific, attributable claims. The goal is to make the extraction path to your domain clearer than the path to your competitor.",
+                    "Audit your pages and your competitor's pages with AiVIS.biz to compare extraction readiness. Identify where their signals are stronger. Fix your Organization schema, add datePublished metadata, and ensure your content makes specific, attributable claims. The goal is to make the extraction path to your domain clearer than the path to your competitor.",
                 ],
             },
         ],
         faqs: [
             {
-                question: "Can AiVIS compare my extraction readiness against competitors?",
+                question: "Can AiVIS.biz compare my extraction readiness against competitors?",
                 answer:
                     "Yes. Alignment tier and above includes competitor tracking, which compares your audit score and extraction signals against competitor domains on shared topics.",
             },
@@ -662,7 +662,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-optimize-for-ai-answer-engines",
         cluster: "problems",
         title: "How to Optimize for AI Answer Engines",
-        metaTitle: "How to Optimize for AI Answer Engines — AEO Guide | AiVIS",
+        metaTitle: "How to Optimize for AI Answer Engines — AEO Guide | AiVIS.biz",
         metaDescription:
             "Answer engine optimization (AEO) requires extraction readiness, not just ranking signals. Learn the structural requirements for ChatGPT, Perplexity, and Gemini.",
         primaryKeyword: "optimize for ai answer engines",
@@ -685,7 +685,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Measuring AEO performance",
                 content: [
-                    "AiVIS provides an evidence-backed AEO score across six dimensions. Unlike generic SEO scores, the AiVIS score is specifically calibrated for AI extraction readiness. Each finding maps to a crawl-observable signal through the BRAG evidence protocol.",
+                    "AiVIS.biz provides an evidence-backed AEO score across six dimensions. Unlike generic SEO scores, the AiVIS.biz score is specifically calibrated for AI extraction readiness. Each finding maps to a crawl-observable signal through the BRAG evidence protocol.",
                 ],
             },
         ],
@@ -714,7 +714,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-structured-data-matters-for-ai-citations",
         cluster: "problems",
         title: "Why Structured Data Matters for AI Citations",
-        metaTitle: "Why Structured Data Matters for AI Citations | AiVIS",
+        metaTitle: "Why Structured Data Matters for AI Citations | AiVIS.biz",
         metaDescription:
             "JSON-LD structured data is the primary mechanism AI models use for entity disambiguation and attribution. Without it, your content is extractable but not citable.",
         primaryKeyword: "structured data ai citations",
@@ -732,7 +732,7 @@ export const problemExtendedPages: KeywordPage[] = [
                 heading: "Which schema types matter most for citation",
                 content: [
                     "Organization: establishes entity identity, connects to verified profiles via sameAs. Article/BlogPosting: declares content type, author, publication date. FAQ: marks Q&A content for direct extraction. BreadcrumbList: provides hierarchical context. Person: identifies content authors with credentials and profiles.",
-                    "AiVIS evaluates 18+ schema.org types as part of the schema coverage dimension.",
+                    "AiVIS.biz evaluates 18+ schema.org types as part of the schema coverage dimension.",
                 ],
             },
             {
@@ -749,7 +749,7 @@ export const problemExtendedPages: KeywordPage[] = [
                     "JSON-LD is the preferred format. Microdata and RDFa are technically parseable but less reliably processed by AI extraction pipelines. Use JSON-LD for maximum compatibility.",
             },
             {
-                question: "Can structured data alone improve my AiVIS score?",
+                question: "Can structured data alone improve my AiVIS.biz score?",
                 answer:
                     "Schema coverage is 20% of the composite score. Adding comprehensive JSON-LD can improve your score significantly, especially if you are starting from zero schema coverage.",
             },
@@ -767,7 +767,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-test-if-ai-can-extract-your-content",
         cluster: "problems",
         title: "How to Test If AI Can Extract Your Content",
-        metaTitle: "Test If AI Can Extract Your Content | AiVIS",
+        metaTitle: "Test If AI Can Extract Your Content | AiVIS.biz",
         metaDescription:
             "Test whether AI models can extract and cite your content with an evidence-backed audit. Check rendering, schema, headings, and readability across six dimensions.",
         primaryKeyword: "test if ai can extract content",
@@ -790,7 +790,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Run an extraction-focused audit",
                 content: [
-                    "Manual checks cover the basics. For a comprehensive extraction readiness assessment, run an AiVIS audit. The audit crawls your page via headless browser (simulating AI crawler behavior), evaluates all six extraction dimensions, and reports specific findings with evidence IDs.",
+                    "Manual checks cover the basics. For a comprehensive extraction readiness assessment, run an AiVIS.biz audit. The audit crawls your page via headless browser (simulating AI crawler behavior), evaluates all six extraction dimensions, and reports specific findings with evidence IDs.",
                     "Each finding tells you exactly what is missing and how to fix it — no guesswork, no generic advice.",
                 ],
             },
@@ -820,7 +820,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-search-gives-outdated-information",
         cluster: "problems",
         title: "Why AI Search Gives Outdated Information About You",
-        metaTitle: "Why AI Gives Outdated Info About Your Site | AiVIS",
+        metaTitle: "Why AI Gives Outdated Info About Your Site | AiVIS.biz",
         metaDescription:
             "AI models serve outdated information because your site lacks freshness signals. Fix datePublished, recrawl cadence, and content structure to stay current.",
         primaryKeyword: "ai search outdated information",
@@ -843,7 +843,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "How to force recency",
                 content: [
-                    "Update dateModified metadata after every content revision. Resubmit your sitemap after major changes. Ensure your content management system updates lastmod timestamps automatically. Run an AiVIS re-audit to verify the updated signals are in place.",
+                    "Update dateModified metadata after every content revision. Resubmit your sitemap after major changes. Ensure your content management system updates lastmod timestamps automatically. Run an AiVIS.biz re-audit to verify the updated signals are in place.",
                 ],
             },
         ],
@@ -872,7 +872,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-fix-ai-extraction-failures",
         cluster: "problems",
         title: "How to Fix AI Extraction Failures",
-        metaTitle: "Fix AI Extraction Failures — Diagnosis & Code Fixes | AiVIS",
+        metaTitle: "Fix AI Extraction Failures — Diagnosis & Code Fixes | AiVIS.biz",
         metaDescription:
             "AI extraction failures happen when crawlers can't access, parse, or attribute your content. Diagnose and fix each failure type with evidence-backed guidance.",
         primaryKeyword: "fix ai extraction failures",
@@ -895,7 +895,7 @@ export const problemExtendedPages: KeywordPage[] = [
                 ],
             },
             {
-                heading: "Using AiVIS to fix extraction failures",
+                heading: "Using AiVIS.biz to fix extraction failures",
                 content: [
                     "Run an audit. Each finding includes a BRAG Evidence ID linking to the specific extraction failure. Starter tier and above provides implementation code for each fix. Score Fix (one-time purchase) automates the fixes as GitHub pull requests.",
                 ],
@@ -905,7 +905,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "What percentage of sites have AI extraction failures?",
                 answer:
-                    "Based on AiVIS audit data, the majority of sites have at least one significant extraction failure. Missing structured data, blocked AI crawlers, and client-side rendering are the most common.",
+                    "Based on AiVIS.biz audit data, the majority of sites have at least one significant extraction failure. Missing structured data, blocked AI crawlers, and client-side rendering are the most common.",
             },
             {
                 question: "Can Score Fix automatically fix extraction failures?",
@@ -926,9 +926,9 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-claude-cant-find-my-website",
         cluster: "problems",
         title: "Why Claude Can't Find My Website",
-        metaTitle: "Why Claude Can't Find Your Website | AiVIS",
+        metaTitle: "Why Claude Can't Find Your Website | AiVIS.biz",
         metaDescription:
-            "Claude uses ClaudeBot and training data to access web content. If Claude can't find your site, diagnose crawler blocks and extraction failures with AiVIS.",
+            "Claude uses ClaudeBot and training data to access web content. If Claude can't find your site, diagnose crawler blocks and extraction failures with AiVIS.biz.",
         primaryKeyword: "claude can't find my website",
         secondaryKeyword: "claude ai website access",
         hook: "Claude (by Anthropic) combines training data with real-time web access via ClaudeBot. If Claude gives wrong or missing information about your site, the extraction pipeline is failing.",
@@ -949,7 +949,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Fixing Claude access",
                 content: [
-                    "Allow ClaudeBot in robots.txt. Ensure server-side rendering. Add Organization and Article JSON-LD. Write clear, attributable content. Run an AiVIS audit to identify the specific gaps in your extraction readiness for Claude and other models.",
+                    "Allow ClaudeBot in robots.txt. Ensure server-side rendering. Add Organization and Article JSON-LD. Write clear, attributable content. Run an AiVIS.biz audit to identify the specific gaps in your extraction readiness for Claude and other models.",
                 ],
             },
         ],
@@ -962,7 +962,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "Can I test what Claude knows about my site?",
                 answer:
-                    "AiVIS citation testing evaluates brand presence across multiple AI models including Claude. You can see whether Claude mentions your brand and how accurately.",
+                    "AiVIS.biz citation testing evaluates brand presence across multiple AI models including Claude. You can see whether Claude mentions your brand and how accurately.",
             },
         ],
         internalLinks: [
@@ -978,7 +978,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "how-to-improve-ai-citation-readiness",
         cluster: "problems",
         title: "How to Improve AI Citation Readiness",
-        metaTitle: "Improve AI Citation Readiness — Actionable Guide | AiVIS",
+        metaTitle: "Improve AI Citation Readiness — Actionable Guide | AiVIS.biz",
         metaDescription:
             "Citation readiness means your content provides the structural signals AI needs to extract, attribute, and cite. Improve it with structured data, clear content, and BRAG-backed fixes.",
         primaryKeyword: "improve ai citation readiness",
@@ -1004,7 +1004,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "Measuring improvement",
                 content: [
-                    "Run an AiVIS audit before and after changes. The stored baseline enables precise delta tracking — you can see exactly which fixes improved which dimensions and by how much.",
+                    "Run an AiVIS.biz audit before and after changes. The stored baseline enables precise delta tracking — you can see exactly which fixes improved which dimensions and by how much.",
                     "Signal tier adds citation testing: direct measurement of whether your brand appears in AI answers across ChatGPT, Perplexity, Gemini, and other models.",
                 ],
             },
@@ -1013,12 +1013,12 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "What is a good citation readiness score?",
                 answer:
-                    "Pages scoring 70+ on the AiVIS audit are generally citation-ready. Pages scoring 80+ are routinely cited as primary sources. The exact threshold depends on competitive landscape.",
+                    "Pages scoring 70+ on the AiVIS.biz audit are generally citation-ready. Pages scoring 80+ are routinely cited as primary sources. The exact threshold depends on competitive landscape.",
             },
             {
                 question: "Can I improve citation readiness without technical skills?",
                 answer:
-                    "Yes. Many improvements are content-level: better headings, more specific claims, FAQ structure. The most technical fix (JSON-LD) can be generated by AiVIS Score Fix or added manually with a simple script tag.",
+                    "Yes. Many improvements are content-level: better headings, more specific claims, FAQ structure. The most technical fix (JSON-LD) can be generated by AiVIS.biz Score Fix or added manually with a simple script tag.",
             },
         ],
         internalLinks: [
@@ -1034,7 +1034,7 @@ export const problemExtendedPages: KeywordPage[] = [
         slug: "why-ai-answers-ignore-small-businesses",
         cluster: "problems",
         title: "Why AI Answers Ignore Small Businesses",
-        metaTitle: "Why AI Ignores Small Businesses — Fix It | AiVIS",
+        metaTitle: "Why AI Ignores Small Businesses — Fix It | AiVIS.biz",
         metaDescription:
             "AI doesn't ignore small businesses by design. It ignores any site with weak extraction signals. Small businesses can compete by fixing structural readiness.",
         primaryKeyword: "ai answers ignore small businesses",
@@ -1051,7 +1051,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 heading: "What small businesses can fix today",
                 content: [
-                    "1. Check robots.txt — many hosted platforms block AI crawlers by default. 2. Add Organization JSON-LD with business name, address, sameAs, and founding date. 3. Add FAQ schema for your most common customer questions. 4. Write specific service descriptions instead of generic marketing copy. 5. Run an AiVIS audit to identify your highest-impact fixes.",
+                    "1. Check robots.txt — many hosted platforms block AI crawlers by default. 2. Add Organization JSON-LD with business name, address, sameAs, and founding date. 3. Add FAQ schema for your most common customer questions. 4. Write specific service descriptions instead of generic marketing copy. 5. Run an AiVIS.biz audit to identify your highest-impact fixes.",
                 ],
             },
             {
@@ -1071,7 +1071,7 @@ export const problemExtendedPages: KeywordPage[] = [
             {
                 question: "How much does it cost to fix AI visibility for a small business?",
                 answer:
-                    "AiVIS Observer tier is free forever. Most structural fixes (robots.txt, JSON-LD, headings) are free to implement. Starter tier at $15/month provides full recommendations with implementation code.",
+                    "AiVIS.biz Observer tier is free forever. Most structural fixes (robots.txt, JSON-LD, headings) are free to implement. Starter tier at $15/month provides full recommendations with implementation code.",
             },
         ],
         internalLinks: [

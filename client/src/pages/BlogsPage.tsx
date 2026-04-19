@@ -91,12 +91,12 @@ export default function BlogsPage() {
   usePageMeta({
     title: 'Blogs | AI Visibility, Citation, and Answer Engine Optimization',
     description:
-      'Enterprise blog on Answer Engine Optimization, AI visibility, content extractability, citations, and the future of search. Written by AiVIS founder.',
+      'Enterprise blog on Answer Engine Optimization, AI visibility, content extractability, citations, and the future of search. Written by AiVIS.biz founder.',
     path: '/blogs',
-    ogTitle: 'AiVIS Blogs',
+    ogTitle: 'AiVIS.biz Blogs',
     structuredData: [
       buildCollectionSchema(
-        'AiVIS Blogs',
+        'AiVIS.biz Blogs',
         'Enterprise blog on AI visibility, Answer Engine Optimization, citation readiness, and visionary content strategy.',
         '/blogs'
       ),
@@ -109,7 +109,7 @@ export default function BlogsPage() {
   });
 
   return (
-    <PublicPageFrame icon={BookOpen} title="AiVIS Insights" subtitle="Enterprise blog on AI visibility, extractability, and citations." maxWidthClass="max-w-6xl">
+    <PublicPageFrame icon={BookOpen} title="AiVIS.biz Insights" subtitle="Enterprise blog on AI visibility, extractability, and citations." maxWidthClass="max-w-6xl">
         {/* Featured carousel */}
         {featuredPosts.length > 0 && !hasActiveFilters && (
           <section className="mb-12">

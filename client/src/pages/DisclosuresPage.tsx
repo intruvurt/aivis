@@ -7,11 +7,11 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function DisclosuresPage() {
   usePageMeta({
-    title: 'Consumer Disclosures | AiVIS — AI Answer Audit System',
-    description: 'AiVIS consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies and platform disclaimers.',
+    title: 'Consumer Disclosures | AiVIS.biz — AI Answer Audit System',
+    description: 'AiVIS.biz consumer disclosures covering AI accuracy limitations, competitive intelligence boundaries, threat detection scope, third-party dependencies and platform disclaimers.',
     path: '/disclosures',
     structuredData: [
-      buildWebPageSchema({ path: '/disclosures', name: 'AiVIS Consumer Disclosures', description: 'Consumer-facing disclosures and disclaimers for the AiVIS AI visibility auditing platform.' }),
+      buildWebPageSchema({ path: '/disclosures', name: 'AiVIS.biz Consumer Disclosures', description: 'Consumer-facing disclosures and disclaimers for the AiVIS.biz AI visibility auditing platform.' }),
       buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Consumer Disclosures', path: '/disclosures' }]),
     ],
   });
@@ -20,7 +20,7 @@ export default function DisclosuresPage() {
   const emailCls = "text-white/85 hover:text-white";
 
   return (
-    <PublicPageFrame icon={AlertTriangle} title="Consumer Disclosures" subtitle="Disclaimers, limitations, and transparency notices for the AiVIS platform" maxWidthClass="max-w-4xl">
+    <PublicPageFrame icon={AlertTriangle} title="Consumer Disclosures" subtitle="Disclaimers, limitations, and transparency notices for the AiVIS.biz platform" maxWidthClass="max-w-4xl">
       <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
@@ -28,14 +28,14 @@ export default function DisclosuresPage() {
           {/* ── Preamble ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">About This Document</h2>
-            <p>This page provides consumer-facing disclosures and transparency notices about the AiVIS platform operated by AiVIS. It supplements our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/privacy" className={linkCls}>Privacy Policy</Link> with specific information about how the platform works, what it can and cannot do, and the boundaries of its outputs.</p>
+            <p>This page provides consumer-facing disclosures and transparency notices about the AiVIS.biz platform operated by AiVIS.biz. It supplements our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/privacy" className={linkCls}>Privacy Policy</Link> with specific information about how the platform works, what it can and cannot do, and the boundaries of its outputs.</p>
             <p className="mt-2">These disclosures are written in plain language to help you make informed decisions about using the Service.</p>
           </section>
 
           {/* ── 1 AI Accuracy ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">1. AI Analysis Accuracy and Limitations</h2>
-            <p>AiVIS uses large language models (LLMs) to evaluate web page structure, content and machine-readability signals. These models are provided by third-party organizations through an intermediary routing service (OpenRouter).</p>
+            <p>AiVIS.biz uses large language models (LLMs) to evaluate web page structure, content and machine-readability signals. These models are provided by third-party organizations through an intermediary routing service (OpenRouter).</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">What AI gets right</h3>
             <p>The AI pipeline excels at identifying structural signals: missing Schema.org markup, absent meta descriptions, broken heading hierarchies, poor FAQ formatting, missing structured data, and content extractability issues. These findings are grounded in deterministic page signals that can be independently verified.</p>
@@ -47,7 +47,7 @@ export default function DisclosuresPage() {
               <li><strong className="text-white">Context limitations:</strong> The AI analyzes a single page in isolation. It does not observe site-wide architecture, internal linking depth, domain authority, backlink profile, or historical search performance.</li>
               <li><strong className="text-white">Temporal lag:</strong> When cached results are served, they reflect the page state at the original analysis time, not the current state.</li>
             </ul>
-            <p className="mt-2">AiVIS applies deterministic floor and ceiling bounds to constrain AI-generated scores within evidence-supported ranges. However, the final score should be treated as a <strong className="text-white">diagnostic indicator</strong>, not an absolute measurement.</p>
+            <p className="mt-2">AiVIS.biz applies deterministic floor and ceiling bounds to constrain AI-generated scores within evidence-supported ranges. However, the final score should be treated as a <strong className="text-white">diagnostic indicator</strong>, not an absolute measurement.</p>
 
             <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Triple-check pipeline (Signal tier)</h3>
             <p>Signal-tier analyses route through three sequential models: a deep analysis model, a peer critique model (which can adjust scores by −15 to +10 points), and a validation gate. Despite this multi-model architecture, the outputs remain AI-generated and are subject to the same fundamental limitations of large language models.</p>
@@ -56,7 +56,7 @@ export default function DisclosuresPage() {
           {/* ── 2 Not Professional Advice ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. Not Professional Advice</h2>
-            <p>AiVIS analysis reports do not constitute professional advice of any kind. Specifically:</p>
+            <p>AiVIS.biz analysis reports do not constitute professional advice of any kind. Specifically:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Analysis results are <strong className="text-white">not SEO advice</strong>. They measure structural machine-readability, not search engine ranking factors.</li>
               <li>Visibility scores are <strong className="text-white">not performance guarantees</strong>. Following recommendations does not guarantee improvements in search rankings, AI citation rates, or website traffic.</li>
@@ -70,7 +70,7 @@ export default function DisclosuresPage() {
           {/* ── 3 Competitive Intelligence ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">3. Competitive Intelligence Boundaries</h2>
-            <p>AiVIS competitor tracking analyzes the publicly accessible version of competitor web pages. It does not:</p>
+            <p>AiVIS.biz competitor tracking analyzes the publicly accessible version of competitor web pages. It does not:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Access password-protected, login gated, or otherwise private content.</li>
               <li>Circumvent access controls, CAPTCHAs or IP-based restrictions.</li>
@@ -83,7 +83,7 @@ export default function DisclosuresPage() {
           {/* ── 4 Threat Detection ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">4. Threat Detection Scope and Limitations</h2>
-            <p>AiVIS performs automated threat scanning on submitted URLs using:</p>
+            <p>AiVIS.biz performs automated threat scanning on submitted URLs using:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">URLhaus</strong> (abuse.ch) - community-maintained malware URL database.</li>
               <li><strong className="text-white">Google Safe Browsing API v4</strong> - Google's phishing and malware feed.</li>
@@ -110,7 +110,7 @@ export default function DisclosuresPage() {
               <li>Sources may rate-limit, temporarily block or change their APIs without notice, causing incomplete results.</li>
               <li>Mentions in private groups, direct messages, paywalled articles, or non-indexed content will not be discovered.</li>
               <li>False positives may occur when common words or phrases overlap with your brand name.</li>
-              <li>AiVIS does not guarantee comprehensive coverage of all online mentions.</li>
+              <li>AiVIS.biz does not guarantee comprehensive coverage of all online mentions.</li>
             </ul>
           </section>
 
@@ -129,20 +129,20 @@ export default function DisclosuresPage() {
           {/* ── 7 Web Scraping ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">7. Web Scraping and Page Analysis</h2>
-            <p>AiVIS uses a headless browser (Puppeteer) to load and extract content from the URL you submit. This process:</p>
+            <p>AiVIS.biz uses a headless browser (Puppeteer) to load and extract content from the URL you submit. This process:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Executes JavaScript on the target page to capture dynamically rendered content.</li>
               <li>Respects robots.txt directives where they apply to our user agent.</li>
               <li>Fetches the page's llms.txt, sitemap, and structured data endpoints if publicly accessible.</li>
               <li>Analyzes page structure including HTML headings, meta tags, Schema.org markup, internal/external links, images, and word count.</li>
             </ul>
-            <p className="mt-2">AiVIS blocks analysis of private IP ranges, localhost, and reserved addresses in production. However, users bear responsibility for ensuring they have authorization to analyze the submitted URL.</p>
+            <p className="mt-2">AiVIS.biz blocks analysis of private IP ranges, localhost, and reserved addresses in production. However, users bear responsibility for ensuring they have authorization to analyze the submitted URL.</p>
           </section>
 
           {/* ── 8 Third Party Dependencies ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">8. Third-Party Service Dependencies</h2>
-            <p>AiVIS depends on external services to operate. Outages, policy changes, or disruptions at any of these providers may affect Service availability or functionality:</p>
+            <p>AiVIS.biz depends on external services to operate. Outages, policy changes, or disruptions at any of these providers may affect Service availability or functionality:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li><strong className="text-white">OpenRouter</strong> - AI model routing. If OpenRouter or upstream model providers experience downtime, analyses may fail or fall back to alternative models.</li>
               <li><strong className="text-white">Stripe</strong> - Payment processing. Stripe outages may prevent subscription changes, upgrades, or checkout completion.</li>
@@ -151,13 +151,13 @@ export default function DisclosuresPage() {
               <li><strong className="text-white">Sentry</strong> - Error monitoring. Sentry outages do not affect Service functionality but may delay our awareness of issues.</li>
               <li><strong className="text-white">Resend</strong> - Email delivery. Resend outages may delay transactional emails (verification, reports, notifications).</li>
             </ul>
-            <p className="mt-2">AiVIS does not guarantee the uptime or performance of third-party providers. We monitor these dependencies and implement fallback chains where feasible (e.g., the AI provider fallback chain includes up to 6 models for free-tier analyses).</p>
+            <p className="mt-2">AiVIS.biz does not guarantee the uptime or performance of third-party providers. We monitor these dependencies and implement fallback chains where feasible (e.g., the AI provider fallback chain includes up to 6 models for free-tier analyses).</p>
           </section>
 
           {/* ── 9 Webhooks ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">9. Webhook and Integration Reliability</h2>
-            <p>AiVIS supports webhook delivery to external endpoints (Slack, Discord, Zapier, Notion, Microsoft Teams, Google Chat, and generic HTTPS endpoints). Webhooks are delivered on a <strong className="text-white">best-effort basis</strong>.</p>
+            <p>AiVIS.biz supports webhook delivery to external endpoints (Slack, Discord, Zapier, Notion, Microsoft Teams, Google Chat, and generic HTTPS endpoints). Webhooks are delivered on a <strong className="text-white">best-effort basis</strong>.</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>There is no guaranteed delivery SLA for webhook payloads.</li>
               <li>Failed deliveries are logged but not automatically retried.</li>
@@ -185,9 +185,9 @@ export default function DisclosuresPage() {
             <h2 className="text-xl font-semibold text-white mb-3">11. Model Selection and Cost Transparency</h2>
             <p>The AI models used in your analysis depend on your subscription tier:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to AiVIS.</li>
-              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to AiVIS.</li>
-              <li><strong className="text-white">Signal ($149/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to AiVIS.</li>
+              <li><strong className="text-white">Observer (Free):</strong> Free-tier model variants (non-reasoning models selected for reliable JSON output). Extended fallback chain of up to 6 models. $0.00 cost per scan to AiVIS.biz.</li>
+              <li><strong className="text-white">Alignment ($49/mo):</strong> Higher-capability models. Approximately $0.002 cost per scan to AiVIS.biz.</li>
+              <li><strong className="text-white">Signal ($149/mo):</strong> Triple-check pipeline (3 sequential models). Approximately $0.004 cost per scan to AiVIS.biz.</li>
             </ul>
             <p className="mt-2">Model names, providers, and routing are subject to change as model availability and pricing evolves on upstream platforms. The analysis response includes model attribution metadata so you can verify which models processed your request.</p>
           </section>
@@ -206,11 +206,11 @@ export default function DisclosuresPage() {
           {/* ── 13 Exports ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">13. Report Exports and Shared Links</h2>
-            <p>AiVIS supports PDF report generation and shareable link creation.</p>
+            <p>AiVIS.biz supports PDF report generation and shareable link creation.</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Exported reports capture the analysis state at the time of export. They are not dynamically updated.</li>
               <li>Shared links provide read-only access to a specific audit and may expire based on your tier's sharing policy.</li>
-              <li>You are responsible for the distribution of exported reports and shared links. Once shared, AiVIS cannot control who accesses the content.</li>
+              <li>You are responsible for the distribution of exported reports and shared links. Once shared, AiVIS.biz cannot control who accesses the content.</li>
               <li>GDPR data exports (JSON format) are available via account settings or by emailing <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a>.</li>
             </ul>
           </section>
@@ -223,7 +223,7 @@ export default function DisclosuresPage() {
               <li>Generated code changes are <strong className="text-white">suggestions</strong>, not guaranteed fixes. Always review auto-generated pull requests before merging.</li>
               <li>Automated remediation targets structural issues (missing markup, heading fixes, metadata additions). It does not rewrite content, redesign pages, or refactor application logic.</li>
               <li>Score Fix credits are non-refundable once any credits have been consumed.</li>
-              <li>Generated PRs require GitHub App authorization. AiVIS accesses only the repositories you explicitly authorize.</li>
+              <li>Generated PRs require GitHub App authorization. AiVIS.biz accesses only the repositories you explicitly authorize.</li>
             </ul>
           </section>
 
@@ -238,7 +238,7 @@ export default function DisclosuresPage() {
           {/* ── 16 Email ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">16. Email Delivery</h2>
-            <p>Transactional emails (verification, password reset, analysis reports, billing receipts) and optional marketing emails are delivered through Resend. AiVIS does not guarantee email delivery. Factors outside our control include:</p>
+            <p>Transactional emails (verification, password reset, analysis reports, billing receipts) and optional marketing emails are delivered through Resend. AiVIS.biz does not guarantee email delivery. Factors outside our control include:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Recipient spam filters, quarantine rules, or mailbox full conditions.</li>
               <li>Email provider reputation filtering or temporary blocks.</li>
@@ -251,14 +251,14 @@ export default function DisclosuresPage() {
           {/* ── 17 Uptime ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">17. Service Availability</h2>
-            <p>AiVIS does not offer a formal Service Level Agreement (SLA). We target high availability but the Service may experience downtime for maintenance, infrastructure updates, or provider outages. We will communicate planned maintenance in advance when possible.</p>
+            <p>AiVIS.biz does not offer a formal Service Level Agreement (SLA). We target high availability but the Service may experience downtime for maintenance, infrastructure updates, or provider outages. We will communicate planned maintenance in advance when possible.</p>
             <p className="mt-2">The platform includes graceful degradation: if the AI pipeline partially fails, earlier valid results are preserved and the response shape remains stable. However, total outages of critical dependencies (database, hosting) will render the Service unavailable.</p>
           </section>
 
           {/* ── 18 Reverse Engineering Tools ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">18. Reverse Engineering and Prompt Intelligence</h2>
-            <p>AiVIS includes tools that analyze how AI models perceive and process web content (prompt decompilation, ghost queries, model-diff, answer simulation). These tools:</p>
+            <p>AiVIS.biz includes tools that analyze how AI models perceive and process web content (prompt decompilation, ghost queries, model-diff, answer simulation). These tools:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
               <li>Produce <strong className="text-white">inferred approximations</strong>, not actual model internals. They do not access proprietary model weights, training data, or architecture.</li>
               <li>Are subject to the same AI accuracy limitations described in Section 1.</li>
@@ -269,14 +269,14 @@ export default function DisclosuresPage() {
           {/* ── 19 Referral ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">19. Referral Program</h2>
-            <p>AiVIS may offer referral credits for inviting new users. Referral credits are promotional and may be modified or discontinued at any time without notice. Credits cannot be exchanged for cash, transferred between accounts, or combined with other promotions unless explicitly stated.</p>
+            <p>AiVIS.biz may offer referral credits for inviting new users. Referral credits are promotional and may be modified or discontinued at any time without notice. Credits cannot be exchanged for cash, transferred between accounts, or combined with other promotions unless explicitly stated.</p>
           </section>
 
           {/* ── 20 Regulatory ── */}
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">20. Regulatory and Compliance Notice</h2>
-            <p>AiVIS is a software tool, not a regulated financial, legal, medical, or cybersecurity service. Outputs should not be relied upon to satisfy regulatory compliance obligations (SOC 2, HIPAA, PCI DSS, etc.) unless independently validated.</p>
-            <p className="mt-2">If you operate in a regulated industry, consult your compliance team before using AiVIS outputs in compliance documentation or audit evidence.</p>
+            <p>AiVIS.biz is a software tool, not a regulated financial, legal, medical, or cybersecurity service. Outputs should not be relied upon to satisfy regulatory compliance obligations (SOC 2, HIPAA, PCI DSS, etc.) unless independently validated.</p>
+            <p className="mt-2">If you operate in a regulated industry, consult your compliance team before using AiVIS.biz outputs in compliance documentation or audit evidence.</p>
           </section>
 
           {/* ── 21 Contact ── */}
@@ -289,7 +289,7 @@ export default function DisclosuresPage() {
               <li>Privacy: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
               <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
             </ul>
-            <p className="mt-4 text-white/60 text-sm">AiVIS · Georgia, USA</p>
+            <p className="mt-4 text-white/60 text-sm">AiVIS.biz · Georgia, USA</p>
           </section>
         </div>
     </PublicPageFrame>

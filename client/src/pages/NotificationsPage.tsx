@@ -39,7 +39,7 @@ export default function NotificationsPage() {
     title: "Notifications",
     description: "Track account and platform notifications, scheduled events, and credit activity in one place.",
     path: "/notifications",
-    ogTitle: "AiVIS Notifications",
+    ogTitle: "AiVIS.biz Notifications",
   });
 
   const fetchNotifications = useCallback(async () => {

@@ -108,8 +108,8 @@ curl -X POST \\
 
 export default function McpConsolePage() {
   usePageMeta({
-    title: "MCP Server Console | AiVIS",
-    description: "Connect AI agents to AiVIS via Model Context Protocol. Browse tools, test connections, and configure Claude, Cursor, and other MCP clients.",
+    title: "MCP Server Console | AiVIS.biz",
+    description: "Connect AI agents to AiVIS.biz via Model Context Protocol. Browse tools, test connections, and configure Claude, Cursor, and other MCP clients.",
     path: "/mcp",
   });
 
@@ -285,7 +285,7 @@ export default function McpConsolePage() {
         <div className="px-4 py-16">
           <UpgradeWall
             feature="MCP Server Console"
-            description="Connect AI agents like Claude and Cursor to AiVIS via Model Context Protocol. Run audits, query analytics, and pull reports - all from your agent's toolbox."
+            description="Connect AI agents like Claude and Cursor to AiVIS.biz via Model Context Protocol. Run audits, query analytics, and pull reports - all from your agent's toolbox."
             requiredTier="alignment"
             icon={<Bot className="h-6 w-6" />}
           />
@@ -311,7 +311,7 @@ export default function McpConsolePage() {
             MCP Server Console
           </h1>
           <p className="mt-1.5 text-sm text-white/50 max-w-2xl">
-            Connect AI agents to AiVIS via Model Context Protocol. Run audits, query analytics,
+            Connect AI agents to AiVIS.biz via Model Context Protocol. Run audits, query analytics,
             access evidence - all through your agent's native tool interface.
           </p>
         </div>
@@ -335,7 +335,7 @@ export default function McpConsolePage() {
           "Test tools directly from this console to verify your setup",
           "Use your agent to run audits, pull scores, and query analytics hands-free",
         ]}
-        benefit="MCP lets your AI coding assistant call AiVIS tools directly — run audits and check scores without leaving your IDE."
+        benefit="MCP lets your AI coding assistant call AiVIS.biz tools directly — run audits and check scores without leaving your IDE."
         accentClass="text-violet-400 border-violet-500/30 bg-violet-500/[0.06]"
         defaultCollapsed
       />
@@ -345,8 +345,8 @@ export default function McpConsolePage() {
           <Bot className="h-5 w-5 text-violet-400" /> What is MCP?
         </h2>
         <p className="text-sm text-white/55 mb-4 max-w-3xl leading-relaxed">
-          <strong className="text-white/80">Model Context Protocol (MCP)</strong> lets AI coding agents - like Claude Desktop, Cursor, and Windsurf - call AiVIS tools directly.
-          Instead of switching between your IDE and the AiVIS dashboard, your agent can run audits, pull scores, and query analytics on your behalf.
+          <strong className="text-white/80">Model Context Protocol (MCP)</strong> lets AI coding agents - like Claude Desktop, Cursor, and Windsurf - call AiVIS.biz tools directly.
+          Instead of switching between your IDE and the AiVIS.biz dashboard, your agent can run audits, pull scores, and query analytics on your behalf.
         </p>
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="rounded-xl border border-white/8 bg-charcoal-light/30 p-3.5">
@@ -355,7 +355,7 @@ export default function McpConsolePage() {
               <span className="text-xs font-semibold text-white/90">In your IDE</span>
             </div>
             <p className="text-[11px] text-white/45 leading-relaxed">
-              Ask your agent: <em className="text-cyan-300/80">"Run an AiVIS audit on example.com"</em> - it handles the rest.
+              Ask your agent: <em className="text-cyan-300/80">"Run an AiVIS.biz audit on example.com"</em> - it handles the rest.
             </p>
           </div>
           <div className="rounded-xl border border-white/8 bg-charcoal-light/30 p-3.5">
@@ -465,7 +465,7 @@ export default function McpConsolePage() {
             </div>
             <div className="text-left">
               <h2 className="text-base font-semibold text-white">Quick Setup</h2>
-              <p className="text-xs text-white/40">Add AiVIS tools to Claude Desktop, Cursor, or any MCP-compatible client</p>
+              <p className="text-xs text-white/40">Add AiVIS.biz tools to Claude Desktop, Cursor, or any MCP-compatible client</p>
             </div>
           </div>
           {showSetup ? <ChevronUp className="h-5 w-5 text-white/30" /> : <ChevronDown className="h-5 w-5 text-white/30" />}
@@ -560,7 +560,7 @@ export default function McpConsolePage() {
                   <span className="text-xs font-semibold text-white">Start Using Tools</span>
                 </div>
                 <p className="text-[11px] text-white/40 leading-relaxed">
-                  Ask your agent to "run an AiVIS audit on example.com" - it will auto-discover and invoke the right tool.
+                  Ask your agent to "run an AiVIS.biz audit on example.com" - it will auto-discover and invoke the right tool.
                 </p>
               </div>
             </div>

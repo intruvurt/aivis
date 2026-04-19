@@ -15,7 +15,7 @@ export default function InsightsPage() {
     ogTitle: 'AI Visibility Insights Hub: 2026 Playbooks',
     structuredData: [
       buildCollectionSchema(
-        'AiVIS Insights Hub',
+        'AiVIS.biz Insights Hub',
         'Strategic content for AI visibility auditing, answer engine optimization, and geo ranking in 2026.',
         '/insights'
       ),
@@ -48,7 +48,7 @@ export default function InsightsPage() {
                   AI Visibility Playbooks
                 </h1>
                 <p className="text-white/65 text-sm leading-relaxed mb-6 max-w-lg">
-                  Evidence-based strategies for answer engine optimization, citation readiness, and geo-adaptive ranking. Every playbook is grounded in real audit data from the AiVIS platform.
+                  Evidence-based strategies for answer engine optimization, citation readiness, and geo-adaptive ranking. Every playbook is grounded in real audit data from the AiVIS.biz platform.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {(['Strategy', 'AEO', 'Geo AI', 'Conversational'] as const).map((cat) => {
@@ -93,7 +93,7 @@ export default function InsightsPage() {
           <p className="text-xs font-semibold tracking-wide uppercase text-white/85 mb-3">Insights Hub</p>
           <h1 className="text-3xl md:text-4xl brand-title mb-4">AI Search Playbooks for 2026</h1>
           <p className="text-white/75 leading-relaxed">
-            High-intent guides built for extractability, citation quality, and semantic reinforcement across the AiVIS domain.
+            High-intent guides built for extractability, citation quality, and semantic reinforcement across the AiVIS.biz domain.
           </p>
         </header>
 
@@ -124,7 +124,7 @@ export default function InsightsPage() {
         </section>
 
         <section className="rounded-2xl border border-white/10/70 bg-charcoal p-6">
-          <h2 className="text-xl brand-title mb-3">Apply These Playbooks in AiVIS</h2>
+          <h2 className="text-xl brand-title mb-3">Apply These Playbooks in AiVIS.biz</h2>
           <p className="text-white/75 mb-4">
             Run audits after each content update, compare recommendation deltas, and track whether your high-value pages are becoming more citation-ready.
           </p>

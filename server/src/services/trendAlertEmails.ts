@@ -4,7 +4,7 @@
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS.biz <noreply@mailer.aivis.biz>';
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0]
   .trim()
@@ -75,11 +75,11 @@ export async function sendScoreDropAlert(payload: ScoreDropAlertPayload): Promis
         This usually means the page content, structure, or schema changed in a way that reduces AI extractability. Check the latest audit for specific recommendations.
       </p>
       <a href="${dashboardUrl}" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background: #f5a623; color: #1e2330; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 14px;">View Analytics Dashboard</a>
-      <p style="margin-top: 20px; font-size: 11px; color: #666;">This alert was triggered by a scheduled rescan in AiVIS.</p>
+      <p style="margin-top: 20px; font-size: 11px; color: #666;">This alert was triggered by a scheduled rescan in AiVIS.biz.</p>
     </div>
   `;
 
-  const text = `Score Drop Alert\n\nYour AI visibility score for ${url} dropped by ${drop} points (${previousScore} → ${currentScore}).\n\nCheck your dashboard: ${dashboardUrl}\n\nThis alert was triggered by a scheduled rescan in AiVIS.`;
+  const text = `Score Drop Alert\n\nYour AI visibility score for ${url} dropped by ${drop} points (${previousScore} → ${currentScore}).\n\nCheck your dashboard: ${dashboardUrl}\n\nThis alert was triggered by a scheduled rescan in AiVIS.biz.`;
 
   await resendSend({ to, subject, html, text });
 }
@@ -119,11 +119,11 @@ export async function sendCitationDropAlert(payload: CitationDropAlertPayload): 
         This typically means competing content has displaced your brand in AI-generated answers, or your content structure has changed. Review your citation tracker for query-level detail.
       </p>
       <a href="${dashboardUrl}" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background: #f5a623; color: #1e2330; font-weight: 600; border-radius: 8px; text-decoration: none; font-size: 14px;">Open Citation Tracker</a>
-      <p style="margin-top: 20px; font-size: 11px; color: #666;">This alert was triggered by a scheduled citation ranking job in AiVIS.</p>
+      <p style="margin-top: 20px; font-size: 11px; color: #666;">This alert was triggered by a scheduled citation ranking job in AiVIS.biz.</p>
     </div>
   `;
 
-  const text = `Citation Drop Alert\n\nThe AI mention rate for ${url} dropped by ${drop.toFixed(0)} percentage points (${previousMentionRate.toFixed(0)}% -> ${currentMentionRate.toFixed(0)}%).\n\nOpen your citation tracker: ${dashboardUrl}\n\nThis alert was triggered by a scheduled citation ranking job in AiVIS.`;
+  const text = `Citation Drop Alert\n\nThe AI mention rate for ${url} dropped by ${drop.toFixed(0)} percentage points (${previousMentionRate.toFixed(0)}% -> ${currentMentionRate.toFixed(0)}%).\n\nOpen your citation tracker: ${dashboardUrl}\n\nThis alert was triggered by a scheduled citation ranking job in AiVIS.biz.`;
 
   await resendSend({ to, subject, html, text });
 }

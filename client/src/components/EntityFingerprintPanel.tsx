@@ -297,7 +297,7 @@ export default function EntityFingerprintPanel() {
             <label className="block text-xs text-white/50 mb-1">Brand name *</label>
             <input
               type="text" value={brandName} onChange={e => setBrandName(e.target.value)}
-              placeholder="AiVIS" maxLength={200}
+              placeholder="AiVIS.biz" maxLength={200}
               className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder-white/25 focus:border-cyan-400/50 focus:outline-none"
             />
           </div>

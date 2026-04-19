@@ -29,7 +29,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
       "schema markup"
     ],
     "author": {
-      "name": "R. Mason / AiVIS",
+      "name": "R. Mason / AiVIS.biz",
       "title": "AI Visibility Research",
       "expertise": [
         "AI Search Strategy",
@@ -37,7 +37,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
         "Machine Readability"
       ],
       "credentials": [
-        "AiVIS Editorial Team"
+        "AiVIS.biz Editorial Team"
       ],
       "experience": "8+ years in search and AI content systems"
     },
@@ -82,7 +82,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
       "schema markup"
     ],
     "author": {
-      "name": "R. Mason / AiVIS",
+      "name": "R. Mason / AiVIS.biz",
       "title": "AI Visibility Research",
       "expertise": [
         "AI Search Strategy",
@@ -90,7 +90,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
         "Machine Readability"
       ],
       "credentials": [
-        "AiVIS Editorial Team"
+        "AiVIS.biz Editorial Team"
       ],
       "experience": "8+ years in search and AI content systems"
     },
@@ -131,7 +131,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
       "schema markup"
     ],
     "author": {
-      "name": "R. Mason / AiVIS",
+      "name": "R. Mason / AiVIS.biz",
       "title": "AI Visibility Research",
       "expertise": [
         "AI Search Strategy",
@@ -139,7 +139,7 @@ export const BLOG_READY_GENERATED_ENTRIES = [
         "Machine Readability"
       ],
       "credentials": [
-        "AiVIS Editorial Team"
+        "AiVIS.biz Editorial Team"
       ],
       "experience": "8+ years in search and AI content systems"
     },

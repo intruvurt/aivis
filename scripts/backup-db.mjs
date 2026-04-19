@@ -1,5 +1,5 @@
 /**
- * Database backup script for AiVIS (Neon Postgres)
+ * Database backup script for AiVIS.biz (Neon Postgres)
  * Usage: node scripts/backup-db.mjs
  *
  * Reads DATABASE_URL from server/.env, dumps all tables as INSERT statements
@@ -61,7 +61,7 @@ async function backup() {
     const outFile = path.join(backupDir, `aivis-backup-${timestamp}.sql`);
 
     const lines = [];
-    lines.push(`-- AiVIS Database Backup`);
+    lines.push(`-- AiVIS.biz Database Backup`);
     lines.push(`-- Generated: ${new Date().toISOString()}`);
     lines.push(`-- Source: Neon Postgres`);
     lines.push(`-- Tables: ${tables.length}`);

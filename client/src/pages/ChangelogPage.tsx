@@ -43,7 +43,7 @@ export default function ChangelogPage() {
   usePageMeta({
     title: "Changelog",
     description:
-      "A permanent ledger of every update, fix, and improvement shipped to AiVIS.",
+      "A permanent ledger of every update, fix, and improvement shipped to AiVIS.biz.",
     path: "/changelog",
   });
 

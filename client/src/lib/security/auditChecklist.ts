@@ -1,5 +1,5 @@
 /**
- * XSS audit checklist for the AiVIS codebase.
+ * XSS audit checklist for the AiVIS.biz codebase.
  *
  * Each entry documents a known risk surface, its current mitigation status,
  * and references to the relevant code. Run this as a living security register:

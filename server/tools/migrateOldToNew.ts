@@ -110,7 +110,7 @@ async function migrateTable(table: string): Promise<{ ins: number; skip: number 
 
 async function main() {
   console.log(`\n${'='.repeat(56)}`);
-  console.log(`  AiVIS DB Migration: OLD -> NEW`);
+  console.log(`  AiVIS.biz DB Migration: OLD -> NEW`);
   console.log(`  Mode: ${DRY_RUN ? 'DRY RUN (--exec to write)' : 'EXECUTING'}`);
   console.log(`${'='.repeat(56)}\n`);
 

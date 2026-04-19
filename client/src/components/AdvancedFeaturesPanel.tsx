@@ -253,13 +253,13 @@ const PROVIDER_SETUP_STEPS: Record<IntegrationPreset["key"] | "custom", string[]
   teams: [
     "Open MS Teams \u2192 go to the channel you want notifications in",
     "Click \u22EF (More options) \u2192 Connectors \u2192 Incoming Webhook",
-    "Name it (e.g. \"AiVIS\"), optionally add an icon, then click Create",
+    "Name it (e.g. \"AiVIS.biz\"), optionally add an icon, then click Create",
     "Copy the webhook URL and paste it below",
   ],
   google_chat: [
     "Open Google Chat \u2192 go to the Space you want notifications in",
     "Click the Space name \u2192 Apps & integrations \u2192 Add webhooks",
-    "Name it (e.g. \"AiVIS Alerts\") and click Save",
+    "Name it (e.g. \"AiVIS.biz Alerts\") and click Save",
     "Copy the webhook URL and paste it below",
   ],
   zapier: [
@@ -276,7 +276,7 @@ const PROVIDER_SETUP_STEPS: Record<IntegrationPreset["key"] | "custom", string[]
   ],
   custom: [
     "Use any HTTPS endpoint that accepts POST requests",
-    "AiVIS sends a signed JSON payload with an X-AiVIS-Signature header",
+    "AiVIS.biz sends a signed JSON payload with an X-AiVIS.biz-Signature header",
     "Paste your endpoint URL below",
   ],
 };
@@ -858,7 +858,7 @@ function ThirdPartyIntegrationsPanel() {
               )}
               {selected === "custom" && (
                 <p className="text-[11px] text-white/40 mt-1.5">
-                  Receives <code className="text-white/60">POST</code> with <code className="text-white/60">X-AiVIS-Signature</code> HMAC header on audit events.
+                  Receives <code className="text-white/60">POST</code> with <code className="text-white/60">X-AiVIS.biz-Signature</code> HMAC header on audit events.
                 </p>
               )}
             </div>
@@ -1118,7 +1118,7 @@ function WebhooksPanel() {
       </div>
 
       <p className="text-xs text-white/50">
-        Receives <code className="text-white/70">POST</code> with <code className="text-white/70">X-AiVIS-Signature</code> header on <code className="text-white/70">audit.completed</code> events.
+        Receives <code className="text-white/70">POST</code> with <code className="text-white/70">X-AiVIS.biz-Signature</code> header on <code className="text-white/70">audit.completed</code> events.
       </p>
 
       {atCap && (
@@ -1244,7 +1244,7 @@ function ReportDeliveryPanel() {
   return (
     <div className="space-y-3">
       <div className="rounded-lg bg-charcoal-deep border border-white/8 p-3 text-xs text-white/60 leading-relaxed">
-        When an audit completes, AiVIS can render a PDF and deliver it automatically. Email receives the PDF attachment. Slack, Discord, Zapier, and generic webhooks receive a summary plus public report link when available.
+        When an audit completes, AiVIS.biz can render a PDF and deliver it automatically. Email receives the PDF attachment. Slack, Discord, Zapier, and generic webhooks receive a summary plus public report link when available.
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">

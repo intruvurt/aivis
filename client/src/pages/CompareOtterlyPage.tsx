@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 
 export default function CompareOtterlyPage() {
   usePageMeta({
-    title: `AiVIS vs Otterly: Better AI SEO & Visibility Auditing (2026 Comparison)`,
-    description: 'AiVIS vs Otterly AI: compare LLM response parsing, entity-trust metrics, and un-gated AEO recommendations side by side.',
+    title: `AiVIS.biz vs Otterly: Better AI SEO & Visibility Auditing (2026 Comparison)`,
+    description: 'AiVIS.biz vs Otterly AI: compare LLM response parsing, entity-trust metrics, and un-gated AEO recommendations side by side.',
     path: '/compare/aivis-vs-otterly',
     structuredData: [
       {
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": `AiVIS vs Otterly: Which AI Visibility Tool Wins?`,
+        "headline": `AiVIS.biz vs Otterly: Which AI Visibility Tool Wins?`,
         "author": { "@id": "https://aivis.biz/#author" },
         "publisher": { "@id": "https://aivis.biz/#organization" }
       }
@@ -23,11 +23,11 @@ export default function CompareOtterlyPage() {
   return (
     <div className="max-w-4xl mx-auto py-12 px-6">
       <h1 className="text-4xl font-extrabold mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
-        AiVIS vs. Otterly
+        AiVIS.biz vs. Otterly
       </h1>
       <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
         Otterly helped popularize the concept of "AI Search Optimization" (AEO) by tracking brand 
-        mentions using standard RAG models. However, <strong>AiVIS</strong> goes beyond tracking-it gives you 
+        mentions using standard RAG models. However, <strong>AiVIS.biz</strong> goes beyond tracking-it gives you 
         the exact architectural fixes, JSON-LD schemas, and content structures required to rank 
         in AI Overviews, Perplexity, and ChatGPT. 
       </p>
@@ -39,7 +39,7 @@ export default function CompareOtterlyPage() {
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="p-4 border-b dark:border-gray-700 font-semibold border-r">Feature</th>
-                <th className="p-4 border-b dark:border-gray-700 font-semibold border-r">AiVIS</th>
+                <th className="p-4 border-b dark:border-gray-700 font-semibold border-r">AiVIS.biz</th>
                 <th className="p-4 border-b dark:border-gray-700 font-semibold">Otterly</th>
               </tr>
             </thead>
@@ -70,11 +70,11 @@ export default function CompareOtterlyPage() {
       </section>
       
       <section className="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-2xl border border-blue-100 dark:border-blue-800">
-        <h3 className="text-2xl font-bold mb-3 text-blue-800 dark:text-blue-200">The AiVIS Advantage</h3>
+        <h3 className="text-2xl font-bold mb-3 text-blue-800 dark:text-blue-200">The AiVIS.biz Advantage</h3>
         <p className="mb-4 text-gray-700 dark:text-gray-300">
           If you want to know <em>how often</em> you appear in conversational search, Otterly is fine. 
           But if you want to know <strong>why you aren't appearing, and precisely what code to change to fix it</strong>, 
-          you need the AiVIS structural analysis engine.
+          you need the AiVIS.biz structural analysis engine.
         </p>
         <Link to="/" className="inline-flex items-center font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700">
           Run your free audit now <ArrowRight className="ml-1 w-4 h-4" />
@@ -82,7 +82,7 @@ export default function CompareOtterlyPage() {
       </section>
 
       <section className="mt-8">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/80 mb-4">Compare AiVIS with other tools</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white/80 mb-4">Compare AiVIS.biz with other tools</h3>
         <div className="flex flex-wrap gap-3">
           <Link to="/compare/ahrefs" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Ahrefs</Link>
           <Link to="/compare/semrush" className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-2 text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.06] transition">vs Semrush</Link>

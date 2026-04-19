@@ -306,7 +306,7 @@ export default function AuthPage() {
             "Invalid email or password. Please try again or create a new account."
           );
         } else if (msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("load failed")) {
-          setError("Could not reach the AiVIS API. This is usually a temporary network issue or a frontend API URL mismatch.");
+          setError("Could not reach the AiVIS.biz API. This is usually a temporary network issue or a frontend API URL mismatch.");
         } else {
           setError(err?.message || "Sign in failed. Please try again.");
         }
@@ -448,12 +448,12 @@ export default function AuthPage() {
           <div className="flex items-center gap-3">
             <img
               src="/aivis-logo.png"
-              alt="AiVIS"
+              alt="AiVIS.biz"
               width={36}
               height={36}
               className="h-9 w-9 shrink-0 rounded-lg object-contain"
             />
-            <span className="text-xl font-bold text-white tracking-tight">AiVIS</span>
+            <span className="text-xl font-bold text-white tracking-tight">AiVIS.biz</span>
           </div>
         </div>
 

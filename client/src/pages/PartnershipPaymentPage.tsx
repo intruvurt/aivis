@@ -56,8 +56,8 @@ interface AgreementBasic {
 
 export default function PartnershipPaymentPage() {
   usePageMeta({
-    title: "Partnership Payments | AiVIS",
-    description: "Private payment portal for AiVIS partnership agreements.",
+    title: "Partnership Payments | AiVIS.biz",
+    description: "Private payment portal for AiVIS.biz partnership agreements.",
     path: "/partnership-payments",
     noIndex: true,
   });

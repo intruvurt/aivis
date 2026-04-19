@@ -275,7 +275,7 @@ router.post('/pr', async (req: Request, res: Response) => {
     baseBranch: String(req.body?.base_branch || 'main'),
     files: Array.isArray(req.body?.files) ? req.body.files : [],
     title: `fix(aivis): ${fix.issue_title?.slice(0, 60) || 'AI visibility fix'}`,
-    body: `AiVIS AutoFix - severity: ${fix.severity || 'medium'}`,
+    body: `AiVIS.biz AutoFix - severity: ${fix.severity || 'medium'}`,
   });
 
   return res.json({ success: true, jobId });

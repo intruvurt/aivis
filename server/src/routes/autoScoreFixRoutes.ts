@@ -62,7 +62,7 @@ async function fetchGitHubApi(path: string, token: string) {
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
-      'User-Agent': 'AiVIS-AutoScoreFix/1.0',
+      'User-Agent': 'AiVIS.biz-AutoScoreFix/1.0',
     },
   });
 

@@ -2,7 +2,7 @@
  * GitHub App Routes
  *
  * Handles GitHub App installation lifecycle, webhooks, and repo introspection
- * for the AiVIS AutoFix Engine.
+ * for the AiVIS.biz AutoFix Engine.
  *
  * Webhook endpoint is unauthenticated (verified via HMAC-SHA256 signature).
  * All other endpoints require user authentication.

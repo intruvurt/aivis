@@ -18,13 +18,13 @@ router.get('/policy', (_req: Request, res: Response) => {
         jurisdiction: 'Georgia, United States',
         summary: [
           'Users can request data export and account deletion from Settings.',
-          'AiVIS does not sell customer website data or account data.',
-          'Billing is handled by Stripe; card details are never stored by AiVIS.',
+          'AiVIS.biz does not sell customer website data or account data.',
+          'Billing is handled by Stripe; card details are never stored by AiVIS.biz.',
         ],
       },
       disclaimer: {
         summary:
-          'AiVIS provides technical AI-visibility diagnostics and recommendations. It is not legal, financial, or medical advice, and no specific ranking outcome is guaranteed.',
+          'AiVIS.biz provides technical AI-visibility diagnostics and recommendations. It is not legal, financial, or medical advice, and no specific ranking outcome is guaranteed.',
       },
       mobileStoreReadiness: {
         supportEmail: 'support@aivis.biz',

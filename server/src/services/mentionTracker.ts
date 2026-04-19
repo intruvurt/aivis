@@ -238,7 +238,7 @@ async function scanGitHub(brand: string): Promise<MentionRow[]> {
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'AiVIS-MentionTracker/1.0', Accept: 'application/vnd.github+json' },
+      headers: { 'User-Agent': 'AiVIS.biz-MentionTracker/1.0', Accept: 'application/vnd.github+json' },
       signal: controller.signal,
     });
     if (!res.ok) return rows;
@@ -619,7 +619,7 @@ async function scanGitHubDiscussions(brand: string): Promise<MentionRow[]> {
   try {
     const res = await fetch(url, {
       headers: {
-        'User-Agent': 'AiVIS-MentionTracker/1.0',
+        'User-Agent': 'AiVIS.biz-MentionTracker/1.0',
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
       },

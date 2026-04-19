@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { buildTechArticleSchema, buildBreadcrumbSchema } from "../lib/seoSchema";
 
-const TITLE = "Competitive Landscape - Where AiVIS Fits";
+const TITLE = "Competitive Landscape - Where AiVIS.biz Fits";
 const DESCRIPTION =
-  "How AiVIS compares to Otterly.ai, Reaudit, Profound, SE Visible, and LLMClicks - with a focus on intent, citation readiness, and structural authority.";
+  "How AiVIS.biz compares to Otterly.ai, Reaudit, Profound, SE Visible, and LLMClicks - with a focus on intent, citation readiness, and structural authority.";
 const PATH = "/competitive-landscape";
 
 export default function CompetitiveLandscapePage() {
@@ -37,7 +37,7 @@ export default function CompetitiveLandscapePage() {
           <h1 className="text-3xl md:text-4xl brand-title-lg mb-4">{TITLE}</h1>
           <p className="text-white/75 leading-relaxed max-w-3xl">
             AI visibility is no longer a side project. It is a dedicated category with its own
-            tools, tradeoffs, and gaps. This article maps where AiVIS sits in that landscape so you
+            tools, tradeoffs, and gaps. This article maps where AiVIS.biz sits in that landscape so you
             can decide when to use it, when to pair it with other platforms, and where it is
             deliberately opinionated.
           </p>
@@ -74,7 +74,7 @@ export default function CompetitiveLandscapePage() {
               </li>
             </ol>
             <p className="text-white/75 leading-relaxed">
-              AiVIS lives almost entirely in the second and third buckets. It does not try to be an
+              AiVIS.biz lives almost entirely in the second and third buckets. It does not try to be an
               all-in-one SEO platform, and it does not run live sentiment monitoring on what AI
               models say about your brand. Instead, it audits your page structure, schema, and
               content blocks to answer a narrower but critical question: <span className="italic">can
@@ -111,8 +111,8 @@ export default function CompetitiveLandscapePage() {
                   <th className="px-4 py-3 font-semibold">Tool</th>
                   <th className="px-4 py-3 font-semibold">Focus</th>
                   <th className="px-4 py-3 font-semibold whitespace-nowrap">Price Entry</th>
-                  <th className="px-4 py-3 font-semibold">AiVIS Advantage</th>
-                  <th className="px-4 py-3 font-semibold">AiVIS Gap</th>
+                  <th className="px-4 py-3 font-semibold">AiVIS.biz Advantage</th>
+                  <th className="px-4 py-3 font-semibold">AiVIS.biz Gap</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
@@ -121,7 +121,7 @@ export default function CompetitiveLandscapePage() {
                   <td className="px-4 py-3">Brand mention monitoring across AI engines</td>
                   <td className="px-4 py-3 whitespace-nowrap">$149/mo</td>
                   <td className="px-4 py-3">
-                    AiVIS does page-level structural auditing, not just mention tracking.
+                    AiVIS.biz does page-level structural auditing, not just mention tracking.
                     It tells you <span className="font-semibold">why</span> you are not being cited.
                   </td>
                   <td className="px-4 py-3">
@@ -133,12 +133,12 @@ export default function CompetitiveLandscapePage() {
                   <td className="px-4 py-3">GEO scoring + 11-engine tracking</td>
                   <td className="px-4 py-3 whitespace-nowrap">$149/mo</td>
                   <td className="px-4 py-3">
-                    AiVIS has deeper per-page, evidence-backed findings instead of a
+                    AiVIS.biz has deeper per-page, evidence-backed findings instead of a
                     score-only output. You get <span className="font-semibold">specific blocks to fix</span>,
                     not just a geo score.
                   </td>
                   <td className="px-4 py-3">
-                    Reaudit tracks 11 engines. AiVIS has no multi-engine tracking yet.
+                    Reaudit tracks 11 engines. AiVIS.biz has no multi-engine tracking yet.
                   </td>
                 </tr>
                 <tr>
@@ -146,8 +146,8 @@ export default function CompetitiveLandscapePage() {
                   <td className="px-4 py-3">Enterprise LLM monitoring + prompt volumes</td>
                   <td className="px-4 py-3 whitespace-nowrap">$499/mo</td>
                   <td className="px-4 py-3">
-                    AiVIS is accessible to SMBs and agencies. Profound is enterprise-first
-                    with complex deployment, while AiVIS is <span className="font-semibold">self-serve</span>
+                    AiVIS.biz is accessible to SMBs and agencies. Profound is enterprise-first
+                    with complex deployment, while AiVIS.biz is <span className="font-semibold">self-serve</span>
                     with page-level audits you can run immediately.
                   </td>
                   <td className="px-4 py-3">
@@ -159,8 +159,8 @@ export default function CompetitiveLandscapePage() {
                   <td className="px-4 py-3">AI monitoring inside a full SEO platform</td>
                   <td className="px-4 py-3 whitespace-nowrap">$189/mo</td>
                   <td className="px-4 py-3">
-                    AiVIS is purpose-built for AI visibility. SE Visible bolts AI features onto
-                    a broader SEO suite, while AiVIS stays focused on <span className="font-semibold">citation-ready
+                    AiVIS.biz is purpose-built for AI visibility. SE Visible bolts AI features onto
+                    a broader SEO suite, while AiVIS.biz stays focused on <span className="font-semibold">citation-ready
                     structure</span> and extraction.
                   </td>
                   <td className="px-4 py-3">
@@ -172,12 +172,12 @@ export default function CompetitiveLandscapePage() {
                   <td className="px-4 py-3">Hallucination detection + accuracy validation</td>
                   <td className="px-4 py-3 whitespace-nowrap">$49/mo</td>
                   <td className="px-4 py-3">
-                    AiVIS focuses on why pages do not get cited in the first place.
-                    LLMClicks looks at <span className="font-semibold">what</span> AI says; AiVIS looks at
+                    AiVIS.biz focuses on why pages do not get cited in the first place.
+                    LLMClicks looks at <span className="font-semibold">what</span> AI says; AiVIS.biz looks at
                     <span className="font-semibold">why</span> the model does not trust your page as a source.
                   </td>
                   <td className="px-4 py-3">
-                    No hallucination or accuracy monitoring for what AI says about AiVIS users.
+                    No hallucination or accuracy monitoring for what AI says about AiVIS.biz users.
                   </td>
                 </tr>
               </tbody>
@@ -186,10 +186,10 @@ export default function CompetitiveLandscapePage() {
         </section>
 
         <section className="mb-10 space-y-6 rounded-2xl border border-white/10 bg-charcoal p-6">
-          <h2 className="text-2xl brand-title">Where AiVIS is intentionally narrow</h2>
+          <h2 className="text-2xl brand-title">Where AiVIS.biz is intentionally narrow</h2>
           <p className="text-white/75 leading-relaxed">
             The easiest mistake in this category is to chase breadth: add yet another keyword
-            explorer, half-finished rank tracker, or generic content brief generator. AiVIS takes the
+            explorer, half-finished rank tracker, or generic content brief generator. AiVIS.biz takes the
             opposite path. It narrows in on <span className="font-semibold">structural readiness</span> - the
             combination of crawlability, extractability, and trust cues that cause an AI system to
             either surface your URL or quietly skip you.
@@ -213,43 +213,43 @@ export default function CompetitiveLandscapePage() {
           </ul>
           <p className="text-white/75 leading-relaxed">
             If you need full-funnel attribution, live LLM transcript analysis, or keyword bidding
-            recommendations, AiVIS will not replace your SEO stack. It is the layer that explains
+            recommendations, AiVIS.biz will not replace your SEO stack. It is the layer that explains
             <span className="font-semibold">why your supposedly great content still does not earn a quote</span>
             inside AI answers.
           </p>
         </section>
 
         <section className="mb-10 space-y-6 rounded-2xl border border-white/10 bg-charcoal p-6">
-          <h2 className="text-2xl brand-title">When to pair AiVIS with other tools</h2>
+          <h2 className="text-2xl brand-title">When to pair AiVIS.biz with other tools</h2>
           <p className="text-white/75 leading-relaxed">
-            Many teams run AiVIS alongside at least one of the competitors above. The pattern usually
+            Many teams run AiVIS.biz alongside at least one of the competitors above. The pattern usually
             looks like this:
           </p>
           <ul className="list-disc list-inside space-y-2 text-white/75">
             <li>
-              <strong className="text-white">Otterly.ai + AiVIS:</strong> Otterly alerts you when your
-              brand appears in AI answers; AiVIS shows which pages need structural work so that
+              <strong className="text-white">Otterly.ai + AiVIS.biz:</strong> Otterly alerts you when your
+              brand appears in AI answers; AiVIS.biz shows which pages need structural work so that
               mentions turn into <span className="font-semibold">defensible citations</span> instead of throwaway
               references.
             </li>
             <li>
-              <strong className="text-white">Reaudit + AiVIS:</strong> Reaudit gives you a multi-engine
-              surface-level view; AiVIS is the <span className="font-semibold">forensics layer</span> that explains
+              <strong className="text-white">Reaudit + AiVIS.biz:</strong> Reaudit gives you a multi-engine
+              surface-level view; AiVIS.biz is the <span className="font-semibold">forensics layer</span> that explains
               why your scores plateau.
             </li>
             <li>
-              <strong className="text-white">Profound / SE Visible + AiVIS:</strong> enterprise teams keep
-              their existing monitoring and reporting stack, then plug AiVIS in as a
+              <strong className="text-white">Profound / SE Visible + AiVIS.biz:</strong> enterprise teams keep
+              their existing monitoring and reporting stack, then plug AiVIS.biz in as a
               <span className="font-semibold">specialist diagnostic tool</span> for high-value landing pages.
             </li>
             <li>
-              <strong className="text-white">LLMClicks + AiVIS:</strong> LLMClicks flags hallucinations and
-              misstatements; AiVIS helps you upgrade the underlying evidence so that models have
+              <strong className="text-white">LLMClicks + AiVIS.biz:</strong> LLMClicks flags hallucinations and
+              misstatements; AiVIS.biz helps you upgrade the underlying evidence so that models have
               <span className="font-semibold">better material</span> to learn from.
             </li>
           </ul>
           <p className="text-white/75 leading-relaxed">
-            In other words: AiVIS is rarely the only tool in the stack, but it often becomes the
+            In other words: AiVIS.biz is rarely the only tool in the stack, but it often becomes the
             <span className="font-semibold">most concrete</span>. It is the place where vague complaints like "AI
             never cites us" turn into a prioritized list of fixes on specific URLs.
           </p>
@@ -258,7 +258,7 @@ export default function CompetitiveLandscapePage() {
         <section className="mb-12 space-y-4 rounded-2xl border border-emerald-400/50 bg-emerald-500/10 p-6">
           <h2 className="text-2xl brand-title text-emerald-200">Positioning summary</h2>
           <p className="text-white/80 leading-relaxed">
-            AiVIS's clearest positioning: the only tool that audits why your page fails at the
+            AiVIS.biz's clearest positioning: the only tool that audits why your page fails at the
             structural level - not just whether you appear, but exactly what structural and content
             failures prevent AI systems from trusting and citing you. That is the anchor for
             everything else: pricing, features, and roadmap.
@@ -278,7 +278,7 @@ export default function CompetitiveLandscapePage() {
               to="/pricing"
               className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/60 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-400/20"
             >
-              Explore AiVIS plans
+              Explore AiVIS.biz plans
               <span aria-hidden>→</span>
             </Link>
           </div>

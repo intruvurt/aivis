@@ -42,7 +42,7 @@ function baseApi(path: string): string {
 export default function IntegrationsHubPage() {
   usePageMeta({
     title: 'Integrations Hub',
-    description: 'Explore AiVIS integrations, automation endpoints, and connected workflows for analytics and operations.',
+    description: 'Explore AiVIS.biz integrations, automation endpoints, and connected workflows for analytics and operations.',
     path: '/integrations',
   });
 
@@ -301,7 +301,7 @@ export default function IntegrationsHubPage() {
               <div>
                 <h2 className="text-lg font-bold text-white">MCP Console</h2>
                 <p className="text-sm text-white/50 max-w-lg">
-                  Connect AI agents like Claude Desktop and Cursor to your AiVIS account. 8 tools for auditing, analytics, and competitor tracking - all via Model Context Protocol.
+                  Connect AI agents like Claude Desktop and Cursor to your AiVIS.biz account. 8 tools for auditing, analytics, and competitor tracking - all via Model Context Protocol.
                 </p>
               </div>
             </div>
@@ -353,7 +353,7 @@ export default function IntegrationsHubPage() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="flex items-center gap-2 text-white"><Bot className="h-4 w-4" /> MCP Server</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Expose AiVIS tools to AI agents via Model Context Protocol. 8 tools including audit execution, history retrieval, and analytics queries.</p>
+              <p className="mt-2 text-xs leading-6 text-white/60">Expose AiVIS.biz tools to AI agents via Model Context Protocol. 8 tools including audit execution, history retrieval, and analytics queries.</p>
               <div className="mt-2 flex items-center gap-2">
                 <span className="inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">Signal+</span>
                 <Link to="/app/mcp" className="text-[10px] text-violet-300 hover:text-violet-200 underline underline-offset-2">Open MCP Console →</Link>

@@ -65,7 +65,7 @@ export default function BlogPostPage() {
   if (!entry) return <Navigate to="/blogs" replace />;
 
   usePageMeta({
-    title: `${entry.title} | AiVIS Blogs`,
+    title: `${entry.title} | AiVIS.biz Blogs`,
     description: entry.description,
     path: entry.path,
     ogTitle: entry.title,
@@ -101,7 +101,7 @@ export default function BlogPostPage() {
             <ArrowLeft className="h-5 w-5 text-white/60" />
           </button>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/72">AiVIS blog</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/72">AiVIS.biz blog</p>
             <p className="mt-1 text-sm text-white/56">Canonical publication on aivis.biz</p>
           </div>
         </div>
@@ -166,9 +166,9 @@ export default function BlogPostPage() {
             </div>
           ) : (
             <div className="mb-8 rounded-3xl border border-amber-400/20 bg-amber-500/10 p-5 text-sm text-white/78">
-              <p className="font-semibold text-amber-200">Full article body not mirrored on AiVIS yet.</p>
+              <p className="font-semibold text-amber-200">Full article body not mirrored on AiVIS.biz yet.</p>
               <p className="mt-2 leading-7 text-white/72">
-                This post currently includes the canonical summary, author context, and key points here on AiVIS. The complete article is still hosted at the original publication source.
+                This post currently includes the canonical summary, author context, and key points here on AiVIS.biz. The complete article is still hosted at the original publication source.
               </p>
               <a
                 href={entry.sourceMediumUrl}
@@ -231,8 +231,8 @@ export default function BlogPostPage() {
           <div className="mb-7 rounded-3xl border border-white/10 bg-white/[0.02] p-4">
             <p className="text-sm text-white/70">
               {hasMirroredContent
-                ? 'This article is originally published on Medium and canonically mirrored on AiVIS for ownership clarity and schema consistency.'
-                : 'This article is originally published at the source below. AiVIS currently mirrors the metadata and key takeaways, with the full body still hosted on the original publication.'}
+                ? 'This article is originally published on Medium and canonically mirrored on AiVIS.biz for ownership clarity and schema consistency.'
+                : 'This article is originally published at the source below. AiVIS.biz currently mirrors the metadata and key takeaways, with the full body still hosted on the original publication.'}
             </p>
             <a href={entry.sourceMediumUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white">
               View source on Medium <ExternalLink className="h-4 w-4" />

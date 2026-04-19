@@ -32,7 +32,7 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
   if (!token) {
     // Suppress log noise from our own internal scanner bot
     const ua = req.headers['user-agent'] || '';
-    if (!ua.includes('AiVIS-PrivateExposureScan')) {
+    if (!ua.includes('AiVIS.biz-PrivateExposureScan')) {
       logMissingToken(req);
     }
     return res.status(401).json({

@@ -4,7 +4,7 @@ This document is the source of truth for the current conversion-first messaging 
 
 ## 1) Positioning
 
-AiVIS is positioned as:
+AiVIS.biz is positioned as:
 
 **Evidence-backed AI citation diagnosis + fix execution**
 
@@ -73,4 +73,4 @@ Dashboard/report surfaces should include a concise “Since last scan” block w
 - citations gained/lost
 - competitor movement
 - new blockers detected
-- fix impact delta
+- fix impact delta

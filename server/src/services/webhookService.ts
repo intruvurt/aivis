@@ -141,7 +141,7 @@ function summarizeEvent(event: WebhookEvent, data: Record<string, any>): string 
   const score = typeof data?.visibility_score === 'number' ? data.visibility_score : null;
   if (event === 'audit.completed') {
     if (url && score !== null) {
-      return `AiVIS audited "${url}" and returned a "${score}/100" AI Visibility score.\nSee how ChatGPT and Perplexity likely interpret the site, what they may miss, and where the biggest visibility gaps are:`;
+      return `AiVIS.biz audited "${url}" and returned a "${score}/100" AI Visibility score.\nSee how ChatGPT and Perplexity likely interpret the site, what they may miss, and where the biggest visibility gaps are:`;
     }
     return `Audit completed${score !== null ? ` • score ${score}` : ''}${url ? ` • ${url}` : ''}`;
   }
@@ -160,11 +160,11 @@ function buildProviderPayload(hook: Webhook, event: WebhookEvent, data: Record<s
 
   if (hook.provider === 'slack') {
     return {
-      text: `[AiVIS] ${summary}`,
+      text: `[AiVIS.biz] ${summary}`,
       blocks: [
         {
           type: 'header',
-          text: { type: 'plain_text', text: `AiVIS • ${event}`, emoji: true },
+          text: { type: 'plain_text', text: `AiVIS.biz • ${event}`, emoji: true },
         },
         {
           type: 'section',
@@ -180,10 +180,10 @@ function buildProviderPayload(hook: Webhook, event: WebhookEvent, data: Record<s
 
   if (hook.provider === 'discord') {
     return {
-      content: `[AiVIS] ${summary}`,
+      content: `[AiVIS.biz] ${summary}`,
       embeds: [
         {
-          title: `AiVIS ${event}`,
+          title: `AiVIS.biz ${event}`,
           description: summary,
           timestamp: timestampIso,
           fields: [
@@ -203,10 +203,10 @@ function buildProviderPayload(hook: Webhook, event: WebhookEvent, data: Record<s
       '@type': 'MessageCard',
       '@context': 'http://schema.org/extensions',
       themeColor: '6366f1',
-      summary: `AiVIS • ${event}`,
+      summary: `AiVIS.biz • ${event}`,
       sections: [
         {
-          activityTitle: `AiVIS • ${event}`,
+          activityTitle: `AiVIS.biz • ${event}`,
           activitySubtitle: summary,
           facts: [
             { name: 'Event', value: event },
@@ -224,10 +224,10 @@ function buildProviderPayload(hook: Webhook, event: WebhookEvent, data: Record<s
 
   if (hook.provider === 'google_chat') {
     return {
-      text: `*AiVIS • ${event}*\n${summary}`,
+      text: `*AiVIS.biz • ${event}*\n${summary}`,
       cards: [
         {
-          header: { title: 'AiVIS Notification', subtitle: event },
+          header: { title: 'AiVIS.biz Notification', subtitle: event },
           sections: [
             {
               widgets: [
@@ -287,11 +287,11 @@ async function sendWithRetries(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-AiVIS-Signature': signature,
-          'X-AiVIS-Signature-V1': signatureV1,
-          'X-AiVIS-Event': event,
-          'X-AiVIS-Timestamp': String(timestamp),
-          'X-AiVIS-Provider': hook.provider,
+          'X-AiVIS.biz-Signature': signature,
+          'X-AiVIS.biz-Signature-V1': signatureV1,
+          'X-AiVIS.biz-Event': event,
+          'X-AiVIS.biz-Timestamp': String(timestamp),
+          'X-AiVIS.biz-Provider': hook.provider,
         },
         body: payloadBody,
         signal: controller.signal,
@@ -615,7 +615,7 @@ export async function testWebhook(
   const timestampIso = new Date().toISOString();
   const payloadBody = JSON.stringify(
     buildProviderPayload(hook, event, {
-      message: 'AiVIS webhook connectivity test',
+      message: 'AiVIS.biz webhook connectivity test',
       source: 'settings.integrations',
       webhook_id: hook.id,
       webhook_url: hook.url,

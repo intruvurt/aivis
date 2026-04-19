@@ -1,5 +1,5 @@
 /**
- * Drop-in Express security middleware for AiVIS.
+ * Drop-in Express security middleware for AiVIS.biz.
  *
  * Usage in server.ts:
  *   import { applySecurityMiddleware } from './middleware/securityMiddleware.js';

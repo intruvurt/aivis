@@ -70,7 +70,7 @@ export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditRes
           <p className="mt-1 text-xs leading-6 text-white/50">
             {isInstalled
               ? `Connected to GitHub as ${status?.installation?.account_login}. AI-generated PRs fix visibility issues automatically.`
-              : "Install the AiVIS AutoFix Engine on GitHub to enable automated code-level visibility fixes."}
+              : "Install the AiVIS.biz AutoFix Engine on GitHub to enable automated code-level visibility fixes."}
           </p>
         </div>
         {isInstalled ? (
@@ -97,7 +97,7 @@ export const AutoScoreFixWidget: React.FC<AutoScoreFixWidgetProps> = ({ auditRes
           rel="noopener noreferrer"
           className="mt-3 block w-full rounded-xl py-2.5 px-3 text-sm font-semibold tracking-tight text-center bg-gradient-to-r from-violet-600 to-cyan-600 text-white hover:from-violet-500 hover:to-cyan-500 transition-all"
         >
-          Install AiVIS AutoFix Engine
+          Install AiVIS.biz AutoFix Engine
         </a>
       ) : (
         <button

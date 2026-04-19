@@ -29,7 +29,7 @@ const COMPETITOR_TARGET_URL_KEY = "aivis-competitor-target-url";
 const COMPETITORS_FAQ = [
   {
     question: "How does competitor AI visibility comparison work?",
-    answer: "AiVIS audits each competitor URL through the same multi-signal analysis pipeline used for your own site: entity clarity, structure, evidence depth, schema alignment, and answer-block quality. The comparison surfaces which structural factors give a competitor an advantage in AI-generated answers and identifies gaps where your content is weaker or missing entirely. This is not a simulated metric — it is an evidence-based comparison of machine-readable signals from both sites.",
+    answer: "AiVIS.biz audits each competitor URL through the same multi-signal analysis pipeline used for your own site: entity clarity, structure, evidence depth, schema alignment, and answer-block quality. The comparison surfaces which structural factors give a competitor an advantage in AI-generated answers and identifies gaps where your content is weaker or missing entirely. This is not a simulated metric — it is an evidence-based comparison of machine-readable signals from both sites.",
   },
   {
     question: "What signals give competitors an advantage in AI answers over my site?",
@@ -48,8 +48,8 @@ const COMPETITORS_FAQ = [
     answer: "Competitor audits use the same live crawl pipeline as standard audits. Each time you run or schedule a competitor check, the system fetches fresh page content and recomputes all signals. Scores reflect the current live state of the competitor's pages and are not cached from prior runs beyond the standard 24-hour cache window.",
   },
   {
-    question: "Can a competitor block AiVIS from auditing their site?",
-    answer: "If a competitor explicitly disallows AI crawlers or the AiVIS scraper in their robots.txt, or deploys aggressive bot detection that blocks the headless browser, that audit will return limited signal data. This itself is a signal: pages that actively block AI crawlers cannot be cited by AI answer engines and will score low on the extraction and trust dimensions regardless.",
+    question: "Can a competitor block AiVIS.biz from auditing their site?",
+    answer: "If a competitor explicitly disallows AI crawlers or the AiVIS.biz scraper in their robots.txt, or deploys aggressive bot detection that blocks the headless browser, that audit will return limited signal data. This itself is a signal: pages that actively block AI crawlers cannot be cited by AI answer engines and will score low on the extraction and trust dimensions regardless.",
   },
 ];
 
@@ -155,7 +155,7 @@ export default function CompetitorsPage() {
     structuredData: [
       buildWebPageSchema({
         path: "/competitors",
-        name: "Competitor AI Visibility Comparison | AiVIS",
+        name: "Competitor AI Visibility Comparison | AiVIS.biz",
         description: "Compare your AI visibility scores against competitors. Identify structural gaps, evidence deficits, and schema mismatches that explain why competitors appear in AI answers where you do not.",
       }),
       buildFaqSchema(COMPETITORS_FAQ, { path: "/competitors" }),

@@ -37,7 +37,7 @@ async function fetchFastHtml(target: string): Promise<string | null> {
     const response = await fetch(target, {
       signal: controller.signal,
       headers: {
-        'user-agent': 'AiVIS-FastAudit/1.0',
+        'user-agent': 'AiVIS.biz-FastAudit/1.0',
         accept: 'text/html,application/xhtml+xml',
       },
       redirect: 'follow',

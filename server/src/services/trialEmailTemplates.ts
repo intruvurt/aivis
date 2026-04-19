@@ -4,7 +4,7 @@
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS <noreply@mailer.aivis.biz>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'AiVIS.biz <noreply@mailer.aivis.biz>';
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
   .split(',')[0]
   .trim()
@@ -66,8 +66,8 @@ function buildTrialEmailPayload(
   switch (emailType) {
     case 'trial_started':
       return {
-        subject: 'Your 14-day AiVIS Signal trial is active',
-        text: `Your AiVIS Signal trial is now active. It expires on ${ctx.trialEndsAt || 'in 14 days'}. Log in at ${FRONTEND_URL} to run your first audit.`,
+        subject: 'Your 14-day AiVIS.biz Signal trial is active',
+        text: `Your AiVIS.biz Signal trial is now active. It expires on ${ctx.trialEndsAt || 'in 14 days'}. Log in at ${FRONTEND_URL} to run your first audit.`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#ffffff;">Your Signal trial is live</h1>
           <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
@@ -83,8 +83,8 @@ function buildTrialEmailPayload(
 
     case 'trial_warning_day10':
       return {
-        subject: `AiVIS Signal trial - ${ctx.daysLeft ?? 4} days remaining`,
-        text: `Your AiVIS Signal trial has ${ctx.daysLeft ?? 4} days left. Upgrade to keep your features: ${FRONTEND_URL}/billing`,
+        subject: `AiVIS.biz Signal trial - ${ctx.daysLeft ?? 4} days remaining`,
+        text: `Your AiVIS.biz Signal trial has ${ctx.daysLeft ?? 4} days left. Upgrade to keep your features: ${FRONTEND_URL}/billing`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#ffffff;">${ctx.daysLeft ?? 4} days left on your Signal trial</h1>
           <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
@@ -100,8 +100,8 @@ function buildTrialEmailPayload(
 
     case 'trial_warning_day13':
       return {
-        subject: 'AiVIS Signal trial expires tomorrow',
-        text: `Your AiVIS Signal trial expires tomorrow. Upgrade now to avoid losing access: ${FRONTEND_URL}/billing`,
+        subject: 'AiVIS.biz Signal trial expires tomorrow',
+        text: `Your AiVIS.biz Signal trial expires tomorrow. Upgrade now to avoid losing access: ${FRONTEND_URL}/billing`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#ef4444;">Your trial expires tomorrow</h1>
           <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
@@ -116,8 +116,8 @@ function buildTrialEmailPayload(
 
     case 'trial_expired':
       return {
-        subject: 'Your AiVIS Signal trial has ended',
-        text: `Your 14-day AiVIS Signal trial has expired. Your account is now on the Observer (free) plan. Upgrade anytime at ${FRONTEND_URL}/billing`,
+        subject: 'Your AiVIS.biz Signal trial has ended',
+        text: `Your 14-day AiVIS.biz Signal trial has expired. Your account is now on the Observer (free) plan. Upgrade anytime at ${FRONTEND_URL}/billing`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#ffffff;">Trial ended</h1>
           <p style="color:#cbd5e1;font-size:15px;line-height:1.7;">
@@ -132,7 +132,7 @@ function buildTrialEmailPayload(
 
     case 'trial_converted':
       return {
-        subject: 'Welcome to AiVIS - subscription confirmed',
+        subject: 'Welcome to AiVIS.biz - subscription confirmed',
         text: `Congratulations! You've upgraded to the ${ctx.newTier || 'paid'} plan. Log in at ${FRONTEND_URL}/dashboard to continue.`,
         html: wrap(`
           <h1 style="margin:0 0 12px;font-size:24px;color:#22d3ee;">You're all set</h1>
@@ -145,7 +145,7 @@ function buildTrialEmailPayload(
       };
 
     default:
-      return { subject: 'AiVIS notification', text: 'You have a new notification from AiVIS.', html: wrap('<p>You have a new notification from AiVIS.</p>') };
+      return { subject: 'AiVIS.biz notification', text: 'You have a new notification from AiVIS.biz.', html: wrap('<p>You have a new notification from AiVIS.biz.</p>') };
   }
 }
 
@@ -186,10 +186,10 @@ function wrap(body: string): string {
   return `
     <div style="background:#0f172a;color:#e5e7eb;padding:24px;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:600px;margin:0 auto;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;background:#111827;">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS.biz -> evidence-backed site analysis for AI answers</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:16px;">AiVIS.biz.biz -> evidence-backed site analysis for AI answers</div>
         ${body}
         <div style="margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);color:#64748b;font-size:11px;line-height:1.6;">
-          <p style="margin:0;">AiVIS by Intruvurt Labs · Georgia, USA</p>
+          <p style="margin:0;">AiVIS.biz by Intruvurt Labs · Georgia, USA</p>
           <p style="margin:4px 0 0;">
             <a href="https://aivis.biz" style="color:#64748b;text-decoration:none;">aivis.biz</a>
             &nbsp;·&nbsp;

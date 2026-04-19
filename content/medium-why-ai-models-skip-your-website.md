@@ -15,7 +15,7 @@ The answer is uncomfortable for most website owners: these models don't care abo
 
 Most websites fail that test. Not because the content is bad, but because the structural signals AI models need don't exist on the page.
 
-So I built a scoring framework to measure exactly that. It runs on [AiVIS](https://aivis.biz/analyze), and it evaluates 28 deterministic rules across 4 categories. No vibes. No AI guessing about AI. Hard structural checks with pass/fail outcomes.
+So I built a scoring framework to measure exactly that. It runs on [AiVIS.biz](https://aivis.biz/analyze), and it evaluates 28 deterministic rules across 4 categories. No vibes. No AI guessing about AI. Hard structural checks with pass/fail outcomes.
 
 Let me walk you through how it actually works.
 
@@ -55,7 +55,7 @@ The most critical check is Organization or LocalBusiness schema. If your page do
 
 Other Source checks include: SameAs social links (at least 2 connected profiles that verify your entity across platforms), author entity in schema (so AI knows who wrote the content), canonical URL declared (so crawlers don't split your identity across duplicate pages), robots.txt accessibility (hard blocker, caps at 80 if missing), AI crawler access (if you're blocking GPTBot, ClaudeBot, or PerplexityBot, your score caps at 60), and llms.txt presence (the emerging standard for declaring AI-specific crawl policies).
 
-You can check your AI crawler access for free right now using the [AiVIS Robots Checker](https://aivis.biz/tools/robots-checker). It detects GPTBot, ClaudeBot, PerplexityBot, CCBot, Anthropic, and others. Letter grade, A through F, no login required.
+You can check your AI crawler access for free right now using the [AiVIS.biz Robots Checker](https://aivis.biz/tools/robots-checker). It detects GPTBot, ClaudeBot, PerplexityBot, CCBot, Anthropic, and others. Letter grade, A through F, no login required.
 
 ### SIGNAL (8 rules)
 
@@ -63,7 +63,7 @@ Signal rules check whether your page communicates its topic clearly through stan
 
 Title tag between 20-70 characters is a hard blocker (caps at 70 if missing). Meta description must exist. Open Graph tags need to be complete (title, description, image) so social previews and AI summaries have clean data to pull. JSON-LD must be present with at least one block (hard blocker, caps at 75). Exactly one H1 tag. Proper heading hierarchy (H1 to H2 to H3, not jumping levels). Sitemap.xml present and accessible. Language attribute declared on the HTML element.
 
-These are table stakes. But you'd be amazed how many production sites fail 3 or 4 of these simultaneously. The [AiVIS Schema Validator](https://aivis.biz/tools/schema-validator) checks JSON-LD, Open Graph, Twitter Cards, and Microdata in one pass. Free, no account needed.
+These are table stakes. But you'd be amazed how many production sites fail 3 or 4 of these simultaneously. The [AiVIS.biz Schema Validator](https://aivis.biz/tools/schema-validator) checks JSON-LD, Open Graph, Twitter Cards, and Microdata in one pass. Free, no account needed.
 
 ### FACT (7 rules)
 
@@ -73,7 +73,7 @@ Content must be at least 800 words. That's a hard blocker (caps at 65 if under).
 
 The word count requirement isn't arbitrary. AI models processing content for citation need enough text to confirm topical depth. Thin pages get classified as supplementary, not authoritative.
 
-Test your content structure with the free [AiVIS Content Extractability Tool](https://aivis.biz/tools/content-extractability). It grades your heading hierarchy, list usage, code blocks, and content density on the same A-F scale.
+Test your content structure with the free [AiVIS.biz Content Extractability Tool](https://aivis.biz/tools/content-extractability). It grades your heading hierarchy, list usage, code blocks, and content density on the same A-F scale.
 
 ### RELATIONSHIP (5 rules)
 
@@ -91,7 +91,7 @@ Each rule also has a weight. Some rules are hard blockers, meaning if you fail t
 
 Final scores map to letter grades: 80-100 is A (excellent AI visibility), 60-79 is B (good with gaps), 40-59 is C (fair but at risk), 20-39 is D (poor), 0-19 is F (effectively invisible).
 
-The full scoring runs on every audit at [AiVIS](https://aivis.biz/analyze), across all tiers including the free Observer plan (3 scans per month, no credit card).
+The full scoring runs on every audit at [AiVIS.biz](https://aivis.biz/analyze), across all tiers including the free Observer plan (3 scans per month, no credit card).
 
 ---
 
@@ -101,7 +101,7 @@ Here's the thing about using AI to evaluate AI readiness: it's circular. If you 
 
 SSFR doesn't do that. Every rule checks a concrete structural fact about your page. JSON-LD either exists or it doesn't. Your robots.txt either allows GPTBot or it doesn't. Your heading hierarchy either follows the spec or it doesn't.
 
-The AI models in the [AiVIS pipeline](https://aivis.biz/methodology) are used for content analysis, recommendation generation, and cross-validation. But the score itself is computed deterministically from your page structure. That's what makes it reproducible and auditable. Run the same URL twice, you get the same structural scores (content-based AI recommendations may vary, structural scores won't).
+The AI models in the [AiVIS.biz pipeline](https://aivis.biz/methodology) are used for content analysis, recommendation generation, and cross-validation. But the score itself is computed deterministically from your page structure. That's what makes it reproducible and auditable. Run the same URL twice, you get the same structural scores (content-based AI recommendations may vary, structural scores won't).
 
 On Signal and Score Fix tiers, the content analysis runs through a [triple-check pipeline](https://aivis.biz/methodology). Three separate AI models (GPT-5 Mini, Claude Sonnet 4.6, and Grok 4.1 Fast as a validation gate) cross-check each other's work. If any stage fails, the system degrades gracefully to the prior stage's output instead of crashing your audit.
 
@@ -109,7 +109,7 @@ On Signal and Score Fix tiers, the content analysis runs through a [triple-check
 
 ## What You Can Do Right Now (Free)
 
-Before you spend a dollar, AiVIS gives you three completely free tools. No login. No API keys. No trial period.
+Before you spend a dollar, AiVIS.biz gives you three completely free tools. No login. No API keys. No trial period.
 
 **[Schema Validator](https://aivis.biz/tools/schema-validator)** - Paste any URL and get a full JSON-LD, Open Graph, Twitter Card, and Microdata validation with a letter grade.
 
@@ -123,7 +123,7 @@ These cover the highest-impact SSFR failures I see. Most sites lose 15-25 points
 
 ## When Free Tools Aren't Enough
 
-If you want the full 28-rule SSFR audit with recommendations, the free Observer tier at [AiVIS](https://aivis.biz/pricing) gives you 3 scans a month.
+If you want the full 28-rule SSFR audit with recommendations, the free Observer tier at [AiVIS.biz](https://aivis.biz/pricing) gives you 3 scans a month.
 
 Need more depth? The Alignment tier ($49/month, 60 scans) adds [competitor tracking](https://aivis.biz/competitors) with head-to-head comparisons across schema coverage, content depth, and page speed. It also adds [brand mention tracking](https://aivis.biz/mentions) across 9 free sources (Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt) and [reverse engineering tools](https://aivis.biz/reverse-engineer) that decompose how AI models think about content in your niche.
 
@@ -135,4 +135,4 @@ Because right now, most of them see nothing.
 
 ---
 
-**Run your first audit free at [AiVIS.biz](https://aivis.biz)**
+**Run your first audit free at [AiVIS.biz.biz](https://aivis.biz)**

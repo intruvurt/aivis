@@ -10,11 +10,11 @@ const router = Router();
 const OPENAPI_SPEC = {
   openapi: '3.0.3',
   info: {
-    title: 'AiVIS API',
+    title: 'AiVIS.biz API',
     version: '1.0.0',
     description:
-      'AiVIS REST API. Audit whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.',
-    contact: { name: 'AiVIS Support', url: 'https://aivis.biz', email: 'support@aivis.biz' },
+      'AiVIS.biz REST API. Audit whether websites are machine-readable, structurally extractable, and citation-ready inside AI-generated answers.',
+    contact: { name: 'AiVIS.biz Support', url: 'https://aivis.biz', email: 'support@aivis.biz' },
     license: { name: 'Proprietary' },
   },
   servers: [
@@ -243,7 +243,7 @@ const OPENAPI_SPEC = {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'avis_*',
-        description: 'API key authentication. Keys are prefixed with avis_ and managed from your AiVIS account settings.',
+        description: 'API key authentication. Keys are prefixed with avis_ and managed from your AiVIS.biz account settings.',
       },
     },
     schemas: {

@@ -7,16 +7,16 @@ import PublicPageFrame from "../components/PublicPageFrame";
 
 export default function CompliancePage() {
   usePageMeta({
-    title: "Compliance & Security | AiVIS",
+    title: "Compliance & Security | AiVIS.biz",
     description:
-      "AiVIS compliance and security posture, including GDPR operations, controls, and SOC roadmap status.",
+      "AiVIS.biz compliance and security posture, including GDPR operations, controls, and SOC roadmap status.",
     path: "/compliance",
     structuredData: [
       buildWebPageSchema({
         path: "/compliance",
-        name: "AiVIS Compliance & Security",
+        name: "AiVIS.biz Compliance & Security",
         description:
-          "Compliance and security operating posture for AiVIS by AiVIS.",
+          "Compliance and security operating posture for AiVIS.biz by AiVIS.biz.",
       }),
       buildBreadcrumbSchema([
         { name: "Home", path: "/" },
@@ -26,28 +26,28 @@ export default function CompliancePage() {
   });
 
   return (
-    <PublicPageFrame icon={ShieldCheck} title="Compliance & Security" subtitle="Formal posture, controls, and current certification status for AiVIS" maxWidthClass="max-w-5xl">
+    <PublicPageFrame icon={ShieldCheck} title="Compliance & Security" subtitle="Formal posture, controls, and current certification status for AiVIS.biz" maxWidthClass="max-w-5xl">
       <div className="space-y-6">
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6 space-y-4">
           <h2 className="text-lg font-semibold text-white">About This Compliance &amp; Security Page</h2>
           <p className="text-sm text-white/75 leading-relaxed">
-            This page is the authoritative, machine-readable record of AiVIS's security posture, data-handling
-            controls, jurisdictional operating terms, and current certification status. AiVIS is an AI Visibility
-            Intelligence System built and operated by AiVIS, a company incorporated under the laws of
+            This page is the authoritative, machine-readable record of AiVIS.biz's security posture, data-handling
+            controls, jurisdictional operating terms, and current certification status. AiVIS.biz is an AI Visibility
+            Intelligence System built and operated by AiVIS.biz, a company incorporated under the laws of
             the State of Georgia, United States (postal code 30501). Every statement on this page is
             evidence-backed and deliberately scoped to what can be independently verified. We do not publish
             forward-looking compliance claims that lack a corresponding attestation.
           </p>
           <p className="text-sm text-white/75 leading-relaxed">
-            AiVIS applies layered security controls across all platform surfaces. Data transmitted between users
+            AiVIS.biz applies layered security controls across all platform surfaces. Data transmitted between users
             and the platform is encrypted in transit using TLS. Authenticated access controls govern all internal
             data access paths. Application logs and security events are retained under defined operational access
-            limits. Payment data is handled exclusively by Stripe; AiVIS never stores, transmits, or processes
+            limits. Payment data is handled exclusively by Stripe; AiVIS.biz never stores, transmits, or processes
             raw card details. Data handling timelines and retention schedules are governed by the Privacy Policy,
             which is accessible from the footer of every page.
           </p>
           <p className="text-sm text-white/75 leading-relaxed">
-            Every audit that runs on AiVIS executes a real-time, three-layer threat intelligence scan in parallel
+            Every audit that runs on AiVIS.biz executes a real-time, three-layer threat intelligence scan in parallel
             with the visibility analysis. The scan checks the target URL against the abuse.ch URLhaus malicious
             URL database (covering known malware distribution, phishing, and command-and-control endpoints),
             runs a Google Safe Browsing API v4 check for social engineering and malware indicators, and applies
@@ -56,9 +56,9 @@ export default function CompliancePage() {
             dedicated banner on every audit report with risk levels ranging from Low to Critical.
           </p>
           <p className="text-sm text-white/75 leading-relaxed">
-            For data-subject rights, AiVIS supports GDPR-style operational controls — including data access,
+            For data-subject rights, AiVIS.biz supports GDPR-style operational controls — including data access,
             correction, deletion, and export requests — processed through privacy@aivis.biz under documented
-            response timelines. Regarding certification: AiVIS does not currently claim SOC 1 Type I or SOC 2
+            response timelines. Regarding certification: AiVIS.biz does not currently claim SOC 1 Type I or SOC 2
             Type II certification. This page will be updated when a certification or third-party attestation can
             be evidenced. Platform disputes are subject to the exclusive jurisdiction of courts in Georgia, USA,
             as documented in the Terms of Service. Security concerns can be reported to security@aivis.biz,
@@ -71,7 +71,7 @@ export default function CompliancePage() {
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">
             <li>Data is encrypted in transit (TLS) and protected by authenticated access controls.</li>
             <li>Application logs and security events are retained with operational access limits.</li>
-            <li>Payment data is processed by Stripe; card data is not stored by AiVIS.</li>
+            <li>Payment data is processed by Stripe; card data is not stored by AiVIS.biz.</li>
             <li>Data handling and retention terms are documented in the Privacy Policy.</li>
           </ul>
         </section>
@@ -79,7 +79,7 @@ export default function CompliancePage() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">Jurisdiction</h2>
           <ul className="space-y-2 text-sm text-white/75 list-disc pl-5">
-            <li>AiVIS is operated by Intruvurt Labs, LLC, a Georgia (USA) based company.</li>
+            <li>AiVIS.biz is operated by Intruvurt Labs, LLC, a Georgia (USA) based company.</li>
             <li>Governing law: State of Georgia, United States (postal code 30501).</li>
             <li>Disputes are subject to the exclusive jurisdiction of courts located in Georgia, USA.</li>
             <li>Full jurisdictional terms are documented in the <Link to="/terms" className="text-white/85 hover:text-white underline">Terms of Service</Link>.</li>
@@ -105,7 +105,7 @@ export default function CompliancePage() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">GDPR operations</h2>
           <p className="text-sm text-white/75 leading-relaxed mb-3">
-            AiVIS supports GDPR-style operational controls including access, correction, deletion, and export requests.
+            AiVIS.biz supports GDPR-style operational controls including access, correction, deletion, and export requests.
             Requests can be sent to <a href="mailto:privacy@aivis.biz" className="text-white/85 hover:text-white underline">privacy@aivis.biz</a> and are processed under documented response timelines.
           </p>
           <p className="text-sm text-white/70">
@@ -116,7 +116,7 @@ export default function CompliancePage() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
           <h2 className="text-lg font-semibold text-white mb-3">SOC status</h2>
           <p className="text-sm text-white/75 leading-relaxed">
-            AiVIS is <strong className="text-white">not currently claiming SOC 1 Type I or SOC 2 certification</strong>.
+            AiVIS.biz is <strong className="text-white">not currently claiming SOC 1 Type I or SOC 2 certification</strong>.
             We only publish controls and attestations that can be evidenced. Certification roadmap updates are published on this page when available.
           </p>
         </section>

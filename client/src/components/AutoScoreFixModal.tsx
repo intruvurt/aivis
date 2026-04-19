@@ -179,7 +179,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
       window.history.replaceState({}, "", `${current.pathname}${current.search}${current.hash}`);
     }
     if (current.searchParams.get("github_app") === "installed") {
-      setTokenMsg({ ok: true, text: "AiVIS AutoFix Engine installed! You can now submit auto fixes." });
+      setTokenMsg({ ok: true, text: "AiVIS.biz AutoFix Engine installed! You can now submit auto fixes." });
       current.searchParams.delete("github_app");
       window.history.replaceState({}, "", `${current.pathname}${current.search}${current.hash}`);
     }
@@ -584,7 +584,7 @@ export const AutoScoreFixModal: React.FC<Props> = ({ open, onClose, auditResult 
                         rel="noopener noreferrer"
                         className="block w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white text-sm font-semibold text-center hover:opacity-90 transition-opacity"
                       >
-                        Install AiVIS AutoFix Engine on GitHub
+                        Install AiVIS.biz AutoFix Engine on GitHub
                       </a>
                     ) : null}
                     <div className="relative flex items-center">

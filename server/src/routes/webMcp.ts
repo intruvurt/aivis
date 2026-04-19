@@ -1,8 +1,8 @@
 /**
- * WebMCP - Browser-native agent tool surface for AiVIS
+ * WebMCP - Browser-native agent tool surface for AiVIS.biz
  *
  * Exposes structured, typed tools so AI browser agents can discover and
- * invoke AiVIS workflows without relying on DOM scraping.
+ * invoke AiVIS.biz workflows without relying on DOM scraping.
  *
  * Discovery:  GET  /.well-known/webmcp.json
  * Metadata:   GET  /api/webmcp
@@ -321,7 +321,7 @@ const TOOLS: WebMcpTool[] = [
   {
     name: 'get_methodology',
     description:
-      'Retrieve AiVIS scoring methodology, including category weights, grading logic, and interpretation notes. Optionally filter to a specific category.',
+      'Retrieve AiVIS.biz scoring methodology, including category weights, grading logic, and interpretation notes. Optionally filter to a specific category.',
     phase: 1,
     minimumTier: 'observer',
     inputSchema: {
@@ -464,7 +464,7 @@ const executors: Record<string, ToolExecutor> = {
     const recs: any[] = r.recommendations || [];
     const grades: any[] = r.category_grades || [];
     const lines: string[] = [
-      `"AiVIS Audit Export"`,
+      `"AiVIS.biz Audit Export"`,
       `"URL","${escapeCsv(audit.url)}"`,
       `"Analyzed","${escapeCsv(String(audit.created_at))}"`,
       `"Visibility Score","${audit.visibility_score}"`,
@@ -806,7 +806,7 @@ const executors: Record<string, ToolExecutor> = {
     const METHODOLOGY = {
       version: '2.0',
       description:
-        'AiVIS scores websites on AI visibility - how readable, extractable, and citation-ready they are for AI answer engines.',
+        'AiVIS.biz scores websites on AI visibility - how readable, extractable, and citation-ready they are for AI answer engines.',
       scoring_range: { min: 0, max: 100 },
       categories: [
         {
@@ -899,7 +899,7 @@ router.get('/manifest', (_req: Request, res: Response) => {
   res.json({
     schema_version: '0.1.0',
     name: 'aivis',
-    display_name: 'AiVIS — AI visibility audit and fix platform',
+    display_name: 'AiVIS.biz — AI visibility audit and fix platform',
     description:
       'Audit, measure, and improve how AI answer engines see your website. Structured tools for visibility scoring, citation testing, competitor comparison, and remediation planning.',
     logo_url: 'https://aivis.biz/icon-512.png',
@@ -907,7 +907,7 @@ router.get('/manifest', (_req: Request, res: Response) => {
     auth: {
       type: 'bearer',
       instructions:
-        'Obtain an API key (avis_*) from your AiVIS dashboard under Settings → API Keys, or use an OAuth token (avist_*).',
+        'Obtain an API key (avis_*) from your AiVIS.biz dashboard under Settings → API Keys, or use an OAuth token (avist_*).',
     },
     tools_endpoint: '/api/webmcp/tools',
     invoke_endpoint: '/api/webmcp/tools/{tool_name}',

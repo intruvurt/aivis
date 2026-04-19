@@ -16,27 +16,31 @@
 ## Detailed Analysis
 
 ### What Code Says (securityMiddleware.ts - Line 87)
+
 ```javascript
-`script-src 'nonce-${nonce}' 'strict-dynamic' https: 
-  https://www.googletagmanager.com 
-  https://www.google-analytics.com 
+`script-src 'nonce-${nonce}' 'strict-dynamic' https:
+  https://www.googletagmanager.com
+  https://www.google-analytics.com
   https://www.clarity.ms ✅  ← INCLUDED
   https://static.cloudflareinsights.com`,
 ```
 
 ### What Production IS Serving (April 19 22:45-22:58 UTC curls)
+
 ```
-script-src 'self' 'unsafe-inline' 
-  https://www.googletagmanager.com 
-  https://www.google-analytics.com 
-  https://www.google.com 
-  https://www.gstatic.com 
+script-src 'self' 'unsafe-inline'
+  https://www.googletagmanager.com
+  https://www.google-analytics.com
+  https://www.google.com
+  https://www.gstatic.com
   https://static.cloudflareinsights.com
   (NO clarity.ms) ❌
 ```
 
 ### Build Verification
+
 ✅ **Local build (dist/) includes correct CSP**:
+
 ```bash
 $ grep "script-src" /workspaces/aivis/server/dist/server/src/middleware/securityMiddleware.js
 → script-src 'nonce-${nonce}' 'strict-dynamic' https: ...
@@ -56,25 +60,27 @@ $ grep "script-src" /workspaces/aivis/server/dist/server/src/middleware/security
 
 ## Commits Tracking
 
-| Commit | Time (UTC) | Change |
-|--------|-----------|--------|
-| e245bb3 | 22:37:30 | ✅ ADD clarity.ms, REMOVE 'unsafe-inline' from script-src |
-| e05b784 | ~22:42 | Empty commit to trigger rebuild |
-| e289387 | ~22:51 | Another empty commit to force fresh build |
-| Railway Build | ~22:54 | 🔨 Compiled securityMiddleware with e245bb3 changes INCLUDED |
+| Commit        | Time (UTC) | Change                                                       |
+| ------------- | ---------- | ------------------------------------------------------------ |
+| e245bb3       | 22:37:30   | ✅ ADD clarity.ms, REMOVE 'unsafe-inline' from script-src    |
+| e05b784       | ~22:42     | Empty commit to trigger rebuild                              |
+| e289387       | ~22:51     | Another empty commit to force fresh build                    |
+| Railway Build | ~22:54     | 🔨 Compiled securityMiddleware with e245bb3 changes INCLUDED |
 
 ---
 
 ## Immediate Actions Needed
 
 ### Option 1: Clear Cloudflare Cache
+
 ```bash
 # If Cloudflare is caching headers
 → Cloudflare Dashboard → Caching → Purge Everything
 → Or purge specific URLs: /app, /api/health
 ```
 
-### Option 2: Force Railway Rebuild Without Cache  
+### Option 2: Force Railway Rebuild Without Cache
+
 ```bash
 # Delete Railway build cache and redeploy
 → Railway Dashboard → [Project] → Build → Clear Cache
@@ -82,26 +88,31 @@ $ grep "script-src" /workspaces/aivis/server/dist/server/src/middleware/security
 ```
 
 ### Option 3: Add CSP Via Cloudflare Worker (Temporary Fix)
+
 If we can't identify the CSP source, add clarity.ms via Cloudflare:
+
 ```javascript
 // Cloudflare Worker
 export default {
   async fetch(request, env, ctx) {
     let response = await env.ORIGIN.fetch(request);
-    let csp = response.headers.get('content-security-policy') || '';
-    
+    let csp = response.headers.get("content-security-policy") || "";
+
     // Add clarity.ms if not present
-    if (csp && !csp.includes('clarity.ms')) {
-      csp = csp.replace('static.cloudflareinsights.com', 
-        'static.cloudflareinsights.com https://www.clarity.ms');
-      response.headers.set('content-security-policy', csp);
+    if (csp && !csp.includes("clarity.ms")) {
+      csp = csp.replace(
+        "static.cloudflareinsights.com",
+        "static.cloudflareinsights.com https://www.clarity.ms",
+      );
+      response.headers.set("content-security-policy", csp);
     }
     return response;
-  }
+  },
 };
 ```
 
 ### Option 4: Check for Meta Tag CSP
+
 ```bash
 # SSH into production and check if HTML has CSP meta tag
 curl -s https://aivis.biz/app | grep -i "meta.*csp\|content-security"

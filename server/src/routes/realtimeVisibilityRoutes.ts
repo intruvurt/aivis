@@ -43,19 +43,22 @@ router.get('/stream/:runId', authRequired, async (req: Request, res: Response) =
     return res.status(400).json({ success: false, error: 'runId is required' });
   }
 
+  // Set up SSE headers and send response
   const origin = String(req.headers.origin || '*');
-  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
-  res.setHeader('Transfer-Encoding', 'chunked');
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Max-Age', '3600');
-  res.setHeader('Vary', 'Origin');
-  res.flushHeaders?.();
+  const headers = {
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache, no-store, no-transform',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no', /* CRITICAL: Disables Cloudflare buffering */
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '3600',
+    'Vary': 'Origin',
+  };
+
+  res.writeHead(200, headers);
 
   const send = async () => {
     const state = await getRealtimeVisibilityRun(runId);

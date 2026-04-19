@@ -169,32 +169,33 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
       return;
     }
 
-    // Set headers using setHeader BEFORE writeHead for proper Cloudflare propagation
+    // Prepare SSE headers - pass directly to writeHead to avoid conflicts
     const origin = String(req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Max-Age', '3600');
-    res.setHeader('Vary', 'Origin');
-    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('X-Accel-Buffering', 'no');  /* CRITICAL: Disables Cloudflare buffering */
-    res.setHeader('Transfer-Encoding', 'chunked');
+    const headers = {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '3600',
+      'Vary': 'Origin',
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, no-transform',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no', /* CRITICAL: Disables Cloudflare buffering */
+    };
 
-    res.writeHead(200);
-
+    res.writeHead(200, headers);
+    
+    // Configure socket for streaming
     req.socket.setTimeout(0);
     req.socket.setNoDelay(true);
     req.socket.setKeepAlive(true);
-    if (typeof res.flushHeaders === 'function') {
-      res.flushHeaders();
-    }
 
+    // Initial SSE messages
     res.write(`event: connected\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
     res.write(`retry: 10000\n\n`);
 
+    // Register client and cleanup handlers
     const removeClient = addClient(user.id, res);
     req.on('close', removeClient);
     req.on('error', removeClient);

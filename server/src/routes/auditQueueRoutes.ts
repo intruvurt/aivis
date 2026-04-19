@@ -54,19 +54,22 @@ router.get(
       return res.status(404).json({ success: false, error: "Job not found" });
     }
 
+    // Set up SSE headers and send response
     const origin = String(req.headers.origin || "*");
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Max-Age", "3600");
-    res.setHeader("Vary", "Origin");
-    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache, no-store, no-transform");
-    res.setHeader("Connection", "keep-alive");
-    res.setHeader("X-Accel-Buffering", "no");
-    res.setHeader("Transfer-Encoding", "chunked");
-    res.flushHeaders?.();
+    const headers = {
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "3600",
+      "Vary": "Origin",
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "no-cache, no-store, no-transform",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no", /* CRITICAL: Disables Cloudflare buffering */
+    };
+
+    res.writeHead(200, headers);
 
     const send = async () => {
       const latest = await getAuditJob(jobId);

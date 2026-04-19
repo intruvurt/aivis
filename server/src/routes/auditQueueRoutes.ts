@@ -32,21 +32,40 @@ router.post(
   },
 );
 
+// CORS preflight
+router.options("/audit/progress/:jobId", (req: Request, res: Response) => {
+  res.setHeader("Access-Control-Allow-Origin", String(req.headers.origin || "*"));
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "3600");
+  res.setHeader("Vary", "Origin");
+  res.status(204).end();
+});
+
 router.get(
   "/audit/progress/:jobId",
   authRequired,
   async (req: Request, res: Response) => {
     const jobId = String(req.params.jobId || "");
     const job = await getAuditJob(jobId);
-    if (!job)
+    if (!job) {
+      res.setHeader("Access-Control-Allow-Origin", String(req.headers.origin || "*"));
       return res.status(404).json({ success: false, error: "Job not found" });
+    }
 
+    const origin = String(req.headers.origin || "*");
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Max-Age", "3600");
+    res.setHeader("Vary", "Origin");
     res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-store, no-transform");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no");
-    res.setHeader("Access-Control-Allow-Origin", String(req.headers.origin || "*"));
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Transfer-Encoding", "chunked");
     res.flushHeaders?.();
 
     const send = async () => {

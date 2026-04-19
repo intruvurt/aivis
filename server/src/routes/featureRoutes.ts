@@ -139,11 +139,23 @@ function ensureNotificationAdmin(req: Request, res: Response): boolean {
   return false;
 }
 
+// CORS preflight for notifications stream
+router.options('/notifications/stream', (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Origin', String(req.headers.origin || '*'));
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '3600');
+  res.setHeader('Vary', 'Origin');
+  res.status(204).end();
+});
+
 // SSE stream - must be before router.use(authRequired) because EventSource
 // cannot send custom headers.  Auth is validated inline from query param.
 router.get('/notifications/stream', async (req: Request, res: Response) => {
   const token = String(req.query.token || '').trim();
   if (!token) {
+    res.setHeader('Access-Control-Allow-Origin', String(req.headers.origin || '*'));
     res.status(401).json({ success: false, error: 'Unauthorized' });
     return;
   }
@@ -152,24 +164,26 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
     const decoded = verifyUserToken(token);
     const user = await getUserById(decoded.userId);
     if (!user) {
+      res.setHeader('Access-Control-Allow-Origin', String(req.headers.origin || '*'));
       res.status(401).json({ success: false, error: 'Unauthorized' });
       return;
     }
 
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream; charset=utf-8',
-      'Cache-Control': 'no-cache, no-store, no-transform',
-      'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no',  /* CRITICAL: Disables Cloudflare buffering that breaks SSE */
-      'Alt-Svc': 'clear',
-      'Transfer-Encoding': 'identity',
-      'Access-Control-Allow-Origin': String(req.headers.origin || '*'),
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '3600',
-      'Vary': 'Origin',
-    });
+    // Set headers using setHeader BEFORE writeHead for proper Cloudflare propagation
+    const origin = String(req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Max-Age', '3600');
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');  /* CRITICAL: Disables Cloudflare buffering */
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    res.writeHead(200);
 
     req.socket.setTimeout(0);
     req.socket.setNoDelay(true);
@@ -185,6 +199,7 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
     req.on('close', removeClient);
     req.on('error', removeClient);
   } catch {
+    res.setHeader('Access-Control-Allow-Origin', String(req.headers.origin || '*'));
     res.status(401).json({ success: false, error: 'Invalid or expired token' });
   }
 });

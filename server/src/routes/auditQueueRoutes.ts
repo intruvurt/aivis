@@ -41,10 +41,12 @@ router.get(
     if (!job)
       return res.status(404).json({ success: false, error: "Job not found" });
 
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-store, no-transform");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no");
+    res.setHeader("Access-Control-Allow-Origin", String(req.headers.origin || "*"));
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.flushHeaders?.();
 
     const send = async () => {

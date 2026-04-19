@@ -29,10 +29,16 @@ router.get('/stream/:runId', authRequired, async (req: Request, res: Response) =
   const runId = String(req.params.runId || '').trim();
   if (!runId) return res.status(400).json({ success: false, error: 'runId is required' });
 
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('X-Accel-Buffering', 'no');
+  res.setHeader('Access-Control-Allow-Origin', String(req.headers.origin || '*'));
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '3600');
+  res.setHeader('Vary', 'Origin');
   res.flushHeaders?.();
 
   const send = async () => {

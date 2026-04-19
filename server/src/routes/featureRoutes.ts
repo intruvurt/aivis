@@ -157,13 +157,17 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
     }
 
     res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
+      'Content-Type': 'text/event-stream; charset=utf-8',
       'Cache-Control': 'no-cache, no-store, no-transform',
       'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no',
+      'X-Accel-Buffering': 'no',  /* CRITICAL: Disables Cloudflare buffering that breaks SSE */
       'Alt-Svc': 'clear',
       'Transfer-Encoding': 'identity',
       'Access-Control-Allow-Origin': String(req.headers.origin || '*'),
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '3600',
       'Vary': 'Origin',
     });
 

@@ -55,7 +55,7 @@ citeLedgerRoutes.get(
   authRequired,
   async (req: Request, res: Response) => {
     try {
-      const { auditId } = req.params;
+      const auditId = String(req.params.auditId);
       const client = await getConnection();
       const cites = await getAuditCites(client, auditId);
       client.release();
@@ -86,7 +86,7 @@ citeLedgerRoutes.get(
   authRequired,
   async (req: Request, res: Response) => {
     try {
-      const { citeId } = req.params;
+      const citeId = String(req.params.citeId);
       const client = await getConnection();
 
       // Get full cite with provenance
@@ -131,7 +131,7 @@ citeLedgerRoutes.get(
   authRequired,
   async (req: Request, res: Response) => {
     try {
-      const { citeId } = req.params;
+      const citeId = String(req.params.citeId);
       const client = await getConnection();
       const verification = await verifyCiteIntegrity(client, citeId);
       client.release();
@@ -171,7 +171,7 @@ citeLedgerRoutes.get(
   authRequired,
   async (req: Request, res: Response) => {
     try {
-      const { auditId } = req.params;
+      const auditId = String(req.params.auditId);
       const client = await getConnection();
 
       // Get all cites for this audit

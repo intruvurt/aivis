@@ -43,6 +43,7 @@ import reverseEngineerApi from "./routes/reverseEngineerApi.js";
 import schemaGeneratorRoutes from "./routes/schemaGeneratorRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
 import citeLedgerRoutes from "./routes/citeLedgerRoutes.js";
+import { queryScanRoutes } from "./routes/queryScanRoutes.js";
 import { getPricingInfo } from "./controllers/paymentController.js";
 import { getUserById } from "./models/User.js";
 import {
@@ -1618,6 +1619,7 @@ app.use("/api/paypal", paypalRoutes);
 app.use("/api/queue", auditQueueRoutes);
 app.get("/api/pricing", getPricingInfo);
 app.use("/api/cite-ledger", citeLedgerRoutes);
+app.use("/api", queryScanRoutes);
 app.use("/api/competitors", competitorRoutes);
 app.use("/api/citations", citationRoutes);
 app.use("/api/mentions", mentionRoutes);

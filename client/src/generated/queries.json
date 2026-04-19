@@ -1,0 +1,800 @@
+[
+  {
+    "slug": "ai-visibility-audit-tool",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit tool",
+    "type": "tool",
+    "canonical": "aiva-Tool"
+  },
+  {
+    "slug": "ai-visibility-audit-checker",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit checker",
+    "type": "checker",
+    "canonical": "aiva-Checker"
+  },
+  {
+    "slug": "ai-visibility-audit-report",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit report",
+    "type": "report",
+    "canonical": "aiva-Report"
+  },
+  {
+    "slug": "ai-visibility-audit-analysis",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit analysis",
+    "type": "analysis",
+    "canonical": "aiva-Analysis"
+  },
+  {
+    "slug": "ai-visibility-audit-audit",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit audit",
+    "type": "audit",
+    "canonical": "aiva-Audit"
+  },
+  {
+    "slug": "ai-visibility-audit-guide",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit guide",
+    "type": "analysis",
+    "canonical": "aiva-Guide"
+  },
+  {
+    "slug": "ai-visibility-audit-framework",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit framework",
+    "type": "audit",
+    "canonical": "aiva-Framework"
+  },
+  {
+    "slug": "ai-visibility-audit-best-practices",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit best practices",
+    "type": "audit",
+    "canonical": "aiva-Best practices"
+  },
+  {
+    "slug": "ai-visibility-audit-metrics",
+    "seed": "ai visibility audit",
+    "intent": "ai visibility audit metrics",
+    "type": "report",
+    "canonical": "aiva-Metrics"
+  },
+  {
+    "slug": "why-is-my-site-not-indexed-by-ai-audit",
+    "seed": "why is my site not indexed by ai",
+    "intent": "why is my site not indexed by ai audit",
+    "type": "audit",
+    "canonical": "whyimsniba-Audit"
+  },
+  {
+    "slug": "why-is-my-site-not-indexed-by-ai-best-practices",
+    "seed": "why is my site not indexed by ai",
+    "intent": "why is my site not indexed by ai best practices",
+    "type": "audit",
+    "canonical": "whyimsniba-Best practices"
+  },
+  {
+    "slug": "why-is-my-site-not-indexed-by-ai-metrics",
+    "seed": "why is my site not indexed by ai",
+    "intent": "why is my site not indexed by ai metrics",
+    "type": "report",
+    "canonical": "whyimsniba-Metrics"
+  },
+  {
+    "slug": "entity-seo-checker-tool",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker tool",
+    "type": "tool",
+    "canonical": "entitysc-Tool"
+  },
+  {
+    "slug": "entity-seo-checker-checker",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker checker",
+    "type": "checker",
+    "canonical": "entitysc-Checker"
+  },
+  {
+    "slug": "entity-seo-checker-report",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker report",
+    "type": "report",
+    "canonical": "entitysc-Report"
+  },
+  {
+    "slug": "entity-seo-checker-analysis",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker analysis",
+    "type": "analysis",
+    "canonical": "entitysc-Analysis"
+  },
+  {
+    "slug": "entity-seo-checker-audit",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker audit",
+    "type": "audit",
+    "canonical": "entitysc-Audit"
+  },
+  {
+    "slug": "entity-seo-checker-guide",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker guide",
+    "type": "analysis",
+    "canonical": "entitysc-Guide"
+  },
+  {
+    "slug": "entity-seo-checker-framework",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker framework",
+    "type": "audit",
+    "canonical": "entitysc-Framework"
+  },
+  {
+    "slug": "entity-seo-checker-best-practices",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker best practices",
+    "type": "audit",
+    "canonical": "entitysc-Best practices"
+  },
+  {
+    "slug": "entity-seo-checker-metrics",
+    "seed": "entity seo checker",
+    "intent": "entity seo checker metrics",
+    "type": "report",
+    "canonical": "entitysc-Metrics"
+  },
+  {
+    "slug": "schema-validation-ai-audit",
+    "seed": "schema validation ai",
+    "intent": "schema validation ai audit",
+    "type": "audit",
+    "canonical": "schemava-Audit"
+  },
+  {
+    "slug": "schema-validation-ai-best-practices",
+    "seed": "schema validation ai",
+    "intent": "schema validation ai best practices",
+    "type": "audit",
+    "canonical": "schemava-Best practices"
+  },
+  {
+    "slug": "schema-validation-ai-metrics",
+    "seed": "schema validation ai",
+    "intent": "schema validation ai metrics",
+    "type": "report",
+    "canonical": "schemava-Metrics"
+  },
+  {
+    "slug": "citation-readiness-test-audit",
+    "seed": "citation readiness test",
+    "intent": "citation readiness test audit",
+    "type": "audit",
+    "canonical": "citationrt-Audit"
+  },
+  {
+    "slug": "citation-readiness-test-best-practices",
+    "seed": "citation readiness test",
+    "intent": "citation readiness test best practices",
+    "type": "audit",
+    "canonical": "citationrt-Best practices"
+  },
+  {
+    "slug": "citation-readiness-test-metrics",
+    "seed": "citation readiness test",
+    "intent": "citation readiness test metrics",
+    "type": "report",
+    "canonical": "citationrt-Metrics"
+  },
+  {
+    "slug": "machine-readability-score-audit",
+    "seed": "machine readability score",
+    "intent": "machine readability score audit",
+    "type": "audit",
+    "canonical": "machiners-Audit"
+  },
+  {
+    "slug": "machine-readability-score-best-practices",
+    "seed": "machine readability score",
+    "intent": "machine readability score best practices",
+    "type": "audit",
+    "canonical": "machiners-Best practices"
+  },
+  {
+    "slug": "machine-readability-score-metrics",
+    "seed": "machine readability score",
+    "intent": "machine readability score metrics",
+    "type": "report",
+    "canonical": "machiners-Metrics"
+  },
+  {
+    "slug": "ai-answer-extraction-audit",
+    "seed": "ai answer extraction",
+    "intent": "ai answer extraction audit",
+    "type": "audit",
+    "canonical": "aiae-Audit"
+  },
+  {
+    "slug": "ai-answer-extraction-best-practices",
+    "seed": "ai answer extraction",
+    "intent": "ai answer extraction best practices",
+    "type": "audit",
+    "canonical": "aiae-Best practices"
+  },
+  {
+    "slug": "ai-answer-extraction-metrics",
+    "seed": "ai answer extraction",
+    "intent": "ai answer extraction metrics",
+    "type": "report",
+    "canonical": "aiae-Metrics"
+  },
+  {
+    "slug": "visibility-in-claude-ai-audit",
+    "seed": "visibility in claude ai",
+    "intent": "visibility in claude ai audit",
+    "type": "audit",
+    "canonical": "visibilityica-Audit"
+  },
+  {
+    "slug": "visibility-in-claude-ai-best-practices",
+    "seed": "visibility in claude ai",
+    "intent": "visibility in claude ai best practices",
+    "type": "audit",
+    "canonical": "visibilityica-Best practices"
+  },
+  {
+    "slug": "visibility-in-claude-ai-metrics",
+    "seed": "visibility in claude ai",
+    "intent": "visibility in claude ai metrics",
+    "type": "report",
+    "canonical": "visibilityica-Metrics"
+  },
+  {
+    "slug": "visibility-in-chatgpt-audit",
+    "seed": "visibility in chatgpt",
+    "intent": "visibility in chatgpt audit",
+    "type": "audit",
+    "canonical": "visibilityic-Audit"
+  },
+  {
+    "slug": "visibility-in-chatgpt-best-practices",
+    "seed": "visibility in chatgpt",
+    "intent": "visibility in chatgpt best practices",
+    "type": "audit",
+    "canonical": "visibilityic-Best practices"
+  },
+  {
+    "slug": "visibility-in-chatgpt-metrics",
+    "seed": "visibility in chatgpt",
+    "intent": "visibility in chatgpt metrics",
+    "type": "report",
+    "canonical": "visibilityic-Metrics"
+  },
+  {
+    "slug": "visibility-in-google-ai-search-audit",
+    "seed": "visibility in google ai search",
+    "intent": "visibility in google ai search audit",
+    "type": "audit",
+    "canonical": "visibilityigas-Audit"
+  },
+  {
+    "slug": "visibility-in-google-ai-search-best-practices",
+    "seed": "visibility in google ai search",
+    "intent": "visibility in google ai search best practices",
+    "type": "audit",
+    "canonical": "visibilityigas-Best practices"
+  },
+  {
+    "slug": "visibility-in-google-ai-search-metrics",
+    "seed": "visibility in google ai search",
+    "intent": "visibility in google ai search metrics",
+    "type": "report",
+    "canonical": "visibilityigas-Metrics"
+  },
+  {
+    "slug": "content-structuring-audit-tool",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit tool",
+    "type": "tool",
+    "canonical": "contentsa-Tool"
+  },
+  {
+    "slug": "content-structuring-audit-checker",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit checker",
+    "type": "checker",
+    "canonical": "contentsa-Checker"
+  },
+  {
+    "slug": "content-structuring-audit-report",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit report",
+    "type": "report",
+    "canonical": "contentsa-Report"
+  },
+  {
+    "slug": "content-structuring-audit-analysis",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit analysis",
+    "type": "analysis",
+    "canonical": "contentsa-Analysis"
+  },
+  {
+    "slug": "content-structuring-audit-audit",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit audit",
+    "type": "audit",
+    "canonical": "contentsa-Audit"
+  },
+  {
+    "slug": "content-structuring-audit-guide",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit guide",
+    "type": "analysis",
+    "canonical": "contentsa-Guide"
+  },
+  {
+    "slug": "content-structuring-audit-framework",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit framework",
+    "type": "audit",
+    "canonical": "contentsa-Framework"
+  },
+  {
+    "slug": "content-structuring-audit-best-practices",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit best practices",
+    "type": "audit",
+    "canonical": "contentsa-Best practices"
+  },
+  {
+    "slug": "content-structuring-audit-metrics",
+    "seed": "content structuring audit",
+    "intent": "content structuring audit metrics",
+    "type": "report",
+    "canonical": "contentsa-Metrics"
+  },
+  {
+    "slug": "entity-clarity-analysis-tool",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis tool",
+    "type": "tool",
+    "canonical": "entityca-Tool"
+  },
+  {
+    "slug": "entity-clarity-analysis-checker",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis checker",
+    "type": "checker",
+    "canonical": "entityca-Checker"
+  },
+  {
+    "slug": "entity-clarity-analysis-report",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis report",
+    "type": "report",
+    "canonical": "entityca-Report"
+  },
+  {
+    "slug": "entity-clarity-analysis-analysis",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis analysis",
+    "type": "analysis",
+    "canonical": "entityca-Analysis"
+  },
+  {
+    "slug": "entity-clarity-analysis-audit",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis audit",
+    "type": "audit",
+    "canonical": "entityca-Audit"
+  },
+  {
+    "slug": "entity-clarity-analysis-guide",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis guide",
+    "type": "analysis",
+    "canonical": "entityca-Guide"
+  },
+  {
+    "slug": "entity-clarity-analysis-framework",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis framework",
+    "type": "audit",
+    "canonical": "entityca-Framework"
+  },
+  {
+    "slug": "entity-clarity-analysis-best-practices",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis best practices",
+    "type": "audit",
+    "canonical": "entityca-Best practices"
+  },
+  {
+    "slug": "entity-clarity-analysis-metrics",
+    "seed": "entity clarity analysis",
+    "intent": "entity clarity analysis metrics",
+    "type": "report",
+    "canonical": "entityca-Metrics"
+  },
+  {
+    "slug": "entity-seo-competitor-comparison-audit",
+    "seed": "entity seo competitor comparison",
+    "intent": "entity seo competitor comparison audit",
+    "type": "audit",
+    "canonical": "entityscc-Audit"
+  },
+  {
+    "slug": "entity-seo-competitor-comparison-best-practices",
+    "seed": "entity seo competitor comparison",
+    "intent": "entity seo competitor comparison best practices",
+    "type": "audit",
+    "canonical": "entityscc-Best practices"
+  },
+  {
+    "slug": "entity-seo-competitor-comparison-metrics",
+    "seed": "entity seo competitor comparison",
+    "intent": "entity seo competitor comparison metrics",
+    "type": "report",
+    "canonical": "entityscc-Metrics"
+  },
+  {
+    "slug": "extractability-framework-tool",
+    "seed": "extractability framework",
+    "intent": "extractability framework tool",
+    "type": "tool",
+    "canonical": "extractabilityf-Tool"
+  },
+  {
+    "slug": "extractability-framework-checker",
+    "seed": "extractability framework",
+    "intent": "extractability framework checker",
+    "type": "checker",
+    "canonical": "extractabilityf-Checker"
+  },
+  {
+    "slug": "extractability-framework-report",
+    "seed": "extractability framework",
+    "intent": "extractability framework report",
+    "type": "report",
+    "canonical": "extractabilityf-Report"
+  },
+  {
+    "slug": "extractability-framework-analysis",
+    "seed": "extractability framework",
+    "intent": "extractability framework analysis",
+    "type": "analysis",
+    "canonical": "extractabilityf-Analysis"
+  },
+  {
+    "slug": "extractability-framework-audit",
+    "seed": "extractability framework",
+    "intent": "extractability framework audit",
+    "type": "audit",
+    "canonical": "extractabilityf-Audit"
+  },
+  {
+    "slug": "extractability-framework-guide",
+    "seed": "extractability framework",
+    "intent": "extractability framework guide",
+    "type": "analysis",
+    "canonical": "extractabilityf-Guide"
+  },
+  {
+    "slug": "extractability-framework-framework",
+    "seed": "extractability framework",
+    "intent": "extractability framework framework",
+    "type": "audit",
+    "canonical": "extractabilityf-Framework"
+  },
+  {
+    "slug": "extractability-framework-best-practices",
+    "seed": "extractability framework",
+    "intent": "extractability framework best practices",
+    "type": "audit",
+    "canonical": "extractabilityf-Best practices"
+  },
+  {
+    "slug": "extractability-framework-metrics",
+    "seed": "extractability framework",
+    "intent": "extractability framework metrics",
+    "type": "report",
+    "canonical": "extractabilityf-Metrics"
+  },
+  {
+    "slug": "ai-crawl-audit-tool",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit tool",
+    "type": "tool",
+    "canonical": "aica-Tool"
+  },
+  {
+    "slug": "ai-crawl-audit-checker",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit checker",
+    "type": "checker",
+    "canonical": "aica-Checker"
+  },
+  {
+    "slug": "ai-crawl-audit-report",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit report",
+    "type": "report",
+    "canonical": "aica-Report"
+  },
+  {
+    "slug": "ai-crawl-audit-analysis",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit analysis",
+    "type": "analysis",
+    "canonical": "aica-Analysis"
+  },
+  {
+    "slug": "ai-crawl-audit-audit",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit audit",
+    "type": "audit",
+    "canonical": "aica-Audit"
+  },
+  {
+    "slug": "ai-crawl-audit-guide",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit guide",
+    "type": "analysis",
+    "canonical": "aica-Guide"
+  },
+  {
+    "slug": "ai-crawl-audit-framework",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit framework",
+    "type": "audit",
+    "canonical": "aica-Framework"
+  },
+  {
+    "slug": "ai-crawl-audit-best-practices",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit best practices",
+    "type": "audit",
+    "canonical": "aica-Best practices"
+  },
+  {
+    "slug": "ai-crawl-audit-metrics",
+    "seed": "ai crawl audit",
+    "intent": "ai crawl audit metrics",
+    "type": "report",
+    "canonical": "aica-Metrics"
+  },
+  {
+    "slug": "semantic-html5-validation-audit",
+    "seed": "semantic html5 validation",
+    "intent": "semantic html5 validation audit",
+    "type": "audit",
+    "canonical": "semantichv-Audit"
+  },
+  {
+    "slug": "semantic-html5-validation-best-practices",
+    "seed": "semantic html5 validation",
+    "intent": "semantic html5 validation best practices",
+    "type": "audit",
+    "canonical": "semantichv-Best practices"
+  },
+  {
+    "slug": "semantic-html5-validation-metrics",
+    "seed": "semantic html5 validation",
+    "intent": "semantic html5 validation metrics",
+    "type": "report",
+    "canonical": "semantichv-Metrics"
+  },
+  {
+    "slug": "structured-data-audit-tool",
+    "seed": "structured data audit",
+    "intent": "structured data audit tool",
+    "type": "tool",
+    "canonical": "structuredda-Tool"
+  },
+  {
+    "slug": "structured-data-audit-checker",
+    "seed": "structured data audit",
+    "intent": "structured data audit checker",
+    "type": "checker",
+    "canonical": "structuredda-Checker"
+  },
+  {
+    "slug": "structured-data-audit-report",
+    "seed": "structured data audit",
+    "intent": "structured data audit report",
+    "type": "report",
+    "canonical": "structuredda-Report"
+  },
+  {
+    "slug": "structured-data-audit-analysis",
+    "seed": "structured data audit",
+    "intent": "structured data audit analysis",
+    "type": "analysis",
+    "canonical": "structuredda-Analysis"
+  },
+  {
+    "slug": "structured-data-audit-audit",
+    "seed": "structured data audit",
+    "intent": "structured data audit audit",
+    "type": "audit",
+    "canonical": "structuredda-Audit"
+  },
+  {
+    "slug": "structured-data-audit-guide",
+    "seed": "structured data audit",
+    "intent": "structured data audit guide",
+    "type": "analysis",
+    "canonical": "structuredda-Guide"
+  },
+  {
+    "slug": "structured-data-audit-framework",
+    "seed": "structured data audit",
+    "intent": "structured data audit framework",
+    "type": "audit",
+    "canonical": "structuredda-Framework"
+  },
+  {
+    "slug": "structured-data-audit-best-practices",
+    "seed": "structured data audit",
+    "intent": "structured data audit best practices",
+    "type": "audit",
+    "canonical": "structuredda-Best practices"
+  },
+  {
+    "slug": "structured-data-audit-metrics",
+    "seed": "structured data audit",
+    "intent": "structured data audit metrics",
+    "type": "report",
+    "canonical": "structuredda-Metrics"
+  },
+  {
+    "slug": "json-ld-schema-audit-tool",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit tool",
+    "type": "tool",
+    "canonical": "json-ldsa-Tool"
+  },
+  {
+    "slug": "json-ld-schema-audit-checker",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit checker",
+    "type": "checker",
+    "canonical": "json-ldsa-Checker"
+  },
+  {
+    "slug": "json-ld-schema-audit-report",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit report",
+    "type": "report",
+    "canonical": "json-ldsa-Report"
+  },
+  {
+    "slug": "json-ld-schema-audit-analysis",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit analysis",
+    "type": "analysis",
+    "canonical": "json-ldsa-Analysis"
+  },
+  {
+    "slug": "json-ld-schema-audit-audit",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit audit",
+    "type": "audit",
+    "canonical": "json-ldsa-Audit"
+  },
+  {
+    "slug": "json-ld-schema-audit-guide",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit guide",
+    "type": "analysis",
+    "canonical": "json-ldsa-Guide"
+  },
+  {
+    "slug": "json-ld-schema-audit-framework",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit framework",
+    "type": "audit",
+    "canonical": "json-ldsa-Framework"
+  },
+  {
+    "slug": "json-ld-schema-audit-best-practices",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit best practices",
+    "type": "audit",
+    "canonical": "json-ldsa-Best practices"
+  },
+  {
+    "slug": "json-ld-schema-audit-metrics",
+    "seed": "json-ld schema audit",
+    "intent": "json-ld schema audit metrics",
+    "type": "report",
+    "canonical": "json-ldsa-Metrics"
+  },
+  {
+    "slug": "open-graph-metadata-audit-tool",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit tool",
+    "type": "tool",
+    "canonical": "opengma-Tool"
+  },
+  {
+    "slug": "open-graph-metadata-audit-checker",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit checker",
+    "type": "checker",
+    "canonical": "opengma-Checker"
+  },
+  {
+    "slug": "open-graph-metadata-audit-report",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit report",
+    "type": "report",
+    "canonical": "opengma-Report"
+  },
+  {
+    "slug": "open-graph-metadata-audit-analysis",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit analysis",
+    "type": "analysis",
+    "canonical": "opengma-Analysis"
+  },
+  {
+    "slug": "open-graph-metadata-audit-audit",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit audit",
+    "type": "audit",
+    "canonical": "opengma-Audit"
+  },
+  {
+    "slug": "open-graph-metadata-audit-guide",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit guide",
+    "type": "analysis",
+    "canonical": "opengma-Guide"
+  },
+  {
+    "slug": "open-graph-metadata-audit-framework",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit framework",
+    "type": "audit",
+    "canonical": "opengma-Framework"
+  },
+  {
+    "slug": "open-graph-metadata-audit-best-practices",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit best practices",
+    "type": "audit",
+    "canonical": "opengma-Best practices"
+  },
+  {
+    "slug": "open-graph-metadata-audit-metrics",
+    "seed": "open graph metadata audit",
+    "intent": "open graph metadata audit metrics",
+    "type": "report",
+    "canonical": "opengma-Metrics"
+  },
+  {
+    "slug": "microdata-validation-audit",
+    "seed": "microdata validation",
+    "intent": "microdata validation audit",
+    "type": "audit",
+    "canonical": "microdatav-Audit"
+  },
+  {
+    "slug": "microdata-validation-best-practices",
+    "seed": "microdata validation",
+    "intent": "microdata validation best practices",
+    "type": "audit",
+    "canonical": "microdatav-Best practices"
+  },
+  {
+    "slug": "microdata-validation-metrics",
+    "seed": "microdata validation",
+    "intent": "microdata validation metrics",
+    "type": "report",
+    "canonical": "microdatav-Metrics"
+  }
+]

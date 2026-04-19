@@ -1,560 +1,1167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AiVIS.biz Methodology | CITE LEDGER &amp; BRAG Evidence Protocol</title>
-  <meta name="description" content="How AiVIS.biz audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the BRAG Trail protocol that ground every finding in crawl-observable data." />
-  <meta property="og:title" content="AiVIS.biz Methodology — CITE LEDGER &amp; BRAG Evidence Protocol" />
-  <meta property="og:description" content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ." />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://aivis.biz/methodology" />
-  <meta property="og:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AiVIS.biz Methodology — CITE LEDGER &amp; BRAG Evidence Protocol" />
-  <meta name="twitter:description" content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ." />
-  <meta name="twitter:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://aivis.biz/methodology" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AiVIS.biz Methodology | CITE LEDGER &amp; BRAG Evidence Protocol</title>
+    <meta
+      name="description"
+      content="How AiVIS.biz audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the BRAG Trail protocol that ground every finding in crawl-observable data."
+    />
+    <meta
+      property="og:title"
+      content="AiVIS.biz Methodology — CITE LEDGER &amp; BRAG Evidence Protocol"
+    />
+    <meta
+      property="og:description"
+      content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ."
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://aivis.biz/methodology" />
+    <meta property="og:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="AiVIS.biz Methodology — CITE LEDGER &amp; BRAG Evidence Protocol"
+    />
+    <meta
+      name="twitter:description"
+      content="CITE LEDGER evidence pipeline, BRAG protocol, six dimension weights, triple-check consensus, score bands, and methodology FAQ."
+    />
+    <meta name="twitter:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://aivis.biz/methodology" />
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">
       {
-        "@type": "TechArticle",
-        "@id": "https://aivis.biz/methodology#article",
-        "headline": "AiVIS.biz Methodology: CITE LEDGER & BRAG Evidence Protocol",
-        "description": "CITE LEDGER evidence pipeline, BRAG protocol, six weighted dimensions, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "TechArticle",
+            "@id": "https://aivis.biz/methodology#article",
+            "headline": "AiVIS.biz Methodology: CITE LEDGER & BRAG Evidence Protocol",
+            "description": "CITE LEDGER evidence pipeline, BRAG protocol, six weighted dimensions, execution pipeline, triple-check consensus, score bands, and methodology FAQ.",
+            "url": "https://aivis.biz/methodology",
+            "datePublished": "2026-03-15T00:00:00-05:00",
+            "dateModified": "2026-03-17T00:00:00-05:00",
+            "author": { "@id": "https://aivis.biz/#author" },
+            "mainEntityOfPage": { "@id": "https://aivis.biz/methodology#webpage" },
+            "publisher": {
+              "@type": "Organization",
+              "@id": "https://aivis.biz/#organization",
+              "name": "AiVIS.biz",
+              "url": "https://aivis.biz",
+              "logo": "https://aivis.biz/aivis-logo.png"
+            },
+            "about": {
+              "@type": "SoftwareApplication",
+              "name": "AiVIS.biz",
+              "url": "https://aivis.biz"
+            },
+            "keywords": [
+              "AI visibility scoring",
+              "generative engine optimization",
+              "answer engine optimization",
+              "AEO audit methodology",
+              "LLM citability",
+              "AI search scoring"
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What does the AiVIS.biz score measure?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The AiVIS.biz score measures how confidently an AI answer engine can parse, trust, and cite a page. It is a composite 0-100 score across six weighted dimensions: content depth, heading structure, schema coverage, metadata completeness, technical SEO, and AI machine readability."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How is the AiVIS.biz 0-100 score calculated?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The score is a weighted sum: Content Depth (25%) + Schema Coverage (22%) + AI Readability (20%) + Metadata Quality (15%) + Heading Structure (10%) + Technical SEO (8%). Each dimension is scored 0-100 independently before weighting. The composite final score is the weighted average rounded to the nearest integer."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is a BRAG trail in AiVIS.biz?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "BRAG stands for Based Retrieval and Auditable Grading. It is AiVIS.biz's protocol for ensuring every recommendation is grounded in observed crawl evidence rather than generic advice. Each finding references the specific page element it came from, ensuring teams can verify and act on every recommendation."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What score is needed to be citation-ready for AI answer engines?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Pages scoring 70 or above are generally citation-ready. Pages between 50-69 are parseable but deprioritized. Pages below 50 face structural barriers that prevent consistent citation regardless of content quality. Most competitive queries are won by pages scoring 75 or higher."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is the CITE LEDGER?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The CITE LEDGER is the structured record each AiVIS.biz audit produces — the transformation layer that converts BRAG-scraped evidence into deterministic, citable ground truth. It uses an ML-driven pipeline with three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle."
+                }
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Methodology",
+                "item": "https://aivis.biz/methodology"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      :root {
+        --ink: #0f0f0f;
+        --ink-secondary: #4a4a4a;
+        --ink-muted: #888;
+        --surface: #ffffff;
+        --surface-raised: #f8f7f4;
+        --surface-tinted: #f0efe9;
+        --border: rgba(0, 0, 0, 0.1);
+        --border-strong: rgba(0, 0, 0, 0.18);
+        --accent: #1a56db;
+        --accent-light: #e8f0fe;
+        --accent-strong: #0f3a9e;
+        --warn: #92400e;
+        --warn-bg: #fef3c7;
+        --success: #14532d;
+        --success-bg: #dcfce7;
+        --danger: #7f1d1d;
+        --danger-bg: #fee2e2;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: Georgia, 'Times New Roman', serif;
+        background: var(--surface);
+        color: var(--ink);
+        line-height: 1.75;
+      }
+      nav {
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        height: 56px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13px;
+      }
+      nav .logo {
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--ink);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+      nav a {
+        color: var(--ink-secondary);
+        text-decoration: none;
+      }
+      nav a:hover {
+        color: var(--ink);
+      }
+      nav .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        margin-left: auto;
+      }
+      .page-wrapper {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 4rem 2rem 6rem;
+      }
+      .page-header {
+        margin-bottom: 3.5rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .page-label {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 1rem;
+      }
+      h1 {
+        font-size: clamp(1.9rem, 4vw, 2.6rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+        color: var(--ink);
+        margin-bottom: 1.25rem;
+      }
+      .page-summary {
+        font-size: 1.1rem;
+        color: var(--ink-secondary);
+        line-height: 1.7;
+        max-width: 640px;
+      }
+      .formula-block {
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 1.5rem 1.75rem;
+        margin: 2.5rem 0;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+      }
+      .formula-block .formula-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.75rem;
+      }
+      .formula-eq {
+        font-size: 0.95rem;
+        line-height: 2;
+        color: var(--ink);
+      }
+      .formula-eq .term {
+        display: inline-block;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0 1px;
+        white-space: nowrap;
+      }
+      .formula-eq .weight {
+        color: var(--accent-strong);
+        font-weight: 600;
+      }
+      .dim-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5px;
+        margin: 1.5rem 0 2rem;
+      }
+      .dim-table thead th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        padding: 0 12px 10px;
+        border-bottom: 1px solid var(--border-strong);
+      }
+      .dim-table tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+      .dim-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .dim-table td {
+        padding: 12px;
+        vertical-align: top;
+        color: var(--ink-secondary);
+      }
+      .dim-table td:first-child {
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .weight-pill {
+        display: inline-block;
+        background: var(--accent-light);
+        color: var(--accent-strong);
+        font-weight: 700;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .bar-mini {
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin-top: 6px;
+        overflow: hidden;
+      }
+      .bar-mini-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 2px;
+      }
+      h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin: 3rem 0 0.75rem;
+        padding-top: 1rem;
+      }
+      h3 {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink-secondary);
+        margin: 2rem 0 0.6rem;
+      }
+      p {
+        color: var(--ink-secondary);
+        margin-bottom: 1.1rem;
+      }
+      p strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .brag-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0 2rem;
+      }
+      @media (max-width: 600px) {
+        .brag-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .brag-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.25rem;
+        background: var(--surface);
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+      }
+      .brag-letter {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        background: var(--ink);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+      }
+      .brag-card h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.3rem;
+      }
+      .brag-card p {
+        font-size: 12.5px;
+        line-height: 1.55;
+        margin: 0;
+        color: var(--ink-secondary);
+      }
+      .tier-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5px;
+      }
+      .tier-row:last-child {
+        border-bottom: none;
+      }
+      .tier-badge {
+        min-width: 70px;
+        text-align: center;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .tier-a {
+        background: var(--success-bg);
+        color: var(--success);
+      }
+      .tier-b {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .tier-c {
+        background: var(--warn-bg);
+        color: var(--warn);
+      }
+      .tier-d {
+        background: #ffedd5;
+        color: #9a3412;
+      }
+      .tier-f {
+        background: var(--danger-bg);
+        color: var(--danger);
+      }
+      .tier-desc {
+        color: var(--ink-secondary);
+        flex: 1;
+      }
+      .tier-range {
+        color: var(--ink-muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .pipeline-steps {
+        counter-reset: steps;
+        margin: 1.5rem 0;
+      }
+      .pipeline-step {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        align-items: flex-start;
+      }
+      .step-num {
+        counter-increment: steps;
+        min-width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--ink);
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .step-content {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5px;
+      }
+      .step-content strong {
+        display: block;
+        color: var(--ink);
+        font-size: 13.5px;
+        margin-bottom: 2px;
+      }
+      .step-content span {
+        color: var(--ink-secondary);
+        line-height: 1.5;
+      }
+      .loop-block {
+        background: var(--surface-tinted);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem 1.75rem;
+        margin: 2rem 0;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5px;
+      }
+      .loop-block .loop-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin-bottom: 1rem;
+      }
+      .loop-steps {
+        display: flex;
+        gap: 0;
+        flex-wrap: wrap;
+      }
+      .loop-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .loop-node {
+        background: var(--ink);
+        color: white;
+        border-radius: 4px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .loop-arrow {
+        color: var(--ink-muted);
+        font-size: 14px;
+        padding: 0 4px;
+      }
+      .callout {
+        border: 1px solid var(--border);
+        border-left: 3px solid;
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        margin: 1.75rem 0;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 13.5px;
+      }
+      .callout-info {
+        border-left-color: var(--accent);
+        background: var(--accent-light);
+      }
+      .callout-info p {
+        color: var(--accent-strong);
+        margin: 0;
+        line-height: 1.55;
+      }
+      .callout-warn {
+        border-left-color: #d97706;
+        background: var(--warn-bg);
+      }
+      .callout-warn p {
+        color: var(--warn);
+        margin: 0;
+        line-height: 1.55;
+      }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2rem;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 12.5px;
+        color: var(--ink-muted);
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      footer a {
+        color: var(--ink-muted);
+        text-decoration: none;
+      }
+      footer a:hover {
+        color: var(--ink);
+      }
+    </style>
+
+    <!-- CITE LEDGER (Layer 2): Evidence-backed audit system visibility -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "@id": "https://aivis.biz/methodology#cite-ledger",
+        "name": "Cite Ledger Output",
+        "description": "Evidence-linked AI visibility audit results. This dataset contains the verifiable signals extracted during crawl, the rules applied, and the resulting visibility score with all evidence identifiers traceable back to source.",
         "url": "https://aivis.biz/methodology",
-        "datePublished": "2026-03-15T00:00:00-05:00",
-        "dateModified": "2026-03-17T00:00:00-05:00",
-        "author": { "@id": "https://aivis.biz/#author" },
-        "mainEntityOfPage": { "@id": "https://aivis.biz/methodology#webpage" },
-        "publisher": {
-          "@type": "Organization",
-          "@id": "https://aivis.biz/#organization",
-          "name": "AiVIS.biz",
-          "url": "https://aivis.biz",
-          "logo": "https://aivis.biz/aivis-logo.png"
-        },
         "about": {
+          "@type": "Thing",
+          "name": "AI Citation Readiness",
+          "description": "Measures whether AI answer engines can extract, verify, and cite this page"
+        },
+        "includedInDataCatalog": {
+          "@type": "DataCatalog",
+          "name": "AiVIS CITE LEDGER",
+          "url": "https://aivis.biz"
+        },
+        "creator": {
           "@type": "SoftwareApplication",
           "name": "AiVIS.biz",
           "url": "https://aivis.biz"
         },
-        "keywords": ["AI visibility scoring", "generative engine optimization", "answer engine optimization", "AEO audit methodology", "LLM citability", "AI search scoring"]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What does the AiVIS.biz score measure?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The AiVIS.biz score measures how confidently an AI answer engine can parse, trust, and cite a page. It is a composite 0-100 score across six weighted dimensions: content depth, heading structure, schema coverage, metadata completeness, technical SEO, and AI machine readability."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How is the AiVIS.biz 0-100 score calculated?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The score is a weighted sum: Content Depth (25%) + Schema Coverage (22%) + AI Readability (20%) + Metadata Quality (15%) + Heading Structure (10%) + Technical SEO (8%). Each dimension is scored 0-100 independently before weighting. The composite final score is the weighted average rounded to the nearest integer."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is a BRAG trail in AiVIS.biz?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "BRAG stands for Based Retrieval and Auditable Grading. It is AiVIS.biz's protocol for ensuring every recommendation is grounded in observed crawl evidence rather than generic advice. Each finding references the specific page element it came from, ensuring teams can verify and act on every recommendation."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What score is needed to be citation-ready for AI answer engines?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Pages scoring 70 or above are generally citation-ready. Pages between 50-69 are parseable but deprioritized. Pages below 50 face structural barriers that prevent consistent citation regardless of content quality. Most competitive queries are won by pages scoring 75 or higher."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the CITE LEDGER?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The CITE LEDGER is the structured record each AiVIS.biz audit produces — the transformation layer that converts BRAG-scraped evidence into deterministic, citable ground truth. It uses an ML-driven pipeline with three phases: Extraction (denoising raw DOM), Alignment (semantic mapping to entity schemas), and Validation (hallucination scoring against stable DOM anchors). Only evidence scoring above a 0.98 reliability threshold earns a citation handle."
-            }
-          }
-        ]
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },
-          { "@type": "ListItem", "position": 2, "name": "Methodology", "item": "https://aivis.biz/methodology" }
-        ]
+        "dateModified": "2026-04-19",
+        "inLanguage": "en-US"
       }
-    ]
-  }
-  </script>
+    </script>
+  </head>
+  <body>
+    <nav>
+      <a href="https://aivis.biz" class="logo">AiVIS.biz</a>
+      <div class="nav-links">
+        <a href="https://aivis.biz/pricing">Pricing</a>
+        <a href="https://aivis.biz/guide">Guide</a>
+        <a href="https://aivis.biz/workflow">Workflow</a>
+        <a href="https://aivis.biz/methodology">Methodology</a>
+        <a href="https://aivis.biz/insights">Insights</a>
+        <a href="https://aivis.biz/faq">FAQ</a>
+      </div>
+    </nav>
 
-  <style>
-    :root {
-      --ink: #0f0f0f;
-      --ink-secondary: #4a4a4a;
-      --ink-muted: #888;
-      --surface: #ffffff;
-      --surface-raised: #f8f7f4;
-      --surface-tinted: #f0efe9;
-      --border: rgba(0,0,0,0.10);
-      --border-strong: rgba(0,0,0,0.18);
-      --accent: #1a56db;
-      --accent-light: #e8f0fe;
-      --accent-strong: #0f3a9e;
-      --warn: #92400e;
-      --warn-bg: #fef3c7;
-      --success: #14532d;
-      --success-bg: #dcfce7;
-      --danger: #7f1d1d;
-      --danger-bg: #fee2e2;
-    }
+    <main class="page-wrapper">
+      <div class="page-header">
+        <p class="page-label">Methodology</p>
+        <h1>How AiVIS.biz scores AI visibility</h1>
+        <p class="page-summary">
+          AiVIS.biz measures whether answer engines - ChatGPT, Perplexity, Gemini, and Claude - can
+          parse, trust, and cite a page with confidence. Every score is grounded in observable page
+          evidence, not heuristics or black-box models. This document explains the full scoring
+          framework, dimension weights, validation pipeline, and the BRAG trail protocol that
+          connects every finding to a specific crawl observation.
+        </p>
+      </div>
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
-    body { font-family: Georgia, "Times New Roman", serif; background: var(--surface); color: var(--ink); line-height: 1.75; }
-    nav { border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 2rem; height: 56px; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13px; }
-    nav .logo { font-weight: 700; font-size: 15px; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
-    nav a { color: var(--ink-secondary); text-decoration: none; }
-    nav a:hover { color: var(--ink); }
-    nav .nav-links { display: flex; gap: 1.5rem; margin-left: auto; }
-    .page-wrapper { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 6rem; }
-    .page-header { margin-bottom: 3.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
-    .page-label { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
-    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 1.25rem; }
-    .page-summary { font-size: 1.1rem; color: var(--ink-secondary); line-height: 1.7; max-width: 640px; }
-    .formula-block { background: var(--surface-raised); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 1.5rem 1.75rem; margin: 2.5rem 0; font-family: "Helvetica Neue", Arial, sans-serif; }
-    .formula-block .formula-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: .75rem; }
-    .formula-eq { font-size: 0.95rem; line-height: 2; color: var(--ink); }
-    .formula-eq .term { display: inline-block; background: white; border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; font-size: 0.85rem; font-weight: 600; margin: 0 1px; white-space: nowrap; }
-    .formula-eq .weight { color: var(--accent-strong); font-weight: 600; }
-    .dim-table { width: 100%; border-collapse: collapse; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13.5px; margin: 1.5rem 0 2rem; }
-    .dim-table thead th { text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); padding: 0 12px 10px; border-bottom: 1px solid var(--border-strong); }
-    .dim-table tbody tr { border-bottom: 1px solid var(--border); }
-    .dim-table tbody tr:last-child { border-bottom: none; }
-    .dim-table td { padding: 12px; vertical-align: top; color: var(--ink-secondary); }
-    .dim-table td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
-    .weight-pill { display: inline-block; background: var(--accent-light); color: var(--accent-strong); font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 20px; }
-    .bar-mini { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-    .bar-mini-fill { height: 100%; background: var(--accent); border-radius: 2px; }
-    h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin: 3rem 0 0.75rem; padding-top: 1rem; }
-    h3 { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-secondary); margin: 2rem 0 0.6rem; }
-    p { color: var(--ink-secondary); margin-bottom: 1.1rem; }
-    p strong { color: var(--ink); font-weight: 600; }
-    .brag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0 2rem; }
-    @media (max-width: 600px) { .brag-grid { grid-template-columns: 1fr; } }
-    .brag-card { border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; background: var(--surface); font-family: "Helvetica Neue", Arial, sans-serif; }
-    .brag-letter { width: 32px; height: 32px; border-radius: 6px; background: var(--ink); color: white; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: .75rem; }
-    .brag-card h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: .3rem; }
-    .brag-card p { font-size: 12.5px; line-height: 1.55; margin: 0; color: var(--ink-secondary); }
-    .tier-row { display: flex; align-items: center; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--border); font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13.5px; }
-    .tier-row:last-child { border-bottom: none; }
-    .tier-badge { min-width: 70px; text-align: center; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; }
-    .tier-a { background: var(--success-bg); color: var(--success); }
-    .tier-b { background: #d1fae5; color: #065f46; }
-    .tier-c { background: var(--warn-bg); color: var(--warn); }
-    .tier-d { background: #ffedd5; color: #9a3412; }
-    .tier-f { background: var(--danger-bg); color: var(--danger); }
-    .tier-desc { color: var(--ink-secondary); flex: 1; }
-    .tier-range { color: var(--ink-muted); font-size: 12px; white-space: nowrap; }
-    .pipeline-steps { counter-reset: steps; margin: 1.5rem 0; }
-    .pipeline-step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
-    .step-num { counter-increment: steps; min-width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12px; font-weight: 700; color: var(--ink); flex-shrink: 0; margin-top: 1px; }
-    .step-content { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13.5px; }
-    .step-content strong { display: block; color: var(--ink); font-size: 13.5px; margin-bottom: 2px; }
-    .step-content span { color: var(--ink-secondary); line-height: 1.5; }
-    .loop-block { background: var(--surface-tinted); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem 1.75rem; margin: 2rem 0; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13.5px; }
-    .loop-block .loop-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 1rem; }
-    .loop-steps { display: flex; gap: 0; flex-wrap: wrap; }
-    .loop-step { display: flex; align-items: center; gap: 8px; }
-    .loop-node { background: var(--ink); color: white; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-    .loop-arrow { color: var(--ink-muted); font-size: 14px; padding: 0 4px; }
-    .callout { border: 1px solid var(--border); border-left: 3px solid; border-radius: 6px; padding: 1rem 1.25rem; margin: 1.75rem 0; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 13.5px; }
-    .callout-info { border-left-color: var(--accent); background: var(--accent-light); }
-    .callout-info p { color: var(--accent-strong); margin: 0; line-height: 1.55; }
-    .callout-warn { border-left-color: #d97706; background: var(--warn-bg); }
-    .callout-warn p { color: var(--warn); margin: 0; line-height: 1.55; }
-    footer { border-top: 1px solid var(--border); padding: 2rem; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12.5px; color: var(--ink-muted); display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    footer a { color: var(--ink-muted); text-decoration: none; }
-    footer a:hover { color: var(--ink); }
-  </style>
-</head>
-<body>
+      <h2>The scoring formula</h2>
+      <p>
+        The AiVIS.biz composite score is a
+        <strong>weighted average of six independent dimensions</strong>, each scored on a 0–100
+        scale. Weights were derived from observed citation patterns across major answer engines and
+        reflect how heavily each signal influences whether a page gets extracted and quoted in a
+        generated response.
+      </p>
 
-<nav>
-  <a href="https://aivis.biz" class="logo">AiVIS.biz</a>
-  <div class="nav-links">
-    <a href="https://aivis.biz/pricing">Pricing</a>
-    <a href="https://aivis.biz/guide">Guide</a>
-    <a href="https://aivis.biz/workflow">Workflow</a>
-    <a href="https://aivis.biz/methodology">Methodology</a>
-    <a href="https://aivis.biz/insights">Insights</a>
-    <a href="https://aivis.biz/faq">FAQ</a>
-  </div>
-</nav>
+      <div class="formula-block">
+        <div class="formula-label">Composite score formula</div>
+        <div class="formula-eq">
+          Score =
+          <span class="term">Content Depth</span> <span class="weight">× 0.25</span> +
+          <span class="term">Schema Coverage</span> <span class="weight">× 0.22</span> +
+          <span class="term">AI Readability</span> <span class="weight">× 0.20</span> +
+          <span class="term">Metadata Quality</span> <span class="weight">× 0.15</span> +
+          <span class="term">Heading Structure</span> <span class="weight">× 0.10</span> +
+          <span class="term">Technical SEO</span> <span class="weight">× 0.08</span>
+        </div>
+      </div>
 
-<main class="page-wrapper">
+      <p>
+        Each dimension score is computed independently before weighting. A page that scores 90 on
+        content depth but 0 on schema still achieves only a composite of roughly 52 - illustrating
+        why one-dimensional optimization consistently underperforms balanced improvements.
+      </p>
 
-  <div class="page-header">
-    <p class="page-label">Methodology</p>
-    <h1>How AiVIS.biz scores AI visibility</h1>
-    <p class="page-summary">
-      AiVIS.biz measures whether answer engines - ChatGPT, Perplexity, Gemini, and Claude - can
-      parse, trust, and cite a page with confidence. Every score is grounded in observable page
-      evidence, not heuristics or black-box models. This document explains the full scoring
-      framework, dimension weights, validation pipeline, and the BRAG trail protocol that
-      connects every finding to a specific crawl observation.
-    </p>
-  </div>
+      <h2>Dimension weights and signals</h2>
 
-  <h2>The scoring formula</h2>
-  <p>
-    The AiVIS.biz composite score is a <strong>weighted average of six independent dimensions</strong>,
-    each scored on a 0–100 scale. Weights were derived from observed citation patterns across
-    major answer engines and reflect how heavily each signal influences whether a page gets
-    extracted and quoted in a generated response.
-  </p>
+      <table class="dim-table" aria-label="AiVIS.biz dimension weights and scoring signals">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Weight</th>
+            <th>Primary signals evaluated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content depth</td>
+            <td>
+              <span class="weight-pill">25%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 100%"></div></div>
+            </td>
+            <td>
+              Word count, topical coverage breadth, factual claim density, example and evidence
+              presence, section-level explanatory depth, absence of thin filler content
+            </td>
+          </tr>
+          <tr>
+            <td>Schema coverage</td>
+            <td>
+              <span class="weight-pill">22%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 88%"></div></div>
+            </td>
+            <td>
+              JSON-LD presence, schema type appropriateness for page context, relationship
+              completeness, entity reference accuracy, FAQPage and HowTo block validity, absence of
+              schema errors
+            </td>
+          </tr>
+          <tr>
+            <td>AI readability</td>
+            <td>
+              <span class="weight-pill">20%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 80%"></div></div>
+            </td>
+            <td>
+              Direct answer block density, Q&amp;A formatted sections, concise factual statements,
+              extractable claim units, passive filler ratio, sentence-level answer completeness
+            </td>
+          </tr>
+          <tr>
+            <td>Metadata quality</td>
+            <td>
+              <span class="weight-pill">15%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 60%"></div></div>
+            </td>
+            <td>
+              Title tag specificity, meta description length and content match (120–155 chars), Open
+              Graph completeness, canonical tag correctness, image alt text coverage
+            </td>
+          </tr>
+          <tr>
+            <td>Heading structure</td>
+            <td>
+              <span class="weight-pill">10%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 40%"></div></div>
+            </td>
+            <td>
+              Single H1 presence, H1-to-title alignment, H2/H3 hierarchy logic, heading density
+              relative to content length, keyword-bearing headings vs. generic labels
+            </td>
+          </tr>
+          <tr>
+            <td>Technical SEO</td>
+            <td>
+              <span class="weight-pill">8%</span>
+              <div class="bar-mini"><div class="bar-mini-fill" style="width: 32%"></div></div>
+            </td>
+            <td>
+              robots.txt accessibility, sitemap presence, canonical correctness, 200 status
+              delivery, internal link graph density, llms.txt governance file presence
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-  <div class="formula-block">
-    <div class="formula-label">Composite score formula</div>
-    <div class="formula-eq">
-      Score =
-      <span class="term">Content Depth</span> <span class="weight">× 0.25</span> +
-      <span class="term">Schema Coverage</span> <span class="weight">× 0.22</span> +
-      <span class="term">AI Readability</span> <span class="weight">× 0.20</span> +
-      <span class="term">Metadata Quality</span> <span class="weight">× 0.15</span> +
-      <span class="term">Heading Structure</span> <span class="weight">× 0.10</span> +
-      <span class="term">Technical SEO</span> <span class="weight">× 0.08</span>
-    </div>
-  </div>
+      <div class="callout callout-info">
+        <p>
+          <strong>Why schema outweighs technical SEO:</strong> In generative engine pipelines,
+          structured data provides machine-readable entity relationships that directly inform
+          knowledge graph construction. A technically clean page with no schema is functionally
+          opaque to extraction models. Schema errors score near zero regardless of other dimension
+          performance.
+        </p>
+      </div>
 
-  <p>
-    Each dimension score is computed independently before weighting. A page that scores 90 on
-    content depth but 0 on schema still achieves only a composite of roughly 52 - illustrating
-    why one-dimensional optimization consistently underperforms balanced improvements.
-  </p>
+      <h2>Score tiers and citation readiness</h2>
+      <p>
+        AiVIS.biz maps composite scores to five citation readiness tiers. These thresholds reflect
+        observed behavior across Perplexity, ChatGPT Browse, and Google AI Overviews - not
+        theoretical ideals. Pages below 50 face structural extraction barriers that content
+        improvements alone cannot resolve.
+      </p>
 
-  <h2>Dimension weights and signals</h2>
+      <div style="margin: 1.5rem 0 2rem">
+        <div class="tier-row">
+          <span class="tier-badge tier-a">A - Elite</span>
+          <span class="tier-desc"
+            >Consistently cited across answer engines. Strong entity clarity, complete schema,
+            extractable answer blocks.</span
+          >
+          <span class="tier-range">85–100</span>
+        </div>
+        <div class="tier-row">
+          <span class="tier-badge tier-b">B - Ready</span>
+          <span class="tier-desc"
+            >Citation-ready for most queries. Minor gaps in schema relationships or content depth.
+            Competes well.</span
+          >
+          <span class="tier-range">70–84</span>
+        </div>
+        <div class="tier-row">
+          <span class="tier-badge tier-c">C - Partial</span>
+          <span class="tier-desc"
+            >Parseable but deprioritized. Cited only on low-competition queries or when competitors
+            are weaker.</span
+          >
+          <span class="tier-range">50–69</span>
+        </div>
+        <div class="tier-row">
+          <span class="tier-badge tier-d">D - Blocked</span>
+          <span class="tier-desc"
+            >Structural barriers present. Answer engines can reach the page but extraction
+            confidence is low.</span
+          >
+          <span class="tier-range">30–49</span>
+        </div>
+        <div class="tier-row">
+          <span class="tier-badge tier-f">F - Invisible</span>
+          <span class="tier-desc"
+            >Critical failures across multiple dimensions. Not practically citable in current
+            state.</span
+          >
+          <span class="tier-range">0–29</span>
+        </div>
+      </div>
 
-  <table class="dim-table" aria-label="AiVIS.biz dimension weights and scoring signals">
-    <thead>
-      <tr>
-        <th>Dimension</th>
-        <th>Weight</th>
-        <th>Primary signals evaluated</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Content depth</td>
-        <td><span class="weight-pill">25%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:100%"></div></div></td>
-        <td>Word count, topical coverage breadth, factual claim density, example and evidence presence, section-level explanatory depth, absence of thin filler content</td>
-      </tr>
-      <tr>
-        <td>Schema coverage</td>
-        <td><span class="weight-pill">22%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:88%"></div></div></td>
-        <td>JSON-LD presence, schema type appropriateness for page context, relationship completeness, entity reference accuracy, FAQPage and HowTo block validity, absence of schema errors</td>
-      </tr>
-      <tr>
-        <td>AI readability</td>
-        <td><span class="weight-pill">20%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:80%"></div></div></td>
-        <td>Direct answer block density, Q&amp;A formatted sections, concise factual statements, extractable claim units, passive filler ratio, sentence-level answer completeness</td>
-      </tr>
-      <tr>
-        <td>Metadata quality</td>
-        <td><span class="weight-pill">15%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:60%"></div></div></td>
-        <td>Title tag specificity, meta description length and content match (120–155 chars), Open Graph completeness, canonical tag correctness, image alt text coverage</td>
-      </tr>
-      <tr>
-        <td>Heading structure</td>
-        <td><span class="weight-pill">10%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:40%"></div></div></td>
-        <td>Single H1 presence, H1-to-title alignment, H2/H3 hierarchy logic, heading density relative to content length, keyword-bearing headings vs. generic labels</td>
-      </tr>
-      <tr>
-        <td>Technical SEO</td>
-        <td><span class="weight-pill">8%</span><div class="bar-mini"><div class="bar-mini-fill" style="width:32%"></div></div></td>
-        <td>robots.txt accessibility, sitemap presence, canonical correctness, 200 status delivery, internal link graph density, llms.txt governance file presence</td>
-      </tr>
-    </tbody>
-  </table>
+      <h2>The BRAG trail protocol</h2>
+      <p>
+        BRAG is AiVIS.biz's internal evidence chain standard. Every finding in an AiVIS.biz audit
+        report must pass a four-step BRAG verification before it is surfaced as a recommendation.
+        This prevents generic advice - the kind that applies to every site and helps none of them -
+        from appearing alongside evidence-grounded findings.
+      </p>
 
-  <div class="callout callout-info">
-    <p><strong>Why schema outweighs technical SEO:</strong> In generative engine pipelines, structured data provides machine-readable entity relationships that directly inform knowledge graph construction. A technically clean page with no schema is functionally opaque to extraction models. Schema errors score near zero regardless of other dimension performance.</p>
-  </div>
+      <div class="brag-grid">
+        <div class="brag-card">
+          <div class="brag-letter">B</div>
+          <h4>Build from observed fields</h4>
+          <p>
+            Every finding originates from a specific crawl-observable element: a missing JSON-LD
+            block, a duplicate H1, an absent meta description. If the finding cannot be traced to a
+            concrete page field, it is not included in the report.
+          </p>
+        </div>
+        <div class="brag-card">
+          <div class="brag-letter">R</div>
+          <h4>Reference explicit evidence</h4>
+          <p>
+            Each finding includes a direct excerpt or field reference from the crawled page. Teams
+            can verify the finding independently without re-running the audit. The evidence is
+            attached to the finding, not implied.
+          </p>
+        </div>
+        <div class="brag-card">
+          <div class="brag-letter">A</div>
+          <h4>Audit recommendation linkage</h4>
+          <p>
+            Recommendations must map to the specific finding they address. A schema recommendation
+            links to schema evidence. A content depth recommendation links to the content fields
+            evaluated. No recommendation is orphaned from its finding.
+          </p>
+        </div>
+        <div class="brag-card">
+          <div class="brag-letter">G</div>
+          <h4>Ground claims in stored outputs</h4>
+          <p>
+            Findings and scores are stored per-scan so every future audit can compare against a
+            prior baseline. Score movement is measured against stored crawl outputs, not
+            recalculated from memory, ensuring comparison stability across weeks and model updates.
+          </p>
+        </div>
+      </div>
 
-  <h2>Score tiers and citation readiness</h2>
-  <p>
-    AiVIS.biz maps composite scores to five citation readiness tiers. These thresholds reflect
-    observed behavior across Perplexity, ChatGPT Browse, and Google AI Overviews - not
-    theoretical ideals. Pages below 50 face structural extraction barriers that content
-    improvements alone cannot resolve.
-  </p>
+      <p>
+        In practice, the BRAG trail means every recommendation in an AiVIS.biz report answers three
+        questions simultaneously: <strong>what exactly is wrong</strong> on this specific page,
+        <strong>where is the evidence</strong> in the crawl output, and
+        <strong>what specific change</strong> will move the score. Teams that implement fixes
+        without this chain typically address symptoms while missing root causes.
+      </p>
 
-  <div style="margin: 1.5rem 0 2rem;">
-    <div class="tier-row">
-      <span class="tier-badge tier-a">A - Elite</span>
-      <span class="tier-desc">Consistently cited across answer engines. Strong entity clarity, complete schema, extractable answer blocks.</span>
-      <span class="tier-range">85–100</span>
-    </div>
-    <div class="tier-row">
-      <span class="tier-badge tier-b">B - Ready</span>
-      <span class="tier-desc">Citation-ready for most queries. Minor gaps in schema relationships or content depth. Competes well.</span>
-      <span class="tier-range">70–84</span>
-    </div>
-    <div class="tier-row">
-      <span class="tier-badge tier-c">C - Partial</span>
-      <span class="tier-desc">Parseable but deprioritized. Cited only on low-competition queries or when competitors are weaker.</span>
-      <span class="tier-range">50–69</span>
-    </div>
-    <div class="tier-row">
-      <span class="tier-badge tier-d">D - Blocked</span>
-      <span class="tier-desc">Structural barriers present. Answer engines can reach the page but extraction confidence is low.</span>
-      <span class="tier-range">30–49</span>
-    </div>
-    <div class="tier-row">
-      <span class="tier-badge tier-f">F - Invisible</span>
-      <span class="tier-desc">Critical failures across multiple dimensions. Not practically citable in current state.</span>
-      <span class="tier-range">0–29</span>
-    </div>
-  </div>
+      <h2>Validation pipeline</h2>
+      <p>
+        AiVIS.biz audits run through a multi-stage validation pipeline before scores are finalized.
+        The pipeline is designed to distinguish high-confidence findings - those grounded in
+        directly observable page structure - from advisory findings that reflect best practice
+        patterns but cannot be verified by crawl alone.
+      </p>
 
-  <h2>The BRAG trail protocol</h2>
-  <p>
-    BRAG is AiVIS.biz's internal evidence chain standard. Every finding in an AiVIS.biz audit report
-    must pass a four-step BRAG verification before it is surfaced as a recommendation. This
-    prevents generic advice - the kind that applies to every site and helps none of them - from
-    appearing alongside evidence-grounded findings.
-  </p>
+      <div class="pipeline-steps">
+        <div class="pipeline-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Crawl and extraction</strong
+            ><span
+              >The target URL is fetched and rendered. HTML structure, JSON-LD blocks, meta fields,
+              heading hierarchy, internal link topology, and raw text content are extracted and
+              stored as the crawl baseline for this scan.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Dimension scoring</strong
+            ><span
+              >Each of the six dimensions is scored independently against the extracted fields.
+              Scoring is deterministic: the same page input produces the same dimension scores
+              across re-runs, enabling reliable before/after comparison.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Evidence mapping</strong
+            ><span
+              >Low-scoring dimension items are mapped to specific crawl evidence. A heading
+              structure score of 30 references the exact H1 and H2 fields observed, not a generic
+              statement about heading importance.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>AI model validation (paid tiers)</strong
+            ><span
+              >Eligible tiers include a secondary pass where an AI critique model reviews content
+              against the observed dimension scores. This surfaces advisory findings - issues the
+              crawl can detect but cannot fully evaluate, such as whether a FAQ answer is factually
+              complete or merely present.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>Confidence classification</strong
+            ><span
+              >Each finding is classified as high-confidence (directly crawl-observable),
+              medium-confidence (pattern-based), or advisory (model-evaluated). Teams should
+              prioritize high-confidence findings first - these have the most predictable score
+              impact.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <strong>Score storage and baseline commit</strong
+            ><span
+              >The composite score, dimension scores, and finding set are committed to the report
+              history store. All future audits on the same URL compare delta against this committed
+              baseline.</span
+            >
+          </div>
+        </div>
+      </div>
 
-  <div class="brag-grid">
-    <div class="brag-card">
-      <div class="brag-letter">B</div>
-      <h4>Build from observed fields</h4>
-      <p>Every finding originates from a specific crawl-observable element: a missing JSON-LD block, a duplicate H1, an absent meta description. If the finding cannot be traced to a concrete page field, it is not included in the report.</p>
-    </div>
-    <div class="brag-card">
-      <div class="brag-letter">R</div>
-      <h4>Reference explicit evidence</h4>
-      <p>Each finding includes a direct excerpt or field reference from the crawled page. Teams can verify the finding independently without re-running the audit. The evidence is attached to the finding, not implied.</p>
-    </div>
-    <div class="brag-card">
-      <div class="brag-letter">A</div>
-      <h4>Audit recommendation linkage</h4>
-      <p>Recommendations must map to the specific finding they address. A schema recommendation links to schema evidence. A content depth recommendation links to the content fields evaluated. No recommendation is orphaned from its finding.</p>
-    </div>
-    <div class="brag-card">
-      <div class="brag-letter">G</div>
-      <h4>Ground claims in stored outputs</h4>
-      <p>Findings and scores are stored per-scan so every future audit can compare against a prior baseline. Score movement is measured against stored crawl outputs, not recalculated from memory, ensuring comparison stability across weeks and model updates.</p>
-    </div>
-  </div>
+      <h2>The optimization loop</h2>
+      <p>
+        A single audit is a diagnostic, not a solution. AiVIS.biz is designed for iterative
+        improvement cycles where teams fix a cluster of related findings, re-audit, and measure
+        category-level delta rather than overall score movement alone. Overall score can mask
+        improvement in one dimension while another degrades - category tracking prevents this.
+      </p>
 
-  <p>
-    In practice, the BRAG trail means every recommendation in an AiVIS.biz report answers three
-    questions simultaneously: <strong>what exactly is wrong</strong> on this specific page,
-    <strong>where is the evidence</strong> in the crawl output, and
-    <strong>what specific change</strong> will move the score. Teams that implement fixes
-    without this chain typically address symptoms while missing root causes.
-  </p>
+      <div class="loop-block">
+        <div class="loop-label">Recommended cycle</div>
+        <div class="loop-steps">
+          <div class="loop-step">
+            <span class="loop-node">Baseline audit</span><span class="loop-arrow">→</span>
+          </div>
+          <div class="loop-step">
+            <span class="loop-node">Fix high-confidence cluster</span
+            ><span class="loop-arrow">→</span>
+          </div>
+          <div class="loop-step">
+            <span class="loop-node">Re-audit</span><span class="loop-arrow">→</span>
+          </div>
+          <div class="loop-step">
+            <span class="loop-node">Compare category delta</span><span class="loop-arrow">→</span>
+          </div>
+          <div class="loop-step">
+            <span class="loop-node">Log change</span><span class="loop-arrow">→</span>
+          </div>
+          <div class="loop-step"><span class="loop-node">Repeat</span></div>
+        </div>
+      </div>
 
-  <h2>Validation pipeline</h2>
-  <p>
-    AiVIS.biz audits run through a multi-stage validation pipeline before scores are finalized.
-    The pipeline is designed to distinguish high-confidence findings - those grounded in
-    directly observable page structure - from advisory findings that reflect best practice
-    patterns but cannot be verified by crawl alone.
-  </p>
+      <p>
+        The most common optimization failure mode is fixing all technical issues first while leaving
+        content depth and schema untouched. Technical SEO accounts for only 8% of the composite
+        score. A page can achieve a perfect technical score and still sit at 30 overall if content
+        depth and schema coverage are near zero. Always prioritize dimension weight when sequencing
+        fixes.
+      </p>
 
-  <div class="pipeline-steps">
-    <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>Crawl and extraction</strong><span>The target URL is fetched and rendered. HTML structure, JSON-LD blocks, meta fields, heading hierarchy, internal link topology, and raw text content are extracted and stored as the crawl baseline for this scan.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>Dimension scoring</strong><span>Each of the six dimensions is scored independently against the extracted fields. Scoring is deterministic: the same page input produces the same dimension scores across re-runs, enabling reliable before/after comparison.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>Evidence mapping</strong><span>Low-scoring dimension items are mapped to specific crawl evidence. A heading structure score of 30 references the exact H1 and H2 fields observed, not a generic statement about heading importance.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>AI model validation (paid tiers)</strong><span>Eligible tiers include a secondary pass where an AI critique model reviews content against the observed dimension scores. This surfaces advisory findings - issues the crawl can detect but cannot fully evaluate, such as whether a FAQ answer is factually complete or merely present.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">5</div><div class="step-content"><strong>Confidence classification</strong><span>Each finding is classified as high-confidence (directly crawl-observable), medium-confidence (pattern-based), or advisory (model-evaluated). Teams should prioritize high-confidence findings first - these have the most predictable score impact.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">6</div><div class="step-content"><strong>Score storage and baseline commit</strong><span>The composite score, dimension scores, and finding set are committed to the report history store. All future audits on the same URL compare delta against this committed baseline.</span></div></div>
-  </div>
+      <div class="callout callout-warn">
+        <p>
+          <strong>Score inflation warning:</strong> Adding schema markup without validating
+          relationship completeness can produce a misleading score increase. AiVIS.biz distinguishes
+          between schema presence (any JSON-LD block exists) and schema quality (relationships are
+          complete, entity references are accurate, type matches page context). The schema dimension
+          weight applies to quality, not presence.
+        </p>
+      </div>
 
-  <h2>The optimization loop</h2>
-  <p>
-    A single audit is a diagnostic, not a solution. AiVIS.biz is designed for iterative improvement
-    cycles where teams fix a cluster of related findings, re-audit, and measure category-level
-    delta rather than overall score movement alone. Overall score can mask improvement in one
-    dimension while another degrades - category tracking prevents this.
-  </p>
+      <h2>What answer engines actually extract</h2>
+      <p>
+        AiVIS.biz scoring is grounded in the extraction behavior of retrieval-augmented generation
+        pipelines. When Perplexity, ChatGPT, or Gemini answers a question using web sources, the
+        selection and extraction process follows a predictable pattern:
+      </p>
 
-  <div class="loop-block">
-    <div class="loop-label">Recommended cycle</div>
-    <div class="loop-steps">
-      <div class="loop-step"><span class="loop-node">Baseline audit</span><span class="loop-arrow">→</span></div>
-      <div class="loop-step"><span class="loop-node">Fix high-confidence cluster</span><span class="loop-arrow">→</span></div>
-      <div class="loop-step"><span class="loop-node">Re-audit</span><span class="loop-arrow">→</span></div>
-      <div class="loop-step"><span class="loop-node">Compare category delta</span><span class="loop-arrow">→</span></div>
-      <div class="loop-step"><span class="loop-node">Log change</span><span class="loop-arrow">→</span></div>
-      <div class="loop-step"><span class="loop-node">Repeat</span></div>
-    </div>
-  </div>
+      <p>
+        <strong>Entity resolution first.</strong> The model identifies what the page is about by
+        reading the title, H1, first paragraph, and any schema with a <code>name</code> or
+        <code>description</code> field. Pages with ambiguous or inconsistent entity signals are
+        assigned lower retrieval priority regardless of content quality.
+      </p>
 
-  <p>
-    The most common optimization failure mode is fixing all technical issues first while leaving
-    content depth and schema untouched. Technical SEO accounts for only 8% of the composite
-    score. A page can achieve a perfect technical score and still sit at 30 overall if content
-    depth and schema coverage are near zero. Always prioritize dimension weight when sequencing
-    fixes.
-  </p>
+      <p>
+        <strong>Passage extraction second.</strong> The model scans for short, self-contained answer
+        units - sentences or paragraphs that fully answer a question without requiring surrounding
+        context. This is why direct answer blocks and FAQ-style sections outperform long narrative
+        content in citation selection even when the narrative is higher quality.
+      </p>
 
-  <div class="callout callout-warn">
-    <p><strong>Score inflation warning:</strong> Adding schema markup without validating relationship completeness can produce a misleading score increase. AiVIS.biz distinguishes between schema presence (any JSON-LD block exists) and schema quality (relationships are complete, entity references are accurate, type matches page context). The schema dimension weight applies to quality, not presence.</p>
-  </div>
+      <p>
+        <strong>Trust verification third.</strong> The model cross-references the source against
+        signals that indicate authority: presence of a methodology or about page, internal links to
+        trust documents like privacy and terms, external corroboration from other indexed sources,
+        and schema that asserts organizational identity. Pages without these signals are cited less
+        frequently on contested or consequential queries.
+      </p>
 
-  <h2>What answer engines actually extract</h2>
-  <p>
-    AiVIS.biz scoring is grounded in the extraction behavior of retrieval-augmented generation
-    pipelines. When Perplexity, ChatGPT, or Gemini answers a question using web sources,
-    the selection and extraction process follows a predictable pattern:
-  </p>
+      <p>
+        AiVIS.biz scores each of these extraction phases through its dimension framework. Content
+        depth and AI readability measure extractability. Schema and heading structure measure entity
+        resolution quality. Metadata and technical SEO measure trust and accessibility. Improving
+        all six dimensions together is the only reliable path to consistent citation across answer
+        engines.
+      </p>
 
-  <p>
-    <strong>Entity resolution first.</strong> The model identifies what the page is about by
-    reading the title, H1, first paragraph, and any schema with a <code>name</code> or
-    <code>description</code> field. Pages with ambiguous or inconsistent entity signals are
-    assigned lower retrieval priority regardless of content quality.
-  </p>
+      <h2 id="cite-ledger">CITE LEDGER — from BRAG evidence to citable data</h2>
+      <p>
+        BRAG (Based-Retrieval-Auditable-Grading) is the evidence protocol.
+        <strong>CITE LEDGER</strong> is the structured record each audit produces — the
+        transformation layer that converts messy scraped content into deterministic, citable ground
+        truth. ML in this pipeline operates as a <strong>deterministic filter</strong>: its job is
+        to reject any scraped evidence that does not meet the structural requirements for a valid
+        citation.
+      </p>
 
-  <p>
-    <strong>Passage extraction second.</strong> The model scans for short, self-contained
-    answer units - sentences or paragraphs that fully answer a question without requiring
-    surrounding context. This is why direct answer blocks and FAQ-style sections outperform
-    long narrative content in citation selection even when the narrative is higher quality.
-  </p>
+      <h3>The audit-fix ML feedback loop</h3>
+      <p>
+        The ML model is trained on audit failures (where citations were rejected or incorrect) and
+        manual fixes (human corrections to data). Each phase transforms the data closer to
+        citation-ready state.
+      </p>
 
-  <p>
-    <strong>Trust verification third.</strong> The model cross-references the source against
-    signals that indicate authority: presence of a methodology or about page, internal links
-    to trust documents like privacy and terms, external corroboration from other indexed sources,
-    and schema that asserts organizational identity. Pages without these signals are cited less
-    frequently on contested or consequential queries.
-  </p>
+      <table class="dim-table" aria-label="CITE LEDGER ML pipeline phases">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Input</th>
+            <th>ML Transformation</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Extraction</td>
+            <td>Raw DOM / HTML</td>
+            <td>
+              Denoising — ML identifies non-content elements (ads, sidebars, boilerplate) based on
+              patterns learned from previous audit removals.
+            </td>
+            <td>Cleaned Data Packet</td>
+          </tr>
+          <tr>
+            <td>Alignment</td>
+            <td>Cleaned Packet</td>
+            <td>
+              Semantic Mapping — ML aligns extracted text to known entity schemas found in
+              historically successful citations.
+            </td>
+            <td>Structured JSON-LD</td>
+          </tr>
+          <tr>
+            <td>Validation</td>
+            <td>Structured Data</td>
+            <td>
+              Hallucination Scoring — Cross-references the citation coordinates with the stable DOM
+              anchor to confirm the data was actually observed on the page.
+            </td>
+            <td>Citable Evidence</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <p>
-    AiVIS.biz scores each of these extraction phases through its dimension framework. Content depth
-    and AI readability measure extractability. Schema and heading structure measure entity
-    resolution quality. Metadata and technical SEO measure trust and accessibility.
-    Improving all six dimensions together is the only reliable path to consistent citation
-    across answer engines.
-  </p>
+      <h3>Transforming scraped evidence into citations</h3>
+      <p>
+        For data to be citable, it must transition from subjective interpretation to objective
+        reference. The pipeline enforces this through three layers:
+      </p>
+      <p>
+        <strong>Upstream — Immutable capture.</strong> The system captures the DOM snapshot and
+        Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the
+        immutable base layer of every CITE LEDGER record.
+      </p>
+      <p>
+        <strong>ML Auditor — Stability classification.</strong> A classifier trained on citable vs.
+        non-citable data evaluates DOM element stability. If an element's ID or class varies too
+        much across audit logs, the ML flags it as volatile and requests a more stable anchor.
+      </p>
+      <p>
+        <strong>Downstream — Reliability scoring.</strong> ML generates a reliability score from 0.0
+        to 1.0. Only data scoring above 0.98 earns a citation handle — a unique, auditable reference
+        that resolves back to the original rendered source.
+      </p>
 
-  <h2 id="cite-ledger">CITE LEDGER — from BRAG evidence to citable data</h2>
-  <p>
-    BRAG (Based-Retrieval-Auditable-Grading) is the evidence protocol. <strong>CITE LEDGER</strong>
-    is the structured record each audit produces — the transformation layer that converts messy
-    scraped content into deterministic, citable ground truth. ML in this pipeline operates as
-    a <strong>deterministic filter</strong>: its job is to reject any scraped evidence that
-    does not meet the structural requirements for a valid citation.
-  </p>
+      <h3>Pipeline principles</h3>
+      <div class="pipeline-steps">
+        <div class="pipeline-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Lock the upstream</strong
+            ><span
+              >The SERP fetch → Cloudflare Render path is the only source of truth. No extraction
+              bypasses, no manual content injection. The pipeline is deterministic from crawl to
+              evidence.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Audit-integrated scoring</strong
+            ><span
+              >ML scoring runs after DOM stabilization but before citation finalization. Evidence
+              that passes the reliability threshold (≥ 0.98) earns a citation handle. Evidence below
+              the threshold is flagged as volatile and excluded from the citable record.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Fix-cycle training</strong
+            ><span
+              >Every manual correction to a citation produces a delta between the scraped value and
+              the fixed value. That delta is fed back into the ML model to refine future extraction
+              — turning each audit-fix cycle into a training signal.</span
+            >
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Deterministic mapping</strong
+            ><span
+              >Every citation contains a unique hash that resolves back to the original rendered
+              HTML source. The audit trail is fully reversible: from final citation handle →
+              structured evidence → cleaned extraction → raw DOM snapshot.</span
+            >
+          </div>
+        </div>
+      </div>
 
-  <h3>The audit-fix ML feedback loop</h3>
-  <p>
-    The ML model is trained on audit failures (where citations were rejected or incorrect) and
-    manual fixes (human corrections to data). Each phase transforms the data closer to
-    citation-ready state.
-  </p>
+      <div class="callout callout-info">
+        <p>
+          <strong>Design constraint:</strong> ML in the CITE LEDGER pipeline is a deterministic
+          filter, not a generator. Its job is to say "no" to any scraped evidence that does not
+          perfectly align with the structure required for a valid citation. By the time data reaches
+          the user, it is not just scraped information — it is a verified asset backed by the
+          history of the system's audits and fixes.
+        </p>
+      </div>
 
-  <table class="dim-table" aria-label="CITE LEDGER ML pipeline phases">
-    <thead>
-      <tr>
-        <th>Phase</th>
-        <th>Input</th>
-        <th>ML Transformation</th>
-        <th>Output</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Extraction</td>
-        <td>Raw DOM / HTML</td>
-        <td>Denoising — ML identifies non-content elements (ads, sidebars, boilerplate) based on patterns learned from previous audit removals.</td>
-        <td>Cleaned Data Packet</td>
-      </tr>
-      <tr>
-        <td>Alignment</td>
-        <td>Cleaned Packet</td>
-        <td>Semantic Mapping — ML aligns extracted text to known entity schemas found in historically successful citations.</td>
-        <td>Structured JSON-LD</td>
-      </tr>
-      <tr>
-        <td>Validation</td>
-        <td>Structured Data</td>
-        <td>Hallucination Scoring — Cross-references the citation coordinates with the stable DOM anchor to confirm the data was actually observed on the page.</td>
-        <td>Citable Evidence</td>
-      </tr>
-    </tbody>
-  </table>
+      <h2>Related documentation</h2>
+      <p>
+        The <a href="https://aivis.biz/guide">AiVIS.biz Guide</a> covers how to interpret audit
+        output and sequence implementation. The <a href="https://aivis.biz/faq">FAQ</a> addresses
+        common questions about score interpretation, category grades, and optimization sequencing.
+        The <a href="https://aivis.biz/compliance">Compliance</a> page documents data handling and
+        crawl governance policies. Teams running the full optimization loop can track progress in
+        <a href="https://aivis.biz/reports">Report History</a>.
+      </p>
+    </main>
 
-  <h3>Transforming scraped evidence into citations</h3>
-  <p>
-    For data to be citable, it must transition from subjective interpretation to objective
-    reference. The pipeline enforces this through three layers:
-  </p>
-  <p>
-    <strong>Upstream — Immutable capture.</strong> The system captures the DOM snapshot and
-    Computed CSS at the moment of extraction. This evidence is non-negotiable and forms the
-    immutable base layer of every CITE LEDGER record.
-  </p>
-  <p>
-    <strong>ML Auditor — Stability classification.</strong> A classifier trained on citable
-    vs. non-citable data evaluates DOM element stability. If an element's ID or class varies
-    too much across audit logs, the ML flags it as volatile and requests a more stable anchor.
-  </p>
-  <p>
-    <strong>Downstream — Reliability scoring.</strong> ML generates a reliability score from
-    0.0 to 1.0. Only data scoring above 0.98 earns a citation handle — a unique, auditable
-    reference that resolves back to the original rendered source.
-  </p>
-
-  <h3>Pipeline principles</h3>
-  <div class="pipeline-steps">
-    <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>Lock the upstream</strong><span>The SERP fetch → Cloudflare Render path is the only source of truth. No extraction bypasses, no manual content injection. The pipeline is deterministic from crawl to evidence.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>Audit-integrated scoring</strong><span>ML scoring runs after DOM stabilization but before citation finalization. Evidence that passes the reliability threshold (≥ 0.98) earns a citation handle. Evidence below the threshold is flagged as volatile and excluded from the citable record.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>Fix-cycle training</strong><span>Every manual correction to a citation produces a delta between the scraped value and the fixed value. That delta is fed back into the ML model to refine future extraction — turning each audit-fix cycle into a training signal.</span></div></div>
-    <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>Deterministic mapping</strong><span>Every citation contains a unique hash that resolves back to the original rendered HTML source. The audit trail is fully reversible: from final citation handle → structured evidence → cleaned extraction → raw DOM snapshot.</span></div></div>
-  </div>
-
-  <div class="callout callout-info">
-    <p><strong>Design constraint:</strong> ML in the CITE LEDGER pipeline is a deterministic filter, not a generator. Its job is to say "no" to any scraped evidence that does not perfectly align with the structure required for a valid citation. By the time data reaches the user, it is not just scraped information — it is a verified asset backed by the history of the system's audits and fixes.</p>
-  </div>
-
-  <h2>Related documentation</h2>
-  <p>
-    The <a href="https://aivis.biz/guide">AiVIS.biz Guide</a> covers how to interpret audit output
-    and sequence implementation. The <a href="https://aivis.biz/faq">FAQ</a> addresses common
-    questions about score interpretation, category grades, and optimization sequencing.
-    The <a href="https://aivis.biz/compliance">Compliance</a> page documents data handling and
-    crawl governance policies. Teams running the full optimization loop can track progress
-    in <a href="https://aivis.biz/reports">Report History</a>.
-  </p>
-
-</main>
-
-<footer>
-  <a href="https://aivis.biz/privacy">Privacy</a>
-  <a href="https://aivis.biz/terms">Terms</a>
-  <a href="https://aivis.biz/compliance">Compliance</a>
-  <a href="https://aivis.biz/compare">Compare</a>
-  <a href="https://aivis.biz/reports">Reports</a>
-  <span style="margin-left:auto">© 2026 AiVIS.biz</span>
-</footer>
-
-</body>
+    <footer>
+      <a href="https://aivis.biz/privacy">Privacy</a>
+      <a href="https://aivis.biz/terms">Terms</a>
+      <a href="https://aivis.biz/compliance">Compliance</a>
+      <a href="https://aivis.biz/compare">Compare</a>
+      <a href="https://aivis.biz/reports">Reports</a>
+      <span style="margin-left: auto">© 2026 AiVIS.biz</span>
+    </footer>
+  </body>
 </html>

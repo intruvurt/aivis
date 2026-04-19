@@ -225,18 +225,24 @@ async function runSingleJob() {
 
       // 7. If BRAG findings exist, persist BRAG trail and cite ledger entries
       if (bragValidation.findings && bragValidation.findings.length > 0) {
-        await persistBragTrail(auditRunId, bragValidation.findings);
+        const pool = getPool();
+        await persistBragTrail(pool, auditRunId, bragValidation);
 
         if (bragValidation.cite_ledger && bragValidation.cite_ledger.length > 0) {
-          await persistCiteLedger(auditRunId, bragValidation.cite_ledger);
+          await persistCiteLedger(pool, auditRunId, bragValidation.cite_ledger);
         }
       }
 
       // 8. Fire-and-forget cite ledger pipeline (no await needed)
+      const urlObj = new URL(scraped.url);
       runCiteLedgerPipeline({
         auditRunId,
         userId: job.payload.userId,
         url: scraped.url,
+        domain: urlObj.hostname || "",
+        score: finalScore,
+        evidenceCount: evidence.items.length,
+        scoreSource: "audit",
       }).catch((err: any) => {
         console.warn(`[audit-worker] Cite ledger pipeline error (non-fatal): ${err?.message || err}`);
       });

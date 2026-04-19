@@ -15,9 +15,12 @@ import { scrapeWebsite } from "../services/scraper.js";
 import { runAnalysisEngines } from "../services/engines/engineComposer.js";
 import { getPool, getConnection } from "../services/postgresql.js";
 import { persistAuditRecord } from "../services/auditPersistenceService.js";
-import { createCiteEntry } from "../services/citeLedgerService.js";
+// TODO: createCiteEntry and CiteEntry type need to be implemented in citeLedgerService.ts and shared/types.ts
+// import { createCiteEntry } from "../services/citeLedgerService.js";
 import { normalizePublicHttpUrl } from "../lib/urlSafety.js";
-import type { CanonicalTier, CiteEntry } from "../../../shared/types.js";
+import type { CanonicalTier } from "../../../shared/types.js";
+// TODO: CiteEntry type needs to be defined in shared/types.ts
+// import type { CiteEntry } from "../../../shared/types.js";
 import { uiTierFromCanonical, getTierLimits } from "../../../shared/types.js";
 import { lookupDomainAgeYears } from "../lib/utils/domainAge.js";
 

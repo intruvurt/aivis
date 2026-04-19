@@ -77,14 +77,9 @@ function normalize(s: string): string {
 }
 
 function generateCanonical(seed: string, modifier: string): string {
-  // Compress multi-word seeds into shorter canonical forms
-  const seedWords = seed.split(' ');
-  const seedKey = seedWords
-    .map((w, i) => (i === 0 ? w : w[0]))
-    .join('')
-    .toLowerCase();
-  const modKey = modifier[0].toUpperCase() + modifier.slice(1);
-  return `${seedKey}-${modKey}`;
+  // Generate full canonical URL matching the slug format
+  const slug = normalize(`${seed} ${modifier}`);
+  return `https://aivis.biz/query/${slug}`;
 }
 
 function generateQueries(): Query[] {

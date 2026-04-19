@@ -3,10 +3,16 @@
  *
  * Endpoints for accessing and expanding the immutable truth layer.
  * All responses are read-only and fully auditable.
+ * 
+ * NOTE: Deprecated in favor of server/src/routes/citeLedger.ts
+ * This file is kept for reference but not active in the router.
  */
 
 import { Router, Request, Response } from "express";
 import { authRequired } from "../middleware/authRequired.js";
+// NOTE: The following imports are commented out as this file is not currently used.
+// Refer to citeLedger.ts for the active implementation.
+/*
 import {
   createCiteEntry,
   getCiteEntry,
@@ -15,6 +21,7 @@ import {
   getCiteLedgerStats,
   verifyCiteIntegrity,
 } from "../services/citeLedgerService.js";
+*/
 import { getConnection } from "../services/postgresql.js";
 
 export const citeLedgerRoutes = Router();
@@ -194,7 +201,7 @@ citeLedgerRoutes.get(
       const avgConfidence =
         cites.length > 0
           ? cites.reduce((sum: number, c: any) => sum + c.confidence_score, 0) /
-            cites.length
+          cites.length
           : 0;
 
       client.release();

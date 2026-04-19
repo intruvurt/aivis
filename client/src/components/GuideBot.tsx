@@ -250,7 +250,7 @@ export default function GuideBot() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             onClick={() => { dismissHint(); setIsOpen(true); }}
-            className="fixed bottom-20 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
+            className="fixed bottom-20 right-6 z-[45] w-16 h-16 rounded-full overflow-hidden shadow-lg shadow-black/30 hover:shadow-cyan-400/20 hover:scale-105 transition-all duration-200 group ring-2 ring-white/10 hover:ring-cyan-400/30"
             aria-label="Open BIX"
           >
             <img src="/bix-agent.png" alt="BIX guide agent" className="w-full h-full object-cover" loading="lazy" decoding="async" />

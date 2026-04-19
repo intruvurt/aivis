@@ -84,7 +84,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   useEffect(() => { setActiveIdx(-1); }, [results]);
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-slate-950 border-b border-slate-800" role="banner" aria-label="App toolbar">
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-slate-950 border-b border-white/5" role="banner" aria-label="App toolbar">
       {/* Left - hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Mobile menu button */}
@@ -112,7 +112,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             aria-activedescendant={activeIdx >= 0 ? `gsr-${activeIdx}` : undefined}
             role="combobox"
             autoComplete="off"
-            className="w-full h-8 pl-9 pr-3 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-orange-400 focus:bg-slate-900 transition-colors"
+            className="w-full h-8 pl-9 pr-3 rounded-lg bg-slate-900 border border-white/8 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-orange-400 focus:bg-slate-800 transition-colors"
           />
           {isOpen && results.length > 0 && (
             <ul

@@ -94,8 +94,8 @@ export default function AppShell() {
               <Outlet />
             </Suspense>
           </OutletErrorBoundary>
-          <Footer />
         </main>
+        <Footer />
       </div>
 
       <GlobalCommandPalette />

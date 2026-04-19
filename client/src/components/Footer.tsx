@@ -1,38 +1,38 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Lock, Shield, ExternalLink, Mail, Globe, Zap } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Lock, Shield, ExternalLink, Mail, Globe, Zap } from 'lucide-react';
 
 const linkGroups = [
   {
-    title: "Platform",
+    title: 'Platform',
     links: [
-      { label: "Run Audit", to: "/" },
-      { label: "Pricing", to: "/pricing" },
-      { label: "Methodology", to: "/methodology" },
-      { label: "Integrations", to: "/integrations" },
-      { label: "API Docs", to: "/api-docs" },
-      { label: "DoFollow Backlink", to: "/badge" },
+      { label: 'Run Audit', to: '/' },
+      { label: 'Pricing', to: '/pricing' },
+      { label: 'Methodology', to: '/methodology' },
+      { label: 'Integrations', to: '/integrations' },
+      { label: 'API Docs', to: '/api-docs' },
+      { label: 'DoFollow Backlink', to: '/badge' },
     ],
   },
   {
-    title: "Resources",
+    title: 'Resources',
     links: [
-      { label: "Insights", to: "/insights" },
-      { label: "Blog", to: "/blogs" },
-      { label: "Guide", to: "/guide" },
-      { label: "FAQ", to: "/faq" },
-      { label: "Help Center", to: "/help" },
-      { label: "Substack", to: "https://dobleduche.substack.com/", external: true },
+      { label: 'Insights', to: '/insights' },
+      { label: 'Blog', to: '/blogs' },
+      { label: 'Guide', to: '/guide' },
+      { label: 'FAQ', to: '/faq' },
+      { label: 'Help Center', to: '/help' },
+      { label: 'Substack', to: 'https://dobleduche.substack.com/', external: true },
     ],
   },
   {
-    title: "Company",
+    title: 'Company',
     links: [
-      { label: "About", to: "/about" },
-      { label: "Press", to: "/press" },
-      { label: "Privacy", to: "/privacy" },
-      { label: "Terms", to: "/terms" },
-      { label: "Disclosures", to: "/disclosures" },
+      { label: 'About', to: '/about' },
+      { label: 'Press', to: '/press' },
+      { label: 'Privacy', to: '/privacy' },
+      { label: 'Terms', to: '/terms' },
+      { label: 'Disclosures', to: '/disclosures' },
     ],
   },
 ] as const;
@@ -51,20 +51,37 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2 sm:col-span-4 lg:col-span-2 lg:pr-8">
             <div className="flex items-center gap-2.5 mb-4">
-              <img src="/aivis-logo.png" alt="AiVIS.biz" className="h-8 w-8 rounded-lg object-contain" />
+              <img
+                src="/aivis-logo.png"
+                alt="AiVIS.biz"
+                width="32"
+                height="32"
+                className="h-8 w-8 rounded-lg object-contain"
+              />
               <span className="text-lg font-bold tracking-tight text-white">
                 AI<span className="text-cyan-400">VIS</span>
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
-              AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.
+              AiVIS.biz is an AI visibility and entity authority system founded in 2026 that
+              measures how AI systems interpret, trust, and cite web content. It operates through
+              CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable
+              record of how a brand is extracted, attributed, and cited within AI-generated answers.
             </p>
             <div className="flex flex-col gap-2 text-xs text-white/40">
-              <a href="mailto:support@aivis.biz" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
+              <a
+                href="mailto:support@aivis.biz"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300"
+              >
                 <Mail className="h-3.5 w-3.5" />
                 support@aivis.biz
               </a>
-              <a href="https://aivis.biz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300">
+              <a
+                href="https://aivis.biz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300"
+              >
                 <Globe className="h-3.5 w-3.5" />
                 aivis.biz
               </a>
@@ -80,7 +97,7 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {group.links.map((link) => (
                   <li key={link.to}>
-                    {"external" in link && link.external ? (
+                    {'external' in link && link.external ? (
                       <a
                         href={link.to}
                         target="_blank"

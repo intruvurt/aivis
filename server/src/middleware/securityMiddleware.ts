@@ -83,7 +83,8 @@ export function applySecurityMiddleware(app: Express): void {
       "default-src 'self'",
       // script-src: nonce-based + strict-dynamic for dynamically loaded scripts + fallback https: for CDN
       // Also explicitly allow analytics services (Google Analytics, Clarity, Cloudflare Insights)
-      `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com`,
+      // Removed 'unsafe-inline' - not needed when nonces are used (ignored by CSP2+ anyway)
+      `script-src 'nonce-${nonce}' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",

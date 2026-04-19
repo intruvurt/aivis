@@ -2,15 +2,21 @@
  * QueryPage - Deterministic query-driven visibility node
  *
  * Each /query/{slug} renders:
- * - Immediate cached insight** - Scan CTA (optional auto-trigger)
+ * - Metadata with unique canonical URL
+ * - Cite-ledger injection for external AI/crawler access
+ * - Immediate cached insight
+ * - Scan CTA (optional auto-trigger)
  * - Schema injection
  * - Related query linking
  */
 
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getPrecomputedCache, getRelatedQueries, mapQueryToScanIntent } from '../lib/queryCache.js';
+import { useQueryPageMetadata } from '../hooks/usePageMetadata';
+import { generateCiteLedgerMeta, generateScoresFromAudit, extractCitationsFromAudit, extractEntitiesFromAudit } from '../lib/citeLedgerMeta';
 import type { PrecomputedCache } from '../lib/queryCache.js';
+import type { CiteLedgerMeta } from '../lib/citeLedgerMeta';
 
 interface QueryPageProps {
   onScanTrigger?: (slug: string, url: string) => void;
@@ -35,6 +41,63 @@ export default function QueryPage({ onScanTrigger }: QueryPageProps) {
     }
   }, [slug, navigate]);
 
+  // Generate cite-ledger metadata (machine-readable evidence graph)
+  const citeLedgerMeta: CiteLedgerMeta | undefined = useMemo(() => {
+    if (!cache) return undefined;
+
+    // Generate scores from cache (would be from actual audit in production)
+    const scores = generateScoresFromAudit({
+      category_grades: {
+        schema_structured_data: cache.expectedScore.typical > 60 ? 'B' : 'C',
+        meta_tags_open_graph: cache.expectedScore.typical > 50 ? 'B' : 'C',
+        heading_structure: cache.expectedScore.typical > 55 ? 'B' : 'C',
+        content_depth_quality: cache.expectedScore.typical > 65 ? 'A' : 'B',
+        technical_trust: cache.expectedScore.typical > 60 ? 'B' : 'C',
+      },
+      visibility_score: cache.expectedScore.typical,
+    });
+
+    // Extract audit findings (would be from real audit response)
+    const citations = extractCitationsFromAudit({
+      url: `https://aivis.biz/query/${slug}`,
+      findings: cache.insights?.map((insight, idx) => ({
+        evidence_id: `query-${slug}-insight-${idx}`,
+        element_type: 'insight',
+        confidence: 85,
+        extract_ready: true,
+      })),
+    });
+
+    const entities = extractEntitiesFromAudit({
+      entities: [
+        {
+          id: 'aivis-query-page',
+          name: 'AiVIS Query Page',
+          type: 'SoftwareApplication',
+          clarity_score: 90,
+          mention_count: 1,
+        },
+      ],
+    });
+
+    return generateCiteLedgerMeta({
+      page: `https://aivis.biz/query/${slug}`,
+      citations,
+      entities,
+      scores,
+      auditChain: undefined, // Would be populated from server-side ledger service
+    });
+  }, [cache, slug]);
+
+  // Set page metadata with cite-ledger injection
+  useQueryPageMetadata(
+    slug,
+    cache?.title || 'Query | AiVIS',
+    cache?.description || 'AiVIS Query Analysis',
+    undefined,
+    citeLedgerMeta
+  );
+
   if (!cache) return null;
 
   const scanIntent = mapQueryToScanIntent(slug);
@@ -49,7 +112,7 @@ export default function QueryPage({ onScanTrigger }: QueryPageProps) {
     onScanTrigger?.(slug, url);
   };
 
-  // Structured data for index
+  // Structured data for index (JSON-LD schema validation compliant)
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
@@ -73,9 +136,6 @@ export default function QueryPage({ onScanTrigger }: QueryPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Schema injection */}
-      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
 
       {/* Hero */}
       <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16">

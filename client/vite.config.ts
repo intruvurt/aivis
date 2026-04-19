@@ -4,6 +4,8 @@ import compression from "vite-plugin-compression";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateHomepageContract } from "./src/homepage/homepage.validate";
+import { validateJsonLdArray, isAllValid, formatValidationErrors } from "./src/lib/jsonLdValidator";
+import { queryRouteValidationPlugin } from "./src/build/queryRouteValidation";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,9 +31,49 @@ function homepageEnforcementPlugin(): Plugin {
   };
 }
 
+/**
+ * JSON-LD Schema Validation Plugin — hard build stop if any JSON-LD schema is invalid.
+ * Validates all generated schemas at buildStart against schema.org specs.
+ */
+function jsonLdValidationPlugin(): Plugin {
+  return {
+    name: "json-ld-validation",
+    async buildStart() {
+      try {
+        // Import homepage schemas dynamically to validate
+        const homepageSchema = await import("./src/homepage/homepage.schema");
+        const schemas = homepageSchema.generateHomepageStructuredData();
+
+        const results = validateJsonLdArray(schemas);
+
+        if (!isAllValid(results)) {
+          const failures = results.filter((r) => !r.isValid);
+          const errorDetails = failures
+            .map((f) => `  [@type: ${f.schema}]\n${formatValidationErrors([f]).split('\n').map(l => '    ' + l).join('\n')}`)
+            .join("\n");
+
+          throw new Error(
+            `\n[JSON-LD Validation] ${failures.length} schema(s) failed validation:\n${errorDetails}\n\nFix JSON-LD schemas in client/src/homepage/homepage.schema.ts before building.\n`
+          );
+        }
+
+        console.log("[JSON-LD Validation] ✓ All schemas valid against schema.org specs");
+      } catch (err) {
+        if ((err as any)?.message?.includes("JSON-LD Validation")) {
+          throw err;
+        }
+        // Re-throw unexpected errors
+        throw new Error(`[JSON-LD Validation] Unexpected error: ${(err as Error).message}`);
+      }
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
   plugins: [
     homepageEnforcementPlugin(),
+    jsonLdValidationPlugin(),
+    queryRouteValidationPlugin(),
     react(),
     // Gzip pre-compression for static hosting (Cloudflare, Vercel serve .gz automatically)
     ...(mode === "production"

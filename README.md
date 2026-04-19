@@ -1,3 +1,6 @@
+# AiVIS — Evidence-Backed AI Visibility Platform
+
+```json
 {
   "@context": "https://schema.org",
   "@graph": [
@@ -85,3 +88,4 @@
     }
   ]
 }
+```

@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import { scrapeWebsite } from '../services/scraper.js';
 import { getPool } from '../services/postgresql.js';
 import { publishAuditCompleted } from '../services/agencyAutomationService.js';
+import { trackEvent } from '../lib/analytics.js';
 import {
   claimNextAuditJob,
   completeAuditJob,
@@ -187,25 +188,25 @@ async function runSingleJob() {
     ]);
 
     await updateAuditJobProgress(job.id, 'extract', 48, ['Extracting page signals', 'Compiling structure + trust data']);
-    
+
     // ─────────────────────────────────────────────────────────────────────────────
     // Execute full audit pipeline
     // ─────────────────────────────────────────────────────────────────────────────
     const auditRunId = job.id;
     let finalScore = 0;
     let finalResult: Record<string, unknown> = {};
-    
+
     try {
       // 1. Extract evidence from scraped data
       const evidence = extractEvidenceFromScrapedData(auditRunId, scraped);
-      
+
       // 2. Evaluate rules against evidence
       const ruleResults = evaluateRules(evidence.items, evidence.contradictions.length);
-      
+
       // 3. Compute visibility score from rule results
       const scoreSnapshot = computeScore(ruleResults);
       finalScore = Math.round(scoreSnapshot.finalScore);
-      
+
       // 4. Run BRAG validation gate to issue evidence-backed finding IDs
       const bragValidation = await runBragValidationGate({
         auditId: auditRunId,
@@ -215,22 +216,22 @@ async function runSingleJob() {
         aiRecommendations: [],
         scrapeSummary: scraped.data,
       });
-      
+
       // 5. Persist rule results to audit_rule_results table
       await persistRuleResults(auditRunId, ruleResults);
-      
+
       // 6. Persist score snapshot to audit_score_snapshots table
       await persistScoreSnapshot(auditRunId, job.payload.userId, scraped.url, scoreSnapshot);
-      
+
       // 7. If BRAG findings exist, persist BRAG trail and cite ledger entries
       if (bragValidation.findings && bragValidation.findings.length > 0) {
         await persistBragTrail(auditRunId, bragValidation.findings);
-        
+
         if (bragValidation.cite_ledger && bragValidation.cite_ledger.length > 0) {
           await persistCiteLedger(auditRunId, bragValidation.cite_ledger);
         }
       }
-      
+
       // 8. Fire-and-forget cite ledger pipeline (no await needed)
       runCiteLedgerPipeline({
         auditRunId,
@@ -239,7 +240,7 @@ async function runSingleJob() {
       }).catch((err: any) => {
         console.warn(`[audit-worker] Cite ledger pipeline error (non-fatal): ${err?.message || err}`);
       });
-      
+
       // Build result payload
       finalResult = {
         success: true,
@@ -268,7 +269,7 @@ async function runSingleJob() {
       `SELECT id FROM audits WHERE id = $1 LIMIT 1`,
       [auditRunId]
     );
-    
+
     if (auditResult.rows.length > 0) {
       // Update existing audit record
       await pool.query(
@@ -293,6 +294,17 @@ async function runSingleJob() {
       checkedPages: diff.checked,
       runtimeMs: Date.now() - startedAt,
     });
+
+    // Track successful audit completion
+    trackEvent('audit_completed', {
+      userId: job.payload.userId,
+      score: finalScore,
+      url: scraped.url,
+      evidenceCount: finalResult.evidence_count || 0,
+      ruleCount: finalResult.rule_count || 0,
+      bragFindingsCount: finalResult.brag_findings_count || 0,
+    });
+
     await publishAuditCompleted({
       userId: job.payload.userId,
       domain: scraped.url,
@@ -310,7 +322,7 @@ export function startAuditWorkerLoop() {
     while (active < concurrency) {
       active += 1;
       runSingleJob()
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => {
           active = Math.max(0, active - 1);
         });

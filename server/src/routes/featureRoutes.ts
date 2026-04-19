@@ -158,9 +158,11 @@ router.get('/notifications/stream', async (req: Request, res: Response) => {
 
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-cache, no-store, no-transform',
       'Connection': 'keep-alive',
       'X-Accel-Buffering': 'no',
+      'Alt-Svc': 'clear',
+      'Transfer-Encoding': 'identity',
       'Access-Control-Allow-Origin': String(req.headers.origin || '*'),
       'Vary': 'Origin',
     });

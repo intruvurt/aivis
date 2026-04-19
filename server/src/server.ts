@@ -258,6 +258,7 @@ import { bootstrapAgencyAutomation } from "./services/agencyAutomationService.js
 import { startDbCleanupLoop, runDbCleanupNow } from "./services/dbCleanup.js";
 import { recordTimelinePoint } from "./services/visibilityTimeline.js";
 import { recordFixOutcome } from "./services/fixLearning.js";
+import { initAnalytics } from "./lib/analytics.js";
 import {
   tieredRateLimit,
   ipRateLimit,
@@ -16067,6 +16068,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startDbCleanupLoop();
     startMcpAuditLoop();
     startTaskWorker();
+    initAnalytics();
     startAuditWorkerLoop();
     startFixWorker();
     startTrackingWorker();

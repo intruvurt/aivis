@@ -110,19 +110,41 @@ export async function getUserEntities(userId: string): Promise<EntityOsRecord[]>
 
 /**
  * Record a drift score snapshot after an audit completes.
+ * Returns the drift delta (current - prior 3-score average) for insight.
  */
 export async function recordDriftScore(
     entityId: string,
     score: number,
     evidenceCount: number,
     scoreSource: string,
-): Promise<void> {
+): Promise<number | null> {
     const pool = getPool();
-    await pool.query(
-        `INSERT INTO drift_scores (entity_id, score, evidence_count, score_source)
-         VALUES ($1, $2, $3, $4)`,
-        [entityId, Math.round(score), evidenceCount, scoreSource],
+
+    // Fetch last 3 scores for drift detection
+    const { rows: priorScores } = await pool.query(
+        `SELECT score FROM drift_scores
+         WHERE entity_id = $1
+         ORDER BY computed_at DESC
+         LIMIT 3`,
+        [entityId],
     );
+
+    // Calculate drift delta
+    let driftDelta: number | null = null;
+    if (priorScores.length > 0) {
+        const priorAverage =
+            priorScores.reduce((sum, row) => sum + row.score, 0) / priorScores.length;
+        driftDelta = Math.round((score - priorAverage) * 10) / 10; // one decimal place
+    }
+
+    // Insert with drift_delta
+    await pool.query(
+        `INSERT INTO drift_scores (entity_id, score, evidence_count, score_source, drift_delta)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [entityId, Math.round(score), evidenceCount, scoreSource, driftDelta],
+    );
+
+    return driftDelta;
 }
 
 /**

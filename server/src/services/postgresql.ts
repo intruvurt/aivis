@@ -296,6 +296,8 @@ export async function runMigrations(): Promise<void> {
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'completed'`,
             `ALTER TABLE audits ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ`,
             `CREATE INDEX IF NOT EXISTS idx_audits_status ON audits(status) WHERE status = 'queued'`,
+            // ── Registry Memory: drift score tracking ──
+            `ALTER TABLE drift_scores ADD COLUMN IF NOT EXISTS drift_delta NUMERIC`,
             // ── Incremental audit page hashes ──
             `CREATE TABLE IF NOT EXISTS audit_page_hashes (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1220,6 +1222,7 @@ export async function runMigrations(): Promise<void> {
               score INTEGER NOT NULL DEFAULT 0,
               evidence_count INTEGER NOT NULL DEFAULT 0,
               score_source VARCHAR(40) NOT NULL DEFAULT 'evidence',
+              drift_delta NUMERIC,
               computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
             `CREATE INDEX IF NOT EXISTS idx_drift_scores_entity ON drift_scores(entity_id, computed_at DESC)`,
@@ -4559,6 +4562,7 @@ export async function runMigrations(): Promise<void> {
         score INTEGER NOT NULL DEFAULT 0,
         evidence_count INTEGER NOT NULL DEFAULT 0,
         score_source VARCHAR(40) NOT NULL DEFAULT 'evidence',
+        drift_delta NUMERIC,
         computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);

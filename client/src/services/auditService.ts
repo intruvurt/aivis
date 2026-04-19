@@ -98,4 +98,17 @@ export const auditService = {
   async getAudits() {
     return this.listAudits();
   },
+
+  /**
+   * Fetch cite ledger entries for an audit (Alignment+ only)
+   */
+  async getCiteLedgerForAudit(auditId) {
+    if (!auditId) throw { message: "Missing audit id" };
+    try {
+      const res = await http.get(`/cite-ledger/run/${auditId}`);
+      return res.data;
+    } catch (err) {
+      throw normalizeError(err);
+    }
+  },
 };

@@ -18,11 +18,11 @@ const SECURITY_HEADERS = {
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'Content-Security-Policy':
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com; " +
-    "style-src 'self' 'unsafe-inline'; " +
+    "script-src 'self' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://codetrendy.com; " +
     "connect-src 'self' https://api.aivis.biz https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.sentry.io https://*.ingest.sentry.io; " +
-    "font-src 'self' data:; " +
+    "font-src 'self' data: https://fonts.gstatic.com; " +
     "frame-src https://www.google.com https://recaptcha.google.com https://js.stripe.com; " +
     "frame-ancestors 'none'; " +
     "base-uri 'self'; " +

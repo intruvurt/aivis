@@ -88,12 +88,12 @@ export function applySecurityMiddleware(app: Express): void {
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "img-src 'self' data: https:",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      // connect-src: allow all https + API calls to analytics services
-      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com",
+      // connect-src: allow all https + API calls to analytics & payment services
+      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com https://api.stripe.com https://checkout.stripe.com",
       "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
-      "frame-src 'self' https: https://www.google.com https://js.stripe.com",
+      "frame-src 'self' https: https://www.google.com https://js.stripe.com https://checkout.stripe.com",
       "upgrade-insecure-requests",
     ];
 

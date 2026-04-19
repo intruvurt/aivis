@@ -1142,6 +1142,30 @@ const PUBLIC_ROUTE_GUIDES: PublicRouteGuideRule[] = [
             primaryActionLabel: "Compare Competitors",
         },
     },
+    {
+        match: "prefix",
+        path: "/tools",
+        guide: {
+            title: "Free Tools",
+            section: "Platform",
+            summary: "Diagnostic utilities for schema validation, server headers, robot rules, and content extractability.",
+            nextStep: "Run one tool to surface structural gaps in your implementation.",
+            primaryActionPath: "/tools/schema-validator",
+            primaryActionLabel: "Run Schema Validator",
+        },
+    },
+    {
+        match: "prefix",
+        path: "/audit/",
+        guide: {
+            title: "Audit Details",
+            section: "Core",
+            summary: "Review evidence from a completed audit showing opportunities, blockers, and citation opportunities.",
+            nextStep: "Route findings into Score Fix for implementation.",
+            primaryActionPath: "/app/reports",
+            primaryActionLabel: "View All Reports",
+        },
+    },
 ];
 
 export function getRouteGuide(pathname: string): RouteGuide | null {

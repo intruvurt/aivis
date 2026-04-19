@@ -288,7 +288,8 @@ function tsFallbackValidation(input: BragGateInput): BragValidationResult {
     for (const rule of input.ruleResults) {
         if (rule.passed) continue;
 
-        const evidence = findRuleEvidence(rule.ruleId, rule.evidenceKeys, evidenceByKey);
+        // Use RULE_EVIDENCE_MAP to find keys for lookup, since evidenceIds are now EV-hashes
+        const evidence = findRuleEvidence(rule.ruleId, [], evidenceByKey);
         if (!evidence) {
             rejectedCount++;
             continue;

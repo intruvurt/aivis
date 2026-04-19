@@ -9,6 +9,10 @@ import {
   requeueAuditJob,
   updateAuditJobProgress,
 } from '../infra/queues/auditQueue.js';
+import { extractEvidenceFromScrapedData } from '../services/audit/evidenceLedger.js';
+import { evaluateRules, computeScore, persistRuleResults, persistScoreSnapshot } from '../services/audit/ruleEngine.js';
+import { runBragValidationGate, persistBragTrail, persistCiteLedger } from '../services/bragGate.js';
+import { runCiteLedgerPipeline } from '../services/citeLedgerService.js';
 
 const JOB_TIMEOUT_MS = 55_000;
 const FAST_FETCH_TIMEOUT_MS = 6_500;
@@ -183,17 +187,107 @@ async function runSingleJob() {
     ]);
 
     await updateAuditJobProgress(job.id, 'extract', 48, ['Extracting page signals', 'Compiling structure + trust data']);
-    await updateAuditJobProgress(job.id, 'score', 82, ['Queuing for AI pipeline', 'Preparing report payload']);
+    
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Execute full audit pipeline
+    // ─────────────────────────────────────────────────────────────────────────────
+    const auditRunId = job.id;
+    let finalScore = 0;
+    let finalResult: Record<string, unknown> = {};
+    
+    try {
+      // 1. Extract evidence from scraped data
+      const evidence = extractEvidenceFromScrapedData(auditRunId, scraped);
+      
+      // 2. Evaluate rules against evidence
+      const ruleResults = evaluateRules(evidence.items, evidence.contradictions.length);
+      
+      // 3. Compute visibility score from rule results
+      const scoreSnapshot = computeScore(ruleResults);
+      finalScore = Math.round(scoreSnapshot.finalScore);
+      
+      // 4. Run BRAG validation gate to issue evidence-backed finding IDs
+      const bragValidation = await runBragValidationGate({
+        auditId: auditRunId,
+        url: scraped.url,
+        evidenceItems: evidence.items,
+        ruleResults: ruleResults,
+        aiRecommendations: [],
+        scrapeSummary: scraped.data,
+      });
+      
+      // 5. Persist rule results to audit_rule_results table
+      await persistRuleResults(auditRunId, ruleResults);
+      
+      // 6. Persist score snapshot to audit_score_snapshots table
+      await persistScoreSnapshot(auditRunId, job.payload.userId, scraped.url, scoreSnapshot);
+      
+      // 7. If BRAG findings exist, persist BRAG trail and cite ledger entries
+      if (bragValidation.findings && bragValidation.findings.length > 0) {
+        await persistBragTrail(auditRunId, bragValidation.findings);
+        
+        if (bragValidation.cite_ledger && bragValidation.cite_ledger.length > 0) {
+          await persistCiteLedger(auditRunId, bragValidation.cite_ledger);
+        }
+      }
+      
+      // 8. Fire-and-forget cite ledger pipeline (no await needed)
+      runCiteLedgerPipeline({
+        auditRunId,
+        userId: job.payload.userId,
+        url: scraped.url,
+      }).catch((err: any) => {
+        console.warn(`[audit-worker] Cite ledger pipeline error (non-fatal): ${err?.message || err}`);
+      });
+      
+      // Build result payload
+      finalResult = {
+        success: true,
+        visibility_score: finalScore,
+        scrape: scraped.data,
+        evidence_count: evidence.items.length,
+        rule_count: ruleResults.length,
+        brag_findings_count: bragValidation.findings?.length ?? 0,
+      };
+    } catch (pipelineErr: any) {
+      console.error(`[audit-worker] Pipeline execution error: ${pipelineErr?.message || pipelineErr}`);
+      // Graceful degradation: continue with scrape-only result
+      finalScore = 0;
+      finalResult = {
+        success: false,
+        error: pipelineErr?.message || 'Pipeline execution failed',
+        scrape: scraped.data,
+      };
+    }
 
-    await getPool().query(
-      `INSERT INTO audits (user_id, url, visibility_score, result, status, created_at, updated_at)
-       VALUES ($1, $2, $3, $4::jsonb, 'completed', NOW(), NOW())`,
-      [job.payload.userId, scraped.url, null, JSON.stringify({ queued: true, pending_ai_score: true, scrape: scraped.data })]
+    await updateAuditJobProgress(job.id, 'persist', 92, ['Saving audit record', 'Finalizing status']);
+
+    // Update audit record with real score and result
+    const pool = getPool();
+    const auditResult = await pool.query(
+      `SELECT id FROM audits WHERE id = $1 LIMIT 1`,
+      [auditRunId]
     );
+    
+    if (auditResult.rows.length > 0) {
+      // Update existing audit record
+      await pool.query(
+        `UPDATE audits SET visibility_score = $2, result = $3::jsonb, status = 'completed', updated_at = NOW()
+         WHERE id = $1`,
+        [auditRunId, finalScore, JSON.stringify(finalResult)]
+      );
+    } else {
+      // Create new audit record (fallback)
+      await pool.query(
+        `INSERT INTO audits (id, user_id, url, visibility_score, result, status, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5::jsonb, 'completed', NOW(), NOW())`,
+        [auditRunId, job.payload.userId, scraped.url, finalScore, JSON.stringify(finalResult)]
+      );
+    }
 
     await completeAuditJob(job.id, {
       success: true,
-      score: null,
+      score: finalScore,
       reused: false,
       changedPages: diff.changedPages,
       checkedPages: diff.checked,
@@ -202,7 +296,7 @@ async function runSingleJob() {
     await publishAuditCompleted({
       userId: job.payload.userId,
       domain: scraped.url,
-      score: 0,
+      score: finalScore,
     });
   } catch (err: any) {
     await failAuditJob(job.id, err?.message || 'Audit failed');

@@ -39,7 +39,8 @@ export interface RuleResult {
   severity: 'critical' | 'high' | 'medium' | 'low';
   scoreImpact: number;
   hardBlocker: boolean;
-  evidenceKeys: string[];
+  evidenceKeys: string[]; // Original key names for lookups and validation
+  evidenceIds: string[]; // EV-hash IDs for database traceability
   remediationKey: string | null;
 }
 
@@ -795,6 +796,11 @@ export function evaluateRules(
     // Special case: T03 overrides based on contradiction count
     const actualPassed = rule.id === 'T03' ? contradictionCount === 0 : passed;
 
+    // Resolve evidence keys to their corresponding evidence IDs (EV-hashes)
+    const evidenceIds = keys
+      .map((key) => evidenceMap.get(key)?.evidence_id)
+      .filter((id): id is string => id !== undefined);
+
     results.push({
       family: rule.family,
       ruleId: rule.id,
@@ -805,6 +811,7 @@ export function evaluateRules(
       scoreImpact: actualPassed ? 0 : -rule.weight,
       hardBlocker: rule.hardBlocker && !actualPassed,
       evidenceKeys: keys,
+      evidenceIds,
       remediationKey: actualPassed ? null : rule.remediationKey,
     });
   }
@@ -885,7 +892,7 @@ export async function persistRuleResults(
         r.severity,
         r.scoreImpact,
         r.hardBlocker,
-        JSON.stringify(r.evidenceKeys),
+        JSON.stringify(r.evidenceIds),
         r.remediationKey,
       ],
     );

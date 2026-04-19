@@ -1,14 +1,21 @@
 /**
  * CITE LEDGER API ROUTES
- * 
+ *
  * Endpoints for accessing and expanding the immutable truth layer.
  * All responses are read-only and fully auditable.
  */
 
-import { Router, Request, Response } from 'express';
-import { authRequired } from '../middleware/authMiddleware.js';
-import { citeLedgerService } from '../services/citeLedgerService.js';
-import { getConnection } from '../services/postgresql.js';
+import { Router, Request, Response } from "express";
+import { authRequired } from "../middleware/authRequired.js";
+import {
+  createCiteEntry,
+  getCiteEntry,
+  getAuditCites,
+  expandCiteWithProvenance,
+  getCiteLedgerStats,
+  verifyCiteIntegrity,
+} from "../services/citeLedgerService.js";
+import { getConnection } from "../services/postgresql.js";
 
 export const citeLedgerRoutes = Router();
 
@@ -17,26 +24,26 @@ export const citeLedgerRoutes = Router();
  * Platform health metrics (no auth required - public insight)
  */
 citeLedgerRoutes.get(
-  '/cite-ledger/stats',
+  "/cite-ledger/stats",
   async (req: Request, res: Response) => {
     try {
       const client = await getConnection();
-      const stats = await citeLedgerService.getCiteLedgerStats(client);
+      const stats = await getCiteLedgerStats(client);
       client.release();
 
       res.json({
-        status: 'ok',
+        status: "ok",
         data: stats,
         timestamp: Date.now(),
       });
     } catch (err: any) {
-      console.error('[Cite Ledger] Stats error:', err);
+      console.error("[Cite Ledger] Stats error:", err);
       res.status(500).json({
-        error: 'Failed to fetch cite ledger stats',
-        code: 'CITE_STATS_ERROR',
+        error: "Failed to fetch cite ledger stats",
+        code: "CITE_STATS_ERROR",
       });
     }
-  }
+  },
 );
 
 /**
@@ -44,30 +51,30 @@ citeLedgerRoutes.get(
  * All cite entries for an audit (authenticated)
  */
 citeLedgerRoutes.get(
-  '/audits/:auditId/cites',
+  "/audits/:auditId/cites",
   authRequired,
   async (req: Request, res: Response) => {
     try {
       const { auditId } = req.params;
       const client = await getConnection();
-      const cites = await citeLedgerService.getAuditCites(client, auditId);
+      const cites = await getAuditCites(client, auditId);
       client.release();
 
       res.json({
-        status: 'ok',
+        status: "ok",
         audit_id: auditId,
         cite_count: cites.length,
         cites,
         timestamp: Date.now(),
       });
     } catch (err: any) {
-      console.error('[Cite Ledger] Get audit cites error:', err);
+      console.error("[Cite Ledger] Get audit cites error:", err);
       res.status(500).json({
-        error: 'Failed to fetch audit cites',
-        code: 'CITE_FETCH_ERROR',
+        error: "Failed to fetch audit cites",
+        code: "CITE_FETCH_ERROR",
       });
     }
-  }
+  },
 );
 
 /**
@@ -75,7 +82,7 @@ citeLedgerRoutes.get(
  * Single cite entry with full provenance (authenticated)
  */
 citeLedgerRoutes.get(
-  '/cites/:citeId',
+  "/cites/:citeId",
   authRequired,
   async (req: Request, res: Response) => {
     try {
@@ -83,22 +90,22 @@ citeLedgerRoutes.get(
       const client = await getConnection();
 
       // Get full cite with provenance
-      const expansion = await citeLedgerService.expandCiteWithProvenance(client, citeId);
-      
+      const expansion = await expandCiteWithProvenance(client, citeId);
+
       if (!expansion) {
         client.release();
         return res.status(404).json({
-          error: 'Cite not found',
-          code: 'CITE_NOT_FOUND',
+          error: "Cite not found",
+          code: "CITE_NOT_FOUND",
         });
       }
 
       // Verify integrity
-      const integrityCheck = await citeLedgerService.verifyCiteIntegrity(client, citeId);
+      const integrityCheck = await verifyCiteIntegrity(client, citeId);
       client.release();
 
       res.json({
-        status: 'ok',
+        status: "ok",
         cite: expansion.cite,
         context: expansion.context,
         provenance: expansion.chain_provenance,
@@ -106,13 +113,13 @@ citeLedgerRoutes.get(
         timestamp: Date.now(),
       });
     } catch (err: any) {
-      console.error('[Cite Ledger] Get cite error:', err);
+      console.error("[Cite Ledger] Get cite error:", err);
       res.status(500).json({
-        error: 'Failed to fetch cite',
-        code: 'CITE_FETCH_ERROR',
+        error: "Failed to fetch cite",
+        code: "CITE_FETCH_ERROR",
       });
     }
-  }
+  },
 );
 
 /**
@@ -120,35 +127,35 @@ citeLedgerRoutes.get(
  * Verify cite hasn't been tampered with (authenticated)
  */
 citeLedgerRoutes.get(
-  '/cites/:citeId/verify',
+  "/cites/:citeId/verify",
   authRequired,
   async (req: Request, res: Response) => {
     try {
       const { citeId } = req.params;
       const client = await getConnection();
-      const verification = await citeLedgerService.verifyCiteIntegrity(client, citeId);
+      const verification = await verifyCiteIntegrity(client, citeId);
       client.release();
 
       res.json({
-        status: 'ok',
+        status: "ok",
         cite_id: citeId,
         ...verification,
         timestamp: Date.now(),
       });
     } catch (err: any) {
-      console.error('[Cite Ledger] Verification error:', err);
+      console.error("[Cite Ledger] Verification error:", err);
       res.status(500).json({
-        error: 'Failed to verify cite',
-        code: 'CITE_VERIFY_ERROR',
+        error: "Failed to verify cite",
+        code: "CITE_VERIFY_ERROR",
       });
     }
-  }
+  },
 );
 
 /**
  * POST /api/analyze (UPDATED)
  * Creates cite entries as part of audit analysis
- * 
+ *
  * This endpoint now:
  * 1. Runs audit as before
  * 2. Creates cite entries for each evidence source
@@ -160,7 +167,7 @@ citeLedgerRoutes.get(
  * Full evidence chain for a visibility score (authenticated)
  */
 citeLedgerRoutes.get(
-  '/audits/:auditId/evidence-chain',
+  "/audits/:auditId/evidence-chain",
   authRequired,
   async (req: Request, res: Response) => {
     try {
@@ -168,7 +175,7 @@ citeLedgerRoutes.get(
       const client = await getConnection();
 
       // Get all cites for this audit
-      const cites = await citeLedgerService.getAuditCites(client, auditId);
+      const cites = await getAuditCites(client, auditId);
 
       // Group by category
       const byCategory = cites.reduce((acc: any, cite: any) => {
@@ -184,14 +191,16 @@ citeLedgerRoutes.get(
       }, {});
 
       // Calculate aggregate confidence
-      const avgConfidence = cites.length > 0
-        ? cites.reduce((sum: number, c: any) => sum + c.confidence_score, 0) / cites.length
-        : 0;
+      const avgConfidence =
+        cites.length > 0
+          ? cites.reduce((sum: number, c: any) => sum + c.confidence_score, 0) /
+            cites.length
+          : 0;
 
       client.release();
 
       res.json({
-        status: 'ok',
+        status: "ok",
         audit_id: auditId,
         total_cite_entries: cites.length,
         avg_confidence: parseFloat((avgConfidence * 100).toFixed(1)),
@@ -199,13 +208,13 @@ citeLedgerRoutes.get(
         timestamp: Date.now(),
       });
     } catch (err: any) {
-      console.error('[Cite Ledger] Evidence chain error:', err);
+      console.error("[Cite Ledger] Evidence chain error:", err);
       res.status(500).json({
-        error: 'Failed to fetch evidence chain',
-        code: 'EVIDENCE_CHAIN_ERROR',
+        error: "Failed to fetch evidence chain",
+        code: "EVIDENCE_CHAIN_ERROR",
       });
     }
-  }
+  },
 );
 
 export default citeLedgerRoutes;

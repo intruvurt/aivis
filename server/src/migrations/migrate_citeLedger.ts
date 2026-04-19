@@ -4,10 +4,11 @@
  */
 
 export default async function migrateCiteLedger(db: any) {
-  console.log('[Migration] Creating CITE LEDGER tables...');
+  console.log("[Migration] Creating CITE LEDGER tables...");
 
   // Main cite ledger table - immutable evidence entries
-  await db.query(`
+  await db.query(
+    `
     CREATE TABLE IF NOT EXISTS cite_ledger_entries (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       url TEXT NOT NULL,
@@ -58,10 +59,13 @@ export default async function migrateCiteLedger(db: any) {
     CREATE INDEX IF NOT EXISTS idx_cite_confidence ON cite_ledger_entries(confidence_score);
     CREATE INDEX IF NOT EXISTS idx_cite_created ON cite_ledger_entries(created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_cite_tags ON cite_ledger_entries USING GIN(tags);
-  `, console.error);
+  `,
+    console.error,
+  );
 
   // Registry patterns table - learned from cite entries
-  await db.query(`
+  await db.query(
+    `
     CREATE TABLE IF NOT EXISTS cite_registry_patterns (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       fingerprint VARCHAR(64) UNIQUE NOT NULL,
@@ -96,10 +100,13 @@ export default async function migrateCiteLedger(db: any) {
     CREATE INDEX IF NOT EXISTS idx_registry_fingerprint ON cite_registry_patterns(fingerprint);
     CREATE INDEX IF NOT EXISTS idx_registry_pattern ON cite_registry_patterns(detected_pattern);
     CREATE INDEX IF NOT EXISTS idx_registry_success ON cite_registry_patterns(success_rate DESC);
-  `, console.error);
+  `,
+    console.error,
+  );
 
   // Fixes table - remediation backed by cite evidence
-  await db.query(`
+  await db.query(
+    `
     CREATE TABLE IF NOT EXISTS cite_fixes (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       registry_fingerprint VARCHAR(64),
@@ -137,10 +144,13 @@ export default async function migrateCiteLedger(db: any) {
     CREATE INDEX IF NOT EXISTS idx_fixes_status ON cite_fixes(status);
     CREATE INDEX IF NOT EXISTS idx_fixes_registry ON cite_fixes(registry_fingerprint);
     CREATE INDEX IF NOT EXISTS idx_fixes_created ON cite_fixes(created_at DESC);
-  `, console.error);
+  `,
+    console.error,
+  );
 
   // Audit cite summary table - materialized view for performance
-  await db.query(`
+  await db.query(
+    `
     CREATE TABLE IF NOT EXISTS audit_cite_summary (
       audit_id UUID PRIMARY KEY,
       total_cites INT NOT NULL DEFAULT 0,
@@ -154,7 +164,9 @@ export default async function migrateCiteLedger(db: any) {
     );
     
     CREATE INDEX IF NOT EXISTS idx_audit_cite_summary ON audit_cite_summary(audit_id);
-  `, console.error);
+  `,
+    console.error,
+  );
 
-  console.log('[Migration] CITE LEDGER tables created successfully');
+  console.log("[Migration] CITE LEDGER tables created successfully");
 }

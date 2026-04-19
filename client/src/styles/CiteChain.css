@@ -1,0 +1,429 @@
+/**
+ * CITE CHAIN STYLES
+ *
+ * Forensic interface. Shows evidence, traces, confidence.
+ */
+
+.cite-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafbfc;
+}
+
+.cite-chain--error {
+  border-color: #fca5a5;
+  background: #fee2e2;
+}
+
+.cite-chain__error {
+  color: #991b1b;
+  font-weight: 500;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 4px;
+}
+
+.cite-chain__label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.cite-chain__container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cite-chain__container--compact {
+  gap: 0.5rem;
+}
+
+.cite-chain__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cite-chain__separator {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  line-height: 0.5rem;
+}
+
+/* CITE NODE */
+
+.cite-node {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 1rem;
+  background: white;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.cite-node:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.cite-node--compact {
+  display: grid;
+  grid-template-columns: 100px 1fr 80px;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border-color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.cite-node--compact:hover {
+  background: #f3f4f6;
+}
+
+.cite-node__header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.cite-node__source {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cite-node__confidence {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.confidence-80,
+.confidence-81,
+.confidence-82,
+.confidence-83,
+.confidence-84,
+.confidence-85,
+.confidence-86,
+.confidence-87,
+.confidence-88,
+.confidence-89,
+.confidence-90,
+.confidence-91,
+.confidence-92,
+.confidence-93,
+.confidence-94,
+.confidence-95,
+.confidence-96,
+.confidence-97,
+.confidence-98,
+.confidence-99,
+.confidence-100 {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.confidence-60,
+.confidence-61,
+.confidence-62,
+.confidence-63,
+.confidence-64,
+.confidence-65,
+.confidence-66,
+.confidence-67,
+.confidence-68,
+.confidence-69,
+.confidence-70,
+.confidence-71,
+.confidence-72,
+.confidence-73,
+.confidence-74,
+.confidence-75,
+.confidence-76,
+.confidence-77,
+.confidence-78,
+.confidence-79 {
+  background: #fef3c7;
+  color: #854d0e;
+}
+
+.confidence-0,
+.confidence-1,
+.confidence-2,
+.confidence-3,
+.confidence-4,
+.confidence-5,
+.confidence-6,
+.confidence-7,
+.confidence-8,
+.confidence-9,
+.confidence-10,
+.confidence-11,
+.confidence-12,
+.confidence-13,
+.confidence-14,
+.confidence-15,
+.confidence-16,
+.confidence-17,
+.confidence-18,
+.confidence-19,
+.confidence-20,
+.confidence-21,
+.confidence-22,
+.confidence-23,
+.confidence-24,
+.confidence-25,
+.confidence-26,
+.confidence-27,
+.confidence-28,
+.confidence-29,
+.confidence-30,
+.confidence-31,
+.confidence-32,
+.confidence-33,
+.confidence-34,
+.confidence-35,
+.confidence-36,
+.confidence-37,
+.confidence-38,
+.confidence-39,
+.confidence-40,
+.confidence-41,
+.confidence-42,
+.confidence-43,
+.confidence-44,
+.confidence-45,
+.confidence-46,
+.confidence-47,
+.confidence-48,
+.confidence-49,
+.confidence-50,
+.confidence-51,
+.confidence-52,
+.confidence-53,
+.confidence-54,
+.confidence-55,
+.confidence-56,
+.confidence-57,
+.confidence-58,
+.confidence-59 {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.cite-node__timestamp {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-left: auto;
+}
+
+.cite-node__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cite-node__signal {
+  font-size: 0.95rem;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+.cite-node__signal strong {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.cite-node__raw {
+  background: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
+}
+
+.cite-node__raw strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.cite-node__raw pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #374151;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.cite-node__footer {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cite-node__id,
+.cite-node__hash {
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+}
+
+.cite-chain__stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border-radius: 4px;
+  border-left: 4px solid #0284c7;
+  font-size: 0.9rem;
+  color: #0c4a6e;
+}
+
+.cite-chain__stats span {
+  font-weight: 500;
+}
+
+/* CITE LEGEND */
+
+.cite-legend {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+}
+
+.cite-legend--empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.cite-legend__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.cite-legend__header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.cite-legend__confidence {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.cite-legend__sources {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.cite-legend__source-group {
+  border: 1px solid #f3f4f6;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #fafbfc;
+}
+
+.cite-legend__source-header {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 0.95rem;
+}
+
+.cite-legend__source-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cite-legend__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
+  font-size: 0.85rem;
+}
+
+.cite-legend__signal {
+  color: #374151;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cite-legend__confidence {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .cite-node--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .cite-chain__stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cite-legend__sources {
+    grid-template-columns: 1fr;
+  }
+}

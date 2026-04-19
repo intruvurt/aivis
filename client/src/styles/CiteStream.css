@@ -1,0 +1,291 @@
+/**
+ * CITE STREAM STYLES
+ *
+ * Real-time evidence streaming view.
+ */
+
+.cite-stream {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #0f172a;
+  overflow: hidden;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  color: #e5e7eb;
+}
+
+.cite-stream__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #334155;
+  background: #1e293b;
+  gap: 1rem;
+}
+
+.cite-stream__header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.cite-stream__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cite-stream__count {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  background: #334155;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.cite-stream__btn {
+  background: #334155;
+  border: none;
+  color: #cbd5e1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.cite-stream__btn:hover {
+  background: #475569;
+  color: #f1f5f9;
+}
+
+.cite-stream__btn--play {
+  animation: pulse-play 2s infinite;
+}
+
+@keyframes pulse-play {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.cite-stream__info {
+  padding: 0.75rem 1rem;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.cite-stream__container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cite-stream__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+.cite-stream__entry {
+  display: grid;
+  grid-template-columns: 80px 80px 1fr 60px 80px;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  background: #1e293b;
+  border-radius: 4px;
+  border-left: 3px solid #475569;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  transition: all 0.2s;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cite-stream__entry:hover {
+  background: #334155;
+  border-left-color: #64748b;
+}
+
+.cite-stream__timestamp {
+  color: #94a3b8;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.cite-stream__source {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 700;
+  color: white;
+  font-size: 0.75rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.cite-stream__signal {
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cite-stream__confidence {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cite-stream__confidence.confidence-80,
+.confidence-81,
+.confidence-82,
+.confidence-83,
+.confidence-84,
+.confidence-85,
+.confidence-86,
+.confidence-87,
+.confidence-88,
+.confidence-89,
+.confidence-90,
+.confidence-91,
+.confidence-92,
+.confidence-93,
+.confidence-94,
+.confidence-95,
+.confidence-96,
+.confidence-97,
+.confidence-98,
+.confidence-99,
+.confidence-100 {
+  background: #10b981;
+  color: #ecfdf5;
+}
+
+.cite-stream__confidence.confidence-60,
+.confidence-70,
+.confidence-75 {
+  background: #f59e0b;
+  color: #fef3c7;
+}
+
+.cite-stream__confidence.confidence-0,
+.confidence-10,
+.confidence-20,
+.confidence-30,
+.confidence-40,
+.confidence-50 {
+  background: #ef4444;
+  color: #fee2e2;
+}
+
+.cite-stream__id {
+  color: #64748b;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.cite-stream__entry:hover .cite-stream__id {
+  color: #94a3b8;
+}
+
+.cite-stream__footer {
+  padding: 0.75rem 1rem;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: right;
+}
+
+/* Scrollbar styling */
+
+.cite-stream__container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cite-stream__container::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.cite-stream__container::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+.cite-stream__container::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .cite-stream__entry {
+    grid-template-columns: 70px 70px 1fr 50px;
+  }
+
+  .cite-stream__id {
+    grid-column: 4;
+  }
+}
+
+@media (max-width: 640px) {
+  .cite-stream__entry {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .cite-stream__timestamp,
+  .cite-stream__source,
+  .cite-stream__signal,
+  .cite-stream__confidence,
+  .cite-stream__id {
+    grid-column: auto;
+  }
+
+  .cite-stream__entry {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+}

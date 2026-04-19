@@ -1,0 +1,205 @@
+[
+  {
+    "path": "/",
+    "type": "home",
+    "priority": 1.0,
+    "changeFreq": "monthly",
+    "note": "Homepage - establishes Organization + WebSite entities"
+  },
+  {
+    "path": "/what-is-*",
+    "type": "ontology",
+    "priority": 0.9,
+    "changeFreq": "quarterly",
+    "schema_note": "DefinedTermSet - canonical vocabulary definitions"
+  },
+  {
+    "path": "/audit-methodology",
+    "type": "docs",
+    "priority": 0.9,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - authoritative technical methodology"
+  },
+  {
+    "path": "/entity-resolution-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/indexation-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/semantic-consistency-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/citation-likelihood-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/structured-data-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/distributed-signals-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/ai-parsability-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/trust-vectors-audit",
+    "type": "docs",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "TechArticle - dimension-specific documentation"
+  },
+  {
+    "path": "/why-ai-*",
+    "type": "blog",
+    "priority": 0.7,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - contextual why-* insights"
+  },
+  {
+    "path": "/entity-resolution-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/indexation-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/semantic-consistency-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/citation-likelihood-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/structured-data-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/distributed-signals-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/ai-parsability-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/trust-vectors-audit-for-*",
+    "type": "blog",
+    "priority": 0.6,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - dimension-specific analysis"
+  },
+  {
+    "path": "/how-*",
+    "type": "blog",
+    "priority": 0.7,
+    "changeFreq": "quarterly",
+    "schema_note": "BlogPosting - how-to guides"
+  },
+  {
+    "path": "/for-*",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - use-case pages"
+  },
+  {
+    "path": "/pricing",
+    "type": "page",
+    "priority": 0.8,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - pricing information"
+  },
+  {
+    "path": "/observer-tier",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - tier information"
+  },
+  {
+    "path": "/starter-tier",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - tier information"
+  },
+  {
+    "path": "/alignment-tier",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - tier information"
+  },
+  {
+    "path": "/signal-tier",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - tier information"
+  },
+  {
+    "path": "/scorefix-tier",
+    "type": "page",
+    "priority": 0.7,
+    "changeFreq": "monthly",
+    "schema_note": "WebPage - tier information"
+  },
+  {
+    "path": "/dataset",
+    "type": "dataset",
+    "priority": 0.8,
+    "changeFreq": "weekly",
+    "schema_note": "Dataset - structured data collection, updated weekly"
+  }
+]

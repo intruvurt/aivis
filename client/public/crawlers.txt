@@ -1,0 +1,59 @@
+# Crawlers Configuration File
+# https://aivis.biz/crawlers.txt
+# 
+# This file defines specific crawling policies for various AI systems
+# and web scrapers to protect proprietary code and user data.
+#
+# Last Updated: 2026-04-19
+
+[OpenAI]
+GPTBot = Deny
+ChatGPT-User = Deny
+Paths = ["/admin", "/api", "/app", "/auth", "/billing"]
+AllowedPaths = ["/blogs", "/methodology", "/guide", "/pricing", "/aeo-playbook-2026"]
+Reason = "Prevent training on proprietary BRAG implementation and user data"
+
+[Anthropic]
+ClaudeBot = Deny
+anthropic-ai = Deny
+Paths = ["/admin", "/api", "/app", "/auth", "/billing"]
+AllowedPaths = ["/blogs", "/methodology", "/guide", "/pricing", "/aeo-playbook-2026"]
+Reason = "Prevent training on proprietary BRAG implementation and user data"
+
+[Google]
+Google-Extended = Deny
+Paths = ["/admin", "/api", "/app", "/auth", "/billing"]
+AllowedPaths = ["/blogs", "/methodology", "/guide", "/pricing"]
+Reason = "Restrict AI training access to public documentation only"
+
+[Perplexity]
+pplxbot = Deny
+PerplexityBot = Deny
+Paths = ["/admin", "/api", "/app", "/auth", "/billing"]
+AllowedPaths = ["/blogs", "/methodology", "/guide", "/pricing"]
+Reason = "Prevent training on internal systems"
+
+[DeepSeek]
+deepseekaiweb = Deny
+deepsearch = Deny
+AllPaths = Deny
+Reason = "Block all access pending policy review"
+
+[Meta]
+facebookexternalhit = Restrict
+Paths = ["/admin", "/api", "/app", "/auth", "/billing"]
+Reason = "Standard privacy protection"
+
+[Amazon]
+AmazonBot = Deny
+Paths = ["/admin", "/api", "/app", "/auth", "/billing", "/niche-discovery"]
+Reason = "Prevent access to proprietary analysis engines"
+
+[General Policy]
+DefaultPolicy = Deny
+MaxCrawlRate = 1 request per 5 seconds
+CachePolicy = "max-age=3600, noai, noindex"
+IPBracketing = "Enabled"
+BotDetectionMode = "Strict"
+LogAllViolations = true
+ReportViolations = "security@aivis.biz"

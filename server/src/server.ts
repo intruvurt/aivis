@@ -42,6 +42,7 @@ import AutoScoreFixRoutes from "./routes/autoScoreFixRoutes.js";
 import reverseEngineerApi from "./routes/reverseEngineerApi.js";
 import schemaGeneratorRoutes from "./routes/schemaGeneratorRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
+import citeLedgerRoutes from "./routes/citeLedgerRoutes.js";
 import { getPricingInfo } from "./controllers/paymentController.js";
 import { getUserById } from "./models/User.js";
 import {
@@ -1616,6 +1617,7 @@ app.use("/api/stripe", paymentRoutes);
 app.use("/api/paypal", paypalRoutes);
 app.use("/api/queue", auditQueueRoutes);
 app.get("/api/pricing", getPricingInfo);
+app.use("/api/cite-ledger", citeLedgerRoutes);
 app.use("/api/competitors", competitorRoutes);
 app.use("/api/citations", citationRoutes);
 app.use("/api/mentions", mentionRoutes);

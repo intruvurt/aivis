@@ -1,0 +1,71 @@
+Contact: security@aivis.biz
+Expires: 2027-04-19T00:00:00Z
+Preferred-Languages: en
+Canonical: https://aivis.biz/.well-known/security.txt
+Policy: https://aivis.biz/security-policy
+
+# Security Policy
+# ═════════════════════════════════════════════════════════════════════════════
+# 
+# AiVIS is an AI Visibility Intelligence Platform that audits website machine-
+# readability, schema coverage, and citation preparedness.
+#
+# SECURITY CONTACT: security@aivis.biz
+#
+# ═════════════════════════════════════════════════════════════════════════════
+# RESPONSIBLE DISCLOSURE
+# ═════════════════════════════════════════════════════════════════════════════
+#
+# If you discover a security vulnerability in AiVIS:
+#
+# 1. DO NOT publicly disclose the vulnerability
+# 2. Email security@aivis.biz with:
+#    - Description of the vulnerability
+#    - Steps to reproduce
+#    - Potential impact
+#    - Your name and contact info
+#
+# Response time: We aim to acknowledge reports within 24 hours and provide
+# an initial assessment within 7 days. Critical vulnerabilities will be
+# prioritized accordingly.
+#
+# Scope: All properties under https://aivis.biz/* and subdomains
+#
+# ═════════════════════════════════════════════════════════════════════════════
+# AI BOT CRAWLING & ACCESS POLICY
+# ═════════════════════════════════════════════════════════════════════════════
+#
+# AiVIS welcomes AI systems to learn from public documentation (blogs, guides,
+# methodology pages) but intentionally restricts access to:
+#
+#   - BRAG implementation details (proprietary evidence-trailing system)
+#   - Private APIs (/api/*)
+#   - User data and authenticated routes (/app/*, /admin/*, /account/*)
+#   - Business logic and source code references
+#
+# This policy is enforced via:
+#   1. robots.txt (crawling directives)
+#   2. X-Robots-Tag HTTP headers
+#   3. Metadata tags (nofollow, noindex, noai, noimageindex)
+#
+# Crawlers that ignore robots.txt directives will be IP-blocked.
+# Access logs are monitored and violations are reported to applicable authorities.
+#
+# ═════════════════════════════════════════════════════════════════════════════
+# DATA PRIVACY
+# ═════════════════════════════════════════════════════════════════════════════
+#
+# Privacy Policy: https://aivis.biz/privacy
+# Terms of Service: https://aivis.biz/terms
+# GDPR Compliance: GDPR requests to legal@aivis.biz
+#
+# ═════════════════════════════════════════════════════════════════════════════
+# FURTHER INFORMATION
+# ═════════════════════════════════════════════════════════════════════════════
+#
+# Website: https://aivis.biz
+# Status Page: https://status.aivis.biz
+# Support: https://aivis.biz/help
+#
+# Published: 2026-04-19
+# Version: 1.0

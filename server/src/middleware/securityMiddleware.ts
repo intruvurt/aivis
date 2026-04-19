@@ -114,6 +114,65 @@ export function applySecurityMiddleware(app: Express): void {
     res.setHeader("X-Frame-Options", "DENY");
     next();
   });
+
+  /* ── X-Robots-Tag headers for AI bot blocking ───────────────────────── */
+  /* Prevents AI bots (GPTBot, ClaudeBot, etc.) from indexing sensitive APIs
+     and implementation code. Works in tandem with robots.txt 
+     CRITICAL: /reports/public/* routes MUST allow crawling for platform citation */
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const path = req.path.toLowerCase();
+
+    // Allow crawling for public shared audit reports (critical for AiVIS citation)
+    if (
+      path.startsWith("/reports/public/") ||
+      path.startsWith("/report/public/")
+    ) {
+      res.setHeader(
+        "X-Robots-Tag",
+        "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+      );
+    }
+    // Block AI indexing for all /api/* routes (implementation code)
+    else if (path.startsWith("/api/")) {
+      res.setHeader(
+        "X-Robots-Tag",
+        "noindex, nofollow, noimageindex, noai, nositelinkssearchbox",
+      );
+    }
+    // Block AI indexing for internal admin/auth routes
+    else if (
+      path.startsWith("/admin") ||
+      path.startsWith("/auth") ||
+      path.startsWith("/app/") ||
+      path.startsWith("/billing")
+    ) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow, noimageindex, noai");
+    }
+    // Block AI indexing for user-specific routes
+    else if (
+      path.startsWith("/profile") ||
+      path.startsWith("/settings") ||
+      path.startsWith("/team") ||
+      path.startsWith("/notifications") ||
+      path.startsWith("/referrals")
+    ) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow, noimageindex, noai");
+    }
+    // Allow public documentation but prevent deep learning of implementation details
+    else if (
+      path.startsWith("/blogs") ||
+      path.startsWith("/methodology") ||
+      path.startsWith("/guide") ||
+      path.startsWith("/api-docs")
+    ) {
+      res.setHeader(
+        "X-Robots-Tag",
+        "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+      );
+    }
+
+    next();
+  });
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

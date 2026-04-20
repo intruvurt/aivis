@@ -81,6 +81,7 @@ export default function useNotifications() {
   const initializedRef = useRef(false);
   const latestSeenMsRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectAttemptRef = useRef(0);
   const eventSourceRef = useRef<EventSource | null>(null);
   const [streamConnected, setStreamConnected] = useState(false);
 
@@ -294,6 +295,7 @@ export default function useNotifications() {
 
       es.addEventListener("connected", () => {
         setStreamConnected(true);
+        reconnectAttemptRef.current = 0; // reset backoff on successful connect
         clearReconnectTimer();
       });
 
@@ -310,7 +312,11 @@ export default function useNotifications() {
         }
         if (!disposed) {
           clearReconnectTimer();
-          reconnectTimerRef.current = setTimeout(connect, 15000);
+          // Exponential backoff: 15s → 30s → 60s → 120s (cap)
+          const attempt = reconnectAttemptRef.current;
+          const delay = Math.min(15_000 * Math.pow(2, attempt), 120_000);
+          reconnectAttemptRef.current = attempt + 1;
+          reconnectTimerRef.current = setTimeout(connect, delay);
         }
       };
     };
@@ -319,6 +325,7 @@ export default function useNotifications() {
 
     return () => {
       disposed = true;
+      reconnectAttemptRef.current = 0;
       closeStream();
     };
   }, [isAuthenticated, pageVisible, fetchNotifications, closeStream, clearReconnectTimer]);

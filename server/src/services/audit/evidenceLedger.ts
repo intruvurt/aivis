@@ -1022,7 +1022,7 @@ import type {
   GeekflareEnrichment,
 } from '../geekflareService.js';
 
-export interface GeekflareEvidenceInput extends GeekflareEnrichment {}
+export interface GeekflareEvidenceInput extends GeekflareEnrichment { }
 
 export function buildGeekflareEvidenceItems(opts: {
   gf: GeekflareEvidenceInput;
@@ -1046,7 +1046,7 @@ export function buildGeekflareEvidenceItems(opts: {
         tbt_ms: lh.total_blocking_time_ms,
         cls: lh.cumulative_layout_shift,
       },
-      status: lh.performance >= 80 ? 'pass' : lh.performance >= 50 ? 'warn' : 'fail',
+      status: lh.performance >= 80 ? 'present' : lh.performance >= 50 ? 'partial' : 'error',
       confidence: 0.95,
       notes: [
         `Lighthouse performance: ${lh.performance}/100`,
@@ -1064,7 +1064,7 @@ export function buildGeekflareEvidenceItems(opts: {
       key: 'lighthouse_seo',
       label: 'Lighthouse SEO score',
       value: { score: lh.seo },
-      status: lh.seo >= 80 ? 'pass' : lh.seo >= 50 ? 'warn' : 'fail',
+      status: lh.seo >= 80 ? 'present' : lh.seo >= 50 ? 'partial' : 'error',
       confidence: 0.95,
       notes: [
         `Lighthouse SEO: ${lh.seo}/100`,
@@ -1080,7 +1080,7 @@ export function buildGeekflareEvidenceItems(opts: {
       key: 'lighthouse_accessibility',
       label: 'Lighthouse accessibility score',
       value: { score: lh.accessibility },
-      status: lh.accessibility >= 80 ? 'pass' : 'warn',
+      status: lh.accessibility >= 80 ? 'present' : 'partial',
       confidence: 0.9,
       notes: [`Lighthouse accessibility: ${lh.accessibility}/100`],
     });
@@ -1090,18 +1090,18 @@ export function buildGeekflareEvidenceItems(opts: {
   const lt = gf.loadtime;
   if (lt) {
     const slowCrawl = lt.ttfb_ms > 2000;
-    const critical  = lt.ttfb_ms > 5000;
+    const critical = lt.ttfb_ms > 5000;
     rawItems.push({
       category: 'technical',
       key: 'page_load_ttfb',
       label: 'Page TTFB and load timing',
       value: {
-        total_ms:   lt.total_ms,
-        ttfb_ms:    lt.ttfb_ms,
-        dns_ms:     lt.dns_ms,
+        total_ms: lt.total_ms,
+        ttfb_ms: lt.ttfb_ms,
+        dns_ms: lt.dns_ms,
         connect_ms: lt.connect_ms,
       },
-      status: critical ? 'fail' : slowCrawl ? 'warn' : 'pass',
+      status: critical ? 'error' : slowCrawl ? 'partial' : 'present',
       confidence: 0.95,
       notes: [
         `TTFB: ${lt.ttfb_ms}ms, DNS: ${lt.dns_ms}ms, Total: ${lt.total_ms}ms`,
@@ -1118,19 +1118,19 @@ export function buildGeekflareEvidenceItems(opts: {
   const tls = gf.tls;
   if (tls) {
     const expiringSoon = tls.days_remaining > 0 && tls.days_remaining <= 30;
-    const expired      = !tls.valid || tls.days_remaining <= 0;
+    const expired = !tls.valid || tls.days_remaining <= 0;
     rawItems.push({
       category: 'technical',
       key: 'tls_certificate',
       label: 'TLS/SSL certificate validity',
       value: {
-        valid:          tls.valid,
-        issuer:         tls.issuer,
-        expires_at:     tls.expires_at,
+        valid: tls.valid,
+        issuer: tls.issuer,
+        expires_at: tls.expires_at,
         days_remaining: tls.days_remaining,
-        protocol:       tls.protocol,
+        protocol: tls.protocol,
       },
-      status: expired ? 'fail' : expiringSoon ? 'warn' : 'pass',
+      status: expired ? 'error' : expiringSoon ? 'partial' : 'present',
       confidence: 0.99,
       notes: [
         expired
@@ -1157,7 +1157,7 @@ export function buildGeekflareEvidenceItems(opts: {
         ratio: Math.round(ratio * 100),
         sample_urls: bl.broken_urls.slice(0, 5),
       },
-      status: bl.broken_count === 0 ? 'pass' : ratio > 0.1 ? 'fail' : 'warn',
+      status: bl.broken_count === 0 ? 'present' : ratio > 0.1 ? 'error' : 'partial',
       confidence: 0.9,
       notes: [
         `${bl.broken_count} broken links out of ${bl.total_checked} checked (${Math.round(ratio * 100)}%).`,

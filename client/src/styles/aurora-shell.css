@@ -1,0 +1,358 @@
+/* ── Aurora Shell – App layout CSS ──────────────────────────────────────────
+ * Defines the authenticated app shell: sidebar + topbar + content area.
+ * All class names are prefixed aurora- to avoid collisions.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Shell wrapper ─────────────────────────────────────────────────────── */
+
+.aurora-shell {
+  display: flex;
+  min-height: 100dvh;
+  background-color: #09090b;
+  color: #e4e4e7;
+  position: relative;
+}
+
+/* ─── Mobile overlay (dims content when sidebar is open) ─────────────────── */
+
+.aurora-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.aurora-overlay.is-open {
+  display: block;
+  opacity: 1;
+}
+
+@media (min-width: 1024px) {
+  .aurora-overlay {
+    display: none !important;
+  }
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+
+.aurora-sidebar {
+  width: 224px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0d10;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 50;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+@media (max-width: 1023px) {
+  .aurora-sidebar {
+    position: fixed;
+    inset-y: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .aurora-sidebar.is-open {
+    transform: translateX(0);
+  }
+}
+
+/* ─── Sidebar brand row ──────────────────────────────────────────────────── */
+
+.aurora-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 12px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.aurora-sidebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f4f4f5;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+}
+
+.aurora-sidebar-subtitle {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(6, 182, 212, 0.9);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+}
+
+/* ─── Sidebar navigation ─────────────────────────────────────────────────── */
+
+.aurora-sidebar-nav {
+  flex: 1;
+  padding: 8px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.aurora-sidebar-section {
+  padding: 4px 0 2px;
+}
+
+.aurora-sidebar-heading {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 8px 14px 4px;
+  margin: 0;
+}
+
+/* ─── Sidebar nav link ───────────────────────────────────────────────────── */
+
+.aurora-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 12px;
+  margin: 1px 6px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.aurora-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.aurora-sidebar-link.is-active {
+  background: rgba(6, 182, 212, 0.1);
+  color: rgb(6, 182, 212);
+}
+
+.aurora-sidebar-link.is-active .aurora-nav-icon {
+  color: rgb(6, 182, 212);
+}
+
+/* ─── Nav icon wrapper ───────────────────────────────────────────────────── */
+
+.aurora-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* ─── Tier lock badge ────────────────────────────────────────────────────── */
+
+.aurora-sidebar-lock {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+/* ─── User pill (bottom of sidebar) ─────────────────────────────────────── */
+
+.aurora-user-pill {
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.aurora-user-pill-inner {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: default;
+  min-width: 0;
+}
+
+.aurora-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgb(6, 182, 212);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.aurora-user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f4f4f5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.aurora-user-tier {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ─── Main area (right of sidebar) ──────────────────────────────────────── */
+
+.aurora-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Content area ───────────────────────────────────────────────────────── */
+
+.aurora-content {
+  flex: 1;
+  padding: 20px 24px;
+  min-height: 0;
+}
+
+@media (max-width: 640px) {
+  .aurora-content {
+    padding: 16px 16px;
+  }
+}
+
+.aurora-page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Topbar hamburger button ────────────────────────────────────────────── */
+
+.aurora-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  flex-shrink: 0;
+}
+
+.aurora-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+@media (max-width: 1023px) {
+  .aurora-menu-btn {
+    display: flex;
+  }
+}
+
+/* ─── Shared reusable primitives ─────────────────────────────────────────── */
+
+.aurora-card {
+  background: #111114;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.aurora-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #e4e4e7;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.aurora-input:focus {
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+.aurora-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+}
+
+.aurora-btn-primary {
+  background: rgb(6, 182, 212);
+  color: #000;
+}
+
+.aurora-btn-primary:hover {
+  background: rgb(8, 201, 234);
+}
+
+.aurora-btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.aurora-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}

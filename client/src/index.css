@@ -3,6 +3,7 @@
 
 @import 'tailwindcss';
 @config "../tailwind.config.ts";
+@import './styles/aurora-shell.css';
 
 :root {
   /* Fonts */

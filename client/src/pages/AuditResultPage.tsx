@@ -162,16 +162,14 @@ export default function AuditResultPage() {
     }
   };
 
-  // Handle view evidence (could open a modal/drawer)
+  // Handle view evidence — navigate to evidence registry filtered by this audit
   const handleViewEvidence = () => {
-    alert('Evidence detail view coming soon');
-    // TODO: Implement detailed evidence view
+    navigate(`/app/evidence?auditId=${auditId}`);
   };
 
-  // Handle compare (requires previous audit)
+  // Handle compare — navigate to analytics showing this audit's score in context
   const handleCompare = () => {
-    alert('Comparison view coming soon');
-    // TODO: Implement audit comparison
+    navigate(`/app/analytics?highlight=${auditId}`);
   };
 
   // Render
@@ -271,8 +269,29 @@ export default function AuditResultPage() {
 
               <button
                 onClick={() => {
-                  // TODO: Implement download
-                  alert('Download coming soon');
+                  if (!audit) return;
+                  const exportPayload = {
+                    id: audit.id,
+                    url: audit.url,
+                    analyzed_at: audit.created_at,
+                    visibility_score: audit.visibility_score,
+                    result: audit.result,
+                  };
+                  const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
+                    type: 'application/json',
+                  });
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  const domain = (() => {
+                    try {
+                      return new URL(audit.url || '').hostname;
+                    } catch {
+                      return 'audit';
+                    }
+                  })();
+                  link.download = `aivis-audit-${domain}-${audit.id.slice(0, 8)}.json`;
+                  link.click();
+                  URL.revokeObjectURL(link.href);
                 }}
                 className="flex-1 px-4 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium transition-colors flex items-center justify-center gap-2"
               >
@@ -280,9 +299,23 @@ export default function AuditResultPage() {
               </button>
 
               <button
-                onClick={() => {
-                  // TODO: Implement share
-                  alert('Share link coming soon');
+                onClick={async () => {
+                  // Generate a shareable link — use the public report path if one exists,
+                  // otherwise fall back to copying the current URL
+                  const base = window.location.origin;
+                  const shareUrl = `${base}/report/${audit?.id ?? auditId}`;
+                  try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    // Show transient feedback without a full alert
+                    const btn = document.activeElement as HTMLButtonElement;
+                    const orig = btn.textContent;
+                    btn.textContent = '✓ Copied!';
+                    setTimeout(() => {
+                      if (btn.textContent === '✓ Copied!') btn.textContent = orig;
+                    }, 1800);
+                  } catch {
+                    window.prompt('Copy this share link:', shareUrl);
+                  }
                 }}
                 className="flex-1 px-4 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium transition-colors flex items-center justify-center gap-2"
               >

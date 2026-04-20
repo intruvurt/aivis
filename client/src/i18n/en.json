@@ -115,6 +115,7 @@
     "languageChecker": "Language Checker",
     "domainRating": "Domain Rating",
     "mcpConsole": "MCP Console",
+    "debugger": "Live Agent Brain",
     "agencyDashboard": "Agency Dashboard",
     "apiDocs": "API Docs",
     "badge": "Dofollow Badge",

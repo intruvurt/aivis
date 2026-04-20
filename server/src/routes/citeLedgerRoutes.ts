@@ -1,33 +1,116 @@
 /**
- * CITE LEDGER API ROUTES (FULL STUB)
- * ====================================================
- * DISABLED: All routes temporarily stubbed pending implementation
+ * CITE LEDGER API ROUTES
+ * =====================================================================
+ * Exposes the cite ledger pipeline data for authenticated users.
  *
- * This file requires:
- * 1. CiteEntry type in shared/types.ts
- * 2. citeLedgerService.ts with function implementations:
- *    - createCiteEntry(client, entry)
- *    - getCiteEntry(auditId, entryId)
- *    - getAuditCites(auditId)
- *    - expandCiteWithProvenance(entry)
- *    - getCiteLedgerStats(userId)
- *    - verifyCiteIntegrity(entry)
- *
- * TODO: Implement all routes once service functions are available
- * Reference: citeLedger.ts (legacy implementation)
+ * Routes:
+ *   GET  /api/cite-ledger/user/summary         → entity-scoped summary (all runs)
+ *   GET  /api/cite-ledger/audit/:auditRunId     → cite entries for one run
+ *   GET  /api/cite-ledger/entity/:entityId/jobs → recent jobs for an entity
+ *   POST /api/cite-ledger/pipeline/run          → trigger pipeline for an audit
  */
 
 import { Router } from "express";
+import {
+  getCiteLedgerForRun,
+  getEntityCiteLedgerSummary,
+  getEntityJobs,
+  runCiteLedgerPipeline,
+} from "../services/citeLedgerService.js";
+import { authRequired } from "../middleware/authRequired.js";
 
 export const citeLedgerRoutes = Router();
 
-// ====================================================
-// ALL ROUTES DISABLED - PENDING IMPLEMENTATION
-// ====================================================
-// GET  /api/cite-ledger/:userId/stats          -> getCiteLedgerStats
-// GET  /api/cite-ledger/audit/:auditId         -> getAuditCites
-// GET  /api/cite-ledger/entry/:auditId/:entryId -> getCiteEntry + expandCiteWithProvenance
-// POST /api/cite-ledger/entry/:auditId/verify  -> verifyCiteIntegrity (batch)
-// GET  /api/cite-ledger/audit/:auditId/export  -> export citations as CSV/JSON
+// ── GET /api/cite-ledger/audit/:auditRunId ────────────────────────────────────
+citeLedgerRoutes.get(
+  "/audit/:auditRunId",
+  authRequired,
+  async (req, res) => {
+    try {
+      const { auditRunId } = req.params;
+      if (!auditRunId || typeof auditRunId !== "string") {
+        return res.status(400).json({ error: "auditRunId is required" });
+      }
+      const entries = await getCiteLedgerForRun(auditRunId);
+      return res.json({ auditRunId, entries, count: entries.length });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to fetch cite ledger";
+      return res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// ── GET /api/cite-ledger/entity/:entityId/summary ─────────────────────────────
+citeLedgerRoutes.get(
+  "/entity/:entityId/summary",
+  authRequired,
+  async (req, res) => {
+    try {
+      const { entityId } = req.params;
+      if (!entityId || typeof entityId !== "string") {
+        return res.status(400).json({ error: "entityId is required" });
+      }
+      const summary = await getEntityCiteLedgerSummary(entityId);
+      return res.json({ entityId, summary });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to fetch entity summary";
+      return res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// ── GET /api/cite-ledger/entity/:entityId/jobs ────────────────────────────────
+citeLedgerRoutes.get(
+  "/entity/:entityId/jobs",
+  authRequired,
+  async (req, res) => {
+    try {
+      const { entityId } = req.params;
+      const limit = Math.min(Number(req.query.limit) || 20, 100);
+      if (!entityId || typeof entityId !== "string") {
+        return res.status(400).json({ error: "entityId is required" });
+      }
+      const jobs = await getEntityJobs(entityId, limit);
+      return res.json({ entityId, jobs, count: jobs.length });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to fetch jobs";
+      return res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// ── POST /api/cite-ledger/pipeline/run ────────────────────────────────────────
+citeLedgerRoutes.post(
+  "/pipeline/run",
+  authRequired,
+  async (req, res) => {
+    try {
+      const { userId, domain, url, auditRunId, score, evidenceCount, scoreSource, brandName } =
+        req.body as {
+          userId: string;
+          domain: string;
+          url: string;
+          auditRunId: string;
+          score: number;
+          evidenceCount: number;
+          scoreSource: string;
+          brandName?: string;
+        };
+
+      if (!userId || !domain || !url || !auditRunId || score === undefined || evidenceCount === undefined) {
+        return res.status(400).json({ error: "Missing required fields: userId, domain, url, auditRunId, score, evidenceCount" });
+      }
+
+      // Fire-and-forget — pipeline logs internally
+      runCiteLedgerPipeline({ userId, domain, url, auditRunId, score, evidenceCount, scoreSource: scoreSource || "manual", brandName }).catch(() => {});
+
+      return res.json({ queued: true, auditRunId });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Pipeline trigger failed";
+      return res.status(500).json({ error: msg });
+    }
+  },
+);
 
 export default citeLedgerRoutes;
+

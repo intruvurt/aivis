@@ -97,6 +97,7 @@ export const APP_NAV_GROUPS: NavGroup[] = [
             { to: "/tools/language-checker", labelKey: "sidebar.languageChecker", iconName: "Languages" },
             { to: "/app/domain-rating", labelKey: "sidebar.domainRating", iconName: "TrendingUp", minTier: "alignment" },
             { to: "/app/mcp", labelKey: "sidebar.mcpConsole", iconName: "Wrench", minTier: "alignment" },
+            { to: "/app/debugger", labelKey: "sidebar.debugger", iconName: "Activity", minTier: "signal" },
         ],
     },
     {

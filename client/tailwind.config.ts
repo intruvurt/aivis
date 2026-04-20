@@ -6,123 +6,63 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Variable-driven system (recommended)
+        // ── Cyber-Metal Variable System ──
         bg: "rgb(var(--bg) / <alpha-value>)",
-        "bg-2": "rgb(var(--bg-2) / <alpha-value>)",
         panel: "rgb(var(--panel) / <alpha-value>)",
-        "panel-2": "rgb(var(--panel-2) / <alpha-value>)",
-        "panel-3": "rgb(var(--panel-3) / <alpha-value>)",
         text: "rgb(var(--text) / <alpha-value>)",
-        muted: "rgb(var(--muted) / <alpha-value>)",
         border: "rgb(var(--border) / <alpha-value>)",
 
-        accent: "rgb(var(--accent) / <alpha-value>)",
-        "accent-foreground": "rgb(var(--accent-foreground) / <alpha-value>)",
+        // ── The "Matt Silver" & High-Contrast System ──
+        "metal-silver": "#E2E8F0",    // The "Light Gray" for primary text/headers
+        "metal-dim": "#94A3B8",       // Dimmer silver for secondary info
+        "cyber-black": "#060607",     // Your base pitch-deck black
+        
+        // ── Surface System (Widened Contrast for Dashboard) ──
+        "surface-base": "#060607",
+        "surface-raised": "#0F1117",  // Dark shadow depth
+        "surface-panel": "#14171F",   // Slightly lighter for card surfaces
+        "surface-hover": "#1E222D",
 
-        // ── Dashboard surface system (widened contrast) ──
-        "surface-base": "#0a0d17",
-        "surface-raised": "#141c2e",
-        "surface-overlay": "#202a40",
-        "surface-card": "#182440",
-        "surface-hover": "#28344e",
-        "surface-active": "#30405c",
-        // ── Score status colors ──
-        "score-excellent": "#10b981",
-        "score-good": "#22d3ee",
-        "score-moderate": "#f59e0b",
-        "score-weak": "#ef4444",
-        "score-critical": "#dc2626",
-        // ── Brand accents ──
-        "brand-cyan": "#06b6d4",
-        "brand-teal": "#14b8a6",
-        "brand-emerald": "#10b981",
-        // ── Sanguine / warm accent static aliases ──
-        sanguine: "#B05146",
-        "sanguine-dk": "#8F3D34",
-        olivo: "#82AF28",
-        "olivo-dk": "#6A911E",
-        "coral-warm": "#E16E55",
-        "amber-warm": "#CC9B2A",
-        // ── Panel / surface tokens ──
-        linen: "#F9F7F4",
-        "linen-2": "#F3F0EC",
-        "linen-3": "#E8E2DA",
-        "warm-border": "#B4A494",
-        "warm-shadow": "rgba(80,55,35,0.08)",
-        // ── Legacy static palette (keep for backward compat) ──
-        logo: "#7d8bb1",
-        contentGray: "#babdc2",
+        // ── Brand Accents (Vibrant but Professional) ──
+        "brand-cyan": "#22D3EE",      // Neon cyan from your landing SVG
+        "brand-violet": "#8B5CF6",    // Deep violet for "AI Layer" feel
+        "brand-amber": "#FBBF24",     // For "Evidence" and "Score Fix"
+
+        // ── Score Status ──
+        "score-excellent": "#10B981",
+        "score-good": "#22D3EE",
+        "score-moderate": "#F59E0B",
+        "score-weak": "#EF4444",
       },
       boxShadow: {
-        app: "var(--shadow)",
-        "card": "0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2)",
-        "card-lg": "0 4px 12px rgba(0,0,0,0.3), 0 12px 40px rgba(0,0,0,0.25)",
-        "glow-cyan": "0 0 20px rgba(6,182,212,0.15), 0 0 60px rgba(6,182,212,0.05)",
-        "glow-teal": "0 0 20px rgba(20,184,166,0.15), 0 0 60px rgba(20,184,166,0.05)",
-        warm: "0 4px 12px rgba(80,55,35,0.07), 0 1px 3px rgba(80,55,35,0.05)",
-        "warm-md": "0 8px 24px rgba(80,55,35,0.10), 0 2px 6px rgba(80,55,35,0.06)",
-        "warm-lg": "0 16px 48px rgba(80,55,35,0.13), 0 4px 12px rgba(80,55,35,0.07)",
-      },
-      borderRadius: {
-        xl: "var(--r-xl)",
-        lg: "var(--r-lg)",
-        md: "var(--r-md)",
+        // The "Dark Shadow" against Matt Silver look
+        "cyber-raised": "0 10px 30px -10px rgba(0,0,0,0.7)",
+        "silver-glow": "0 0 20px rgba(226, 232, 240, 0.05)",
+        "cyan-glow": "0 0 15px rgba(34, 211, 238, 0.15)",
+        "inner-metal": "inset 0 1px 0 0 rgba(255, 255, 255, 0.05)", 
       },
       fontFamily: {
-        sans: ["DM Sans", "Caveat", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        accent: ["Caveat", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        corporate: ["Inter", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        fancy: ["Space Grotesk", "DM Sans", "ui-sans-serif", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+        // Orbitron for that robotic/futuristic header feel
+        cyber: ["Orbitron", "JetBrains Mono", "monospace"],
+        sans: ["Inter", "DM Sans", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       backgroundImage: {
-        "score-ring": "conic-gradient(var(--ring-color) calc(var(--ring-pct) * 1%), transparent 0)",
+        "glass-gradient": "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)",
+        "metal-shine": "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)",
       },
-      // ── Subtle motion utilities ──
       keyframes: {
-        "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(12px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        "scale-in": {
-          "0%": { opacity: "0", transform: "scale(0.96)" },
-          "100%": { opacity: "1", transform: "scale(1)" },
-        },
-        "slide-in-right": {
-          "0%": { opacity: "0", transform: "translateX(16px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        "bar-grow": {
-          "0%": { transform: "scaleX(0)" },
-          "100%": { transform: "scaleX(1)" },
-        },
-        "score-pop": {
-          "0%": { opacity: "0", transform: "scale(0.8)" },
-          "60%": { opacity: "1", transform: "scale(1.04)" },
-          "100%": { transform: "scale(1)" },
+        "scan-line": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(1000%)" },
         },
         "shimmer": {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
+          "100%": { transform: "translateX(100%)" },
+        }
       },
       animation: {
-        "fade-up": "fade-up 0.5s ease-out both",
-        "fade-up-d1": "fade-up 0.5s ease-out 0.07s both",
-        "fade-up-d2": "fade-up 0.5s ease-out 0.14s both",
-        "fade-up-d3": "fade-up 0.5s ease-out 0.21s both",
-        "fade-up-d4": "fade-up 0.5s ease-out 0.28s both",
-        "fade-up-d5": "fade-up 0.5s ease-out 0.35s both",
-        "fade-in": "fade-in 0.4s ease-out both",
-        "scale-in": "scale-in 0.4s ease-out both",
-        "slide-in-right": "slide-in-right 0.45s ease-out both",
-        "bar-grow": "bar-grow 0.8s ease-out 0.3s both",
-        "score-pop": "score-pop 0.6s ease-out both",
-        "shimmer": "shimmer 2.4s linear infinite",
+        "scan": "scan-line 3s linear infinite",
+        "shimmer": "shimmer 2s infinite",
       },
     },
   },

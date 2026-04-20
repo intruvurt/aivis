@@ -303,8 +303,8 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
     maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 10, maxStoredAudits: 1000,
     maxApiRequestsPerMonth: 5000,
-    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
-    hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
+    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
+    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
   },
   scorefix: {
     scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 220, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,
@@ -2460,6 +2460,61 @@ export interface DatasetAuditProof {
   labels_snapshot: string;
   provenance_jsonld: Record<string, unknown>;
   issued_at: string;
+}
+
+// ── Audit evidence ledger entry (written by intelligence engines) ────────────
+
+/**
+ * AuditEvidenceEntry — the canonical truth object.
+ *
+ * This is the ONLY valid shape for evidence written to the citation ledger.
+ * Every engine output (citation_engine, trust_layer, entity_graph, ai_provider,
+ * mention_tracker, serp_service) MUST produce an AuditEvidenceEntry before its
+ * results may influence any score, report, or response.
+ *
+ * Invariant: No score, no claim, no recommendation may be surfaced unless it
+ * is derived from an AuditEvidenceEntry row. This closes the hallucination surface.
+ */
+export interface AuditEvidenceEntry {
+  // ── Auto-generated (excluded from create input) ──────────────────────────
+  /** UUID primary key */
+  id: string;
+  /** SHA-256 of raw_evidence — immutable proof of capture */
+  raw_evidence_hash: string;
+  /** SHA-256(previous_hash + raw_evidence_hash) — chain link */
+  ledger_hash: string;
+  /** ISO 8601 — write-once, never updated */
+  created_at: string;
+  /** ISO 8601 — last status change only (not content) */
+  updated_at: string;
+
+  // ── Required on create ───────────────────────────────────────────────────
+  /** Target URL this evidence was extracted from */
+  url: string;
+  /** audit_id from the audit store (foreign key) */
+  audit_id: string;
+  /** Which engine produced this entry */
+  source_type: 'citation_engine' | 'trust_layer' | 'entity_graph' | 'ai_provider' | 'mention_tracker' | 'serp_service' | 'rule_engine';
+  /** Engine-specific metadata (e.g. section heading, signal name) */
+  source_metadata: Record<string, unknown>;
+  /** Verbatim text or JSON that was observed — immutable after write */
+  raw_evidence: string;
+  /** Concise machine-readable signal label */
+  extracted_signal: string;
+  /** 0.0–1.0 score assigned by the engine */
+  confidence_score: number;
+  /** Human-readable explanation of how confidence was derived */
+  confidence_basis: string;
+  /** Plain-language interpretation of what this entry means for visibility */
+  interpretation: string;
+  /** Named entities referenced by this entry */
+  entity_refs: Array<{ name: string; type: string }>;
+
+  // ── Optional ─────────────────────────────────────────────────────────────
+  /** Related finding IDs from other engines (cross-reference) */
+  related_findings?: string[];
+  /** Classification tags (e.g. 'trust_signal', 'citable_section') */
+  tags: string[];
 }
 
 // ── Streaming scan event types ──────────────────────────────────────────────

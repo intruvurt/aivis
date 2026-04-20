@@ -17,6 +17,8 @@
 import { createHash } from 'crypto';
 import { getPool } from './postgresql.js';
 import { resolveEntity, recordDriftScore } from './entityService.js';
+import type { AuditEvidenceEntry } from '../../../shared/types.js';
+import type { PoolClient } from 'pg';
 
 // ─── Job queue operations (Express equivalent of CF Queue) ────────────────────
 
@@ -221,4 +223,117 @@ export function computeEvidenceScore(evidenceCount: number): number {
  */
 export function citeLedgerHash(input: string): string {
   return 'ev_' + createHash('sha256').update(input).digest('hex').slice(0, 12);
+}
+
+// ─── Audit Evidence Entry write (Truth Contract) ──────────────────────────────
+
+/**
+ * Create an AuditEvidenceEntry row in the audit_evidence_entries table.
+ *
+ * This is the canonical write path for all engine outputs. Nothing may influence
+ * a score or response unless it first passes through this function.
+ *
+ * Chain integrity:
+ *   raw_evidence_hash = SHA-256(raw_evidence)
+ *   ledger_hash = SHA-256(previous_ledger_hash + raw_evidence_hash)
+ *
+ * Pass a pg PoolClient to participate in an outer transaction, or pass null
+ * to use the pool directly (auto-commit).
+ */
+export async function createAuditEvidenceEntry(
+  client: PoolClient | null,
+  input: Omit<AuditEvidenceEntry, 'id' | 'raw_evidence_hash' | 'ledger_hash' | 'created_at' | 'updated_at'>,
+): Promise<AuditEvidenceEntry> {
+  const pool = getPool();
+  const db = client ?? pool;
+
+  // Derive hashes deterministically
+  const raw_evidence_hash = createHash('sha256').update(input.raw_evidence).digest('hex');
+
+  // Get previous ledger hash for this audit (for chain integrity)
+  const prevRow = await (client ? client : pool).query(
+    `SELECT ledger_hash FROM audit_evidence_entries
+     WHERE audit_id = $1 ORDER BY created_at DESC LIMIT 1`,
+    [input.audit_id],
+  );
+  const previousHash: string = prevRow.rows[0]?.ledger_hash ?? '0'.repeat(64);
+  const ledger_hash = createHash('sha256').update(previousHash + raw_evidence_hash).digest('hex');
+
+  const { rows } = await db.query(
+    `INSERT INTO audit_evidence_entries (
+      url, audit_id, source_type, source_metadata,
+      raw_evidence, raw_evidence_hash,
+      extracted_signal, confidence_score, confidence_basis,
+      interpretation, entity_refs,
+      related_findings, tags, ledger_hash
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+    RETURNING *`,
+    [
+      input.url,
+      input.audit_id,
+      input.source_type,
+      JSON.stringify(input.source_metadata),
+      input.raw_evidence,
+      raw_evidence_hash,
+      input.extracted_signal,
+      input.confidence_score,
+      input.confidence_basis,
+      input.interpretation,
+      JSON.stringify(input.entity_refs),
+      JSON.stringify(input.related_findings ?? []),
+      JSON.stringify(input.tags),
+      ledger_hash,
+    ],
+  );
+
+  const row = rows[0];
+  return {
+    id: row.id,
+    url: row.url,
+    audit_id: row.audit_id,
+    source_type: row.source_type,
+    source_metadata: typeof row.source_metadata === 'string' ? JSON.parse(row.source_metadata) : row.source_metadata,
+    raw_evidence: row.raw_evidence,
+    raw_evidence_hash: row.raw_evidence_hash,
+    extracted_signal: row.extracted_signal,
+    confidence_score: Number(row.confidence_score),
+    confidence_basis: row.confidence_basis,
+    interpretation: row.interpretation,
+    entity_refs: typeof row.entity_refs === 'string' ? JSON.parse(row.entity_refs) : (row.entity_refs ?? []),
+    related_findings: typeof row.related_findings === 'string' ? JSON.parse(row.related_findings) : (row.related_findings ?? []),
+    tags: typeof row.tags === 'string' ? JSON.parse(row.tags) : (row.tags ?? []),
+    ledger_hash: row.ledger_hash,
+    created_at: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+    updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
+  } satisfies AuditEvidenceEntry;
+}
+
+/**
+ * Retrieve all AuditEvidenceEntry rows for a given audit, ordered by chain sequence.
+ */
+export async function getAuditEvidenceEntries(auditId: string): Promise<AuditEvidenceEntry[]> {
+  const pool = getPool();
+  const { rows } = await pool.query(
+    `SELECT * FROM audit_evidence_entries WHERE audit_id = $1 ORDER BY created_at ASC`,
+    [auditId],
+  );
+  return rows.map((row: Record<string, unknown>) => ({
+    id: row.id as string,
+    url: row.url as string,
+    audit_id: row.audit_id as string,
+    source_type: row.source_type as AuditEvidenceEntry['source_type'],
+    source_metadata: typeof row.source_metadata === 'string' ? JSON.parse(row.source_metadata as string) : (row.source_metadata as Record<string, unknown>),
+    raw_evidence: row.raw_evidence as string,
+    raw_evidence_hash: row.raw_evidence_hash as string,
+    extracted_signal: row.extracted_signal as string,
+    confidence_score: Number(row.confidence_score),
+    confidence_basis: row.confidence_basis as string,
+    interpretation: row.interpretation as string,
+    entity_refs: typeof row.entity_refs === 'string' ? JSON.parse(row.entity_refs as string) : ((row.entity_refs as Array<{ name: string; type: string }>) ?? []),
+    related_findings: typeof row.related_findings === 'string' ? JSON.parse(row.related_findings as string) : ((row.related_findings as string[]) ?? []),
+    tags: typeof row.tags === 'string' ? JSON.parse(row.tags as string) : ((row.tags as string[]) ?? []),
+    ledger_hash: row.ledger_hash as string,
+    created_at: row.created_at instanceof Date ? (row.created_at as Date).toISOString() : row.created_at as string,
+    updated_at: row.updated_at instanceof Date ? (row.updated_at as Date).toISOString() : row.updated_at as string,
+  }));
 }

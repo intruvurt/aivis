@@ -113,9 +113,7 @@ import { requireWorkspacePermission } from "./middleware/workspacePermission.js"
 import { usageGate } from "./middleware/usageGate.js";
 import { incrementUsage } from "./middleware/incrementUsage.js";
 import { handleAssistantMessage } from "./controllers/assistantController.js";
-// TODO: intelligenceAnalyzeController uses undefined types (CiteEntry) and functions (createCiteEntry)
-// These need to be properly implemented in shared/types.ts and citeLedgerService.ts before enabling
-// import { intelligenceAnalyzeHandler } from "./controllers/intelligenceAnalyzeController.js";
+import { intelligenceAnalyzeHandler } from "./controllers/intelligenceAnalyzeController.js";
 import {
   closePool,
   runMigrations,
@@ -14035,10 +14033,11 @@ Return ONLY valid JSON:
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Intelligence Analysis endpoint - Phase 1 of intelligence engine pipeline
+// Intelligence Analysis endpoint — modular engine pipeline (Phase 1)
+// Runs Citation + Trust + Entity engines concurrently, writes AuditEvidenceEntry
+// rows to audit_evidence_entries (truth contract), then assembles response.
+// Observer/Starter fall back to legacy /api/analyze (scored by brag gate).
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: intelligenceAnalyzeHandler uses undefined types; route disabled until proper implementation
-/*
 app.post(
   "/api/analyze/intelligence",
   authRequired,
@@ -14049,7 +14048,6 @@ app.post(
   incrementUsage,
   intelligenceAnalyzeHandler,
 );
-*/
 
 // Admin endpoints
 const adminLimiter = rateLimit({

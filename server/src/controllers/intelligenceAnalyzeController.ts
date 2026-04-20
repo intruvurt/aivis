@@ -15,12 +15,9 @@ import { scrapeWebsite } from "../services/scraper.js";
 import { runAnalysisEngines } from "../services/engines/engineComposer.js";
 import { getPool, getConnection } from "../services/postgresql.js";
 import { persistAuditRecord } from "../services/auditPersistenceService.js";
-// TODO: createCiteEntry and CiteEntry type need to be implemented in citeLedgerService.ts and shared/types.ts
-// import { createCiteEntry } from "../services/citeLedgerService.js";
+import { createAuditEvidenceEntry } from "../services/citeLedgerService.js";
 import { normalizePublicHttpUrl } from "../lib/urlSafety.js";
 import type { CanonicalTier } from "../../../shared/types.js";
-// TODO: CiteEntry type needs to be defined in shared/types.ts
-// import type { CiteEntry } from "../../../shared/types.js";
 import { uiTierFromCanonical, getTierLimits } from "../../../shared/types.js";
 import { lookupDomainAgeYears } from "../lib/utils/domainAge.js";
 
@@ -180,10 +177,9 @@ export async function intelligenceAnalyzeHandler(
 
     // ====================================================================
     // RECORD CITE LEDGER ENTRIES FROM EVIDENCE EXTRACTED BY ENGINES
-    // TODO: Implement once citeLedgerService.ts and CiteEntry type are defined
+    // AuditEvidenceEntry is the ONLY valid truth object — nothing reaches
+    // the response unless it passes through createAuditEvidenceEntry().
     // ====================================================================
-
-    /* Commented out: Awaiting citeLedgerService implementation
     if (savedAuditId) {
       try {
         const client = await getConnection();
@@ -192,7 +188,7 @@ export async function intelligenceAnalyzeHandler(
           if (analysis.citation_readiness?.data?.citable_sections) {
             const sections = analysis.citation_readiness.data.citable_sections;
             for (const section of sections) {
-              await createCiteEntry(client, {
+              await createAuditEvidenceEntry(client, {
                 url: targetUrl,
                 audit_id: savedAuditId,
                 source_type: "citation_engine",
@@ -211,14 +207,7 @@ export async function intelligenceAnalyzeHandler(
                   "citable_section",
                   `confidence_${Math.round((section.confidence || 0.85) * 100)}`,
                 ],
-              } as unknown as Omit<
-                CiteEntry,
-                | "id"
-                | "ledger_hash"
-                | "raw_evidence_hash"
-                | "created_at"
-                | "updated_at"
-              >);
+              });
             }
           }
 
@@ -227,15 +216,12 @@ export async function intelligenceAnalyzeHandler(
             const signals = analysis.trust_layer.data.signal_status;
             const trustSignals: string[] = [];
             if (signals.https_enabled) trustSignals.push("HTTPS enabled");
-            if (signals.tls_certificate_trusted)
-              trustSignals.push("TLS certificate trusted");
-            if (signals.contact_info_present)
-              trustSignals.push("Contact info present");
-            if (signals.privacy_policy_accessible)
-              trustSignals.push("Privacy policy accessible");
+            if (signals.tls_certificate_trusted) trustSignals.push("TLS certificate trusted");
+            if (signals.contact_info_present) trustSignals.push("Contact info present");
+            if (signals.privacy_policy_accessible) trustSignals.push("Privacy policy accessible");
 
             if (trustSignals.length > 0) {
-              await createCiteEntry(client, {
+              await createAuditEvidenceEntry(client, {
                 url: targetUrl,
                 audit_id: savedAuditId,
                 source_type: "trust_layer",
@@ -243,31 +229,21 @@ export async function intelligenceAnalyzeHandler(
                 raw_evidence: JSON.stringify(signals),
                 extracted_signal: `Trust signals: ${trustSignals.join(", ")}`,
                 confidence_score: 0.9,
-                confidence_basis:
-                  "Automated verification of security and trust indicators",
+                confidence_basis: "Automated verification of security and trust indicators",
                 interpretation: `Site demonstrates trust through ${trustSignals.join(", ")}`,
                 entity_refs: [],
                 tags: [
                   "trust_signal",
-                  ...trustSignals
-                    .map((s) => `trust_${s.toLowerCase().replace(/ /g, "_")}`)
-                    .slice(0, 3),
+                  ...trustSignals.map((s) => `trust_${s.toLowerCase().replace(/ /g, "_")}`).slice(0, 3),
                 ],
-              } as unknown as Omit<
-                CiteEntry,
-                | "id"
-                | "ledger_hash"
-                | "raw_evidence_hash"
-                | "created_at"
-                | "updated_at"
-              >);
+              });
             }
           }
 
           // Extract entity clarity evidence
           if (analysis.entity_graph?.data?.primary_entity) {
             const entity = analysis.entity_graph.data.primary_entity;
-            await createCiteEntry(client, {
+            await createAuditEvidenceEntry(client, {
               url: targetUrl,
               audit_id: savedAuditId,
               source_type: "entity_graph",
@@ -278,39 +254,24 @@ export async function intelligenceAnalyzeHandler(
               raw_evidence: JSON.stringify(entity),
               extracted_signal:
                 `Clear identity: ${entity.canonical_name}` +
-                (entity.aliases.length > 0
-                  ? ` (${entity.aliases.length} aliases)`
-                  : ""),
+                (entity.aliases.length > 0 ? ` (${entity.aliases.length} aliases)` : ""),
               confidence_score: entity.confidence || 0.85,
-              confidence_basis:
-                "Entity extraction and name consistency analysis",
+              confidence_basis: "Entity extraction and name consistency analysis",
               interpretation: `Primary entity "${entity.canonical_name}" clearly identified with ${entity.confidence} confidence`,
-              entity_refs: [
-                { name: entity.canonical_name, type: "organization" },
-              ],
+              entity_refs: [{ name: entity.canonical_name, type: "organization" }],
               tags: ["entity_identification", "primary_entity"],
-            } as unknown as Omit<
-              CiteEntry,
-              | "id"
-              | "ledger_hash"
-              | "raw_evidence_hash"
-              | "created_at"
-              | "updated_at"
-            >);
+            });
           }
 
-          console.log(
-            `[${requestId}] Recorded cite ledger entries for audit ${savedAuditId}`,
-          );
+          console.log(`[${requestId}] Recorded cite ledger entries for audit ${savedAuditId}`);
         } finally {
           client.release();
         }
       } catch (err) {
         console.warn(`[${requestId}] Failed to record cite entries:`, err);
-        // Non-critical - audit is already saved
+        // Non-critical — audit is already saved
       }
     }
-    */
 
     // ====================================================================
     // RESPONSE

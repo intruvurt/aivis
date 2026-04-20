@@ -4698,7 +4698,35 @@ export async function runMigrations(): Promise<void> {
     `);
       _q(`CREATE INDEX IF NOT EXISTS idx_job_queue_status ON job_queue_log(status, created_at DESC)`);
 
-      // Execute all migrations in a single round-trip
+      // ── TRUTH CONTRACT: Audit Evidence Entries ────────────────────────────
+      // This table is the canonical truth store for all engine outputs.
+      // Every AuditEvidenceEntry row is hash-chained to detect post-write mutation.
+      // No score or response may be produced without a corresponding row here.
+      _q(`
+      CREATE TABLE IF NOT EXISTS audit_evidence_entries (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url TEXT NOT NULL,
+        audit_id TEXT NOT NULL,
+        source_type TEXT NOT NULL,
+        source_metadata JSONB NOT NULL DEFAULT '{}',
+        raw_evidence TEXT NOT NULL,
+        raw_evidence_hash TEXT NOT NULL,
+        extracted_signal TEXT NOT NULL,
+        confidence_score FLOAT NOT NULL DEFAULT 0,
+        confidence_basis TEXT NOT NULL DEFAULT '',
+        interpretation TEXT NOT NULL DEFAULT '',
+        entity_refs JSONB NOT NULL DEFAULT '[]',
+        related_findings JSONB NOT NULL DEFAULT '[]',
+        tags JSONB NOT NULL DEFAULT '[]',
+        ledger_hash TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+      `);
+      _q(`CREATE INDEX IF NOT EXISTS idx_aee_audit ON audit_evidence_entries(audit_id, created_at ASC)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_aee_url ON audit_evidence_entries(url, created_at DESC)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_aee_source ON audit_evidence_entries(source_type)`);
+      _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_aee_ledger_hash ON audit_evidence_entries(ledger_hash)`);
       if (_ddl.length > 0) {
         console.log(
           `[DB] Executing ${_ddl.length} DDL statements in single batch...`,

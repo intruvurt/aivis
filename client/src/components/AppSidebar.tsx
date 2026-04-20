@@ -1,19 +1,43 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
-  LayoutDashboard, Search, BarChart3, FileText, Target,
-  Users, FlaskConical, Brain, Wrench, Globe, Shield,
-  Settings, CreditCard, Zap, Cpu, ArrowLeftRight,
-  Eye, Layers, HelpCircle, X, Building2, Network, Code2, TrendingUp, Award,
-  FileSearch, BookOpen, Languages, Database,
-} from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from "../utils/userIdentity";
-import { meetsMinimumTier, type CanonicalTier } from "@shared/types";
-import { APP_NAV_GROUPS, formatTierGateLabel, type NavItem } from "../config/routeIntelligence";
+  LayoutDashboard,
+  Search,
+  BarChart3,
+  FileText,
+  Target,
+  Users,
+  FlaskConical,
+  Brain,
+  Wrench,
+  Globe,
+  Shield,
+  Settings,
+  CreditCard,
+  Zap,
+  Cpu,
+  ArrowLeftRight,
+  Eye,
+  Layers,
+  HelpCircle,
+  X,
+  Building2,
+  Network,
+  Code2,
+  TrendingUp,
+  Award,
+  FileSearch,
+  BookOpen,
+  Languages,
+  Database,
+} from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from '../utils/userIdentity';
+import { meetsMinimumTier, type CanonicalTier } from '@shared/types';
+import { APP_NAV_GROUPS, formatTierGateLabel, type NavItem } from '../config/routeIntelligence';
 
-const LOGO_URL = "/aivis-logo.png";
+const LOGO_URL = '/aivis-logo.png';
 
 interface AppSidebarProps {
   isOpen?: boolean;
@@ -50,11 +74,23 @@ const ICON_BY_NAME = {
   Database,
 } as const;
 
-const CODETRENDY_BADGE_URL = "https://codetrendy.com/api/badge?style=dark";
+const CODETRENDY_BADGE_URL = 'https://codetrendy.com/api/badge?style=dark';
 
-function NavSection({ title, items, onClose, iconClass, iconBg }: { title: string; items: NavItem[]; onClose?: () => void; iconClass: string; iconBg: string }) {
+function NavSection({
+  title,
+  items,
+  onClose,
+  iconClass,
+  iconBg,
+}: {
+  title: string;
+  items: NavItem[];
+  onClose?: () => void;
+  iconClass: string;
+  iconBg: string;
+}) {
   const user = useAuthStore((s) => s.user);
-  const tier = (user?.tier ?? "observer") as CanonicalTier;
+  const tier = (user?.tier ?? 'observer') as CanonicalTier;
   const { t } = useTranslation();
 
   return (
@@ -66,17 +102,23 @@ function NavSection({ title, items, onClose, iconClass, iconBg }: { title: strin
         return (
           <NavLink
             key={item.to}
-            to={locked ? "#" : item.to}
-            end={item.to === "/app"}
-            onClick={(e) => { if (locked) { e.preventDefault(); return; } onClose?.(); }}
+            to={locked ? '#' : item.to}
+            end={item.to === '/app'}
+            onClick={(e) => {
+              if (locked) {
+                e.preventDefault();
+                return;
+              }
+              onClose?.();
+            }}
             aria-disabled={locked || undefined}
             tabIndex={locked ? -1 : undefined}
             className={({ isActive }) =>
-              `aurora-sidebar-link ${isActive ? "is-active" : ""} ${locked ? "pointer-events-none opacity-40" : ""}`
+              `aurora-sidebar-link ${isActive ? 'is-active' : ''} ${locked ? 'pointer-events-none opacity-40' : ''}`
             }
           >
-            <span className={`inline-flex items-center justify-center w-[22px] h-[22px] rounded-md shrink-0 ${iconBg}`}>
-              <Icon className={`w-[13px] h-[13px] ${iconClass}`} />
+            <span className="aurora-nav-icon">
+              <Icon className={`w-[15px] h-[15px] ${iconClass}`} />
             </span>
             <span className="truncate">{t(item.labelKey)}</span>
             {locked && (
@@ -100,17 +142,25 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
 
   return (
     <aside
-      className={`aurora-sidebar ${isOpen ? "is-open" : ""}`}
+      className={`aurora-sidebar ${isOpen ? 'is-open' : ''}`}
       aria-label="Main navigation"
-      onKeyDown={(e) => { if (e.key === "Escape" && isOpen) onClose?.(); }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && isOpen) onClose?.();
+      }}
     >
       {/* Brand */}
       <div className="aurora-sidebar-brand">
         <NavLink to="/app" className="flex items-center gap-2 min-w-0 flex-1" onClick={onClose}>
-          <img src={LOGO_URL} alt="AiVIS.biz" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
+          <img
+            src={LOGO_URL}
+            alt="AiVIS.biz"
+            width={28}
+            height={28}
+            className="h-7 w-7 shrink-0 rounded-lg object-contain"
+          />
           <div className="min-w-0">
             <p className="aurora-sidebar-title">AiVIS.biz</p>
-            <p className="aurora-sidebar-subtitle">CITE LEDGER | Evidence-Linked Scores</p>
+            <span className="aurora-sidebar-subtitle">CITE LEDGER</span>
           </div>
         </NavLink>
         {/* Mobile close button */}
@@ -146,7 +196,9 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
             height={40}
             loading="lazy"
             className="opacity-60 hover:opacity-100 transition-opacity"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
           />
         </a>
       </div>
@@ -166,10 +218,10 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
               <p className="aurora-user-name">{user.company || displayName}</p>
               <p className="aurora-user-tier truncate">
                 {user.website
-                  ? user.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
-                  : (user.tier || "observer")}
+                  ? user.website.replace(/^https?:\/\//, '').replace(/\/$/, '')
+                  : user.tier || 'observer'}
                 {user.website && (
-                  <span className="ml-1.5 opacity-60">· {user.tier || "observer"}</span>
+                  <span className="ml-1.5 opacity-60">· {user.tier || 'observer'}</span>
                 )}
               </p>
             </div>

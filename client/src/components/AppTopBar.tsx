@@ -158,7 +158,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             aria-activedescendant={activeIdx >= 0 ? `gsr-${activeIdx}` : undefined}
             role="combobox"
             autoComplete="off"
-            className="w-full h-8 pl-9 pr-3 rounded-lg bg-slate-900 border border-white/8 text-sm text-slate-100 placeholder-slate-300 focus:outline-none focus:border-orange-400 focus:bg-slate-800 transition-colors"
+            className="w-full h-9 pl-9 pr-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-indigo-500/20 transition-all"
           />
           {isOpen && results.length > 0 && (
             <ul

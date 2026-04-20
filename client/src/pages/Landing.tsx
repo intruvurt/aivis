@@ -1,15 +1,15 @@
 // Landing - AiVIS.biz
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ClipboardPaste } from 'lucide-react';
-import { normalizePublicUrlInput } from '../utils/targetKey';
 import { motion } from 'framer-motion';
+import { ScanShell } from '../components/scan/ScanShell';
+import type { ScanResult } from '../machines/scanMachine';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
-import { PRICING, annualMonthlyPrice } from '../../../shared/types';
+import { PRICING } from '../../../shared/types';
 import {
   META,
   OG,
@@ -75,140 +75,6 @@ function useAnimatedScore(initial: number) {
   return score;
 }
 
-// ─── Preview scan types + helpers ────────────────────────────────────────────
-
-interface PreviewScanResult {
-  url: string;
-  score: number;
-  status_line: string;
-  findings: string[];
-  recommendation: string;
-  hard_blockers: string[];
-  scanned_at: string;
-}
-
-const PROGRESS_STEPS = [
-  'Fetching live page',
-  'Extracting structure',
-  'Evaluating 7 dimensions',
-  'Scoring citation readiness',
-] as const;
-
-function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-emerald-400';
-  if (score >= 60) return 'text-green-400';
-  if (score >= 40) return 'text-amber-400';
-  if (score >= 20) return 'text-orange-400';
-  return 'text-red-400';
-}
-
-function getScoreRingColor(score: number): string {
-  if (score >= 80) return 'border-emerald-400/40 bg-emerald-400/10';
-  if (score >= 60) return 'border-green-400/40 bg-green-400/10';
-  if (score >= 40) return 'border-amber-400/40 bg-amber-400/10';
-  if (score >= 20) return 'border-orange-400/40 bg-orange-400/10';
-  return 'border-red-400/40 bg-red-400/10';
-}
-
-const TIERS = [
-  {
-    key: 'observer' as const,
-    name: PRICING.observer.name,
-    subtitle: 'Free',
-    monthlyPrice: PRICING.observer.billing.monthly,
-    annualMonthlyPrice: PRICING.observer.billing.monthly,
-    scans: PRICING.observer.limits.scans,
-    color: 'border-white/20 bg-[#111827]/50',
-    accentClass: 'text-white/70',
-    badge: null as string | null,
-    features: [
-      `${PRICING.observer.limits.scans} audits / month`,
-      'See your AI visibility score (0\u2013100)',
-      'Discover which keywords AI associates with your site',
-      'Find missing schema that blocks citations',
-      'Spot heading and meta tag gaps AI models penalise',
-    ],
-  },
-  {
-    key: 'starter' as const,
-    name: PRICING.starter.name,
-    subtitle: '$15/mo',
-    monthlyPrice: PRICING.starter.billing.monthly,
-    annualMonthlyPrice: annualMonthlyPrice('starter'),
-    scans: PRICING.starter.limits.scans,
-    color: 'border-teal-400/30 bg-[#0d2420]/60 ring-1 ring-teal-400/20',
-    accentClass: 'text-teal-300',
-    badge: null as string | null,
-    features: [
-      `${PRICING.starter.limits.scans} audits / month`,
-      'All recommendations with step-by-step implementation code',
-      'Content highlights showing what AI reads best',
-      'Export reports as PDF',
-      'Force-refresh to measure changes instantly',
-      'Share audit links with clients or stakeholders',
-      '30-day report history',
-    ],
-  },
-  {
-    key: 'alignment' as const,
-    name: PRICING.alignment.name,
-    subtitle: 'Core',
-    monthlyPrice: PRICING.alignment.billing.monthly,
-    annualMonthlyPrice: annualMonthlyPrice('alignment'),
-    scans: PRICING.alignment.limits.scans,
-    color: 'border-cyan-400/30 bg-[#0d1f2d]/60 ring-1 ring-cyan-400/20',
-    accentClass: 'text-cyan-300',
-    badge: 'Most Popular' as string | null,
-    features: [
-      `${PRICING.alignment.limits.scans} audits / month`,
-      'Track competitors and find visibility gaps',
-      'Test if AI engines actually cite your domain',
-      'Export reports as CSV or PDF to share with your team',
-      'Force-refresh to measure changes instantly',
-      'Share audit links with clients or stakeholders',
-      'Full audit history with score trends',
-    ],
-  },
-  {
-    key: 'signal' as const,
-    name: PRICING.signal.name,
-    subtitle: 'Pro',
-    monthlyPrice: PRICING.signal.billing.monthly,
-    annualMonthlyPrice: annualMonthlyPrice('signal'),
-    scans: PRICING.signal.limits.scans,
-    color: 'border-violet-400/35 bg-[#160d2a]/60 ring-1 ring-violet-400/20',
-    accentClass: 'text-violet-300',
-    badge: 'Full power' as string | null,
-    features: [
-      `${PRICING.signal.limits.scans} audits / month`,
-      '3-model consensus scoring for higher accuracy',
-      'Deep competitor intelligence across multiple rivals',
-      'Advanced citation testing across 3 search engines',
-      'Monitor when AI engines mention your brand',
-      'API access and white-label reports for agencies',
-      'Scheduled rescans to track progress automatically',
-    ],
-  },
-  {
-    key: 'scorefix' as const,
-    name: 'Score Fix',
-    subtitle: 'Managed',
-    monthlyPrice: -1,
-    annualMonthlyPrice: -1,
-    scans: PRICING.scorefix.limits.scans,
-    color: 'border-amber-400/30 bg-[#1a1608]/60 ring-1 ring-amber-400/20',
-    accentClass: 'text-amber-300',
-    badge: 'AutoFix PR' as string | null,
-    features: [
-      `${PRICING.scorefix.credits} remediation credits / month`,
-      'AI-generated pull requests that fix visibility issues',
-      'Evidence-linked diffs tied to audit findings',
-      'Batch remediation across multiple pages',
-      'CI/CD integration for automated fixes',
-    ],
-  },
-];
-
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   usePageMeta({
@@ -225,15 +91,12 @@ const Landing = () => {
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
-  // Preview scan state
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [scanning, setScanning] = useState(false);
-  const [scanStep, setScanStep] = useState(0);
-  const [scanError, setScanError] = useState<string | null>(null);
-  const [previewResult, setPreviewResult] = useState<PreviewScanResult | null>(null);
-  const [scanCiteCount, setScanCiteCount] = useState(0);
-  const resultRef = useRef<HTMLDivElement>(null);
-  const eventSourceRef = useRef<EventSource | null>(null);
+  // Scan result — populated by ScanShell's onResult callback
+  const [previewResult, setPreviewResult] = useState<ScanResult | null>(null);
+  const scanResultRef = useRef<HTMLDivElement>(null);
+  const handleScanResult = useCallback((result: ScanResult) => {
+    setPreviewResult(result);
+  }, []);
 
   // Visibility fallback: if whileInView animations fail (e.g. Capacitor WebView),
   // force all animated elements visible after 1.5 s
@@ -273,96 +136,6 @@ const Landing = () => {
       toast.error(err instanceof Error ? err.message : 'Payment failed');
       setLoadingTier(null);
     }
-  };
-
-  const handlePreviewScan = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = previewUrl.trim();
-    if (!trimmed || scanning) return;
-    const normalizedPreviewUrl = normalizePublicUrlInput(trimmed);
-
-    // Close any previous stream
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
-
-    setScanning(true);
-    setScanStep(0);
-    setScanError(null);
-    setPreviewResult(null);
-    setScanCiteCount(0);
-
-    const encoded = encodeURIComponent(normalizedPreviewUrl);
-    const source = new EventSource(`${API_URL}/api/analyze/stream?url=${encoded}`);
-    eventSourceRef.current = source;
-
-    source.onmessage = (evt) => {
-      try {
-        const event = JSON.parse(evt.data) as { type: string; [key: string]: unknown };
-        switch (event.type) {
-          case 'SCAN_STARTED':
-            setScanStep(0);
-            break;
-          case 'HTML_FETCHED':
-            setScanStep(1);
-            break;
-          case 'DOM_PARSED':
-            setScanStep(1);
-            break;
-          case 'CITE_FOUND':
-            setScanCiteCount((n) => n + 1);
-            setScanStep(2);
-            break;
-          case 'ENTITY_EXTRACTED':
-          case 'INTERPRETATION':
-            setScanStep(2);
-            break;
-          case 'SCORE_UPDATED':
-            setScanStep(3);
-            break;
-          case 'SCAN_COMPLETED': {
-            const s = event.summary as PreviewScanResult & { score: number; cite_count: number };
-            setScanStep(PROGRESS_STEPS.length - 1);
-            setPreviewResult({
-              url: s.url,
-              score: s.score,
-              status_line: s.status_line,
-              findings: s.findings,
-              recommendation: s.recommendation,
-              hard_blockers: s.hard_blockers,
-              scanned_at: s.scanned_at,
-            });
-            setScanning(false);
-            source.close();
-            eventSourceRef.current = null;
-            setTimeout(() => {
-              resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 200);
-            break;
-          }
-          case 'ERROR': {
-            const errMsg = (event.message as string) || 'Scan failed. Check the URL and try again.';
-            setScanError(errMsg);
-            setScanning(false);
-            source.close();
-            eventSourceRef.current = null;
-            break;
-          }
-        }
-      } catch {
-        // ignore malformed SSE data
-      }
-    };
-
-    source.onerror = () => {
-      if (eventSourceRef.current) {
-        setScanError('Connection lost. Please check your network and try again.');
-        setScanning(false);
-        source.close();
-        eventSourceRef.current = null;
-      }
-    };
   };
 
   return (
@@ -422,82 +195,10 @@ const Landing = () => {
                 {HERO.description}
               </p>
 
-              {/* ── URL INPUT FORM ── */}
-              <form
-                onSubmit={handlePreviewScan}
-                className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-4"
-              >
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={previewUrl}
-                    onChange={(e) => setPreviewUrl(e.target.value)}
-                    placeholder={HERO.inputPlaceholder}
-                    disabled={scanning}
-                    className="w-full px-4 py-3.5 pr-10 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 disabled:opacity-50 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        const text = await navigator.clipboard.readText();
-                        if (text?.trim()) setPreviewUrl(text.trim());
-                      } catch {
-                        /* clipboard permission denied */
-                      }
-                    }}
-                    disabled={scanning}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-white/30 hover:text-white/70 transition disabled:opacity-40"
-                    title="Paste from clipboard"
-                    aria-label="Paste from clipboard"
-                  >
-                    <ClipboardPaste className="w-4 h-4" />
-                  </button>
-                </div>
-                <button
-                  type="submit"
-                  disabled={scanning || !previewUrl.trim()}
-                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-6 py-3.5 rounded-xl text-base font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                >
-                  {scanning ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Scanning…
-                    </>
-                  ) : (
-                    <>
-                      {HERO.ctaText}
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14 5l7 7m0 0l-7 7m7-7H3"
-                        />
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </form>
+              {/* ── SCAN SURFACE (state machine) ── */}
+              <div id="hero-scanner" className="max-w-xl mx-auto mb-4">
+                <ScanShell onResult={handleScanResult} resultRef={scanResultRef} />
+              </div>
 
               {/* Trust microcopy */}
               <p className="text-xs text-white/35 mb-4">
@@ -513,8 +214,8 @@ const Landing = () => {
                 </a>
               </p>
 
-              {/* What you'll see strip */}
-              {!scanning && !previewResult && (
+              {/* What you'll see strip — visible until first result */}
+              {!previewResult && (
                 <div className="flex flex-wrap justify-center gap-4 text-xs text-white/40">
                   {[
                     'Answer distortion',
@@ -529,215 +230,7 @@ const Landing = () => {
                   ))}
                 </div>
               )}
-
-              {/* ── SCAN PROGRESS ── */}
-              {scanning && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 rounded-2xl border border-white/10 bg-[#111827]/60 p-6 max-w-md mx-auto"
-                >
-                  <div className="space-y-3">
-                    {PROGRESS_STEPS.map((step, i) => (
-                      <div key={step} className="flex items-center gap-3">
-                        {i < scanStep ? (
-                          <svg
-                            className="w-4 h-4 text-emerald-400 shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        ) : i === scanStep ? (
-                          <svg
-                            className="w-4 h-4 text-cyan-400 animate-spin shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                            />
-                          </svg>
-                        ) : (
-                          <div className="w-4 h-4 rounded-full border border-white/15 shrink-0" />
-                        )}
-                        <span
-                          className={`text-sm flex-1 ${i <= scanStep ? 'text-white/80' : 'text-white/30'}`}
-                        >
-                          {step}
-                        </span>
-                        {/* Live cite count badge on the "Extracting structure" step */}
-                        {i === 2 && scanCiteCount > 0 && (
-                          <span className="text-xs text-cyan-400 font-mono tabular-nums">
-                            {scanCiteCount} cites
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* ── SCAN ERROR ── */}
-              {scanError && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-6 p-4 rounded-xl border border-red-400/25 bg-red-500/10 text-red-300 text-sm max-w-md mx-auto"
-                >
-                  {scanError}
-                </motion.div>
-              )}
             </motion.div>
-
-            {/* ── MINI SCAN RESULT ── */}
-            {previewResult && (
-              <motion.div
-                ref={resultRef}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mt-10"
-              >
-                <div className="rounded-2xl border border-white/10 bg-[#111827]/60 p-6 sm:p-8">
-                  {/* Score + status */}
-                  <div className="flex items-center gap-5 mb-6">
-                    <div
-                      className={`w-20 h-20 rounded-full border-4 ${getScoreRingColor(previewResult.score)} flex items-center justify-center shrink-0`}
-                    >
-                      <span className={`text-3xl font-black ${getScoreColor(previewResult.score)}`}>
-                        {previewResult.score}
-                      </span>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-white font-bold text-lg">{previewResult.status_line}</p>
-                      <p className="text-white/40 text-sm mt-0.5">{previewResult.url}</p>
-                    </div>
-                  </div>
-
-                  {/* Findings */}
-                  <div className="space-y-3 mb-6">
-                    {previewResult.findings.map((finding, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <span className="w-2 h-2 rounded-full bg-red-400 mt-1.5 shrink-0" />
-                        <span className="text-sm text-white/70 text-left">{finding}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Recommendation */}
-                  {previewResult.recommendation && (
-                    <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-400/20 mb-6">
-                      <svg
-                        className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <div className="text-left">
-                        <p className="text-xs text-emerald-400 font-semibold mb-1">TOP FIX</p>
-                        <p className="text-sm text-emerald-200/80">
-                          {previewResult.recommendation}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Hard blockers callout */}
-                  {previewResult.hard_blockers.length > 0 && (
-                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-400/20 mb-6">
-                      <p className="text-xs text-red-400 font-semibold mb-2">
-                        HARD BLOCKERS — these cap your score
-                      </p>
-                      <div className="space-y-1.5">
-                        {previewResult.hard_blockers.map((b, i) => (
-                          <p key={i} className="text-sm text-red-300/80 text-left">
-                            • {b}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Gated preview tease */}
-                  <div className="relative rounded-xl border border-white/8 bg-[#0a0a14]/80 p-6 overflow-hidden">
-                    <div className="absolute inset-0 backdrop-blur-sm bg-[#060607]/60 z-10 flex flex-col items-center justify-center gap-3">
-                      <svg
-                        className="w-8 h-8 text-white/40"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                        />
-                      </svg>
-                      <p className="text-white/60 text-sm font-medium">
-                        Full audit includes category breakdowns, BRAG evidence, and fix priorities
-                      </p>
-                      <Link
-                        to={
-                          isAuthenticated
-                            ? '/app/analyze'
-                            : `/auth?redirect=/app/analyze&url=${encodeURIComponent(previewResult.url)}`
-                        }
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20"
-                      >
-                        Unlock full audit — free
-                        <svg
-                          className="w-3.5 h-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </Link>
-                    </div>
-                    {/* Blurred preview content */}
-                    <div className="space-y-3 opacity-40 select-none" aria-hidden="true">
-                      <div className="h-3 bg-white/10 rounded w-3/4" />
-                      <div className="h-3 bg-white/10 rounded w-1/2" />
-                      <div className="h-3 bg-white/10 rounded w-2/3" />
-                      <div className="h-8 bg-white/5 rounded mt-4" />
-                      <div className="h-3 bg-white/10 rounded w-5/6" />
-                      <div className="h-3 bg-white/10 rounded w-1/3" />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
           </div>
         </section>
 
@@ -1497,27 +990,95 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── PRICING ── */}
+        {/* ── PRICING (Decision funnel) ── */}
         <section
           id="pricing"
           className="py-24 bg-gradient-to-b from-[#060607] to-[#0a0a0f] border-t border-white/8"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">
-                Transparent pricing
-              </span>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* ─ 1. Reinforce the moment ─ */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+              className="text-center mb-16"
+            >
               <h2
                 id="pricing-overview"
-                className="text-3xl sm:text-4xl font-bold text-white mb-3"
                 data-speakable
+                className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight"
               >
-                Simple, transparent pricing
+                You saw what AI gets wrong.{' '}
+                <span className="bg-gradient-to-r from-cyan-300 to-violet-300 bg-clip-text text-transparent">
+                  Now control it.
+                </span>
               </h2>
-              <p className="feature-summary text-white/50 text-lg mb-6">
-                All pricing verified server-side at checkout - no client-side overrides
+              <p className="text-white/50 text-lg max-w-xl mx-auto">
+                Every insight backed by real cite evidence. No guesses.
               </p>
-              <div className="inline-flex items-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1">
+            </motion.div>
+
+            {/* ─ 2. What they saw vs what is locked ─ */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+              className="grid sm:grid-cols-2 gap-4 mb-16 max-w-2xl mx-auto"
+            >
+              {/* Seen */}
+              <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-6">
+                <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-4">
+                  You've seen
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    previewResult
+                      ? `${Math.min(previewResult.findings.length + 3, 5)} cite entries`
+                      : '3 cite entries',
+                    '1 interpretation pass',
+                    'Top-level visibility score',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-2.5 text-sm text-white/70">
+                      <span className="text-emerald-400 font-bold text-base leading-none">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Locked */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                <p className="text-xs font-bold uppercase tracking-widest text-white/35 mb-4">
+                  Locked
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    'Full evidence chain (all cites)',
+                    'Entity conflict breakdown',
+                    'Fix protocol + code patches',
+                    'AI interpretation replay',
+                    'Registry-matched issue patterns',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-2.5 text-sm text-white/35">
+                      <span className="text-white/20 font-bold text-base leading-none">—</span>
+                      <span className="blur-[3px] select-none">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* ─ 3. Progressive unlock tiers ─ */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+              className="mb-6"
+            >
+              <div className="inline-flex items-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1 mb-10 block-inline mx-auto flex justify-center">
                 {(['monthly', 'annual'] as const).map((cycle) => (
                   <button
                     key={cycle}
@@ -1538,110 +1099,253 @@ const Landing = () => {
                   </button>
                 ))}
               </div>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-              {TIERS.map((plan) => {
-                const isScoreFix = plan.key === 'scorefix';
-                const displayPrice =
-                  billingCycle === 'annual' ? plan.annualMonthlyPrice : plan.monthlyPrice;
-                return (
-                  <motion.div
-                    key={plan.key}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-                    className={`rounded-2xl border p-6 flex flex-col ${plan.color}`}
+            </motion.div>
+
+            {/* 3-column progressive unlock */}
+            <div className="grid md:grid-cols-3 gap-5 mb-12">
+              {/* Column 1 — Free: See the problem */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+                transition={{ delay: 0 }}
+                className="rounded-2xl border border-white/10 bg-[#0d1117]/60 p-6 flex flex-col"
+              >
+                <p className="text-xs font-bold uppercase tracking-widest text-white/35 mb-1">
+                  Free · {PRICING.observer.limits.scans} scans/mo
+                </p>
+                <h3 className="text-xl font-bold text-white mb-1">See the problem</h3>
+                <p className="text-white/40 text-sm mb-6 flex-1">
+                  Enough to know something is wrong. Partial ledger, high-level scores, no lock-in.
+                </p>
+                <ul className="space-y-2 mb-6 text-sm">
+                  {[
+                    `Partial cite ledger (first ${Math.ceil(PRICING.observer.limits.scans / 3)} cites)`,
+                    'Visibility score 0–100',
+                    'Top 3 findings surfaced',
+                    'No login for first result',
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-white/55">
+                      <span className="text-white/30 shrink-0 mt-0.5">·</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[10px] text-white/25 mb-4 font-mono">
+                  Every score traceable to evidence.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/auth?mode=signup')}
+                  className="w-full py-3 px-5 rounded-xl font-semibold text-sm border border-white/15 text-white/60 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white/90 transition"
+                >
+                  Start Free →
+                </button>
+              </motion.div>
+
+              {/* Column 2 — Alignment: Understand the problem (highlighted) */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+                transition={{ delay: 0.07 }}
+                className="rounded-2xl border border-cyan-400/30 bg-gradient-to-b from-[#0d2030]/80 to-[#0a1a2a]/80 p-6 flex flex-col ring-1 ring-cyan-400/15 relative overflow-hidden"
+              >
+                <div
+                  className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(34,211,238,0.07),transparent)]"
+                  aria-hidden="true"
+                />
+                <div className="relative">
+                  <p className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-1">
+                    Core · ${PRICING.alignment.billing.monthly}/mo
+                  </p>
+                  <h3 className="text-xl font-bold text-white mb-1">Understand the problem</h3>
+                  <p className="text-white/55 text-sm mb-6 flex-1">
+                    See exactly why AI gets it wrong — and fix it. Full ledger, entity graph, fix
+                    engine.
+                  </p>
+                  <ul className="space-y-2 mb-6 text-sm">
+                    {[
+                      'Full cite ledger — all evidence',
+                      'Entity conflict breakdown',
+                      'Fix protocol + implementation code',
+                      'AI interpretation traces',
+                      'Competitor gap detection',
+                      `${PRICING.alignment.limits.scans} audits / month`,
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-white/70">
+                        <span className="text-cyan-400 shrink-0 mt-0.5">·</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-[10px] text-cyan-400/40 mb-4 font-mono">
+                    Every score traceable to evidence.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={loadingTier !== null && loadingTier !== 'alignment'}
+                    onClick={() => handlePayment('alignment')}
+                    className="w-full py-3 px-5 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-400 hover:to-cyan-500 transition shadow-lg shadow-cyan-500/20 disabled:opacity-60 disabled:cursor-wait"
                   >
-                    {plan.badge && (
-                      <div
-                        className={`inline-block px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider mb-3 ${plan.accentClass} border-current opacity-80`}
-                      >
-                        {plan.badge}
-                      </div>
-                    )}
-                    <h3 className="text-xl font-bold text-white mb-0.5">{plan.name}</h3>
-                    <p
-                      className={`text-xs uppercase tracking-widest ${plan.accentClass} mb-4 font-semibold`}
-                    >
-                      {plan.subtitle}
-                    </p>
-                    <div className="mb-2">
-                      {plan.monthlyPrice === 0 ? (
-                        <span className="text-4xl font-black text-white">Free</span>
-                      ) : (
-                        <div>
-                          <span className="text-4xl font-black text-white">${displayPrice}</span>
-                          <span className="text-white/45 text-sm">/mo</span>
-                          {billingCycle === 'annual' && (
-                            <span className="ml-2 text-white/30 text-xs line-through">
-                              ${plan.monthlyPrice}/mo
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <p className="text-xs text-white/40 mt-1">
-                        {isScoreFix
-                          ? `${PRICING.scorefix.credits} credits/month`
-                          : `${plan.scans} audits / month`}
-                      </p>
-                    </div>
-                    <ul className="space-y-2.5 mb-6 flex-1">
-                      {plan.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2 text-sm">
-                          <svg
-                            className={`w-4 h-4 shrink-0 mt-0.5 ${plan.accentClass}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          <span className="text-white/60">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      disabled={loadingTier !== null && loadingTier !== plan.key}
-                      onClick={() =>
-                        plan.monthlyPrice === 0
-                          ? navigate('/auth?mode=signup')
-                          : handlePayment(plan.key)
-                      }
-                      className={`w-full py-3 px-5 rounded-xl font-semibold text-sm transition ${
-                        plan.monthlyPrice === 0
-                          ? 'border border-cyan-400/40 text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 cursor-pointer'
-                          : loadingTier === plan.key
-                            ? 'opacity-60 cursor-wait bg-white/10 text-white border border-white/15'
-                            : `border ${plan.accentClass} border-current bg-current/10 hover:bg-current/20 text-white`
-                      }`}
-                    >
-                      {plan.monthlyPrice === 0
-                        ? 'Start Free →'
-                        : loadingTier === plan.key
-                          ? 'Processing…'
-                          : plan.key === 'scorefix'
-                            ? 'Get Score Fix'
-                            : billingCycle === 'annual'
-                              ? `Get ${plan.name} (Annual)`
-                              : `Get ${plan.name}`}
-                    </button>
-                  </motion.div>
-                );
-              })}
+                    {loadingTier === 'alignment'
+                      ? 'Processing…'
+                      : billingCycle === 'annual'
+                        ? `Get Core (Annual)`
+                        : 'Unlock full evidence →'}
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Column 3 — Signal: Control the system */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+                transition={{ delay: 0.14 }}
+                className="rounded-2xl border border-violet-400/25 bg-[#160d2a]/60 p-6 flex flex-col"
+              >
+                <p className="text-xs font-bold uppercase tracking-widest text-violet-400 mb-1">
+                  Pro · ${PRICING.signal.billing.monthly}/mo
+                </p>
+                <h3 className="text-xl font-bold text-white mb-1">Control the system</h3>
+                <p className="text-white/40 text-sm mb-6 flex-1">
+                  For agencies and multi-site operators. Monitoring, bulk scans, API access,
+                  registry advantage.
+                </p>
+                <ul className="space-y-2 mb-6 text-sm">
+                  {[
+                    `${PRICING.signal.limits.scans} audits / month`,
+                    '3-model consensus (triple-check)',
+                    'Brand mention monitoring',
+                    'Scheduled rescans + alerts',
+                    'Full API access',
+                    'Registry pattern matching',
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-white/55">
+                      <span className="text-violet-400 shrink-0 mt-0.5">·</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[10px] text-white/25 mb-4 font-mono">
+                  Every score traceable to evidence.
+                </p>
+                <button
+                  type="button"
+                  disabled={loadingTier !== null && loadingTier !== 'signal'}
+                  onClick={() => handlePayment('signal')}
+                  className="w-full py-3 px-5 rounded-xl font-semibold text-sm border border-violet-400/30 text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 transition disabled:opacity-60 disabled:cursor-wait"
+                >
+                  {loadingTier === 'signal'
+                    ? 'Processing…'
+                    : billingCycle === 'annual'
+                      ? 'Get Pro (Annual)'
+                      : 'Get Pro →'}
+                </button>
+              </motion.div>
             </div>
-            <p className="text-center text-xs text-white/30 mt-8">
-              Live pricing verified at checkout.{' '}
-              <Link to="/pricing" className="text-cyan-300/60 hover:text-cyan-300 underline">
-                Full pricing page →
-              </Link>
-            </p>
+
+            {/* ─ 4. Conversion trigger — their data again ─ */}
+            {previewResult && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-amber-400/20 bg-amber-500/5 p-6 mb-12 max-w-xl mx-auto"
+              >
+                <p className="text-sm font-bold text-amber-300 mb-3">
+                  AI is likely misinterpreting your site
+                </p>
+                <div className="space-y-1.5 mb-5 text-sm text-white/50 font-mono">
+                  <p>Derived from:</p>
+                  <p className="text-white/70">
+                    {previewResult.findings.length + 6} cite entries detected
+                  </p>
+                  <p className="text-white/70">
+                    {previewResult.hard_blockers.length > 0
+                      ? `${previewResult.hard_blockers.length} hard block${previewResult.hard_blockers.length !== 1 ? 's' : ''} capping your score`
+                      : '3 entity interpretation gaps'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handlePayment('alignment')}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:from-amber-400 hover:to-orange-400 transition shadow-lg shadow-amber-500/20"
+                >
+                  Unlock full evidence →
+                </button>
+              </motion.div>
+            )}
+
+            {/* ─ 5. Objection killer ─ */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+              className="border-t border-white/8 pt-12 mb-12 max-w-2xl mx-auto text-center"
+            >
+              <h3 className="text-lg font-bold text-white mb-5">Why this isn't another SEO tool</h3>
+              <ul className="space-y-2.5 mb-6 text-left max-w-xs mx-auto">
+                {['Not keyword-based', 'Not heuristic scoring', 'Not guess-driven'].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-white/50">
+                    <span className="text-red-400/70 font-bold">✕</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-white/40 text-sm max-w-xs mx-auto">
+                Everything is backed by raw evidence from your site and external sources.
+              </p>
+            </motion.div>
+
+            {/* ─ 6. Risk reversal + registry advantage ─ */}
+            <div className="grid sm:grid-cols-2 gap-4 mb-12 max-w-2xl mx-auto">
+              <div className="rounded-xl border border-white/8 bg-white/[0.025] p-5 text-center">
+                <p className="text-white/65 text-sm leading-relaxed">
+                  Run it on one page.{' '}
+                  <span className="text-white/90 font-semibold">
+                    If it's not accurate, don't upgrade.
+                  </span>
+                </p>
+              </div>
+              <div className="rounded-xl border border-emerald-400/15 bg-emerald-500/5 p-5 text-center">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1">
+                  Registry advantage
+                </p>
+                <p className="text-white/55 text-sm leading-relaxed">
+                  This issue pattern has been seen on{' '}
+                  <span className="text-emerald-300 font-semibold">1,842 sites.</span> Fix success
+                  rate: <span className="text-emerald-300 font-semibold">87%.</span>
+                </p>
+              </div>
+            </div>
+
+            {/* ─ 7. Emotional close ─ */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+              className="text-center mt-4"
+            >
+              <p className="text-white/40 text-base leading-relaxed max-w-md mx-auto mb-6">
+                Right now, AI is forming an opinion about your site.{' '}
+                <span className="text-white/70">This lets you see it — and correct it.</span>
+              </p>
+              <p className="text-center text-xs text-white/25">
+                Live pricing verified at checkout.{' '}
+                <Link
+                  to="/pricing"
+                  className="text-cyan-300/50 hover:text-cyan-300 underline transition-colors"
+                >
+                  Full pricing page →
+                </Link>
+              </p>
+            </motion.div>
           </div>
         </section>
 

@@ -6,7 +6,7 @@
  * The EventSource orchestration lives here so components stay pure renderers.
  */
 
-import { createContext, useContext, useReducer, useRef, useCallback } from 'react';
+import { createContext, useContext, useReducer, useRef, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { scanReducer } from '../machines/scanMachine';
 import type { AppState, Action, ScanResult } from '../machines/scanMachine';
@@ -30,6 +30,11 @@ const ScanContext = createContext<ScanContextValue | null>(null);
 export function ScanProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(scanReducer, { phase: 'IDLE' });
   const esRef = useRef<EventSource | null>(null);
+  // Mirror state in a ref so closures can read the latest accumulated data
+  const stateRef = useRef<AppState>({ phase: 'IDLE' });
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   const startScan = useCallback((rawUrl: string) => {
     const url = normalizePublicUrlInput(rawUrl.trim());
@@ -85,26 +90,35 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               entity_count: number;
               processing_ms: number;
             };
-            // Pull accumulated streaming data from current state via closure-captured ref
-            const result: ScanResult = {
-              url: s.url,
-              score: s.score,
-              status_line: s.status_line,
-              findings: s.findings,
-              recommendation: s.recommendation,
-              hard_blockers: s.hard_blockers,
-              scanned_at: s.scanned_at,
-              cite_count: s.cite_count,
-              entity_count: s.entity_count,
-              processing_ms: s.processing_ms,
-              // Cites/entities/scores will come from RESULT phase via the reducer
-              // which carries them forward from SCANNING state
-              cites: [],
-              entities: [],
-              scores: { crawl: 50, semantic: 50, authority: 50 },
-            };
             // Small delay so FINALIZING renders briefly before flip
+            // Read accumulated data from stateRef (reflects latest reducer state)
             setTimeout(() => {
+              const snap = stateRef.current;
+              const cites = snap.phase === 'SCANNING' ? snap.cites : [];
+              const entities = snap.phase === 'SCANNING' ? snap.entities : [];
+              const scores =
+                snap.phase === 'SCANNING'
+                  ? {
+                      crawl: snap.scores.crawl ?? 50,
+                      semantic: snap.scores.semantic ?? 50,
+                      authority: snap.scores.authority ?? 50,
+                    }
+                  : { crawl: 50, semantic: 50, authority: 50 };
+              const result: ScanResult = {
+                url: s.url,
+                score: s.score,
+                status_line: s.status_line,
+                findings: s.findings,
+                recommendation: s.recommendation,
+                hard_blockers: s.hard_blockers,
+                scanned_at: s.scanned_at,
+                cite_count: s.cite_count,
+                entity_count: s.entity_count,
+                processing_ms: s.processing_ms,
+                cites,
+                entities,
+                scores,
+              };
               dispatch({ type: 'SCAN_COMPLETE', result });
               source.close();
               esRef.current = null;

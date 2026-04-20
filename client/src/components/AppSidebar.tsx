@@ -153,7 +153,7 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
     >
       {/* Brand */}
       <div className="aurora-sidebar-brand">
-        <NavLink to="/app" className="flex items-center gap-2 min-w-0 flex-1" onClick={onClose}>
+        <NavLink to="/landing" className="flex items-center gap-2 min-w-0 flex-1" onClick={onClose}>
           <img
             src={LOGO_URL}
             alt="AiVIS.biz"

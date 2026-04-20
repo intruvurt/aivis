@@ -9,6 +9,7 @@ import { useWorkspaceStore } from './stores/workspaceStore';
 
 import PublicLayout from './components/PublicLayout';
 import AppLayout from './components/AppLayout';
+import ScanShell from './components/ScanShell';
 import { CookieConsent } from './components/CookieConsent';
 import PageLoadingSpinner from './components/PageLoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -347,7 +348,13 @@ export default function App() {
               <Route path="language-checker" element={<LanguageCheckerPage />} />
             </Route>
 
-            {/* ═══ Authenticated App Shell ═══ */}
+            {/* ═══ SCAN SYSTEM — no sidebar, no topbar, full-viewport state machine ═══ */}
+            <Route element={<ScanShell />}>
+              <Route path="/app/scan" element={<AnalyzePage />} />
+              <Route path="/app/audits/:id" element={<AuditDetails />} />
+            </Route>
+
+            {/* ═══ Authenticated App Shell (operator/infra surfaces — keep sidebar) ═══ */}
             <Route
               path="/app"
               element={
@@ -356,9 +363,8 @@ export default function App() {
                 </ProtectedRoute>
               }
             >
-              {/* Canonical scan entry — new users land here after login */}
+              {/* /app → scan entry */}
               <Route index element={<Navigate to="/app/scan" replace />} />
-              <Route path="scan" element={<AnalyzePage />} />
               {/* Legacy analyze path — redirect to canonical scan route */}
               <Route path="analyze" element={<Navigate to="/app/scan" replace />} />
               {/* Legacy overview — Dashboard preserved for users with audit history */}
@@ -402,7 +408,6 @@ export default function App() {
               <Route path="api-docs" element={<ApiDocsPage />} />
               <Route path="integrations" element={<IntegrationsHubPage />} />
               <Route path="help" element={<HelpCenter />} />
-              <Route path="audits/:id" element={<AuditDetails />} />{' '}
               <Route path="debugger" element={<DebuggerPage />} />{' '}
             </Route>
 

@@ -65,7 +65,8 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 
 export const META = {
     title: `AiVIS — AI Visibility Audit | Evidence-Backed by ${BRAND.product}`,
-    description: `${BRAND.name} ingests a URL, extracts entity and structural signals, generates intent query sets, probes AI models and search engines, and builds an evidence ledger of observed and missing citations. Every score traces to a verifiable crawl event, ledger entry, or registry computation.`,
+    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} scores pages using ${BRAG.expansion} (BRAG) — an evidence framework that links every finding to a verifiable crawl event, citation_ledger entry, or registry computation.`,
+    // NOTE: description must include CITE_LEDGER_DEFINITION and BRAG.expansion verbatim — enforced at build time.
     keywords: `${BRAND.product}, ${BRAND.name}, ${BRAG.acronym} evidence scores, AI citation audit, ChatGPT citation verification, Perplexity citation, Claude citation, structured data verification, AI answer verification, AI citation ledger, evidence-linked audit, anti-hallucination audit, ${BRAG.acronym} framework, entity disambiguation, citation readiness, AI extraction verification, machine readability, fix protocol, citation proof, AI answer distortion`,
     author: BRAND.name,
     canonical: BRAND.domain,

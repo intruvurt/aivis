@@ -12,6 +12,7 @@ import {
 import type { SerpEvidenceInput, KgEvidenceInput } from './evidenceLedger.js';
 import { isSERPAvailable, fetchSERPSignals } from '../serpService.js';
 import { searchKnowledgeGraph } from '../googleKnowledgeGraph.js';
+import { isGeekflareAvailable, fetchGeekflareEnrichment, type GeekflareEnrichment } from '../geekflareService.js';
 
 export interface RunAuditPipelineInput {
   scrapeResult: ScrapeResult;
@@ -55,14 +56,18 @@ export async function runAuditPipeline(
 
     let serpEvidence: SerpEvidenceInput | undefined;
     let kgEvidence: KgEvidenceInput | undefined;
+    let geekflareEvidence: GeekflareEnrichment | undefined;
 
-    // Run SERP + KG in parallel, non-blocking on failure
-    const [serpResult, kgResult] = await Promise.allSettled([
+    // Run SERP + KG + Geekflare in parallel, non-blocking on failure
+    const [serpResult, kgResult, gfResult] = await Promise.allSettled([
       isSERPAvailable() && brand
         ? fetchSERPSignals(brand, hostname)
         : Promise.resolve(null),
       (process.env.GOOGLE_KG_KEY || process.env.GOOGLE_KG_API_KEY) && brand
         ? searchKnowledgeGraph(brand, { limit: 3 })
+        : Promise.resolve(null),
+      isGeekflareAvailable() && targetUrl
+        ? fetchGeekflareEnrichment(targetUrl)
         : Promise.resolve(null),
     ]);
 
@@ -94,13 +99,17 @@ export async function runAuditPipeline(
         kgEvidence = { entityPresent: false };
       }
     }
+
+    if (gfResult.status === 'fulfilled' && gfResult.value) {
+      geekflareEvidence = gfResult.value;
+    }
     // ─────────────────────────────────────────────────────────────────────────
 
     deterministic = await runDeterministicAuditLayer(
       input.auditRunId,
       input.userId,
       input.scrapeResult,
-      { serpEvidence, kgEvidence, brand: brand || undefined },
+      { serpEvidence, kgEvidence, geekflareEvidence, brand: brand || undefined },
     );
   }
 

@@ -16,9 +16,11 @@ import {
   extractEvidenceFromScrapedData,
   persistEvidenceItems,
   buildSerpEvidenceItems,
+  buildGeekflareEvidenceItems,
   type EvidenceLedger,
   type SerpEvidenceInput,
   type KgEvidenceInput,
+  type GeekflareEvidenceInput,
 } from './evidenceLedger.js';
 import {
   evaluateRules,
@@ -76,6 +78,8 @@ export async function runDeterministicAuditLayer(
     serpEvidence?: SerpEvidenceInput;
     /** Pre-fetched Knowledge Graph entity data to inject as evidence (optional) */
     kgEvidence?: KgEvidenceInput;
+    /** Pre-fetched Geekflare technical enrichment (Lighthouse, Loadtime, TLS, Broken Links) */
+    geekflareEvidence?: GeekflareEvidenceInput;
     /** Brand name used for SERP/KG labelling */
     brand?: string;
   },
@@ -91,6 +95,15 @@ export async function runDeterministicAuditLayer(
       brand: opts.brand,
     });
     ledger.items.push(...externalItems);
+  }
+
+  // 2b. Inject Geekflare technical enrichment when available
+  if (opts?.geekflareEvidence) {
+    const gfItems = buildGeekflareEvidenceItems({
+      gf: opts.geekflareEvidence,
+      auditRunId,
+    });
+    ledger.items.push(...gfItems);
   }
 
   // 3. Run rule engine against augmented evidence

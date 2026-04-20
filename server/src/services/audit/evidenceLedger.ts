@@ -1015,3 +1015,163 @@ export async function loadEvidenceForRun(auditRunId: string): Promise<EvidenceIt
     notes: Array.isArray(row.notes_json) ? (row.notes_json as string[]) : [],
   }));
 }
+
+// ─── Geekflare evidence ───────────────────────────────────────────────────────
+
+import type {
+  GeekflareEnrichment,
+} from '../geekflareService.js';
+
+export interface GeekflareEvidenceInput extends GeekflareEnrichment {}
+
+export function buildGeekflareEvidenceItems(opts: {
+  gf: GeekflareEvidenceInput;
+  auditRunId?: string;
+}): EvidenceItem[] {
+  const { gf, auditRunId = 'gf' } = opts;
+  const rawItems: RawEvidenceItem[] = [];
+
+  // ── 1. Lighthouse scores ──────────────────────────────────────────────────
+  const lh = gf.lighthouse;
+  if (lh) {
+    // Performance
+    rawItems.push({
+      category: 'technical',
+      key: 'lighthouse_performance',
+      label: 'Lighthouse performance score',
+      value: {
+        score: lh.performance,
+        fcp_ms: lh.first_contentful_paint_ms,
+        lcp_ms: lh.largest_contentful_paint_ms,
+        tbt_ms: lh.total_blocking_time_ms,
+        cls: lh.cumulative_layout_shift,
+      },
+      status: lh.performance >= 80 ? 'pass' : lh.performance >= 50 ? 'warn' : 'fail',
+      confidence: 0.95,
+      notes: [
+        `Lighthouse performance: ${lh.performance}/100`,
+        lh.first_contentful_paint_ms > 0 ? `FCP: ${lh.first_contentful_paint_ms}ms` : null,
+        lh.largest_contentful_paint_ms > 0 ? `LCP: ${lh.largest_contentful_paint_ms}ms` : null,
+        lh.performance < 50
+          ? 'Poor performance degrades AI crawler success rate — bots may timeout before page loads.'
+          : null,
+      ].filter(Boolean) as string[],
+    });
+
+    // SEO
+    rawItems.push({
+      category: 'technical',
+      key: 'lighthouse_seo',
+      label: 'Lighthouse SEO score',
+      value: { score: lh.seo },
+      status: lh.seo >= 80 ? 'pass' : lh.seo >= 50 ? 'warn' : 'fail',
+      confidence: 0.95,
+      notes: [
+        `Lighthouse SEO: ${lh.seo}/100`,
+        lh.seo < 80
+          ? 'Low SEO score signals missing meta, broken canonical, or unindexable content.'
+          : 'Strong Lighthouse SEO — page signals are machine-readable.',
+      ],
+    });
+
+    // Accessibility
+    rawItems.push({
+      category: 'technical',
+      key: 'lighthouse_accessibility',
+      label: 'Lighthouse accessibility score',
+      value: { score: lh.accessibility },
+      status: lh.accessibility >= 80 ? 'pass' : 'warn',
+      confidence: 0.9,
+      notes: [`Lighthouse accessibility: ${lh.accessibility}/100`],
+    });
+  }
+
+  // ── 2. Load time (crawlability latency gate) ──────────────────────────────
+  const lt = gf.loadtime;
+  if (lt) {
+    const slowCrawl = lt.ttfb_ms > 2000;
+    const critical  = lt.ttfb_ms > 5000;
+    rawItems.push({
+      category: 'technical',
+      key: 'page_load_ttfb',
+      label: 'Page TTFB and load timing',
+      value: {
+        total_ms:   lt.total_ms,
+        ttfb_ms:    lt.ttfb_ms,
+        dns_ms:     lt.dns_ms,
+        connect_ms: lt.connect_ms,
+      },
+      status: critical ? 'fail' : slowCrawl ? 'warn' : 'pass',
+      confidence: 0.95,
+      notes: [
+        `TTFB: ${lt.ttfb_ms}ms, DNS: ${lt.dns_ms}ms, Total: ${lt.total_ms}ms`,
+        critical
+          ? 'Critical TTFB (>5s): AI crawlers likely timeout before content is accessible.'
+          : slowCrawl
+            ? 'High TTFB (>2s): may cause AI crawler partial fetches and citation misses.'
+            : 'Page responds within crawlable latency thresholds.',
+      ],
+    });
+  }
+
+  // ── 3. TLS / trust gate ───────────────────────────────────────────────────
+  const tls = gf.tls;
+  if (tls) {
+    const expiringSoon = tls.days_remaining > 0 && tls.days_remaining <= 30;
+    const expired      = !tls.valid || tls.days_remaining <= 0;
+    rawItems.push({
+      category: 'technical',
+      key: 'tls_certificate',
+      label: 'TLS/SSL certificate validity',
+      value: {
+        valid:          tls.valid,
+        issuer:         tls.issuer,
+        expires_at:     tls.expires_at,
+        days_remaining: tls.days_remaining,
+        protocol:       tls.protocol,
+      },
+      status: expired ? 'fail' : expiringSoon ? 'warn' : 'pass',
+      confidence: 0.99,
+      notes: [
+        expired
+          ? `CRITICAL: TLS certificate is invalid or expired — AI crawlers will refuse to index this page.`
+          : expiringSoon
+            ? `TLS certificate expires in ${tls.days_remaining} days. Renew before expiry to prevent indexing loss.`
+            : `TLS valid (${tls.protocol}), ${tls.days_remaining} days remaining.`,
+        tls.issuer ? `Issuer: ${tls.issuer}` : null,
+      ].filter(Boolean) as string[],
+    });
+  }
+
+  // ── 4. Broken links (content integrity) ───────────────────────────────────
+  const bl = gf.broken_links;
+  if (bl && bl.total_checked > 0) {
+    const ratio = bl.broken_count / Math.max(bl.total_checked, 1);
+    rawItems.push({
+      category: 'authority',
+      key: 'broken_link_ratio',
+      label: 'Internal broken link ratio',
+      value: {
+        broken_count: bl.broken_count,
+        total_checked: bl.total_checked,
+        ratio: Math.round(ratio * 100),
+        sample_urls: bl.broken_urls.slice(0, 5),
+      },
+      status: bl.broken_count === 0 ? 'pass' : ratio > 0.1 ? 'fail' : 'warn',
+      confidence: 0.9,
+      notes: [
+        `${bl.broken_count} broken links out of ${bl.total_checked} checked (${Math.round(ratio * 100)}%).`,
+        bl.broken_count > 0
+          ? 'Broken internal links degrade page authority and signal low maintenance to AI crawlers.'
+          : 'No broken internal links — strong content integrity.',
+      ],
+    });
+  }
+
+  // Finalize with IDs
+  return rawItems.map(item => ({
+    ...item,
+    evidence_id: generateEvidenceId(auditRunId, item.key, item.status),
+    source: 'geekflare' as const,
+  })) as EvidenceItem[];
+}

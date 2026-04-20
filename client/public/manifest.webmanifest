@@ -41,15 +41,9 @@
     {
       "src": "/og-image.png?v=20260408",
       "type": "image/png",
-      "sizes": "1200x630",
+      "sizes": "942x317",
       "form_factor": "wide",
       "label": "AiVIS.biz AI Visibility Audit - Desktop"
-    },
-    {
-      "src": "/analyze.png?v=20260408",
-      "type": "image/png",
-      "sizes": "1024x1024",
-      "label": "AiVIS.biz AI Visibility Audit - Mobile"
     }
   ]
 }

@@ -53,16 +53,47 @@ export default {
       },
       keyframes: {
         "scan-line": {
-          "0%": { transform: "translateY(-100%)" },
+          "0%":   { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(1000%)" },
         },
         "shimmer": {
           "100%": { transform: "translateX(100%)" },
-        }
+        },
+        // ── Motion language: inference states ────────────────────────────────
+        // pulse-lock — confidence convergence (single cycle, sharp in/soft out)
+        "pulse-lock": {
+          "0%, 100%": { transform: "scale(1)",    opacity: "1"    },
+          "40%":      { transform: "scale(1.03)", opacity: "0.92" },
+          "65%":      { transform: "scale(1.01)", opacity: "1"    },
+        },
+        // drift — uncertainty field (must feel slightly uncomfortable)
+        "drift": {
+          "0%, 100%": { transform: "translateX(0px)",  opacity: "1"    },
+          "18%":      { transform: "translateX(-3px)", opacity: "0.88" },
+          "42%":      { transform: "translateX(4px)",  opacity: "0.93" },
+          "63%":      { transform: "translateX(-2px)", opacity: "0.85" },
+          "82%":      { transform: "translateX(3px)",  opacity: "0.92" },
+        },
+        // field-bloom — system activation / page load (radial-esque expansion)
+        "field-bloom": {
+          "0%":   { opacity: "0", transform: "scale(0.96)" },
+          "60%":  { opacity: "1", transform: "scale(1.01)" },
+          "100%": { opacity: "1", transform: "scale(1)"    },
+        },
+        // scan-idle — barely-visible background pulse (living system signature)
+        "scan-idle": {
+          "0%, 100%": { opacity: "0.03" },
+          "35%":      { opacity: "0.07" },
+          "70%":      { opacity: "0.04" },
+        },
       },
       animation: {
-        "scan": "scan-line 3s linear infinite",
-        "shimmer": "shimmer 2s infinite",
+        "scan":        "scan-line 3s linear infinite",
+        "shimmer":     "shimmer 2s infinite",
+        "pulse-lock":  "pulse-lock 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "drift":       "drift 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite",
+        "field-bloom": "field-bloom 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "scan-idle":   "scan-idle 15s ease-in-out infinite",
       },
     },
   },

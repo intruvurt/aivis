@@ -123,11 +123,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   }, [results]);
 
   return (
-    <header
-      className="sticky top-0 z-30 h-14 flex items-center justify-between gap-4 px-4 sm:px-6 bg-slate-950 border-b border-white/5"
-      role="banner"
-      aria-label="App toolbar"
-    >
+    <header className="aurora-topbar px-4 sm:px-6" role="banner" aria-label="App toolbar">
       {/* Left - hamburger (mobile) + search */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Mobile menu button */}

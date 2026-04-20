@@ -18,7 +18,7 @@ const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
   "Content-Security-Policy":
     "default-src 'self'; " +
-    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com https://recaptcha.google.com https://www.google.com https://cdn-cgi.octolane.com https://www.gstatic.com; " +
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com https://recaptcha.google.com https://www.google.com https://cdn-cgi.octolane.com https://www.gstatic.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://codetrendy.com; " +
     "connect-src 'self' https://api.aivis.biz https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.sentry.io https://*.ingest.sentry.io https://www.google.com https://cloudflareinsights.com; " +

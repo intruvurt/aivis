@@ -31,6 +31,7 @@ import {
   BookOpen,
   Languages,
   Database,
+  Activity,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from '../utils/userIdentity';
@@ -72,6 +73,7 @@ const ICON_BY_NAME = {
   BookOpen,
   Languages,
   Database,
+  Activity,
 } as const;
 
 const CODETRENDY_BADGE_URL = 'https://codetrendy.com/api/badge?style=dark';

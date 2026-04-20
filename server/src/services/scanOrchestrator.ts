@@ -14,6 +14,7 @@ import { scrapeWebsite } from './scraper.js';
 import { extractEvidenceFromScrape } from './evidenceExtractor.js';
 import { scoreEvidence } from './scoringEngine.js';
 import { buildPreviewResult } from './previewScanner.js';
+import { filterCitations, hashHtmlSnapshot } from './citationFilter.js';
 import type {
     ScanEvent,
     CiteEntry,
@@ -44,18 +45,6 @@ function citeId(evidenceKey: string, source: string): string {
         .update(`${evidenceKey}:${source}`)
         .digest('hex')
         .slice(0, 16);
-}
-
-/** Convert an evidence item's value to a human-readable signal string */
-function toSignal(evidenceKey: string, value: unknown): string {
-    if (typeof value === 'string') return value.slice(0, 120);
-    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-    if (Array.isArray(value)) return `${value.length} item(s)`;
-    if (value && typeof value === 'object') {
-        const keys = Object.keys(value as object).join(', ');
-        return keys ? `{${keys.slice(0, 80)}}` : 'structured data present';
-    }
-    return 'present';
 }
 
 /** Evidence family → entity type label */
@@ -109,16 +98,31 @@ export async function runScan(
         return;
     }
 
-    // Emit each cite entry (cap at 30 to keep the stream lightweight)
-    const capped = evidence.slice(0, 30);
-    for (const item of capped) {
-        const cite: CiteEntry = {
-            id: citeId(item.evidence_key, item.source),
-            raw_evidence: toSignal(item.evidence_key, item.value),
-            extracted_signal: `${item.evidence_key} — ${item.status}`,
-            evidence_key: item.evidence_key,
-            timestamp: Date.now(),
-        };
+    // ── Stage 2b: Citation filter ─────────────────────────────────────────────
+    // Hash the raw HTML once — this is the immutable upstream anchor for all
+    // cites produced from this page render.
+    const htmlHash = hashHtmlSnapshot(scrapeResult.data.html ?? '');
+
+    // Run every evidence item through the deterministic reliability scorer.
+    // Only items with reliability_score >= 0.98 are granted a Citation Handle
+    // and emitted to the stream — this is the single-writer commit gate.
+    const filterResults = filterCitations(evidence, { htmlHash });
+    const accepted = filterResults.filter((r) => r.accepted);
+    const rejectedCount = filterResults.length - accepted.length;
+
+    if (rejectedCount > 0) {
+        // Emit a single diagnostic event so operators can see the rejection rate
+        // without exposing individual rejected items to the client stream.
+        emit({
+            type: 'INTERPRETATION',
+            message: `Citation filter: ${accepted.length} accepted, ${rejectedCount} rejected (reliability < 0.98)`,
+            cite_ids: [],
+        });
+    }
+
+    // Emit each accepted cite (cap at 30 to keep the stream lightweight)
+    const cappedCites = accepted.slice(0, 30);
+    for (const { cite } of cappedCites) {
         emit({ type: 'CITE_FOUND', cite });
     }
 

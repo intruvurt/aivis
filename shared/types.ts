@@ -2409,6 +2409,40 @@ export interface CiteEntry {
   evidence_key: string;
   /** Unix ms timestamp when this cite was extracted */
   timestamp: number;
+  /**
+   * Reliability score produced by the citation filter (0.0–1.0).
+   * Measures structural stability of the evidence element.
+   * Only entries scoring ≥ CITATION_THRESHOLD (0.98) receive a citation_handle.
+   */
+  reliability_score: number;
+  /**
+   * Citation Handle — sha256(evidence_key + source + stable_value + html_hash).
+   * Present only when reliability_score ≥ 0.98.
+   * Resolves back to the original rendered HTML snapshot for full auditability.
+   */
+  citation_handle: string | null;
+  /**
+   * SHA-256 of the raw HTML at capture time.
+   * Immutable upstream anchor — ties the cite to a specific page render.
+   */
+  source_html_hash: string;
+}
+
+/** Result shape returned by the citation filter for a single evidence item */
+export interface CitationFilterResult {
+  cite: CiteEntry;
+  /** true = passed threshold, emitted to stream; false = rejected */
+  accepted: boolean;
+  /** Reason for rejection, when accepted === false */
+  rejection_reason?: string;
+  /** Individual penalty breakdown for observability */
+  score_breakdown: {
+    base: number;
+    volatility_penalty: number;
+    structure_bonus: number;
+    delta_correction: number;
+    final: number;
+  };
 }
 
 /** A named entity reference streamed during entity extraction */

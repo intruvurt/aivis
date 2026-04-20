@@ -58,14 +58,14 @@ type ReplayState = {
     commits: CommitNode[],
     diffs?: Record<string, CommitDiff>,
   ) => void;
-  setCursor:     (cursor: Cursor) => void;
+  setCursor: (cursor: Cursor) => void;
   setCursorHash: (hash: string) => void;
-  setCursorSeq:  (seq: number) => void;
-  stepForward:   () => void;
-  stepBack:      () => void;
-  toggleBranch:  (branch: string) => void;
-  setHoveredHash:(hash: string | null) => void;
-  reset:         () => void;
+  setCursorSeq: (seq: number) => void;
+  stepForward: () => void;
+  stepBack: () => void;
+  toggleBranch: (branch: string) => void;
+  setHoveredHash: (hash: string | null) => void;
+  reset: () => void;
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -101,28 +101,28 @@ export function resolveCursor(cursor: Cursor, commits: CommitNode[]): CommitNode
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 export const useReplayStore = create<ReplayState>((set, get) => ({
-  scanId:          null,
-  commits:         [],
-  diffs:           {},
-  cursor:          { seq: 0 },
-  maxSeq:          0,
-  allBranches:     [],
+  scanId: null,
+  commits: [],
+  diffs: {},
+  cursor: { seq: 0 },
+  maxSeq: 0,
+  allBranches: [],
   visibleBranches: [],
-  hoveredHash:     null,
-  commitByHash:    {},
+  hoveredHash: null,
+  commitByHash: {},
 
   loadCommits(scanId, rawCommits, diffs = {}) {
-    const commits      = sortedBySeq(rawCommits);
-    const allBranches  = extractBranches(commits);
-    const maxSeq       = commits.length > 0 ? commits[commits.length - 1].seq : 0;
-    const first        = commits[0];
+    const commits = sortedBySeq(rawCommits);
+    const allBranches = extractBranches(commits);
+    const maxSeq = commits.length > 0 ? commits[commits.length - 1].seq : 0;
+    const first = commits[0];
     set({
       scanId,
       commits,
       diffs,
       allBranches,
       visibleBranches: [...allBranches],
-      commitByHash:    buildIndex(commits),
+      commitByHash: buildIndex(commits),
       maxSeq,
       cursor: first ? { hash: first.hash, seq: first.seq } : { seq: 0 },
       hoveredHash: null,
@@ -179,15 +179,15 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
 
   reset() {
     set({
-      scanId:          null,
-      commits:         [],
-      diffs:           {},
-      cursor:          { seq: 0 },
-      maxSeq:          0,
-      allBranches:     [],
+      scanId: null,
+      commits: [],
+      diffs: {},
+      cursor: { seq: 0 },
+      maxSeq: 0,
+      allBranches: [],
       visibleBranches: [],
-      hoveredHash:     null,
-      commitByHash:    {},
+      hoveredHash: null,
+      commitByHash: {},
     });
   },
 }));

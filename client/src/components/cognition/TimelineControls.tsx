@@ -20,13 +20,13 @@ import { useReplayStore } from '../../stores/replayStore';
 const SCRUB_DEBOUNCE_MS = 16;
 
 export default function TimelineControls() {
-  const scanId      = useReplayStore(s => s.scanId);
-  const commits     = useReplayStore(s => s.commits);
-  const cursor      = useReplayStore(s => s.cursor);
-  const maxSeq      = useReplayStore(s => s.maxSeq);
-  const stepForward = useReplayStore(s => s.stepForward);
-  const stepBack    = useReplayStore(s => s.stepBack);
-  const setCursorSeq= useReplayStore(s => s.setCursorSeq);
+  const scanId = useReplayStore((s) => s.scanId);
+  const commits = useReplayStore((s) => s.commits);
+  const cursor = useReplayStore((s) => s.cursor);
+  const maxSeq = useReplayStore((s) => s.maxSeq);
+  const stepForward = useReplayStore((s) => s.stepForward);
+  const stepBack = useReplayStore((s) => s.stepBack);
+  const setCursorSeq = useReplayStore((s) => s.setCursorSeq);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -36,10 +36,10 @@ export default function TimelineControls() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => setCursorSeq(val), SCRUB_DEBOUNCE_MS);
     },
-    [setCursorSeq],
+    [setCursorSeq]
   );
 
-  const currentIdx = commits.findIndex(c => c.seq === cursor.seq);
+  const currentIdx = commits.findIndex((c) => c.seq === cursor.seq);
   const currentCommit = currentIdx >= 0 ? commits[currentIdx] : null;
   const fillPct = maxSeq > 0 ? (cursor.seq / maxSeq) * 100 : 0;
 
@@ -70,17 +70,9 @@ export default function TimelineControls() {
           {/* Visual track */}
           <div className="fl-timeline__track" aria-hidden="true" />
           {/* Filled progress */}
-          <div
-            className="tc-fill"
-            style={{ width: `${fillPct}%` }}
-            aria-hidden="true"
-          />
+          <div className="tc-fill" style={{ width: `${fillPct}%` }} aria-hidden="true" />
           {/* Thumb marker */}
-          <div
-            className="fl-timeline__thumb"
-            style={{ left: `${fillPct}%` }}
-            aria-hidden="true"
-          />
+          <div className="fl-timeline__thumb" style={{ left: `${fillPct}%` }} aria-hidden="true" />
           {/* Range input covers full hit area — transparent overlay */}
           <input
             type="range"
@@ -114,23 +106,30 @@ export default function TimelineControls() {
         {scanId && (
           <>
             <span title={`Scan: ${scanId}`}>{scanId.slice(0, 12)}…</span>
-            <span className="tc-sep" aria-hidden="true">·</span>
+            <span className="tc-sep" aria-hidden="true">
+              ·
+            </span>
           </>
         )}
         <span className="tc-meta-mono" title={currentCommit?.hash ?? ''}>
           {currentCommit ? currentCommit.hash.slice(0, 8) : '────────'}
         </span>
-        <span className="tc-sep" aria-hidden="true">·</span>
+        <span className="tc-sep" aria-hidden="true">
+          ·
+        </span>
         <span className="tc-meta-mono">#{cursor.seq}</span>
-        <span className="tc-sep" aria-hidden="true">·</span>
-        <span>{currentIdx >= 0 ? currentIdx + 1 : '?'} / {commits.length}</span>
+        <span className="tc-sep" aria-hidden="true">
+          ·
+        </span>
+        <span>
+          {currentIdx >= 0 ? currentIdx + 1 : '?'} / {commits.length}
+        </span>
         {currentCommit && (
           <>
-            <span className="tc-sep" aria-hidden="true">·</span>
-            <span
-              className="tc-conf"
-              style={{ color: confColor(currentCommit.confidence) }}
-            >
+            <span className="tc-sep" aria-hidden="true">
+              ·
+            </span>
+            <span className="tc-conf" style={{ color: confColor(currentCommit.confidence) }}>
               {(currentCommit.confidence * 100).toFixed(0)}% conf
             </span>
           </>

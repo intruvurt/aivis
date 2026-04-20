@@ -30,14 +30,14 @@ import '../../styles/cognition-replay.css';
 // and set that as the replay point so the CausalityGraph shows matching state.
 
 export function useCursorSync() {
-  const cursor = useReplayStore(s => s.cursor);
-  const events = useDebugStore(s => s.events);
-  const setReplayIndex = useDebugStore(s => s.setReplayIndex);
+  const cursor = useReplayStore((s) => s.cursor);
+  const events = useDebugStore((s) => s.events);
+  const setReplayIndex = useDebugStore((s) => s.setReplayIndex);
 
   useEffect(() => {
     if (events.length === 0) return;
     // Find first event at or beyond cursor.seq — if none, clamp to last
-    const idx = events.findIndex(e => e.seq >= cursor.seq);
+    const idx = events.findIndex((e) => e.seq >= cursor.seq);
     setReplayIndex(idx >= 0 ? idx : events.length - 1);
   }, [cursor.seq, events, setReplayIndex]);
 }
@@ -60,10 +60,10 @@ function GraphPlaceholder({ seq }: { seq: number }) {
 // ── TopBar ────────────────────────────────────────────────────────────────────
 
 function CognitionTopBar() {
-  const scanId     = useReplayStore(s => s.scanId);
-  const commits    = useReplayStore(s => s.commits);
-  const allBranches= useReplayStore(s => s.allBranches);
-  const cursor     = useReplayStore(s => s.cursor);
+  const scanId = useReplayStore((s) => s.scanId);
+  const commits = useReplayStore((s) => s.commits);
+  const allBranches = useReplayStore((s) => s.allBranches);
+  const cursor = useReplayStore((s) => s.cursor);
 
   return (
     <>
@@ -97,7 +97,7 @@ interface CognitionReplayProps {
 }
 
 export default function CognitionReplay({ graphSlot, className }: CognitionReplayProps) {
-  const cursor = useReplayStore(s => s.cursor);
+  const cursor = useReplayStore((s) => s.cursor);
 
   // Wire replayStore → debugStore automatically when graphSlot is provided
   useCursorSync();

@@ -30,9 +30,9 @@ function confLabel(c: number): string {
 // ── DiffView ──────────────────────────────────────────────────────────────────
 
 interface DiffViewProps {
-  added:           string[];
-  removed:         string[];
-  modified:        string[];
+  added: string[];
+  removed: string[];
+  modified: string[];
   affectedNodeIds: string[];
 }
 
@@ -49,7 +49,8 @@ function DiffView({ added, removed, modified, affectedNodeIds }: DiffViewProps) 
           <div className="ci-diff-heading">Added ({added.length})</div>
           {added.map((line, i) => (
             <div key={i} className="fl-diff-line fl-diff-line--add">
-              <span className="ci-diff-sigil">+</span>{line}
+              <span className="ci-diff-sigil">+</span>
+              {line}
             </div>
           ))}
         </div>
@@ -59,7 +60,8 @@ function DiffView({ added, removed, modified, affectedNodeIds }: DiffViewProps) 
           <div className="ci-diff-heading">Removed ({removed.length})</div>
           {removed.map((line, i) => (
             <div key={i} className="fl-diff-line fl-diff-line--del">
-              <span className="ci-diff-sigil">−</span>{line}
+              <span className="ci-diff-sigil">−</span>
+              {line}
             </div>
           ))}
         </div>
@@ -69,7 +71,8 @@ function DiffView({ added, removed, modified, affectedNodeIds }: DiffViewProps) 
           <div className="ci-diff-heading">Modified ({modified.length})</div>
           {modified.map((line, i) => (
             <div key={i} className="fl-diff-line fl-diff-line--meta">
-              <span className="ci-diff-sigil">~</span>{line}
+              <span className="ci-diff-sigil">~</span>
+              {line}
             </div>
           ))}
         </div>
@@ -91,10 +94,10 @@ function DiffView({ added, removed, modified, affectedNodeIds }: DiffViewProps) 
 // ── CommitInspector ───────────────────────────────────────────────────────────
 
 export default function CommitInspector() {
-  const cursor      = useReplayStore(s => s.cursor);
-  const commits     = useReplayStore(s => s.commits);
-  const diffs       = useReplayStore(s => s.diffs);
-  const hoveredHash = useReplayStore(s => s.hoveredHash);
+  const cursor = useReplayStore((s) => s.cursor);
+  const commits = useReplayStore((s) => s.commits);
+  const diffs = useReplayStore((s) => s.diffs);
+  const hoveredHash = useReplayStore((s) => s.hoveredHash);
 
   // While a commit is hovered, show its data as a PREVIEW (cursor unchanged)
   const displayHash = hoveredHash ?? cursor.hash;
@@ -103,9 +106,9 @@ export default function CommitInspector() {
   const commit = useMemo(
     () =>
       displayHash
-        ? (commits.find(c => c.hash === displayHash) ?? resolveCursor(cursor, commits))
+        ? (commits.find((c) => c.hash === displayHash) ?? resolveCursor(cursor, commits))
         : resolveCursor(cursor, commits),
-    [commits, displayHash, cursor],
+    [commits, displayHash, cursor]
   );
 
   const diff = displayHash ? (diffs[displayHash] ?? null) : null;
@@ -123,7 +126,9 @@ export default function CommitInspector() {
   return (
     <div className="fl-panel fl-panel--inspector">
       {isPreviewing && (
-        <div className="ci-preview-badge" aria-label="Preview mode">PREVIEW</div>
+        <div className="ci-preview-badge" aria-label="Preview mode">
+          PREVIEW
+        </div>
       )}
 
       {/* §8 Commit header — 72px */}

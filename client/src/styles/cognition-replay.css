@@ -47,7 +47,9 @@
   cursor: pointer;
   line-height: 1.4;
   /* §13: hover — only color change, no layout shift */
-  transition: color 80ms ease, border-color 80ms ease;
+  transition:
+    color 80ms ease,
+    border-color 80ms ease;
 }
 
 .cg-branch-chip:hover {
@@ -205,7 +207,9 @@
   cursor: pointer;
   font-size: 11px;
   /* §13: micro timing */
-  transition: color 80ms ease, border-color 80ms ease;
+  transition:
+    color 80ms ease,
+    border-color 80ms ease;
 }
 
 .tc-btn:hover:not(:disabled) {

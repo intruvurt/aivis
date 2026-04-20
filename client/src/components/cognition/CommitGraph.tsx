@@ -17,14 +17,14 @@ import type { CommitNode } from '../../stores/replayStore';
 
 // ── Geometry constants (forensic-grid §6) ─────────────────────────────────────
 
-const ROW_H       = 40;   // px per commit row
-const NODE_R      = 5;    // radius for default node (10px diameter)
-const NODE_R_ACT  = 7;    // radius for active node  (14px diameter)
-const LANE_STEP   = 32;   // horizontal offset per branch lane
-const LEFT_PAD    = 24;   // left padding before first lane
-const LABEL_X     = 72;   // commit message column start
-const LABEL_CHARS = 30;   // max chars before truncation
-const SVG_W       = 320;  // fixed SVG width (panel 336px − 16px padding)
+const ROW_H = 40; // px per commit row
+const NODE_R = 5; // radius for default node (10px diameter)
+const NODE_R_ACT = 7; // radius for active node  (14px diameter)
+const LANE_STEP = 32; // horizontal offset per branch lane
+const LEFT_PAD = 24; // left padding before first lane
+const LABEL_X = 72; // commit message column start
+const LABEL_CHARS = 30; // max chars before truncation
+const SVG_W = 320; // fixed SVG width (panel 336px − 16px padding)
 
 // ── Color helpers (§11 semantic palette) ─────────────────────────────────────
 
@@ -57,10 +57,10 @@ type NodePos = { x: number; y: number; laneIdx: number };
 
 function computeGeometry(
   commits: CommitNode[],
-  visibleBranches: string[],
+  visibleBranches: string[]
 ): {
   positions: Map<string, NodePos>;
-  laneMap:   Map<string, number>;
+  laneMap: Map<string, number>;
   svgHeight: number;
 } {
   // Assign lanes in first-appearance order across ALL commits (stable even when filtered)
@@ -70,7 +70,7 @@ function computeGeometry(
     if (!laneMap.has(c.branch)) laneMap.set(c.branch, nextLane++);
   }
 
-  const visible = commits.filter(c => visibleBranches.includes(c.branch));
+  const visible = commits.filter((c) => visibleBranches.includes(c.branch));
   const positions = new Map<string, NodePos>();
   visible.forEach((c, i) => {
     const laneIdx = laneMap.get(c.branch) ?? 0;
@@ -91,38 +91,38 @@ const OVERSCAN = 5; // rows above/below viewport to pre-render
 function visibleRange(
   scrollTop: number,
   clientHeight: number,
-  totalRows: number,
+  totalRows: number
 ): [number, number] {
   const start = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
-  const end   = Math.min(totalRows, Math.ceil((scrollTop + clientHeight) / ROW_H) + OVERSCAN);
+  const end = Math.min(totalRows, Math.ceil((scrollTop + clientHeight) / ROW_H) + OVERSCAN);
   return [start, end];
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function CommitGraph() {
-  const commits        = useReplayStore(s => s.commits);
-  const cursor         = useReplayStore(s => s.cursor);
-  const visibleBranches= useReplayStore(s => s.visibleBranches);
-  const hoveredHash    = useReplayStore(s => s.hoveredHash);
-  const allBranches    = useReplayStore(s => s.allBranches);
-  const setCursorHash  = useReplayStore(s => s.setCursorHash);
-  const setHoveredHash = useReplayStore(s => s.setHoveredHash);
-  const toggleBranch   = useReplayStore(s => s.toggleBranch);
+  const commits = useReplayStore((s) => s.commits);
+  const cursor = useReplayStore((s) => s.cursor);
+  const visibleBranches = useReplayStore((s) => s.visibleBranches);
+  const hoveredHash = useReplayStore((s) => s.hoveredHash);
+  const allBranches = useReplayStore((s) => s.allBranches);
+  const setCursorHash = useReplayStore((s) => s.setCursorHash);
+  const setHoveredHash = useReplayStore((s) => s.setHoveredHash);
+  const toggleBranch = useReplayStore((s) => s.toggleBranch);
 
-  const scrollRef   = useRef<HTMLDivElement>(null);
-  const hoverTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [scrollTop, setScrollTop] = useState(0);
-  const [clientH,   setClientH]   = useState(600);
+  const [clientH, setClientH] = useState(600);
 
   const visibleCommits = useMemo(
-    () => commits.filter(c => visibleBranches.includes(c.branch)),
-    [commits, visibleBranches],
+    () => commits.filter((c) => visibleBranches.includes(c.branch)),
+    [commits, visibleBranches]
   );
 
   const { positions, laneMap, svgHeight } = useMemo(
     () => computeGeometry(commits, visibleBranches),
-    [commits, visibleBranches],
+    [commits, visibleBranches]
   );
 
   // Viewport windowing
@@ -134,10 +134,13 @@ export default function CommitGraph() {
     setClientH(el.clientHeight);
   }, []);
 
-  const handleHover = useCallback((hash: string | null) => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    hoverTimer.current = setTimeout(() => setHoveredHash(hash), 60);
-  }, [setHoveredHash]);
+  const handleHover = useCallback(
+    (hash: string | null) => {
+      if (hoverTimer.current) clearTimeout(hoverTimer.current);
+      hoverTimer.current = setTimeout(() => setHoveredHash(hash), 60);
+    },
+    [setHoveredHash]
+  );
 
   if (commits.length === 0) {
     return (
@@ -149,10 +152,10 @@ export default function CommitGraph() {
 
   // Build connector lines between parent → child for ALL visible commits
   // (lines are always drawn even if parent is out of virtual viewport)
-  const connectorLines = visibleCommits.flatMap(commit => {
+  const connectorLines = visibleCommits.flatMap((commit) => {
     if (!commit.parent) return [];
     const from = positions.get(commit.parent);
-    const to   = positions.get(commit.hash);
+    const to = positions.get(commit.hash);
     if (!from || !to) return [];
     const isCross = from.x !== to.x;
     return [{ from, to, isCross, hash: commit.hash }];
@@ -161,7 +164,7 @@ export default function CommitGraph() {
   // Branch spine lines: thin vertical line through each branch's Y range
   const spineLines = (() => {
     const branchRanges = new Map<string, { minY: number; maxY: number; laneIdx: number }>();
-    visibleCommits.forEach(c => {
+    visibleCommits.forEach((c) => {
       const pos = positions.get(c.hash);
       if (!pos) return;
       const existing = branchRanges.get(c.branch);
@@ -173,7 +176,9 @@ export default function CommitGraph() {
       }
     });
     return Array.from(branchRanges.entries()).map(([branch, { minY, maxY, laneIdx }]) => ({
-      branch, minY, maxY,
+      branch,
+      minY,
+      maxY,
       x: LEFT_PAD + laneIdx * LANE_STEP,
       color: branchColor(laneIdx),
     }));
@@ -183,7 +188,7 @@ export default function CommitGraph() {
     <div className="fl-panel fl-panel--commit cg-root">
       {/* Branch filter chips */}
       <div className="cg-branch-filter" role="group" aria-label="Branch visibility">
-        {allBranches.map(branch => {
+        {allBranches.map((branch) => {
           const laneIdx = laneMap.get(branch) ?? 0;
           const on = visibleBranches.includes(branch);
           return (
@@ -210,18 +215,15 @@ export default function CommitGraph() {
         role="listbox"
         aria-label="Commit history"
       >
-        <svg
-          width={SVG_W}
-          height={svgHeight}
-          className="cg-svg"
-          aria-hidden="true"
-        >
+        <svg width={SVG_W} height={svgHeight} className="cg-svg" aria-hidden="true">
           {/* Branch spine (faint vertical lane guides) */}
           {spineLines.map(({ branch, minY, maxY, x, color }) => (
             <line
               key={`spine-${branch}`}
-              x1={x} y1={minY}
-              x2={x} y2={maxY}
+              x1={x}
+              y1={minY}
+              x2={x}
+              y2={maxY}
               stroke={color}
               strokeWidth={1}
               opacity={0.12}
@@ -232,8 +234,10 @@ export default function CommitGraph() {
           {connectorLines.map(({ from, to, isCross, hash }) => (
             <line
               key={`conn-${hash}`}
-              x1={from.x} y1={from.y}
-              x2={to.x}   y2={to.y}
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
               stroke={isCross ? '#4fc3f7' : '#2a2a2a'}
               strokeWidth={isCross ? 1.5 : 2}
               strokeDasharray={isCross ? '3 3' : undefined}
@@ -242,13 +246,13 @@ export default function CommitGraph() {
           ))}
 
           {/* Commit nodes (virtualized window only) */}
-          {visibleCommits.slice(rowStart, rowEnd).map(commit => {
+          {visibleCommits.slice(rowStart, rowEnd).map((commit) => {
             const pos = positions.get(commit.hash);
             if (!pos) return null;
 
-            const isActive  = cursor.hash === commit.hash || cursor.seq === commit.seq;
+            const isActive = cursor.hash === commit.hash || cursor.seq === commit.seq;
             const isHovered = hoveredHash === commit.hash;
-            const r         = (isActive || isHovered) ? NODE_R_ACT : NODE_R;
+            const r = isActive || isHovered ? NODE_R_ACT : NODE_R;
             const nodeColor = confidenceColor(commit.confidence);
             const laneColor = branchColor(pos.laneIdx);
 
@@ -264,17 +268,13 @@ export default function CommitGraph() {
               >
                 {/* Active / hover glow */}
                 {(isActive || isHovered) && (
-                  <circle
-                    cx={pos.x} cy={pos.y}
-                    r={r + 5}
-                    fill={nodeColor}
-                    opacity={0.1}
-                  />
+                  <circle cx={pos.x} cy={pos.y} r={r + 5} fill={nodeColor} opacity={0.1} />
                 )}
 
                 {/* Branch lane color ring */}
                 <circle
-                  cx={pos.x} cy={pos.y}
+                  cx={pos.x}
+                  cy={pos.y}
                   r={r + 2}
                   fill="none"
                   stroke={laneColor}
@@ -284,7 +284,8 @@ export default function CommitGraph() {
 
                 {/* Main dot: filled when active, outlined when not */}
                 <circle
-                  cx={pos.x} cy={pos.y}
+                  cx={pos.x}
+                  cy={pos.y}
                   r={r}
                   fill={isActive ? nodeColor : '#0a0a0a'}
                   stroke={nodeColor}
@@ -293,7 +294,8 @@ export default function CommitGraph() {
 
                 {/* Seq label inside dot */}
                 <text
-                  x={pos.x} y={pos.y + 3.5}
+                  x={pos.x}
+                  y={pos.y + 3.5}
                   fill={isActive ? '#000' : nodeColor}
                   fontSize={7}
                   fontFamily="monospace"

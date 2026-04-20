@@ -2468,6 +2468,20 @@ html.touch-mode {
     width: 2.75rem;
     height: 2.75rem;
   }
+
+  /* Interactive <div> elements that can't be targeted by the `button` rule above
+     (cite-node, accordion panel headers). Ensure 44×44 minimum tap area via
+     transparent padding so visual layout is unchanged. */
+  .cite-node {
+    min-height: var(--touch-target-min);
+    touch-action: manipulation;
+  }
+  .heatmap-layer__header,
+  .issue-item__header,
+  .fix-item__header {
+    min-height: var(--touch-target-min);
+    touch-action: manipulation;
+  }
 }
 
 /* ── 3. iOS / Android zoom prevention ─────────────────────────── *
@@ -2529,6 +2543,42 @@ html.touch-mode {
     background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.9);
     border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* ── Cite system: reveal hover-hidden data + :active feedback ── */
+
+  /* CiteStream ID column: hidden at 0.4 on desktop until hover.
+     On touch, show at full legibility since hover never fires. */
+  .cite-stream__entry .cite-stream__id {
+    color: #94a3b8;
+  }
+
+  /* Cite node: replace hover elevation with :active press feedback.
+     No resting transform change — visual weight is preserved. */
+  .cite-node:active {
+    border-color: #60a5fa;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.12);
+    transform: translateY(-1px);
+  }
+  .cite-node--compact:active {
+    background: #f3f4f6;
+  }
+
+  /* Panel accordion headers */
+  .heatmap-layer__header:active {
+    background: #f9fafb;
+    border-bottom-color: #3b82f6;
+  }
+  .issue-item__header:active {
+    background: #f9fafb;
+  }
+  .fix-item__header:active {
+    background: #f0f9ff;
+  }
+  /* Fix item card: hover border shown on :active instead */
+  .fix-item:active {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
   }
 }
 

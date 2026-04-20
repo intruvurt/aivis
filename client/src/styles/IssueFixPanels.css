@@ -142,6 +142,7 @@
   background: white;
   cursor: pointer;
   transition: background 0.2s;
+  touch-action: manipulation;
 }
 
 .issue-item__header:hover {
@@ -314,6 +315,7 @@
   background: white;
   cursor: pointer;
   transition: background 0.2s;
+  touch-action: manipulation;
 }
 
 .fix-item__header:hover {

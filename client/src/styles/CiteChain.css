@@ -70,6 +70,7 @@
   background: white;
   transition: all 0.2s;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .cite-node:hover {
@@ -87,6 +88,7 @@
   border-radius: 4px;
   border-color: #e5e7eb;
   font-size: 0.9rem;
+  touch-action: manipulation;
 }
 
 .cite-node--compact:hover {

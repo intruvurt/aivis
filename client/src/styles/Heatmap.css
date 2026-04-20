@@ -136,6 +136,7 @@
   cursor: pointer;
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
+  touch-action: manipulation;
 }
 
 .heatmap-layer__header:hover {

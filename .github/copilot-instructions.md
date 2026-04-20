@@ -1,104 +1,239 @@
-# AI Coding Agent Instructions for Evidence-backed site analysis for AI answers platform 
+AiVIS — Evidence-backed AI Visibility & Citation Engine
+0. SYSTEM DEFINITION (READ FIRST)
 
-## Architecture overview
-- **Monorepo**: `client/` (Vite + React 19 + Tailwind), `server/` (Express 5 + TypeScript), `shared/` (types shared between both)
-- **Data flow**: `POST /api/analyze` → `authRequired` → `usageGate` → `incrementUsage` → `scraper.ts` (Puppeteer) → multi-model AI chain via `callAIProvider()` → `AnalysisCacheService` → JSON response
-- **Entry points**: `client/src/main.tsx` (React router), `server/src/server.ts` (Express routes)
+This is not a dashboard application.
 
-## Development commands
+This is a closed-loop visibility engine that:
 
-> **Terminal rule:** The workspace owner's Windows username contains `$` (`Ma$e`). PowerShell treats `$e` as a variable, breaking paths. **Always use `npm.cmd` / `npx.cmd`** instead of bare `npm` / `npx` in terminal commands.
+detects whether entities are cited in AI systems
+explains why they are not cited
+and generates structured actions that increase citation probability
 
-```bash
-# Client (from client/)
-npm.cmd install && npm.cmd run dev     # Vite dev server on :5173
-npm.cmd test                           # Vitest
-npm.cmd run typecheck                  # tsc --noEmit
+All code changes must preserve this invariant:
 
-# Server (from server/)
-npm.cmd install && npm.cmd run dev     # tsx watch on :3001
-npm.cmd run build                      # Compile to dist/
-```
+Every insight must connect to either a citation state OR a corrective action path.
 
-## Critical conventions
+1. ARCHITECTURE OVERVIEW
+Monorepo structure
+client/ → Vite + React 19 + Tailwind UI
+server/ → Express 5 + TypeScript (source of truth)
+shared/ → canonical types, tiers, and contracts
+Core execution pipeline
+POST /api/analyze
+→ authRequired
+→ usageGate
+→ incrementUsage
+→ scraper.ts (Puppeteer extraction)
+→ queryGenerator.ts (AI query expansion)
+→ citationTester.ts (multi-engine verification)
+→ aiProviders.ts (multi-model reasoning chain)
+→ ledger write (citation truth store)
+→ scoringEngine.ts
+→ AnalysisCacheService
+→ response JSON
+System principle
 
-### Shared types contract
-`shared/types.ts` defines `CanonicalTier`, `TIER_LIMITS`, `TierLimits`, and tier conversion helpers (`uiTierFromCanonical`, `meetsMinimumTier`). **Any tier/limit change must update this file first** - both client and server import from it.
+Server is authoritative. Client is representational.
 
-### Tier system (5-tier)
-| Canonical | Display name | Monthly scans | Price |
-|-----------|-------------|---------------|-------|
-| `observer` | Observer (Free) | 3 | Free |
-| `starter` | Starter | 15 | $15/mo |
-| `alignment` | Alignment (Core) | 60 | $49/mo |
-| `signal` | Signal (Pro) | 110 | $149/mo |
-| `scorefix` | Score Fix (AutoFix PR) | 250 credits | $299 one-time |
+If disagreement occurs:
+server always wins.
 
-Legacy aliases (`free`, `core`, `premium`, `pro`, `enterprise`) map through `uiTierFromCanonical()`.
+2. DEVELOPMENT COMMAND RULES (CRITICAL)
 
-### AI providers
-`server/src/services/aiProviders.ts` exports `PROVIDERS` (paid), `FREE_PROVIDERS` (free-tier), and `callAIProvider()`. Actual prompt logic lives in `server/src/config/aiProviders.ts`.
+Workspace contains Windows username with $.
 
-**Tier-based model allocation (cost-optimised):**
-- **Observer (free):** `FREE_PROVIDERS.slice(0, 2)` - **$0.00/scan**. Uses OpenRouter `:free` model variants (Gemma 4 31B primary, Gemma 4 26B MoE fallback). Both are non-reasoning instruct models chosen specifically because they reliably produce JSON without wasting tokens on `<think>` chain-of-thought blocks. Rate-limited by OpenRouter but zero cost. Extended fallback chain (6 models total): Gemma 4 31B → Gemma 4 26B MoE → Nemotron 3 Super 120B → MiniMax M2.5 → Nemotron 3 Nano 30B → GPT-OSS 120B. All verified against OpenRouter `/models?q=:free` on 2026-04-09.
-- **Starter ($15/mo):** Same model allocation as Alignment — `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. GPT-5 Nano (primary), Claude Haiku 4.5 (fallback only). Full recommendations with implementation code, content highlights, PDF export, shareable links.
-- **Alignment ($49/mo):** `PROVIDERS.slice(0, 2)` - **~$0.002/scan**. GPT-5 Nano (primary), Claude Haiku 4.5 (fallback only).
-- **Signal ($149/mo):** `PROVIDERS.slice(0, 3)` - **~$0.005/scan**. **Triple-Check Pipeline** (3 models). GPT-5 Mini deep analysis → Claude Sonnet 4.6 peer critique (score adjustment −15 to +10, extra recommendations) → Grok 4.1 Fast validation gate (confirms or overrides final score). Triple-check is Signal-exclusive; the progress overlay adapts dynamically.
+REQUIRED COMMAND FORMAT
 
-`callAIProvider` forwards `opts.max_tokens` through to `openrouterPrompt()`. Right-sized per stage: AI1=5000, AI2=600, AI3=400. AI2 and AI3 run sequentially after AI1. Each has a deadline-based timeout derived from the remaining pipeline budget (57 s total). The per-call HTTP timeout is 30 s. The primary AI deadline is capped at 25 s to guarantee the fallback chain gets ≥ 14 s. The fallback floor is 8 s per model (raised from 5 s). Deadline timers are cleared via `clearTimeout` after each `Promise.race` settles to prevent ghost responses from leaked timers. The response includes `triple_check_enabled` (boolean) and `model_count` (1, 2, or 3). Truncated JSON from models hitting max_tokens is auto-repaired by `repairTruncatedJson()` in `safeJsonParse`.
+Always use:
 
-**Recommendation output:** The prompt requests 8-12 recommendations with no artificial cap. Client-side rendering (RecommendationList, ComprehensiveAnalysis keypoints, DocumentGenerator exports) shows ALL BRAG evidence-backed recommendations returned by the analysis pipeline - no slicing or truncation.
+npm.cmd
+npx.cmd
 
-### Middleware chain for protected routes
-```typescript
-app.post('/api/analyze', authRequired, usageGate, incrementUsage, handler);
-```
-- `authRequired`: validates JWT, enforces email verification, sets `req.user`
-- `usageGate`: checks monthly scan limit against `usage_daily` table (skipped in dev)
-- `incrementUsage`: increments daily usage counter
+Never use:
 
-### Security rules
-- `/api/analyze` **rejects client-provided API keys** (server-only `OPENROUTER_API_KEY`)
-- URL validation blocks private/localhost IPs via `isPrivateOrLocalHost()` in production
-- Cache keyed by case-insensitive URL in `analysis_cache` table
+npm
+npx
 
-## Environment variables
+Reason:
+PowerShell variable interpolation breaks $e paths.
 
-### Server (required)
-- `DATABASE_URL` - Supabase PostgreSQL connection string (PgBouncer pooler, `sslmode=require` auto-enforced)
-- `JWT_SECRET` - Signs user tokens
-- `OPEN_ROUTER_API_KEY` or `OPENROUTER_API_KEY` - AI provider auth
+3. TIER SYSTEM (CANONICAL TRUTH)
 
-### Server (optional)
-- `SENTRY_DSN`, `ADMIN_KEY`, `OLLAMA_BASE_URL`, `FRONTEND_URL`
-- `DATABASE_CA_CERT` / `PG_CA_CERT` - CA cert for Railway/managed Postgres verified SSL
+Defined in shared/types.ts.
 
-### Client (`client/.env`)
-- `VITE_API_URL` - Backend base URL
-- `VITE_SENTRY_DSN` - Client error tracking
-- `VITE_SUPABASE_URL` - Supabase project URL (for the browser-side Supabase JS client)
-- `VITE_SUPABASE_ANON_KEY` - Supabase anon/public key (preferred; legacy `VITE_SUPABASE_PUBLISHABLE_KEY` also accepted)
+Canonical tiers
+Tier	Name	Scans	Purpose
+observer	Free visibility probe	3/mo	entry-level detection
+starter	Growth layer	15/mo	baseline optimization
+alignment	Core system	60/mo	structured visibility engineering
+signal	Advanced inference	110/mo	triple-model reasoning
+scorefix	remediation engine	250 credits	automated PR fixes
+RULES
+Never hardcode tier logic outside shared/types.ts
+UI labels are derived only via mapping helpers
+Legacy names are invalid except through conversion layer
+4. AI MODEL ORCHESTRATION
 
-## Database
-Database is **Supabase PostgreSQL** (migrated from Neon). Server connects via `pg` Pool through the Supabase PgBouncer pooler URL (`DATABASE_URL`). The server uses the service-role password so RLS is bypassed server-side (correct). The browser-side Supabase JS client (`client/src/utils/supabase.ts`) uses the anon key and is only instantiated when both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set.
+Defined in aiProviders.ts + config/aiProviders.ts
 
-Migrations auto-run at startup in `server/src/services/postgresql.ts`. Key tables: `users`, `user_sessions`, `usage_daily`, `analysis_cache`, `payments`, `audits`, `competitor_tracking`, `citation_tests`, `citation_results`, `licenses`, `brand_mentions`, `mention_kpi_snapshots`, `serp_snapshots`, `ner_run_entities`.
+Execution model
+Observer (free)
+OpenRouter :free models only
+6-model fallback chain
+zero-cost execution
+optimized for structured JSON output (no reasoning verbosity)
+Starter / Alignment
+GPT-5 Nano primary
+Claude Haiku 4.5 fallback
+lightweight deterministic responses
+Signal (advanced)
 
-## Social listening + SERP
-- `server/src/services/mentionTracker.ts` — 19 free sources (Reddit, HN, Mastodon, DDG/Bing dork, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, GitHub Discussions). No API key required.
-- `server/src/services/serpService.ts` — SerpAPI client: `fetchSERPSignals()`, `computeSERPBoosts()`, `saveSERPSnapshot()`, `getCachedSERPSnapshot()`. Requires `SERP_API_KEY` env var. Tier-gated: Alignment+ only. Boosts `entity_clarity_score` and `authority_score`.
+Triple-check pipeline:
 
-## Key API routes
-| Endpoint | Auth | Purpose |
-|----------|------|---------|
-| `POST /api/analyze` | ✓ | Run AI visibility audit |
-| `GET /api/audits` | ✓ | User's audit history |
-| `GET /api/analytics` | ✓ | Score history & trends |
-| `GET /api/health` | ✗ | Health check + DB ping |
-| `GET /api/pricing` | ✗ | Tier pricing info |
-| `POST /api/admin/cache/clear` | Admin | Clear analysis cache |
-| `/api/auth/*` | varies | Auth routes (register, signin, profile) |
-| `/api/payment/*` | varies | Stripe checkout, webhooks, pricing |
-| `/api/competitors/*` | ✓ | Competitor tracking (Alignment+) |
-| `/api/citations/*` | ✓ | Citation testing (Signal) |
-| `/api/reverse-engineer/*` | ✓ | AI answer tools - decompile, ghost, model-diff, simulate (Alignment+) |
+GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast
+peer validation stage
+score adjustment layer
+final reconciliation gate
+5. CITATION ENGINE (CORE SYSTEM)
+Citation engines (parallel execution)
+ddg_web
+bing_web
+ddg_instant
+
+All executed via:
+
+Promise.all()
+
+in citationTester.ts.
+
+RULE
+
+A claim is invalid unless it can be traced to at least one citation source OR explicitly marked as missing evidence.
+
+6. SECURITY MODEL
+Middleware chain (required order)
+authRequired →
+usageGate →
+incrementUsage →
+handler
+Security invariants
+/api/analyze NEVER accepts client API keys
+all external URLs validated via isPrivateOrLocalHost()
+all input sanitized via sanitizeInput()
+SSR payloads protected via escapeBootstrapState()
+CSP nonce enforced per request
+Helmet always enabled globally
+7. DATABASE MODEL (SUPABASE POSTGRES)
+Storage system
+Primary DB: Supabase Postgres (PgBouncer pooler)
+Server uses service-role credentials (RLS bypassed intentionally)
+Client uses anon key only
+Core tables
+users
+usage_daily
+analysis_cache
+audits
+citation_tests
+citation_results
+competitor_tracking
+brand_mentions
+serp_snapshots
+ner_run_entities
+payments
+8. SOCIAL + SERP INTELLIGENCE
+Mention system (no API keys)
+
+mentionTracker.ts sources:
+
+Reddit
+Hacker News
+Mastodon
+GitHub
+Quora
+Product Hunt
+Wikipedia
+YouTube
+Dev.to
+Medium
+Stack Overflow
+Twitter/X
+Bluesky
+Lemmy
+Google News
+others (19 total)
+SERP enrichment (tier gated)
+
+serpService.ts:
+
+requires SERP_API_KEY
+Alignment+ only
+improves:
+entity_clarity_score
+authority_score
+9. ROUTE SYSTEM
+Core API
+Route	Auth	Purpose
+/api/analyze	yes	primary visibility engine
+/api/audits	yes	history
+/api/analytics	yes	temporal visibility traces
+/api/health	no	system check
+/api/pricing	no	tier definitions
+Extended systems
+/api/competitors → comparison engine (Alignment+)
+/api/citations → citation verification (Signal)
+/api/reverse-engineer → AI answer deconstruction tools
+/api/payment → Stripe billing engine
+/api/auth → session system
+10. CRITICAL PIPELINE RULES
+/api/analyze must always execute in this order:
+authRequired
+→ usageGate
+→ incrementUsage
+→ scraper
+→ query expansion
+→ citation verification
+→ AI reasoning chain
+→ ledger persistence
+→ scoring engine
+→ cached response
+FAILURE HANDLING RULE
+
+If any stage fails:
+
+preserve prior valid outputs
+degrade gracefully
+never return partial schema
+never break response shape
+11. OUTPUT CONTRACT RULE
+
+Every analysis MUST produce:
+
+citation state OR
+missing citation explanation + action graph
+
+No exceptions.
+
+12. SYSTEM PHILOSOPHY (NON-OPTIONAL)
+
+This system is not:
+
+SEO tool
+analytics dashboard
+reporting SaaS
+
+This system is:
+
+a deterministic engine for measuring and increasing entity visibility inside AI answer systems
+
+13. CODE MODIFICATION RULES
+
+When modifying code:
+
+do not break ledger consistency
+do not bypass citation flow
+do not introduce non-traceable metrics
+do not weaken server authority model
+do not add UI-only logic that contradicts backend truth
+14. FINAL PRINCIPLE
+
+If an output does not improve the probability of citation or explain its absence, it does not belong in the system.

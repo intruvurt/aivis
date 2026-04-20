@@ -1150,12 +1150,12 @@ function _LegacyRender_UNUSED() {
                   {loading ? (
                     <>
                       <Spinner className="h-5 w-5" />
-                      Analyzing how AI reads your site…
+                      Analyzing AI citation status…
                     </>
                   ) : (
                     <>
                       <Zap className="h-4 w-4" />
-                      See Your Visibility
+                      Check Citation Status
                     </>
                   )}
                 </button>

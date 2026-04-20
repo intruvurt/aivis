@@ -394,6 +394,7 @@ export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>
   alignment: { monthlyUsd: PRICING.alignment.billing.monthly, yearlyUsd: PRICING.alignment.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   signal: { monthlyUsd: PRICING.signal.billing.monthly, yearlyUsd: PRICING.signal.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   scorefix: { monthlyUsd: PRICING.scorefix.billing.monthly, yearlyUsd: PRICING.scorefix.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
+  agency: { monthlyUsd: 299, yearlyUsd: 2990, oneTimeUsd: 0, billingModel: 'subscription' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */
@@ -425,11 +426,11 @@ export interface ToolCreditRule {
 }
 
 export const TOOL_CREDIT_COSTS: Readonly<Record<ToolAction, ToolCreditRule>> = {
-  citation_query: { freeMonthly: { observer: 0, starter: 0, alignment: 5, signal: 20, scorefix: 10 }, creditCost: 1 },
-  reverse_engineer: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 2 },
-  mention_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 1 },
-  competitor_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 2, signal: 5, scorefix: 3 }, creditCost: 2 },
-  mention_juice: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5 }, creditCost: 1 },
+  citation_query: { freeMonthly: { observer: 0, starter: 0, alignment: 5, signal: 20, scorefix: 10, agency: 50 }, creditCost: 1 },
+  reverse_engineer: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5, agency: 20 }, creditCost: 2 },
+  mention_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5, agency: 20 }, creditCost: 1 },
+  competitor_scan: { freeMonthly: { observer: 0, starter: 0, alignment: 2, signal: 5, scorefix: 3, agency: 10 }, creditCost: 2 },
+  mention_juice: { freeMonthly: { observer: 0, starter: 0, alignment: 3, signal: 10, scorefix: 5, agency: 20 }, creditCost: 1 },
 };
 
 /* ── Milestones ─────────────────────────────────────────────────────────── */
@@ -476,6 +477,7 @@ export const PRIVATE_EXPOSURE_SCAN_PACKAGING: Readonly<Record<CanonicalTier, Pri
   alignment: { available: true, label: 'Standard', maxTargetsPerScan: 3, description: 'Run private exposure scans on up to 3 targets per request.' },
   signal: { available: true, label: 'Advanced', maxTargetsPerScan: 10, description: 'Full private exposure scanning with up to 10 targets per request.' },
   scorefix: { available: true, label: 'Premium', maxTargetsPerScan: 20, description: 'Unlimited private exposure scanning logic.' },
+  agency: { available: true, label: 'Agency', maxTargetsPerScan: 50, description: 'Full private exposure scanning for agency clients.' },
 };
 
 /* ========================= AI Platform scores ========================= */

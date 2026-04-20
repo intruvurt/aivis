@@ -77,6 +77,16 @@ export const ENTITLEMENTS: Readonly<Record<Plan, PlanEntitlements>> = {
     alerts: true,
     fixVerification: true,
   },
+  agency: {
+    auditsMonthly: 500,
+    pagesPerAudit: 50,
+    fullEvidence: true,
+    competitorTracking: true,
+    citationTracking: true,
+    history: true,
+    alerts: true,
+    fixVerification: true,
+  },
 };
 
 export function normalizePlan(plan: CanonicalTier | LegacyTier): Plan {

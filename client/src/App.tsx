@@ -354,7 +354,7 @@ export default function App() {
               <Route path="/app/audits/:id" element={<AuditDetails />} />
             </Route>
 
-            {/* ═══ Authenticated App Shell (operator/infra surfaces — keep sidebar) ═══ */}
+            {/* ═══ Authenticated App Shell ═══ */}
             <Route
               path="/app"
               element={

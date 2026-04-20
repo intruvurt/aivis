@@ -1,26 +1,47 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  ChevronDown, User, Settings, CreditCard, LogOut, Gift,
-  BarChart3, Target, Users, Eye, FlaskConical, FileText, BookOpen, Shield, Bell,
-  Search, Cpu, Globe, Wrench, Zap, Layers, HelpCircle, Brain, ShieldCheck,
-} from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import { useWorkspaceStore } from "../stores/workspaceStore";
-import useFeatureStatus from "../hooks/useFeatureStatus";
-import useNotifications, { getNotificationDestination } from "../hooks/useNotifications";
-import { TIER_LIMITS, meetsMinimumTier } from "@shared/types";
-import WhatsNewPanel from "./WhatsNewPanel";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { CompetitorRadarIcon, AnswerDecompilerIcon } from "./icons";
-import { useTranslation } from "react-i18next";
-import { getDisplayAvatarUrl, getIdentityInitials } from "../utils/userIdentity";
+  ChevronDown,
+  User,
+  Settings,
+  CreditCard,
+  LogOut,
+  Gift,
+  BarChart3,
+  Target,
+  Users,
+  Eye,
+  FlaskConical,
+  FileText,
+  BookOpen,
+  Shield,
+  Bell,
+  Search,
+  Cpu,
+  Globe,
+  Wrench,
+  Zap,
+  Layers,
+  HelpCircle,
+  Brain,
+  ShieldCheck,
+} from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import { useWorkspaceStore } from '../stores/workspaceStore';
+import useFeatureStatus from '../hooks/useFeatureStatus';
+import useNotifications, { getNotificationDestination } from '../hooks/useNotifications';
+import { TIER_LIMITS, meetsMinimumTier } from '@shared/types';
+import WhatsNewPanel from './WhatsNewPanel';
+import LanguageSwitcher from './LanguageSwitcher';
+import { CompetitorRadarIcon, AnswerDecompilerIcon } from './icons';
+import { useTranslation } from 'react-i18next';
+import { getDisplayAvatarUrl, getIdentityInitials } from '../utils/userIdentity';
 
-const LOGO_URL = "/aivis-logo.png";
-const LOCKED_FEATURE_IMAGE_URL = "/feature-locked.png";
+const LOGO_URL = '/aivis-logo.png';
+const LOCKED_FEATURE_IMAGE_URL = '/feature-locked.png';
 
-type ToolTier = "observer" | "alignment" | "signal" | "scorefix";
+type ToolTier = 'observer' | 'alignment' | 'signal' | 'scorefix';
 type ToolLink = {
   to: string;
   label: string;
@@ -39,21 +60,63 @@ type ToolGroup = {
 /** Research & Analysis tools - data/insights gathering */
 const RESEARCH_GROUPS: ToolGroup[] = [
   {
-    heading: "Analysis",
-    accent: "text-cyan-400",
+    heading: 'Analysis',
+    accent: 'text-cyan-400',
     links: [
-      { to: "/app/analytics", label: "Analytics", icon: BarChart3, desc: "Score history & trends", minTier: "observer", color: "text-cyan-400" },
-      { to: "/app/reports", label: "Reports", icon: FileText, desc: "Saved audit reports", minTier: "observer", color: "text-cyan-300" },
-      { to: "/app/site-crawl", label: "Site Crawl", icon: Layers, desc: "Multi-page SEO crawl", minTier: "alignment", color: "text-cyan-500" },
+      {
+        to: '/app/analytics',
+        label: 'Analytics',
+        icon: BarChart3,
+        desc: 'Score history & trends',
+        minTier: 'observer',
+        color: 'text-cyan-400',
+      },
+      {
+        to: '/app/reports',
+        label: 'Reports',
+        icon: FileText,
+        desc: 'Saved audit reports',
+        minTier: 'observer',
+        color: 'text-cyan-300',
+      },
+      {
+        to: '/app/site-crawl',
+        label: 'Site Crawl',
+        icon: Layers,
+        desc: 'Multi-page SEO crawl',
+        minTier: 'alignment',
+        color: 'text-cyan-500',
+      },
     ],
   },
   {
-    heading: "Research",
-    accent: "text-emerald-400",
+    heading: 'Research',
+    accent: 'text-emerald-400',
     links: [
-      { to: "/app/keywords", label: "Keywords", icon: Search, desc: "AI keyword research", minTier: "observer", color: "text-emerald-400" },
-      { to: "/app/niche-discovery", label: "Niche Discovery", icon: Globe, desc: "Top 100 niche rankings", minTier: "observer", color: "text-emerald-300" },
-      { to: "/app/competitors", label: "Competitors", icon: CompetitorRadarIcon, desc: "Side by side benchmarks", minTier: "alignment", color: "text-emerald-500" },
+      {
+        to: '/app/keywords',
+        label: 'Keywords',
+        icon: Search,
+        desc: 'AI keyword research',
+        minTier: 'observer',
+        color: 'text-emerald-400',
+      },
+      {
+        to: '/app/niche-discovery',
+        label: 'Niche Discovery',
+        icon: Globe,
+        desc: 'Top 100 niche rankings',
+        minTier: 'observer',
+        color: 'text-emerald-300',
+      },
+      {
+        to: '/app/competitors',
+        label: 'Competitors',
+        icon: CompetitorRadarIcon,
+        desc: 'Side by side benchmarks',
+        minTier: 'alignment',
+        color: 'text-emerald-500',
+      },
     ],
   },
 ];
@@ -61,30 +124,93 @@ const RESEARCH_GROUPS: ToolGroup[] = [
 /** AI Intelligence & Technical tools - action/optimization */
 const AI_TOOL_GROUPS: ToolGroup[] = [
   {
-    heading: "AI Intelligence",
-    accent: "text-violet-400",
+    heading: 'AI Intelligence',
+    accent: 'text-violet-400',
     links: [
-      { to: "/app/citations", label: "Citations", icon: Eye, desc: "AI citation tracking", minTier: "alignment", color: "text-violet-400" },
-      { to: "/app/reverse-engineer", label: "Reverse Engineer", icon: AnswerDecompilerIcon, desc: "Deconstruct AI answers", minTier: "alignment", color: "text-violet-300" },
-      { to: "/app/prompt-intelligence", label: "Prompt Intelligence", icon: Brain, desc: "AI query pattern analysis", minTier: "alignment", color: "text-violet-200" },
-      { to: "/app/answer-presence", label: "Answer Presence", icon: Globe, desc: "AI answer inclusion tracking", minTier: "alignment", color: "text-cyan-400" },
-      { to: "/app/brand-integrity", label: "Brand Integrity", icon: ShieldCheck, desc: "Brand accuracy monitoring", minTier: "alignment", color: "text-emerald-400" },
+      {
+        to: '/app/citations',
+        label: 'Citations',
+        icon: Eye,
+        desc: 'AI citation tracking',
+        minTier: 'alignment',
+        color: 'text-violet-400',
+      },
+      {
+        to: '/app/reverse-engineer',
+        label: 'Reverse Engineer',
+        icon: AnswerDecompilerIcon,
+        desc: 'Deconstruct AI answers',
+        minTier: 'alignment',
+        color: 'text-violet-300',
+      },
+      {
+        to: '/app/prompt-intelligence',
+        label: 'Prompt Intelligence',
+        icon: Brain,
+        desc: 'AI query pattern analysis',
+        minTier: 'alignment',
+        color: 'text-violet-200',
+      },
+      {
+        to: '/app/answer-presence',
+        label: 'Answer Presence',
+        icon: Globe,
+        desc: 'AI answer inclusion tracking',
+        minTier: 'alignment',
+        color: 'text-cyan-400',
+      },
+      {
+        to: '/app/brand-integrity',
+        label: 'Brand Integrity',
+        icon: ShieldCheck,
+        desc: 'Brand accuracy monitoring',
+        minTier: 'alignment',
+        color: 'text-emerald-400',
+      },
     ],
   },
   {
-    heading: "Technical",
-    accent: "text-amber-400",
+    heading: 'Technical',
+    accent: 'text-amber-400',
     links: [
-      { to: "/tools/server-headers", label: "Server Headers", icon: Shield, desc: "HTTP headers, cache, security", minTier: "observer", color: "text-amber-400" },
-      { to: "/app/score-fix", label: "Score Fix", icon: FlaskConical, desc: "Remediation workflows", minTier: "scorefix", color: "text-amber-500" },
+      {
+        to: '/tools/server-headers',
+        label: 'Server Headers',
+        icon: Shield,
+        desc: 'HTTP headers, cache, security',
+        minTier: 'observer',
+        color: 'text-amber-400',
+      },
+      {
+        to: '/app/score-fix',
+        label: 'Score Fix',
+        icon: FlaskConical,
+        desc: 'Remediation workflows',
+        minTier: 'scorefix',
+        color: 'text-amber-500',
+      },
     ],
   },
   {
-    heading: "Platform",
-    accent: "text-indigo-400",
+    heading: 'Platform',
+    accent: 'text-indigo-400',
     links: [
-      { to: "/app/mcp", label: "MCP Console", icon: Cpu, desc: "AI agent tool server", minTier: "alignment", color: "text-indigo-400" },
-      { to: "/app/gsc", label: "Search Console", icon: BarChart3, desc: "GSC performance intelligence", minTier: "alignment", color: "text-emerald-400" },
+      {
+        to: '/app/mcp',
+        label: 'MCP Console',
+        icon: Cpu,
+        desc: 'AI agent tool server',
+        minTier: 'alignment',
+        color: 'text-indigo-400',
+      },
+      {
+        to: '/app/gsc',
+        label: 'Search Console',
+        icon: BarChart3,
+        desc: 'GSC performance intelligence',
+        minTier: 'alignment',
+        color: 'text-emerald-400',
+      },
     ],
   },
 ];
@@ -102,19 +228,24 @@ type DocsLink = {
 };
 
 const DOCS_LINKS: DocsLink[] = [
-  { to: "/guide", label: "Guide", icon: BookOpen, color: "text-sky-300" },
-  { to: "/api-docs", label: "API Docs", icon: Cpu, color: "text-indigo-300" },
-  { to: "/blogs", label: "Blog", icon: FileText, color: "text-cyan-300" },
-  { to: "/methodology", label: "Methodology", icon: FlaskConical, color: "text-violet-300" },
-  { to: "/help", label: "Help Center", icon: HelpCircle, color: "text-emerald-300" },
-  { to: "/compliance", label: "Compliance & Security", icon: Shield, color: "text-rose-300" },
-  { to: "/insights", label: "Insights", icon: Eye, color: "text-cyan-300" },
-  { to: "/app/benchmarks", label: "Benchmarks", icon: Target, color: "text-orange-300" },
-  { to: "/changelog", label: "Changelog", icon: FileText, color: "text-white/70" },
-  { to: "/compare", label: "Compare", icon: BarChart3, color: "text-indigo-300" },
-  { to: "/competitive-landscape", label: "Competitive Landscape", icon: Globe, color: "text-teal-300" },
-  { to: "/integrations", label: "Integrations", icon: Wrench, color: "text-fuchsia-300" },
-  { to: "/app/workflow", label: "Workflow", icon: Zap, color: "text-amber-300" },
+  { to: '/guide', label: 'Guide', icon: BookOpen, color: 'text-sky-300' },
+  { to: '/api-docs', label: 'API Docs', icon: Cpu, color: 'text-indigo-300' },
+  { to: '/blogs', label: 'Blog', icon: FileText, color: 'text-cyan-300' },
+  { to: '/methodology', label: 'Methodology', icon: FlaskConical, color: 'text-violet-300' },
+  { to: '/help', label: 'Help Center', icon: HelpCircle, color: 'text-emerald-300' },
+  { to: '/compliance', label: 'Compliance & Security', icon: Shield, color: 'text-rose-300' },
+  { to: '/insights', label: 'Insights', icon: Eye, color: 'text-cyan-300' },
+  { to: '/app/benchmarks', label: 'Benchmarks', icon: Target, color: 'text-orange-300' },
+  { to: '/changelog', label: 'Changelog', icon: FileText, color: 'text-white/70' },
+  { to: '/compare', label: 'Compare', icon: BarChart3, color: 'text-indigo-300' },
+  {
+    to: '/competitive-landscape',
+    label: 'Competitive Landscape',
+    icon: Globe,
+    color: 'text-teal-300',
+  },
+  { to: '/integrations', label: 'Integrations', icon: Wrench, color: 'text-fuchsia-300' },
+  { to: '/app/workflow', label: 'Workflow', icon: Zap, color: 'text-amber-300' },
 ];
 
 type UserMenuLink = {
@@ -126,14 +257,15 @@ type UserMenuLink = {
 
 /** Extra links moved into the user menu for discoverability */
 const USER_EXTRA_LINKS: UserMenuLink[] = [
-  { to: "/about", label: "About", icon: BookOpen, color: "text-sky-300" },
-  { to: "/support", label: "Support", icon: Users, color: "text-emerald-300" },
-  { to: "/integrations", label: "Integrations", icon: Target, color: "text-violet-300" },
+  { to: '/about', label: 'About', icon: BookOpen, color: 'text-sky-300' },
+  { to: '/support', label: 'Support', icon: Users, color: 'text-emerald-300' },
+  { to: '/integrations', label: 'Integrations', icon: Target, color: 'text-violet-300' },
 ];
 
 /* ── Compact workspace switcher ──────────────── */
 function WorkspaceSwitcher() {
-  const { workspaces, activeWorkspaceId, setActiveWorkspaceId, fetchWorkspaces } = useWorkspaceStore();
+  const { workspaces, activeWorkspaceId, setActiveWorkspaceId, fetchWorkspaces } =
+    useWorkspaceStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -146,8 +278,8 @@ function WorkspaceSwitcher() {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
   if (!isAuthenticated || workspaces.length <= 1) return null;
@@ -164,20 +296,29 @@ function WorkspaceSwitcher() {
         aria-expanded={open}
       >
         <Layers className="w-3.5 h-3.5 text-cyan-400/70" />
-        <span className="text-white/70 truncate max-w-[100px]">{active?.workspaceName || "Workspace"}</span>
-        <ChevronDown className={`w-3 h-3 text-white/40 transition-transform ${open ? "rotate-180" : ""}`} />
+        <span className="text-white/70 truncate max-w-[100px]">
+          {active?.workspaceName || 'Workspace'}
+        </span>
+        <ChevronDown
+          className={`w-3 h-3 text-white/40 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
       </button>
       {open && (
         <div className="absolute right-0 mt-1.5 w-56 bg-gradient-to-b from-[#2d3548] to-[#272f3e] border border-white/12 rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-[200]">
-          <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/35">Workspaces</p>
+          <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+            Workspaces
+          </p>
           {workspaces.map((w) => (
             <button
               key={w.workspaceId}
-              onClick={() => { setActiveWorkspaceId(w.workspaceId); setOpen(false); }}
+              onClick={() => {
+                setActiveWorkspaceId(w.workspaceId);
+                setOpen(false);
+              }}
               className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
                 w.workspaceId === activeWorkspaceId
-                  ? "text-cyan-300 bg-cyan-500/10"
-                  : "text-white/70 hover:text-white hover:bg-white/5"
+                  ? 'text-cyan-300 bg-cyan-500/10'
+                  : 'text-white/70 hover:text-white hover:bg-white/5'
               }`}
             >
               <Layers className="w-3.5 h-3.5 flex-shrink-0" />
@@ -224,14 +365,22 @@ export default function TopNav() {
   // Close user dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as globalThis.Node)) setMenuOpen(false);
-      if (notificationsRef.current && !notificationsRef.current.contains(e.target as globalThis.Node)) setNotificationsOpen(false);
-      if (researchRef.current && !researchRef.current.contains(e.target as globalThis.Node)) setResearchOpen(false);
-      if (aiToolsRef.current && !aiToolsRef.current.contains(e.target as globalThis.Node)) setAiToolsOpen(false);
-      if (docsRef.current && !docsRef.current.contains(e.target as globalThis.Node)) setDocsOpen(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as globalThis.Node))
+        setMenuOpen(false);
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(e.target as globalThis.Node)
+      )
+        setNotificationsOpen(false);
+      if (researchRef.current && !researchRef.current.contains(e.target as globalThis.Node))
+        setResearchOpen(false);
+      if (aiToolsRef.current && !aiToolsRef.current.contains(e.target as globalThis.Node))
+        setAiToolsOpen(false);
+      if (docsRef.current && !docsRef.current.contains(e.target as globalThis.Node))
+        setDocsOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   // Close menus on route change
@@ -250,23 +399,38 @@ export default function TopNav() {
   const avatarUrl = getDisplayAvatarUrl(user);
   const initials = getIdentityInitials(user);
   const hasSession = isAuthenticated || !!token;
-  const tierKey = (user?.tier === 'alignment' || user?.tier === 'signal' || user?.tier === 'scorefix' || user?.tier === 'observer')
-    ? user.tier
-    : 'observer';
+  const tierKey =
+    user?.tier === 'alignment' ||
+    user?.tier === 'signal' ||
+    user?.tier === 'scorefix' ||
+    user?.tier === 'observer'
+      ? user.tier
+      : 'observer';
   const tierLimits = TIER_LIMITS[tierKey] || TIER_LIMITS.observer;
-  const monthlyScanTotal = Number(featureStatus?.usage?.monthlyLimit ?? tierLimits.scansPerMonth ?? 0);
+  const monthlyScanTotal = Number(
+    featureStatus?.usage?.monthlyLimit ?? tierLimits.scansPerMonth ?? 0
+  );
   const scansUsed = Math.max(0, Number(featureStatus?.usage?.usedThisMonth ?? 0));
-  const scansRemaining = Math.max(0, Number(featureStatus?.usage?.remainingThisMonth ?? monthlyScanTotal));
-  const usagePercent = monthlyScanTotal > 0 ? Math.min(100, Math.round((scansUsed / monthlyScanTotal) * 100)) : 0;
+  const scansRemaining = Math.max(
+    0,
+    Number(featureStatus?.usage?.remainingThisMonth ?? monthlyScanTotal)
+  );
+  const usagePercent =
+    monthlyScanTotal > 0 ? Math.min(100, Math.round((scansUsed / monthlyScanTotal) * 100)) : 0;
   const packCreditsBalance = Math.max(0, Number(featureStatus?.credits?.packCreditsRemaining ?? 0));
-  const referralCreditsTotal = Math.max(0, Number(featureStatus?.credits?.referralCreditsEarnedTotal ?? 0));
-  const formatCreditBalance = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(2));
+  const referralCreditsTotal = Math.max(
+    0,
+    Number(featureStatus?.credits?.referralCreditsEarnedTotal ?? 0)
+  );
+  const formatCreditBalance = (value: number) =>
+    Number.isInteger(value) ? String(value) : value.toFixed(2);
   const packCreditsLabel = formatCreditBalance(packCreditsBalance);
 
   const tierTheme = {
     observer: {
       label: 'Observer',
-      className: 'bg-gradient-to-r from-charcoal-deep via-charcoal to-charcoal-light border border-white/25 text-white',
+      className:
+        'bg-gradient-to-r from-charcoal-deep via-charcoal to-charcoal-light border border-white/25 text-white',
       navActive: 'bg-emerald-500/20 border border-emerald-300/45 text-emerald-100',
       navHover: 'hover:bg-emerald-500/12 hover:text-emerald-100',
       menuBorder: 'border-emerald-300/40',
@@ -275,7 +439,8 @@ export default function TopNav() {
     },
     alignment: {
       label: 'Alignment',
-      className: 'bg-gradient-to-r from-[#f97316] via-[#fbbf24] to-[#22d3ee] border border-white/25 text-charcoal-deep',
+      className:
+        'bg-gradient-to-r from-[#f97316] via-[#fbbf24] to-[#22d3ee] border border-white/25 text-charcoal-deep',
       navActive: 'bg-indigo-500/20 border border-indigo-300/45 text-indigo-100',
       navHover: 'hover:bg-indigo-500/12 hover:text-indigo-100',
       menuBorder: 'border-indigo-300/40',
@@ -284,7 +449,8 @@ export default function TopNav() {
     },
     signal: {
       label: 'Signal',
-      className: 'bg-gradient-to-r from-[#0a6ea8] via-[#118ad1] to-[#37a6de] border border-white/25 text-white',
+      className:
+        'bg-gradient-to-r from-[#0a6ea8] via-[#118ad1] to-[#37a6de] border border-white/25 text-white',
       navActive: 'bg-cyan-500/20 border border-cyan-300/45 text-cyan-100',
       navHover: 'hover:bg-cyan-500/12 hover:text-cyan-100',
       menuBorder: 'border-cyan-300/40',
@@ -293,7 +459,8 @@ export default function TopNav() {
     },
     scorefix: {
       label: 'Score Fix',
-      className: 'bg-gradient-to-r from-fuchsia-600 via-violet-600 to-pink-500 border border-white/25 text-white',
+      className:
+        'bg-gradient-to-r from-fuchsia-600 via-violet-600 to-pink-500 border border-white/25 text-white',
       navActive: 'bg-amber-500/20 border border-amber-300/45 text-amber-100',
       navHover: 'hover:bg-amber-500/12 hover:text-amber-100',
       menuBorder: 'border-amber-300/40',
@@ -305,7 +472,8 @@ export default function TopNav() {
   const navActiveClass = `${tierTheme.navActive}`;
   const navInactiveClass = `text-white/65 ${tierTheme.navHover}`;
   const menuPanelClass = `bg-charcoal-deep border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
-  const dropdownScrollClass = "max-h-[min(70vh,calc(100vh-5.5rem))] overflow-y-auto overscroll-contain";
+  const dropdownScrollClass =
+    'max-h-[min(70vh,calc(100vh-5.5rem))] overflow-y-auto overscroll-contain';
 
   const isToolLocked = useCallback(
     (link: ToolLink) => !meetsMinimumTier(tierKey, link.minTier),
@@ -318,21 +486,44 @@ export default function TopNav() {
   const isDocsActive = DOCS_LINKS.some((l) => location.pathname === l.to);
 
   // Hover-intent handlers for desktop menus
-  const openResearch = useCallback(() => { clearTimeout(researchTimeout.current); setResearchOpen(true); }, []);
-  const closeResearch = useCallback(() => { researchTimeout.current = setTimeout(() => setResearchOpen(false), 150); }, []);
-  const openAiTools = useCallback(() => { clearTimeout(aiToolsTimeout.current); setAiToolsOpen(true); }, []);
-  const closeAiTools = useCallback(() => { aiToolsTimeout.current = setTimeout(() => setAiToolsOpen(false), 150); }, []);
-  const openDocs = useCallback(() => { clearTimeout(docsTimeout.current); setDocsOpen(true); }, []);
-  const closeDocs = useCallback(() => { docsTimeout.current = setTimeout(() => setDocsOpen(false), 150); }, []);
+  const openResearch = useCallback(() => {
+    clearTimeout(researchTimeout.current);
+    setResearchOpen(true);
+  }, []);
+  const closeResearch = useCallback(() => {
+    researchTimeout.current = setTimeout(() => setResearchOpen(false), 150);
+  }, []);
+  const openAiTools = useCallback(() => {
+    clearTimeout(aiToolsTimeout.current);
+    setAiToolsOpen(true);
+  }, []);
+  const closeAiTools = useCallback(() => {
+    aiToolsTimeout.current = setTimeout(() => setAiToolsOpen(false), 150);
+  }, []);
+  const openDocs = useCallback(() => {
+    clearTimeout(docsTimeout.current);
+    setDocsOpen(true);
+  }, []);
+  const closeDocs = useCallback(() => {
+    docsTimeout.current = setTimeout(() => setDocsOpen(false), 150);
+  }, []);
 
   return (
-    <nav aria-label="Main navigation" className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible">
-
+    <nav
+      aria-label="Main navigation"
+      className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible"
+    >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center gap-2 shrink-0">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 py-1">
-            <img src={LOGO_URL} alt="AiVIS.biz" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg object-contain" />
+            <img
+              src={LOGO_URL}
+              alt="AiVIS.biz"
+              width={28}
+              height={28}
+              className="h-7 w-7 shrink-0 rounded-lg object-contain"
+            />
             <span className="text-[15px] font-bold text-white tracking-tight">AiVIS.biz</span>
           </Link>
 
@@ -347,134 +538,219 @@ export default function TopNav() {
         {/* Center nav - desktop */}
         <div className="hidden lg:flex flex-1 min-w-0 items-center justify-center px-2 xl:px-4">
           <div className="flex min-w-0 max-w-full items-center gap-1 text-sm font-medium whitespace-nowrap overflow-visible">
-          {/* Home */}
-          <Link
-            to="/"
-            className={`px-2.5 py-1.5 rounded-lg transition-colors ${
-              location.pathname === "/" ? navActiveClass : navInactiveClass
-            }`}
-          >
-            {t('nav.home')}
-          </Link>
+            {/* Home */}
+            <Link
+              to="/"
+              className={`px-2.5 py-1.5 rounded-lg transition-colors ${
+                location.pathname === '/' ? navActiveClass : navInactiveClass
+              }`}
+            >
+              {t('nav.home')}
+            </Link>
 
-          {/* Research cascade */}
-          <div ref={researchRef} className="relative" onMouseEnter={openResearch} onMouseLeave={closeResearch}>
-            <button type="button" onClick={() => setResearchOpen(!researchOpen)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isResearchActive ? navActiveClass : navInactiveClass}`}
-              aria-expanded={researchOpen} aria-haspopup="menu">
-              {t('nav.research')}
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${researchOpen ? "rotate-180" : ""}`} />
-            </button>
-            <div className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${researchOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
-              <div className={`w-72 ${menuPanelClass}`}>
-                <div className={`p-1.5 ${dropdownScrollClass}`}>
-                  {RESEARCH_GROUPS.map((group, gi) => (
-                    <div key={group.heading}>
-                      {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
-                      <p className={`px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}>{group.heading}</p>
-                      {group.links.map((link) => {
-                        const Icon = link.icon;
-                        const isGated = isToolLocked(link);
-                        const isActive = location.pathname === link.to;
-                        return (
-                          <Link key={link.to} to={link.to}
-                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
-                            title={isGated ? `${link.label}: Upgrade required` : undefined}>
-                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
-                              <Icon className="w-8 h-8" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-sm font-medium text-inherit">{link.label}</span>
-                                {isGated && <img src={LOCKED_FEATURE_IMAGE_URL} alt="Locked feature" className="w-8 h-8 rounded-sm object-cover opacity-95" loading="lazy" />}
+            {/* Research cascade */}
+            <div
+              ref={researchRef}
+              className="relative"
+              onMouseEnter={openResearch}
+              onMouseLeave={closeResearch}
+            >
+              <button
+                type="button"
+                onClick={() => setResearchOpen(!researchOpen)}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isResearchActive ? navActiveClass : navInactiveClass}`}
+                aria-expanded={researchOpen}
+                aria-haspopup="menu"
+              >
+                {t('nav.research')}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${researchOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${researchOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'}`}
+              >
+                <div className={`w-72 ${menuPanelClass}`}>
+                  <div className={`p-1.5 ${dropdownScrollClass}`}>
+                    {RESEARCH_GROUPS.map((group, gi) => (
+                      <div key={group.heading}>
+                        {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
+                        <p
+                          className={`px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}
+                        >
+                          {group.heading}
+                        </p>
+                        {group.links.map((link) => {
+                          const Icon = link.icon;
+                          const isGated = isToolLocked(link);
+                          const isActive = location.pathname === link.to;
+                          return (
+                            <Link
+                              key={link.to}
+                              to={link.to}
+                              className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? 'text-white/45 hover:text-white/70 hover:bg-charcoal-light' : 'text-white/75 hover:text-white hover:bg-charcoal-light'}`}
+                              title={isGated ? `${link.label}: Upgrade required` : undefined}
+                            >
+                              <div
+                                className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? 'bg-charcoal text-white' : isGated ? 'bg-charcoal-light text-white/45' : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}
+                              >
+                                <Icon className="w-8 h-8" />
                               </div>
-                              <p className="text-[11px] text-white/50 leading-tight">{link.desc}</p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* AI Tools cascade */}
-          <div ref={aiToolsRef} className="relative" onMouseEnter={openAiTools} onMouseLeave={closeAiTools}>
-            <button type="button" onClick={() => setAiToolsOpen(!aiToolsOpen)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isAiToolActive ? navActiveClass : navInactiveClass}`}
-              aria-expanded={aiToolsOpen} aria-haspopup="menu">
-              {t('nav.aiTools')}
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${aiToolsOpen ? "rotate-180" : ""}`} />
-            </button>
-            <div className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${aiToolsOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
-              <div className={`w-72 ${menuPanelClass}`}>
-                <div className={`p-1.5 ${dropdownScrollClass}`}>
-                  {AI_TOOL_GROUPS.map((group, gi) => (
-                    <div key={group.heading}>
-                      {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
-                      <p className={`px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}>{group.heading}</p>
-                      {group.links.map((link) => {
-                        const Icon = link.icon;
-                        const isGated = isToolLocked(link);
-                        const isActive = location.pathname === link.to;
-                        return (
-                          <Link key={link.to} to={link.to}
-                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? "text-white/45 hover:text-white/70 hover:bg-charcoal-light" : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}
-                            title={isGated ? `${link.label}: Upgrade required` : undefined}>
-                            <div className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? "bg-charcoal text-white" : isGated ? "bg-charcoal-light text-white/45" : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}>
-                              <Icon className="w-8 h-8" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-sm font-medium text-inherit">{link.label}</span>
-                                {isGated && <img src={LOCKED_FEATURE_IMAGE_URL} alt="Locked feature" className="w-8 h-8 rounded-sm object-cover opacity-95" loading="lazy" />}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm font-medium text-inherit">
+                                    {link.label}
+                                  </span>
+                                  {isGated && (
+                                    <img
+                                      src={LOCKED_FEATURE_IMAGE_URL}
+                                      alt="Locked feature"
+                                      className="w-8 h-8 rounded-sm object-cover opacity-95"
+                                      loading="lazy"
+                                    />
+                                  )}
+                                </div>
+                                <p className="text-[11px] text-white/50 leading-tight">
+                                  {link.desc}
+                                </p>
                               </div>
-                              <p className="text-[11px] text-white/50 leading-tight">{link.desc}</p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  ))}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Docs cascade */}
-          <div ref={docsRef} className="relative" onMouseEnter={openDocs} onMouseLeave={closeDocs}>
-            <button type="button" onClick={() => setDocsOpen(!docsOpen)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isDocsActive ? navActiveClass : navInactiveClass}`}
-              aria-expanded={docsOpen} aria-haspopup="menu">
-              {t('nav.docs')}
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${docsOpen ? "rotate-180" : ""}`} />
-            </button>
-            <div className={`absolute right-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${docsOpen ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"}`}>
-              <div className={`w-56 ${menuPanelClass}`}>
-                <div className={`p-1.5 ${dropdownScrollClass}`}>
-                  {DOCS_LINKS.map((link) => {
-                    const Icon = link.icon;
-                    const isActive = location.pathname === link.to;
-                    return (
-                      <Link key={link.to} to={link.to}
-                        className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? navActiveClass : "text-white/75 hover:text-white hover:bg-charcoal-light"}`}>
-                        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-white" : link.color}`} />
-                        {link.label}
-                      </Link>
-                    );
-                  })}
+            {/* AI Tools cascade */}
+            <div
+              ref={aiToolsRef}
+              className="relative"
+              onMouseEnter={openAiTools}
+              onMouseLeave={closeAiTools}
+            >
+              <button
+                type="button"
+                onClick={() => setAiToolsOpen(!aiToolsOpen)}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isAiToolActive ? navActiveClass : navInactiveClass}`}
+                aria-expanded={aiToolsOpen}
+                aria-haspopup="menu"
+              >
+                {t('nav.aiTools')}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${aiToolsOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={`absolute left-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${aiToolsOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'}`}
+              >
+                <div className={`w-72 ${menuPanelClass}`}>
+                  <div className={`p-1.5 ${dropdownScrollClass}`}>
+                    {AI_TOOL_GROUPS.map((group, gi) => (
+                      <div key={group.heading}>
+                        {gi > 0 && <div className="mx-3 my-1 border-t border-white/5" />}
+                        <p
+                          className={`px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}
+                        >
+                          {group.heading}
+                        </p>
+                        {group.links.map((link) => {
+                          const Icon = link.icon;
+                          const isGated = isToolLocked(link);
+                          const isActive = location.pathname === link.to;
+                          return (
+                            <Link
+                              key={link.to}
+                              to={link.to}
+                              className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${isActive && !isGated ? navActiveClass : isGated ? 'text-white/45 hover:text-white/70 hover:bg-charcoal-light' : 'text-white/75 hover:text-white hover:bg-charcoal-light'}`}
+                              title={isGated ? `${link.label}: Upgrade required` : undefined}
+                            >
+                              <div
+                                className={`p-1.5 social-icon-chip transition-colors ${isActive && !isGated ? 'bg-charcoal text-white' : isGated ? 'bg-charcoal-light text-white/45' : `bg-charcoal-light ${link.color} group-hover:bg-charcoal group-hover:text-white`}`}
+                              >
+                                <Icon className="w-8 h-8" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-sm font-medium text-inherit">
+                                    {link.label}
+                                  </span>
+                                  {isGated && (
+                                    <img
+                                      src={LOCKED_FEATURE_IMAGE_URL}
+                                      alt="Locked feature"
+                                      className="w-8 h-8 rounded-sm object-cover opacity-95"
+                                      loading="lazy"
+                                    />
+                                  )}
+                                </div>
+                                <p className="text-[11px] text-white/50 leading-tight">
+                                  {link.desc}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <Link to="/pricing"
-            className={`px-2.5 py-1.5 rounded-lg transition-colors ${location.pathname === "/pricing" ? navActiveClass : navInactiveClass}`}>
-            {t('nav.pricing')}
-          </Link>
+            {/* Docs cascade */}
+            <div
+              ref={docsRef}
+              className="relative"
+              onMouseEnter={openDocs}
+              onMouseLeave={closeDocs}
+            >
+              <button
+                type="button"
+                onClick={() => setDocsOpen(!docsOpen)}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isDocsActive ? navActiveClass : navInactiveClass}`}
+                aria-expanded={docsOpen}
+                aria-haspopup="menu"
+              >
+                {t('nav.docs')}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${docsOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={`absolute right-0 top-full pt-1.5 z-[200] transition-all duration-200 origin-top ${docsOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-1 pointer-events-none'}`}
+              >
+                <div className={`w-56 ${menuPanelClass}`}>
+                  <div className={`p-1.5 ${dropdownScrollClass}`}>
+                    {DOCS_LINKS.map((link) => {
+                      const Icon = link.icon;
+                      const isActive = location.pathname === link.to;
+                      return (
+                        <Link
+                          key={link.to}
+                          to={link.to}
+                          className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? navActiveClass : 'text-white/75 hover:text-white hover:bg-charcoal-light'}`}
+                        >
+                          <Icon
+                            className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : link.color}`}
+                          />
+                          {link.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <Link
+              to="/pricing"
+              className={`px-2.5 py-1.5 rounded-lg transition-colors ${location.pathname === '/pricing' ? navActiveClass : navInactiveClass}`}
+            >
+              {t('nav.pricing')}
+            </Link>
           </div>
         </div>
 
@@ -498,7 +774,12 @@ export default function TopNav() {
                 title={`Current tier: ${tierTheme.label}`}
               >
                 {tierTheme.tierImage && (
-                  <img src={tierTheme.tierImage} alt={`${tierTheme.label} tier`} className="w-3.5 h-3.5 rounded-sm object-cover" loading="lazy" />
+                  <img
+                    src={tierTheme.tierImage}
+                    alt={`${tierTheme.label} tier`}
+                    className="w-3.5 h-3.5 rounded-sm object-cover"
+                    loading="lazy"
+                  />
                 )}
                 {tierTheme.label}
                 <span className="absolute -top-1 -right-1 px-1.5 py-0.5 border border-white/20 bg-charcoal text-[8px] leading-none tracking-[0.12em] text-white/80 rounded-sm rotate-[-10deg] [clip-path:polygon(0_0,88%_0,100%_50%,88%_100%,0_100%)] shadow-sm shadow-black/30">
@@ -530,7 +811,11 @@ export default function TopNav() {
             onClick={() => {
               const next = !mobileOpen;
               setMobileOpen(next);
-              if (!next) { setMobileResearchOpen(false); setMobileAiToolsOpen(false); setMobileDocsOpen(false); }
+              if (!next) {
+                setMobileResearchOpen(false);
+                setMobileAiToolsOpen(false);
+                setMobileDocsOpen(false);
+              }
             }}
             className="lg:hidden p-2 text-white/65 hover:text-white transition-colors"
             aria-label="Toggle menu"
@@ -539,9 +824,19 @@ export default function TopNav() {
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -556,12 +851,16 @@ export default function TopNav() {
                   onClick={() => setNotificationsOpen((prev) => !prev)}
                   className="relative p-2 rounded-lg border border-white/10 bg-charcoal-light/50 text-white/80 hover:text-white hover:bg-charcoal-light transition-colors"
                   aria-label="Notifications"
-                  title={unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "Notifications"}
+                  title={
+                    unreadNotifications > 0
+                      ? `${unreadNotifications} unread notifications`
+                      : 'Notifications'
+                  }
                 >
                   <Bell className="w-4 h-4" />
                   {unreadNotifications > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-cyan-500 text-[10px] font-semibold text-black flex items-center justify-center">
-                      {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
                     </span>
                   )}
                 </button>
@@ -574,7 +873,9 @@ export default function TopNav() {
                         {notifications.length > 0 && (
                           <button
                             type="button"
-                            onClick={() => { dismissAllNotifications(); }}
+                            onClick={() => {
+                              dismissAllNotifications();
+                            }}
                             className="text-[11px] text-white/50 hover:text-white/80"
                           >
                             Clear all
@@ -582,7 +883,9 @@ export default function TopNav() {
                         )}
                         <button
                           type="button"
-                          onClick={() => { void markAllNotificationsRead(); }}
+                          onClick={() => {
+                            void markAllNotificationsRead();
+                          }}
                           className="text-[11px] text-cyan-200 hover:text-cyan-100"
                         >
                           Mark all read
@@ -607,13 +910,17 @@ export default function TopNav() {
                             }}
                             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                               item.is_read
-                                ? "text-white/65 hover:bg-charcoal-light"
-                                : "text-white bg-charcoal/70 hover:bg-charcoal"
+                                ? 'text-white/65 hover:bg-charcoal-light'
+                                : 'text-white bg-charcoal/70 hover:bg-charcoal'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-[12px] font-semibold truncate">{item.title}</span>
-                              <span className="text-[10px] text-white/45 shrink-0">{item.scope === "platform" ? "Platform" : "Account"}</span>
+                              <span className="text-[12px] font-semibold truncate">
+                                {item.title}
+                              </span>
+                              <span className="text-[10px] text-white/45 shrink-0">
+                                {item.scope === 'platform' ? 'Platform' : 'Account'}
+                              </span>
                             </div>
                             <p className="text-[11px] text-white/70 mt-0.5">{item.message}</p>
                           </button>
@@ -625,7 +932,7 @@ export default function TopNav() {
                         type="button"
                         onClick={() => {
                           setNotificationsOpen(false);
-                          navigate("/app/notifications");
+                          navigate('/app/notifications');
                         }}
                         className="w-full text-center text-xs px-3 py-2 rounded-lg border border-white/10 bg-charcoal-light text-cyan-200 hover:text-cyan-100"
                       >
@@ -640,102 +947,185 @@ export default function TopNav() {
               <WorkspaceSwitcher />
 
               <div className="relative" ref={dropdownRef}>
-                <button type="button" aria-label="User menu" aria-expanded={menuOpen} aria-haspopup="menu" onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors">
+                <button
+                  type="button"
+                  aria-label="User menu"
+                  aria-expanded={menuOpen}
+                  aria-haspopup="menu"
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors"
+                >
                   <div className="w-7 h-7 social-icon-chip bg-gradient-to-br from-white/28 to-white/14 flex items-center justify-center">
                     {avatarUrl ? (
-                      <img src={avatarUrl} alt="User avatar" className="h-full w-full rounded-full object-cover" />
+                      <img
+                        src={avatarUrl}
+                        alt="User avatar"
+                        className="h-full w-full rounded-full object-cover"
+                      />
                     ) : (
                       <span className="text-[10px] font-bold text-white">{initials}</span>
                     )}
                   </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-white/65 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-white/65 transition-transform ${menuOpen ? 'rotate-180' : ''}`}
+                  />
                 </button>
 
                 <AnimatePresence>
-                {menuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
-                    transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="absolute right-0 mt-2 w-64 bg-gradient-to-b from-[#2d3548] to-[#272f3e] border border-white/12 rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-[200]"
-                  >
-                    {/* Identity header */}
-                    <div className="px-4 py-3 border-b border-white/10 bg-gradient-to-r from-charcoal-light/50 to-charcoal-deep/60">
-                      <p className="text-sm font-semibold text-white truncate">{user?.email || "Signed in"}</p>
-                      <p className="text-xs text-cyan-300/80 capitalize font-medium mt-0.5">{user?.tier || "Observer"} Plan</p>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-[10px] text-violet-300">Referral +{referralCreditsTotal}</span>
-                        <span className="text-[10px] text-white/40">•</span>
-                        <span className="text-[10px] text-amber-300">Balance {packCreditsLabel}</span>
+                  {menuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="absolute right-0 mt-2 w-64 bg-gradient-to-b from-[#2d3548] to-[#272f3e] border border-white/12 rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-[200]"
+                    >
+                      {/* Identity header */}
+                      <div className="px-4 py-3 border-b border-white/10 bg-gradient-to-r from-charcoal-light/50 to-charcoal-deep/60">
+                        <p className="text-sm font-semibold text-white truncate">
+                          {user?.email || 'Signed in'}
+                        </p>
+                        <p className="text-xs text-cyan-300/80 capitalize font-medium mt-0.5">
+                          {user?.tier || 'Observer'} Plan
+                        </p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-[10px] text-violet-300">
+                            Referral +{referralCreditsTotal}
+                          </span>
+                          <span className="text-[10px] text-white/40">•</span>
+                          <span className="text-[10px] text-amber-300">
+                            Balance {packCreditsLabel}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    {/* Account section */}
-                    <div className="p-1.5">
-                      <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Account</p>
-                      <button onClick={() => { setMenuOpen(false); navigate("/app/profile"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                        <User className="w-4 h-4 text-cyan-400" /> Profile
-                      </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/app/settings"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                        <Settings className="w-4 h-4 text-amber-400" /> Settings
-                      </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/app/billing"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                        <CreditCard className="w-4 h-4 text-emerald-400" /> Billing
-                      </button>
-                      <button onClick={() => { setMenuOpen(false); navigate("/app/referrals"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                        <Gift className="w-4 h-4 text-violet-400" /> Referrals
-                      </button>
-                    </div>
-                    {/* Platform section */}
-                    <div className="p-1.5 border-t border-white/8">
-                      <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Platform</p>
-                      {USER_EXTRA_LINKS.map((link) => {
-                        const Icon = link.icon;
-                        return (
-                          <button key={link.to} onClick={() => { setMenuOpen(false); navigate(link.to); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                            <Icon className={`w-4 h-4 ${link.color}`} /> {link.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {/* Team / Workspace */}
-                    <div className="p-1.5 border-t border-white/8">
-                      <button onClick={() => { setMenuOpen(false); navigate("/app/team"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                        <Users className="w-4 h-4 text-cyan-400" /> Team &amp; Workspaces
-                      </button>
-                    </div>
-                    {/* Admin section - role-gated */}
-                    {String(user?.role || "").toLowerCase() === "admin" && (
-                      <div className="p-1.5 border-t border-white/10">
-                        <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">Admin</p>
-                        <button onClick={() => { setMenuOpen(false); navigate("/app/admin"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors">
-                          <Shield className="w-4 h-4 text-rose-400" /> Admin Portal
+                      {/* Account section */}
+                      <div className="p-1.5">
+                        <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+                          Account
+                        </p>
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/app/profile');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                        >
+                          <User className="w-4 h-4 text-cyan-400" /> Profile
+                        </button>
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/app/settings');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-amber-400" /> Settings
+                        </button>
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/app/billing');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                        >
+                          <CreditCard className="w-4 h-4 text-emerald-400" /> Billing
+                        </button>
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/app/referrals');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                        >
+                          <Gift className="w-4 h-4 text-violet-400" /> Referrals
                         </button>
                       </div>
-                    )}
-                    {/* Sign out */}
-                    <div className="p-1.5 border-t border-white/10">
-                      <button onClick={() => { logout(); setMenuOpen(false); navigate("/auth?mode=signin"); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-300/80 hover:text-red-200 hover:bg-red-500/10 rounded-lg transition-colors">
-                        <LogOut className="w-4 h-4" /> {t('nav.signOut')}
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
+                      {/* Platform section */}
+                      <div className="p-1.5 border-t border-white/8">
+                        <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+                          Platform
+                        </p>
+                        {USER_EXTRA_LINKS.map((link) => {
+                          const Icon = link.icon;
+                          return (
+                            <button
+                              key={link.to}
+                              onClick={() => {
+                                setMenuOpen(false);
+                                navigate(link.to);
+                              }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                            >
+                              <Icon className={`w-4 h-4 ${link.color}`} /> {link.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {/* Team / Workspace */}
+                      <div className="p-1.5 border-t border-white/8">
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/app/team');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                        >
+                          <Users className="w-4 h-4 text-cyan-400" /> Team &amp; Workspaces
+                        </button>
+                      </div>
+                      {/* Admin section - role-gated */}
+                      {String(user?.role || '').toLowerCase() === 'admin' && (
+                        <div className="p-1.5 border-t border-white/10">
+                          <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+                            Admin
+                          </p>
+                          <button
+                            onClick={() => {
+                              setMenuOpen(false);
+                              navigate('/app/admin');
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/8 rounded-lg transition-colors"
+                          >
+                            <Shield className="w-4 h-4 text-rose-400" /> Admin Portal
+                          </button>
+                        </div>
+                      )}
+                      {/* Sign out */}
+                      <div className="p-1.5 border-t border-white/10">
+                        <button
+                          onClick={() => {
+                            logout();
+                            setMenuOpen(false);
+                            navigate('/auth?mode=signin');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-300/80 hover:text-red-200 hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" /> {t('nav.signOut')}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </div>
-
-
             </div>
           ) : (
             <>
               <LanguageSwitcher />
               <WhatsNewPanel />
-              <Link to="/auth?mode=signin" className="text-sm text-white/60 dark:text-white/75 hover:text-white dark:hover:text-white transition-colors font-medium">{t('nav.logIn')}</Link>
+              <Link
+                to="/auth?mode=signin"
+                className="text-sm text-white/60 dark:text-white/75 hover:text-white dark:hover:text-white transition-colors font-medium"
+              >
+                {t('nav.logIn')}
+              </Link>
               <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full border border-emerald-300/35 bg-emerald-500/12 text-emerald-200 text-[10px] font-black tracking-[0.1em] uppercase">
                 {t('nav.free')}
               </span>
-                  <Link to="/auth?mode=signup" className="text-sm px-4 py-2 rounded-2xl bg-orange-400 text-slate-950 font-semibold hover:bg-orange-300 transition">
-                See Your Visibility
+              <Link
+                to="/auth?mode=signup"
+                className="text-sm px-4 py-2 rounded-2xl bg-orange-400 text-slate-950 font-semibold hover:bg-orange-300 transition"
+              >
+                Check AI Presence
               </Link>
             </>
           )}
@@ -744,7 +1134,10 @@ export default function TopNav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div id="mobile-nav-menu" className="lg:hidden border-t border-white/12 dark:border-white/10 bg-charcoal-deep dark:bg-charcoal-solid">
+        <div
+          id="mobile-nav-menu"
+          className="lg:hidden border-t border-white/12 dark:border-white/10 bg-charcoal-deep dark:bg-charcoal-solid"
+        >
           <div className="px-4 py-3 space-y-1">
             {hasSession && tierTheme && (
               <div className="px-3 pb-2">
@@ -755,7 +1148,12 @@ export default function TopNav() {
                     className={`relative inline-flex items-center gap-1.5 px-2.5 pr-4 py-1.5 rounded-lg text-[10px] font-semibold tracking-wide uppercase ${tierTheme.className}`}
                   >
                     {tierTheme.tierImage && (
-                      <img src={tierTheme.tierImage} alt={`${tierTheme.label} tier`} className="w-3.5 h-3.5 rounded-sm object-cover" loading="lazy" />
+                      <img
+                        src={tierTheme.tierImage}
+                        alt={`${tierTheme.label} tier`}
+                        className="w-3.5 h-3.5 rounded-sm object-cover"
+                        loading="lazy"
+                      />
                     )}
                     {tierTheme.label}
                     <span className="absolute -top-1 -right-1 px-1.5 py-0.5 border border-white/20 bg-charcoal text-[8px] leading-none tracking-[0.12em] text-white/80 rounded-sm rotate-[-10deg] [clip-path:polygon(0_0,88%_0,100%_50%,88%_100%,0_100%)] shadow-sm shadow-black/30">
@@ -775,7 +1173,10 @@ export default function TopNav() {
                     </div>
                   </div>
                 </div>
-                <p className="text-[11px] mt-1" title="Referral audit credits and current credit balance">
+                <p
+                  className="text-[11px] mt-1"
+                  title="Referral audit credits and current credit balance"
+                >
                   <span className="text-violet-300">Referral +{referralCreditsTotal}</span>
                   <span className="text-white/40"> • </span>
                   <span className="text-amber-300">Balance {packCreditsLabel}</span>
@@ -788,7 +1189,7 @@ export default function TopNav() {
               to="/"
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-                location.pathname === "/" ? navActiveClass : navInactiveClass
+                location.pathname === '/' ? navActiveClass : navInactiveClass
               }`}
             >
               {t('nav.home')}
@@ -815,29 +1216,48 @@ export default function TopNav() {
                 aria-expanded={mobileResearchOpen}
               >
                 <span className="font-semibold tracking-wide">{t('nav.research')}</span>
-                <ChevronDown className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileResearchOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileResearchOpen ? 'rotate-180' : ''}`}
+                />
               </button>
 
               {mobileResearchOpen && (
-                <div className={`mt-2 ml-3 pl-3 border-l-2 ${tierTheme.mobileMenuBorder} space-y-1`}>
+                <div
+                  className={`mt-2 ml-3 pl-3 border-l-2 ${tierTheme.mobileMenuBorder} space-y-1`}
+                >
                   {RESEARCH_GROUPS.map((group) => (
                     <div key={group.heading}>
-                      <p className={`px-3 pt-2 pb-0.5 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}>
+                      <p
+                        className={`px-3 pt-2 pb-0.5 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}
+                      >
                         {group.heading}
                       </p>
                       {group.links.map((link) => {
                         const Icon = link.icon;
                         const isGated = isToolLocked(link);
                         return (
-                          <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
+                          <Link
+                            key={link.to}
+                            to={link.to}
+                            onClick={() => setMobileOpen(false)}
                             className={`flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg border transition-colors ${
-                              isGated ? "text-white/75 bg-charcoal-light/65 border-white/10 hover:text-white hover:bg-charcoal-light/80"
-                                : location.pathname === link.to ? navActiveClass
-                                : `text-white/90 bg-charcoal-light/65 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
-                            }`}>
-                            <Icon className={`w-8 h-8 ${isGated ? "text-white/45" : link.color}`} />
+                              isGated
+                                ? 'text-white/75 bg-charcoal-light/65 border-white/10 hover:text-white hover:bg-charcoal-light/80'
+                                : location.pathname === link.to
+                                  ? navActiveClass
+                                  : `text-white/90 bg-charcoal-light/65 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
+                            }`}
+                          >
+                            <Icon className={`w-8 h-8 ${isGated ? 'text-white/45' : link.color}`} />
                             {link.label}
-                            {isGated && <img src={LOCKED_FEATURE_IMAGE_URL} alt="Locked feature" className="w-8 h-8 rounded-sm object-cover opacity-95" loading="lazy" />}
+                            {isGated && (
+                              <img
+                                src={LOCKED_FEATURE_IMAGE_URL}
+                                alt="Locked feature"
+                                className="w-8 h-8 rounded-sm object-cover opacity-95"
+                                loading="lazy"
+                              />
+                            )}
                           </Link>
                         );
                       })}
@@ -860,29 +1280,48 @@ export default function TopNav() {
                 aria-expanded={mobileAiToolsOpen}
               >
                 <span className="font-semibold tracking-wide">{t('nav.aiTools')}</span>
-                <ChevronDown className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileAiToolsOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileAiToolsOpen ? 'rotate-180' : ''}`}
+                />
               </button>
 
               {mobileAiToolsOpen && (
-                <div className={`mt-2 ml-3 pl-3 border-l-2 ${tierTheme.mobileMenuBorder} space-y-1`}>
+                <div
+                  className={`mt-2 ml-3 pl-3 border-l-2 ${tierTheme.mobileMenuBorder} space-y-1`}
+                >
                   {AI_TOOL_GROUPS.map((group) => (
                     <div key={group.heading}>
-                      <p className={`px-3 pt-2 pb-0.5 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}>
+                      <p
+                        className={`px-3 pt-2 pb-0.5 text-[10px] font-semibold uppercase tracking-wider ${group.accent}`}
+                      >
                         {group.heading}
                       </p>
                       {group.links.map((link) => {
                         const Icon = link.icon;
                         const isGated = isToolLocked(link);
                         return (
-                          <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
+                          <Link
+                            key={link.to}
+                            to={link.to}
+                            onClick={() => setMobileOpen(false)}
                             className={`flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg border transition-colors ${
-                              isGated ? "text-white/75 bg-charcoal-light/65 border-white/10 hover:text-white hover:bg-charcoal-light/80"
-                                : location.pathname === link.to ? navActiveClass
-                                : `text-white/90 bg-charcoal-light/65 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
-                            }`}>
-                            <Icon className={`w-8 h-8 ${isGated ? "text-white/45" : link.color}`} />
+                              isGated
+                                ? 'text-white/75 bg-charcoal-light/65 border-white/10 hover:text-white hover:bg-charcoal-light/80'
+                                : location.pathname === link.to
+                                  ? navActiveClass
+                                  : `text-white/90 bg-charcoal-light/65 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
+                            }`}
+                          >
+                            <Icon className={`w-8 h-8 ${isGated ? 'text-white/45' : link.color}`} />
                             {link.label}
-                            {isGated && <img src={LOCKED_FEATURE_IMAGE_URL} alt="Locked feature" className="w-8 h-8 rounded-sm object-cover opacity-95" loading="lazy" />}
+                            {isGated && (
+                              <img
+                                src={LOCKED_FEATURE_IMAGE_URL}
+                                alt="Locked feature"
+                                className="w-8 h-8 rounded-sm object-cover opacity-95"
+                                loading="lazy"
+                              />
+                            )}
                           </Link>
                         );
                       })}
@@ -905,7 +1344,9 @@ export default function TopNav() {
                 aria-expanded={mobileDocsOpen}
               >
                 <span className="font-semibold tracking-wide">{t('nav.docs')}</span>
-                <ChevronDown className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileDocsOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-4 h-4 text-white/85 transition-transform duration-200 ${mobileDocsOpen ? 'rotate-180' : ''}`}
+                />
               </button>
 
               {mobileDocsOpen && (
@@ -913,10 +1354,16 @@ export default function TopNav() {
                   {DOCS_LINKS.map((link) => {
                     const Icon = link.icon;
                     return (
-                      <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
+                      <Link
+                        key={link.to}
+                        to={link.to}
+                        onClick={() => setMobileOpen(false)}
                         className={`flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors ${
-                          location.pathname === link.to ? navActiveClass : "text-white/75 hover:text-white hover:bg-charcoal-light"
-                        }`}>
+                          location.pathname === link.to
+                            ? navActiveClass
+                            : 'text-white/75 hover:text-white hover:bg-charcoal-light'
+                        }`}
+                      >
                         <Icon className={`w-4 h-4 ${link.color}`} />
                         {link.label}
                       </Link>
@@ -930,12 +1377,11 @@ export default function TopNav() {
               to="/pricing"
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-                location.pathname === "/pricing" ? navActiveClass : navInactiveClass
+                location.pathname === '/pricing' ? navActiveClass : navInactiveClass
               }`}
             >
               {t('nav.pricing')}
             </Link>
-
           </div>
         </div>
       )}

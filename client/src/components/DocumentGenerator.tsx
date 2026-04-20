@@ -1,11 +1,25 @@
 // client/src/components/DocumentGenerator.tsx
-import React, { useState, useEffect } from "react";
-import { FileText, Download, FileSpreadsheet, Loader2, CheckCircle, Lock, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { getAnalysisExecutionClass, type AnalysisExecutionClass, type AnalysisResponse, TIER_LIMITS, type CanonicalTier } from "@shared/types";
-import { useAuthStore } from "../stores/authStore";
-import { API_URL } from "../config";
-import { apiFetch } from "../utils/api";
+import React, { useState, useEffect } from 'react';
+import {
+  FileText,
+  Download,
+  FileSpreadsheet,
+  Loader2,
+  CheckCircle,
+  Lock,
+  ArrowRight,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  getAnalysisExecutionClass,
+  type AnalysisExecutionClass,
+  type AnalysisResponse,
+  TIER_LIMITS,
+  type CanonicalTier,
+} from '@shared/types';
+import { useAuthStore } from '../stores/authStore';
+import { API_URL } from '../config';
+import { apiFetch } from '../utils/api';
 
 interface DocumentGeneratorProps {
   result: AnalysisResponse;
@@ -26,10 +40,10 @@ const ENTERPRISE_EXPORT_LOGO_URL = '/full-logo.png';
 const BRANDED_EXPORT_CREDIT_COST = 1;
 
 function getExecutionClassLabel(executionClass: AnalysisExecutionClass): string {
-  if (executionClass === "LIVE") return "Live pipeline";
-  if (executionClass === "DETERMINISTIC_FALLBACK") return "Deterministic fallback";
-  if (executionClass === "SCRAPE_ONLY") return "Scrape-only";
-  return "Upload analysis";
+  if (executionClass === 'LIVE') return 'Live pipeline';
+  if (executionClass === 'DETERMINISTIC_FALLBACK') return 'Deterministic fallback';
+  if (executionClass === 'SCRAPE_ONLY') return 'Scrape-only';
+  return 'Upload analysis';
 }
 
 // Generate CSV content from analysis result
@@ -37,109 +51,146 @@ function generateCSV(result: AnalysisResponse): string {
   const rows: string[][] = [];
 
   // Header
-  rows.push(["AI Visibility Analysis Report"]);
-  rows.push(["Generated:", new Date().toISOString()]);
-  rows.push(["URL:", result.url || "N/A"]);
-  rows.push([""]);
+  rows.push(['AI Visibility Analysis Report']);
+  rows.push(['Generated:', new Date().toISOString()]);
+  rows.push(['URL:', result.url || 'N/A']);
+  rows.push(['']);
 
   // Text Summary
   if (result.text_summary) {
-    rows.push(["Executive Summary"]);
-    rows.push(["Intro", result.text_summary.intro]);
-    rows.push([""]);
-    rows.push(["#", "Finding", "Explanation", "Fix"]);
+    rows.push(['Executive Summary']);
+    rows.push(['Intro', result.text_summary.intro]);
+    rows.push(['']);
+    rows.push(['#', 'Finding', 'Explanation', 'Fix']);
     result.text_summary.findings.forEach((f, i) => {
-      rows.push([`${i + 1}`, f.title, f.explanation, f.fix || ""]);
+      rows.push([`${i + 1}`, f.title, f.explanation, f.fix || '']);
     });
-    rows.push([""]);
+    rows.push(['']);
     if (result.text_summary.priority_order.length > 0) {
-      rows.push(["Recommended Fix Order"]);
+      rows.push(['Recommended Fix Order']);
       result.text_summary.priority_order.forEach((item, i) => {
         rows.push([`${i + 1}`, item]);
       });
-      rows.push([""]);
+      rows.push(['']);
     }
-    rows.push(["Closing", result.text_summary.closing]);
-    rows.push([""]);
+    rows.push(['Closing', result.text_summary.closing]);
+    rows.push(['']);
   }
 
   // Overall Metrics
-  rows.push(["Metric", "Value", "Status"]);
-  rows.push(["Visibility Score", `${result.visibility_score}/100`, getScoreStatus(result.visibility_score)]);
-  rows.push(["Execution Class", getExecutionClassLabel(getAnalysisExecutionClass(result)), "Runtime Mode"]);
+  rows.push(['Metric', 'Value', 'Status']);
+  rows.push([
+    'Visibility Score',
+    `${result.visibility_score}/100`,
+    getScoreStatus(result.visibility_score),
+  ]);
+  rows.push([
+    'Execution Class',
+    getExecutionClassLabel(getAnalysisExecutionClass(result)),
+    'Runtime Mode',
+  ]);
   if (result.geo_signal_profile) {
-    rows.push(["SSFR Source Verified", result.geo_signal_profile.source_verified ? "Yes" : "No"]);
-    rows.push(["SSFR Signal Consistent", result.geo_signal_profile.signal_consistent ? "Yes" : "No"]);
-    rows.push(["SSFR Information Gain", result.geo_signal_profile.information_gain]);
-    rows.push(["SSFR Relationship Anchored", result.geo_signal_profile.relationship_anchored ? "Yes" : "No"]);
+    rows.push(['SSFR Source Verified', result.geo_signal_profile.source_verified ? 'Yes' : 'No']);
+    rows.push([
+      'SSFR Signal Consistent',
+      result.geo_signal_profile.signal_consistent ? 'Yes' : 'No',
+    ]);
+    rows.push(['SSFR Information Gain', result.geo_signal_profile.information_gain]);
+    rows.push([
+      'SSFR Relationship Anchored',
+      result.geo_signal_profile.relationship_anchored ? 'Yes' : 'No',
+    ]);
   }
   if (result.contradiction_report) {
-    rows.push(["Contradiction Status", result.contradiction_report.status]);
-    rows.push(["Contradiction Blockers", `${result.contradiction_report.blocker_count}`]);
-    rows.push(["Contradiction Issues", `${result.contradiction_report.issue_count}`]);
+    rows.push(['Contradiction Status', result.contradiction_report.status]);
+    rows.push(['Contradiction Blockers', `${result.contradiction_report.blocker_count}`]);
+    rows.push(['Contradiction Issues', `${result.contradiction_report.issue_count}`]);
   }
-  rows.push(["Word Count", `${result.content_analysis?.word_count || 0}`, getWordCountStatus(result.content_analysis?.word_count || 0)]);
-  rows.push(["Schema Types", `${result.schema_markup?.json_ld_count || 0}`, (result.schema_markup?.json_ld_count ?? 0) > 0 ? "Present" : "Missing"]);
-  rows.push(["HTTPS Enabled", result.technical_signals?.https_enabled ? "Yes" : "No", result.technical_signals?.https_enabled ? "Secure" : "Critical"]);
-  rows.push(["H1 Tag Present", result.content_analysis?.has_proper_h1 ? "Yes" : "No", result.content_analysis?.has_proper_h1 ? "Good" : "Critical"]);
-  rows.push([""]);
+  rows.push([
+    'Word Count',
+    `${result.content_analysis?.word_count || 0}`,
+    getWordCountStatus(result.content_analysis?.word_count || 0),
+  ]);
+  rows.push([
+    'Schema Types',
+    `${result.schema_markup?.json_ld_count || 0}`,
+    (result.schema_markup?.json_ld_count ?? 0) > 0 ? 'Present' : 'Missing',
+  ]);
+  rows.push([
+    'HTTPS Enabled',
+    result.technical_signals?.https_enabled ? 'Yes' : 'No',
+    result.technical_signals?.https_enabled ? 'Secure' : 'Critical',
+  ]);
+  rows.push([
+    'H1 Tag Present',
+    result.content_analysis?.has_proper_h1 ? 'Yes' : 'No',
+    result.content_analysis?.has_proper_h1 ? 'Good' : 'Critical',
+  ]);
+  rows.push(['']);
 
   // Goal Alignment
   if (result.goal_alignment || (result.findability_goals && result.findability_goals.length > 0)) {
-    rows.push(["Findability Goal Alignment"]);
-    rows.push(["Goal Coverage", `${Math.round((result.goal_alignment?.coverage || 0) * 100)}%`]);
-    rows.push(["Score Impact", `${(result.goal_alignment?.score_adjustment || 0) > 0 ? '+' : ''}${result.goal_alignment?.score_adjustment || 0}`]);
+    rows.push(['Findability Goal Alignment']);
+    rows.push(['Goal Coverage', `${Math.round((result.goal_alignment?.coverage || 0) * 100)}%`]);
+    rows.push([
+      'Score Impact',
+      `${(result.goal_alignment?.score_adjustment || 0) > 0 ? '+' : ''}${result.goal_alignment?.score_adjustment || 0}`,
+    ]);
     if (result.findability_goals && result.findability_goals.length > 0) {
-      rows.push(["Provided Goals", result.findability_goals.join(' | ')]);
+      rows.push(['Provided Goals', result.findability_goals.join(' | ')]);
     }
     if (result.goal_alignment?.matched_goals?.length) {
-      rows.push(["Matched Goals", result.goal_alignment.matched_goals.join(' | ')]);
+      rows.push(['Matched Goals', result.goal_alignment.matched_goals.join(' | ')]);
     }
     if (result.goal_alignment?.missing_goals?.length) {
-      rows.push(["Missing Goals", result.goal_alignment.missing_goals.join(' | ')]);
+      rows.push(['Missing Goals', result.goal_alignment.missing_goals.join(' | ')]);
     }
-    rows.push([""]);
+    rows.push(['']);
   }
 
   // AI Platform Scores
   if (result.ai_platform_scores) {
-    rows.push(["AI Platform", "Score"]);
-    rows.push(["ChatGPT", `${result.ai_platform_scores.chatgpt || 0}/100`]);
-    rows.push(["Perplexity", `${result.ai_platform_scores.perplexity || 0}/100`]);
-    rows.push(["Google AI", `${result.ai_platform_scores.google_ai || 0}/100`]);
-    rows.push(["Claude", `${result.ai_platform_scores.claude || 0}/100`]);
-    rows.push([""]);
+    rows.push(['AI Platform', 'Score']);
+    rows.push(['ChatGPT', `${result.ai_platform_scores.chatgpt || 0}/100`]);
+    rows.push(['Perplexity', `${result.ai_platform_scores.perplexity || 0}/100`]);
+    rows.push(['Google AI', `${result.ai_platform_scores.google_ai || 0}/100`]);
+    rows.push(['Claude', `${result.ai_platform_scores.claude || 0}/100`]);
+    rows.push(['']);
   }
 
   if (result.ai_model_scores && result.ai_model_scores.length > 0) {
-    rows.push(["Methodology Benchmark Model", "Score", "Used In Pipeline"]);
+    rows.push(['Methodology Benchmark Model', 'Score', 'Used In Pipeline']);
     result.ai_model_scores.forEach((model) => {
-      rows.push([
-        model.model_label,
-        `${model.score}/100`,
-        model.used_in_pipeline ? "Yes" : "No",
-      ]);
+      rows.push([model.model_label, `${model.score}/100`, model.used_in_pipeline ? 'Yes' : 'No']);
     });
-    rows.push([""]);
+    rows.push(['']);
   }
 
   if (result.strict_rubric) {
-    rows.push(["Strict Rubric System"]);
-    rows.push(["Rubric Version", result.strict_rubric.version]);
-    rows.push(["Reliability Index", `${result.strict_rubric.reliability_index_0_100}/100`]);
-    rows.push(["Pass Rate", `${Math.round((result.strict_rubric.pass_rate || 0) * 100)}%`]);
-    rows.push(["Cross Platform Ready", result.strict_rubric.cross_platform_ready ? "Yes" : "No"]);
-    rows.push(["Expected Delta Band", `+${result.strict_rubric.guarantee_policy.expected_delta_band.min} to +${result.strict_rubric.guarantee_policy.expected_delta_band.max}`]);
-    rows.push([""]);
+    rows.push(['Strict Rubric System']);
+    rows.push(['Rubric Version', result.strict_rubric.version]);
+    rows.push(['Reliability Index', `${result.strict_rubric.reliability_index_0_100}/100`]);
+    rows.push(['Pass Rate', `${Math.round((result.strict_rubric.pass_rate || 0) * 100)}%`]);
+    rows.push(['Cross Platform Ready', result.strict_rubric.cross_platform_ready ? 'Yes' : 'No']);
+    rows.push([
+      'Expected Delta Band',
+      `+${result.strict_rubric.guarantee_policy.expected_delta_band.min} to +${result.strict_rubric.guarantee_policy.expected_delta_band.max}`,
+    ]);
+    rows.push(['']);
 
-    rows.push(["Rubric Gates", "Status", "Score", "Threshold"]);
+    rows.push(['Rubric Gates', 'Status', 'Score', 'Threshold']);
     result.strict_rubric.gates.forEach((gate) => {
-      rows.push([gate.label, gate.status.toUpperCase(), `${gate.score_0_100}/100`, `${gate.threshold_pass}`]);
+      rows.push([
+        gate.label,
+        gate.status.toUpperCase(),
+        `${gate.score_0_100}/100`,
+        `${gate.threshold_pass}`,
+      ]);
     });
-    rows.push([""]);
+    rows.push(['']);
 
     if (result.strict_rubric.required_fixpacks.length > 0) {
-      rows.push(["Required Fixpacks", "Target Gates", "Expected Lift", "Actions"]);
+      rows.push(['Required Fixpacks', 'Target Gates', 'Expected Lift', 'Actions']);
       result.strict_rubric.required_fixpacks.forEach((pack) => {
         rows.push([
           pack.label,
@@ -148,50 +199,52 @@ function generateCSV(result: AnalysisResponse): string {
           (pack.actions || []).join(' | '),
         ]);
       });
-      rows.push([""]);
+      rows.push(['']);
     }
   }
 
   // Recommendations
   if (result.recommendations && result.recommendations.length > 0) {
-    rows.push(["Priority Recommendations"]);
-    rows.push(["#", "Title", "Impact", "Description"]);
+    rows.push(['Priority Recommendations']);
+    rows.push(['#', 'Title', 'Impact', 'Description']);
     result.recommendations.forEach((rec, idx) => {
-      rows.push([
-        `${idx + 1}`,
-        rec.title,
-        rec.impact || "Medium",
-        rec.description || ""
-      ]);
+      rows.push([`${idx + 1}`, rec.title, rec.impact || 'Medium', rec.description || '']);
     });
-    rows.push([""]);
+    rows.push(['']);
   }
 
   // Topical Keywords
   if (result.topical_keywords && result.topical_keywords.length > 0) {
-    rows.push(["Topical Keywords"]);
+    rows.push(['Topical Keywords']);
     result.topical_keywords.slice(0, 20).forEach((kw, idx) => {
       rows.push([`${idx + 1}. ${kw}`]);
     });
-    rows.push([""]);
+    rows.push(['']);
   }
 
   // Technical Details
-  rows.push(["Technical Trust Details"]);
-  rows.push(["Check", "Status"]);
-  rows.push(["HTTPS Enforced", result.technical_signals?.https_enabled ? "Yes" : "No"]);
-  rows.push(["Canonical Tag", result.technical_signals?.has_canonical ? "Present" : "Missing"]);
-  rows.push(["Meta Description", result.content_analysis?.has_meta_description ? "Present" : "Missing"]);
-  rows.push(["Robots.txt", result.technical_signals?.has_robots_txt ? "Present" : "Missing"]);
+  rows.push(['Technical Trust Details']);
+  rows.push(['Check', 'Status']);
+  rows.push(['HTTPS Enforced', result.technical_signals?.https_enabled ? 'Yes' : 'No']);
+  rows.push(['Canonical Tag', result.technical_signals?.has_canonical ? 'Present' : 'Missing']);
+  rows.push([
+    'Meta Description',
+    result.content_analysis?.has_meta_description ? 'Present' : 'Missing',
+  ]);
+  rows.push(['Robots.txt', result.technical_signals?.has_robots_txt ? 'Present' : 'Missing']);
 
   // Convert to CSV format
-  return rows.map(row =>
-    row.map(cell => {
-      // Escape quotes and wrap in quotes if contains comma/newline
-      const escaped = String(cell).replace(/"/g, '""');
-      return /[,\n"]/.test(escaped) ? `"${escaped}"` : escaped;
-    }).join(',')
-  ).join('\n');
+  return rows
+    .map((row) =>
+      row
+        .map((cell) => {
+          // Escape quotes and wrap in quotes if contains comma/newline
+          const escaped = String(cell).replace(/"/g, '""');
+          return /[,\n"]/.test(escaped) ? `"${escaped}"` : escaped;
+        })
+        .join(',')
+    )
+    .join('\n');
 }
 
 // Generate HTML report for PDF conversion
@@ -203,8 +256,16 @@ function generateHTMLReport(
   const score = result.visibility_score;
   const executionClass = getAnalysisExecutionClass(result);
   const executionClassLabel = getExecutionClassLabel(executionClass);
-  const scoreColor = score >= 80 ? '#10b981' : score >= 60 ? '#06b6d4' : score >= 40 ? '#f59e0b' : '#ef4444';
-  const scoreLabel = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Needs Improvement' : 'Critical';
+  const scoreColor =
+    score >= 80 ? '#10b981' : score >= 60 ? '#06b6d4' : score >= 40 ? '#f59e0b' : '#ef4444';
+  const scoreLabel =
+    score >= 80
+      ? 'Excellent'
+      : score >= 60
+        ? 'Good'
+        : score >= 40
+          ? 'Needs Improvement'
+          : 'Critical';
 
   const brandPrimary = branding?.primary_color || scoreColor;
   const brandName = (branding?.company_name || DEFAULT_EXPORT_BRAND_NAME).trim();
@@ -420,42 +481,58 @@ function generateHTMLReport(
   </div>
 
   <div class="score-card">
-    <div class="score-label">Overall AI Visibility Score</div>
+    <div class="score-label">Citation Probability Score</div>
     <div class="score-value">${score}<span style="font-size: 24px; color: #6b7280;">/100</span></div>
     <div class="score-label">${scoreLabel}</div>
   </div>
 
-  ${result.text_summary ? `
+  ${
+    result.text_summary
+      ? `
   <div class="section">
     <h2 class="section-title">Executive Summary</h2>
     <p style="color: #374151; line-height: 1.7; margin-bottom: 20px;">${result.text_summary.intro}</p>
 
-    ${result.text_summary.findings.map((f, i) => `
+    ${result.text_summary.findings
+      .map(
+        (f, i) => `
     <div class="recommendation">
       <div class="recommendation-title">${i + 1}. ${f.title}</div>
       <div class="recommendation-desc">${f.explanation}</div>
       ${f.fix ? `<div style="margin-top: 10px; padding: 10px; background: #f0fdf4; border-radius: 6px; font-size: 13px; color: #166534;"><strong>How to fix it:</strong> ${f.fix}</div>` : ''}
     </div>
-    `).join('')}
+    `
+      )
+      .join('')}
 
-    ${result.text_summary.priority_order.length > 0 ? `
+    ${
+      result.text_summary.priority_order.length > 0
+        ? `
     <div style="margin-top: 20px; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
       <div style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Recommended Fix Order</div>
       <ol style="padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
         ${result.text_summary.priority_order.map((item) => `<li>${item}</li>`).join('')}
       </ol>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
 
     <p style="color: #6b7280; line-height: 1.7; margin-top: 20px; font-style: italic;">${result.text_summary.closing}</p>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${(result.geo_signal_profile || result.contradiction_report) ? `
+  ${
+    result.geo_signal_profile || result.contradiction_report
+      ? `
   <div class="section">
     <h2 class="section-title">GEO / SSFR Truth Layer</h2>
     <div class="metrics-grid">
-      ${result.geo_signal_profile ? `
+      ${
+        result.geo_signal_profile
+          ? `
       <div class="metric-card">
         <div class="metric-label">Source</div>
         <div class="metric-value" style="font-size: 20px;">${result.geo_signal_profile.source_verified ? 'Verified' : 'Weak'}</div>
@@ -472,10 +549,14 @@ function generateHTMLReport(
         <div class="metric-label">Relationship</div>
         <div class="metric-value" style="font-size: 20px;">${result.geo_signal_profile.relationship_anchored ? 'Anchored' : 'Weak'}</div>
       </div>
-      ` : ''}
+      `
+          : ''
+      }
     </div>
 
-    ${result.contradiction_report && result.contradiction_report.issues.length > 0 ? `
+    ${
+      result.contradiction_report && result.contradiction_report.issues.length > 0
+        ? `
       <table class="technical-table" style="margin-top:16px;">
         <thead>
           <tr>
@@ -486,19 +567,27 @@ function generateHTMLReport(
           </tr>
         </thead>
         <tbody>
-          ${result.contradiction_report.issues.map((issue) => `
+          ${result.contradiction_report.issues
+            .map(
+              (issue) => `
             <tr>
               <td>${issue.title}</td>
               <td>${issue.severity}</td>
               <td>${issue.dimension}</td>
               <td>${issue.blocking ? 'Yes' : 'No'}</td>
             </tr>
-          `).join('')}
+          `
+            )
+            .join('')}
         </tbody>
       </table>
-    ` : ''}
+    `
+        : ''
+    }
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <div class="section">
     <h2 class="section-title">Key Metrics</h2>
@@ -534,9 +623,11 @@ function generateHTMLReport(
     </div>
   </div>
 
-  ${result.ai_platform_scores ? `
+  ${
+    result.ai_platform_scores
+      ? `
   <div class="section">
-    <h2 class="section-title">AI Platform Visibility Scores</h2>
+    <h2 class="section-title">AI Platform Citation Scores</h2>
     <div class="metrics-grid">
       <div class="metric-card">
         <div class="metric-label">ChatGPT</div>
@@ -556,13 +647,19 @@ function generateHTMLReport(
       </div>
     </div>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${result.ai_model_scores && result.ai_model_scores.length > 0 ? `
+  ${
+    result.ai_model_scores && result.ai_model_scores.length > 0
+      ? `
   <div class="section">
     <h2 class="section-title">Methodology Benchmark Model Scores</h2>
     <div class="metrics-grid">
-      ${result.ai_model_scores.map((model) => `
+      ${result.ai_model_scores
+        .map(
+          (model) => `
       <div class="metric-card">
         <div class="metric-label">${model.model_label}</div>
         <div class="metric-value">${model.score}<span style="font-size: 14px; color: #6b7280;">/100</span></div>
@@ -570,12 +667,18 @@ function generateHTMLReport(
           ${model.used_in_pipeline ? 'Used in this audit' : 'Methodology benchmark'}
         </div>
       </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${(result.goal_alignment || (result.findability_goals && result.findability_goals.length > 0)) ? `
+  ${
+    result.goal_alignment || (result.findability_goals && result.findability_goals.length > 0)
+      ? `
   <div class="section">
     <h2 class="section-title">Findability Goal Alignment</h2>
     <div class="metrics-grid">
@@ -589,36 +692,52 @@ function generateHTMLReport(
       </div>
     </div>
 
-    ${result.findability_goals && result.findability_goals.length > 0 ? `
+    ${
+      result.findability_goals && result.findability_goals.length > 0
+        ? `
       <div style="margin-top: 16px;">
         <div style="font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Provided Goals</div>
         <div class="keywords-list">
           ${result.findability_goals.map((goal) => `<span class="keyword-tag">${goal}</span>`).join('')}
         </div>
       </div>
-    ` : ''}
+    `
+        : ''
+    }
 
-    ${result.goal_alignment?.matched_goals && result.goal_alignment.matched_goals.length > 0 ? `
+    ${
+      result.goal_alignment?.matched_goals && result.goal_alignment.matched_goals.length > 0
+        ? `
       <div style="margin-top: 12px;">
         <div style="font-size: 13px; color: #065f46; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Matched Goals</div>
         <ul style="padding-left: 18px; color: #111827;">
           ${result.goal_alignment.matched_goals.map((goal) => `<li style="margin-bottom: 4px;">${goal}</li>`).join('')}
         </ul>
       </div>
-    ` : ''}
+    `
+        : ''
+    }
 
-    ${result.goal_alignment?.missing_goals && result.goal_alignment.missing_goals.length > 0 ? `
+    ${
+      result.goal_alignment?.missing_goals && result.goal_alignment.missing_goals.length > 0
+        ? `
       <div style="margin-top: 12px;">
         <div style="font-size: 13px; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Missing Goals</div>
         <ul style="padding-left: 18px; color: #111827;">
           ${result.goal_alignment.missing_goals.map((goal) => `<li style="margin-bottom: 4px;">${goal}</li>`).join('')}
         </ul>
       </div>
-    ` : ''}
+    `
+        : ''
+    }
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${result.strict_rubric ? `
+  ${
+    result.strict_rubric
+      ? `
   <div class="section">
     <h2 class="section-title">Strict Rubric System</h2>
     <div class="metrics-grid">
@@ -650,53 +769,82 @@ function generateHTMLReport(
         </tr>
       </thead>
       <tbody>
-        ${result.strict_rubric.gates.map((gate) => `
+        ${result.strict_rubric.gates
+          .map(
+            (gate) => `
           <tr>
             <td>${gate.label}</td>
             <td><span class="status-badge ${gate.status === 'pass' ? 'pass' : 'fail'}">${gate.status.toUpperCase()}</span></td>
             <td>${gate.score_0_100}/100</td>
             <td>${gate.threshold_pass}</td>
           </tr>
-        `).join('')}
+        `
+          )
+          .join('')}
       </tbody>
     </table>
 
-    ${result.strict_rubric.required_fixpacks.length > 0 ? `
+    ${
+      result.strict_rubric.required_fixpacks.length > 0
+        ? `
       <div style="margin-top: 16px;">
         <div style="font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Required Fixpacks</div>
-        ${result.strict_rubric.required_fixpacks.map((pack, idx) => `
+        ${result.strict_rubric.required_fixpacks
+          .map(
+            (pack, idx) => `
           <div class="recommendation">
             <div class="recommendation-title">${idx + 1}. ${pack.label}</div>
             <div class="recommendation-desc">Targets: ${pack.target_gate_ids.join(', ')}</div>
             <div class="recommendation-desc">Expected lift: +${pack.estimated_score_lift_min} to +${pack.estimated_score_lift_max}</div>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
-    ` : ''}
+    `
+        : ''
+    }
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${result.recommendations && result.recommendations.length > 0 ? `
+  ${
+    result.recommendations && result.recommendations.length > 0
+      ? `
   <div class="section">
     <h2 class="section-title">Priority Recommendations</h2>
-    ${result.recommendations.map((rec, idx) => `
+    ${result.recommendations
+      .map(
+        (rec, idx) => `
       <div class="recommendation">
         <div class="recommendation-title">${idx + 1}. ${rec.title}</div>
         <div class="recommendation-desc">${rec.description || 'No description available'}</div>
         ${rec.impact ? `<div class="recommendation-impact">${rec.impact}</div>` : ''}
       </div>
-    `).join('')}
+    `
+      )
+      .join('')}
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
-  ${result.topical_keywords && result.topical_keywords.length > 0 ? `
+  ${
+    result.topical_keywords && result.topical_keywords.length > 0
+      ? `
   <div class="section">
     <h2 class="section-title">Topical Keywords Detected</h2>
     <div class="keywords-list">
-      ${result.topical_keywords.slice(0, 20).map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+      ${result.topical_keywords
+        .slice(0, 20)
+        .map((kw) => `<span class="keyword-tag">${kw}</span>`)
+        .join('')}
     </div>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <div class="section">
     <h2 class="section-title">Technical Trust Checklist</h2>
@@ -744,16 +892,16 @@ function generateHTMLReport(
 }
 
 function getScoreStatus(score: number): string {
-  if (score >= 80) return "Excellent";
-  if (score >= 60) return "Good";
-  if (score >= 40) return "Needs Improvement";
-  return "Critical";
+  if (score >= 80) return 'Excellent';
+  if (score >= 60) return 'Good';
+  if (score >= 40) return 'Needs Improvement';
+  return 'Critical';
 }
 
 function getWordCountStatus(count: number): string {
-  if (count >= 800) return "Comprehensive";
-  if (count >= 300) return "Adequate";
-  return "Thin Content";
+  if (count >= 800) return 'Comprehensive';
+  if (count >= 300) return 'Adequate';
+  return 'Thin Content';
 }
 
 const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
@@ -765,36 +913,41 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
 
   // Fetch branding for Signal+ users (Signal, Score Fix)
   useEffect(() => {
-    const canUseBranding = TIER_LIMITS[(user?.tier as CanonicalTier) || 'observer']?.hasWhiteLabel === true;
+    const canUseBranding =
+      TIER_LIMITS[(user?.tier as CanonicalTier) || 'observer']?.hasWhiteLabel === true;
     if (!canUseBranding || !token) return;
-    apiFetch(`/api/features/branding`, { credentials: "include" })
+    apiFetch(`/api/features/branding`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (d?.data) setBranding(d.data); })
-      .catch(() => { console.warn("Branding fetch failed - export will be unbranded"); });
+      .then((d) => {
+        if (d?.data) setBranding(d.data);
+      })
+      .catch(() => {
+        console.warn('Branding fetch failed - export will be unbranded');
+      });
   }, [token, user?.tier]);
 
   const requestExportSession = async (branded: boolean) => {
     if (!token) {
-      throw new Error("Sign in required before exporting reports");
+      throw new Error('Sign in required before exporting reports');
     }
 
     const response = await apiFetch(`/api/features/exports/report-pdf-session`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ branded }),
     });
 
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(payload?.error || "Export is not available on your current tier");
+      throw new Error(payload?.error || 'Export is not available on your current tier');
     }
 
     return payload?.data ?? {};
   };
 
   const downloadCSV = async () => {
-    setGenerating("csv");
+    setGenerating('csv');
     setSuccess(null);
 
     try {
@@ -811,14 +964,15 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
       link.click();
 
       URL.revokeObjectURL(url);
-      setSuccess("CSV report downloaded successfully");
+      setSuccess('CSV report downloaded successfully');
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
-      console.error("CSV generation error:", error);
+      console.error('CSV generation error:', error);
       setSuccess(null);
       // Use toast if available, otherwise show inline (don't route through success state)
-      const msg = error instanceof Error ? error.message : "CSV generation failed";
-      if (typeof window !== 'undefined' && (window as any).__toast_error) (window as any).__toast_error(msg);
+      const msg = error instanceof Error ? error.message : 'CSV generation failed';
+      if (typeof window !== 'undefined' && (window as any).__toast_error)
+        (window as any).__toast_error(msg);
       else setSuccess(`⚠ ${msg}`);
     } finally {
       setGenerating(null);
@@ -826,11 +980,11 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
   };
 
   const downloadPDF = async () => {
-    setGenerating("pdf");
+    setGenerating('pdf');
     setSuccess(null);
 
     try {
-      const base = (API_URL || "").replace(/\/+$/, "");
+      const base = (API_URL || '').replace(/\/+$/, '');
       const canUseBrandedExport = Boolean(
         branding && TIER_LIMITS[(user?.tier as CanonicalTier) || 'observer']?.hasWhiteLabel && token
       );
@@ -848,25 +1002,31 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
 
       // POST to server - Puppeteer renders a real .pdf file
       const pdfRes = await fetch(`${base}/api/features/exports/generate-pdf`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({ html, branded: canUseBrandedExport }),
       });
 
       if (!pdfRes.ok) {
         const errPayload = await pdfRes.json().catch(() => ({}));
-        throw new Error(errPayload?.error || "PDF generation failed");
+        throw new Error(errPayload?.error || 'PDF generation failed');
       }
 
       // Stream the binary PDF to a real file download
       const blob = await pdfRes.blob();
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      const domain = (() => { try { return new URL(result.url || "").hostname; } catch { return "report"; } })();
+      const link = document.createElement('a');
+      const domain = (() => {
+        try {
+          return new URL(result.url || '').hostname;
+        } catch {
+          return 'report';
+        }
+      })();
       const date = new Date().toISOString().slice(0, 10);
       link.href = url;
       link.download = `aivis-report-${domain}-${date}.pdf`;
@@ -878,12 +1038,12 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
       setSuccess(
         canUseBrandedExport
           ? `Branded PDF downloaded - ${BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit used`
-          : "PDF report downloaded"
+          : 'PDF report downloaded'
       );
       setTimeout(() => setSuccess(null), 4000);
     } catch (error) {
-      console.error("PDF generation error:", error);
-      setSuccess(error instanceof Error ? error.message : "PDF generation failed");
+      console.error('PDF generation error:', error);
+      setSuccess(error instanceof Error ? error.message : 'PDF generation failed');
     } finally {
       setGenerating(null);
     }
@@ -900,7 +1060,8 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           <h3 className="text-xl font-bold text-white/70">Export Report</h3>
         </div>
         <p className="text-white/55 mb-4 text-sm">
-          PDF and CSV exports are available on paid plans. Upgrade to download full reports with detailed fix guidance.
+          PDF and CSV exports are available on paid plans. Upgrade to download full reports with
+          detailed fix guidance.
         </p>
         <Link
           to="/pricing"
@@ -921,12 +1082,14 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
       </div>
 
       <p className="text-white/55 mb-6 text-sm">
-        Download your analysis report in your preferred format for compliance, documentation, or stakeholder sharing.
+        Download your analysis report in your preferred format for compliance, documentation, or
+        stakeholder sharing.
       </p>
 
-      {branding && (user?.tier === "signal" || user?.tier === "scorefix") && (
+      {branding && (user?.tier === 'signal' || user?.tier === 'scorefix') && (
         <p className="-mt-3 mb-6 text-xs text-amber-200/85">
-          Branded PDF export uses your workspace white-label profile and deducts {BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit per export.
+          Branded PDF export uses your workspace white-label profile and deducts{' '}
+          {BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit per export.
         </p>
       )}
 
@@ -943,7 +1106,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           disabled={!!generating}
           className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-white/22 to-white/14 text-white rounded-lg font-semibold hover:from-white/22 hover:to-white/14 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-white/20"
         >
-          {generating === "pdf" ? (
+          {generating === 'pdf' ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
               Generating PDF...
@@ -951,7 +1114,9 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           ) : (
             <>
               <FileText className="w-5 h-5" />
-              {branding && (user?.tier === "signal" || user?.tier === "scorefix") ? `Export branded PDF • ${BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit` : "Export as PDF"}
+              {branding && (user?.tier === 'signal' || user?.tier === 'scorefix')
+                ? `Export branded PDF • ${BRANDED_EXPORT_CREDIT_COST.toFixed(2)} credit`
+                : 'Export as PDF'}
             </>
           )}
         </button>
@@ -961,7 +1126,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           disabled={!!generating}
           className="flex items-center justify-center gap-3 px-6 py-4 bg-charcoal border-2 border-white/10 text-white/80 rounded-lg font-semibold hover:bg-charcoal-light transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {generating === "csv" ? (
+          {generating === 'csv' ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
               Generating CSV...
@@ -996,7 +1161,9 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ result }) => {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-white/80 font-bold">•</span>
-            <span>Findability goal alignment, coverage, and score impact (when goals are provided)</span>
+            <span>
+              Findability goal alignment, coverage, and score impact (when goals are provided)
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-white/80 font-bold">•</span>

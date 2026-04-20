@@ -194,7 +194,7 @@ function webResultFromPresence(
         position,
         url: topResult?.url ?? null,
         title: topResult?.title ?? null,
-        snippet: topResult?.snippet ?? null,
+        snippet: topResult?.description ?? null,
         competitorsDomains: competitors,
     };
 }

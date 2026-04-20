@@ -303,4 +303,9 @@ Disallow: /reports
 
 Crawl-delay: 1
 
-Sitemap: https://aivis.biz/sitemap.xml
+# Sub-sitemaps (for large-scale URL discovery):
+Sitemap: https://aivis.biz/sitemap-index.xml
+Sitemap: https://aivis.biz/sitemap-core.xml
+Sitemap: https://aivis.biz/sitemap-blogs.xml
+Sitemap: https://aivis.biz/sitemap-keywords.xml
+Sitemap: https://aivis.biz/sitemap-entities.xml

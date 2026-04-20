@@ -20,7 +20,7 @@
 
 /* ========================= Canonical tier system ========================= */
 
-export type CanonicalTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'scorefix';
+export type CanonicalTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'agency' | 'scorefix';
 
 /**
  * Legacy tier aliases for backwards compatibility
@@ -33,7 +33,7 @@ export type LegacyTier = 'free' | 'core' | 'premium';
  * If UI naming ever diverges from canonical naming, update the
  * LEGACY_TO_UI_TIER map and canonicalTierFromUi() accordingly.
  */
-export type UiTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'scorefix';
+export type UiTier = 'observer' | 'starter' | 'alignment' | 'signal' | 'agency' | 'scorefix';
 
 /** Convenience re-aliases for external consumers */
 export type Tier = CanonicalTier;
@@ -47,6 +47,7 @@ const LEGACY_TO_UI_TIER: Readonly<Record<CanonicalTier | LegacyTier, UiTier>> = 
   starter: 'starter',
   alignment: 'alignment',
   signal: 'signal',
+  agency: 'agency',
   scorefix: 'scorefix',
   // legacy aliases
   free: 'observer',
@@ -59,6 +60,7 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   starter: 'Starter',
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
+  agency: 'Agency (VaaS)',
   scorefix: 'Score Fix [AutoFix PR]',
 };
 
@@ -67,6 +69,7 @@ const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
   starter: 'full audit with all recommendations, implementation code, and fix-ready outputs',
   alignment: 'structured optimization system — turn extraction failures into evidence-backed fixes',
   signal: 'verified AI answer pipeline — triple-check consensus across 3 models',
+  agency: 'multi-client visibility operations platform — bulk scanning, org branding, white-label reports',
   scorefix: 'evidence-based fix pack — automated PRs that ship fixes, not guesses',
 };
 
@@ -75,6 +78,7 @@ const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   starter: 'solo founders • side-project owners • early-stage builders who need fixes not just scores',
   alignment: 'solo builders • early founders • no-code creators • production ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
+  agency: 'digital agencies • VaaS operators • consultancies managing multi-client AI visibility',
   scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
 };
 
@@ -83,7 +87,8 @@ const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
   starter: 1,
   alignment: 2,
   signal: 3,
-  scorefix: 4,
+  agency: 4,
+  scorefix: 5,
   free: 0,
   core: 2,
   premium: 3,
@@ -98,6 +103,7 @@ const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
 const VALID_TIER_STRINGS: ReadonlySet<string> = new Set<CanonicalTier | LegacyTier>([
   'observer',
   'starter',
+  'agency',
   'alignment',
   'signal',
   'scorefix',
@@ -233,6 +239,11 @@ export const PRICING = {
     billing: { monthly: 149, yearly: 1394, yearlyDiscount: 0.22 },
     limits: { scans: 200, competitors: 10, citations: 250 },
   },
+  agency: {
+    name: 'Agency (VaaS)',
+    billing: { monthly: 499, yearly: 4788, yearlyDiscount: 0.20 },
+    limits: { scans: 500, competitors: 50, citations: 1000 },
+  },
   scorefix: {
     name: 'ScoreFix AutoFix PR',
     billing: { monthly: 299, yearly: 2868, yearlyDiscount: 0.2 },
@@ -305,6 +316,20 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     maxApiRequestsPerMonth: 5000,
     hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
     hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 25,
+  },
+  agency: {
+    scansPerMonth: PRICING.agency.limits.scans, pagesPerScan: 200, competitors: PRICING.agency.limits.competitors, cacheDays: 90,
+    hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: true,
+    hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
+    hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
+    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasTeamWorkspaces: true,
+    maxScheduledRescans: -1, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
+    maxApiKeys: 50, maxWebhooks: 100, maxReportDeliveries: -1, maxTeamMembers: 50, maxStoredAudits: -1,
+    maxApiRequestsPerMonth: 20000,
+    hasAgencyDashboard: true, hasBulkFix: true, hasOrgBranding: true,
+    hasEmbedWidgets: true, hasIndustryBenchmarks: true, hasCustomDomain: true, maxProjects: -1,
   },
   scorefix: {
     scansPerMonth: PRICING.scorefix.limits.scans, pagesPerScan: 220, competitors: PRICING.scorefix.limits.competitors, cacheDays: 90,

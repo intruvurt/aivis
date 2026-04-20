@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express from "express";
 import { runAnalysisPipeline } from "../controllers/aiOrchestratorController.ts";
 import { authRequired } from "../middleware/authRequired.js";

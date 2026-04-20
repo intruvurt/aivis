@@ -37,6 +37,7 @@ export const DAILY_TASK_LIMITS: Record<CanonicalTier, number> = {
   alignment: 10,
   signal: 20,
   scorefix: 40,
+  agency: 100,
 };
 
 /* ────────────────────────────────────────────────────────────────────────────

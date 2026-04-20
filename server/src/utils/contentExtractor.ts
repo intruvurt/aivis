@@ -4,7 +4,7 @@ import { buildEvidence } from "./evidence.js";
 /**
  * Stage 4: Extraction - Extract all relevant signals from HTML
  */
-export const extractContent = (html, url) => {
+export const extractContent = (html: string, url: string) => {
   const evidence = [];
   const extractedData = {
     metaTags: {},

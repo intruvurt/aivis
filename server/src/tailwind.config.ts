@@ -215,7 +215,7 @@ module.exports = {
       },
       
       // Custom typography plugin defaults
-      typography: (theme) => ({
+      typography: (theme: any) => ({
         DEFAULT: {
           css: {
             color: theme('colors.gray.300'),
@@ -250,7 +250,7 @@ module.exports = {
     require('@tailwindcss/container-queries'),
     
     // Custom glass effect utility
-    function({ addUtilities, theme }) {
+    function({ addUtilities, theme }: { addUtilities: any; theme: any }) {
       const newUtilities = {
         '.glass-effect': {
           background: 'rgba(255, 255, 255, 0.05)',

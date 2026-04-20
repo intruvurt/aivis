@@ -30,6 +30,19 @@ export const AUTO_SCORE_FIX_EXPIRY_HOURS = 48;
 export const AUTO_SCORE_FIX_REFUND_PERCENT = 0.80;
 export const AUTO_SCORE_FIX_FEE_PERCENT = 0.20;
 
+/**
+ * AutoFix execution mode — must be explicitly escalated to production_pr.
+ *
+ * dry_run      — generate fix plan + diff preview, no VCS write. Default.
+ * staging_pr   — create PR on a staging/preview branch; no main-branch write.
+ * production_pr — create PR targeting the actual base branch.
+ *                 Requires alignment+ tier AND a manual override token.
+ */
+export type AutoFixMode = 'dry_run' | 'staging_pr' | 'production_pr';
+
+/** Minimum tier required to escalate to production_pr */
+export const PRODUCTION_PR_MIN_TIER = 'alignment' as const;
+
 export type VcsProvider = 'github' | 'gitlab' | 'bitbucket';
 export type JobStatus =
   | 'pending'
@@ -53,6 +66,17 @@ export interface AutoScoreFixJobInput {
   repoBranch: string;
   encryptedToken: string;
   repoTree?: string[];
+  /**
+   * Execution mode. Defaults to 'dry_run' when omitted.
+   * 'production_pr' requires alignment+ tier + productionOverrideToken.
+   */
+  mode?: AutoFixMode;
+  /**
+   * Required when mode = 'production_pr'.
+   * Must be a server-side token stored in the users table (production_override_token).
+   * Prevents accidental production PR creation from the UI default path.
+   */
+  productionOverrideToken?: string;
   auditEvidence: {
     visibility_score: number;
     recommendations: Array<{
@@ -716,6 +740,46 @@ async function createBitbucketPR(
 export async function submitAutoScoreFixJob(input: AutoScoreFixJobInput): Promise<string> {
   const pool = getPool();
 
+  // ── Mode enforcement ─────────────────────────────────────────────────────
+  // Default to dry_run when mode is omitted.
+  const mode: AutoFixMode = input.mode ?? 'dry_run';
+
+  if (mode === 'production_pr') {
+    // Require alignment+ tier
+    const { meetsMinimumTier, uiTierFromCanonical } = await import('../../../shared/types.js');
+    const { rows: userRows } = await pool.query(
+      `SELECT tier, production_override_token FROM users WHERE id = $1`,
+      [input.userId],
+    );
+    const userTier = uiTierFromCanonical(userRows[0]?.tier ?? 'observer');
+    if (!meetsMinimumTier(userTier, PRODUCTION_PR_MIN_TIER)) {
+      throw new Error(
+        `production_pr mode requires ${PRODUCTION_PR_MIN_TIER}+ tier. ` +
+        `Current tier: ${userTier}. Use mode='dry_run' or upgrade your plan.`,
+      );
+    }
+    // Require override token
+    const storedToken = userRows[0]?.production_override_token;
+    if (!storedToken || storedToken !== input.productionOverrideToken) {
+      throw new Error(
+        'production_pr mode requires a valid productionOverrideToken. ' +
+        'Obtain your token from Settings → Operator Mode → AutoFix.',
+      );
+    }
+  }
+
+  // dry_run: generate plan + diff, skip VCS write entirely, return synthetic job id
+  if (mode === 'dry_run') {
+    const plan = await generateHybridFixPlan(input);
+    return JSON.stringify({ dry_run: true, plan });
+  }
+
+  // staging_pr: target a dedicated staging branch instead of the user's base branch
+  const effectiveBranch =
+    mode === 'staging_pr' ? `staging/aivis-preview-${Date.now()}` : input.repoBranch;
+
+  const adjustedInput: AutoScoreFixJobInput = { ...input, repoBranch: effectiveBranch, mode };
+
   // 1. Deduct credits upfront (atomic)
   const { consumed } = await consumePackCredits(
     input.userId,
@@ -729,7 +793,7 @@ export async function submitAutoScoreFixJob(input: AutoScoreFixJobInput): Promis
     );
   }
 
-  // 2. Create job record
+  // 2. Create job record (using adjusted branch for staging_pr)
   const expiresAt = new Date(Date.now() + AUTO_SCORE_FIX_EXPIRY_HOURS * 60 * 60 * 1000);
   const { rows } = await pool.query(
     `INSERT INTO auto_score_fix_jobs
@@ -738,17 +802,17 @@ export async function submitAutoScoreFixJob(input: AutoScoreFixJobInput): Promis
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'generating',$9,$10,$11)
      RETURNING id`,
     [
-      input.userId,
-      input.workspaceId,
-      input.auditId || null,
-      input.targetUrl,
-      input.vcsProvider,
-      input.repoOwner,
-      input.repoName,
-      input.repoBranch,
+      adjustedInput.userId,
+      adjustedInput.workspaceId,
+      adjustedInput.auditId || null,
+      adjustedInput.targetUrl,
+      adjustedInput.vcsProvider,
+      adjustedInput.repoOwner,
+      adjustedInput.repoName,
+      adjustedInput.repoBranch,
       AUTO_SCORE_FIX_CREDIT_COST,
       expiresAt.toISOString(),
-      JSON.stringify(input.auditEvidence),
+      JSON.stringify(adjustedInput.auditEvidence),
     ]
   );
   const jobId: string = rows[0].id;

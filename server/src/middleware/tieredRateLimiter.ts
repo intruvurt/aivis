@@ -24,6 +24,7 @@ const TIER_RATE_LIMITS: Record<RouteKey, Record<CanonicalTier, { maxRequests: nu
     alignment: { maxRequests: 15, windowMs: 60_000 },
     signal: { maxRequests: 30, windowMs: 60_000 },
     scorefix: { maxRequests: 50, windowMs: 60_000 },
+    agency: { maxRequests: 60, windowMs: 60_000 },
   },
   api_default: {
     observer: { maxRequests: 30, windowMs: 60_000 },
@@ -31,6 +32,7 @@ const TIER_RATE_LIMITS: Record<RouteKey, Record<CanonicalTier, { maxRequests: nu
     alignment: { maxRequests: 60, windowMs: 60_000 },
     signal: { maxRequests: 120, windowMs: 60_000 },
     scorefix: { maxRequests: 200, windowMs: 60_000 },
+    agency: { maxRequests: 300, windowMs: 60_000 },
   },
 };
 

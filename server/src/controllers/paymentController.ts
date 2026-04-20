@@ -1385,6 +1385,7 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       alignment: 5,
       signal: 10,
       scorefix: 15,
+      agency: 25,
     };
 
     const buildTierFeatures = (tier: CanonicalTier): string[] => {

@@ -22,6 +22,7 @@ const DAILY_LIMITS: Record<CanonicalTier, number> = {
   alignment: 10,
   signal: 30, // Signal tier gets 30 messages/day — premium support
   scorefix: 25,
+  agency: 50, // Agency tier gets 50 messages/day — team support
 };
 
 function uniqueProviders(providers: AiProvider[]): AiProvider[] {
@@ -222,6 +223,7 @@ const TIER_DISPLAY: Record<CanonicalTier, string> = {
   alignment: 'Alignment [Core]',
   signal: 'Signal [Pro]',
   scorefix: 'Score Fix [AutoFix PR]',
+  agency: 'Agency',
 };
 
 function detectActionIntent(message: string): DetectedAction | null {

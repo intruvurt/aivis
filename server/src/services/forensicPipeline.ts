@@ -15,7 +15,7 @@
  *   await pipeline.emit('CITATION_FOUND', { scanId, queryId, sourceId, ... });
  */
 
-import { getPool } from './postgresql';
+import { getPool } from './postgresql.js';
 
 // ── Event Type Map ────────────────────────────────────────────────────────────
 

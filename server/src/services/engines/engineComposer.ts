@@ -56,6 +56,7 @@ function getEnginesForTierSafe(tier: CanonicalTier): {
     alignment: 1,
     signal: 2,
     scorefix: 3,
+    agency: 3,
   };
   const current = rank[tier] ?? 0;
   return {
@@ -507,10 +508,10 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
 
   console.log(
     `[Analysis] Completed in ${totalTimeMs}ms | Tier: ${input.tier} | Score: ${overallScore}` +
-      (comparisonInsight ? ` | Benchmark gap: ${comparisonInsight.scoreGap}` : '') +
-      (repairInsight
-        ? ` | Repair plan: ${repairInsight.priorityActions.length} actions, projected ${repairInsight.projectedScoreAfterFixes}`
-        : ''),
+    (comparisonInsight ? ` | Benchmark gap: ${comparisonInsight.scoreGap}` : '') +
+    (repairInsight
+      ? ` | Repair plan: ${repairInsight.priorityActions.length} actions, projected ${repairInsight.projectedScoreAfterFixes}`
+      : ''),
   );
   response.audit_report = auditReport;
   response.analysis_coverage = {

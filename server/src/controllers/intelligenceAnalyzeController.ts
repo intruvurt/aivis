@@ -18,8 +18,10 @@ import { persistAuditRecord } from "../services/auditPersistenceService.js";
 import { createAuditEvidenceEntry } from "../services/citeLedgerService.js";
 import { normalizePublicHttpUrl } from "../lib/urlSafety.js";
 import type { CanonicalTier } from "../../../shared/types.js";
-import { uiTierFromCanonical, getTierLimits } from "../../../shared/types.js";
+import { uiTierFromCanonical, getTierLimits, meetsMinimumTier } from "../../../shared/types.js";
 import { lookupDomainAgeYears } from "../lib/utils/domainAge.js";
+import { arbitrate, type SignalLayer } from "../services/truthArbiterService.js";
+import { runCitationEvolutionEngine, enforceCitationIntegrity } from "../services/citationEvolutionEngine.js";
 
 export async function intelligenceAnalyzeHandler(
   req: Request,
@@ -274,6 +276,45 @@ export async function intelligenceAnalyzeHandler(
     }
 
     // ====================================================================
+    // TRUTH ARBITRATION — no score reaches the response without signal validation
+    // ====================================================================
+
+    const signalLayer: SignalLayer = {
+      aiOutput: `score:${analysis.overall_ai_visibility_score} entity:${(analysis.entity_graph?.data as Record<string, unknown>)?.primary_entity ? ((analysis.entity_graph?.data as Record<string, unknown>).primary_entity as Record<string, unknown>)?.canonical_name : ''}`,
+      citationSources: [],
+      mentionSignals: [],
+    };
+    const arbitrated = arbitrate(signalLayer);
+
+    // ====================================================================
+    // CITATION EVOLUTION ENGINE — gap detection + action graph (alignment+)
+    // ====================================================================
+
+    let citationEvolution = null;
+    if (meetsMinimumTier(tier, 'alignment')) {
+      try {
+        citationEvolution = runCitationEvolutionEngine(analysis, {
+          scanId: savedAuditId ?? undefined,
+        });
+        // Enforce citation integrity contract
+        enforceCitationIntegrity(citationEvolution);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.startsWith('NON_COMPLIANT_OUTPUT')) {
+          console.error(`[${requestId}] Citation integrity violation:`, msg);
+          // Non-compliant outputs must not be delivered — return 500
+          res.status(500).json({
+            error: 'Citation integrity violation — output lacks evidence backing',
+            code: 'NON_COMPLIANT_OUTPUT',
+            request_id: requestId,
+          });
+          return;
+        }
+        console.warn(`[${requestId}] Citation evolution engine non-critical failure:`, err);
+      }
+    }
+
+    // ====================================================================
     // RESPONSE
     // ====================================================================
 
@@ -284,10 +325,33 @@ export async function intelligenceAnalyzeHandler(
       request_id: requestId,
       processing_time_ms: responseTime,
       ...(savedAuditId ? { audit_id: savedAuditId } : {}),
+      // TruthArbiter signal validation result
+      truth_arbiter: {
+        validity: arbitrated.validity,
+        confidence_score: arbitrated.confidence_score,
+        is_ledger_approved: arbitrated.is_ledger_approved,
+      },
+      // Citation evolution (alignment+ only)
+      ...(citationEvolution ? {
+        gap_analysis: {
+          total_gaps: citationEvolution.gap_analysis.total_gap_count,
+          critical_gaps: citationEvolution.gap_analysis.critical_gap_count,
+          gaps: citationEvolution.gap_analysis.gaps,
+          estimated_total_uplift: citationEvolution.gap_analysis.estimated_total_uplift,
+        },
+        action_graph: {
+          actions: citationEvolution.action_graph.actions,
+          projected_score: citationEvolution.projected_score,
+          quick_win_score: citationEvolution.quick_win_score,
+          automatable_count: citationEvolution.action_graph.automatable_count,
+        },
+        visibility_plan: citationEvolution.visibility_plan,
+        missing_citations: citationEvolution.missing_citations,
+      } : {}),
     });
 
     console.log(
-      `[${requestId}] Analysis complete in ${responseTime}ms | Score: ${analysis.overall_ai_visibility_score} | Tier: ${tier}`,
+      `[${requestId}] Analysis complete in ${responseTime}ms | Score: ${analysis.overall_ai_visibility_score} | Tier: ${tier} | Arbiter: ${arbitrated.validity} | Gaps: ${citationEvolution?.gap_analysis.total_gap_count ?? 'n/a'}`,
     );
   } catch (err) {
     console.error(`[${requestId}] Analysis error:`, err);

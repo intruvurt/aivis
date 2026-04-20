@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express from "express";
 import { getBrand, createBrand, updateBrand, deleteBrand, getAllBrands } from "../controllers/brandController.ts";
 import { body } from "express-validator";

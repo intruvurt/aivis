@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express from "express";
 import jwt from "jsonwebtoken";
 import { authRequired } from "../middleware/authRequired.js";

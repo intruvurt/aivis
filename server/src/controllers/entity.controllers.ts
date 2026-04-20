@@ -1029,7 +1029,7 @@ export async function simulateEntityHandler(req: Request, res: Response) {
     const baseLikelihood = clampPercent(Math.round((citationReadiness * 0.45) + (clarityScore * 0.35) + (authorityScore * 0.2)));
     const topCollisionSeverity = Number(competitors[0]?.severity || 0);
 
-    const results = queries.map((query) => {
+    const results = queries.map((query: string) => {
       const overlapScore = computeQueryOverlapScore(query, entity);
       const citedLikelihood = clampPercent(baseLikelihood + Math.round((overlapScore - 0.5) * 20));
       const confusionPenalty = Math.round(topCollisionSeverity * 35);
@@ -1056,8 +1056,8 @@ export async function simulateEntityHandler(req: Request, res: Response) {
       simulation: {
         entity_id: entity.id,
         aggregate: {
-          average_cited_likelihood: clampPercent(results.reduce((sum, item) => sum + item.cited_likelihood, 0) / results.length),
-          average_misclassification_risk: clampPercent(results.reduce((sum, item) => sum + item.misclassification_risk, 0) / results.length),
+          average_cited_likelihood: clampPercent(results.reduce((sum: number, item: typeof results[0]) => sum + item.cited_likelihood, 0) / results.length),
+          average_misclassification_risk: clampPercent(results.reduce((sum: number, item: typeof results[0]) => sum + item.misclassification_risk, 0) / results.length),
         },
         results,
       },

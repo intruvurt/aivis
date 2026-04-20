@@ -43,18 +43,19 @@ async function testAnalyze() {
     console.log('Recommendations:', response.data.recommendations?.length || 0);
 
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ Test failed!');
     console.error('');
 
-    if (error.response) {
-      console.error('Status:', error.response.status);
-      console.error('Error:', error.response.data);
-    } else if (error.request) {
+    const err = error as any;
+    if (err.response) {
+      console.error('Status:', err.response.status);
+      console.error('Error:', err.response.data);
+    } else if (err.request) {
       console.error('No response received. Is the server running?');
-      console.error('Error:', error.message);
+      console.error('Error:', err.message);
     } else {
-      console.error('Error:', error.message);
+      console.error('Error:', err.message);
     }
 
     process.exit(1);

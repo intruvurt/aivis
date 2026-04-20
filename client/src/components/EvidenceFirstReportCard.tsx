@@ -222,7 +222,7 @@ function EvidenceCoverageBlock({ result }: { result: AnalysisResponse | AuditRes
 
   return (
     <div className="px-6 py-6 border-b border-slate-700/30">
-      <p className="text-xs text-slate-400 uppercase tracking-wide mb-3">Evidence Coverage</p>
+      <p className="text-xs text-slate-400 uppercase tracking-wide mb-3">AI Citation Probability</p>
       <div className="flex items-center gap-6">
         {/* Circular gauge */}
         <div className="relative w-24 h-24 shrink-0">
@@ -288,12 +288,12 @@ function EvidenceCoverageBlock({ result }: { result: AnalysisResponse | AuditRes
         <div className="flex-1">
           <p className="text-sm font-semibold text-white mb-2">
             {coverage >= 80
-              ? 'Excellent coverage'
+              ? 'AI systems reliably cite this content'
               : coverage >= 60
-                ? 'Good coverage'
+                ? 'Citation likelihood is partial'
                 : coverage >= 40
-                  ? 'Moderate coverage'
-                  : 'Limited coverage'}
+                  ? 'Citation likelihood is low'
+                  : 'Absent from AI answers'}
           </p>
           <p className="text-xs text-slate-400 leading-relaxed">
             {coverage >= 80

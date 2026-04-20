@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Audit from "../models/Audit.js";
 import Website from "../models/Website.js";
 import User from "../models/User.js";

@@ -13036,11 +13036,11 @@ For each recommendation:
                   url: targetUrl,
                   domain,
                   html: (scraped.data?.html || scraped.data?.body || '') as string,
-                  brandName: (apiResponse as Record<string, unknown>)?.brand_entities
-                    ? ((apiResponse as Record<string, unknown>).brand_entities as string[])[0]
+                  brandName: (fullPayload as Record<string, unknown>)?.brand_entities
+                    ? ((fullPayload as Record<string, unknown>).brand_entities as string[])[0]
                     : undefined,
                 }).then((result) => {
-                  (apiResponse as Record<string, unknown>).answer_presence = result;
+                  (fullPayload as Record<string, unknown>).answer_presence = result;
                   console.log(
                     `[${requestId}] Answer presence: ${result.mentions_found}/${result.queries_tested} queries mentioned, score=${result.answer_presence_score}`,
                   );

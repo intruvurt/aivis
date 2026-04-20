@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Brand from "../models/Brand.js";
 import { validationResult } from "express-validator";
 

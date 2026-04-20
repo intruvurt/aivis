@@ -1396,9 +1396,9 @@ export async function authorityGranularCheck(req: Request, res: Response) {
           'Backlink signals are heuristic and should be confirmed manually for legal/compliance workflows.',
         ],
       },
-      security: trustSignals.security,
-      phishing_risk: trustSignals.phishingRisk,
-      compliance: trustSignals.compliance,
+      security: trustSignals.security ?? { https: false, hardening_score: 0, missing_header_count: 5 },
+      phishing_risk: trustSignals.phishingRisk ?? { level: 'low' as const, reasons: [] },
+      compliance: trustSignals.compliance ?? { detected_niche: 'general', required_signals: [], present_signals: [], missing_signals: [] },
       entity: entityFingerprint ? {
         fingerprint_active: true,
         anchor_score: computeAnchorScore(entityFingerprint),

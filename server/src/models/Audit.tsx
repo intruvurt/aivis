@@ -1,4 +1,4 @@
-import { pool } from '../../services/postgresql';
+import { pool } from '../../services/postgresql.js';
 
 export interface Audit {
   id: string;

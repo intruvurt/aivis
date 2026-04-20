@@ -50,11 +50,11 @@ async function queryGitHubInstallations<T = any>(sql: string, params: unknown[])
   const pool = getPool();
 
   try {
-    return await pool.query(sql, params);
+    return (await pool.query(sql, params)) as unknown as { rows: T[] };
   } catch (error: any) {
     if (error?.code !== '42P01') throw error;
     await ensureGitHubInstallationsTable();
-    return await pool.query(sql, params);
+    return (await pool.query(sql, params)) as unknown as { rows: T[] };
   }
 }
 

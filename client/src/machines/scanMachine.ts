@@ -20,12 +20,12 @@ export type ScanStage =
   | 'FINALIZING';
 
 export const STAGE_LABEL: Record<ScanStage, string> = {
-  FETCHING:             'fetching source…',
-  PARSING_DOM:          'parsing dom…',
-  EXTRACTING_ENTITIES:  'extracting entities…',
-  RESOLVING_CITATIONS:  'resolving citations…',
-  SCORING:              'computing scores…',
-  FINALIZING:           'finalizing graph…',
+  FETCHING:             'checking AI systems for your presence…',
+  PARSING_DOM:          'mapping entity structure…',
+  EXTRACTING_ENTITIES:  'detecting citation signals…',
+  RESOLVING_CITATIONS:  'probing AI answer graphs…',
+  SCORING:              'computing citation probability…',
+  FINALIZING:           'building visibility path…',
 };
 
 // Ordered list used to animate the terminal stream

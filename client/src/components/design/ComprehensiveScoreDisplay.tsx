@@ -1,10 +1,10 @@
-import React from "react";
-import { COLORS, SPACING, BORDER_RADIUS, TYPOGRAPHY } from "../../lib/design/designSystem";
+import React from 'react';
+import { COLORS, SPACING, BORDER_RADIUS, TYPOGRAPHY } from '../../lib/design/designSystem';
 
 /**
  * ─────────────────────────────────────────────────────────────
  * 5-PART SCORE DISPLAY
- * 
+ *
  * Shows: Verified Evidence | Gaps | Drift | Technical SEO | Registry
  * ─────────────────────────────────────────────────────────────
  */
@@ -14,7 +14,7 @@ interface ScoreMetric {
   current: number;
   max: number;
   color: string;
-  status: "pass" | "warning" | "review" | "action";
+  status: 'pass' | 'warning' | 'review' | 'action';
   description?: string;
 }
 
@@ -23,7 +23,7 @@ interface ComprehensiveScoreDisplayProps {
   maxScore: number;
   metrics: ScoreMetric[];
   technicalSeoScore: number;
-  technicalSeoStatus: "pass" | "fail";
+  technicalSeoStatus: 'pass' | 'fail';
   visibilityWithoutSeo?: number;
   roadmapScore?: number;
 }
@@ -55,15 +55,15 @@ export function ComprehensiveScoreDisplay({
               fontSize: TYPOGRAPHY.bodySmall.size,
               fontWeight: TYPOGRAPHY.bodySmall.weight,
               color: COLORS.text.secondary,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
             }}
           >
-            Visibility Score
+            Citation Probability
           </p>
           <h2
             style={{
-              fontSize: "2.25rem",
+              fontSize: '2.25rem',
               fontWeight: 700,
               color: COLORS.text.primary,
               marginTop: SPACING.xs,
@@ -75,7 +75,7 @@ export function ComprehensiveScoreDisplay({
         <div className="text-right">
           <div
             style={{
-              fontSize: "1.5rem",
+              fontSize: '1.5rem',
               fontWeight: 600,
               color: COLORS.text.primary,
             }}
@@ -84,20 +84,20 @@ export function ComprehensiveScoreDisplay({
           </div>
           <div
             style={{
-              width: "200px",
-              height: "8px",
+              width: '200px',
+              height: '8px',
               backgroundColor: COLORS.bg.secondary,
               borderRadius: BORDER_RADIUS.xs,
               marginTop: SPACING.sm,
-              overflow: "hidden",
+              overflow: 'hidden',
             }}
           >
             <div
               style={{
-                height: "100%",
+                height: '100%',
                 width: `${percentage}%`,
                 backgroundColor: getScoreColor(percentage),
-                transition: "width 250ms ease-out",
+                transition: 'width 250ms ease-out',
               }}
             />
           </div>
@@ -135,10 +135,10 @@ export function ComprehensiveScoreDisplay({
             style={{
               fontSize: TYPOGRAPHY.bodySmall.size,
               fontWeight: 600,
-              color: technicalSeoStatus === "pass" ? COLORS.status.success : COLORS.status.danger,
+              color: technicalSeoStatus === 'pass' ? COLORS.status.success : COLORS.status.danger,
             }}
           >
-            {technicalSeoScore}/{15} {technicalSeoStatus === "pass" ? "✓ PASS" : "✗ FAIL"}
+            {technicalSeoScore}/{15} {technicalSeoStatus === 'pass' ? '✓ PASS' : '✗ FAIL'}
           </span>
         </div>
         <p
@@ -148,12 +148,10 @@ export function ComprehensiveScoreDisplay({
             marginTop: SPACING.xs,
           }}
         >
-          • Schema.org structured data: {technicalSeoStatus === "pass" ? "✓" : "✗"} Valid JSON-LD
-          <br />
-          • WCAG 2.1 AA compliance: {technicalSeoStatus === "pass" ? "✓" : "✗"} PASS
-          <br />
-          • Mobile rendering: {technicalSeoStatus === "pass" ? "✓" : "✗"} Responsive
-          <br />• Crawlability: {technicalSeoStatus === "pass" ? "✓" : "✗"} Accessible
+          • Schema.org structured data: {technicalSeoStatus === 'pass' ? '✓' : '✗'} Valid JSON-LD
+          <br />• WCAG 2.1 AA compliance: {technicalSeoStatus === 'pass' ? '✓' : '✗'} PASS
+          <br />• Mobile rendering: {technicalSeoStatus === 'pass' ? '✓' : '✗'} Responsive
+          <br />• Crawlability: {technicalSeoStatus === 'pass' ? '✓' : '✗'} Accessible
         </p>
       </div>
 
@@ -178,8 +176,8 @@ export function ComprehensiveScoreDisplay({
           </p>
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
               gap: SPACING.lg,
             }}
           >
@@ -189,7 +187,7 @@ export function ComprehensiveScoreDisplay({
               </p>
               <p
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: '1.5rem',
                   fontWeight: 600,
                   color: COLORS.text.primary,
                 }}
@@ -203,15 +201,13 @@ export function ComprehensiveScoreDisplay({
               </p>
               <p
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: '1.5rem',
                   fontWeight: 600,
                   color:
-                    technicalSeoStatus === "pass"
-                      ? COLORS.status.success
-                      : COLORS.status.danger,
+                    technicalSeoStatus === 'pass' ? COLORS.status.success : COLORS.status.danger,
                 }}
               >
-                {technicalSeoStatus === "pass" ? "0" : "-15"}
+                {technicalSeoStatus === 'pass' ? '0' : '-15'}
               </p>
             </div>
             <div>
@@ -220,7 +216,7 @@ export function ComprehensiveScoreDisplay({
               </p>
               <p
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: '1.5rem',
                   fontWeight: 600,
                   color: COLORS.status.warning,
                 }}
@@ -234,7 +230,7 @@ export function ComprehensiveScoreDisplay({
               </p>
               <p
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: '1.5rem',
                   fontWeight: 600,
                   color: COLORS.text.primary,
                 }}
@@ -277,18 +273,18 @@ function ScoreMetricRow({ metric }: { metric: ScoreMetric }) {
       </div>
       <div
         style={{
-          height: "6px",
+          height: '6px',
           backgroundColor: COLORS.bg.secondary,
           borderRadius: BORDER_RADIUS.xs,
-          overflow: "hidden",
+          overflow: 'hidden',
         }}
       >
         <div
           style={{
-            height: "100%",
+            height: '100%',
             width: `${(metric.current / metric.max) * 100}%`,
             backgroundColor: metric.color,
-            transition: "width 250ms ease-out",
+            transition: 'width 250ms ease-out',
           }}
         />
       </div>
@@ -314,12 +310,12 @@ function ScoreMetricRow({ metric }: { metric: ScoreMetric }) {
  */
 
 interface BlockerCardProps {
-  severity: "critical" | "high" | "medium" | "low";
+  severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   description: string;
   impactPoints: number;
   effortMinutes: number;
-  status: "not_started" | "in_progress" | "completed";
+  status: 'not_started' | 'in_progress' | 'completed';
   tags?: string[];
   onViewDetails?: () => void;
   onFix?: () => void;
@@ -330,10 +326,10 @@ interface BlockerCardProps {
 }
 
 const SEVERITY_CONFIG = {
-  critical: { color: COLORS.status.danger, label: "CRITICAL", bg: "#7f1d1d" },
-  high: { color: COLORS.status.warning, label: "HIGH", bg: "#78350f" },
-  medium: { color: COLORS.status.info, label: "MEDIUM", bg: "#082f49" },
-  low: { color: COLORS.status.success, label: "LOW", bg: "#064e3b" },
+  critical: { color: COLORS.status.danger, label: 'CRITICAL', bg: '#7f1d1d' },
+  high: { color: COLORS.status.warning, label: 'HIGH', bg: '#78350f' },
+  medium: { color: COLORS.status.info, label: 'MEDIUM', bg: '#082f49' },
+  low: { color: COLORS.status.success, label: 'LOW', bg: '#064e3b' },
 };
 
 export function BlockerCard({
@@ -350,7 +346,7 @@ export function BlockerCard({
 }: BlockerCardProps) {
   const config = SEVERITY_CONFIG[severity];
   const statusText =
-    status === "completed" ? "Fixed" : status === "in_progress" ? "In Progress" : "Not Started";
+    status === 'completed' ? 'Fixed' : status === 'in_progress' ? 'In Progress' : 'Not Started';
 
   return (
     <div
@@ -365,7 +361,7 @@ export function BlockerCard({
         <div>
           <div
             style={{
-              display: "inline-block",
+              display: 'inline-block',
               backgroundColor: config.bg,
               color: config.color,
               padding: `${SPACING.xs} ${SPACING.sm}`,
@@ -391,8 +387,7 @@ export function BlockerCard({
           style={{
             fontSize: TYPOGRAPHY.bodyXs.size,
             fontWeight: 600,
-            color:
-              status === "completed" ? COLORS.status.success : COLORS.text.muted,
+            color: status === 'completed' ? COLORS.status.success : COLORS.text.muted,
           }}
         >
           {statusText}
@@ -413,8 +408,8 @@ export function BlockerCard({
       {/* Metadata Row */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
           gap: SPACING.md,
           marginBottom: SPACING.md,
           paddingBottom: SPACING.md,
@@ -422,9 +417,7 @@ export function BlockerCard({
         }}
       >
         <div>
-          <p style={{ fontSize: TYPOGRAPHY.bodyXs.size, color: COLORS.text.muted }}>
-            Impact
-          </p>
+          <p style={{ fontSize: TYPOGRAPHY.bodyXs.size, color: COLORS.text.muted }}>Impact</p>
           <p
             style={{
               fontSize: TYPOGRAPHY.h4.size,
@@ -436,9 +429,7 @@ export function BlockerCard({
           </p>
         </div>
         <div>
-          <p style={{ fontSize: TYPOGRAPHY.bodyXs.size, color: COLORS.text.muted }}>
-            Effort
-          </p>
+          <p style={{ fontSize: TYPOGRAPHY.bodyXs.size, color: COLORS.text.muted }}>Effort</p>
           <p
             style={{
               fontSize: TYPOGRAPHY.h4.size,
@@ -497,21 +488,21 @@ export function BlockerCard({
       )}
 
       {/* Actions */}
-      <div style={{ display: "flex", gap: SPACING.sm }}>
+      <div style={{ display: 'flex', gap: SPACING.sm }}>
         {onViewDetails && (
           <button
             onClick={onViewDetails}
             style={{
               flex: 1,
               padding: `${SPACING.sm} ${SPACING.md}`,
-              backgroundColor: "transparent",
+              backgroundColor: 'transparent',
               color: COLORS.text.primary,
               border: `1px solid ${COLORS.border.default}`,
               borderRadius: BORDER_RADIUS.sm,
               fontSize: TYPOGRAPHY.bodySmall.size,
               fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 150ms ease-out",
+              cursor: 'pointer',
+              transition: 'all 150ms ease-out',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = COLORS.border.strong;
@@ -519,7 +510,7 @@ export function BlockerCard({
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = COLORS.border.default;
-              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.backgroundColor = 'transparent';
             }}
           >
             View Details
@@ -532,13 +523,13 @@ export function BlockerCard({
               flex: 1,
               padding: `${SPACING.sm} ${SPACING.md}`,
               backgroundColor: COLORS.action.primary,
-              color: "#0f172a",
-              border: "none",
+              color: '#0f172a',
+              border: 'none',
               borderRadius: BORDER_RADIUS.sm,
               fontSize: TYPOGRAPHY.bodySmall.size,
               fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 150ms ease-out",
+              cursor: 'pointer',
+              transition: 'all 150ms ease-out',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = COLORS.action.hover;

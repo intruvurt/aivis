@@ -48,7 +48,13 @@ export type GatedFeature =
   | 'priorityQueue'     // Signal-exclusive: priority analysis queue
   | 'autoPR'            // scorefix-exclusive: automated GitHub PR generation via MCP
   | 'batchRemediation'  // scorefix-exclusive: batch remediation across multiple URLs
-  | 'evidenceLinkedPRs'; // scorefix-exclusive: evidence-linked PR commits
+  | 'evidenceLinkedPRs' // scorefix-exclusive: evidence-linked PR commits
+  // Signal-exclusive agency/platform features
+  | 'agencyDashboard'   // Signal: multi-client agency dashboard
+  | 'bulkFix'           // Signal: batch URL remediation
+  | 'orgBranding'       // Signal: white-label org branding
+  | 'embedWidgets'      // Signal: embeddable visibility score widgets
+  | 'industryBenchmarks'; // Signal: industry benchmark comparisons
 
 /**
  * Map feature keys to TierLimits properties
@@ -72,6 +78,11 @@ const featureToLimitKey: Partial<Record<GatedFeature, keyof TierLimits>> = {
   autoPR: 'hasAutoFixPR',
   batchRemediation: 'hasBatchRemediation',
   evidenceLinkedPRs: 'hasEvidenceLinkedPRs',
+  agencyDashboard: 'hasAgencyDashboard',
+  bulkFix: 'hasBulkFix',
+  orgBranding: 'hasOrgBranding',
+  embedWidgets: 'hasEmbedWidgets',
+  industryBenchmarks: 'hasIndustryBenchmarks',
 };
 
 const minimumTierByFeature: Partial<Record<GatedFeature, CanonicalTier>> = {
@@ -142,6 +153,11 @@ export function getTierFeatures(tier: string): Record<GatedFeature, boolean> {
     'autoPR',
     'batchRemediation',
     'evidenceLinkedPRs',
+    'agencyDashboard',
+    'bulkFix',
+    'orgBranding',
+    'embedWidgets',
+    'industryBenchmarks',
   ];
 
   return features.reduce((acc, feature) => {

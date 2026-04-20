@@ -172,13 +172,13 @@ function webResultFromPresence(
     presence: WebSearchPresenceResult,
     brandName: string,
 ): ProbeWebResult {
-    const mentioned = presence.brandFound ?? presence.found ?? false;
+    const mentioned = presence.found ?? false;
     const position = presence.position ?? null;
-    const topResult = presence.results?.[0];
+    const topResult = presence.top_results?.[0];
 
     // Collect competitor domains from search results
     const brandDomainParts = brandName.toLowerCase().split(/\s+/);
-    const competitors = (presence.results || [])
+    const competitors = (presence.top_results || [])
         .filter(r => {
             if (!r.url) return false;
             const domain = extractDomain(r.url).toLowerCase();
@@ -222,7 +222,7 @@ async function runAIProbe(
             opts: {
                 max_tokens: 500,
                 temperature: PROBE_TEMPERATURE,
-                system: `You are a helpful AI assistant. Answer the following question directly and concisely, mentioning specific brands, tools, or services where relevant.`,
+                systemPrompt: `You are a helpful AI assistant. Answer the following question directly and concisely, mentioning specific brands, tools, or services where relevant.`,
             },
         }) ?? '';
     } catch {

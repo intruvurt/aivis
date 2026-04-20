@@ -59,6 +59,7 @@ import type {
   LegacyTier,
   StrictRubricSystem,
   SchemaMarkup,
+  ScanEvent,
 } from "../../shared/types.js";
 import { verifyUserToken } from "./lib/utils/jwt.js";
 import { getRequestAuthToken } from "./lib/authSession.js";
@@ -285,6 +286,7 @@ import {
 } from "./services/evidenceExtractor.js";
 import { scoreEvidence } from "./services/scoringEngine.js";
 import { buildPreviewResult } from "./services/previewScanner.js";
+import { runScan } from "./services/scanOrchestrator.js";
 import {
   evaluateSSFRRules,
   buildSSFRSummary,
@@ -9507,6 +9509,49 @@ app.post(
         .status(500)
         .json({ error: "Preview scan failed. Please try again." });
     }
+  },
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Streaming scan — public, no auth, Server-Sent Events
+// GET /api/analyze/stream?url=<encoded-url>
+// ─────────────────────────────────────────────────────────────────────────────
+app.get(
+  "/api/analyze/stream",
+  ipRateLimit({ maxRequests: 5, windowMs: 3_600_000 }),
+  async (req: Request, res: Response) => {
+    const rawUrl =
+      typeof req.query.url === "string" ? req.query.url.trim() : "";
+
+    if (!rawUrl) {
+      return res.status(400).json({ error: "url query parameter is required" });
+    }
+    if (rawUrl.length > 2048) {
+      return res.status(400).json({ error: "URL too long" });
+    }
+
+    const { valid, url: targetUrl, error: urlError } = validateUrl(rawUrl);
+    if (!valid || !targetUrl) {
+      return res.status(400).json({ error: urlError || "Invalid URL" });
+    }
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no"); // disable nginx buffering
+    res.flushHeaders();
+
+    const emit = (event: ScanEvent) =>
+      res.write(`data: ${JSON.stringify(event)}\n\n`);
+
+    try {
+      await runScan(targetUrl, emit);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Scan failed";
+      emit({ type: "ERROR", stage: "ORCHESTRATOR", message: msg });
+    }
+
+    res.end();
   },
 );
 

@@ -2394,3 +2394,54 @@ export interface DatasetAuditProof {
   provenance_jsonld: Record<string, unknown>;
   issued_at: string;
 }
+
+// ── Streaming scan event types ──────────────────────────────────────────────
+
+/** A single cite-ledger entry streamed during a live scan */
+export interface CiteEntry {
+  /** Stable hash ID: sha1(evidence_key + ':' + source) */
+  id: string;
+  /** Raw signal text extracted from the page */
+  raw_evidence: string;
+  /** Human-readable signal interpretation */
+  extracted_signal: string;
+  /** Normalised evidence key (e.g. 'schema_org', 'meta_description') */
+  evidence_key: string;
+  /** Unix ms timestamp when this cite was extracted */
+  timestamp: number;
+}
+
+/** A named entity reference streamed during entity extraction */
+export interface EntityRef {
+  name: string;
+  /** SSFF family: 'source' | 'signal' | 'fact' | 'relationship' */
+  type: string;
+  confidence: number;
+}
+
+/** Final scan summary included with SCAN_COMPLETED */
+export interface ScanSummary {
+  url: string;
+  score: number;
+  cite_count: number;
+  entity_count: number;
+  processing_ms: number;
+  /** Pre-built preview result for the result card */
+  status_line: string;
+  findings: string[];
+  recommendation: string;
+  hard_blockers: string[];
+  scanned_at: string;
+}
+
+/** Discriminated union of all events emitted over the SSE stream */
+export type ScanEvent =
+  | { type: 'SCAN_STARTED'; url: string; ts: number }
+  | { type: 'HTML_FETCHED'; bytes: number }
+  | { type: 'DOM_PARSED'; nodes: number }
+  | { type: 'CITE_FOUND'; cite: CiteEntry }
+  | { type: 'ENTITY_EXTRACTED'; entity: EntityRef }
+  | { type: 'INTERPRETATION'; message: string; cite_ids: string[] }
+  | { type: 'SCORE_UPDATED'; layer: 'crawl' | 'semantic' | 'authority'; value: number }
+  | { type: 'ERROR'; stage: string; message: string }
+  | { type: 'SCAN_COMPLETED'; summary: ScanSummary };

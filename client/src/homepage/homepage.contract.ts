@@ -18,7 +18,7 @@ export const BRAND = {
     domain: 'https://aivis.biz',
     tagline: `${BRAG_ACRONYM} evidence-linked scores`,
     secondaryTagline: 'get cited fixes',
-    slogan: 'Fix how AI systems interpret and cite your website',
+    slogan: 'Verify whether AI answer engines can find, extract, and cite your content — and trace every gap to a crawl event.',
     author: {
         name: 'Ryan Mason',
         twitter: '@dobleduche',
@@ -65,7 +65,7 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 
 export const META = {
     title: `AiVIS — AI Visibility Audit | Evidence-Backed by ${BRAND.product}`,
-    description: `${CITE_LEDGER_DEFINITION} Every finding is evidence-linked through ${BRAG.acronym} (${BRAG.expansion}).`,
+    description: `${BRAND.name} ingests a URL, extracts entity and structural signals, generates intent query sets, probes AI models and search engines, and builds an evidence ledger of observed and missing citations. Every score traces to a verifiable crawl event, ledger entry, or registry computation.`,
     keywords: `${BRAND.product}, ${BRAND.name}, ${BRAG.acronym} evidence scores, AI citation audit, ChatGPT citation verification, Perplexity citation, Claude citation, structured data verification, AI answer verification, AI citation ledger, evidence-linked audit, anti-hallucination audit, ${BRAG.acronym} framework, entity disambiguation, citation readiness, AI extraction verification, machine readability, fix protocol, citation proof, AI answer distortion`,
     author: BRAND.name,
     canonical: BRAND.domain,
@@ -105,9 +105,9 @@ export const TWITTER = {
 
 export const HERO = {
     headline: [BRAND.name, BRAND.product, `${BRAG.acronym} evidence-linked scores`, 'get cited fixes'] as const,
-    subHeadline: 'Verify how AI systems interpret and cite your website. Every finding is evidence-linked.',
-    description: `${BRAND.name} ${BRAND.product} runs a live page analysis and maps how AI models interpret your content. Every result is tied to real on-page evidence through ${BRAG.acronym} — ${BRAG.expansion}.`,
-    ctaText: 'See what AI gets wrong',
+    subHeadline: 'Submit a URL. The system extracts entity signals, generates intent queries, and probes live AI and search responses. Every result maps to a ledger entry or a gap detection record — not an inference.',
+    description: `${BRAND.name} ingests your URL → extracts entity and structural signals → generates typed query sets → probes AI models and web search in parallel → stores every result as an immutable citation ledger entry → computes visibility gaps and competitive displacement → outputs evidence-linked fix instructions tied to specific crawl observations.`,
+    ctaText: 'Run citation audit',
     inputPlaceholder: 'yourdomain.com',
 } as const;
 

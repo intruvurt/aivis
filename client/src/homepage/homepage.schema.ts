@@ -31,11 +31,11 @@ import {
 export const HOMEPAGE_FAQ_ITEMS = [
     {
         q: 'What is AiVIS.biz and what does it audit?',
-        a: `${CITE_LEDGER_DEFINITION} It fetches your live page and scores seven evidence-linked categories using BRAG (Based-Retrieval-Auditable-Grading).`,
+        a: `${CITE_LEDGER_DEFINITION} It runs an eight-step pipeline: URL ingestion → entity and structural extraction → typed query generation → parallel AI and web probing → citation ledger construction (citation_ledger table) → visibility registry computation → gap detection (scan_gaps table) → evidence-linked action output. Every finding maps to a crawl event, a ledger entry, or a registry metric.`,
     },
     {
         q: 'Why does citation verification matter more than traditional ranking?',
-        a: `Traditional search rewards backlinks and keywords. AI answer engines synthesize responses from structured content — thin structure, missing schema or poor heading hierarchy means you get skipped or misrepresented, regardless of domain authority. ${BRAND.product} tracks how AI models interpret, reference, and cite your content — the citation layer that traditional tools do not measure.`,
+        a: `Traditional search rewards backlinks and keywords. AI answer engines synthesize responses from structured content — thin structure, missing schema, or poor heading hierarchy means your brand is absent from AI answers regardless of domain authority. ${BRAND.product} probes live AI model responses, records whether your brand appears, at what position, and which competing domains are cited instead. Every absence is stored as a gap detection record in the scan_gaps table — not an estimate.`,
     },
     {
         q: 'What is BRAG and why does AiVIS.biz use it?',
@@ -48,7 +48,7 @@ export const HOMEPAGE_FAQ_ITEMS = [
     { q: 'What happens to unused monthly audits?', a: 'Monthly audit credits reset at billing cycle start and do not roll over.' },
     {
         q: 'What is citation readiness?',
-        a: 'Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or hallucination.',
+        a: 'Citation readiness measures how extractable and citable a page is for AI answer engines. It is computed from observed probe results: entity presence in crawled signals, schema coverage, heading structure accessibility, and citation_ledger entries showing whether the brand appeared in AI responses to relevant queries. A page with high citation readiness has verifiable entity signals and consistent citation observations across query categories.',
     },
     {
         q: 'Who should use AiVIS.biz?',

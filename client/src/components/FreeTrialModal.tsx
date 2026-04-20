@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { X, Zap, CheckCircle2, AlertCircle, ShieldCheck } from "lucide-react";
-import toast from "react-hot-toast";
-import { useAuthStore } from "../stores/authStore";
-import { apiFetch } from "../utils/api";
+import React, { useState } from 'react';
+import { X, Zap, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuthStore } from '../stores/authStore';
+import { apiFetch } from '../utils/api';
 
 interface Props {
   onClose: () => void;
 }
 
 const SIGNAL_FEATURES = [
-  "Triple-Check AI pipeline (3-model score consensus)",
-  "Citation testing across ChatGPT, Claude & Perplexity",
-  "Competitor tracking + gap analysis",
-  "Brand mention monitoring (19 sources)",
-  "Advanced PDF & shareable report exports",
-  "200 AI visibility scans per month",
+  'Triple-model verification pipeline: GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast',
+  'Existence mapping: typed query generation + parallel AI and web probe execution',
+  'Citation ledger: every probe result stored as an immutable evidence record',
+  'Competitor tracking: query-level competitive displacement detection',
+  'Brand mention scanning across 19 public sources',
+  '110 AI visibility scans per month',
 ];
 
 export default function FreeTrialModal({ onClose }: Props) {
@@ -27,24 +27,24 @@ export default function FreeTrialModal({ onClose }: Props) {
     setLoading(true);
     setApiError(null);
     try {
-      const res = await apiFetch("/api/payment/stripe", {
-        method: "POST",
+      const res = await apiFetch('/api/payment/stripe', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ tier: "signal", billingPeriod: "monthly" }),
+        body: JSON.stringify({ tier: 'signal', billingPeriod: 'monthly' }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data?.error || "Failed to create checkout session");
+        throw new Error(data?.error || 'Failed to create checkout session');
       }
       // data.data is the Stripe Checkout URL
       const checkoutUrl = data.data as string;
-      if (!checkoutUrl) throw new Error("No checkout URL returned");
+      if (!checkoutUrl) throw new Error('No checkout URL returned');
       window.location.href = checkoutUrl;
     } catch (err: any) {
-      const msg = err?.message || "Could not start checkout — please try again";
+      const msg = err?.message || 'Could not start checkout — please try again';
       setApiError(msg);
       toast.error(msg);
       setLoading(false);
@@ -79,9 +79,7 @@ export default function FreeTrialModal({ onClose }: Props) {
               Signal Plan
             </span>
           </div>
-          <h2 className="text-xl font-bold text-white mb-1">
-            14-Day Free Trial
-          </h2>
+          <h2 className="text-xl font-bold text-white mb-1">14-Day Free Trial</h2>
           <p className="text-sm text-white/50 mb-5">
             Full Signal access — no charge today. Card required to start.
           </p>
@@ -100,14 +98,14 @@ export default function FreeTrialModal({ onClose }: Props) {
           <div className="flex items-start gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-3 mb-5">
             <ShieldCheck className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
             <p className="text-xs text-amber-200/80 leading-relaxed">
-              <strong className="text-amber-300">$0.00 today.</strong> Your card will be
-              charged <strong className="text-amber-300">$149/mo</strong> within 24–46 hours
-              after your 14-day trial ends on{" "}
+              <strong className="text-amber-300">$0.00 today.</strong> Your card will be charged{' '}
+              <strong className="text-amber-300">$149/mo</strong> within 24–46 hours after your
+              14-day trial ends on{' '}
               <strong className="text-amber-300">
-                {new Date(Date.now() + 14 * 86_400_000).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
+                {new Date(Date.now() + 14 * 86_400_000).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
                 })}
               </strong>
               . Cancel any time before that for $0 charges.
@@ -132,13 +130,20 @@ export default function FreeTrialModal({ onClose }: Props) {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
                 Opening Stripe…
               </span>
             ) : (
-              "Start Free Trial — Enter Card"
+              'Start Free Trial — Enter Card'
             )}
           </button>
 

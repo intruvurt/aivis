@@ -1,269 +1,656 @@
-﻿import React from "react";
-import { Shield } from "lucide-react";
-import { Link } from "react-router-dom";
-import { usePageMeta } from "../hooks/usePageMeta";
-import { buildBreadcrumbSchema, buildWebPageSchema } from "../lib/seoSchema";
-import PublicPageFrame from "../components/PublicPageFrame";
+﻿import React from 'react';
+import { Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { buildBreadcrumbSchema, buildWebPageSchema } from '../lib/seoSchema';
+import PublicPageFrame from '../components/PublicPageFrame';
 
 export default function PrivacyPage() {
   usePageMeta({
     title: 'Privacy Policy',
-    description: 'How AiVIS.biz collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+    description:
+      'How AiVIS.biz collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
     path: '/privacy',
     structuredData: [
-      buildWebPageSchema({ path: '/privacy', name: 'AiVIS.biz Privacy Policy', description: 'Data collection, usage, and protection practices for the AiVIS.biz platform.' }),
-      buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy' }]),
+      buildWebPageSchema({
+        path: '/privacy',
+        name: 'AiVIS.biz Privacy Policy',
+        description: 'Data collection, usage, and protection practices for the AiVIS.biz platform.',
+      }),
+      buildBreadcrumbSchema([
+        { name: 'Home', path: '/' },
+        { name: 'Privacy Policy', path: '/privacy' },
+      ]),
     ],
   });
 
-  const linkCls = "text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200";
-  const emailCls = "text-white/85 hover:text-white";
+  const linkCls = 'text-cyan-300/80 underline underline-offset-2 hover:text-cyan-200';
+  const emailCls = 'text-white/85 hover:text-white';
 
   return (
-    <PublicPageFrame icon={Shield} title="Privacy Policy" subtitle="How AiVIS.biz collects, uses, and protects your data" maxWidthClass="max-w-4xl">
+    <PublicPageFrame
+      icon={Shield}
+      title="Privacy Policy"
+      subtitle="How AiVIS.biz collects, uses, and protects your data"
+      maxWidthClass="max-w-4xl"
+    >
       <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
+        {/* ── Summary ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
+          <p>
+            AiVIS.biz is operated by <strong className="text-white">AiVIS.biz</strong> (a product of
+            Intruvurt Labs, LLC), a company based in Georgia, USA. We are the data controller for
+            personal information collected through this Service.
+          </p>
+          <p className="mt-2">
+            We collect only the data necessary to operate a multi-model AI answer audit system. We
+            never sell personal data. We never use it for advertising. You can request access,
+            correction, export, or deletion at any time.
+          </p>
+          <p className="mt-2">
+            This Privacy Policy should be read alongside our{' '}
+            <Link to="/terms" className={linkCls}>
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/disclosures" className={linkCls}>
+              Consumer Disclosures
+            </Link>
+            .
+          </p>
+        </section>
 
-          {/* ── Summary ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">Summary</h2>
-            <p>AiVIS.biz is operated by <strong className="text-white">AiVIS.biz</strong> (a product of Intruvurt Labs, LLC), a company based in Georgia, USA. We are the data controller for personal information collected through this Service.</p>
-            <p className="mt-2">We collect only the data necessary to operate a multi-model AI answer audit system. We never sell personal data. We never use it for advertising. You can request access, correction, export, or deletion at any time.</p>
-            <p className="mt-2">This Privacy Policy should be read alongside our <Link to="/terms" className={linkCls}>Terms of Service</Link> and <Link to="/disclosures" className={linkCls}>Consumer Disclosures</Link>.</p>
-          </section>
+        {/* ── 1 What We Collect ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">1. Information We Collect</h2>
 
-          {/* ── 1 What We Collect ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">1. Information We Collect</h2>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.1 Account Information</h3>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              <strong className="text-white">Email address</strong> - required for registration and
+              email verification.
+            </li>
+            <li>
+              <strong className="text-white">Password</strong> - hashed with bcrypt before storage.
+              We never store or log plaintext passwords.
+            </li>
+            <li>
+              <strong className="text-white">Display name</strong> - optional, used in team
+              workspaces and shared reports.
+            </li>
+            <li>
+              <strong className="text-white">Google OAuth profile</strong> - if you sign in with
+              Google, we receive your email, display name, and profile photo URL. We do not receive
+              or store your Google password.
+            </li>
+          </ul>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.1 Account Information</h3>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong className="text-white">Email address</strong> - required for registration and email verification.</li>
-              <li><strong className="text-white">Password</strong> - hashed with bcrypt before storage. We never store or log plaintext passwords.</li>
-              <li><strong className="text-white">Display name</strong> - optional, used in team workspaces and shared reports.</li>
-              <li><strong className="text-white">Google OAuth profile</strong> - if you sign in with Google, we receive your email, display name, and profile photo URL. We do not receive or store your Google password.</li>
-            </ul>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            1.2 Analysis and Audit Data
+          </h3>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              <strong className="text-white">Submitted URLs</strong> - the web addresses you provide
+              for analysis.
+            </li>
+            <li>
+              <strong className="text-white">Scraped page data</strong> - HTML structure, meta tags,
+              Schema.org markup, headings, links, images, robots.txt, llms.txt, sitemap references,
+              word count, and language extracted by our headless browser. This data is processed
+              server-side and not shared with other users.
+            </li>
+            <li>
+              <strong className="text-white">AI analysis results</strong> - visibility scores, BRAG
+              evidence breakdowns, recommendations, and execution class metadata generated by the AI
+              pipeline.
+            </li>
+            <li>
+              <strong className="text-white">Competitor tracking data</strong> - URLs and analysis
+              results for competitor sites you configure (Alignment+ tiers).
+            </li>
+            <li>
+              <strong className="text-white">Citation test results</strong> - queries, model
+              responses, and citation verdicts from live AI citation tests (Signal tier).
+            </li>
+            <li>
+              <strong className="text-white">Brand mention results</strong> - publicly available
+              mentions discovered across Reddit, Hacker News, Mastodon, DuckDuckGo, Google News,
+              GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and
+              Lobsters.
+            </li>
+          </ul>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.2 Analysis and Audit Data</h3>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong className="text-white">Submitted URLs</strong> - the web addresses you provide for analysis.</li>
-              <li><strong className="text-white">Scraped page data</strong> - HTML structure, meta tags, Schema.org markup, headings, links, images, robots.txt, llms.txt, sitemap references, word count, and language extracted by our headless browser. This data is processed server-side and not shared with other users.</li>
-              <li><strong className="text-white">AI analysis results</strong> - visibility scores, BRAG evidence breakdowns, recommendations, and execution class metadata generated by the AI pipeline.</li>
-              <li><strong className="text-white">Competitor tracking data</strong> - URLs and analysis results for competitor sites you configure (Alignment+ tiers).</li>
-              <li><strong className="text-white">Citation test results</strong> - queries, model responses, and citation verdicts from live AI citation tests (Signal tier).</li>
-              <li><strong className="text-white">Brand mention results</strong> - publicly available mentions discovered across Reddit, Hacker News, Mastodon, DuckDuckGo, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.</li>
-            </ul>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
+          <p>
+            Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS
+            Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS
+            Level 1 compliant), depending on the payment method you select at checkout. AiVIS.biz
+            never receives, processes, or stores full payment card numbers or bank account details.
+            We retain only: payment processor customer ID, subscription status, plan tier, billing
+            period, and invoice history.
+          </p>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.3 Payment Information</h3>
-            <p>Payments are processed by <strong className="text-white">Stripe, Inc.</strong> (PCI DSS Level 1 compliant) and/or <strong className="text-white">PayPal, Inc.</strong> (PCI DSS Level 1 compliant), depending on the payment method you select at checkout. AiVIS.biz never receives, processes, or stores full payment card numbers or bank account details. We retain only: payment processor customer ID, subscription status, plan tier, billing period, and invoice history.</p>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            1.4 Device and Technical Data
+          </h3>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>Browser type and version (User-Agent header)</li>
+            <li>
+              IP address (used for rate limiting, abuse detection, and approximate geolocation)
+            </li>
+            <li>Referring domain and page navigation patterns</li>
+            <li>Screen resolution and viewport size (when analytics consent is given)</li>
+          </ul>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.4 Device and Technical Data</h3>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Browser type and version (User-Agent header)</li>
-              <li>IP address (used for rate limiting, abuse detection, and approximate geolocation)</li>
-              <li>Referring domain and page navigation patterns</li>
-              <li>Screen resolution and viewport size (when analytics consent is given)</li>
-            </ul>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.5 API and Webhook Data</h3>
+          <p>
+            If you create API keys, we store a SHA-256 hash of each key alongside its scoped
+            permissions. Plaintext keys are displayed once at creation and never stored. Webhook
+            endpoint URLs and HMAC signing secrets you configure are stored server-side to enable
+            delivery.
+          </p>
+        </section>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">1.5 API and Webhook Data</h3>
-            <p>If you create API keys, we store a SHA-256 hash of each key alongside its scoped permissions. Plaintext keys are displayed once at creation and never stored. Webhook endpoint URLs and HMAC signing secrets you configure are stored server-side to enable delivery.</p>
-          </section>
+        {/* ── 2 How We Use ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">2. How We Use Your Information</h2>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              <strong className="text-white">Service operation:</strong> Process analysis requests,
+              execute the AI pipeline, deliver reports, manage subscriptions, enforce tier limits.
+            </li>
+            <li>
+              <strong className="text-white">Account management:</strong> Email verification,
+              password resets, session management, team workspace administration.
+            </li>
+            <li>
+              <strong className="text-white">Transactional communications:</strong> Analysis
+              completion notifications, billing receipts, security alerts, verification emails,
+              report delivery. Sent via Resend.
+            </li>
+            <li>
+              <strong className="text-white">Security and abuse prevention:</strong> Rate limiting,
+              threat detection on submitted URLs (URLhaus, Google Safe Browsing), SSRF protection,
+              bot detection, session anomaly detection.
+            </li>
+            <li>
+              <strong className="text-white">Product improvement:</strong> Aggregate, anonymized
+              usage analytics to improve scoring accuracy, pipeline reliability, and user
+              experience.
+            </li>
+            <li>
+              <strong className="text-white">Newsletter and product updates:</strong> Optional
+              marketing emails (you can unsubscribe at any time). We never send marketing emails
+              without your opt-in consent.
+            </li>
+          </ul>
+          <p className="mt-2">
+            We do <strong className="text-white">not</strong> use your data for targeted
+            advertising, behavioral profiling, or sale to data brokers.
+          </p>
+        </section>
 
-          {/* ── 2 How We Use ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">2. How We Use Your Information</h2>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong className="text-white">Service operation:</strong> Process analysis requests, execute the AI pipeline, deliver reports, manage subscriptions, enforce tier limits.</li>
-              <li><strong className="text-white">Account management:</strong> Email verification, password resets, session management, team workspace administration.</li>
-              <li><strong className="text-white">Transactional communications:</strong> Analysis completion notifications, billing receipts, security alerts, verification emails, report delivery. Sent via Resend.</li>
-              <li><strong className="text-white">Security and abuse prevention:</strong> Rate limiting, threat detection on submitted URLs (URLhaus, Google Safe Browsing), SSRF protection, bot detection, session anomaly detection.</li>
-              <li><strong className="text-white">Product improvement:</strong> Aggregate, anonymized usage analytics to improve scoring accuracy, pipeline reliability, and user experience.</li>
-              <li><strong className="text-white">Newsletter and product updates:</strong> Optional marketing emails (you can unsubscribe at any time). We never send marketing emails without your opt-in consent.</li>
-            </ul>
-            <p className="mt-2">We do <strong className="text-white">not</strong> use your data for targeted advertising, behavioral profiling, or sale to data brokers.</p>
-          </section>
+        {/* ── 3 AI Pipeline ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">
+            3. AI Analysis Pipeline and Data Processing
+          </h2>
+          <p>When you submit a URL for analysis, the following data processing chain occurs:</p>
+          <ol className="list-decimal list-inside space-y-1 ml-2 mt-2">
+            <li>
+              <strong className="text-white">Scraping:</strong> A headless browser (Puppeteer) loads
+              the public page and extracts structural signals (HTML, meta tags, Schema.org,
+              headings, links, images, word count, language, robots.txt, llms.txt).
+            </li>
+            <li>
+              <strong className="text-white">Threat scan:</strong> The URL is checked against
+              URLhaus and Google Safe Browsing feeds. Hostname heuristics (punycode, raw IP, risky
+              TLDs) are also evaluated.
+            </li>
+            <li>
+              <strong className="text-white">AI analysis:</strong> Extracted page data (not your
+              personal information) is sent to large language models via{' '}
+              <strong className="text-white">OpenRouter</strong>. The specific models used depend on
+              your tier.
+            </li>
+            <li>
+              <strong className="text-white">Triple-check (Signal tier):</strong> Three sequential
+              models independently analyze, critique, and validate results before producing a final
+              score.
+            </li>
+            <li>
+              <strong className="text-white">Existence mapping (Alignment+ tiers):</strong> The
+              system generates typed intent queries, probes each query against live web search
+              engines and AI models in parallel, and records each response as a discrete probe
+              result.
+            </li>
+            <li>
+              <strong className="text-white">Forensic event log:</strong> Every probe result,
+              citation detection, and entity mention observation is written as an immutable event to
+              the <code className="text-xs">scan_events</code> table, keyed to a{' '}
+              <code className="text-xs">scan_id</code>. These records are append-only and are not
+              modified after creation.
+            </li>
+            <li>
+              <strong className="text-white">Citation ledger:</strong> Probe results are committed
+              to the <code className="text-xs">citation_ledger</code> table, recording for each
+              query: source URL, domain, position, whether the brand was mentioned or cited,
+              confidence score, and AI model used. This is the primary evidence store for all
+              visibility findings.
+            </li>
+            <li>
+              <strong className="text-white">Registry computation:</strong> Citation coverage,
+              authority alignment, and answer presence metrics are derived from{' '}
+              <code className="text-xs">citation_ledger</code> and stored in{' '}
+              <code className="text-xs">visibility_registry</code> and{' '}
+              <code className="text-xs">query_coverage</code> tables.
+            </li>
+            <li>
+              <strong className="text-white">Gap detection:</strong> Query-absence, citation-gap,
+              and authority-gap records are computed from the registry and stored in{' '}
+              <code className="text-xs">scan_gaps</code>. Each gap entry references the query, the
+              brand, and competing domains that appeared instead.
+            </li>
+            <li>
+              <strong className="text-white">Caching:</strong> Audit results are cached in our
+              PostgreSQL database for performance. Cache duration varies by tier.
+            </li>
+          </ol>
+          <p className="mt-2">
+            <strong className="text-white">What is sent to AI models:</strong> Page content,
+            extracted structural signals, and generated query texts only. Your email address,
+            password, payment information, and account details are never transmitted to AI model
+            providers.
+          </p>
+          <p className="mt-2">
+            <strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to
+            the appropriate AI model. The API key is held server-side and is never exposed to the
+            client browser. See OpenRouter's privacy policy for their data handling practices.
+          </p>
+        </section>
 
-          {/* ── 3 AI Pipeline ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">3. AI Analysis Pipeline and Data Processing</h2>
-            <p>When you submit a URL for analysis, the following data processing chain occurs:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Scraping:</strong> A headless browser (Puppeteer) loads the public page and extracts structural signals (HTML, meta tags, Schema.org, headings, links, images, word count, language).</li>
-              <li><strong className="text-white">Threat scan:</strong> The URL is checked against URLhaus and Google Safe Browsing feeds. Hostname heuristics (punycode, raw IP, risky TLDs) are also evaluated.</li>
-              <li><strong className="text-white">AI analysis:</strong> Extracted page data (not your personal information) is sent to large language models via <strong className="text-white">OpenRouter</strong>. The specific models used depend on your tier - free tiers use zero-cost model variants; paid tiers use higher-capability models.</li>
-              <li><strong className="text-white">Triple-check (Signal tier):</strong> Three sequential models independently analyze, critique, and validate results before producing a final score.</li>
-              <li><strong className="text-white">Caching:</strong> Results are cached in our PostgreSQL database (Neon) for performance. Cache duration varies by tier.</li>
-            </ol>
-            <p className="mt-2"><strong className="text-white">What is sent to AI models:</strong> Page content and structural data only. Your email address, password, payment information, and account details are never transmitted to AI model providers.</p>
-            <p className="mt-2"><strong className="text-white">OpenRouter's role:</strong> OpenRouter routes requests to the appropriate AI model. AiVIS.biz holds the API key server-side; it is never exposed to the client browser. See OpenRouter's privacy policy for their data handling practices.</p>
-          </section>
+        {/* ── 4 Third-Party Services ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">
+            4. Third-Party Service Providers
+          </h2>
+          <p>We share data with these service providers solely to operate the platform:</p>
+          <table className="w-full text-sm mt-2 border-collapse">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-2 text-white/90">Provider</th>
+                <th className="text-left py-2 text-white/90">Purpose</th>
+                <th className="text-left py-2 text-white/90">Data Shared</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              <tr>
+                <td className="py-2">OpenRouter</td>
+                <td className="py-2">AI model routing</td>
+                <td className="py-2">Page content, structural signals</td>
+              </tr>
+              <tr>
+                <td className="py-2">Stripe</td>
+                <td className="py-2">Payment processing</td>
+                <td className="py-2">Email, subscription tier</td>
+              </tr>
+              <tr>
+                <td className="py-2">PayPal</td>
+                <td className="py-2">Payment processing</td>
+                <td className="py-2">Email, subscription tier</td>
+              </tr>
+              <tr>
+                <td className="py-2">Render</td>
+                <td className="py-2">Application hosting</td>
+                <td className="py-2">Application logs, request metadata</td>
+              </tr>
+              <tr>
+                <td className="py-2">Neon</td>
+                <td className="py-2">PostgreSQL database</td>
+                <td className="py-2">All persisted application data</td>
+              </tr>
+              <tr>
+                <td className="py-2">Sentry</td>
+                <td className="py-2">Error tracking, performance</td>
+                <td className="py-2">Error context, anonymized replays (consent-based)</td>
+              </tr>
+              <tr>
+                <td className="py-2">Resend</td>
+                <td className="py-2">Email delivery</td>
+                <td className="py-2">Email address, message content</td>
+              </tr>
+              <tr>
+                <td className="py-2">Google Safe Browsing</td>
+                <td className="py-2">URL threat detection</td>
+                <td className="py-2">SHA-256 URL hash prefixes</td>
+              </tr>
+              <tr>
+                <td className="py-2">URLhaus (abuse.ch)</td>
+                <td className="py-2">Malware URL database</td>
+                <td className="py-2">URL lookups against public feed</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="mt-3">
+            We do not sell, rent, or trade personal information to any third party. Data shared with
+            service providers is limited to what is necessary for the stated purpose.
+          </p>
+        </section>
 
-          {/* ── 4 Third-Party Services ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">4. Third-Party Service Providers</h2>
-            <p>We share data with these service providers solely to operate the platform:</p>
-            <table className="w-full text-sm mt-2 border-collapse">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-2 text-white/90">Provider</th>
-                  <th className="text-left py-2 text-white/90">Purpose</th>
-                  <th className="text-left py-2 text-white/90">Data Shared</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                <tr><td className="py-2">OpenRouter</td><td className="py-2">AI model routing</td><td className="py-2">Page content, structural signals</td></tr>
-                <tr><td className="py-2">Stripe</td><td className="py-2">Payment processing</td><td className="py-2">Email, subscription tier</td></tr>
-                <tr><td className="py-2">PayPal</td><td className="py-2">Payment processing</td><td className="py-2">Email, subscription tier</td></tr>
-                <tr><td className="py-2">Render</td><td className="py-2">Application hosting</td><td className="py-2">Application logs, request metadata</td></tr>
-                <tr><td className="py-2">Neon</td><td className="py-2">PostgreSQL database</td><td className="py-2">All persisted application data</td></tr>
-                <tr><td className="py-2">Sentry</td><td className="py-2">Error tracking, performance</td><td className="py-2">Error context, anonymized replays (consent-based)</td></tr>
-                <tr><td className="py-2">Resend</td><td className="py-2">Email delivery</td><td className="py-2">Email address, message content</td></tr>
-                <tr><td className="py-2">Google Safe Browsing</td><td className="py-2">URL threat detection</td><td className="py-2">SHA-256 URL hash prefixes</td></tr>
-                <tr><td className="py-2">URLhaus (abuse.ch)</td><td className="py-2">Malware URL database</td><td className="py-2">URL lookups against public feed</td></tr>
-              </tbody>
-            </table>
-            <p className="mt-3">We do not sell, rent, or trade personal information to any third party. Data shared with service providers is limited to what is necessary for the stated purpose.</p>
-          </section>
+        {/* ── 5 Brand Mention Scanning ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">5. Brand Mention Scanning</h2>
+          <p>
+            The brand mention feature scans publicly available content across 15 external sources to
+            find references to your brand, domain, or configured keywords. These sources include
+            Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product
+            Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.
+          </p>
+          <p className="mt-2">
+            Mention scanning queries public APIs and public web pages. We do not create accounts on,
+            log into, or scrape private content from any of these platforms. Results are cached
+            locally and associated with your account.
+          </p>
+        </section>
 
-          {/* ── 5 Brand Mention Scanning ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">5. Brand Mention Scanning</h2>
-            <p>The brand mention feature scans publicly available content across 15 external sources to find references to your brand, domain, or configured keywords. These sources include Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.</p>
-            <p className="mt-2">Mention scanning queries public APIs and public web pages. We do not create accounts on, log into, or scrape private content from any of these platforms. Results are cached locally and associated with your account.</p>
-          </section>
+        {/* ── 6 Data Retention ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">6. Data Retention</h2>
+          <table className="w-full text-sm mt-2 border-collapse">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-2 text-white/90">Data Type</th>
+                <th className="text-left py-2 text-white/90">Retention Period</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              <tr>
+                <td className="py-2">Analysis cache</td>
+                <td className="py-2">7 days (Observer) / up to 30 days (paid tiers)</td>
+              </tr>
+              <tr>
+                <td className="py-2">Audit history</td>
+                <td className="py-2">Retained while account is active</td>
+              </tr>
+              <tr>
+                <td className="py-2">scan_events (forensic event log)</td>
+                <td className="py-2">Append-only; retained while account is active</td>
+              </tr>
+              <tr>
+                <td className="py-2">citation_ledger (probe results)</td>
+                <td className="py-2">Append-only; retained while account is active</td>
+              </tr>
+              <tr>
+                <td className="py-2">visibility_registry / scan_gaps</td>
+                <td className="py-2">
+                  Derived from citation_ledger; retained while account is active
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2">Account data</td>
+                <td className="py-2">Retained until deletion request (processed within 30 days)</td>
+              </tr>
+              <tr>
+                <td className="py-2">Security and access logs</td>
+                <td className="py-2">90 days, then automatically purged</td>
+              </tr>
+              <tr>
+                <td className="py-2">Stripe billing records</td>
+                <td className="py-2">As required by tax and financial regulations</td>
+              </tr>
+              <tr>
+                <td className="py-2">Email delivery logs</td>
+                <td className="py-2">30 days (via Resend)</td>
+              </tr>
+              <tr>
+                <td className="py-2">Brand mention results</td>
+                <td className="py-2">Retained while account is active</td>
+              </tr>
+              <tr>
+                <td className="py-2">API key hashes</td>
+                <td className="py-2">Until key is revoked or account is deleted</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="mt-3">
+            After account deletion, we remove personal information within 30 calendar days.
+            Anonymized, aggregate usage statistics may be retained indefinitely for product
+            improvement.
+          </p>
+        </section>
 
-          {/* ── 6 Data Retention ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">6. Data Retention</h2>
-            <table className="w-full text-sm mt-2 border-collapse">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-2 text-white/90">Data Type</th>
-                  <th className="text-left py-2 text-white/90">Retention Period</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                <tr><td className="py-2">Analysis cache</td><td className="py-2">7 days (Observer) / up to 30 days (paid tiers)</td></tr>
-                <tr><td className="py-2">Audit history</td><td className="py-2">Retained while account is active</td></tr>
-                <tr><td className="py-2">Account data</td><td className="py-2">Retained until deletion request (processed within 30 days)</td></tr>
-                <tr><td className="py-2">Security and access logs</td><td className="py-2">90 days, then automatically purged</td></tr>
-                <tr><td className="py-2">Stripe billing records</td><td className="py-2">As required by tax and financial regulations</td></tr>
-                <tr><td className="py-2">Email delivery logs</td><td className="py-2">30 days (via Resend)</td></tr>
-                <tr><td className="py-2">Brand mention results</td><td className="py-2">Retained while account is active</td></tr>
-                <tr><td className="py-2">API key hashes</td><td className="py-2">Until key is revoked or account is deleted</td></tr>
-              </tbody>
-            </table>
-            <p className="mt-3">After account deletion, we remove personal information within 30 calendar days. Anonymized, aggregate usage statistics may be retained indefinitely for product improvement.</p>
-          </section>
+        {/* ── 7 Browser Storage ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">7. Browser Storage and Cookies</h2>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            Essential (no consent required)
+          </h3>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              <strong className="text-white">sessionStorage:</strong> Authentication JWT, cleared
+              when the browser tab closes. Not a cookie; never sent to third parties.
+            </li>
+            <li>
+              <strong className="text-white">localStorage:</strong> Cookie-consent preference, UI
+              settings, theme preference. No personal data.
+            </li>
+          </ul>
 
-          {/* ── 7 Browser Storage ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">7. Browser Storage and Cookies</h2>
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Essential (no consent required)</h3>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong className="text-white">sessionStorage:</strong> Authentication JWT, cleared when the browser tab closes. Not a cookie; never sent to third parties.</li>
-              <li><strong className="text-white">localStorage:</strong> Cookie-consent preference, UI settings, theme preference. No personal data.</li>
-            </ul>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            Analytics (consent required)
+          </h3>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              <strong className="text-white">Sentry:</strong> When you accept the consent banner, we
+              enable Sentry error tracking, performance monitoring, and anonymized session replays.
+              Replays mask all text and block media. Sentry sets its own cookies for replay session
+              correlation. None of this is activated without your consent.
+            </li>
+          </ul>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Analytics (consent required)</h3>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong className="text-white">Sentry:</strong> When you accept the consent banner, we enable Sentry error tracking, performance monitoring, and anonymized session replays. Replays mask all text and block media. Sentry sets its own cookies for replay session correlation. None of this is activated without your consent.</li>
-            </ul>
+          <p className="mt-3">
+            We do <strong className="text-white">not</strong> use tracking cookies, advertising
+            pixels, Facebook/Meta pixels, Google remarketing tags, or any retargeting technology.
+            You can withdraw analytics consent at any time from Settings.
+          </p>
+        </section>
 
-            <p className="mt-3">We do <strong className="text-white">not</strong> use tracking cookies, advertising pixels, Facebook/Meta pixels, Google remarketing tags, or any retargeting technology. You can withdraw analytics consent at any time from Settings.</p>
-          </section>
+        {/* ── 8 Security ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">8. Security Measures</h2>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>All data in transit encrypted via TLS 1.2+</li>
+            <li>Passwords hashed using bcrypt with per-user salts</li>
+            <li>API keys stored as SHA-256 hashes (plaintext shown once at creation)</li>
+            <li>Webhook payloads signed with HMAC-SHA256</li>
+            <li>SSRF protection: private/localhost/reserved IP ranges blocked server-side</li>
+            <li>Content Security Policy (CSP) with per-request nonce</li>
+            <li>Helmet middleware for HTTP security headers</li>
+            <li>Rate limiting on authentication and analysis endpoints</li>
+            <li>Email verification required for full account access</li>
+            <li>Input sanitization via DOMPurify and Zod schema validation</li>
+            <li>JWT tokens with time-limited expiration windows</li>
+          </ul>
+          <p className="mt-2">
+            No system is impervious to all threats. If you discover a security vulnerability, please
+            report it to{' '}
+            <a href="mailto:security@aivis.biz" className={emailCls}>
+              security@aivis.biz
+            </a>
+            . We commit to acknowledging reports within 72 hours.
+          </p>
+        </section>
 
-          {/* ── 8 Security ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">8. Security Measures</h2>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>All data in transit encrypted via TLS 1.2+</li>
-              <li>Passwords hashed using bcrypt with per-user salts</li>
-              <li>API keys stored as SHA-256 hashes (plaintext shown once at creation)</li>
-              <li>Webhook payloads signed with HMAC-SHA256</li>
-              <li>SSRF protection: private/localhost/reserved IP ranges blocked server-side</li>
-              <li>Content Security Policy (CSP) with per-request nonce</li>
-              <li>Helmet middleware for HTTP security headers</li>
-              <li>Rate limiting on authentication and analysis endpoints</li>
-              <li>Email verification required for full account access</li>
-              <li>Input sanitization via DOMPurify and Zod schema validation</li>
-              <li>JWT tokens with time-limited expiration windows</li>
-            </ul>
-            <p className="mt-2">No system is impervious to all threats. If you discover a security vulnerability, please report it to <a href="mailto:security@aivis.biz" className={emailCls}>security@aivis.biz</a>. We commit to acknowledging reports within 72 hours.</p>
-          </section>
+        {/* ── 9 Your Rights ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">9. Your Rights</h2>
+          <p>Regardless of where you are located, we extend the following rights to all users:</p>
+          <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
+            <li>
+              <strong className="text-white">Access:</strong> Request a copy of the personal data we
+              hold about you.
+            </li>
+            <li>
+              <strong className="text-white">Correction:</strong> Request correction of inaccurate
+              personal data.
+            </li>
+            <li>
+              <strong className="text-white">Deletion:</strong> Request deletion of your account and
+              associated personal data.
+            </li>
+            <li>
+              <strong className="text-white">Data portability:</strong> Request an export of your
+              data in a machine-readable format (JSON). Available via the GDPR export feature in
+              account settings or by request.
+            </li>
+            <li>
+              <strong className="text-white">Opt-out:</strong> Withdraw analytics consent,
+              unsubscribe from marketing emails, or disable specific integrations at any time.
+            </li>
+            <li>
+              <strong className="text-white">Restriction:</strong> Request that we limit processing
+              of your data under certain circumstances.
+            </li>
+          </ul>
 
-          {/* ── 9 Your Rights ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">9. Your Rights</h2>
-            <p>Regardless of where you are located, we extend the following rights to all users:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li><strong className="text-white">Access:</strong> Request a copy of the personal data we hold about you.</li>
-              <li><strong className="text-white">Correction:</strong> Request correction of inaccurate personal data.</li>
-              <li><strong className="text-white">Deletion:</strong> Request deletion of your account and associated personal data.</li>
-              <li><strong className="text-white">Data portability:</strong> Request an export of your data in a machine-readable format (JSON). Available via the GDPR export feature in account settings or by request.</li>
-              <li><strong className="text-white">Opt-out:</strong> Withdraw analytics consent, unsubscribe from marketing emails, or disable specific integrations at any time.</li>
-              <li><strong className="text-white">Restriction:</strong> Request that we limit processing of your data under certain circumstances.</li>
-            </ul>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            California Residents (CCPA/CPRA)
+          </h3>
+          <p>
+            You have the right to know what personal information we collect, request its deletion,
+            and opt out of its "sale." We do not sell personal information. You will not be
+            discriminated against for exercising these rights.
+          </p>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">California Residents (CCPA/CPRA)</h3>
-            <p>You have the right to know what personal information we collect, request its deletion, and opt out of its "sale." We do not sell personal information. You will not be discriminated against for exercising these rights.</p>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">
+            European Economic Area (GDPR)
+          </h3>
+          <p>
+            Our lawful basis for processing is: (a) contract performance (to deliver the Service you
+            signed up for), (b) legitimate interest (security, abuse prevention, product
+            improvement), and (c) consent (analytics, marketing emails). You may withdraw consent at
+            any time without affecting the lawfulness of prior processing.
+          </p>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">European Economic Area (GDPR)</h3>
-            <p>Our lawful basis for processing is: (a) contract performance (to deliver the Service you signed up for), (b) legitimate interest (security, abuse prevention, product improvement), and (c) consent (analytics, marketing emails). You may withdraw consent at any time without affecting the lawfulness of prior processing.</p>
+          <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Georgia Residents</h3>
+          <p>
+            Georgia does not currently have a comprehensive consumer privacy statute. We voluntarily
+            extend the same rights described above to all Georgia and US-based users.
+          </p>
 
-            <h3 className="text-lg font-medium text-white/90 mt-4 mb-2">Georgia Residents</h3>
-            <p>Georgia does not currently have a comprehensive consumer privacy statute. We voluntarily extend the same rights described above to all Georgia and US-based users.</p>
+          <p className="mt-3">
+            To exercise any right, email{' '}
+            <a href="mailto:privacy@aivis.biz" className={emailCls}>
+              privacy@aivis.biz
+            </a>
+            . We respond within 30 days.
+          </p>
+        </section>
 
-            <p className="mt-3">To exercise any right, email <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a>. We respond within 30 days.</p>
-          </section>
+        {/* ── 10 Children ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">10. Children's Privacy</h2>
+          <p>
+            AiVIS.biz is not intended for users under 16 years of age. We do not knowingly collect
+            personal information from children. If you believe a child has created an account,
+            contact us at{' '}
+            <a href="mailto:privacy@aivis.biz" className={emailCls}>
+              privacy@aivis.biz
+            </a>{' '}
+            and we will delete the account and associated data promptly.
+          </p>
+        </section>
 
-          {/* ── 10 Children ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">10. Children's Privacy</h2>
-            <p>AiVIS.biz is not intended for users under 16 years of age. We do not knowingly collect personal information from children. If you believe a child has created an account, contact us at <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a> and we will delete the account and associated data promptly.</p>
-          </section>
+        {/* ── 11 International ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">
+            11. International Data Transfers
+          </h2>
+          <p>
+            AiVIS.biz is operated from the United States. If you access the Service from outside the
+            US, your personal data will be transferred to and processed in the United States.
+          </p>
+          <p className="mt-2">
+            For transfers from the European Economic Area, we rely on Standard Contractual Clauses
+            (SCCs) or equivalent safeguards as required by applicable law. Our sub-processors
+            (Render, Neon, Sentry, Stripe, Resend) maintain their own data transfer mechanisms.
+          </p>
+        </section>
 
-          {/* ── 11 International ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">11. International Data Transfers</h2>
-            <p>AiVIS.biz is operated from the United States. If you access the Service from outside the US, your personal data will be transferred to and processed in the United States.</p>
-            <p className="mt-2">For transfers from the European Economic Area, we rely on Standard Contractual Clauses (SCCs) or equivalent safeguards as required by applicable law. Our sub-processors (Render, Neon, Sentry, Stripe, Resend) maintain their own data transfer mechanisms.</p>
-          </section>
+        {/* ── 12 Legal Disclosure ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">12. Legal Disclosure</h2>
+          <p>
+            We may disclose personal information if required by law, regulation, legal process, or
+            enforceable governmental request. In such cases, we will:
+          </p>
+          <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
+            <li>Evaluate the validity and scope of the request.</li>
+            <li>Challenge overly broad or improper requests where legally permissible.</li>
+            <li>
+              Notify the affected user before disclosure unless prohibited by law or court order.
+            </li>
+            <li>Limit disclosure to the minimum data necessary to comply.</li>
+          </ul>
+        </section>
 
-          {/* ── 12 Legal Disclosure ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">12. Legal Disclosure</h2>
-            <p>We may disclose personal information if required by law, regulation, legal process, or enforceable governmental request. In such cases, we will:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-              <li>Evaluate the validity and scope of the request.</li>
-              <li>Challenge overly broad or improper requests where legally permissible.</li>
-              <li>Notify the affected user before disclosure unless prohibited by law or court order.</li>
-              <li>Limit disclosure to the minimum data necessary to comply.</li>
-            </ul>
-          </section>
+        {/* ── 13 Changes ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">13. Changes to This Policy</h2>
+          <p>
+            Material changes to this Privacy Policy will be communicated via email or in-app
+            notification at least 30 days before taking effect. Non-material clarifications may be
+            applied without advance notice. The "Last updated" date at the top reflects the most
+            recent revision.
+          </p>
+          <p className="mt-2">
+            Continued use of the Service after the effective date of updated terms constitutes
+            acceptance.
+          </p>
+        </section>
 
-          {/* ── 13 Changes ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">13. Changes to This Policy</h2>
-            <p>Material changes to this Privacy Policy will be communicated via email or in-app notification at least 30 days before taking effect. Non-material clarifications may be applied without advance notice. The "Last updated" date at the top reflects the most recent revision.</p>
-            <p className="mt-2">Continued use of the Service after the effective date of updated terms constitutes acceptance.</p>
-          </section>
-
-          {/* ── 14 Contact ── */}
-          <section>
-            <h2 className="text-xl font-semibold text-white mb-3">14. Contact Us</h2>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Privacy inquiries: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
-              <li>Data access / deletion requests: <a href="mailto:privacy@aivis.biz" className={emailCls}>privacy@aivis.biz</a></li>
-              <li>Security vulnerabilities: <a href="mailto:security@aivis.biz" className={emailCls}>security@aivis.biz</a></li>
-              <li>General support: <a href="mailto:support@aivis.biz" className={emailCls}>support@aivis.biz</a></li>
-              <li>Phone: <a href="tel:+17069075299" className={emailCls}>(706) 907-5299</a></li>
-            </ul>
-            <p className="mt-3">We respond to privacy inquiries within 30 calendar days.</p>
-            <p className="mt-4 text-white/60 text-sm">AiVIS.biz · Georgia, USA</p>
-          </section>
-        </div>
+        {/* ── 14 Contact ── */}
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-3">14. Contact Us</h2>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>
+              Privacy inquiries:{' '}
+              <a href="mailto:privacy@aivis.biz" className={emailCls}>
+                privacy@aivis.biz
+              </a>
+            </li>
+            <li>
+              Data access / deletion requests:{' '}
+              <a href="mailto:privacy@aivis.biz" className={emailCls}>
+                privacy@aivis.biz
+              </a>
+            </li>
+            <li>
+              Security vulnerabilities:{' '}
+              <a href="mailto:security@aivis.biz" className={emailCls}>
+                security@aivis.biz
+              </a>
+            </li>
+            <li>
+              General support:{' '}
+              <a href="mailto:support@aivis.biz" className={emailCls}>
+                support@aivis.biz
+              </a>
+            </li>
+            <li>
+              Phone:{' '}
+              <a href="tel:+17069075299" className={emailCls}>
+                (706) 907-5299
+              </a>
+            </li>
+          </ul>
+          <p className="mt-3">We respond to privacy inquiries within 30 calendar days.</p>
+          <p className="mt-4 text-white/60 text-sm">AiVIS.biz · Georgia, USA</p>
+        </section>
+      </div>
     </PublicPageFrame>
   );
 }

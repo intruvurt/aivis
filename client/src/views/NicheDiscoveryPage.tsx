@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore";
-import { usePageMeta } from "../hooks/usePageMeta";
-import { meetsMinimumTier, TIER_LIMITS, type CanonicalTier } from "@shared/types";
-import UpgradeWall from "../components/UpgradeWall";
-import FeatureInstruction from "../components/FeatureInstruction";
-import { API_URL } from "../config";
-import apiFetch from "../utils/api";
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { meetsMinimumTier, TIER_LIMITS, type CanonicalTier } from '@shared/types';
+import UpgradeWall from '../components/UpgradeWall';
+import FeatureInstruction from '../components/FeatureInstruction';
+import { API_URL } from '../config';
+import apiFetch from '../utils/api';
 import {
   Search,
   MapPin,
@@ -26,7 +26,7 @@ import {
   TrendingUp,
   Target,
   RotateCcw,
-} from "lucide-react";
+} from 'lucide-react';
 
 /* ── Types ────────────────────────────────────────────────────────── */
 
@@ -57,59 +57,92 @@ interface DiscoveryJob {
 function parseDiscoveredUrls(raw: unknown): DiscoveredUrl[] {
   if (Array.isArray(raw)) return raw;
   if (typeof raw === 'string') {
-    try { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) return parsed; } catch { /* ignore */ }
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      /* ignore */
+    }
   }
   return [];
 }
 
 function statusBadge(valid: boolean, duplicate: boolean, httpStatus: number | null) {
-  if (duplicate) return <span className="inline-flex items-center gap-1 rounded-full bg-yellow-500/15 px-2 py-0.5 text-[11px] font-medium text-yellow-400"><Copy className="h-3 w-3" />Duplicate</span>;
-  if (!valid) return <span className="inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-medium text-red-400"><XCircle className="h-3 w-3" />Invalid{httpStatus ? ` (${httpStatus})` : ""}</span>;
-  return <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400"><CheckCircle2 className="h-3 w-3" />Valid{httpStatus ? ` (${httpStatus})` : ""}</span>;
+  if (duplicate)
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-500/15 px-2 py-0.5 text-[11px] font-medium text-yellow-400">
+        <Copy className="h-3 w-3" />
+        Duplicate
+      </span>
+    );
+  if (!valid)
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-medium text-red-400">
+        <XCircle className="h-3 w-3" />
+        Invalid{httpStatus ? ` (${httpStatus})` : ''}
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400">
+      <CheckCircle2 className="h-3 w-3" />
+      Valid{httpStatus ? ` (${httpStatus})` : ''}
+    </span>
+  );
 }
 
 function jobStatusLabel(status: string) {
   switch (status) {
-    case "pending": case "discovering": return "Discovering…";
-    case "validating": return "Validating URLs…";
-    case "completed": return "Completed";
-    case "failed": return "Failed";
-    default: return status;
+    case 'pending':
+    case 'discovering':
+      return 'Discovering…';
+    case 'validating':
+      return 'Validating URLs…';
+    case 'completed':
+      return 'Completed';
+    case 'failed':
+      return 'Failed';
+    default:
+      return status;
   }
 }
 
 const FREQUENCY_OPTIONS = [
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
-  { value: "biweekly", label: "Bi-weekly" },
-  { value: "monthly", label: "Monthly" },
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'biweekly', label: 'Bi-weekly' },
+  { value: 'monthly', label: 'Monthly' },
 ] as const;
 
 /* ── Component ────────────────────────────────────────────────────── */
 
 export default function NicheDiscoveryPage() {
   usePageMeta({
-    title: "Niche URL Discovery",
-    description: "Discover real business URLs by niche and location, validate them, and add to scheduled audits.",
-    path: "/niche-discovery",
+    title: 'Niche URL Discovery',
+    description:
+      'Discover real business URLs by niche and location, validate them, and add to scheduled audits.',
+    path: '/niche-discovery',
   });
 
   const user = useAuthStore((s) => s.user);
-  const tier = (user?.tier || "observer") as CanonicalTier;
-  const hasAccess = meetsMinimumTier(tier, "alignment");
+  const tier = (user?.tier || 'observer') as CanonicalTier;
+  const hasAccess = meetsMinimumTier(tier, 'alignment');
 
   /* ── Search state ──────────────────────────────── */
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
+  const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /* ── Current job state ─────────────────────────── */
   const [job, setJob] = useState<DiscoveryJob | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [frequency, setFrequency] = useState("weekly");
+  const [frequency, setFrequency] = useState('weekly');
   const [scheduling, setScheduling] = useState(false);
-  const [scheduleResult, setScheduleResult] = useState<{ added: number; skipped: number; errors: string[] } | null>(null);
+  const [scheduleResult, setScheduleResult] = useState<{
+    added: number;
+    skipped: number;
+    errors: string[];
+  } | null>(null);
 
   /* ── History state ─────────────────────────────── */
   const [pastJobs, setPastJobs] = useState<DiscoveryJob[]>([]);
@@ -129,11 +162,15 @@ export default function NicheDiscoveryPage() {
         const data = await res.json();
         setPastJobs(Array.isArray(data) ? data : data.jobs || []);
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     setHistoryLoaded(true);
   }, [hasAccess]);
 
-  useEffect(() => { loadHistory(); }, [loadHistory]);
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
 
   /* ── Discover URLs ──────────────────────────────── */
   const handleDiscover = useCallback(async () => {
@@ -146,8 +183,8 @@ export default function NicheDiscoveryPage() {
 
     try {
       const res = await apiFetch(`${API_URL}/api/features/niche-discovery`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: query.trim(), location: location.trim() }),
       });
 
@@ -175,7 +212,7 @@ export default function NicheDiscoveryPage() {
       // Refresh history
       loadHistory();
     } catch (err: any) {
-      setError(err.message || "Discovery failed");
+      setError(err.message || 'Discovery failed');
     } finally {
       setLoading(false);
     }
@@ -190,8 +227,8 @@ export default function NicheDiscoveryPage() {
 
     try {
       const res = await apiFetch(`${API_URL}/api/features/niche-discovery/${job.id}/schedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: Array.from(selected), frequency }),
       });
 
@@ -204,7 +241,7 @@ export default function NicheDiscoveryPage() {
       setScheduleResult(result);
       loadHistory();
     } catch (err: any) {
-      setError(err.message || "Scheduling failed");
+      setError(err.message || 'Scheduling failed');
     } finally {
       setScheduling(false);
     }
@@ -214,7 +251,8 @@ export default function NicheDiscoveryPage() {
   const toggleUrl = (url: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(url)) next.delete(url); else next.add(url);
+      if (next.has(url)) next.delete(url);
+      else next.add(url);
       return next;
     });
   };
@@ -239,8 +277,8 @@ export default function NicheDiscoveryPage() {
         const jobData: DiscoveryJob = data.job || data;
         jobData.discovered_urls = parseDiscoveredUrls(jobData.discovered_urls);
         setJob(jobData);
-        setQuery(jobData.query || "");
-        setLocation(jobData.location || "");
+        setQuery(jobData.query || '');
+        setLocation(jobData.location || '');
         setScheduleResult(null);
         const autoSelect = new Set<string>();
         for (const u of jobData.discovered_urls) {
@@ -248,12 +286,16 @@ export default function NicheDiscoveryPage() {
         }
         setSelected(autoSelect);
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   /* ── Aggregate stats ─────────────────────────────── */
   const historyStats = useMemo(() => {
-    let totalFound = 0, totalValid = 0, totalScheduled = 0;
+    let totalFound = 0,
+      totalValid = 0,
+      totalScheduled = 0;
     for (const j of pastJobs) {
       const discovered = parseDiscoveredUrls(j.discovered_urls);
       totalFound += discovered.length;
@@ -273,9 +315,9 @@ export default function NicheDiscoveryPage() {
           requiredTier="alignment"
           icon={<Search className="h-6 w-6" />}
           featurePreview={[
-            "Topic clusters your audit URL is missing vs. top AI-cited pages",
-            "Keyword gaps ranked by citation opportunity",
-            "One-click export of gap analysis for content planning",
+            'Discover real business URLs by niche keyword and geographic location via web search',
+            'Validate each discovered URL for public accessibility and crawl eligibility',
+            'Add discovered URLs to your scheduled audit list in bulk',
           ]}
         />
       </div>
@@ -292,7 +334,10 @@ export default function NicheDiscoveryPage() {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <Link to="/" className="mb-3 inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/70 transition">
+          <Link
+            to="/"
+            className="mb-3 inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white/70 transition"
+          >
             <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl flex items-center gap-3">
@@ -300,7 +345,8 @@ export default function NicheDiscoveryPage() {
             Niche URL Discovery
           </h1>
           <p className="mt-1.5 text-sm text-white/50 max-w-2xl">
-            Discover real business URLs by industry and location using DuckDuckGo + Bing web search, validate HTTP responses, and schedule AI visibility audits.
+            Discover real business URLs by industry and location using DuckDuckGo + Bing web search,
+            validate HTTP responses, and schedule AI visibility audits.
           </p>
         </div>
         <span className="shrink-0 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
@@ -312,9 +358,9 @@ export default function NicheDiscoveryPage() {
         headline="How to use Niche Discovery"
         steps={[
           "Type an industry or service niche (e.g. 'dentists in Austin') and click Discover.",
-          "Review the discovered URLs — valid ones are auto-selected for scheduling.",
-          "Set a scan frequency (daily, weekly, monthly) and add selected URLs to scheduled audits.",
-          "Check back later to see aggregated audit results across the niche.",
+          'Review the discovered URLs — valid ones are auto-selected for scheduling.',
+          'Set a scan frequency (daily, weekly, monthly) and add selected URLs to scheduled audits.',
+          'Check back later to see aggregated audit results across the niche.',
         ]}
         benefit="Build a competitor landscape automatically by discovering and monitoring real business URLs in any niche."
         accentClass="text-emerald-400 border-emerald-500/30 bg-emerald-500/[0.06]"
@@ -325,19 +371,27 @@ export default function NicheDiscoveryPage() {
       {historyLoaded && historyStats.totalJobs > 0 && (
         <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-white tabular-nums">{historyStats.totalJobs}</div>
+            <div className="text-2xl font-bold text-white tabular-nums">
+              {historyStats.totalJobs}
+            </div>
             <div className="text-[11px] text-white/40 mt-0.5">Discoveries Run</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-cyan-300 tabular-nums">{historyStats.totalFound}</div>
+            <div className="text-2xl font-bold text-cyan-300 tabular-nums">
+              {historyStats.totalFound}
+            </div>
             <div className="text-[11px] text-white/40 mt-0.5">URLs Found</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-300 tabular-nums">{historyStats.totalValid}</div>
+            <div className="text-2xl font-bold text-emerald-300 tabular-nums">
+              {historyStats.totalValid}
+            </div>
             <div className="text-[11px] text-white/40 mt-0.5">Valid URLs</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-violet-300 tabular-nums">{historyStats.totalScheduled}</div>
+            <div className="text-2xl font-bold text-violet-300 tabular-nums">
+              {historyStats.totalScheduled}
+            </div>
             <div className="text-[11px] text-white/40 mt-0.5">Scheduled for Audit</div>
           </div>
         </div>
@@ -351,14 +405,16 @@ export default function NicheDiscoveryPage() {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Niche / Industry</label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">
+              Niche / Industry
+            </label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !loading && query.trim() && handleDiscover()}
+                onKeyDown={(e) => e.key === 'Enter' && !loading && query.trim() && handleDiscover()}
                 enterKeyHint="search"
                 placeholder='e.g. "CBD smoke shops" or "vegan bakeries"'
                 maxLength={200}
@@ -367,14 +423,16 @@ export default function NicheDiscoveryPage() {
             </div>
           </div>
           <div className="flex-1">
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Location / Area <span className="text-white/30">(optional)</span></label>
+            <label className="mb-1.5 block text-xs font-medium text-white/60">
+              Location / Area <span className="text-white/30">(optional)</span>
+            </label>
             <div className="relative">
               <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !loading && query.trim() && handleDiscover()}
+                onKeyDown={(e) => e.key === 'Enter' && !loading && query.trim() && handleDiscover()}
                 enterKeyHint="search"
                 placeholder='e.g. "Atlanta, GA" or "Southeast US"'
                 maxLength={200}
@@ -387,8 +445,12 @@ export default function NicheDiscoveryPage() {
             disabled={loading || !query.trim()}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600/80 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            {loading ? "Discovering…" : "Discover URLs"}
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            {loading ? 'Discovering…' : 'Discover URLs'}
           </button>
         </div>
 
@@ -417,7 +479,9 @@ export default function NicheDiscoveryPage() {
                 <span className="text-xs text-white/30">Results</span>
               </div>
             </div>
-            <p className="mt-3 text-xs text-white/40 text-center">Scraping DuckDuckGo + Bing for real business URLs matching your query…</p>
+            <p className="mt-3 text-xs text-white/40 text-center">
+              Scraping DuckDuckGo + Bing for real business URLs matching your query…
+            </p>
           </div>
         )}
       </div>
@@ -440,7 +504,7 @@ export default function NicheDiscoveryPage() {
       )}
 
       {/* Results section */}
-      {job && job.status === "completed" && urls.length > 0 && (
+      {job && job.status === 'completed' && urls.length > 0 && (
         <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-5 sm:p-6 mb-6">
           {/* Result summary bar */}
           <div className="mb-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -468,10 +532,16 @@ export default function NicheDiscoveryPage() {
               Discovered URLs
             </h2>
             <div className="flex items-center gap-2">
-              <button onClick={selectAllValid} className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 transition">
+              <button
+                onClick={selectAllValid}
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 transition"
+              >
                 Select all valid ({validCount})
               </button>
-              <button onClick={deselectAll} className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 transition">
+              <button
+                onClick={deselectAll}
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 transition"
+              >
                 Deselect all
               </button>
             </div>
@@ -495,7 +565,7 @@ export default function NicheDiscoveryPage() {
                   return (
                     <tr
                       key={u.url + i}
-                      className={`border-b border-white/5 transition ${canSelect ? "hover:bg-white/[0.03] cursor-pointer" : "opacity-50"}`}
+                      className={`border-b border-white/5 transition ${canSelect ? 'hover:bg-white/[0.03] cursor-pointer' : 'opacity-50'}`}
                       onClick={() => canSelect && toggleUrl(u.url)}
                     >
                       <td className="py-3 text-center">
@@ -516,12 +586,18 @@ export default function NicheDiscoveryPage() {
                           className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition break-all"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <span className="break-all">{u.url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span>
+                          <span className="break-all">
+                            {u.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                          </span>
                           <ExternalLink className="h-3 w-3 shrink-0" />
                         </a>
                       </td>
-                      <td className="py-3 px-3">{statusBadge(u.valid, u.duplicate, u.httpStatus)}</td>
-                      <td className="py-3 pl-3 pr-4 text-xs text-white/40 max-w-xs truncate">{u.reason}</td>
+                      <td className="py-3 px-3">
+                        {statusBadge(u.valid, u.duplicate, u.httpStatus)}
+                      </td>
+                      <td className="py-3 pl-3 pr-4 text-xs text-white/40 max-w-xs truncate">
+                        {u.reason}
+                      </td>
                     </tr>
                   );
                 })}
@@ -539,10 +615,15 @@ export default function NicheDiscoveryPage() {
                   onChange={(e) => setFrequency(e.target.value)}
                   className="appearance-none rounded-lg border border-white/10 bg-white/5 py-1.5 pl-3 pr-8 text-xs text-white/80 focus:border-white/20 focus:outline-none"
                 >
-                  {visibleFreqs.length > 0
-                    ? visibleFreqs.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)
-                    : <option value="weekly">Weekly</option>
-                  }
+                  {visibleFreqs.length > 0 ? (
+                    visibleFreqs.map((f) => (
+                      <option key={f.value} value={f.value}>
+                        {f.label}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="weekly">Weekly</option>
+                  )}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/30" />
               </div>
@@ -552,7 +633,11 @@ export default function NicheDiscoveryPage() {
                 disabled={scheduling || selected.size === 0}
                 className="inline-flex items-center gap-2 rounded-xl bg-emerald-600/80 px-4 py-2 text-xs font-medium text-white transition hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {scheduling ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CalendarPlus className="h-3.5 w-3.5" />}
+                {scheduling ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <CalendarPlus className="h-3.5 w-3.5" />
+                )}
                 Add {selected.size} to scheduled scans
               </button>
 
@@ -568,13 +653,18 @@ export default function NicheDiscoveryPage() {
               <div className="flex items-center gap-2 text-sm text-emerald-400">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>
-                  {scheduleResult.added} URL{scheduleResult.added !== 1 ? "s" : ""} added to scheduled scans
-                  {scheduleResult.skipped > 0 && <span className="text-yellow-400/80"> · {scheduleResult.skipped} skipped</span>}
+                  {scheduleResult.added} URL{scheduleResult.added !== 1 ? 's' : ''} added to
+                  scheduled scans
+                  {scheduleResult.skipped > 0 && (
+                    <span className="text-yellow-400/80"> · {scheduleResult.skipped} skipped</span>
+                  )}
                 </span>
               </div>
               {scheduleResult.errors.length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs text-white/40">
-                  {scheduleResult.errors.map((e, i) => <li key={i}>• {e}</li>)}
+                  {scheduleResult.errors.map((e, i) => (
+                    <li key={i}>• {e}</li>
+                  ))}
                 </ul>
               )}
             </div>
@@ -583,11 +673,11 @@ export default function NicheDiscoveryPage() {
       )}
 
       {/* Job failed */}
-      {job && job.status === "failed" && (
+      {job && job.status === 'failed' && (
         <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <div className="flex-1">
-            <span>{job.error || "Discovery failed. Try again or adjust your search."}</span>
+            <span>{job.error || 'Discovery failed. Try again or adjust your search.'}</span>
             <button
               onClick={handleDiscover}
               disabled={loading || !query.trim()}
@@ -605,18 +695,22 @@ export default function NicheDiscoveryPage() {
           <Target className="h-10 w-10 text-white/15 mx-auto mb-4" />
           <h3 className="text-base font-semibold text-white/70 mb-2">No discoveries yet</h3>
           <p className="text-sm text-white/40 max-w-md mx-auto mb-5">
-            Enter a niche like "CBD smoke shops" or "vegan bakeries" above to search DuckDuckGo and Bing for real business URLs. Valid results can be added to your scheduled audit pipeline.
+            Enter a niche like "CBD smoke shops" or "vegan bakeries" above to search DuckDuckGo and
+            Bing for real business URLs. Valid results can be added to your scheduled audit
+            pipeline.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            {["SaaS analytics tools", "organic pet food brands", "coworking spaces NYC"].map((ex) => (
-              <button
-                key={ex}
-                onClick={() => setQuery(ex)}
-                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/50 hover:text-white/80 hover:bg-white/10 transition"
-              >
-                {ex}
-              </button>
-            ))}
+            {['SaaS analytics tools', 'organic pet food brands', 'coworking spaces NYC'].map(
+              (ex) => (
+                <button
+                  key={ex}
+                  onClick={() => setQuery(ex)}
+                  className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/50 hover:text-white/80 hover:bg-white/10 transition"
+                >
+                  {ex}
+                </button>
+              )
+            )}
           </div>
         </div>
       )}
@@ -629,7 +723,9 @@ export default function NicheDiscoveryPage() {
               <TrendingUp className="h-4 w-4 text-white/50" />
               Discovery History
             </h2>
-            <span className="text-[11px] text-white/30">{pastJobs.length} past run{pastJobs.length !== 1 ? "s" : ""}</span>
+            <span className="text-[11px] text-white/30">
+              {pastJobs.length} past run{pastJobs.length !== 1 ? 's' : ''}
+            </span>
           </div>
           <div className="space-y-2">
             {pastJobs.map((j) => {
@@ -641,28 +737,36 @@ export default function NicheDiscoveryPage() {
                   onClick={() => loadJob(j.id)}
                   className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left transition ${
                     job?.id === j.id
-                      ? "border-emerald-500/20 bg-emerald-500/[0.04]"
-                      : "border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]"
+                      ? 'border-emerald-500/20 bg-emerald-500/[0.04]'
+                      : 'border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]'
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Globe className="h-3.5 w-3.5 text-white/40 shrink-0" />
                       <span className="truncate text-sm font-medium text-white/80">{j.query}</span>
-                      {j.location && <span className="truncate text-xs text-white/40">in {j.location}</span>}
+                      {j.location && (
+                        <span className="truncate text-xs text-white/40">in {j.location}</span>
+                      )}
                     </div>
                     <div className="mt-1 flex items-center gap-3 text-[11px] text-white/30">
                       <span>{new Date(j.created_at).toLocaleDateString()}</span>
                       <span>{jUrls.length} found</span>
                       <span className="text-emerald-400/50">{jValid} valid</span>
-                      {j.scheduled_count > 0 && <span className="text-violet-400/50">{j.scheduled_count} scheduled</span>}
+                      {j.scheduled_count > 0 && (
+                        <span className="text-violet-400/50">{j.scheduled_count} scheduled</span>
+                      )}
                     </div>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                    j.status === "completed" ? "bg-emerald-500/15 text-emerald-400"
-                    : j.status === "failed" ? "bg-red-500/15 text-red-400"
-                    : "bg-white/10 text-white/50"
-                  }`}>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                      j.status === 'completed'
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : j.status === 'failed'
+                          ? 'bg-red-500/15 text-red-400'
+                          : 'bg-white/10 text-white/50'
+                    }`}
+                  >
                     {jobStatusLabel(j.status)}
                   </span>
                 </button>

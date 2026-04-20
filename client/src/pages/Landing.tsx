@@ -238,17 +238,19 @@ const Landing = () => {
         <section id="tldr" className="py-10 bg-[#0b0f1a]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 id="summary" className="text-lg font-semibold text-white/80 mb-3" data-speakable>
-              What CITE LEDGER exposes
+              What the citation ledger exposes
             </h2>
             <p
               className="feature-summary text-white/55 text-sm sm:text-base leading-relaxed"
               data-speakable
             >
-              AI answer engines don&apos;t just skip your site — they rewrite what you say, drop
-              your name, and cite competitors instead. AiVIS.biz CITE LEDGER scans your live page,
-              measures the distortion across ChatGPT, Perplexity, Google AI and Claude, and traces
-              every finding to a real page element using BRAG evidence identifiers. No
-              hallucination. No assumptions. Just proof.
+              AI answer engines do not just skip your site — they query your domain, fail to extract
+              attributable content, and cite other sources instead. AiVIS.biz runs a headless
+              browser crawl of your URL, generates intent-based query sets, probes live AI and
+              search responses, and stores every result as an immutable citation ledger entry. The
+              visibility_registry distills those entries into scored dimensions. scan_gaps
+              identifies where your brand is absent and who is present instead. Every finding traces
+              to a specific crawl event or ledger record — no AI inference without evidence.
             </p>
           </div>
         </section>
@@ -332,7 +334,7 @@ const Landing = () => {
                   }}
                   className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer"
                 >
-                  Expose your distortions
+                  Run citation audit
                   <svg
                     className="w-3.5 h-3.5"
                     fill="none"
@@ -364,43 +366,43 @@ const Landing = () => {
                 className="text-3xl sm:text-4xl font-bold text-white mb-3"
                 data-speakable
               >
-                Four layers. One audit.
+                Eight pipeline steps. Zero black boxes.
               </h2>
               <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">
-                Every finding traces back to a real element on your page through BRAG —
-                Based-Retrieval-Auditable-Grading. No black boxes. No guessing.
+                Every finding maps to a crawl event, a citation ledger entry, a registry metric, or
+                a gap detection record. Nothing is inferred without evidence.
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {(
                 [
                   {
-                    n: '01',
+                    n: '01–02',
                     color: 'text-cyan-300',
                     borderColor: 'border-cyan-400/20 bg-cyan-400/5',
-                    title: 'BRAG Engine',
-                    desc: 'Scans your live page with a headless browser. Extracts every heading, schema block, meta tag and content section. Labels each element with a unique evidence identifier that follows it through the entire pipeline.',
+                    title: 'Extraction',
+                    desc: 'A headless browser crawls your URL server-side and extracts entity signals: name, aliases, schema types, sameAs links, headings, and AI crawler access status. Each field is timestamped and tagged with a BRAG evidence identifier.',
                   },
                   {
-                    n: '02',
+                    n: '03–04',
                     color: 'text-violet-300',
                     borderColor: 'border-violet-400/20 bg-violet-400/5',
-                    title: 'Citation Layer',
-                    desc: 'Measures whether AI engines can structurally extract and cite your content. Tests entity clarity, schema completeness, content depth and attribution safety across ChatGPT, Perplexity, Google AI and Claude.',
+                    title: 'Query + Execution',
+                    desc: 'The system generates typed query sets — direct, intent, comparative, long-tail — then probes each query against web search engines and AI models in parallel. Every response is a ledger event with a source, position, confidence score, and brand-present verdict.',
                   },
                   {
-                    n: '03',
+                    n: '05–06',
                     color: 'text-red-300',
                     borderColor: 'border-red-400/20 bg-red-400/5',
-                    title: 'Distortion Map',
-                    desc: 'Exposes what AI gets wrong: dropped entities, rewritten claims, missing attributions and competitor substitutions. Every distortion links to the BRAG evidence ID that proves it.',
+                    title: 'Ledger + Registry',
+                    desc: 'Every probe result commits to the citation_ledger table as an immutable record. The visibility_registry derives citation coverage, authority alignment, and answer presence from those records. competitor domains that appear in your place are logged in each ledger entry.',
                   },
                   {
-                    n: '04',
+                    n: '07–08',
                     color: 'text-emerald-300',
                     borderColor: 'border-emerald-400/20 bg-emerald-400/5',
-                    title: 'Fix Protocol',
-                    desc: 'Produces ranked corrections with expected score lift. JSON-LD patches, heading rewrites, FAQ blocks and entity clarifications — each one tied to the specific evidence that triggered it.',
+                    title: 'Gaps + Actions',
+                    desc: 'Gap detection reads the registry and classifies: query_absence (brand never appeared), citation_gap (mentioned but not cited), authority_gap (no high-alignment sources). Each gap maps to a specific, query-linked fix instruction tied to the evidence that triggered it.',
                   },
                 ] as const
               ).map((step) => (

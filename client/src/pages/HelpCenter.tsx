@@ -38,8 +38,18 @@ import {
   Filter,
 } from 'lucide-react';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
-import { BRAG_ACRONYM, BRAG_EXPANSION, BRAG_TRAIL_LABEL, SUPPORT_TICKET_CATEGORIES } from '@shared/types';
-import type { SupportTicketCategory, SupportTicketPriority, SupportTicket as SupportTicketType, SupportTicketStatus } from '@shared/types';
+import {
+  BRAG_ACRONYM,
+  BRAG_EXPANSION,
+  BRAG_TRAIL_LABEL,
+  SUPPORT_TICKET_CATEGORIES,
+} from '@shared/types';
+import type {
+  SupportTicketCategory,
+  SupportTicketPriority,
+  SupportTicket as SupportTicketType,
+  SupportTicketStatus,
+} from '@shared/types';
 import { useSupportTickets } from '../hooks/useSupportTickets';
 import { useAuthStore } from '../stores/authStore';
 
@@ -76,8 +86,8 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What does the visibility score mean?',
-        a: '0-19 Critical (AI will ignore you), 20-39 Poor, 40-59 Fair, 60-79 Good, 80-100 Excellent. Most sites score 30-50 on their first audit. The seven scoring dimensions (Schema & Structured Data 20%, Content Depth 18%, Technical SEO 15%, Meta Tags & Open Graph 15%, AI Readability 12%, Heading Structure 10%, Security & Trust 10%) each contribute to the overall score. Hard-blocker caps apply when critical signals are missing.',
-        tags: ['score', 'visibility', 'categories', 'grades'],
+        a: 'The score is a citation probability indicator — the likelihood that AI answer systems (ChatGPT, Perplexity, Gemini, Claude, Google AI Overviews) will cite your content for relevant queries. It is not a traffic or ranking metric. Ranges: 0-19 Critical (AI cannot access or attribute your content), 20-39 Poor, 40-59 Fair, 60-79 Good, 80-100 Excellent. Most sites score 30-50 on their first audit. The seven scoring dimensions (Schema & Structured Data 20%, Content Depth 18%, Technical SEO 15%, Meta Tags & Open Graph 15%, AI Readability 12%, Heading Structure 10%, Security & Trust 10%) each contribute to the overall score. Hard-blocker caps apply when critical signals are missing.',
+        tags: ['score', 'visibility', 'citation', 'probability', 'categories', 'grades'],
       },
       {
         q: 'Can I audit any website?',
@@ -280,7 +290,7 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'Is my data safe?',
-        a: 'Payments processed through Stripe (PCI Level 1). We never see card details. Analysis results are cached in our database. We don\'t sell data or run third-party trackers. Data export and deletion controls are available in Settings.',
+        a: "Payments processed through Stripe (PCI Level 1). We never see card details. Analysis results are cached in our database. We don't sell data or run third-party trackers. Data export and deletion controls are available in Settings.",
         tags: ['data', 'security', 'privacy', 'gdpr', 'stripe'],
       },
       {
@@ -304,7 +314,8 @@ const CATEGORIES: HelpCategory[] = [
     id: 'aeo-content',
     label: 'AEO & Content Strategy',
     icon: Target,
-    description: 'Answer Engine Optimization fundamentals, content formats, and AI-extractable writing.',
+    description:
+      'Answer Engine Optimization fundamentals, content formats, and AI-extractable writing.',
     articles: [
       {
         q: 'What is Answer Engine Optimization (AEO)?',
@@ -313,7 +324,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How is AEO different from traditional SEO?',
-        a: 'SEO targets Google\'s link-graph ranking algorithm. AEO targets AI extraction and attribution. A page ranking number one on Google can be completely invisible in AI-generated answers if it lacks structured data and clear entity signals that AI models rely on for citation decisions.',
+        a: "SEO targets Google's link-graph ranking algorithm. AEO targets AI extraction and attribution. A page ranking number one on Google can be completely invisible in AI-generated answers if it lacks structured data and clear entity signals that AI models rely on for citation decisions.",
         tags: ['seo', 'aeo', 'difference', 'ranking'],
       },
       {
@@ -411,7 +422,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'How do I validate my schema after adding it?',
-        a: 'Use Google\'s Rich Results Test, Schema.org validator, or validator.schema.org for initial checks. AiVIS.biz re-validates all schema blocks on every audit automatically. After applying Score Fix patches, trigger a rescan to get a new evidence-backed validation report showing exactly which schema types are now complete and which properties were corrected.',
+        a: "Use Google's Rich Results Test, Schema.org validator, or validator.schema.org for initial checks. AiVIS.biz re-validates all schema blocks on every audit automatically. After applying Score Fix patches, trigger a rescan to get a new evidence-backed validation report showing exactly which schema types are now complete and which properties were corrected.",
         tags: ['validate', 'rich results', 'schema.org', 'testing', 'scorefix', 'rescan'],
       },
     ],
@@ -455,7 +466,14 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'Why did my score drop after I updated my website?',
         a: 'Common causes: a CMS plugin update overwrote your JSON-LD schema, JavaScript rendering now hides content blocks from the static scraper, robots.txt was reset during a CMS migration, or an H1 tag was accidentally removed. Use AiVIS.biz audit history to diff before-and-after evidence points and identify exactly which signal changed.',
-        tags: ['score drop', 'cms update', 'schema overwritten', 'robots.txt reset', 'history', 'diff'],
+        tags: [
+          'score drop',
+          'cms update',
+          'schema overwritten',
+          'robots.txt reset',
+          'history',
+          'diff',
+        ],
       },
       {
         q: 'Does page load speed directly affect my AiVIS.biz score?',
@@ -478,7 +496,8 @@ const CATEGORIES: HelpCategory[] = [
     id: 'citation-brand',
     label: 'Citation Testing & Brand Visibility',
     icon: Eye,
-    description: 'How citation tests work, mention rates, false positives, and brand citation strategy.',
+    description:
+      'How citation tests work, mention rates, false positives, and brand citation strategy.',
     articles: [
       {
         q: 'How does the AiVIS.biz citation test actually work under the hood?',
@@ -491,8 +510,8 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['mention rate', 'benchmark', '15%', '30%', '60%', 'strong', 'average'],
       },
       {
-        q: 'Why isn\'t my brand mentioned even though I rank well on Google?',
-        a: 'Ranking and citation are separate mechanisms. AI citation depends on machine-readable schema, entity resolution, content extractability, and whether your brand exists in the AI model\'s training data or real-time retrieval index in a citable format. High domain authority and PageRank have no direct bearing on AI citation rates.',
+        q: "Why isn't my brand mentioned even though I rank well on Google?",
+        a: "Ranking and citation are separate mechanisms. AI citation depends on machine-readable schema, entity resolution, content extractability, and whether your brand exists in the AI model's training data or real-time retrieval index in a citable format. High domain authority and PageRank have no direct bearing on AI citation rates.",
         tags: ['not cited', 'ranking', 'domain authority', 'schema', 'retrieval', 'entity'],
       },
       {
@@ -503,7 +522,14 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'How can I increase my brand mention rate in AI answers?',
         a: 'Strengthen Organization schema with complete sameAs links to LinkedIn, Crunchbase, and G2. Publish FAQ content that uses your brand name in direct answer positions. Earn mentions from high-authority off-page sources AI models reference. Then rerun AiVIS.biz citation tests to measure the before-and-after delta in your mention rate across each platform.',
-        tags: ['increase mentions', 'organization schema', 'sameAs', 'off-page', 'FAQ content', 'delta'],
+        tags: [
+          'increase mentions',
+          'organization schema',
+          'sameAs',
+          'off-page',
+          'FAQ content',
+          'delta',
+        ],
       },
       {
         q: 'Can I test specific queries I care about instead of auto-generated ones?',
@@ -528,7 +554,14 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'What is a citation drop alert and what triggers it?',
         a: 'An automated notification that fires when your mention rate drops significantly between two consecutive citation test cycles. AiVIS.biz compares the most recent test against the previous one and alerts you with the previous rate, current rate, and drop magnitude so you can investigate which queries or platforms drove the decline.',
-        tags: ['drop alert', 'notification', 'rate drop', 'consecutive', 'magnitude', 'investigate'],
+        tags: [
+          'drop alert',
+          'notification',
+          'rate drop',
+          'consecutive',
+          'magnitude',
+          'investigate',
+        ],
       },
     ],
   },
@@ -536,22 +569,45 @@ const CATEGORIES: HelpCategory[] = [
     id: 'ai-llm-tech',
     label: 'AI & LLM Technology',
     icon: BookOpen,
-    description: 'How AI models work, training cutoffs, entity resolution, hallucinations, and RAG.',
+    description:
+      'How AI models work, training cutoffs, entity resolution, hallucinations, and RAG.',
     articles: [
       {
         q: 'Why do different AI models cite different sources for the same query?',
-        a: 'Each model has a different training dataset, training cutoff date, and retrieval mechanism. Perplexity uses live web retrieval. ChatGPT relies on training data plus optional browsing. Claude prioritizes context window accuracy. A source prominent in one model\'s training corpus may be completely unknown to another model with a different cutoff or retrieval index.',
-        tags: ['models differ', 'training data', 'cutoff', 'retrieval', 'chatgpt', 'perplexity', 'claude'],
+        a: "Each model has a different training dataset, training cutoff date, and retrieval mechanism. Perplexity uses live web retrieval. ChatGPT relies on training data plus optional browsing. Claude prioritizes context window accuracy. A source prominent in one model's training corpus may be completely unknown to another model with a different cutoff or retrieval index.",
+        tags: [
+          'models differ',
+          'training data',
+          'cutoff',
+          'retrieval',
+          'chatgpt',
+          'perplexity',
+          'claude',
+        ],
       },
       {
         q: 'What is a training cutoff and how does it affect my visibility?',
-        a: 'The date after which an AI model stopped ingesting new training data. Sites that launched, changed significantly, or published new content after a model\'s cutoff will not appear in non-retrieval-based answers from that model. Perplexity and Bing Chat are less affected because they use real-time retrieval to supplement training knowledge continuously.',
-        tags: ['training cutoff', 'launch date', 'perplexity', 'bing', 'real-time retrieval', 'new content'],
+        a: "The date after which an AI model stopped ingesting new training data. Sites that launched, changed significantly, or published new content after a model's cutoff will not appear in non-retrieval-based answers from that model. Perplexity and Bing Chat are less affected because they use real-time retrieval to supplement training knowledge continuously.",
+        tags: [
+          'training cutoff',
+          'launch date',
+          'perplexity',
+          'bing',
+          'real-time retrieval',
+          'new content',
+        ],
       },
       {
         q: 'How do AI models decide which sources to cite in their answers?',
         a: 'Multiple factors: source quality and reputation in training data, retrieval ranking at query time for browsing-enabled models, entity resolution confidence (can the model identify your brand from context?), content structure clarity, and schema completeness. Well-structured pages with clear Organization schema and explicit topical claims are cited more reliably across all tested models.',
-        tags: ['citation decision', 'source quality', 'entity resolution', 'schema', 'browsing', 'factors'],
+        tags: [
+          'citation decision',
+          'source quality',
+          'entity resolution',
+          'schema',
+          'browsing',
+          'factors',
+        ],
       },
       {
         q: 'What is GEO (Generative Engine Optimization) and how does it differ from AEO?',
@@ -559,19 +615,31 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['geo', 'generative engine', 'aeo', 'difference', 'perplexity', 'voice search'],
       },
       {
-        q: 'Does my website need to be in Google\'s index to be cited by AI engines?',
-        a: 'Not universally. Perplexity and Bing Chat maintain independent retrieval indices. However, Google AI Overview and ChatGPT browsing are heavily influenced by Google\'s crawl and index. Strong Google indexation remains a prerequisite for most AI citation pathways, so confirming you are indexed should be verified before focusing exclusively on schema optimization.',
+        q: "Does my website need to be in Google's index to be cited by AI engines?",
+        a: "Not universally. Perplexity and Bing Chat maintain independent retrieval indices. However, Google AI Overview and ChatGPT browsing are heavily influenced by Google's crawl and index. Strong Google indexation remains a prerequisite for most AI citation pathways, so confirming you are indexed should be verified before focusing exclusively on schema optimization.",
         tags: ['google index', 'indexed', 'perplexity', 'bing', 'chatgpt browsing', 'prerequisite'],
       },
       {
         q: 'What is entity resolution and why does it affect my AI citation rate?',
         a: 'The process by which an AI model links your brand name to a known entity in its knowledge graph. If "AiVIS.biz," "aivis.biz," and "AI Visibility Audit System" are not consistently defined across your schema and off-page profiles, models may treat them as separate unrelated entities, lowering attribution confidence and reducing citation frequency across all platforms.',
-        tags: ['entity resolution', 'knowledge graph', 'brand name', 'consistency', 'attribution confidence'],
+        tags: [
+          'entity resolution',
+          'knowledge graph',
+          'brand name',
+          'consistency',
+          'attribution confidence',
+        ],
       },
       {
         q: 'What is a hallucination in AI and can it create false information about my brand?',
         a: 'A hallucination is when an AI model generates claims not grounded in actual source data. For brands, this can mean the model invents details about your product or confuses you with a similar competitor. AiVIS.biz citation testing detects hallucinated or false-context mentions through its revalidation service and automatically flags them as false positives.',
-        tags: ['hallucination', 'false information', 'brand confusion', 'false positive', 'revalidation'],
+        tags: [
+          'hallucination',
+          'false information',
+          'brand confusion',
+          'false positive',
+          'revalidation',
+        ],
       },
       {
         q: 'Can I make AI models stop citing my competitors and start citing me instead?',
@@ -581,7 +649,14 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'What is retrieval-augmented generation (RAG) and why does it matter for my site?',
         a: 'RAG is an architecture where AI models query external sources in real-time to supplement their static training knowledge. Perplexity, Bing Chat, and Google AI Overview all use RAG-style retrieval. Being indexed, structurally readable, and schema-complete is essential for appearing in RAG-powered answers because retrieval quality directly determines citation frequency.',
-        tags: ['rag', 'retrieval-augmented generation', 'perplexity', 'bing chat', 'real-time', 'indexed'],
+        tags: [
+          'rag',
+          'retrieval-augmented generation',
+          'perplexity',
+          'bing chat',
+          'real-time',
+          'indexed',
+        ],
       },
       {
         q: 'How do Perplexity, ChatGPT, and Claude differ in how they attribute sources?',
@@ -618,8 +693,15 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What is the MCP Server Console and who should use it?',
-        a: 'The MCP Console exposes 15+ AiVIS.biz tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent\'s tool interface. Requires Alignment+ tier.',
-        tags: ['mcp', 'model context protocol', 'claude desktop', 'cursor', 'windsurf', 'coding agent'],
+        a: "The MCP Console exposes 15+ AiVIS.biz tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent's tool interface. Requires Alignment+ tier.",
+        tags: [
+          'mcp',
+          'model context protocol',
+          'claude desktop',
+          'cursor',
+          'windsurf',
+          'coding agent',
+        ],
       },
       {
         q: 'How do I connect Claude Desktop to AiVIS.biz via MCP?',
@@ -634,7 +716,14 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'How do I verify that an AiVIS.biz webhook payload has not been tampered with?',
         a: 'Every webhook request includes an X-Signature header containing an HMAC-SHA256 hash of the raw request body signed with your webhook secret. Compute the same hash server-side using your stored secret and compare byte-by-byte. Reject any payload where signatures do not match to prevent replay attacks and request forgery from untrusted sources.',
-        tags: ['webhook verification', 'hmac-sha256', 'x-signature', 'replay attack', 'forgery', 'security'],
+        tags: [
+          'webhook verification',
+          'hmac-sha256',
+          'x-signature',
+          'replay attack',
+          'forgery',
+          'security',
+        ],
       },
       {
         q: 'Can I schedule automated audits via the AiVIS.biz API?',
@@ -644,7 +733,15 @@ const CATEGORIES: HelpCategory[] = [
       {
         q: 'What rate limits apply to the AiVIS.biz external API?',
         a: 'Tier-based limits apply. Alignment: 500 API requests per month. Signal: 5,000 requests per month. Score Fix: 2,000 requests per month. Requests exceeding the limit receive a 429 Too Many Requests response with a Retry-After header showing the next reset time. Scan quotas are tracked separately and displayed in Settings alongside API usage.',
-        tags: ['rate limits', '429', 'retry-after', 'alignment', 'signal', 'scorefix', 'monthly quota'],
+        tags: [
+          'rate limits',
+          '429',
+          'retry-after',
+          'alignment',
+          'signal',
+          'scorefix',
+          'monthly quota',
+        ],
       },
     ],
   },
@@ -662,12 +759,40 @@ const QUICK_LINKS = [
 /* ────────────────────────────────────────────────────────────────────────────
  * Ticket status helpers
  * ──────────────────────────────────────────────────────────────────────────── */
-const STATUS_META: Record<SupportTicketStatus, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  open: { label: 'Open', color: 'text-cyan-300', bg: 'bg-cyan-500/15 border-cyan-400/30', icon: Inbox },
-  in_progress: { label: 'In Progress', color: 'text-amber-300', bg: 'bg-amber-500/15 border-amber-400/30', icon: Clock },
-  waiting_on_customer: { label: 'Awaiting Reply', color: 'text-orange-300', bg: 'bg-orange-500/15 border-orange-400/30', icon: MessageSquare },
-  resolved: { label: 'Resolved', color: 'text-emerald-300', bg: 'bg-emerald-500/15 border-emerald-400/30', icon: CheckCircle2 },
-  closed: { label: 'Closed', color: 'text-white/40', bg: 'bg-white/5 border-white/10', icon: CheckCircle2 },
+const STATUS_META: Record<
+  SupportTicketStatus,
+  { label: string; color: string; bg: string; icon: React.ElementType }
+> = {
+  open: {
+    label: 'Open',
+    color: 'text-cyan-300',
+    bg: 'bg-cyan-500/15 border-cyan-400/30',
+    icon: Inbox,
+  },
+  in_progress: {
+    label: 'In Progress',
+    color: 'text-amber-300',
+    bg: 'bg-amber-500/15 border-amber-400/30',
+    icon: Clock,
+  },
+  waiting_on_customer: {
+    label: 'Awaiting Reply',
+    color: 'text-orange-300',
+    bg: 'bg-orange-500/15 border-orange-400/30',
+    icon: MessageSquare,
+  },
+  resolved: {
+    label: 'Resolved',
+    color: 'text-emerald-300',
+    bg: 'bg-emerald-500/15 border-emerald-400/30',
+    icon: CheckCircle2,
+  },
+  closed: {
+    label: 'Closed',
+    color: 'text-white/40',
+    bg: 'bg-white/5 border-white/10',
+    icon: CheckCircle2,
+  },
 };
 
 const PRIORITY_META: Record<string, { label: string; dot: string }> = {
@@ -690,10 +815,34 @@ interface LearningGuide {
 }
 
 const LEARNING_GUIDES: LearningGuide[] = [
-  { id: 'seo', title: 'SEO', subtitle: 'Search Engine Optimization', icon: Target, available: true },
-  { id: 'aeo', title: 'AEO', subtitle: 'Answer Engine Optimization', icon: MessageSquare, available: true },
-  { id: 'geo', title: 'GEO', subtitle: 'Generative Engine Optimization', icon: Zap, available: true },
-  { id: 'playbook', title: 'Playbook', subtitle: 'Page-by-Page SEO + AEO + GEO', icon: BookOpen, available: true },
+  {
+    id: 'seo',
+    title: 'SEO',
+    subtitle: 'Search Engine Optimization',
+    icon: Target,
+    available: true,
+  },
+  {
+    id: 'aeo',
+    title: 'AEO',
+    subtitle: 'Answer Engine Optimization',
+    icon: MessageSquare,
+    available: true,
+  },
+  {
+    id: 'geo',
+    title: 'GEO',
+    subtitle: 'Generative Engine Optimization',
+    icon: Zap,
+    available: true,
+  },
+  {
+    id: 'playbook',
+    title: 'Playbook',
+    subtitle: 'Page-by-Page SEO + AEO + GEO',
+    icon: BookOpen,
+    available: true,
+  },
 ];
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -707,12 +856,21 @@ const HELP_FAQ_ITEMS = CATEGORIES.flatMap((cat) =>
 export default function HelpCenter() {
   usePageMeta({
     title: 'Help Center | AiVIS.biz — AI Answer Audit System',
-    description: 'Answers to common questions about AI visibility audits, scoring, Score Fix, citations, pricing, and platform workflow.',
+    description:
+      'Answers to common questions about AI citation presence, what AiVIS is, how citation gaps work, action graphs, scoring, Score Fix, pricing, and platform workflow.',
     path: '/help',
     structuredData: [
       { ...buildFaqSchema(HELP_FAQ_ITEMS), '@id': `${PUBLIC_APP_ORIGIN}/help#faq` },
-      buildWebPageSchema({ path: '/help', name: 'AiVIS.biz Help Center', description: 'Platform documentation and frequently asked questions about AI visibility auditing.' }),
-      buildBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Help Center', path: '/help' }]),
+      buildWebPageSchema({
+        path: '/help',
+        name: 'AiVIS.biz Help Center',
+        description:
+          'Platform documentation and frequently asked questions about AI citation intelligence and extraction auditing.',
+      }),
+      buildBreadcrumbSchema([
+        { name: 'Home', path: '/' },
+        { name: 'Help Center', path: '/help' },
+      ]),
     ],
   });
 
@@ -724,8 +882,22 @@ export default function HelpCenter() {
   const [activeTab, setActiveTab] = useState<HelpTab>('knowledge');
   const tabContentRef = useRef<HTMLElement>(null);
   const swipeTabs: HelpTab[] = ['knowledge', 'guides', 'tickets'];
-  const swipeTabNext = useCallback(() => setActiveTab((t) => { const i = swipeTabs.indexOf(t); return i >= 0 && i < swipeTabs.length - 1 ? swipeTabs[i + 1] : t; }), []);
-  const swipeTabPrev = useCallback(() => setActiveTab((t) => { const i = swipeTabs.indexOf(t); return i > 0 ? swipeTabs[i - 1] : t; }), []);
+  const swipeTabNext = useCallback(
+    () =>
+      setActiveTab((t) => {
+        const i = swipeTabs.indexOf(t);
+        return i >= 0 && i < swipeTabs.length - 1 ? swipeTabs[i + 1] : t;
+      }),
+    []
+  );
+  const swipeTabPrev = useCallback(
+    () =>
+      setActiveTab((t) => {
+        const i = swipeTabs.indexOf(t);
+        return i > 0 ? swipeTabs[i - 1] : t;
+      }),
+    []
+  );
   useSwipeGesture(tabContentRef, { onSwipeLeft: swipeTabNext, onSwipeRight: swipeTabPrev });
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -827,7 +999,9 @@ export default function HelpCenter() {
   }, [search]);
 
   const totalArticles = CATEGORIES.reduce((n, c) => n + c.articles.length, 0);
-  const openTicketCount = tickets.filter((t) => t.status !== 'closed' && t.status !== 'resolved').length;
+  const openTicketCount = tickets.filter(
+    (t) => t.status !== 'closed' && t.status !== 'resolved'
+  ).length;
 
   return (
     <div className="text-white">
@@ -882,17 +1056,36 @@ export default function HelpCenter() {
             />
             <TabButton
               active={activeTab === 'tickets' || activeTab === 'ticket-detail'}
-              onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }}
+              onClick={() => {
+                setActiveTab('tickets');
+                setActiveTicket(null);
+              }}
               icon={Ticket}
               label="My Tickets"
               badge={openTicketCount > 0 ? openTicketCount : undefined}
               requiresAuth={!isLoggedIn}
             />
             {activeTab === 'new-ticket' && (
-              <TabButton active icon={Plus} label="New Ticket" onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }} />
+              <TabButton
+                active
+                icon={Plus}
+                label="New Ticket"
+                onClick={() => {
+                  setActiveTab('tickets');
+                  setActiveTicket(null);
+                }}
+              />
             )}
             {activeTab === 'ticket-detail' && activeTicket && (
-              <TabButton active icon={MessageSquare} label={activeTicket.ticket.ticket_number} onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }} />
+              <TabButton
+                active
+                icon={MessageSquare}
+                label={activeTicket.ticket.ticket_number}
+                onClick={() => {
+                  setActiveTab('tickets');
+                  setActiveTicket(null);
+                }}
+              />
             )}
           </div>
         </div>
@@ -944,7 +1137,9 @@ export default function HelpCenter() {
                         className="flex flex-col items-center gap-2 p-3.5 rounded-xl bg-white/[0.03] border border-white/8 hover:bg-white/[0.06] hover:border-white/15 transition-all group"
                       >
                         <Icon className="w-4.5 h-4.5 text-white/50 group-hover:text-cyan-400 transition-colors" />
-                        <span className="text-[11px] text-white/55 font-medium group-hover:text-white/80 transition-colors">{link.label}</span>
+                        <span className="text-[11px] text-white/55 font-medium group-hover:text-white/80 transition-colors">
+                          {link.label}
+                        </span>
                       </Link>
                     );
                   })}
@@ -956,7 +1151,10 @@ export default function HelpCenter() {
                 <div className="text-center py-20">
                   <Search className="w-8 h-8 text-white/20 mx-auto mb-3" />
                   <p className="text-white/50 text-sm">No articles match &ldquo;{search}&rdquo;</p>
-                  <button onClick={() => setSearch('')} className="text-xs text-cyan-400/70 hover:text-cyan-400 mt-2 transition-colors">
+                  <button
+                    onClick={() => setSearch('')}
+                    className="text-xs text-cyan-400/70 hover:text-cyan-400 mt-2 transition-colors"
+                  >
                     Clear search
                   </button>
                 </div>
@@ -966,7 +1164,10 @@ export default function HelpCenter() {
                     const Icon = cat.icon;
                     const isExpanded = search.length > 0 || expandedCats.has(cat.id);
                     return (
-                      <section key={cat.id} className="rounded-xl bg-white/[0.03] border border-white/8 overflow-hidden">
+                      <section
+                        key={cat.id}
+                        className="rounded-xl bg-white/[0.03] border border-white/8 overflow-hidden"
+                      >
                         <button
                           type="button"
                           onClick={() => !search && toggleCategory(cat.id)}
@@ -978,7 +1179,9 @@ export default function HelpCenter() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <h3 className="text-sm font-semibold text-white">{cat.label}</h3>
-                              <span className="text-[10px] text-white/30 bg-white/5 px-1.5 py-0.5 rounded-full">{cat.articles.length}</span>
+                              <span className="text-[10px] text-white/30 bg-white/5 px-1.5 py-0.5 rounded-full">
+                                {cat.articles.length}
+                              </span>
                             </div>
                             <p className="text-xs text-white/40 mt-0.5">{cat.description}</p>
                           </div>
@@ -991,7 +1194,9 @@ export default function HelpCenter() {
                               Open <ExternalLink className="w-3 h-3" />
                             </Link>
                           )}
-                          <ChevronDown className={`w-4 h-4 text-white/30 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                          <ChevronDown
+                            className={`w-4 h-4 text-white/30 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                          />
                         </button>
 
                         <AnimatePresence>
@@ -1015,14 +1220,18 @@ export default function HelpCenter() {
                                       type="button"
                                     >
                                       <div className="flex items-center justify-between px-4 py-3">
-                                        <span className="text-sm text-white/80 font-medium pr-4">{article.q}</span>
+                                        <span className="text-sm text-white/80 font-medium pr-4">
+                                          {article.q}
+                                        </span>
                                         <ChevronRight
                                           className={`w-3.5 h-3.5 text-white/30 transition-transform shrink-0 ${isOpen ? 'rotate-90' : ''}`}
                                         />
                                       </div>
                                       {isOpen && (
                                         <div className="px-4 pb-3.5 border-t border-white/5 pt-3">
-                                          <p className="text-sm text-white/55 leading-relaxed">{article.a}</p>
+                                          <p className="text-sm text-white/55 leading-relaxed">
+                                            {article.a}
+                                          </p>
                                         </div>
                                       )}
                                     </button>
@@ -1045,9 +1254,12 @@ export default function HelpCenter() {
                     <MessageSquare className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-base font-semibold text-white">Can&apos;t find what you need?</h3>
+                    <h3 className="text-base font-semibold text-white">
+                      Can&apos;t find what you need?
+                    </h3>
                     <p className="text-sm text-white/50 mt-1">
-                      Submit a support ticket and our team will respond within 24 hours. Or chat with AiVIS.biz Guide for instant help.
+                      Submit a support ticket and our team will respond within 24 hours. Or chat
+                      with AiVIS.biz Guide for instant help.
                     </p>
                     <div className="flex flex-wrap gap-3 mt-4">
                       {isLoggedIn ? (
@@ -1094,7 +1306,8 @@ export default function HelpCenter() {
               <div className="max-w-2xl">
                 <h2 className="text-lg font-semibold text-white">Self-Learning Guides</h2>
                 <p className="text-sm text-white/50 mt-1">
-                  Plain-English tutorials on how search and AI visibility actually work. No jargon, no fluff.
+                  Plain-English tutorials on how search and AI visibility actually work. No jargon,
+                  no fluff.
                 </p>
               </div>
 
@@ -1114,7 +1327,9 @@ export default function HelpCenter() {
                       }`}
                     >
                       <div className="w-10 h-10 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center mb-4">
-                        <Icon className={`w-5 h-5 ${guide.available ? 'text-cyan-400' : 'text-white/30'}`} />
+                        <Icon
+                          className={`w-5 h-5 ${guide.available ? 'text-cyan-400' : 'text-white/30'}`}
+                        />
                       </div>
                       <h3 className="text-base font-bold text-white">{guide.title}</h3>
                       <p className="text-xs text-white/40 mt-1">{guide.subtitle}</p>
@@ -1158,7 +1373,9 @@ export default function HelpCenter() {
                   <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#1e2536] border-b border-white/8 rounded-t-2xl">
                     <div>
                       <h2 className="text-lg font-bold text-white">SEO for Normal People</h2>
-                      <p className="text-xs text-white/40 mt-0.5">What actually matters if you want a page to rank</p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        What actually matters if you want a page to rank
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -1175,41 +1392,53 @@ export default function HelpCenter() {
                     {/* Intro */}
                     <div className="space-y-3">
                       <p>
-                        SEO is not magic. It is not tricking Google. It is making a page so clear, useful, and easy to trust
-                        that search engines feel safe showing it to people.
+                        SEO is not magic. It is not tricking Google. It is making a page so clear,
+                        useful, and easy to trust that search engines feel safe showing it to
+                        people.
                       </p>
                       <p>
-                        If you want to succeed with almost any page, you do not need to learn everything. You need to learn
-                        the few things that move a page from invisible to useful to trusted.
+                        If you want to succeed with almost any page, you do not need to learn
+                        everything. You need to learn the few things that move a page from invisible
+                        to useful to trusted.
                       </p>
                     </div>
 
                     {/* The five jobs */}
                     <div className="space-y-4">
-                      <h3 className="text-base font-semibold text-white">Think of SEO as five simple jobs</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        Think of SEO as five simple jobs
+                      </h3>
                       <div className="space-y-4">
                         <GuideBlock number={1} heading="Make sure the page deserves to exist">
-                          A page should solve one clear problem for one clear kind of person. If the page is trying to do ten things at once,
-                          it usually ranks for none of them. Before writing anything, answer in plain words: what exact question is this page
-                          here to answer, and why should someone trust this page more than the others?
+                          A page should solve one clear problem for one clear kind of person. If the
+                          page is trying to do ten things at once, it usually ranks for none of
+                          them. Before writing anything, answer in plain words: what exact question
+                          is this page here to answer, and why should someone trust this page more
+                          than the others?
                         </GuideBlock>
                         <GuideBlock number={2} heading="Make sure search engines can find it">
-                          A page cannot rank if it is hard to crawl or index. At the basic level, the page needs to be publicly accessible,
-                          not blocked, linked from somewhere on your site, and ideally included in a sitemap.
+                          A page cannot rank if it is hard to crawl or index. At the basic level,
+                          the page needs to be publicly accessible, not blocked, linked from
+                          somewhere on your site, and ideally included in a sitemap.
                         </GuideBlock>
                         <GuideBlock number={3} heading="Make sure the page instantly makes sense">
-                          This is where most people lose. A good page says what it is about without forcing the reader or Google to guess.
-                          Your title should say what the page is. Your main heading should match the topic. The first part of the page
-                          should make the answer obvious. The sections below should expand that answer cleanly.
+                          This is where most people lose. A good page says what it is about without
+                          forcing the reader or Google to guess. Your title should say what the page
+                          is. Your main heading should match the topic. The first part of the page
+                          should make the answer obvious. The sections below should expand that
+                          answer cleanly.
                         </GuideBlock>
                         <GuideBlock number={4} heading="Make sure the page is genuinely useful">
-                          The internet is drowning in pages that say almost the same thing. The pages that win usually explain more clearly,
-                          answer faster, show proof, show examples, or cover the topic more completely.
+                          The internet is drowning in pages that say almost the same thing. The
+                          pages that win usually explain more clearly, answer faster, show proof,
+                          show examples, or cover the topic more completely.
                         </GuideBlock>
                         <GuideBlock number={5} heading="Make sure the site looks trustworthy">
-                          Even a strong page struggles when the overall site feels weak, thin, or confusing. People and search engines both
-                          look for signals like who is behind the site, whether the site seems maintained, whether pages are internally
-                          linked well, and whether the content feels written by somebody who knows what they are talking about.
+                          Even a strong page struggles when the overall site feels weak, thin, or
+                          confusing. People and search engines both look for signals like who is
+                          behind the site, whether the site seems maintained, whether pages are
+                          internally linked well, and whether the content feels written by somebody
+                          who knows what they are talking about.
                         </GuideBlock>
                       </div>
                     </div>
@@ -1228,8 +1457,14 @@ export default function HelpCenter() {
                           <li>A blog post can answer one question</li>
                           <li>A location page can target one place plus one service</li>
                         </ul>
-                        <p className="mt-2">When a page tries to rank for everything, it usually becomes fuzzy. Fuzzy pages do not win.</p>
-                        <p className="mt-2 text-cyan-300/70 text-xs italic">Good question to ask: If someone lands here from Google, what do I want them to learn or do?</p>
+                        <p className="mt-2">
+                          When a page tries to rank for everything, it usually becomes fuzzy. Fuzzy
+                          pages do not win.
+                        </p>
+                        <p className="mt-2 text-cyan-300/70 text-xs italic">
+                          Good question to ask: If someone lands here from Google, what do I want
+                          them to learn or do?
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={2} title="Know what the searcher wants">
@@ -1242,13 +1477,18 @@ export default function HelpCenter() {
                           <li>Some want a specific brand or website</li>
                         </ul>
                         <p className="mt-2">
-                          The page has to match the mood of the search. If someone searches &ldquo;best CRM for nonprofits,&rdquo; they
-                          probably want comparison and recommendations. If they search &ldquo;HubSpot login,&rdquo; they want a direct path.
+                          The page has to match the mood of the search. If someone searches
+                          &ldquo;best CRM for nonprofits,&rdquo; they probably want comparison and
+                          recommendations. If they search &ldquo;HubSpot login,&rdquo; they want a
+                          direct path.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={3} title="Put the main phrase in the right places">
-                        <p>You do not need keyword stuffing. You need clarity. Use the main phrase naturally in:</p>
+                        <p>
+                          You do not need keyword stuffing. You need clarity. Use the main phrase
+                          naturally in:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>The page title</li>
                           <li>The main heading</li>
@@ -1256,11 +1496,17 @@ export default function HelpCenter() {
                           <li>One or two subheadings</li>
                           <li>The URL if possible</li>
                         </ul>
-                        <p className="mt-2">That is usually enough to help a page stay focused without sounding robotic.</p>
+                        <p className="mt-2">
+                          That is usually enough to help a page stay focused without sounding
+                          robotic.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={4} title="Answer fast, then go deeper">
-                        <p>Do not make people dig through filler. Give the core answer early, then expand with details, examples, steps, and proof.</p>
+                        <p>
+                          Do not make people dig through filler. Give the core answer early, then
+                          expand with details, examples, steps, and proof.
+                        </p>
                         <p className="mt-2">A strong page often feels like this:</p>
                         <ol className="list-decimal list-inside space-y-1 mt-2 text-white/60">
                           <li>Here is the answer</li>
@@ -1269,7 +1515,9 @@ export default function HelpCenter() {
                           <li>Here is proof or an example</li>
                           <li>Here is what to do next</li>
                         </ol>
-                        <p className="mt-2">That format works because it respects time and builds trust.</p>
+                        <p className="mt-2">
+                          That format works because it respects time and builds trust.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={5} title="Make the page easy to scan">
@@ -1282,11 +1530,17 @@ export default function HelpCenter() {
                           <li>Real examples</li>
                           <li>Specific language instead of vague claims</li>
                         </ul>
-                        <p className="mt-2">Good pages are readable. They do not feel like a legal document or a college essay.</p>
+                        <p className="mt-2">
+                          Good pages are readable. They do not feel like a legal document or a
+                          college essay.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={6} title="Make every page say something original">
-                        <p>This is one of the biggest differences between pages that float and pages that sink. Do not just rewrite what everyone else says. Add something:</p>
+                        <p>
+                          This is one of the biggest differences between pages that float and pages
+                          that sink. Do not just rewrite what everyone else says. Add something:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>Your process</li>
                           <li>Your take</li>
@@ -1312,7 +1566,10 @@ export default function HelpCenter() {
                       </GuideStep>
 
                       <GuideStep num={8} title="Do the boring basics once">
-                        <p>This is the only slightly technical part most people actually need. Make sure:</p>
+                        <p>
+                          This is the only slightly technical part most people actually need. Make
+                          sure:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>The page can load</li>
                           <li>The page works on mobile</li>
@@ -1322,11 +1579,20 @@ export default function HelpCenter() {
                           <li>Titles and descriptions are set</li>
                           <li>Images have meaningful descriptions when relevant</li>
                         </ul>
-                        <p className="mt-2">You do not need to become an engineer to win. You just need the basics not to be broken.</p>
+                        <p className="mt-2">
+                          You do not need to become an engineer to win. You just need the basics not
+                          to be broken.
+                        </p>
                       </GuideStep>
 
-                      <GuideStep num={9} title="Build pages around topics, not just isolated keywords">
-                        <p>One page can rank, but a cluster of related pages usually ranks better over time.</p>
+                      <GuideStep
+                        num={9}
+                        title="Build pages around topics, not just isolated keywords"
+                      >
+                        <p>
+                          One page can rank, but a cluster of related pages usually ranks better
+                          over time.
+                        </p>
                         <p className="mt-2">If you have a service, build:</p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>One main service page</li>
@@ -1335,31 +1601,41 @@ export default function HelpCenter() {
                           <li>Pricing or process pages</li>
                           <li>Case studies if possible</li>
                         </ul>
-                        <p className="mt-2">This helps search engines understand that your site is not just mentioning a topic. It is actually about that topic.</p>
+                        <p className="mt-2">
+                          This helps search engines understand that your site is not just mentioning
+                          a topic. It is actually about that topic.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={10} title="Use internal links like paths, not decoration">
                         <p>
-                          When you mention something important, link to the page that explains it better. This helps people
-                          move through your site and helps search engines understand how your pages connect.
+                          When you mention something important, link to the page that explains it
+                          better. This helps people move through your site and helps search engines
+                          understand how your pages connect.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={11} title="Update pages that are almost good">
                         <ul className="list-disc list-inside space-y-1 text-white/60">
-                          <li>If a page gets views but few clicks, improve the title and description</li>
+                          <li>
+                            If a page gets views but few clicks, improve the title and description
+                          </li>
                           <li>If it gets visits but no action, improve the page itself</li>
                           <li>If it ranks on page two, deepen the content and sharpen the focus</li>
                           <li>If it is outdated, refresh it</li>
                         </ul>
-                        <p className="mt-2">A lot of wins do not come from new pages. They come from fixing pages that are half alive.</p>
+                        <p className="mt-2">
+                          A lot of wins do not come from new pages. They come from fixing pages that
+                          are half alive.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={12} title="Do not fear AI content, fear useless content">
                         <p>
-                          AI-generated content is not automatically bad. What matters is whether the content is helpful, original enough,
-                          and made for people rather than low-effort filler. The real problem is not using AI. The problem is publishing
-                          something lazy and calling it done.
+                          AI-generated content is not automatically bad. What matters is whether the
+                          content is helpful, original enough, and made for people rather than
+                          low-effort filler. The real problem is not using AI. The problem is
+                          publishing something lazy and calling it done.
                         </p>
                       </GuideStep>
                     </div>
@@ -1371,17 +1647,34 @@ export default function HelpCenter() {
                       <h3 className="text-base font-semibold text-white">The short version</h3>
                       <p>A page wins when it is:</p>
                       <ul className="space-y-1.5 text-white/60">
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to find</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to understand</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to trust</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Actually useful</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Focused on one real search need</li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to
+                          find
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to
+                          understand
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Easy to
+                          trust
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Actually
+                          useful
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Focused on
+                          one real search need
+                        </li>
                       </ul>
                     </div>
 
                     {/* Pre-publish checklist */}
                     <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
-                      <h3 className="text-base font-semibold text-white">Before publishing any page, ask:</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        Before publishing any page, ask:
+                      </h3>
                       <ul className="space-y-2 text-white/60">
                         {[
                           'What exact question or need does this page solve?',
@@ -1400,7 +1693,9 @@ export default function HelpCenter() {
                           </li>
                         ))}
                       </ul>
-                      <p className="text-white/50 text-xs mt-2">If the answer is yes to most of those, the page has a real chance.</p>
+                      <p className="text-white/50 text-xs mt-2">
+                        If the answer is yes to most of those, the page has a real chance.
+                      </p>
                     </div>
 
                     {/* Mistakes */}
@@ -1454,7 +1749,9 @@ export default function HelpCenter() {
                   <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#1e2536] border-b border-white/8 rounded-t-2xl">
                     <div>
                       <h2 className="text-lg font-bold text-white">AEO for Normal People</h2>
-                      <p className="text-xs text-white/40 mt-0.5">What actually matters for answer engines</p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        What actually matters for answer engines
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -1471,47 +1768,59 @@ export default function HelpCenter() {
                     {/* Intro */}
                     <div className="space-y-3">
                       <p>
-                        AEO stands for Answer Engine Optimization - the practice of shaping your page so an AI engine can
-                        grab the answer fast and use it directly in a generated response.
+                        AEO stands for Answer Engine Optimization - the practice of shaping your
+                        page so an AI engine can grab the answer fast and use it directly in a
+                        generated response.
                       </p>
                       <p>
-                        SEO asks: <em className="text-cyan-300/70">&ldquo;Can this page rank?&rdquo;</em><br />
-                        AEO asks: <em className="text-cyan-300/70">&ldquo;Can this page answer?&rdquo;</em>
+                        SEO asks:{' '}
+                        <em className="text-cyan-300/70">&ldquo;Can this page rank?&rdquo;</em>
+                        <br />
+                        AEO asks:{' '}
+                        <em className="text-cyan-300/70">&ldquo;Can this page answer?&rdquo;</em>
                       </p>
                       <p>
-                        When someone types a question into ChatGPT, Perplexity, Google AI Overview, or any AI assistant,
-                        the model has to pick a source to pull the answer from. AEO is about making your page the one
-                        that gets picked.
+                        When someone types a question into ChatGPT, Perplexity, Google AI Overview,
+                        or any AI assistant, the model has to pick a source to pull the answer from.
+                        AEO is about making your page the one that gets picked.
                       </p>
                     </div>
 
                     {/* What AEO looks like on a real page */}
                     <div className="space-y-4">
-                      <h3 className="text-base font-semibold text-white">What AEO looks like on a real page</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        What AEO looks like on a real page
+                      </h3>
                       <div className="space-y-4">
                         <GuideBlock number={1} heading="A clear question is answered immediately">
-                          A heading asks the question, and the very next element - a sentence or a short paragraph - delivers
-                          the answer directly. No preamble, no filler, no &ldquo;in today&rsquo;s world&rdquo; warm-up. The answer comes first.
+                          A heading asks the question, and the very next element - a sentence or a
+                          short paragraph - delivers the answer directly. No preamble, no filler, no
+                          &ldquo;in today&rsquo;s world&rdquo; warm-up. The answer comes first.
                         </GuideBlock>
                         <GuideBlock number={2} heading="The answer is machine-extractable">
-                          The answer lives in clean, semantic HTML - a paragraph, a list, or a definition block - not buried
-                          inside an image, a JavaScript widget, or a collapsed accordion that never renders for crawlers.
+                          The answer lives in clean, semantic HTML - a paragraph, a list, or a
+                          definition block - not buried inside an image, a JavaScript widget, or a
+                          collapsed accordion that never renders for crawlers.
                         </GuideBlock>
                         <GuideBlock number={3} heading="Supporting detail follows logically">
-                          After the direct answer, the page expands with context, steps, examples, or evidence. This mirrors
-                          how an AI model structures a response: lead with the answer, then explain.
+                          After the direct answer, the page expands with context, steps, examples,
+                          or evidence. This mirrors how an AI model structures a response: lead with
+                          the answer, then explain.
                         </GuideBlock>
                         <GuideBlock number={4} heading="Structured data backs it up">
-                          Schema markup - FAQ, HowTo, Article, Product - tells the engine exactly what the content is and how
-                          to extract it. This is not decoration; this is the machine-readable contract.
+                          Schema markup - FAQ, HowTo, Article, Product - tells the engine exactly
+                          what the content is and how to extract it. This is not decoration; this is
+                          the machine-readable contract.
                         </GuideBlock>
                         <GuideBlock number={5} heading="The entity is named, not assumed">
-                          The brand, product, or concept is stated explicitly on the page. AI models do not infer well from
-                          context alone. If you want to be cited, say who you are and what your thing does in plain text.
+                          The brand, product, or concept is stated explicitly on the page. AI models
+                          do not infer well from context alone. If you want to be cited, say who you
+                          are and what your thing does in plain text.
                         </GuideBlock>
                         <GuideBlock number={6} heading="Recency and freshness are visible">
-                          A visible publish or update date, a changelog, or a &ldquo;last reviewed&rdquo; note all signal that the page
-                          is maintained. AI models with access to recency signals prefer content that is clearly current.
+                          A visible publish or update date, a changelog, or a &ldquo;last
+                          reviewed&rdquo; note all signal that the page is maintained. AI models
+                          with access to recency signals prefer content that is clearly current.
                         </GuideBlock>
                       </div>
                     </div>
@@ -1522,13 +1831,15 @@ export default function HelpCenter() {
                     <div className="space-y-3">
                       <h3 className="text-base font-semibold text-white">The overlap with SEO</h3>
                       <p>
-                        AEO and SEO are not enemies. Most of what makes a page good for search engines also makes it good
-                        for answer engines. Clear headings, fast load times, mobile-friendliness, internal links, HTTPS,
-                        structured data - all of that matters for both.
+                        AEO and SEO are not enemies. Most of what makes a page good for search
+                        engines also makes it good for answer engines. Clear headings, fast load
+                        times, mobile-friendliness, internal links, HTTPS, structured data - all of
+                        that matters for both.
                       </p>
                       <p>
-                        The difference is emphasis. AEO shifts the priority from &ldquo;get this page into the top 10 blue links&rdquo;
-                        to &ldquo;make this page the one an AI model chooses to extract the answer from.&rdquo;
+                        The difference is emphasis. AEO shifts the priority from &ldquo;get this
+                        page into the top 10 blue links&rdquo; to &ldquo;make this page the one an
+                        AI model chooses to extract the answer from.&rdquo;
                       </p>
                     </div>
 
@@ -1536,37 +1847,45 @@ export default function HelpCenter() {
 
                     {/* What changes with AEO */}
                     <div className="space-y-6">
-                      <h3 className="text-base font-semibold text-white">What changes when you think AEO</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        What changes when you think AEO
+                      </h3>
 
                       <GuideStep num={1} title="Answer placement becomes critical">
                         <p>
-                          In SEO, you might open an article with a story or context. In AEO, the answer needs to come early - ideally
-                          in the first paragraph under the heading - because the extraction window is short. If the answer is buried
+                          In SEO, you might open an article with a story or context. In AEO, the
+                          answer needs to come early - ideally in the first paragraph under the
+                          heading - because the extraction window is short. If the answer is buried
                           on paragraph six, it probably will not get picked.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={2} title="Structured data stops being optional">
                         <p>
-                          Schema markup has always helped SEO, but for AEO it is closer to required. FAQ schema, HowTo schema,
-                          Product schema, and Article schema give the engine a clean contract to pull from. Without it, the engine
-                          is guessing - and it will often guess someone else&rsquo;s page instead.
+                          Schema markup has always helped SEO, but for AEO it is closer to required.
+                          FAQ schema, HowTo schema, Product schema, and Article schema give the
+                          engine a clean contract to pull from. Without it, the engine is guessing -
+                          and it will often guess someone else&rsquo;s page instead.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={3} title="Entity clarity matters more than keyword density">
                         <p>
-                          SEO traditionally focused on keywords. AEO focuses on entities - who you are, what you offer, where you
-                          operate, and what category you belong to. An AI model is trying to build a knowledge graph entry for your
-                          brand. Give it the facts explicitly: name, description, location, offerings, differentiators.
+                          SEO traditionally focused on keywords. AEO focuses on entities - who you
+                          are, what you offer, where you operate, and what category you belong to.
+                          An AI model is trying to build a knowledge graph entry for your brand.
+                          Give it the facts explicitly: name, description, location, offerings,
+                          differentiators.
                         </p>
                       </GuideStep>
 
                       <GuideStep num={4} title="Citations become the new backlinks">
                         <p>
-                          In traditional SEO, backlinks are votes of trust. In AEO, citations are votes of authority. When your content
-                          gets cited by an AI model - with a source link or an inline reference - that is the AEO equivalent of a
-                          high-authority backlink. To earn citations, your content must be specific, factual, and directly answerable.
+                          In traditional SEO, backlinks are votes of trust. In AEO, citations are
+                          votes of authority. When your content gets cited by an AI model - with a
+                          source link or an inline reference - that is the AEO equivalent of a
+                          high-authority backlink. To earn citations, your content must be specific,
+                          factual, and directly answerable.
                         </p>
                       </GuideStep>
                     </div>
@@ -1575,7 +1894,9 @@ export default function HelpCenter() {
 
                     {/* Practical AEO checklist */}
                     <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
-                      <h3 className="text-base font-semibold text-white">Practical AEO checklist</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        Practical AEO checklist
+                      </h3>
                       <ul className="space-y-2 text-white/60">
                         {[
                           'Does the page answer a specific question within the first paragraph?',
@@ -1592,7 +1913,9 @@ export default function HelpCenter() {
                           </li>
                         ))}
                       </ul>
-                      <p className="text-white/50 text-xs mt-2">If most of these are yes, your page is AEO-ready.</p>
+                      <p className="text-white/50 text-xs mt-2">
+                        If most of these are yes, your page is AEO-ready.
+                      </p>
                     </div>
 
                     {/* Quick summary */}
@@ -1600,11 +1923,26 @@ export default function HelpCenter() {
                       <h3 className="text-base font-semibold text-white">The short version</h3>
                       <p>An AEO-ready page is one where:</p>
                       <ul className="space-y-1.5 text-white/60">
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> The answer is immediate and extractable</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> The entity is named, not assumed</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Structured data provides a machine-readable contract</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Supporting detail expands the answer logically</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Freshness signals are visible</li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> The answer
+                          is immediate and extractable
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> The entity
+                          is named, not assumed
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Structured
+                          data provides a machine-readable contract
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Supporting
+                          detail expands the answer logically
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Freshness
+                          signals are visible
+                        </li>
                       </ul>
                     </div>
 
@@ -1617,8 +1955,8 @@ export default function HelpCenter() {
                         AEO helps your page get used as the answer.
                       </p>
                       <p className="text-white/50 text-xs mt-2">
-                        The best pages do both - they rank in search results <em>and</em> they get cited by AI models.
-                        That is the full visibility stack.
+                        The best pages do both - they rank in search results <em>and</em> they get
+                        cited by AI models. That is the full visibility stack.
                       </p>
                     </div>
 
@@ -1673,7 +2011,9 @@ export default function HelpCenter() {
                   <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#1e2536] border-b border-white/8 rounded-t-2xl">
                     <div>
                       <h2 className="text-lg font-bold text-white">GEO for Normal People</h2>
-                      <p className="text-xs text-white/40 mt-0.5">What actually matters for generative engine visibility</p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        What actually matters for generative engine visibility
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -1690,51 +2030,85 @@ export default function HelpCenter() {
                     {/* Intro */}
                     <div className="space-y-3">
                       <p>
-                        GEO stands for Generative Engine Optimization. The term comes from academic research proposing
-                        a framework for improving visibility in generative engine responses.
+                        GEO stands for Generative Engine Optimization. The term comes from academic
+                        research proposing a framework for improving visibility in generative engine
+                        responses.
                       </p>
                       <p>
-                        Plain English: it means shaping your site so AI systems are more likely to use you,
-                        mention you, or cite you when they generate an answer.
+                        Plain English: it means shaping your site so AI systems are more likely to
+                        use you, mention you, or cite you when they generate an answer.
                       </p>
-                      <p>
-                        The easiest way to separate it from AEO:
-                      </p>
+                      <p>The easiest way to separate it from AEO:</p>
                       <div className="rounded-xl bg-white/[0.03] border border-white/8 p-4 space-y-1.5">
-                        <p>AEO asks: <em className="text-cyan-300/70">&ldquo;Can this page be pulled as the answer?&rdquo;</em></p>
-                        <p>GEO asks: <em className="text-cyan-300/70">&ldquo;Will this brand or page be used when AI builds the answer?&rdquo;</em></p>
+                        <p>
+                          AEO asks:{' '}
+                          <em className="text-cyan-300/70">
+                            &ldquo;Can this page be pulled as the answer?&rdquo;
+                          </em>
+                        </p>
+                        <p>
+                          GEO asks:{' '}
+                          <em className="text-cyan-300/70">
+                            &ldquo;Will this brand or page be used when AI builds the answer?&rdquo;
+                          </em>
+                        </p>
                       </div>
                       <p>
-                        That sounds close because it is close. But the center of gravity is different. AEO is more page-level
-                        and extraction-level &mdash; it cares about whether a page is easy to lift into a direct answer. GEO is broader.
-                        It cares about whether your site is a trusted source in the larger AI response system at all. That includes
-                        citations, mentions, grounding, source selection, and whether your brand is associated with the topic strongly
+                        That sounds close because it is close. But the center of gravity is
+                        different. AEO is more page-level and extraction-level &mdash; it cares
+                        about whether a page is easy to lift into a direct answer. GEO is broader.
+                        It cares about whether your site is a trusted source in the larger AI
+                        response system at all. That includes citations, mentions, grounding, source
+                        selection, and whether your brand is associated with the topic strongly
                         enough to survive when AI compresses the web into one response.
                       </p>
                     </div>
 
                     {/* The clean line */}
                     <div className="rounded-xl bg-cyan-500/[0.06] border border-cyan-400/15 p-5 space-y-1.5">
-                      <p className="text-white/70 text-sm">SEO helps you <span className="text-white font-medium">rank</span>.</p>
-                      <p className="text-white/70 text-sm">AEO helps you <span className="text-white font-medium">answer</span>.</p>
-                      <p className="text-cyan-300/80 text-sm font-semibold">GEO helps you get <span className="text-cyan-300">used</span>.</p>
+                      <p className="text-white/70 text-sm">
+                        SEO helps you <span className="text-white font-medium">rank</span>.
+                      </p>
+                      <p className="text-white/70 text-sm">
+                        AEO helps you <span className="text-white font-medium">answer</span>.
+                      </p>
+                      <p className="text-cyan-300/80 text-sm font-semibold">
+                        GEO helps you get <span className="text-cyan-300">used</span>.
+                      </p>
                     </div>
 
                     <hr className="border-white/8" />
 
                     {/* What changes with GEO */}
                     <div className="space-y-4">
-                      <h3 className="text-base font-semibold text-white">What changes when you optimize for GEO</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        What changes when you optimize for GEO
+                      </h3>
                       <p>
-                        You stop thinking only about one page ranking for one keyword. You start thinking about
-                        whether AI systems can clearly identify:
+                        You stop thinking only about one page ranking for one keyword. You start
+                        thinking about whether AI systems can clearly identify:
                       </p>
                       <ul className="space-y-1.5 text-white/60 ml-1">
-                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> who you are</li>
-                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> what you are known for</li>
-                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> why your claims are trustworthy</li>
-                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> what topic cluster you actually own</li>
-                        <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> whether your content is strong enough to be cited or referenced</li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> who
+                          you are
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> what
+                          you are known for
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> why
+                          your claims are trustworthy
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" /> what
+                          topic cluster you actually own
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60 shrink-0" />{' '}
+                          whether your content is strong enough to be cited or referenced
+                        </li>
                       </ul>
                     </div>
 
@@ -1742,42 +2116,54 @@ export default function HelpCenter() {
 
                     {/* What GEO leans into */}
                     <div className="space-y-4">
-                      <h3 className="text-base font-semibold text-white">What GEO leans harder into</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        What GEO leans harder into
+                      </h3>
                       <div className="space-y-4">
                         <GuideBlock number={1} heading="Clear brand and entity identity">
-                          AI systems need to know exactly who you are before they will cite you. Your brand name,
-                          what you do, and what category you belong to should be stated explicitly &mdash; not assumed,
-                          not buried, not left for the model to guess.
+                          AI systems need to know exactly who you are before they will cite you.
+                          Your brand name, what you do, and what category you belong to should be
+                          stated explicitly &mdash; not assumed, not buried, not left for the model
+                          to guess.
                         </GuideBlock>
                         <GuideBlock number={2} heading="Consistent naming across the site">
-                          If your homepage calls the product one thing, your about page calls it another, and your
-                          blog uses a third variation, AI systems struggle to build a coherent entity entry. Consistency
-                          is how you get a clean knowledge graph node.
+                          If your homepage calls the product one thing, your about page calls it
+                          another, and your blog uses a third variation, AI systems struggle to
+                          build a coherent entity entry. Consistency is how you get a clean
+                          knowledge graph node.
                         </GuideBlock>
                         <GuideBlock number={3} heading="Strong topical depth">
-                          One article on a topic does not make you an authority. A cluster of connected pages &mdash;
-                          a main page, supporting questions, comparison pages, case studies &mdash; signals real ownership.
-                          GEO rewards sites that genuinely cover a topic, not sites that mention it once.
+                          One article on a topic does not make you an authority. A cluster of
+                          connected pages &mdash; a main page, supporting questions, comparison
+                          pages, case studies &mdash; signals real ownership. GEO rewards sites that
+                          genuinely cover a topic, not sites that mention it once.
                         </GuideBlock>
                         <GuideBlock number={4} heading="Original insights, data, or examples">
-                          AI models already have access to a compressed version of generic content. What they value
-                          for citation is content that adds something new: original data, real examples, specific numbers,
-                          unique methodology, or first-party evidence.
+                          AI models already have access to a compressed version of generic content.
+                          What they value for citation is content that adds something new: original
+                          data, real examples, specific numbers, unique methodology, or first-party
+                          evidence.
                         </GuideBlock>
                         <GuideBlock number={5} heading="Credible trust signals">
-                          Author bios, company information, About pages, external references &mdash; these are the signals
-                          AI systems use to decide whether a source is safe to cite. The research that introduced GEO found
-                          that effectiveness varied by domain, meaning trust is weighed differently depending on the topic.
+                          Author bios, company information, About pages, external references &mdash;
+                          these are the signals AI systems use to decide whether a source is safe to
+                          cite. The research that introduced GEO found that effectiveness varied by
+                          domain, meaning trust is weighed differently depending on the topic.
                         </GuideBlock>
-                        <GuideBlock number={6} heading="Content that is easy to quote, summarize, or attribute">
-                          AI models compress information. If your content is structured so that key claims are in clean
-                          paragraphs, lists, or definition blocks, it is easier for the model to extract and attribute.
-                          Walls of text with no structure get compressed away.
+                        <GuideBlock
+                          number={6}
+                          heading="Content that is easy to quote, summarize, or attribute"
+                        >
+                          AI models compress information. If your content is structured so that key
+                          claims are in clean paragraphs, lists, or definition blocks, it is easier
+                          for the model to extract and attribute. Walls of text with no structure
+                          get compressed away.
                         </GuideBlock>
                         <GuideBlock number={7} heading="Off-site presence that AI can verify">
-                          AI systems often favor sources that appear credible beyond their own walls. Mentions, links,
-                          and references on third-party platforms &mdash; forums, news, Q&amp;A sites, open-source projects &mdash;
-                          give the model independent confirmation that you exist and matter.
+                          AI systems often favor sources that appear credible beyond their own
+                          walls. Mentions, links, and references on third-party platforms &mdash;
+                          forums, news, Q&amp;A sites, open-source projects &mdash; give the model
+                          independent confirmation that you exist and matter.
                         </GuideBlock>
                       </div>
                     </div>
@@ -1786,25 +2172,43 @@ export default function HelpCenter() {
 
                     {/* How GEO is measured */}
                     <div className="space-y-3">
-                      <h3 className="text-base font-semibold text-white">How GEO becomes measurable</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        How GEO becomes measurable
+                      </h3>
                       <p>
-                        A common criticism of GEO is that it sounds theoretical. That is changing. Bing now provides
-                        AI Performance reporting covering cited pages and grounding phrases. Google&rsquo;s site-owner documentation
-                        for AI features says inclusion in AI experiences follows the same fundamental approach as Search.
+                        A common criticism of GEO is that it sounds theoretical. That is changing.
+                        Bing now provides AI Performance reporting covering cited pages and
+                        grounding phrases. Google&rsquo;s site-owner documentation for AI features
+                        says inclusion in AI experiences follows the same fundamental approach as
+                        Search.
                       </p>
-                      <p>
-                        The practical signals that make GEO measurable:
-                      </p>
+                      <p>The practical signals that make GEO measurable:</p>
                       <ul className="space-y-1.5 text-white/60">
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> AI mention / citation presence</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Cited pages in Bing AI Performance</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Grounding phrase visibility</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Source inclusion in AI-generated responses</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Brand mention frequency across third-party platforms</li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> AI mention
+                          / citation presence
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Cited
+                          pages in Bing AI Performance
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Grounding
+                          phrase visibility
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Source
+                          inclusion in AI-generated responses
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Brand
+                          mention frequency across third-party platforms
+                        </li>
                       </ul>
                       <p className="text-white/50 text-xs mt-1">
-                        If somebody says they do GEO but they cannot measure AI mentions, cited pages, grounding visibility,
-                        or source inclusion, they are probably just repainting old SEO and charging new money.
+                        If somebody says they do GEO but they cannot measure AI mentions, cited
+                        pages, grounding visibility, or source inclusion, they are probably just
+                        repainting old SEO and charging new money.
                       </p>
                     </div>
 
@@ -1812,7 +2216,9 @@ export default function HelpCenter() {
 
                     {/* Practical GEO checklist */}
                     <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
-                      <h3 className="text-base font-semibold text-white">Practical GEO checklist</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        Practical GEO checklist
+                      </h3>
                       <ul className="space-y-2 text-white/60">
                         {[
                           'Is it obvious what your company or page is about?',
@@ -1830,29 +2236,48 @@ export default function HelpCenter() {
                           </li>
                         ))}
                       </ul>
-                      <p className="text-white/50 text-xs mt-2">If most of these are yes, your site has real GEO readiness.</p>
+                      <p className="text-white/50 text-xs mt-2">
+                        If most of these are yes, your site has real GEO readiness.
+                      </p>
                     </div>
 
                     {/* Quick summary */}
                     <div className="space-y-4">
                       <h3 className="text-base font-semibold text-white">The short version</h3>
                       <ul className="space-y-1.5 text-white/60">
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> SEO is about being found in search results</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> AEO is about being pulled as an answer</li>
-                        <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> GEO is about being included when AI assembles the answer</li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> SEO is
+                          about being found in search results
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> AEO is
+                          about being pulled as an answer
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> GEO is
+                          about being included when AI assembles the answer
+                        </li>
                       </ul>
                       <p className="mt-2 text-white/60">Or even shorter:</p>
                       <ul className="space-y-1 text-white/60">
-                        <li><span className="text-white font-medium">SEO</span> = rank</li>
-                        <li><span className="text-white font-medium">AEO</span> = answer</li>
-                        <li><span className="text-cyan-300 font-medium">GEO</span> = citation and presence</li>
+                        <li>
+                          <span className="text-white font-medium">SEO</span> = rank
+                        </li>
+                        <li>
+                          <span className="text-white font-medium">AEO</span> = answer
+                        </li>
+                        <li>
+                          <span className="text-cyan-300 font-medium">GEO</span> = citation and
+                          presence
+                        </li>
                       </ul>
                     </div>
 
                     {/* The framing close */}
                     <div className="rounded-xl bg-cyan-500/[0.06] border border-cyan-400/15 p-5 space-y-2">
                       <p className="text-white/80 text-sm">
-                        If SEO gets your page into the race, and AEO helps your page answer the question&hellip;
+                        If SEO gets your page into the race, and AEO helps your page answer the
+                        question&hellip;
                       </p>
                       <p className="text-cyan-300/80 text-sm font-semibold">
                         GEO is what makes AI say your name while giving that answer.
@@ -1910,7 +2335,9 @@ export default function HelpCenter() {
                   <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-[#1e2536] border-b border-white/8 rounded-t-2xl">
                     <div>
                       <h2 className="text-lg font-bold text-white">The Page-by-Page Playbook</h2>
-                      <p className="text-xs text-white/40 mt-0.5">What every page should do for SEO, AEO, and GEO at once</p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        What every page should do for SEO, AEO, and GEO at once
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -1926,16 +2353,24 @@ export default function HelpCenter() {
                   <div className="px-6 py-6 space-y-8 text-white/75 text-sm leading-relaxed max-h-[80vh] overflow-y-auto">
                     {/* Intro */}
                     <div className="space-y-3">
-                      <p>
-                        Every page should do three jobs at once:
-                      </p>
+                      <p>Every page should do three jobs at once:</p>
                       <div className="rounded-xl bg-white/[0.03] border border-white/8 p-4 space-y-1.5">
-                        <p><span className="text-white font-medium">SEO</span> &mdash; help the page get found in search</p>
-                        <p><span className="text-white font-medium">AEO</span> &mdash; help the page answer the question fast</p>
-                        <p><span className="text-cyan-300 font-medium">GEO</span> &mdash; help AI trust the page enough to use or cite it</p>
+                        <p>
+                          <span className="text-white font-medium">SEO</span> &mdash; help the page
+                          get found in search
+                        </p>
+                        <p>
+                          <span className="text-white font-medium">AEO</span> &mdash; help the page
+                          answer the question fast
+                        </p>
+                        <p>
+                          <span className="text-cyan-300 font-medium">GEO</span> &mdash; help AI
+                          trust the page enough to use or cite it
+                        </p>
                       </div>
                       <p>
-                        This is the reusable playbook. Follow it for every page you publish or update.
+                        This is the reusable playbook. Follow it for every page you publish or
+                        update.
                       </p>
                     </div>
 
@@ -1944,14 +2379,20 @@ export default function HelpCenter() {
                     {/* The 12 steps */}
                     <div className="space-y-6">
                       <GuideStep num={1} title="Give the page one job">
-                        <p>Every page needs one clear purpose. Not &ldquo;rank for everything.&rdquo; Not &ldquo;kind of about this and kind of about that.&rdquo; One page, one main problem, one main promise.</p>
+                        <p>
+                          Every page needs one clear purpose. Not &ldquo;rank for everything.&rdquo;
+                          Not &ldquo;kind of about this and kind of about that.&rdquo; One page, one
+                          main problem, one main promise.
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>A service page sells one service</li>
                           <li>A blog post answers one question</li>
                           <li>A location page targets one service in one place</li>
                           <li>A product page explains one product clearly</li>
                         </ul>
-                        <p className="mt-2 text-cyan-300/70 text-xs italic">If the page has no sharp purpose, everything else gets blurry.</p>
+                        <p className="mt-2 text-cyan-300/70 text-xs italic">
+                          If the page has no sharp purpose, everything else gets blurry.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={2} title="Match the page to the searcher's real need">
@@ -1963,7 +2404,10 @@ export default function HelpCenter() {
                           <li>Find a local provider?</li>
                           <li>Get a fast definition?</li>
                         </ul>
-                        <p className="mt-2">Your page should match that mood. Ranking systems surface the most relevant and useful results, not just pages with matching words.</p>
+                        <p className="mt-2">
+                          Your page should match that mood. Ranking systems surface the most
+                          relevant and useful results, not just pages with matching words.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={3} title="Make the topic obvious immediately">
@@ -1976,22 +2420,41 @@ export default function HelpCenter() {
                         </ul>
                         <p className="mt-3">A simple pattern:</p>
                         <div className="rounded-lg bg-white/[0.03] border border-white/8 p-3 mt-2 space-y-1 text-white/50 text-xs">
-                          <p><span className="text-white/70 font-medium">Title:</span> What the page is about</p>
-                          <p><span className="text-white/70 font-medium">H1:</span> The same topic in plain language</p>
-                          <p><span className="text-white/70 font-medium">Opening:</span> Direct explanation of what the page covers</p>
+                          <p>
+                            <span className="text-white/70 font-medium">Title:</span> What the page
+                            is about
+                          </p>
+                          <p>
+                            <span className="text-white/70 font-medium">H1:</span> The same topic in
+                            plain language
+                          </p>
+                          <p>
+                            <span className="text-white/70 font-medium">Opening:</span> Direct
+                            explanation of what the page covers
+                          </p>
                         </div>
                       </GuideStep>
 
                       <GuideStep num={4} title="Answer fast">
-                        <p>This is where AEO starts. The page should answer the core question near the top. Not after three paragraphs of throat-clearing. Not buried under brand fluff.</p>
+                        <p>
+                          This is where AEO starts. The page should answer the core question near
+                          the top. Not after three paragraphs of throat-clearing. Not buried under
+                          brand fluff.
+                        </p>
                         <div className="rounded-lg bg-white/[0.03] border border-white/8 p-3 mt-2 text-white/50 text-xs italic">
-                          &ldquo;What is AEO? AEO means making your content easy for search engines and AI systems to pull as a direct answer.&rdquo;
+                          &ldquo;What is AEO? AEO means making your content easy for search engines
+                          and AI systems to pull as a direct answer.&rdquo;
                         </div>
-                        <p className="mt-2">That works because it is clean, direct, and extractable.</p>
+                        <p className="mt-2">
+                          That works because it is clean, direct, and extractable.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={5} title="Build the rest of the page with clear sections">
-                        <p>After the fast answer, go deeper. Use headings that sound like real questions or clear subtopics:</p>
+                        <p>
+                          After the fast answer, go deeper. Use headings that sound like real
+                          questions or clear subtopics:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>What it is</li>
                           <li>Why it matters</li>
@@ -2000,7 +2463,9 @@ export default function HelpCenter() {
                           <li>Mistakes to avoid</li>
                           <li>What to do next</li>
                         </ul>
-                        <p className="mt-2">This helps humans scan and helps engines understand the content structure.</p>
+                        <p className="mt-2">
+                          This helps humans scan and helps engines understand the content structure.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={6} title="Write like a human, not a brochure">
@@ -2029,7 +2494,11 @@ export default function HelpCenter() {
                       </GuideStep>
 
                       <GuideStep num={7} title="Add something original">
-                        <p>This is where SEO starts getting stronger and GEO starts becoming real. Do not just repeat what ten other pages already say. Add something that makes your page worth using:</p>
+                        <p>
+                          This is where SEO starts getting stronger and GEO starts becoming real. Do
+                          not just repeat what ten other pages already say. Add something that makes
+                          your page worth using:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>Your process or framework</li>
                           <li>Original examples or screenshots</li>
@@ -2038,11 +2507,18 @@ export default function HelpCenter() {
                           <li>Mistakes you have seen in the real world</li>
                           <li>Data, proof, or experience</li>
                         </ul>
-                        <p className="mt-2 text-cyan-300/70 text-xs italic">The more useful and reusable your content is, the better your odds of being included in AI-generated answers.</p>
+                        <p className="mt-2 text-cyan-300/70 text-xs italic">
+                          The more useful and reusable your content is, the better your odds of
+                          being included in AI-generated answers.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={8} title="Make the page easy to trust">
-                        <p>GEO lives here. AI systems are more likely to use pages that feel safe, clear, and attributable. The page and site should make these things obvious:</p>
+                        <p>
+                          GEO lives here. AI systems are more likely to use pages that feel safe,
+                          clear, and attributable. The page and site should make these things
+                          obvious:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>Who wrote this</li>
                           <li>What company this is</li>
@@ -2058,15 +2534,24 @@ export default function HelpCenter() {
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>Article schema for articles</li>
                           <li>FAQ schema for real FAQ sections</li>
-                          <li>QAPage only when the page truly is a question with user-submitted answers</li>
+                          <li>
+                            QAPage only when the page truly is a question with user-submitted
+                            answers
+                          </li>
                           <li>Organization or business schema for the brand/site</li>
                         </ul>
-                        <p className="mt-2">Schema supports clarity. Schema does not replace clarity.</p>
+                        <p className="mt-2">
+                          Schema supports clarity. Schema does not replace clarity.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={10} title="Link to your other relevant pages">
                         <p>Internal links are not decoration. They are paths.</p>
-                        <p className="mt-2">If one page mentions a service, concept, tool, or related topic you explain elsewhere, link to it. That helps users keep moving and helps search engines understand your site structure.</p>
+                        <p className="mt-2">
+                          If one page mentions a service, concept, tool, or related topic you
+                          explain elsewhere, link to it. That helps users keep moving and helps
+                          search engines understand your site structure.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={11} title="Make sure the page is reachable and indexable">
@@ -2078,11 +2563,15 @@ export default function HelpCenter() {
                           <li>It is not blocked from crawling or indexing</li>
                           <li>It is included in your sitemap if possible</li>
                         </ul>
-                        <p className="mt-2">Search engines need to discover and index a page before it can compete.</p>
+                        <p className="mt-2">
+                          Search engines need to discover and index a page before it can compete.
+                        </p>
                       </GuideStep>
 
                       <GuideStep num={12} title="End with a clear next step">
-                        <p>A good page does not just answer. It moves the user somewhere sensible:</p>
+                        <p>
+                          A good page does not just answer. It moves the user somewhere sensible:
+                        </p>
                         <ul className="list-disc list-inside space-y-1 mt-2 text-white/60">
                           <li>Contact us</li>
                           <li>Book a demo</li>
@@ -2091,7 +2580,10 @@ export default function HelpCenter() {
                           <li>Request an audit</li>
                           <li>See examples</li>
                         </ul>
-                        <p className="mt-2">This is not only about conversion. It also helps the page feel complete and purposeful.</p>
+                        <p className="mt-2">
+                          This is not only about conversion. It also helps the page feel complete
+                          and purposeful.
+                        </p>
                       </GuideStep>
                     </div>
 
@@ -2099,7 +2591,9 @@ export default function HelpCenter() {
 
                     {/* Quick reference box */}
                     <div className="rounded-xl bg-white/[0.03] border border-white/8 p-5 space-y-3">
-                      <h3 className="text-base font-semibold text-white">What to do on every page</h3>
+                      <h3 className="text-base font-semibold text-white">
+                        What to do on every page
+                      </h3>
                       <ul className="space-y-2 text-white/60">
                         {[
                           'Make the page about one thing.',
@@ -2115,7 +2609,9 @@ export default function HelpCenter() {
                           'End with a clear next step.',
                         ].map((item, i) => (
                           <li key={item} className="flex items-start gap-2">
-                            <span className="mt-0.5 w-5 h-5 rounded-full bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[10px] text-cyan-300 font-bold shrink-0">{i + 1}</span>
+                            <span className="mt-0.5 w-5 h-5 rounded-full bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[10px] text-cyan-300 font-bold shrink-0">
+                              {i + 1}
+                            </span>
                             <span>{item}</span>
                           </li>
                         ))}
@@ -2126,9 +2622,10 @@ export default function HelpCenter() {
                     <div className="rounded-xl bg-cyan-500/[0.06] border border-cyan-400/15 p-5 space-y-2">
                       <p className="text-white/80 text-sm font-medium">The one-line memory hook:</p>
                       <p className="text-white/60 text-sm">
-                        <span className="text-white font-medium">SEO</span> gets the page discovered.
-                        {' '}<span className="text-white font-medium">AEO</span> gets the page extracted.
-                        {' '}<span className="text-cyan-300 font-semibold">GEO</span> gets the page used.
+                        <span className="text-white font-medium">SEO</span> gets the page
+                        discovered. <span className="text-white font-medium">AEO</span> gets the
+                        page extracted. <span className="text-cyan-300 font-semibold">GEO</span>{' '}
+                        gets the page used.
                       </p>
                     </div>
                   </div>
@@ -2150,7 +2647,9 @@ export default function HelpCenter() {
               {!isLoggedIn ? (
                 <div className="text-center py-20">
                   <Ticket className="w-10 h-10 text-white/20 mx-auto mb-3" />
-                  <p className="text-white/50 mb-4">Sign in to view and manage your support tickets</p>
+                  <p className="text-white/50 mb-4">
+                    Sign in to view and manage your support tickets
+                  </p>
                   <Link
                     to="/auth?mode=signin"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500/15 border border-cyan-400/25 text-cyan-300 text-sm font-medium hover:bg-cyan-500/25 transition-all"
@@ -2164,7 +2663,9 @@ export default function HelpCenter() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-base font-semibold text-white">Support Tickets</h2>
-                      <p className="text-xs text-white/40 mt-0.5">{total} total ticket{total !== 1 ? 's' : ''}</p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        {total} total ticket{total !== 1 ? 's' : ''}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1 bg-white/5 border border-white/8 rounded-lg p-0.5">
@@ -2178,7 +2679,11 @@ export default function HelpCenter() {
                                 : 'text-white/40 hover:text-white/60'
                             }`}
                           >
-                            {f === 'all' ? 'All' : f === 'in_progress' ? 'In Progress' : f.charAt(0).toUpperCase() + f.slice(1)}
+                            {f === 'all'
+                              ? 'All'
+                              : f === 'in_progress'
+                                ? 'In Progress'
+                                : f.charAt(0).toUpperCase() + f.slice(1)}
                           </button>
                         ))}
                       </div>
@@ -2218,7 +2723,8 @@ export default function HelpCenter() {
                   ) : (
                     <div className="space-y-2">
                       {tickets.map((ticket) => {
-                        const statusMeta = STATUS_META[ticket.status as SupportTicketStatus] || STATUS_META.open;
+                        const statusMeta =
+                          STATUS_META[ticket.status as SupportTicketStatus] || STATUS_META.open;
                         const priorityMeta = PRIORITY_META[ticket.priority] || PRIORITY_META.normal;
                         const StatusIcon = statusMeta.icon;
                         return (
@@ -2229,7 +2735,9 @@ export default function HelpCenter() {
                             type="button"
                           >
                             <div className="flex items-start gap-3.5">
-                              <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 ${statusMeta.bg}`}>
+                              <div
+                                className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 ${statusMeta.bg}`}
+                              >
                                 <StatusIcon className={`w-4 h-4 ${statusMeta.color}`} />
                               </div>
                               <div className="flex-1 min-w-0">
@@ -2237,18 +2745,26 @@ export default function HelpCenter() {
                                   <span className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors truncate">
                                     {ticket.subject}
                                   </span>
-                                  <span className="text-[10px] text-white/25 font-mono shrink-0">{ticket.ticket_number}</span>
+                                  <span className="text-[10px] text-white/25 font-mono shrink-0">
+                                    {ticket.ticket_number}
+                                  </span>
                                 </div>
                                 <div className="flex items-center gap-3 mt-1.5">
-                                  <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusMeta.bg} ${statusMeta.color}`}>
+                                  <span
+                                    className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusMeta.bg} ${statusMeta.color}`}
+                                  >
                                     {statusMeta.label}
                                   </span>
                                   <span className="flex items-center gap-1 text-[10px] text-white/35">
-                                    <span className={`w-1.5 h-1.5 rounded-full ${priorityMeta.dot}`} />
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full ${priorityMeta.dot}`}
+                                    />
                                     {priorityMeta.label}
                                   </span>
                                   <span className="text-[10px] text-white/25">
-                                    {SUPPORT_TICKET_CATEGORIES.find((c) => c.value === ticket.category)?.label || ticket.category}
+                                    {SUPPORT_TICKET_CATEGORIES.find(
+                                      (c) => c.value === ticket.category
+                                    )?.label || ticket.category}
                                   </span>
                                   <span className="text-[10px] text-white/20">
                                     {new Date(ticket.created_at).toLocaleDateString()}
@@ -2308,7 +2824,10 @@ export default function HelpCenter() {
                     <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-400/20 text-red-300 text-sm">
                       <AlertCircle className="w-4 h-4 shrink-0" />
                       {ticketsError}
-                      <button onClick={clearError} className="ml-auto text-red-400/60 hover:text-red-400">
+                      <button
+                        onClick={clearError}
+                        className="ml-auto text-red-400/60 hover:text-red-400"
+                      >
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -2337,11 +2856,17 @@ export default function HelpCenter() {
                         </label>
                         <select
                           value={ticketCategory}
-                          onChange={(e) => setTicketCategory(e.target.value as SupportTicketCategory)}
+                          onChange={(e) =>
+                            setTicketCategory(e.target.value as SupportTicketCategory)
+                          }
                           className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/25 focus:border-cyan-400/25 transition-all"
                         >
                           {SUPPORT_TICKET_CATEGORIES.map((cat) => (
-                            <option key={cat.value} value={cat.value} className="bg-[#2f3747] text-white">
+                            <option
+                              key={cat.value}
+                              value={cat.value}
+                              className="bg-[#2f3747] text-white"
+                            >
                               {cat.label}
                             </option>
                           ))}
@@ -2353,13 +2878,23 @@ export default function HelpCenter() {
                         </label>
                         <select
                           value={ticketPriority}
-                          onChange={(e) => setTicketPriority(e.target.value as SupportTicketPriority)}
+                          onChange={(e) =>
+                            setTicketPriority(e.target.value as SupportTicketPriority)
+                          }
                           className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/25 focus:border-cyan-400/25 transition-all"
                         >
-                          <option value="low" className="bg-[#2f3747]">Low</option>
-                          <option value="normal" className="bg-[#2f3747]">Normal</option>
-                          <option value="high" className="bg-[#2f3747]">High</option>
-                          <option value="urgent" className="bg-[#2f3747]">Urgent</option>
+                          <option value="low" className="bg-[#2f3747]">
+                            Low
+                          </option>
+                          <option value="normal" className="bg-[#2f3747]">
+                            Normal
+                          </option>
+                          <option value="high" className="bg-[#2f3747]">
+                            High
+                          </option>
+                          <option value="urgent" className="bg-[#2f3747]">
+                            Urgent
+                          </option>
                         </select>
                       </div>
                     </div>
@@ -2377,14 +2912,20 @@ export default function HelpCenter() {
                         rows={6}
                         className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400/25 focus:border-cyan-400/25 transition-all resize-none"
                       />
-                      <p className="text-[10px] text-white/25 mt-1 text-right">{ticketDescription.length}/5000</p>
+                      <p className="text-[10px] text-white/25 mt-1 text-right">
+                        {ticketDescription.length}/5000
+                      </p>
                     </div>
 
                     {/* Actions */}
                     <div className="flex items-center gap-3 pt-2">
                       <button
                         onClick={handleCreateTicket}
-                        disabled={ticketsLoading || ticketSubject.trim().length < 3 || ticketDescription.trim().length < 10}
+                        disabled={
+                          ticketsLoading ||
+                          ticketSubject.trim().length < 3 ||
+                          ticketDescription.trim().length < 10
+                        }
                         className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-semibold hover:bg-cyan-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       >
                         {ticketsLoading ? (
@@ -2422,17 +2963,24 @@ export default function HelpCenter() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[11px] font-mono text-white/30">{activeTicket.ticket.ticket_number}</span>
+                      <span className="text-[11px] font-mono text-white/30">
+                        {activeTicket.ticket.ticket_number}
+                      </span>
                       {(() => {
-                        const s = STATUS_META[activeTicket.ticket.status as SupportTicketStatus] || STATUS_META.open;
+                        const s =
+                          STATUS_META[activeTicket.ticket.status as SupportTicketStatus] ||
+                          STATUS_META.open;
                         return (
-                          <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border ${s.bg} ${s.color}`}>
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border ${s.bg} ${s.color}`}
+                          >
                             {s.label}
                           </span>
                         );
                       })()}
                       {(() => {
-                        const p = PRIORITY_META[activeTicket.ticket.priority] || PRIORITY_META.normal;
+                        const p =
+                          PRIORITY_META[activeTicket.ticket.priority] || PRIORITY_META.normal;
                         return (
                           <span className="flex items-center gap-1 text-[10px] text-white/35">
                             <span className={`w-1.5 h-1.5 rounded-full ${p.dot}`} />
@@ -2441,15 +2989,25 @@ export default function HelpCenter() {
                         );
                       })()}
                     </div>
-                    <h2 className="text-lg font-semibold text-white">{activeTicket.ticket.subject}</h2>
+                    <h2 className="text-lg font-semibold text-white">
+                      {activeTicket.ticket.subject}
+                    </h2>
                     <div className="flex items-center gap-3 mt-2 text-xs text-white/35">
-                      <span>{SUPPORT_TICKET_CATEGORIES.find((c) => c.value === activeTicket.ticket.category)?.label || activeTicket.ticket.category}</span>
+                      <span>
+                        {SUPPORT_TICKET_CATEGORIES.find(
+                          (c) => c.value === activeTicket.ticket.category
+                        )?.label || activeTicket.ticket.category}
+                      </span>
                       <span>&middot;</span>
-                      <span>Created {new Date(activeTicket.ticket.created_at).toLocaleString()}</span>
+                      <span>
+                        Created {new Date(activeTicket.ticket.created_at).toLocaleString()}
+                      </span>
                       {activeTicket.ticket.resolved_at && (
                         <>
                           <span>&middot;</span>
-                          <span>Resolved {new Date(activeTicket.ticket.resolved_at).toLocaleString()}</span>
+                          <span>
+                            Resolved {new Date(activeTicket.ticket.resolved_at).toLocaleString()}
+                          </span>
                         </>
                       )}
                     </div>
@@ -2457,14 +3015,21 @@ export default function HelpCenter() {
                   <div className="flex items-center gap-2 shrink-0">
                     {activeTicket.ticket.status !== 'closed' && (
                       <button
-                        onClick={() => closeTicketById(activeTicket.ticket.id).then(() => setActiveTab('tickets'))}
+                        onClick={() =>
+                          closeTicketById(activeTicket.ticket.id).then(() =>
+                            setActiveTab('tickets')
+                          )
+                        }
                         className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 text-xs font-medium hover:text-white/80 hover:border-white/15 transition-all"
                       >
                         Close Ticket
                       </button>
                     )}
                     <button
-                      onClick={() => { setActiveTab('tickets'); setActiveTicket(null); }}
+                      onClick={() => {
+                        setActiveTab('tickets');
+                        setActiveTicket(null);
+                      }}
                       className="p-2 rounded-lg hover:bg-white/5 transition-colors"
                     >
                       <X className="w-4 h-4 text-white/40" />
@@ -2479,17 +3044,26 @@ export default function HelpCenter() {
                   const isUser = msg.sender_type === 'user';
                   const isSystem = msg.sender_type === 'system';
                   return (
-                    <div key={msg.id} className={`rounded-xl p-4 ${
-                      isUser
-                        ? 'bg-white/[0.03] border border-white/8'
-                        : isSystem
-                          ? 'bg-cyan-500/5 border border-cyan-400/15'
-                          : 'bg-emerald-500/5 border border-emerald-400/15'
-                    }`}>
+                    <div
+                      key={msg.id}
+                      className={`rounded-xl p-4 ${
+                        isUser
+                          ? 'bg-white/[0.03] border border-white/8'
+                          : isSystem
+                            ? 'bg-cyan-500/5 border border-cyan-400/15'
+                            : 'bg-emerald-500/5 border border-emerald-400/15'
+                      }`}
+                    >
                       <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                          isUser ? 'bg-white/10 text-white/60' : isSystem ? 'bg-cyan-500/20 text-cyan-300' : 'bg-emerald-500/20 text-emerald-300'
-                        }`}>
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
+                            isUser
+                              ? 'bg-white/10 text-white/60'
+                              : isSystem
+                                ? 'bg-cyan-500/20 text-cyan-300'
+                                : 'bg-emerald-500/20 text-emerald-300'
+                          }`}
+                        >
                           {isUser ? 'Y' : isSystem ? 'S' : 'A'}
                         </div>
                         <span className="text-xs font-medium text-white/60">
@@ -2499,7 +3073,9 @@ export default function HelpCenter() {
                           {new Date(msg.created_at).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                      <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
+                        {msg.message}
+                      </p>
                     </div>
                   );
                 })}
@@ -2540,7 +3116,15 @@ export default function HelpCenter() {
 /* ────────────────────────────────────────────────────────────────────────────
  * Guide sub-components
  * ──────────────────────────────────────────────────────────────────────────── */
-function GuideBlock({ number, heading, children }: { number: number; heading: string; children: React.ReactNode }) {
+function GuideBlock({
+  number,
+  heading,
+  children,
+}: {
+  number: number;
+  heading: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex gap-3">
       <span className="shrink-0 w-7 h-7 rounded-full bg-cyan-500/15 border border-cyan-400/20 flex items-center justify-center text-xs font-bold text-cyan-300">
@@ -2554,7 +3138,15 @@ function GuideBlock({ number, heading, children }: { number: number; heading: st
   );
 }
 
-function GuideStep({ num, title, children }: { num: number; title: string; children: React.ReactNode }) {
+function GuideStep({
+  num,
+  title,
+  children,
+}: {
+  num: number;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="rounded-xl bg-white/[0.02] border border-white/6 p-5">
       <div className="flex items-center gap-2.5 mb-3">

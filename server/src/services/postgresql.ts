@@ -1304,6 +1304,124 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_entities_embedding ON entities USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
             `CREATE INDEX IF NOT EXISTS idx_entity_evidence_embedding ON entity_evidence USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
             `CREATE INDEX IF NOT EXISTS idx_entity_variants_embedding ON entity_variants USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`,
+            // ── Forensic Pipeline: event log, ledger, and registry (append-only truth) ──────────
+            // EVENT LOG (append-only truth)
+            `CREATE TABLE IF NOT EXISTS scan_events (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL,
+              event_type TEXT NOT NULL,
+              payload JSONB NOT NULL DEFAULT '{}',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_events_scan ON scan_events(scan_id, created_at ASC)`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_events_type ON scan_events(event_type)`,
+            // SCANS (root entity — maps 1:1 to audits but decoupled for forensic replay)
+            `CREATE TABLE IF NOT EXISTS scan_runs (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+              url TEXT NOT NULL,
+              domain TEXT NOT NULL,
+              input_brand TEXT,
+              status TEXT NOT NULL DEFAULT 'pending',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_runs_audit ON scan_runs(audit_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_runs_domain ON scan_runs(domain)`,
+            // QUERIES (generated intent layer)
+            `CREATE TABLE IF NOT EXISTS scan_queries (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL REFERENCES scan_runs(id) ON DELETE CASCADE,
+              query TEXT NOT NULL,
+              query_type TEXT,
+              priority INT DEFAULT 0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_queries_scan ON scan_queries(scan_id)`,
+            // SOURCES (authority layer — deduplicated by domain)
+            `CREATE TABLE IF NOT EXISTS citation_sources (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              domain TEXT NOT NULL,
+              url TEXT NOT NULL,
+              authority_score FLOAT DEFAULT 0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(url)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_citation_sources_domain ON citation_sources(domain)`,
+            // CITATION LEDGER (core immutable evidence — append-only, never update rows)
+            `CREATE TABLE IF NOT EXISTS citation_ledger (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL REFERENCES scan_runs(id) ON DELETE CASCADE,
+              query_id UUID REFERENCES scan_queries(id) ON DELETE SET NULL,
+              source_id UUID REFERENCES citation_sources(id) ON DELETE SET NULL,
+              position INT,
+              mentioned BOOLEAN NOT NULL DEFAULT FALSE,
+              cited BOOLEAN NOT NULL DEFAULT FALSE,
+              context TEXT,
+              sentiment TEXT,
+              confidence FLOAT DEFAULT 1.0,
+              model TEXT,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_citation_ledger_scan ON citation_ledger(scan_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_citation_ledger_query ON citation_ledger(query_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_citation_ledger_source ON citation_ledger(source_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_citation_ledger_cited ON citation_ledger(scan_id, cited)`,
+            // ENTITY MENTIONS (link layer — entity_id references existing entities table)
+            `CREATE TABLE IF NOT EXISTS entity_mention_links (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+              citation_id UUID NOT NULL REFERENCES citation_ledger(id) ON DELETE CASCADE,
+              relevance FLOAT DEFAULT 1.0,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_mention_links_entity ON entity_mention_links(entity_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_entity_mention_links_citation ON entity_mention_links(citation_id)`,
+            // VISIBILITY REGISTRY (derived queryable state — upserted by pipeline)
+            `CREATE TABLE IF NOT EXISTS visibility_registry (
+              scan_id UUID PRIMARY KEY REFERENCES scan_runs(id) ON DELETE CASCADE,
+              entity_clarity FLOAT,
+              citation_coverage FLOAT,
+              authority_alignment FLOAT,
+              answer_presence FLOAT,
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            // QUERY COVERAGE (derived per-query state)
+            `CREATE TABLE IF NOT EXISTS query_coverage (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL REFERENCES scan_runs(id) ON DELETE CASCADE,
+              query_id UUID NOT NULL REFERENCES scan_queries(id) ON DELETE CASCADE,
+              appears BOOLEAN NOT NULL DEFAULT FALSE,
+              citation_count INT DEFAULT 0,
+              avg_position FLOAT,
+              updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE(scan_id, query_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_query_coverage_scan ON query_coverage(scan_id)`,
+            // AUTHORITY REGISTRY (derived per-source state)
+            `CREATE TABLE IF NOT EXISTS authority_registry (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL REFERENCES scan_runs(id) ON DELETE CASCADE,
+              source_id UUID NOT NULL REFERENCES citation_sources(id) ON DELETE CASCADE,
+              mentions INT DEFAULT 0,
+              citations INT DEFAULT 0,
+              alignment_score FLOAT DEFAULT 0,
+              UNIQUE(scan_id, source_id)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_authority_registry_scan ON authority_registry(scan_id)`,
+            // GAPS (what users pay for — visibility failure surface)
+            `CREATE TABLE IF NOT EXISTS scan_gaps (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              scan_id UUID NOT NULL REFERENCES scan_runs(id) ON DELETE CASCADE,
+              gap_type TEXT NOT NULL,
+              description TEXT,
+              related_query_id UUID REFERENCES scan_queries(id) ON DELETE SET NULL,
+              related_entity_id TEXT REFERENCES entities(id) ON DELETE SET NULL,
+              severity FLOAT DEFAULT 0.5,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_gaps_scan ON scan_gaps(scan_id)`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_gaps_type ON scan_gaps(gap_type)`,
+            `CREATE INDEX IF NOT EXISTS idx_scan_gaps_severity ON scan_gaps(scan_id, severity DESC)`,
           ];
           let patchOk = 0;
           let patchFail = 0;

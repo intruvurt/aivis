@@ -3392,6 +3392,76 @@ fs.writeFileSync(publicSitemapPath, sitemapXml, 'utf8');
 fs.writeFileSync(distSitemapPath, sitemapXml, 'utf8');
 console.log(`[prerender] generated sitemap.xml (${sitemapEntries.length} URLs, lastmod ${today})`);
 
+// ── Split sitemaps + sitemap-index.xml ────────────────────────────────────────
+// For 100-1000 page scale Google requires a sitemap index that references
+// themed sub-sitemaps (max 50 k URLs each). AI crawlers also discover pages
+// faster when sitemaps are grouped by content type.
+//
+// Sub-sitemaps generated here:
+//   sitemap-core.xml      — landing, docs, tools, ontology, misc public pages
+//   sitemap-blogs.xml     — all /blogs/* routes
+//   sitemap-keywords.xml  — /compare /platforms /problems /signals /industries
+//   sitemap-entities.xml  — dynamic DB-backed entities (served by the server)
+//
+// The index sits at /sitemap-index.xml and is the canonical discovery point
+// for both search bots and AI crawlers (Sitemap: line in robots.txt).
+
+const SITEMAP_BASE = 'https://aivis.biz';
+
+function buildUrlset(urlLines) {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...urlLines,
+    '</urlset>',
+  ].join('\n');
+}
+
+function toSitemapEntry(r) {
+  const { priority, changefreq } = sitemapMeta(r.path);
+  return `  <url><loc>${SITEMAP_BASE}${r.path}</loc><lastmod>${today}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+}
+
+// Bucket routes by content type (same SITEMAP_SKIP applies)
+const _sitemapRoutes = routes.filter((r) => !SITEMAP_SKIP.has(r.path));
+const _blogSitemapRoutes = _sitemapRoutes.filter(
+  (r) => r.path === '/blogs' || r.path.startsWith('/blogs/')
+);
+const _keywordSitemapRoutes = _sitemapRoutes.filter((r) =>
+  /^\/(compare|platforms|problems|signals|industries)(\/|$)/.test(r.path)
+);
+const _coreSitemapRoutes = _sitemapRoutes.filter(
+  (r) => !_blogSitemapRoutes.includes(r) && !_keywordSitemapRoutes.includes(r)
+);
+
+const coreSitemapXml = buildUrlset(_coreSitemapRoutes.map(toSitemapEntry));
+const blogSitemapXml = buildUrlset(_blogSitemapRoutes.map(toSitemapEntry));
+const keywordSitemapXml = buildUrlset(_keywordSitemapRoutes.map(toSitemapEntry));
+
+const sitemapIndexXml = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  `  <sitemap><loc>${SITEMAP_BASE}/sitemap-core.xml</loc><lastmod>${today}</lastmod></sitemap>`,
+  `  <sitemap><loc>${SITEMAP_BASE}/sitemap-blogs.xml</loc><lastmod>${today}</lastmod></sitemap>`,
+  `  <sitemap><loc>${SITEMAP_BASE}/sitemap-keywords.xml</loc><lastmod>${today}</lastmod></sitemap>`,
+  `  <sitemap><loc>${SITEMAP_BASE}/sitemap-entities.xml</loc><lastmod>${today}</lastmod></sitemap>`,
+  '</sitemapindex>',
+].join('\n');
+
+const _splitFiles = [
+  ['sitemap-core.xml', coreSitemapXml],
+  ['sitemap-blogs.xml', blogSitemapXml],
+  ['sitemap-keywords.xml', keywordSitemapXml],
+  ['sitemap-index.xml', sitemapIndexXml],
+];
+for (const [name, xml] of _splitFiles) {
+  fs.writeFileSync(path.resolve(process.cwd(), 'public', name), xml, 'utf8');
+  fs.writeFileSync(path.join(distDir, name), xml, 'utf8');
+}
+console.log(
+  `[prerender] generated sitemap index → core(${_coreSitemapRoutes.length}) + blogs(${_blogSitemapRoutes.length}) + keywords(${_keywordSitemapRoutes.length}) + entities(dynamic)`
+);
+
 // ── robots.txt auto-generation ─────────────────────────────────────────────
 // Generates robots.txt from the same routes array so it is never out of sync
 // with the sitemap. Private / authenticated routes are disallowed.
@@ -3498,7 +3568,12 @@ const robotsLines = [
   '',
   'Crawl-delay: 1',
   '',
-  'Sitemap: https://aivis.biz/sitemap.xml',
+  '# Sub-sitemaps (for large-scale URL discovery):',
+  'Sitemap: https://aivis.biz/sitemap-index.xml',
+  'Sitemap: https://aivis.biz/sitemap-core.xml',
+  'Sitemap: https://aivis.biz/sitemap-blogs.xml',
+  'Sitemap: https://aivis.biz/sitemap-keywords.xml',
+  'Sitemap: https://aivis.biz/sitemap-entities.xml',
 ];
 
 const robotsTxt = robotsLines.join('\n') + '\n';

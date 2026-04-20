@@ -1,6 +1,6 @@
 // client/src/views/PricingPage.tsx
-import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Check,
   Loader2,
@@ -14,16 +14,22 @@ import {
   WalletCards,
   ShieldCheck,
   ArrowLeft,
-} from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import apiFetch from "../utils/api";
-import { usePageMeta } from "../hooks/usePageMeta";
-import { useTranslation } from "react-i18next";
-import { TIER_BRAND_PALETTE } from "../constants/uiPalette";
-import { SOFTWARE_APPLICATION_ID, buildFaqSchema, buildOrganizationRef, buildOrganizationSchema, buildWebPageSchema } from "../lib/seoSchema";
-import { PRICING, TIER_LIMITS } from "../../../shared/types";
+} from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import apiFetch from '../utils/api';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { useTranslation } from 'react-i18next';
+import { TIER_BRAND_PALETTE } from '../constants/uiPalette';
+import {
+  SOFTWARE_APPLICATION_ID,
+  buildFaqSchema,
+  buildOrganizationRef,
+  buildOrganizationSchema,
+  buildWebPageSchema,
+} from '../lib/seoSchema';
+import { PRICING, TIER_LIMITS } from '../../../shared/types';
 
-type BillingPeriod = "monthly" | "yearly";
+type BillingPeriod = 'monthly' | 'yearly';
 
 interface TierLimits {
   scans_per_month: number;
@@ -45,7 +51,7 @@ interface TierPricing {
   key: string;
   name: string;
   displayName: string;
-  billingModel: "core" | "subscription" | "one_time" | "free";
+  billingModel: 'core' | 'subscription' | 'one_time' | 'free';
   stripeReady?: boolean;
   pricing: {
     monthly: TierPrice | null;
@@ -102,168 +108,166 @@ const TIER_ICONS: Record<string, ReactNode> = {
   ),
 };
 
-const TIER_COLORS: Record<
-  string,
-  { gradient: string; border: string; glow: string }
-> = TIER_BRAND_PALETTE;
+const TIER_COLORS: Record<string, { gradient: string; border: string; glow: string }> =
+  TIER_BRAND_PALETTE;
 
 const TIER_POSITIONING: Record<string, string> = {
-  observer: "detection audit — see what AI models misread on your site, free",
-  starter: "full audit with all recommendations, implementation code, and fix-ready outputs",
-  alignment: "structured optimization — turn extraction failures into evidence-backed fixes",
-  signal: "verified AI answer pipeline — triple-check consensus across 3 models",
-  scorefix: "evidence-based fix pack — automated PRs that ship fixes via MCP",
+  observer: 'You start with exposure, not understanding.',
+  starter: 'Ignorance starts breaking at this level.',
+  alignment: 'Stop guessing. See the battlefield.',
+  signal: 'Not analysis. Control.',
+  scorefix: 'Not reporting. Correction.',
 };
 
 const TIER_AUDIENCE: Record<string, string> = {
-  observer: "For anyone who wants to see what AI misreads on their site",
-  starter: "For solo founders and builders who need fixes, not just scores",
-  alignment: "For teams who need to fix what the audit found, not just see it",
-  signal: "For agencies and teams running audits across multiple client sites",
-  scorefix: "For teams who want fixes shipped as pull requests automatically",
+  observer: 'For anyone who wants to see what AI misreads on their site',
+  starter: 'For solo founders and builders who need fixes, not just scores',
+  alignment: 'For teams who need to fix what the audit found, not just see it',
+  signal: 'For agencies and teams running audits across multiple client sites',
+  scorefix: 'For teams who want fixes shipped as pull requests automatically',
 };
 
-const TIER_COPY: Record<string, { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }> = {
+const TIER_COPY: Record<
+  string,
+  { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }
+> = {
   observer: {
-    headline: "Free evidence-backed baseline",
-    body: "Run the CITE LEDGER pipeline on your most important pages and see what AI systems can actually extract.",
+    headline: "You don't start with understanding. You start with exposure.",
+    body: 'We run a limited scan and show you what appears when AI systems talk about your domain. This is a glimpse. Not a system.',
     includes: [
-      `${PRICING.observer.limits.scans} audits/month`,
-      "seven-dimension visibility score",
-      "BRAG evidence IDs on findings",
-      "prioritized recommendations",
+      'whether your brand appears in AI answers at all',
+      'a small set of real queries where you are tested',
+      'basic citation evidence from surfaced results',
     ],
-    cta: "Start free",
+    cta: 'Start free',
   },
   starter: {
-    headline: "Implementation-ready audits",
-    body: "Unlock full recommendations with implementation code, exports, and report history without jumping to an enterprise plan.",
+    headline: 'At this level, ignorance starts breaking.',
+    body: 'We expand the surface area of reality. You are no longer looking at your site. You are looking at where it fails to exist in answers.',
     includes: [
-      `${PRICING.starter.limits.scans} audits/month`,
-      "all recommendations with implementation code",
-      "PDF export and shareable links",
-      "report history and score tracking",
-      "paid AI model pipeline",
+      'full query map',
+      "where your brand should appear but doesn't",
+      'where citations exist without you',
+      'first layer of evidence ledger',
+      'all recommendations with implementation code',
     ],
-    cta: "Get Starter",
+    cta: 'Get Starter',
   },
   alignment: {
-    headline: "Competitive intelligence tier",
-    body: "Track competitors, monitor mentions, and use reverse-engineer workflows to understand why AI engines trust other sources more than yours.",
+    headline: 'Now you stop guessing.',
+    body: 'We run parallel AI model evaluations and compare your presence against competitors in the same answer space. This is the first time you see the battlefield.',
     includes: [
-      `${PRICING.alignment.limits.scans} audits/month`,
-      "competitor tracking and comparison",
-      "brand mention tracking across 19 sources",
-      "reverse-engineer tools and niche discovery",
-      "WebMCP and developer workflows",
+      'where competitors replace you in AI answers',
+      'where you are partially cited but not trusted',
+      'how different AI models describe your category',
+      'full citation ledger with cross-model validation',
+      'competitor tracking and comparison',
     ],
-    cta: "Get Alignment",
+    cta: 'Get Alignment',
   },
   signal: {
-    headline: "Operations and automation tier",
-    body: "Run the triple-check model pipeline, test citations, automate workflows, and coordinate audits across teams and client portfolios.",
+    headline: 'This is not analysis anymore. This is control.',
+    body: 'You get access to the system that generates visibility intelligence. You are no longer observing the system. You are inside it.',
     includes: [
-      `${PRICING.signal.limits.scans} audits/month`,
-      "triple-check AI validation pipeline",
-      "citation testing and scheduled rescans",
-      `team workspaces (${TIER_LIMITS.signal.maxTeamMembers} seats)`,
-      "API access, webhooks, and white-label reporting",
+      'continuous scanning',
+      'API access to citation and query engine',
+      'real-time updates when your presence changes',
+      'full reasoning graph of how conclusions are formed',
+      'time-travel replay of visibility states',
     ],
-    cta: "Get Signal",
+    cta: 'Get Signal',
   },
   scorefix: {
-    headline: "Automated remediation pack",
-    body: "Everything in Signal plus evidence-linked GitHub PR generation so the platform can write the actual fix instead of just describing it.",
+    headline: 'This is not reporting. This is correction.',
+    body: 'We map exactly where you are missing from AI answer space and what structural signals are preventing inclusion. This is repair instructions for visibility failure.',
     includes: [
-      `${PRICING.scorefix.credits} AutoFix PR credits/month`,
-      "everything in Signal, plus automated remediation",
-      "evidence-linked GitHub pull requests",
-      "batch remediation workflows",
-      "monthly managed remediation cadence",
+      'missing query opportunities',
+      'citation gaps mapped to specific sources',
+      'authority weakness breakdown',
+      'content structure required to be recognized',
+      'entity clarity corrections',
     ],
-    cta: "Get Score Fix",
+    cta: 'Get Score Fix',
   },
 };
 
 const VALUE_RAIL = [
   {
     icon: ShieldCheck,
-    title: "Diagnose, not just track",
+    title: 'The gap is real',
     detail:
-      "Visibility dashboards show you a chart. AiVIS.biz shows you the broken schema, the missing FAQ block and the exact line that needs to change.",
+      'There are things the internet sees. There are things AI repeats. Most brands live somewhere between those two and never know the difference. AiVIS shows you the gap.',
   },
   {
     icon: Zap,
-    title: "Evidence-backed fixes, not generic advice",
+    title: 'You are not buying features',
     detail:
-      "Every recommendation traces to a specific crawled element on your page - not a vague suggestion to 'improve your content.'",
+      'You are paying to see where you exist inside machine answers. Most people leave their first scan unsettled. That is intentional.',
   },
   {
     icon: Rocket,
-    title: "Ship the fix, not just the report",
+    title: 'The upgrade path is a question',
     detail:
-      "Score Fix opens a real GitHub PR with schema patches, H1 rewrites, and FAQ blocks. No other AI visibility tool goes from audit to merged code.",
+      'Free → Am I visible? Starter → Why am I missing? Alignment → Who is replacing me? Signal → Can I control this? Score Fix → Fix it now.',
   },
 ] as const;
 
 const PRICING_FAQ_ITEMS = [
   {
-    question: "Is AiVIS.biz free to use?",
+    question: 'Is AiVIS.biz free to use?',
     answer:
-      "Yes. Observer is permanently free and includes 3 CITE LEDGER audits per month with evidence-backed scoring and prioritized findings. No credit card is required to start.",
+      'Yes. Observer is permanently free and includes 3 CITE LEDGER audits per month with evidence-backed scoring and prioritized findings. No credit card is required to start.',
   },
   {
-    question: "What is included in every plan?",
+    question: 'What is included in every plan?',
     answer:
-      "Every plan includes CITE LEDGER evidence-backed scoring, BRAG evidence IDs, and prioritized recommendations tied to real page signals. Higher tiers expand audit volume, automation, and collaboration rather than changing the scoring method itself.",
+      'Every plan includes CITE LEDGER evidence-backed scoring, BRAG evidence IDs, and prioritized recommendations tied to real page signals. Higher tiers expand audit volume, automation, and collaboration rather than changing the scoring method itself.',
   },
   {
-    question: "What is the difference between Alignment and Signal?",
-    answer:
-      `Alignment focuses on intelligence workflows: competitor tracking, brand mention scanning, reverse-engineer tools, and recurring rescans. Signal adds the triple-check AI validation pipeline, citation testing, API and webhook access, white-label reporting, and team workspaces with up to ${TIER_LIMITS.signal.maxTeamMembers} seats.`,
+    question: 'What is the difference between Alignment and Signal?',
+    answer: `Alignment focuses on intelligence workflows: competitor tracking, brand mention scanning, reverse-engineer tools, and recurring rescans. Signal adds the triple-check AI validation pipeline, citation testing, API and webhook access, white-label reporting, and team workspaces with up to ${TIER_LIMITS.signal.maxTeamMembers} seats.`,
   },
   {
-    question: "What is the triple-check pipeline?",
+    question: 'What is the triple-check pipeline?',
     answer:
-      "The triple-check pipeline runs three independent model passes on every audit. A primary model scores the site, a second model peer-critiques and can adjust the score within a bounded range, and a third model validates the final result. It is available on Signal and Score Fix.",
+      'The triple-check pipeline runs three independent model passes on every audit. A primary model scores the site, a second model peer-critiques and can adjust the score within a bounded range, and a third model validates the final result. It is available on Signal and Score Fix.',
   },
   {
-    question: "What is Score Fix AutoFix PR?",
-    answer:
-      `Score Fix is a recurring managed remediation plan at $${PRICING.scorefix.billing.monthly}/month with ${PRICING.scorefix.credits} monthly remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes.`,
+    question: 'What is Score Fix AutoFix PR?',
+    answer: `Score Fix is a recurring managed remediation plan at $${PRICING.scorefix.billing.monthly}/month with ${PRICING.scorefix.credits} monthly remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes.`,
   },
   {
-    question: "What does brand mention tracking scan?",
+    question: 'What does brand mention tracking scan?',
     answer:
-      "Brand mention tracking scans 19 public sources including Reddit, Hacker News, Mastodon, DuckDuckGo and Bing site search, Google News RSS, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. It is available on Alignment and above.",
+      'Brand mention tracking scans 19 public sources including Reddit, Hacker News, Mastodon, DuckDuckGo and Bing site search, Google News RSS, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. It is available on Alignment and above.',
   },
   {
-    question: "How does annual billing work?",
+    question: 'How does annual billing work?',
     answer:
-      "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Starter, Alignment, and Signal annual totals are shown at checkout and in billing settings, and you can switch from monthly to annual when eligible.",
+      'Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Starter, Alignment, and Signal annual totals are shown at checkout and in billing settings, and you can switch from monthly to annual when eligible.',
   },
   {
-    question: "Can I cancel at any time?",
+    question: 'Can I cancel at any time?',
     answer:
-      "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period.",
+      'Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period.',
   },
   {
     question: "Do audits roll over if I don't use them all?",
     answer:
-      "No. Audit allowances and Score Fix remediation credits reset at the start of each billing cycle.",
+      'No. Audit allowances and Score Fix remediation credits reset at the start of each billing cycle.',
   },
   {
-    question: "What payment methods are accepted?",
+    question: 'What payment methods are accepted?',
     answer:
-      "AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.",
+      'AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.',
   },
 ] as const;
 
 function normalizeTierPrice(input: unknown): TierPrice | null {
-  if (!input || typeof input !== "object") return null;
+  if (!input || typeof input !== 'object') return null;
   const candidate = input as Record<string, unknown>;
   const amount = Number(candidate.amount ?? 0);
-  const formatted = String(candidate.formatted ?? "").trim();
+  const formatted = String(candidate.formatted ?? '').trim();
 
   if (!Number.isFinite(amount) || amount < 0) return null;
 
@@ -274,8 +278,7 @@ function normalizeTierPrice(input: unknown): TierPrice | null {
 }
 
 function normalizeTierLimits(input: unknown): TierLimits {
-  const candidate =
-    input && typeof input === "object" ? (input as Record<string, unknown>) : {};
+  const candidate = input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
 
   return {
     scans_per_month: Number(candidate.scans_per_month ?? 0),
@@ -294,21 +297,23 @@ function normalizePricingTiers(input: unknown): TierPricing[] {
 
   return input
     .map((entry) => {
-      if (!entry || typeof entry !== "object") return null;
+      if (!entry || typeof entry !== 'object') return null;
       const tier = entry as Record<string, unknown>;
-      const key = String(tier.key ?? "").trim().toLowerCase();
-      const name = String(tier.name ?? "").trim();
-      const displayName = String(tier.displayName ?? tier.name ?? "").trim();
+      const key = String(tier.key ?? '')
+        .trim()
+        .toLowerCase();
+      const name = String(tier.name ?? '').trim();
+      const displayName = String(tier.displayName ?? tier.name ?? '').trim();
 
       if (!key || !name) return null;
 
       const pricing =
-        tier.pricing && typeof tier.pricing === "object"
+        tier.pricing && typeof tier.pricing === 'object'
           ? (tier.pricing as Record<string, unknown>)
           : {};
 
       const features = Array.isArray(tier.features)
-        ? tier.features.map((item) => String(item ?? "").trim()).filter(Boolean)
+        ? tier.features.map((item) => String(item ?? '').trim()).filter(Boolean)
         : [];
 
       return {
@@ -316,11 +321,15 @@ function normalizePricingTiers(input: unknown): TierPricing[] {
         name,
         displayName,
         billingModel:
-          String(tier.billingModel ?? "").trim().toLowerCase() === "one_time"
-            ? "one_time"
-            : String(tier.billingModel ?? "").trim().toLowerCase() === "subscription"
-              ? "subscription"
-              : "free",
+          String(tier.billingModel ?? '')
+            .trim()
+            .toLowerCase() === 'one_time'
+            ? 'one_time'
+            : String(tier.billingModel ?? '')
+                  .trim()
+                  .toLowerCase() === 'subscription'
+              ? 'subscription'
+              : 'free',
         pricing: {
           monthly: normalizeTierPrice(pricing.monthly),
           yearly: normalizeTierPrice(pricing.yearly),
@@ -343,68 +352,60 @@ function enrichTiersForDisplay(sourceTiers: TierPricing[]): TierPricing[] {
       nextFeatures.unshift(label);
     };
 
-    if (tier.key === "observer") {
-      ensureFeature("Citation gap diagnosis", /citation gap|keyword intelligence/i);
-      ensureFeature("Bix AI assistant (5 messages/day)", /bix ai assistant/i);
+    if (tier.key === 'observer') {
+      ensureFeature('Citation gap diagnosis', /citation gap|keyword intelligence/i);
+      ensureFeature('Bix AI assistant (5 messages/day)', /bix ai assistant/i);
     }
 
-    if (tier.key === "starter") {
-      ensureFeature("All recommendations with implementation code", /all recommendations|implementation code/i);
-      ensureFeature("Content highlights", /content highlights/i);
-      ensureFeature("PDF export", /pdf export/i);
-      ensureFeature("Bix AI assistant (8 messages/day)", /bix ai assistant/i);
-    }
-
-    if (tier.key === "alignment") {
-      ensureFeature("Decision query gap analysis", /decision query gap|analytics dashboard/i);
-      ensureFeature("Brand mention tracking (19 sources)", /brand mention/i);
-      ensureFeature("Private exposure scan", /private exposure/i);
-      ensureFeature("Competitor advantage signals", /competitor advantage|niche url/i);
-      ensureFeature("MCP Server access", /mcp server/i);
-      ensureFeature("Bix AI assistant (10 messages/day)", /bix ai assistant/i);
-    }
-
-    if (tier.key === "signal") {
+    if (tier.key === 'starter') {
       ensureFeature(
-        "OpenAPI spec + OAuth 2.0 developer access",
-        /openapi|oauth/i
+        'All recommendations with implementation code',
+        /all recommendations|implementation code/i
       );
+      ensureFeature('Content highlights', /content highlights/i);
+      ensureFeature('PDF export', /pdf export/i);
+      ensureFeature('Bix AI assistant (8 messages/day)', /bix ai assistant/i);
+    }
+
+    if (tier.key === 'alignment') {
+      ensureFeature('Decision query gap analysis', /decision query gap|analytics dashboard/i);
+      ensureFeature('Brand mention tracking (19 sources)', /brand mention/i);
+      ensureFeature('Private exposure scan', /private exposure/i);
+      ensureFeature('Competitor advantage signals', /competitor advantage|niche url/i);
+      ensureFeature('MCP Server access', /mcp server/i);
+      ensureFeature('Bix AI assistant (10 messages/day)', /bix ai assistant/i);
+    }
+
+    if (tier.key === 'signal') {
+      ensureFeature('OpenAPI spec + OAuth 2.0 developer access', /openapi|oauth/i);
       ensureFeature(
-        "Slack + Discord alerts, Zapier workflow automation",
+        'Slack + Discord alerts, Zapier workflow automation',
         /slack|zapier|discord|integrations/i
       );
+      ensureFeature('MCP Server for AI agent integration', /mcp server|ai agent/i);
       ensureFeature(
-        "MCP Server for AI agent integration",
-        /mcp server|ai agent/i
-      );
-      ensureFeature(
-        "Signal+ team workflow automation (Notion/Airtable/CRM via Zapier)",
+        'Signal+ team workflow automation (Notion/Airtable/CRM via Zapier)',
         /workflow automation|signal\+/i
       );
-      ensureFeature("Bix AI assistant (30 messages/day)", /bix ai assistant/i);
+      ensureFeature('Bix AI assistant (30 messages/day)', /bix ai assistant/i);
     }
 
-    if (tier.key === "scorefix") {
-      ensureFeature("Everything in Signal, plus:", /everything in signal/i);
-      ensureFeature(
-        "Automated GitHub PR remediation via MCP",
-        /automated.*pr|github.*mcp|autopr/i
-      );
+    if (tier.key === 'scorefix') {
+      ensureFeature('Everything in Signal, plus:', /everything in signal/i);
+      ensureFeature('Automated GitHub PR remediation via MCP', /automated.*pr|github.*mcp|autopr/i);
     }
 
     return {
       ...tier,
-      features: Array.from(new Set(nextFeatures.map((f) => f.trim()))).filter(
-        Boolean
-      ),
+      features: Array.from(new Set(nextFeatures.map((f) => f.trim()))).filter(Boolean),
     };
   });
 }
 
 function formatUsd(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     maximumFractionDigits: value % 1 === 0 ? 0 : 2,
   }).format(value);
 }
@@ -431,22 +432,20 @@ function PricingCard({
   isStartingTrial?: boolean;
 }) {
   const pricing = tier.pricing;
-  const isOneTime = tier.billingModel === "one_time";
+  const isOneTime = tier.billingModel === 'one_time';
   const price = isOneTime
-    ? pricing.one_time ?? pricing.monthly
-    : billingPeriod === "yearly"
+    ? (pricing.one_time ?? pricing.monthly)
+    : billingPeriod === 'yearly'
       ? pricing.yearly
       : pricing.monthly;
-  const isFree = tier.billingModel === "free" || !tier.isPaid;
+  const isFree = tier.billingModel === 'free' || !tier.isPaid;
   const isCurrent = currentTier?.toLowerCase() === tier.key.toLowerCase();
   const stripeReady = tier.stripeReady !== false;
   const colors = TIER_COLORS[tier.key] || TIER_COLORS.observer;
   const tierCopy = TIER_COPY[tier.key];
 
   const yearlyEffectiveMonthly =
-    pricing.yearly && pricing.yearly.amount > 0
-      ? pricing.yearly.amount / 12
-      : null;
+    pricing.yearly && pricing.yearly.amount > 0 ? pricing.yearly.amount / 12 : null;
 
   const yearlySavings =
     pricing.monthly && pricing.yearly
@@ -454,13 +453,10 @@ function PricingCard({
       : 0;
 
   return (
-    <div
-      id={tier.key}
-      className="relative group h-full"
-    >
+    <div id={tier.key} className="relative group h-full">
       <div
         className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-2xl blur opacity-0 transition duration-500 ${
-          isHighlighted ? "opacity-30" : "group-hover:opacity-40"
+          isHighlighted ? 'opacity-30' : 'group-hover:opacity-40'
         }`}
       />
 
@@ -468,7 +464,7 @@ function PricingCard({
         className={`relative h-full bg-charcoal rounded-2xl p-6 flex flex-col transition-all duration-300 hover:translate-y-[-2px] ${
           isHighlighted
             ? `${colors.border} border-2 shadow-xl ${colors.glow}`
-            : "border border-white/10 hover:border-white/14"
+            : 'border border-white/10 hover:border-white/14'
         }`}
       >
         {isHighlighted && (
@@ -497,14 +493,14 @@ function PricingCard({
           )}
 
           <div className="flex items-center gap-3 mb-2">
-            <div
-              className={`p-2 rounded-lg bg-gradient-to-br ${colors.gradient} text-white`}
-            >
+            <div className={`p-2 rounded-lg bg-gradient-to-br ${colors.gradient} text-white`}>
               {TIER_ICONS[tier.key] || <Shield className="w-6 h-6" />}
             </div>
             <div>
               <h3 className="text-xl font-bold text-white">{tier.name}</h3>
-              <p className="text-xs text-white/60">{tierCopy?.headline || TIER_AUDIENCE[tier.key]}</p>
+              <p className="text-xs text-white/60">
+                {tierCopy?.headline || TIER_AUDIENCE[tier.key]}
+              </p>
             </div>
           </div>
         </div>
@@ -522,20 +518,18 @@ function PricingCard({
           ) : isOneTime ? (
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">
-                  ${price?.amount ?? 0}
-                </span>
+                <span className="text-4xl font-bold text-white">${price?.amount ?? 0}</span>
                 <span className="text-white/60">one-time</span>
               </div>
               <p className="text-xs text-white/75 mt-1">
                 One payment • no recurring subscription charge
               </p>
             </div>
-          ) : billingPeriod === "yearly" && price ? (
+          ) : billingPeriod === 'yearly' && price ? (
             <div>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-bold text-white">
-                  ${yearlyEffectiveMonthly?.toFixed(2) ?? "0.00"}
+                  ${yearlyEffectiveMonthly?.toFixed(2) ?? '0.00'}
                 </span>
                 <span className="text-white/60">/month</span>
               </div>
@@ -545,17 +539,13 @@ function PricingCard({
             </div>
           ) : (
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold text-white">
-                ${price?.amount ?? 0}
-              </span>
+              <span className="text-4xl font-bold text-white">${price?.amount ?? 0}</span>
               <span className="text-white/60">/month</span>
             </div>
           )}
 
-          {!isOneTime && billingPeriod === "yearly" && yearlySavings > 0 && (
-            <p className="text-xs text-white/80 mt-1">
-              Save {formatUsd(yearlySavings)}/year
-            </p>
+          {!isOneTime && billingPeriod === 'yearly' && yearlySavings > 0 && (
+            <p className="text-xs text-white/80 mt-1">Save {formatUsd(yearlySavings)}/year</p>
           )}
         </div>
 
@@ -579,15 +569,11 @@ function PricingCard({
           className={`grid grid-cols-2 gap-2 mb-6 p-3 bg-charcoal-light rounded-lg border ${colors.border}`}
         >
           <div className="text-center">
-            <p className="text-lg font-bold text-white">
-              {tier.limits.scans_per_month}
-            </p>
-            <p className="text-xs text-white/60">{isOneTime ? "included audits" : "audits/mo"}</p>
+            <p className="text-lg font-bold text-white">{tier.limits.scans_per_month}</p>
+            <p className="text-xs text-white/60">{isOneTime ? 'included audits' : 'audits/mo'}</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-white">
-              {tier.limits.pages_per_scan}
-            </p>
+            <p className="text-lg font-bold text-white">{tier.limits.pages_per_scan}</p>
             <p className="text-xs text-white/60">pages/audit</p>
           </div>
         </div>
@@ -603,33 +589,37 @@ function PricingCard({
           disabled={isCurrent || isLoading || (!isFree && !stripeReady)}
           className={`w-full py-3 px-4 rounded-full font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
             isCurrent
-              ? "bg-charcoal-light text-white/50 cursor-not-allowed"
+              ? 'bg-charcoal-light text-white/50 cursor-not-allowed'
               : !isFree && !stripeReady
-                ? "bg-charcoal-light text-white/40 cursor-not-allowed border border-white/8"
+                ? 'bg-charcoal-light text-white/40 cursor-not-allowed border border-white/8'
                 : isHighlighted
                   ? `bg-gradient-to-r ${colors.gradient} text-white hover:opacity-90 shadow-lg ${colors.glow}`
                   : isFree
-                    ? "bg-charcoal border border-white/12 text-white hover:bg-charcoal-light"
-                    : "bg-charcoal-light border border-white/10 text-white/85 hover:bg-charcoal"
+                    ? 'bg-charcoal border border-white/12 text-white hover:bg-charcoal-light'
+                    : 'bg-charcoal-light border border-white/10 text-white/85 hover:bg-charcoal'
           }`}
           type="button"
         >
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : isCurrent ? (
-            "Current Plan"
+            'Current Plan'
           ) : !isFree && !stripeReady ? (
-            "Contact Support"
+            'Contact Support'
           ) : isFree ? (
-            tierCopy?.cta || "Start Free"
+            tierCopy?.cta || 'Start Free'
           ) : isOneTime ? (
-            tierCopy?.cta || "Buy One-Time"
+            tierCopy?.cta || 'Buy One-Time'
           ) : (
-            tierCopy?.cta || <>Upgrade <ArrowRight className="w-4 h-4" /></>
+            tierCopy?.cta || (
+              <>
+                Upgrade <ArrowRight className="w-4 h-4" />
+              </>
+            )
           )}
         </button>
 
-        {canStartTrial && tier.key === "signal" && !isCurrent && onStartTrial && (
+        {canStartTrial && tier.key === 'signal' && !isCurrent && onStartTrial && (
           <button
             onClick={onStartTrial}
             disabled={isStartingTrial}
@@ -685,7 +675,7 @@ export default function PricingPage() {
   const location = useLocation();
   const { user, token, isAuthenticated, logout } = useAuthStore();
 
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly");
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('yearly');
   const [tiers, setTiers] = useState<TierPricing[]>([]);
   const [isLoadingPricing, setIsLoadingPricing] = useState(true);
   const [isCheckingOutTier, setIsCheckingOutTier] = useState<string | null>(null);
@@ -707,7 +697,7 @@ export default function PricingPage() {
       .catch(() => {});
   }, []);
 
-  const currentTier = String(user?.tier || "observer").toLowerCase();
+  const currentTier = String(user?.tier || 'observer').toLowerCase();
 
   const yearlySavingsPercent = Math.max(
     0,
@@ -718,23 +708,21 @@ export default function PricingPage() {
         const yearly = tier.pricing.yearly!.amount;
         const annualMonthlyCost = monthly * 12;
         if (annualMonthlyCost <= 0 || yearly >= annualMonthlyCost) return 0;
-        return Math.round(
-          ((annualMonthlyCost - yearly) / annualMonthlyCost) * 100
-        );
+        return Math.round(((annualMonthlyCost - yearly) / annualMonthlyCost) * 100);
       })
   );
 
   useEffect(() => {
-    const hash = String(location.hash || "").trim();
+    const hash = String(location.hash || '').trim();
     if (!hash) return;
 
-    const anchorId = hash.replace(/^#/, "");
+    const anchorId = hash.replace(/^#/, '');
     if (!anchorId) return;
 
     const scrollToAnchor = () => {
       const node = document.getElementById(anchorId);
       if (!node) return false;
-      node.scrollIntoView({ behavior: "smooth", block: "start" });
+      node.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return true;
     };
 
@@ -751,133 +739,130 @@ export default function PricingPage() {
 
   const teamRoleUseCases = [
     {
-      role: "Founder",
-      fit: "Observer / Alignment",
-      outcome:
-        "Validate AI visibility quickly and share proof links with advisors or clients.",
+      role: 'Founder',
+      fit: 'Observer / Alignment',
+      outcome: 'Validate AI visibility quickly and share proof links with advisors or clients.',
     },
     {
-      role: "AI Visibility Lead",
-      fit: "Alignment / Signal",
-      outcome:
-        "Prioritize evidence-backed fixes and monitor score momentum sprint-to-sprint.",
+      role: 'AI Visibility Lead',
+      fit: 'Alignment / Signal',
+      outcome: 'Prioritize evidence-backed fixes and monitor score momentum sprint-to-sprint.',
     },
     {
-      role: "Content Ops",
-      fit: "Alignment / Signal",
-      outcome:
-        "Ship extractable pages with clearer entities, structure, and citation readiness.",
+      role: 'Content Ops',
+      fit: 'Alignment / Signal',
+      outcome: 'Ship extractable pages with clearer entities, structure, and citation readiness.',
     },
     {
-      role: "Agency PM",
-      fit: "Signal / Score Fix",
+      role: 'Agency PM',
+      fit: 'Signal / Score Fix',
       outcome:
-        "Coordinate teams with integrations, automation, and client-ready reporting workflows.",
+        'Coordinate teams with integrations, automation, and client-ready reporting workflows.',
     },
     {
-      role: "Remediation Lead",
-      fit: "Score Fix (Managed)",
+      role: 'Remediation Lead',
+      fit: 'Score Fix (Managed)',
       outcome:
-        "Run recurring evidence-linked remediation with monthly verification handoff and proof packets.",
+        'Run recurring evidence-linked remediation with monthly verification handoff and proof packets.',
     },
   ] as const;
 
   const rollingPriceValidUntil = `${new Date().getUTCFullYear() + 1}-12-31`;
 
   usePageMeta({
-    title: "Pricing",
+    title: 'Pricing',
     description:
-      "Five tiers from free to automated remediation. Compare Observer, Starter, Alignment, Signal, and Score Fix for AI visibility audits and CITE LEDGER evidence-backed scoring.",
-    path: "/pricing",
-    ogTitle: "AI Visibility Audit Pricing Plans",
+      'Five tiers from free to automated remediation. Compare Observer, Starter, Alignment, Signal, and Score Fix for AI visibility audits and CITE LEDGER evidence-backed scoring.',
+    path: '/pricing',
+    ogTitle: 'AI Visibility Audit Pricing Plans',
     structuredData: [
       buildOrganizationSchema(),
       {
-        "@context": "https://schema.org",
-        "@type": ["SoftwareApplication", "WebApplication"],
-        "@id": "https://aivis.biz/#software-pricing",
-        name: "AiVIS.biz",
-        url: "https://aivis.biz/pricing",
+        '@context': 'https://schema.org',
+        '@type': ['SoftwareApplication', 'WebApplication'],
+        '@id': 'https://aivis.biz/#software-pricing',
+        name: 'AiVIS.biz',
+        url: 'https://aivis.biz/pricing',
         description:
-          "AiVIS.biz pricing for AI visibility audits with evidence-backed scoring, competitive intelligence, citation testing, and automated remediation.",
-        applicationCategory: "BusinessApplication",
-        operatingSystem: "Web",
+          'AiVIS.biz pricing for AI visibility audits with evidence-backed scoring, competitive intelligence, citation testing, and automated remediation.',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
         publisher: buildOrganizationRef(),
         aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          reviewCount: "47",
-          bestRating: "5",
-          worstRating: "1",
+          '@type': 'AggregateRating',
+          ratingValue: '4.8',
+          reviewCount: '47',
+          bestRating: '5',
+          worstRating: '1',
         },
         offers: [
           {
-            "@type": "Offer",
-            name: "Observer [Free]",
-            price: "0",
-            priceCurrency: "USD",
-            url: "https://aivis.biz/pricing#observer",
-            availability: "https://schema.org/InStock",
+            '@type': 'Offer',
+            name: 'Observer [Free]',
+            price: '0',
+            priceCurrency: 'USD',
+            url: 'https://aivis.biz/pricing#observer',
+            availability: 'https://schema.org/InStock',
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Free tier with evidence-backed scoring, BRAG evidence IDs, and 3 audits per month.",
+              'Free tier with evidence-backed scoring, BRAG evidence IDs, and 3 audits per month.',
           },
           {
-            "@type": "Offer",
-            name: "Starter",
+            '@type': 'Offer',
+            name: 'Starter',
             price: String(PRICING.starter.billing.monthly),
-            priceCurrency: "USD",
-            url: "https://aivis.biz/pricing#starter",
-            availability: "https://schema.org/InStock",
+            priceCurrency: 'USD',
+            url: 'https://aivis.biz/pricing#starter',
+            availability: 'https://schema.org/InStock',
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Implementation-ready recommendations, exports, and shareable reporting for growing teams.",
+              'Implementation-ready recommendations, exports, and shareable reporting for growing teams.',
           },
           {
-            "@type": "Offer",
-            name: "Alignment [Core]",
+            '@type': 'Offer',
+            name: 'Alignment [Core]',
             price: String(PRICING.alignment.billing.monthly),
-            priceCurrency: "USD",
-            url: "https://aivis.biz/pricing#alignment",
-            availability: "https://schema.org/InStock",
+            priceCurrency: 'USD',
+            url: 'https://aivis.biz/pricing#alignment',
+            availability: 'https://schema.org/InStock',
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Competitor tracking, brand mention scanning, reverse-engineer tools, and recurring intelligence workflows.",
+              'Competitor tracking, brand mention scanning, reverse-engineer tools, and recurring intelligence workflows.',
           },
           {
-            "@type": "Offer",
-            name: "Signal [Pro]",
+            '@type': 'Offer',
+            name: 'Signal [Pro]',
             price: String(PRICING.signal.billing.monthly),
-            priceCurrency: "USD",
-            url: "https://aivis.biz/pricing#signal",
-            availability: "https://schema.org/InStock",
+            priceCurrency: 'USD',
+            url: 'https://aivis.biz/pricing#signal',
+            availability: 'https://schema.org/InStock',
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Triple-check AI validation, citation testing, developer access, team workflows, and white-label reporting.",
+              'Triple-check AI validation, citation testing, developer access, team workflows, and white-label reporting.',
           },
           {
-            "@type": "Offer",
-            name: "Score Fix [AutoFix PR]",
+            '@type': 'Offer',
+            name: 'Score Fix [AutoFix PR]',
             price: String(PRICING.scorefix.billing.monthly),
-            priceCurrency: "USD",
-            url: "https://aivis.biz/pricing#scorefix",
-            availability: "https://schema.org/InStock",
+            priceCurrency: 'USD',
+            url: 'https://aivis.biz/pricing#scorefix',
+            availability: 'https://schema.org/InStock',
             priceValidUntil: rollingPriceValidUntil,
             description:
-              "Recurring AutoFix PR remediation subscription with monthly credits and evidence-linked GitHub remediation.",
+              'Recurring AutoFix PR remediation subscription with monthly credits and evidence-linked GitHub remediation.',
           },
         ],
       },
       buildWebPageSchema({
-        path: "/pricing",
-        name: "AI Visibility Audit Pricing Plans",
+        path: '/pricing',
+        name: 'AI Visibility Audit Pricing Plans',
         description:
-          "Compare Observer, Starter, Alignment, Signal, and Score Fix plans for AI visibility audits, competitive intelligence, and automated remediation.",
+          'Compare Observer, Starter, Alignment, Signal, and Score Fix plans for AI visibility audits, competitive intelligence, and automated remediation.',
         mainEntityId: SOFTWARE_APPLICATION_ID,
       }),
       {
         ...buildFaqSchema([...PRICING_FAQ_ITEMS]),
-        "@id": "https://aivis.biz/pricing#faq",
+        '@id': 'https://aivis.biz/pricing#faq',
       },
     ],
   });
@@ -890,11 +875,11 @@ export default function PricingPage() {
         setIsLoadingPricing(true);
         setError(null);
 
-        const response = await apiFetch("/api/payment/pricing", {
-          method: "GET",
+        const response = await apiFetch('/api/payment/pricing', {
+          method: 'GET',
           signal: controller.signal,
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
@@ -909,15 +894,13 @@ export default function PricingPage() {
           setTiers(enrichTiersForDisplay(normalized));
         } else {
           setTiers([]);
-          setError(
-            "No pricing tiers are currently available. Please try again shortly."
-          );
+          setError('No pricing tiers are currently available. Please try again shortly.');
         }
       } catch (err: any) {
         if (controller.signal.aborted) return;
-        console.warn("Pricing fetch unavailable:", err);
+        console.warn('Pricing fetch unavailable:', err);
         setTiers([]);
-        setError("Unable to load live pricing right now. Please try again shortly.");
+        setError('Unable to load live pricing right now. Please try again shortly.');
       } finally {
         if (!controller.signal.aborted) {
           setIsLoadingPricing(false);
@@ -938,7 +921,7 @@ export default function PricingPage() {
       return;
     }
     // Only observers who haven't trialed are eligible
-    if (currentTier !== "observer") {
+    if (currentTier !== 'observer') {
       setCanStartTrial(false);
       return;
     }
@@ -946,7 +929,7 @@ export default function PricingPage() {
     const controller = new AbortController();
     (async () => {
       try {
-        const res = await apiFetch("/api/trial/status", {
+        const res = await apiFetch('/api/trial/status', {
           signal: controller.signal,
         });
         if (!res.ok) {
@@ -969,39 +952,39 @@ export default function PricingPage() {
 
   async function handleStartTrial() {
     if (!isAuthenticated || !token) {
-      navigate("/auth?mode=signup&redirect=/pricing");
+      navigate('/auth?mode=signup&redirect=/pricing');
       return;
     }
     setIsStartingTrial(true);
     setError(null);
     try {
-      const res = await apiFetch("/api/billing/start-trial", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await apiFetch('/api/billing/start-trial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setError(data.error || "Failed to start trial");
+        setError(data.error || 'Failed to start trial');
         return;
       }
       // Reload auth state to reflect new trial tier
       window.location.reload();
     } catch (err: any) {
       console.error('[PricingPage] Start trial error:', err);
-      setError("Failed to start trial. Please try again.");
+      setError('Failed to start trial. Please try again.');
     } finally {
       setIsStartingTrial(false);
     }
   }
 
   async function handleSelectTier(tierKey: string) {
-    if (tierKey === "observer") {
-      navigate("/");
+    if (tierKey === 'observer') {
+      navigate('/');
       return;
     }
 
     if (!isAuthenticated || !token) {
-      navigate("/auth?mode=signin&redirect=/pricing");
+      navigate('/auth?mode=signin&redirect=/pricing');
       return;
     }
 
@@ -1009,10 +992,10 @@ export default function PricingPage() {
     setError(null);
 
     try {
-      const response = await apiFetch("/api/payment/checkout", {
-        method: "POST",
+      const response = await apiFetch('/api/payment/checkout', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           tier: tierKey,
@@ -1022,7 +1005,7 @@ export default function PricingPage() {
 
       if (response.status === 401) {
         logout();
-        navigate("/auth?mode=signin");
+        navigate('/auth?mode=signin');
         return;
       }
 
@@ -1036,8 +1019,8 @@ export default function PricingPage() {
 
       window.location.assign(checkoutUrl);
     } catch (err) {
-      console.error("Checkout error:", err);
-      setError("Failed to start checkout. Please try again.");
+      console.error('Checkout error:', err);
+      setError('Failed to start checkout. Please try again.');
     } finally {
       setIsCheckingOutTier(null);
     }
@@ -1049,15 +1032,18 @@ export default function PricingPage() {
         <div id="overview" className="section-anchor text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
             <Sparkles className="w-4 h-4" />
-            Fix how AI systems interpret and cite your website
+            AiVIS Pricing
           </div>
 
           <div className="lonely-text">
             <h1 className="text-4xl md:text-5xl brand-title-lg mb-4">
-              AI can read your site.<br />It just won't cite it.
+              There are things the internet sees.
+              <br />
+              There are things AI repeats.
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              AiVIS.biz shows what AI can't verify, why competitors get cited instead, and what to fix first.
+              Most brands live somewhere between those two and never know the difference. AiVIS
+              shows you the gap.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -1080,7 +1066,10 @@ export default function PricingPage() {
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-white/50 mb-8">
           <span className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-emerald-400/70" />
-            <strong className="text-white/70">{totalAudits ? `${totalAudits.toLocaleString()}+` : '…'}</strong> audits completed
+            <strong className="text-white/70">
+              {totalAudits ? `${totalAudits.toLocaleString()}+` : '…'}
+            </strong>{' '}
+            audits completed
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">
@@ -1100,38 +1089,36 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
-          <h2 className="text-2xl font-bold text-white mb-3">You don’t need another SEO tool. You need a citation engine.</h2>
-          <p className="text-white/75">You need to know:</p>
-          <p className="text-white/65">why AI ignores you · who is taking your citations · what 7 dimensions to fix first</p>
+          <h2 className="text-2xl font-bold text-white mb-3">You are not buying features.</h2>
+          <p className="text-white/75">You are paying to see where you exist inside machine answers.</p>
+          <p className="text-white/65">
+            And if you don’t exist there — it shows you exactly where reality breaks.
+          </p>
         </div>
 
         <div id="plans" className="section-anchor flex justify-center mb-8">
           <div className="relative bg-charcoal-light border border-white/10 rounded-full p-1.5 flex items-center">
             <button
-              onClick={() => setBillingPeriod("monthly")}
+              onClick={() => setBillingPeriod('monthly')}
               className={`relative px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                billingPeriod === "monthly"
-                  ? "text-white"
-                  : "text-white/60 hover:text-white"
+                billingPeriod === 'monthly' ? 'text-white' : 'text-white/60 hover:text-white'
               }`}
               type="button"
             >
-              {billingPeriod === "monthly" && (
+              {billingPeriod === 'monthly' && (
                 <div className="absolute inset-0 bg-charcoal rounded-full" />
               )}
               <span className="relative">{t('pricing.monthly')}</span>
             </button>
 
             <button
-              onClick={() => setBillingPeriod("yearly")}
+              onClick={() => setBillingPeriod('yearly')}
               className={`relative px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                billingPeriod === "yearly"
-                  ? "text-white"
-                  : "text-white/60 hover:text-white"
+                billingPeriod === 'yearly' ? 'text-white' : 'text-white/60 hover:text-white'
               }`}
               type="button"
             >
-              {billingPeriod === "yearly" && (
+              {billingPeriod === 'yearly' && (
                 <div className="absolute inset-0 bg-gradient-to-r from-white/35 to-white/22 rounded-full" />
               )}
               <span className="relative flex items-center gap-2">
@@ -1171,7 +1158,7 @@ export default function PricingPage() {
                 onStartTrial={handleStartTrial}
                 currentTier={currentTier}
                 isLoading={isCheckingOutTier === tier.key}
-                isHighlighted={tier.key === "signal"}
+                isHighlighted={tier.key === 'signal'}
                 canStartTrial={canStartTrial}
                 isStartingTrial={isStartingTrial}
               />
@@ -1187,7 +1174,9 @@ export default function PricingPage() {
         <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
           <div className="p-5 border-b border-white/8">
             <h2 className="text-base font-semibold text-white">Compare plans at a glance</h2>
-            <p className="text-xs text-white/50 mt-1">Key capabilities by tier - check marks show included features</p>
+            <p className="text-xs text-white/50 mt-1">
+              Key capabilities by tier - check marks show included features
+            </p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -1203,24 +1192,41 @@ export default function PricingPage() {
               </thead>
               <tbody className="text-white/70">
                 {[
-                  ["Audit allowance", "3/mo", "15/mo", "60/mo", "200/mo", `${PRICING.scorefix.credits} credits/mo`],
-                  ["Visibility score + recs", true, true, true, true, true],
-                  ["BRAG evidence IDs", true, true, true, true, true],
-                  ["Implementation-ready guidance", false, true, true, true, true],
-                  ["Shareable report links", false, true, true, true, true],
-                  ["Export (PDF / JSON)", false, true, true, true, true],
-                  ["Competitor tracking", false, false, true, true, true],
-                  ["Brand mention tracking", false, false, true, true, true],
-                  ["Reverse-engineer workflows", false, false, true, true, true],
-                  ["API + OAuth access", false, false, false, true, true],
-                  ["Triple-check AI validation", false, false, false, true, true],
-                  ["Citation testing", false, false, false, true, true],
-                  ["MCP Server (AI agents)", false, false, true, true, true],
-                  ["Team seats", "0", "0", String(TIER_LIMITS.alignment.maxTeamMembers), String(TIER_LIMITS.signal.maxTeamMembers), String(TIER_LIMITS.scorefix.maxTeamMembers)],
-                  ["White-label reports", false, false, false, true, false],
-                  ["Auto GitHub PRs via MCP", false, false, false, false, true],
+                  [
+                    'Audit allowance',
+                    '3/mo',
+                    '15/mo',
+                    '60/mo',
+                    '200/mo',
+                    `${PRICING.scorefix.credits} credits/mo`,
+                  ],
+                  ['Visibility score + recs', true, true, true, true, true],
+                  ['BRAG evidence IDs', true, true, true, true, true],
+                  ['Implementation-ready guidance', false, true, true, true, true],
+                  ['Shareable report links', false, true, true, true, true],
+                  ['Export (PDF / JSON)', false, true, true, true, true],
+                  ['Competitor tracking', false, false, true, true, true],
+                  ['Brand mention tracking', false, false, true, true, true],
+                  ['Reverse-engineer workflows', false, false, true, true, true],
+                  ['API + OAuth access', false, false, false, true, true],
+                  ['Triple-check AI validation', false, false, false, true, true],
+                  ['Citation testing', false, false, false, true, true],
+                  ['MCP Server (AI agents)', false, false, true, true, true],
+                  [
+                    'Team seats',
+                    '0',
+                    '0',
+                    String(TIER_LIMITS.alignment.maxTeamMembers),
+                    String(TIER_LIMITS.signal.maxTeamMembers),
+                    String(TIER_LIMITS.scorefix.maxTeamMembers),
+                  ],
+                  ['White-label reports', false, false, false, true, false],
+                  ['Auto GitHub PRs via MCP', false, false, false, false, true],
                 ].map(([label, ...vals], idx) => (
-                  <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <tr
+                    key={idx}
+                    className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                  >
                     <td className="px-5 py-3 text-white/80">{label}</td>
                     {vals.map((v, vi) => (
                       <td key={vi} className="px-4 py-3 text-center">
@@ -1252,9 +1258,7 @@ export default function PricingPage() {
                   <Icon className="w-4 h-4 text-white/80" />
                   <p className="text-sm font-semibold text-white">{item.title}</p>
                 </div>
-                <p className="text-xs text-white/65 leading-relaxed">
-                  {item.detail}
-                </p>
+                <p className="text-xs text-white/65 leading-relaxed">{item.detail}</p>
               </div>
             );
           })}
@@ -1264,9 +1268,7 @@ export default function PricingPage() {
           id="preview"
           className="section-anchor mt-10 mb-10 rounded-2xl border border-white/10 bg-charcoal-light p-4 sm:p-5 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-base brand-title-muted mb-3">
-            What buyers get after the score
-          </h2>
+          <h2 className="text-base brand-title-muted mb-3">What buyers get after the score</h2>
           <div className="rounded-xl border border-white/10 bg-charcoal/50 p-3">
             <img
               src="/images/fix-pack-preview.svg"
@@ -1276,7 +1278,8 @@ export default function PricingPage() {
             />
           </div>
           <p className="text-xs text-white/60 mt-3">
-            The redesign pushes the product toward outcomes, not abstract scoring. This preview shows the handoff: evidence, priority, and implementation-ready fixes.
+            The redesign pushes the product toward outcomes, not abstract scoring. This preview
+            shows the handoff: evidence, priority, and implementation-ready fixes.
           </p>
         </div>
 
@@ -1284,9 +1287,7 @@ export default function PricingPage() {
           id="audience"
           className="section-anchor mb-10 rounded-2xl border border-white/10 bg-charcoal-light p-5 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-base brand-title-muted mb-3">
-            Best fit by workflow
-          </h2>
+          <h2 className="text-base brand-title-muted mb-3">Best fit by workflow</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {teamRoleUseCases.map((item) => (
               <div
@@ -1294,16 +1295,12 @@ export default function PricingPage() {
                 className="rounded-xl border border-white/10 bg-charcoal/55 p-3.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-white/90">
-                    {item.role}
-                  </p>
+                  <p className="text-sm font-semibold text-white/90">{item.role}</p>
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-charcoal border border-white/12 text-white/70">
                     {item.fit}
                   </span>
                 </div>
-                <p className="text-xs text-white/65 mt-1.5 leading-relaxed">
-                  {item.outcome}
-                </p>
+                <p className="text-xs text-white/65 mt-1.5 leading-relaxed">{item.outcome}</p>
               </div>
             ))}
           </div>
@@ -1312,28 +1309,26 @@ export default function PricingPage() {
         <div id="features" className="section-anchor mt-16 text-center">
           <div className="inline-flex flex-wrap justify-center gap-4 p-4 bg-charcoal-light border border-white/10 rounded-2xl shadow-sm surface-structured-muted">
             {[
-              "JSON-LD audit",
-              "Meta tag audit",
-              "Heading structure",
-              "robots.txt check",
-              "Sitemap validation",
-              "Slack + Discord alerts (Signal+)",
-              "Zapier automations (Notion, Airtable, CRM)",
-              "OpenAPI 3.0 + OAuth 2.0 (Alignment+)",
-              "MCP Server for AI agents (Signal+)",
-              "Automated GitHub PR remediation (Score Fix)",
+              'JSON-LD audit',
+              'Meta tag audit',
+              'Heading structure',
+              'robots.txt check',
+              'Sitemap validation',
+              'Slack + Discord alerts (Signal+)',
+              'Zapier automations (Notion, Airtable, CRM)',
+              'OpenAPI 3.0 + OAuth 2.0 (Alignment+)',
+              'MCP Server for AI agents (Signal+)',
+              'Automated GitHub PR remediation (Score Fix)',
             ].map((feature) => (
-              <span
-                key={feature}
-                className="flex items-center gap-2 text-sm text-white/75"
-              >
+              <span key={feature} className="flex items-center gap-2 text-sm text-white/75">
                 <Check className="w-4 h-4 text-white/80" />
                 {feature}
               </span>
             ))}
           </div>
           <p className="mt-6 text-white/60 text-sm lonely-text inline-block">
-            Every plan covers core visibility analysis. Higher tiers change execution depth, coordination, and remediation support.
+            Every plan covers core visibility analysis. Higher tiers change execution depth,
+            coordination, and remediation support.
           </p>
         </div>
 
@@ -1341,21 +1336,26 @@ export default function PricingPage() {
           id="proof"
           className="section-anchor mt-8 rounded-2xl border border-white/10 bg-charcoal-light p-6 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-lg brand-title mb-2">
-            What actually changes as you move up
-          </h2>
+          <h2 className="text-lg brand-title mb-2">What this actually is</h2>
+          <p className="text-sm text-white/75 mb-4 leading-relaxed">
+            AiVIS does not rank you. It reveals whether AI systems recognize you at all. And if they
+            don't, it shows you exactly where reality breaks.
+          </p>
           <ul className="space-y-2 text-sm text-white/80">
             <li>
-              <span className="font-semibold text-white">Observer</span> gives you a baseline score, core recommendations, and shareable proof for lightweight review.
+              <span className="font-semibold text-white">Free</span> — Am I visible?
             </li>
             <li>
-              <span className="font-semibold text-white">Alignment</span> adds exports, competitor context, repeatable fix prioritization, and developer access via OpenAPI spec and OAuth 2.0.
+              <span className="font-semibold text-white">Starter</span> — Why am I missing?
             </li>
             <li>
-              <span className="font-semibold text-white">Signal</span> adds triple-check analysis, Slack/Discord delivery alerts, Zapier automations (including Notion), MCP Server for AI agents, API access, and white-label workflows for teams and agencies.
+              <span className="font-semibold text-white">Alignment</span> — Who is replacing me?
             </li>
             <li>
-              <span className="font-semibold text-white">Score Fix</span> ships automated GitHub PRs via MCP connections. Each fix costs 10-25 credits from your 250-credit pack, targeting schema patches, content fixes, and structural remediations directly in your repo.
+              <span className="font-semibold text-white">Signal</span> — Can I control this?
+            </li>
+            <li>
+              <span className="font-semibold text-white">Score Fix</span> — Fix it now.
             </li>
           </ul>
         </div>
@@ -1369,12 +1369,10 @@ export default function PricingPage() {
               <WalletCards className="w-4 h-4 text-white/80" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">
-                Ready to scale with confidence?
-              </p>
+              <p className="text-sm font-semibold text-white">Ready to scale with confidence?</p>
               <p className="text-xs text-white/65 mt-1">
-                Checkout creates a secure session and activates your selected plan
-                immediately after payment confirmation.
+                Checkout creates a secure session and activates your selected plan immediately after
+                payment confirmation.
               </p>
             </div>
           </div>
@@ -1388,7 +1386,7 @@ export default function PricingPage() {
               Open Billing Center
             </Link>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
               className="text-xs px-3.5 py-2 rounded-full bg-charcoal-light border border-white/10 text-white/75 hover:text-white transition-colors"
               type="button"
             >
@@ -1416,16 +1414,44 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-6 text-center text-sm text-white/55">
-          Enterprise or volume pricing? <a href="mailto:sales@aivis.biz" className="text-white/80 hover:text-white underline underline-offset-2 transition-colors">sales@aivis.biz</a>
+          Enterprise or volume pricing?{' '}
+          <a
+            href="mailto:sales@aivis.biz"
+            className="text-white/80 hover:text-white underline underline-offset-2 transition-colors"
+          >
+            sales@aivis.biz
+          </a>
         </div>
 
         <div className="mt-10">
-          <h3 className="text-lg font-semibold text-white/80 mb-4 text-center">Learn More About AiVIS.biz</h3>
+          <h3 className="text-lg font-semibold text-white/80 mb-4 text-center">
+            Learn More About AiVIS.biz
+          </h3>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/methodology" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Methodology</Link>
-            <Link to="/compliance" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Compliance</Link>
-            <Link to="/guide" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Implementation Guide</Link>
-            <Link to="/why-ai-visibility" className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition">Why AI Visibility?</Link>
+            <Link
+              to="/methodology"
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition"
+            >
+              Methodology
+            </Link>
+            <Link
+              to="/compliance"
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition"
+            >
+              Compliance
+            </Link>
+            <Link
+              to="/guide"
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition"
+            >
+              Implementation Guide
+            </Link>
+            <Link
+              to="/why-ai-visibility"
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/[0.06] transition"
+            >
+              Why AI Visibility?
+            </Link>
           </div>
         </div>
 

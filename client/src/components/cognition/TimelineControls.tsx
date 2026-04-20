@@ -14,8 +14,14 @@
  *   fl-timeline__meta     → commit hash · seq · position
  */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useReplayStore } from '../../stores/replayStore';
+import {
+  getReplayMode,
+  onReplayModeChange,
+  setReplayMode,
+  type ReplayMode,
+} from '../../lib/replayEngine';
 
 const SCRUB_DEBOUNCE_MS = 16;
 
@@ -27,6 +33,15 @@ export default function TimelineControls() {
   const stepForward = useReplayStore((s) => s.stepForward);
   const stepBack = useReplayStore((s) => s.stepBack);
   const setCursorSeq = useReplayStore((s) => s.setCursorSeq);
+
+  // Track engine mode for LIVE/REPLAY badge
+  const [mode, setLocalMode] = useState<ReplayMode>(getReplayMode());
+  useEffect(() => onReplayModeChange((m) => setLocalMode(m)), []);
+
+  const jumpToLive = useCallback(() => {
+    setCursorSeq(maxSeq);
+    setReplayMode('LIVE');
+  }, [setCursorSeq, maxSeq]);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -99,6 +114,37 @@ export default function TimelineControls() {
         >
           ▶
         </button>
+      </div>
+
+      {/* Mode row: LIVE badge or jump-to-live button */}
+      <div className="flex items-center justify-between px-1 mb-1" style={{ minHeight: '18px' }}>
+        <span
+          className="text-[9px] font-mono px-1.5 py-0.5 border"
+          style={
+            mode === 'LIVE'
+              ? {
+                  color: '#22c55e',
+                  borderColor: 'rgba(34,197,94,0.25)',
+                  background: 'rgba(34,197,94,0.06)',
+                }
+              : {
+                  color: '#eab308',
+                  borderColor: 'rgba(234,179,8,0.25)',
+                  background: 'rgba(234,179,8,0.06)',
+                }
+          }
+        >
+          {mode === 'LIVE' ? '● LIVE' : '⏸ REPLAY'}
+        </span>
+        {mode === 'REPLAY' && (
+          <button
+            type="button"
+            onClick={jumpToLive}
+            className="text-[9px] font-mono text-white/30 hover:text-white/60 border border-white/10 hover:border-white/25 px-2 py-0.5 transition-all"
+          >
+            ⏵ live
+          </button>
+        )}
       </div>
 
       {/* Metadata row: scanId · hash · seq · position */}

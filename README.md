@@ -9,12 +9,12 @@
       "@id": "https://aivis.biz/#org",
       "name": "AiVIS",
       "url": "https://aivis.biz",
-      "logo": "https://aivis.biz/logo.png",
+      "logo": "https://aivis.biz/aivis-logo.png",
       "sameAs": [
         "https://aivis.biz",
-        "https://twitter.com/aivis",
-        "https://www.reddit.com/user/aivis",
-        "https://www.linkedin.com/company/aivis"
+        "https://twitter.com/intruvurt",
+        "https://www.reddit.com/user/intruvurt",
+        "https://www.linkedin.com/in/web4aidev"
       ],
       "description": "AiVIS is an AI visibility intelligence system that measures how answer engines interpret, trust, and cite web entities using evidence-based analysis.",
       "identifier": {

@@ -25,7 +25,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@id': ORGANIZATION_ID,
     name: 'AiVIS.biz',
     alternateName: 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
-    url: `${BASE_URL}/`,
+    url: BASE_URL,
     description:
       'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™, a structured attribution layer that records parsing, validation, and citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry that ties each audit finding to verifiable on-page signals. Together, these systems define citation readiness by quantifying extractability, entity clarity, and trust alignment, producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers, based on traceable evidence from source content.',
     founder: {
@@ -54,6 +54,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       telephone: '+1-706-907-5299',
     },
     sameAs: [
+      BASE_URL,
       'https://twitter.com/dobleduche',
       'https://twitter.com/intruvurt',
       'https://twitter.com/odinarysol',
@@ -65,7 +66,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
       'https://www.reddit.com/user/renomase',
       'https://www.reddit.com/r/AiVIS.biz/',
       'https://www.youtube.com/@mediatechmele',
-      'https://linkedin.com/in/web4aidev',
+      'https://www.linkedin.com/in/web4aidev',
       'https://www.linkedin.com/posts/web4aidev_aivis-audits-how-ai-systems-read-a-website-share-7447000684455071745-tDOK',
       'https://www.producthunt.com/products/aivis-ai-visibility-intelligence-audit',
       'https://relaxstart.com/startup/ai-visibility-intelligence-platform',

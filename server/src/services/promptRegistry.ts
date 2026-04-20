@@ -5,7 +5,9 @@ export type PromptTemplateId =
     | 'audit.peer_review'
     | 'audit.validation_gate'
     | 'scorefix.fix_plan'
-    | 'citations.query_pack';
+    | 'citations.query_pack'
+    | 'existence.typed_query_pack'
+    | 'existence.probe_analysis';
 
 export type PromptRenderResult = {
     id: PromptTemplateId;
@@ -263,11 +265,110 @@ Return ONLY valid JSON (no markdown, no fences):
 }`;
 }
 
+// ── Types for new existence templates ────────────────────────────────────────
+
+export type TypedQueryPackArgs = {
+    brandName: string;
+    url: string;
+    primaryEntity: string;
+    aliases: string[];
+    topics: string[];
+    niche?: string;
+    description?: string;
+};
+
+export type ExistenceProbeArgs = {
+    query: string;
+    queryType: string;
+    queryRationale: string;
+    brandName: string;
+    url: string;
+    primaryEntity: string;
+    aiResponse: string;
+    model: string;
+};
+
+function buildTypedQueryPackPrompt(args: TypedQueryPackArgs): string {
+    return `You are an existence-testing strategist. Your job is NOT to search for the brand.
+Your job is to identify queries where "${args.brandName}" (${args.url}) SHOULD concretely appear in AI answer systems — and verify whether it does.
+
+Primary entity: ${args.primaryEntity}${args.aliases.length ? `\nAliases: ${args.aliases.join(', ')}` : ''}
+Niche/industry: ${args.niche || 'unknown'}
+Topics: ${args.topics.join(', ') || 'N/A'}
+Description: ${args.description || 'N/A'}
+
+Generate a structured query set across exactly 4 types. For each query, explain WHY the brand should legitimately appear there (rationale).
+
+TYPE A — Direct queries (brand recognition tests):
+  "what is [brand]", "[brand] review", "is [brand] legit", "[brand] pricing"
+TYPE B — Intent queries (niche + problem space):
+  "best tools for [niche problem]", "how to solve [specific workflow]", "[category] software for [use case]"
+TYPE C — Comparative queries (market positioning tests):
+  "[brand] vs [competitor type]", "alternatives to [approach]", "[primary topic] comparison"
+TYPE D — Long-tail AI-style queries (multi-word, information-dense):
+  "what tools help with [specific workflow in this niche]", "how does [technical process] work for [audience]"
+
+Rules:
+- Minimum 5 queries per type (20 total minimum)
+- Each query must have a rationale: one sentence explaining why the brand should appear here
+- Queries must be natural — phrased as a real user would type them to ChatGPT or Perplexity
+- Do not fabricate capabilities. Only generate queries the entity can legitimately answer
+- queryType must be exactly one of: "direct", "intent", "comparative", "long_tail"
+
+Return ONLY valid JSON:
+{
+  "queries": [
+    { "query": "...", "type": "direct", "rationale": "..." },
+    { "query": "...", "type": "intent", "rationale": "..." }
+  ],
+  "industry": "...",
+  "primary_entity": "..."
+}`;
+}
+
+function buildExistenceProbePrompt(args: ExistenceProbeArgs): string {
+    return `You are an existence auditor for AI answer systems.
+
+Query: "${args.query}"
+Query type: ${args.queryType}
+Why the brand should appear: ${args.queryRationale}
+Brand under test: "${args.brandName}" (${args.url})
+Primary entity: "${args.primaryEntity}"
+Model simulated: ${args.model}
+
+Below is the AI-generated response to the query:
+---
+${args.aiResponse}
+---
+
+Analyze the response and answer:
+1. Is the brand "${args.brandName}" or its domain "${args.url}" mentioned anywhere? (mentioned: true/false)
+2. Is it cited as a recommended source, tool, or authority? (cited: true/false)
+3. If mentioned: at what approximate position in the answer (1 = first, higher = later)?
+4. What is the full sentence or phrase where the brand appears (excerpt), or null?
+5. Which other brands/domains ARE cited instead? (competitors array, empty if none)
+6. Confidence this finding is accurate (0.0–1.0)
+7. One-sentence explanation of WHY the brand does or does not appear here (absence_reason if not mentioned)
+
+Return ONLY valid JSON:
+{
+  "mentioned": boolean,
+  "cited": boolean,
+  "position": number | null,
+  "excerpt": string | null,
+  "competitors_instead": string[],
+  "confidence": number,
+  "absence_reason": string | null
+}`;
+}
+
 export function renderPrompt(id: 'audit.primary', args: AuditPrimaryArgs): PromptRenderResult;
 export function renderPrompt(id: 'audit.peer_review', args: AuditPeerReviewArgs): PromptRenderResult;
 export function renderPrompt(id: 'audit.validation_gate', args: AuditValidationArgs): PromptRenderResult;
 export function renderPrompt(id: 'scorefix.fix_plan', args: ScoreFixPlanArgs): PromptRenderResult;
 export function renderPrompt(id: 'citations.query_pack', args: QueryPackArgs): PromptRenderResult;
+export function renderPrompt(id: 'existence.typed_query_pack', args: TypedQueryPackArgs): PromptRenderResult;
+export function renderPrompt(id: 'existence.probe_analysis', args: ExistenceProbeArgs): PromptRenderResult;
 export function renderPrompt(id: PromptTemplateId, args: any): PromptRenderResult {
     switch (id) {
         case 'audit.primary':
@@ -280,6 +381,10 @@ export function renderPrompt(id: PromptTemplateId, args: any): PromptRenderResul
             return buildScoreFixPlanPrompt(args);
         case 'citations.query_pack':
             return { id, version: '2026-04-13.1', prompt: buildQueryPackPrompt(args) };
+        case 'existence.typed_query_pack':
+            return { id, version: '2026-04-13.1', prompt: buildTypedQueryPackPrompt(args) };
+        case 'existence.probe_analysis':
+            return { id, version: '2026-04-13.1', prompt: buildExistenceProbePrompt(args) };
         default:
             throw new Error(`Unknown prompt template: ${id satisfies never}`);
     }

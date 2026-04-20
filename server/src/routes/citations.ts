@@ -43,6 +43,7 @@ import {
   runCitationRankScoreHandler,
   getCitationRankSnapshotHandler,
   getCitationRankHistoryHandler,
+  runExistenceMap,
 } from '../controllers/citations.controllers.js';
 
 const router = Router();
@@ -205,6 +206,13 @@ router.get('/rank-score/snapshot', requireSignal, getCitationRankSnapshotHandler
 
 // Historic trend
 router.get('/rank-score/history', requireSignal, getCitationRankHistoryHandler);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXISTENCE MAPPING — 8-step answer space probe (Alignment+)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Full existence test: identity extract → typed queries → AI probes → ledger → score → actions
+router.post('/existence', requireAlignmentOrHigher, runExistenceMap);
 
 export { router as citationRoutes };
 export default router;

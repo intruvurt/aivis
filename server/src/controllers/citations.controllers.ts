@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { createHash } from 'crypto';
 import { getPool } from '../services/postgresql.js';
 import { sanitizeHtmlServer } from '../middleware/securityMiddleware.js';
+import { mapExistence } from '../services/existenceMapper.js';
 import { generateQueries, prioritizeQueries } from '../services/queryGenerator.js';
 import { testMultipleQueries, calculateCitationSummary, buildCitationPrompt, excerptHasSubstantiveSupport, containsNegativeMentionContext } from '../services/citationTester.js';
 import type { CitationTest, AICitationResult } from '../../../shared/types.js';
@@ -3057,5 +3058,50 @@ export async function getCitationRankHistoryHandler(req: Request, res: Response)
   } catch (err: any) {
     console.error('[CitationRankHistory] Error:', err?.message);
     return res.status(500).json({ error: 'Failed to fetch CitationRankScore history' });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXISTENCE MAPPING — 8-step pipeline
+// POST /api/citations/existence
+// Tier: alignment+
+// ─────────────────────────────────────────────────────────────────────────────
+export async function runExistenceMap(req: Request, res: Response) {
+  const user = (req as any).user;
+  if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { url, brandName, niche, queryCount, auditId } = req.body ?? {};
+
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'url is required', code: 'MISSING_URL' });
+  }
+
+  const normalized = normalizePublicHttpUrl(String(url));
+  if (!normalized.ok) {
+    return res.status(400).json({ error: normalized.error ?? 'Invalid URL', code: 'INVALID_URL' });
+  }
+
+  const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY;
+  if (!apiKey) {
+    return res.status(503).json({ error: 'AI provider not configured', code: 'NO_API_KEY' });
+  }
+
+  const cap = user.tier === 'signal' ? 25 : 15;
+  const resolvedCount = Math.min(
+    Math.max(parseInt(String(queryCount ?? cap), 10) || cap, 4),
+    cap,
+  );
+
+  try {
+    const report = await mapExistence(normalized.url, apiKey, {
+      brandName: typeof brandName === 'string' ? sanitizeHtmlServer(brandName.trim()).slice(0, 100) : undefined,
+      niche: typeof niche === 'string' ? sanitizeHtmlServer(niche.trim()).slice(0, 80) : undefined,
+      queryCount: resolvedCount,
+      auditId: typeof auditId === 'string' ? auditId : undefined,
+    });
+    return res.json({ success: true, report });
+  } catch (err: any) {
+    console.error('[ExistenceMap] Error:', err?.message);
+    return res.status(500).json({ error: 'Existence mapping failed', detail: err?.message });
   }
 }

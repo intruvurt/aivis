@@ -805,6 +805,12 @@ export interface AnalysisResponse {
     missing_goals: string[];
     score_adjustment: number;
   };
+  /**
+   * Answer presence pipeline result — evidence that the entity appears (or is
+   * absent) in AI-generated answers and search results.
+   * Steps 1-7 from the extraction → query → test → ledger → gap spec.
+   */
+  answer_presence?: AnswerPresenceResult;
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
@@ -1380,6 +1386,67 @@ export interface BragValidationResult {
 
 /** Scrape method used to collect evidence for the audit */
 export type ScrapeMethod = 'http_fetch' | 'python_nlp' | 'cf_browser_run';
+
+// ── Answer Presence Pipeline ─────────────────────────────────────────────────
+
+/** One citation / mention entry in the live evidence ledger */
+export interface QueryEvidence {
+  /** The query that was tested */
+  query: string;
+  /** Why this query was generated */
+  intent: 'direct' | 'intent' | 'comparative' | 'longtail';
+  /** Search engine or AI model that returned this result */
+  source: string;
+  /** Whether the brand/entity appeared in results */
+  mentioned: boolean;
+  /** Position in result list (1-indexed), if applicable */
+  position?: number;
+  /** Snippet text where brand was detected */
+  snippet?: string;
+  /** 0.0–1.0 confidence in this citation observation */
+  citation_strength: number;
+}
+
+/** A detected absence in AI/search visibility */
+export interface GapItem {
+  /** Category of the gap */
+  type: 'content' | 'citation' | 'authority' | 'entity_clarity';
+  /** Human-readable description of the gap */
+  description: string;
+  /** Query that revealed the gap */
+  query?: string;
+  /** Domains that DO appear for this query (competitors) */
+  dominant_sources?: string[];
+  /** What to do about this gap */
+  action: string;
+}
+
+/**
+ * Full result of the answer presence pipeline (Steps 1-7 from spec).
+ * All scores derived ONLY from observed QueryEvidence — no synthetic metrics.
+ */
+export interface AnswerPresenceResult {
+  /** Canonical primary entity name extracted from the page */
+  primary_entity: string;
+  /** Known aliases / variant spellings detected */
+  aliases: string[];
+  /** Total queries tested in parallel */
+  queries_tested: number;
+  /** Number of queries where entity was mentioned */
+  mentions_found: number;
+  /** Full citation ledger — every query result, positive or negative */
+  evidence: QueryEvidence[];
+  /** Gaps where entity should appear but does not */
+  gaps: GapItem[];
+  /** 0-100: how clearly the entity is defined in search/AI systems */
+  entity_clarity_score: number;
+  /** 0-100: fraction of tested queries where entity has a citation */
+  citation_coverage_score: number;
+  /** 0-100: presence in authoritative (high-rank) sources */
+  authority_alignment_score: number;
+  /** 0-100: composite presence score derived from evidence */
+  answer_presence_score: number;
+}
 
 export const SCRAPE_METHOD_LABELS: Readonly<Record<ScrapeMethod, string>> = {
   http_fetch: 'HTTP Fetch',

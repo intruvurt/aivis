@@ -94,9 +94,15 @@ interface CognitionReplayProps {
    */
   graphSlot?: React.ReactNode;
   className?: string;
+  /** When true, the timeline scrubber is hidden (e.g. during live scanning) */
+  hideTimeline?: boolean;
 }
 
-export default function CognitionReplay({ graphSlot, className }: CognitionReplayProps) {
+export default function CognitionReplay({
+  graphSlot,
+  className,
+  hideTimeline,
+}: CognitionReplayProps) {
   const cursor = useReplayStore((s) => s.cursor);
 
   // Wire replayStore → debugStore automatically when graphSlot is provided
@@ -111,7 +117,7 @@ export default function CognitionReplay({ graphSlot, className }: CognitionRepla
       left={<CommitGraph />}
       center={center}
       right={<CommitInspector />}
-      timeline={<TimelineControls />}
+      timeline={hideTimeline ? undefined : <TimelineControls />}
     />
   );
 }

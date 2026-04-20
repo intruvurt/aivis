@@ -280,6 +280,7 @@ import { loadEvidenceForRun, extractEvidenceFromScrapedData } from "./services/a
 import { evaluateRules, computeScore as computeRuleScore, persistRuleResults, persistScoreSnapshot } from "./services/audit/ruleEngine.js";
 import { runBragValidationGate, persistBragTrail, persistCiteLedger } from "./services/bragGate.js";
 import { runCiteLedgerPipeline } from "./services/citeLedgerService.js";
+import { runAnswerPresenceAnalysis } from "./services/answerPresenceService.js";
 import {
   extractEvidenceFromScrape,
   enrichEvidenceFromAnalysis,
@@ -3575,6 +3576,13 @@ Avoid private or authenticated areas, including:
 - /api/
 - /admin/
 - /partnership-terms
+
+Sitemaps (machine-readable URL discovery)
+- Index:    https://aivis.biz/sitemap-index.xml
+- Core:     https://aivis.biz/sitemap-core.xml
+- Blogs:    https://aivis.biz/sitemap-blogs.xml
+- Keywords: https://aivis.biz/sitemap-keywords.xml
+- Entities: https://aivis.biz/sitemap-entities.xml
 `);
 });
 
@@ -13020,6 +13028,28 @@ For each recommendation:
               );
             }
 
+            // ── Answer Presence Pipeline: identity → queries → evidence → gaps ──
+            // Fire-and-forget: attaches answer_presence to apiResponse
+            if (scraped?.data?.html || scraped?.data?.body) {
+              const domain = (() => { try { return new URL(targetUrl).hostname; } catch { return targetUrl; } })();
+              backgroundWithTimeout(
+                `answer-presence:${requestId}`,
+                runAnswerPresenceAnalysis({
+                  url: targetUrl,
+                  domain,
+                  html: (scraped.data?.html || scraped.data?.body || '') as string,
+                  brandName: (apiResponse as Record<string, unknown>)?.brand_entities
+                    ? ((apiResponse as Record<string, unknown>).brand_entities as string[])[0]
+                    : undefined,
+                }).then((result) => {
+                  (apiResponse as Record<string, unknown>).answer_presence = result;
+                  console.log(
+                    `[${requestId}] Answer presence: ${result.mentions_found}/${result.queries_tested} queries mentioned, score=${result.answer_presence_score}`,
+                  );
+                }),
+              );
+            }
+
             backgroundWithTimeout(
               `deep-analysis:${requestId}`,
               (async () => {
@@ -15202,7 +15232,11 @@ app.get("/robots.txt", (_req, res) => {
       "Disallow: /api/",
       "Crawl-delay: 1",
       "",
-      `Sitemap: ${siteUrl}/sitemap.xml`,
+      `Sitemap: ${siteUrl}/sitemap-index.xml`,
+      `Sitemap: ${siteUrl}/sitemap-core.xml`,
+      `Sitemap: ${siteUrl}/sitemap-blogs.xml`,
+      `Sitemap: ${siteUrl}/sitemap-keywords.xml`,
+      `Sitemap: ${siteUrl}/sitemap-entities.xml`,
       "",
       "User-agent: GPTBot",
       "Allow: /",
@@ -15383,7 +15417,50 @@ app.get("/sitemap.xml", (_req, res) => {
   );
 });
 
-// Sentry error handler (v10)
+// ── Sitemap index (discovery root for 100-1000 page scale) ───────────────────
+// Serves the pregenerated sitemap-index.xml from dist/client/ or falls back
+// to a dynamic index that references all known sub-sitemaps.
+app.get("/sitemap-index.xml", (_req, res) => {
+  res.type("application/xml");
+  const staticIndex = path.resolve(process.cwd(), "dist/client/sitemap-index.xml");
+  if (existsSync(staticIndex)) {
+    try {
+      const xml = readFileSync(staticIndex, "utf8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      return res.send(xml);
+    } catch {
+      // fall through
+    }
+  }
+  const siteUrl = String(process.env.FRONTEND_URL || "https://aivis.biz").replace(/\/+$/, "");
+  const today = new Date().toISOString().slice(0, 10);
+  const subMaps = ["sitemap-core.xml", "sitemap-blogs.xml", "sitemap-keywords.xml", "sitemap-entities.xml"];
+  const entries = subMaps.map((s) => `  <sitemap><loc>${siteUrl}/${s}</loc><lastmod>${today}</lastmod></sitemap>`).join("\n");
+  return res.send(
+    `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>\n`,
+  );
+});
+
+// ── Themed sub-sitemap endpoints ─────────────────────────────────────────────
+// Serve the pregenerated split sitemaps produced by prerender-routes.mjs.
+// These are static files so they get a 1-hour cache. No dynamic fallback
+// needed — the sitemap-index.xml fallback above covers bootstrapping.
+for (const sub of ["sitemap-core.xml", "sitemap-blogs.xml", "sitemap-keywords.xml"]) {
+  app.get(`/${sub}`, (_req, res) => {
+    res.type("application/xml");
+    const staticFile = path.resolve(process.cwd(), `dist/client/${sub}`);
+    if (existsSync(staticFile)) {
+      try {
+        const xml = readFileSync(staticFile, "utf8");
+        res.setHeader("Cache-Control", "public, max-age=3600");
+        return res.send(xml);
+      } catch {
+        // fall through
+      }
+    }
+    return res.status(404).type("text/plain").send("Sitemap not generated yet. Run build.");
+  });
+}
 if (process.env.SENTRY_DSN) Sentry.setupExpressErrorHandler(app);
 
 // ── Global error handler - catches unhandled errors from all routes ──────────

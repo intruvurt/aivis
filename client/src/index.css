@@ -1,9 +1,10 @@
 /* ── Custom Font Imports ── */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
-
-@import 'tailwindcss';
 @import './styles/aurora-shell.css';
-@config "../tailwind.config.ts";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   /* Fonts */

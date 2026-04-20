@@ -1,21 +1,26 @@
-import React, { Suspense, useCallback, useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import AppSidebar from "./AppSidebar";
-import AppTopBar from "./AppTopBar";
-import Footer from "./Footer";
-import GlobalCommandPalette from "./GlobalCommandPalette";
-import TrialBanner from "./TrialBanner";
-import RouteGuideBar from "./RouteGuideBar";
-import { getRouteGuide } from "../config/routeIntelligence";
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import AppSidebar from './AppSidebar';
+import AppTopBar from './AppTopBar';
+import Footer from './Footer';
+import GlobalCommandPalette from './GlobalCommandPalette';
+import TrialBanner from './TrialBanner';
+import ScanFlowBanner from './ScanFlowBanner';
+import RouteGuideBar from './RouteGuideBar';
+import { getRouteGuide } from '../config/routeIntelligence';
 
-const GuideBot = React.lazy(() => import("./GuideBot"));
+const GuideBot = React.lazy(() => import('./GuideBot'));
 
 function OutletErrorFallback() {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-2xl">⚠️</div>
+      <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-2xl">
+        ⚠️
+      </div>
       <h2 className="text-lg font-semibold text-white">Page failed to load</h2>
-      <p className="text-white/50 text-sm max-w-xs">This can happen on slow connections or after a deployment. Try reloading.</p>
+      <p className="text-white/50 text-sm max-w-xs">
+        This can happen on slow connections or after a deployment. Try reloading.
+      </p>
       <button
         type="button"
         onClick={() => window.location.reload()}
@@ -39,7 +44,7 @@ class OutletErrorBoundary extends React.Component<React.PropsWithChildren, { has
     return { hasError: true };
   }
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error("[AppShell OutletError]", error, info.componentStack);
+    console.error('[AppShell OutletError]', error, info.componentStack);
   }
   render() {
     if (this.state.hasError) return <OutletErrorFallback />;
@@ -77,7 +82,7 @@ export default function AppShell() {
       </a>
 
       <div
-        className={`aurora-overlay ${sidebarOpen ? "is-open" : ""}`}
+        className={`aurora-overlay ${sidebarOpen ? 'is-open' : ''}`}
         onClick={close}
         aria-hidden="true"
       />
@@ -87,6 +92,7 @@ export default function AppShell() {
       <div className="aurora-main">
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         <TrialBanner />
+        <ScanFlowBanner />
         {routeGuide ? <RouteGuideBar guide={routeGuide} /> : null}
         <main id="main-content" className="aurora-content" role="main" aria-label="App content">
           <OutletErrorBoundary key={location.pathname}>

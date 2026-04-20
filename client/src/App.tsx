@@ -356,8 +356,13 @@ export default function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Dashboard />} />
-              <Route path="analyze" element={<AnalyzePage />} />
+              {/* Canonical scan entry — new users land here after login */}
+              <Route index element={<Navigate to="/app/scan" replace />} />
+              <Route path="scan" element={<AnalyzePage />} />
+              {/* Legacy analyze path — redirect to canonical scan route */}
+              <Route path="analyze" element={<Navigate to="/app/scan" replace />} />
+              {/* Legacy overview — Dashboard preserved for users with audit history */}
+              <Route path="overview" element={<Dashboard />} />
               <Route path="snapshot" element={<SnapshotPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="evidence" element={<EvidenceRegistryPage />} />
@@ -404,7 +409,8 @@ export default function App() {
             <Route path="/audit/:id" element={<LegacyAuditRedirect />} />
 
             {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
-            <Route path="/analyze" element={<Navigate to="/app/analyze" replace />} />
+            <Route path="/analyze" element={<Navigate to="/app/scan" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/app/scan" replace />} />
             <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
             <Route path="/evidence" element={<Navigate to="/app/evidence" replace />} />
             <Route path="/keywords" element={<Navigate to="/app/keywords" replace />} />
@@ -466,7 +472,6 @@ export default function App() {
               element={<Navigate to="/app/niche-discovery" replace />}
             />
             <Route path="/workflow" element={<Navigate to="/app/workflow" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/app" replace />} />
 
             {/* Catch-all */}
             <Route path="*" element={<PublicLayout />}>

@@ -15,14 +15,14 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import CognitionReplay from './CognitionReplay';
-import { EntityGraph } from './EntityGraph';
+import CognitionReplay from '../components/cognition/CognitionReplay';
+import { EntityGraph } from '../components/cognition/EntityGraph';
 import {
   buildCognitionData,
   buildScanningCommits,
   buildScanningCognitionData,
-} from './buildCognitionData';
-import { buildReplayData, buildScanReplayNodes } from './buildReplayData';
+} from '../components/cognition/buildCognitionData';
+import { buildReplayData, buildScanReplayNodes } from '../components/cognition/buildReplayData';
 import { graphEventBus } from '../lib/graphEventBus';
 import {
   replayEngine,
@@ -30,11 +30,11 @@ import {
   onReplayModeChange,
   type ReplayMode,
 } from '../lib/replayEngine';
-import { useReplayStore } from '../../stores/replayStore';
-import type { CognitionData } from './types';
+import { useReplayStore } from '../stores/replayStore';
+import type { CognitionData } from '../components/cognition/types';
 import type { AnalysisResponse } from '@shared/types';
-import '../../styles/forensic-grid.css';
-import '../../styles/cognition-replay.css';
+import '../styles/forensic-grid.css';
+import '../styles/cognition-replay.css';
 
 // ── Score color ───────────────────────────────────────────────────────────────
 

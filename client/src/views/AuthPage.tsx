@@ -490,13 +490,13 @@ export default function AuthPage() {
           <div className="bg-[#0f1623] border border-white/[0.09] rounded-2xl p-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-white mb-2">
-                {mode === 'signin' && 'Welcome Back'}
-                {mode === 'signup' && 'Create Account'}
+                {mode === 'signin' && 'Access Evidence History'}
+                {mode === 'signup' && 'Start Your Evidence Record'}
                 {mode === 'reset' && 'Reset Password'}
               </h1>
               <p className="text-white/65 text-sm">
-                {mode === 'signin' && 'Sign in to access your dashboard'}
-                {mode === 'signup' && 'Start tracking your AI visibility'}
+                {mode === 'signin' && 'Sign in to resume your citation ledger session'}
+                {mode === 'signup' && 'Submit a URL. The pipeline builds your evidence record.'}
                 {mode === 'reset' && "We'll send you reset instructions"}
               </p>
             </div>

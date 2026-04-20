@@ -14,7 +14,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import { getPrecomputedCache, getRelatedQueries, mapQueryToScanIntent } from '../lib/queryCache.js';
 import { useQueryPageMetadata } from '../hooks/usePageMetadata';
-import { generateCiteLedgerMeta, generateScoresFromAudit, extractCitationsFromAudit, extractEntitiesFromAudit } from '../lib/citeLedgerMeta';
+import {
+  generateCiteLedgerMeta,
+  generateScoresFromAudit,
+  extractCitationsFromAudit,
+  extractEntitiesFromAudit,
+} from '../lib/citeLedgerMeta';
 import type { PrecomputedCache } from '../lib/queryCache.js';
 import type { CiteLedgerMeta } from '../lib/citeLedgerMeta';
 
@@ -136,7 +141,7 @@ export default function QueryPage({ onScanTrigger }: QueryPageProps) {
   };
 
   return (
-
+    <div className="min-h-screen bg-slate-900 text-white">
       {/* Hero */}
       <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto">

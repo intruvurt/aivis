@@ -39,9 +39,9 @@
   ],
   "screenshots": [
     {
-      "src": "/og-image.png?v=20260408",
+      "src": "/og-image2.png",
       "type": "image/png",
-      "sizes": "942x317",
+      "sizes": "512x512",
       "form_factor": "wide",
       "label": "AiVIS.biz AI Visibility Audit - Desktop"
     }

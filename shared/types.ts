@@ -2627,4 +2627,81 @@ export type ScanEvent =
   | { type: 'INTERPRETATION'; message: string; cite_ids: string[] }
   | { type: 'SCORE_UPDATED'; layer: 'crawl' | 'semantic' | 'authority'; value: number }
   | { type: 'ERROR'; stage: string; message: string }
+
+// ─── Citation Heatmap ─────────────────────────────────────────────────────────
+
+/**
+ * The four AI engines tested by the citation pipeline.
+ * Matches the `platform` column values in citation_results.
+ */
+export type CitationEngine = 'chatgpt' | 'perplexity' | 'claude' | 'google_ai';
+
+export const CITATION_ENGINES: CitationEngine[] = ['chatgpt', 'perplexity', 'claude', 'google_ai'];
+
+/**
+ * One cell in the Query × Engine surface.
+ * Derived strictly from citation_results rows — no client-side computation.
+ */
+export interface HeatmapCell {
+  engine: CitationEngine;
+  /** Whether the entity was cited at least once for this query by this engine */
+  cited: boolean;
+  /** Number of times cited across all tests for this (query, engine) pair */
+  citationCount: number;
+  /** 0–100 confidence derived from mention_quality_score average */
+  confidence: number;
+  /** ISO timestamp of most recent positive citation */
+  lastSeenAt: string | null;
+  /** Representative excerpt from the most recent citation */
+  excerpt: string | null;
+}
+
+/**
+ * Corrective action tied to a dark or dim cell.
+ * Generated server-side from gap analysis — never fabricated.
+ */
+export interface HeatmapGapAction {
+  query: string;
+  issue: 'no_citation' | 'weak_citation';
+  cause: string;
+  fix: string;
+  expectedImpact: string;
+}
+
+/**
+ * One row in the heatmap: one query across all four engines.
+ */
+export interface HeatmapRow {
+  query: string;
+  cells: HeatmapCell[];
+  totalCitations: number;
+  /** 0–1 fraction of engines that cited this entity for this query */
+  visibilityProbability: number;
+  /** Non-null for any row where visibilityProbability < 1 */
+  gapAction: HeatmapGapAction | null;
+}
+
+/**
+ * Change detected between the current and previous citation test.
+ */
+export interface HeatmapDelta {
+  query: string;
+  engine: CitationEngine;
+  change: 'gained' | 'lost';
+}
+
+/**
+ * Full Query × Engine × Citation Probability surface for one entity.
+ * This is the ONLY valid representation of citation state.
+ */
+export interface HeatmapSurface {
+  entity: string;
+  url: string;
+  rows: HeatmapRow[];
+  generatedAt: string;
+  /** Changes detected vs the previous citation test for this URL */
+  deltas: HeatmapDelta[];
+  totalCited: number;
+  totalQueries: number;
+}
   | { type: 'SCAN_COMPLETED'; summary: ScanSummary };

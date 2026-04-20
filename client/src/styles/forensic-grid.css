@@ -1,0 +1,422 @@
+/* ── Forensic Grid System ─────────────────────────────────────────────────────
+ *
+ * Spatial constraint system for visualizing machine reasoning without
+ * distortion. Pixel-constrained, tokenized, 3-breakpoint only.
+ *
+ * Breakpoints (controlled, never fluid):
+ *   1440px — primary
+ *   1280px — compressed  (center loses width; side panels stay fixed)
+ *   ≤1024px — analysis mode (stacked; NOT fluid scaling)
+ *
+ * Design rule: if anything expands, overlaps, or decorates beyond this
+ * grid — it is wrong.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── §10: Spacing tokens ──────────────────────────────────────────────────── */
+
+:root {
+  --fl-space-micro: 4px; /* micro spacing       */
+  --fl-space-base: 8px; /* baseline unit       */
+  --fl-space-gap: 16px; /* standard gap        */
+  --fl-space-section: 24px; /* section gap         */
+  --fl-space-panel: 32px; /* panel padding       */
+  --fl-space-large: 48px; /* large separation    */
+
+  /* ── §11: Semantic color tokens ──────────────────────────────────────── */
+  /* No gradients. No branding colors. */
+  --fl-bg: #000000;
+  --fl-panel: #0a0a0a;
+  --fl-border: #1a1a1a;
+  --fl-text-primary: #eaeaea;
+  --fl-text-secondary: #888888;
+  --fl-truth: #00ff9c; /* success / verified entity */
+  --fl-warning: #ffc857;
+  --fl-conflict: #ff4d4d;
+  --fl-node: #4fc3f7;
+
+  /* ── §2/§3: Layout dimension tokens ──────────────────────────────────── */
+  --fl-topbar-h: 64px;
+  --fl-timeline-h: 96px;
+  --fl-panel-left: 336px;
+  --fl-panel-right: 336px;
+  --fl-panel-gap: 16px;
+
+  /* ── §8: Inspector typography ─────────────────────────────────────────── */
+  --fl-type-title-size: 16px;
+  --fl-type-title-lh: 24px;
+  --fl-type-meta-size: 12px;
+  --fl-type-meta-lh: 16px;
+  --fl-type-diff-size: 12px;
+  --fl-type-diff-lh: 18px;
+
+  /* ── §6: Commit graph geometry ────────────────────────────────────────── */
+  --fl-commit-lane: 48px; /* width per branch lane             */
+  --fl-commit-row: 40px; /* vertical spacing between nodes    */
+  --fl-commit-node: 10px; /* default node diameter             */
+  --fl-commit-node-active: 14px; /* active/selected node diameter     */
+  --fl-commit-connector: 2px; /* branch line thickness             */
+  --fl-commit-branch-step: 32px; /* horizontal offset per branch      */
+  --fl-commit-msg-offset: 72px; /* commit message column starts here */
+  --fl-commit-msg-max: 220px; /* max message width before ellipsis */
+
+  /* ── §9: Scrubber geometry ────────────────────────────────────────────── */
+  --fl-scrubber-track: 4px;
+  --fl-scrubber-thumb: 16px;
+  --fl-scrubber-hit: 32px; /* enlarged hit area */
+}
+
+/* ── §2: App shell ────────────────────────────────────────────────────────── */
+/* Auto layout: vertical, no padding, no gap. */
+
+.fl-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--fl-bg);
+  color: var(--fl-text-primary);
+}
+
+/* ── §5: Top bar — 64px fixed ─────────────────────────────────────────────── */
+
+.fl-topbar {
+  flex-shrink: 0;
+  height: var(--fl-topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: var(--fl-space-gap);
+  background-color: var(--fl-panel);
+  border-bottom: 1px solid var(--fl-border);
+}
+
+.fl-topbar__controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--fl-space-gap);
+}
+
+/* ── §3: Main grid — fill ─────────────────────────────────────────────────── */
+/* Auto layout: horizontal, gap 16px, padding 16px L/R only. */
+
+.fl-main-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: var(--fl-panel-gap);
+  padding: 0 var(--fl-panel-gap);
+  overflow: hidden;
+  min-height: 0; /* required for scrollable children inside flex */
+}
+
+/* ── §6: Left panel — commit graph, 336px fixed ───────────────────────────── */
+
+.fl-panel--commit {
+  flex-shrink: 0;
+  width: var(--fl-panel-left);
+  min-width: 280px;
+  max-width: var(--fl-panel-left);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--fl-space-gap);
+  background-color: var(--fl-panel);
+  border-right: 1px solid var(--fl-border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--fl-border) transparent;
+}
+
+/* ── §7: Center panel — graph canvas, fill ────────────────────────────────── */
+/* Pure black background. No padding. Overflow hidden (WebGL manages bounds). */
+
+.fl-panel--graph {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background-color: var(--fl-bg);
+  position: relative;
+}
+
+/* §7 graph overlay positions */
+.fl-graph__overlay-tl {
+  position: absolute;
+  top: var(--fl-space-gap);
+  left: var(--fl-space-gap);
+  font-size: var(--fl-type-meta-size);
+  line-height: var(--fl-type-meta-lh);
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+  pointer-events: none;
+}
+
+.fl-graph__overlay-tr {
+  position: absolute;
+  top: var(--fl-space-gap);
+  right: var(--fl-space-gap);
+  display: flex;
+  gap: var(--fl-space-base);
+  pointer-events: all;
+}
+
+.fl-graph__overlay-bl {
+  position: absolute;
+  bottom: var(--fl-space-gap);
+  left: var(--fl-space-gap);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+  pointer-events: none;
+}
+
+/* ── §8: Right panel — inspector, 336px fixed ─────────────────────────────── */
+
+.fl-panel--inspector {
+  flex-shrink: 0;
+  width: var(--fl-panel-right);
+  min-width: 280px;
+  max-width: var(--fl-panel-right);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--fl-space-gap);
+  background-color: var(--fl-panel);
+  border-left: 1px solid var(--fl-border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--fl-border) transparent;
+}
+
+/* Generic panel base (used without a variant) */
+.fl-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── §9: Timeline scrubber — 96px fixed ────────────────────────────────────── */
+
+.fl-timeline {
+  flex-shrink: 0;
+  height: var(--fl-timeline-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--fl-space-base);
+  padding: var(--fl-space-gap) var(--fl-space-panel);
+  background-color: var(--fl-panel);
+  border-top: 1px solid var(--fl-border);
+}
+
+.fl-timeline__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--fl-space-gap);
+}
+
+.fl-timeline__track-wrap {
+  flex: 1;
+  position: relative;
+  height: var(--fl-scrubber-hit);
+  display: flex;
+  align-items: center;
+}
+
+.fl-timeline__track {
+  width: 100%;
+  height: var(--fl-scrubber-track);
+  background-color: var(--fl-border);
+  border-radius: 2px;
+  position: relative;
+}
+
+.fl-timeline__thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--fl-scrubber-thumb);
+  height: var(--fl-scrubber-thumb);
+  border-radius: 50%;
+  background-color: var(--fl-node);
+  cursor: grab;
+  transition: background-color 80ms ease;
+}
+
+.fl-timeline__thumb:active {
+  cursor: grabbing;
+}
+
+.fl-timeline__meta {
+  display: flex;
+  gap: var(--fl-space-gap);
+  font-size: var(--fl-type-meta-size);
+  line-height: var(--fl-type-meta-lh);
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+}
+
+/* ── §6: Commit node components ───────────────────────────────────────────── */
+
+.fl-commit-row {
+  display: flex;
+  align-items: center;
+  height: var(--fl-commit-row);
+  min-width: 280px;
+  max-width: 336px;
+  position: relative;
+  padding-left: 24px;
+  /* §13: hover — no layout shift, only color/opacity */
+  transition: none;
+}
+
+.fl-commit-dot {
+  flex-shrink: 0;
+  width: var(--fl-commit-node);
+  height: var(--fl-commit-node);
+  border-radius: 50%;
+  background-color: var(--fl-node);
+  /* §13: micro timing (80ms) for size change */
+  transition:
+    width 80ms ease,
+    height 80ms ease,
+    box-shadow 80ms ease;
+}
+
+/* §13: active node — grows, bolds label, adds glow ≤8px blur */
+.fl-commit-row--active .fl-commit-dot {
+  width: var(--fl-commit-node-active);
+  height: var(--fl-commit-node-active);
+  box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
+}
+
+.fl-commit-row--active .fl-commit-label {
+  font-weight: 700;
+  color: var(--fl-text-primary);
+}
+
+.fl-commit-label {
+  font-size: var(--fl-type-meta-size);
+  line-height: var(--fl-type-meta-lh);
+  color: var(--fl-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: var(--fl-commit-msg-max);
+  /* offset: message column starts at 72px from left edge */
+  margin-left: calc(var(--fl-commit-msg-offset) - 24px);
+  /* §13: hover — color only, no layout shift */
+  transition: color 80ms ease;
+}
+
+.fl-commit-row:hover .fl-commit-label {
+  color: var(--fl-text-primary);
+}
+
+/* Vertical connector between nodes */
+.fl-commit-connector {
+  position: absolute;
+  left: calc(24px + (var(--fl-commit-node) / 2) - (var(--fl-commit-connector) / 2));
+  top: calc(var(--fl-commit-row) / 2);
+  width: var(--fl-commit-connector);
+  background-color: var(--fl-border);
+  /* height must be set inline to span the correct number of rows */
+}
+
+/* ── §8: Inspector sections ───────────────────────────────────────────────── */
+
+.fl-inspector__header {
+  flex-shrink: 0;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--fl-space-micro);
+}
+
+.fl-inspector__title {
+  font-size: var(--fl-type-title-size);
+  line-height: var(--fl-type-title-lh);
+  color: var(--fl-text-primary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fl-inspector__meta-block {
+  font-size: var(--fl-type-meta-size);
+  line-height: var(--fl-type-meta-lh);
+  color: var(--fl-text-secondary);
+  min-height: 120px;
+}
+
+.fl-inspector__divider {
+  height: 1px;
+  background-color: var(--fl-border);
+  flex-shrink: 0;
+  margin: var(--fl-space-section) 0;
+}
+
+/* Diff block */
+.fl-diff-line {
+  display: flex;
+  gap: var(--fl-space-micro);
+  font-size: var(--fl-type-diff-size);
+  line-height: var(--fl-type-diff-lh);
+  font-family: monospace;
+  margin-bottom: 4px;
+}
+
+.fl-diff-section {
+  margin-bottom: var(--fl-space-section);
+}
+
+.fl-diff-line--add {
+  color: var(--fl-truth);
+}
+.fl-diff-line--del {
+  color: var(--fl-conflict);
+}
+.fl-diff-line--meta {
+  color: var(--fl-text-secondary);
+}
+
+/* ── §14: Breakpoints ─────────────────────────────────────────────────────── */
+
+/* 1440px → primary; no overrides needed */
+
+/* 1280px → compressed: center loses width, side panels stay fixed */
+@media (max-width: 1280px) and (min-width: 1025px) {
+  /* fl-panel--commit and fl-panel--inspector clamp naturally.
+     fl-panel--graph flex: 1 compresses automatically. No additional rules. */
+}
+
+/* ≤1024px → analysis mode: stacked layout.
+   NOT fluid scaling — hard switch to column. */
+@media (max-width: 1024px) {
+  .fl-main-grid {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    gap: 0;
+  }
+
+  .fl-panel--commit,
+  .fl-panel--inspector {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid var(--fl-border);
+    /* Remove fixed height for stacked flow */
+    max-height: 40vh;
+  }
+
+  .fl-panel--graph {
+    min-height: 320px;
+    order: -1; /* graph first in stacked mode */
+  }
+
+  .fl-timeline {
+    padding: var(--fl-space-gap);
+  }
+}

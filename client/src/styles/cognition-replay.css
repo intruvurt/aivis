@@ -1,0 +1,329 @@
+/* ── cognition-replay.css ─────────────────────────────────────────────────────
+ * Styles for the CognitionReplay system:
+ *   CommitGraph · CommitInspector · TimelineControls · CognitionReplay
+ *
+ * All tokens reference --fl-* CSS custom properties from forensic-grid.css.
+ * Rule: no gradients, no decoration, minimal color semantics.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── CommitGraph ──────────────────────────────────────────────────────────── */
+
+.cg-root {
+  display: flex;
+  flex-direction: column;
+}
+
+.cg-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.cg-empty__label {
+  font-size: 12px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+}
+
+/* Branch filter chips */
+.cg-branch-filter {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fl-space-micro);
+  padding: var(--fl-space-base) 0;
+  border-bottom: 1px solid var(--fl-border);
+  margin-bottom: var(--fl-space-base);
+}
+
+.cg-branch-chip {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--fl-text-secondary);
+  background: transparent;
+  border: 1px solid var(--fl-border);
+  padding: 2px 6px;
+  cursor: pointer;
+  line-height: 1.4;
+  /* §13: hover — only color change, no layout shift */
+  transition: color 80ms ease, border-color 80ms ease;
+}
+
+.cg-branch-chip:hover {
+  color: var(--chip-color, var(--fl-node));
+  border-color: var(--chip-color, var(--fl-node));
+}
+
+.cg-branch-chip--on {
+  color: var(--chip-color, var(--fl-node));
+  border-color: var(--chip-color, var(--fl-node));
+}
+
+/* SVG scroll container */
+.cg-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fl-border) transparent;
+  min-height: 0;
+}
+
+.cg-svg {
+  display: block;
+}
+
+/* ── CommitInspector ──────────────────────────────────────────────────────── */
+
+.ci-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.ci-empty-label {
+  font-size: 12px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+}
+
+/* PREVIEW mode indicator — visible when hovering a different commit */
+.ci-preview-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-family: monospace;
+  color: var(--fl-warning);
+  border: 1px solid var(--fl-warning);
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  margin-bottom: var(--fl-space-base);
+}
+
+/* Short commit hash below title */
+.ci-hash {
+  display: block;
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--fl-text-secondary);
+  letter-spacing: 0.05em;
+  margin-top: var(--fl-space-micro);
+}
+
+/* Metadata table */
+.ci-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ci-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--fl-type-meta-size);
+  line-height: var(--fl-type-meta-lh);
+}
+
+.ci-meta-key {
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+  flex-shrink: 0;
+}
+
+.ci-meta-val {
+  color: var(--fl-text-primary);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.ci-meta-val--mono {
+  font-family: monospace;
+}
+
+.ci-meta-val--conf {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+/* Diff section */
+.ci-diff {
+  font-size: var(--fl-type-diff-size);
+  line-height: var(--fl-type-diff-lh);
+}
+
+.ci-diff-empty {
+  font-size: 12px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+  margin: 0;
+}
+
+.ci-diff-heading {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--fl-text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ci-diff-sigil {
+  flex-shrink: 0;
+  margin-right: 6px;
+  font-family: monospace;
+}
+
+.ci-diff-node-id {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ── TimelineControls ─────────────────────────────────────────────────────── */
+
+.tc-empty {
+  font-size: 12px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+}
+
+/* Step buttons */
+.tc-btn {
+  flex-shrink: 0;
+  width: var(--fl-scrubber-hit);
+  height: var(--fl-scrubber-hit);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--fl-border);
+  color: var(--fl-text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  /* §13: micro timing */
+  transition: color 80ms ease, border-color 80ms ease;
+}
+
+.tc-btn:hover:not(:disabled) {
+  color: var(--fl-node);
+  border-color: var(--fl-node);
+}
+
+.tc-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* Progress fill overlay on track */
+.tc-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: var(--fl-scrubber-track);
+  background-color: var(--fl-node);
+  border-radius: 2px;
+  pointer-events: none;
+  /* §13: meso timing for continuous update */
+  transition: width 16ms linear;
+}
+
+/* Range input: transparent overlay covering full hit-area */
+.tc-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: var(--fl-scrubber-hit);
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Meta row separators */
+.tc-sep {
+  color: var(--fl-border);
+  padding: 0 2px;
+}
+
+.tc-meta-mono {
+  font-family: monospace;
+}
+
+.tc-conf {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+/* ── CognitionReplay top bar ──────────────────────────────────────────────── */
+
+.cr-topbar-label {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--fl-text-primary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-right: var(--fl-space-gap);
+}
+
+.cr-topbar-scanid {
+  font-size: 11px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+  margin-right: var(--fl-space-section);
+}
+
+.cr-topbar-scanid-val {
+  color: var(--fl-node);
+}
+
+.cr-topbar-stat {
+  font-size: 11px;
+  color: var(--fl-text-secondary);
+  font-family: monospace;
+}
+
+.cr-topbar-stat--seq {
+  color: var(--fl-node);
+}
+
+/* ── Center graph placeholder ─────────────────────────────────────────────── */
+
+.cr-graph-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fl-bg);
+}
+
+.cr-graph-placeholder__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fl-space-base);
+}
+
+.cr-graph-placeholder__seq {
+  font-size: 32px;
+  font-family: monospace;
+  color: var(--fl-text-secondary);
+  opacity: 0.25;
+  letter-spacing: 0.1em;
+}
+
+.cr-graph-placeholder__label {
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--fl-text-secondary);
+  opacity: 0.4;
+}
+
+.cr-graph-placeholder__label code {
+  color: var(--fl-node);
+  font-size: 11px;
+}

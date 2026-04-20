@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
 @import './styles/aurora-shell.css';
 @import './styles/forensic-grid.css';
+@import './styles/cognition-replay.css';
 
 @tailwind base;
 @tailwind components;

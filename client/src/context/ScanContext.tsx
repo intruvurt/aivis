@@ -22,6 +22,7 @@ import { ScanEngine } from '../services/scanEngine';
 import { API_URL } from '../config';
 import { normalizePublicUrlInput } from '../utils/targetKey';
 import type { CiteEntry, EntityRef, ScanSummary } from '../../../shared/types';
+import { useDebugStore } from '../stores/debugStore';
 
 // ── Context shape ─────────────────────────────────────────────────────────────
 
@@ -96,6 +97,10 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       getEngine().reset(scanId);
       accumulatedRef.current = { cites: [], entities: [], scores: {} };
 
+      // Shadow-projection: tell the debug store which scan is active
+      const debugTap = useDebugStore.getState();
+      debugTap.setScanId(scanId);
+
       dispatch({ type: 'START_SCAN', url });
 
       const source = new EventSource(
@@ -103,24 +108,31 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       );
       esRef.current = source;
 
+      let sseSeq = 0;
+
       source.onmessage = (evt) => {
         try {
           const raw = JSON.parse(evt.data) as { type: string; [key: string]: unknown };
           const engine = getEngine();
           const sid = scanIdRef.current;
+          const tap = useDebugStore.getState();
+          const currentSeq = ++sseSeq;
 
           switch (raw.type) {
             // ── Stage advances ──────────────────────────────────────────────────
             case 'SCAN_STARTED':
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'FETCHING' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
 
             case 'HTML_FETCHED':
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'PARSING_DOM' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
 
             case 'DOM_PARSED':
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'EXTRACTING_ENTITIES' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
 
             // ── Cite accumulation ───────────────────────────────────────────────
@@ -129,6 +141,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               accumulatedRef.current.cites.push(cite); // sync — always accurate
               engine.ingest(sid, { type: 'CITE_FOUND', cite });
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'EXTRACTING_ENTITIES' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
             }
 
@@ -138,11 +151,13 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               accumulatedRef.current.entities.push(entity); // sync — always accurate
               engine.ingest(sid, { type: 'ENTITY_FOUND', entity });
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'RESOLVING_CITATIONS' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
             }
 
             case 'INTERPRETATION':
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'RESOLVING_CITATIONS' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
 
             // ── Score accumulation ──────────────────────────────────────────────
@@ -152,6 +167,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               accumulatedRef.current.scores[layer] = value; // sync — always accurate
               engine.ingest(sid, { type: 'SCORE_UPDATE', layer, value });
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'SCORING' });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               break;
             }
 
@@ -188,6 +204,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               // Commit FINALIZING immediately so the terminal animation plays
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'FINALIZING' });
               engine.flush(sid);
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
 
               // After brief FINALIZING animation, flip to RESULT phase
               setTimeout(() => {
@@ -205,6 +222,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
                 type: 'SCAN_ERROR',
                 message: (raw.message as string) || 'Scan failed.',
               });
+              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               engine.flush(sid);
               source.close();
               esRef.current = null;

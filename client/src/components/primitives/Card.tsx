@@ -1,6 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { fieldBloomVariants } from "../../lib/scanMotion";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { fieldBloomVariants } from '../../lib/scanMotion';
 
 // Card is the base containment field.
 // glow is semantic emphasis, not decoration.
@@ -9,40 +9,40 @@ import { fieldBloomVariants } from "../../lib/scanMotion";
 type CardProps = {
   children: React.ReactNode;
   className?: string;
-  glow?: "cyan" | "silver" | "none";
+  glow?: 'cyan' | 'silver' | 'none';
   elevated?: boolean;
   /** Trigger field-bloom enter animation on mount */
   bloom?: boolean;
 };
 
 const glowMap = {
-  cyan:   "shadow-cyan-glow",
-  silver: "shadow-silver-glow",
-  none:   "",
+  cyan: 'shadow-cyan-glow',
+  silver: 'shadow-silver-glow',
+  none: '',
 } as const;
 
 export function Card({
   children,
-  className = "",
-  glow = "none",
+  className = '',
+  glow = 'none',
   elevated = false,
   bloom = false,
 }: CardProps) {
   return (
     <motion.div
       className={[
-        "relative rounded-2xl border border-border",
-        "bg-surface-panel text-text",
-        elevated ? "shadow-cyber-raised" : "shadow-inner-metal",
+        'relative rounded-2xl border border-border',
+        'bg-surface-panel text-text',
+        elevated ? 'shadow-cyber-raised' : 'shadow-inner-metal',
         glowMap[glow],
-        "overflow-hidden",
+        'overflow-hidden',
         className,
       ]
         .filter(Boolean)
-        .join(" ")}
+        .join(' ')}
       variants={fieldBloomVariants}
-      initial={bloom ? "dormant" : false}
-      animate={bloom ? "blooming" : undefined}
+      initial={bloom ? 'dormant' : false}
+      animate={bloom ? 'blooming' : undefined}
     >
       {children}
     </motion.div>

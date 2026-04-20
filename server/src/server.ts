@@ -360,28 +360,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     }
   };
 
-  // Build allowed origins list
-  const rawFrontendUrl =
-    process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || "";
-  const allowedOrigins = [
-    "https://aivis.biz",
-    "https://www.aivis.biz",
-    "http://localhost:5173", // dev
-    "http://localhost:3000", // dev
-    ...(rawFrontendUrl
-      ? rawFrontendUrl
-        .split(",")
-        .map((o) => o.trim())
-        .filter(Boolean)
-      : []),
-  ]
-    .map(normalizeOriginHelper)
-    .filter(Boolean);
+  // Use the same NORMALIZED_ALLOWED_ORIGINS list built at startup
+  // (includes FRONTEND_URL, EXTRA_CORS_ORIGINS, and hardcoded origins).
 
   // Allow all responses to include CORS headers if origin is valid
   if (origin) {
     const normalizedOrigin = normalizeOriginHelper(origin);
-    if (allowedOrigins.includes(normalizedOrigin)) {
+    if (NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader("Vary", "Origin");
@@ -1164,6 +1149,11 @@ const normalizeOrigin = (origin: string): string => {
   }
 };
 
+// EXTRA_CORS_ORIGINS: comma-separated list of additional allowed origins.
+// Use this to add Cloudflare Pages preview URLs (e.g. https://aivis-d24.pages.dev)
+// without changing FRONTEND_URL, which is used for OAuth redirects.
+const EXTRA_CORS_ORIGINS = process.env.EXTRA_CORS_ORIGINS || "";
+
 const ALLOWED_ORIGINS = [
   ...new Set([
     normalizeOrigin("https://aivis.biz"),
@@ -1172,6 +1162,11 @@ const ALLOWED_ORIGINS = [
     normalizeOrigin("http://localhost:3000"),
     ...(FRONTEND_URL
       ? FRONTEND_URL.split(",")
+        .map((o: string) => normalizeOrigin(o.trim()))
+        .filter(Boolean)
+      : []),
+    ...(EXTRA_CORS_ORIGINS
+      ? EXTRA_CORS_ORIGINS.split(",")
         .map((o: string) => normalizeOrigin(o.trim()))
         .filter(Boolean)
       : []),

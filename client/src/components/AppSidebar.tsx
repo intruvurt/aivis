@@ -37,6 +37,7 @@ import { useAuthStore } from '../stores/authStore';
 import { getDisplayAvatarUrl, getDisplayName, getIdentityInitials } from '../utils/userIdentity';
 import { meetsMinimumTier, type CanonicalTier } from '@shared/types';
 import { APP_NAV_GROUPS, formatTierGateLabel, type NavItem } from '../config/routeIntelligence';
+import { CloudflareBadge } from './CloudflareBadge';
 
 const LOGO_URL = '/aivis-logo.png';
 
@@ -203,6 +204,11 @@ export default function AppSidebar({ isOpen = false, onClose }: AppSidebarProps)
             }}
           />
         </a>
+      </div>
+
+      {/* Cloudflare badge */}
+      <div className="px-3 pb-1 shrink-0">
+        <CloudflareBadge variant="sidebar" />
       </div>
 
       {/* User pill */}

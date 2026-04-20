@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Lock, Shield, ExternalLink, Mail, Globe, Zap } from 'lucide-react';
+import { CloudflareBadge } from './CloudflareBadge';
 
 const linkGroups = [
   {
@@ -140,6 +141,7 @@ export default function Footer() {
               <Zap className="h-3 w-3 text-amber-400/50" />
               <span>GDPR compliant</span>
             </span>
+            <CloudflareBadge variant="footer" />
           </div>
 
           <p className="text-[11px] text-white/25">

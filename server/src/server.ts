@@ -15548,19 +15548,28 @@ app.use((req, res) => {
     });
   }
 
+  const userAgent = String(req.get("user-agent") || "").toLowerCase();
+  const servePrerenderRoute =
+    String(req.query.prerender || "") === "1" ||
+    /bot|crawler|spider|slurp|bingpreview|facebookexternalhit|linkedinbot|whatsapp|discordbot|slackbot|telegrambot|twitterbot|google-read-aloud|gptbot|chatgpt-user|claudebot|ccbot|perplexity/i.test(
+      userAgent,
+    );
+
   if (existsSync(clientDist)) {
-    const normalizedPath = req.path.replace(/^\/+/, "").replace(/\/+$/, "");
-    if (normalizedPath) {
-      const routeIndexPath = path.resolve(
-        clientDist,
-        normalizedPath,
-        "index.html",
-      );
-      if (
-        routeIndexPath.startsWith(path.resolve(clientDist)) &&
-        existsSync(routeIndexPath)
-      ) {
-        return sendHtmlWithNonce(res, routeIndexPath);
+    if (servePrerenderRoute) {
+      const normalizedPath = req.path.replace(/^\/+/, "").replace(/\/+$/, "");
+      if (normalizedPath) {
+        const routeIndexPath = path.resolve(
+          clientDist,
+          normalizedPath,
+          "index.html",
+        );
+        if (
+          routeIndexPath.startsWith(path.resolve(clientDist)) &&
+          existsSync(routeIndexPath)
+        ) {
+          return sendHtmlWithNonce(res, routeIndexPath);
+        }
       }
     }
   }

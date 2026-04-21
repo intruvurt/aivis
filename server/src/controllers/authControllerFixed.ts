@@ -385,7 +385,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Get user
-    const user = await getUserByEmail(email);
+    let user = await getUserByEmail(email);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -421,6 +421,20 @@ export const login = async (req: Request, res: Response) => {
         error: 'Invalid email or password',
         statusCode: 401,
       });
+    }
+
+    // Reconcile legacy accounts that were verified before is_verified became canonical.
+    const legacyEmailVerified = Boolean((user as any).email_verified);
+    const missingVerificationToken = !user.verification_token && !user.verification_token_expires;
+    if (!user.is_verified && (legacyEmailVerified || missingVerificationToken)) {
+      const reconciledUser = await updateUserById(user.id, {
+        is_verified: true,
+        verification_token: null,
+        verification_token_expires: null,
+      });
+      if (reconciledUser) {
+        user = reconciledUser;
+      }
     }
 
     // CRITICAL: Check if email is verified

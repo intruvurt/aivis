@@ -247,15 +247,18 @@ export default function AuthPage() {
 
     try {
       const captchaToken = await getCaptchaToken('resend_verification');
-      const res = await fetch(`${apiBase}/api/auth/resend-verification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, captchaToken }),
-      });
+      const { response: res, body: data } = await fetchJsonWithTimeout(
+        `${apiBase}/api/auth/resend-verification`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, captchaToken }),
+        }
+      );
 
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || 'Failed to resend verification email');
+      if (!res.ok)
+        throw new Error(data?.error || data?.details || 'Failed to resend verification email');
 
       setSuccess('Verification email resent! Please check your inbox (and spam folder).');
       setResendCooldown(60);

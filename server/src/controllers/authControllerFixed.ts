@@ -40,6 +40,18 @@ import { profileUpdateSchema, sanitizeHtmlServer } from '../middleware/securityM
 
 const MAX_PROFILE_IMAGE_BYTES = 400 * 1024;
 
+function isRecoverableCaptchaFailure(message: unknown): boolean {
+  const text = String(message || '').toLowerCase();
+  return (
+    text.includes('missing captcha token') ||
+    text.includes('timeout-or-duplicate') ||
+    text.includes('invalid-input-response') ||
+    text.includes('captcha-verification-failed') ||
+    text.includes('fetch failed') ||
+    text.includes('network')
+  );
+}
+
 function normalizeUploadedImageDataUrl(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
@@ -198,13 +210,17 @@ export const register = async (req: Request, res: Response) => {
     if (isRecaptchaEnforced()) {
       const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
       if (!captcha.ok) {
-        return res.status(400).json({
-          success: false,
-          error: 'Captcha verification failed',
-          statusCode: 400,
-          code: 'CAPTCHA_FAILED',
-          details: captcha.message,
-        });
+        if (isRecoverableCaptchaFailure(captcha.message)) {
+          console.warn('[Auth] Recoverable captcha failure on login - allowing request:', captcha.message);
+        } else {
+          return res.status(400).json({
+            success: false,
+            error: 'Captcha verification failed',
+            statusCode: 400,
+            code: 'CAPTCHA_FAILED',
+            details: captcha.message,
+          });
+        }
       }
     }
 
@@ -374,13 +390,17 @@ export const login = async (req: Request, res: Response) => {
     if (isRecaptchaEnforced()) {
       const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
       if (!captcha.ok) {
-        return res.status(400).json({
-          success: false,
-          error: 'Captcha verification failed',
-          statusCode: 400,
-          code: 'CAPTCHA_FAILED',
-          details: captcha.message,
-        });
+        if (isRecoverableCaptchaFailure(captcha.message)) {
+          console.warn('[Auth] Recoverable captcha failure on resend verification - allowing request:', captcha.message);
+        } else {
+          return res.status(400).json({
+            success: false,
+            error: 'Captcha verification failed',
+            statusCode: 400,
+            code: 'CAPTCHA_FAILED',
+            details: captcha.message,
+          });
+        }
       }
     }
 

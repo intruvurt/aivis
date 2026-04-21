@@ -510,8 +510,8 @@ export default function DisclosuresPage() {
             14. Score Fix and Automated Remediation
           </h2>
           <p>
-            Score Fix ($299 one-time) includes automated code-level remediation that can generate
-            pull requests with evidence-linked fixes.
+            Score Fix ($299/month subscription, 250 credits per billing cycle) includes automated
+            code-level remediation that can generate pull requests with evidence-linked fixes.
           </p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li>
@@ -523,7 +523,10 @@ export default function DisclosuresPage() {
               metadata additions). It does not rewrite content, redesign pages, or refactor
               application logic.
             </li>
-            <li>Score Fix credits are non-refundable once any credits have been consumed.</li>
+            <li>
+              Score Fix credits are non-refundable once any credits have been consumed in the
+              current billing cycle. Unused monthly credits do not carry over.
+            </li>
             <li>
               Generated PRs require GitHub App authorization. AiVIS.biz accesses only the
               repositories you explicitly authorize.

@@ -496,11 +496,11 @@ const categories: FAQCategory[] = [
         ],
       },
       {
-        question: 'What is Score Fix and why is it a one-time purchase rather than a subscription?',
+        question: 'What is Score Fix and how does the credit model work?',
         answer: [
-          'Score Fix (AutoFix PR) is a 250-credit one-time purchase at $299. Rather than a recurring audit subscription, it provides a structured remediation execution service: AiVIS.biz generates a pull request (or equivalent deployment-ready code) for all critical and high-priority findings across your site.',
-          'It is one-time rather than subscription because remediation of structural issues (schema, rendering, robots.txt, CDN configuration) is a project with an end state. Once the gating blocks and primary schema gaps are resolved, ongoing need shifts to monitoring score stability — which is the role of a subscription tier.',
-          'Score Fix credits can be allocated across multiple pages. A typical allocation for a 20-page site might use 5 credits per critical page, leaving remaining credits for content pages. The generated implementations are reviewed before deployment and include verification audit runs.',
+          'Score Fix (AutoFix PR) is a $299/month subscription that includes 250 remediation credits per billing cycle. Each automated GitHub PR costs 10–25 credits depending on fix complexity — simple schema patches use fewer credits while multi-file content rewrites with FAQ blocks use more. 250 monthly credits typically cover 10–25 full remediation PRs.',
+          'Score Fix includes everything in Signal plus automated GitHub PR generation via MCP, batch remediation across multiple URLs, and evidence-linked PR commits. AiVIS.biz generates a pull request (or equivalent deployment-ready code) for critical and high-priority findings across your site.',
+          'Credits reset each billing cycle and are not carried over. A typical allocation for a 20-page site might use 5–15 credits per critical page. The generated implementations are reviewed before deployment and include verification audit runs.',
         ],
       },
       {

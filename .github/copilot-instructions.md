@@ -236,4 +236,4 @@ do not weaken server authority model
 do not add UI-only logic that contradicts backend truth
 14. FINAL PRINCIPLE
 
-If an output does not improve the probability of citation or explain its absence, it does not belong in the system.
+If an output does not improve the probability of citation or explain its absence, it does not belong in the core analysis pipeline.

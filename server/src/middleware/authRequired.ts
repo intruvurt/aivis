@@ -101,3 +101,19 @@ export async function authRequired(req: Request, res: Response, next: NextFuncti
     });
   }
 }
+
+/**
+ * Tier gate — ScoreFix only.
+ * Must be placed AFTER authRequired in the middleware chain.
+ * Apply only to /api/scorefix/run, /api/scorefix/ledger-sync, /api/scorefix/pr-status.
+ */
+export function requireScoreFixTier(req: Request, res: Response, next: NextFunction): void {
+  if ((req as any).user?.tier !== 'scorefix') {
+    res.status(403).json({
+      error: 'Score Fix tier required. Subscribe at /pricing#scorefix to unlock continuous evidence repair.',
+      code: 'SCOREFIX_TIER_REQUIRED',
+    });
+    return;
+  }
+  next();
+}

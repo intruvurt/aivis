@@ -122,9 +122,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     refreshUser: async () => {
         try {
+            const currentToken = get().token;
+            const headers: Record<string, string> = { "Content-Type": "application/json" };
+            if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
+
             const response = await fetch(`${API_URL}/api/user/refresh`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers,
                 credentials: "include",
             });
 
@@ -153,7 +157,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     hydrate: () => {
         clearLegacyAuthStorage();
-        set({ isHydrated: false, user: null, token: null, isAuthenticated: false });
+        const savedToken = get().token;
+        set({ isHydrated: false, user: null, token: savedToken, isAuthenticated: false });
         void get().refreshUser();
     },
 

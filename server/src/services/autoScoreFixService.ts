@@ -31,6 +31,26 @@ export const AUTO_SCORE_FIX_REFUND_PERCENT = 0.80;
 export const AUTO_SCORE_FIX_FEE_PERCENT = 0.20;
 
 /**
+ * Ledger Watch Mode — ScoreFix tier always-on configuration.
+ *
+ * The background worker uses these values when operating in continuous
+ * evidence repair mode for Score Fix subscribers.
+ *
+ * continuousMonitoring — enables the always-on repair loop
+ * intervalHours        — how often to evaluate ledger drift (default: 6h)
+ * autoFixThreshold     — minimum visibility score below which a repair PR
+ *                        is auto-queued without manual trigger (0–100)
+ * maxPRsPerWeek        — hard cap on auto-generated PRs per user per week;
+ *                        prevents runaway spend and merge noise
+ */
+export const LEDGER_WATCH_CONFIG = {
+  continuousMonitoring: true,
+  intervalHours: 6,
+  autoFixThreshold: 70,
+  maxPRsPerWeek: 5,
+} as const;
+
+/**
  * AutoFix execution mode — must be explicitly escalated to production_pr.
  *
  * dry_run      — generate fix plan + diff preview, no VCS write. Default.
@@ -1385,6 +1405,19 @@ export function startAutoScoreFixPostMergeLoop(
         const scoreBefore = inferScoreBefore(row);
         const scoreDelta = Math.round((scoreAfter - scoreBefore) * 100) / 100;
 
+        // ── Trust moat: rollback PRs that caused a score regression ──────────
+        // If the post-merge rescan shows the visibility score is worse than
+        // before the PR was merged, flag the job as auto-rolled-back in the
+        // ledger. The caller (ScoreFix routes) surfaces this to the user
+        // and the webhook can trigger a revert PR if desired.
+        const didRegress = scoreAfter < scoreBefore;
+        if (didRegress) {
+          console.warn(
+            `[AutoScoreFix] Score regression detected on job ${jobId}: ` +
+            `${scoreBefore} → ${scoreAfter} (Δ${scoreDelta}). Flagging for rollback.`
+          );
+        }
+
         await pool.query(
           `UPDATE auto_score_fix_jobs
            SET rescan_status = 'completed',
@@ -1393,9 +1426,10 @@ export function startAutoScoreFixPostMergeLoop(
                score_before = COALESCE(score_before, $3),
                score_after = $4,
                score_delta = $5,
+               auto_rolled_back = $6,
                updated_at = NOW()
            WHERE id = $1`,
-          [jobId, auditId, scoreBefore, scoreAfter, scoreDelta]
+          [jobId, auditId, scoreBefore, scoreAfter, scoreDelta, didRegress]
         );
 
         await hooks?.onCompleted?.({

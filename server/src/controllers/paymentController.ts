@@ -1446,10 +1446,15 @@ export const getPricingInfo = async (req: Request, res: Response) => {
 
       if (tier === 'scorefix') {
         features.push('Everything in Signal, plus:');
-        features.push('Automated GitHub PR remediation via MCP (600-1008 code lines)');
-        features.push('Thorough evidence audit mode');
-        features.push('Actual Fix Plan (evidence-linked)');
-        features.push('Issue-level validation checklist');
+        features.push('Continuous Evidence Repair System — always-on ledger monitoring');
+        features.push('Auto-detection of citation decay, entity graph drift, schema @id breaks');
+        features.push('6-hour watch-mode loop with configurable auto-fix threshold');
+        features.push('Automated GitHub PR remediation via MCP (evidence-linked)');
+        features.push('PR regression rollback — auto-reverts PRs that reduce visibility score');
+        features.push('Evidence delta tracking across repair cycles');
+        features.push('Weekly Visibility Repair Cycle report');
+        features.push('Up to 5 auto-generated PRs/week');
+        features.push('250 monthly repair credits (reset each billing cycle)');
       }
 
       return features;

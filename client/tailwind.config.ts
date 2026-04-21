@@ -34,6 +34,14 @@ export default {
         "score-moderate": "#F59E0B",
         "score-weak": "#EF4444",
 
+        // ── Charcoal surface system ───────────────────────────────────────
+        // Used throughout the app for backgrounds, cards, nav, dropdowns.
+        // Hierarchy (light → dark): charcoal-solid > charcoal-light > charcoal > charcoal-deep
+        "charcoal-deep": "#0a0a0d", // dropdown panels, deepest background
+        "charcoal": "#111116", // card/surface base
+        "charcoal-light": "#1a1a1f", // nav bar, elevated surfaces, hover states
+        "charcoal-solid": "#27272c", // most elevated (headers, highlighted rows)
+
         // ── Forensic Layout tokens (§11) ──────────────────────────────────
         // Strict semantic palette; no gradients, no branding colors.
         // Mirrors the --fl-* CSS custom properties in forensic-grid.css.

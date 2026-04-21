@@ -14,7 +14,10 @@ const SIGNAL_FEATURES = [
   'Citation ledger: every probe result stored as an immutable evidence record',
   'Competitor tracking: query-level competitive displacement detection',
   'Brand mention scanning across 19 public sources',
-  '110 AI visibility scans per month',
+  '200 AI visibility scans per month',
+  '10 competitors tracked · 100 pages/scan',
+  'API access, webhooks, team workspaces (up to 10 seats)',
+  'White-label reports and scheduled rescans',
 ];
 
 export default function FreeTrialModal({ onClose }: Props) {

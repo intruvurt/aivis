@@ -111,7 +111,7 @@ export const STRIPE_PRICING = {
     },
   },
 
-  // SCOREFIX — $299/month managed remediation subscription
+  // SCOREFIX — $299/month continuous evidence repair subscription
   scorefix: {
     name: PRICING.scorefix.name,
     lookupKey: 'scorefix_monthly',
@@ -130,9 +130,14 @@ export const STRIPE_PRICING = {
       api_access: true,
       white_label: TIER_LIMITS.scorefix.hasWhiteLabel,
       scorefix_mode: true,
+      continuous_ledger_repair: true,
+      ledger_watch_mode: true,
+      evidence_delta_tracking: true,
       auto_pr: true,
       batch_remediation: true,
       evidence_linked_prs: true,
+      repair_interval_hours: 6,
+      max_prs_per_week: 5,
     },
   },
 };

@@ -61,7 +61,7 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
   alignment: 'Alignment (Core)',
   signal: 'Signal (Pro)',
   agency: 'Agency (VaaS)',
-  scorefix: 'Score Fix [AutoFix PR]',
+  scorefix: 'Score Fix',
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
@@ -70,7 +70,7 @@ const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
   alignment: 'structured optimization system — turn extraction failures into evidence-backed fixes',
   signal: 'verified AI answer pipeline — triple-check consensus across 3 models',
   agency: 'multi-client visibility operations platform — bulk scanning, org branding, white-label reports',
-  scorefix: 'evidence-based fix pack — automated PRs that ship fixes, not guesses',
+  scorefix: 'continuous evidence repair system — keeps AI citation integrity stable through automated ledger monitoring, drift detection, and GitHub PR remediation',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
@@ -79,7 +79,7 @@ const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {
   alignment: 'solo builders • early founders • no-code creators • production ready audits',
   signal: 'agencies • studios • internal teams • 14-day free trial available',
   agency: 'digital agencies • VaaS operators • consultancies managing multi-client AI visibility',
-  scorefix: 'teams needing automated remediation • CI/CD integration • auto-PR fixes',
+  scorefix: 'teams that cannot afford citation decay • CI/CD integration • always-on ledger repair',
 };
 
 const TIER_HIERARCHY: Readonly<Record<CanonicalTier | LegacyTier, number>> = {
@@ -189,6 +189,12 @@ export interface TierLimits {
   hasAutoFixPR: boolean;
   hasBatchRemediation: boolean;
   hasEvidenceLinkedPRs: boolean;
+  /** ScoreFix-exclusive: continuous background ledger scanning + drift detection */
+  hasContinuousLedgerRepair: boolean;
+  /** ScoreFix-exclusive: 6-hour watch-mode loop with auto-fix threshold */
+  hasLedgerWatchMode: boolean;
+  /** ScoreFix-exclusive: delta tracking across repair cycles */
+  hasEvidenceDeltaTracking: boolean;
   hasTeamWorkspaces: boolean;
   maxScheduledRescans: number;
   allowedRescanFrequencies: readonly string[];
@@ -245,12 +251,12 @@ export const PRICING = {
     limits: { scans: 500, competitors: 50, citations: 1000 },
   },
   scorefix: {
-    name: 'ScoreFix AutoFix PR',
+    name: 'Score Fix',
     billing: { monthly: 299, yearly: 2868, yearlyDiscount: 0.2 },
     credits: 250,
     /** Output range (code lines) varies by issue complexity — internal only */
     output: { low: 1000, medium: 700, high: 400 },
-    limits: { scans: 15, competitors: 5, citations: 100 },
+    limits: { scans: 250, competitors: 10, citations: 250 },
   },
 } as const;
 
@@ -268,6 +274,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
     hasAutoFixPR: true, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasContinuousLedgerRepair: false, hasLedgerWatchMode: false, hasEvidenceDeltaTracking: false,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
     maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 0, maxTeamMembers: 0, maxStoredAudits: 10,
@@ -282,6 +289,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: false, hasNicheDiscovery: false, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
     hasAutoFixPR: true, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasContinuousLedgerRepair: false, hasLedgerWatchMode: false, hasEvidenceDeltaTracking: false,
     hasTeamWorkspaces: false,
     maxScheduledRescans: 0, allowedRescanFrequencies: [] as readonly string[],
     maxApiKeys: 0, maxWebhooks: 0, maxReportDeliveries: 2, maxTeamMembers: 0, maxStoredAudits: 25,
@@ -296,6 +304,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: false,
     hasAlertIntegrations: false, hasAutomationWorkflows: false, hasPriorityQueue: false,
     hasAutoFixPR: true, hasBatchRemediation: false, hasEvidenceLinkedPRs: false,
+    hasContinuousLedgerRepair: false, hasLedgerWatchMode: false, hasEvidenceDeltaTracking: false,
     hasTeamWorkspaces: true,
     maxScheduledRescans: 2, allowedRescanFrequencies: ['weekly', 'monthly'] as readonly string[],
     maxApiKeys: 1, maxWebhooks: 2, maxReportDeliveries: 5, maxTeamMembers: 3, maxStoredAudits: 50,
@@ -310,6 +319,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
     hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasContinuousLedgerRepair: false, hasLedgerWatchMode: false, hasEvidenceDeltaTracking: false,
     hasTeamWorkspaces: true,
     maxScheduledRescans: 20, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
     maxApiKeys: 10, maxWebhooks: 20, maxReportDeliveries: 50, maxTeamMembers: 10, maxStoredAudits: 1000,
@@ -324,6 +334,7 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
     hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasContinuousLedgerRepair: false, hasLedgerWatchMode: false, hasEvidenceDeltaTracking: false,
     hasTeamWorkspaces: true,
     maxScheduledRescans: -1, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
     maxApiKeys: 50, maxWebhooks: 100, maxReportDeliveries: -1, maxTeamMembers: 50, maxStoredAudits: -1,
@@ -336,14 +347,15 @@ export const TIER_LIMITS: Readonly<Record<CanonicalTier, TierLimits>> = {
     hasExports: true, hasForceRefresh: true, hasApiAccess: true, hasWhiteLabel: false,
     hasScheduledRescans: true, hasReportHistory: true, hasShareableLink: true,
     hasMentionDigests: true, hasNicheDiscovery: true, hasTripleCheck: true,
-    hasAlertIntegrations: false, hasAutomationWorkflows: true, hasPriorityQueue: true,
+    hasAlertIntegrations: true, hasAutomationWorkflows: true, hasPriorityQueue: true,
     hasAutoFixPR: true, hasBatchRemediation: true, hasEvidenceLinkedPRs: true,
+    hasContinuousLedgerRepair: true, hasLedgerWatchMode: true, hasEvidenceDeltaTracking: true,
     hasTeamWorkspaces: true,
-    maxScheduledRescans: 5, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
-    maxApiKeys: 2, maxWebhooks: 5, maxReportDeliveries: 10, maxTeamMembers: 10, maxStoredAudits: 200,
-    maxApiRequestsPerMonth: 2000,
-    hasAgencyDashboard: false, hasBulkFix: false, hasOrgBranding: false,
-    hasEmbedWidgets: false, hasIndustryBenchmarks: false, hasCustomDomain: false, maxProjects: 0,
+    maxScheduledRescans: -1, allowedRescanFrequencies: ['daily', 'weekly', 'biweekly', 'monthly'] as readonly string[],
+    maxApiKeys: 5, maxWebhooks: 10, maxReportDeliveries: 50, maxTeamMembers: 10, maxStoredAudits: 500,
+    maxApiRequestsPerMonth: 5000,
+    hasAgencyDashboard: false, hasBulkFix: true, hasOrgBranding: false,
+    hasEmbedWidgets: false, hasIndustryBenchmarks: true, hasCustomDomain: false, maxProjects: 10,
   },
 } as const;
 
@@ -2627,6 +2639,7 @@ export type ScanEvent =
   | { type: 'INTERPRETATION'; message: string; cite_ids: string[] }
   | { type: 'SCORE_UPDATED'; layer: 'crawl' | 'semantic' | 'authority'; value: number }
   | { type: 'ERROR'; stage: string; message: string }
+  | { type: 'SCAN_COMPLETED'; summary: ScanSummary };
 
 // ─── Citation Heatmap ─────────────────────────────────────────────────────────
 
@@ -2704,4 +2717,3 @@ export interface HeatmapSurface {
   totalCited: number;
   totalQueries: number;
 }
-  | { type: 'SCAN_COMPLETED'; summary: ScanSummary };

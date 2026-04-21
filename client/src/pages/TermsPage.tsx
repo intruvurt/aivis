@@ -247,9 +247,9 @@ export default function TermsPage() {
               webhooks, and scheduled rescans.
             </li>
             <li>
-              <strong className="text-white">Score Fix ($299 one-time):</strong> 250-credit pack
-              with automated remediation, evidence-linked pull request generation, and batch
-              operations.
+              <strong className="text-white">Score Fix ($299/mo or $2,868/yr):</strong> 250 monthly
+              remediation credits with automated GitHub PR generation, evidence-linked pull request
+              generation, and batch operations. Credits reset each billing cycle.
             </li>
           </ul>
           <p className="mt-2">
@@ -261,8 +261,8 @@ export default function TermsPage() {
           <p className="mt-2">
             <strong className="text-white">Refund policy:</strong> Refund requests are evaluated on
             a case-by-case basis if submitted within 14 calendar days of the initial charge. After
-            this period, all charges are final. Score Fix purchases are non-refundable once any scan
-            credits have been consumed.
+            this period, all charges are final. Score Fix subscription credits are non-refundable
+            once any credits have been consumed in the current billing cycle.
           </p>
           <p className="mt-2">
             Pricing, scan limits, and feature availability are published on the{' '}

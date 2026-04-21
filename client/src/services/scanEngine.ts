@@ -30,7 +30,17 @@ import type React from 'react';
 // ── Event schema (immutable + versioned) ──────────────────────────────────────
 
 export type BusEvent =
-  | { id: string; scanId: string; seq: number; timestamp: number; type: 'STAGE_UPDATE'; stage: ScanStage }
+  | {
+      id: string;
+      scanId: string;
+      seq: number;
+      timestamp: number;
+      type: 'STAGE_UPDATE';
+      stage: ScanStage;
+      progress?: number;
+      data?: Record<string, unknown>;
+      sourceType?: string;
+    }
   | { id: string; scanId: string; seq: number; timestamp: number; type: 'CITE_FOUND'; cite: CiteEntry }
   | { id: string; scanId: string; seq: number; timestamp: number; type: 'ENTITY_FOUND'; entity: EntityRef }
   | { id: string; scanId: string; seq: number; timestamp: number; type: 'SCORE_UPDATE'; layer: keyof LayerScores; value: number }
@@ -122,7 +132,14 @@ class Sequencer {
 function commitToReducer(event: BusEvent, dispatch: React.Dispatch<Action>): void {
   switch (event.type) {
     case 'STAGE_UPDATE':
-      dispatch({ type: 'ADVANCE_STAGE', stage: event.stage });
+      dispatch({
+        type: 'ADVANCE_STAGE',
+        stage: event.stage,
+        progress: event.progress,
+        timestamp: event.timestamp,
+        data: event.data,
+        sourceType: event.sourceType,
+      });
       break;
     case 'CITE_FOUND':
       dispatch({ type: 'ACCUMULATE_CITE', cite: event.cite });

@@ -2636,9 +2636,27 @@ export interface ScanSummary {
   scanned_at: string;
 }
 
+/** Deterministic stage machine for live scan replay */
+export type PipelineScanStage =
+  | 'ingesting'
+  | 'chunking'
+  | 'embedding'
+  | 'entity_resolving'
+  | 'edge_building'
+  | 'scoring'
+  | 'complete'
+  | 'error';
+
 /** Discriminated union of all events emitted over the SSE stream */
 export type ScanEvent =
   | { type: 'SCAN_STARTED'; url: string; ts: number }
+  | {
+      type: 'PIPELINE_STAGE';
+      stage: PipelineScanStage;
+      progress?: number;
+      payload?: Record<string, unknown>;
+      timestamp: number;
+    }
   | { type: 'HTML_FETCHED'; bytes: number }
   | { type: 'DOM_PARSED'; nodes: number }
   | { type: 'CITE_FOUND'; cite: CiteEntry }

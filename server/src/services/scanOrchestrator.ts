@@ -70,6 +70,13 @@ export async function runScan(
     const startMs = Date.now();
 
     emit({ type: 'SCAN_STARTED', url, ts: startMs });
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'ingesting',
+        progress: 0.05,
+        payload: { url },
+        timestamp: Date.now(),
+    });
 
     // ── Stage 1: Fetch HTML ───────────────────────────────────────────────────
     let scrapeResult: Awaited<ReturnType<typeof scrapeWebsite>>;
@@ -83,10 +90,24 @@ export async function runScan(
 
     const htmlBytes = scrapeResult.data.html?.length ?? 0;
     emit({ type: 'HTML_FETCHED', bytes: htmlBytes });
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'ingesting',
+        progress: 1,
+        payload: { bytes: htmlBytes },
+        timestamp: Date.now(),
+    });
 
     // Approximate DOM node count from the raw HTML length (one tag ≈ 80 bytes)
     const estimatedNodes = Math.max(10, Math.round(htmlBytes / 80));
     emit({ type: 'DOM_PARSED', nodes: estimatedNodes });
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'chunking',
+        progress: 0.3,
+        payload: { estimated_nodes: estimatedNodes },
+        timestamp: Date.now(),
+    });
 
     // ── Stage 2: Extract evidence / cites ────────────────────────────────────
     let evidence: ReturnType<typeof extractEvidenceFromScrape>;
@@ -97,6 +118,14 @@ export async function runScan(
         emit({ type: 'ERROR', stage: 'CITE_EXTRACT', message: msg });
         return;
     }
+
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'chunking',
+        progress: 1,
+        payload: { chunks: evidence.length },
+        timestamp: Date.now(),
+    });
 
     // ── Stage 2b: Citation filter ─────────────────────────────────────────────
     // Hash the raw HTML once — this is the immutable upstream anchor for all
@@ -109,6 +138,17 @@ export async function runScan(
     const filterResults = filterCitations(evidence, { htmlHash });
     const accepted = filterResults.filter((r) => r.accepted);
     const rejectedCount = filterResults.length - accepted.length;
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'embedding',
+        progress: 1,
+        payload: {
+            candidate_chunks: filterResults.length,
+            accepted_chunks: accepted.length,
+            rejected_chunks: rejectedCount,
+        },
+        timestamp: Date.now(),
+    });
 
     if (rejectedCount > 0) {
         // Emit a single diagnostic event so operators can see the rejection rate
@@ -142,6 +182,13 @@ export async function runScan(
         };
         entities.push(entity);
         emit({ type: 'ENTITY_EXTRACTED', entity });
+        emit({
+            type: 'PIPELINE_STAGE',
+            stage: 'entity_resolving',
+            progress: entities.length / Math.max(1, seenFamilies.size),
+            payload: { resolved_entities: entities.length },
+            timestamp: Date.now(),
+        });
     }
 
     // ── Stage 4: Interpretation pass ─────────────────────────────────────────
@@ -157,6 +204,16 @@ export async function runScan(
             .map((e) => citeId(e.evidence_key, e.source));
 
         emit({ type: 'INTERPRETATION', message: msg, cite_ids });
+        emit({
+            type: 'PIPELINE_STAGE',
+            stage: 'edge_building',
+            progress: interpretedFamilies.size / Math.max(1, seenFamilies.size),
+            payload: {
+                interpreted_families: interpretedFamilies.size,
+                cite_ids: cite_ids.length,
+            },
+            timestamp: Date.now(),
+        });
     }
 
     // ── Stage 5: Score ────────────────────────────────────────────────────────
@@ -169,6 +226,14 @@ export async function runScan(
         return;
     }
 
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'scoring',
+        progress: 0.7,
+        payload: { categories: scoring.categories.length },
+        timestamp: Date.now(),
+    });
+
     // Build a category → score lookup
     const catMap = new Map<ScoringCategory, number>();
     for (const cat of scoring.categories) {
@@ -178,9 +243,28 @@ export async function runScan(
     emit({ type: 'SCORE_UPDATED', layer: 'crawl', value: avgScore(CRAWL_CATEGORIES, catMap) });
     emit({ type: 'SCORE_UPDATED', layer: 'semantic', value: avgScore(SEMANTIC_CATEGORIES, catMap) });
     emit({ type: 'SCORE_UPDATED', layer: 'authority', value: avgScore(AUTHORITY_CATEGORIES, catMap) });
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'scoring',
+        progress: 1,
+        payload: { overall_score: scoring.overall_score },
+        timestamp: Date.now(),
+    });
 
     // ── Stage 6: Finalise ─────────────────────────────────────────────────────
     const preview = buildPreviewResult(url, evidence, scoring);
+
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'complete',
+        progress: 1,
+        payload: {
+            score: scoring.overall_score,
+            cites: evidence.length,
+            entities: entities.length,
+        },
+        timestamp: Date.now(),
+    });
 
     emit({
         type: 'SCAN_COMPLETED',

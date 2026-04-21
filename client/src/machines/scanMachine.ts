@@ -12,31 +12,39 @@ import type { CiteEntry, EntityRef } from '../../../shared/types';
 // ── Stage ─────────────────────────────────────────────────────────────────────
 
 export type ScanStage =
-  | 'FETCHING'
-  | 'PARSING_DOM'
-  | 'EXTRACTING_ENTITIES'
-  | 'RESOLVING_CITATIONS'
-  | 'SCORING'
-  | 'FINALIZING';
+  | 'ingesting'
+  | 'chunking'
+  | 'embedding'
+  | 'entity_resolving'
+  | 'edge_building'
+  | 'scoring';
 
 export const STAGE_LABEL: Record<ScanStage, string> = {
-  FETCHING:             'checking AI systems for your presence…',
-  PARSING_DOM:          'mapping entity structure…',
-  EXTRACTING_ENTITIES:  'detecting citation signals…',
-  RESOLVING_CITATIONS:  'probing AI answer graphs…',
-  SCORING:              'computing citation probability…',
-  FINALIZING:           'building visibility path…',
+  ingesting: 'ingesting and validating source…',
+  chunking: 'segmenting document into semantic chunks…',
+  embedding: 'embedding chunks and normalizing vectors…',
+  entity_resolving: 'resolving entity matches and aliases…',
+  edge_building: 'building citation graph edges…',
+  scoring: 'computing influence score…',
 };
 
 // Ordered list used to animate the terminal stream
 export const SCAN_STAGE_ORDER: ScanStage[] = [
-  'FETCHING',
-  'PARSING_DOM',
-  'EXTRACTING_ENTITIES',
-  'RESOLVING_CITATIONS',
-  'SCORING',
-  'FINALIZING',
+  'ingesting',
+  'chunking',
+  'embedding',
+  'entity_resolving',
+  'edge_building',
+  'scoring',
 ];
+
+export interface TimelineEvent {
+  stage: ScanStage;
+  timestamp: number;
+  progress?: number;
+  data?: Record<string, unknown>;
+  sourceType?: string;
+}
 
 // ── Result ────────────────────────────────────────────────────────────────────
 
@@ -67,7 +75,16 @@ export interface ScanResult {
 export type AppState =
   | { phase: 'IDLE' }
   | { phase: 'INPUT_FOCUSED' }
-  | { phase: 'SCANNING'; url: string; stage: ScanStage; cites: CiteEntry[]; entities: EntityRef[]; scores: Partial<LayerScores> }
+  | {
+      phase: 'SCANNING';
+      url: string;
+      stage: ScanStage;
+      stageProgress: number;
+      timeline: TimelineEvent[];
+      cites: CiteEntry[];
+      entities: EntityRef[];
+      scores: Partial<LayerScores>;
+    }
   | { phase: 'RESULT'; result: ScanResult }
   | { phase: 'ERROR'; error: string };
 
@@ -77,7 +94,14 @@ export type Action =
   | { type: 'FOCUS_INPUT' }
   | { type: 'BLUR_INPUT' }
   | { type: 'START_SCAN'; url: string }
-  | { type: 'ADVANCE_STAGE'; stage: ScanStage }
+  | {
+      type: 'ADVANCE_STAGE';
+      stage: ScanStage;
+      progress?: number;
+      timestamp?: number;
+      data?: Record<string, unknown>;
+      sourceType?: string;
+    }
   | { type: 'ACCUMULATE_CITE'; cite: CiteEntry }
   | { type: 'ACCUMULATE_ENTITY'; entity: EntityRef }
   | { type: 'UPDATE_SCORE'; layer: keyof LayerScores; value: number }
@@ -101,7 +125,9 @@ export function scanReducer(state: AppState, action: Action): AppState {
       return {
         phase: 'SCANNING',
         url: action.url,
-        stage: 'FETCHING',
+        stage: 'ingesting',
+        stageProgress: 0,
+        timeline: [],
         cites: [],
         entities: [],
         scores: {},
@@ -109,7 +135,21 @@ export function scanReducer(state: AppState, action: Action): AppState {
 
     case 'ADVANCE_STAGE':
       if (state.phase !== 'SCANNING') return state;
-      return { ...state, stage: action.stage };
+      return {
+        ...state,
+        stage: action.stage,
+        stageProgress: action.progress ?? state.stageProgress,
+        timeline: [
+          ...state.timeline,
+          {
+            stage: action.stage,
+            timestamp: action.timestamp ?? Date.now(),
+            progress: action.progress,
+            data: action.data,
+            sourceType: action.sourceType,
+          },
+        ],
+      };
 
     case 'ACCUMULATE_CITE':
       if (state.phase !== 'SCANNING') return state;

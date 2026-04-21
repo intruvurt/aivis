@@ -17,12 +17,49 @@
 import { createContext, useContext, useReducer, useRef, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { scanReducer } from '../machines/scanMachine';
-import type { AppState, Action, ScanResult, LayerScores } from '../machines/scanMachine';
+import type { AppState, Action, ScanResult, LayerScores, ScanStage } from '../machines/scanMachine';
 import { ScanEngine } from '../services/scanEngine';
 import { API_URL } from '../config';
 import { normalizePublicUrlInput } from '../utils/targetKey';
-import type { CiteEntry, EntityRef, ScanSummary } from '../../../shared/types';
+import type {
+  CiteEntry,
+  EntityRef,
+  ScanSummary,
+  PipelineScanStage,
+  ScanEvent,
+} from '../../../shared/types';
 import { useDebugStore } from '../stores/debugStore';
+
+const PIPELINE_STAGE_MAP: Record<PipelineScanStage, ScanStage | null> = {
+  ingesting: 'ingesting',
+  chunking: 'chunking',
+  embedding: 'embedding',
+  entity_resolving: 'entity_resolving',
+  edge_building: 'edge_building',
+  scoring: 'scoring',
+  complete: null,
+  error: null,
+};
+
+function mapLegacyEventToStage(type: string): ScanStage | null {
+  switch (type) {
+    case 'SCAN_STARTED':
+    case 'HTML_FETCHED':
+      return 'ingesting';
+    case 'DOM_PARSED':
+      return 'chunking';
+    case 'CITE_FOUND':
+      return 'embedding';
+    case 'ENTITY_EXTRACTED':
+      return 'entity_resolving';
+    case 'INTERPRETATION':
+      return 'edge_building';
+    case 'SCORE_UPDATED':
+      return 'scoring';
+    default:
+      return null;
+  }
+}
 
 // ── Context shape ─────────────────────────────────────────────────────────────
 
@@ -121,26 +158,53 @@ export function ScanProvider({ children }: { children: ReactNode }) {
 
       source.onmessage = (evt) => {
         try {
-          const raw = JSON.parse(evt.data) as { type: string; [key: string]: unknown };
+          if (esRef.current !== source) return;
+
+          const raw = JSON.parse(evt.data) as ScanEvent & { [key: string]: unknown };
           const engine = getEngine();
           const tap = useDebugStore.getState();
           const currentSeq = ++sseSeq;
 
+          if (raw.type === 'PIPELINE_STAGE') {
+            const mapped = PIPELINE_STAGE_MAP[raw.stage];
+            if (mapped) {
+              engine.ingest(sid, {
+                type: 'STAGE_UPDATE',
+                stage: mapped,
+                progress: raw.progress,
+                data: raw.payload,
+                sourceType: raw.type,
+              });
+              tap.tapEvent(raw, sid, currentSeq);
+              scheduleFlush(sid);
+            }
+            return;
+          }
+
+          const legacyStage = mapLegacyEventToStage(raw.type);
+          if (legacyStage) {
+            const progressByType: Record<string, number> = {
+              SCAN_STARTED: 0.1,
+              HTML_FETCHED: 1,
+              DOM_PARSED: 1,
+              CITE_FOUND: 0.65,
+              ENTITY_EXTRACTED: 0.75,
+              INTERPRETATION: 0.9,
+              SCORE_UPDATED: 1,
+            };
+            engine.ingest(sid, {
+              type: 'STAGE_UPDATE',
+              stage: legacyStage,
+              progress: progressByType[raw.type],
+              sourceType: raw.type,
+            });
+          }
+
           switch (raw.type) {
-            // ── Stage advances ──────────────────────────────────────────────────
             case 'SCAN_STARTED':
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'FETCHING' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
-              break;
-
             case 'HTML_FETCHED':
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'PARSING_DOM' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
-              break;
-
             case 'DOM_PARSED':
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'EXTRACTING_ENTITIES' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               break;
 
             // ── Cite accumulation ───────────────────────────────────────────────
@@ -148,8 +212,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               const cite = raw.cite as CiteEntry;
               accumulatedRef.current.cites.push(cite); // sync — always accurate
               engine.ingest(sid, { type: 'CITE_FOUND', cite });
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'EXTRACTING_ENTITIES' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               break;
             }
 
@@ -158,14 +221,12 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               const entity = raw.entity as EntityRef;
               accumulatedRef.current.entities.push(entity); // sync — always accurate
               engine.ingest(sid, { type: 'ENTITY_FOUND', entity });
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'RESOLVING_CITATIONS' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               break;
             }
 
             case 'INTERPRETATION':
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'RESOLVING_CITATIONS' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               break;
 
             // ── Score accumulation ──────────────────────────────────────────────
@@ -174,8 +235,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               const value = raw.value as number;
               accumulatedRef.current.scores[layer] = value; // sync — always accurate
               engine.ingest(sid, { type: 'SCORE_UPDATE', layer, value });
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'SCORING' });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               break;
             }
 
@@ -209,18 +269,17 @@ export function ScanProvider({ children }: { children: ReactNode }) {
                   authority: acc.scores.authority ?? 50,
                 },
               };
-
-              // Commit FINALIZING immediately so the terminal animation plays
-              engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'FINALIZING' });
+              engine.ingest(sid, {
+                type: 'STAGE_UPDATE',
+                stage: 'scoring',
+                progress: 1,
+                sourceType: raw.type,
+              });
               engine.flush(sid);
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               closeStream();
-
-              // After brief FINALIZING animation, flip to RESULT phase
-              setTimeout(() => {
-                engine.ingest(sid, { type: 'SCAN_COMPLETE', result });
-                engine.flush(sid);
-              }, 400);
+              engine.ingest(sid, { type: 'SCAN_COMPLETE', result });
+              engine.flush(sid);
               return; // skip scheduleFlush below — already flushed
             }
 
@@ -231,7 +290,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
                 type: 'SCAN_ERROR',
                 message: (raw.message as string) || 'Scan failed.',
               });
-              tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              tap.tapEvent(raw, sid, currentSeq);
               engine.flush(sid);
               closeStream();
               return; // skip scheduleFlush below — already flushed

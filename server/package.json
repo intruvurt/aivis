@@ -25,6 +25,7 @@
     "test:debug": "vitest --inspect-brk",
     "verify:features": "tsx tools/verifyFeatureWiring.ts",
     "verify:auto-score-fix": "tsx tools/verifyAutoScoreFixWiring.ts",
+    "test:citation-core-v2": "node --import tsx tools/testCitationCoreV2.ts",
     "worker:bix": "node --import tsx src/workers/bix.worker.ts",
     "worker:citations": "node --import tsx src/workers/citation.worker.ts",
     "worker:fix": "node --import tsx src/workers/fix.worker.ts",

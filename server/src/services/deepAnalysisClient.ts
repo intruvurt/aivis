@@ -260,6 +260,17 @@ export interface RawDocumentProcessResult {
   docId: string;
   edgesCreated: number;
   entitiesUpdated: string[];
+  edges?: Array<{
+    entityId: string;
+    chunkId: string;
+    docId: string;
+    type: 'direct' | 'semantic' | 'paraphrase' | 'ai_summary';
+    similarity: number;
+    confidence: number;
+    sourceAuthority: number;
+    engagementScore: number;
+    timestamp: number;
+  }>;
 }
 
 /**

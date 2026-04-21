@@ -584,4 +584,5 @@ async def process_raw_document(req: RawDocumentEvent):
         "docId": req.docId,
         "edgesCreated": len(edges),
         "entitiesUpdated": sorted(updated_entities),
+        "edges": edges,
     }

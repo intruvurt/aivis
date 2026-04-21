@@ -5,6 +5,8 @@ import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
 import type { Request, Response, NextFunction } from 'express';
 import {
   runMentionScan,
+  enqueueRssIngestionHandler,
+  ingestUrlReplayHandler,
   getMentionHistoryHandler,
   getMentionTimelineHandler,
   getMentionKPIHandler,
@@ -12,6 +14,8 @@ import {
   computeMentionJuiceHandler,
   getMentionJuiceSnapshotHandler,
   getMentionJuiceHistoryHandler,
+  getInfluenceSummaryHandler,
+  getInfluenceEntityHandler,
 } from '../controllers/mentions.controllers.js';
 
 const router = Router();
@@ -35,6 +39,12 @@ const requireAlignmentOrHigher = (req: Request, res: Response, next: NextFunctio
 
 // POST /api/mentions/scan - run a live mention scan
 router.post('/scan', requireAlignmentOrHigher, runMentionScan);
+
+// POST /api/mentions/ingest/rss - push one RSS document into ingestion queue
+router.post('/ingest/rss', requireAlignmentOrHigher, enqueueRssIngestionHandler);
+
+// POST /api/mentions/ingest/url - fetch URL content, enqueue, and return persisted IDs
+router.post('/ingest/url', requireAlignmentOrHigher, ingestUrlReplayHandler);
 
 // GET /api/mentions/history - get stored mentions for current user
 router.get('/history', requireAlignmentOrHigher, getMentionHistoryHandler);
@@ -60,5 +70,11 @@ router.get('/juice/snapshot', requireAlignmentOrHigher, getMentionJuiceSnapshotH
 
 // GET /api/mentions/juice/history?brand=XYZ - score trend history
 router.get('/juice/history', requireAlignmentOrHigher, getMentionJuiceHistoryHandler);
+
+// GET /api/mentions/influence/summary - persisted graph-backed influence leaderboard
+router.get('/influence/summary', requireAlignmentOrHigher, getInfluenceSummaryHandler);
+
+// GET /api/mentions/influence/entity/:entityId - persisted graph topology for one entity
+router.get('/influence/entity/:entityId', requireAlignmentOrHigher, getInfluenceEntityHandler);
 
 export default router;

@@ -11,6 +11,9 @@ import {
   getMentionKPIHistory,
 } from '../services/mentionTracker.js';
 import { buildEntityInfluenceGraph } from '../services/entityInfluenceGraph.js';
+import { ingestRssDocument } from '../node-workers/rssWorker.js';
+import { ingestUrlForReplay } from '../node-workers/urlIngestWorker.js';
+import { getInfluenceSummary, getEntityInfluenceTopology } from '../services/citationGraphQueryService.js';
 import {
   computeMentionJuice,
   saveMentionJuiceSnapshot,
@@ -313,5 +316,112 @@ export async function getMentionJuiceHistoryHandler(req: Request, res: Response)
   } catch (err: any) {
     console.error('[MentionJuiceHistory] Error:', err?.message);
     return res.status(500).json({ error: 'Failed to fetch MentionJuice history' });
+  }
+}
+
+/**
+ * POST /api/mentions/ingest/rss
+ * Push a normalized RSS-style document into the raw-document ingestion queue.
+ */
+export async function enqueueRssIngestionHandler(req: Request, res: Response) {
+  try {
+    const { url, text, html, timestamp } = req.body || {};
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'url is required' });
+    }
+    if ((!text || typeof text !== 'string') && (!html || typeof html !== 'string')) {
+      return res.status(400).json({ error: 'text or html is required' });
+    }
+
+    const jobId = await ingestRssDocument({
+      url: url.trim(),
+      text: typeof text === 'string' ? text : undefined,
+      html: typeof html === 'string' ? html : undefined,
+      timestamp: Number.isFinite(Number(timestamp)) ? Number(timestamp) : undefined,
+    });
+
+    return res.json({
+      success: true,
+      queued: true,
+      source: 'rss',
+      jobId,
+    });
+  } catch (err: any) {
+    console.error('[MentionRSSIngest] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Failed to enqueue RSS ingestion event' });
+  }
+}
+
+/**
+ * POST /api/mentions/ingest/url
+ * Fetch URL content, enqueue raw-document event, and wait for persistence IDs.
+ */
+export async function ingestUrlReplayHandler(req: Request, res: Response) {
+  try {
+    const { url, source, timeoutMs } = req.body || {};
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'url is required' });
+    }
+
+    const result = await ingestUrlForReplay({
+      url: url.trim(),
+      source: typeof source === 'string' ? source : undefined,
+      timeoutMs: Number.isFinite(Number(timeoutMs)) ? Number(timeoutMs) : undefined,
+    });
+
+    return res.json({
+      success: true,
+      queued: true,
+      replay_ready: true,
+      docId: result.docId,
+      scanId: result.scanId || null,
+      persisted_entity_ids: result.persistedEntityIds,
+      persisted_claim_ids: result.persistedClaimIds,
+      touched_cluster_ids: result.touchedClusterIds,
+      conflict_edges_created: result.conflictEdgesCreated,
+      edges_created: result.edgesCreated,
+      entities_updated: result.entitiesUpdated,
+    });
+  } catch (err: any) {
+    console.error('[MentionURLIngest] Error:', err?.message, '\n', err?.stack || err);
+    const message = String(err?.message || 'Failed to ingest URL for replay');
+    const isClientError =
+      /url is required|not allowed|no extractable content|http \d{3}/i.test(message);
+    return res.status(isClientError ? 400 : 500).json({ error: message });
+  }
+}
+
+/**
+ * GET /api/mentions/influence/summary?limit=20
+ * Return persisted entity influence rankings from citation graph tables.
+ */
+export async function getInfluenceSummaryHandler(req: Request, res: Response) {
+  try {
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit || '20'), 10) || 20, 1), 100);
+    const rows = await getInfluenceSummary(limit);
+    return res.json({ success: true, limit, entities: rows });
+  } catch (err: any) {
+    console.error('[InfluenceSummary] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Failed to load influence summary' });
+  }
+}
+
+/**
+ * GET /api/mentions/influence/entity/:entityId?limit=80
+ * Return graph topology for one persisted entity node.
+ */
+export async function getInfluenceEntityHandler(req: Request, res: Response) {
+  try {
+    const entityId = String(req.params.entityId || '').trim();
+    if (!entityId) return res.status(400).json({ error: 'entityId is required' });
+
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit || '80'), 10) || 80, 1), 250);
+    const graph = await getEntityInfluenceTopology(entityId, limit);
+    if (!graph) return res.status(404).json({ error: 'Entity not found or no persisted graph data' });
+
+    return res.json({ success: true, graph });
+  } catch (err: any) {
+    console.error('[InfluenceEntity] Error:', err?.message, '\n', err?.stack || err);
+    return res.status(500).json({ error: 'Failed to load entity influence graph' });
   }
 }

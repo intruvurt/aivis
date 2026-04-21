@@ -254,6 +254,7 @@ import { startAuditWorkerLoop } from "./workers/auditWorker.js";
 import { startFixWorker } from "./workers/fixWorker.js";
 import { startTrackingWorker } from "./workers/trackingWorker.js";
 import { startPRWorker } from "./workers/prWorker.js";
+import { startRawDocumentWorker } from "./workers/rawDocument.worker.js";
 import { startScheduler } from "./services/scheduler.js";
 import { startSelfHealingLoop } from "./services/selfHealingService.js";
 import { bootstrapAgencyAutomation } from "./services/agencyAutomationService.js";
@@ -16196,6 +16197,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startFixWorker();
     startTrackingWorker();
     startPRWorker();
+    startRawDocumentWorker();
     startScheduler();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();

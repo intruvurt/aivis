@@ -3,102 +3,124 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+
   "main": "dist/server/src/server.js",
+
   "engines": {
     "node": ">=22.11.0"
   },
+
   "scripts": {
     "dev": "tsx watch src/server.ts",
+
+    "build:client": "npm --prefix ../client install --include=dev && npm --prefix ../client run build",
+    "build:server": "node ./node_modules/typescript/bin/tsc -p tsconfig.build.json",
+    "build:stage": "node ./tools/stageClientDist.mjs",
+    "build": "npm run build:client && npm run build:stage && npm run build:server",
+
     "start": "node --import tsx src/server.ts",
     "start:prod": "node --import ./dist/server/src/instrument.js dist/server/src/server.js",
-    "build": "npm --prefix ../client install --include=dev && npm --prefix ../client run build && node ./tools/stageClientDist.mjs && node ./node_modules/typescript/bin/tsc -p tsconfig.build.json",
+
     "lint": "eslint . --config eslint.config.cjs --ext .ts",
-    "mcp": "node --loader ts-node/esm src/mcp/index.ts",
-    "mcp:dev": "ts-node --esm src/mcp/index.ts",
     "lint:fix": "eslint . --config eslint.config.cjs --ext .ts --fix",
-    "format": "prettier --write \"**/*.{ts,js,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,js,json}\"",
+
     "typecheck": "node ./node_modules/typescript/bin/tsc -p tsconfig.build.json --noEmit",
+
     "test": "vitest run",
+    "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
-    "test:watch": "vitest watch",
     "test:debug": "vitest --inspect-brk",
-    "test:ui:watch": "vitest --ui --watch",
+
     "verify:features": "tsx tools/verifyFeatureWiring.ts",
     "verify:auto-score-fix": "tsx tools/verifyAutoScoreFixWiring.ts",
+
     "worker:bix": "node --import tsx src/workers/bix.worker.ts",
     "worker:citations": "node --import tsx src/workers/citation.worker.ts",
-    "worker:fix": "node --import tsx src/workers/fix.worker.ts"
+    "worker:fix": "node --import tsx src/workers/fix.worker.ts",
+
+    "worker:all": "npm run worker:bix & npm run worker:citations & npm run worker:fix"
   },
+
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1",
-    "@sentry/node": "^9.47.1",
-    "@sentry/profiling-node": "^9.47.1",
-    "@sparticuz/chromium": "^143.0.4",
-    "@types/compression": "^1.8.1",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.3.0",
-    "@types/passport": "^1.0.17",
-    "@types/passport-github2": "^1.2.9",
-    "@types/passport-google-oauth20": "^2.0.17",
-    "@types/validator": "^13.15.10",
-    "axios": "^1.13.5",
-    "bcryptjs": "^3.0.3",
-    "bullmq": "^5.72.1",
-    "cheerio": "^1.2.0",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "cors": "^2.8.6",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dompurify": "^3.3.3",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
+
     "express-rate-limit": "^8.3.1",
-    "express-validator": "^7.3.1",
-    "helmet": "^8.1.0",
+    "rate-limit-redis": "^4.3.1",
     "ioredis": "^5.9.3",
+    "bullmq": "^5.72.1",
+
+    "pg": "^8.18.0",
+    "stripe": "^17.7.0",
+
     "jsonwebtoken": "^9.0.3",
     "jwks-rsa": "^3.2.2",
-    "linkedom": "^0.18.12",
-    "mammoth": "^1.11.0",
-    "node-cron": "^4.2.1",
+    "bcryptjs": "^3.0.3",
+
+    "zod": "^4.3.6",
+    "express-validator": "^7.3.1",
+    "validator": "^13.15.26",
+
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
+
+    "dotenv": "^17.3.1",
     "nodemailer": "^8.0.1",
-    "passport": "^0.7.0",
-    "passport-github2": "^0.1.12",
-    "passport-google-oauth20": "^2.0.0",
+    "resend": "^6.9.2",
+
+    "node-cron": "^4.2.1",
+
+    "puppeteer-core": "^24.37.5",
+    "@sparticuz/chromium": "^143.0.4",
+
+    "linkedom": "^0.18.12",
+    "robots-parser": "^3.0.1",
+
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.17.2",
-    "pg": "^8.18.0",
-    "prompts": "^2.4.2",
-    "puppeteer-core": "^24.37.5",
-    "rate-limit-redis": "^4.3.1",
-    "resend": "^6.9.2",
-    "robots-parser": "^3.0.1",
-    "stripe": "^17.7.0",
+    "mammoth": "^1.11.0",
     "tesseract.js": "^7.0.0",
-    "typescript": "^5.9.3",
-    "validator": "^13.15.26",
     "xml2js": "^0.6.2",
+
+    "@modelcontextprotocol/sdk": "^1.27.1",
+
+    "@sentry/node": "^9.47.1",
+    "@sentry/profiling-node": "^9.47.1",
+
+    "dompurify": "^3.3.3",
     "zod": "^4.3.6"
   },
+
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18",
+    "supertest": "^7.2.2",
+
+    "@types/node": "^25.3.0",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/cors": "^2.8.19",
+    "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/validator": "^13.15.10",
     "@types/nodemailer": "^7.0.10",
-    "@types/prompts": "^2.4.9",
-    "@types/supertest": "^6.0.3",
     "@types/xml2js": "^0.4.14",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@types/supertest": "^6.0.3",
+
     "@typescript-eslint/parser": "^8.56.0",
-    "chalk": "^5.6.2",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
-    "supertest": "^7.2.2",
-    "tsx": "^4.21.0",
-    "vitest": "^4.0.18"
+    "chalk": "^5.6.2",
+    "prompts": "^2.4.2"
   },
+
   "overrides": {
     "esbuild": "^0.25.0",
     "path-to-regexp": "^6.2.3",

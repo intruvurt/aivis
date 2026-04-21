@@ -94,6 +94,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       // New scan session — assign fresh UUID and reset engine + accumulator
       const scanId = crypto.randomUUID();
       scanIdRef.current = scanId;
+      const sid = scanId;
       getEngine().reset(scanId);
       accumulatedRef.current = { cites: [], entities: [], scores: {} };
 
@@ -122,7 +123,6 @@ export function ScanProvider({ children }: { children: ReactNode }) {
         try {
           const raw = JSON.parse(evt.data) as { type: string; [key: string]: unknown };
           const engine = getEngine();
-          const sid = scanIdRef.current;
           const tap = useDebugStore.getState();
           const currentSeq = ++sseSeq;
 
@@ -253,8 +253,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        if (esRef.current) {
-          const sid = scanIdRef.current;
+        if (esRef.current === source) {
           const engine = getEngine();
           engine.ingest(sid, {
             type: 'SCAN_ERROR',

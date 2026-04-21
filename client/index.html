@@ -498,7 +498,7 @@
         <p style="position:absolute;left:-10000px;top:auto;white-space:normal" role="doc-subtitle">AiVIS.biz - CITE LEDGER | Evidence-Linked Scores · Get Fixes Fast</p>
         <div style="text-align:center">
           <img src="/aivis-logo.png" alt="AiVIS.biz | CITE LEDGER" width="48" height="48" style="margin:0 auto 16px;display:block;border-radius:10px" />
-          <p style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
+          <p id="boot-loading-text" style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
         </div>
       </div>
       <!-- SEO crawlable content: present in initial HTML payload for JS-free crawlers; visually hidden -->
@@ -637,7 +637,69 @@
 
 
     <script>if(window.gtag){gtag("js",new Date());gtag("config","G-B4WM53183L")}</script>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" id="app-entry" src="/src/main.tsx"></script>
+    <script>
+      (function () {
+        var RETRY_KEY = "aivis_boot_retry";
+        var BOOT_TIMEOUT_MS = 9000;
+
+        function setLoadingMessage(message) {
+          var label = document.getElementById("boot-loading-text");
+          if (label) {
+            label.textContent = message;
+          }
+        }
+
+        function renderRecoveryButton() {
+          var root = document.getElementById("root");
+          if (!root || document.getElementById("boot-recovery-btn")) return;
+
+          var button = document.createElement("button");
+          button.id = "boot-recovery-btn";
+          button.type = "button";
+          button.textContent = "Reload App";
+          button.style.marginTop = "12px";
+          button.style.padding = "8px 14px";
+          button.style.borderRadius = "10px";
+          button.style.border = "1px solid rgba(255,255,255,0.18)";
+          button.style.background = "rgba(255,255,255,0.08)";
+          button.style.color = "#fff";
+          button.style.cursor = "pointer";
+          button.onclick = function () {
+            sessionStorage.removeItem(RETRY_KEY);
+            window.location.href = window.location.origin + window.location.pathname + "?boot=" + Date.now();
+          };
+
+          var shell = root.querySelector("div[style*='text-align:center']");
+          if (shell) shell.appendChild(button);
+        }
+
+        function fail(message) {
+          setLoadingMessage(message);
+          renderRecoveryButton();
+        }
+
+        var entry = document.getElementById("app-entry");
+        if (entry) {
+          entry.addEventListener("error", function () {
+            fail("App bundle failed to load. Retrying...");
+          });
+        }
+
+        window.setTimeout(function () {
+          if (window.__AIVIS_BOOTSTRAPPED) return;
+
+          if (!sessionStorage.getItem(RETRY_KEY)) {
+            sessionStorage.setItem(RETRY_KEY, "1");
+            setLoadingMessage("Loading timed out. Retrying...");
+            window.location.href = window.location.origin + window.location.pathname + "?boot=" + Date.now();
+            return;
+          }
+
+          fail("App failed to initialize. Please reload.");
+        }, BOOT_TIMEOUT_MS);
+      })();
+    </script>
 
     <!-- Structured data removed from body; canonical JSON-LD is in <head> -->
     <script>window.__AIVIS_RECAPTCHA_SITE_KEY="6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8"</script>

@@ -24,6 +24,8 @@ window.addEventListener('vite:preloadError', () => {
 // Hydrate auth state from browser storage BEFORE rendering
 useAuthStore.getState().hydrate();
 
+(window as any).__AIVIS_BOOTSTRAPPED = true;
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppErrorBoundary>

@@ -193,7 +193,9 @@ export function ipRateLimit(opts?: { maxRequests?: number; windowMs?: number }) 
   return (req: Request, res: Response, next: NextFunction): void => {
     if (isOwnerExempt(req)) { next(); return; }
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
-    const key = `ip:${ip}`;
+    // Bucket by endpoint to prevent one noisy public route from throttling all others.
+    const routeScope = `${req.method}:${req.baseUrl || ''}${req.path || ''}`;
+    const key = `ip:${ip}:${routeScope}`;
     const result = consumeToken(key, maxRequests, windowMs);
 
     res.setHeader('X-RateLimit-Limit', maxRequests);

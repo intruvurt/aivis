@@ -9466,7 +9466,7 @@ app.get(
 // ─────────────────────────────────────────────────────────────────────────────
 app.post(
   "/api/analyze/preview",
-  ipRateLimit({ maxRequests: 3, windowMs: 3_600_000 }),
+  ipRateLimit({ maxRequests: 20, windowMs: 3_600_000 }),
   async (req: Request, res: Response) => {
     const startTime = Date.now();
     try {
@@ -9524,7 +9524,7 @@ app.post(
 // ─────────────────────────────────────────────────────────────────────────────
 app.get(
   "/api/analyze/stream",
-  ipRateLimit({ maxRequests: 5, windowMs: 3_600_000 }),
+  ipRateLimit({ maxRequests: 30, windowMs: 3_600_000 }),
   async (req: Request, res: Response) => {
     const rawUrl =
       typeof req.query.url === "string" ? req.query.url.trim() : "";

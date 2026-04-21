@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { isRecoverableChunkError, recoverFromChunkError } from '../lib/chunkRecovery';
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -9,15 +9,19 @@ type ErrorBoundaryState = {
 class AppErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBoundaryState> {
   constructor(props: React.PropsWithChildren) {
     super(props);
-    this.state = { hasError: false, message: "" };
+    this.state = { hasError: false, message: '' };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, message: error?.message || "Unknown error" };
+    return { hasError: true, message: error?.message || 'Unknown error' };
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error("[RootErrorBoundary]", error, info.componentStack);
+    console.error('[RootErrorBoundary]', error, info.componentStack);
+
+    if (isRecoverableChunkError(error)) {
+      recoverFromChunkError();
+    }
   }
 
   render() {
@@ -33,8 +37,8 @@ class AppErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBou
             <div className="flex flex-col items-center gap-3">
               <button
                 onClick={() => {
-                  this.setState({ hasError: false, message: "" });
-                  window.location.href = "/";
+                  this.setState({ hasError: false, message: '' });
+                  window.location.href = '/';
                 }}
                 className="px-6 py-2.5 rounded-xl bg-charcoal hover:bg-charcoal text-white text-sm font-semibold transition-colors"
                 type="button"

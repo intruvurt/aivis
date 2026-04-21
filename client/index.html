@@ -1,15 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) - config deferred to body -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4WM53183L"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}</script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+    </script>
     <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "waskttt5ee");
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'waskttt5ee');
     </script>
 
     <meta charset="UTF-8" />
@@ -25,7 +37,10 @@
       content="CITE LEDGER, AiVIS.biz, BRAG evidence scores, AI citation audit, ChatGPT citation verification, Perplexity citation, Claude citation, structured data verification, AI answer verification, AI citation ledger, evidence-linked audit, anti-hallucination audit, BRAG framework, entity disambiguation, citation readiness, AI extraction verification, machine readability, fix protocol, citation proof, AI answer distortion"
     />
     <meta name="author" content="AiVIS.biz" />
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
     <meta name="theme-color" content="#0891b2" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -38,7 +53,10 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AiVIS.biz" />
-    <meta property="og:title" content="AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER" />
+    <meta
+      property="og:title"
+      content="AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER"
+    />
     <meta
       property="og:description"
       content="AiVIS.biz CITE LEDGER verifies how ChatGPT, Perplexity, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG — no hallucination, no assumptions."
@@ -50,7 +68,10 @@
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER" />
+    <meta
+      property="og:image:alt"
+      content="AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER"
+    />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -62,7 +83,10 @@
       content="AiVIS.biz CITE LEDGER verifies how ChatGPT, Perplexity, Google AI Overviews, and Claude interpret and cite your website. Every finding is evidence-linked through BRAG — no hallucination, no assumptions."
     />
     <meta name="twitter:image" content="https://aivis.biz/og-image2.png" />
-    <meta name="twitter:image:alt" content="AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores" />
+    <meta
+      name="twitter:image:alt"
+      content="AiVIS.biz | CITE LEDGER — BRAG Evidence-Linked Scores"
+    />
 
     <!-- Icons -->
     <link rel="icon" type="image/png" sizes="48x48" href="/aivis-circ-logo.png?v=20260408" />
@@ -84,8 +108,17 @@
     <!-- Google Fonts (non-render-blocking, reduced weight subset) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    /></noscript>
 
     <!-- reCAPTCHA deferred to body -->
 
@@ -98,8 +131,13 @@
       }
       /* Responsive baseline – helps audit crawlers detect responsive design */
       @media (max-width: 640px) {
-        body { font-size: 15px; }
-        img { max-width: 100%; height: auto; }
+        body {
+          font-size: 15px;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+        }
       }
     </style>
 
@@ -196,7 +234,6 @@
           "BRAG - Based Retrieval Auditable Grading",
           "entity disambiguation",
           "AI search optimization"
-      
         ],
         "areaServed": "Worldwide",
         "slogan": "Fix how AI systems interpret and cite your website"
@@ -350,8 +387,16 @@
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "mainEntityOfPage": { "@id": "https://aivis.biz/#webpage" },
         "citation": [
-          { "@type": "CreativeWork", "name": "BRAG Evidence Framework", "url": "https://github.com/dobleduche/brag" },
-          { "@type": "WebPage", "name": "AiVIS.biz Audit Methodology", "url": "https://aivis.biz/methodology" }
+          {
+            "@type": "CreativeWork",
+            "name": "BRAG Evidence Framework",
+            "url": "https://github.com/dobleduche/brag"
+          },
+          {
+            "@type": "WebPage",
+            "name": "AiVIS.biz Audit Methodology",
+            "url": "https://aivis.biz/methodology"
+          }
         ],
         "isBasedOn": {
           "@type": "CreativeWork",
@@ -371,7 +416,10 @@
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": { "@type": "EntryPoint", "urlTemplate": "https://aivis.biz/analyze?url={search_term_string}" },
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://aivis.biz/analyze?url={search_term_string}"
+          },
           "query-input": "required name=search_term_string"
         }
       }
@@ -386,27 +434,42 @@
           {
             "@type": "Question",
             "name": "What is AI search visibility and why does it matter?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AI search visibility is the degree to which an AI system; such as ChatGPT, Perplexity, Claude or Google Gemini Overviews; can parse, trust and cite your website content in generated answers. A page that scores poorly for AI search visibility is unlikely to appear as a source or citation in AI generated responses, regardless of its traditional search ranking. AI search visibility depends on structured data quality, heading clarity, content depth, metadata completeness and machine readable formatting." }
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AI search visibility is the degree to which an AI system; such as ChatGPT, Perplexity, Claude or Google Gemini Overviews; can parse, trust and cite your website content in generated answers. A page that scores poorly for AI search visibility is unlikely to appear as a source or citation in AI generated responses, regardless of its traditional search ranking. AI search visibility depends on structured data quality, heading clarity, content depth, metadata completeness and machine readable formatting."
+            }
           },
           {
             "@type": "Question",
             "name": "How does AiVIS.biz calculate a search visibility score?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS.biz runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. The 0-100 CITE LEDGER score is a weighted composite across seven dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%). Each finding is tied back to real page evidence." }
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AiVIS.biz runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. The 0-100 CITE LEDGER score is a weighted composite across seven dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%). Each finding is tied back to real page evidence."
+            }
           },
           {
             "@type": "Question",
             "name": "What is the difference between AiVIS.biz and traditional query and answer engine tools?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Traditional SEO tools optimize for search engine crawlers and ranking signals like backlinks or keyword density. AiVIS.biz focuses specifically on answer engine readiness; whether AI systems can extract, trust and cite your content in generated responses. AiVIS.biz evaluates machine readability, entity clarity, schema coverage and citability rather than link authority. Every recommendation is evidence-linked, meaning it references the specific crawled signal that triggered it, not a generic checklist. The platform also tracks brand presence across citation sources and discussion platforms: Answer Engine Optimization (AEO)." }
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Traditional SEO tools optimize for search engine crawlers and ranking signals like backlinks or keyword density. AiVIS.biz focuses specifically on answer engine readiness; whether AI systems can extract, trust and cite your content in generated responses. AiVIS.biz evaluates machine readability, entity clarity, schema coverage and citability rather than link authority. Every recommendation is evidence-linked, meaning it references the specific crawled signal that triggered it, not a generic checklist. The platform also tracks brand presence across citation sources and discussion platforms: Answer Engine Optimization (AEO)."
+            }
           },
           {
             "@type": "Question",
             "name": "What sources does brand mention tracking monitor?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Brand mention tracking scans 19 public sources: Reddit, Hacker News, Mastodon, DuckDuckGo site search, Bing site search, Google News RSS, GitHub repositories, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy and GitHub Discussions. Available on the Alignment tier and above." }
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Brand mention tracking scans 19 public sources: Reddit, Hacker News, Mastodon, DuckDuckGo site search, Bing site search, Google News RSS, GitHub repositories, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy and GitHub Discussions. Available on the Alignment tier and above."
+            }
           },
           {
             "@type": "Question",
             "name": "What plans does AiVIS.biz offer and what is included?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AiVIS.biz offers five tiers. Observer (free) includes 3 scans per month powered by open-weight AI models. Starter ($15/month) includes 15 scans per month with full recommendations, implementation code, PDF exports, and shareable links. Alignment (Core, $49/month) includes 60 scans per month with paid AI models, competitor tracking, brand mention scanning, reverse engineering tools, and WebMCP access. Signal (Pro, $149/month) includes 200 scans per month with a triple-check pipeline, citation testing, niche ranking, scheduled citation tests, team workspaces with 25 seats, full MCP/API access, and white-label reports. Score Fix (AutoFix PR, $299 one-time) uses higher capacity models and generates automated GitHub PRs with 250 credits." }
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AiVIS.biz offers five tiers. Observer (free) includes 3 scans per month powered by open-weight AI models. Starter ($15/month) includes 15 scans per month with full recommendations, implementation code, PDF exports, and shareable links. Alignment (Core, $49/month) includes 60 scans per month with paid AI models, competitor tracking, brand mention scanning, reverse engineering tools, and WebMCP access. Signal (Pro, $149/month) includes 200 scans per month with a triple-check pipeline, citation testing, niche ranking, scheduled citation tests, team workspaces with 25 seats, full MCP/API access, and white-label reports. Score Fix (AutoFix PR, $299 one-time) uses higher capacity models and generates automated GitHub PRs with 250 credits."
+            }
           }
         ]
       }
@@ -420,16 +483,56 @@
         "@id": "https://aivis.biz/#breadcrumb",
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://aivis.biz" },
-          { "@type": "ListItem", "position": 2, "name": "Pricing", "item": "https://aivis.biz/pricing" },
-          { "@type": "ListItem", "position": 3, "name": "Guide", "item": "https://aivis.biz/guide" },
-          { "@type": "ListItem", "position": 4, "name": "Methodology", "item": "https://aivis.biz/methodology" },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Pricing",
+            "item": "https://aivis.biz/pricing"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Guide",
+            "item": "https://aivis.biz/guide"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Methodology",
+            "item": "https://aivis.biz/methodology"
+          },
           { "@type": "ListItem", "position": 5, "name": "FAQ", "item": "https://aivis.biz/faq" },
           { "@type": "ListItem", "position": 6, "name": "Blog", "item": "https://aivis.biz/blogs" },
-          { "@type": "ListItem", "position": 7, "name": "About", "item": "https://aivis.biz/about" },
-          { "@type": "ListItem", "position": 8, "name": "Schema Validator", "item": "https://aivis.biz/tools/schema-validator" },
-          { "@type": "ListItem", "position": 9, "name": "Robots Checker", "item": "https://aivis.biz/tools/robots-checker" },
-          { "@type": "ListItem", "position": 10, "name": "Compare", "item": "https://aivis.biz/compare" },
-          { "@type": "ListItem", "position": 11, "name": "API Documentation", "item": "https://aivis.biz/app/api-docs" }
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "name": "About",
+            "item": "https://aivis.biz/about"
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "name": "Schema Validator",
+            "item": "https://aivis.biz/tools/schema-validator"
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "name": "Robots Checker",
+            "item": "https://aivis.biz/tools/robots-checker"
+          },
+          {
+            "@type": "ListItem",
+            "position": 10,
+            "name": "Compare",
+            "item": "https://aivis.biz/compare"
+          },
+          {
+            "@type": "ListItem",
+            "position": 11,
+            "name": "API Documentation",
+            "item": "https://aivis.biz/app/api-docs"
+          }
         ]
       }
     </script>
@@ -444,10 +547,30 @@
         "totalTime": "PT30M",
         "image": "https://aivis.biz/og-image2.png",
         "step": [
-          { "@type": "HowToStep", "position": 1, "name": "Run a baseline audit", "text": "Start by auditing the target URL to establish current CITE LEDGER score and dimension grades across schema coverage, content depth, technical trust, metadata, AI readability, heading structure, and security." },
-          { "@type": "HowToStep", "position": 2, "name": "Review dimension grades", "text": "Identify which of the seven scoring dimensions show the biggest gaps. Focus on dimensions with B or lower grades first for maximum score impact." },
-          { "@type": "HowToStep", "position": 3, "name": "Implement high-priority fixes", "text": "Ship evidence-backed fixes targeting the weakest categories. Common fixes include expanding content depth, adding schema markup, improving heading hierarchy, and strengthening metadata." },
-          { "@type": "HowToStep", "position": 4, "name": "Re-audit and compare", "text": "Run the same URL through AiVIS.biz again to measure category-level movement and composite score delta. Track improvements over multiple audit cycles for sustained visibility gains." }
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Run a baseline audit",
+            "text": "Start by auditing the target URL to establish current CITE LEDGER score and dimension grades across schema coverage, content depth, technical trust, metadata, AI readability, heading structure, and security."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Review dimension grades",
+            "text": "Identify which of the seven scoring dimensions show the biggest gaps. Focus on dimensions with B or lower grades first for maximum score impact."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Implement high-priority fixes",
+            "text": "Ship evidence-backed fixes targeting the weakest categories. Common fixes include expanding content depth, adding schema markup, improving heading hierarchy, and strengthening metadata."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 4,
+            "name": "Re-audit and compare",
+            "text": "Run the same URL through AiVIS.biz again to measure category-level movement and composite score delta. Track improvements over multiple audit cycles for sustained visibility gains."
+          }
         ]
       }
     </script>
@@ -468,7 +591,10 @@
         "inLanguage": "en-US",
         "dateModified": "2026-04-17",
         "lastReviewed": "2026-04-17",
-        "primaryImageOfPage": { "@type": "ImageObject", "url": "https://aivis.biz/aivis-symbol.png?v=20260408" },
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": "https://aivis.biz/aivis-symbol.png?v=20260408"
+        },
         "speakable": {
           "@type": "SpeakableSpecification",
           "cssSelector": ["h1", "h2", ".hero-description", ".feature-summary", "[data-speakable]"]
@@ -488,186 +614,430 @@
         "breadcrumb": { "@id": "https://aivis.biz/#breadcrumb" }
       }
     </script>
-
   </head>
 
   <body>
     <div id="root">
       <!-- Minimal loading skeleton - React replaces this on mount -->
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0f1a;font-family:system-ui,sans-serif">
-        <p style="position:absolute;left:-10000px;top:auto;white-space:normal" role="doc-subtitle">AiVIS.biz - CITE LEDGER | Evidence-Linked Scores · Get Fixes Fast</p>
-        <div style="text-align:center">
-          <img src="/aivis-logo.png" alt="AiVIS.biz | CITE LEDGER" width="48" height="48" style="margin:0 auto 16px;display:block;border-radius:10px" />
-          <p id="boot-loading-text" style="color:rgba(255,255,255,0.6);font-size:14px;margin:0">Loading&hellip;</p>
+      <div
+        style="
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #0b0f1a;
+          font-family: system-ui, sans-serif;
+        "
+      >
+        <p
+          style="position: absolute; left: -10000px; top: auto; white-space: normal"
+          role="doc-subtitle"
+        >
+          AiVIS.biz - CITE LEDGER | Evidence-Linked Scores · Get Fixes Fast
+        </p>
+        <div style="text-align: center">
+          <img
+            src="/aivis-logo.png"
+            alt="AiVIS.biz | CITE LEDGER"
+            width="48"
+            height="48"
+            style="margin: 0 auto 16px; display: block; border-radius: 10px"
+          />
+          <p
+            id="boot-loading-text"
+            style="color: rgba(255, 255, 255, 0.6); font-size: 14px; margin: 0"
+          >
+            Loading&hellip;
+          </p>
         </div>
       </div>
       <!-- SEO crawlable content: present in initial HTML payload for JS-free crawlers; visually hidden -->
-      <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;overflow:hidden;width:1px;height:1px">
-      <main style="max-width:800px;margin:0 auto;padding:40px 20px;color:#e2e8f0;font-family:system-ui,sans-serif">
-        <h1 style="font-size:28px;margin:0 0 12px">AiVIS.biz - CITE LEDGER | Evidence-Linked Scores</h1>
-        <section id="tldr" style="margin:0 0 20px;padding:12px 16px;border-left:3px solid #06b6d4;background:rgba(6,182,212,0.06)">
-          <h2 style="font-size:16px;margin:0 0 6px;color:#e2e8f0">Summary:</h2>
-          <p style="color:#94a3b8;line-height:1.6;margin:0">
-            CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor. Enter any URL to get a 0-100 evidence-linked score tied to BRAG-methodology-findings, fostering consistently verifiable category grades and prioritized Autofix GitHub protocols.
-            Every recommendation is grounded systematically in real page evidence through 'Based-Retrieval-Auditable-Grading' - BRAG (https://github.com/dobleduche/brag). No assumptions, no AI hallucinations, just reliable, actionable code-to-page mappings that show exactly what needs to be fixed and why.
+      <div
+        aria-hidden="true"
+        style="
+          position: absolute;
+          left: -10000px;
+          top: auto;
+          overflow: hidden;
+          width: 1px;
+          height: 1px;
+        "
+      >
+        <main
+          style="
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: #e2e8f0;
+            font-family: system-ui, sans-serif;
+          "
+        >
+          <h1 style="font-size: 28px; margin: 0 0 12px">
+            AiVIS.biz - CITE LEDGER | Evidence-Linked Scores
+          </h1>
+          <section
+            id="tldr"
+            style="
+              margin: 0 0 20px;
+              padding: 12px 16px;
+              border-left: 3px solid #06b6d4;
+              background: rgba(6, 182, 212, 0.06);
+            "
+          >
+            <h2 style="font-size: 16px; margin: 0 0 6px; color: #e2e8f0">Summary:</h2>
+            <p style="color: #94a3b8; line-height: 1.6; margin: 0">
+              CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI
+              models interpret, reference, and cite web content across answer engines like ChatGPT,
+              Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded
+              in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content
+              fingerprint, and traceability link connecting it to its predecessor. Enter any URL to
+              get a 0-100 evidence-linked score tied to BRAG-methodology-findings, fostering
+              consistently verifiable category grades and prioritized Autofix GitHub protocols.
+              Every recommendation is grounded systematically in real page evidence through
+              'Based-Retrieval-Auditable-Grading' - BRAG (https://github.com/dobleduche/brag). No
+              assumptions, no AI hallucinations, just reliable, actionable code-to-page mappings
+              that show exactly what needs to be fixed and why.
+            </p>
+          </section>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AiVIS.biz annotation style CITE LEDGER verifies & registers how ChatGPT, Perplexity AI,
+            Google AI Overviews and Claude interprets, cites and monitors mentions. Every finding
+            has evidence-ids through BRAG — no hallucination, no assumptions. Get a 0-100 score with
+            specific evidence-linked findings based on results from a collection of AI cross
+            referencing then forced to pass systematic non-AI, no fluff, no guessing output before
+            the user ever sees prioritized fix packs.
           </p>
-        </section>
-        <p style="color:#94a3b8;line-height:1.6">
-          AiVIS.biz annotation style CITE LEDGER verifies & registers how ChatGPT, Perplexity AI, Google AI Overviews and Claude interprets, cites and monitors mentions.
-          Every finding has evidence-ids through BRAG — no hallucination, no assumptions. Get a 0-100 score with specific evidence-linked findings based on results from a collection of AI cross referencing then forced to pass systematic non-AI, no fluff, no guessing output before the user ever sees prioritized fix packs.
-        </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">What is CITE LEDGER</h2>
-        <p style="color:#94a3b8;line-height:1.6">
-          CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.
-          Every validated audit finding is recorded in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content fingerprint, and traceability link connecting it to its predecessor.
-          A page can rank first in traditional search and still be invisible to answer engines if these signals are missing.
-          CITE LEDGER measures the extractability, trust signal alignment and citation readiness of your content by verifying what answer engines actually need to formulate a reliable, non-hallucinated answer.
-          Learn more about the <a href="/methodology" style="color:#06b6d4">audit methodology</a> behind the scoring.
-        </p>
-        <p style="color:#94a3b8;line-height:1.6">
-          According to a <a href="https://sparktoro.com/blog/2026-zero-click-search-study/" style="color:#06b6d4">2026 SparkToro study</a>, 58.5% of Google searches now end in zero clicks.
-          AI answer engines like ChatGPT, Perplexity and Google AI Overviews compose responses by retrieving, synthesizing and citing web sources directly.
-          Pages that lack structured data, clear entity definitions or sufficient content depth are systematically excluded from these generated answers.
-          The CITE LEDGER scores visibility across seven weighted dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%).
-        </p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">What is CITE LEDGER</h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI
+            models interpret, reference, and cite web content across answer engines like ChatGPT,
+            Perplexity, Google AI Overviews, and Claude. Every validated audit finding is recorded
+            in a sequential, verifiable evidence chain where each entry carries a BRAG ID, content
+            fingerprint, and traceability link connecting it to its predecessor. A page can rank
+            first in traditional search and still be invisible to answer engines if these signals
+            are missing. CITE LEDGER measures the extractability, trust signal alignment and
+            citation readiness of your content by verifying what answer engines actually need to
+            formulate a reliable, non-hallucinated answer. Learn more about the
+            <a href="/methodology" style="color: #06b6d4">audit methodology</a> behind the scoring.
+          </p>
+          <p style="color: #94a3b8; line-height: 1.6">
+            According to a
+            <a
+              href="https://sparktoro.com/blog/2026-zero-click-search-study/"
+              style="color: #06b6d4"
+              >2026 SparkToro study</a
+            >, 58.5% of Google searches now end in zero clicks. AI answer engines like ChatGPT,
+            Perplexity and Google AI Overviews compose responses by retrieving, synthesizing and
+            citing web sources directly. Pages that lack structured data, clear entity definitions
+            or sufficient content depth are systematically excluded from these generated answers.
+            The CITE LEDGER scores visibility across seven weighted dimensions: Schema and
+            Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open
+            Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust
+            (10%).
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Evidence-linked Registry | Citation Ledger</h2>
-        <h3 style="font-size:18px;margin:16px 0 8px">Full site interpretation</h3>
-        <p style="color:#94a3b8;line-height:1.6">AI Search Visibility reads your page the way an answer engine does and shows where meaning breaks or becomes unclear.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">BRAG Evidence-IDs linked to findings & fixes</h3>
-        <p style="color:#94a3b8;line-height:1.6">Every issue is tied to a real part of your page so you can see what caused it and how to fix it.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Clear consistent scoring logic</h3>
-        <p style="color:#94a3b8;line-height:1.6">You get a visibility score based on structure, content and trust signals that affect citation readiness. No AI guessing, hallucinations or opinions. Every finding must be validated with BRAG evidence IDs.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Actionable fixes</h3>
-        <p style="color:#94a3b8;line-height:1.6">Each result includes direct changes that improve how your site is read and reused by AI systems.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">
+            Evidence-linked Registry | Citation Ledger
+          </h2>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Full site interpretation</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AI Search Visibility reads your page the way an answer engine does and shows where
+            meaning breaks or becomes unclear.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">
+            BRAG Evidence-IDs linked to findings & fixes
+          </h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Every issue is tied to a real part of your page so you can see what caused it and how to
+            fix it.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Clear consistent scoring logic</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            You get a visibility score based on structure, content and trust signals that affect
+            citation readiness. No AI guessing, hallucinations or opinions. Every finding must be
+            validated with BRAG evidence IDs.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Actionable fixes</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Each result includes direct changes that improve how your site is read and reused by AI
+            systems.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">How AI systems evaluate websites</h2>
-        <h3 style="font-size:18px;margin:16px 0 8px">Structure comes first</h3>
-        <p style="color:#94a3b8;line-height:1.6">Clean headings and logical sections help models understand what each part of the page means without guessing.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Clarity beats volume</h3>
-        <p style="color:#94a3b8;line-height:1.6">A long page does not help if the meaning is unclear. AI prefers content that is easy to break into usable parts.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Trust is earned through signals</h3>
-        <p style="color:#94a3b8;line-height:1.6">Consistent naming, schema and supporting details increase confidence in what the page is saying. Use the free <a href="/tools/schema-validator" style="color:#06b6d4">structured data impact validator</a> to check your schema coverage.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Alignment with real user questions</h3>
-        <p style="color:#94a3b8;line-height:1.6">Content must match how users actually ask questions or it will not be retrieved.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">How AI systems evaluate websites</h2>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Structure comes first</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Clean headings and logical sections help models understand what each part of the page
+            means without guessing.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Clarity beats volume</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            A long page does not help if the meaning is unclear. AI prefers content that is easy to
+            break into usable parts.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Trust is earned through signals</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Consistent naming, schema and supporting details increase confidence in what the page is
+            saying. Use the free
+            <a href="/tools/schema-validator" style="color: #06b6d4"
+              >structured data impact validator</a
+            >
+            to check your schema coverage.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Alignment with real user questions</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Content must match how users actually ask questions or it will not be retrieved.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">What AiVIS.biz actually audits</h2>
-        <h3 style="font-size:18px;margin:16px 0 8px">Content depth</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether your page has enough substance to support extraction, summarization and reuse.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Heading hierarchy</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether your structure helps or blocks understanding across sections.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Entity clarity and authority</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether your site clearly defines what it is and how it should be trusted and understood by machines.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Structured data</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether your schema supports your content or conflicts with it.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Technical foundation</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether performance, crawlability, robots, SPA and accessibility are blocking interpretation.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Citation readiness</h3>
-        <p style="color:#94a3b8;line-height:1.6">Whether your content can be safely used inside AI generated answers.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">What AiVIS.biz actually audits</h2>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Content depth</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether your page has enough substance to support extraction, summarization and reuse.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Heading hierarchy</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether your structure helps or blocks understanding across sections.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Entity clarity and authority</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether your site clearly defines what it is and how it should be trusted and understood
+            by machines.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Structured data</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether your schema supports your content or conflicts with it.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Technical foundation</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether performance, crawlability, robots, SPA and accessibility are blocking
+            interpretation.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Citation readiness</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Whether your content can be safely used inside AI generated answers.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Who benefits from AI visibility audits</h2>
-        <p style="color:#94a3b8;line-height:1.6">
-          AI visibility audits help anyone whose content needs to appear inside generated answers.
-          If your site depends on being found, trusted and reused by AI systems, this audit shows you exactly where visibility breaks and how to fix it.
-        </p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Founders and product teams</h3>
-        <p style="color:#94a3b8;line-height:1.6">Understand whether your product pages, documentation and landing pages are readable by AI systems that potential customers use to evaluate solutions before they ever visit your site.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Marketing and content teams</h3>
-        <p style="color:#94a3b8;line-height:1.6">See which content assets are eligible for citation, which are being ignored, and what structural changes unlock retrieval across ChatGPT, Perplexity, Claude and Google Gemini.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Developers and technical leads</h3>
-        <p style="color:#94a3b8;line-height:1.6">Audit schema markup, heading hierarchy, canonical tags and structured data against the signals AI models use to build trust, resolve entities and extract usable content.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Power users and consultants</h3>
-        <p style="color:#94a3b8;line-height:1.6">Offer clients measurable proof of AI visibility health with a structured report that connects every finding to actual site evidence through BRAG evidence integrity identifiers.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">
+            Who benefits from AI visibility audits
+          </h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AI visibility audits help anyone whose content needs to appear inside generated answers.
+            If your site depends on being found, trusted and reused by AI systems, this audit shows
+            you exactly where visibility breaks and how to fix it.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Founders and product teams</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Understand whether your product pages, documentation and landing pages are readable by
+            AI systems that potential customers use to evaluate solutions before they ever visit
+            your site.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Marketing and content teams</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            See which content assets are eligible for citation, which are being ignored, and what
+            structural changes unlock retrieval across ChatGPT, Perplexity, Claude and Google
+            Gemini.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Developers and technical leads</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Audit schema markup, heading hierarchy, canonical tags and structured data against the
+            signals AI models use to build trust, resolve entities and extract usable content.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Power users and consultants</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Offer clients measurable proof of AI visibility health with a structured report that
+            connects every finding to actual site evidence through BRAG evidence integrity
+            identifiers.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Based-Retrieval-Auditable-Grading</h2>
-        <p style="color:#94a3b8;line-height:1.6">
-          AiVIS.biz uses BRAG which stands for Based-Retrieval-Auditable-Grading. Every finding is tied to verifiable page evidence using stable evidence identifiers.
-          Each element of your page is assigned a BRAG evidence ID so results can be traced, verified and rechecked across scan cycles.
-          If something cannot be proven it is not included. If something is missing it is shown as missing. <a href="https://github.com/dobleduche/brag" style="color:#06b6d4">Learn more about BRAG, or customize it for your needs.</a>
-        </p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">Based-Retrieval-Auditable-Grading</h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AiVIS.biz uses BRAG which stands for Based-Retrieval-Auditable-Grading. Every finding is
+            tied to verifiable page evidence using stable evidence identifiers. Each element of your
+            page is assigned a BRAG evidence ID so results can be traced, verified and rechecked
+            across scan cycles. If something cannot be proven it is not included. If something is
+            missing it is shown as missing.
+            <a href="https://github.com/dobleduche/brag" style="color: #06b6d4"
+              >Learn more about BRAG, or customize it for your needs.</a
+            >
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">From audit to citation</h2>
-        <p style="color:#94a3b8;line-height:1.6">
-          An audit is the starting point. AiVIS.biz also supports <a href="/citations" style="color:#06b6d4">how AI citation testing works</a> to verify whether AI models reference your brand in live answers.
-          You can run <a href="/competitors" style="color:#06b6d4">competitor visibility tracking</a> to benchmark your visibility against rival sites.
-          Review the <a href="/methodology" style="color:#06b6d4">audit methodology</a> to understand how each category is scored or use the <a href="/tools/schema-validator" style="color:#06b6d4">structured data impact validator</a> to check your schema coverage.
-        </p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">From audit to citation</h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            An audit is the starting point. AiVIS.biz also supports
+            <a href="/citations" style="color: #06b6d4">how AI citation testing works</a> to verify
+            whether AI models reference your brand in live answers. You can run
+            <a href="/competitors" style="color: #06b6d4">competitor visibility tracking</a> to
+            benchmark your visibility against rival sites. Review the
+            <a href="/methodology" style="color: #06b6d4">audit methodology</a> to understand how
+            each category is scored or use the
+            <a href="/tools/schema-validator" style="color: #06b6d4"
+              >structured data impact validator</a
+            >
+            to check your schema coverage.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Real-world score improvement example</h2>
-        <p style="color:#94a3b8;line-height:1.6">
-          A user audited their SaaS landing page and received an initial score of 15/100. The audit identified three critical gaps: no JSON-LD structured data (Schema category grade F), a broken heading hierarchy with multiple H1 tags (Heading Structure grade D), and zero FAQ schema for their support questions.
-          After applying the three recommended fixes or  GitHub PR - adding Organization and FAQPage JSON-LD, restructuring headings into a single H1 with logical H2/H3 nesting, and converting support questions into FAQ schema - a re-scan showed a score of 52/100, a 37-point improvement in a single audit cycle.
-          The most impactful single fix was adding JSON-LD structured data, which lifted the Schema category from F to B and contributed roughly 18 of the 37 points gained.
-        </p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">Real-world score improvement example</h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            A user audited their SaaS landing page and received an initial score of 15/100. The
+            audit identified three critical gaps: no JSON-LD structured data (Schema category grade
+            F), a broken heading hierarchy with multiple H1 tags (Heading Structure grade D), and
+            zero FAQ schema for their support questions. After applying the three recommended fixes
+            or GitHub PR - adding Organization and FAQPage JSON-LD, restructuring headings into a
+            single H1 with logical H2/H3 nesting, and converting support questions into FAQ schema -
+            a re-scan showed a score of 52/100, a 37-point improvement in a single audit cycle. The
+            most impactful single fix was adding JSON-LD structured data, which lifted the Schema
+            category from F to B and contributed roughly 18 of the 37 points gained.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Frequently asked questions about AI search visibility</h2>
-        <h3 style="font-size:18px;margin:16px 0 8px">What is AiVIS.biz</h3>
-        <p style="color:#94a3b8;line-height:1.6">AiVIS.biz is an evidence-linked AI citation audit platform that analyzes whether ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. It crawls your page, extracts structural signals and maps them to a 0-100 visibility score across six weighted categories. Every finding is tied to real page evidence through BRAG evidence identifiers so results can be verified and traced, not assumed.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">What is AI visibility</h3>
-        <p style="color:#94a3b8;line-height:1.6">AI discoverability is the degree to which a website can be understood, trusted and reused by systems that generate answers instead of returning links. It depends on content depth, heading clarity, schema coverage, metadata quality and machine-readable formatting. A page can rank first in traditional search and still be invisible to answer engines if these signals are missing.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">What causes low AI visibility scores</h3>
-        <p style="color:#94a3b8;line-height:1.6">Common causes include thin content with fewer than 800 words, missing or conflicting structured data, unclear heading hierarchy, absent metadata, weak entity signals and poor technical foundations like blocked crawlers or slow load times. AiVIS.biz identifies each gap with evidence so you know exactly what to fix and in what order of impact.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">How does AiVIS.biz find visibility issues</h3>
-        <p style="color:#94a3b8;line-height:1.6">AiVIS.biz crawls the target URL with a real browser, extracts structural signals including headings, schema, meta tags, body content and links, then runs them through a multi-model AI pipeline that scores each category. On higher tiers a second model critiques findings and a third validates the result. Every issue references specific page evidence through BRAG identifiers.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">What is citation readiness</h3>
-        <p style="color:#94a3b8;line-height:1.6">Citation readiness measures how safe and reliable a page is for reuse inside AI-generated answers. It requires clear entity definitions, consistent schema support, sufficient content depth and structural formatting that allows AI systems to extract usable information without risking attribution errors or factual misrepresentation.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">What is BRAG in AiVIS.biz</h3>
-        <p style="color:#94a3b8;line-height:1.6">BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence framework that ties every audit finding to a real element on your page. Each heading, schema block, meta tag and content section receives a BRAG evidence identifier that can be traced, verified and rechecked across scan cycles so no finding is left unsupported.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Why does structure matter for AI systems</h3>
-        <p style="color:#94a3b8;line-height:1.6">Structure allows AI models to break content into context-appropriate sections without losing meaning. Clean headings, logical section flow, consistent naming and proper schema help answer engines determine what each part of a page means, how it relates to the broader topic and whether it can be safely extracted and cited as a source.</p>
-        <h3 style="font-size:18px;margin:16px 0 8px">Who should use AiVIS.biz</h3>
-        <p style="color:#94a3b8;line-height:1.6">AiVIS.biz is built for solofounders, marketers, developers and power agency users who need to understand why their content is not being used by AI answer engines, removing bottleneck for their clients. If your site depends on being found, trusted, mentioned and resurfaced by ChatGPT, Perplexity, Claude or Google Gemini AI, the audit 'is not based or trusted from AI responses' but it shows exactly where visibility breaks and what changes systematically or code-level remediations will resolve and improve overall visibility.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">
+            Frequently asked questions about AI search visibility
+          </h2>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">What is AiVIS.biz</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AiVIS.biz is an evidence-linked AI citation audit platform that analyzes whether
+            ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret,
+            and cite your website. It crawls your page, extracts structural signals and maps them to
+            a 0-100 visibility score across six weighted categories. Every finding is tied to real
+            page evidence through BRAG evidence identifiers so results can be verified and traced,
+            not assumed.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">What is AI visibility</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AI discoverability is the degree to which a website can be understood, trusted and
+            reused by systems that generate answers instead of returning links. It depends on
+            content depth, heading clarity, schema coverage, metadata quality and machine-readable
+            formatting. A page can rank first in traditional search and still be invisible to answer
+            engines if these signals are missing.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">What causes low AI visibility scores</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Common causes include thin content with fewer than 800 words, missing or conflicting
+            structured data, unclear heading hierarchy, absent metadata, weak entity signals and
+            poor technical foundations like blocked crawlers or slow load times. AiVIS.biz
+            identifies each gap with evidence so you know exactly what to fix and in what order of
+            impact.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">
+            How does AiVIS.biz find visibility issues
+          </h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AiVIS.biz crawls the target URL with a real browser, extracts structural signals
+            including headings, schema, meta tags, body content and links, then runs them through a
+            multi-model AI pipeline that scores each category. On higher tiers a second model
+            critiques findings and a third validates the result. Every issue references specific
+            page evidence through BRAG identifiers.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">What is citation readiness</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Citation readiness measures how safe and reliable a page is for reuse inside
+            AI-generated answers. It requires clear entity definitions, consistent schema support,
+            sufficient content depth and structural formatting that allows AI systems to extract
+            usable information without risking attribution errors or factual misrepresentation.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">What is BRAG in AiVIS.biz</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence framework that
+            ties every audit finding to a real element on your page. Each heading, schema block,
+            meta tag and content section receives a BRAG evidence identifier that can be traced,
+            verified and rechecked across scan cycles so no finding is left unsupported.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">
+            Why does structure matter for AI systems
+          </h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            Structure allows AI models to break content into context-appropriate sections without
+            losing meaning. Clean headings, logical section flow, consistent naming and proper
+            schema help answer engines determine what each part of a page means, how it relates to
+            the broader topic and whether it can be safely extracted and cited as a source.
+          </p>
+          <h3 style="font-size: 18px; margin: 16px 0 8px">Who should use AiVIS.biz</h3>
+          <p style="color: #94a3b8; line-height: 1.6">
+            AiVIS.biz is built for solofounders, marketers, developers and power agency users who
+            need to understand why their content is not being used by AI answer engines, removing
+            bottleneck for their clients. If your site depends on being found, trusted, mentioned
+            and resurfaced by ChatGPT, Perplexity, Claude or Google Gemini AI, the audit 'is not
+            based or trusted from AI responses' but it shows exactly where visibility breaks and
+            what changes systematically or code-level remediations will resolve and improve overall
+            visibility.
+          </p>
 
-        <h2 style="font-size:22px;margin:28px 0 10px">Triple-Check Methodology</h2>
-        <p style="color:#94a3b8;line-height:1.6">The AiVIS.biz Triple-Check Methodology is a three-stage verification protocol that validates every audit finding against crawl-observable evidence. Stage 1 (Extraction) captures signals from the target URL through a multi-step fetch pipeline: HTTP, headless Puppeteer, and Cloudflare Browser Rendering. Stage 2 (Verification) binds extracted evidence to 30 deterministic scoring rules and AI analysis, requiring the model to cite evidence IDs for every recommendation. Stage 3 (Consistency) runs multi-model consensus — GPT-5 Mini deep analysis, Claude Sonnet 4.6 peer critique (score adjustment −15 to +10), and Grok 4.1 Fast validation gate. Each stage maps to named functions in the AiVIS.biz pipeline and produces independently verifiable outputs. The full three-stage pipeline is available on Signal ($149/mo) and Score Fix ($299 one-time) tiers. Read the full <a href="/triple-check-methodology" style="color:#06b6d4">Triple-Check Methodology protocol</a>.</p>
+          <h2 style="font-size: 22px; margin: 28px 0 10px">Triple-Check Methodology</h2>
+          <p style="color: #94a3b8; line-height: 1.6">
+            The AiVIS.biz Triple-Check Methodology is a three-stage verification protocol that
+            validates every audit finding against crawl-observable evidence. Stage 1 (Extraction)
+            captures signals from the target URL through a multi-step fetch pipeline: HTTP, headless
+            Puppeteer, and Cloudflare Browser Rendering. Stage 2 (Verification) binds extracted
+            evidence to 30 deterministic scoring rules and AI analysis, requiring the model to cite
+            evidence IDs for every recommendation. Stage 3 (Consistency) runs multi-model consensus
+            — GPT-5 Mini deep analysis, Claude Sonnet 4.6 peer critique (score adjustment −15 to
+            +10), and Grok 4.1 Fast validation gate. Each stage maps to named functions in the
+            AiVIS.biz pipeline and produces independently verifiable outputs. The full three-stage
+            pipeline is available on Signal ($149/mo) and Score Fix ($299 one-time) tiers. Read the
+            full
+            <a href="/triple-check-methodology" style="color: #06b6d4"
+              >Triple-Check Methodology protocol</a
+            >.
+          </p>
 
-        <nav aria-label="Primary navigation" style="margin-top:24px">
-          <a href="/" style="color:#06b6d4;margin-right:16px">Home</a>
-          <a href="/pricing" style="color:#06b6d4;margin-right:16px">Compare 'aivis.biz' plans</a>
-          <a href="/methodology" style="color:#06b6d4;margin-right:16px">Executive Audit Methodology</a>
-          <a href="/triple-check-methodology" style="color:#06b6d4;margin-right:16px">Triple-Check Methodology</a>
-          <a href="/guide" style="color:#06b6d4;margin-right:16px">Guide to Visibility</a>
-          <a href="/tools/schema-validator" style="color:#06b6d4;margin-right:16px">Structured-data Verification</a>
-          <a href="/faq" style="color:#06b6d4">FAQs</a>
-        </nav>
-      </main>
+          <nav aria-label="Primary navigation" style="margin-top: 24px">
+            <a href="/" style="color: #06b6d4; margin-right: 16px">Home</a>
+            <a href="/pricing" style="color: #06b6d4; margin-right: 16px"
+              >Compare 'aivis.biz' plans</a
+            >
+            <a href="/methodology" style="color: #06b6d4; margin-right: 16px"
+              >Executive Audit Methodology</a
+            >
+            <a href="/triple-check-methodology" style="color: #06b6d4; margin-right: 16px"
+              >Triple-Check Methodology</a
+            >
+            <a href="/guide" style="color: #06b6d4; margin-right: 16px">Guide to Visibility</a>
+            <a href="/tools/schema-validator" style="color: #06b6d4; margin-right: 16px"
+              >Structured-data Verification</a
+            >
+            <a href="/faq" style="color: #06b6d4">FAQs</a>
+          </nav>
+        </main>
       </div>
     </div>
 
-
-    <script>if(window.gtag){gtag("js",new Date());gtag("config","G-B4WM53183L")}</script>
+    <script>
+      if (window.gtag) {
+        gtag('js', new Date());
+        gtag('config', 'G-B4WM53183L');
+      }
+    </script>
     <script type="module" id="app-entry" src="/src/main.tsx"></script>
     <script>
       (function () {
-        var RETRY_KEY = "aivis_boot_retry";
+        var RETRY_KEY = 'aivis_boot_retry';
         var BOOT_TIMEOUT_MS = 9000;
 
         function setLoadingMessage(message) {
-          var label = document.getElementById("boot-loading-text");
+          var label = document.getElementById('boot-loading-text');
           if (label) {
             label.textContent = message;
           }
         }
 
         function renderRecoveryButton() {
-          var root = document.getElementById("root");
-          if (!root || document.getElementById("boot-recovery-btn")) return;
+          var root = document.getElementById('root');
+          if (!root || document.getElementById('boot-recovery-btn')) return;
 
-          var button = document.createElement("button");
-          button.id = "boot-recovery-btn";
-          button.type = "button";
-          button.textContent = "Reload App";
-          button.style.marginTop = "12px";
-          button.style.padding = "8px 14px";
-          button.style.borderRadius = "10px";
-          button.style.border = "1px solid rgba(255,255,255,0.18)";
-          button.style.background = "rgba(255,255,255,0.08)";
-          button.style.color = "#fff";
-          button.style.cursor = "pointer";
+          var button = document.createElement('button');
+          button.id = 'boot-recovery-btn';
+          button.type = 'button';
+          button.textContent = 'Reload App';
+          button.style.marginTop = '12px';
+          button.style.padding = '8px 14px';
+          button.style.borderRadius = '10px';
+          button.style.border = '1px solid rgba(255,255,255,0.18)';
+          button.style.background = 'rgba(255,255,255,0.08)';
+          button.style.color = '#fff';
+          button.style.cursor = 'pointer';
           button.onclick = function () {
             sessionStorage.removeItem(RETRY_KEY);
-            window.location.href = window.location.origin + window.location.pathname + "?boot=" + Date.now();
+            window.location.href =
+              window.location.origin + window.location.pathname + '?boot=' + Date.now();
           };
 
           var shell = root.querySelector("div[style*='text-align:center']");
@@ -679,10 +1049,10 @@
           renderRecoveryButton();
         }
 
-        var entry = document.getElementById("app-entry");
+        var entry = document.getElementById('app-entry');
         if (entry) {
-          entry.addEventListener("error", function () {
-            fail("App bundle failed to load. Retrying...");
+          entry.addEventListener('error', function () {
+            fail('App bundle failed to load. Retrying...');
           });
         }
 
@@ -690,20 +1060,26 @@
           if (window.__AIVIS_BOOTSTRAPPED) return;
 
           if (!sessionStorage.getItem(RETRY_KEY)) {
-            sessionStorage.setItem(RETRY_KEY, "1");
-            setLoadingMessage("Loading timed out. Retrying...");
-            window.location.href = window.location.origin + window.location.pathname + "?boot=" + Date.now();
+            sessionStorage.setItem(RETRY_KEY, '1');
+            setLoadingMessage('Loading timed out. Retrying...');
+            window.location.href =
+              window.location.origin + window.location.pathname + '?boot=' + Date.now();
             return;
           }
 
-          fail("App failed to initialize. Please reload.");
+          fail('App failed to initialize. Please reload.');
         }, BOOT_TIMEOUT_MS);
       })();
     </script>
 
     <!-- Structured data removed from body; canonical JSON-LD is in <head> -->
-    <script>window.__AIVIS_RECAPTCHA_SITE_KEY="6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8"</script>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8" async defer></script>
+    <script>
+      window.__AIVIS_RECAPTCHA_SITE_KEY = '6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8';
+    </script>
+    <script
+      src="https://www.google.com/recaptcha/api.js?render=6LdNwIgsAAAAAMyezxlfxM4jvpqIrApXKf8YQHr8"
+      async
+      defer
+    ></script>
   </body>
 </html>
-

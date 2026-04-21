@@ -13,6 +13,7 @@ import ScanShell from './components/ScanShell';
 import { CookieConsent } from './components/CookieConsent';
 import PageLoadingSpinner from './components/PageLoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
+import Landing from './pages/Landing';
 
 /* ── Lazy-loaded pages (code-split for fast initial load) ── */
 const Dashboard = React.lazy(() => import('./views/Dashboard'));
@@ -82,7 +83,6 @@ const Admin = React.lazy(() => import('./pages/Admin'));
 const TeamPage = React.lazy(() => import('./pages/TeamPage'));
 const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 const HelpCenter = React.lazy(() => import('./pages/HelpCenter'));
-const Landing = React.lazy(() => import('./pages/Landing'));
 const SampleReport = React.lazy(() => import('./pages/SampleReport'));
 const WhyAIVisibility = React.lazy(() => import('./pages/WhyAIVisibility'));
 const AISearchVisibility2026 = React.lazy(() => import('./pages/AISearchVisibility2026'));

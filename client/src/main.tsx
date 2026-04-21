@@ -1,23 +1,37 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 
-import App from "./App";
-import "./index.css";
-import "./i18n"; // Initialize i18n before rendering
+import App from './App';
+import './index.css';
+import './i18n'; // Initialize i18n before rendering
 
-import AppErrorBoundary from "./components/AppErrorBoundary";
-import { initSentryIfConsented } from "./lib/sentry";
-import { useAuthStore } from "./stores/authStore";
+import AppErrorBoundary from './components/AppErrorBoundary';
+import {
+  isRecoverableChunkError,
+  markChunkBootSuccess,
+  recoverFromChunkError,
+} from './lib/chunkRecovery';
+import { initSentryIfConsented } from './lib/sentry';
+import { useAuthStore } from './stores/authStore';
 
 initSentryIfConsented();
 
-// Handle stale chunk errors after deployments - auto-reload once
+// Handle stale chunk errors after deployments - auto-reload once.
 window.addEventListener('vite:preloadError', () => {
-  const reloaded = sessionStorage.getItem('chunk-reload');
-  if (!reloaded) {
-    sessionStorage.setItem('chunk-reload', '1');
-    window.location.reload();
+  recoverFromChunkError();
+});
+
+window.addEventListener('error', (event) => {
+  if (isRecoverableChunkError(event.error ?? event.message)) {
+    recoverFromChunkError();
+  }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  if (isRecoverableChunkError(event.reason)) {
+    event.preventDefault();
+    recoverFromChunkError();
   }
 });
 
@@ -25,8 +39,9 @@ window.addEventListener('vite:preloadError', () => {
 useAuthStore.getState().hydrate();
 
 (window as any).__AIVIS_BOOTSTRAPPED = true;
+markChunkBootSuccess();
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppErrorBoundary>
       <BrowserRouter>

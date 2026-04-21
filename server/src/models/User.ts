@@ -141,6 +141,38 @@ export async function createUser(input: {
   return result.rows[0];
 }
 
+/**
+ * Create a user who authenticated via OAuth provider.
+ * The provider has already verified the email, so is_verified is set to TRUE
+ * atomically at insert time — no separate update step needed.
+ */
+export async function createOAuthUser(input: {
+  email: string;
+  name?: string;
+  role?: UserRole;
+  tier?: string;
+}): Promise<User> {
+  const email = normalizeEmail(input.email);
+  // OAuth users have no password; generate a long random one they'll never use
+  const password_hash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 12);
+
+  const result = await pool.query(
+    `INSERT INTO users (
+      email, password_hash, name, tier, is_verified, verification_token, verification_token_expires
+    )
+     VALUES ($1, $2, $3, $4, TRUE, NULL, NULL)
+     RETURNING *`,
+    [
+      email,
+      password_hash,
+      input.name || email.split('@')[0],
+      input.tier || 'observer',
+    ]
+  );
+
+  return result.rows[0];
+}
+
 export async function verifyUserEmail(token: string): Promise<User | null> {
   const result = await pool.query(
     `UPDATE users

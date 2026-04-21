@@ -16,7 +16,7 @@ import {
 } from '../controllers/authControllerFixed.js';
 import { authRequired } from '../middleware/authRequired.js';
 import { getPool } from '../services/postgresql.js';
-import { createUser, getUserByEmail, updateUserById } from '../models/User.js';
+import { createUser, createOAuthUser, getUserByEmail, updateUserById } from '../models/User.js';
 import { clearSessionCookie, setSessionCookie } from '../lib/authSession.js';
 import { signUserToken } from '../lib/utils/jwt.js';
 import { attachReferralAtSignup, normalizeReferralCodeInput, validateReferralCode } from '../services/referralCredits.js';
@@ -287,12 +287,8 @@ router.get('/google/callback', async (req, res) => {
     let referralAttached = false;
 
     if (!user) {
-      const generatedPassword = randomBytes(24).toString('hex');
-      user = await createUser({
-        email,
-        password: generatedPassword,
-        name: displayName,
-      });
+      // createOAuthUser creates with is_verified=TRUE atomically — no race condition
+      user = await createOAuthUser({ email, name: displayName });
 
       const referralCode = normalizeReferralCodeInput(String(state.ref || ''));
       if (state.mode === 'signup' && referralCode) {
@@ -306,11 +302,11 @@ router.get('/google/callback', async (req, res) => {
           referralAttached = attachResult.attached;
         }
       }
-    }
-
-    // Google already confirmed this email is verified — trust the provider
-    if (!user.is_verified) {
-      user = (await updateUserById(user.id, { is_verified: true })) || user;
+    } else if (!user.is_verified) {
+      // Existing user verified their email ownership via Google OAuth — mark verified
+      const updated = await updateUserById(user.id, { is_verified: true });
+      if (!updated) throw new Error('Failed to mark OAuth user as verified');
+      user = updated;
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });
@@ -499,12 +495,8 @@ router.get('/github/callback', async (req, res) => {
     let referralAttached = false;
 
     if (!user) {
-      const generatedPassword = randomBytes(24).toString('hex');
-      user = await createUser({
-        email,
-        password: generatedPassword,
-        name: displayName,
-      });
+      // createOAuthUser creates with is_verified=TRUE atomically — no race condition
+      user = await createOAuthUser({ email, name: displayName });
 
       const referralCode = normalizeReferralCodeInput(String(state.ref || ''));
       if (state.mode === 'signup' && referralCode) {
@@ -518,11 +510,11 @@ router.get('/github/callback', async (req, res) => {
           referralAttached = attachResult.attached;
         }
       }
-    }
-
-    // GitHub already confirmed this email is verified — trust the provider
-    if (!user.is_verified) {
-      user = (await updateUserById(user.id, { is_verified: true })) || user;
+    } else if (!user.is_verified) {
+      // Existing user verified their email ownership via GitHub OAuth — mark verified
+      const updated = await updateUserById(user.id, { is_verified: true });
+      if (!updated) throw new Error('Failed to mark OAuth user as verified');
+      user = updated;
     }
 
     const token = signUserToken({ userId: user.id, tier: user.tier || 'observer' });

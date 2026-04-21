@@ -1,7 +1,0 @@
-# Explicit Nixpacks configuration for Railway deployment
-# Forces Node 22.12.0+ to ensure Rolldown native bindings compile correctly
-
-[build]
-# Specify exact Node version to prevent Railway from using incompatible versions
-nodeVersion = "22.12.0"
-npmVersion = "11.6.1"

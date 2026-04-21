@@ -1,0 +1,6 @@
+# Explicit Nixpacks configuration for Railway deployment.
+# Root-level placement is required for Railway/Nixpacks to honor it.
+
+[build]
+nodeVersion = "22.12.0"
+npmVersion = "11.6.1"

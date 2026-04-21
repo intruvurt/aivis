@@ -17,6 +17,7 @@
  */
 
 import { getPool } from './postgresql.js';
+import { emitBackboneEvent } from './eventBackbone.js';
 import type {
   CitationEngine,
   HeatmapCell,
@@ -155,7 +156,7 @@ export async function buildHeatmapSurface(
 
   const totalCited = rows.filter((r) => r.totalCitations > 0).length;
 
-  return {
+  const surface: HeatmapSurface = {
     entity: url,
     url,
     rows,
@@ -164,6 +165,17 @@ export async function buildHeatmapSurface(
     totalCited,
     totalQueries: rows.length,
   };
+
+  emitBackboneEvent('heatmap.surface.built', {
+    source: 'heatmap',
+    userId,
+    domain: url,
+    totalQueries: surface.totalQueries,
+    totalCited: surface.totalCited,
+    deltaCount: surface.deltas.length,
+  });
+
+  return surface;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

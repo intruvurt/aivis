@@ -2,12 +2,12 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "cd server && npm install --include=dev && npm run build"
+    "buildCommand": "npm --prefix server install --include=dev && npm --prefix server run build"
   },
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "cd server && node --import ./dist/server/src/instrument.js dist/server/src/server.js",
+    "startCommand": "npm --prefix server run start:prod",
     "healthcheckPath": "/api/health",
     "sleepApplication": false,
     "useLegacyStacker": false,

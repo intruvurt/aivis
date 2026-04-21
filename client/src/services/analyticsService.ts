@@ -1,7 +1,11 @@
 import { Pool } from 'pg';
-import { Parser } from 'json2csv';
 
 const pool = new Pool();
+
+function escapeCsvValue(value: unknown): string {
+  const raw = value == null ? '' : String(value);
+  return /[",\n]/.test(raw) ? `"${raw.replace(/"/g, '""')}"` : raw;
+}
 
 // Fetch analytics data for a user and range
 export async function getAnalyticsFromDB(userId: string, range: string) {
@@ -16,6 +20,14 @@ export async function getAnalyticsFromDB(userId: string, range: string) {
 // Generate CSV from analytics data
 export async function generateCSV(userId: string, range: string) {
   const data = await getAnalyticsFromDB(userId, range);
-  const parser = new Parser();
-  return parser.parse(data);
+  if (!data.length) return '';
+
+  const headers = Object.keys(data[0]);
+  const lines = [headers.map(escapeCsvValue).join(',')];
+
+  for (const row of data) {
+    lines.push(headers.map((header) => escapeCsvValue(row[header])).join(','));
+  }
+
+  return lines.join('\n');
 }

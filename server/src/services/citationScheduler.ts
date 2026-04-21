@@ -13,6 +13,7 @@ import type { ScheduledCitationJob, CitationSchedulePreset } from '../../../shar
 import { CITATION_PRESET_HOURS } from '../../../shared/types.js';
 import { detectAndStoreDropAlert } from './citationIntelligenceService.js';
 import { sendCitationDropAlert } from './trendAlertEmails.js';
+import { emitBackboneEvent } from './eventBackbone.js';
 
 function getServerApiKey(): string | null {
   return process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || null;
@@ -58,6 +59,13 @@ async function executeJob(job: ScheduledCitationJob): Promise<void> {
   }
 
   console.log(`[CitationScheduler] Running job ${job.id} for "${job.target_url}"`);
+  emitBackboneEvent('citation.job.started', {
+    source: 'citation',
+    userId: job.user_id,
+    domain: job.target_url,
+    jobId: job.id,
+    intervalHours: job.interval_hours,
+  });
 
   const pool = getPool();
 
@@ -109,6 +117,23 @@ async function executeJob(job: ScheduledCitationJob): Promise<void> {
       [now.toISOString(), nextRun.toISOString(), result?.id ?? null, job.id]
     );
 
+    emitBackboneEvent('citation.job.completed', {
+      source: 'citation',
+      userId: job.user_id,
+      domain: job.target_url,
+      jobId: job.id,
+      rankingId: result?.id ?? null,
+      nextRunAt: nextRun.toISOString(),
+    });
+
+    emitBackboneEvent('citation.ledger.updated', {
+      source: 'citation',
+      userId: job.user_id,
+      domain: job.target_url,
+      jobId: job.id,
+      rankingId: result?.id ?? null,
+    });
+
     console.log(`[CitationScheduler] Job ${job.id} complete. Next: ${nextRun.toISOString()}`);
 
     // Check for mention-rate drops and fire email if threshold exceeded
@@ -138,6 +163,13 @@ async function executeJob(job: ScheduledCitationJob): Promise<void> {
     }
   } catch (err: any) {
     console.error(`[CitationScheduler] Job ${job.id} failed:`, err.message);
+    emitBackboneEvent('citation.job.failed', {
+      source: 'citation',
+      userId: job.user_id,
+      domain: job.target_url,
+      jobId: job.id,
+      error: String(err?.message || err),
+    });
     // Update next_run_at without incrementing to avoid missing runs
     const nextRun = addHours(new Date(), job.interval_hours);
     await pool.query(

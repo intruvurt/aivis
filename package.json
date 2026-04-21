@@ -6,14 +6,20 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "install:all": "npm --prefix client install && npm --prefix server install",
-    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install && npm --prefix server run build",
-    "api": "cd server && npm install --include=dev && npm run build",
-    "web": "cd client && npm install --include=dev && npm run build",
+    "build:client": "npm --prefix client run build",
+    "build:server": "npm --prefix server run build",
+    "build": "npm run build:client && npm run build:server",
     "start": "npm --prefix server run start",
     "lint": "npm --prefix client run lint && npm --prefix server run lint",
-    "dev": "cd server && npm run dev",
     "typecheck": "npm --prefix client run typecheck && npm --prefix server run typecheck",
+    "api": "npm --prefix server run dev",
+    "web": "npm --prefix client run dev",
+    "worker": "npm --prefix server run worker",
+    "worker:dev": "npm --prefix server run worker:dev",
+    "queue:replay": "node ./tools/replay-queue.mjs",
+    "queue:inspect": "node ./tools/inspect-queue.mjs",
     "smoke:features": "node ./tools/verify-feature-status-smoke.mjs",
     "smoke:analyze": "node ./tools/verify-analyze-integrity-smoke.mjs",
     "smoke:analyze:tiers": "node ./tools/verify-analyze-integrity-by-tier.mjs",
@@ -21,7 +27,15 @@
     "smoke:prod": "node ./tools/verify-prod-endpoints-smoke.mjs",
     "smoke:prod:crawl": "node ./tools/verify-prod-crawl-surface.mjs",
     "smoke:visibility:gate": "node ./tools/verify-visibility-gate.mjs",
-    "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs"
+    "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs",
+    "worker:bix": "npm --prefix server run worker:bix",
+    "worker:citations": "npm --prefix server run worker:citations",
+    "worker:fix": "npm --prefix server run worker:fix",
+    "queue:debug": "node ./tools/debug-queue.mjs",
+    "system:health": "node ./tools/system-health.mjs",
+    "bix:simulate": "node ./tools/simulate-bix.mjs",
+    "audit:full": "npm run smoke:features && npm run smoke:analyze && npm run smoke:wiring:static",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.0",
@@ -36,11 +50,11 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^3.0.0",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.2.3",
     "@types/pg": "^8.16.0",
+    "concurrently": "^9.0.0",
     "typescript": "^5.9.3"
   },
   "overrides": {

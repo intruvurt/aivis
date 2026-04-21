@@ -12,6 +12,8 @@
 import cron from "node-cron";
 import { getPool } from "../services/postgresql.js";
 import { enqueueAuditJob } from "../infra/queues/auditQueue.js";
+import { emitBackboneEvent } from "./eventBackbone.js";
+import { SCHEDULER_CONFIG, SYSTEM_CONFIG } from "../config/runtime.system.config.js";
 
 let schedulerStarted = false;
 
@@ -19,6 +21,7 @@ let schedulerStarted = false;
  * Enqueue audits for projects that opted in AND whose owner meets the tier gate.
  */
 async function enqueueAllProjectsForAudit(): Promise<void> {
+  if (!SYSTEM_CONFIG.bix.enabled) return;
   const pool = getPool();
 
   // Only process projects where:
@@ -43,9 +46,17 @@ async function enqueueAllProjectsForAudit(): Promise<void> {
 
   if (projects.length === 0) return;
 
-  console.log(`[Scheduler] Enqueuing audits for ${projects.length} projects`);
+  const cappedProjects = projects.slice(0, Math.max(1, SYSTEM_CONFIG.bix.maxConcurrentScans));
 
-  for (const project of projects) {
+  emitBackboneEvent("bix.tick.started", {
+    source: "scheduler",
+    candidateCount: projects.length,
+    cappedCount: cappedProjects.length,
+  });
+
+  console.log(`[Scheduler] Enqueuing audits for ${cappedProjects.length}/${projects.length} projects`);
+
+  for (const project of cappedProjects) {
     try {
       // Find a user in this org to run the audit as
       const { rows: members } = await pool.query(
@@ -65,10 +76,22 @@ async function enqueueAllProjectsForAudit(): Promise<void> {
         userId: members[0].id,
         priority: "normal",
       });
+
+      emitBackboneEvent("bix.scan.enqueued", {
+        source: "scheduler",
+        userId: members[0].id,
+        domain: project.domain,
+        orgId: project.org_id,
+      });
     } catch (err: any) {
       console.warn(
         `[Scheduler] Failed to enqueue audit for project ${project.id}: ${err.message}`,
       );
+      emitBackboneEvent("bix.error", {
+        source: "scheduler",
+        domain: project.domain,
+        error: String(err?.message || err),
+      });
     }
   }
 }
@@ -179,9 +202,16 @@ export function startScheduler(): void {
 
   // Run full project audit sweep every 6 hours
   cron.schedule("0 */6 * * *", () => {
-    enqueueAllProjectsForAudit().catch((err) => {
-      console.error("[Scheduler] Audit sweep failed:", err.message);
-    });
+    const jitter = Math.floor(Math.random() * Math.max(1, SCHEDULER_CONFIG.jitterMs));
+    setTimeout(() => {
+      enqueueAllProjectsForAudit().catch((err) => {
+        console.error("[Scheduler] Audit sweep failed:", err.message);
+        emitBackboneEvent("bix.error", {
+          source: "scheduler",
+          error: String(err?.message || err),
+        });
+      });
+    }, jitter);
   });
 
   // Clean up stale audit jobs every hour

@@ -1,6 +1,17 @@
 # Explicit Nixpacks configuration for Railway deployment.
 # Root-level placement is required for Railway/Nixpacks to honor it.
 
-[build]
-nodeVersion = "22.12.0"
-npmVersion = "11.6.1"
+[phases.setup]
+nixPkgs = ["nodejs_24", "npm-9_x"]
+
+[phases.install]
+cmds = ["npm --prefix server install --include=dev"]
+
+[phases.build]
+cmds = [
+	"npm --prefix server run build",
+	"cd server && npx puppeteer browsers install chrome"
+]
+
+[start]
+cmd = "npm --prefix server run start:prod"

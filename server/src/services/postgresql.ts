@@ -1451,6 +1451,13 @@ export async function runMigrations(): Promise<void> {
       console.log(
         `[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`,
       );
+      // Ensure pgvector extension is available before any vector column DDL
+      try {
+        await client.query(`CREATE EXTENSION IF NOT EXISTS vector`);
+      } catch (_extErr) {
+        // pgvector not installed in this Postgres instance — vector columns will be skipped
+        console.warn("[DB] pgvector extension unavailable; vector indexes will not be created");
+      }
       // Batch all DDL into a single round-trip to minimize connection overhead
       // (~200 queries → 1 query = ~99% reduction in compute time)
       const _ddl: string[] = [];
@@ -4727,6 +4734,120 @@ export async function runMigrations(): Promise<void> {
       _q(`CREATE INDEX IF NOT EXISTS idx_aee_url ON audit_evidence_entries(url, created_at DESC)`);
       _q(`CREATE INDEX IF NOT EXISTS idx_aee_source ON audit_evidence_entries(source_type)`);
       _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_aee_ledger_hash ON audit_evidence_entries(ledger_hash)`);
+
+      // ── GRAPH KNOWLEDGE LAYER (migration 010) ────────────────────────────
+      // scans: pipeline execution records, separate from user-facing audits
+      _q(`
+      CREATE TABLE IF NOT EXISTS scans (
+        id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        audit_id        UUID        REFERENCES audits(id) ON DELETE SET NULL,
+        url             TEXT        NOT NULL,
+        status          TEXT        NOT NULL DEFAULT 'pending'
+                                    CHECK (status IN ('pending','running','complete','failed')),
+        execution_class TEXT,
+        model_count     SMALLINT    DEFAULT 0,
+        triple_check    BOOLEAN     DEFAULT FALSE,
+        created_at      TIMESTAMPTZ DEFAULT now()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_scans_audit   ON scans (audit_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_scans_url     ON scans (url)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_scans_created ON scans (created_at DESC)`);
+
+      // entities: canonical entity registry with optional vector embeddings
+      _q(`
+      CREATE TABLE IF NOT EXISTS entities (
+        id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        canonical_name TEXT        NOT NULL,
+        type           TEXT,
+        embedding      vector(768),
+        created_at     TIMESTAMPTZ DEFAULT now()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_entities_name ON entities (canonical_name)`);
+
+      // claims: atomic SPO truth units extracted per scan
+      _q(`
+      CREATE TABLE IF NOT EXISTS claims (
+        id               UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
+        scan_id          UUID              REFERENCES scans(id) ON DELETE CASCADE,
+        subject_id       UUID              REFERENCES entities(id) ON DELETE SET NULL,
+        predicate        TEXT              NOT NULL,
+        object_value     TEXT,
+        object_raw       TEXT,
+        object_number    DOUBLE PRECISION,
+        value_type       TEXT              CHECK (value_type IN ('string','number','boolean')),
+        confidence       REAL              CHECK (confidence       BETWEEN 0 AND 1),
+        domain_authority REAL              CHECK (domain_authority BETWEEN 0 AND 1),
+        freshness        REAL              CHECK (freshness        BETWEEN 0 AND 1),
+        source_url       TEXT,
+        embedding        vector(768),
+        created_at       TIMESTAMPTZ       DEFAULT now()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claims_subject_pred ON claims (subject_id, predicate)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claims_scan         ON claims (scan_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claims_predicate    ON claims (predicate)`);
+
+      // claim_edges: append-only conflict/support/duplicate graph
+      _q(`
+      CREATE TABLE IF NOT EXISTS claim_edges (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        claim_a    UUID        NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+        claim_b    UUID        NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
+        edge_type  TEXT        NOT NULL CHECK (edge_type IN ('SUPPORTS','CONFLICTS','DUPLICATE')),
+        weight     REAL        DEFAULT 1.0,
+        created_at TIMESTAMPTZ DEFAULT now(),
+        CONSTRAINT claim_edges_no_self_loop CHECK (claim_a <> claim_b),
+        CONSTRAINT claim_edges_ordered      CHECK (claim_a < claim_b)
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claim_edges_a    ON claim_edges (claim_a)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claim_edges_b    ON claim_edges (claim_b)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claim_edges_type ON claim_edges (edge_type)`);
+
+      // entity_edges: knowledge-graph relationships between entities
+      _q(`
+      CREATE TABLE IF NOT EXISTS entity_edges (
+        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        from_entity UUID        NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+        to_entity   UUID        NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+        relation    TEXT,
+        weight      REAL        DEFAULT 1.0,
+        created_at  TIMESTAMPTZ DEFAULT now()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_entity_edges_from ON entity_edges (from_entity)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_entity_edges_to   ON entity_edges (to_entity)`);
+
+      // claim_clusters: one cluster per (subject_id, predicate) — materialized
+      _q(`
+      CREATE TABLE IF NOT EXISTS claim_clusters (
+        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        subject_id  UUID        REFERENCES entities(id) ON DELETE CASCADE,
+        predicate   TEXT        NOT NULL,
+        created_at  TIMESTAMPTZ DEFAULT now(),
+        UNIQUE (subject_id, predicate)
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_claim_clusters_subj_pred ON claim_clusters (subject_id, predicate)`);
+
+      // cluster_members: claim membership within clusters
+      _q(`
+      CREATE TABLE IF NOT EXISTS cluster_members (
+        cluster_id UUID NOT NULL REFERENCES claim_clusters(id) ON DELETE CASCADE,
+        claim_id   UUID NOT NULL REFERENCES claims(id)         ON DELETE CASCADE,
+        PRIMARY KEY (cluster_id, claim_id)
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_cluster_members_claim ON cluster_members (claim_id)`);
+
+      // resolutions: probabilistic verdict per cluster — multiple candidates allowed
+      _q(`
+      CREATE TABLE IF NOT EXISTS resolutions (
+        id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        cluster_id  UUID        NOT NULL REFERENCES claim_clusters(id) ON DELETE CASCADE,
+        value       TEXT,
+        probability REAL        CHECK (probability BETWEEN 0 AND 1),
+        support     REAL,
+        status      TEXT        CHECK (status IN ('VERIFIED','DEGRADED','CONTRADICTORY')),
+        created_at  TIMESTAMPTZ DEFAULT now()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_resolutions_cluster ON resolutions (cluster_id)`);
+
       if (_ddl.length > 0) {
         console.log(
           `[DB] Executing ${_ddl.length} DDL statements in single batch...`,

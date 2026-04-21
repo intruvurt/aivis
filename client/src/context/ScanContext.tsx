@@ -107,6 +107,14 @@ export function ScanProvider({ children }: { children: ReactNode }) {
         `${API_URL}/api/analyze/stream?url=${encodeURIComponent(url)}`
       );
       esRef.current = source;
+      let terminalEventReceived = false;
+
+      const closeStream = () => {
+        source.close();
+        if (esRef.current === source) {
+          esRef.current = null;
+        }
+      };
 
       let sseSeq = 0;
 
@@ -173,6 +181,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
 
             // ── Completion ──────────────────────────────────────────────────────
             case 'SCAN_COMPLETED': {
+              terminalEventReceived = true;
               const s = raw.summary as ScanSummary & {
                 cite_count: number;
                 entity_count: number;
@@ -205,27 +214,26 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               engine.ingest(sid, { type: 'STAGE_UPDATE', stage: 'FINALIZING' });
               engine.flush(sid);
               tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
+              closeStream();
 
               // After brief FINALIZING animation, flip to RESULT phase
               setTimeout(() => {
                 engine.ingest(sid, { type: 'SCAN_COMPLETE', result });
                 engine.flush(sid);
-                source.close();
-                esRef.current = null;
               }, 400);
               return; // skip scheduleFlush below — already flushed
             }
 
             // ── Error ───────────────────────────────────────────────────────────
             case 'ERROR': {
+              terminalEventReceived = true;
               engine.ingest(sid, {
                 type: 'SCAN_ERROR',
                 message: (raw.message as string) || 'Scan failed.',
               });
               tap.tapEvent(raw as import('../../../shared/types').ScanEvent, sid, currentSeq);
               engine.flush(sid);
-              source.close();
-              esRef.current = null;
+              closeStream();
               return; // skip scheduleFlush below — already flushed
             }
           }
@@ -238,6 +246,13 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       };
 
       source.onerror = () => {
+        // EventSource fires onerror when the server closes the stream.
+        // If a terminal event has already been processed, this is expected.
+        if (terminalEventReceived) {
+          closeStream();
+          return;
+        }
+
         if (esRef.current) {
           const sid = scanIdRef.current;
           const engine = getEngine();
@@ -246,8 +261,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
             message: 'Connection lost. Check your network and try again.',
           });
           engine.flush(sid);
-          source.close();
-          esRef.current = null;
+          closeStream();
         }
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -93,7 +93,14 @@ export async function getUserById(id: string): Promise<User | null> {
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const result = await pool.query(`SELECT * FROM users WHERE email = $1`, [normalizeEmail(email)]);
+  const result = await pool.query(
+    `SELECT *
+     FROM users
+     WHERE LOWER(email) = LOWER($1)
+     ORDER BY is_verified DESC, created_at DESC
+     LIMIT 1`,
+    [normalizeEmail(email)]
+  );
   return result.rows[0] || null;
 }
 
@@ -189,10 +196,18 @@ export async function resendVerificationEmail(email: string): Promise<{ token: s
   const { token, expires } = generateVerificationToken();
 
   const result = await pool.query(
-    `UPDATE users
+    `WITH target AS (
+       SELECT id
+       FROM users
+       WHERE LOWER(email) = LOWER($3) AND is_verified = FALSE
+       ORDER BY created_at DESC
+       LIMIT 1
+     )
+     UPDATE users u
      SET verification_token = $1, verification_token_expires = $2, updated_at = NOW()
-     WHERE email = $3 AND is_verified = FALSE
-     RETURNING *`,
+     FROM target
+     WHERE u.id = target.id
+     RETURNING u.*`,
     [token, expires, normalizeEmail(email)]
   );
 
@@ -265,14 +280,14 @@ export async function incrementLoginAttempts(email: string): Promise<void> {
     `UPDATE users
      SET login_attempts = COALESCE(login_attempts, 0) + 1,
          locked_until = CASE WHEN COALESCE(login_attempts, 0) >= 5 THEN NOW() + INTERVAL '30 minutes' ELSE locked_until END
-     WHERE email = $1`,
+     WHERE LOWER(email) = LOWER($1)`,
     [normalizeEmail(email)]
   );
 }
 
 export async function resetLoginAttempts(email: string): Promise<void> {
   await pool.query(
-    `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE email = $1`,
+    `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE LOWER(email) = LOWER($1)`,
     [normalizeEmail(email)]
   );
 }
@@ -307,10 +322,18 @@ export async function setPasswordResetToken(
   const { token, expires } = generatePasswordResetToken();
 
   const result = await pool.query(
-    `UPDATE users
+    `WITH target AS (
+       SELECT id
+       FROM users
+       WHERE LOWER(email) = LOWER($3) AND is_verified = TRUE
+       ORDER BY created_at DESC
+       LIMIT 1
+     )
+     UPDATE users u
      SET verification_token = $1, verification_token_expires = $2, updated_at = NOW()
-     WHERE email = $3 AND is_verified = TRUE
-     RETURNING *`,
+     FROM target
+     WHERE u.id = target.id
+     RETURNING u.*`,
     [token, expires, normalizeEmail(email)],
   );
 

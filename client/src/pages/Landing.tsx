@@ -79,6 +79,7 @@ function useAnimatedScore(initial: number) {
 const Landing = () => {
   usePageMeta({
     title: META.title,
+    fullTitle: META.title,
     description: META.description,
     path: '/landing',
     ogTitle: OG.title,

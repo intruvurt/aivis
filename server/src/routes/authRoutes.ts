@@ -576,9 +576,9 @@ router.post(
 router.post(
   '/login',
   [
-    body('email').isEmail().withMessage('Valid email is required'),
+    body('email').trim().isEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required'),
-    body('captchaToken').optional().isString().withMessage('Invalid captcha token')
+    body('captchaToken').optional({ nullable: true, checkFalsy: true }).isString().withMessage('Invalid captcha token')
   ],
   login
 );
@@ -593,8 +593,8 @@ router.get('/verify-email', verifyEmail);
 router.post(
   '/resend-verification',
   [
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('captchaToken').optional().isString().withMessage('Invalid captcha token')
+    body('email').trim().isEmail().withMessage('Valid email is required'),
+    body('captchaToken').optional({ nullable: true, checkFalsy: true }).isString().withMessage('Invalid captcha token')
   ],
   resendVerification
 );

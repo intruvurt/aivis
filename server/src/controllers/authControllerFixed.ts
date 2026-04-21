@@ -46,7 +46,9 @@ function isRecoverableCaptchaFailure(message: unknown): boolean {
     text.includes('missing captcha token') ||
     text.includes('timeout-or-duplicate') ||
     text.includes('invalid-input-response') ||
+    text.includes('invalid-captcha') ||
     text.includes('captcha-verification-failed') ||
+    text.includes('bad-request') ||
     text.includes('fetch failed') ||
     text.includes('network')
   );

@@ -171,6 +171,14 @@ export async function runScan(
     const seenFamilies = new Set<string>();
     const entities: EntityRef[] = [];
 
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'entity_resolving',
+        progress: 0,
+        payload: { resolved_entities: 0 },
+        timestamp: Date.now(),
+    });
+
     for (const item of evidence) {
         if (seenFamilies.has(item.family)) continue;
         seenFamilies.add(item.family);
@@ -191,8 +199,23 @@ export async function runScan(
         });
     }
 
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'entity_resolving',
+        progress: 1,
+        payload: { resolved_entities: entities.length },
+        timestamp: Date.now(),
+    });
+
     // ── Stage 4: Interpretation pass ─────────────────────────────────────────
     const interpretedFamilies = new Set<string>();
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'edge_building',
+        progress: 0,
+        payload: { interpreted_families: 0, cite_ids: 0 },
+        timestamp: Date.now(),
+    });
     for (const item of evidence) {
         if (interpretedFamilies.has(item.family)) continue;
         interpretedFamilies.add(item.family);
@@ -215,6 +238,16 @@ export async function runScan(
             timestamp: Date.now(),
         });
     }
+
+    emit({
+        type: 'PIPELINE_STAGE',
+        stage: 'edge_building',
+        progress: 1,
+        payload: {
+            interpreted_families: interpretedFamilies.size,
+        },
+        timestamp: Date.now(),
+    });
 
     // ── Stage 5: Score ────────────────────────────────────────────────────────
     let scoring: ReturnType<typeof scoreEvidence>;

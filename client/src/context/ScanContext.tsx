@@ -142,7 +142,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'START_SCAN', url });
 
       const source = new EventSource(
-        `${API_URL}/api/analyze/stream?url=${encodeURIComponent(url)}`
+        `${API_URL}/api/analyze/stream?url=${encodeURIComponent(url)}&scanId=${encodeURIComponent(scanId)}`
       );
       esRef.current = source;
       let terminalEventReceived = false;

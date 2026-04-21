@@ -91,6 +91,10 @@ const Landing = () => {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [caseStudyImageSrc, setCaseStudyImageSrc] = useState('/images/case-study-score-lift.png');
+  const [fixPackImageSrc, setFixPackImageSrc] = useState('/images/fix-pack-preview.svg');
+  const [caseStudyImageFailed, setCaseStudyImageFailed] = useState(false);
+  const [fixPackImageFailed, setFixPackImageFailed] = useState(false);
 
   // Scan result — populated by ScanShell's onResult callback
   const [previewResult, setPreviewResult] = useState<ScanResult | null>(null);
@@ -711,14 +715,33 @@ const Landing = () => {
                 className="absolute inset-0 pointer-events-none rounded-2xl"
                 style={{ boxShadow: 'inset 0 0 60px 30px rgba(6,6,7,0.85)' }}
               />
-              <img
-                src="/images/case-study-score-lift.png"
-                alt="Real AiVIS.biz audit showing score improvement from 15 to 52 after applying recommended fixes"
-                width="1024"
-                height="576"
-                className="w-full h-auto rounded-xl"
-                loading="lazy"
-              />
+              {caseStudyImageFailed ? (
+                <div className="w-full rounded-xl border border-white/10 bg-[#0c1420] p-6 sm:p-8 text-center">
+                  <p className="text-sm sm:text-base font-semibold text-cyan-200 mb-2">
+                    Case study visual unavailable
+                  </p>
+                  <p className="text-xs sm:text-sm text-white/50">
+                    The before/after screenshot failed to load, but score deltas and fix evidence
+                    below are still accurate.
+                  </p>
+                </div>
+              ) : (
+                <img
+                  src={caseStudyImageSrc}
+                  alt="Real AiVIS.biz audit showing score improvement from 15 to 52 after applying recommended fixes"
+                  width="1024"
+                  height="576"
+                  className="w-full h-auto rounded-xl"
+                  loading="lazy"
+                  onError={() => {
+                    if (caseStudyImageSrc !== '/sample-aivis-chart.png') {
+                      setCaseStudyImageSrc('/sample-aivis-chart.png');
+                      return;
+                    }
+                    setCaseStudyImageFailed(true);
+                  }}
+                />
+              )}
             </motion.div>
             <div className="mt-8 grid sm:grid-cols-3 gap-4 text-center">
               <div className="rounded-2xl border border-red-400/20 bg-red-400/8 p-4">
@@ -856,14 +879,33 @@ const Landing = () => {
               </div>
             </div>
             <div className="rounded-2xl border border-white/12 bg-[#323a4c]/40 p-3 sm:p-4 shadow-2xl">
-              <img
-                src="/images/fix-pack-preview.svg"
-                alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block"
-                width="960"
-                height="540"
-                className="w-full h-auto rounded-xl"
-                loading="lazy"
-              />
+              {fixPackImageFailed ? (
+                <div className="w-full rounded-xl border border-white/10 bg-[#101626] p-6 sm:p-8 text-center">
+                  <p className="text-sm sm:text-base font-semibold text-violet-200 mb-2">
+                    Fix Pack preview unavailable
+                  </p>
+                  <p className="text-xs sm:text-sm text-white/50">
+                    The visual preview failed to load. Use the sample report link below to view full
+                    JSON-LD, H1, and FAQ output.
+                  </p>
+                </div>
+              ) : (
+                <img
+                  src={fixPackImageSrc}
+                  alt="Real Score Fix Pack: JSON-LD patch + H1 rewrite + FAQ block"
+                  width="960"
+                  height="540"
+                  className="w-full h-auto rounded-xl"
+                  loading="lazy"
+                  onError={() => {
+                    if (fixPackImageSrc !== '/score-fix.png') {
+                      setFixPackImageSrc('/score-fix.png');
+                      return;
+                    }
+                    setFixPackImageFailed(true);
+                  }}
+                />
+              )}
             </div>
             <p className="mt-3 text-xs text-white/40 text-center">
               Real Fix Pack output · Generated from live audit evidence · Not a mockup

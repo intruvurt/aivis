@@ -45,6 +45,18 @@ export function ScanningView({ stage, url }: Props) {
     state.phase === 'SCANNING' ? Math.round((state.stageProgress || 0) * 100) : 0;
   const currentIndex = SCAN_STAGE_ORDER.indexOf(stage);
   const timeline = state.phase === 'SCANNING' ? state.timeline.slice(-5) : [];
+  const progressWidthClass =
+    stageProgress >= 95
+      ? 'w-full'
+      : stageProgress >= 75
+        ? 'w-3/4'
+        : stageProgress >= 50
+          ? 'w-1/2'
+          : stageProgress >= 25
+            ? 'w-1/4'
+            : stageProgress > 0
+              ? 'w-[8%]'
+              : 'w-0';
 
   return (
     <div className="w-full max-w-lg mx-auto mt-4">
@@ -138,10 +150,7 @@ export function ScanningView({ stage, url }: Props) {
               <span className="tabular-nums">{stageProgress}%</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div
-                className="h-full bg-cyan-400/80 transition-all"
-                style={{ width: `${stageProgress}%` }}
-              />
+              <div className={`h-full bg-cyan-400/80 transition-all ${progressWidthClass}`} />
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-[11px]">

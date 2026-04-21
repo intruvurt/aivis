@@ -289,6 +289,7 @@ import {
 import { scoreEvidence } from "./services/scoringEngine.js";
 import { buildPreviewResult } from "./services/previewScanner.js";
 import { runScan } from "./services/scanOrchestrator.js";
+import { appendScanEvent, readScanEvents } from "./services/scanEventStream.js";
 import {
   evaluateSSFRRules,
   buildSSFRSummary,
@@ -9523,6 +9524,30 @@ app.post(
 // GET /api/analyze/stream?url=<encoded-url>
 // ─────────────────────────────────────────────────────────────────────────────
 app.get(
+  "/api/analyze/timeline/:scanId",
+  ipRateLimit({ maxRequests: 90, windowMs: 3_600_000 }),
+  async (req: Request, res: Response) => {
+    const rawScanId = String(req.params.scanId || "").trim();
+    if (!rawScanId) {
+      return res.status(400).json({ error: "scanId is required" });
+    }
+
+    const limit = Math.max(
+      1,
+      Math.min(1000, Number(req.query.limit || 300) || 300),
+    );
+
+    const events = await readScanEvents(rawScanId, limit);
+    return res.json({
+      success: true,
+      scanId: rawScanId,
+      count: events.length,
+      events,
+    });
+  },
+);
+
+app.get(
   "/api/analyze/stream",
   ipRateLimit({ maxRequests: 30, windowMs: 3_600_000 }),
   async (req: Request, res: Response) => {
@@ -9541,14 +9566,29 @@ app.get(
       return res.status(400).json({ error: urlError || "Invalid URL" });
     }
 
+    const queryScanId =
+      typeof req.query.scanId === "string" ? req.query.scanId.trim() : "";
+    const scanId = queryScanId || `scan_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no"); // disable nginx buffering
+    res.setHeader("X-Scan-Id", scanId);
     res.flushHeaders();
 
-    const emit = (event: ScanEvent) =>
-      res.write(`data: ${JSON.stringify(event)}\n\n`);
+    let seq = 0;
+    const emit = (event: ScanEvent) => {
+      seq += 1;
+      const enriched = {
+        ...event,
+        scanId,
+        seq,
+      };
+
+      res.write(`data: ${JSON.stringify(enriched)}\n\n`);
+      void appendScanEvent(scanId, seq, event);
+    };
 
     try {
       await runScan(targetUrl, emit);

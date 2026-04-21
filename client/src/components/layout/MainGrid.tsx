@@ -37,11 +37,36 @@ export interface MainGridProps {
   /** 96px fixed bottom bar — timeline scrubber */
   timeline?: React.ReactNode;
   className?: string;
+
+  /**
+   * Stage-primary layout mode (fl-shell--stage).
+   * Desktop: stageRail (80px left spine) + graph over stagePanel.
+   * Mobile: stageRail and stagePanel hidden; falls back to stacked layout.
+   */
+  stageMode?: boolean;
+  /** Narrow left stage timeline rail — rendered at desktop only in stageMode */
+  stageRail?: React.ReactNode;
+  /** Contextual evidence panel below graph — rendered at desktop only in stageMode */
+  stagePanel?: React.ReactNode;
 }
 
-export function MainGrid({ topBar, left, center, right, timeline, className = '' }: MainGridProps) {
+export function MainGrid({
+  topBar,
+  left,
+  center,
+  right,
+  timeline,
+  className = '',
+  stageMode = false,
+  stageRail,
+  stagePanel,
+}: MainGridProps) {
+  const shellClass = ['fl-shell', stageMode ? 'fl-shell--stage' : '', className]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={`fl-shell${className ? ` ${className}` : ''}`}>
+    <div className={shellClass}>
       {topBar != null && (
         <header className="fl-topbar" role="banner">
           {topBar}
@@ -49,16 +74,31 @@ export function MainGrid({ topBar, left, center, right, timeline, className = ''
       )}
 
       <div className="fl-main-grid" role="main">
+        {/* Stage rail — desktop only in stageMode; CSS hides on mobile */}
+        {stageMode && stageRail != null && stageRail}
+
+        {/* Commit graph — mobile fallback; CSS hides on desktop in stageMode */}
         {left != null && (
           <aside className="fl-panel fl-panel--commit" aria-label="Commit history">
             {left}
           </aside>
         )}
 
-        <section className="fl-panel fl-panel--graph" aria-label="Graph">
-          {center}
-        </section>
+        {stageMode ? (
+          /* Stage content: graph (flex:1) stacked over deepview (220px) */
+          <div className="fl-stage-content">
+            <section className="fl-stage-graph fl-panel fl-panel--graph" aria-label="Graph">
+              {center}
+            </section>
+            {stagePanel != null && stagePanel}
+          </div>
+        ) : (
+          <section className="fl-panel fl-panel--graph" aria-label="Graph">
+            {center}
+          </section>
+        )}
 
+        {/* Inspector — mobile fallback; CSS hides on desktop in stageMode */}
         {right != null && (
           <aside className="fl-panel fl-panel--inspector" aria-label="Inspector">
             {right}

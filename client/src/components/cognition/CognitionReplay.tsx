@@ -96,12 +96,25 @@ interface CognitionReplayProps {
   className?: string;
   /** When true, the timeline scrubber is hidden (e.g. during live scanning) */
   hideTimeline?: boolean;
+  /**
+   * Activates stage-primary desktop layout (fl-shell--stage).
+   * Desktop: narrow stage rail + graph + deepview panel.
+   * Mobile: ignored — stacked layout applies.
+   */
+  stageMode?: boolean;
+  /** Narrow left stage-timeline rail (80px) — desktop only in stageMode */
+  stageRail?: React.ReactNode;
+  /** Contextual evidence panel below graph — desktop only in stageMode */
+  stagePanel?: React.ReactNode;
 }
 
 export default function CognitionReplay({
   graphSlot,
   className,
   hideTimeline,
+  stageMode = false,
+  stageRail,
+  stagePanel,
 }: CognitionReplayProps) {
   const cursor = useReplayStore((s) => s.cursor);
 
@@ -118,6 +131,9 @@ export default function CognitionReplay({
       center={center}
       right={<CommitInspector />}
       timeline={hideTimeline ? undefined : <TimelineControls />}
+      stageMode={stageMode}
+      stageRail={stageRail}
+      stagePanel={stagePanel}
     />
   );
 }

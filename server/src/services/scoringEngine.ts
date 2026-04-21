@@ -92,14 +92,40 @@ const EVIDENCE_FIX_CLASS: Record<string, FixClass> = {
   link_diversity: 'INTERNAL_LINK_PATCH',
 };
 
-// ─── Hard blockers: evidence keys whose absence caps overall score ──────────
+// ─── Blocker deductions: soft penalties that reduce score without hard caps ──
+//
+// These replace the old hard-cap system that could destroy a score entirely.
+// Each missing blocker deducts a fixed amount from the final score.
+// Maximum total deduction: 64 pts. Score floored at 5 (never total zero).
+//
+// User principle: "conflicts reduce, not destroy."
 
-const HARD_BLOCKERS: Array<{ key: string; cap: number; reason: string }> = [
-  { key: 'robots_txt', cap: 30, reason: 'Missing robots.txt - crawlers cannot verify access permissions' },
-  { key: 'ai_crawler_access', cap: 35, reason: 'AI crawlers are blocked - content is invisible to AI models' },
-  { key: 'organization_schema', cap: 50, reason: 'No Organization schema - entity identity unverifiable' },
-  { key: 'title_tag', cap: 40, reason: 'Missing or malformed title tag - AI cannot identify page topic' },
-  { key: 'json_ld_schemas', cap: 50, reason: 'No JSON-LD structured data - AI cannot extract entities' },
+const BLOCKER_DEDUCTIONS: Array<{ key: string; deduction: number; reason: string }> = [
+  {
+    key: 'robots_txt',
+    deduction: 12,
+    reason: 'Missing robots.txt — crawlers cannot verify access permissions',
+  },
+  {
+    key: 'ai_crawler_access',
+    deduction: 15,
+    reason: 'AI crawlers are blocked — content is invisible to AI models',
+  },
+  {
+    key: 'organization_schema',
+    deduction: 12,
+    reason: 'No Organization schema — entity identity unverifiable',
+  },
+  {
+    key: 'title_tag',
+    deduction: 10,
+    reason: 'Missing or malformed title tag — AI cannot identify page topic',
+  },
+  {
+    key: 'json_ld_schemas',
+    deduction: 15,
+    reason: 'No JSON-LD structured data — AI cannot extract entities',
+  },
 ];
 
 // ─── Score helpers ──────────────────────────────────────────────────────────
@@ -175,32 +201,29 @@ export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
     categories.reduce((sum, c) => sum + c.weighted_contribution, 0),
   );
 
-  // Apply hard-blocker caps
+  // Apply soft blocker deductions — conflicts reduce, not destroy
   const hardBlockers: string[] = [];
-  let scoreCap: number | null = null;
-  let scoreCapReason: string | null = null;
+  let totalDeduction = 0;
 
-  for (const blocker of HARD_BLOCKERS) {
+  for (const blocker of BLOCKER_DEDUCTIONS) {
     const item = evidenceMap.get(blocker.key);
     if (!item || item.status === 'missing' || item.status === 'invalid') {
       hardBlockers.push(blocker.reason);
-      if (scoreCap === null || blocker.cap < scoreCap) {
-        scoreCap = blocker.cap;
-        scoreCapReason = blocker.reason;
-      }
+      totalDeduction += blocker.deduction;
     }
   }
 
-  if (scoreCap !== null && overallScore > scoreCap) {
-    overallScore = scoreCap;
+  if (totalDeduction > 0) {
+    overallScore = Math.max(5, overallScore - totalDeduction);
   }
 
   return {
     overall_score: overallScore,
     categories,
     hard_blockers: hardBlockers,
-    score_cap: scoreCap,
-    score_cap_reason: scoreCapReason,
+    // score_cap repurposed: total deduction applied (null if none)
+    score_cap: totalDeduction > 0 ? totalDeduction : null,
+    score_cap_reason: hardBlockers.length > 0 ? `${hardBlockers.length} blocker${hardBlockers.length > 1 ? 's' : ''} detected` : null,
   };
 }
 

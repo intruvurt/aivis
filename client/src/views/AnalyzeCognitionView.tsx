@@ -16,6 +16,11 @@ import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CognitionReplay from '../components/cognition/CognitionReplay';
+import ScanStageTimeline, {
+  pipelineStepToStage,
+  type ScanStage,
+} from '../components/cognition/ScanStageTimeline';
+import StageDeepView from '../components/cognition/StageDeepView';
 import { EntityGraph } from '../components/cognition/EntityGraph';
 import {
   buildCognitionData,
@@ -184,6 +189,29 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [replayMode, setLocalReplayMode] = useState<ReplayMode>('LIVE');
+
+  // Stage-primary desktop layout: user can select a stage to inspect
+  const [selectedStage, setSelectedStage] = useState<ScanStage>(pipelineStepToStage(scanStep));
+
+  // Follow active pipeline stage until user overrides
+  const userOverrodeStageRef = useRef(false);
+  useEffect(() => {
+    if (!userOverrodeStageRef.current) {
+      setSelectedStage(pipelineStepToStage(scanStep));
+    }
+  }, [scanStep]);
+  // When scan completes, unlock override so stage auto-advances to 'score'
+  useEffect(() => {
+    if (result) {
+      userOverrodeStageRef.current = false;
+      setSelectedStage('score');
+    }
+  }, [result]);
+
+  const handleStageSelect = useCallback((stage: ScanStage) => {
+    userOverrodeStageRef.current = true;
+    setSelectedStage(stage);
+  }, []);
 
   const loadCommits = useReplayStore((s) => s.loadCommits);
   const cursorSeq = useReplayStore((s) => s.cursor.seq);
@@ -398,6 +426,19 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
         graphSlot={graphSlot}
         // Hide timeline during scan — scrubbing is for post-scan replay
         hideTimeline={scanning && !result}
+        // Stage-primary desktop layout
+        stageMode
+        stageRail={
+          <ScanStageTimeline
+            currentStep={scanStep}
+            complete={!!result}
+            selectedStage={selectedStage}
+            onStageSelect={handleStageSelect}
+          />
+        }
+        stagePanel={
+          <StageDeepView stage={selectedStage} result={result} graphConflicts={conflicts} />
+        }
       />
     </motion.div>
   );

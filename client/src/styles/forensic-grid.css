@@ -420,3 +420,260 @@
     padding: var(--fl-space-gap);
   }
 }
+
+/* ── §15: Stage-primary layout variant ───────────────────────────────────────
+ *
+ * Class: fl-shell--stage
+ *
+ * Desktop (≥1025px):
+ *   LEFT    → fl-stage-rail   80px   vertical stage nodes, sequential
+ *   CENTER  → fl-stage-content  fill  flex-column: graph (flex:1) + deepview (220px)
+ *   (hides fl-panel--commit and fl-panel--inspector)
+ *
+ * Mobile (≤1024px):
+ *   fl-stage-rail + fl-deepview hidden; falls back to stacked layout.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* Stage rail — narrow left navigation spine */
+.fl-stage-rail {
+  flex-shrink: 0;
+  width: 80px;
+  background-color: var(--fl-panel);
+  border-right: 1px solid var(--fl-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--fl-space-section) 0;
+  overflow: hidden;
+  /* hidden at mobile; shown at desktop via media query below */
+  display: none;
+}
+
+/* Stage content — fills main area; stacks graph over deepview */
+.fl-stage-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fl-stage-graph {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--fl-bg);
+}
+
+/* Stage deepview — 220px fixed panel below graph; shows contextual evidence */
+.fl-deepview {
+  flex-shrink: 0;
+  height: 220px;
+  border-top: 1px solid var(--fl-border);
+  background-color: var(--fl-panel);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--fl-space-gap);
+  font-family: monospace;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fl-border) transparent;
+  /* hidden at mobile */
+  display: none;
+}
+
+/* Stage node — a single step in the rail */
+.fl-stage-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* vertical connector line */
+.fl-stage-node::after {
+  content: '';
+  position: absolute;
+  top: calc(100% - 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 12px;
+  background-color: var(--fl-border);
+}
+
+.fl-stage-node:last-child::after {
+  display: none;
+}
+
+.fl-stage-node--selected .fl-stage-dot {
+  box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.4);
+}
+
+/* Stage dots */
+.fl-stage-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--fl-border);
+  transition:
+    width 80ms ease,
+    height 80ms ease,
+    box-shadow 80ms ease,
+    background-color 80ms ease;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.fl-stage-dot--done {
+  background-color: #00d67a; /* subdued truth tone */
+}
+
+.fl-stage-dot--active {
+  width: 14px;
+  height: 14px;
+  background-color: var(--fl-node);
+  box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
+}
+
+.fl-stage-dot--pending {
+  background-color: var(--fl-border);
+  opacity: 0.35;
+}
+
+/* Stage labels */
+.fl-stage-label {
+  font-size: 9px;
+  line-height: 12px;
+  font-family: monospace;
+  text-align: center;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color 80ms ease;
+}
+
+/* Deepview internals */
+.fl-deepview__section-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fl-text-secondary);
+  opacity: 0.6;
+  margin-bottom: var(--fl-space-base);
+  flex-shrink: 0;
+}
+
+.fl-deepview__row {
+  display: flex;
+  gap: var(--fl-space-gap);
+  align-items: baseline;
+  min-height: 20px;
+}
+
+.fl-deepview__key {
+  flex-shrink: 0;
+  min-width: 90px;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--fl-text-secondary);
+}
+
+.fl-deepview__val {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--fl-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40vw;
+}
+
+.fl-deepview__val--pass {
+  color: var(--fl-truth);
+}
+.fl-deepview__val--warn {
+  color: var(--fl-warning);
+}
+.fl-deepview__val--fail {
+  color: var(--fl-conflict);
+}
+
+/* Verdict ring */
+.fl-verdict-ring {
+  display: flex;
+  align-items: center;
+  gap: var(--fl-space-section);
+  margin-bottom: var(--fl-space-base);
+}
+
+.fl-verdict-ring__circle {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.fl-verdict-ring__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* ── Desktop: activate stage layout ──────────────────────────────────────── */
+@media (min-width: 1025px) {
+  /* Show stage rail and deepview */
+  .fl-shell--stage .fl-stage-rail {
+    display: flex;
+  }
+
+  .fl-shell--stage .fl-deepview {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hide git-commit panels — replaced by stage rail + deepview */
+  .fl-shell--stage .fl-panel--commit {
+    display: none !important;
+  }
+
+  .fl-shell--stage .fl-panel--inspector {
+    display: none !important;
+  }
+
+  /* Remove gap from main grid — stage rail has its own border */
+  .fl-shell--stage .fl-main-grid {
+    gap: 0;
+    padding: 0;
+  }
+}
+
+/* ── Mobile: stage layout falls back to stacked ──────────────────────────── */
+@media (max-width: 1024px) {
+  /* Stage content wrapper acts as a flowthrough in column layout */
+  .fl-shell--stage .fl-stage-content {
+    order: -1; /* graph wrapper first */
+    min-height: 320px;
+    flex: none;
+    width: 100%;
+  }
+
+  .fl-shell--stage .fl-stage-graph {
+    min-height: 320px;
+  }
+}

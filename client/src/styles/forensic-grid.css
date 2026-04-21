@@ -425,28 +425,23 @@
  *
  * Class: fl-shell--stage
  *
- * Desktop (≥1025px):
- *   LEFT    → fl-stage-rail   80px   vertical stage nodes, sequential
- *   CENTER  → fl-stage-content  fill  flex-column: graph (flex:1) + deepview (220px)
- *   (hides fl-panel--commit and fl-panel--inspector)
- *
- * Mobile (≤1024px):
- *   fl-stage-rail + fl-deepview hidden; falls back to stacked layout.
+ * ALL screen sizes (consistent mobile = desktop):
+ *   LEFT   → fl-stage-rail   vertical nodes (desktop) / horizontal bar (mobile)
+ *   CENTER → fl-stage-content  fill  flex-column: graph (flex:1) + deepview
+ *   (always hides fl-panel--commit and fl-panel--inspector in stage mode)
  * ─────────────────────────────────────────────────────────────────────────── */
 
-/* Stage rail — narrow left navigation spine */
+/* Stage rail — hidden by default; always shown inside fl-shell--stage */
 .fl-stage-rail {
+  display: none;
   flex-shrink: 0;
   width: 80px;
   background-color: var(--fl-panel);
   border-right: 1px solid var(--fl-border);
-  display: flex;
   flex-direction: column;
   align-items: center;
   padding: var(--fl-space-section) 0;
   overflow: hidden;
-  /* hidden at mobile; shown at desktop via media query below */
-  display: none;
 }
 
 /* Stage content — fills main area; stacks graph over deepview */
@@ -466,8 +461,9 @@
   background-color: var(--fl-bg);
 }
 
-/* Stage deepview — 220px fixed panel below graph; shows contextual evidence */
+/* Stage deepview — hidden by default; always shown inside fl-shell--stage */
 .fl-deepview {
+  display: none;
   flex-shrink: 0;
   height: 220px;
   border-top: 1px solid var(--fl-border);
@@ -478,8 +474,31 @@
   font-family: monospace;
   scrollbar-width: thin;
   scrollbar-color: var(--fl-border) transparent;
-  /* hidden at mobile */
-  display: none;
+}
+
+/* ── Stage mode active rules (all screen sizes): ─────────────────────────── */
+
+/* Show stage rail */
+.fl-shell--stage .fl-stage-rail {
+  display: flex;
+}
+
+/* Show deepview */
+.fl-shell--stage .fl-deepview {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Always hide legacy git-commit panels in stage mode */
+.fl-shell--stage .fl-panel--commit,
+.fl-shell--stage .fl-panel--inspector {
+  display: none !important;
+}
+
+/* Remove gap/padding — stage rail has its own border */
+.fl-shell--stage .fl-main-grid {
+  gap: 0;
+  padding: 0;
 }
 
 /* Stage node — a single step in the rail */
@@ -635,45 +654,45 @@
   gap: 3px;
 }
 
-/* ── Desktop: activate stage layout ──────────────────────────────────────── */
-@media (min-width: 1025px) {
-  /* Show stage rail and deepview */
+/* ── Mobile overrides for stage layout ───────────────────────────────────── */
+/* On mobile (≤768px), the stage rail rotates to a horizontal top bar.       */
+/* Deepview shrinks; stage-content fills the rest.                           */
+@media (max-width: 768px) {
+  /* Rail becomes a horizontal bar across the top */
   .fl-shell--stage .fl-stage-rail {
-    display: flex;
-  }
-
-  .fl-shell--stage .fl-deepview {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Hide git-commit panels — replaced by stage rail + deepview */
-  .fl-shell--stage .fl-panel--commit {
-    display: none !important;
-  }
-
-  .fl-shell--stage .fl-panel--inspector {
-    display: none !important;
-  }
-
-  /* Remove gap from main grid — stage rail has its own border */
-  .fl-shell--stage .fl-main-grid {
-    gap: 0;
-    padding: 0;
-  }
-}
-
-/* ── Mobile: stage layout falls back to stacked ──────────────────────────── */
-@media (max-width: 1024px) {
-  /* Stage content wrapper acts as a flowthrough in column layout */
-  .fl-shell--stage .fl-stage-content {
-    order: -1; /* graph wrapper first */
-    min-height: 320px;
-    flex: none;
     width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid var(--fl-border);
+    padding: var(--fl-space-base) var(--fl-space-base);
+  }
+
+  /* No vertical connectors between nodes in horizontal mode */
+  .fl-shell--stage .fl-stage-node::after {
+    display: none;
+  }
+
+  /* Stage node labels hidden on narrow screens — dot+state colour is enough */
+  .fl-shell--stage .fl-stage-label {
+    display: none;
+  }
+
+  /* Deepview: shorter on mobile */
+  .fl-shell--stage .fl-deepview {
+    height: 160px;
+  }
+
+  /* Stage content: full-width, graph fills remaining height */
+  .fl-shell--stage .fl-stage-content {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
   }
 
   .fl-shell--stage .fl-stage-graph {
-    min-height: 320px;
+    min-height: 240px;
   }
 }

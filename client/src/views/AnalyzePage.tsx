@@ -837,6 +837,12 @@ const AnalyzePage: React.FC = () => {
         setUrl(urlInput);
         handleAnalyze(urlInput);
       }}
+      onReset={() => {
+        setResult(null);
+        setError(null);
+        setProgress({ requestId: null, step: 'idle', percent: 0 });
+        setScanLimitReached(false);
+      }}
     />
   );
 };

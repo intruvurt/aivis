@@ -76,9 +76,11 @@ function isValidUrl(input: string): boolean {
 interface IdleProps {
   onSubmit: (url: string) => void;
   error: string | null;
+  /** Whether to show a link back to the main dashboard */
+  showBack?: boolean;
 }
 
-function IdleScreen({ onSubmit, error }: IdleProps) {
+function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -98,12 +100,24 @@ function IdleScreen({ onSubmit, error }: IdleProps) {
   return (
     <motion.div
       key="idle"
-      className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center"
+      className="fixed inset-0 bg-[#080c14] flex flex-col items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.97 }}
       transition={{ duration: 0.4 }}
     >
+      {/* Escape — back to dashboard */}
+      {showBack && (
+        <div className="absolute top-4 right-5 z-10">
+          <Link
+            to="/app/overview"
+            className="text-[9px] font-mono text-white/20 hover:text-white/50 transition-colors"
+          >
+            ← dashboard
+          </Link>
+        </div>
+      )}
+
       {/* Subtle grid background */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -457,6 +471,8 @@ export interface AnalyzeCognitionViewProps {
   error: string | null;
   /** Called when user submits a URL in the idle input */
   onSubmit: (url: string) => void;
+  /** Called when the user clicks "new scan" — parent should clear its result state */
+  onReset?: () => void;
 }
 
 export default function AnalyzeCognitionView({
@@ -465,29 +481,33 @@ export default function AnalyzeCognitionView({
   result,
   error,
   onSubmit,
+  onReset,
 }: AnalyzeCognitionViewProps) {
   const [dismissed, setDismissed] = useState(false);
 
-  // When user clicks "new scan", reset to idle
+  // When user clicks "new scan":
+  //   1. tell parent to clear its result state (so result becomes null)
+  //   2. set dismissed for the brief fade-out duration
+  //   3. When dismissed resets and result is now null → showIdle stays true
   const handleReset = useCallback(() => {
+    onReset?.();
     setDismissed(true);
-    // brief delay so the fade-out plays
-    setTimeout(() => setDismissed(false), 400);
-  }, []);
+    setTimeout(() => setDismissed(false), 420);
+  }, [onReset]);
 
-  const showOverlay = loading || (result != null && !dismissed);
+  const showOverlay = !dismissed && (loading || result != null);
   const showIdle = !showOverlay;
 
   return (
     <AnimatePresence mode="wait">
       {showIdle ? (
-        <IdleScreen key="idle" onSubmit={onSubmit} error={error} />
+        <IdleScreen key="idle" onSubmit={onSubmit} error={error} showBack />
       ) : (
         <CognitionOverlay
           key="overlay"
           scanning={loading}
           scanStep={step}
-          result={dismissed ? null : result}
+          result={result}
           onReset={handleReset}
         />
       )}

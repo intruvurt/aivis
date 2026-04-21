@@ -242,6 +242,35 @@ export async function analyzeDocument(params: {
   return pyPost<DocumentAnalysis>('/analyze/document', params);
 }
 
+export interface RawDocumentEventPayload {
+  docId: string;
+  url: string;
+  source: string;
+  text: string;
+  timestamp: number;
+  engagement?: {
+    likes?: number;
+    upvotes?: number;
+    comments?: number;
+    shares?: number;
+  };
+}
+
+export interface RawDocumentProcessResult {
+  docId: string;
+  edgesCreated: number;
+  entitiesUpdated: string[];
+}
+
+/**
+ * Process a normalized ingestion event through Python intelligence workers.
+ */
+export async function processRawDocumentEvent(
+  params: RawDocumentEventPayload
+): Promise<RawDocumentProcessResult | null> {
+  return pyPost<RawDocumentProcessResult>('/process/raw-document', params as unknown as Record<string, unknown>);
+}
+
 // ---------------------------------------------------------------------------
 // OCR Cross-Check
 // ---------------------------------------------------------------------------

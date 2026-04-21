@@ -138,6 +138,23 @@ class BragValidateRequest(BaseModel):
     internal_key: str | None = None
 
 
+class RawDocumentEngagement(BaseModel):
+    likes: int = 0
+    upvotes: int = 0
+    comments: int = 0
+    shares: int = 0
+
+
+class RawDocumentEvent(BaseModel):
+    docId: str
+    url: str
+    source: str
+    text: str
+    timestamp: int
+    engagement: RawDocumentEngagement | None = None
+    internal_key: str | None = None
+
+
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
@@ -433,3 +450,138 @@ async def validate_brag(req: BragValidateRequest):
     result["processing_time_ms"] = int((time.monotonic() - start) * 1000)
 
     return result
+
+
+def _semantic_chunks(text: str, max_chunk_len: int = 700) -> list[str]:
+    """Split text into stable semantic chunks using paragraph-first strategy."""
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n+", text) if p.strip()]
+    if not paragraphs:
+        paragraphs = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+
+    chunks: list[str] = []
+    current: list[str] = []
+    current_len = 0
+
+    for paragraph in paragraphs:
+        plen = len(paragraph)
+        if current and current_len + plen > max_chunk_len:
+            chunks.append("\n\n".join(current))
+            current = [paragraph]
+            current_len = plen
+            continue
+        current.append(paragraph)
+        current_len += plen
+
+    if current:
+        chunks.append("\n\n".join(current))
+
+    return chunks
+
+
+def _tokenize(text: str) -> set[str]:
+    return {t.lower() for t in re.findall(r"[a-zA-Z0-9_\-.]{3,}", text)}
+
+
+def _jaccard_similarity(a: str, b: str) -> float:
+    ta = _tokenize(a)
+    tb = _tokenize(b)
+    if not ta or not tb:
+        return 0.0
+    inter = len(ta & tb)
+    union = len(ta | tb)
+    return inter / union if union else 0.0
+
+
+def _extract_entity_candidates(text: str, url: str) -> list[str]:
+    host = ""
+    try:
+        host = url.split("//", 1)[-1].split("/", 1)[0].lower()
+    except Exception:
+        host = ""
+
+    candidates: set[str] = set()
+    if host:
+        host_name = host.replace("www.", "")
+        candidates.add(host_name)
+        candidates.add(host_name.split(".")[0])
+
+    # Lightweight named phrase heuristic.
+    for phrase in re.findall(r"\b([A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+){0,2})\b", text[:4000]):
+        if len(phrase) >= 4:
+            candidates.add(phrase.lower())
+
+    return [c for c in candidates if c]
+
+
+def _classify_edge(explicit: bool, semantic: float) -> str | None:
+    if explicit and semantic > 0.6:
+        return "direct"
+    if semantic > 0.82:
+        return "semantic"
+    if semantic > 0.75:
+        return "paraphrase"
+    return None
+
+
+@app.post("/process/raw-document")
+async def process_raw_document(req: RawDocumentEvent):
+    """Process normalized ingestion events in the Python intelligence layer.
+
+    This endpoint intentionally avoids crawling/fetching concerns and focuses on:
+      1) semantic chunking
+      2) entity candidate resolution
+      3) citation edge detection
+      4) score update payload generation
+    """
+    _check_key(req.internal_key)
+
+    text = (req.text or "").strip()
+    if len(text) < 20:
+        raise HTTPException(status_code=400, detail="Insufficient text content")
+
+    chunks = _semantic_chunks(text)
+    entity_candidates = _extract_entity_candidates(text, req.url)
+
+    edges: list[dict[str, Any]] = []
+    updated_entities: set[str] = set()
+
+    engagement_total = 0
+    if req.engagement:
+        engagement_total = (
+            int(req.engagement.likes or 0)
+            + int(req.engagement.upvotes or 0)
+            + int(req.engagement.comments or 0)
+            + int(req.engagement.shares or 0)
+        )
+
+    for idx, chunk in enumerate(chunks):
+        chunk_id = f"{req.docId}:{idx}"
+        for entity in entity_candidates:
+            explicit = entity in chunk.lower()
+            semantic = _jaccard_similarity(chunk, entity)
+            edge_type = _classify_edge(explicit, semantic)
+            if not edge_type:
+                continue
+
+            confidence = min(1.0, (0.3 if explicit else 0.0) + semantic)
+
+            edges.append(
+                {
+                    "entityId": entity,
+                    "chunkId": chunk_id,
+                    "docId": req.docId,
+                    "type": edge_type,
+                    "similarity": round(semantic, 4),
+                    "confidence": round(confidence, 4),
+                    "sourceAuthority": 0.55,
+                    "engagementScore": engagement_total,
+                    "timestamp": req.timestamp,
+                }
+            )
+            updated_entities.add(entity)
+
+    return {
+        "docId": req.docId,
+        "edgesCreated": len(edges),
+        "entitiesUpdated": sorted(updated_entities),
+    }

@@ -10,6 +10,7 @@ import {
   saveMentionKPISnapshot,
   getMentionKPIHistory,
 } from '../services/mentionTracker.js';
+import { buildEntityInfluenceGraph } from '../services/entityInfluenceGraph.js';
 import {
   computeMentionJuice,
   saveMentionJuiceSnapshot,
@@ -55,6 +56,11 @@ export async function runMentionScan(req: Request, res: Response) {
     const cleanDomain = (domain || '').trim().slice(0, 200).replace(/^https?:\/\//, '').replace(/\/+$/, '');
 
     const result = await trackBrandMentions(cleanBrand, cleanDomain);
+    const entityInfluence = await buildEntityInfluenceGraph(
+      cleanBrand,
+      result.entity_aliases,
+      result.mentions,
+    );
 
     // Persist results (non-fatal - scan data is still returned even if persistence fails)
     let persisted = 0;
@@ -73,6 +79,8 @@ export async function runMentionScan(req: Request, res: Response) {
       domain: result.domain,
       sources_checked: result.sources_checked,
       mentions: result.mentions,
+      entity_aliases: result.entity_aliases,
+      entity_influence: entityInfluence,
       scanned_at: result.scanned_at,
       persisted,
     });

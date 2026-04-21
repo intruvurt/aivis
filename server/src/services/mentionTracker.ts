@@ -11,6 +11,10 @@ export interface MentionRow {
   title: string;
   snippet: string;
   detected_at: string;
+  sentiment?: 'positive' | 'negative' | 'neutral';
+  authority_weight?: number;
+  relevance_score?: number;
+  relevance_reasons?: string[];
 }
 
 export interface MentionScanResult {
@@ -18,8 +22,33 @@ export interface MentionScanResult {
   domain: string;
   sources_checked: string[];
   mentions: MentionRow[];
+  entity_aliases: string[];
   scanned_at: string;
 }
+
+const SOURCE_AUTHORITY_WEIGHT: Record<string, number> = {
+  wikipedia: 1.0,
+  reddit: 0.85,
+  hackernews: 0.8,
+  stackoverflow: 0.8,
+  github: 0.75,
+  github_discussions: 0.72,
+  google_news: 0.7,
+  producthunt: 0.65,
+  quora: 0.6,
+  devto: 0.55,
+  medium: 0.5,
+  youtube: 0.5,
+  lobsters: 0.45,
+  bluesky: 0.35,
+  twitter: 0.3,
+  mastodon: 0.25,
+  lemmy: 0.2,
+  ddg_dork: 0.12,
+  bing_dork: 0.12,
+};
+
+const DEFAULT_SOURCE_AUTHORITY_WEIGHT = 0.2;
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 const FETCH_TIMEOUT = 12_000;
@@ -61,6 +90,138 @@ function stripHtml(input: string): string {
     .replace(/&nbsp;/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function normalizeForMatch(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/[^a-z0-9\s.-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function toDomainRoot(domain: string): string {
+  const normalized = normalizeForMatch(domain).split('/')[0];
+  const parts = normalized.split('.').filter(Boolean);
+  if (parts.length >= 2) {
+    return parts[parts.length - 2];
+  }
+  return parts[0] || '';
+}
+
+function buildEntityAliases(brand: string, domain: string): string[] {
+  const cleanBrand = normalizeForMatch(brand);
+  const compactBrand = cleanBrand.replace(/[\s.-]+/g, '');
+  const dashedBrand = cleanBrand.replace(/\s+/g, '-');
+  const domainRoot = toDomainRoot(domain);
+
+  const aliases = new Set<string>([
+    cleanBrand,
+    compactBrand,
+    dashedBrand,
+    domainRoot,
+  ]);
+
+  if (domainRoot) {
+    aliases.add(domainRoot.replace(/-/g, ' '));
+    aliases.add(domainRoot.replace(/_/g, ' '));
+  }
+
+  for (const token of cleanBrand.split(/\s+/)) {
+    if (token.length >= 4) aliases.add(token);
+  }
+
+  return Array.from(aliases)
+    .map((a) => a.trim())
+    .filter((a) => a.length >= 3)
+    .slice(0, 16);
+}
+
+function semanticTokenOverlapScore(text: string, aliases: string[]): number {
+  const normalized = normalizeForMatch(text);
+  if (!normalized) return 0;
+  const textTokens = new Set(normalized.split(/\s+/).filter((t) => t.length >= 3));
+  if (textTokens.size === 0) return 0;
+
+  const aliasTokens = new Set<string>();
+  for (const alias of aliases) {
+    for (const token of normalizeForMatch(alias).split(/\s+/)) {
+      if (token.length >= 3) aliasTokens.add(token);
+    }
+  }
+
+  if (aliasTokens.size === 0) return 0;
+
+  let overlap = 0;
+  for (const token of aliasTokens) {
+    if (textTokens.has(token)) overlap++;
+  }
+
+  return overlap / aliasTokens.size;
+}
+
+function matchAliasesInText(text: string, aliases: string[]): string[] {
+  const hits: string[] = [];
+  const normalizedText = normalizeForMatch(text);
+  for (const alias of aliases) {
+    const normalizedAlias = normalizeForMatch(alias);
+    if (!normalizedAlias) continue;
+    if (textMentionsBrand(normalizedText, normalizedAlias) || normalizedText.includes(normalizedAlias)) {
+      hits.push(alias);
+    }
+  }
+  return hits.slice(0, 6);
+}
+
+function scoreMentionRelevance(row: MentionRow, brand: string, domain: string, aliases: string[]): {
+  relevant: boolean;
+  score: number;
+  reasons: string[];
+  authorityWeight: number;
+} {
+  const authorityWeight = SOURCE_AUTHORITY_WEIGHT[row.source] ?? DEFAULT_SOURCE_AUTHORITY_WEIGHT;
+  const compositeText = `${row.title || ''} ${row.snippet || ''} ${row.url || ''}`;
+  const reasons: string[] = [];
+  let score = 0;
+
+  const normalizedDomain = normalizeForMatch(domain);
+  const normalizedUrl = normalizeForMatch(row.url || '');
+  const normalizedBrand = normalizeForMatch(brand);
+
+  if (normalizedDomain && normalizedUrl.includes(normalizedDomain)) {
+    score += 0.8;
+    reasons.push('owned-domain');
+  }
+
+  if (normalizedBrand && textMentionsBrand(compositeText, normalizedBrand)) {
+    score += 0.5;
+    reasons.push('brand-hit');
+  }
+
+  const aliasHits = matchAliasesInText(compositeText, aliases);
+  if (aliasHits.length > 0) {
+    score += Math.min(0.5, aliasHits.length * 0.15);
+    reasons.push(`alias-hit:${aliasHits.join('|')}`);
+  }
+
+  const semanticOverlap = semanticTokenOverlapScore(compositeText, aliases);
+  if (semanticOverlap >= 0.2) {
+    score += Math.min(0.35, semanticOverlap * 0.5);
+    reasons.push(`semantic-overlap:${semanticOverlap.toFixed(2)}`);
+  }
+
+  score += authorityWeight * 0.25;
+  reasons.push(`authority:${authorityWeight.toFixed(2)}`);
+
+  const threshold = authorityWeight >= 0.7 ? 0.45 : 0.6;
+  return {
+    relevant: score >= threshold,
+    score: Number(score.toFixed(4)),
+    reasons,
+    authorityWeight,
+  };
 }
 
 // ── Source: Reddit JSON ─────────────────────────────────────────────────────
@@ -672,11 +833,13 @@ export type MentionSource = typeof ALL_SOURCES[number]['name'];
  * Check if a mention result is genuinely about the brand.
  * Uses word-boundary matching and compound-word rejection from searchDisambiguation.
  */
-function isMentionRelevant(row: MentionRow, brand: string, domain: string): boolean {
-  // Results from the brand's own domain are always relevant
-  if (domain && row.url.toLowerCase().includes(domain.toLowerCase())) return true;
-  // Check title + snippet using word-boundary matching
-  return textMentionsBrand(row.title, brand) || textMentionsBrand(row.snippet, brand);
+function isMentionRelevant(row: MentionRow, brand: string, domain: string, aliases: string[]): {
+  relevant: boolean;
+  score: number;
+  reasons: string[];
+  authorityWeight: number;
+} {
+  return scoreMentionRelevance(row, brand, domain, aliases);
 }
 
 /**
@@ -688,6 +851,7 @@ export async function trackBrandMentions(
   domain: string,
   sources?: MentionSource[],
 ): Promise<MentionScanResult> {
+  const entityAliases = buildEntityAliases(brand, domain);
   const activeSources = sources
     ? ALL_SOURCES.filter((s) => sources.includes(s.name))
     : [...ALL_SOURCES];
@@ -713,8 +877,11 @@ export async function trackBrandMentions(
     sourcesChecked.push(source);
     for (const row of rows) {
       if (!row.url || seenUrls.has(row.url)) continue;
-      // Disambiguate: reject results where the brand only appears as a compound substring
-      if (!isMentionRelevant(row, brand, domain)) continue;
+      const relevance = isMentionRelevant(row, brand, domain, entityAliases);
+      if (!relevance.relevant) continue;
+      row.authority_weight = relevance.authorityWeight;
+      row.relevance_score = relevance.score;
+      row.relevance_reasons = relevance.reasons;
       seenUrls.add(row.url);
       mentions.push(row);
     }
@@ -728,6 +895,7 @@ export async function trackBrandMentions(
     domain,
     sources_checked: sourcesChecked,
     mentions,
+    entity_aliases: entityAliases,
     scanned_at: new Date().toISOString(),
   };
 }

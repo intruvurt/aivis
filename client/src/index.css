@@ -35,6 +35,43 @@
     scroll-behavior: smooth;
   }
 
+  /* ── Global form element dark reset ── */
+  input,
+  textarea,
+  select {
+    background-color: #111116;
+    color: #e4e4e7;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* ── input-field utility ── */
+  .input-field {
+    display: block;
+    width: 100%;
+    background-color: #111116;
+    color: #e4e4e7;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .input-field::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .input-field:focus {
+    border-color: rgba(251, 146, 60, 0.4);
+    box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.1);
+  }
+
   h1,
   h2,
   h3,

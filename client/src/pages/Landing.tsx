@@ -1,6 +1,6 @@
 // Landing - AiVIS.biz
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ScanShell } from '../components/scan/ScanShell';
 import type { ScanResult } from '../machines/scanMachine';
@@ -77,11 +77,13 @@ function useAnimatedScore(initial: number) {
 
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
+  const location = useLocation();
+
   usePageMeta({
     title: META.title,
     fullTitle: META.title,
     description: META.description,
-    path: '/landing',
+    path: location.pathname === '/landing' ? '/landing' : '/',
     ogTitle: OG.title,
     structuredData: LANDING_STRUCTURED_DATA,
   });

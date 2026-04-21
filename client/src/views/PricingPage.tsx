@@ -263,6 +263,63 @@ const PRICING_FAQ_ITEMS = [
   },
 ] as const;
 
+const REFERENCE_TIER_ORDER = ['observer', 'starter', 'alignment', 'signal', 'scorefix'] as const;
+
+function buildReferencePricingTiers(): TierPricing[] {
+  return REFERENCE_TIER_ORDER.map((key) => {
+    const pricingEntry = PRICING[key];
+    const limits = TIER_LIMITS[key];
+    const monthlyAmount = Number(pricingEntry?.billing?.monthly ?? 0);
+    const yearlyAmount = Number(pricingEntry?.billing?.yearly ?? 0);
+    const oneTimeAmount = key === 'scorefix' ? monthlyAmount : 0;
+
+    return {
+      key,
+      name: pricingEntry?.name ?? key,
+      displayName: pricingEntry?.name ?? key,
+      billingModel: key === 'observer' ? 'free' : key === 'scorefix' ? 'one_time' : 'subscription',
+      stripeReady: false,
+      pricing: {
+        monthly:
+          key === 'observer'
+            ? null
+            : {
+                amount: monthlyAmount,
+                formatted: formatUsd(monthlyAmount),
+              },
+        yearly:
+          key === 'observer' || !yearlyAmount
+            ? null
+            : {
+                amount: yearlyAmount,
+                formatted: formatUsd(yearlyAmount),
+              },
+        one_time:
+          key !== 'scorefix'
+            ? null
+            : {
+                amount: oneTimeAmount,
+                formatted: formatUsd(oneTimeAmount),
+              },
+      },
+      features: [...(TIER_COPY[key]?.includes ?? [])],
+      limits: {
+        scans_per_month: Number(limits?.scansPerMonth ?? 0),
+        pages_per_scan: Number(limits?.pagesPerScan ?? 0),
+        competitors: Number(limits?.competitors ?? 0),
+        cache_days: Number(limits?.cacheDays ?? 0),
+        exports: Boolean(limits?.hasExports),
+        force_refresh: Boolean(limits?.hasForceRefresh),
+        api_access: Boolean(limits?.hasApiAccess),
+        white_label: Boolean(limits?.hasWhiteLabel),
+      },
+      isPaid: key !== 'observer',
+    } satisfies TierPricing;
+  });
+}
+
+const REFERENCE_PRICING_TIERS = enrichTiersForDisplay(buildReferencePricingTiers());
+
 function normalizeTierPrice(input: unknown): TierPrice | null {
   if (!input || typeof input !== 'object') return null;
   const candidate = input as Record<string, unknown>;
@@ -676,8 +733,8 @@ export default function PricingPage() {
   const { user, token, isAuthenticated, logout } = useAuthStore();
 
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('yearly');
-  const [tiers, setTiers] = useState<TierPricing[]>([]);
-  const [isLoadingPricing, setIsLoadingPricing] = useState(true);
+  const [tiers, setTiers] = useState<TierPricing[]>(REFERENCE_PRICING_TIERS);
+  const [isLoadingPricing, setIsLoadingPricing] = useState(false);
   const [isCheckingOutTier, setIsCheckingOutTier] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [canStartTrial, setCanStartTrial] = useState(false);
@@ -872,15 +929,15 @@ export default function PricingPage() {
 
     async function fetchPricing() {
       try {
-        setIsLoadingPricing(true);
+        if (tiers.length === 0) {
+          setIsLoadingPricing(true);
+        }
         setError(null);
 
         const response = await apiFetch('/api/payment/pricing', {
           method: 'GET',
           signal: controller.signal,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          timeoutMs: 12_000,
         });
 
         if (!response.ok) {
@@ -893,14 +950,12 @@ export default function PricingPage() {
         if (data?.success && normalized.length > 0) {
           setTiers(enrichTiersForDisplay(normalized));
         } else {
-          setTiers([]);
-          setError('No pricing tiers are currently available. Please try again shortly.');
+          setTiers(REFERENCE_PRICING_TIERS);
         }
       } catch (err: any) {
         if (controller.signal.aborted) return;
         console.warn('Pricing fetch unavailable:', err);
-        setTiers([]);
-        setError('Unable to load live pricing right now. Please try again shortly.');
+        setTiers((current) => (current.length > 0 ? current : REFERENCE_PRICING_TIERS));
       } finally {
         if (!controller.signal.aborted) {
           setIsLoadingPricing(false);
@@ -911,7 +966,7 @@ export default function PricingPage() {
     fetchPricing();
 
     return () => controller.abort();
-  }, []);
+  }, [tiers.length]);
 
   // Check trial eligibility when authenticated
   useEffect(() => {
@@ -1090,7 +1145,9 @@ export default function PricingPage() {
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
           <h2 className="text-2xl font-bold text-white mb-3">You are not buying features.</h2>
-          <p className="text-white/75">You are paying to see where you exist inside machine answers.</p>
+          <p className="text-white/75">
+            You are paying to see where you exist inside machine answers.
+          </p>
           <p className="text-white/65">
             And if you don’t exist there — it shows you exactly where reality breaks.
           </p>

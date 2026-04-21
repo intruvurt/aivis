@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
+import apiFetch from '../utils/api';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
@@ -67,6 +68,26 @@ function unwrapPayload(raw: any) {
   // { user, token, entitlements }
   // { data: {...} }
   return raw?.data ?? raw;
+}
+
+async function fetchJsonWithTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs = 20000
+) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await apiFetch(input, {
+      ...init,
+      signal: controller.signal,
+      timeoutMs,
+    });
+    const body = await response.json().catch(() => ({}));
+    return { response, body };
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
 
 export default function AuthPage() {
@@ -255,14 +276,15 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken('login');
-        const res = await fetch(`${apiBase}/api/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, password, captchaToken }),
-        });
-
-        const raw = await res.json().catch(() => ({}));
+        const { response: res, body: raw } = await fetchJsonWithTimeout(
+          `${apiBase}/api/auth/login`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password, captchaToken }),
+          }
+        );
         if (!res.ok) {
           const requiresVerification =
             raw?.code === 'EMAIL_NOT_VERIFIED' ||
@@ -314,13 +336,12 @@ export default function AuthPage() {
         if (isUserMissing) {
           setError('Invalid email or password. Please try again or create a new account.');
         } else if (
+          err?.name === 'AbortError' ||
           msg.includes('failed to fetch') ||
           msg.includes('networkerror') ||
           msg.includes('load failed')
         ) {
-          setError(
-            'Could not reach the AiVIS.biz API. This is usually a temporary network issue or a frontend API URL mismatch.'
-          );
+          setError('Could not reach the AiVIS.biz API in time. Please try again.');
         } else {
           setError(err?.message || 'Sign in failed. Please try again.');
         }
@@ -358,25 +379,27 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken('signup');
-        const res = await fetch(`${apiBase}/api/auth/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            email,
-            password,
-            name,
-            captchaToken,
-            referralCode: referralCode ? referralCode.trim().toUpperCase() : undefined,
-            termsAccepted: acceptedTerms,
-            privacyAccepted: acceptedPrivacy,
-            marketingOptIn,
-            policyVersion: '2026-03-12',
-            consentSource: 'auth_signup_form',
-          }),
-        });
+        const { response: res, body: raw } = await fetchJsonWithTimeout(
+          `${apiBase}/api/auth/signup`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email,
+              password,
+              name,
+              captchaToken,
+              referralCode: referralCode ? referralCode.trim().toUpperCase() : undefined,
+              termsAccepted: acceptedTerms,
+              privacyAccepted: acceptedPrivacy,
+              marketingOptIn,
+              policyVersion: '2026-03-12',
+              consentSource: 'auth_signup_form',
+            }),
+          }
+        );
 
-        const raw = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(raw?.error || 'Sign up failed');
 
         const payload = unwrapPayload(raw);
@@ -444,14 +467,15 @@ export default function AuthPage() {
 
       try {
         const captchaToken = await getCaptchaToken('reset_password');
-        const res = await fetch(`${apiBase}/api/auth/reset-password`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, captchaToken }),
-        });
-
-        const raw = await res.json().catch(() => ({}));
+        const { response: res, body: raw } = await fetchJsonWithTimeout(
+          `${apiBase}/api/auth/reset-password`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, captchaToken }),
+          }
+        );
         if (!res.ok) throw new Error(raw?.error || 'Password reset failed');
 
         setSuccess('Password reset instructions sent to your email');

@@ -30,6 +30,18 @@ const SITE_NAME = 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 
+function buildDocumentTitle(title: string, fullTitle?: string): string {
+  const normalizedFullTitle = fullTitle?.trim();
+  if (normalizedFullTitle) return normalizedFullTitle;
+
+  const normalizedTitle = title.trim();
+  const alreadyBranded =
+    normalizedTitle.startsWith(SITE_NAME) ||
+    (/AiVIS(\.biz)?/i.test(normalizedTitle) && normalizedTitle.includes('|'));
+
+  return alreadyBranded ? normalizedTitle : `${SITE_NAME} | ${normalizedTitle}`;
+}
+
 function setMeta(name: string, content: string, property = false): void {
   const attr = property ? 'property' : 'name';
   let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -171,7 +183,7 @@ function setStructuredData(data: Record<string, unknown> | Record<string, unknow
 export function usePageMeta({ title, description, path, structuredData, ogTitle, ogDescription, ogType, fullTitle, noIndex }: PageMeta): void {
   useEffect(() => {
     // Document title - use fullTitle if provided (for homepage with strict 30-60 char requirement)
-    document.title = fullTitle || `${SITE_NAME} | ${title}`;
+    document.title = buildDocumentTitle(title, fullTitle);
 
     // Meta description
     setMeta('description', description);
@@ -216,7 +228,7 @@ export function usePageMeta({ title, description, path, structuredData, ogTitle,
 
     // Cleanup on unmount - restore defaults
     return () => {
-      document.title = `${SITE_NAME} | ${title}`;
+      document.title = buildDocumentTitle(title, fullTitle);
       setMeta('robots', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
       setStructuredData(undefined);
     };

@@ -38,6 +38,7 @@ export type AuthState = {
 };
 
 const LEGACY_KEYS = ["aivis_auth_v2", "auth-storage", "aivis_auth_v1"];
+const AUTH_TOKEN_STORAGE_KEY = "aivis_auth_session_token";
 
 function canUseStorage() {
     return typeof window !== "undefined" && !!window.sessionStorage;
@@ -54,6 +55,39 @@ function clearLegacyAuthStorage() {
         window.localStorage.removeItem("aivis-analysis");
     } catch {
         // ignore storage cleanup failures
+    }
+}
+
+function readPersistedToken() {
+    if (!canUseStorage()) return null;
+    try {
+        return normalizeAuthToken(window.sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY));
+    } catch {
+        return null;
+    }
+}
+
+function writePersistedToken(token: string | null) {
+    if (!canUseStorage()) return;
+    try {
+        const normalized = normalizeAuthToken(token);
+        if (normalized) {
+            window.sessionStorage.setItem(AUTH_TOKEN_STORAGE_KEY, normalized);
+        } else {
+            window.sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+        }
+    } catch {
+        // ignore storage failures
+    }
+}
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs = 15000) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(input, { ...init, signal: controller.signal });
+    } finally {
+        window.clearTimeout(timeout);
     }
 }
 
@@ -95,20 +129,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     setToken: (token) => {
         const normalizedToken = normalizeAuthToken(token);
+        writePersistedToken(normalizedToken);
         set({ token: normalizedToken, isAuthenticated: !!normalizedToken || !!get().user });
     },
 
     login: (user, token) => {
         clearLegacyAuthStorage();
+        const normalizedToken = normalizeAuthToken(token);
+        writePersistedToken(normalizedToken);
         set({
             user,
-            token: normalizeAuthToken(token),
+            token: normalizedToken,
             isAuthenticated: true,
             isHydrated: true,
         });
     },
 
     logout: () => {
+        writePersistedToken(null);
         set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
         clearLegacyAuthStorage();
 
@@ -126,20 +164,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const headers: Record<string, string> = { "Content-Type": "application/json" };
             if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
 
-            const response = await fetch(`${API_URL}/api/user/refresh`, {
+            const response = await fetchWithTimeout(`${API_URL}/api/user/refresh`, {
                 method: "POST",
                 headers,
                 credentials: "include",
             });
 
             if (!response.ok) {
+                writePersistedToken(null);
                 set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
                 return false;
             }
 
             const data = await response.json().catch(() => null);
             const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
-            const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null);
+            const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null) ?? currentToken;
+
+            writePersistedToken(nextToken);
 
             set({
                 user: nextUser,
@@ -150,6 +191,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             return !!nextUser;
         } catch {
+            writePersistedToken(null);
             set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
             return false;
         }
@@ -157,7 +199,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     hydrate: () => {
         clearLegacyAuthStorage();
-        const savedToken = get().token;
+        const savedToken = get().token ?? readPersistedToken();
+
+        if (!savedToken) {
+            set({ isHydrated: true, user: null, token: null, isAuthenticated: false });
+            return;
+        }
+
         set({ isHydrated: false, user: null, token: savedToken, isAuthenticated: false });
         void get().refreshUser();
     },

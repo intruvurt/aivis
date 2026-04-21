@@ -210,17 +210,13 @@ export const register = async (req: Request, res: Response) => {
     if (isRecaptchaEnforced()) {
       const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
       if (!captcha.ok) {
-        if (isRecoverableCaptchaFailure(captcha.message)) {
-          console.warn('[Auth] Recoverable captcha failure on login - allowing request:', captcha.message);
-        } else {
-          return res.status(400).json({
-            success: false,
-            error: 'Captcha verification failed',
-            statusCode: 400,
-            code: 'CAPTCHA_FAILED',
-            details: captcha.message,
-          });
-        }
+        return res.status(400).json({
+          success: false,
+          error: 'Captcha verification failed',
+          statusCode: 400,
+          code: 'CAPTCHA_FAILED',
+          details: captcha.message,
+        });
       }
     }
 
@@ -391,7 +387,7 @@ export const login = async (req: Request, res: Response) => {
       const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
       if (!captcha.ok) {
         if (isRecoverableCaptchaFailure(captcha.message)) {
-          console.warn('[Auth] Recoverable captcha failure on resend verification - allowing request:', captcha.message);
+          console.warn('[Auth] Recoverable captcha failure on login - allowing request:', captcha.message);
         } else {
           return res.status(400).json({
             success: false,
@@ -600,13 +596,17 @@ export const resendVerification = async (req: Request, res: Response) => {
     if (isRecaptchaEnforced()) {
       const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
       if (!captcha.ok) {
-        return res.status(400).json({
-          success: false,
-          error: 'Captcha verification failed',
-          statusCode: 400,
-          code: 'CAPTCHA_FAILED',
-          details: captcha.message,
-        });
+        if (isRecoverableCaptchaFailure(captcha.message)) {
+          console.warn('[Auth] Recoverable captcha failure on resend verification - allowing request:', captcha.message);
+        } else {
+          return res.status(400).json({
+            success: false,
+            error: 'Captcha verification failed',
+            statusCode: 400,
+            code: 'CAPTCHA_FAILED',
+            details: captcha.message,
+          });
+        }
       }
     }
 

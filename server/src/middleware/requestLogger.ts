@@ -171,10 +171,19 @@ export function createRequestLogger() {
 
       storeLog(log);
 
+      const isExpectedRefresh401 =
+        res.statusCode === 401 &&
+        req.method === "POST" &&
+        requestPath === "/api/user/refresh" &&
+        !req.headers.authorization &&
+        !req.headers.cookie;
+
       // Log verbose details for errors or slow requests
       if (res.statusCode >= 400 || responseTimeMs > 5000) {
         const level =
-          res.statusCode >= 500
+          isExpectedRefresh401
+            ? "[INFO]"
+            : res.statusCode >= 500
             ? "[ERROR]"
             : res.statusCode >= 400
               ? "[WARN]"

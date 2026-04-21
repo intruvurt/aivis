@@ -850,6 +850,13 @@ export interface AnalysisResponse {
    * Steps 1-7 from the extraction → query → test → ledger → gap spec.
    */
   answer_presence?: AnswerPresenceResult;
+  /**
+   * Probabilistic claim resolution result.
+   * Aggregates atomic claims from all signal layers (AI models, SERP, scrape),
+   * resolves conflicts via softmax rather than collapsing on contradiction,
+   * and produces a composite score that degrades gracefully under disagreement.
+   */
+  claim_resolution?: ClaimResolutionResult;
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
@@ -2716,4 +2723,130 @@ export interface HeatmapSurface {
   deltas: HeatmapDelta[];
   totalCited: number;
   totalQueries: number;
+}
+
+/* ── Probabilistic Claim Engine ─────────────────────────────────────────────
+ *
+ * The claim engine treats disagreement as signal tension, not failure.
+ * Every factual assertion (from AI models, SERP, scrape, etc.) reduces to an
+ * atomic Claim. Claims are grouped into clusters by subject + predicate, then
+ * resolved probabilistically via softmax — contradictions degrade certainty
+ * rather than collapsing the entire output to zero.
+ *
+ * Pipeline:
+ *   raw signals → Claim[] → normalize → ClaimCluster[] → ConflictGraph →
+ *   aggregate + penalty → softmax → ClaimResolution[] → composite_score
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Atomic claim — the fundamental unit of the probabilistic scoring model.
+ * Every factual assertion about an entity must reduce to this shape before
+ * entering the conflict resolution pipeline.
+ */
+export interface Claim {
+  id: string;
+  /** Canonical entity identifier (after alias deduplication) */
+  subject: string;
+  /** Normalized predicate key (after synonym mapping) */
+  predicate: string;
+  /** Normalized value (after format canonicalization) */
+  object: string | number | boolean;
+  valueType: 'string' | 'number' | 'boolean';
+  /** Extraction confidence 0–1 as reported by the producing engine */
+  confidence: number;
+  source: {
+    url: string;
+    /** 0–1, normalized from domain authority signals */
+    domainAuthority: number;
+    /** 0–1, 1 = very recent, 0 = very old or unknown */
+    freshness: number;
+  };
+  evidence: {
+    /** Verbatim text where the claim was found */
+    text: string;
+    /** Character offsets [start, end] in the source document */
+    position: [number, number];
+    /** How the value was derived — affects evidenceQuality weight */
+    matchType: 'exact' | 'fuzzy' | 'inferred';
+  };
+}
+
+/**
+ * A cluster of claims about the same subject + predicate combination.
+ * Conflict detection and resolution operate at cluster granularity.
+ */
+export interface ClaimCluster {
+  subject: string;
+  predicate: string;
+  claims: Claim[];
+}
+
+/** Directed edge in the conflict graph — both endpoints are Claim ids */
+export interface ConflictEdge {
+  a: string;
+  b: string;
+}
+
+/** Mini conflict graph for a single cluster */
+export interface ClaimConflictGraph {
+  nodes: Claim[];
+  edges: ConflictEdge[];
+}
+
+/**
+ * A candidate value with its posterior probability after softmax resolution.
+ * All candidates for a single cluster sum to 1.0.
+ */
+export interface ResolutionCandidate {
+  value: string;
+  /** Posterior probability after softmax normalization (0–1) */
+  probability: number;
+  /** Raw accumulated support score before normalization */
+  support: number;
+  /** Values this candidate is in direct conflict with */
+  conflictsWith: string[];
+}
+
+/**
+ * Resolution status thresholds applied to the top candidate probability:
+ *   VERIFIED       — probability ≥ 0.75
+ *   DEGRADED       — probability 0.40–0.75
+ *   CONTRADICTORY  — probability < 0.40 with high spread across candidates
+ */
+export type ResolutionStatus = 'VERIFIED' | 'DEGRADED' | 'CONTRADICTORY';
+
+/**
+ * Full probabilistic resolution for a single subject + predicate cluster.
+ * Candidates are sorted descending by probability.
+ */
+export interface ClaimResolution {
+  subject: string;
+  predicate: string;
+  candidates: ResolutionCandidate[];
+  status: ResolutionStatus;
+}
+
+/**
+ * The final output of the claim conflict resolver for a complete analysis run.
+ * Composite score never collapses to zero on contradiction — degraded certainty
+ * is preserved and surfaced through status_summary.
+ */
+export interface ClaimResolutionResult {
+  /** ISO timestamp when resolution was computed */
+  resolved_at: string;
+  resolutions: ClaimResolution[];
+  /**
+   * Probabilistic visibility composite score (0–100).
+   * Derived from top-candidate probabilities weighted by resolution status.
+   * Contradictions reduce certainty, they do not destroy output.
+   */
+  composite_score: number;
+  /** Distribution of clusters by status */
+  status_summary: {
+    verified: number;
+    degraded: number;
+    contradictory: number;
+  };
+  /** True when at least one CONTRADICTORY cluster was detected */
+  has_contradictions: boolean;
 }

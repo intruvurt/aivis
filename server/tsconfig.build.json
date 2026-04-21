@@ -8,7 +8,15 @@
     "declaration": true,
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "../shared/**/*.ts", "../shared/**/*.d.ts", "tools/**/*.ts", "tools/**/*.d.ts", "src/tests/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "../shared/**/*.ts",
+    "../shared/**/*.d.ts",
+    "tools/**/*.ts",
+    "tools/**/*.d.ts",
+    "src/tests/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
@@ -32,6 +40,7 @@
     "src/routes/statusUpdates.ts",
     "src/models/Audit.tsx",
     "src/models/Brand.tsx",
-    "src/models/Website.tsx"
+    "src/models/Website.tsx",
+    "src/config/oauth.ts"
   ]
 }

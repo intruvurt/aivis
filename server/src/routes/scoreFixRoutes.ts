@@ -15,7 +15,9 @@ import type { Request, Response } from 'express';
 import { authRequired, requireScoreFixTier } from '../middleware/authRequired.js';
 import { LEDGER_WATCH_CONFIG, getJobById } from '../services/autoScoreFixService.js';
 import { pool } from '../services/postgresql.js';
-import { sanitizeInput } from '../lib/sanitize.js';
+function sanitizeInput(input: string, maxLen = 2000): string {
+    return String(input).slice(0, maxLen).replace(/[<>'"]/g, '');
+}
 
 const router = Router();
 

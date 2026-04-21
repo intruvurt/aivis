@@ -1,12 +1,8 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
-  "build": {
-    "builder": "RAILPACK"
-  },
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "npm --prefix server run start:prod",
     "healthcheckPath": "/api/health",
     "sleepApplication": false,
     "useLegacyStacker": false,

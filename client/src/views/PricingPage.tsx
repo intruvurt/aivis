@@ -112,19 +112,19 @@ const TIER_COLORS: Record<string, { gradient: string; border: string; glow: stri
   TIER_BRAND_PALETTE;
 
 const TIER_POSITIONING: Record<string, string> = {
-  observer: 'You start with exposure, not understanding.',
-  starter: 'Ignorance starts breaking at this level.',
-  alignment: 'Stop guessing. See the battlefield.',
-  signal: 'Not analysis. Control.',
-  scorefix: 'Not reporting. Correction.',
+  observer: 'See whether AI systems can find and cite your site.',
+  starter: 'Move from baseline checks to implementation-ready fixes.',
+  alignment: 'Track competitors, mentions, and query-level gaps.',
+  signal: 'Run full validation with API and workflow automation.',
+  scorefix: 'Operate continuous remediation with evidence-linked outputs.',
 };
 
 const TIER_AUDIENCE: Record<string, string> = {
-  observer: 'For anyone who wants to see what AI misreads on their site',
-  starter: 'For solo founders and builders who need fixes, not just scores',
-  alignment: 'For teams who need to fix what the audit found, not just see it',
-  signal: 'For agencies and teams running audits across multiple client sites',
-  scorefix: 'For teams who want fixes shipped as pull requests automatically',
+  observer: 'For teams validating baseline AI visibility',
+  starter: 'For teams that need prioritized implementation guidance',
+  alignment: 'For teams managing competitive and mention intelligence',
+  signal: 'For teams running full validation and automation workflows',
+  scorefix: 'For teams operating continuous evidence-linked remediation',
 };
 
 const TIER_COPY: Record<
@@ -132,8 +132,8 @@ const TIER_COPY: Record<
   { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }
 > = {
   observer: {
-    headline: "You don't start with understanding. You start with exposure.",
-    body: 'We run a limited scan and show you what appears when AI systems talk about your domain. This is a glimpse. Not a system.',
+    headline: 'Baseline visibility check for your domain.',
+    body: 'Observer shows whether AI systems can extract and cite your site, with evidence-linked findings and core recommendations.',
     includes: [
       'whether your brand appears in AI answers at all',
       'a small set of real queries where you are tested',
@@ -142,8 +142,8 @@ const TIER_COPY: Record<
     cta: 'Start free',
   },
   starter: {
-    headline: 'At this level, ignorance starts breaking.',
-    body: 'We expand the surface area of reality. You are no longer looking at your site. You are looking at where it fails to exist in answers.',
+    headline: 'Implementation-ready optimization layer.',
+    body: 'Starter expands coverage and produces actionable fixes, exports, and shareable links tied to real audit evidence.',
     includes: [
       'full query map',
       "where your brand should appear but doesn't",
@@ -154,8 +154,8 @@ const TIER_COPY: Record<
     cta: 'Get Starter',
   },
   alignment: {
-    headline: 'Now you stop guessing.',
-    body: 'We run parallel AI model evaluations and compare your presence against competitors in the same answer space. This is the first time you see the battlefield.',
+    headline: 'Competitive and mention intelligence layer.',
+    body: 'Alignment adds competitor tracking, mention scanning, and reverse-engineer workflows so you can prioritize structural visibility gaps.',
     includes: [
       'where competitors replace you in AI answers',
       'where you are partially cited but not trusted',
@@ -166,8 +166,8 @@ const TIER_COPY: Record<
     cta: 'Get Alignment',
   },
   signal: {
-    headline: 'This is not analysis anymore. This is control.',
-    body: 'You get access to the system that generates visibility intelligence. You are no longer observing the system. You are inside it.',
+    headline: 'Full validation and automation layer.',
+    body: 'Signal adds triple-check validation, citation testing, API access, alerts, and team workflow automation for production-scale operations.',
     includes: [
       'continuous scanning',
       'API access to citation and query engine',
@@ -178,8 +178,8 @@ const TIER_COPY: Record<
     cta: 'Get Signal',
   },
   scorefix: {
-    headline: 'This is not reporting. This is correction.',
-    body: 'We map exactly where you are missing from AI answer space and what structural signals are preventing inclusion. This is repair instructions for visibility failure.',
+    headline: 'Continuous remediation and repair layer.',
+    body: 'Score Fix includes Signal plus automated, evidence-linked remediation cycles with recurring credits and GitHub PR workflows.',
     includes: [
       'missing query opportunities',
       'citation gaps mapped to specific sources',
@@ -194,21 +194,21 @@ const TIER_COPY: Record<
 const VALUE_RAIL = [
   {
     icon: ShieldCheck,
-    title: 'The gap is real',
+    title: 'Evidence-first visibility',
     detail:
-      'There are things the internet sees. There are things AI repeats. Most brands live somewhere between those two and never know the difference. AiVIS shows you the gap.',
+      'Every plan maps outcomes to CITE LEDGER evidence, so scores and recommendations stay traceable to observed crawl and answer behavior.',
   },
   {
     icon: Zap,
-    title: 'You are not buying features',
+    title: 'Tiered execution depth',
     detail:
-      'You are paying to see where you exist inside machine answers. Most people leave their first scan unsettled. That is intentional.',
+      'Plans share the same scoring core; higher tiers expand validation depth, automation workflows, and remediation capacity.',
   },
   {
     icon: Rocket,
-    title: 'The upgrade path is a question',
+    title: 'Clear upgrade path',
     detail:
-      'Free → Am I visible? Starter → Why am I missing? Alignment → Who is replacing me? Signal → Can I control this? Score Fix → Fix it now.',
+      'Observer verifies baseline presence, Starter adds implementation guidance, Alignment adds intelligence, Signal adds control, and Score Fix adds continuous repair.',
   },
 ] as const;
 
@@ -271,13 +271,12 @@ function buildReferencePricingTiers(): TierPricing[] {
     const limits = TIER_LIMITS[key];
     const monthlyAmount = Number(pricingEntry?.billing?.monthly ?? 0);
     const yearlyAmount = Number(pricingEntry?.billing?.yearly ?? 0);
-    const oneTimeAmount = key === 'scorefix' ? monthlyAmount : 0;
 
     return {
       key,
       name: pricingEntry?.name ?? key,
       displayName: pricingEntry?.name ?? key,
-      billingModel: key === 'observer' ? 'free' : key === 'scorefix' ? 'one_time' : 'subscription',
+      billingModel: key === 'observer' ? 'free' : 'subscription',
       stripeReady: false,
       pricing: {
         monthly:
@@ -294,13 +293,7 @@ function buildReferencePricingTiers(): TierPricing[] {
                 amount: yearlyAmount,
                 formatted: formatUsd(yearlyAmount),
               },
-        one_time:
-          key !== 'scorefix'
-            ? null
-            : {
-                amount: oneTimeAmount,
-                formatted: formatUsd(oneTimeAmount),
-              },
+        one_time: null,
       },
       features: [...(TIER_COPY[key]?.includes ?? [])],
       limits: {
@@ -1144,12 +1137,12 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
-          <h2 className="text-2xl font-bold text-white mb-3">You are not buying features.</h2>
-          <p className="text-white/75">
-            You are paying to see where you exist inside machine answers.
-          </p>
+          <h2 className="text-2xl font-bold text-white mb-3">
+            Choose the execution depth your team needs.
+          </h2>
+          <p className="text-white/75">Every tier uses the same evidence-linked scoring model.</p>
           <p className="text-white/65">
-            And if you don’t exist there — it shows you exactly where reality breaks.
+            Higher tiers add deeper validation, collaboration, and remediation automation.
           </p>
         </div>
 
@@ -1393,14 +1386,14 @@ export default function PricingPage() {
           id="proof"
           className="section-anchor mt-8 rounded-2xl border border-white/10 bg-charcoal-light p-6 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-lg brand-title mb-2">What this actually is</h2>
+          <h2 className="text-lg brand-title mb-2">How the tiers progress</h2>
           <p className="text-sm text-white/75 mb-4 leading-relaxed">
-            AiVIS does not rank you. It reveals whether AI systems recognize you at all. And if they
-            don't, it shows you exactly where reality breaks.
+            AiVIS measures whether AI systems can extract, validate, and cite your site. Each tier
+            expands operational depth while keeping the same evidence model.
           </p>
           <ul className="space-y-2 text-sm text-white/80">
             <li>
-              <span className="font-semibold text-white">Free</span> — Am I visible?
+              <span className="font-semibold text-white">Observer</span> — Am I visible?
             </li>
             <li>
               <span className="font-semibold text-white">Starter</span> — Why am I missing?

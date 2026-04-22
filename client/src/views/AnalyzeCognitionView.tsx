@@ -49,6 +49,12 @@ function scoreColor(s: number): string {
   return '#ef4444';
 }
 
+function visibilityLabel(score: number): 'LOW' | 'MEDIUM' | 'HIGH' {
+  if (score >= 65) return 'HIGH';
+  if (score >= 40) return 'MEDIUM';
+  return 'LOW';
+}
+
 // ── URL validation (mirrors AnalyzePage) ─────────────────────────────────────
 
 function isValidUrl(input: string): boolean {
@@ -206,6 +212,7 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
 
   // Stage-primary desktop layout: user can select a stage to inspect
   const [selectedStage, setSelectedStage] = useState<ScanStage>(pipelineStepToStage(scanStep));
+  const [showStableNodes, setShowStableNodes] = useState(false);
 
   // Follow active pipeline stage until user overrides
   const userOverrodeStageRef = useRef(false);
@@ -327,6 +334,167 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
     return cognData?.edges.filter((e) => e.revealedAtStep <= cursorSeq) ?? [];
   }, [projectedState, cognData, cursorSeq]);
 
+  const stageFilteredNodeIds = useMemo(() => {
+    const matchesStage = (node: (typeof visibleNodes)[number]) => {
+      switch (selectedStage) {
+        case 'conflict':
+          return (
+            node.status === 'conflict' ||
+            node.status === 'uncertain' ||
+            node.type === 'issue' ||
+            node.type === 'gap'
+          );
+        case 'trust':
+          return (node.type === 'entity' || node.type === 'category') && node.confidence >= 0.6;
+        case 'score':
+          return node.type === 'category' || node.type === 'issue' || node.type === 'gap';
+        case 'schema':
+          return /schema|json|markup/i.test(node.label) || node.type === 'issue';
+        case 'extract':
+          return (
+            node.type === 'entity' ||
+            node.type === 'claim' ||
+            node.type === 'keyword' ||
+            node.type === 'query' ||
+            node.type === 'gap'
+          );
+        case 'fetch':
+          return node.type === 'entity' || node.type === 'category' || node.type === 'issue';
+        case 'resolve':
+        default:
+          return true;
+      }
+    };
+
+    const ids = new Set<string>();
+    for (const node of visibleNodes) {
+      const keepByStage = matchesStage(node);
+      const hideStable = !!result && !showStableNodes && node.status === 'confirmed';
+      const keepSelected = node.id === selectedNodeId;
+      if ((keepByStage && !hideStable) || keepSelected) {
+        ids.add(node.id);
+      }
+    }
+
+    if (ids.size === 0) {
+      for (const node of visibleNodes) ids.add(node.id);
+    }
+
+    return ids;
+  }, [visibleNodes, selectedStage, result, showStableNodes, selectedNodeId]);
+
+  const focusedNodes = useMemo(
+    () => visibleNodes.filter((n) => stageFilteredNodeIds.has(n.id)),
+    [visibleNodes, stageFilteredNodeIds]
+  );
+
+  const focusedEdges = useMemo(
+    () =>
+      visibleEdges.filter(
+        (e) => stageFilteredNodeIds.has(e.source) && stageFilteredNodeIds.has(e.target)
+      ),
+    [visibleEdges, stageFilteredNodeIds]
+  );
+
+  const conflictCount = useMemo(
+    () => visibleNodes.filter((n) => n.status === 'conflict').length,
+    [visibleNodes]
+  );
+  const uncertainCount = useMemo(
+    () => visibleNodes.filter((n) => n.status === 'uncertain').length,
+    [visibleNodes]
+  );
+
+  const weakAuthority = useMemo(() => {
+    const authorityFromPresence = (result?.answer_presence?.authority_alignment_score ?? 100) < 60;
+    const authorityFromGrades =
+      (result?.category_grades ?? []).find((g) => /authority|trust/i.test(g.label))?.score ?? 100;
+    return authorityFromPresence || authorityFromGrades < 60;
+  }, [result]);
+
+  const missingCoverage = useMemo(() => {
+    const coverage = result?.answer_presence?.citation_coverage_score;
+    const gaps = result?.answer_presence?.gaps?.length ?? 0;
+    if (coverage == null) return gaps > 0;
+    return coverage < 60 || gaps > 0;
+  }, [result]);
+
+  const primaryIssueNode = useMemo(() => {
+    const pool = visibleNodes.filter(
+      (n) =>
+        n.status === 'conflict' ||
+        n.status === 'uncertain' ||
+        n.type === 'issue' ||
+        n.type === 'gap'
+    );
+    if (pool.length === 0) return visibleNodes[0] ?? null;
+    return pool.sort((a, b) => a.confidence - b.confidence)[0] ?? null;
+  }, [visibleNodes]);
+
+  const selectedNode = useMemo(
+    () => visibleNodes.find((n) => n.id === selectedNodeId) ?? null,
+    [visibleNodes, selectedNodeId]
+  );
+
+  const issueNode = selectedNode ?? primaryIssueNode;
+
+  const nodeConflictCount = useCallback(
+    (nodeId: string): number => {
+      let count = 0;
+      for (const e of visibleEdges) {
+        const linkedId = e.source === nodeId ? e.target : e.target === nodeId ? e.source : null;
+        if (!linkedId) continue;
+        const linked = visibleNodes.find((n) => n.id === linkedId);
+        if (linked?.status === 'conflict') count++;
+      }
+      return count;
+    },
+    [visibleEdges, visibleNodes]
+  );
+
+  const nodeFixPath = useCallback(
+    (node: NonNullable<typeof issueNode>) => {
+      const rec = (result?.recommendations ?? []).find(
+        (r) =>
+          node.label.toLowerCase().includes(r.title.toLowerCase().slice(0, 20)) ||
+          r.title.toLowerCase().includes(node.label.toLowerCase().slice(0, 20))
+      );
+
+      if (rec?.description) {
+        return [
+          rec.title,
+          rec.description,
+          rec.category
+            ? `Re-test ${rec.category.toLowerCase()} after applying fix`
+            : 'Re-scan to verify evidence change',
+        ];
+      }
+
+      if (node.type === 'entity') {
+        return [
+          'Update homepage H1 to one canonical positioning statement',
+          'Align meta description and Organization schema with the same wording',
+          'Reinforce that statement in three supporting pages',
+        ];
+      }
+
+      if (node.type === 'category' && /schema|json/i.test(node.label)) {
+        return [
+          'Add or repair JSON-LD blocks for primary entity pages',
+          'Validate schema output against required properties',
+          'Re-scan and verify citation coverage lift',
+        ];
+      }
+
+      return [
+        'Unify conflicting claims across key pages',
+        'Back claims with structured evidence and source citations',
+        'Re-run analysis and verify conflict count reduction',
+      ];
+    },
+    [issueNode, result]
+  );
+
   // Conflicts derived from engine state (shown in graph overlay)
   const conflicts = projectedState?.conflicts ?? [];
 
@@ -341,35 +509,46 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
   const graphSlot = (
     <div className="relative w-full h-full">
       <EntityGraph
-        nodes={visibleNodes}
-        edges={visibleEdges}
+        nodes={focusedNodes}
+        edges={focusedEdges}
         selectedNodeId={selectedNodeId}
         onNodeHover={setHoveredNodeId}
         onNodeClick={handleNodeClick}
       />
 
-      {/* Top-left overlay: scan info */}
+      {/* Narrative-first overlay */}
       <div
-        className="fl-graph__overlay-tl font-mono pointer-events-none"
-        style={{ color: 'rgba(255,255,255,0.25)' }}
+        className="fl-graph__overlay-tl font-mono"
+        style={{ color: 'rgba(255,255,255,0.85)', pointerEvents: 'auto', maxWidth: 420 }}
       >
         {result ? (
-          <>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>scan:</span> {result.url}
-            {'  '}
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>score:</span>{' '}
-            <span style={{ color: score != null ? scoreColor(score) : '#888' }}>
-              {score ?? '–'}
-            </span>
-            {conflicts.length > 0 && (
-              <>
-                {'  '}
-                <span style={{ color: '#ef4444' }}>
-                  ⚡ {conflicts.length} conflict{conflicts.length !== 1 ? 's' : ''}
-                </span>
-              </>
-            )}
-          </>
+          <div
+            className="rounded-md border px-3 py-2"
+            style={{ borderColor: 'rgba(255,255,255,0.14)', background: 'rgba(2,8,23,0.7)' }}
+          >
+            <div className="text-[10px] tracking-widest uppercase text-white/40">
+              Decision Surface
+            </div>
+            <div className="mt-1 text-[12px] text-white/90">
+              Your visibility is{' '}
+              <span style={{ color: score != null ? scoreColor(score) : '#888' }}>
+                {score != null ? visibilityLabel(score) : 'UNKNOWN'}
+              </span>{' '}
+              because:
+            </div>
+            <ul className="mt-1 text-[11px] space-y-1 text-white/80">
+              <li>- {conflictCount} conflicting claims detected</li>
+              <li>
+                - {weakAuthority ? 'weak entity authority signals' : 'authority signals are stable'}
+              </li>
+              <li>
+                - {missingCoverage ? 'missing citation coverage' : 'citation coverage is holding'}
+              </li>
+            </ul>
+            <div className="mt-2 text-[10px] text-white/45">
+              score {score ?? '–'} · focused {focusedNodes.length} / {visibleNodes.length} nodes
+            </div>
+          </div>
         ) : (
           <>
             <span style={{ color: 'rgba(255,255,255,0.15)' }}>status:</span>{' '}
@@ -405,6 +584,20 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
 
       {/* Top-right: action buttons */}
       <div className="fl-graph__overlay-tr gap-2">
+        {result && (
+          <button
+            type="button"
+            onClick={() => setShowStableNodes((prev) => !prev)}
+            className="text-[10px] font-mono text-white/55 hover:text-white/85 border px-3 py-1 transition-all"
+            style={{
+              borderColor: showStableNodes ? 'rgba(34,197,94,0.45)' : 'rgba(255,255,255,0.2)',
+              background: showStableNodes ? 'rgba(34,197,94,0.08)' : 'rgba(0,0,0,0.35)',
+            }}
+            title="Toggle stable nodes"
+          >
+            {showStableNodes ? 'hide stable' : 'show stable'}
+          </button>
+        )}
         {result?.audit_id && (
           <Link
             to={`/app/audits/${result.audit_id}`}
@@ -421,6 +614,54 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
           ✕ new scan
         </button>
       </div>
+
+      {/* Current issue panel */}
+      {result && issueNode && (
+        <div
+          className="absolute bottom-3 right-3 w-[360px] rounded-md border p-3 font-mono"
+          style={{
+            background: 'rgba(2,8,23,0.82)',
+            borderColor: 'rgba(255,255,255,0.14)',
+            zIndex: 12,
+          }}
+        >
+          <div className="text-[10px] tracking-widest uppercase text-white/45">Current Issue</div>
+          <div className="mt-1 text-[12px] text-white/90">
+            Primary {issueNode.status === 'conflict' ? 'Conflict' : 'Focus'}: {issueNode.label}
+          </div>
+          <div className="mt-2 text-[11px] text-white/70">
+            Impact: lowers entity confidence and citation consistency.
+          </div>
+          <div className="mt-1 text-[11px] text-white/60">
+            Node stats: confidence {issueNode.confidence.toFixed(2)} · mentions{' '}
+            {issueNode.sources ?? 0} · linked conflicts {nodeConflictCount(issueNode.id)}
+          </div>
+          <div className="mt-2 text-[10px] tracking-wide uppercase text-white/45">Fix Path</div>
+          <ol className="mt-1 text-[11px] text-white/80 space-y-1">
+            {nodeFixPath(issueNode).map((stepText, i) => (
+              <li key={`${issueNode.id}-fix-${i}`}>
+                {i + 1}. {stepText}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* Focus hint */}
+      {result && !showStableNodes && (
+        <div
+          className="absolute bottom-3 left-3 text-[10px] font-mono px-2 py-1 border rounded"
+          style={{
+            borderColor: 'rgba(234,179,8,0.35)',
+            color: 'rgba(255,255,255,0.75)',
+            background: 'rgba(234,179,8,0.08)',
+            zIndex: 11,
+          }}
+        >
+          Focus mode: highlighting conflicts ({conflictCount}) + uncertain ({uncertainCount}),
+          stable nodes hidden
+        </div>
+      )}
     </div>
   );
 

@@ -164,6 +164,39 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
   // Tooltip (single DOM node)
   const [tooltip, setTooltip] = useState<{ x: number; y: number; node: SimNode } | null>(null);
 
+  const getNodeConflictCount = useCallback((nodeId: string): number => {
+    const simMap = simMapRef.current;
+    let count = 0;
+    for (const e of edgesRef.current) {
+      const linkedId = e.source === nodeId ? e.target : e.target === nodeId ? e.source : null;
+      if (!linkedId) continue;
+      const linkedNode = simMap.get(linkedId);
+      if (linkedNode?.status === 'conflict') count++;
+    }
+    return count;
+  }, []);
+
+  const deriveProblem = useCallback((node: SimNode): string => {
+    if (node.status === 'conflict') return 'Conflicting descriptions across sources';
+    if (node.status === 'uncertain') return 'Signal confidence is too weak to trust';
+    if (node.type === 'issue' || node.type === 'gap')
+      return 'Visibility blocker detected in pipeline';
+    if (node.type === 'entity') return 'Entity definition is not fully reinforced';
+    return 'No critical blocker detected';
+  }, []);
+
+  const deriveFix = useCallback((node: SimNode): string => {
+    if (node.type === 'entity')
+      return 'Unify H1, meta description, and Organization schema wording';
+    if (node.type === 'category' && /schema|json/i.test(node.label))
+      return 'Add/repair JSON-LD and validate required properties';
+    if (node.status === 'conflict')
+      return 'Align page claims and support with citation-backed evidence';
+    if (node.type === 'issue' || node.type === 'gap')
+      return 'Apply recommended fix path and re-scan this stage';
+    return 'Reinforce with supporting references and re-test';
+  }, []);
+
   // ── Ref syncs (avoid re-running animation effect) ─────────────────────────
   useEffect(() => {
     selectedRef.current = selectedNodeId;
@@ -561,10 +594,12 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
             whiteSpace: 'nowrap',
           }}
         >
-          <div style={{ color: 'rgba(255,255,255,0.35)', marginBottom: 2 }}>
+          <div
+            style={{ color: 'rgba(255,255,255,0.35)', marginBottom: 2, textTransform: 'uppercase' }}
+          >
             {tooltip.node.type}
           </div>
-          <div style={{ color: '#fff', fontWeight: 600 }}>{tooltip.node.label}</div>
+          <div style={{ color: '#fff', fontWeight: 600 }}>Entity: {tooltip.node.label}</div>
           <div style={{ marginTop: 4, color: 'rgba(255,255,255,0.35)' }}>
             confidence:{' '}
             <span
@@ -580,9 +615,12 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
               {tooltip.node.confidence.toFixed(2)}
             </span>
           </div>
-          {tooltip.node.sources != null && (
-            <div style={{ color: 'rgba(255,255,255,0.35)' }}>sources: {tooltip.node.sources}</div>
-          )}
+          <div style={{ color: 'rgba(255,255,255,0.35)' }}>
+            mentions: {tooltip.node.sources ?? 0}
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.35)' }}>
+            conflicts: {getNodeConflictCount(tooltip.node.id)}
+          </div>
           <div style={{ marginTop: 2, color: 'rgba(255,255,255,0.25)' }}>
             status:{' '}
             <span
@@ -599,6 +637,14 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
             >
               {tooltip.node.status}
             </span>
+          </div>
+          <div style={{ marginTop: 4, color: 'rgba(255,255,255,0.42)' }}>Problem:</div>
+          <div style={{ color: 'rgba(255,255,255,0.82)', maxWidth: 280, whiteSpace: 'normal' }}>
+            {deriveProblem(tooltip.node)}
+          </div>
+          <div style={{ marginTop: 4, color: 'rgba(255,255,255,0.42)' }}>Fix:</div>
+          <div style={{ color: 'rgba(255,255,255,0.82)', maxWidth: 280, whiteSpace: 'normal' }}>
+            {deriveFix(tooltip.node)}
           </div>
         </div>
       )}

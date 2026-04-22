@@ -22,10 +22,11 @@ import type { ScanResult } from '../../machines/scanMachine';
 
 interface InnerProps {
   onResult?: (result: ScanResult) => void;
+  onPhaseChange?: (phase: string) => void;
   resultRef?: React.RefObject<HTMLDivElement>;
 }
 
-function ScanShellInner({ onResult, resultRef }: InnerProps) {
+function ScanShellInner({ onResult, onPhaseChange, resultRef }: InnerProps) {
   const { state } = useScan();
   const prevPhaseRef = useRef(state.phase);
 
@@ -39,7 +40,8 @@ function ScanShellInner({ onResult, resultRef }: InnerProps) {
       }, 200);
     }
     prevPhaseRef.current = state.phase;
-  }, [state.phase, onResult, resultRef]);
+    onPhaseChange?.(state.phase);
+  }, [state.phase, onResult, onPhaseChange, resultRef]);
 
   return (
     <div className="scan-shell w-full text-center">
@@ -56,13 +58,14 @@ function ScanShellInner({ onResult, resultRef }: InnerProps) {
 
 interface ScanShellProps {
   onResult?: (result: ScanResult) => void;
+  onPhaseChange?: (phase: string) => void;
   resultRef?: React.RefObject<HTMLDivElement>;
 }
 
-export function ScanShell({ onResult, resultRef }: ScanShellProps) {
+export function ScanShell({ onResult, onPhaseChange, resultRef }: ScanShellProps) {
   return (
     <ScanProvider>
-      <ScanShellInner onResult={onResult} resultRef={resultRef} />
+      <ScanShellInner onResult={onResult} onPhaseChange={onPhaseChange} resultRef={resultRef} />
     </ScanProvider>
   );
 }

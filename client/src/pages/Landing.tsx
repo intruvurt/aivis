@@ -13,6 +13,7 @@ import {
   type MismatchData,
   type MismatchStatus,
 } from '../components/mismatch/AIMismatchPanel';
+import { LiveAuditNarrative } from '../components/homepage/LiveAuditNarrative';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
 import { PRICING } from '../../../shared/types';
 import type { EvidenceLedgerEntry } from '../../../shared/types';
@@ -655,20 +656,9 @@ const Landing = () => {
               {/* Compact value prop — only show full version when idle */}
               {landingPhase === 'idle' && (
                 <>
-                  <h1
-                    id="hero-headline"
-                    data-speakable
-                    className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] text-white mb-4 tracking-tight"
-                  >
-                    See what AI actually reads
-                    <span className="block text-white/60 font-semibold text-xl sm:text-2xl mt-2">
-                      on your site — and where it gets it wrong
-                    </span>
-                  </h1>
-                  <p className="text-sm text-white/40 mb-8 max-w-lg mx-auto leading-relaxed">
-                    Run a free scan. Watch the interpretation live. Correct the gaps that keep you
-                    invisible to AI.
-                  </p>
+                  <div className="mb-8">
+                    <LiveAuditNarrative />
+                  </div>
                 </>
               )}
 

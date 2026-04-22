@@ -21,6 +21,11 @@ export async function workspaceRequired(req: Request, res: Response, next: NextF
       ctx = await resolveWorkspaceForUser(userId, requestedWorkspaceId);
     }
 
+    // Recover from stale workspace headers by falling back to any accessible workspace.
+    if (!ctx && requestedWorkspaceId) {
+      ctx = await resolveWorkspaceForUser(userId, undefined);
+    }
+
     if (!ctx) {
       return res.status(403).json({
         error: 'No accessible workspace found for this account',

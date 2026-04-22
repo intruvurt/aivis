@@ -277,13 +277,20 @@ export default function AuthPage() {
       setIsLoading(true);
 
       try {
+        const form = e.currentTarget as HTMLFormElement;
+        const formData = new FormData(form);
+        const submittedEmail = String(formData.get('email') || email || '').trim();
+        const submittedPassword = String(formData.get('password') || password || '');
+        if (submittedEmail && submittedEmail !== email) setEmail(submittedEmail);
+        if (submittedPassword && submittedPassword !== password) setPassword(submittedPassword);
+
         const { response: res, body: raw } = await fetchJsonWithTimeout(
-          `${apiBase}/api/auth/login`,
+          `${apiBase}/api/auth/signin`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email: submittedEmail, password: submittedPassword }),
           }
         );
         if (!res.ok) {

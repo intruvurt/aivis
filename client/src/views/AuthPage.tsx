@@ -246,14 +246,13 @@ export default function AuthPage() {
     setError(null);
 
     try {
-      const captchaToken = await getCaptchaToken('resend_verification');
       const { response: res, body: data } = await fetchJsonWithTimeout(
         `${apiBase}/api/auth/resend-verification`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ email, captchaToken }),
+          body: JSON.stringify({ email }),
         }
       );
 
@@ -278,14 +277,13 @@ export default function AuthPage() {
       setIsLoading(true);
 
       try {
-        const captchaToken = await getCaptchaToken('login');
         const { response: res, body: raw } = await fetchJsonWithTimeout(
           `${apiBase}/api/auth/login`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ email, password, captchaToken }),
+            body: JSON.stringify({ email, password }),
           }
         );
         if (!res.ok) {
@@ -381,7 +379,6 @@ export default function AuthPage() {
       }
 
       try {
-        const captchaToken = await getCaptchaToken('signup');
         const { response: res, body: raw } = await fetchJsonWithTimeout(
           `${apiBase}/api/auth/signup`,
           {
@@ -392,7 +389,6 @@ export default function AuthPage() {
               email,
               password,
               name,
-              captchaToken,
               referralCode: referralCode ? referralCode.trim().toUpperCase() : undefined,
               termsAccepted: acceptedTerms,
               privacyAccepted: acceptedPrivacy,

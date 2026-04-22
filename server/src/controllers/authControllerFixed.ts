@@ -214,18 +214,7 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    if (isRecaptchaEnforced()) {
-      const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
-      if (!captcha.ok) {
-        return res.status(400).json({
-          success: false,
-          error: 'Captcha verification failed',
-          statusCode: 400,
-          code: 'CAPTCHA_FAILED',
-          details: captcha.message,
-        });
-      }
-    }
+    // Captcha removed entirely — verified/unverified email + rate limiting provides sufficient bot protection for signup
 
     const referralCode = normalizeReferralCodeInput(String(rawReferralCode || ''));
 

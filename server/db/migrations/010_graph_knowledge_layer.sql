@@ -22,18 +22,20 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS scans (
   id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   audit_id       UUID        REFERENCES audits(id) ON DELETE SET NULL,
+  workspace_id   UUID,                          -- multi-tenant isolation
   url            TEXT        NOT NULL,
   status         TEXT        NOT NULL DEFAULT 'pending'
                              CHECK (status IN ('pending','running','complete','failed')),
-  execution_class TEXT,                          -- observer | starter | alignment | signal
+  execution_class TEXT,                         -- observer | starter | alignment | signal
   model_count    SMALLINT    DEFAULT 0,
   triple_check   BOOLEAN     DEFAULT FALSE,
   created_at     TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_scans_audit   ON scans (audit_id);
-CREATE INDEX IF NOT EXISTS idx_scans_url     ON scans (url);
-CREATE INDEX IF NOT EXISTS idx_scans_created ON scans (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_scans_audit       ON scans (audit_id);
+CREATE INDEX IF NOT EXISTS idx_scans_url         ON scans (url);
+CREATE INDEX IF NOT EXISTS idx_scans_created     ON scans (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_scans_workspace   ON scans (workspace_id);
 
 -- ============================================================
 -- entities
@@ -64,25 +66,42 @@ CREATE INDEX IF NOT EXISTS idx_entities_embedding
 -- are evidence weights, not scores (scoring happens downstream).
 -- ============================================================
 CREATE TABLE IF NOT EXISTS claims (
-  id              UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
-  scan_id         UUID              REFERENCES scans(id) ON DELETE CASCADE,
-  subject_id      UUID              REFERENCES entities(id) ON DELETE SET NULL,
-  predicate       TEXT              NOT NULL,
-  object_value    TEXT,                           -- normalized string
-  object_raw      TEXT,                           -- original extracted text
-  object_number   DOUBLE PRECISION,              -- populated when value is numeric
-  value_type      TEXT              CHECK (value_type IN ('string','number','boolean')),
-  confidence      REAL              CHECK (confidence  BETWEEN 0 AND 1),
-  domain_authority REAL             CHECK (domain_authority BETWEEN 0 AND 1),
-  freshness       REAL              CHECK (freshness BETWEEN 0 AND 1),
-  source_url      TEXT,
-  embedding       VECTOR(768),
-  created_at      TIMESTAMPTZ       DEFAULT now()
+  id               UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
+  scan_id          UUID              REFERENCES scans(id) ON DELETE CASCADE,
+  workspace_id     UUID,                          -- multi-tenant isolation (denormalized for query speed)
+  subject_id       UUID              NOT NULL REFERENCES entities(id) ON DELETE SET NULL,
+  predicate        TEXT              NOT NULL,
+  object_value     TEXT,                          -- normalized string
+  object_raw       TEXT,                          -- original extracted text
+  object_number    DOUBLE PRECISION,             -- populated when value is numeric
+  value_type       TEXT              CHECK (value_type IN ('string','number','boolean')),
+  confidence       REAL              CHECK (confidence  BETWEEN 0 AND 1),
+  domain_authority REAL              CHECK (domain_authority BETWEEN 0 AND 1),
+  freshness        REAL              CHECK (freshness BETWEEN 0 AND 1),
+  source_url       TEXT,
+  -- Interpretation provenance (critical for debugging + trust)
+  model_name       TEXT,                          -- e.g. gpt-4o-mini, claude-haiku-4-5
+  extraction_method TEXT,                         -- e.g. puppeteer-html, llm-extraction
+  prompt_hash      TEXT,                          -- SHA-256 of prompt used for this claim
+  embedding        VECTOR(768),
+  created_at       TIMESTAMPTZ       DEFAULT now(),
+  -- SPO completeness constraint: every claim must have subject + predicate + at least one object
+  CONSTRAINT claims_spo_valid CHECK (
+    subject_id IS NOT NULL
+    AND predicate IS NOT NULL
+    AND (object_value IS NOT NULL OR object_number IS NOT NULL)
+  )
 );
 
 CREATE INDEX IF NOT EXISTS idx_claims_subject_pred ON claims (subject_id, predicate);
 CREATE INDEX IF NOT EXISTS idx_claims_scan         ON claims (scan_id);
 CREATE INDEX IF NOT EXISTS idx_claims_predicate    ON claims (predicate);
+CREATE INDEX IF NOT EXISTS idx_claims_workspace    ON claims (workspace_id);
+
+-- Partial index: subject+predicate queries only ever have subject_id set (enforced by CHECK)
+CREATE INDEX IF NOT EXISTS idx_claims_subject_pred_partial
+  ON claims (subject_id, predicate)
+  WHERE subject_id IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_claims_embedding
   ON claims USING ivfflat (embedding vector_cosine_ops)
@@ -109,6 +128,10 @@ CREATE INDEX IF NOT EXISTS idx_claim_edges_a    ON claim_edges (claim_a);
 CREATE INDEX IF NOT EXISTS idx_claim_edges_b    ON claim_edges (claim_b);
 CREATE INDEX IF NOT EXISTS idx_claim_edges_type ON claim_edges (edge_type);
 
+-- REQUIRED: prevents duplicate edges (ON CONFLICT DO NOTHING needs this to function correctly)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_claim_edges_unique
+  ON claim_edges (claim_a, claim_b, edge_type);
+
 -- ============================================================
 -- entity_edges
 -- Knowledge-graph relationships between entities. Used for
@@ -125,6 +148,10 @@ CREATE TABLE IF NOT EXISTS entity_edges (
 
 CREATE INDEX IF NOT EXISTS idx_entity_edges_from ON entity_edges (from_entity);
 CREATE INDEX IF NOT EXISTS idx_entity_edges_to   ON entity_edges (to_entity);
+
+-- Deduplication: same directional edge with same relation is only stored once
+CREATE UNIQUE INDEX IF NOT EXISTS idx_entity_edges_unique
+  ON entity_edges (from_entity, to_entity, relation);
 
 -- ============================================================
 -- claim_clusters
@@ -172,6 +199,14 @@ CREATE TABLE IF NOT EXISTS resolutions (
 
 CREATE INDEX IF NOT EXISTS idx_resolutions_cluster ON resolutions (cluster_id);
 
+-- Supports ORDER BY probability DESC queries efficiently
+CREATE INDEX IF NOT EXISTS idx_resolutions_cluster_prob
+  ON resolutions (cluster_id, probability DESC);
+
+-- Optional: enforce value uniqueness per cluster (comment out if multiple values per cluster are intended)
+-- CREATE UNIQUE INDEX IF NOT EXISTS idx_resolutions_cluster_value
+--   ON resolutions (cluster_id, value);
+
 -- ============================================================
 -- generate_conflict_edges (helper function)
 -- Call after batch-inserting claims for a scan_id.
@@ -193,12 +228,20 @@ BEGIN
       1.0::REAL AS w
     FROM claims c1
     JOIN claims c2
-      ON  c1.subject_id = c2.subject_id
-      AND c1.predicate  = c2.predicate
-      AND c1.id         < c2.id          -- enforce ordering (see CHECK constraint)
-      AND c1.object_value IS DISTINCT FROM c2.object_value
-    WHERE c1.scan_id = p_scan_id
-      OR  c2.scan_id = p_scan_id
+      ON  c1.subject_id   = c2.subject_id
+      AND c1.predicate    = c2.predicate
+      AND c1.id           < c2.id          -- enforce ordering (see CHECK constraint)
+      -- Normalize comparison across string/number types to avoid type-slip false negatives
+      AND COALESCE(c1.object_value, c1.object_number::text)
+            IS DISTINCT FROM
+          COALESCE(c2.object_value, c2.object_number::text)
+    WHERE (c1.scan_id = p_scan_id OR c2.scan_id = p_scan_id)
+      -- Quadratic explosion guard: for large clusters, sample 10% of pairs
+      -- Remove this filter only for small controlled ingestion batches
+      AND (random() < 0.1 OR (
+        SELECT COUNT(*) FROM claims cx
+        WHERE cx.subject_id = c1.subject_id AND cx.predicate = c1.predicate
+      ) <= 50)
   )
   INSERT INTO claim_edges (claim_a, claim_b, edge_type, weight)
   SELECT a, b, 'CONFLICTS', w
@@ -266,3 +309,11 @@ $$;
 --   WHERE ce.edge_type = 'CONFLICTS'
 --   GROUP BY cc.subject_id, cc.predicate
 --   ORDER BY conflict_count DESC;
+
+-- ============================================================
+-- Post-bulk-insert maintenance (run after large ingestion batches)
+-- ivfflat indexes require statistics to build efficient probes
+-- ============================================================
+
+-- ANALYZE entities;
+-- ANALYZE claims;

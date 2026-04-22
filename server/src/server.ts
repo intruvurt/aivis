@@ -216,6 +216,7 @@ import {
   createOrRefreshPublicReportLink,
   resolvePublicReportReference,
 } from "./services/publicReportLinks.js";
+import { runProductionHardChecks } from "./services/deterministicContractService.js";
 import {
   getPublicEntityNode,
   listPublicEntitySitemapEntries,
@@ -236,6 +237,7 @@ import autoVisibilityFixRoutes from "./routes/autoVisibilityFixRoutes.js";
 import githubAppRoutes from "./routes/githubAppRoutes.js";
 import selfHealingRoutes from "./routes/selfHealingRoutes.js";
 import pipelineRoutes from "./routes/pipelineRoutes.js";
+import deterministicLoopRoutes from "./routes/deterministicLoopRoutes.js";
 import cloudflareRoutes from "./routes/cloudflareRoutes.js";
 import portfolioRoutes from "./routes/portfolioRoutes.js";
 import growthEngineRoutes from "./routes/growthEngineRoutes.js";
@@ -1659,6 +1661,7 @@ app.use("/api/visibility", realtimeVisibilityRoutes);
 app.use("/api/fix-engine", autoVisibilityFixRoutes);
 app.use("/api/self-healing", selfHealingRoutes);
 app.use("/api/pipeline", pipelineRoutes);
+app.use("/api", deterministicLoopRoutes);
 app.use("/api/cloudflare", cloudflareRoutes);
 app.use("/api/tracking", trackingRoutes);
 app.use("/api/dataset", datasetRoutes);
@@ -9608,12 +9611,61 @@ app.get(
 // ─────────────────────────────────────────────────────────────────────────────
 // Analyze endpoint
 // ─────────────────────────────────────────────────────────────────────────────
+let determinismGateCache: {
+  expiresAt: number;
+  report: Awaited<ReturnType<typeof runProductionHardChecks>>;
+} | null = null;
+
+const enforceDeterminismGate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const now = Date.now();
+    const cached = determinismGateCache;
+    const ttlMs = Math.max(
+      5_000,
+      Number(process.env.DETERMINISM_GATE_CACHE_MS || 30_000),
+    );
+
+    const report =
+      cached && cached.expiresAt > now
+        ? cached.report
+        : await runProductionHardChecks();
+
+    if (!cached || cached.expiresAt <= now) {
+      determinismGateCache = {
+        report,
+        expiresAt: now + ttlMs,
+      };
+    }
+
+    if (!report.ok) {
+      return res.status(503).json({
+        error: "determinism_gate_failed",
+        code: "DETERMINISM_GATE_FAILED",
+        report: report.checks,
+      });
+    }
+
+    return next();
+  } catch (err: any) {
+    return res.status(503).json({
+      error: "determinism_gate_unavailable",
+      code: "DETERMINISM_GATE_UNAVAILABLE",
+      details: err?.message || "Failed to run production checks",
+    });
+  }
+};
+
 app.post(
   "/api/analyze",
   authRequired,
   workspaceRequired,
   requireWorkspacePermission("audit:run"),
   heavyActionLimiter,
+  enforceDeterminismGate,
   usageGate,
   async (req: Request, res: Response) => {
     const startTime = Date.now();
@@ -14093,6 +14145,7 @@ app.post(
   workspaceRequired,
   requireWorkspacePermission("audit:run"),
   heavyActionLimiter,
+  enforceDeterminismGate,
   usageGate,
   incrementUsage,
   intelligenceAnalyzeHandler,

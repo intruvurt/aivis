@@ -12,6 +12,34 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+type ContractStage =
+  | 'queued'
+  | 'fetched'
+  | 'parsed'
+  | 'entities'
+  | 'citations'
+  | 'scored'
+  | 'finalized';
+
+function toContractStage(jobStatus: string): ContractStage {
+  switch (jobStatus) {
+    case 'queued':
+      return 'queued';
+    case 'fetched':
+      return 'fetched';
+    case 'parsed':
+      return 'parsed';
+    case 'analyzed':
+      return 'scored';
+    case 'completed':
+      return 'finalized';
+    case 'failed':
+      return 'finalized';
+    default:
+      return 'queued';
+  }
+}
+
 /**
  * Map ingestion_jobs.status → pipeline stage name
  */
@@ -47,11 +75,25 @@ export async function broadcastStageUpdate(
   }
 
   const channelName = `analysis:${runId}`;
+  const timestamp = Date.now();
+  const stageStatus = jobStatus === 'failed' ? 'failed' : jobStatus === 'completed' ? 'complete' : 'running';
   const payload = {
     type: 'stage',
+    runId,
+    contract: {
+      runId,
+      stage: toContractStage(jobStatus),
+      status: stageStatus,
+      timestamp,
+      payload: {
+        duration: duration || 0,
+        ...(error ? { error } : {}),
+      },
+    },
+    // legacy shape kept for existing clients
     stage: {
       name: stageName,
-      status: jobStatus === 'failed' ? 'failed' : jobStatus === 'completed' ? 'complete' : 'running',
+      status: stageStatus,
       duration: duration || 0,
       timestamp: new Date().toISOString(),
     },
@@ -91,6 +133,15 @@ export async function broadcastPartialResults(
   const channelName = `analysis:${runId}`;
   const payload = {
     type: 'partial',
+    runId,
+    contract: {
+      runId,
+      stage: 'entities' as ContractStage,
+      status: 'complete',
+      timestamp: Date.now(),
+      payload: partial,
+    },
+    // legacy shape kept for existing clients
     data: partial,
     timestamp: new Date().toISOString(),
   };
@@ -118,6 +169,15 @@ export async function broadcastAnalysisComplete(runId: string, final: any) {
   const channelName = `analysis:${runId}`;
   const payload = {
     type: 'complete',
+    runId,
+    contract: {
+      runId,
+      stage: 'finalized' as ContractStage,
+      status: 'complete',
+      timestamp: Date.now(),
+      payload: final,
+    },
+    // legacy shape kept for existing clients
     data: final,
     timestamp: new Date().toISOString(),
   };
@@ -145,6 +205,15 @@ export async function broadcastAnalysisError(runId: string, error: string) {
   const channelName = `analysis:${runId}`;
   const payload = {
     type: 'error',
+    runId,
+    contract: {
+      runId,
+      stage: 'finalized' as ContractStage,
+      status: 'failed',
+      timestamp: Date.now(),
+      payload: { error: { message: error } },
+    },
+    // legacy shape kept for existing clients
     error: { message: error },
     timestamp: new Date().toISOString(),
   };

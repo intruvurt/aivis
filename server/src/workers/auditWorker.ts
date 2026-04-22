@@ -29,6 +29,7 @@ import {
   broadcastAnalysisComplete,
   broadcastAnalysisError,
 } from '../services/pipelineStatebroadcaster.js';
+import { runProductionHardChecks } from '../services/deterministicContractService.js';
 
 const JOB_TIMEOUT_MS = 55_000;
 const FAST_FETCH_TIMEOUT_MS = 6_500;
@@ -199,6 +200,12 @@ async function runSingleJob() {
   const startedAt = Date.now();
 
   try {
+    const gateReport = await runProductionHardChecks();
+    if (!gateReport.ok) {
+      await failAuditJob(job.id, 'Determinism gate failed before job execution');
+      return;
+    }
+
     try {
       const ingestion = await startIngestionJob(job.payload.url);
       ingestionJobId = ingestion.id;

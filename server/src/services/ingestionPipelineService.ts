@@ -1,8 +1,13 @@
 import { randomUUID } from 'crypto';
 import { getPool } from './postgresql.js';
 import { hashNormalizedUrl } from '../utils/urlHash.js';
+import {
+  computeDeterministicDelta,
+  recordStageEvent,
+  ensureDeterministicContractTables,
+} from './deterministicContractService.js';
 
-type JobRow = { id: string; url_hash: string };
+type JobRow = { id: string; url_hash: string; run_id: string };
 
 type EntityCandidate = {
   entityType: string;
@@ -69,19 +74,22 @@ async function safeQuery(sql: string, params: unknown[]): Promise<any[]> {
     return res.rows || [];
   } catch (err: any) {
     const msg = String(err?.message || err || '');
-    if (msg.includes('does not exist')) return [];
+    if (msg.includes('does not exist') || msg.includes('column') || msg.includes('permission denied')) return [];
     throw err;
   }
 }
 
 export async function startIngestionJob(url: string, priority: number = 0): Promise<JobRow> {
+  await ensureDeterministicContractTables();
   const urlHash = hashUrl(url);
+  const runId = randomUUID();
   const rows = await safeQuery(
-    `INSERT INTO ingestion_jobs (url, url_hash, status, priority, retry_count, scheduled_at, started_at, updated_at)
-     VALUES ($1, $2, 'processing', $3, 0, NOW(), NOW(), NOW())
+    `INSERT INTO ingestion_jobs (url, url_hash, run_id, status, priority, retry_count, scheduled_at, started_at, updated_at)
+     VALUES ($1, $2, $3::uuid, 'processing', $4, 0, NOW(), NOW(), NOW())
      ON CONFLICT (url_hash)
      DO UPDATE SET
        url = EXCLUDED.url,
+       run_id = EXCLUDED.run_id,
        status = 'processing',
        priority = GREATEST(ingestion_jobs.priority, EXCLUDED.priority),
        retry_count = CASE
@@ -92,12 +100,20 @@ export async function startIngestionJob(url: string, priority: number = 0): Prom
        completed_at = NULL,
        last_error = NULL,
        updated_at = NOW()
-     RETURNING id, url_hash`,
-    [url, urlHash, priority],
+     RETURNING id, url_hash, run_id`,
+    [url, urlHash, runId, priority],
   );
 
   const row = rows[0] as JobRow | undefined;
-  return row || { id: randomUUID(), url_hash: urlHash };
+  const out = row || { id: randomUUID(), url_hash: urlHash, run_id: runId };
+
+  try {
+    await recordStageEvent({ runId: out.run_id, stage: 'queued', status: 'complete', payload: { url } });
+  } catch {
+    // best-effort append-only event
+  }
+
+  return out;
 }
 
 export async function markFetched(jobId: string, urlHash: string, scrapeResult: any): Promise<string | null> {
@@ -124,16 +140,34 @@ export async function markFetched(jobId: string, urlHash: string, scrapeResult: 
     [jobId],
   );
 
+  const runRow = await safeQuery(`SELECT run_id FROM ingestion_jobs WHERE id = $1`, [jobId]);
+  const runId = String(runRow[0]?.run_id || '').trim();
+  if (runId) {
+    try {
+      await recordStageEvent({
+        runId,
+        stage: 'fetched',
+        status: 'complete',
+        payload: { final_url: String(scrapeResult?.url || ''), http_status: Number(scrapeResult?.httpStatus || 0) || null },
+      });
+    } catch {
+      // best-effort
+    }
+  }
+
   return snapshots[0]?.id ? String(snapshots[0].id) : null;
 }
 
 export async function markParsed(jobId: string, urlHash: string, source: any, snapshotId?: string | null): Promise<number> {
   const entities = toEntityCandidates(source);
+  const runRow = await safeQuery(`SELECT run_id FROM ingestion_jobs WHERE id = $1`, [jobId]);
+  const runId = String(runRow[0]?.run_id || '').trim();
+
   for (const entity of entities) {
     await safeQuery(
-      `INSERT INTO extracted_entities (crawl_snapshot_id, url_hash, entity_type, entity_value, confidence, context, extracted_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-      [snapshotId || null, urlHash, entity.entityType, entity.entityValue, entity.confidence, entity.context],
+      `INSERT INTO extracted_entities (crawl_snapshot_id, run_id, url_hash, entity_type, entity_value, confidence, context, extracted_at)
+       VALUES ($1, $2::uuid, $3, $4, $5, $6, $7, NOW())`,
+      [snapshotId || null, runId || null, urlHash, entity.entityType, entity.entityValue, entity.confidence, entity.context],
     );
   }
 
@@ -144,6 +178,15 @@ export async function markParsed(jobId: string, urlHash: string, source: any, sn
       WHERE id = $1`,
     [jobId],
   );
+
+  if (runId) {
+    try {
+      await recordStageEvent({ runId, stage: 'parsed', status: 'complete', payload: { entity_candidates: entities.length } });
+      await recordStageEvent({ runId, stage: 'entities', status: 'complete', payload: { entity_count: entities.length } });
+    } catch {
+      // best-effort
+    }
+  }
 
   return entities.length;
 }
@@ -183,17 +226,49 @@ export async function markAnalyzed(jobId: string, urlHash: string, result: any, 
       WHERE id = $1`,
     [jobId],
   );
+
+  const runRow = await safeQuery(`SELECT run_id FROM ingestion_jobs WHERE id = $1`, [jobId]);
+  const runId = String(runRow[0]?.run_id || '').trim();
+  if (runId) {
+    try {
+      await recordStageEvent({
+        runId,
+        stage: 'scored',
+        status: 'complete',
+        payload: { score: visibilityScore ?? 0 },
+      });
+    } catch {
+      // best-effort
+    }
+  }
 }
 
 export async function markCompleted(jobId: string, urlHash: string, result: any, score?: number): Promise<void> {
+  await ensureDeterministicContractTables();
   const visibilityScore = deriveVisibilityScore(result, score);
-  const runId = randomUUID();
+  const ingestionRows = await safeQuery(`SELECT run_id FROM ingestion_jobs WHERE id = $1`, [jobId]);
+  const runId = String(ingestionRows[0]?.run_id || randomUUID());
+
+  const previousRunRows = await safeQuery(
+    `SELECT result_snapshot
+       FROM analysis_runs
+      WHERE url_hash = $1
+      ORDER BY created_at DESC
+      LIMIT 1`,
+    [urlHash],
+  );
+  const previousSnapshot = previousRunRows[0]?.result_snapshot || null;
+  const delta = previousSnapshot ? computeDeterministicDelta(result || {}, previousSnapshot) : {
+    scoreDiff: 0,
+    entityDiff: { added: [], removed: [], changed: [] },
+    conflictsResolved: 0,
+  };
 
   const analysisRunRows = await safeQuery(
     `INSERT INTO analysis_runs (url_hash, run_id, score, visibility_score, delta, result_snapshot, created_at)
-     VALUES ($1, $2, $3, $4, NULL, $5::jsonb, NOW())
+     VALUES ($1, $2::uuid, $3, $4, $5::jsonb, $6::jsonb, NOW())
      RETURNING id`,
-    [urlHash, runId, visibilityScore, visibilityScore, JSON.stringify(result || {})],
+    [urlHash, runId, visibilityScore, visibilityScore, JSON.stringify(delta), JSON.stringify(result || {})],
   );
 
   const analysisRunId = analysisRunRows[0]?.id ? String(analysisRunRows[0].id) : null;
@@ -212,6 +287,7 @@ export async function markCompleted(jobId: string, urlHash: string, result: any,
         `INSERT INTO citations (
            analysis_run_id,
            extracted_entity_id,
+           run_id,
            url_hash,
            source,
            target_entity,
@@ -220,10 +296,11 @@ export async function markCompleted(jobId: string, urlHash: string, result: any,
            context,
            created_at
          )
-         VALUES ($1, $2, $3, $4, $5, 1, $6, $7::jsonb, NOW())`,
+         VALUES ($1, $2, $3::uuid, $4, $5, $6, 1, $7, $8::jsonb, NOW())`,
         [
           analysisRunId,
           entity.id,
+          runId,
           urlHash,
           'audit-worker',
           String(entity.entity_value || ''),
@@ -243,9 +320,30 @@ export async function markCompleted(jobId: string, urlHash: string, result: any,
       WHERE id = $1`,
     [jobId],
   );
+
+  try {
+    await recordStageEvent({
+      runId,
+      stage: 'citations',
+      status: 'complete',
+      payload: { citations_written: analysisRunId ? 1 : 0 },
+    });
+    await recordStageEvent({
+      runId,
+      stage: 'finalized',
+      status: 'complete',
+      payload: { score: visibilityScore ?? 0, delta },
+    });
+  } catch {
+    // best-effort
+  }
 }
 
 export async function markFailed(jobId: string, urlHash: string, errorMessage: string): Promise<void> {
+  await ensureDeterministicContractTables();
+  const ingestionRows = await safeQuery(`SELECT run_id FROM ingestion_jobs WHERE id = $1`, [jobId]);
+  const runId = String(ingestionRows[0]?.run_id || randomUUID());
+
   await safeQuery(
     `UPDATE ingestion_jobs
         SET status = 'failed',
@@ -258,12 +356,23 @@ export async function markFailed(jobId: string, urlHash: string, errorMessage: s
 
   await safeQuery(
     `INSERT INTO analysis_runs (url_hash, run_id, score, visibility_score, delta, result_snapshot, created_at)
-     VALUES ($1, $2, 0, 0, $3::jsonb, $4::jsonb, NOW())`,
+     VALUES ($1, $2::uuid, 0, 0, $3::jsonb, $4::jsonb, NOW())`,
     [
       urlHash,
-      randomUUID(),
+      runId,
       JSON.stringify({ status: 'failed', error: errorMessage || 'unknown_error' }),
       JSON.stringify({ status: 'failed' }),
     ],
   );
+
+  try {
+    await recordStageEvent({
+      runId,
+      stage: 'finalized',
+      status: 'failed',
+      payload: { error: errorMessage || 'unknown_error' },
+    });
+  } catch {
+    // best-effort
+  }
 }

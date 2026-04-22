@@ -250,6 +250,8 @@ import paypalRoutes from "./routes/paypalRoutes.js";
 import badgeRoutes from "./routes/badgeRoutes.js";
 import trackingRoutes from "./routes/trackingRoutes.js";
 import datasetRoutes from "./routes/datasetRoutes.js";
+import featureFlagsRoutes from "./routes/featureFlagsRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 import {
   startTrialExpiryLoop,
   stopTrialExpiryLoop,
@@ -1618,6 +1620,11 @@ if (IS_PRODUCTION) {
 }
 
 // Routes
+
+// PostHog feature flags and analytics routes
+// PostHog feature flags and analytics routes
+app.use("/api/feature-flags", featureFlagsRoutes);
+app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/billing", paymentRoutes);

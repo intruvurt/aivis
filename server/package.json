@@ -67,6 +67,7 @@
     "mammoth": "^1.11.0",
     "tesseract.js": "^7.0.0",
     "xml2js": "^0.6.2",
+      "posthog-node": "^3.4.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",

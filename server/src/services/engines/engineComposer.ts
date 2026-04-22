@@ -30,6 +30,10 @@ export interface EngineComposerInput {
   ragQuery?: string;
   /** Optional seed entities for RAG graph seeding */
   ragEntities?: string[];
+  /** Optional scan stream id for timeline events */
+  scanId?: string;
+  /** Optional scan event sequence ref */
+  seqRef?: { value: number };
 }
 
 interface ComparisonInsight {
@@ -295,6 +299,8 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
       subjectEntities: input.ragEntities ?? [],
       maxPages: 8,
       topN: 15,
+      scanId: input.scanId,
+      seqRef: input.seqRef,
     }).catch(err => { console.warn('[RAG] Pipeline failed (non-fatal):', err?.message); return null; });
   }
 
@@ -534,9 +540,11 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
 
   if (ragResult) {
     (response as any).rag_pipeline = {
+      scan_id: input.scanId ?? null,
       intent: ragResult.intent,
       search_stats: ragResult.search.provider_stats,
       consensus_top: ragResult.search.consensus_top.slice(0, 5),
+      source_candidates: ragResult.source_candidates,
       discarded_sources: ragResult.search.discarded,
       graph_stats: (ragResult.graph as any).stats ?? {},
       top_entity: ragResult.scores.top_entity,

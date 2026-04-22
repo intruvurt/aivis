@@ -1,5 +1,5 @@
 /* ── Custom Font Imports ── */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import './styles/aurora-shell.css';
 @import './styles/forensic-grid.css';
 @import './styles/cognition-replay.css';
@@ -10,29 +10,39 @@
 
 :root {
   /* Fonts */
-  --font-header: 'Orbitron', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-header: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 
-  /* The New Age Pitch Deck Palette */
-  --bg-pitch: 5 5 5; /* #050505 - True Deep Black */
-  --bg-card: 15 15 15; /* #0f0f0f - Raised Surface */
-  --matte-silver: 192 192 192; /* #c0c0c0 - Primary Text/Border */
+  --bg-pitch: 11 10 9;
+  --bg-card: 24 20 18;
+  --matte-silver: 236 228 214;
   --glass-stroke: 255 255 255;
 
-  /* Cyber Accents */
-  --neon-cyan: #00f3ff;
-  --neon-amber: #ffaa00;
-  --neon-red: #ff004c;
+  --neon-cyan: #56c3b6;
+  --neon-amber: #ff8a3d;
+  --neon-red: #ff5c49;
+  --accent-gold: #f4b860;
+  --panel-glow: rgba(255, 138, 61, 0.18);
 
-  --app-radius: 0px; /* Hard edges for that industrial tech look */
+  --app-radius: 20px;
 }
 
 @layer base {
   html {
-    background-color: rgb(var(--bg-pitch));
-    color: #e0e0e0;
+    background:
+      radial-gradient(circle at top left, rgba(255, 138, 61, 0.18), transparent 30%),
+      radial-gradient(circle at top right, rgba(86, 195, 182, 0.12), transparent 28%),
+      linear-gradient(180deg, #090807 0%, #12100f 45%, #0f0d0b 100%);
+    color: #f3ede3;
     font-family: var(--font-body);
     scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    background: transparent;
+    color: #f3ede3;
   }
 
   /* ── Global form element dark reset ── */
@@ -78,9 +88,15 @@
   h4,
   .font-orbitron {
     font-family: var(--font-header);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    text-transform: none;
     color: rgb(var(--matte-silver));
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono);
   }
 
   /* ── Industrial Scrollbar ── */
@@ -102,37 +118,37 @@
 @layer components {
   /* ── The "Napster" Card ── */
   .cyber-card {
-    background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(5, 5, 5, 0.9) 100%);
-    border: 1px solid rgba(var(--matte-silver), 0.2);
-    box-shadow: 10px 10px 0px rgba(0, 0, 0, 1); /* Hard offset shadow */
+    background: linear-gradient(145deg, rgba(26, 21, 18, 0.92) 0%, rgba(12, 10, 8, 0.94) 100%);
+    border: 1px solid rgba(255, 184, 96, 0.16);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--app-radius);
   }
 
   .cyber-card:hover {
-    border-color: var(--neon-cyan);
+    border-color: var(--neon-amber);
     transform: translate(-2px, -2px);
-    box-shadow: 12px 12px 0px rgba(0, 243, 255, 0.2);
+    box-shadow: 0 28px 70px var(--panel-glow);
   }
 
   /* ── Interactive Silver Buttons ── */
   .btn-silver {
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.08em;
     padding: 0.5rem 1.5rem;
     font-family: var(--font-header);
-    background: rgb(var(--matte-silver));
-    color: black;
-    border: 1px solid white;
-    clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    background: linear-gradient(135deg, var(--accent-gold), var(--neon-amber));
+    color: #120f0c;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
     transition: 0.2s;
   }
 
   .btn-silver:hover {
-    background: var(--neon-cyan);
-    box-shadow: 0 0 20px var(--neon-cyan);
+    background: linear-gradient(135deg, #ffd08c, #ff9c60);
+    box-shadow: 0 0 20px rgba(255, 138, 61, 0.3);
     transform: scale(1.05);
   }
 
@@ -141,10 +157,10 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--neon-cyan);
+    background: var(--neon-amber);
     box-shadow:
-      0 0 12px var(--neon-cyan),
-      0 0 20px var(--neon-cyan);
+      0 0 12px var(--neon-amber),
+      0 0 20px var(--neon-amber);
   }
 
   /* ── Input Overhaul ── */

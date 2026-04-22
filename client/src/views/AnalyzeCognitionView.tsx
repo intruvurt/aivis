@@ -37,9 +37,16 @@ import {
 } from '../lib/replayEngine';
 import { useReplayStore } from '../stores/replayStore';
 import type { CognitionData } from '../components/cognition/types';
-import type { AnalysisResponse } from '@shared/types';
+import type { AnalysisResponse, ScanEvent } from '@shared/types';
 import '../styles/forensic-grid.css';
 import '../styles/cognition-replay.css';
+
+type TimelineEvent = {
+  id: string;
+  seq: number;
+  timestamp: number;
+  event: ScanEvent;
+};
 
 // ── Score color ───────────────────────────────────────────────────────────────
 
@@ -219,9 +226,18 @@ interface CognitionOverlayProps {
   scanStep: string;
   result: AnalysisResponse | null;
   onReset: () => void;
+  timelineScanId?: string | null;
+  timelineEvents: TimelineEvent[];
 }
 
-function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOverlayProps) {
+function CognitionOverlay({
+  scanning,
+  scanStep,
+  result,
+  onReset,
+  timelineScanId,
+  timelineEvents,
+}: CognitionOverlayProps) {
   const [cognData, setCognData] = useState<CognitionData | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -781,7 +797,15 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
           />
         }
         stagePanel={
-          <StageDeepView stage={selectedStage} result={result} graphConflicts={conflicts} />
+          <StageDeepView
+            stage={selectedStage}
+            result={result}
+            graphConflicts={conflicts}
+            timelineScanId={timelineScanId}
+            timelineEvents={timelineEvents}
+            scanStep={scanStep}
+            scanning={scanning}
+          />
         }
       />
     </motion.div>
@@ -803,6 +827,8 @@ export interface AnalyzeCognitionViewProps {
   onSubmit: (url: string) => void;
   /** Called when the user clicks "new scan" — parent should clear its result state */
   onReset?: () => void;
+  timelineScanId?: string | null;
+  timelineEvents: TimelineEvent[];
 }
 
 export default function AnalyzeCognitionView({
@@ -812,6 +838,8 @@ export default function AnalyzeCognitionView({
   error,
   onSubmit,
   onReset,
+  timelineScanId,
+  timelineEvents,
 }: AnalyzeCognitionViewProps) {
   const [dismissed, setDismissed] = useState(false);
 
@@ -839,6 +867,8 @@ export default function AnalyzeCognitionView({
           scanStep={step}
           result={result}
           onReset={handleReset}
+          timelineScanId={timelineScanId}
+          timelineEvents={timelineEvents}
         />
       )}
     </AnimatePresence>

@@ -10,8 +10,15 @@
  */
 
 import React from 'react';
-import type { AnalysisResponse } from '@shared/types';
+import type { AnalysisResponse, RagPipelineSourceCandidate, ScanEvent } from '@shared/types';
 import type { ScanStage } from './ScanStageTimeline';
+
+type TimelineEvent = {
+  id: string;
+  seq: number;
+  timestamp: number;
+  event: ScanEvent;
+};
 
 // ── Shared row primitive ──────────────────────────────────────────────────────
 
@@ -35,6 +42,42 @@ function Row({
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <div className="fl-deepview__section-label">{children}</div>;
+}
+
+function decisionBadgeClass(decision: string): string {
+  if (decision === 'accept') return 'fl-deepview__badge fl-deepview__badge--accept';
+  if (decision === 'partial') return 'fl-deepview__badge fl-deepview__badge--partial';
+  return 'fl-deepview__badge fl-deepview__badge--reject';
+}
+
+function summarizeRejectionReasons(
+  candidates: RagPipelineSourceCandidate[]
+): Array<[string, number]> {
+  const counts = new Map<string, number>();
+  for (const candidate of candidates) {
+    if (candidate.final_decision !== 'reject') continue;
+    for (const flag of candidate.reason_flags ?? []) {
+      counts.set(flag, (counts.get(flag) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+}
+
+function formatTimelineLabel(entry: TimelineEvent): string {
+  if (entry.event.type === 'PIPELINE_STAGE') {
+    const progress =
+      typeof entry.event.progress === 'number'
+        ? ` · ${Math.round(entry.event.progress * 100)}%`
+        : '';
+    return `${entry.event.stage.replace(/_/g, ' ')}${progress}`;
+  }
+  if (entry.event.type === 'ERROR') {
+    return `${entry.event.stage}: ${entry.event.message}`;
+  }
+  if (entry.event.type === 'SCAN_COMPLETED') {
+    return `complete · score ${entry.event.summary.score}`;
+  }
+  return entry.event.type.toLowerCase().replace(/_/g, ' ');
 }
 
 // ── Per-stage sub-panels ──────────────────────────────────────────────────────
@@ -172,6 +215,12 @@ function TrustPanel({ result }: { result: AnalysisResponse | null }) {
   const di = result.domain_intelligence;
   const rubricGates = result.strict_rubric?.gates ?? [];
   const trustGates = rubricGates.filter((g) => /trust|author|https|security|crawl/i.test(g.id));
+  const trustSources = result.rag_pipeline?.trust_sources;
+  const sourceCandidates = result.rag_pipeline?.source_candidates ?? [];
+  const rejectionReasons = summarizeRejectionReasons(sourceCandidates);
+  const visibleCandidates = [...sourceCandidates]
+    .sort((left, right) => left.rank - right.rank)
+    .slice(0, 6);
   return (
     <>
       <SectionLabel>trust & access</SectionLabel>
@@ -196,6 +245,113 @@ function TrustPanel({ result }: { result: AnalysisResponse | null }) {
           status={g.status === 'pass' ? 'pass' : g.status === 'warn' ? 'warn' : 'fail'}
         />
       ))}
+      {trustSources && (
+        <>
+          <SectionLabel>source trust summary</SectionLabel>
+          <div className="fl-deepview__stat-grid">
+            <div className="fl-deepview__stat-card">
+              <span className="fl-deepview__stat-label">accepted</span>
+              <span className="fl-deepview__stat-value fl-deepview__stat-value--accept">
+                {trustSources.summary.accepted}
+              </span>
+            </div>
+            <div className="fl-deepview__stat-card">
+              <span className="fl-deepview__stat-label">partial</span>
+              <span className="fl-deepview__stat-value fl-deepview__stat-value--partial">
+                {trustSources.summary.partial}
+              </span>
+            </div>
+            <div className="fl-deepview__stat-card">
+              <span className="fl-deepview__stat-label">rejected</span>
+              <span className="fl-deepview__stat-value fl-deepview__stat-value--reject">
+                {trustSources.summary.rejected}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+      {rejectionReasons.length > 0 && (
+        <>
+          <SectionLabel>top rejection reasons</SectionLabel>
+          <div className="fl-deepview__tag-list">
+            {rejectionReasons.map(([reason, count]) => (
+              <span key={reason} className="fl-deepview__tag fl-deepview__tag--reject">
+                {reason.replace(/_/g, ' ')} · {count}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
+      {visibleCandidates.length > 0 && (
+        <>
+          <SectionLabel>candidate decisions</SectionLabel>
+          <div className="fl-deepview__candidate-list">
+            {visibleCandidates.map((candidate) => (
+              <div key={candidate.url} className="fl-deepview__candidate-card">
+                <div className="fl-deepview__candidate-head">
+                  <span className={decisionBadgeClass(candidate.final_decision)}>
+                    {candidate.final_decision}
+                  </span>
+                  <span className="fl-deepview__candidate-rank">#{candidate.rank}</span>
+                </div>
+                <div
+                  className="fl-deepview__candidate-title"
+                  title={candidate.title || candidate.url}
+                >
+                  {candidate.title || candidate.url}
+                </div>
+                <div className="fl-deepview__candidate-meta">
+                  <span>{Math.round(candidate.trust_score)}/100</span>
+                  {candidate.format_used ? <span>{candidate.format_used}</span> : null}
+                </div>
+                {candidate.reason_flags.length > 0 && (
+                  <div className="fl-deepview__tag-list">
+                    {candidate.reason_flags.slice(0, 4).map((flag) => (
+                      <span key={`${candidate.url}-${flag}`} className="fl-deepview__tag">
+                        {flag.replace(/_/g, ' ')}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
+function TimelinePanel({
+  timelineEvents,
+  timelineScanId,
+  scanning,
+}: {
+  timelineEvents: TimelineEvent[];
+  timelineScanId?: string | null;
+  scanning: boolean;
+}) {
+  if (!timelineScanId && timelineEvents.length === 0) return null;
+
+  return (
+    <>
+      <SectionLabel>server timeline</SectionLabel>
+      {timelineScanId ? <Row k="scan id" v={timelineScanId} /> : null}
+      {timelineEvents.length === 0 ? (
+        <Row k="status" v={scanning ? 'waiting for timeline events…' : 'no timeline events'} />
+      ) : (
+        <div className="fl-deepview__timeline-list">
+          {timelineEvents
+            .slice(-5)
+            .reverse()
+            .map((entry) => (
+              <div key={entry.id} className="fl-deepview__timeline-row">
+                <span className="fl-deepview__timeline-seq">#{entry.seq}</span>
+                <span className="fl-deepview__timeline-label">{formatTimelineLabel(entry)}</span>
+              </div>
+            ))}
+        </div>
+      )}
     </>
   );
 }
@@ -292,9 +448,20 @@ export interface StageDeepViewProps {
   result: AnalysisResponse | null;
   /** Conflicts from graph engine (CognitionReplay projected state) */
   graphConflicts: Array<{ id: string }>;
+  timelineScanId?: string | null;
+  timelineEvents: TimelineEvent[];
+  scanStep: string;
+  scanning: boolean;
 }
 
-export default function StageDeepView({ stage, result, graphConflicts }: StageDeepViewProps) {
+export default function StageDeepView({
+  stage,
+  result,
+  graphConflicts,
+  timelineScanId,
+  timelineEvents,
+  scanning,
+}: StageDeepViewProps) {
   return (
     <div className="fl-deepview" aria-label={`Stage details: ${stage}`}>
       {stage === 'resolve' && <ResolvePanel result={result} />}
@@ -304,6 +471,11 @@ export default function StageDeepView({ stage, result, graphConflicts }: StageDe
       {stage === 'trust' && <TrustPanel result={result} />}
       {stage === 'conflict' && <ConflictPanel result={result} graphConflicts={graphConflicts} />}
       {stage === 'score' && <ScorePanel result={result} />}
+      <TimelinePanel
+        timelineEvents={timelineEvents}
+        timelineScanId={timelineScanId}
+        scanning={scanning}
+      />
     </div>
   );
 }

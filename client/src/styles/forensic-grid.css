@@ -654,6 +654,150 @@
   gap: 3px;
 }
 
+.fl-deepview__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.fl-deepview__stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid var(--fl-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fl-deepview__stat-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fl-text-secondary);
+}
+
+.fl-deepview__stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fl-text-primary);
+}
+
+.fl-deepview__stat-value--accept {
+  color: var(--fl-truth);
+}
+
+.fl-deepview__stat-value--partial {
+  color: var(--fl-warning);
+}
+
+.fl-deepview__stat-value--reject {
+  color: var(--fl-conflict);
+}
+
+.fl-deepview__candidate-list,
+.fl-deepview__timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fl-deepview__candidate-card,
+.fl-deepview__timeline-row {
+  border: 1px solid var(--fl-border);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+}
+
+.fl-deepview__candidate-head,
+.fl-deepview__candidate-meta,
+.fl-deepview__timeline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fl-deepview__candidate-title {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--fl-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fl-deepview__candidate-meta,
+.fl-deepview__timeline-seq,
+.fl-deepview__timeline-label {
+  font-size: 10px;
+  color: var(--fl-text-secondary);
+}
+
+.fl-deepview__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 2px 6px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+
+.fl-deepview__badge--accept {
+  color: var(--fl-truth);
+  background: rgba(0, 214, 122, 0.08);
+}
+
+.fl-deepview__badge--partial {
+  color: var(--fl-warning);
+  background: rgba(234, 179, 8, 0.08);
+}
+
+.fl-deepview__badge--reject {
+  color: var(--fl-conflict);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.fl-deepview__candidate-rank {
+  font-size: 10px;
+  color: var(--fl-text-secondary);
+}
+
+.fl-deepview__tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.fl-deepview__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border: 1px solid var(--fl-border);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 9px;
+  color: var(--fl-text-primary);
+}
+
+.fl-deepview__tag--reject {
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--fl-conflict);
+}
+
+.fl-deepview__timeline-seq {
+  flex-shrink: 0;
+}
+
+.fl-deepview__timeline-label {
+  flex: 1;
+  text-align: right;
+}
+
 /* ── Mobile overrides for stage layout ───────────────────────────────────── */
 /* On mobile (≤768px), the stage rail rotates to a horizontal top bar.       */
 /* Deepview shrinks; stage-content fills the rest.                           */

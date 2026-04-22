@@ -835,6 +835,8 @@ export async function getEntityHealthHandler(req: Request, res: Response) {
 // POST /api/entity/:id/audit
 export async function runEntityAuditHandler(req: Request, res: Response) {
   try {
+    const seqRef = { value: 1 };
+    const scanId = `entity_audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const { entity, userId } = await loadOwnedEntity(req, String(req.params.id || ''));
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
     if (!entity) return res.status(404).json({ error: 'Entity not found' });
@@ -870,6 +872,8 @@ export async function runEntityAuditHandler(req: Request, res: Response) {
       tier,
       https_enabled: parsedUrl.protocol === 'https:',
       domain_age_years: domainAgeYears,
+      scanId,
+      seqRef,
     });
 
     const visibilityScore = clampPercent(Number(analysis.overall_ai_visibility_score || 0));
@@ -938,6 +942,7 @@ export async function runEntityAuditHandler(req: Request, res: Response) {
       success: true,
       entity_id: entity.id,
       audit_id: auditId,
+      timeline_scan_id: scanId,
       scores: {
         overall_ai_visibility_score: visibilityScore,
         citation_readiness_score: citationReadiness,

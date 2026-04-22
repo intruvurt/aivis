@@ -29,7 +29,7 @@ import ComprehensiveAnalysis from '../components/ComprehensiveAnalysis';
 import TextSummaryView from '../components/TextSummaryView';
 import ShareButtons from '../components/ShareButtons';
 import { API_URL } from '../config';
-import type { AnalysisResponse, TextSummary } from '@shared/types';
+import type { AnalysisResponse, PipelineScanStage, ScanEvent, TextSummary } from '@shared/types';
 import apiFetch from '../utils/api';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { PLATFORM_NARRATIVE } from '../constants/platformNarrative';
@@ -120,6 +120,20 @@ type ProgressEventPayload = {
   stage?: string;
   percent?: number;
   progress?: number;
+};
+
+type TimelineEvent = {
+  id: string;
+  seq: number;
+  timestamp: number;
+  event: ScanEvent;
+};
+
+type TimelineResponse = {
+  success: boolean;
+  scanId: string;
+  count: number;
+  events: TimelineEvent[];
 };
 
 type ApiFetchOptions = Parameters<typeof apiFetch>[1];
@@ -268,6 +282,39 @@ function getStageMicrocopy(step: string): string[] {
   return ['Preparing audit', 'Checking structure', 'Collecting evidence'];
 }
 
+function mapTimelineStageToProgress(stage: PipelineScanStage): { step: string; percent: number } {
+  switch (stage) {
+    case 'ingesting':
+      return { step: 'crawl', percent: 12 };
+    case 'chunking':
+      return { step: 'extract', percent: 26 };
+    case 'chunked':
+      return { step: 'extract', percent: 48 };
+    case 'embedding':
+      return { step: 'ai1', percent: 56 };
+    case 'entity_resolving':
+      return { step: 'schema', percent: 18 };
+    case 'entity_resolved':
+      return { step: 'schema', percent: 40 };
+    case 'claim_writing':
+      return { step: 'ai2', percent: 64 };
+    case 'edge_building':
+    case 'edge_generation':
+      return { step: 'technical', percent: 70 };
+    case 'scoring':
+      return { step: 'technical', percent: 78 };
+    case 'ingestion_complete':
+      return { step: 'finalize', percent: 92 };
+    case 'complete':
+      return { step: 'complete', percent: 100 };
+    case 'ingestion_failed':
+    case 'error':
+      return { step: 'timeout', percent: 96 };
+    default:
+      return { step: 'starting', percent: 0 };
+  }
+}
+
 function sanitizeResponseJson<T>(response: Response): Promise<T> {
   return response.text().then((text) => {
     if (!text) throw new Error('Empty response from server. Please try again.');
@@ -295,6 +342,7 @@ const AnalyzePage: React.FC = () => {
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
   const [browsingPromptVisible, setBrowsingPromptVisible] = useState(false);
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const browsingPromptRef = useRef<HTMLDivElement>(null);
   const resultTextSummary = result
     ? (result as AnalysisResultWithTextSummary).text_summary
@@ -318,6 +366,7 @@ const AnalyzePage: React.FC = () => {
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const progressSourceRef = useRef<EventSource | null>(null);
+  const latestTimelineSeqRef = useRef<number>(-1);
   const pendingAutostartRef = useRef(false);
   const sseAliveRef = useRef(false);
 
@@ -403,6 +452,73 @@ const AnalyzePage: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const scanId = result?.timeline_scan_id || progress.requestId;
+    if (!scanId) return;
+    if (!loading && !result) return;
+
+    let cancelled = false;
+
+    const syncTimeline = async () => {
+      try {
+        const response = await apiFetch(
+          `${API_URL}/api/analyze/timeline/${encodeURIComponent(scanId)}?limit=300`
+        );
+        if (!response.ok) return;
+
+        const payload = await sanitizeResponseJson<TimelineResponse>(response);
+        if (cancelled || !Array.isArray(payload.events)) return;
+
+        setTimelineEvents((prev) => {
+          const prevLastSeq = prev[prev.length - 1]?.seq ?? -1;
+          const nextLastSeq = payload.events[payload.events.length - 1]?.seq ?? -1;
+          if (prev.length === payload.events.length && prevLastSeq === nextLastSeq) {
+            return prev;
+          }
+          return payload.events;
+        });
+
+        const latestStageEvent = [...payload.events]
+          .reverse()
+          .find((entry) => entry.event.type === 'PIPELINE_STAGE');
+
+        const latestSeq = payload.events[payload.events.length - 1]?.seq ?? -1;
+        if (latestSeq > latestTimelineSeqRef.current) {
+          latestTimelineSeqRef.current = latestSeq;
+        }
+
+        if (loading && latestStageEvent?.event.type === 'PIPELINE_STAGE') {
+          const mapped = mapTimelineStageToProgress(latestStageEvent.event.stage);
+          sseAliveRef.current = true;
+          setProgress((prev) => ({
+            requestId: prev.requestId || scanId,
+            step:
+              mapped.percent >= prev.percent || prev.step === 'starting' ? mapped.step : prev.step,
+            percent: Math.max(prev.percent, mapped.percent),
+          }));
+        }
+      } catch {
+        // Timeline polling is best-effort; the primary analyze flow stays authoritative.
+      }
+    };
+
+    void syncTimeline();
+
+    if (!loading)
+      return () => {
+        cancelled = true;
+      };
+
+    const intervalId = window.setInterval(() => {
+      void syncTimeline();
+    }, 1200);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [loading, progress.requestId, result]);
 
   // Fallback timer: if real SSE events are flowing, do nothing. Otherwise
   // synthesise both step AND percent so the pipeline checklist animates.
@@ -585,6 +701,8 @@ const AnalyzePage: React.FC = () => {
       setError(null);
       setScanLimitReached(false);
       setResult(null);
+      setTimelineEvents([]);
+      latestTimelineSeqRef.current = -1;
       setResultView('summary');
       sseAliveRef.current = false;
 
@@ -840,9 +958,13 @@ const AnalyzePage: React.FC = () => {
       onReset={() => {
         setResult(null);
         setError(null);
+        setTimelineEvents([]);
+        latestTimelineSeqRef.current = -1;
         setProgress({ requestId: null, step: 'idle', percent: 0 });
         setScanLimitReached(false);
       }}
+      timelineScanId={result?.timeline_scan_id || progress.requestId}
+      timelineEvents={timelineEvents}
     />
   );
 };

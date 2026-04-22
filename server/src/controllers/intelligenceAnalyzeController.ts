@@ -28,6 +28,7 @@ export async function intelligenceAnalyzeHandler(
   res: Response,
 ): Promise<void> {
   const requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const seqRef = { value: 1 };
   const startTime = Date.now();
 
   try {
@@ -155,6 +156,8 @@ export async function intelligenceAnalyzeHandler(
       tier,
       https_enabled: analysisUrl.protocol === "https:",
       domain_age_years: domainAgeYears,
+      scanId: requestId,
+      seqRef,
     });
 
     // ====================================================================
@@ -323,6 +326,7 @@ export async function intelligenceAnalyzeHandler(
     res.json({
       ...analysis,
       request_id: requestId,
+      timeline_scan_id: requestId,
       processing_time_ms: responseTime,
       ...(savedAuditId ? { audit_id: savedAuditId } : {}),
       // TruthArbiter signal validation result

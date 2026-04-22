@@ -1,21 +1,8 @@
-<<<<<<< Updated upstream
-<<<<<<<< Updated upstream:server/services/paymentService.ts
-<<<<<<< Updated upstream
-import { pool } from './postgresql.ts';
-=======
-import { pool } from './postgresql';
->>>>>>> Stashed changes
-========
-import { pool } from './postgresql.ts';
->>>>>>>> Stashed changes:services/paymentService.ts
-=======
-import { pool } from './postgresql';
->>>>>>> Stashed changes
-import type { PoolClient } from 'pg';
+import { pool } from "./postgresql.ts";
+import type { PoolClient } from "pg";
 
-// Types
-export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded' | 'canceled';
-export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'incomplete' | 'trialing' | 'unpaid';
+export type PaymentStatus = "pending" | "completed" | "failed" | "refunded" | "canceled";
+export type SubscriptionStatus = "active" | "canceled" | "past_due" | "incomplete" | "trialing" | "unpaid";
 
 export interface Payment {
   id: string;
@@ -31,7 +18,7 @@ export interface Payment {
   currency: string;
   subscription_status?: SubscriptionStatus;
   current_period_end?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
 }
@@ -45,20 +32,18 @@ export interface CreatePaymentInput {
   stripePriceId?: string;
   amountCents: number;
   currency?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
-async function executeTransaction<T>(
-  fn: (client: PoolClient) => Promise<T>
-): Promise<T> {
+async function executeTransaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
+    await client.query("BEGIN");
     const result = await fn(client);
-    await client.query('COMMIT');
+    await client.query("COMMIT");
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -66,13 +51,10 @@ async function executeTransaction<T>(
 }
 
 export class PaymentService {
-  /**
-   * Create a new payment record
-   */
   static async create(input: CreatePaymentInput): Promise<Payment> {
     const res = await pool.query<Payment>(
       `INSERT INTO payments (
-        user_id, tier, method, status, stripe_session_id, 
+        user_id, tier, method, status, stripe_session_id,
         stripe_price_id, amount_cents, currency, metadata, created_at, updated_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
       RETURNING *`,
@@ -84,49 +66,34 @@ export class PaymentService {
         input.stripeSessionId || null,
         input.stripePriceId || null,
         input.amountCents,
-        input.currency || 'usd',
+        input.currency || "usd",
         input.metadata ? JSON.stringify(input.metadata) : null,
-      ]
+      ],
     );
     return res.rows[0];
   }
 
-  /**
-   * Find payment by Stripe session ID
-   */
   static async findBySessionId(sessionId: string): Promise<Payment | null> {
-    const res = await pool.query<Payment>(
-      'SELECT * FROM payments WHERE stripe_session_id = $1',
-      [sessionId]
-    );
+    const res = await pool.query<Payment>("SELECT * FROM payments WHERE stripe_session_id = $1", [sessionId]);
     return res.rows[0] || null;
   }
 
-  /**
-   * Find most recent payment with Stripe customer ID for a user
-   */
   static async findWithCustomerId(userId: string): Promise<Payment | null> {
     const res = await pool.query<Payment>(
-      `SELECT * FROM payments 
-       WHERE user_id = $1 
-         AND stripe_customer_id IS NOT NULL 
+      `SELECT * FROM payments
+       WHERE user_id = $1
+         AND stripe_customer_id IS NOT NULL
          AND status = 'completed'
-       ORDER BY created_at DESC 
+       ORDER BY created_at DESC
        LIMIT 1`,
-      [userId]
+      [userId],
     );
     return res.rows[0] || null;
   }
 
-  /**
-   * Update payment by Stripe session ID
-   */
-  static async updateBySessionId(
-    sessionId: string,
-    updates: Partial<Payment>
-  ): Promise<Payment | null> {
+  static async updateBySessionId(sessionId: string, updates: Partial<Payment>): Promise<Payment | null> {
     const setClause: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (updates.status !== undefined) {
@@ -154,27 +121,21 @@ export class PaymentService {
       values.push(JSON.stringify(updates.metadata));
     }
 
-    setClause.push(`updated_at = NOW()`);
+    setClause.push("updated_at = NOW()");
     values.push(sessionId);
 
     const res = await pool.query<Payment>(
-      `UPDATE payments SET ${setClause.join(', ')} 
+      `UPDATE payments SET ${setClause.join(", ")}
        WHERE stripe_session_id = $${paramIndex}
        RETURNING *`,
-      values
+      values,
     );
     return res.rows[0] || null;
   }
 
-  /**
-   * Update payment by Stripe subscription ID
-   */
-  static async updateBySubscriptionId(
-    subscriptionId: string,
-    updates: Partial<Payment>
-  ): Promise<Payment | null> {
+  static async updateBySubscriptionId(subscriptionId: string, updates: Partial<Payment>): Promise<Payment | null> {
     const setClause: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (updates.status !== undefined) {
@@ -190,31 +151,32 @@ export class PaymentService {
       values.push(updates.current_period_end);
     }
 
-    setClause.push(`updated_at = NOW()`);
+    setClause.push("updated_at = NOW()");
     values.push(subscriptionId);
 
     const res = await pool.query<Payment>(
-      `UPDATE payments SET ${setClause.join(', ')} 
+      `UPDATE payments SET ${setClause.join(", ")}
        WHERE stripe_subscription_id = $${paramIndex}
        RETURNING *`,
-      values
+      values,
     );
     return res.rows[0] || null;
   }
 
-  /**
-   * Get user's subscription status
-   */
   static async getUserSubscription(userId: string): Promise<Payment | null> {
     const res = await pool.query<Payment>(
-      `SELECT * FROM payments 
-       WHERE user_id = $1 
+      `SELECT * FROM payments
+       WHERE user_id = $1
          AND subscription_status IN ('active', 'trialing')
-       ORDER BY created_at DESC 
+       ORDER BY created_at DESC
        LIMIT 1`,
-      [userId]
+      [userId],
     );
     return res.rows[0] || null;
+  }
+
+  static async inTransaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+    return executeTransaction(fn);
   }
 }
 

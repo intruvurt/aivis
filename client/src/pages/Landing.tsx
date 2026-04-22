@@ -640,7 +640,6 @@ const Landing = () => {
   return (
     <HomepageGuard>
       <div className="min-h-screen bg-[#060607]">
-
         {/* ── HERO — always visible ─────────────────────────────────────────── */}
         <section className="relative flex items-center overflow-hidden bg-[#060607] pt-12 pb-12 sm:pt-16 sm:pb-16">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.07),transparent)]" />
@@ -679,9 +678,7 @@ const Landing = () => {
                   <p className="text-xs uppercase tracking-widest text-cyan-400/70 mb-2 font-mono">
                     live execution
                   </p>
-                  <h1 className="text-2xl font-bold text-white">
-                    System is reading your site
-                  </h1>
+                  <h1 className="text-2xl font-bold text-white">System is reading your site</h1>
                 </div>
               )}
 
@@ -702,26 +699,24 @@ const Landing = () => {
 
               {/* ── SCAN SURFACE ── */}
               <div id="hero-scanner" className="max-w-xl mx-auto mb-4">
-                <ScanShell
-                  onResult={handleScanResult}
-                  onPhaseChange={handlePhaseChange}
-                />
+                <ScanShell onResult={handleScanResult} onPhaseChange={handlePhaseChange} />
               </div>
 
               {landingPhase === 'idle' && (
                 <div className="flex flex-col items-center gap-3">
-                  <p className="text-xs text-white/30">
-                    No login · No credit card · Free scan
-                  </p>
+                  <p className="text-xs text-white/30">No login · No credit card · Free scan</p>
                   <div className="flex flex-wrap justify-center gap-4 text-xs text-white/35">
-                    {['Answer distortion', 'Missing citations', 'Entity confusion', 'Fix protocol'].map(
-                      (item) => (
-                        <span key={item} className="flex items-center gap-1.5">
-                          <span className="w-1 h-1 rounded-full bg-red-400/50" />
-                          {item}
-                        </span>
-                      )
-                    )}
+                    {[
+                      'Answer distortion',
+                      'Missing citations',
+                      'Entity confusion',
+                      'Fix protocol',
+                    ].map((item) => (
+                      <span key={item} className="flex items-center gap-1.5">
+                        <span className="w-1 h-1 rounded-full bg-red-400/50" />
+                        {item}
+                      </span>
+                    ))}
                   </div>
                   <div className="mt-4 flex gap-3 justify-center">
                     <Link
@@ -744,9 +739,7 @@ const Landing = () => {
         </section>
 
         {/* ── STATE 1: SCANNING — live pipeline feed ───────────────────────── */}
-        {landingPhase === 'scanning' && (
-          <ScanLiveFeed />
-        )}
+        {landingPhase === 'scanning' && <ScanLiveFeed />}
 
         {/* ── STATE 0: IDLE — social proof + proof strip ───────────────────── */}
         {landingPhase === 'idle' && (
@@ -800,8 +793,12 @@ const Landing = () => {
                     </div>
                     <div className="flex-1 text-center sm:text-left">
                       <p className="text-sm text-white/65 leading-relaxed">
-                        <span className="text-white/85 font-semibold">Missing JSON-LD, broken heading hierarchy, zero FAQ schema.</span>
-                        <span className="text-white/40 ml-1">One audit. Three fixes. Score doubled.</span>
+                        <span className="text-white/85 font-semibold">
+                          Missing JSON-LD, broken heading hierarchy, zero FAQ schema.
+                        </span>
+                        <span className="text-white/40 ml-1">
+                          One audit. Three fixes. Score doubled.
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -834,9 +831,7 @@ const Landing = () => {
         {landingPhase !== 'scanning' && (
           <>
             {/* Methodology — only shown post-result */}
-            {landingPhase === 'result' && (
-              <PostResultMethodology forceVisible={forceVisible} />
-            )}
+            {landingPhase === 'result' && <PostResultMethodology forceVisible={forceVisible} />}
 
             {/* Use cases — always shown post-idle or post-result */}
             <section className="py-16 bg-[#060607] border-t border-white/8">
@@ -875,7 +870,11 @@ const Landing = () => {
             {/* FAQ */}
             <section className="py-16 bg-[#0a0a0f] border-t border-white/8">
               <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 id="faq" className="text-2xl font-bold text-white mb-8 text-center" data-speakable>
+                <h2
+                  id="faq"
+                  className="text-2xl font-bold text-white mb-8 text-center"
+                  data-speakable
+                >
                   Frequently asked questions
                 </h2>
                 <dl className="space-y-4">
@@ -902,9 +901,7 @@ const Landing = () => {
                     then correct what it gets wrong
                   </span>
                 </h2>
-                <p className="text-base text-white/45 mb-8">
-                  {MARKETING_CLAIMS.modelAllocation}
-                </p>
+                <p className="text-base text-white/45 mb-8">{MARKETING_CLAIMS.modelAllocation}</p>
                 <a
                   href="#hero-scanner"
                   onClick={(e) => {
@@ -921,7 +918,6 @@ const Landing = () => {
             </section>
           </>
         )}
-          </div>
       </div>
     </HomepageGuard>
   );
@@ -1012,24 +1008,35 @@ function MismatchConversionEngine({
           <div className="rounded-2xl border border-white/10 bg-[#070d1a] p-4 sm:p-5">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Mismatch score</p>
-                <p className="text-2xl font-black text-red-300 tabular-nums">{mismatchData.mismatchScore}/100</p>
+                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">
+                  Mismatch score
+                </p>
+                <p className="text-2xl font-black text-red-300 tabular-nums">
+                  {mismatchData.mismatchScore}/100
+                </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Entities found</p>
-                <p className="text-2xl font-black text-white tabular-nums">{mismatchData.entities.length}</p>
+                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">
+                  Entities found
+                </p>
+                <p className="text-2xl font-black text-white tabular-nums">
+                  {mismatchData.entities.length}
+                </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Citation gaps</p>
+                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">
+                  Citation gaps
+                </p>
                 <p className="text-2xl font-black text-amber-300 tabular-nums">
                   {mismatchData.entities.filter((e) => e.status === 'missing').length}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Ledger depth</p>
+                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">
+                  Ledger depth
+                </p>
                 <p className="text-sm font-bold text-white/60 mt-1">
-                  Seeing{' '}
-                  <span className="text-cyan-300 font-black">{seenPct}%</span>
+                  Seeing <span className="text-cyan-300 font-black">{seenPct}%</span>
                 </p>
               </div>
             </div>
@@ -1058,8 +1065,8 @@ function MismatchConversionEngine({
                   You are seeing <span className="text-cyan-300">{seenPct}%</span> of the ledger
                 </p>
                 <p className="text-sm text-white/45 mb-5 max-w-md mx-auto">
-                  Full evidence chain, entity conflict breakdown, fix protocol, and AI interpretation
-                  drift are locked.
+                  Full evidence chain, entity conflict breakdown, fix protocol, and AI
+                  interpretation drift are locked.
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center mb-5">
                   {[
@@ -1130,7 +1137,11 @@ function PricingConsequence({
   onPayment,
 }: PricingConsequenceProps) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       {/* Context bridge */}
       <div className="rounded-2xl border border-amber-400/20 bg-amber-500/5 p-5 mb-6 max-w-xl mx-auto text-center">
         <p className="text-sm font-bold text-amber-300 mb-2">
@@ -1155,7 +1166,9 @@ function PricingConsequence({
       {/* Seen vs locked */}
       <div className="grid sm:grid-cols-2 gap-4 mb-8 max-w-xl mx-auto">
         <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-5">
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">You've seen</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">
+            You've seen
+          </p>
           <ul className="space-y-2 text-sm">
             {[
               `${Math.min(scanResult.findings.length + 3, 5)} cite entries`,
@@ -1195,7 +1208,9 @@ function PricingConsequence({
               type="button"
               onClick={() => onBillingCycleChange(cycle)}
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${
-                billingCycle === cycle ? 'bg-white/12 text-white' : 'text-white/45 hover:text-white/65'
+                billingCycle === cycle
+                  ? 'bg-white/12 text-white'
+                  : 'text-white/45 hover:text-white/65'
               }`}
             >
               {cycle === 'monthly' ? (
@@ -1225,11 +1240,7 @@ function PricingConsequence({
             Partial ledger, top-level scores, no lock-in.
           </p>
           <ul className="space-y-1.5 mb-4 text-xs">
-            {[
-              'Partial cite ledger',
-              'Visibility score 0–100',
-              'Top 3 findings',
-            ].map((f) => (
+            {['Partial cite ledger', 'Visibility score 0–100', 'Top 3 findings'].map((f) => (
               <li key={f} className="flex items-start gap-1.5 text-white/50">
                 <span className="text-white/25 shrink-0">·</span> {f}
               </li>
@@ -1246,7 +1257,10 @@ function PricingConsequence({
 
         {/* Core — highlighted */}
         <div className="rounded-2xl border border-cyan-400/30 bg-gradient-to-b from-[#0d2030]/80 to-[#0a1a2a]/80 p-5 flex flex-col ring-1 ring-cyan-400/15 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(34,211,238,0.07),transparent)]" aria-hidden="true" />
+          <div
+            className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(34,211,238,0.07),transparent)]"
+            aria-hidden="true"
+          />
           <div className="relative">
             <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 mb-1">
               Core · ${PRICING.alignment.billing.monthly}/mo
@@ -1285,9 +1299,7 @@ function PricingConsequence({
             Pro · ${PRICING.signal.billing.monthly}/mo
           </p>
           <h3 className="text-lg font-bold text-white mb-1">Control the system</h3>
-          <p className="text-white/40 text-xs mb-4 flex-1">
-            Agencies and multi-site operators.
-          </p>
+          <p className="text-white/40 text-xs mb-4 flex-1">Agencies and multi-site operators.</p>
           <ul className="space-y-1.5 mb-4 text-xs">
             {[
               `${PRICING.signal.limits.scans} reconstructions/month`,
@@ -1313,7 +1325,10 @@ function PricingConsequence({
 
       <p className="text-center text-xs text-white/20 mt-6">
         Live pricing verified at checkout.{' '}
-        <Link to="/pricing" className="text-cyan-300/40 hover:text-cyan-300 underline transition-colors">
+        <Link
+          to="/pricing"
+          className="text-cyan-300/40 hover:text-cyan-300 underline transition-colors"
+        >
           Full pricing page →
         </Link>
       </p>
@@ -1351,7 +1366,9 @@ function PostResultMethodology({ forceVisible }: { forceVisible: boolean }) {
             },
           ].map((s) => (
             <li key={s.n} className="flex gap-4">
-              <span className={`${s.color} font-mono text-xs pt-1 flex-shrink-0 font-bold`}>{s.n}</span>
+              <span className={`${s.color} font-mono text-xs pt-1 flex-shrink-0 font-bold`}>
+                {s.n}
+              </span>
               <div className="border-l border-white/10 pl-4">
                 <p className={`${s.color} font-semibold text-sm mb-0.5`}>{s.title}</p>
                 <p className="text-white/50 text-sm leading-relaxed">{s.desc}</p>
@@ -1363,6 +1380,5 @@ function PostResultMethodology({ forceVisible }: { forceVisible: boolean }) {
     </section>
   );
 }
-
 
 export default Landing;

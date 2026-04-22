@@ -6,46 +6,34 @@ module.exports = {
     node: true,
   },
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'prettier',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier",
   ],
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+    ecmaVersion: "latest",
+    sourceType: "module",
     ecmaFeatures: {
       jsx: true,
     },
   },
-  plugins: ['@typescript-eslint', 'react', 'react-hooks'],
+  plugins: ["@typescript-eslint", "react", "react-hooks"],
   settings: {
     react: {
-      version: 'detect',
+      version: "detect",
     },
   },
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
-    'prefer-const': 'error',
-    'no-var': 'error',
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "no-console": ["warn", { allow: ["warn", "error"] }],
+    "prefer-const": "error",
+    "no-var": "error",
   },
-<<<<<<< Updated upstream
-<<<<<<<< Updated upstream:server/src/.eslintrc.cjs
-<<<<<<< Updated upstream
-  ignorePatterns: ['dist', 'node_modules', '*.config.ts', '*.config.ts'],
-=======
- // ignorePatterns: ['dist', 'node_modules', '*.config.ts', '*.config.ts'],
->>>>>>> Stashed changes
-========
-  ignorePatterns: ['dist', 'node_modules', '*.config.ts', '*.config.ts'],
->>>>>>>> Stashed changes:.eslintrc.cjs
-=======
- // ignorePatterns: ['dist', 'node_modules', '*.config.ts', '*.config.ts'],
->>>>>>> Stashed changes
+  ignorePatterns: ["dist", "node_modules", "*.config.ts", "*.config.ts"],
 };

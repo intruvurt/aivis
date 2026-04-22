@@ -179,6 +179,68 @@ export async function runMigrations(): Promise<void> {
         // Each statement runs independently so one failure doesn't block the rest.
         {
           const patchStatements = [
+            `CREATE EXTENSION IF NOT EXISTS pgcrypto`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS raw_url TEXT`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS url_hash TEXT`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'fresh'`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS last_accessed_at TIMESTAMPTZ`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS invalidated_at TIMESTAMPTZ`,
+            `ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS hit_count INTEGER DEFAULT 0`,
+            `UPDATE analysis_cache SET raw_url = COALESCE(raw_url, url) WHERE raw_url IS NULL`,
+            `UPDATE analysis_cache SET url_hash = encode(digest(COALESCE(url, raw_url), 'sha256'), 'hex') WHERE url_hash IS NULL AND COALESCE(url, raw_url) IS NOT NULL`,
+            `UPDATE analysis_cache SET analyzed_at = COALESCE(analyzed_at, created_at, NOW()) WHERE analyzed_at IS NULL`,
+            `UPDATE analysis_cache SET expires_at = COALESCE(expires_at, analyzed_at + INTERVAL '7 days', NOW() + INTERVAL '7 days') WHERE expires_at IS NULL`,
+            `UPDATE analysis_cache SET status = CASE
+               WHEN invalidated_at IS NOT NULL THEN 'invalidated'
+               WHEN expires_at <= NOW() THEN 'expired'
+               WHEN analyzed_at <= NOW() - INTERVAL '1 day' THEN 'stale'
+               ELSE COALESCE(status, 'fresh')
+             END`,
+            `ALTER TABLE analysis_cache ALTER COLUMN raw_url SET NOT NULL`,
+            `ALTER TABLE analysis_cache ALTER COLUMN url_hash SET NOT NULL`,
+            `ALTER TABLE analysis_cache ALTER COLUMN analyzed_at SET NOT NULL`,
+            `ALTER TABLE analysis_cache ALTER COLUMN expires_at SET NOT NULL`,
+            `ALTER TABLE analysis_cache ALTER COLUMN hit_count SET DEFAULT 0`,
+            `ALTER TABLE analysis_cache ALTER COLUMN hit_count SET NOT NULL`,
+            `ALTER TABLE analysis_cache DROP CONSTRAINT IF EXISTS analysis_cache_url_key`,
+            `ALTER TABLE analysis_cache DROP CONSTRAINT IF EXISTS unique_url_hash`,
+            `ALTER TABLE analysis_cache DROP CONSTRAINT IF EXISTS analysis_cache_status_check`,
+            `ALTER TABLE analysis_cache ADD CONSTRAINT analysis_cache_status_check CHECK (status IN ('fresh', 'stale', 'expired', 'invalidated', 'revalidated'))`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_analysis_cache_url_hash_unique ON analysis_cache(url_hash)`,
+            `CREATE INDEX IF NOT EXISTS idx_analysis_cache_url_hash ON analysis_cache(url_hash)`,
+            `CREATE INDEX IF NOT EXISTS idx_analysis_cache_status_expires ON analysis_cache(status, expires_at)`,
+            `ALTER TABLE analysis_cache DROP COLUMN IF EXISTS analyzed_at_timestamp`,
+            `DROP INDEX IF EXISTS idx_user_sessions_token`,
+            `ALTER TABLE user_sessions ADD COLUMN IF NOT EXISTS session_token_hash VARCHAR(128)`,
+            `ALTER TABLE user_sessions ADD COLUMN IF NOT EXISTS session_token_last4 VARCHAR(4)`,
+            `ALTER TABLE user_sessions ADD COLUMN IF NOT EXISTS revoked_at TIMESTAMPTZ`,
+            `ALTER TABLE user_sessions ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMPTZ DEFAULT NOW()`,
+            `UPDATE user_sessions SET session_token_hash = encode(digest(session_token, 'sha256'), 'hex') WHERE session_token_hash IS NULL AND session_token IS NOT NULL`,
+            `UPDATE user_sessions SET session_token_last4 = RIGHT(session_token, 4) WHERE session_token_last4 IS NULL AND session_token IS NOT NULL`,
+            `ALTER TABLE user_sessions ALTER COLUMN session_token_hash SET NOT NULL`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(session_token_hash)`,
+            `CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(user_id, revoked_at, expires_at DESC)`,
+            `ALTER TABLE usage_daily ADD COLUMN IF NOT EXISTS scan_units NUMERIC(12,2) NOT NULL DEFAULT 1`,
+            `ALTER TABLE usage_daily ADD COLUMN IF NOT EXISTS compute_units INTEGER NOT NULL DEFAULT 0`,
+            `ALTER TABLE usage_daily ADD COLUMN IF NOT EXISTS entities_extracted INTEGER NOT NULL DEFAULT 0`,
+            `ALTER TABLE usage_daily ADD COLUMN IF NOT EXISTS citations_generated INTEGER NOT NULL DEFAULT 0`,
+            `ALTER TABLE payments ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMPTZ`,
+            `ALTER TABLE payments ADD COLUMN IF NOT EXISTS stripe_last_event_id VARCHAR(255)`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_last_event_id ON payments(stripe_last_event_id) WHERE stripe_last_event_id IS NOT NULL`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS normalized_url TEXT`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS run_group_id UUID DEFAULT gen_random_uuid()`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS prior_run_id UUID REFERENCES audits(id) ON DELETE SET NULL`,
+            `ALTER TABLE audits ADD COLUMN IF NOT EXISTS snapshot_kind VARCHAR(20) DEFAULT 'snapshot'`,
+            `UPDATE audits SET normalized_url = COALESCE(normalized_url, url) WHERE normalized_url IS NULL`,
+            `UPDATE audits SET run_group_id = COALESCE(run_group_id, gen_random_uuid()) WHERE run_group_id IS NULL`,
+            `UPDATE audits SET snapshot_kind = COALESCE(snapshot_kind, CASE WHEN prior_run_id IS NULL THEN 'snapshot' ELSE 'delta' END) WHERE snapshot_kind IS NULL`,
+            `ALTER TABLE audits ALTER COLUMN run_group_id SET NOT NULL`,
+            `ALTER TABLE audits ALTER COLUMN snapshot_kind SET NOT NULL`,
+            `ALTER TABLE audits DROP CONSTRAINT IF EXISTS audits_snapshot_kind_check`,
+            `ALTER TABLE audits ADD CONSTRAINT audits_snapshot_kind_check CHECK (snapshot_kind IN ('snapshot', 'delta'))`,
+            `CREATE INDEX IF NOT EXISTS idx_audits_normalized_url_created ON audits(normalized_url, created_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_audits_run_group_created ON audits(run_group_id, created_at DESC)`,
             // ── Workspace infrastructure (may be missing if initial DDL batch failed partway) ──
             `CREATE TABLE IF NOT EXISTS organizations (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1422,6 +1484,21 @@ export async function runMigrations(): Promise<void> {
             `CREATE INDEX IF NOT EXISTS idx_scan_gaps_scan ON scan_gaps(scan_id)`,
             `CREATE INDEX IF NOT EXISTS idx_scan_gaps_type ON scan_gaps(gap_type)`,
             `CREATE INDEX IF NOT EXISTS idx_scan_gaps_severity ON scan_gaps(scan_id, severity DESC)`,
+            `DO $$
+            DECLARE
+              rec RECORD;
+            BEGIN
+              FOR rec IN
+                SELECT schemaname, tablename
+                FROM pg_tables
+                WHERE schemaname = 'public'
+                  AND tablename NOT IN ('schema_migrations')
+              LOOP
+                EXECUTE format('ALTER TABLE %I.%I ENABLE ROW LEVEL SECURITY', rec.schemaname, rec.tablename);
+                EXECUTE format('ALTER TABLE %I.%I FORCE ROW LEVEL SECURITY', rec.schemaname, rec.tablename);
+              END LOOP;
+            END
+            $$`,
           ];
           let patchOk = 0;
           let patchFail = 0;
@@ -1451,6 +1528,11 @@ export async function runMigrations(): Promise<void> {
       console.log(
         `[DB] Running database migrations (non-transactional) - attempt ${attempt}/${maxRetries}...`,
       );
+      try {
+        await client.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto`);
+      } catch (_extErr) {
+        console.warn("[DB] pgcrypto extension unavailable; digest-based schema backfills may be skipped");
+      }
       // Ensure pgvector extension is available before any vector column DDL
       try {
         await client.query(`CREATE EXTENSION IF NOT EXISTS vector`);
@@ -1467,17 +1549,26 @@ export async function runMigrations(): Promise<void> {
       _q(`
       CREATE TABLE IF NOT EXISTS analysis_cache (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        url TEXT UNIQUE NOT NULL,
+        raw_url TEXT NOT NULL,
+        url TEXT NOT NULL,
+        url_hash TEXT NOT NULL UNIQUE,
         result JSONB NOT NULL,
-        analyzed_at_timestamp BIGINT NOT NULL,
-        analyzed_at TIMESTAMPTZ,
+        status VARCHAR(20) NOT NULL DEFAULT 'fresh',
+        analyzed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
+        last_accessed_at TIMESTAMPTZ,
+        invalidated_at TIMESTAMPTZ,
+        hit_count INTEGER NOT NULL DEFAULT 0,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ DEFAULT NOW()
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        CONSTRAINT analysis_cache_status_check CHECK (status IN ('fresh', 'stale', 'expired', 'invalidated', 'revalidated'))
       )
     `);
       _q(
         `CREATE INDEX IF NOT EXISTS idx_analysis_cache_url ON analysis_cache(url)`,
       );
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_cache_url_hash ON analysis_cache(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_cache_status_expires ON analysis_cache(status, expires_at)`);
       _q(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1500,16 +1591,20 @@ export async function runMigrations(): Promise<void> {
       CREATE TABLE IF NOT EXISTS user_sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        session_token VARCHAR(512) UNIQUE NOT NULL,
+        session_token_hash VARCHAR(128) UNIQUE NOT NULL,
+        session_token_last4 VARCHAR(4),
         expires_at TIMESTAMPTZ NOT NULL,
+        revoked_at TIMESTAMPTZ,
         user_agent TEXT,
         ip_address INET,
+        last_active_at TIMESTAMPTZ DEFAULT NOW(),
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
       _q(
-        `CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token)`,
+        `CREATE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(session_token_hash)`,
       );
+      _q(`CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(user_id, revoked_at, expires_at DESC)`);
 
       // ─── Organizations / Workspaces (must be created early - many tables reference workspaces) ───
       _q(`
@@ -1592,6 +1687,10 @@ export async function runMigrations(): Promise<void> {
         user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         date DATE NOT NULL,
         requests INT NOT NULL DEFAULT 0,
+        scan_units NUMERIC(12,2) NOT NULL DEFAULT 1,
+        compute_units INTEGER NOT NULL DEFAULT 0,
+        entities_extracted INTEGER NOT NULL DEFAULT 0,
+        citations_generated INTEGER NOT NULL DEFAULT 0,
         PRIMARY KEY (user_id, date)
       )
     `);
@@ -1915,10 +2014,13 @@ export async function runMigrations(): Promise<void> {
         status VARCHAR(50),
         current_period_start TIMESTAMPTZ,
         current_period_end TIMESTAMPTZ,
+        last_synced_at TIMESTAMPTZ,
+        stripe_last_event_id VARCHAR(255),
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
+      _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_last_event_id ON payments(stripe_last_event_id) WHERE stripe_last_event_id IS NOT NULL`);
       _q(`
       CREATE TABLE IF NOT EXISTS subscriptions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1953,14 +2055,21 @@ export async function runMigrations(): Promise<void> {
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
         url TEXT NOT NULL,
+        normalized_url TEXT,
+        run_group_id UUID NOT NULL DEFAULT gen_random_uuid(),
+        prior_run_id UUID REFERENCES audits(id) ON DELETE SET NULL,
+        snapshot_kind VARCHAR(20) NOT NULL DEFAULT 'snapshot',
         visibility_score INTEGER,
         result JSONB,
         status VARCHAR(20) DEFAULT 'completed',
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ
+        updated_at TIMESTAMPTZ,
+        CONSTRAINT audits_snapshot_kind_check CHECK (snapshot_kind IN ('snapshot', 'delta'))
       )
     `);
       _q(`CREATE INDEX IF NOT EXISTS idx_audits_user_id ON audits(user_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_audits_normalized_url_created ON audits(normalized_url, created_at DESC)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_audits_run_group_created ON audits(run_group_id, created_at DESC)`);
       _q(
         `CREATE INDEX IF NOT EXISTS idx_audits_created_at ON audits(created_at DESC)`,
       );
@@ -2111,6 +2220,8 @@ export async function runMigrations(): Promise<void> {
         ["last_invoice_id", "VARCHAR(255)"],
         ["last_failed_payment_at", "TIMESTAMPTZ"],
         ["failed_invoice_id", "VARCHAR(255)"],
+        ["last_synced_at", "TIMESTAMPTZ"],
+        ["stripe_last_event_id", "VARCHAR(255)"],
         ["metadata", "JSONB"],
       ];
       for (const [col, def] of paymentCols) {
@@ -2128,19 +2239,70 @@ export async function runMigrations(): Promise<void> {
 
       // analysis_cache: columns added after initial schema
       const cacheCols: [string, string][] = [
-        ["analyzed_at_timestamp", "BIGINT"],
+        ["raw_url", "TEXT"],
+        ["url_hash", "TEXT"],
         ["analyzed_at", "TIMESTAMPTZ"],
+        ["expires_at", "TIMESTAMPTZ"],
+        ["status", "VARCHAR(20) DEFAULT 'fresh'"],
+        ["last_accessed_at", "TIMESTAMPTZ"],
+        ["invalidated_at", "TIMESTAMPTZ"],
+        ["hit_count", "INTEGER DEFAULT 0"],
         ["updated_at", "TIMESTAMPTZ DEFAULT NOW()"],
       ];
       for (const [col, def] of cacheCols) {
         _q(`ALTER TABLE analysis_cache ADD COLUMN IF NOT EXISTS ${col} ${def}`);
       }
-      // Backfill analyzed_at_timestamp for rows that existed before the column
+      _q(`UPDATE analysis_cache SET raw_url = COALESCE(raw_url, url) WHERE raw_url IS NULL`);
+      _q(`UPDATE analysis_cache SET url_hash = encode(digest(COALESCE(url, raw_url), 'sha256'), 'hex') WHERE url_hash IS NULL AND COALESCE(url, raw_url) IS NOT NULL`);
       _q(`
       UPDATE analysis_cache
-      SET analyzed_at_timestamp = EXTRACT(EPOCH FROM created_at)::BIGINT * 1000
-      WHERE analyzed_at_timestamp IS NULL
+      SET analyzed_at = COALESCE(analyzed_at, created_at, NOW())
+      WHERE analyzed_at IS NULL
     `);
+      _q(`UPDATE analysis_cache SET expires_at = COALESCE(expires_at, analyzed_at + INTERVAL '7 days', NOW() + INTERVAL '7 days') WHERE expires_at IS NULL`);
+      _q(`UPDATE analysis_cache SET status = CASE WHEN invalidated_at IS NOT NULL THEN 'invalidated' WHEN expires_at <= NOW() THEN 'expired' WHEN analyzed_at <= NOW() - INTERVAL '1 day' THEN 'stale' ELSE COALESCE(status, 'fresh') END`);
+      _q(`ALTER TABLE analysis_cache DROP COLUMN IF EXISTS analyzed_at_timestamp`);
+      _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_analysis_cache_url_hash_unique ON analysis_cache(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_cache_status_expires ON analysis_cache(status, expires_at)`);
+
+      const sessionCols: [string, string][] = [
+        ["session_token_hash", "VARCHAR(128)"],
+        ["session_token_last4", "VARCHAR(4)"],
+        ["revoked_at", "TIMESTAMPTZ"],
+        ["last_active_at", "TIMESTAMPTZ DEFAULT NOW()"],
+      ];
+      for (const [col, def] of sessionCols) {
+        _q(`ALTER TABLE user_sessions ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+      _q(`UPDATE user_sessions SET session_token_hash = encode(digest(session_token, 'sha256'), 'hex') WHERE session_token_hash IS NULL AND session_token IS NOT NULL`);
+      _q(`UPDATE user_sessions SET session_token_last4 = RIGHT(session_token, 4) WHERE session_token_last4 IS NULL AND session_token IS NOT NULL`);
+      _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_sessions_token_hash ON user_sessions(session_token_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(user_id, revoked_at, expires_at DESC)`);
+
+      const usageCols: [string, string][] = [
+        ["scan_units", "NUMERIC(12,2) NOT NULL DEFAULT 1"],
+        ["compute_units", "INTEGER NOT NULL DEFAULT 0"],
+        ["entities_extracted", "INTEGER NOT NULL DEFAULT 0"],
+        ["citations_generated", "INTEGER NOT NULL DEFAULT 0"],
+      ];
+      for (const [col, def] of usageCols) {
+        _q(`ALTER TABLE usage_daily ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+
+      const auditCols: [string, string][] = [
+        ["normalized_url", "TEXT"],
+        ["run_group_id", "UUID DEFAULT gen_random_uuid()"],
+        ["prior_run_id", "UUID REFERENCES audits(id) ON DELETE SET NULL"],
+        ["snapshot_kind", "VARCHAR(20) DEFAULT 'snapshot'"],
+      ];
+      for (const [col, def] of auditCols) {
+        _q(`ALTER TABLE audits ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+      }
+      _q(`UPDATE audits SET normalized_url = COALESCE(normalized_url, url) WHERE normalized_url IS NULL`);
+      _q(`UPDATE audits SET run_group_id = COALESCE(run_group_id, gen_random_uuid()) WHERE run_group_id IS NULL`);
+      _q(`UPDATE audits SET snapshot_kind = COALESCE(snapshot_kind, CASE WHEN prior_run_id IS NULL THEN 'snapshot' ELSE 'delta' END) WHERE snapshot_kind IS NULL`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_audits_normalized_url_created ON audits(normalized_url, created_at DESC)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_audits_run_group_created ON audits(run_group_id, created_at DESC)`);
 
       // ─── License tables ───────────────────────────────────────────────────────
       _q(`
@@ -4736,6 +4898,108 @@ export async function runMigrations(): Promise<void> {
       _q(`CREATE INDEX IF NOT EXISTS idx_aee_source ON audit_evidence_entries(source_type)`);
       _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_aee_ledger_hash ON audit_evidence_entries(ledger_hash)`);
 
+      // ── INGESTION PIPELINE LEDGER (migration 012) ───────────────────────
+      _q(`
+      CREATE TABLE IF NOT EXISTS ingestion_jobs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url TEXT NOT NULL,
+        url_hash TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'queued'
+          CHECK (status IN ('queued', 'processing', 'fetched', 'parsed', 'analyzed', 'completed', 'failed')),
+        priority INT NOT NULL DEFAULT 0,
+        retry_count INT NOT NULL DEFAULT 0,
+        max_retries INT NOT NULL DEFAULT 3,
+        scheduled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        started_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ,
+        last_error TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT ingestion_jobs_url_hash_unique UNIQUE (url_hash)
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_status ON ingestion_jobs(status)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_url_hash ON ingestion_jobs(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_schedule ON ingestion_jobs(status, scheduled_at, priority DESC)`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS crawl_snapshots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        ingestion_job_id UUID REFERENCES ingestion_jobs(id) ON DELETE SET NULL,
+        url_hash TEXT NOT NULL,
+        final_url TEXT,
+        http_status INT,
+        headers JSONB,
+        html TEXT,
+        text_content TEXT,
+        fetched_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_crawl_snapshots_url_hash ON crawl_snapshots(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_crawl_snapshots_job ON crawl_snapshots(ingestion_job_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_crawl_snapshots_fetched_at ON crawl_snapshots(fetched_at DESC)`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS extracted_entities (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        crawl_snapshot_id UUID REFERENCES crawl_snapshots(id) ON DELETE CASCADE,
+        url_hash TEXT NOT NULL,
+        entity_type TEXT,
+        entity_value TEXT,
+        confidence DOUBLE PRECISION,
+        context TEXT,
+        extracted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_extracted_entities_url_hash ON extracted_entities(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_extracted_entities_snapshot ON extracted_entities(crawl_snapshot_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_extracted_entities_type_value ON extracted_entities(entity_type, entity_value)`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS analysis_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url_hash TEXT NOT NULL UNIQUE,
+        score INT,
+        visibility_score INT,
+        result JSONB NOT NULL,
+        model_version TEXT,
+        analyzed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_results_expires ON analysis_results(expires_at)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_results_analyzed ON analysis_results(analyzed_at DESC)`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS analysis_runs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        url_hash TEXT NOT NULL,
+        run_id UUID NOT NULL,
+        score INT,
+        visibility_score INT,
+        delta JSONB,
+        result_snapshot JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_runs_url_hash ON analysis_runs(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_runs_run_id ON analysis_runs(run_id)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_analysis_runs_created_at ON analysis_runs(created_at DESC)`);
+
+      _q(`
+      CREATE TABLE IF NOT EXISTS citations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        analysis_run_id UUID REFERENCES analysis_runs(id) ON DELETE SET NULL,
+        extracted_entity_id UUID REFERENCES extracted_entities(id) ON DELETE SET NULL,
+        url_hash TEXT NOT NULL,
+        source TEXT,
+        target_entity TEXT,
+        mention_count INT NOT NULL DEFAULT 1,
+        confidence DOUBLE PRECISION,
+        context JSONB,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_citations_url_hash ON citations(url_hash)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_citations_source ON citations(source)`);
+      _q(`CREATE INDEX IF NOT EXISTS idx_citations_target_entity ON citations(target_entity)`);
+
       // ── GRAPH KNOWLEDGE LAYER (migration 010) ────────────────────────────
       // scans: pipeline execution records, separate from user-facing audits
       _q(`
@@ -4848,6 +5112,24 @@ export async function runMigrations(): Promise<void> {
         created_at  TIMESTAMPTZ DEFAULT now()
       )`);
       _q(`CREATE INDEX IF NOT EXISTS idx_resolutions_cluster ON resolutions (cluster_id)`);
+
+      // Enforce RLS on all public tables created by bootstrap migrations.
+      _q(`
+      DO $$
+      DECLARE
+        rec RECORD;
+      BEGIN
+        FOR rec IN
+          SELECT schemaname, tablename
+          FROM pg_tables
+          WHERE schemaname = 'public'
+            AND tablename NOT IN ('schema_migrations')
+        LOOP
+          EXECUTE format('ALTER TABLE %I.%I ENABLE ROW LEVEL SECURITY', rec.schemaname, rec.tablename);
+          EXECUTE format('ALTER TABLE %I.%I FORCE ROW LEVEL SECURITY', rec.schemaname, rec.tablename);
+        END LOOP;
+      END
+      $$`);
 
       if (_ddl.length > 0) {
         console.log(

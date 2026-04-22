@@ -14,6 +14,21 @@ import { extractEvidenceFromScrapedData } from '../services/audit/evidenceLedger
 import { evaluateRules, computeScore, persistRuleResults, persistScoreSnapshot } from '../services/audit/ruleEngine.js';
 import { runBragValidationGate, persistBragTrail, persistCiteLedger } from '../services/bragGate.js';
 import { runCiteLedgerPipeline } from '../services/citeLedgerService.js';
+import { normalizeTrackedUrl } from '../utils/normalizeUrl.js';
+import {
+  startIngestionJob,
+  markFetched as markIngestionFetched,
+  markParsed as markIngestionParsed,
+  markAnalyzed as markIngestionAnalyzed,
+  markCompleted as markIngestionCompleted,
+  markFailed as markIngestionFailed,
+} from '../services/ingestionPipelineService.js';
+import {
+  broadcastStageUpdate,
+  broadcastPartialResults,
+  broadcastAnalysisComplete,
+  broadcastAnalysisError,
+} from '../services/pipelineStatebroadcaster.js';
 
 const JOB_TIMEOUT_MS = 55_000;
 const FAST_FETCH_TIMEOUT_MS = 6_500;
@@ -109,6 +124,34 @@ async function getLatestAuditForDomain(userId: string, url: string, workspaceId?
   return rows[0] || null;
 }
 
+async function resolveAuditLineage(userId: string, url: string, workspaceId?: string, excludeAuditId?: string) {
+  const normalizedUrl = normalizeTrackedUrl(url);
+  const params: Array<string | null> = [userId, workspaceId || null, normalizedUrl];
+  let exclusionSql = '';
+  if (excludeAuditId) {
+    params.push(excludeAuditId);
+    exclusionSql = ` AND id <> $4`;
+  }
+
+  const { rows } = await getPool().query(
+    `SELECT id, run_group_id
+       FROM audits
+      WHERE user_id = $1
+        AND workspace_id IS NOT DISTINCT FROM $2
+        AND COALESCE(normalized_url, url) = $3${exclusionSql}
+      ORDER BY created_at DESC
+      LIMIT 1`,
+    params,
+  );
+
+  return {
+    normalizedUrl,
+    priorRunId: rows[0]?.id ? String(rows[0].id) : null,
+    runGroupId: rows[0]?.run_group_id ? String(rows[0].run_group_id) : null,
+    snapshotKind: rows[0]?.id ? 'delta' : 'snapshot',
+  };
+}
+
 async function runIncrementalDiff(targetUrl: string) {
   const parsed = new URL(targetUrl);
   const domain = parsed.hostname.toLowerCase();
@@ -141,6 +184,8 @@ async function runIncrementalDiff(targetUrl: string) {
 async function runSingleJob() {
   const job = await claimNextAuditJob();
   if (!job) return;
+  let ingestionJobId = '';
+  let ingestionUrlHash = '';
   const shardCount = Math.max(1, Number(process.env.AUDIT_WORKER_SHARD_TOTAL || '1'));
   const shardIndex = Math.max(0, Number(process.env.AUDIT_WORKER_SHARD_INDEX || '0'));
   if (shardCount > 1) {
@@ -154,6 +199,14 @@ async function runSingleJob() {
   const startedAt = Date.now();
 
   try {
+    try {
+      const ingestion = await startIngestionJob(job.payload.url);
+      ingestionJobId = ingestion.id;
+      ingestionUrlHash = ingestion.url_hash;
+    } catch (ingestionStartErr: any) {
+      console.warn(`[audit-worker] ingestion start skipped: ${ingestionStartErr?.message || ingestionStartErr}`);
+    }
+
     await updateAuditJobProgress(job.id, 'incremental_diff', 12, ['Checking core pages', 'Comparing content hashes']);
     const diff = await runIncrementalDiff(job.payload.url);
 
@@ -161,17 +214,29 @@ async function runSingleJob() {
       await updateAuditJobProgress(job.id, 'instant_mode', 70, ['No major changes detected', 'Reusing previous audit result']);
       const cached = await getLatestAuditForDomain(job.payload.userId, job.payload.url, job.payload.workspaceId);
       if (cached?.result) {
+        const lineage = await resolveAuditLineage(job.payload.userId, job.payload.url, job.payload.workspaceId);
         await getPool().query(
-          `INSERT INTO audits (user_id, workspace_id, url, visibility_score, result, status, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5::jsonb, 'completed', NOW(), NOW())`,
+          `INSERT INTO audits (
+             user_id, workspace_id, url, normalized_url, run_group_id, prior_run_id,
+             snapshot_kind, visibility_score, result, status, created_at, updated_at
+           )
+           VALUES ($1, $2, $3, $4, COALESCE($5, gen_random_uuid()), $6, $7, $8, $9::jsonb, 'completed', NOW(), NOW())`,
           [
             job.payload.userId,
             job.payload.workspaceId || null,
             job.payload.url,
+            lineage.normalizedUrl,
+            lineage.runGroupId,
+            lineage.priorRunId,
+            lineage.snapshotKind,
             Number(cached.visibility_score || 0),
             JSON.stringify(cached.result),
           ]
         );
+        if (ingestionJobId && ingestionUrlHash) {
+          await markIngestionAnalyzed(ingestionJobId, ingestionUrlHash, cached.result, Number(cached.visibility_score || 0));
+          await markIngestionCompleted(ingestionJobId, ingestionUrlHash, cached.result, Number(cached.visibility_score || 0));
+        }
         await completeAuditJob(job.id, {
           success: true,
           reused: true,
@@ -194,7 +259,23 @@ async function runSingleJob() {
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Audit worker timeout')), JOB_TIMEOUT_MS)),
     ]);
 
+    let ingestionSnapshotId: string | null = null;
+    if (ingestionJobId && ingestionUrlHash) {
+      ingestionSnapshotId = await markIngestionFetched(ingestionJobId, ingestionUrlHash, scraped);
+      await markIngestionParsed(ingestionJobId, ingestionUrlHash, scraped, ingestionSnapshotId);
+    }
+
     await updateAuditJobProgress(job.id, 'extract', 48, ['Extracting page signals', 'Compiling structure + trust data']);
+    // Broadcast fetch + parse stages to realtime subscribers
+    if (ingestionJobId) {
+      try {
+        const fetchDuration = Date.now() - startedAt;
+        await broadcastStageUpdate(ingestionJobId, 'fetched', fetchDuration);
+        await broadcastStageUpdate(ingestionJobId, 'parsed', fetchDuration);
+      } catch (err: any) {
+        console.warn(`[audit-worker] Broadcast fetch/parse error (non-fatal): ${err?.message || err}`);
+      }
+    }
 
     // ─────────────────────────────────────────────────────────────────────────────
     // Execute full audit pipeline
@@ -223,6 +304,20 @@ async function runSingleJob() {
         aiRecommendations: [],
         scrapeSummary: scraped.data,
       });
+
+      // Broadcast entity extraction + score to realtime subscribers.
+      if (ingestionJobId) {
+        try {
+          const stageDuration = Date.now() - startedAt;
+          await broadcastStageUpdate(ingestionJobId, 'analyzed', stageDuration);
+          await broadcastPartialResults(ingestionJobId, {
+            score: finalScore,
+            visibility: finalScore,
+          });
+        } catch (err: any) {
+          console.warn(`[audit-worker] Broadcast analyze error (non-fatal): ${err?.message || err}`);
+        }
+      }
 
       // 5. Persist rule results to audit_rule_results table
       await persistRuleResults(auditRunId, ruleResults);
@@ -274,7 +369,26 @@ async function runSingleJob() {
       };
     }
 
+    if (ingestionJobId && ingestionUrlHash) {
+      await markIngestionAnalyzed(ingestionJobId, ingestionUrlHash, finalResult, finalScore);
+      await markIngestionCompleted(ingestionJobId, ingestionUrlHash, finalResult, finalScore);
+    }
+
     await updateAuditJobProgress(job.id, 'persist', 92, ['Saving audit record', 'Finalizing status']);
+    // Broadcast completion to realtime subscribers
+    if (ingestionJobId) {
+      try {
+        const totalDuration = Date.now() - startedAt;
+        if (finalResult.success) {
+          await broadcastStageUpdate(ingestionJobId, 'completed', totalDuration);
+          await broadcastAnalysisComplete(ingestionJobId, finalResult);
+        } else {
+          await broadcastAnalysisError(ingestionJobId, finalResult?.error as string || 'Unknown error');
+        }
+      } catch (err: any) {
+        console.warn(`[audit-worker] Broadcast completion error (non-fatal): ${err?.message || err}`);
+      }
+    }
 
     // Update audit record with real score and result
     const pool = getPool();
@@ -285,21 +399,45 @@ async function runSingleJob() {
 
     if (auditResult.rows.length > 0) {
       // Update existing audit record
+      const lineage = await resolveAuditLineage(job.payload.userId, scraped.url, job.payload.workspaceId, auditRunId);
       await pool.query(
-        `UPDATE audits SET visibility_score = $2, result = $3::jsonb, status = 'completed', updated_at = NOW()
+        `UPDATE audits SET normalized_url = $2,
+                           run_group_id = COALESCE($3, run_group_id, gen_random_uuid()),
+                           prior_run_id = $4,
+                           snapshot_kind = $5,
+                           visibility_score = $6,
+                           result = $7::jsonb,
+                           status = 'completed',
+                           updated_at = NOW()
          WHERE id = $1`,
-        [auditRunId, finalScore, JSON.stringify(finalResult)]
+        [
+          auditRunId,
+          lineage.normalizedUrl,
+          lineage.runGroupId,
+          lineage.priorRunId,
+          lineage.snapshotKind,
+          finalScore,
+          JSON.stringify(finalResult),
+        ]
       );
     } else {
       // Create new audit record (fallback)
+      const lineage = await resolveAuditLineage(job.payload.userId, scraped.url, job.payload.workspaceId);
       await pool.query(
-        `INSERT INTO audits (id, user_id, workspace_id, url, visibility_score, result, status, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6::jsonb, 'completed', NOW(), NOW())`,
+        `INSERT INTO audits (
+           id, user_id, workspace_id, url, normalized_url, run_group_id, prior_run_id,
+           snapshot_kind, visibility_score, result, status, created_at, updated_at
+         )
+         VALUES ($1, $2, $3, $4, $5, COALESCE($6, gen_random_uuid()), $7, $8, $9, $10::jsonb, 'completed', NOW(), NOW())`,
         [
           auditRunId,
           job.payload.userId,
           job.payload.workspaceId || null,
           scraped.url,
+          lineage.normalizedUrl,
+          lineage.runGroupId,
+          lineage.priorRunId,
+          lineage.snapshotKind,
           finalScore,
           JSON.stringify(finalResult),
         ]
@@ -331,6 +469,9 @@ async function runSingleJob() {
       score: finalScore,
     });
   } catch (err: any) {
+    if (ingestionJobId && ingestionUrlHash) {
+      await markIngestionFailed(ingestionJobId, ingestionUrlHash, err?.message || 'Audit failed');
+    }
     await failAuditJob(job.id, err?.message || 'Audit failed');
   }
 }

@@ -2,23 +2,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.VITE_API_URL || 'http://localhost:3001';
-<<<<<<<< HEAD:client/test-analyze.ts
 const TEST_URL = 'https://intruvurt.space';
-========
-<<<<<<< Updated upstream
-<<<<<<<< Updated upstream:server/src/test-analyze.ts
-<<<<<<< Updated upstream
-const TEST_URL = 'https://intruvurt.space';
-=======
-const TEST_URL = 'https://example.com';
->>>>>>> Stashed changes
-========
-const TEST_URL = 'https://intruvurt.space';
->>>>>>>> Stashed changes:test-analyze.ts
-=======
-const TEST_URL = 'https://example.com';
->>>>>>> Stashed changes
->>>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3:server/src/test-analyze.ts
 
 async function testAnalyze() {
   console.log('🧪 Testing analyze endpoint...');

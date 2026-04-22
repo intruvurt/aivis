@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS payments (
   subscription_status VARCHAR(50),
   current_period_end TIMESTAMPTZ,
   cancel_at_period_end BOOLEAN DEFAULT FALSE,
+  last_synced_at TIMESTAMPTZ,
+  stripe_last_event_id VARCHAR(255),
   metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -27,6 +29,7 @@ CREATE INDEX IF NOT EXISTS idx_payments_stripe_session_id ON payments(stripe_ses
 CREATE INDEX IF NOT EXISTS idx_payments_stripe_subscription_id ON payments(stripe_subscription_id);
 CREATE INDEX IF NOT EXISTS idx_payments_stripe_customer_id ON payments(stripe_customer_id);
 CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_last_event_id ON payments(stripe_last_event_id) WHERE stripe_last_event_id IS NOT NULL;
 
 -- Add tier-related columns to users table if they don't exist
 DO $$ 

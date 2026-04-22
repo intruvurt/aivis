@@ -1,58 +1,57 @@
-<<<<<<<< HEAD:server/utils/jwt.ts
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-import "dotenv/config"
-import jwt from 'jsonwebtoken'
-
-// SECURITY: Only use server-side JWT_SECRET (never VITE_ prefixed vars as they are exposed client-side)
-const JWT_SECRET = process.env.JWT_SECRET
-if (!JWT_SECRET) throw new Error('JWT_SECRET missing - set JWT_SECRET in your .env file (DO NOT use VITE_JWT_SECRET)')
-
-export function signUserToken(payload: { userId: string; tier: string }) {
-return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-}
-
-export function verifyUserToken(token: string) {
-return jwt.verify(token, JWT_SECRET) as { userId: string; tier: string; iat: number; exp: number }
-}
-export function decodeUserToken(token: string) {
-  return jwt.decode(token) as { userId: string; tier: string; iat: number; exp: number } | null
-=======
-=======
->>>>>>> Stashed changes
-// utils/jwt.ts
 import "dotenv/config";
-import jwt, { type JwtPayload } from "jsonwebtoken";
-========
-import "dotenv/config"
-import jwt from 'jsonwebtoken'
->>>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3:utils/jwt.ts
+import jwt from "jsonwebtoken";
 
-// SECURITY: Only use server-side JWT_SECRET (never VITE_ prefixed vars as they are exposed client-side)
-const JWT_SECRET = process.env.JWT_SECRET
-if (!JWT_SECRET) throw new Error('JWT_SECRET missing - set JWT_SECRET in your .env file (DO NOT use VITE_JWT_SECRET)')
+export type UserTokenPayload = {
+  userId: string;
+  tier: string;
+  iat?: number;
+  exp?: number;
+};
 
-export function signUserToken(payload: { userId: string; tier: string }) {
-return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
+type JwtVerifyResult = string | Record<string, unknown>;
+
+const JWT_SECRET = process.env.JWT_SECRET?.trim();
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET missing - set JWT_SECRET in your .env file (DO NOT use VITE_JWT_SECRET)");
 }
 
-export function verifyUserToken(token: string) {
-return jwt.verify(token, JWT_SECRET) as { userId: string; tier: string; iat: number; exp: number }
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
-<<<<<<<< HEAD:server/utils/jwt.ts
+
+function asUserTokenPayload(decoded: unknown): UserTokenPayload {
+  if (!isObject(decoded)) throw new Error("Invalid JWT payload");
+
+  const userId = typeof decoded.userId === "string" ? decoded.userId : "";
+  const tier = typeof decoded.tier === "string" ? decoded.tier : "";
+
+  if (!userId || !tier) {
+    throw new Error("JWT payload missing required fields");
+  }
+
+  const iat = typeof decoded.iat === "number" ? decoded.iat : undefined;
+  const exp = typeof decoded.exp === "number" ? decoded.exp : undefined;
+
+  return { userId, tier, iat, exp };
+}
+
+export function signUserToken(payload: Pick<UserTokenPayload, "userId" | "tier">): string {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+}
+
+export function verifyUserToken(token: string): UserTokenPayload {
+  const decoded: JwtVerifyResult = jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] });
+  if (typeof decoded === "string") throw new Error("Invalid JWT payload");
+  return asUserTokenPayload(decoded);
+}
 
 export function decodeUserToken(token: string): UserTokenPayload | null {
-  // WARNING: decode() does NOT verify signature or expiry.
-  // Only use for debugging or non-security UI hints.
   const decoded = jwt.decode(token);
   if (!decoded || typeof decoded === "string") return null;
-  return decoded as UserTokenPayload;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-========
-export function decodeUserToken(token: string) {
-  return jwt.decode(token) as { userId: string; tier: string; iat: number; exp: number } | null
->>>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3:utils/jwt.ts
+
+  try {
+    return asUserTokenPayload(decoded);
+  } catch {
+    return null;
+  }
 }

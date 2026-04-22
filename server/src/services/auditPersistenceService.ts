@@ -36,6 +36,19 @@ export async function persistAuditRecord(args: {
   const pool = getPool();
   const normalizedUrl = normalizeTrackedUrl(args.url);
   const createdAt = args.createdAt || new Date();
+  const lineageResult = await pool.query(
+    `SELECT id, run_group_id
+       FROM audits
+      WHERE user_id = $1
+        AND workspace_id IS NOT DISTINCT FROM $2
+        AND COALESCE(normalized_url, url) = $3
+      ORDER BY created_at DESC
+      LIMIT 1`,
+    [args.userId, args.workspaceId || null, normalizedUrl],
+  );
+  const priorRunId = lineageResult.rows[0]?.id ? String(lineageResult.rows[0].id) : null;
+  const runGroupId = lineageResult.rows[0]?.run_group_id ? String(lineageResult.rows[0].run_group_id) : null;
+  const snapshotKind = priorRunId ? 'delta' : 'snapshot';
   const executionClass = extractExecutionClass(args.result);
   const geoSignalProfile = extractGeoSignalProfile(args.result);
   const contradictionReport = extractContradictionReport(args.result);
@@ -46,13 +59,20 @@ export async function persistAuditRecord(args: {
   let auditInsertRows: Array<{ id: string }>;
   try {
     const auditInsert = await pool.query(
-      `INSERT INTO audits (user_id, workspace_id, url, tier_at_analysis, visibility_score, result, content_hash, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO audits (
+         user_id, workspace_id, url, normalized_url, run_group_id, prior_run_id,
+         snapshot_kind, tier_at_analysis, visibility_score, result, content_hash, created_at
+       )
+       VALUES ($1, $2, $3, $4, COALESCE($5, gen_random_uuid()), $6, $7, $8, $9, $10, $11, $12)
        RETURNING id`,
       [
         args.userId,
         args.workspaceId || null,
         args.url,
+        normalizedUrl,
+        runGroupId,
+        priorRunId,
+        snapshotKind,
         args.tierAtAnalysis || null,
         args.visibilityScore,
         JSON.stringify(args.result),
@@ -67,10 +87,20 @@ export async function persistAuditRecord(args: {
     if (insertErr?.code === '42703') {
       console.warn('[persistAudit] Full insert failed (missing column), retrying with minimal columns:', insertErr.message);
       const fallback = await pool.query(
-        `INSERT INTO audits (user_id, url, visibility_score, result, created_at)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO audits (user_id, url, normalized_url, run_group_id, prior_run_id, snapshot_kind, visibility_score, result, created_at)
+         VALUES ($1, $2, $3, COALESCE($4, gen_random_uuid()), $5, $6, $7, $8, $9)
          RETURNING id`,
-        [args.userId, args.url, args.visibilityScore, JSON.stringify(args.result), createdAt.toISOString()]
+        [
+          args.userId,
+          args.url,
+          normalizedUrl,
+          runGroupId,
+          priorRunId,
+          snapshotKind,
+          args.visibilityScore,
+          JSON.stringify(args.result),
+          createdAt.toISOString(),
+        ]
       );
       auditInsertRows = fallback.rows;
     } else {

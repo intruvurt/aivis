@@ -15,7 +15,7 @@ import {
   resetPasswordWithToken,
   User,
 } from '../models/User.js';
-import { sendVerificationEmail } from '../services/emailService.js';
+import { sendVerificationEmail, isEmailDeliveryConfigured } from '../services/emailService.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { sendWelcomeOnboardingEmail } from '../services/emailService.js';
 import { setSessionCookie } from '../lib/authSession.js';
@@ -211,6 +211,15 @@ export const register = async (req: Request, res: Response) => {
         error: 'You must accept Terms and Privacy Policy to create an account.',
         statusCode: 400,
         code: 'CONSENT_REQUIRED',
+      });
+    }
+
+    if (!isEmailDeliveryConfigured()) {
+      return res.status(503).json({
+        success: false,
+        error: 'Email verification is temporarily unavailable. Please try again later.',
+        code: 'EMAIL_PROVIDER_UNAVAILABLE',
+        statusCode: 503,
       });
     }
 
@@ -614,6 +623,15 @@ export const resendVerification = async (req: Request, res: Response) => {
       if (!captcha.ok) {
         console.warn('[Auth] Captcha failure on resend verification (soft-fail, continuing):', captcha.message);
       }
+    }
+
+    if (!isEmailDeliveryConfigured()) {
+      return res.status(503).json({
+        success: false,
+        error: 'Email verification is temporarily unavailable. Please try again later.',
+        code: 'EMAIL_PROVIDER_UNAVAILABLE',
+        statusCode: 503,
+      });
     }
 
     const result = await resendVerificationEmail(email);

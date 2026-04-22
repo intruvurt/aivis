@@ -73,8 +73,17 @@ async function runCleanup(): Promise<void> {
     // global cache retention cutoff. Per-user tier-aware cache eviction would
     // require joining cache → audits → users which is heavier than needed.
     const maxCacheDays = Math.max(...(Object.values(TIER_LIMITS) as TierLimits[]).map(t => t.cacheDays));
+    await pool.query(
+      `UPDATE analysis_cache
+          SET status = 'expired',
+              updated_at = NOW()
+        WHERE status NOT IN ('expired', 'invalidated')
+          AND expires_at <= NOW()`
+    );
     const cacheResult = await pool.query(
-      `DELETE FROM analysis_cache WHERE created_at < NOW() - INTERVAL '1 day' * $1`,
+      `DELETE FROM analysis_cache
+        WHERE (status = 'expired' AND expires_at < NOW() - INTERVAL '1 day' * $1)
+           OR (status = 'invalidated' AND COALESCE(invalidated_at, updated_at, created_at) < NOW() - INTERVAL '1 day' * $1)`,
       [maxCacheDays]
     );
     stats.cache = cacheResult.rowCount ?? 0;

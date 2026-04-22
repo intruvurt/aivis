@@ -74,11 +74,7 @@ app.use(
   helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-<<<<<<< HEAD
   }),
-=======
-  })
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
 );
 
 const limiter = rateLimit({
@@ -127,27 +123,19 @@ function isPrivateOrLocalHost(hostname: string): boolean {
   return false;
 }
 
-<<<<<<< HEAD
 function validateUrl(urlString: string): {
   valid: boolean;
   error?: string;
   url?: string;
 } {
-=======
-function validateUrl(urlString: string): { valid: boolean; error?: string; url?: string } {
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
   if (!urlString || typeof urlString !== "string") {
     return { valid: false, error: "URL must be a string" };
   }
 
   const trimmed = urlString.trim();
-<<<<<<< HEAD
   const normalized = /^https?:\/\//i.test(trimmed)
     ? trimmed
     : `https://${trimmed}`;
-=======
-  const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
 
   if (
     !validator.isURL(normalized, {
@@ -173,21 +161,12 @@ function validateUrl(urlString: string): { valid: boolean; error?: string; url?:
 }
 
 function getServerApiKey(): string | null {
-<<<<<<< HEAD
-  return (
-    process.env.OPEN_ROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || null
-  );
+  return process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || null;
 }
 
 function safeJsonParse<T = any>(
   raw: string,
 ): { ok: true; value: T } | { ok: false; error: string } {
-=======
-  return process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || null;
-}
-
-function safeJsonParse<T = any>(raw: string): { ok: true; value: T } | { ok: false; error: string } {
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
   try {
     return { ok: true, value: JSON.parse(raw) as T };
   } catch {
@@ -205,14 +184,10 @@ app.post(
     const start = Date.now();
 
     try {
-<<<<<<< HEAD
       const { url, apiKey: clientApiKey } = (req.body ?? {}) as {
         url?: string;
         apiKey?: string;
       };
-=======
-      const { url, apiKey: clientApiKey } = (req.body ?? {}) as { url?: string; apiKey?: string };
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
 
       // Never allow browser to bring keys to your server.
       if (clientApiKey) {
@@ -257,13 +232,9 @@ app.post(
       // Pick first 3 providers (or fewer if you configured less)
       const selectedProviders = PROVIDERS.slice(0, 3);
       if (selectedProviders.length < 1) {
-<<<<<<< HEAD
         return res
           .status(500)
           .json({ error: "No AI providers configured", code: "NO_PROVIDERS" });
-=======
-        return res.status(500).json({ error: "No AI providers configured", code: "NO_PROVIDERS" });
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
       }
 
       // AI1: create the primary JSON analysis
@@ -284,13 +255,9 @@ ${JSON.stringify(scraped?.data ?? {}, null, 0)}
       });
 
       if (!ai1Raw) {
-<<<<<<< HEAD
         return res
           .status(500)
           .json({ error: "AI1 did not return output", code: "AI1_EMPTY" });
-=======
-        return res.status(500).json({ error: "AI1 did not return output", code: "AI1_EMPTY" });
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
       }
 
       const parsed1 = safeJsonParse(ai1Raw);
@@ -358,13 +325,9 @@ ${ai2Raw}
               endpoint: selectedProviders[2].endpoint,
             })) || "";
           const parsed3 = safeJsonParse(ai3Raw);
-<<<<<<< HEAD
           ai3Validation = parsed3.ok
             ? parsed3.value
             : { error: "AI3 returned invalid JSON", raw: ai3Raw };
-=======
-          ai3Validation = parsed3.ok ? parsed3.value : { error: "AI3 returned invalid JSON", raw: ai3Raw };
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
         } catch (e: any) {
           ai3Validation = { error: `AI3 failed: ${String(e?.message || e)}` };
         }
@@ -380,15 +343,11 @@ ${ai2Raw}
         triple_check: {
           ai1: { model: selectedProviders[0]?.model, output: ai1Raw },
           ai2: { model: selectedProviders[1]?.model, output: ai2Raw },
-<<<<<<< HEAD
           ai3: {
             model: selectedProviders[2]?.model,
             output: ai3Raw,
             validation: ai3Validation,
           },
-=======
-          ai3: { model: selectedProviders[2]?.model, output: ai3Raw, validation: ai3Validation },
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
         },
         validated_visibility_reasons:
           ai3Validation?.validated_visibility_reasons ??
@@ -405,7 +364,6 @@ ${ai2Raw}
       return res.status(500).json({
         error: "Analysis failed",
         code: "INTERNAL_ERROR",
-<<<<<<< HEAD
         message:
           process.env.NODE_ENV === "development"
             ? String(err?.message || err)
@@ -413,12 +371,6 @@ ${ai2Raw}
       });
     }
   },
-=======
-        message: process.env.NODE_ENV === "development" ? String(err?.message || err) : undefined,
-      });
-    }
-  }
->>>>>>> 924924e57549acaf9d858f77fa106c7b59d8d0b3
 );
 
 /* -------------------- ADMIN CACHE CLEAR -------------------- */

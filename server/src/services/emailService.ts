@@ -29,6 +29,10 @@ const MARKETING_REPLY_TO = 'kimsupport@aivis.biz';
 const IS_DEV_MODE =
   FRONTEND_URL.includes('localhost') || process.env.NODE_ENV === 'development';
 
+export function isEmailDeliveryConfigured(): boolean {
+  return RESEND_KEY_VALID;
+}
+
 console.log(`[Email] FROM: ${FROM_EMAIL} | FRONTEND_URL: ${FRONTEND_URL} | DEV_MODE: ${IS_DEV_MODE} | API_KEY_SET: ${RESEND_KEY_VALID}`);
 if (!RESEND_KEY_VALID) {
   console.warn('[Email] ⚠️  RESEND_API_KEY is missing or invalid - all emails will be logged to console only. Set a valid Resend API key (starts with re_) for production email delivery.');

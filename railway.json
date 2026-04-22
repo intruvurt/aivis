@@ -2,6 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "deploy": {
     "runtime": "V2",
+    "startCommand": "npm --prefix server run start:prod",
     "numReplicas": 1,
     "healthcheckPath": "/api/health",
     "sleepApplication": false,

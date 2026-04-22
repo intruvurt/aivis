@@ -43,5 +43,6 @@ RUN npm --prefix server install --include=dev
 RUN npm --prefix server run build
 RUN cd server && npx puppeteer browsers install chrome
 
-ENTRYPOINT ["/bin/sh", "-lc"]
-CMD ["npm --prefix server run start:prod"]
+ENV NODE_ENV=production
+
+CMD ["npm", "--prefix", "server", "run", "start:prod"]

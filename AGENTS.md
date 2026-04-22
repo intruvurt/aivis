@@ -198,12 +198,13 @@ Legacy dashboards are deprecated and must not expand.
 
 ### 8. Tiering system (canonical)
 
-Only these tiers exist:
+Only these canonical tiers exist:
 
 observer
 starter
 alignment
 signal
+agency
 scorefix (one-time remediation)
 
 All access control must derive from `shared/types.ts`.

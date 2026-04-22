@@ -390,20 +390,11 @@ export const login = async (req: Request, res: Response) => {
 
     const { email, password, captchaToken } = req.body;
 
-    if (isRecaptchaEnforced()) {
-      const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
+    // Captcha is soft-fail on login — password + lockout are the real security.
+    if (isRecaptchaEnforced() && captchaToken) {
+      const captcha = await verifyRecaptchaToken(String(captchaToken), req.ip);
       if (!captcha.ok) {
-        if (isRecoverableCaptchaFailure(captcha.message)) {
-          console.warn('[Auth] Recoverable captcha failure on login - allowing request:', captcha.message);
-        } else {
-          return res.status(400).json({
-            success: false,
-            error: 'Captcha verification failed',
-            statusCode: 400,
-            code: 'CAPTCHA_FAILED',
-            details: captcha.message,
-          });
-        }
+        console.warn('[Auth] Captcha failure on login (soft-fail, continuing):', captcha.message);
       }
     }
 
@@ -600,20 +591,11 @@ export const resendVerification = async (req: Request, res: Response) => {
       });
     }
 
-    if (isRecaptchaEnforced()) {
-      const captcha = await verifyRecaptchaToken(String(captchaToken || ''), req.ip);
+    // Captcha is soft-fail on resend — prevents email harvesting via rate limiting, not captcha.
+    if (isRecaptchaEnforced() && captchaToken) {
+      const captcha = await verifyRecaptchaToken(String(captchaToken), req.ip);
       if (!captcha.ok) {
-        if (isRecoverableCaptchaFailure(captcha.message)) {
-          console.warn('[Auth] Recoverable captcha failure on resend verification - allowing request:', captcha.message);
-        } else {
-          return res.status(400).json({
-            success: false,
-            error: 'Captcha verification failed',
-            statusCode: 400,
-            code: 'CAPTCHA_FAILED',
-            details: captcha.message,
-          });
-        }
+        console.warn('[Auth] Captcha failure on resend verification (soft-fail, continuing):', captcha.message);
       }
     }
 

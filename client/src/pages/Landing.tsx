@@ -689,7 +689,7 @@ const Landing = () => {
               {landingPhase === 'result' && previewResult && (
                 <div className="mb-6">
                   <p className="text-xs uppercase tracking-widest text-emerald-400/70 mb-2 font-mono">
-            </div>
+                    mismatch report
                   </p>
                   <h1 className="text-2xl font-bold text-white">
                     Mismatch detected
@@ -705,6 +705,7 @@ const Landing = () => {
                 <ScanShell
                   onResult={handleScanResult}
                   onPhaseChange={handlePhaseChange}
+                />
               </div>
 
               {landingPhase === 'idle' && (

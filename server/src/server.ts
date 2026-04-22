@@ -3568,7 +3568,7 @@ Trust documents
 - Terms: https://aivis.biz/terms
 
 Team updates
-- New member: Danielle C. Mason - Marketing Specialist (UTC-5)
+- New member: L.L.M. - Marketing Specialist (UTC-5)
 - Team profile: https://aivis.biz/about#leadership
 
 Private partnership notice

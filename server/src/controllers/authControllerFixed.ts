@@ -368,11 +368,39 @@ export const register = async (req: Request, res: Response) => {
  */
 export const login = async (req: Request, res: Response) => {
   try {
+    const loginBody =
+      req.body && typeof req.body === 'object' ? (req.body as Record<string, unknown>) : {};
+    const debugEnabled = String(process.env.AUTH_DEBUG || '').toLowerCase() === 'true';
+    if (debugEnabled) {
+      console.info('[Auth][login] request received', {
+        contentType: req.headers['content-type'] || null,
+        hasBody: Boolean(req.body),
+        bodyKeys: Object.keys(loginBody),
+        hasEmail: typeof loginBody.email === 'string' && String(loginBody.email).trim().length > 0,
+        hasPassword: typeof loginBody.password === 'string' && String(loginBody.password).length > 0,
+      });
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      const validationErrors = errors.array();
+      if (debugEnabled) {
+        console.warn('[Auth][login] validation failed', {
+          errors: validationErrors,
+          contentType: req.headers['content-type'] || null,
+          bodyKeys: Object.keys(loginBody),
+        });
+      }
+
       return res.status(400).json({
         success: false,
-        error: errors.array()[0].msg,
+        error: validationErrors[0]?.msg || 'Invalid login payload',
+        code: 'INVALID_LOGIN_PAYLOAD',
+        details: validationErrors.map((e: any) => ({
+          type: e?.type,
+          field: e?.path,
+          message: e?.msg,
+        })),
         statusCode: 400,
       });
     }

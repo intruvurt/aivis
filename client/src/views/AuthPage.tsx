@@ -284,11 +284,18 @@ export default function AuthPage() {
         if (submittedEmail && submittedEmail !== email) setEmail(submittedEmail);
         if (submittedPassword && submittedPassword !== password) setPassword(submittedPassword);
 
+        if (!submittedEmail || !submittedPassword) {
+          throw new Error('Email and password are required');
+        }
+
         const { response: res, body: raw } = await fetchJsonWithTimeout(
-          `${apiBase}/api/auth/signin`,
+          `${apiBase}/api/auth/login`,
           {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
             credentials: 'include',
             body: JSON.stringify({ email: submittedEmail, password: submittedPassword }),
           }

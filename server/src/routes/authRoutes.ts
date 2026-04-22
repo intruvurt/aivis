@@ -573,18 +573,20 @@ router.post(
 );
 
 // LOGIN - REQUIRES verified email to succeed
+const loginValidation = [
+  body('email').trim().isEmail().withMessage('Valid email is required'),
+  body('password').notEmpty().withMessage('Password is required'),
+  body('captchaToken').optional({ nullable: true, checkFalsy: true }).isString().withMessage('Invalid captcha token')
+];
+
 router.post(
   '/login',
-  [
-    body('email').trim().isEmail().withMessage('Valid email is required'),
-    body('password').notEmpty().withMessage('Password is required'),
-    body('captchaToken').optional({ nullable: true, checkFalsy: true }).isString().withMessage('Invalid captcha token')
-  ],
+  loginValidation,
   login
 );
 
 // Alias for backward compatibility
-router.post('/signin', login);
+router.post('/signin', loginValidation, login);
 
 // EMAIL VERIFICATION - Activates account and returns token
 router.get('/verify-email', verifyEmail);

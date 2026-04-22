@@ -164,7 +164,7 @@ Avoid private or authenticated areas, including:
 Do not treat authenticated dashboards, internal APIs, or private report views as public-source material unless explicitly exposed for public access.
 
 Team updates
-- New member: Danielle C. Mason - Marketing Specialist (UTC-5)
+- New member: L.L.M. - Marketing Specialist (UTC-5)
 - Profile reference: https://aivis.biz/about#leadership
 
 Private partnership notice

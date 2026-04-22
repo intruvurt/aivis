@@ -1,7 +1,7 @@
 // client/src/api.ts
 import { API_URL } from "./config";
 import { useAuthStore } from "./stores/authStore";
-import { getWorkspaceHeader } from "./stores/workspaceStore";
+import { getWorkspaceHeader, useWorkspaceStore } from "./stores/workspaceStore";
 import type { CitationIdentityResponse, ServerHeadersCheckResult, QueryPack } from "@shared/types";
 
 type ApiError = Error & { status?: number; code?: string };
@@ -51,6 +51,7 @@ async function tryRefreshTokenOnce(): Promise<boolean> {
 async function apiFetch<T>(path: string, init: RequestInit = {}, opts?: { includeCredentials?: boolean }): Promise<T> {
   const token = useAuthStore.getState().token;
   const wsHeaders = getWorkspaceHeader();
+  const hadWorkspaceHeader = Object.keys(wsHeaders).length > 0;
 
   const headers = new Headers(init.headers || {});
   if (!headers.has("Content-Type") && init.body) headers.set("Content-Type", "application/json");
@@ -59,7 +60,7 @@ async function apiFetch<T>(path: string, init: RequestInit = {}, opts?: { includ
     if (!headers.has(k)) headers.set(k, v);
   }
 
-  const res = await fetch(`${API_URL}${path}`, {
+  let res = await fetch(`${API_URL}${path}`, {
     ...init,
     headers,
     credentials: opts?.includeCredentials ? "include" : "omit",
@@ -114,10 +115,44 @@ async function apiFetch<T>(path: string, init: RequestInit = {}, opts?: { includ
   }
 
   if (!res.ok) {
-    console.error("[client/api] API request failed", { path, status: res.status, body: data });
-    const err: ApiError = new Error(data?.error || data?.message || `Request failed (${res.status})`);
+    let errorPayload = data;
+    if (res.status === 403 && hadWorkspaceHeader) {
+      const code = String(data?.code || "").toUpperCase();
+      if (code === "WORKSPACE_ACCESS_DENIED") {
+        try {
+          useWorkspaceStore.getState().setActiveWorkspaceId(null);
+        } catch {
+          // Continue with original failure if workspace store update fails.
+        }
+
+        const retryHeaders = new Headers(init.headers || {});
+        if (!retryHeaders.has("Content-Type") && init.body) retryHeaders.set("Content-Type", "application/json");
+        const retryToken = useAuthStore.getState().token;
+        if (retryToken) retryHeaders.set("Authorization", `Bearer ${retryToken}`);
+        retryHeaders.delete("X-Workspace-Id");
+        retryHeaders.delete("x-workspace-id");
+
+        res = await fetch(`${API_URL}${path}`, {
+          ...init,
+          headers: retryHeaders,
+          credentials: opts?.includeCredentials ? "include" : "omit",
+        });
+
+        if (res.ok) {
+          const retryText = await res.text();
+          const retryData = safeJson(retryText);
+          return retryData as T;
+        }
+
+        const retryText = await res.text();
+        errorPayload = safeJson(retryText);
+      }
+    }
+
+    console.error("[client/api] API request failed", { path, status: res.status, body: errorPayload });
+    const err: ApiError = new Error(errorPayload?.error || errorPayload?.message || `Request failed (${res.status})`);
     err.status = res.status;
-    err.code = data?.code;
+    err.code = errorPayload?.code;
     throw err;
   }
 
@@ -125,7 +160,7 @@ async function apiFetch<T>(path: string, init: RequestInit = {}, opts?: { includ
 }
 
 // Existing
-export function analyzeSite(payload: { url: string; [k: string]: any }) {
+export function analyzeSite(payload: { url: string;[k: string]: any }) {
   return apiFetch("/api/analyze", {
     method: "POST",
     body: JSON.stringify(payload),

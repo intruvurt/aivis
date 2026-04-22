@@ -1,7 +1,7 @@
 import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
 import { buildBearerHeader } from './authToken';
-import { getWorkspaceHeader } from '../stores/workspaceStore';
+import { getWorkspaceHeader, useWorkspaceStore } from '../stores/workspaceStore';
 
 const DEFAULT_TIMEOUT_MS = 60_000;
 
@@ -50,6 +50,7 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
 
   // Inject workspace header so server-side workspaceRequired resolves correctly
   const wsHeaders = getWorkspaceHeader();
+  const hadWorkspaceHeader = Object.keys(wsHeaders).length > 0;
   for (const [k, v] of Object.entries(wsHeaders)) {
     if (!headers.has(k)) headers.set(k, v);
   }
@@ -97,6 +98,38 @@ export async function apiFetch(input: RequestInfo, init: ApiFetchOptions = {}) {
           }
           response = await fetch(requestInput, { ...init, headers, credentials, signal: controller.signal });
         }
+      }
+    }
+
+    // Recover once from stale workspace context cached in the browser.
+    if (response.status === 403 && hadWorkspaceHeader) {
+      let code = '';
+      try {
+        const body = await response.clone().json();
+        code = String((body as any)?.code || '').toUpperCase();
+      } catch {
+        code = '';
+      }
+
+      if (code === 'WORKSPACE_ACCESS_DENIED') {
+        try {
+          useWorkspaceStore.getState().setActiveWorkspaceId(null);
+        } catch {
+          // Keep request failure behavior deterministic if store update fails.
+        }
+
+        const retryHeaders = new Headers(init.headers || {});
+        const retryAuth = buildBearerHeader(useAuthStore.getState().token);
+        if (retryAuth) retryHeaders.set('Authorization', retryAuth);
+        retryHeaders.delete('X-Workspace-Id');
+        retryHeaders.delete('x-workspace-id');
+
+        response = await fetch(requestInput, {
+          ...init,
+          headers: retryHeaders,
+          credentials,
+          signal: controller.signal,
+        });
       }
     }
 

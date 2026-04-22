@@ -15,6 +15,8 @@ import { extractEvidenceFromScrape } from './evidenceExtractor.js';
 import { scoreEvidence } from './scoringEngine.js';
 import { buildPreviewResult } from './previewScanner.js';
 import { filterCitations, hashHtmlSnapshot } from './citationFilter.js';
+import { runGraphIngestion } from './graphIngestionService.js';
+import { runResolution } from './graphResolutionService.js';
 import type {
     ScanEvent,
     CiteEntry,
@@ -286,6 +288,23 @@ export async function runScan(
 
     // ── Stage 6: Finalise ─────────────────────────────────────────────────────
     const preview = buildPreviewResult(url, evidence, scoring);
+
+    // ── Stage 6b: Graph ingestion + resolution (fire-and-forget) ─────────────
+    // Runs in background — does not block SCAN_COMPLETED emission.
+    // Failures are logged but do not degrade the scan response.
+    void runGraphIngestion({
+        url,
+        html: scrapeResult.data.html ?? '',
+    })
+        .then(async (ingestion) => {
+            if (ingestion.claimCount > 0) {
+                await runResolution({ scanId: ingestion.scanId });
+            }
+        })
+        .catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            console.warn('[scanOrchestrator] graph ingestion failed (non-fatal):', msg);
+        });
 
     emit({
         type: 'PIPELINE_STAGE',

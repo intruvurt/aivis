@@ -27,6 +27,7 @@ from .evidence_ledger import EvidenceLedger
 from .document_parser import DocumentParser
 from .content_fingerprint import ContentFingerprinter
 from .brag_validator import BragValidator
+from .graph_ingest import IngestRequest, IngestResponse, handle_ingest
 
 # ---------------------------------------------------------------------------
 # App
@@ -168,6 +169,17 @@ async def health():
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "nlp_ready": nlp.is_ready(),
     }
+
+
+@app.post("/ingest", response_model=IngestResponse)
+async def ingest_for_graph(req: IngestRequest):
+    """Graph ingestion endpoint.
+
+    Chunks page content, generates embeddings, extracts entities and SPO claims.
+    Node orchestrator calls this, then handles all DB writes into the graph tables.
+    """
+    _check_key(req.internal_key)
+    return await handle_ingest(req)
 
 
 @app.post("/analyze/content")

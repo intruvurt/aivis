@@ -2718,11 +2718,17 @@ export interface ScanSummary {
 export type PipelineScanStage =
   | 'ingesting'
   | 'chunking'
+  | 'chunked'
   | 'embedding'
   | 'entity_resolving'
+  | 'entity_resolved'
+  | 'claim_writing'
   | 'edge_building'
+  | 'edge_generation'
   | 'scoring'
   | 'complete'
+  | 'ingestion_complete'
+  | 'ingestion_failed'
   | 'error';
 
 /** Discriminated union of all events emitted over the SSE stream */

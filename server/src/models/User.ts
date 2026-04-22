@@ -277,17 +277,41 @@ export async function updateUserById(
 
 export async function incrementLoginAttempts(email: string): Promise<void> {
   await pool.query(
-    `UPDATE users
-     SET login_attempts = COALESCE(login_attempts, 0) + 1,
-         locked_until = CASE WHEN COALESCE(login_attempts, 0) >= 5 THEN NOW() + INTERVAL '30 minutes' ELSE locked_until END
-     WHERE LOWER(email) = LOWER($1)`,
+    `WITH target AS (
+       SELECT id
+       FROM users
+       WHERE LOWER(email) = LOWER($1)
+       ORDER BY is_verified DESC, created_at DESC
+       LIMIT 1
+     )
+     UPDATE users u
+     SET login_attempts = COALESCE(u.login_attempts, 0) + 1,
+         locked_until = CASE
+           WHEN COALESCE(u.login_attempts, 0) >= 4 THEN NOW() + INTERVAL '30 minutes'
+           ELSE u.locked_until
+         END,
+         updated_at = NOW()
+     FROM target
+     WHERE u.id = target.id`,
     [normalizeEmail(email)]
   );
 }
 
 export async function resetLoginAttempts(email: string): Promise<void> {
   await pool.query(
-    `UPDATE users SET login_attempts = 0, locked_until = NULL WHERE LOWER(email) = LOWER($1)`,
+    `WITH target AS (
+       SELECT id
+       FROM users
+       WHERE LOWER(email) = LOWER($1)
+       ORDER BY is_verified DESC, created_at DESC
+       LIMIT 1
+     )
+     UPDATE users u
+     SET login_attempts = 0,
+         locked_until = NULL,
+         updated_at = NOW()
+     FROM target
+     WHERE u.id = target.id`,
     [normalizeEmail(email)]
   );
 }

@@ -112,19 +112,19 @@ const TIER_COLORS: Record<string, { gradient: string; border: string; glow: stri
   TIER_BRAND_PALETTE;
 
 const TIER_POSITIONING: Record<string, string> = {
-  observer: 'See whether AI systems can find and cite your site.',
-  starter: 'Move from baseline checks to implementation-ready fixes.',
-  alignment: 'Track competitors, mentions, and query-level gaps.',
-  signal: 'Run full validation with API and workflow automation.',
-  scorefix: 'Operate continuous remediation with evidence-linked outputs.',
+  observer: 'Surface layer: prove whether AI interpretation is happening at all.',
+  starter: 'Structural layer: inspect entity-level mismatches and evidence traces.',
+  alignment: 'Temporal layer: track interpretation drift and cross-scan changes.',
+  signal: 'Infrastructure layer: operate the ledger with automation and APIs.',
+  scorefix: 'Remediation layer: continuously repair gaps with evidence-linked actions.',
 };
 
 const TIER_AUDIENCE: Record<string, string> = {
-  observer: 'For teams validating baseline AI visibility',
-  starter: 'For teams that need prioritized implementation guidance',
-  alignment: 'For teams managing competitive and mention intelligence',
-  signal: 'For teams running full validation and automation workflows',
-  scorefix: 'For teams operating continuous evidence-linked remediation',
+  observer: 'For teams validating surface interpretation visibility',
+  starter: 'For teams investigating entity-level interpretation loss',
+  alignment: 'For teams monitoring temporal interpretation drift',
+  signal: 'For teams operating AI visibility infrastructure',
+  scorefix: 'For teams running continuous evidence-linked repairs',
 };
 
 const TIER_COPY: Record<
@@ -132,47 +132,47 @@ const TIER_COPY: Record<
   { headline: string; body: string; includes: string[]; cta: string; priceLabel?: string }
 > = {
   observer: {
-    headline: 'Baseline visibility check for your domain.',
-    body: 'Observer shows whether AI systems can extract and cite your site, with evidence-linked findings and core recommendations.',
+    headline: 'Surface interpretation layer.',
+    body: 'Observer shows the first ledger surface: whether AI systems can extract and cite your site at all.',
     includes: [
-      'whether your brand appears in AI answers at all',
-      'a small set of real queries where you are tested',
+      'surface interpretation snapshot',
+      'first ledger reconstruction samples',
       'basic citation evidence from surfaced results',
     ],
     cta: 'Start free',
   },
   starter: {
-    headline: 'Implementation-ready optimization layer.',
-    body: 'Starter expands coverage and produces actionable fixes, exports, and shareable links tied to real audit evidence.',
+    headline: 'Structural interpretation layer.',
+    body: 'Starter unlocks structural visibility: full mismatch UI, entity-level ledger entries, and evidence traces tied to each scan.',
     includes: [
-      'full query map',
-      "where your brand should appear but doesn't",
-      'where citations exist without you',
-      'first layer of evidence ledger',
-      'all recommendations with implementation code',
+      'full mismatch breakdown',
+      'entity-level ledger entries',
+      'evidence trace per scan',
+      'scan timeline replay (basic)',
+      'implementation-ready corrections',
     ],
     cta: 'Get Starter',
   },
   alignment: {
-    headline: 'Competitive and mention intelligence layer.',
-    body: 'Alignment adds competitor tracking, mention scanning, and reverse-engineer workflows so you can prioritize structural visibility gaps.',
+    headline: 'Temporal interpretation layer.',
+    body: 'Alignment reveals how AI understanding shifts over time with cross-scan context and propagation-level evidence history.',
     includes: [
-      'where competitors replace you in AI answers',
-      'where you are partially cited but not trusted',
-      'how different AI models describe your category',
-      'full citation ledger with cross-model validation',
-      'competitor tracking and comparison',
+      'interpretation drift over time',
+      'cross-scan entity graph context',
+      'citation propagation history',
+      'full ledger replay surface',
+      'cross-model interpretation verification',
     ],
     cta: 'Get Alignment',
   },
   signal: {
-    headline: 'Full validation and automation layer.',
-    body: 'Signal adds triple-check validation, citation testing, API access, alerts, and team workflow automation for production-scale operations.',
+    headline: 'Infrastructure access layer.',
+    body: 'Signal operationalizes the ledger as infrastructure with APIs, automation, team workflows, and real-time observability.',
     includes: [
-      'continuous scanning',
-      'API access to citation and query engine',
-      'real-time updates when your presence changes',
-      'full reasoning graph of how conclusions are formed',
+      'real-time scan stream observability',
+      'API access to ledger and query engine',
+      'workspace-level intelligence workflows',
+      'automation and webhook operations',
       'time-travel replay of visibility states',
     ],
     cta: 'Get Signal',
@@ -194,21 +194,21 @@ const TIER_COPY: Record<
 const VALUE_RAIL = [
   {
     icon: ShieldCheck,
-    title: 'Evidence-first visibility',
+    title: 'Depth before features',
     detail:
-      'Every plan maps outcomes to CITE LEDGER evidence, so scores and recommendations stay traceable to observed crawl and answer behavior.',
+      'Pricing maps to interpretation depth: surface, structural, temporal, and infrastructure access to the same ledger truth.',
   },
   {
     icon: Zap,
-    title: 'Tiered execution depth',
+    title: 'Ledger-native progression',
     detail:
-      'Plans share the same scoring core; higher tiers expand validation depth, automation workflows, and remediation capacity.',
+      'Each upgrade unlocks a deeper layer of interpretation visibility, not a different scoring system.',
   },
   {
     icon: Rocket,
-    title: 'Clear upgrade path',
+    title: 'Scan to upgrade loop',
     detail:
-      'Observer verifies baseline presence, Starter adds implementation guidance, Alignment adds intelligence, Signal adds control, and Score Fix adds continuous repair.',
+      'Run a scan, inspect proof, then unlock deeper reconstruction and control where the gaps are most visible.',
   },
 ] as const;
 
@@ -620,11 +620,13 @@ function PricingCard({
         >
           <div className="text-center">
             <p className="text-lg font-bold text-white">{tier.limits.scans_per_month}</p>
-            <p className="text-xs text-white/60">{isOneTime ? 'included audits' : 'audits/mo'}</p>
+            <p className="text-xs text-white/60">
+              {isOneTime ? 'included reconstructions' : 'ledger reconstructions/mo'}
+            </p>
           </div>
           <div className="text-center">
             <p className="text-lg font-bold text-white">{tier.limits.pages_per_scan}</p>
-            <p className="text-xs text-white/60">pages/audit</p>
+            <p className="text-xs text-white/60">evidence window</p>
           </div>
         </div>
 
@@ -1138,11 +1140,12 @@ export default function PricingPage() {
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
           <h2 className="text-2xl font-bold text-white mb-3">
-            Choose the execution depth your team needs.
+            How deeply do you want to see how AI understands your site?
           </h2>
           <p className="text-white/75">Every tier uses the same evidence-linked scoring model.</p>
           <p className="text-white/65">
-            Higher tiers add deeper validation, collaboration, and remediation automation.
+            Higher tiers unlock deeper interpretation reconstruction: Surface, Structure, Drift, and
+            Infrastructure.
           </p>
         </div>
 
@@ -1243,7 +1246,7 @@ export default function PricingPage() {
               <tbody className="text-white/70">
                 {[
                   [
-                    'Audit allowance',
+                    'Ledger reconstructions / month',
                     '3/mo',
                     '15/mo',
                     '60/mo',

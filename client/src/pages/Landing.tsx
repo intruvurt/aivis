@@ -1470,16 +1470,45 @@ const Landing = () => {
                 data-speakable
                 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight"
               >
-                Built for teams that care about how AI represents them{' '}
+                How deeply do you want to see how AI understands your site?{' '}
                 <span className="bg-gradient-to-r from-cyan-300 to-violet-300 bg-clip-text text-transparent">
-                  at the model level.
+                  Surface → Structure → Drift → Infrastructure.
                 </span>
               </h2>
               <p className="text-white/50 text-lg max-w-xl mx-auto">
-                AiVIS isn&apos;t a keyword tracker. It&apos;s a system for understanding and fixing
-                how your content is interpreted.
+                Pricing is a consequence of scan truth. Run a live scan first, then unlock deeper
+                interpretation layers.
               </p>
             </motion.div>
+
+            {!previewResult && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
+                className="rounded-2xl border border-cyan-400/20 bg-cyan-500/8 p-6 mb-12 max-w-2xl mx-auto text-center"
+              >
+                <p className="text-sm font-semibold text-cyan-200 mb-2">
+                  Run at least one scan to unlock contextual pricing.
+                </p>
+                <p className="text-xs text-white/55 mb-4">
+                  Pricing appears after execution events are detected: scan stage, mismatch signal,
+                  and entity resolution.
+                </p>
+                <a
+                  href="#hero-scanner"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const node = document.getElementById('hero-scanner');
+                    node?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:from-cyan-400 hover:to-violet-500 transition shadow-lg shadow-violet-500/20"
+                >
+                  Run scan to reveal depth tiers
+                </a>
+              </motion.div>
+            )}
 
             {/* ─ 2. What they saw vs what is locked ─ */}
             <motion.div
@@ -1487,7 +1516,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-              className="grid sm:grid-cols-2 gap-4 mb-16 max-w-2xl mx-auto"
+              className={`grid sm:grid-cols-2 gap-4 mb-16 max-w-2xl mx-auto ${previewResult ? '' : 'hidden'}`}
             >
               {/* Seen */}
               <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-6">
@@ -1538,9 +1567,9 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-              className="mb-6"
+              className={`mb-6 ${previewResult ? '' : 'hidden'}`}
             >
-              <div className="inline-flex items-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1 mb-10 block-inline mx-auto flex justify-center">
+              <div className="inline-flex items-center justify-center gap-1 rounded-xl border border-white/12 bg-[#111827]/70 p-1 mb-10 block-inline mx-auto">
                 {(['monthly', 'annual'] as const).map((cycle) => (
                   <button
                     key={cycle}
@@ -1564,7 +1593,7 @@ const Landing = () => {
             </motion.div>
 
             {/* 3-column progressive unlock */}
-            <div className="grid md:grid-cols-3 gap-5 mb-12">
+            <div className={`grid md:grid-cols-3 gap-5 mb-12 ${previewResult ? '' : 'hidden'}`}>
               {/* Column 1 — Free: See the problem */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1575,9 +1604,9 @@ const Landing = () => {
                 className="rounded-2xl border border-white/10 bg-[#0d1117]/60 p-6 flex flex-col"
               >
                 <p className="text-xs font-bold uppercase tracking-widest text-white/35 mb-1">
-                  Free · {PRICING.observer.limits.scans} scans/mo
+                  Surface · {PRICING.observer.limits.scans} ledger reconstructions/mo
                 </p>
-                <h3 className="text-xl font-bold text-white mb-1">See the problem</h3>
+                <h3 className="text-xl font-bold text-white mb-1">Surface visibility</h3>
                 <p className="text-white/40 text-sm mb-6 flex-1">
                   Enough to know something is wrong. Partial ledger, high-level scores, no lock-in.
                 </p>
@@ -1635,7 +1664,7 @@ const Landing = () => {
                       'Fix protocol + implementation code',
                       'AI interpretation traces',
                       'Competitor gap detection',
-                      `${PRICING.alignment.limits.scans} audits / month`,
+                      `${PRICING.alignment.limits.scans} ledger reconstructions / month`,
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2 text-white/70">
                         <span className="text-cyan-400 shrink-0 mt-0.5">·</span>
@@ -1680,7 +1709,7 @@ const Landing = () => {
                 </p>
                 <ul className="space-y-2 mb-6 text-sm">
                   {[
-                    `${PRICING.signal.limits.scans} audits / month`,
+                    `${PRICING.signal.limits.scans} ledger reconstructions / month`,
                     '3-model consensus (triple-check)',
                     'Brand mention monitoring',
                     'Scheduled rescans + alerts',
@@ -1748,7 +1777,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-              className="border-t border-white/8 pt-12 mb-12 max-w-2xl mx-auto text-center"
+              className={`border-t border-white/8 pt-12 mb-12 max-w-2xl mx-auto text-center ${previewResult ? '' : 'hidden'}`}
             >
               <h3 className="text-lg font-bold text-white mb-5">
                 This isn&apos;t SEO. It&apos;s AI interpretation.
@@ -1768,7 +1797,9 @@ const Landing = () => {
             </motion.div>
 
             {/* ─ 6. Risk reversal + registry advantage ─ */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-12 max-w-2xl mx-auto">
+            <div
+              className={`grid sm:grid-cols-2 gap-4 mb-12 max-w-2xl mx-auto ${previewResult ? '' : 'hidden'}`}
+            >
               <div className="rounded-xl border border-white/8 bg-white/[0.025] p-5 text-center">
                 <p className="text-white/65 text-sm leading-relaxed">
                   Run it on one page.{' '}
@@ -1795,7 +1826,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-              className="text-center mt-4"
+              className={`text-center mt-4 ${previewResult ? '' : 'hidden'}`}
             >
               <p className="text-white/40 text-base leading-relaxed max-w-md mx-auto mb-6">
                 Right now, AI is forming an opinion about your site.{' '}

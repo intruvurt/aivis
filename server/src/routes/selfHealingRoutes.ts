@@ -14,7 +14,11 @@ import {
   type AlertType,
 } from '../services/alertService.js';
 import { getTimeline, getUserTimelineUrls } from '../services/visibilityTimeline.js';
-import { getFixRankings, getGlobalFixRankings } from '../services/fixLearning.js';
+import {
+  getFixRankings,
+  getGlobalFixRankings,
+  seedValidatedFixOutcomes,
+} from '../services/fixLearning.js';
 
 const VALID_CHANNELS = new Set<AlertChannel>(['email', 'slack', 'discord', 'webhook', 'in_app']);
 const VALID_ALERT_TYPES = new Set<AlertType>([
@@ -108,11 +112,20 @@ router.get('/fix-rankings', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '').trim();
   const scope = String(req.query.scope || 'user');
 
+  let seeding: { inserted: number; candidates: number } | null = null;
+  if (scope !== 'global') {
+    try {
+      seeding = await seedValidatedFixOutcomes({ userId });
+    } catch {
+      seeding = null;
+    }
+  }
+
   const rankings = scope === 'global'
     ? await getGlobalFixRankings()
     : await getFixRankings(userId);
 
-  return res.json({ success: true, rankings });
+  return res.json({ success: true, rankings, seeding });
 });
 
 // ── Alert Subscriptions ───────────────────────────────────────────────────────

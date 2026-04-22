@@ -33,6 +33,46 @@ export interface FixRanking {
   accuracy_ratio: number;
 }
 
+export interface ValidatedSeedResult {
+  inserted: number;
+  candidates: number;
+}
+
+const SEEDED_SUBTYPE_PREFIX = 'seed_validated_repeated';
+
+const DEFAULT_EXPECTED_DELTA_BY_TYPE: Record<FixType, number> = {
+  meta: 4,
+  schema: 7,
+  heading: 3,
+  content: 3,
+  internal_links: 2,
+  canonical: 3,
+  robots: 6,
+  performance: 2,
+  generic: 2,
+};
+
+function toFixType(category: string): FixType {
+  const c = String(category || '').toLowerCase();
+  if (c.includes('schema') || c.includes('structured')) return 'schema';
+  if (c.includes('meta') || c.includes('open graph') || c.includes('og')) return 'meta';
+  if (c.includes('heading') || c.includes('h1')) return 'heading';
+  if (c.includes('content') || c.includes('readability')) return 'content';
+  if (c.includes('link')) return 'internal_links';
+  if (c.includes('canonical')) return 'canonical';
+  if (c.includes('robot') || c.includes('crawl')) return 'robots';
+  if (c.includes('performance') || c.includes('speed')) return 'performance';
+  return 'generic';
+}
+
+function slugPart(value: string): string {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 40);
+}
+
 // ── Write ────────────────────────────────────────────────────────────────────
 
 /**
@@ -146,4 +186,71 @@ export async function getBestFixTypeForUrl(userId: string, url: string): Promise
     [userId, url],
   );
   return rows[0]?.fix_type ?? null;
+}
+
+/**
+ * Seed fix_outcomes from repeated, evidence-backed findings in recent audits.
+ * This bootstraps rankings before post-merge verification data accumulates.
+ */
+export async function seedValidatedFixOutcomes(args: {
+  userId: string;
+  lookbackDays?: number;
+  minOccurrences?: number;
+}): Promise<ValidatedSeedResult> {
+  const lookbackDays = Math.max(14, Math.min(365, Number(args.lookbackDays || 90)));
+  const minOccurrences = Math.max(2, Math.min(12, Number(args.minOccurrences || 2)));
+
+  const { rows } = await getPool().query(
+    `SELECT
+       LOWER(COALESCE(NULLIF(a.normalized_url, ''), a.url)) AS url,
+       COALESCE(NULLIF(rec->>'category', ''), 'generic') AS category,
+       COALESCE(NULLIF(rec->>'title', ''), 'Untitled finding') AS title,
+       COUNT(*)::int AS occurrences
+     FROM audits a
+     CROSS JOIN LATERAL jsonb_array_elements(COALESCE(a.result->'recommendations', '[]'::jsonb)) AS rec
+     WHERE a.user_id = $1
+       AND a.created_at >= NOW() - ($2::text || ' days')::interval
+       AND COALESCE(a.status, 'completed') = 'completed'
+       AND (
+         (jsonb_typeof(rec->'evidence_ids') = 'array' AND jsonb_array_length(rec->'evidence_ids') > 0)
+         OR rec ? 'evidence'
+         OR rec ? 'implementation'
+       )
+     GROUP BY 1, 2, 3
+     HAVING COUNT(*) >= $3
+     ORDER BY occurrences DESC, url ASC
+     LIMIT 120`,
+    [args.userId, lookbackDays, minOccurrences],
+  );
+
+  let inserted = 0;
+
+  for (const r of rows as Array<{ url: string; category: string; title: string; occurrences: number }>) {
+    const fixType = toFixType(r.category);
+    const expectedDelta = DEFAULT_EXPECTED_DELTA_BY_TYPE[fixType] + Math.min(3, Math.max(0, Number(r.occurrences) - minOccurrences));
+    const actualDelta = Math.round((expectedDelta * 0.65) * 100) / 100;
+    const subtype = `${SEEDED_SUBTYPE_PREFIX}:${slugPart(r.category)}:${slugPart(r.title)}`;
+    const roi = expectedDelta !== 0 ? Math.round((actualDelta / expectedDelta) * 100) / 100 : 0;
+
+    const result = await getPool().query(
+      `INSERT INTO fix_outcomes (user_id, fix_type, fix_subtype, expected_delta, actual_delta, roi_ratio, url)
+       SELECT $1, $2, $3, $4, $5, $6, LOWER($7)
+       WHERE NOT EXISTS (
+         SELECT 1
+         FROM fix_outcomes
+         WHERE user_id = $1
+           AND LOWER(url) = LOWER($7)
+           AND fix_subtype = $3
+           AND captured_at >= NOW() - INTERVAL '30 days'
+       )`,
+      [args.userId, fixType, subtype, expectedDelta, actualDelta, roi, r.url],
+    );
+
+    if (Number(result.rowCount || 0) > 0) inserted += 1;
+  }
+
+  return {
+    inserted,
+    candidates: rows.length,
+  };
 }

@@ -11,6 +11,7 @@
 
 import React, { useEffect, useState } from 'react';
 import useAnalysis from '../hooks/useAnalysis';
+import { fetchCloudflareSignal } from '../services/cloudflareSignalsService';
 import {
   ScanLine,
   EntityHighlight,
@@ -25,13 +26,16 @@ interface AnalysisViewerProps {
   runId: string;
 
   /** User's subscription tier (controls: snapshot only vs live stream) */
-  userTier?: 'free' | 'starter' | 'alignment' | 'signal';
+  userTier?: 'observer' | 'starter' | 'alignment' | 'signal';
 
   /** Show timeline replay controls (requires 'alignment' or higher) */
   showTimeline?: boolean;
 
   /** Auto-replay timeline when complete (pro feature) */
   autoReplay?: boolean;
+
+  /** Optional target URL to pull Cloudflare traffic physics signals */
+  targetUrl?: string;
 }
 
 export const AnalysisViewer: React.FC<AnalysisViewerProps> = ({
@@ -39,6 +43,7 @@ export const AnalysisViewer: React.FC<AnalysisViewerProps> = ({
   userTier = 'observer',
   showTimeline = false,
   autoReplay = false,
+  targetUrl,
 }) => {
   const {
     state,
@@ -60,6 +65,8 @@ export const AnalysisViewer: React.FC<AnalysisViewerProps> = ({
 
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [cloudflareSignal, setCloudflareSignal] = useState<any | null>(null);
+  const [cloudflareError, setCloudflareError] = useState<string>('');
 
   /**
    * Animation frame loop for smooth stage progression visualization
@@ -73,6 +80,28 @@ export const AnalysisViewer: React.FC<AnalysisViewerProps> = ({
 
     return () => clearInterval(animationFrame);
   }, [isAnalyzing]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!targetUrl || userTier === 'observer') return;
+
+    const run = async () => {
+      const signalResponse = await fetchCloudflareSignal(targetUrl);
+      if (cancelled) return;
+      if (signalResponse.success) {
+        setCloudflareSignal(signalResponse.signal || null);
+        setCloudflareError('');
+      } else {
+        setCloudflareSignal(null);
+        setCloudflareError(signalResponse.error || 'Unable to load Cloudflare signals');
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [targetUrl, userTier, runId]);
 
   /**
    * Free tier: show cached snapshot only
@@ -163,6 +192,116 @@ export const AnalysisViewer: React.FC<AnalysisViewerProps> = ({
         </h3>
         <StageIndicator stages={stages} />
       </section>
+
+      {(cloudflareSignal || cloudflareError) && (
+        <section>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: 600, color: '#374151' }}>
+            Traffic Physics Signals
+          </h3>
+
+          {cloudflareError && (
+            <div
+              style={{
+                padding: '0.75rem',
+                borderRadius: '0.375rem',
+                border: '1px solid #fecaca',
+                backgroundColor: '#fef2f2',
+                color: '#991b1b',
+                fontSize: '0.875rem',
+              }}
+            >
+              {cloudflareError}
+            </div>
+          )}
+
+          {cloudflareSignal && (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '0.75rem',
+                padding: '1rem',
+                backgroundColor: '#f9fafb',
+                borderRadius: '0.5rem',
+                border: '1px solid #e5e7eb',
+              }}
+            >
+              <div
+                style={{
+                  padding: '0.5rem',
+                  background: '#fff',
+                  borderRadius: '0.375rem',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Scan Intensity</div>
+                <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827' }}>
+                  {cloudflareSignal.derived.scanIntensity}/100
+                </div>
+              </div>
+              <div
+                style={{
+                  padding: '0.5rem',
+                  background: '#fff',
+                  borderRadius: '0.375rem',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Cache Stability</div>
+                <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827' }}>
+                  {cloudflareSignal.derived.cacheStability}%
+                </div>
+              </div>
+              <div
+                style={{
+                  padding: '0.5rem',
+                  background: '#fff',
+                  borderRadius: '0.375rem',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>AI Visibility Gate</div>
+                <div
+                  style={{
+                    fontSize: '1.125rem',
+                    fontWeight: 700,
+                    color:
+                      cloudflareSignal.derived.aiVisibilityGate === 'open' ? '#047857' : '#b91c1c',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {cloudflareSignal.derived.aiVisibilityGate}
+                </div>
+              </div>
+              <div
+                style={{
+                  padding: '0.5rem',
+                  background: '#fff',
+                  borderRadius: '0.375rem',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Traffic Physics Score</div>
+                <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827' }}>
+                  {cloudflareSignal.derived.trafficPhysicsScore}/100
+                </div>
+              </div>
+
+              <div style={{ gridColumn: '1 / -1', paddingTop: '0.25rem' }}>
+                {Array.isArray(cloudflareSignal.explanation) &&
+                  cloudflareSignal.explanation.slice(0, 3).map((line: string, i: number) => (
+                    <div
+                      key={i}
+                      style={{ fontSize: '0.8rem', color: '#4b5563', marginBottom: '0.25rem' }}
+                    >
+                      {line}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Fetch stage detail with scan line */}
       <section>

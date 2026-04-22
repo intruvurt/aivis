@@ -10,7 +10,7 @@ import { analysisReducer, createInitialState, UIState, AnalysisAction } from './
 
 interface UseAnalysisOptions {
   runId: string;
-  userTier?: 'free' | 'starter' | 'alignment' | 'signal';
+  userTier?: 'observer' | 'starter' | 'alignment' | 'signal';
   onError?: (error: string) => void;
   autoReplay?: boolean;
 }

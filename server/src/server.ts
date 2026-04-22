@@ -15732,6 +15732,40 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     // Don't exit - allow server to start with partial schema
   }
 
+  const startupGateRaw = String(
+    process.env.DETERMINISM_STARTUP_GATE || "",
+  ).trim().toLowerCase();
+  const startupGateEnabled = startupGateRaw
+    ? ["1", "true", "yes", "on"].includes(startupGateRaw)
+    : NODE_ENV === "production";
+
+  if (startupGateEnabled) {
+    try {
+      const startupDeterminism = await runProductionHardChecks();
+      if (!startupDeterminism.ok) {
+        console.error(
+          "[Startup] FATAL: Determinism gate failed. Refusing to start server.",
+        );
+        console.error(
+          "[Startup] Determinism report:",
+          JSON.stringify(startupDeterminism.checks, null, 2),
+        );
+        process.exit(1);
+      }
+      console.log("[Startup] Determinism gate passed");
+    } catch (err: any) {
+      console.error(
+        "[Startup] FATAL: Determinism gate unavailable. Refusing to start server.",
+        err?.message || err,
+      );
+      process.exit(1);
+    }
+  } else {
+    console.log(
+      "[Startup] Determinism startup gate disabled via DETERMINISM_STARTUP_GATE",
+    );
+  }
+
   // Validate FRONTEND_URL at startup — a missing or schemeless value causes malformed OAuth redirects
   const _frontendUrlVal = String(process.env.FRONTEND_URL || '').trim();
   if (NODE_ENV === 'production') {

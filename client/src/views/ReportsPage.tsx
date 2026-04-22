@@ -127,7 +127,9 @@ function resolvePublicShareUrl(sharePath?: string, token?: string): string {
       : PUBLIC_APP_ORIGIN
   ).replace(/\/$/, '');
 
-  const fallbackPath = token ? `/report/public/${token}` : '/reports/public';
+  const fallbackPath = token
+    ? `/s/observe/${encodeURIComponent(token)}?depth=2&view=ledger&ts=latest`
+    : '/reports/public';
   const rawPath = String(sharePath || fallbackPath).trim();
   if (/^https?:\/\//i.test(rawPath)) return rawPath;
   const normalizedPath = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;

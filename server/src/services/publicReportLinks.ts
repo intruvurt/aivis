@@ -186,7 +186,7 @@ export async function createOrRefreshPublicReportLink(args: {
 
   const shareLinkExpirationDays = 0; // permanent
 
-  const sharePath = `/reports/public/${slug}`;
+  const sharePath = `/s/observe/${slug}?node=${encodeURIComponent(slug)}&depth=2&view=ledger&ts=latest`;
   return {
     token,
     slug,

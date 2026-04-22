@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import AppSidebar from './AppSidebar';
 import AppTopBar from './AppTopBar';
 import Footer from './Footer';
@@ -8,6 +8,7 @@ import TrialBanner from './TrialBanner';
 import ScanFlowBanner from './ScanFlowBanner';
 import RouteGuideBar from './RouteGuideBar';
 import { getRouteGuide } from '../config/routeIntelligence';
+import { useAuthStore } from '../stores/authStore';
 
 const GuideBot = React.lazy(() => import('./GuideBot'));
 
@@ -63,6 +64,7 @@ function PageLoadingIndicator() {
 export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const close = useCallback(() => setSidebarOpen(false), []);
+  const user = useAuthStore((s) => s.user);
 
   // Close sidebar on every route change (handles back/forward navigation on mobile)
   const location = useLocation();
@@ -71,6 +73,13 @@ export default function AppShell() {
   }, [location.pathname, close]);
 
   const routeGuide = getRouteGuide(location.pathname);
+  const verificationGraceUntil = user?.verification_grace_until || null;
+  const verificationReminderVisible =
+    user?.is_verified === false &&
+    user?.verification_grace_active === true &&
+    !!verificationGraceUntil &&
+    Number.isFinite(new Date(String(verificationGraceUntil)).getTime()) &&
+    new Date(String(verificationGraceUntil)).getTime() > Date.now();
 
   return (
     <div className="aurora-shell">
@@ -91,6 +100,25 @@ export default function AppShell() {
 
       <div className="aurora-main">
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
+        {verificationReminderVisible ? (
+          <div className="mx-4 mt-4 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-500/18 via-orange-500/12 to-rose-500/12 px-4 py-3 text-[13px] text-amber-100 shadow-[0_14px_32px_rgba(0,0,0,0.28)] sm:mx-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                Verify your email to keep uninterrupted access. Grace period ends on{' '}
+                <span className="font-semibold text-white">
+                  {new Date(String(verificationGraceUntil)).toLocaleString()}
+                </span>
+                .
+              </p>
+              <Link
+                to="/auth?mode=signin"
+                className="inline-flex items-center justify-center rounded-full border border-amber-100/40 bg-amber-100/15 px-3 py-1.5 text-[12px] font-semibold text-amber-50 transition hover:bg-amber-100/25"
+              >
+                Resend verification
+              </Link>
+            </div>
+          </div>
+        ) : null}
         <TrialBanner />
         <ScanFlowBanner />
         {routeGuide ? <RouteGuideBar guide={routeGuide} /> : null}

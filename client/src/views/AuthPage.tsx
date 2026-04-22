@@ -118,8 +118,8 @@ export default function AuthPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [showResend, setShowResend] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(true);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(true);
   const [marketingOptIn, setMarketingOptIn] = useState(true);
 
   const pwStrength = useMemo(() => getPasswordStrength(password), [password]);
@@ -173,7 +173,11 @@ export default function AuthPage() {
     transition: 'background-color 9999s ease-in-out 0s',
   };
   const vividFieldClass =
-    'field-vivid w-full border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-[#f97316]/45 focus:ring-1 focus:ring-[#0ea5e9]/40 transition-all';
+    'field-vivid w-full border border-white/12 rounded-xl text-white placeholder-white/45 focus:outline-none focus:border-[#ff7a45]/60 focus:ring-1 focus:ring-[#ff9a64]/45 transition-all';
+  const primaryButtonClass =
+    'w-full py-3 px-4 bg-gradient-to-r from-[#f54e5e] via-[#ff7a45] to-[#ffb347] text-white font-semibold rounded-full hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-[0_14px_34px_rgba(245,78,94,0.28)]';
+  const socialButtonClass =
+    'w-full py-3 px-4 border border-white/15 bg-[#1a1210]/70 hover:bg-[#241714] text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2';
 
   React.useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -334,11 +338,22 @@ export default function AuthPage() {
             display_name: user.display_name,
             created_at: user.created_at,
             avatar_url: user.avatar_url,
+            is_verified: user.is_verified === true,
+            verification_grace_active:
+              payload?.verification_grace_active === true || user?.verification_grace_active === true,
+            verification_grace_until:
+              payload?.verification_grace_until || user?.verification_grace_until || null,
           },
           token
         );
 
-        setSuccess('Successfully signed in!');
+        if (payload?.verification_grace_active && payload?.verification_grace_until) {
+          setSuccess(
+            `Signed in with temporary access. Verify your email before ${new Date(payload.verification_grace_until).toLocaleString()} to keep access.`
+          );
+        } else {
+          setSuccess('Successfully signed in!');
+        }
         const redirect = safeRedirect(searchParams.get('redirect'));
         window.setTimeout(() => navigate(redirect), 350);
       } catch (err: any) {
@@ -437,6 +452,9 @@ export default function AuthPage() {
               display_name: payload.user.display_name,
               created_at: payload.user.created_at,
               avatar_url: payload.user.avatar_url,
+              is_verified: payload.user.is_verified === true,
+              verification_grace_active: payload.user.verification_grace_active === true,
+              verification_grace_until: payload.user.verification_grace_until || null,
             },
             payload.token
           );
@@ -508,7 +526,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center p-4">
+    <div className="flex flex-1 items-center justify-center bg-[radial-gradient(circle_at_12%_10%,rgba(255,122,69,0.20),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(245,78,94,0.18),transparent_30%),linear-gradient(160deg,#120f10_0%,#1a1111_52%,#120d0d_100%)] p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center gap-3">
@@ -524,14 +542,14 @@ export default function AuthPage() {
         </div>
 
         <div className="relative">
-          <div className="bg-[#0f1623] border border-white/[0.09] rounded-2xl p-8">
+          <div className="rounded-3xl border border-white/[0.10] bg-[linear-gradient(165deg,rgba(28,18,18,0.96),rgba(18,12,12,0.98))] p-8 shadow-[0_30px_70px_rgba(0,0,0,0.42)]">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-white mb-2">
                 {mode === 'signin' && 'Access Evidence History'}
                 {mode === 'signup' && 'Start Your Evidence Record'}
                 {mode === 'reset' && 'Reset Password'}
               </h1>
-              <p className="text-white/65 text-sm">
+              <p className="text-white/72 text-sm">
                 {mode === 'signin' && 'Sign in to resume your citation ledger session'}
                 {mode === 'signup' && 'Submit a URL. The pipeline builds your evidence record.'}
                 {mode === 'reset' && "We'll send you reset instructions"}
@@ -630,18 +648,14 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#6366f1] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-                >
+                <button type="submit" disabled={isLoading} className={primaryButtonClass}>
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
                 </button>
 
                 <button
                   type="button"
                   onClick={startGoogleOAuth}
-                  className="w-full py-3 px-4 border border-white/15 bg-charcoal-light hover:bg-charcoal text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2"
+                  className={socialButtonClass}
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -667,7 +681,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={startGithubOAuth}
-                  className="w-full py-3 px-4 border border-white/15 bg-charcoal-light hover:bg-charcoal text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2"
+                  className={socialButtonClass}
                 >
                   <svg
                     className="w-5 h-5"
@@ -881,18 +895,14 @@ export default function AuthPage() {
                   </label>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-[#0ea5e9] via-[#6366f1] to-[#f97316] text-white font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-                >
+                <button type="submit" disabled={isLoading} className={primaryButtonClass}>
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
                 </button>
 
                 <button
                   type="button"
                   onClick={startGoogleOAuth}
-                  className="w-full py-3 px-4 border border-white/15 bg-charcoal-light hover:bg-charcoal text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2"
+                  className={socialButtonClass}
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -918,7 +928,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={startGithubOAuth}
-                  className="w-full py-3 px-4 border border-white/15 bg-charcoal-light hover:bg-charcoal text-white font-semibold rounded-full transition-all flex items-center justify-center gap-2"
+                  className={socialButtonClass}
                 >
                   <svg
                     className="w-5 h-5"

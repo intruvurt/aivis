@@ -39,6 +39,7 @@ import { meetsMinimumTier, type CanonicalTier, type LegacyTier } from '../../../
 import { profileUpdateSchema, sanitizeHtmlServer } from '../middleware/securityMiddleware.js';
 
 const MAX_PROFILE_IMAGE_BYTES = 400 * 1024;
+const EMAIL_VERIFICATION_GRACE_HOURS = Number(process.env.EMAIL_VERIFICATION_GRACE_HOURS || 12);
 
 function isRecoverableCaptchaFailure(message: unknown): boolean {
   const text = String(message || '').toLowerCase();
@@ -477,16 +478,32 @@ export const login = async (req: Request, res: Response) => {
       }
     }
 
-    // CRITICAL: Check if email is verified
+    // Verification gate with grace period for newly created accounts.
+    // This supports low-friction onboarding while preserving a hard verification deadline.
+    let verificationGraceActive = false;
+    let verificationGraceUntil: string | null = null;
     if (!user.is_verified) {
-      return res.status(403).json({
-        success: false,
-        error: 'Please verify your email before logging in. Check your inbox for the verification link.',
-        statusCode: 403,
-        code: 'EMAIL_NOT_VERIFIED',
-        requiresVerification: true,
-        userEmail: email,
-      });
+      const createdAtMs = new Date(String(user.created_at || '')).getTime();
+      const graceMs = Math.max(1, EMAIL_VERIFICATION_GRACE_HOURS) * 60 * 60 * 1000;
+      const canApplyGrace = Number.isFinite(createdAtMs) && createdAtMs > 0;
+      const graceUntilMs = canApplyGrace ? createdAtMs + graceMs : 0;
+      const nowMs = Date.now();
+
+      if (canApplyGrace && graceUntilMs > nowMs) {
+        verificationGraceActive = true;
+        verificationGraceUntil = new Date(graceUntilMs).toISOString();
+      } else {
+        return res.status(403).json({
+          success: false,
+          error: 'Please verify your email before logging in. Check your inbox for the verification link.',
+          statusCode: 403,
+          code: 'EMAIL_NOT_VERIFIED',
+          requiresVerification: true,
+          userEmail: email,
+          verificationGraceActive: false,
+          verificationGraceUntil,
+        });
+      }
     }
 
     // Reset login attempts on successful login
@@ -498,7 +515,11 @@ export const login = async (req: Request, res: Response) => {
     const allowlisted = getAllowlistedElevatedEmails();
     const effectiveRole = allowlisted.has(String(user.email || '').trim().toLowerCase()) ? 'admin' : (user.role || 'user');
 
-    const safeUser = pickSafeUser({ ...user, tier: effectiveTier, role: effectiveRole as any });
+    const safeUser = {
+      ...pickSafeUser({ ...user, tier: effectiveTier, role: effectiveRole as any }),
+      verification_grace_active: verificationGraceActive,
+      verification_grace_until: verificationGraceUntil,
+    };
 
     // Generate token with userId + tier (matches jwt.ts contract)
     const token = signUserToken({ userId: user.id, tier: effectiveTier || 'observer' });
@@ -509,6 +530,8 @@ export const login = async (req: Request, res: Response) => {
       data: {
         token,
         user: safeUser,
+        verification_grace_active: verificationGraceActive,
+        verification_grace_until: verificationGraceUntil,
       },
     });
   } catch (error: any) {

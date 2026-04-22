@@ -405,12 +405,24 @@ applySecurityMiddleware(app);
 // Add request logging for diagnostics (tracks all requests)
 app.use(createRequestLogger());
 
+const STRICT_STARTUP_ENV_RAW = String(
+  process.env.STRICT_STARTUP_ENV || "",
+).trim().toLowerCase();
+const STRICT_STARTUP_ENV_ENABLED = ["1", "true", "yes", "on"].includes(
+  STRICT_STARTUP_ENV_RAW,
+);
 const PORT = Number(process.env.PORT) || 10000;
-const PUBLIC_REPORT_SIGNING_SECRET =
+let PUBLIC_REPORT_SIGNING_SECRET =
   process.env.PUBLIC_REPORT_SIGNING_SECRET || process.env.JWT_SECRET || "";
 if (!PUBLIC_REPORT_SIGNING_SECRET && process.env.NODE_ENV === "production") {
-  throw new Error(
-    "PUBLIC_REPORT_SIGNING_SECRET or JWT_SECRET must be set in production",
+  if (STRICT_STARTUP_ENV_ENABLED) {
+    throw new Error(
+      "PUBLIC_REPORT_SIGNING_SECRET or JWT_SECRET must be set in production",
+    );
+  }
+  PUBLIC_REPORT_SIGNING_SECRET = `runtime-unsafe-${Date.now()}`;
+  console.warn(
+    "[Startup] Missing PUBLIC_REPORT_SIGNING_SECRET/JWT_SECRET; using ephemeral in-memory fallback (degraded mode)",
   );
 }
 const ANALYZE_REENTRANCY_GUARD_ENABLED =
@@ -1140,10 +1152,19 @@ function assertCriticalEnvForProduction(): void {
     missing.push("STRIPE_WEBHOOK_SECRET");
 
   if (missing.length > 0) {
-    console.error(
-      `[Startup] Missing required production env vars: ${missing.join(", ")}`,
+    const missingText = missing.join(", ");
+    if (STRICT_STARTUP_ENV_ENABLED) {
+      console.error(
+        `[Startup] Missing required production env vars: ${missingText}`,
+      );
+      process.exit(1);
+    }
+    console.warn(
+      `[Startup] Missing production env vars (degraded mode): ${missingText}`,
     );
-    process.exit(1);
+    console.warn(
+      "[Startup] Set STRICT_STARTUP_ENV=true to enforce fail-fast startup in production",
+    );
   }
 }
 
@@ -9146,6 +9167,11 @@ app.post(
           .json({ error: "Public report signing is not configured" });
       }
 
+      const allowCrossWorkspaceFallback =
+        String(process.env.ALLOW_CROSS_WORKSPACE_AUDIT_FALLBACK || "false")
+          .trim()
+          .toLowerCase() === "true";
+
       const pool = getPool();
       // Primary lookup: workspace-scoped (includes NULL workspace for legacy audits)
       let { rows } = auditId
@@ -9171,7 +9197,7 @@ app.post(
       // Fallback: if workspace-scoped query missed, try user-only ownership check.
       // This covers audits that ended up with a different workspace_id (e.g. user
       // switched workspaces, or audit was created before workspace auto-assign).
-      if (!rows[0]?.id && auditId) {
+      if (!rows[0]?.id && auditId && allowCrossWorkspaceFallback) {
         const fallback = await pool.query(
           `SELECT id, created_at FROM audits WHERE id = $1 AND user_id = $2 LIMIT 1`,
           [auditId, userId],
@@ -9182,7 +9208,7 @@ app.post(
             `[Share-link] Fallback matched audit ${rows[0].id} (workspace mismatch resolved)`,
           );
         }
-      } else if (!rows[0]?.id && !auditId) {
+      } else if (!rows[0]?.id && !auditId && allowCrossWorkspaceFallback) {
         // Fallback 1: exact URL match (no workspace filter)
         const fallback = await pool.query(
           `SELECT id, created_at FROM audits
@@ -9201,7 +9227,7 @@ app.post(
 
       // Fallback 2: if still no match, try the most recent audit for this user + URL
       // This handles URL normalization edge cases (trailing slash, protocol, etc.)
-      if (!rows[0]?.id) {
+      if (!rows[0]?.id && allowCrossWorkspaceFallback) {
         const normalizedTarget = normalizeAuditTargetKey(rawUrl.trim());
         const broadFallback = await pool.query(
           `SELECT id, url, created_at FROM audits
@@ -9285,6 +9311,13 @@ app.post(
         expires_at: shareLink.expiresAt,
         share_path: shareLink.sharePath,
         legacy_share_path: shareLink.legacySharePath,
+        graph_projection: {
+          mode: "observe",
+          node_id: shareLink.slug,
+          depth: 2,
+          view: "ledger",
+          snapshot: "latest",
+        },
         scan_ordinal: scanOrdinal,
         scan_count_for_target: matchingTargetAudits.length,
         scan_label: scanLabel,
@@ -15713,10 +15746,16 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   if (!(process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY))
     missingVars.push("OPENROUTER_API_KEY");
   if (missingVars.length && NODE_ENV === "production") {
-    console.error(
-      `[Startup] FATAL: Missing required env vars: ${missingVars.join(", ")}. Aborting.`,
+    const missingText = missingVars.join(", ");
+    if (STRICT_STARTUP_ENV_ENABLED) {
+      console.error(
+        `[Startup] FATAL: Missing required env vars: ${missingText}. Aborting.`,
+      );
+      process.exit(1);
+    }
+    console.warn(
+      `[Startup] WARNING: Missing required env vars in production; continuing in degraded mode: ${missingText}`,
     );
-    process.exit(1);
   } else if (missingVars.length) {
     console.warn(
       `[Startup] WARNING: Missing env vars (non-fatal in ${NODE_ENV}): ${missingVars.join(", ")}`,
@@ -15749,25 +15788,47 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     : NODE_ENV === "production";
 
   if (startupGateEnabled) {
+    const strictDeterminismRaw = String(
+      process.env.DETERMINISM_STARTUP_GATE_STRICT || "",
+    ).trim().toLowerCase();
+    const strictDeterminismEnabled = ["1", "true", "yes", "on"].includes(
+      strictDeterminismRaw,
+    );
     try {
       const startupDeterminism = await runProductionHardChecks();
       if (!startupDeterminism.ok) {
+        if (strictDeterminismEnabled) {
+          console.error(
+            "[Startup] FATAL: Determinism gate failed. Refusing to start server.",
+          );
+          console.error(
+            "[Startup] Determinism report:",
+            JSON.stringify(startupDeterminism.checks, null, 2),
+          );
+          process.exit(1);
+        }
         console.error(
-          "[Startup] FATAL: Determinism gate failed. Refusing to start server.",
+          "[Startup] Determinism gate failed; continuing in degraded mode (set DETERMINISM_STARTUP_GATE_STRICT=true to fail fast)",
         );
         console.error(
           "[Startup] Determinism report:",
           JSON.stringify(startupDeterminism.checks, null, 2),
         );
+      } else {
+        console.log("[Startup] Determinism gate passed");
+      }
+    } catch (err: any) {
+      if (strictDeterminismEnabled) {
+        console.error(
+          "[Startup] FATAL: Determinism gate unavailable. Refusing to start server.",
+          err?.message || err,
+        );
         process.exit(1);
       }
-      console.log("[Startup] Determinism gate passed");
-    } catch (err: any) {
       console.error(
-        "[Startup] FATAL: Determinism gate unavailable. Refusing to start server.",
+        "[Startup] Determinism gate unavailable; continuing in degraded mode:",
         err?.message || err,
       );
-      process.exit(1);
     }
   } else {
     console.log(

@@ -21,6 +21,9 @@ export type AuthUser = {
     org_favicon_url?: string;
     company?: string;
     website?: string;
+    is_verified?: boolean;
+    verification_grace_active?: boolean;
+    verification_grace_until?: string | null;
 };
 
 export type AuthState = {
@@ -111,6 +114,9 @@ function normalizeAuthUser(raw: any): AuthUser | null {
         org_favicon_url: raw.org_favicon_url ?? undefined,
         company: raw.company ?? undefined,
         website: raw.website ?? undefined,
+        is_verified: raw.is_verified === true,
+        verification_grace_active: raw.verification_grace_active === true,
+        verification_grace_until: raw.verification_grace_until ?? null,
     };
 
     if (!user.id || !user.email) return null;

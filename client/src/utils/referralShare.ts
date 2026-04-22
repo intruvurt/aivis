@@ -9,14 +9,21 @@ export type ShareReferralArgs = {
 };
 
 export function buildReferralInviteLink(referralCode: string): string {
-  return `${PUBLIC_APP_ORIGIN}/auth?mode=signup&ref=${encodeURIComponent(referralCode)}`;
+  const qp = new URLSearchParams({
+    mode: 'signup',
+    ref: referralCode,
+    utm_source: 'referral',
+    utm_medium: 'invite',
+    utm_campaign: 'user_referral',
+  });
+  return `${PUBLIC_APP_ORIGIN}/auth?${qp.toString()}`;
 }
 
 export function buildReferralInviteMessage(args: ShareReferralArgs): { link: string; message: string } {
   const link = buildReferralInviteLink(args.referralCode);
   const requiredAudits = Math.max(1, Number(args.requiredAuditsForReward || 5));
   const paidMultiplier = Math.max(1, Number(args.paidRewardMultiplier || 3));
-  const message = `I use AiVIS.biz to validate AI search answers, citation and brand mentions, technical trust signals, brand or domain credibility and global authority accurately. Sign up with my invite link and unlock +${args.creditsToReferred} credits for you and +${args.creditsToReferrer} for me once eligibility is met (${requiredAudits}+ audits), with ${paidMultiplier}x rewards on paid upgrades.`;
+  const message = `I use AiVIS to measure and improve how AI systems cite web content. Use my invite link to start free and unlock +${args.creditsToReferred} credits for you (+${args.creditsToReferrer} for me) after eligibility (${requiredAudits}+ audits), with ${paidMultiplier}x rewards on paid upgrades.`;
   return { link, message };
 }
 

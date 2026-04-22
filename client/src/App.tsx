@@ -321,6 +321,7 @@ export default function App() {
               <Route path="/reports/public/:shareId" element={<PublicReportPage />} />
               <Route path="/report/public/:shareId" element={<PublicReportPage />} />
               <Route path="/report/:shareId" element={<PublicReportPage />} />
+              <Route path="/s/:mode/:shareId" element={<PublicReportPage />} />
               <Route path="/payment-success" element={<PaymentSuccessPage />} />
               <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
 

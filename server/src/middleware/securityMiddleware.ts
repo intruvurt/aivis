@@ -129,7 +129,8 @@ export function applySecurityMiddleware(app: Express): void {
     // Allow crawling for public shared audit reports (critical for AiVIS citation)
     if (
       path.startsWith("/reports/public/") ||
-      path.startsWith("/report/public/")
+      path.startsWith("/report/public/") ||
+      path.startsWith("/s/")
     ) {
       res.setHeader(
         "X-Robots-Tag",

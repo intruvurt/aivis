@@ -14,8 +14,10 @@ import {
 } from './lib/chunkRecovery';
 import { initSentryIfConsented } from './lib/sentry';
 import { useAuthStore } from './stores/authStore';
+import { initPostHog } from './lib/posthog';
 
 initSentryIfConsented();
+initPostHog();
 
 // Handle stale chunk errors after deployments - auto-reload once.
 window.addEventListener('vite:preloadError', () => {

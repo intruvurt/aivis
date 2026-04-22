@@ -12,7 +12,8 @@ Add these environment variables to your Railway project:
 POSTHOG_KEY=phx_YOUR_PERSONAL_API_KEY
 POSTHOG_PROJECT_ID=YOUR_PROJECT_ID
 POSTHOG_API_ENDPOINT=https://app.posthog.com
-NEXT_PUBLIC_POSTHOG_KEY=YOUR_PUBLIC_KEY  (for browser tracking)
+VITE_POSTHOG_PUBLIC_KEY=YOUR_PUBLIC_KEY  (for browser tracking)
+VITE_POSTHOG_API_HOST=https://us.i.posthog.com
 ```
 
 **How to find on Railway:**
@@ -21,7 +22,8 @@ NEXT_PUBLIC_POSTHOG_KEY=YOUR_PUBLIC_KEY  (for browser tracking)
 - Click "Variables" tab
 - Add the three/four vars above (see steps 2-3 for getting the values)
 - `POSTHOG_KEY` = Backend server key (private, read-write)
-- `NEXT_PUBLIC_POSTHOG_KEY` = Frontend public key (read-only for events)
+- `VITE_POSTHOG_PUBLIC_KEY` = Frontend public key (read-only for events)
+- `VITE_POSTHOG_API_HOST` = Frontend PostHog host (`https://us.i.posthog.com` by default)
 
 ## 2. Create PostHog Personal API Key (Backend)
 
@@ -50,14 +52,15 @@ For frontend event capture, use a **Project API Key** instead:
 
 1. Go to https://app.posthog.com → **Project settings → API Keys**
 2. Copy the **Project API Key** (starts with `phx_`)
-3. This is used as `NEXT_PUBLIC_POSTHOG_KEY` in browser
+3. This is used as `VITE_POSTHOG_PUBLIC_KEY` in browser
 4. Public keys are **read-only** for event creation (safe to expose)
 
 ## 4. Set Environment Variables on Railway
 
 ```bash
 POSTHOG_KEY="phx_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # Backend (private)
-NEXT_PUBLIC_POSTHOG_KEY="phx_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"  # Frontend (public)
+VITE_POSTHOG_PUBLIC_KEY="phc_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"  # Frontend (public)
+VITE_POSTHOG_API_HOST="https://us.i.posthog.com"
 POSTHOG_PROJECT_ID="<your project ID>"
 POSTHOG_API_ENDPOINT="https://app.posthog.com"  # default; EU: https://eu.posthog.com
 ```
@@ -71,12 +74,15 @@ POSTHOG_API_ENDPOINT="https://app.posthog.com"  # default; EU: https://eu.postho
 AiVIS frontend captures events automatically when PostHog SDK is initialized:
 
 ```typescript
-// In main client init (src/main.tsx or App.tsx)
-import posthog from "posthog-js";
+// In main client init (src/main.tsx)
+import { initPostHog } from "./lib/posthog";
 
-// Initialize with PUBLIC key
+// Initialize once during app bootstrap
+initPostHog();
+
+// Internally:
 posthog.init(import.meta.env.VITE_POSTHOG_PUBLIC_KEY, {
-  api_host: import.meta.env.VITE_POSTHOG_API_HOST || "https://app.posthog.com",
+  api_host: import.meta.env.VITE_POSTHOG_API_HOST || "https://us.i.posthog.com",
   // Identify current user after auth
   loaded: (ph) => {
     const user = getCurrentUser(); // from auth store
@@ -370,7 +376,7 @@ curl -X POST https://api.aivis.biz/api/analytics/events \
 
 1. Check frontend PostHog initialization
 2. Check browser console for `window.posthog`
-3. Verify `NEXT_PUBLIC_POSTHOG_KEY` is correct
+3. Verify `VITE_POSTHOG_PUBLIC_KEY` is correct
 4. Check PostHog → Settings → API access for IP whitelisting
 
 ### Feature flags not working

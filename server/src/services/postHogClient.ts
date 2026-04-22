@@ -10,16 +10,15 @@ import type {
     FeatureFlagBatchResponse,
     PersonPropertiesResponse,
     AnalyticsError,
-    AnalyticsErrorCode,
     ProductMetricsResponse,
     EngagementResponse,
     VisitorResponse,
     RetentionResponse,
-    CohortMembershipResponse,
     PersonPropertyValue,
     FeatureFlagClient,
     AnalyticsClient,
 } from '../types/analyticsTypes.js';
+import { AnalyticsErrorCode } from '../types/analyticsTypes.js';
 
 class PostHogAnalyticsError extends Error implements AnalyticsError {
     public code: AnalyticsErrorCode;
@@ -83,7 +82,7 @@ export class FeatureFlagService implements FeatureFlagClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 `Failed to evaluate flag: ${flagKey}`,
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -128,7 +127,7 @@ export class FeatureFlagService implements FeatureFlagClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 'Failed to evaluate flags in batch',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -168,7 +167,7 @@ export class FeatureFlagService implements FeatureFlagClient {
         if (!response.success || !response.properties) {
             throw new PostHogAnalyticsError(
                 `Person not found: ${userId}`,
-                'NOT_FOUND',
+                AnalyticsErrorCode.NOT_FOUND,
                 404
             );
         }
@@ -195,7 +194,7 @@ export class FeatureFlagService implements FeatureFlagClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 `Failed to update person properties: ${userId}`,
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -281,7 +280,7 @@ export class FeatureFlagService implements FeatureFlagClient {
                 const error = await response.json().catch(() => ({}));
                 throw new PostHogAnalyticsError(
                     error.error || 'API request failed',
-                    'QUERY_FAILED',
+                    AnalyticsErrorCode.QUERY_FAILED,
                     response.status,
                     error
                 );
@@ -294,7 +293,7 @@ export class FeatureFlagService implements FeatureFlagClient {
             }
             throw new PostHogAnalyticsError(
                 err?.message || 'Network error',
-                'SERVICE_UNAVAILABLE',
+                AnalyticsErrorCode.SERVICE_UNAVAILABLE,
                 503
             );
         }
@@ -360,7 +359,7 @@ export class AnalyticsService implements AnalyticsClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 'Failed to fetch visitor metrics',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -388,7 +387,7 @@ export class AnalyticsService implements AnalyticsClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 'Failed to fetch engagement metrics',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -428,7 +427,7 @@ export class AnalyticsService implements AnalyticsClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 'Failed to fetch product metrics',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -449,12 +448,16 @@ export class AnalyticsService implements AnalyticsClient {
         if (!response.success) {
             throw new PostHogAnalyticsError(
                 'Failed to fetch retention data',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
 
-        return response.retention;
+        return response.retention.map((point) => ({
+            interval: point.interval,
+            cohortSize: point.cohort_size,
+            returnRate: point.return_rate,
+        }));
     }
 
     /**
@@ -472,7 +475,7 @@ export class AnalyticsService implements AnalyticsClient {
         if (!response.results) {
             throw new PostHogAnalyticsError(
                 'Query execution returned no results',
-                'QUERY_FAILED',
+                AnalyticsErrorCode.QUERY_FAILED,
                 500
             );
         }
@@ -505,7 +508,7 @@ export class AnalyticsService implements AnalyticsClient {
                 const error = await response.json().catch(() => ({}));
                 throw new PostHogAnalyticsError(
                     error.error || 'API request failed',
-                    'QUERY_FAILED',
+                    AnalyticsErrorCode.QUERY_FAILED,
                     response.status,
                     error
                 );
@@ -518,7 +521,7 @@ export class AnalyticsService implements AnalyticsClient {
             }
             throw new PostHogAnalyticsError(
                 err?.message || 'Network error',
-                'SERVICE_UNAVAILABLE',
+                AnalyticsErrorCode.SERVICE_UNAVAILABLE,
                 503
             );
         }

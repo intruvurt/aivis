@@ -51,11 +51,21 @@ type RunState = {
 
 const RUN_TTL_SECONDS = 60 * 60;
 const CACHE_TTL_SECONDS = 60 * 60 * 8;
-const MODELS = [
+const ALL_MODELS = [
   'openai/gpt-5-nano',
   'anthropic/claude-haiku-4.5',
   'meta-llama/llama-3.3-70b-instruct',
 ];
+
+function parsePositiveInt(value: string | undefined, fallback: number): number {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return fallback;
+  return Math.floor(n);
+}
+
+const MODEL_CAP = Math.min(ALL_MODELS.length, parsePositiveInt(process.env.REALTIME_VIS_MODELS, 2));
+const PROMPT_CAP = parsePositiveInt(process.env.REALTIME_VIS_PROMPTS, 8);
+const MODELS = ALL_MODELS.slice(0, MODEL_CAP);
 
 const PROMPT_CLUSTERS: Array<{ cluster: 'discovery' | 'comparison' | 'decision'; prompts: string[] }> = [
   {
@@ -252,7 +262,7 @@ export async function startRealtimeVisibilityRun(args: {
 
   const promptSet = PROMPT_CLUSTERS.flatMap((cluster) =>
     cluster.prompts.flatMap((prompt) => VARIANTS.slice(0, 2).map((variant) => `${prompt} (${variant})`))
-  ).slice(0, 12);
+  ).slice(0, PROMPT_CAP);
 
   const totalRuns = promptSet.length * MODELS.length;
   const dayCacheKey = dayKey(domain);

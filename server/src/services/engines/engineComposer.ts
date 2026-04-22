@@ -16,6 +16,7 @@ import { runCitationReadinessEngine } from './citationEngine.js';
 import { runTrustLayerEngine } from './trustEngine.js';
 import { runEntityGraphEngine } from './entityEngine.js';
 import { runAuditPipeline } from '../audit/pipeline.js';
+import { runRAGPipeline } from '../ragPipeline.js';
 
 export interface EngineComposerInput {
   html: string;
@@ -25,6 +26,10 @@ export interface EngineComposerInput {
   https_enabled?: boolean;
   domain_age_years?: number;
   scrapeResult?: any;
+  /** Optional seed query for RAG pipeline (Signal tier only) */
+  ragQuery?: string;
+  /** Optional seed entities for RAG graph seeding */
+  ragEntities?: string[];
 }
 
 interface ComparisonInsight {
@@ -280,6 +285,19 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
   // Determine which engines this tier can run
   const engineAccess = getEnginesForTierSafe(input.tier);
 
+  // ── RAG Pipeline (Signal / agency tier) — fires in parallel ──────────────
+  let ragPipelinePromise: Promise<Awaited<ReturnType<typeof runRAGPipeline>> | null> =
+    Promise.resolve(null);
+  if (input.tier === 'signal' || input.tier === 'agency') {
+    const ragQuery = input.ragQuery || `What is ${input.domain} and is it credible?`;
+    ragPipelinePromise = runRAGPipeline({
+      query: ragQuery,
+      subjectEntities: input.ragEntities ?? [],
+      maxPages: 8,
+      topN: 15,
+    }).catch(err => { console.warn('[RAG] Pipeline failed (non-fatal):', err?.message); return null; });
+  }
+
   let citationResult: CitationReadinessOutput | null = null;
   let trustResult: TrustLayerOutput | null = null;
   let entityResult: EntityGraphOutput | null = null;
@@ -456,6 +474,9 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
       ]);
     }
   }
+  // Await RAG (parallel) result
+  const ragResult = await ragPipelinePromise;
+
   const auditPipeline = await runAuditPipeline({
     scrapeResult: input.scrapeResult
       ? input.scrapeResult
@@ -481,26 +502,21 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
 
   const overallScore = Math.round(
     (computeOverallVisibilityScore(citationScore, trustScore, entityScore, promptScore, hallucinationScore) * 0.7) +
-    (structuralSupportScore * 0.3)
+    (structuralSupportScore * 0.3),
   );
 
   const totalTimeMs = Date.now() - startTime;
 
-  // Build base response (visible to all tiers)
   const response: IntelligenceAnalysisResponse & { audit_report?: any; analysis_coverage?: any } = {
     url: input.url,
     analyzed_at: new Date().toISOString(),
     tier: input.tier,
     processing_time_ms: totalTimeMs,
     is_cached: false,
-
-    // Always visible
     overall_ai_visibility_score: overallScore,
     citation_readiness_score: citationScore,
     trust_score: trustScore,
     entity_clarity_score: entityScore,
-
-    // Engine outputs
     citation_readiness: citationResult,
     trust_layer: trustResult,
     entity_graph: entityResult,
@@ -513,7 +529,24 @@ export async function runAnalysisEngines(input: EngineComposerInput): Promise<In
       ? ` | Repair plan: ${repairInsight.priorityActions.length} actions, projected ${repairInsight.projectedScoreAfterFixes}`
       : ''),
   );
+
   response.audit_report = auditReport;
+
+  if (ragResult) {
+    (response as any).rag_pipeline = {
+      intent: ragResult.intent,
+      search_stats: ragResult.search.provider_stats,
+      consensus_top: ragResult.search.consensus_top.slice(0, 5),
+      discarded_sources: ragResult.search.discarded,
+      graph_stats: (ragResult.graph as any).stats ?? {},
+      top_entity: ragResult.scores.top_entity,
+      graph_summary: ragResult.scores.graph_summary,
+      entity_scores: ragResult.scores.entity_scores.slice(0, 5),
+      trust_sources: ragResult.trust_sources,
+      execution_class: ragResult.execution_class,
+      pipeline_ms: ragResult.pipeline_ms,
+    };
+  }
   response.analysis_coverage = {
     modules: {
       content: auditModules.content,

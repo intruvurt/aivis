@@ -12,16 +12,19 @@ const router = Router();
 
 // PostHog instance
 let posthogClient: any;
-try {
-    const PostHog = await import('posthog-node').then(m => m.default || m.PostHog);
-    if (PostHog) {
-        posthogClient = new PostHog(process.env.POSTHOG_KEY || '', {
-            apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
-        });
+(async () => {
+    try {
+        const moduleRef = await import('posthog-node');
+        const PostHogCtor = (moduleRef as any).PostHog || (moduleRef as any).default;
+        if (PostHogCtor) {
+            posthogClient = new PostHogCtor(process.env.POSTHOG_KEY || '', {
+                apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
+            });
+        }
+    } catch (err) {
+        console.warn('[Analytics] PostHog client not available');
     }
-} catch (err) {
-    console.warn('[Analytics] PostHog client not available');
-}
+})();
 
 /**
  * GET /api/analytics/health

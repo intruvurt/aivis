@@ -12,16 +12,19 @@ const router = Router();
 
 // Use real PostHog instance (from config)
 let posthogClient: any;
-try {
-    const PostHog = await import('posthog-node').then(m => m.default || m.PostHog);
-    if (PostHog) {
-        posthogClient = new PostHog(process.env.POSTHOG_KEY || '', {
-            apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
-        });
+(async () => {
+    try {
+        const moduleRef = await import('posthog-node');
+        const PostHogCtor = (moduleRef as any).PostHog || (moduleRef as any).default;
+        if (PostHogCtor) {
+            posthogClient = new PostHogCtor(process.env.POSTHOG_KEY || '', {
+                apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
+            });
+        }
+    } catch (err) {
+        console.warn('[Features] PostHog client not available (feature flags disabled)');
     }
-} catch (err) {
-    console.warn('[Features] PostHog client not available (feature flags disabled)');
-}
+})();
 
 /**
  * POST /api/features/flags/evaluate

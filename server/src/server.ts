@@ -236,6 +236,7 @@ import realtimeVisibilityRoutes from "./routes/realtimeVisibilityRoutes.js";
 import autoVisibilityFixRoutes from "./routes/autoVisibilityFixRoutes.js";
 import githubAppRoutes from "./routes/githubAppRoutes.js";
 import selfHealingRoutes from "./routes/selfHealingRoutes.js";
+import simulationRoutes from "./routes/simulationRoutes.js";
 import pipelineRoutes from "./routes/pipelineRoutes.js";
 import deterministicLoopRoutes from "./routes/deterministicLoopRoutes.js";
 import analyticsGatewayRoutes from "./routes/analyticsGatewayRoutes.js";
@@ -1689,6 +1690,7 @@ app.use("/api/integrations/gsc", gscRoutes);
 app.use("/api/visibility", realtimeVisibilityRoutes);
 app.use("/api/fix-engine", autoVisibilityFixRoutes);
 app.use("/api/self-healing", selfHealingRoutes);
+app.use("/api/simulate", simulationRoutes);
 app.use("/api/pipeline", pipelineRoutes);
 app.use("/api", deterministicLoopRoutes);
 app.use("/api", analyticsGatewayRoutes);
@@ -15783,9 +15785,10 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   const startupGateRaw = String(
     process.env.DETERMINISM_STARTUP_GATE || "",
   ).trim().toLowerCase();
-  const startupGateEnabled = startupGateRaw
-    ? ["1", "true", "yes", "on"].includes(startupGateRaw)
-    : NODE_ENV === "production";
+  const startupGateEnabled = ["1", "true", "yes", "on"].includes(startupGateRaw);
+  const startupGateHardFail = ["1", "true", "yes", "on"].includes(
+    String(process.env.DETERMINISM_STARTUP_GATE_HARD_FAIL || "").trim().toLowerCase(),
+  );
 
   if (startupGateEnabled) {
     const strictDeterminismRaw = String(
@@ -15832,7 +15835,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     }
   } else {
     console.log(
-      "[Startup] Determinism startup gate disabled via DETERMINISM_STARTUP_GATE",
+      "[Startup] Determinism startup gate disabled (set DETERMINISM_STARTUP_GATE=true to enable)",
     );
   }
 

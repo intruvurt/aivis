@@ -776,6 +776,18 @@ const SettingsPage: React.FC = () => {
 
             {/* Utility actions */}
             <div className="mt-5 space-y-1 border-t border-white/10 pt-5">
+              <Link
+                to="/app/profile"
+                className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
+              >
+                <User className="w-4 h-4" /> Profile Home
+              </Link>
+              <Link
+                to="/app/billing"
+                className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"
+              >
+                <CreditCard className="w-4 h-4" /> Billing
+              </Link>
               <button
                 onClick={exportSettings}
                 className="w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm text-white/70 transition-colors hover:bg-white/[0.04] hover:text-white"

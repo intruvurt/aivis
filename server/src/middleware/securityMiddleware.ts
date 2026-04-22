@@ -84,14 +84,14 @@ export function applySecurityMiddleware(app: Express): void {
       // script-src: nonce-based + strict-dynamic for dynamically loaded scripts + fallback https: for CDN
       // Includes: analytics (Google, Clarity, Cloudflare), Cloudflare bot challenges,
       // Sentry error tracking, Recaptcha, and CDN fallback
-      `script-src 'nonce-${nonce}' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms https://static.cloudflareinsights.com https://challenges.cloudflare.com https://cdn-cgi.octolane.com https://recaptcha.google.com https://www.google.com https://*.sentry.io`,
+      `script-src 'nonce-${nonce}' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms https://static.cloudflareinsights.com https://challenges.cloudflare.com https://cdn-cgi.octolane.com https://recaptcha.google.com https://www.google.com https://*.sentry.io https://us-assets.i.posthog.com https://app.posthog.com`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com",
       // connect-src: XMLHttpRequest/fetch/WebSocket to self, all https, analytics, Sentry, Stripe, Cloudflare
-      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com https://*.sentry.io https://*.ingest.sentry.io https://api.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com https://cloudflareinsights.com https://*.clarity.ms",
+      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com https://*.sentry.io https://*.ingest.sentry.io https://api.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com https://cloudflareinsights.com https://*.clarity.ms https://us.i.posthog.com https://us-assets.i.posthog.com https://app.posthog.com",
       "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
       "frame-src 'self' https: https://www.google.com https://recaptcha.google.com https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com",

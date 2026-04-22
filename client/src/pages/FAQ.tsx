@@ -694,6 +694,42 @@ const categories: FAQCategory[] = [
       },
     ],
   },
+
+  // ── 12. Core Kernel & Modes ─────────────────────────────────────────
+  {
+    id: 'core-kernel',
+    label: 'Core Kernel, Modes, and Simulation',
+    items: [
+      {
+        question: 'What is the AiVIS Core Kernel?',
+        answer: [
+          'The Core Kernel is the canonical reasoning spine that unifies Entity Graph, Citation Ledger, AI simulation outputs, temporal memory, and action compilation. It prevents scan, diagnosis, and remediation from drifting into disconnected tool surfaces.',
+          'In practical terms, the kernel keeps every output traceable to evidence, every score grounded in ledger truth, and every fix linked to a verifiable outcome path.',
+        ],
+      },
+      {
+        question: 'Why does AiVIS use mode-based system states?',
+        answer: [
+          'AiVIS separates runtime intent into Scan, Observe, Diagnose, and Fix so each mode has one epistemic job. Scan ingests evidence, Observe structures it, Diagnose highlights contradictions and trust gaps, and Fix compiles deterministic remediation.',
+          'This separation reduces UI drift and keeps each screen aligned with one truth operation instead of mixing dashboards, reports, and execution controls in the same surface.',
+        ],
+      },
+      {
+        question: 'What does the simulation layer add beyond citation tracking?',
+        answer: [
+          'Tracking tells you whether a model cited you in the past. Simulation estimates how multiple model behaviors are likely to reconstruct your content now, and where distortion or omission risk is highest.',
+          'That enables predictive remediation: not just "you were missed," but "you are likely to be missed again unless these specific entity and structure fixes are applied."',
+        ],
+      },
+      {
+        question: 'How does temporal memory change decision quality?',
+        answer: [
+          'Temporal memory converts isolated snapshots into drift-aware history: when citation presence decays, when trust states fragment across engines, and when a fix produces durable lift vs short-lived movement.',
+          'Without this timeline view, teams optimize on static reports. With it, teams optimize on verified trend behavior and cross-model stability.',
+        ],
+      },
+    ],
+  },
 ];
 
 function AccordionItem({
@@ -779,7 +815,7 @@ export default function FAQ() {
     <PublicPageFrame
       icon={HelpCircle}
       title="Frequently asked questions"
-      subtitle="Clear product answers without the giant bordered-slab FAQ treatment."
+      subtitle="Citation intelligence answers across Scan, Observe, Diagnose, Fix, and simulation."
       backTo="/"
       maxWidthClass="max-w-5xl"
     >

@@ -685,7 +685,7 @@ router.get('/project/:projectId/timeline', requireScope('read:audits'), async (r
     }
 
     const url = rows[0].domain as string;
-    const timeline = await getTimeline(userId, url, days);
+    const timeline = await getTimeline(userId, url, days, workspaceId || null);
     return res.json({ success: true, data: { project_id: projectId, domain: url, ...timeline } });
   } catch {
     return res.status(500).json({ success: false, error: 'Internal server error' });

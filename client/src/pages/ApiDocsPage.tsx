@@ -1,20 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { BookOpen, KeyRound, Code2, AlertTriangle, Activity, Globe, Lock, Cpu } from "lucide-react";
-import { usePageMeta } from "../hooks/usePageMeta";
-import { buildBreadcrumbSchema, buildTechArticleSchema, buildWebPageSchema } from "../lib/seoSchema";
-import PublicPageFrame from "../components/PublicPageFrame";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { BookOpen, KeyRound, Code2, AlertTriangle, Activity, Globe, Lock, Cpu } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
+import {
+  buildBreadcrumbSchema,
+  buildTechArticleSchema,
+  buildWebPageSchema,
+} from '../lib/seoSchema';
+import PublicPageFrame from '../components/PublicPageFrame';
 
 export default function ApiDocsPage() {
   usePageMeta({
-    title: "API Docs | Auth, Endpoints, Quickstart",
+    title: 'API Docs | Auth, Endpoints, Timeline + Trust',
     description:
-      "Developer docs for AiVIS.biz API: quickstart, API key auth, endpoint reference, scopes, error handling, and integration examples.",
-    path: "/api-docs",
+      'Developer docs for AiVIS.biz API: quickstart, API key auth, endpoint reference, scopes, timeline/trust outputs, and integration examples.',
+    path: '/api-docs',
     structuredData: [
       buildTechArticleSchema({
         title: 'AiVIS.biz API Documentation',
-        description: 'Developer docs for AiVIS.biz REST API: quickstart, API key authentication, endpoint reference, scopes, error codes, and integration examples.',
+        description:
+          'Developer docs for AiVIS.biz REST API: quickstart, API key authentication, endpoint reference, scopes, error codes, and integration examples.',
         path: '/api-docs',
         proficiencyLevel: 'Expert',
         dependencies: 'AiVIS.biz API key · Alignment+ plan',
@@ -22,7 +27,8 @@ export default function ApiDocsPage() {
       buildWebPageSchema({
         path: '/api-docs',
         name: 'AiVIS.biz API Docs | Developer Reference',
-        description: 'Complete reference documentation for the AiVIS.biz AI visibility auditing API.',
+        description:
+          'Complete reference documentation for the AiVIS.biz AI visibility auditing API.',
       }),
       buildBreadcrumbSchema([
         { name: 'Home', path: '/' },
@@ -34,69 +40,133 @@ export default function ApiDocsPage() {
   const sections = [
     {
       icon: BookOpen,
-      title: "Quickstart",
+      title: 'Quickstart',
       points: [
-        "Create an API key from your account feature settings.",
-        "Call /api/v1/audits with Bearer avis_* key.",
-        "Use /api/v1/usage to monitor metered API requests.",
+        'Create an API key from your account feature settings.',
+        'Call /api/v1/audits with Bearer avis_* key.',
+        'Use /api/v1/usage to monitor metered API requests.',
+        'Map outputs into your Scan -> Observe -> Diagnose -> Fix workflow.',
       ],
     },
     {
       icon: KeyRound,
-      title: "Authentication",
+      title: 'Authentication',
       points: [
-        "External API uses API key auth: Authorization: Bearer avis_xxx.",
-        "Session-auth routes under /api/features manage API keys.",
-        "API keys are workspace-bound and can be disabled or revoked.",
+        'External API uses API key auth: Authorization: Bearer avis_xxx.',
+        'Session-auth routes under /api/features manage API keys.',
+        'API keys are workspace-bound and can be disabled or revoked.',
       ],
     },
     {
       icon: Code2,
-      title: "Endpoint Surface",
+      title: 'Endpoint Surface',
       points: [
-        "v1 endpoints include audits, analytics, competitors, evidence, usage, and page validation.",
-        "Scopes: read:audits and read:analytics.",
-        "Designed for integrations, reporting pipelines, sync jobs, and validation tooling.",
+        'v1 endpoints include audits, analytics, competitors, evidence, usage, and page validation.',
+        'Scopes: read:audits and read:analytics.',
+        'Designed for integrations, reporting pipelines, sync jobs, and validation tooling.',
       ],
     },
     {
       icon: AlertTriangle,
-      title: "Troubleshooting",
+      title: 'Troubleshooting',
       points: [
-        "401 INVALID_API_KEY for missing/invalid/disabled/expired keys.",
-        "403 INSUFFICIENT_SCOPE when key lacks required scope.",
-        "Tier access and workspace isolation are enforced server-side on every key validation.",
-        "Per-key request throttling is active to protect production API stability.",
+        '401 INVALID_API_KEY for missing/invalid/disabled/expired keys.',
+        '403 INSUFFICIENT_SCOPE when key lacks required scope.',
+        'Tier access and workspace isolation are enforced server-side on every key validation.',
+        'Per-key request throttling is active to protect production API stability.',
       ],
     },
   ];
 
   const endpoints = [
-    { method: "GET", path: "/api/v1/audits", scope: "read:audits", note: "List audits with pagination" },
-    { method: "GET", path: "/api/v1/audits/:id", scope: "read:audits", note: "Get full audit payload" },
-    { method: "GET", path: "/api/v1/analytics", scope: "read:analytics", note: "Get score history grouped by URL" },
-    { method: "GET", path: "/api/v1/competitors", scope: "read:audits", note: "Get competitor tracking records" },
-    { method: "GET", path: "/api/v1/evidence/:auditId", scope: "read:audits", note: "Get evidence-focused audit view" },
-    { method: "GET", path: "/api/v1/usage", scope: "read:audits", note: "Get current-month metered API usage" },
-    { method: "POST", path: "/api/v1/page-validation", scope: "read:audits", note: "Run and store technical page validation" },
-    { method: "GET", path: "/api/v1/page-validation/:id", scope: "read:audits", note: "Fetch stored page validation record" },
-    { method: "GET", path: "/api/compliance/policy", scope: "public", note: "Consumer policy and disclaimer metadata" },
-    { method: "GET", path: "/api/compliance/consent", scope: "session auth", note: "List consent records for account/workspace" },
-    { method: "POST", path: "/api/compliance/consent", scope: "session auth", note: "Create or update consent status" },
+    {
+      method: 'GET',
+      path: '/api/v1/audits',
+      scope: 'read:audits',
+      note: 'List audits with pagination',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/audits/:id',
+      scope: 'read:audits',
+      note: 'Get full audit payload',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/analytics',
+      scope: 'read:analytics',
+      note: 'Get score history grouped by URL',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/competitors',
+      scope: 'read:audits',
+      note: 'Get competitor tracking records',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/evidence/:auditId',
+      scope: 'read:audits',
+      note: 'Get evidence-focused audit view',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/usage',
+      scope: 'read:audits',
+      note: 'Get current-month metered API usage',
+    },
+    {
+      method: 'POST',
+      path: '/api/v1/page-validation',
+      scope: 'read:audits',
+      note: 'Run and store technical page validation',
+    },
+    {
+      method: 'GET',
+      path: '/api/v1/page-validation/:id',
+      scope: 'read:audits',
+      note: 'Fetch stored page validation record',
+    },
+    {
+      method: 'GET',
+      path: '/api/compliance/policy',
+      scope: 'public',
+      note: 'Consumer policy and disclaimer metadata',
+    },
+    {
+      method: 'GET',
+      path: '/api/compliance/consent',
+      scope: 'session auth',
+      note: 'List consent records for account/workspace',
+    },
+    {
+      method: 'POST',
+      path: '/api/compliance/consent',
+      scope: 'session auth',
+      note: 'Create or update consent status',
+    },
   ];
 
   return (
-    <PublicPageFrame icon={Code2} title="API Documentation" subtitle="Auth, endpoints, scopes, and integration quickstart for the AiVIS.biz REST API" maxWidthClass="max-w-6xl">
+    <PublicPageFrame
+      icon={Code2}
+      title="API Documentation"
+      subtitle="Auth, endpoints, scopes, and trust/timeline-aware integration for the AiVIS.biz REST API"
+      maxWidthClass="max-w-6xl"
+    >
       <section>
         <div className="rounded-2xl border border-white/12 bg-charcoal-light/40 p-6 sm:p-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-300/40 bg-emerald-500/12 text-emerald-200 text-xs font-semibold tracking-[0.08em] uppercase">
             <Activity className="w-3.5 h-3.5" />
             Developer API
           </div>
-          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">AiVIS.biz API Documentation</h1>
+          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
+            AiVIS.biz API Documentation
+          </h1>
           <p className="mt-3 text-white/75 max-w-3xl leading-relaxed">
-            Everything needed to integrate with the real AiVIS.biz API: quickstart, API key auth, scopes, endpoint behavior, and
-            production safe error handling.
+            Everything needed to integrate with the real AiVIS.biz API: quickstart, API key auth,
+            scopes, timeline-aware evidence flows, trust-state outputs, and production safe error
+            handling.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -119,7 +189,10 @@ export default function ApiDocsPage() {
             { label: 'Usage metering', value: 'Tracked', tone: 'emerald' },
             { label: 'Evidence-first payloads', value: 'Native', tone: 'amber' },
           ].map((item) => (
-            <div key={item.label} className="rounded-xl border border-white/12 bg-charcoal-light/35 p-4">
+            <div
+              key={item.label}
+              className="rounded-xl border border-white/12 bg-charcoal-light/35 p-4"
+            >
               <p className="text-[10px] uppercase tracking-wide text-white/50">{item.label}</p>
               <p className="mt-2 text-2xl font-black text-white">{item.value}</p>
             </div>
@@ -130,7 +203,10 @@ export default function ApiDocsPage() {
           {sections.map((section) => {
             const Icon = section.icon;
             return (
-              <article key={section.title} className="rounded-xl border border-white/12 bg-charcoal-light/35 p-5">
+              <article
+                key={section.title}
+                className="rounded-xl border border-white/12 bg-charcoal-light/35 p-5"
+              >
                 <div className="flex items-center gap-2 text-white">
                   <Icon className="w-4 h-4" />
                   <h2 className="text-lg font-semibold">{section.title}</h2>
@@ -146,7 +222,8 @@ export default function ApiDocsPage() {
         </div>
 
         <div className="mt-6 rounded-xl border border-amber-300/30 bg-amber-500/10 p-4 text-sm text-amber-100/95">
-          Paid tier reality: Alignment is paid but does not include external API key access. Signal and Score Fix include API access.
+          Paid tier reality: Alignment is paid but does not include external API key access. Signal
+          and Score Fix include API access.
         </div>
 
         <div className="mt-6 rounded-xl border border-white/12 bg-charcoal-light/35 p-5">
@@ -160,7 +237,10 @@ export default function ApiDocsPage() {
               'Tier-gated access enforced server-side on every request',
               'Technical validation and audit endpoints designed for automation workflows',
             ].map((capability) => (
-              <div key={capability} className="rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-sm text-white/78">
+              <div
+                key={capability}
+                className="rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-sm text-white/78"
+              >
                 {capability}
               </div>
             ))}
@@ -181,7 +261,10 @@ export default function ApiDocsPage() {
               </thead>
               <tbody>
                 {endpoints.map((endpoint) => (
-                  <tr key={endpoint.path} className="border-b border-white/5 text-white/85 align-top">
+                  <tr
+                    key={endpoint.path}
+                    className="border-b border-white/5 text-white/85 align-top"
+                  >
                     <td className="py-2 pr-3 text-emerald-200 font-medium">{endpoint.method}</td>
                     <td className="py-2 pr-3 font-mono text-xs">{endpoint.path}</td>
                     <td className="py-2 pr-3 text-white/75">{endpoint.scope}</td>
@@ -197,17 +280,26 @@ export default function ApiDocsPage() {
           <div className="rounded-xl border border-white/12 bg-charcoal-light/35 p-5">
             <h3 className="text-base font-semibold">Quickstart cURL</h3>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
-{`curl "https://api.aivis.biz/api/v1/audits?limit=25" \\
+              {`curl "https://api.aivis.biz/api/v1/audits?limit=25" \\
   -H "Authorization: Bearer avis_xxxxxxxxxxxxxxxxx"`}
             </pre>
           </div>
           <div className="rounded-xl border border-white/12 bg-charcoal-light/35 p-5">
             <h3 className="text-base font-semibold">Common Errors</h3>
             <ul className="mt-3 space-y-2 text-sm text-white/75">
-              <li>• 401 INVALID_API_KEY: key missing, invalid, disabled, expired, or not entitled by tier</li>
+              <li>
+                • 401 INVALID_API_KEY: key missing, invalid, disabled, expired, or not entitled by
+                tier
+              </li>
               <li>• 403 INSUFFICIENT_SCOPE: key exists but lacks required operation scope</li>
               <li>• 404 Audit/Page not found: audit ID is outside your workspace scope</li>
-              <li>• 400 Validation failed: unsupported, invalid, private, or localhost URL passed to page validation</li>
+              <li>
+                • 409 Truth-state mismatch: timeline/event references are outside workspace scope
+              </li>
+              <li>
+                • 400 Validation failed: unsupported, invalid, private, or localhost URL passed to
+                page validation
+              </li>
             </ul>
           </div>
         </div>
@@ -215,7 +307,10 @@ export default function ApiDocsPage() {
         {/* ── Integration Discovery ────────────────────────────────── */}
         <div className="mt-10 mb-2">
           <h2 className="text-2xl font-bold tracking-tight">Integration Discovery</h2>
-          <p className="mt-1 text-sm text-white/60">Three ways for third-party tools and AI agents to find and connect with AiVIS.biz automatically.</p>
+          <p className="mt-1 text-sm text-white/60">
+            Three ways for third-party tools and AI agents to find and connect with AiVIS.biz
+            automatically.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -226,10 +321,11 @@ export default function ApiDocsPage() {
               <h3 className="text-base font-semibold">OpenAPI 3.0 Spec</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Machine-readable API definition at a single public URL. Import into Postman, generate SDKs, or feed directly to documentation engines.
+              Machine-readable API definition at a single public URL. Import into Postman, generate
+              SDKs, or feed directly to documentation engines.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
-{`GET /api/v1/openapi.json`}
+              {`GET /api/v1/openapi.json`}
             </pre>
             <ul className="mt-3 space-y-1.5 text-xs text-white/60">
               <li>• Public - no auth required</li>
@@ -246,10 +342,11 @@ export default function ApiDocsPage() {
               <h3 className="text-base font-semibold">OAuth 2.0</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Authorization Code flow lets third-party apps request user consent and receive scoped access tokens - no API key sharing required.
+              Authorization Code flow lets third-party apps request user consent and receive scoped
+              access tokens - no API key sharing required.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
-{`POST /api/oauth/clients      # Register app
+              {`POST /api/oauth/clients      # Register app
 GET  /api/oauth/authorize    # User consent
 POST /api/oauth/token        # Code → token
 POST /api/oauth/revoke       # Revoke token`}
@@ -269,10 +366,11 @@ POST /api/oauth/revoke       # Revoke token`}
               <h3 className="text-base font-semibold">MCP Server</h3>
             </div>
             <p className="mt-2 text-sm text-white/70 leading-relaxed">
-              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS.biz tools natively - audit, analytics, evidence, and validation.
+              Model Context Protocol endpoint for AI agents. Agents discover and call AiVIS.biz
+              tools natively - audit, analytics, evidence, and validation.
             </p>
             <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
-{`GET  /api/mcp            # Server info
+              {`GET  /api/mcp            # Server info
 GET  /api/mcp/tools      # List tools
 POST /api/mcp/call       # Execute tool`}
             </pre>
@@ -289,7 +387,7 @@ POST /api/mcp/call       # Execute tool`}
         <div className="mt-4 rounded-xl border border-white/12 bg-charcoal-light/35 p-5">
           <h3 className="text-base font-semibold">AI Agent Configuration Example</h3>
           <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
-{`{
+            {`{
   "mcpServers": {
     "aivis": {
       "url": "https://api.aivis.biz/api/mcp",
@@ -301,7 +399,8 @@ POST /api/mcp/call       # Execute tool`}
 }`}
           </pre>
           <p className="mt-2 text-xs text-white/50">
-            Add this to your AI agent's MCP config. The agent will auto-discover available tools via /api/mcp/tools.
+            Add this to your AI agent's MCP config. The agent will auto-discover available tools via
+            /api/mcp/tools.
           </p>
         </div>
       </section>

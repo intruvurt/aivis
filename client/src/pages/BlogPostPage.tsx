@@ -24,13 +24,23 @@ function renderInlineMarkdown(text: string): React.ReactNode {
     if (match[1] && match[2]) {
       // Markdown link: [text](url)
       elements.push(
-        <a key={key++} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-orange-300 underline underline-offset-2 hover:text-orange-200 transition-colors">
+        <a
+          key={key++}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-orange-300 underline underline-offset-2 hover:text-orange-200 transition-colors"
+        >
           {match[1]}
         </a>
       );
     } else if (match[3]) {
       // Bold: **text**
-      elements.push(<strong key={key++} className="font-semibold text-white">{match[3]}</strong>);
+      elements.push(
+        <strong key={key++} className="font-semibold text-white">
+          {match[3]}
+        </strong>
+      );
     }
 
     lastIndex = regex.lastIndex;
@@ -55,6 +65,19 @@ const categoryLabels: Record<string, string> = {
   implementation: 'Implementation',
 };
 
+function getSourceLabel(rawUrl: string): string {
+  try {
+    const hostname = new URL(rawUrl).hostname.toLowerCase();
+    if (hostname.includes('medium.com')) return 'Medium';
+    if (hostname.includes('blogspot.com') || hostname.includes('blogger.com')) return 'Blogger';
+    if (hostname.includes('aivis.biz') || hostname.includes('aivis.ing')) return 'AiVIS.biz';
+  } catch {
+    return 'canonical source';
+  }
+
+  return 'canonical source';
+}
+
 export default function BlogPostPage() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
@@ -63,6 +86,16 @@ export default function BlogPostPage() {
   const hasMirroredContent = Boolean(entry?.content?.trim());
 
   if (!entry) return <Navigate to="/blogs" replace />;
+
+  const sourceLabel = getSourceLabel(entry.sourceMediumUrl);
+  const hasExternalCanonicalSource = (() => {
+    try {
+      const sourceUrl = new URL(entry.sourceMediumUrl);
+      return !(sourceUrl.hostname.includes('aivis.biz') && sourceUrl.pathname === entry.path);
+    } catch {
+      return false;
+    }
+  })();
 
   usePageMeta({
     title: `${entry.title} | AiVIS.biz Blogs`,
@@ -97,24 +130,39 @@ export default function BlogPostPage() {
     <div className="text-white">
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <div className="mb-8 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="rounded-full border border-white/10 p-2 transition-colors hover:bg-white/[0.05]" type="button" aria-label="Go back">
+          <button
+            onClick={() => navigate(-1)}
+            className="rounded-full border border-white/10 p-2 transition-colors hover:bg-white/[0.05]"
+            type="button"
+            aria-label="Go back"
+          >
             <ArrowLeft className="h-5 w-5 text-white/60" />
           </button>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/72">AiVIS.biz blog</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/72">
+              AiVIS.biz blog
+            </p>
             <p className="mt-1 text-sm text-white/56">Canonical publication on aivis.biz</p>
           </div>
         </div>
 
         <article className="rounded-[30px] border border-white/10 bg-white/[0.03] p-6 sm:p-8">
           <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-white/60">
-            <span className="flex items-center gap-1"><Folder className="h-3.5 w-3.5" />{categoryLabels[entry.category] ?? entry.category}</span>
-            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{entry.readMinutes} min read</span>
+            <span className="flex items-center gap-1">
+              <Folder className="h-3.5 w-3.5" />
+              {categoryLabels[entry.category] ?? entry.category}
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              {entry.readMinutes} min read
+            </span>
             <span>{entry.publishedAt}</span>
             {entry.updatedAt ? <span>Updated {entry.updatedAt}</span> : null}
           </div>
 
-          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">{entry.title}</h1>
+          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            {entry.title}
+          </h1>
           <p className="mb-6 text-lg leading-relaxed text-white/75">{entry.description}</p>
 
           {hasMirroredContent ? (
@@ -124,22 +172,35 @@ export default function BlogPostPage() {
                 .map((block) => block.trim())
                 .filter(Boolean)
                 .map((block, index) => {
-                  const looksLikeHeading = /^\d+\./.test(block) || (/^[A-Z][^\n]{0,100}$/.test(block) && block.split(' ').length <= 14);
+                  const looksLikeHeading =
+                    /^\d+\./.test(block) ||
+                    (/^[A-Z][^\n]{0,100}$/.test(block) && block.split(' ').length <= 14);
                   const looksLikeDivider = /^(---|\*\*\*|---)$/.test(block);
                   const looksLikeList = block.includes('\n- ') || block.startsWith('- ');
-                  const looksLikeQuote = block.startsWith('> ') || (/^[“"].+[”"]$/.test(block) && block.length < 260);
+                  const looksLikeQuote =
+                    block.startsWith('> ') || (/^[“"].+[”"]$/.test(block) && block.length < 260);
 
                   if (looksLikeDivider) {
                     return <hr key={`divider-${index}`} className="my-6 border-white/10" />;
                   }
 
                   if (looksLikeHeading) {
-                    return <h3 key={`heading-${index}`} className="pt-2 text-xl font-semibold text-white">{renderInlineMarkdown(block)}</h3>;
+                    return (
+                      <h3
+                        key={`heading-${index}`}
+                        className="pt-2 text-xl font-semibold text-white"
+                      >
+                        {renderInlineMarkdown(block)}
+                      </h3>
+                    );
                   }
 
                   if (looksLikeQuote) {
                     return (
-                      <blockquote key={`quote-${index}`} className="rounded-r-2xl border-l-4 border-orange-400/60 bg-orange-950/18 px-4 py-3 italic text-white/85">
+                      <blockquote
+                        key={`quote-${index}`}
+                        className="rounded-r-2xl border-l-4 border-orange-400/60 bg-orange-950/18 px-4 py-3 italic text-white/85"
+                      >
                         {renderInlineMarkdown(block.replace(/^>\s*/, ''))}
                       </blockquote>
                     );
@@ -154,30 +215,45 @@ export default function BlogPostPage() {
 
                     if (items.length > 0) {
                       return (
-                        <ul key={`list-${index}`} className="list-disc space-y-2 pl-5 text-white/75 marker:text-orange-400">
-                          {items.map((item) => <li key={`${index}-${item}`}>{renderInlineMarkdown(item)}</li>)}
+                        <ul
+                          key={`list-${index}`}
+                          className="list-disc space-y-2 pl-5 text-white/75 marker:text-orange-400"
+                        >
+                          {items.map((item) => (
+                            <li key={`${index}-${item}`}>{renderInlineMarkdown(item)}</li>
+                          ))}
                         </ul>
                       );
                     }
                   }
 
-                  return <p key={`paragraph-${index}`} className="text-white/75">{renderInlineMarkdown(block)}</p>;
+                  return (
+                    <p key={`paragraph-${index}`} className="text-white/75">
+                      {renderInlineMarkdown(block)}
+                    </p>
+                  );
                 })}
             </div>
           ) : (
             <div className="mb-8 rounded-3xl border border-amber-400/20 bg-amber-500/10 p-5 text-sm text-white/78">
-              <p className="font-semibold text-amber-200">Full article body not mirrored on AiVIS.biz yet.</p>
-              <p className="mt-2 leading-7 text-white/72">
-                This post currently includes the canonical summary, author context, and key points here on AiVIS.biz. The complete article is still hosted at the original publication source.
+              <p className="font-semibold text-amber-200">
+                Full article body not mirrored on AiVIS.biz yet.
               </p>
-              <a
-                href={entry.sourceMediumUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-amber-100 transition-colors hover:text-white"
-              >
-                Read full article at source <ExternalLink className="h-4 w-4" />
-              </a>
+              <p className="mt-2 leading-7 text-white/72">
+                This post currently includes the canonical summary, author context, and key points
+                here on AiVIS.biz. The complete article is still hosted at the original publication
+                source.
+              </p>
+              {hasExternalCanonicalSource ? (
+                <a
+                  href={entry.sourceMediumUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-amber-100 transition-colors hover:text-white"
+                >
+                  Read full article at {sourceLabel} <ExternalLink className="h-4 w-4" />
+                </a>
+              ) : null}
             </div>
           )}
 
@@ -191,10 +267,18 @@ export default function BlogPostPage() {
                 <p className="mb-3 text-sm text-white/70">{entry.author.experience}</p>
                 {entry.author.expertise.length > 0 ? (
                   <div>
-                    <p className="mb-1 flex items-center gap-1 text-xs font-semibold text-orange-300/80"><Award className="h-3 w-3" />Expertise</p>
+                    <p className="mb-1 flex items-center gap-1 text-xs font-semibold text-orange-300/80">
+                      <Award className="h-3 w-3" />
+                      Expertise
+                    </p>
                     <div className="flex flex-wrap gap-1.5">
                       {entry.author.expertise.map((item) => (
-                        <span key={item} className="inline-flex rounded-full border border-orange-900/50 bg-orange-900/30 px-2 py-0.5 text-xs text-orange-200">{item}</span>
+                        <span
+                          key={item}
+                          className="inline-flex rounded-full border border-orange-900/50 bg-orange-900/30 px-2 py-0.5 text-xs text-orange-200"
+                        >
+                          {item}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -217,10 +301,17 @@ export default function BlogPostPage() {
 
           {entry.tags?.length ? (
             <div className="mb-7">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white/80"><Tag className="h-4 w-4" />Topics</h3>
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white/80">
+                <Tag className="h-4 w-4" />
+                Topics
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {entry.tags.map((tag) => (
-                  <Link key={tag} to={`/blogs?tag=${tag}`} className="inline-flex rounded-full border border-cyan-900/40 bg-cyan-900/16 px-3 py-1.5 text-sm text-cyan-200 transition hover:border-cyan-300/40">
+                  <Link
+                    key={tag}
+                    to={`/blogs?tag=${tag}`}
+                    className="inline-flex rounded-full border border-cyan-900/40 bg-cyan-900/16 px-3 py-1.5 text-sm text-cyan-200 transition hover:border-cyan-300/40"
+                  >
                     {tag}
                   </Link>
                 ))}
@@ -231,12 +322,21 @@ export default function BlogPostPage() {
           <div className="mb-7 rounded-3xl border border-white/10 bg-white/[0.02] p-4">
             <p className="text-sm text-white/70">
               {hasMirroredContent
-                ? 'This article is originally published on Medium and canonically mirrored on AiVIS.biz for ownership clarity and schema consistency.'
-                : 'This article is originally published at the source below. AiVIS.biz currently mirrors the metadata and key takeaways, with the full body still hosted on the original publication.'}
+                ? hasExternalCanonicalSource
+                  ? `This article is canonically mirrored on AiVIS.biz and linked back to ${sourceLabel} for source clarity and schema consistency.`
+                  : 'This article is published directly on AiVIS.biz with a full mirrored body and on-site structured metadata.'
+                : `This article is originally published at ${sourceLabel}. AiVIS.biz currently mirrors the metadata and key takeaways, with the full body still hosted on the original publication.`}
             </p>
-            <a href={entry.sourceMediumUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white">
-              View source on Medium <ExternalLink className="h-4 w-4" />
-            </a>
+            {hasExternalCanonicalSource ? (
+              <a
+                href={entry.sourceMediumUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white"
+              >
+                View source on {sourceLabel} <ExternalLink className="h-4 w-4" />
+              </a>
+            ) : null}
           </div>
 
           {relatedPosts.length > 0 ? (
@@ -244,9 +344,15 @@ export default function BlogPostPage() {
               <h3 className="mb-4 text-lg font-semibold text-white">Related reading</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 {relatedPosts.map((post) => (
-                  <Link key={post.slug} to={post.path} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:border-cyan-300/35 hover:bg-white/[0.04]">
+                  <Link
+                    key={post.slug}
+                    to={post.path}
+                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 transition-all hover:border-cyan-300/35 hover:bg-white/[0.04]"
+                  >
                     <p className="mb-2 text-xs text-white/60">{post.publishedAt}</p>
-                    <h4 className="mb-1 line-clamp-2 text-sm font-semibold text-cyan-200">{post.title}</h4>
+                    <h4 className="mb-1 line-clamp-2 text-sm font-semibold text-cyan-200">
+                      {post.title}
+                    </h4>
                     <p className="mb-3 line-clamp-2 text-xs text-white/70">{post.description}</p>
                     <p className="text-xs text-white/50">{post.readMinutes} min read</p>
                   </Link>

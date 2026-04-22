@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
+import { workspaceRequired } from '../middleware/workspaceRequired.js';
 import { getPool } from '../services/postgresql.js';
 import { runSelfHealingCycle } from '../services/selfHealingService.js';
 import {
@@ -92,30 +93,35 @@ router.post('/run-now', async (_req: Request, res: Response) => {
 
 // ── Visibility Timeline ───────────────────────────────────────────────────────
 
-router.get('/timeline', async (req: Request, res: Response) => {
+router.get('/timeline', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '').trim();
+  const workspaceId = String((req as any).workspace?.id || '').trim() || null;
   const url = String(req.query.url || '').trim();
   const days = Math.max(1, Math.min(365, Number(req.query.days || 30)));
 
   if (!url) {
-    const urls = await getUserTimelineUrls(userId);
+    const urls = await getUserTimelineUrls(userId, workspaceId);
     return res.json({ success: true, urls });
   }
 
-  const timeline = await getTimeline(userId, url, days);
+  const timeline = await getTimeline(userId, url, days, workspaceId);
   return res.json({ success: true, timeline });
 });
 
 // ── Fix ROI Rankings ──────────────────────────────────────────────────────────
 
-router.get('/fix-rankings', async (req: Request, res: Response) => {
+router.get('/fix-rankings', workspaceRequired, async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '').trim();
   const scope = String(req.query.scope || 'user');
+  const workspaceId = String((req as any).workspace?.id || '').trim();
 
   let seeding: { inserted: number; candidates: number } | null = null;
   if (scope !== 'global') {
     try {
-      seeding = await seedValidatedFixOutcomes({ userId });
+      seeding = await seedValidatedFixOutcomes({
+        userId,
+        workspaceId: workspaceId || undefined,
+      });
     } catch {
       seeding = null;
     }
@@ -125,7 +131,7 @@ router.get('/fix-rankings', async (req: Request, res: Response) => {
     ? await getGlobalFixRankings()
     : await getFixRankings(userId);
 
-  return res.json({ success: true, rankings, seeding });
+  return res.json({ success: true, rankings, seeding, workspaceId: workspaceId || null });
 });
 
 // ── Alert Subscriptions ───────────────────────────────────────────────────────

@@ -748,12 +748,12 @@ const CATEGORIES: HelpCategory[] = [
 ];
 
 const QUICK_LINKS = [
-  { label: 'Dashboard', to: '/', icon: BarChart3 },
-  { label: 'Run Audit', to: '/analyze', icon: Zap },
-  { label: 'Guide', to: '/guide', icon: BookOpen },
-  { label: 'FAQ', to: '/faq', icon: HelpCircle },
+  { label: 'Command Center', to: '/app/scan', icon: BarChart3 },
+  { label: 'Run Scan', to: '/app/scan', icon: Zap },
+  { label: 'Observe', to: '/app/evidence', icon: BookOpen },
+  { label: 'Diagnose', to: '/app/answer-presence', icon: HelpCircle },
   { label: 'Pricing', to: '/pricing', icon: CreditCard },
-  { label: 'Settings', to: '/settings', icon: Shield },
+  { label: 'Settings', to: '/app/settings', icon: Shield },
 ];
 
 /* ────────────────────────────────────────────────────────────────────────────

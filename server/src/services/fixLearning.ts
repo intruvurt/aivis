@@ -194,11 +194,13 @@ export async function getBestFixTypeForUrl(userId: string, url: string): Promise
  */
 export async function seedValidatedFixOutcomes(args: {
   userId: string;
+  workspaceId?: string;
   lookbackDays?: number;
   minOccurrences?: number;
 }): Promise<ValidatedSeedResult> {
   const lookbackDays = Math.max(14, Math.min(365, Number(args.lookbackDays || 90)));
   const minOccurrences = Math.max(2, Math.min(12, Number(args.minOccurrences || 2)));
+  const workspaceId = String(args.workspaceId || '').trim();
 
   const { rows } = await getPool().query(
     `SELECT
@@ -209,7 +211,8 @@ export async function seedValidatedFixOutcomes(args: {
      FROM audits a
      CROSS JOIN LATERAL jsonb_array_elements(COALESCE(a.result->'recommendations', '[]'::jsonb)) AS rec
      WHERE a.user_id = $1
-       AND a.created_at >= NOW() - ($2::text || ' days')::interval
+       AND ($2::uuid IS NULL OR a.workspace_id = $2::uuid)
+       AND a.created_at >= NOW() - ($3::text || ' days')::interval
        AND COALESCE(a.status, 'completed') = 'completed'
        AND (
          (jsonb_typeof(rec->'evidence_ids') = 'array' AND jsonb_array_length(rec->'evidence_ids') > 0)
@@ -217,10 +220,10 @@ export async function seedValidatedFixOutcomes(args: {
          OR rec ? 'implementation'
        )
      GROUP BY 1, 2, 3
-     HAVING COUNT(*) >= $3
+     HAVING COUNT(*) >= $4
      ORDER BY occurrences DESC, url ASC
      LIMIT 120`,
-    [args.userId, lookbackDays, minOccurrences],
+    [args.userId, workspaceId || null, lookbackDays, minOccurrences],
   );
 
   let inserted = 0;

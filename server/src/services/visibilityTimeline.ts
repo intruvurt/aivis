@@ -73,8 +73,9 @@ export async function recordTimelinePoint(args: {
     const { rows } = await pool.query(
       `SELECT score FROM audit_score_timeline
        WHERE user_id = $1 AND LOWER(url) = LOWER($2)
+         AND (($3::uuid IS NULL AND workspace_id IS NULL) OR workspace_id = $3::uuid)
        ORDER BY captured_at DESC LIMIT 1`,
-      [args.userId, args.url],
+      [args.userId, args.url, args.workspaceId ?? null],
     );
     if (rows.length) previousScore = Number(rows[0].score);
   } catch {
@@ -107,13 +108,15 @@ export async function getTimeline(
   userId: string,
   url: string,
   days = 30,
+  workspaceId: string | null,
 ): Promise<TimelineWithEvents> {
   const { rows } = await getPool().query(
     `SELECT * FROM audit_score_timeline
      WHERE user_id = $1 AND LOWER(url) = LOWER($2)
+       AND (($4::uuid IS NULL AND workspace_id IS NULL) OR workspace_id = $4::uuid)
        AND captured_at >= NOW() - ($3 || ' days')::interval
      ORDER BY captured_at ASC`,
-    [userId, url, days],
+    [userId, url, days, workspaceId],
   );
 
   if (!rows.length) {
@@ -140,21 +143,24 @@ export async function getTimeline(
     delta: r.score_delta !== null ? Number(r.score_delta) : null,
     event: r.event_type !== 'manual_audit' || r.event_label || r.fix_id
       ? {
-          type: r.event_type,
-          label: r.event_label,
-          auditId: r.audit_id,
-          fixId: r.fix_id,
-        }
+        type: r.event_type,
+        label: r.event_label,
+        auditId: r.audit_id,
+        fixId: r.fix_id,
+      }
       : undefined,
   }));
 
   return { points, minScore, maxScore, latestScore, trend };
 }
 
-export async function getUserTimelineUrls(userId: string): Promise<string[]> {
+export async function getUserTimelineUrls(userId: string, workspaceId: string | null): Promise<string[]> {
   const { rows } = await getPool().query(
-    `SELECT DISTINCT url FROM audit_score_timeline WHERE user_id = $1 ORDER BY url`,
-    [userId],
+    `SELECT DISTINCT url FROM audit_score_timeline
+      WHERE user_id = $1
+        AND (($2::uuid IS NULL AND workspace_id IS NULL) OR workspace_id = $2::uuid)
+      ORDER BY url`,
+    [userId, workspaceId],
   );
   return rows.map((r: { url: string }) => r.url);
 }
@@ -165,4 +171,86 @@ export async function pruneOldTimelineData(): Promise<number> {
     `DELETE FROM audit_score_timeline WHERE captured_at < NOW() - INTERVAL '1 year'`,
   );
   return rowCount ?? 0;
+}
+
+// ── Temporal drift + AVP join ──────────────────────────────────────────────────
+
+export interface TemporalDriftPoint {
+  date: string;
+  /** Traditional visibility score (0–100) from audit_score_timeline */
+  visibility_score: number;
+  /** AI Visibility Probability (0–1) from simulation_runs, if available */
+  avp: number | null;
+  /** AVP delta vs prior data point */
+  avp_delta: number | null;
+  /** Score delta vs prior audit */
+  score_delta: number | null;
+  /** Driving event, if any */
+  event_type: TimelineEventType | null;
+}
+
+/**
+ * Joins audit score timeline with simulation_runs AVP values to produce a
+ * unified temporal drift view — the backbone of the Diagnose mode display.
+ *
+ * AVP values are matched to the nearest timeline point within a 24-hour window.
+ * Falls back gracefully if simulation_runs table does not yet exist.
+ */
+export async function getTemporalDriftWithAVP(
+  userId: string,
+  url: string,
+  days = 30,
+  workspaceId: string | null,
+): Promise<TemporalDriftPoint[]> {
+  const pool = getPool();
+
+  // Fetch audit score timeline
+  const { rows: timelineRows } = await pool.query<TimelinePoint>(
+    `SELECT * FROM audit_score_timeline
+     WHERE user_id = $1 AND LOWER(url) = LOWER($2)
+       AND (($4::uuid IS NULL AND workspace_id IS NULL) OR workspace_id = $4::uuid)
+       AND captured_at >= NOW() - ($3 || ' days')::interval
+     ORDER BY captured_at ASC`,
+    [userId, url, days, workspaceId],
+  );
+
+  // Attempt to fetch simulation AVP values — graceful if table absent
+  let simRows: Array<{ run_at: string; aggregate_avp: number; avp_delta: number | null }> = [];
+  try {
+    const result = await pool.query<{ run_at: string; aggregate_avp: number; avp_delta: number | null }>(
+      `SELECT run_at, aggregate_avp, avp_delta FROM simulation_runs
+       WHERE user_id = $1 AND LOWER(url) = LOWER($2)
+         AND (($4::uuid IS NULL AND workspace_id IS NULL) OR workspace_id = $4::uuid)
+         AND run_at >= NOW() - ($3 || ' days')::interval
+       ORDER BY run_at ASC`,
+      [userId, url, days, workspaceId],
+    );
+    simRows = result.rows;
+  } catch {
+    // simulation_runs table may not exist yet — continue without AVP
+  }
+
+  return timelineRows.map((tp) => {
+    const tpMs = new Date(tp.captured_at).getTime();
+
+    // Find nearest simulation run within ±24h
+    let matchedSim: (typeof simRows)[0] | null = null;
+    let minDiff = 24 * 60 * 60 * 1000; // 24h in ms
+    for (const sr of simRows) {
+      const diff = Math.abs(new Date(sr.run_at).getTime() - tpMs);
+      if (diff < minDiff) {
+        minDiff = diff;
+        matchedSim = sr;
+      }
+    }
+
+    return {
+      date: tp.captured_at,
+      visibility_score: Number(tp.score),
+      avp: matchedSim ? matchedSim.aggregate_avp : null,
+      avp_delta: matchedSim ? matchedSim.avp_delta : null,
+      score_delta: tp.score_delta !== null ? Number(tp.score_delta) : null,
+      event_type: tp.event_type ?? null,
+    };
+  });
 }

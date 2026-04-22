@@ -43,6 +43,7 @@
     "ioredis": "^5.9.3",
     "bullmq": "^5.72.1",
     "pg": "^8.18.0",
+    "@supabase/supabase-js": "^2.45.0",
     "stripe": "^17.7.0",
     "jsonwebtoken": "^9.0.3",
     "jwks-rsa": "^3.2.2",

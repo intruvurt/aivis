@@ -37,7 +37,7 @@ export async function broadcastStageUpdate(
 ) {
   const supabase = createClient(
     process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || ''
   );
 
   const stageName = jobStatusToStage[jobStatus];
@@ -85,7 +85,7 @@ export async function broadcastPartialResults(
 ) {
   const supabase = createClient(
     process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || ''
   );
 
   const channelName = `analysis:${runId}`;
@@ -112,7 +112,7 @@ export async function broadcastPartialResults(
 export async function broadcastAnalysisComplete(runId: string, final: any) {
   const supabase = createClient(
     process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || ''
   );
 
   const channelName = `analysis:${runId}`;
@@ -139,7 +139,7 @@ export async function broadcastAnalysisComplete(runId: string, final: any) {
 export async function broadcastAnalysisError(runId: string, error: string) {
   const supabase = createClient(
     process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || ''
   );
 
   const channelName = `analysis:${runId}`;

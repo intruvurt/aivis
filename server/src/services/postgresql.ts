@@ -86,6 +86,36 @@ function markDatabaseUnavailable(err: unknown): void {
   lastDatabaseErrorTime = Date.now();
 }
 
+/**
+ * Check if the pool is healthy by attempting a simple query
+ */
+export async function validateDatabaseConnection(): Promise<boolean> {
+  try {
+    if (!poolInstance) return false;
+    const client = await poolInstance.connect();
+    try {
+      await client.query('SELECT 1');
+      return true;
+    } finally {
+      client.release();
+    }
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Force reset the pool to clear bad connections
+ */
+export function resetPool(): void {
+  if (poolInstance) {
+    poolInstance.end().catch((err: any) => {
+      console.warn('[DB Pool] Error during reset:', err.message);
+    });
+    poolInstance = null;
+  }
+}
+
 export function getPool(): Pool {
   if (!dbConfigured) {
     throw new Error("DATABASE_URL not configured");
@@ -105,9 +135,14 @@ export function getPool(): Pool {
     const poolConfig: any = {
       connectionString,
       max: 30,
-      idleTimeoutMillis: 30_000,
-      connectionTimeoutMillis: 10_000,
-      statement_timeout: 30_000,
+      min: 2,
+      // Supabase/Railway proxies may close idle connections after 5-10 minutes
+      // Keep our timeout shorter to detect and recreate before proxy closes
+      idleTimeoutMillis: 240_000, // 4 minutes (before proxy typically closes at 5-10min)
+      connectionTimeoutMillis: 15_000, // 15 seconds to establish connection
+      statement_timeout: 120_000, // 2 minutes for queries (was 30s, too short for large scans)
+      allowExitOnIdle: false, // Keep pool alive even if idle
+      application_name: 'aivis-server',
     };
 
     // If CA certificate is provided (Railway/managed Postgres), use it for SSL verification
@@ -126,6 +161,34 @@ export function getPool(): Pool {
     }
 
     poolInstance = new PgPool(poolConfig);
+
+    // Add error handlers for connection pool events
+    poolInstance.on('error', (err: any) => {
+      console.error('[DB Pool Error]', {
+        message: err.message,
+        code: err.code,
+        severity: err.severity,
+      });
+    });
+
+    poolInstance.on('connect', () => {
+      // Log successful connections for debugging
+      if (process.env.DEBUG_DB_CONNECT === 'true') {
+        console.log('[DB Pool] Connection established');
+      }
+    });
+
+    // Warm up the pool by acquiring and immediately releasing min connections
+    (async () => {
+      try {
+        const client = await poolInstance!.connect();
+        await client.query('SELECT 1');
+        client.release();
+        console.log('[DB Pool] Warmup successful, pool ready');
+      } catch (err: any) {
+        console.warn('[DB Pool] Warmup failed:', err.message);
+      }
+    })();
   }
   return poolInstance;
 }

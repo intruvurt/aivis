@@ -1520,20 +1520,39 @@ function ReportDeliveryPanel() {
       )}
 
       <div className="grid gap-2 md:grid-cols-3 text-xs text-white/70">
-        <label className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2">
-          <input type="checkbox" checked={branded} onChange={(e) => setBranded(e.target.checked)} />
+        <label
+          htmlFor="branded-pdf"
+          className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2"
+        >
+          <input
+            id="branded-pdf"
+            name="branded-pdf"
+            type="checkbox"
+            checked={branded}
+            onChange={(e) => setBranded(e.target.checked)}
+          />
           Branded PDF when available
         </label>
-        <label className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2">
+        <label
+          htmlFor="include-pdf"
+          className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2"
+        >
           <input
+            id="include-pdf"
+            name="include-pdf"
             type="checkbox"
             checked={includePdf}
             onChange={(e) => setIncludePdf(e.target.checked)}
           />
           Include PDF delivery
         </label>
-        <label className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2">
+        <label
+          htmlFor="include-share-link"
+          className="flex items-center gap-2 rounded-lg border border-white/8 bg-charcoal-deep px-3 py-2"
+        >
           <input
+            id="include-share-link"
+            name="include-share-link"
             type="checkbox"
             checked={includeShareLink}
             onChange={(e) => setIncludeShareLink(e.target.checked)}

@@ -69,7 +69,7 @@ export async function processQueuedAudit(auditId: string, userId: string, worksp
 
         // Remove the duplicate row created by analyzeInternally (if different from queued ID)
         if (resultAuditId !== auditId) {
-          await pool.query(`DELETE FROM audits WHERE id = $1`, [resultAuditId]).catch(() => {});
+          await pool.query(`DELETE FROM audits WHERE id = $1`, [resultAuditId]).catch(() => { });
         }
       } else {
         await pool.query(
@@ -88,7 +88,7 @@ export async function processQueuedAudit(auditId: string, userId: string, worksp
     await pool.query(
       `UPDATE audits SET status = 'error', updated_at = NOW() WHERE id = $1`,
       [auditId],
-    ).catch(() => {});
+    ).catch(() => { });
   }
 }
 
@@ -102,6 +102,10 @@ let consecutiveErrors = 0;
 
 function isSchemaError(msg: string): boolean {
   return /does not exist|undefined column|relation .* does not exist/i.test(msg);
+}
+
+function isConnectionError(msg: string): boolean {
+  return /EDBHANDLEREXITED|connection (closed|lost|refused)|connection to database closed|failed to connect|no available server/i.test(msg);
 }
 
 export function startMcpAuditLoop(): void {
@@ -125,15 +129,28 @@ function scheduleNextRun(): void {
       consecutiveErrors = 0;
     } catch (err: any) {
       const msg = err?.message || '';
-      if (isSchemaError(msg)) {
+      if (isConnectionError(msg)) {
+        console.error(`[mcp-audit] Connection error detected: ${msg}`);
+        // Reset pool on connection error so next attempt gets fresh connection
+        const { resetPool } = await import('./postgresql.js');
+        resetPool();
+        consecutiveErrors++;
+        if (consecutiveErrors >= 3) {
+          console.error(`[mcp-audit] Disabling loop after ${consecutiveErrors} connection failures`);
+          stopMcpAuditLoop();
+          return;
+        }
+      } else if (isSchemaError(msg)) {
         consecutiveErrors++;
         if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
           console.error(`[mcp-audit] Disabling loop after ${consecutiveErrors} consecutive schema errors: ${msg}`);
           stopMcpAuditLoop();
           return;
         }
+      } else {
+        // Non-schema, non-connection errors reset counter but continue
+        console.error(`[mcp-audit] Loop error: ${msg}`);
       }
-      console.error(`[mcp-audit] Loop error: ${msg}`);
     }
     if (_loopTimeout !== null) scheduleNextRun();
   }, 30_000);

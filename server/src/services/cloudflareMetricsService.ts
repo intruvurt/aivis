@@ -1,6 +1,6 @@
-import { createHash } from 'crypto';
 import { getPool } from './postgresql.js';
 import { normalizeTrackedUrl } from '../utils/normalizeUrl.js';
+import { hashNormalizedUrl } from '../utils/urlHash.js';
 
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
 
@@ -50,8 +50,7 @@ export type CloudflareSignalSummary = {
 };
 
 function hashUrl(url: string): string {
-  const normalized = normalizeTrackedUrl(url);
-  return createHash('sha256').update(normalized).digest('hex');
+  return hashNormalizedUrl(url);
 }
 
 function clamp(value: number, min: number, max: number): number {

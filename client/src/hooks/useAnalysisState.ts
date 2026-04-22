@@ -46,7 +46,7 @@ export interface UIState {
 
   // Timeline tracking for replay
   timeline: {
-    events: Array<{ type: string; timestamp: string; frame: number }>;
+    events: Array<{ type: string; timestamp: string; frame: number; action?: AnalysisAction }>;
     currentFrame: number;
     isReplaying: boolean;
   };
@@ -58,7 +58,7 @@ export interface UIState {
 }
 
 export interface AnalysisAction {
-  type: 'STAGE_UPDATE' | 'ENTITIES_UPDATE' | 'CITATIONS_UPDATE' | 'SCORE_UPDATE' | 'ERROR' | 'RESET';
+  type: 'STAGE_UPDATE' | 'ENTITIES_UPDATE' | 'CITATIONS_UPDATE' | 'SCORE_UPDATE' | 'ERROR' | 'RESET' | 'HYDRATE';
   payload?: any;
   timestamp: number;
 }
@@ -107,8 +107,18 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
           ...state.timeline,
           events: [
             ...state.timeline.events,
-            { type: `stage:${stage.name}:${stage.status}`, timestamp: new Date(action.timestamp).toISOString(), frame: baselineFrame },
+            {
+              type: `stage:${stage.name}:${stage.status}`,
+              timestamp: new Date(action.timestamp).toISOString(),
+              frame: baselineFrame,
+              action: {
+                type: 'STAGE_UPDATE',
+                payload: action.payload,
+                timestamp: action.timestamp,
+              },
+            },
           ],
+          currentFrame: baselineFrame,
         },
         lastUpdate: action.timestamp,
       };
@@ -142,8 +152,18 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
           ...state.timeline,
           events: [
             ...state.timeline.events,
-            { type: `entities:${newEntities.length}`, timestamp: new Date(action.timestamp).toISOString(), frame: baselineFrame },
+            {
+              type: `entities:${newEntities.length}`,
+              timestamp: new Date(action.timestamp).toISOString(),
+              frame: baselineFrame,
+              action: {
+                type: 'ENTITIES_UPDATE',
+                payload: action.payload,
+                timestamp: action.timestamp,
+              },
+            },
           ],
+          currentFrame: baselineFrame,
         },
         lastUpdate: action.timestamp,
       };
@@ -174,8 +194,18 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
           ...state.timeline,
           events: [
             ...state.timeline.events,
-            { type: `citations:${newCitations.length}`, timestamp: new Date(action.timestamp).toISOString(), frame: baselineFrame },
+            {
+              type: `citations:${newCitations.length}`,
+              timestamp: new Date(action.timestamp).toISOString(),
+              frame: baselineFrame,
+              action: {
+                type: 'CITATIONS_UPDATE',
+                payload: action.payload,
+                timestamp: action.timestamp,
+              },
+            },
           ],
+          currentFrame: baselineFrame,
         },
         lastUpdate: action.timestamp,
       };
@@ -197,8 +227,18 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
           ...state.timeline,
           events: [
             ...state.timeline.events,
-            { type: 'score:updated', timestamp: new Date(action.timestamp).toISOString(), frame: baselineFrame },
+            {
+              type: 'score:updated',
+              timestamp: new Date(action.timestamp).toISOString(),
+              frame: baselineFrame,
+              action: {
+                type: 'SCORE_UPDATE',
+                payload: action.payload,
+                timestamp: action.timestamp,
+              },
+            },
           ],
+          currentFrame: baselineFrame,
         },
         lastUpdate: action.timestamp,
       };
@@ -213,8 +253,18 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
           ...state.timeline,
           events: [
             ...state.timeline.events,
-            { type: 'error', timestamp: new Date(action.timestamp).toISOString(), frame: baselineFrame },
+            {
+              type: 'error',
+              timestamp: new Date(action.timestamp).toISOString(),
+              frame: baselineFrame,
+              action: {
+                type: 'ERROR',
+                payload: action.payload,
+                timestamp: action.timestamp,
+              },
+            },
           ],
+          currentFrame: baselineFrame,
         },
         lastUpdate: action.timestamp,
       };
@@ -222,6 +272,10 @@ export function analysisReducer(state: UIState, action: AnalysisAction): UIState
 
     case 'RESET': {
       return createInitialState();
+    }
+
+    case 'HYDRATE': {
+      return action.payload as UIState;
     }
 
     default:

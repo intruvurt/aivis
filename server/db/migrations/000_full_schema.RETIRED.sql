@@ -1,6 +1,6 @@
 -- ============================================
--- AiVIS.biz - Full Database Schema
--- Run this against your Neon PostgreSQL database
+-- RETIRED MIGRATION SNAPSHOT (DO NOT EXECUTE)
+-- This file is archived only. Use additive migrations (001+) instead.
 -- ============================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;

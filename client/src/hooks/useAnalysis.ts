@@ -124,19 +124,30 @@ export function useAnalysis(options: UseAnalysisOptions) {
   /**
    * Timeline replay: scrub through recorded events
    */
-  const scrubToFrame = useCallback((frame: number) => {
-    // Find all events up to this frame
-    const eventsUpToFrame = state.timeline.events.filter((e) => e.frame <= frame);
+  const buildStateAtFrame = useCallback((frame: number): UIState => {
+    const eventsUpToFrame = state.timeline.events
+      .filter((e) => e.frame <= frame && e.action)
+      .sort((a, b) => a.frame - b.frame);
 
-    // Reset state and replay events deterministically
-    dispatch({ type: 'RESET', timestamp: Date.now() });
+    const replayed = eventsUpToFrame.reduce((acc, timelineEvent) => {
+      return analysisReducer(acc, timelineEvent.action as AnalysisAction);
+    }, createInitialState());
 
-    eventsUpToFrame.forEach((event) => {
-      // Reconstruct action from timeline event
-      // This requires the original event payloads to be stored
-      // In production, fetch from analysis_runs history
-    });
+    return {
+      ...replayed,
+      timeline: {
+        ...replayed.timeline,
+        events: state.timeline.events,
+        currentFrame: frame,
+        isReplaying: frame < (state.timeline.events[state.timeline.events.length - 1]?.frame ?? 0),
+      },
+    };
   }, [state.timeline.events]);
+
+  const scrubToFrame = useCallback((frame: number) => {
+    const replayState = buildStateAtFrame(frame);
+    dispatch({ type: 'HYDRATE', payload: replayState, timestamp: Date.now() });
+  }, [buildStateAtFrame]);
 
   /**
    * Auto-replay: cycle through timeline when complete
@@ -144,15 +155,30 @@ export function useAnalysis(options: UseAnalysisOptions) {
   useEffect(() => {
     if (!autoReplay || state.status !== 'complete') return;
 
-    // Wait 2s, then start replay
+    const finalFrame = state.timeline.events[state.timeline.events.length - 1]?.frame ?? 0;
+    if (finalFrame === 0) return;
+
     replayTimeoutRef.current = setTimeout(() => {
-      // TODO: implement timeline replay
+      let currentFrame = 0;
+      const step = Math.max(1, Math.floor(finalFrame / 120));
+
+      const tick = () => {
+        scrubToFrame(currentFrame);
+        if (currentFrame >= finalFrame) {
+          dispatch({ type: 'HYDRATE', payload: buildStateAtFrame(finalFrame), timestamp: Date.now() });
+          return;
+        }
+        currentFrame = Math.min(finalFrame, currentFrame + step);
+        replayTimeoutRef.current = setTimeout(tick, 16);
+      };
+
+      tick();
     }, 2000);
 
     return () => {
       if (replayTimeoutRef.current) clearTimeout(replayTimeoutRef.current);
     };
-  }, [autoReplay, state.status]);
+  }, [autoReplay, state.status, state.timeline.events, buildStateAtFrame, scrubToFrame]);
 
   return {
     // Current state for rendering

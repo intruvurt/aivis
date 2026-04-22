@@ -1,10 +1,16 @@
 import "dotenv/config"
 import pg from 'pg'
 import type { Pool, PoolClient } from 'pg'
+import { existsSync } from 'fs'
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 const { Pool: PgPool } = pg
 
 const DATABASE_URL = process.env.DATABASE_URL?.trim() || ''
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export const dbConfigured = DATABASE_URL.length > 0
 
@@ -33,6 +39,15 @@ export function getPool(): Pool {
  */
 export async function runMigrations(): Promise<void> {
   if (migrationsRan || !dbConfigured) return
+
+  const blockedFiles = [
+    resolve(__dirname, '../src/migrations/000_full_schema.sql'),
+    resolve(__dirname, '../db/migrations/000_full_schema.sql'),
+  ]
+  const activeLegacy = blockedFiles.find((filePath) => existsSync(filePath))
+  if (activeLegacy) {
+    throw new Error(`Blocked legacy migration snapshot detected: ${activeLegacy}. Rename to *.RETIRED.sql and keep additive migrations only.`)
+  }
   
   const client = await getPool().connect()
   try {

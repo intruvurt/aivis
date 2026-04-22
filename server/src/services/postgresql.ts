@@ -1,6 +1,9 @@
 import "dotenv/config";
 import pg from "pg";
 import type { Pool, PoolClient } from "pg";
+import { existsSync } from "fs";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 import { IS_PRODUCTION } from "../config/runtime.js";
 
 const { Pool: PgPool } = pg;
@@ -29,6 +32,9 @@ function normalizeDatabaseUrl(raw: string): string {
 const DATABASE_URL = normalizeDatabaseUrl(
   process.env.DATABASE_URL?.trim() || "",
 );
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const dbConfigured = DATABASE_URL.length > 0;
 
@@ -156,8 +162,24 @@ async function checkDatabaseInitialized(client: PoolClient): Promise<boolean> {
   }
 }
 
+function assertLegacySnapshotRetired(): void {
+  const blockedFiles = [
+    resolve(__dirname, "../migrations/000_full_schema.sql"),
+    resolve(__dirname, "../../db/migrations/000_full_schema.sql"),
+  ];
+
+  const activeLegacy = blockedFiles.find((filePath) => existsSync(filePath));
+  if (activeLegacy) {
+    throw new Error(
+      `Blocked legacy migration snapshot detected: ${activeLegacy}. Rename to *.RETIRED.sql and keep additive migrations only.`,
+    );
+  }
+}
+
 export async function runMigrations(): Promise<void> {
   if (migrationsRan || !dbConfigured) return;
+
+  assertLegacySnapshotRetired();
 
   let client: PoolClient | null = null;
   const retriesFromEnv = Number(process.env.DB_MIGRATION_MAX_RETRIES || "");

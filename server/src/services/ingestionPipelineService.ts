@@ -1,6 +1,6 @@
-import { createHash, randomUUID } from 'crypto';
+import { randomUUID } from 'crypto';
 import { getPool } from './postgresql.js';
-import { normalizeTrackedUrl } from '../utils/normalizeUrl.js';
+import { hashNormalizedUrl } from '../utils/urlHash.js';
 
 type JobRow = { id: string; url_hash: string };
 
@@ -12,8 +12,7 @@ type EntityCandidate = {
 };
 
 function hashUrl(url: string): string {
-  const normalized = normalizeTrackedUrl(url);
-  return createHash('sha256').update(normalized).digest('hex');
+  return hashNormalizedUrl(url);
 }
 
 function toEntityCandidates(source: any): EntityCandidate[] {

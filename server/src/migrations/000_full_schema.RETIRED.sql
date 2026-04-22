@@ -1,6 +1,6 @@
 -- ============================================
--- Evidence-backed site analysis for AI answers Platform - Full Database Schema
--- Run this against your Neon PostgreSQL database
+-- RETIRED MIGRATION SNAPSHOT (DO NOT EXECUTE)
+-- This file is archived only. Use additive migrations (001+) instead.
 -- ============================================
 
 -- 1. Analysis Cache

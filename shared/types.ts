@@ -1295,23 +1295,46 @@ export interface AnswerDecomposition {
   reconstructionBlueprint: string;
 }
 
-/** TODO: Define concrete shape when CompetitorGhost feature is spec'd */
 export interface CompetitorGhost {
+  competitors: Array<{
+    name: string;
+    domain?: string;
+    overlapScore?: number;
+    strengths?: string[];
+    weaknesses?: string[];
+  }>;
+  summary?: string;
+  generatedAt?: string;
   [key: string]: unknown;
 }
 
-/** TODO: Define concrete shape when ModelPreferenceDiff feature is spec'd */
 export interface ModelPreferenceDiff {
+  models: Array<{
+    model: string;
+    preferredSignals: string[];
+    avoidedSignals?: string[];
+    confidence?: number;
+  }>;
+  consensusSignals?: string[];
+  divergenceSignals?: string[];
   [key: string]: unknown;
 }
 
-/** TODO: Define concrete shape when VisibilitySimulation feature is spec'd */
 export interface VisibilitySimulation {
+  baselineScore?: number;
+  projectedScore?: number;
+  delta?: number;
+  appliedChanges?: string[];
+  riskNotes?: string[];
   [key: string]: unknown;
 }
 
-/** TODO: Define concrete shape when ModelAnalysis feature is spec'd */
 export interface ModelAnalysis {
+  model: string;
+  strengths?: string[];
+  weaknesses?: string[];
+  confidence?: number;
+  recommendations?: string[];
   [key: string]: unknown;
 }
 

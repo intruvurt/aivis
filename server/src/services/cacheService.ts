@@ -1,8 +1,8 @@
-import { createHash } from 'crypto';
 import { Redis } from 'ioredis';
 import { getPool } from './postgresql.js';
 import { getRedis } from '../infra/redis.js';
 import { normalizeTrackedUrl } from '../utils/normalizeUrl.js';
+import { hashSha256Hex } from '../utils/urlHash.js';
 
 type CacheValue = Record<string, any> & { analyzed_at?: string };
 
@@ -24,7 +24,7 @@ function buildCacheIdentity(input: string): CacheIdentity {
   const tierSuffix = tierIndex >= 0 ? rawKey.slice(tierIndex + tierSeparator.length).trim().toLowerCase() : '';
   const normalizedBase = normalizeTrackedUrl(baseKey) || baseKey.toLowerCase();
   const canonicalKey = tierSuffix ? `${normalizedBase}${tierSeparator}${tierSuffix}` : normalizedBase;
-  const urlHash = createHash('sha256').update(canonicalKey).digest('hex');
+  const urlHash = hashSha256Hex(canonicalKey);
   return {
     rawKey,
     canonicalKey,

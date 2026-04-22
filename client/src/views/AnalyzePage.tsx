@@ -1495,7 +1495,7 @@ function _LegacyRender_UNUSED() {
       )}
 
       {loading && !result && (
-        <section className="mt-8 space-y-4" aria-live="polite" aria-busy={loading}>
+        <section className="mt-8 space-y-4" aria-live="polite" aria-busy="true">
           <div className="animate-pulse rounded-2xl border border-white/10 bg-charcoal/80 p-5 shadow-2xl sm:p-6">
             <div className="h-4 w-40 rounded bg-white/10" />
             <div className="mt-3 h-8 w-2/3 rounded bg-white/10" />

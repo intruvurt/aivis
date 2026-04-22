@@ -44,6 +44,11 @@ function isRecoverableCaptchaFailure(message: unknown): boolean {
   const text = String(message || '').toLowerCase();
   return (
     text.includes('missing captcha token') ||
+    text.includes('missing-input-response') ||
+    text.includes('missing-input-secret') ||
+    text.includes('invalid-input-secret') ||
+    text.includes('sitekey-secret-mismatch') ||
+    text.includes('invalid-keys') ||
     text.includes('timeout-or-duplicate') ||
     text.includes('invalid-input-response') ||
     text.includes('invalid-captcha') ||

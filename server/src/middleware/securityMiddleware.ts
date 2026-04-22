@@ -82,19 +82,19 @@ export function applySecurityMiddleware(app: Express): void {
     const directives = [
       "default-src 'self'",
       // script-src: nonce-based + strict-dynamic for dynamically loaded scripts + fallback https: for CDN
-      // Also explicitly allow analytics services (Google Analytics, Clarity, Cloudflare Insights)
-      // Removed 'unsafe-inline' - not needed when nonces are used (ignored by CSP2+ anyway)
-      `script-src 'nonce-${nonce}' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://static.cloudflareinsights.com`,
+      // Includes: analytics (Google, Clarity, Cloudflare), Cloudflare bot challenges,
+      // Sentry error tracking, Recaptcha, and CDN fallback
+      `script-src 'nonce-${nonce}' 'strict-dynamic' https: https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms https://static.cloudflareinsights.com https://challenges.cloudflare.com https://cdn-cgi.octolane.com https://recaptcha.google.com https://www.google.com https://*.sentry.io`,
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com",
-      // connect-src: allow all https + API calls to analytics & payment services
-      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com https://api.stripe.com https://checkout.stripe.com",
+      // connect-src: XMLHttpRequest/fetch/WebSocket to self, all https, analytics, Sentry, Stripe, Cloudflare
+      "connect-src 'self' https: https://www.googletagmanager.com https://www.google-analytics.com https://*.analytics.google.com https://*.sentry.io https://*.ingest.sentry.io https://api.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com https://cloudflareinsights.com https://*.clarity.ms",
       "font-src 'self' data: https: https://fonts.gstatic.com",
       "form-action 'self'",
-      "frame-src 'self' https: https://www.google.com https://js.stripe.com https://checkout.stripe.com",
+      "frame-src 'self' https: https://www.google.com https://recaptcha.google.com https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com",
       "upgrade-insecure-requests",
     ];
 

@@ -917,7 +917,8 @@ function ThirdPartyIntegrationsPanel() {
             </p>
             <div className="flex flex-wrap gap-2">
               {INTEGRATION_PRESETS.map((item) => (
-                <button
+                <A11yButton
+                  label={`Select ${item.label} integration`}
                   key={item.key}
                   type="button"
                   onClick={() => {
@@ -935,9 +936,10 @@ function ThirdPartyIntegrationsPanel() {
                     {item.icon}
                     {item.label}
                   </span>
-                </button>
+                </A11yButton>
               ))}
-              <button
+              <A11yButton
+                label="Select custom integration URL"
                 type="button"
                 onClick={() => {
                   setSelected('custom');
@@ -954,7 +956,7 @@ function ThirdPartyIntegrationsPanel() {
                   <IntegrationBrandIcon brand="custom" />
                   Custom URL
                 </span>
-              </button>
+              </A11yButton>
             </div>
           </div>
 
@@ -1143,12 +1145,14 @@ function ApiKeysPanel() {
               <Copy className="w-4 h-4" />
             </A11yButton>
           </div>
-          <button
+          <A11yButton
+            label="Dismiss API key reveal"
+            type="button"
             onClick={() => setNewKey(null)}
             className="text-xs text-white/50 mt-2 hover:text-white/80"
           >
             Dismiss
-          </button>
+          </A11yButton>
         </div>
       )}
 
@@ -1162,14 +1166,16 @@ function ApiKeysPanel() {
           onChange={(e) => setNewKeyName(e.target.value)}
           className={`flex-1 text-sm px-3 py-2 rounded-lg ${appInputSurfaceClass}`}
         />
-        <button
+        <A11yButton
+          label="Generate API key"
+          type="button"
           onClick={handleCreate}
           disabled={atCap}
           title={atCap ? `Limit: ${limits.maxApiKeys} keys on your plan` : 'Generate API key'}
           className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Key className="w-4 h-4" /> Generate
-        </button>
+        </A11yButton>
       </div>
 
       {atCap && (
@@ -1725,7 +1731,9 @@ function BrandingPanel() {
             />
           </label>
           {logoPreview && (
-            <button
+            <A11yButton
+              label="Remove uploaded logo"
+              type="button"
               onClick={() => {
                 setLogoPreview(null);
                 setLogoBase64(null);
@@ -1733,7 +1741,7 @@ function BrandingPanel() {
               className="text-xs text-red-400 hover:text-red-300 transition-colors"
             >
               Remove
-            </button>
+            </A11yButton>
           )}
         </div>
       </div>
@@ -1896,7 +1904,9 @@ function BrandingPanel() {
         )}
       </div>
 
-      <button
+      <A11yButton
+        label="Save branding settings"
+        type="button"
         onClick={handleSave}
         disabled={saving}
         className="w-full px-4 py-2.5 rounded-lg text-white text-sm font-medium transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
@@ -1911,7 +1921,7 @@ function BrandingPanel() {
           <CheckCircle2 className="w-4 h-4" />
         )}
         Save Branding
-      </button>
+      </A11yButton>
     </div>
   );
 }

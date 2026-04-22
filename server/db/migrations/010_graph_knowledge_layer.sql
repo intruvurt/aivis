@@ -8,9 +8,10 @@
 -- ============================================================
 
 -- Extensions (idempotent)
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Order: vector first, then pgcrypto (for gen_random_uuid), then uuid-ossp
 CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
 -- scans

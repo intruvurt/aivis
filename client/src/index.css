@@ -105,6 +105,7 @@
     background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(5, 5, 5, 0.9) 100%);
     border: 1px solid rgba(var(--matte-silver), 0.2);
     box-shadow: 10px 10px 0px rgba(0, 0, 0, 1); /* Hard offset shadow */
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }

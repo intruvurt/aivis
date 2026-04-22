@@ -1,6 +1,6 @@
 # AiVIS.biz — AI Visibility Audit | CITE LEDGER
 # https://aivis.biz
-# Auto-generated 2026-04-21 — 254 public routes
+# Auto-generated 2026-04-22 — 254 public routes
 
 User-agent: *
 Allow: /

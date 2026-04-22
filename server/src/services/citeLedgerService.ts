@@ -393,7 +393,7 @@ function safeParseAuditResult(result: unknown): Record<string, unknown> {
 }
 
 function buildEvidenceRef(entry: AuditEvidenceEntry): EvidenceRef {
-  const locationParts = [entry.source_type];
+  const locationParts: string[] = [entry.source_type];
   const heading = typeof entry.source_metadata?.section_heading === 'string'
     ? entry.source_metadata.section_heading
     : null;

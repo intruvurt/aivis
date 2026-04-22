@@ -55,6 +55,23 @@ function visibilityLabel(score: number): 'LOW' | 'MEDIUM' | 'HIGH' {
   return 'LOW';
 }
 
+function normalizeToken(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function nodeMatchesAnyToken(label: string, tokens: string[]): boolean {
+  const normalized = ` ${normalizeToken(label)} `;
+  return tokens.some((token) => {
+    const t = normalizeToken(token);
+    if (!t) return false;
+    return normalized.includes(` ${t} `) || normalized.includes(t);
+  });
+}
+
 // ── URL validation (mirrors AnalyzePage) ─────────────────────────────────────
 
 function isValidUrl(input: string): boolean {
@@ -334,6 +351,61 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
     return cognData?.edges.filter((e) => e.revealedAtStep <= cursorSeq) ?? [];
   }, [projectedState, cognData, cursorSeq]);
 
+  const trustFocusTokens = useMemo(() => {
+    if (!result) return ['trust', 'authority', 'security', 'https', 'entity'];
+
+    const rubricTrust = (result.strict_rubric?.gates ?? [])
+      .filter((g) => /trust|security|author|https|crawl|reliability/i.test(`${g.id} ${g.label}`))
+      .map((g) => ({ token: g.label, deficit: Math.max(0, 100 - g.score_0_100) }));
+
+    const presence = result.answer_presence;
+    const presenceSignals = [
+      {
+        token: 'authority',
+        deficit: Math.max(0, 100 - (presence?.authority_alignment_score ?? 100)),
+      },
+      { token: 'entity', deficit: Math.max(0, 100 - (presence?.entity_clarity_score ?? 100)) },
+      { token: 'citation', deficit: Math.max(0, 100 - (presence?.citation_coverage_score ?? 100)) },
+    ];
+
+    return [...rubricTrust, ...presenceSignals]
+      .sort((a, b) => b.deficit - a.deficit)
+      .slice(0, 5)
+      .map((x) => x.token)
+      .concat(['trust', 'authority', 'security', 'https']);
+  }, [result]);
+
+  const scoreFocusTokens = useMemo(() => {
+    if (!result) return ['score', 'category', 'issue'];
+
+    const gradeSignals = (result.category_grades ?? []).map((g) => ({
+      token: g.label,
+      deficit: Math.max(0, 100 - g.score),
+    }));
+
+    const presence = result.answer_presence;
+    const presenceSignals = [
+      {
+        token: 'citation coverage',
+        deficit: Math.max(0, 100 - (presence?.citation_coverage_score ?? 100)),
+      },
+      {
+        token: 'authority alignment',
+        deficit: Math.max(0, 100 - (presence?.authority_alignment_score ?? 100)),
+      },
+      {
+        token: 'entity clarity',
+        deficit: Math.max(0, 100 - (presence?.entity_clarity_score ?? 100)),
+      },
+    ];
+
+    return [...gradeSignals, ...presenceSignals]
+      .sort((a, b) => b.deficit - a.deficit)
+      .slice(0, 6)
+      .map((x) => x.token)
+      .concat(['score', 'issue', 'gap']);
+  }, [result]);
+
   const stageFilteredNodeIds = useMemo(() => {
     const matchesStage = (node: (typeof visibleNodes)[number]) => {
       switch (selectedStage) {
@@ -345,9 +417,18 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
             node.type === 'gap'
           );
         case 'trust':
-          return (node.type === 'entity' || node.type === 'category') && node.confidence >= 0.6;
+          return (
+            nodeMatchesAnyToken(node.label, trustFocusTokens) ||
+            ((node.type === 'entity' || node.type === 'category') && node.confidence >= 0.6) ||
+            node.status === 'conflict'
+          );
         case 'score':
-          return node.type === 'category' || node.type === 'issue' || node.type === 'gap';
+          return (
+            node.type === 'category' ||
+            node.type === 'issue' ||
+            node.type === 'gap' ||
+            nodeMatchesAnyToken(node.label, scoreFocusTokens)
+          );
         case 'schema':
           return /schema|json|markup/i.test(node.label) || node.type === 'issue';
         case 'extract':
@@ -381,7 +462,15 @@ function CognitionOverlay({ scanning, scanStep, result, onReset }: CognitionOver
     }
 
     return ids;
-  }, [visibleNodes, selectedStage, result, showStableNodes, selectedNodeId]);
+  }, [
+    visibleNodes,
+    selectedStage,
+    result,
+    showStableNodes,
+    selectedNodeId,
+    trustFocusTokens,
+    scoreFocusTokens,
+  ]);
 
   const focusedNodes = useMemo(
     () => visibleNodes.filter((n) => stageFilteredNodeIds.has(n.id)),

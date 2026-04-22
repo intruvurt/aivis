@@ -823,6 +823,7 @@ export interface CompetitorSuggestionResult {
 export async function discoverCompetitorsFromHistory(
   userId: string,
   userWebsite: string,
+  workspaceId?: string | null,
 ): Promise<CompetitorSuggestionResult[]> {
   const pool = getPool();
 
@@ -844,8 +845,9 @@ export async function discoverCompetitorsFromHistory(
     const { rows } = await pool.query(
       `SELECT result->'topical_keywords' AS keywords FROM audits
        WHERE user_id = $1 AND url ILIKE $2
+         AND workspace_id IS NOT DISTINCT FROM $3
        ORDER BY created_at DESC LIMIT 1`,
-      [userId, `%${userDomain}%`]
+      [userId, `%${userDomain}%`, workspaceId || null]
     );
     if (rows[0]?.keywords && Array.isArray(rows[0].keywords)) {
       userKeywords = rows[0].keywords.map((k: unknown) => String(k).toLowerCase());
@@ -863,17 +865,18 @@ export async function discoverCompetitorsFromHistory(
      FROM audits
      WHERE user_id = $1
        AND url NOT ILIKE $2
+       AND workspace_id IS NOT DISTINCT FROM $3
      ORDER BY lower(regexp_replace(url, '/+$', '')), created_at DESC
      LIMIT 50`,
-    [userId, `%${userDomain}%`]
+    [userId, `%${userDomain}%`, workspaceId || null]
   );
 
   if (otherAudits.length === 0) return [];
 
   // Get already-tracked competitor URLs
   const { rows: tracked } = await pool.query(
-    `SELECT competitor_url FROM competitor_tracking WHERE user_id = $1`,
-    [userId]
+    `SELECT competitor_url FROM competitor_tracking WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $2`,
+    [userId, workspaceId || null]
   );
   const trackedDomains = new Set(
     tracked.map((r: any) => {
@@ -947,7 +950,7 @@ export async function autoDiscoverCompetitors(req: Request, res: Response) {
       });
     }
 
-    const suggestions = await discoverCompetitorsFromHistory(userId, userWebsite);
+    const suggestions = await discoverCompetitorsFromHistory(userId, userWebsite, req.workspace?.id ?? null);
 
     return res.json({
       success: true,

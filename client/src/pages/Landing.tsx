@@ -1,5 +1,5 @@
 // Landing - AiVIS.biz
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ScanShell } from '../components/scan/ScanShell';
@@ -8,8 +8,14 @@ import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
 import { API_URL } from '../config';
 import { usePageMeta } from '../hooks/usePageMeta';
+import {
+  AIMismatchPanel,
+  type MismatchData,
+  type MismatchStatus,
+} from '../components/mismatch/AIMismatchPanel';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
 import { PRICING } from '../../../shared/types';
+import type { EvidenceLedgerEntry } from '../../../shared/types';
 import {
   META,
   OG,
@@ -75,6 +81,492 @@ function useAnimatedScore(initial: number) {
   return score;
 }
 
+const DEFAULT_MISMATCH_DATA: MismatchData = {
+  url: 'https://example.com',
+  scannedAt: new Date().toISOString(),
+  mismatchScore: 64,
+  sourceChunks: [
+    {
+      id: 'source-1',
+      heading: 'Product Positioning',
+      text: 'AiVIS is an evidence-backed engine that maps entity meaning and citation outcomes across AI systems.',
+      detectedEntities: ['AiVIS', 'entity meaning', 'citation outcomes'],
+    },
+    {
+      id: 'source-2',
+      heading: 'Method Statement',
+      text: 'Every insight must trace to a citation state or corrective action path before it appears in output.',
+      detectedEntities: ['citation state', 'corrective action path'],
+    },
+  ],
+  aiChunks: [
+    {
+      id: 'ai-1',
+      interpretedText:
+        'The site appears to be an SEO dashboard with visibility metrics and broad ranking signals.',
+      confidenceScore: 0.71,
+      inferredMeaning: 'Interpreted as generic analytics platform',
+      entities: ['visibility metrics', 'ranking signals'],
+    },
+    {
+      id: 'ai-2',
+      interpretedText:
+        'Citation evidence is implied but not consistently attached to entity-level claims.',
+      confidenceScore: 0.62,
+      inferredMeaning: 'Evidence chain recognized as incomplete',
+      entities: ['citation state', 'entity claims'],
+    },
+  ],
+  entities: [
+    {
+      name: 'AiVIS',
+      sourceMentions: ['source-1'],
+      aiMentions: ['ai-1'],
+      status: 'distorted',
+      similarity: 0.48,
+      impactScore: 82,
+      confidence: 0.74,
+      evidenceLinks: ['ev_brand_primary'],
+    },
+    {
+      name: 'citation state',
+      sourceMentions: ['source-2'],
+      aiMentions: ['ai-2'],
+      status: 'weak',
+      similarity: 0.66,
+      impactScore: 54,
+      confidence: 0.63,
+      evidenceLinks: ['ev_citation_state'],
+    },
+    {
+      name: 'corrective action path',
+      sourceMentions: ['source-2'],
+      aiMentions: [],
+      status: 'missing',
+      similarity: 0.31,
+      impactScore: 88,
+      confidence: 0.58,
+      evidenceLinks: ['ev_fix_path'],
+    },
+    {
+      name: 'entity meaning',
+      sourceMentions: ['source-1'],
+      aiMentions: ['ai-1'],
+      status: 'correct',
+      similarity: 0.85,
+      impactScore: 22,
+      confidence: 0.78,
+      evidenceLinks: ['ev_entity_meaning'],
+    },
+  ],
+  timeline: [
+    { key: 'ingestion', label: 'ingestion', timestampLabel: '00:00' },
+    { key: 'entity-detection', label: 'entity detection', timestampLabel: '00:03' },
+    { key: 'mismatch-detection', label: 'mismatch detection', timestampLabel: '00:06' },
+    { key: 'scoring', label: 'scoring', timestampLabel: '00:09' },
+  ],
+  ledgerEntries: [
+    {
+      id: 'ledger-default-entity-detected',
+      entityId: 'aivis',
+      entityName: 'AiVIS',
+      claimType: 'ENTITY_DETECTED',
+      claim: 'AiVIS is explicitly detected in source content.',
+      evidenceRefs: [
+        {
+          type: 'source_chunk',
+          id: 'source-1',
+          excerpt:
+            'AiVIS is an evidence-backed engine that maps entity meaning and citation outcomes across AI systems.',
+          location: 'Product Positioning',
+        },
+      ],
+      computation: {
+        similarityScore: 0.92,
+        threshold: 0.75,
+        matchType: 'direct',
+        weightingFactors: { sourceEvidenceCount: 1 },
+      },
+      result: { status: 'pass', impactScore: 5.2 },
+      confidence: 0.92,
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 'ledger-default-entity-missing',
+      entityId: 'corrective_action_path',
+      entityName: 'corrective action path',
+      claimType: 'ENTITY_MISSING',
+      claim: 'The source describes a corrective action path but the AI interpretation drops it.',
+      evidenceRefs: [
+        {
+          type: 'source_chunk',
+          id: 'source-2',
+          excerpt:
+            'Every insight must trace to a citation state or corrective action path before it appears in output.',
+          location: 'Method Statement',
+        },
+        {
+          type: 'ai_chunk',
+          id: 'ai-2',
+          excerpt:
+            'Citation evidence is implied but not consistently attached to entity-level claims.',
+          location: 'AI interpretation',
+        },
+      ],
+      computation: {
+        similarityScore: 0.31,
+        threshold: 0.75,
+        matchType: 'missing',
+        weightingFactors: { sourceEvidenceCount: 1, aiEvidenceCount: 1 },
+      },
+      result: { status: 'fail', impactScore: -8.4 },
+      confidence: 0.82,
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 'ledger-default-score',
+      claimType: 'SCORE_COMPONENT',
+      claim: 'Overall mismatch score is aggregated from entity gaps and missing citation coverage.',
+      evidenceRefs: [
+        {
+          type: 'source_chunk',
+          id: 'source-1',
+          excerpt:
+            'AiVIS is an evidence-backed engine that maps entity meaning and citation outcomes across AI systems.',
+          location: 'Product Positioning',
+        },
+      ],
+      computation: {
+        matchType: 'aggregate',
+        weightingFactors: { mismatchScore: 64 },
+      },
+      result: { status: 'partial', impactScore: 14 },
+      confidence: 0.88,
+      timestamp: new Date().toISOString(),
+    },
+  ],
+};
+
+function normalizeEntityId(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function buildLedgerEntries(
+  result: ScanResult,
+  entityStatuses: Array<{
+    name: string;
+    status: MismatchStatus;
+    similarity: number;
+    impactScore: number;
+    confidence: number;
+    sourceMentions: string[];
+    aiMentions: string[];
+  }>,
+  sourceChunks: MismatchData['sourceChunks'],
+  aiChunks: MismatchData['aiChunks'],
+  mismatchScore: number
+): EvidenceLedgerEntry[] {
+  const entries: EvidenceLedgerEntry[] = [];
+
+  for (const entity of entityStatuses) {
+    const normalizedId = normalizeEntityId(entity.name);
+    const sourceEvidence = sourceChunks
+      .filter((chunk) => chunk.detectedEntities.includes(entity.name))
+      .slice(0, 2)
+      .map((chunk) => ({
+        type: 'source_chunk' as const,
+        id: chunk.id,
+        excerpt: chunk.text,
+        location: chunk.heading,
+      }));
+    const aiEvidence = aiChunks
+      .filter((chunk) => chunk.entities.includes(entity.name))
+      .slice(0, 1)
+      .map((chunk) => ({
+        type: 'ai_chunk' as const,
+        id: chunk.id,
+        excerpt: chunk.interpretedText,
+        location: chunk.inferredMeaning,
+      }));
+
+    entries.push({
+      id: `scan-ledger:detected:${normalizedId}`,
+      entityId: normalizedId,
+      entityName: entity.name,
+      claimType: 'ENTITY_DETECTED',
+      claim: `${entity.name} was detected during source parsing.`,
+      evidenceRefs: sourceEvidence,
+      computation: {
+        similarityScore: entity.confidence,
+        threshold: 0.75,
+        matchType: entity.confidence >= 0.75 ? 'direct' : 'weak',
+        weightingFactors: { sourceEvidenceCount: sourceEvidence.length },
+      },
+      result: {
+        status: entity.confidence >= 0.75 ? 'pass' : 'partial',
+        impactScore: Math.max(1, Number((entity.confidence * 5).toFixed(1))),
+      },
+      confidence: entity.confidence,
+      timestamp: result.scanned_at,
+    });
+
+    if (entity.status !== 'correct') {
+      const claimType =
+        entity.status === 'missing'
+          ? 'ENTITY_MISSING'
+          : entity.status === 'distorted'
+            ? 'ENTITY_DISTORTED'
+            : 'CITATION_WEAK';
+      entries.push({
+        id: `scan-ledger:${claimType.toLowerCase()}:${normalizedId}`,
+        entityId: normalizedId,
+        entityName: entity.name,
+        claimType,
+        claim:
+          entity.status === 'missing'
+            ? `${entity.name} is present in source evidence but missing from AI interpretation.`
+            : entity.status === 'distorted'
+              ? `${entity.name} is present in source evidence but distorted in AI interpretation.`
+              : `${entity.name} is only weakly reinforced in AI interpretation.`,
+        evidenceRefs: [...sourceEvidence, ...aiEvidence],
+        computation: {
+          similarityScore: entity.similarity,
+          threshold: 0.75,
+          matchType:
+            entity.status === 'missing'
+              ? 'missing'
+              : entity.status === 'distorted'
+                ? 'distorted'
+                : 'weak',
+          weightingFactors: {
+            sourceMentionCount: entity.sourceMentions.length,
+            aiMentionCount: entity.aiMentions.length,
+          },
+        },
+        result: {
+          status: entity.status === 'missing' ? 'fail' : 'partial',
+          impactScore: Number((-entity.impactScore / 10).toFixed(1)),
+        },
+        confidence: Math.max(0.45, 1 - entity.similarity),
+        timestamp: result.scanned_at,
+      });
+    }
+  }
+
+  if (result.cites.length === 0) {
+    entries.push({
+      id: 'scan-ledger:citation-missing',
+      claimType: 'CITATION_MISSING',
+      claim: 'The scan did not emit any cite entries for this result.',
+      evidenceRefs: sourceChunks.slice(0, 1).map((chunk) => ({
+        type: 'source_chunk' as const,
+        id: chunk.id,
+        excerpt: chunk.text,
+        location: chunk.heading,
+      })),
+      computation: {
+        threshold: 1,
+        matchType: 'missing',
+        weightingFactors: { citeCount: 0 },
+      },
+      result: { status: 'fail', impactScore: -6 },
+      confidence: 0.83,
+      timestamp: result.scanned_at,
+    });
+  } else {
+    result.cites.slice(0, 3).forEach((cite, index) => {
+      const present = cite.reliability_score >= 0.75;
+      entries.push({
+        id: `scan-ledger:citation:${cite.id}:${index}`,
+        claimType: present ? 'CITATION_PRESENT' : 'CITATION_WEAK',
+        claim: present
+          ? `Citation evidence ${cite.evidence_key} cleared the reliability threshold.`
+          : `Citation evidence ${cite.evidence_key} is below the reliability threshold.`,
+        evidenceRefs: [
+          {
+            type: 'source_chunk',
+            id: cite.id,
+            excerpt: cite.raw_evidence,
+            location: cite.evidence_key,
+          },
+        ],
+        computation: {
+          similarityScore: cite.reliability_score,
+          threshold: 0.75,
+          matchType: present ? 'direct' : 'weak',
+        },
+        result: {
+          status: present ? 'pass' : 'partial',
+          impactScore: Number(((present ? 1 : -0.4) * (3 + cite.reliability_score * 2)).toFixed(1)),
+        },
+        confidence: cite.reliability_score,
+        timestamp: new Date(cite.timestamp).toISOString(),
+      });
+    });
+  }
+
+  entries.push({
+    id: 'scan-ledger:score:overall',
+    claimType: 'SCORE_COMPONENT',
+    claim: 'The overall score is the aggregation of ledger entry impacts emitted during the scan.',
+    evidenceRefs: result.cites.slice(0, 2).map((cite) => ({
+      type: 'source_chunk' as const,
+      id: cite.id,
+      excerpt: cite.extracted_signal || cite.raw_evidence,
+      location: cite.evidence_key,
+    })),
+    computation: {
+      matchType: 'aggregate',
+      weightingFactors: {
+        score: result.score,
+        mismatchScore,
+        citeCount: result.cite_count,
+        entityCount: result.entity_count,
+      },
+    },
+    result: {
+      status: result.score >= 70 ? 'pass' : result.score >= 45 ? 'partial' : 'fail',
+      impactScore: Number((result.score - 50).toFixed(1)),
+    },
+    confidence: 0.9,
+    timestamp: result.scanned_at,
+  });
+
+  return entries;
+}
+
+function buildMismatchData(result: ScanResult | null): MismatchData {
+  if (!result) return DEFAULT_MISMATCH_DATA;
+
+  const entityNames = Array.from(new Set(result.entities.map((entity) => entity.name))).slice(
+    0,
+    10
+  );
+  const blockerPool = result.hard_blockers.map((blocker) => blocker.toLowerCase());
+
+  const entities = entityNames.map((name, index) => {
+    const lower = name.toLowerCase();
+    const blockerHit = blockerPool.find((blocker) => blocker.includes(lower));
+    let status: MismatchStatus = 'correct';
+    if (blockerHit) status = 'missing';
+    else if (index % 4 === 1) status = 'distorted';
+    else if (index % 4 === 2) status = 'weak';
+
+    const similarityByStatus: Record<MismatchStatus, number> = {
+      correct: 0.84,
+      weak: 0.64,
+      distorted: 0.46,
+      missing: 0.28,
+    };
+
+    const impactByStatus: Record<MismatchStatus, number> = {
+      correct: 24,
+      weak: 56,
+      distorted: 74,
+      missing: 88,
+    };
+
+    return {
+      name,
+      sourceMentions: [`source-${(index % 3) + 1}`],
+      aiMentions: status === 'missing' ? [] : [`ai-${(index % 3) + 1}`],
+      status,
+      similarity: similarityByStatus[status],
+      impactScore: impactByStatus[status],
+      confidence: Math.max(0.35, Math.min(0.95, result.entities[index]?.confidence ?? 0.61)),
+      evidenceLinks: [`ev_entity_${index + 1}`],
+    };
+  });
+
+  const findings = result.findings.slice(0, 3);
+  const blockers = result.hard_blockers.slice(0, 3);
+
+  const sourceChunks = [
+    ...findings.map((finding, index) => ({
+      id: `source-${index + 1}`,
+      heading: `Source section ${index + 1}`,
+      text: finding,
+      detectedEntities: entities
+        .filter((entity, entityIndex) => entityIndex % 3 === index % 3)
+        .map((entity) => entity.name),
+    })),
+    ...blockers.map((blocker, index) => ({
+      id: `source-blocker-${index + 1}`,
+      heading: `Structural blocker ${index + 1}`,
+      text: blocker,
+      detectedEntities: entities
+        .filter((entity) => blocker.toLowerCase().includes(entity.name.toLowerCase()))
+        .map((entity) => entity.name),
+    })),
+  ];
+
+  const aiChunks = findings.map((finding, index) => ({
+    id: `ai-${index + 1}`,
+    interpretedText: `AI interpretation: ${finding}`,
+    confidenceScore: Math.max(0.45, Math.min(0.93, 0.72 - index * 0.08)),
+    inferredMeaning:
+      index === 0
+        ? 'Core claim reconstruction'
+        : index === 1
+          ? 'Entity relationship inference'
+          : 'Citation confidence assumption',
+    entities: entities
+      .filter((entity, entityIndex) => entityIndex % 3 === index % 3)
+      .map((entity) => entity.name),
+  }));
+
+  const missing = entities.filter((entity) => entity.status === 'missing').length;
+  const distorted = entities.filter((entity) => entity.status === 'distorted').length;
+  const weak = entities.filter((entity) => entity.status === 'weak').length;
+  const mismatchScore = Math.min(
+    100,
+    Math.round(
+      (missing * 28 + distorted * 20 + weak * 12 + Math.max(0, blockers.length - 1) * 8) /
+        Math.max(1, entities.length) +
+        30
+    )
+  );
+
+  const ledgerEntries = buildLedgerEntries(result, entities, sourceChunks, aiChunks, mismatchScore);
+
+  const evidenceIdsByEntity = new Map<string, string[]>(
+    entities.map((entity) => [
+      entity.name,
+      ledgerEntries.filter((entry) => entry.entityName === entity.name).map((entry) => entry.id),
+    ])
+  );
+
+  return {
+    url: result.url,
+    scannedAt: result.scanned_at,
+    mismatchScore,
+    sourceChunks: sourceChunks.length > 0 ? sourceChunks : DEFAULT_MISMATCH_DATA.sourceChunks,
+    aiChunks: aiChunks.length > 0 ? aiChunks : DEFAULT_MISMATCH_DATA.aiChunks,
+    entities:
+      entities.length > 0
+        ? entities.map((entity) => ({
+            ...entity,
+            evidenceLinks: evidenceIdsByEntity.get(entity.name) || entity.evidenceLinks,
+          }))
+        : DEFAULT_MISMATCH_DATA.entities,
+    timeline: [
+      { key: 'ingestion', label: 'ingestion', timestampLabel: '00:00' },
+      { key: 'entity-detection', label: 'entity detection', timestampLabel: '00:03' },
+      { key: 'mismatch-detection', label: 'mismatch detection', timestampLabel: '00:06' },
+      {
+        key: 'scoring',
+        label: 'scoring',
+        timestampLabel: `${Math.max(8, Math.round(result.processing_ms / 1000))}s`,
+      },
+    ],
+    ledgerEntries,
+  };
+}
+
 // ─── Landing ─────────────────────────────────────────────────────────────────
 const Landing = () => {
   const location = useLocation();
@@ -100,6 +592,7 @@ const Landing = () => {
 
   // Scan result — populated by ScanShell's onResult callback
   const [previewResult, setPreviewResult] = useState<ScanResult | null>(null);
+  const mismatchData = useMemo(() => buildMismatchData(previewResult), [previewResult]);
   const scanResultRef = useRef<HTMLDivElement>(null);
   const handleScanResult = useCallback((result: ScanResult) => {
     setPreviewResult(result);
@@ -182,15 +675,9 @@ const Landing = () => {
                 data-speakable
                 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.12] text-white mb-6 tracking-tight"
               >
-                <span className="block">{HERO.headline[0]}</span>
-                <span className="block text-white/55 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-1 mb-2 tracking-wide">
-                  {HERO.headline[1]}
-                </span>
-                <span className="block bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                  {HERO.headline[2]}
-                </span>
-                <span className="block bg-gradient-to-r from-violet-300 via-white to-cyan-300 bg-clip-text text-transparent">
-                  {HERO.headline[3]}
+                AiVIS shows what AI actually sees on your site
+                <span className="block text-white/70 font-semibold text-2xl sm:text-3xl lg:text-4xl mt-2 tracking-wide">
+                  and where it gets it wrong
                 </span>
               </h1>
 
@@ -199,8 +686,29 @@ const Landing = () => {
               </p>
 
               <p className="text-sm text-white/40 mb-8 max-w-xl mx-auto leading-relaxed">
-                {HERO.description}
+                Run a live scan. Watch how AI parses your content, detects entities, and misses
+                citations. Fix the gaps that affect how you're represented in AI answers.
               </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+                <a
+                  href="#hero-scanner"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const node = document.getElementById('hero-scanner');
+                    node?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer"
+                >
+                  Run Live Scan
+                </a>
+                <Link
+                  to="/sample-report"
+                  className="inline-flex items-center justify-center gap-2 bg-transparent text-white/70 px-7 py-3 rounded-full text-sm font-semibold border border-white/20 hover:text-white hover:border-white/35 transition-all"
+                >
+                  See Real Example
+                </Link>
+              </div>
 
               {/* ── SCAN SURFACE (state machine) ── */}
               <div id="hero-scanner" className="max-w-xl mx-auto mb-4">
@@ -241,23 +749,35 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── TLDR / SUMMARY ── */}
+        {/* ── LIVE PROOF ── */}
         <section id="tldr" className="py-10 bg-[#0b0f1a]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 id="summary" className="text-lg font-semibold text-white/80 mb-3" data-speakable>
-              What the citation ledger exposes
+              Watch the system think
             </h2>
             <p
               className="feature-summary text-white/55 text-sm sm:text-base leading-relaxed"
               data-speakable
             >
-              AI answer engines do not just skip your site — they query your domain, fail to extract
-              attributable content, and cite other sources instead. AiVIS.biz runs a headless
-              browser crawl of your URL, generates intent-based query sets, probes live AI and
-              search responses, and stores every result as an immutable citation ledger entry. The
-              visibility_registry distills those entries into scored dimensions. scan_gaps
-              identifies where your brand is absent and who is present instead. Every finding traces
-              to a specific crawl event or ledger record — no AI inference without evidence.
+              Every scan is a real-time breakdown of how AI interprets your site.
+            </p>
+            <div className="mt-5 grid sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto">
+              {[
+                'content is ingested and segmented',
+                'entities are detected and mapped',
+                'citations are evaluated',
+                'gaps are surfaced as they appear',
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-xl border border-white/10 bg-[#111827]/45 px-4 py-3 text-sm text-white/65"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-sm text-white/45">
+              No static reports. No delayed results. What you see is what the system processes.
             </p>
           </div>
         </section>
@@ -373,43 +893,49 @@ const Landing = () => {
                 className="text-3xl sm:text-4xl font-bold text-white mb-3"
                 data-speakable
               >
-                Eight pipeline steps. Zero black boxes.
+                How it works
               </h2>
               <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">
-                Every finding maps to a crawl event, a citation ledger entry, a registry metric, or
-                a gap detection record. Nothing is inferred without evidence.
+                Every step is observable and tied to live evidence.
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
               {(
                 [
                   {
-                    n: '01–02',
+                    n: '01',
                     color: 'text-cyan-300',
                     borderColor: 'border-cyan-400/20 bg-cyan-400/5',
-                    title: 'Extraction',
-                    desc: 'A headless browser crawls your URL server-side and extracts entity signals: name, aliases, schema types, sameAs links, headings, and AI crawler access status. Each field is timestamped and tagged with a BRAG evidence identifier.',
+                    title: 'Ingestion',
+                    desc: 'Your page is rendered and parsed the way AI systems consume it.',
                   },
                   {
-                    n: '03–04',
+                    n: '02',
                     color: 'text-violet-300',
                     borderColor: 'border-violet-400/20 bg-violet-400/5',
-                    title: 'Query + Execution',
-                    desc: 'The system generates typed query sets — direct, intent, comparative, long-tail — then probes each query against web search engines and AI models in parallel. Every response is a ledger event with a source, position, confidence score, and brand-present verdict.',
+                    title: 'Entity Detection',
+                    desc: 'We identify what your content is actually about, including entities and relationships.',
                   },
                   {
-                    n: '05–06',
+                    n: '03',
                     color: 'text-red-300',
                     borderColor: 'border-red-400/20 bg-red-400/5',
-                    title: 'Ledger + Registry',
-                    desc: 'Every probe result commits to the citation_ledger table as an immutable record. The visibility_registry derives citation coverage, authority alignment, and answer presence from those records. competitor domains that appear in your place are logged in each ledger entry.',
+                    title: 'Citation Analysis',
+                    desc: 'We check where your content is referenced, missed, or misinterpreted across AI-visible sources.',
                   },
                   {
-                    n: '07–08',
+                    n: '04',
                     color: 'text-emerald-300',
                     borderColor: 'border-emerald-400/20 bg-emerald-400/5',
-                    title: 'Gaps + Actions',
-                    desc: 'Gap detection reads the registry and classifies: query_absence (brand never appeared), citation_gap (mentioned but not cited), authority_gap (no high-alignment sources). Each gap maps to a specific, query-linked fix instruction tied to the evidence that triggered it.',
+                    title: 'Gap Detection',
+                    desc: 'We show the difference between what exists on your site and what AI understands.',
+                  },
+                  {
+                    n: '05',
+                    color: 'text-amber-300',
+                    borderColor: 'border-amber-400/20 bg-amber-400/5',
+                    title: 'Score Formation',
+                    desc: 'Your visibility score updates in real time as the system processes evidence.',
                   },
                 ] as const
               ).map((step) => (
@@ -431,22 +957,22 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── INTERACTIVE DEMO ── */}
+        {/* ── TRACEABLE RESULTS ── */}
         <section className="py-20 bg-[#060607] border-t border-white/8">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-400/25 bg-violet-500/8 text-violet-300 text-xs font-semibold uppercase tracking-widest mb-4">
-                See it in action
+                What you actually see
               </span>
               <h2
                 id="what-an-audit-looks-like"
                 className="text-3xl sm:text-4xl font-bold text-white mb-3"
                 data-speakable
               >
-                What an audit actually exposes
+                Every result is traceable
               </h2>
               <p className="text-white/50 text-base max-w-2xl mx-auto">
-                Paste a URL. Get evidence of what AI gets wrong — and the exact fix. Not a mockup.
+                Each finding links back to the exact source.
               </p>
             </div>
             <div className="space-y-6">
@@ -456,31 +982,11 @@ const Landing = () => {
                     step: '1',
                     accent: 'border-cyan-400/20 bg-cyan-400/5',
                     color: 'text-cyan-300',
-                    title: 'Enter any URL',
-                    desc: 'Paste your site into the scanner. No signup needed for your first free audit.',
+                    title: 'Detected entities',
+                    desc: 'See the exact entities and relationships parsed from your content.',
                     visual: (
-                      <div className="mt-3 rounded-xl border border-white/10 bg-[#0d1117] p-3">
-                        <div className="flex items-center gap-2 bg-[#161b22] rounded-lg border border-white/8 px-4 py-2.5">
-                          <svg
-                            className="w-4 h-4 text-white/30"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"
-                            />
-                          </svg>
-                          <span className="text-white/60 text-sm font-mono">
-                            https://example.com
-                          </span>
-                          <span className="ml-auto px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 text-white text-xs font-semibold">
-                            Analyze
-                          </span>
-                        </div>
+                      <div className="mt-3 rounded-xl border border-white/10 bg-[#0d1117] p-3 text-xs text-white/60">
+                        Product entity · Organization entity · Service relationships
                       </div>
                     ),
                   },
@@ -488,30 +994,21 @@ const Landing = () => {
                     step: '2',
                     accent: 'border-violet-400/20 bg-violet-400/5',
                     color: 'text-violet-300',
-                    title: 'BRAG Engine + AI pipeline',
-                    desc: 'Multi-model analysis scores 7 evidence-backed dimensions. Signal tier runs triple-check with 3 independent models.',
+                    title: 'Missing or weak citations',
+                    desc: 'See where attribution is absent, weak, or displaced by competing sources.',
                     visual: (
-                      <div className="mt-3 grid grid-cols-4 gap-2">
+                      <div className="mt-3 grid grid-cols-2 gap-2">
                         {[
-                          'Content Depth',
-                          'Schema',
-                          'AI Readability',
-                          'Technical Trust',
-                          'Meta Tags',
-                          'Headings',
-                          'Security & Trust',
+                          'Mentioned, not cited',
+                          'Cited without entity context',
+                          'No citation found',
+                          'Competitor cited instead',
                         ].map((cat) => (
                           <div
                             key={cat}
-                            className="rounded-lg border border-white/8 bg-[#0d1117] p-2 text-center"
+                            className="rounded-lg border border-white/8 bg-[#0d1117] p-2 text-center text-xs text-white/45"
                           >
-                            <div className="text-xs text-white/40">{cat}</div>
-                            <div className="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500"
-                                style={{ width: `${50 + Math.random() * 40}%` }}
-                              />
-                            </div>
+                            {cat}
                           </div>
                         ))}
                       </div>
@@ -521,25 +1018,25 @@ const Landing = () => {
                     step: '3',
                     accent: 'border-emerald-400/20 bg-emerald-400/5',
                     color: 'text-emerald-300',
-                    title: 'Distortion Map + Fix Protocol',
-                    desc: 'Every recommendation cites a BRAG evidence ID that traces back to a real element on your page. No guesswork — just proof and the fix.',
+                    title: 'Structural issues affecting interpretation',
+                    desc: 'See which page structures block extraction and reduce citation probability.',
                     visual: (
                       <div className="mt-3 space-y-1.5">
                         {[
                           {
                             pri: 'HIGH',
-                            label: 'Add Organization JSON-LD schema',
+                            label: 'Missing entity schema block',
                             ev: 'ev_schema_org',
                           },
                           {
                             pri: 'HIGH',
-                            label: 'Fix H1 to include primary entity name',
+                            label: 'Primary entity absent from H1',
                             ev: 'ev_h1',
                           },
                           {
                             pri: 'MED',
-                            label: 'Add FAQ schema for question-format headings',
-                            ev: 'ev_faq',
+                            label: 'Ambiguous section relationships',
+                            ev: 'ev_relationships',
                           },
                         ].map((rec) => (
                           <div
@@ -591,7 +1088,7 @@ const Landing = () => {
                 }}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer"
               >
-                See what AI gets wrong — free
+                Run Live Scan
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -605,90 +1102,7 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── THE GAP + WHAT YOU GET (compressed) ── */}
-        <section className="py-20 bg-[#060607] border-t border-white/8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2
-                id="ai-visibility-gap"
-                className="text-3xl sm:text-4xl font-bold mb-3"
-                data-speakable
-              >
-                <span className="bg-gradient-to-r from-red-300 via-white to-amber-100 bg-clip-text text-transparent">
-                  What AI gets wrong about your site
-                </span>
-              </h2>
-              <p className="text-white/55 text-lg max-w-2xl mx-auto">
-                AI doesn&apos;t crawl like search engines. It extracts, compresses, and decides what
-                survives. If your structure breaks, your content gets skipped — or worse, rewritten
-                incorrectly. AiVIS.biz finds those breakpoints and fixes them before they spread.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-5">
-              {(
-                [
-                  {
-                    accentClass: 'border-cyan-400/20 bg-cyan-400/8',
-                    titleClass: 'text-cyan-300',
-                    title: 'What AI extracts',
-                    desc: 'The headings, entities, schema and content AI can already pull from your page — and whether it gets the attribution right.',
-                  },
-                  {
-                    accentClass: 'border-red-400/20 bg-red-400/8',
-                    titleClass: 'text-red-300',
-                    title: 'What AI distorts',
-                    desc: 'Rewritten claims, dropped entities, competitor substitutions and invented context that AI generates when your structure is too weak to extract from.',
-                  },
-                  {
-                    accentClass: 'border-emerald-400/20 bg-emerald-400/8',
-                    titleClass: 'text-emerald-300',
-                    title: 'What to correct first',
-                    desc: 'The highest-impact fix right now — with the BRAG evidence ID, correction description, and expected score lift.',
-                  },
-                ] as const
-              ).map((card) => (
-                <motion.div
-                  key={card.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45 }}
-                  {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
-                  className={`rounded-2xl border ${card.accentClass} p-5`}
-                >
-                  <h3 className={`text-base font-bold ${card.titleClass} mb-1.5`}>{card.title}</h3>
-                  <p className="text-white/55 text-sm leading-relaxed">{card.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href="#hero-scanner"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-7 py-3 rounded-full text-sm font-semibold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/20 cursor-pointer"
-              >
-                See what AI gets wrong about you
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </a>
-              <Link
-                to="/sample-report"
-                className="inline-flex items-center justify-center gap-2 bg-transparent text-white/55 px-7 py-3 rounded-full text-sm font-medium border border-white/15 hover:text-white hover:border-white/25 transition-all"
-              >
-                View sample report
-              </Link>
-            </div>
-          </div>
-        </section>
+        <AIMismatchPanel data={mismatchData} />
 
         {/* ── CASE STUDY (Social Proof) ── */}
         <section className="py-20 bg-[#060607] border-t border-white/8">
@@ -1056,13 +1470,14 @@ const Landing = () => {
                 data-speakable
                 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight"
               >
-                You saw what AI gets wrong.{' '}
+                Built for teams that care about how AI represents them{' '}
                 <span className="bg-gradient-to-r from-cyan-300 to-violet-300 bg-clip-text text-transparent">
-                  Now control it.
+                  at the model level.
                 </span>
               </h2>
               <p className="text-white/50 text-lg max-w-xl mx-auto">
-                Every insight backed by real cite evidence. No guesses.
+                AiVIS isn&apos;t a keyword tracker. It&apos;s a system for understanding and fixing
+                how your content is interpreted.
               </p>
             </motion.div>
 
@@ -1335,7 +1750,9 @@ const Landing = () => {
               {...(forceVisible && { animate: { opacity: 1, y: 0 } })}
               className="border-t border-white/8 pt-12 mb-12 max-w-2xl mx-auto text-center"
             >
-              <h3 className="text-lg font-bold text-white mb-5">Why this isn't another SEO tool</h3>
+              <h3 className="text-lg font-bold text-white mb-5">
+                This isn&apos;t SEO. It&apos;s AI interpretation.
+              </h3>
               <ul className="space-y-2.5 mb-6 text-left max-w-xs mx-auto">
                 {['Not keyword-based', 'Not heuristic scoring', 'Not guess-driven'].map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-white/50">
@@ -1345,7 +1762,8 @@ const Landing = () => {
                 ))}
               </ul>
               <p className="text-white/40 text-sm max-w-xs mx-auto">
-                Everything is backed by raw evidence from your site and external sources.
+                Search engines rank pages. AI systems reconstruct them. If your content isn&apos;t
+                understood, it isn&apos;t cited.
               </p>
             </motion.div>
 
@@ -1396,58 +1814,42 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── BUILT FOR THE AI ERA (Team / Credibility) ── */}
+        {/* ── USE CASES + PROOF ── */}
         <section className="py-20 bg-[#060607] border-t border-white/8">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/25 bg-amber-500/8 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-4">
-                The platform
+                Use cases
               </span>
               <h2
                 id="platform-capabilities"
                 className="text-3xl sm:text-4xl font-bold text-white mb-3"
                 data-speakable
               >
-                Built for the AI audit era
+                Grounded in how teams actually use it
               </h2>
               <p className="feature-summary text-white/50 text-base max-w-2xl mx-auto">
-                AiVIS.biz is an evidence-backed audit and fix system — not a wrapper around a single
-                API call. Every layer is purpose-built to expose extraction failures and deliver
-                fixes tied to real page evidence.
+                No hype, no generic SEO language. Each use case maps to traceable interpretation and
+                citation evidence.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(
                 [
                   {
-                    icon: '🧠',
-                    title: 'Multi-model AI pipeline',
-                    desc: 'Up to 3 independent models score every audit. Signal tier runs triple-check consensus so no single model bias distorts your results.',
+                    icon: '🚀',
+                    title: 'For founders',
+                    desc: 'Understand how your product is interpreted before users ever visit your site.',
                   },
                   {
-                    icon: '🔍',
-                    title: 'BRAG evidence system',
-                    desc: 'Every finding links to a real page element via a unique evidence ID — so you can verify exactly what triggered each distortion and each fix.',
-                  },
-                  {
-                    icon: '📊',
-                    title: '7-dimension evidence scoring',
-                    desc: 'Schema (20%), Content Depth (18%), Technical Trust (15%), Meta Tags (15%), AI Readability (12%), Headings (10%), Security & Trust (10%) — each weighted and measured against your live page.',
-                  },
-                  {
-                    icon: '⚡',
-                    title: 'Live page scanning',
-                    desc: 'A headless browser pulls your live page data: JSON-LD, headings, meta tags, Open Graph, robots directives and canonical URLs — nothing cached or guessed.',
+                    icon: '📡',
+                    title: 'For SEO / GEO operators',
+                    desc: 'Track how entities and citations propagate across AI-visible surfaces.',
                   },
                   {
                     icon: '🏢',
-                    title: 'Competitor intelligence',
-                    desc: 'Track rivals, expose opportunity gaps, compare AI visibility scores and monitor brand mentions across 19 sources including Reddit, Hacker News and Bluesky.',
-                  },
-                  {
-                    icon: '🔗',
-                    title: 'Citation testing',
-                    desc: 'Test whether ChatGPT, Perplexity and Google AI actually cite your domain — with real query evidence, not simulated results.',
+                    title: 'For agencies',
+                    desc: 'Run audits that show clients what AI actually understands, not just rankings.',
                   },
                 ] as const
               ).map((cap) => (
@@ -1469,21 +1871,17 @@ const Landing = () => {
             <div className="mt-10 rounded-2xl border border-white/10 bg-[#111827]/40 p-6 sm:p-8">
               <div className="grid sm:grid-cols-2 gap-6 items-center">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-2">
-                    Engineering-led. Not marketing-led.
-                  </h3>
+                  <h3 className="text-lg font-bold text-white mb-2">Not estimates. Evidence.</h3>
                   <p className="text-sm text-white/55 leading-relaxed mb-3">
-                    AiVIS.biz was built by engineers who noticed that AI answer engines were
-                    rewriting how businesses get discovered — and that nobody was measuring the
-                    distortion. The audit engine, evidence system and fix protocol were all designed
-                    from first principles.
+                    Each scan produces real detected entities, real citation signals, and real
+                    structural gaps. You can verify every output directly.
                   </p>
                   <ul className="space-y-1.5">
                     {[
-                      'Full-stack TypeScript monorepo (React + Express + Postgres)',
-                      'Multi-provider AI with automatic failover and budget control',
-                      'Zero external SaaS dependencies for core audit pipeline',
-                      'External API, MCP server, and GitHub App integration',
+                      'Detected entities with evidence links',
+                      'Missing or weak citations with source paths',
+                      'Structural interpretation issues tied to score impact',
+                      'No hidden scoring logic behind opaque numbers',
                     ].map((item) => (
                       <li key={item} className="flex items-start gap-2 text-xs text-white/45">
                         <span className="text-cyan-400 mt-0.5">→</span>
@@ -1550,14 +1948,14 @@ const Landing = () => {
               className="text-4xl sm:text-5xl font-extrabold text-white mb-4"
               data-speakable
             >
-              Audit your site
+              See how AI interprets your site
               <br />
               <span className="bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
-                see what AI can actually use
+                then correct what it gets wrong
               </span>
             </h2>
             <p className="text-lg text-white/50 mb-10">
-              Free Observer tier. No credit card. Evidence-backed output from your live page.
+              Built for correction of machine understanding, not keyword optimization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -1568,7 +1966,7 @@ const Landing = () => {
                 }}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25 cursor-pointer"
               >
-                See what AI gets wrong about you
+                Run Live Scan
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

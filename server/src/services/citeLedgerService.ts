@@ -17,7 +17,13 @@
 import { createHash } from 'crypto';
 import { getPool } from './postgresql.js';
 import { resolveEntity, recordDriftScore } from './entityService.js';
-import type { AuditEvidenceEntry } from '../../../shared/types.js';
+import type {
+  AuditEvidenceEntry,
+  EvidenceLedgerClaimType,
+  EvidenceLedgerEntry,
+  EvidenceLedgerProjection,
+  EvidenceRef,
+} from '../../../shared/types.js';
 import type { PoolClient } from 'pg';
 
 // ─── Job queue operations (Express equivalent of CF Queue) ────────────────────
@@ -336,4 +342,408 @@ export async function getAuditEvidenceEntries(auditId: string): Promise<AuditEvi
     created_at: row.created_at instanceof Date ? (row.created_at as Date).toISOString() : row.created_at as string,
     updated_at: row.updated_at instanceof Date ? (row.updated_at as Date).toISOString() : row.updated_at as string,
   }));
+}
+
+type AuditProjectionRow = {
+  audit_id: string;
+  url: string;
+  visibility_score: number | null;
+  result: unknown;
+  scan_id: string | null;
+};
+
+type ClaimProjectionRow = {
+  id: string;
+  canonical_name: string | null;
+  subject_id: string | null;
+  predicate: string;
+  object_value: string | null;
+  confidence: number | null;
+  domain_authority: number | null;
+  source_url: string | null;
+  created_at: string;
+};
+
+function clampUnit(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
+
+function roundImpact(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+function normalizeEntityId(name: string): string {
+  return String(name || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'unknown_entity';
+}
+
+function safeParseAuditResult(result: unknown): Record<string, unknown> {
+  if (result && typeof result === 'object') return result as Record<string, unknown>;
+  if (typeof result !== 'string') return {};
+  try {
+    const parsed = JSON.parse(result);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function buildEvidenceRef(entry: AuditEvidenceEntry): EvidenceRef {
+  const locationParts = [entry.source_type];
+  const heading = typeof entry.source_metadata?.section_heading === 'string'
+    ? entry.source_metadata.section_heading
+    : null;
+  const page = typeof entry.source_metadata?.page === 'string' ? entry.source_metadata.page : null;
+  if (heading) locationParts.push(heading);
+  if (page) locationParts.push(page);
+
+  return {
+    type: entry.source_type === 'ai_provider' ? 'ai_chunk' : 'source_chunk',
+    id: entry.id,
+    excerpt: String(entry.raw_evidence || entry.extracted_signal || '').slice(0, 240),
+    location: locationParts.join(' / '),
+  };
+}
+
+function buildExternalEvidenceRef(claim: ClaimProjectionRow): EvidenceRef {
+  return {
+    type: 'external_url',
+    id: claim.id,
+    excerpt: String(claim.object_value || claim.predicate || 'external citation').slice(0, 240),
+    location: String(claim.source_url || 'external_source'),
+  };
+}
+
+function lexicalSimilarity(entityName: string, aiEntries: AuditEvidenceEntry[]): number {
+  const needle = String(entityName || '').trim().toLowerCase();
+  if (!needle || aiEntries.length === 0) return 0;
+
+  let best = 0;
+  const needleTokens = needle.split(/\s+/).filter(Boolean);
+
+  for (const entry of aiEntries) {
+    const haystack = `${entry.raw_evidence} ${entry.extracted_signal}`.toLowerCase();
+    if (haystack.includes(needle)) return 1;
+
+    const tokenHits = needleTokens.filter((token) => haystack.includes(token)).length;
+    if (needleTokens.length > 0) {
+      best = Math.max(best, tokenHits / needleTokens.length);
+    }
+  }
+
+  return clampUnit(best);
+}
+
+function pushCount(
+  counts: Partial<Record<EvidenceLedgerClaimType, number>>,
+  claimType: EvidenceLedgerClaimType,
+): void {
+  counts[claimType] = Number(counts[claimType] || 0) + 1;
+}
+
+export async function getEvidenceLedgerProjectionForAudit(
+  auditId: string,
+): Promise<EvidenceLedgerProjection | null> {
+  const pool = getPool();
+  const auditResult = await pool.query<AuditProjectionRow>(
+    `SELECT a.id AS audit_id, a.url, a.visibility_score, a.result, s.id AS scan_id
+     FROM audits a
+     LEFT JOIN scans s ON s.audit_id = a.id
+     WHERE a.id = $1
+     ORDER BY s.created_at DESC NULLS LAST
+     LIMIT 1`,
+    [auditId],
+  );
+
+  if (!auditResult.rowCount || !auditResult.rows[0]) return null;
+
+  const audit = auditResult.rows[0];
+  const parsedResult = safeParseAuditResult(audit.result);
+  const evidenceEntries = await getAuditEvidenceEntries(auditId);
+  const claimRows = audit.scan_id
+    ? (
+        await pool.query<ClaimProjectionRow>(
+          `SELECT c.id,
+                  e.canonical_name,
+                  c.subject_id,
+                  c.predicate,
+                  c.object_value,
+                  c.confidence,
+                  c.domain_authority,
+                  c.source_url,
+                  c.created_at::text
+           FROM claims c
+           LEFT JOIN entities e ON e.id = c.subject_id
+           WHERE c.scan_id = $1
+           ORDER BY c.created_at ASC`,
+          [audit.scan_id],
+        )
+      ).rows
+    : [];
+
+  const entries: EvidenceLedgerEntry[] = [];
+  const seenIds = new Set<string>();
+  const detectedEntityMap = new Map<string, AuditEvidenceEntry[]>();
+  const aiEntries = evidenceEntries.filter((entry) => entry.source_type === 'ai_provider');
+  const citationEntries = evidenceEntries.filter((entry) => entry.source_type === 'citation_engine');
+
+  for (const entry of evidenceEntries) {
+    for (const entityRef of entry.entity_refs || []) {
+      const name = String(entityRef?.name || '').trim();
+      if (!name) continue;
+      const bucket = detectedEntityMap.get(name) || [];
+      bucket.push(entry);
+      detectedEntityMap.set(name, bucket);
+    }
+  }
+
+  for (const [entityName, sourceEntries] of detectedEntityMap.entries()) {
+    const avgConfidence = clampUnit(
+      sourceEntries.reduce((sum, entry) => sum + Number(entry.confidence_score || 0), 0) /
+        Math.max(1, sourceEntries.length),
+    );
+    const entryId = `ledger:${auditId}:entity-detected:${normalizeEntityId(entityName)}`;
+    if (!seenIds.has(entryId)) {
+      seenIds.add(entryId);
+      entries.push({
+        id: entryId,
+        scanId: audit.scan_id,
+        auditId,
+        entityId: normalizeEntityId(entityName),
+        entityName,
+        claimType: 'ENTITY_DETECTED',
+        claim: `${entityName} detected in source-backed evidence`,
+        evidenceRefs: sourceEntries.slice(0, 3).map(buildEvidenceRef),
+        computation: {
+          similarityScore: avgConfidence,
+          threshold: 0.75,
+          matchType: avgConfidence >= 0.75 ? 'direct' : 'weak',
+          weightingFactors: {
+            evidenceCount: sourceEntries.length,
+            avgConfidence,
+          },
+        },
+        result: {
+          status: avgConfidence >= 0.75 ? 'pass' : 'partial',
+          impactScore: roundImpact(2 + sourceEntries.length * avgConfidence * 4),
+        },
+        confidence: avgConfidence,
+        timestamp: sourceEntries[0]?.created_at || new Date().toISOString(),
+      });
+    }
+
+    const similarityScore = lexicalSimilarity(entityName, aiEntries);
+    if (similarityScore < 0.75) {
+      const claimType: EvidenceLedgerClaimType = similarityScore <= 0.1 ? 'ENTITY_MISSING' : 'ENTITY_DISTORTED';
+      const mismatchId = `ledger:${auditId}:${claimType.toLowerCase()}:${normalizeEntityId(entityName)}`;
+      if (!seenIds.has(mismatchId)) {
+        seenIds.add(mismatchId);
+        const evidenceRefs = [...sourceEntries.slice(0, 2).map(buildEvidenceRef)];
+        if (aiEntries[0]) evidenceRefs.push(buildEvidenceRef(aiEntries[0]));
+        entries.push({
+          id: mismatchId,
+          scanId: audit.scan_id,
+          auditId,
+          entityId: normalizeEntityId(entityName),
+          entityName,
+          claimType,
+          claim:
+            claimType === 'ENTITY_MISSING'
+              ? `${entityName} is present in source evidence but absent from AI interpretation`
+              : `${entityName} is present in source evidence but distorted in AI interpretation`,
+          evidenceRefs,
+          computation: {
+            similarityScore,
+            threshold: 0.75,
+            matchType: claimType === 'ENTITY_MISSING' ? 'missing' : 'distorted',
+            weightingFactors: {
+              sourceEvidenceCount: sourceEntries.length,
+              aiEvidenceCount: aiEntries.length,
+            },
+          },
+          result: {
+            status: claimType === 'ENTITY_MISSING' ? 'fail' : 'partial',
+            impactScore: roundImpact(-(0.75 - similarityScore) * 14),
+          },
+          confidence: roundImpact(Math.max(0.45, 1 - similarityScore)),
+          timestamp: aiEntries[0]?.created_at || sourceEntries[0]?.created_at || new Date().toISOString(),
+        });
+      }
+    }
+  }
+
+  if (citationEntries.length === 0 && detectedEntityMap.size > 0) {
+    entries.push({
+      id: `ledger:${auditId}:citation-missing`,
+      scanId: audit.scan_id,
+      auditId,
+      claimType: 'CITATION_MISSING',
+      claim: 'No citation evidence was captured for this audit projection',
+      evidenceRefs: evidenceEntries.slice(0, 2).map(buildEvidenceRef),
+      computation: {
+        threshold: 0.75,
+        matchType: 'missing',
+        weightingFactors: {
+          detectedEntities: detectedEntityMap.size,
+        },
+      },
+      result: {
+        status: 'fail',
+        impactScore: -8,
+      },
+      confidence: 0.72,
+      timestamp: evidenceEntries[0]?.created_at || new Date().toISOString(),
+    });
+  }
+
+  for (const citationEntry of citationEntries) {
+    const present = Number(citationEntry.confidence_score || 0) >= 0.75;
+    entries.push({
+      id: `ledger:${auditId}:${present ? 'citation-present' : 'citation-weak'}:${citationEntry.id}`,
+      scanId: audit.scan_id,
+      auditId,
+      claimType: present ? 'CITATION_PRESENT' : 'CITATION_WEAK',
+      claim: present
+        ? 'Citation evidence cleared the readiness threshold'
+        : 'Citation evidence exists but remains below the readiness threshold',
+      evidenceRefs: [buildEvidenceRef(citationEntry)],
+      computation: {
+        similarityScore: clampUnit(Number(citationEntry.confidence_score || 0)),
+        threshold: 0.75,
+        matchType: present ? 'direct' : 'weak',
+      },
+      result: {
+        status: present ? 'pass' : 'partial',
+        impactScore: present ? roundImpact(4 + Number(citationEntry.confidence_score || 0) * 4) : -3,
+      },
+      confidence: clampUnit(Number(citationEntry.confidence_score || 0)),
+      timestamp: citationEntry.created_at,
+    });
+  }
+
+  const parsedStructureSignals = evidenceEntries.filter(
+    (entry) => entry.source_type === 'trust_layer' || entry.source_type === 'rule_engine',
+  );
+  if (parsedStructureSignals.length > 0) {
+    const avgStructureConfidence = clampUnit(
+      parsedStructureSignals.reduce((sum, entry) => sum + Number(entry.confidence_score || 0), 0) /
+        parsedStructureSignals.length,
+    );
+    entries.push({
+      id: `ledger:${auditId}:structure-parsed`,
+      scanId: audit.scan_id,
+      auditId,
+      claimType: 'STRUCTURE_PARSED',
+      claim: 'Structural signals were parsed into evidence-backed machine-readable entries',
+      evidenceRefs: parsedStructureSignals.slice(0, 3).map(buildEvidenceRef),
+      computation: {
+        similarityScore: avgStructureConfidence,
+        threshold: 0.6,
+        matchType: 'parsed',
+        weightingFactors: {
+          parsedSignals: parsedStructureSignals.length,
+        },
+      },
+      result: {
+        status: avgStructureConfidence >= 0.6 ? 'pass' : 'partial',
+        impactScore: roundImpact(2 + avgStructureConfidence * 3),
+      },
+      confidence: avgStructureConfidence,
+      timestamp: parsedStructureSignals[0]?.created_at || new Date().toISOString(),
+    });
+  }
+
+  const numericScoreFields: Array<[string, number]> = [];
+  const layerScores = parsedResult.scores;
+  if (layerScores && typeof layerScores === 'object') {
+    for (const [key, value] of Object.entries(layerScores as Record<string, unknown>)) {
+      const num = Number(value);
+      if (Number.isFinite(num)) numericScoreFields.push([key, num]);
+    }
+  }
+  const overallScore = Number(
+    audit.visibility_score ?? parsedResult.visibility_score ?? parsedResult.score ?? 0,
+  );
+  numericScoreFields.unshift(['overall', Number.isFinite(overallScore) ? overallScore : 0]);
+
+  for (const [component, value] of numericScoreFields) {
+    entries.push({
+      id: `ledger:${auditId}:score:${component}`,
+      scanId: audit.scan_id,
+      auditId,
+      claimType: 'SCORE_COMPONENT',
+      claim: component === 'overall' ? 'Overall visibility score derived from ledger impact' : `Score component: ${component}`,
+      evidenceRefs: claimRows.slice(0, 2).map(buildExternalEvidenceRef),
+      computation: {
+        matchType: 'aggregate',
+        weightingFactors: {
+          componentValue: value,
+          claimCount: claimRows.length,
+          evidenceCount: evidenceEntries.length,
+        },
+      },
+      result: {
+        status: value >= 70 ? 'pass' : value >= 45 ? 'partial' : 'fail',
+        impactScore: roundImpact(component === 'overall' ? value - 50 : (value - 50) / 4),
+      },
+      confidence: clampUnit(component === 'overall' ? 0.92 : 0.78),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  const claimTypeCounts: Partial<Record<EvidenceLedgerClaimType, number>> = {};
+  let positiveImpact = 0;
+  let negativeImpact = 0;
+  for (const entry of entries) {
+    pushCount(claimTypeCounts, entry.claimType);
+    if (entry.result.impactScore >= 0) positiveImpact += entry.result.impactScore;
+    else negativeImpact += entry.result.impactScore;
+  }
+
+  const entitySummaryMap = new Map<string, { entityName: string; entryIds: string[]; netImpactScore: number; strongestClaimType: EvidenceLedgerClaimType; strongestAbsImpact: number }>();
+  for (const entry of entries) {
+    if (!entry.entityId || !entry.entityName) continue;
+    const current = entitySummaryMap.get(entry.entityId) || {
+      entityName: entry.entityName,
+      entryIds: [],
+      netImpactScore: 0,
+      strongestClaimType: entry.claimType,
+      strongestAbsImpact: 0,
+    };
+    current.entryIds.push(entry.id);
+    current.netImpactScore = roundImpact(current.netImpactScore + entry.result.impactScore);
+    const absImpact = Math.abs(entry.result.impactScore);
+    if (absImpact >= current.strongestAbsImpact) {
+      current.strongestAbsImpact = absImpact;
+      current.strongestClaimType = entry.claimType;
+    }
+    entitySummaryMap.set(entry.entityId, current);
+  }
+
+  return {
+    auditId,
+    scanId: audit.scan_id,
+    url: audit.url,
+    generatedAt: new Date().toISOString(),
+    entries,
+    entities: [...entitySummaryMap.entries()].map(([entityId, value]) => ({
+      entityId,
+      entityName: value.entityName,
+      entryIds: value.entryIds,
+      netImpactScore: value.netImpactScore,
+      strongestClaimType: value.strongestClaimType,
+    })),
+    totals: {
+      entryCount: entries.length,
+      evidenceCount: evidenceEntries.length,
+      positiveImpact: roundImpact(positiveImpact),
+      negativeImpact: roundImpact(negativeImpact),
+      netImpact: roundImpact(positiveImpact + negativeImpact),
+      claimTypeCounts,
+    },
+  };
 }

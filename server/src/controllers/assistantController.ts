@@ -835,6 +835,7 @@ interface MilestoneStatus {
 async function buildEnrichedUserContext(
   userId: string,
   brandingUrl: string | null,
+  workspaceId?: string | null,
 ): Promise<string> {
   const pool = getPool();
   const lines: string[] = [];
@@ -842,15 +843,27 @@ async function buildEnrichedUserContext(
   try {
     // Parallel queries: audit count, recent URLs, credit balance, citation count, competitor count
     const [auditRes, recentRes, creditRes, citationRes, competitorRes] = await Promise.all([
-      pool.query<{ cnt: string }>('SELECT COUNT(*)::text AS cnt FROM audits WHERE user_id = $1', [userId]),
-      pool.query<{ target_url: string }>('SELECT DISTINCT target_url FROM audits WHERE user_id = $1 ORDER BY target_url LIMIT 10', [userId]),
+      pool.query<{ cnt: string }>(
+        'SELECT COUNT(*)::text AS cnt FROM audits WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $2',
+        [userId, workspaceId || null],
+      ),
+      pool.query<{ url: string }>(
+        'SELECT DISTINCT url FROM audits WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $2 ORDER BY url LIMIT 10',
+        [userId, workspaceId || null],
+      ),
       pool.query<{ credits: number }>('SELECT credits FROM users WHERE id = $1', [userId]).catch(() => ({ rows: [] as { credits: number }[] })),
-      pool.query<{ cnt: string }>('SELECT COUNT(*)::text AS cnt FROM citation_tests WHERE user_id = $1', [userId]).catch(() => ({ rows: [{ cnt: '0' }] })),
-      pool.query<{ cnt: string }>('SELECT COUNT(*)::text AS cnt FROM competitor_tracking WHERE user_id = $1', [userId]).catch(() => ({ rows: [{ cnt: '0' }] })),
+      pool.query<{ cnt: string }>(
+        'SELECT COUNT(*)::text AS cnt FROM citation_tests WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $2',
+        [userId, workspaceId || null],
+      ).catch(() => ({ rows: [{ cnt: '0' }] })),
+      pool.query<{ cnt: string }>(
+        'SELECT COUNT(*)::text AS cnt FROM competitor_tracking WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $2',
+        [userId, workspaceId || null],
+      ).catch(() => ({ rows: [{ cnt: '0' }] })),
     ]);
 
     const totalAudits = parseInt(auditRes.rows[0]?.cnt || '0', 10);
-    const recentUrls = recentRes.rows.map(r => r.target_url);
+    const recentUrls = recentRes.rows.map(r => r.url);
     const creditBalance = creditRes.rows[0]?.credits ?? 0;
     const totalCitations = parseInt(citationRes.rows[0]?.cnt || '0', 10);
     const totalCompetitors = parseInt(competitorRes.rows[0]?.cnt || '0', 10);
@@ -1086,7 +1099,7 @@ export async function handleAssistantMessage(req: Request, res: Response) {
     }
 
     // ── Build enriched user context (milestones, URLs, credits) ──
-    const enrichedUserContext = await buildEnrichedUserContext(user.id, brandingWebsiteUrl);
+    const enrichedUserContext = await buildEnrichedUserContext(user.id, brandingWebsiteUrl, req.workspace?.id ?? null);
 
     // ── Build conversation for the model ──
     const systemPrompt = buildSystemPrompt(tier, pageContext || '/', livePricingContext, sharedReportContext, siteFileContext, enrichedUserContext, ticketContext);

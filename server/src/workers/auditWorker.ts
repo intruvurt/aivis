@@ -94,16 +94,17 @@ async function upsertPageHash(domain: string, path: string, contentHash: string,
   );
 }
 
-async function getLatestAuditForDomain(userId: string, url: string): Promise<any | null> {
+async function getLatestAuditForDomain(userId: string, url: string, workspaceId?: string): Promise<any | null> {
   const { rows } = await getPool().query(
     `SELECT visibility_score, result
        FROM audits
       WHERE user_id = $1
+        AND workspace_id IS NOT DISTINCT FROM $3
         AND url = $2
         AND status = 'completed'
       ORDER BY created_at DESC
       LIMIT 1`,
-    [userId, url]
+    [userId, url, workspaceId || null]
   );
   return rows[0] || null;
 }
@@ -158,12 +159,18 @@ async function runSingleJob() {
 
     if (diff.checked > 0 && diff.changedPages.length === 0) {
       await updateAuditJobProgress(job.id, 'instant_mode', 70, ['No major changes detected', 'Reusing previous audit result']);
-      const cached = await getLatestAuditForDomain(job.payload.userId, job.payload.url);
+      const cached = await getLatestAuditForDomain(job.payload.userId, job.payload.url, job.payload.workspaceId);
       if (cached?.result) {
         await getPool().query(
-          `INSERT INTO audits (user_id, url, visibility_score, result, status, created_at, updated_at)
-           VALUES ($1, $2, $3, $4::jsonb, 'completed', NOW(), NOW())`,
-          [job.payload.userId, job.payload.url, Number(cached.visibility_score || 0), JSON.stringify(cached.result)]
+          `INSERT INTO audits (user_id, workspace_id, url, visibility_score, result, status, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, $5::jsonb, 'completed', NOW(), NOW())`,
+          [
+            job.payload.userId,
+            job.payload.workspaceId || null,
+            job.payload.url,
+            Number(cached.visibility_score || 0),
+            JSON.stringify(cached.result),
+          ]
         );
         await completeAuditJob(job.id, {
           success: true,
@@ -286,9 +293,16 @@ async function runSingleJob() {
     } else {
       // Create new audit record (fallback)
       await pool.query(
-        `INSERT INTO audits (id, user_id, url, visibility_score, result, status, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5::jsonb, 'completed', NOW(), NOW())`,
-        [auditRunId, job.payload.userId, scraped.url, finalScore, JSON.stringify(finalResult)]
+        `INSERT INTO audits (id, user_id, workspace_id, url, visibility_score, result, status, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6::jsonb, 'completed', NOW(), NOW())`,
+        [
+          auditRunId,
+          job.payload.userId,
+          job.payload.workspaceId || null,
+          scraped.url,
+          finalScore,
+          JSON.stringify(finalResult),
+        ]
       );
     }
 

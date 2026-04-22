@@ -2563,6 +2563,84 @@ export interface AuditEvidenceEntry {
   tags: string[];
 }
 
+// ── Evidence ledger projection (claim -> evidence -> computation -> result) ──
+
+export type EvidenceLedgerClaimType =
+  | 'ENTITY_DETECTED'
+  | 'ENTITY_MISSING'
+  | 'ENTITY_DISTORTED'
+  | 'CITATION_PRESENT'
+  | 'CITATION_WEAK'
+  | 'CITATION_MISSING'
+  | 'STRUCTURE_PARSED'
+  | 'SCORE_COMPONENT';
+
+export interface EvidenceRef {
+  type: 'source_chunk' | 'ai_chunk' | 'external_url';
+  id: string;
+  excerpt: string;
+  location: string;
+}
+
+export interface ComputationTrace {
+  similarityScore?: number;
+  threshold?: number;
+  matchType?:
+    | 'direct'
+    | 'missing'
+    | 'semantic_miss'
+    | 'weak'
+    | 'distorted'
+    | 'aggregate'
+    | 'parsed';
+  weightingFactors?: Record<string, number>;
+  frequency?: number;
+  authorityScore?: number;
+}
+
+export interface EvidenceLedgerEntry {
+  id: string;
+  scanId?: string | null;
+  auditId?: string | null;
+  entityId?: string | null;
+  entityName?: string | null;
+  claimType: EvidenceLedgerClaimType;
+  claim: string;
+  evidenceRefs: EvidenceRef[];
+  computation: ComputationTrace;
+  result: {
+    status: 'pass' | 'fail' | 'partial';
+    impactScore: number;
+  };
+  confidence: number;
+  timestamp: string;
+}
+
+export interface EvidenceLedgerEntitySummary {
+  entityId: string;
+  entityName: string;
+  entryIds: string[];
+  netImpactScore: number;
+  strongestClaimType: EvidenceLedgerClaimType;
+}
+
+export interface EvidenceLedgerProjection {
+  auditId: string;
+  scanId?: string | null;
+  url: string;
+  generatedAt: string;
+  entries: EvidenceLedgerEntry[];
+  entities: EvidenceLedgerEntitySummary[];
+  totals: {
+    entryCount: number;
+    evidenceCount: number;
+    positiveImpact: number;
+    negativeImpact: number;
+    netImpact: number;
+    claimTypeCounts: Partial<Record<EvidenceLedgerClaimType, number>>;
+  };
+}
+
 // ── Streaming scan event types ──────────────────────────────────────────────
 
 /** A single cite-ledger entry streamed during a live scan */

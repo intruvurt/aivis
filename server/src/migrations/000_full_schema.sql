@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower_unique ON users ((LOWER(email)));
 CREATE INDEX IF NOT EXISTS idx_users_tier ON users(tier);
 
 -- 3. User Sessions

@@ -13,15 +13,56 @@
 import { Router } from "express";
 import {
   getCiteLedgerForRun,
+  getEvidenceLedgerProjectionForAudit,
   getEntityCiteLedgerSummary,
   getEntityJobs,
   runCiteLedgerPipeline,
 } from "../services/citeLedgerService.js";
 import { authRequired } from "../middleware/authRequired.js";
+import { getPool } from "../services/postgresql.js";
 
 export const citeLedgerRoutes = Router();
 
+async function userOwnsAudit(auditId: string, userId: string): Promise<boolean> {
+  const pool = getPool();
+  const { rows } = await pool.query(
+    "SELECT id FROM audits WHERE id = $1 AND user_id = $2 LIMIT 1",
+    [auditId, userId],
+  );
+  return rows.length > 0;
+}
+
 // ── GET /api/cite-ledger/audit/:auditRunId ────────────────────────────────────
+citeLedgerRoutes.get(
+  "/audit/:auditId/projection",
+  authRequired,
+  async (req, res) => {
+    try {
+      const userId = String((req as any).user?.id || "").trim();
+      const auditId = String(req.params.auditId || "").trim();
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      if (!auditId) {
+        return res.status(400).json({ error: "auditId is required" });
+      }
+      if (!(await userOwnsAudit(auditId, userId))) {
+        return res.status(404).json({ error: "Audit not found" });
+      }
+
+      const projection = await getEvidenceLedgerProjectionForAudit(auditId);
+      if (!projection) {
+        return res.status(404).json({ error: "No ledger projection available for audit" });
+      }
+
+      return res.json({ success: true, projection });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to fetch evidence ledger projection";
+      return res.status(500).json({ error: msg });
+    }
+  },
+);
+
 citeLedgerRoutes.get(
   "/audit/:auditRunId",
   authRequired,

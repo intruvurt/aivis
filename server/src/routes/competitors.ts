@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
+import { workspaceRequired } from '../middleware/workspaceRequired.js';
 import { meetsMinimumTier } from '../../../shared/types.js';
 import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
 import {
@@ -18,6 +19,7 @@ const router = Router();
 
 // All competitor routes require authentication
 router.use(authRequired);
+router.use(workspaceRequired);
 
 // Tier gate: Alignment+ only (competitor tracking is a paid feature)
 router.use((req: Request, res: Response, next: NextFunction) => {

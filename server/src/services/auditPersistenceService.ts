@@ -147,9 +147,9 @@ export async function persistAuditRecord(args: {
     // Score improvement check: compare to prior audit for same URL
     const priorScoreRes = await pool.query(
       `SELECT visibility_score FROM audits
-       WHERE user_id = $1 AND url = $2 AND id != $3
+       WHERE user_id = $1 AND workspace_id IS NOT DISTINCT FROM $4 AND url = $2 AND id != $3
        ORDER BY created_at DESC LIMIT 1`,
-      [args.userId, args.url, auditId],
+      [args.userId, args.url, auditId, args.workspaceId || null],
     );
     if (priorScoreRes.rows.length > 0) {
       const prevScore = Number(priorScoreRes.rows[0].visibility_score || 0);

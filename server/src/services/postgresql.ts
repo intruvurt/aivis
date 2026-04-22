@@ -1494,6 +1494,7 @@ export async function runMigrations(): Promise<void> {
       )
     `);
       _q(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+      _q(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower_unique ON users ((LOWER(email)))`);
       _q(`CREATE INDEX IF NOT EXISTS idx_users_tier ON users(tier)`);
       _q(`
       CREATE TABLE IF NOT EXISTS user_sessions (

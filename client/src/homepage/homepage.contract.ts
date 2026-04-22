@@ -105,9 +105,15 @@ export const TWITTER = {
 /* ── Hero copy ──────────────────────────────────────────────────────────── */
 
 export const HERO = {
-    headline: [BRAND.name, BRAND.product, `${BRAG.acronym} evidence-linked scores`, 'get cited fixes'] as const,
-    subHeadline: 'Submit a URL. The system extracts entity signals, generates intent queries, and probes live AI and search responses. Every result maps to a ledger entry or a gap detection record — not an inference.',
-    description: `${BRAND.name} ingests your URL → extracts entity and structural signals → generates typed query sets → probes AI models and web search in parallel → stores every result as an immutable citation ledger entry → computes visibility gaps and competitive displacement → outputs evidence-linked fix instructions tied to specific crawl observations.`,
+    headline: [
+        BRAND.name,
+        BRAND.product,
+        'shows what AI actually sees on your site and where it gets it wrong',
+    ] as const,
+    subHeadline:
+        'Run a live scan. Watch how AI parses your content, detects entities, and misses citations. Fix the gaps that affect how you are represented in AI answers.',
+    description:
+        'No static reports. No delayed results. What you see is what the system processes in real time.',
     ctaText: 'Run citation audit',
     inputPlaceholder: 'yourdomain.com',
 } as const;

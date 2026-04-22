@@ -748,6 +748,9 @@ router.delete('/account', authRequired, async (req: any, res) => {
     // Clean audit-linked tables that would survive due to SET NULL on audits.user_id
     // NOTE: subquery is inlined directly (not interpolated via template literal) to prevent
     // any risk of accidental SQL injection if this pattern were ever copy-pasted with user input.
+    // Graph v2: scans uses ON DELETE SET NULL on audit_id, so delete user-linked scans first.
+    // This cascades claims -> claim_edges/cluster_members and claim_clusters -> resolutions.
+    await client.query('DELETE FROM scans WHERE audit_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM brag_trail WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM cite_ledger WHERE audit_run_id IN (SELECT id FROM audits WHERE user_id = $1)', [userId]);
     await client.query('DELETE FROM fixpack_assets WHERE fixpack_id IN (SELECT id FROM fixpacks WHERE user_id = $1)', [userId]);

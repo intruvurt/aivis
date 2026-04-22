@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { authRequired } from "../middleware/authRequired.js";
+import { workspaceRequired } from "../middleware/workspaceRequired.js";
 import { tieredRateLimit } from "../middleware/tieredRateLimiter.js";
 import { enqueueAuditJob, getAuditJob } from "../infra/queues/auditQueue.js";
 
@@ -9,6 +10,7 @@ const router = Router();
 router.post(
   "/audit",
   authRequired,
+  workspaceRequired,
   tieredRateLimit("analyze"),
   async (req: Request, res: Response) => {
     const userId = String((req as any).user?.id || "");

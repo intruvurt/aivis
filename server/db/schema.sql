@@ -20,3 +20,10 @@ CREATE TABLE pages (
   content JSONB,
   published_at TIMESTAMP
 );
+CREATE TABLE events (
+  id UUID PRIMARY KEY,
+  job_id UUID,
+  type TEXT,
+  payload JSONB,
+  ts BIGINT
+);

@@ -105,6 +105,7 @@
     "esbuild": "^0.25.0",
     "path-to-regexp": "^6.2.3",
     "minimatch": "^10.2.1",
+    "uuid": "9.0.1",
     "undici": "^7.23.1",
     "html-encoding-sniffer": "2.0.0"
   }

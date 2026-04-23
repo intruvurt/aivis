@@ -1,202 +1,191 @@
-# Live Audit Narrative → Next Phase: Real Audit Sessions
+# Eventized Audit Rendering Model
 
-## What Just Changed
+## Correction Applied
 
-**Homepage Evolution:**
-- **Old Model**: Declarative storytelling ("Here's what we do")
-- **New Model**: Execution theater ("Watch the system audit this page")
+The homepage proof surface now prioritizes traceability over story continuity.
 
-The homepage now mirrors your Scan → Observe → Fix pipeline as a **proof surface** instead of an explanation.
+- Deprecated model: live narrative progression
+- Required model: immutable audit trace stream
 
----
-
-## Architecture: Current State
-
-### LiveAuditNarrative Component (Live)
-```
-Homepage Hero Section
-├── Header: "AI visibility audit in progress"
-├── Step 01: Crawling surface
-├── Step 02: Entity resolution
-├── Step 03: Citation readiness test
-├── Step 04: Structural failure scan
-├── Step 05: System interpretation
-├── System state summary
-└── Call to action: "Run a live audit below"
-├── ScanShell (user input + real audit trigger)
-```
-
-**Key behaviors:**
-- Steps collapse/expand on click
-- Findings displayed with icons and priority
-- Each observation is specific to what AI crawlers actually see
-- Bottom statement: "This page is demonstrating the system, not describing it"
-
-**Prerender safety:** Yes — all content is static HTML-first (no runtime dependency on API)
+Trust in AI visibility systems comes from discrete execution evidence, not cinematic continuity.
 
 ---
 
-## Next Evolution: Live Audit Per Visitor
+## Core Principle
 
-### Phase 2: Injected Audit Data
-```
-HomePage (personalized per visitor)
-├── Static Narrative (current) ← prerender-safe
-├── Live Audit Results (NEW) ← per-visitor generated
-│   ├── Unique scan_id
-│   ├── Real entity extraction (this page's entities)
-│   ├── Actual mismatch score (this page vs AI interpretation)
-│   ├── Real findings from this page
-│   └── Timestamp: "Scanned 2s ago"
-└── Call-to-action tied to actual result
-```
+Users and crawlers should not feel they are watching a story unfold.
 
-### Implementation Path
+Users and crawlers should feel they are reading a system log that already happened.
 
-**Option A: Pre-audit on Deploy**
-- Build generates unique audit per commit
-- Bakes result into prerendered HTML
-- Fast (no runtime query), but stale within hours
+Every event must be:
 
-**Option B: Server-side Render + Cache**
-- `/` renders with real-time audit on first hit
-- Caches result for N minutes (120-300s TTL)
-- Visitors within cache window see same audit
-- Cost: 1 audit per N minutes
-- Benefit: Always "recent" (<5min old typically)
-
-**Option C: Client-side Hydration (Best)**
-- HTML prerendered with placeholder structure
-- On page load, fetch latest audit for `https://aivis.biz` (this site)
-- Inject findings into pre-positioned DOM slots
-- No extra server load, instant async update
-- Benefit: Proof is live + interactive
+- timestamped
+- independently verifiable
+- bound to a real execution ID
+- replayable under deterministic input
 
 ---
 
-## Semantic & SEO Impact
+## Runtime Surface
 
-### Current Homepage Messaging
+Homepage hero now renders an event stream with this shape:
 
-**Old schema interpretation:**
-```json
-{
-  "@type": "SoftwareApplication",
-  "name": "AiVIS",
-  "description": "See what AI reads" ← Generic marketing claim
+- [EVENT] crawl.started
+- [EVENT] dom.structure.extract
+- [EVENT] entity.resolve
+- [EVENT] schema.validate
+- [EVENT] citation.simulation.run
+- [EVENT] failure.scan.completed
+- [EVENT] audit.finalized
+
+Each line includes status markers and event details.
+
+---
+
+## Corrected Phase 2 Architecture
+
+### Per-Visitor Audit Trace Session
+
+```ts
+interface AuditSession {
+  session_id: string;
+  target_url: string;
+  execution_id: string;
+  event_stream: Array<{
+    timestamp: string;
+    event_name: string;
+    status: "pass" | "warn" | "fail";
+    detail: string;
+  }>;
+  entity_graph_snapshot: {
+    entities: string[];
+    ambiguous_entities: string[];
+    canonicalized_count: number;
+  };
+  failure_points: Array<{
+    code: string;
+    severity: "low" | "medium" | "high";
+    message: string;
+  }>;
+  final_score_vector: {
+    comprehension: number;
+    verification_confidence: number;
+    citation_confidence: number;
+  };
+  execution_time_ms: number;
 }
 ```
 
-**New schema interpretation:**
-```json
-{
-  "@type": "HowTo",  ← Procedural documentation, not marketing
-  "steps": [
-    { "name": "Crawling surface", "description": "Extract structure..." },
-    { "name": "Entity resolution", "description": "Map entities..." },
-    ...
-  ],
-  "result": {
-    "name": "AI Visibility Audit Complete",
-    "description": "Comprehension: high. Verification: medium."
-  }
-}
-```
+---
 
-**AI Crawler Behavior:**
-- Old: Treats page as marketing → Lower citation trust
-- New: Treats page as procedural documentation → Higher evidence weight
+## Frontend Rendering Contract
 
-This shifts perception from "company describes their tool" to "tool demonstrates itself on real content."
+Replace:
+
+- collapsible step narrative
+- guided progression language
+- implied continuous execution
+
+With:
+
+- scrollable immutable trace log
+- event-first rendering
+- explicit execution metadata (session_id, execution_id, timestamps)
+
+Reference line style:
+
+- ✓ crawl.dom_extracted (142 nodes)
+- ✓ schema.org detected (3 entities)
+- ✓ citation simulation run (ChatGPT / Perplexity / Claude)
+- ⚠ entity ambiguity detected: AiVIS -> 2 competing definitions
+- ✗ citation confidence threshold not met (0.62 < 0.75)
+- ✓ audit finalized
 
 ---
 
-## Unblocked Use Cases
+## API Contract Change
 
-### 1. **Social Proof at Scale**
-Instead of static testimonials, homepage shows:
-- "We audited https://aivis.biz and found X gaps"
-- "This page is currently: 74% AI-visible" (generated in real-time)
-- Visitors trust results more because they're **live and reproducible**
+Rename endpoint model from snapshot to session artifact.
 
-### 2. **Content Marketing Playbook**
-Every blog post can include:
-```
-[Live Audit Card]
-This article was audited at [timestamp].
-Current visibility score: 81/100
-Missing: [generated from real audit]
-```
+Deprecated:
 
-### 3. **Customer Onboarding**
-First-time users land on homepage and see:
-- "We're auditing this page right now"
-- Narrative explains stages
-- [Audit complete] → "Here's what we found on your site"
-- Users immediately understand product through live demo
+- `/api/public/audit-snapshot/homepage`
+
+Required:
+
+- `/api/public/audit/session/:id`
+
+Optional convenience resolver:
+
+- `/api/public/audit/session/latest?target_url=https://aivis.biz/`
+
+Session response must be immutable after finalize.
 
 ---
 
-## Technical Requirements for Phase 2
+## Determinism Requirement
 
-### Database / Cache
-- Store latest audit of `https://aivis.biz` in expedited cache
-- TTL: 5 minutes (not tier-limited, internal use)
-- Key: `audit:homepage:latest`
-- Trigger: Every production deploy or manual refresh
+Hard requirement for trust:
 
-### Client Component Changes
-```tsx
-// New component: LiveAuditResults
-// Hydrates with real findings from latest homepage audit
-// Replaces mock DEFAULT_MISMATCH_DATA with actual findings
-// Displays in right panel or below narrative
-```
+- same input + same execution class => identical event stream ordering and equivalent final score vector
 
-### API Endpoint (New)
-```
-GET /api/public/audit-snapshot/homepage
-- No auth required
-- Returns: { findings, score, scanned_at, entities }
-- Cacheable (Cache-Control: public, max-age=300)
-- CDN-friendly
-```
+To support this:
+
+- lock event schema version in payload
+- include execution class (`observer|starter|alignment|signal`)
+- persist event stream as append-only ledger rows
+- prohibit post-finalize event mutation
 
 ---
 
-## Success Metrics
+## Product Risk Removed
 
-| Metric | Current | Phase 2 Target | Signal |
-|--------|---------|---|---|
-| Homepage Time-on-Page | ~2s | ~5-8s | Narrative engagement |
-| Bounce Rate | TBD | -15% | Proof reduction |
-| CTA Click Rate | TBD | +30% | Trust in demo |
-| Audit Starts (homepage) | TBD | +25% | Users act after seeing audit |
-| Return Visits | TBD | +20% | Social sharing of audit |
+Risk in prior model:
 
----
+- narrative UX could be interpreted as simulation
+- technical users ask: executed trace or UI theater?
+- trust degrades when provenance is unclear
 
-## Recommendation: Start Phase 2 Next Sprint
-
-1. **Week 1**: Implement `/api/public/audit-snapshot/homepage`
-2. **Week 2**: Create `LiveAuditResults` component (hydration pattern)
-3. **Week 2**: Integrate into Landing page
-4. **Week 3**: A/B test narrative + live results vs static
-
-This keeps the proof surface **real** and turns visitors into believers through **unambiguous demonstration**.
+Eventized model removes ambiguity by making provenance first-class.
 
 ---
 
-## Architecture Guard Rails
+## What This Unlocks
 
-✅ **Do not:**
-- Hard-code audit results (breaks on next deploy)
-- Fetch from unauthenticated `/api/analyze` (rate-limit exposure)
-- Store stale snapshots (>5min old feels fake)
-- Hide live audit behind spinner (defeats "proof" purpose)
+1. Machine-verifiable artifact output
 
-✅ **Do:**
-- Cache aggressively server-side (few seconds build+cache time)
-- Regenerate on every deploy (always fresh)
-- Show timestamp ("Scanned 2 seconds ago")
-- Make it reproducible (users can run same audit on their URL)
+- AI systems can parse events as structured evidence
+
+1. Homepage as reference execution artifact
+
+- Not a marketing surface, a reproducible run log
+
+1. Self-explanatory product behavior
+
+- Output becomes explanation
+
+---
+
+## Minimal Implementation Plan (Delta)
+
+1. Keep current hero shell and scan entry
+2. Render immutable event stream component as primary proof block
+3. Back API with server-generated session artifacts
+4. Cache by target_url + event schema version + execution class
+5. Expose replay metadata (`session_id`, `execution_id`, `event_schema_version`)
+
+---
+
+## Guard Rails
+
+Do not:
+
+- fabricate event timestamps client-side for authoritative sessions
+- stream pseudo-events that are not persisted
+- mutate finalized streams for UX polish
+
+Do:
+
+- persist events server-side before rendering as authoritative
+- label demo streams as demo until bound to a real session
+- include replay identity in every rendered trace block

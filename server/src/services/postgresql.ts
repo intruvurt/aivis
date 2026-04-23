@@ -1462,6 +1462,72 @@ export async function runMigrations(): Promise<void> {
             )`,
             `CREATE INDEX IF NOT EXISTS idx_scan_events_scan ON scan_events(scan_id, created_at ASC)`,
             `CREATE INDEX IF NOT EXISTS idx_scan_events_type ON scan_events(event_type)`,
+            // ── Audit Trace Sessions (homepage/public immutable execution artifacts) ───────────
+            `CREATE TABLE IF NOT EXISTS audit_sessions (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              target_url TEXT NOT NULL,
+              status VARCHAR(16) NOT NULL DEFAULT 'queued',
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              completed_at TIMESTAMPTZ,
+              final_score NUMERIC(8,4),
+              final_score_vector JSONB,
+              session_type VARCHAR(16) NOT NULL DEFAULT 'user_url',
+              source VARCHAR(24) NOT NULL DEFAULT 'user_request',
+              execution_class VARCHAR(24) NOT NULL DEFAULT 'observer',
+              execution_time_ms INTEGER,
+              event_schema_version INTEGER NOT NULL DEFAULT 1,
+              CHECK (status IN ('queued', 'running', 'completed', 'failed')),
+              CHECK (session_type IN ('homepage', 'user_url', 'api_call')),
+              CHECK (source IN ('homepage_autorun', 'user_request', 'api'))
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_sessions_target_completed ON audit_sessions(target_url, completed_at DESC)`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_sessions_status_created ON audit_sessions(status, created_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS audit_events (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              session_id UUID NOT NULL REFERENCES audit_sessions(id) ON DELETE CASCADE,
+              event_type TEXT NOT NULL,
+              event_payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              sequence_index INT NOT NULL,
+              UNIQUE(session_id, sequence_index)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_events_session_seq ON audit_events(session_id, sequence_index ASC)`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_events_type_created ON audit_events(event_type, created_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS audit_session_cache (
+              url TEXT PRIMARY KEY,
+              session_id UUID NOT NULL REFERENCES audit_sessions(id) ON DELETE CASCADE,
+              last_updated TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              ttl_expires_at TIMESTAMPTZ NOT NULL
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_audit_session_cache_ttl ON audit_session_cache(ttl_expires_at)`,
+            `CREATE OR REPLACE FUNCTION block_audit_events_mutation()
+             RETURNS trigger AS $$
+             BEGIN
+               RAISE EXCEPTION 'audit_events is append-only';
+             END;
+             $$ LANGUAGE plpgsql`,
+            `DROP TRIGGER IF EXISTS trg_block_audit_events_update ON audit_events`,
+            `CREATE TRIGGER trg_block_audit_events_update
+             BEFORE UPDATE ON audit_events
+             FOR EACH ROW EXECUTE FUNCTION block_audit_events_mutation()`,
+            `DROP TRIGGER IF EXISTS trg_block_audit_events_delete ON audit_events`,
+            `CREATE TRIGGER trg_block_audit_events_delete
+             BEFORE DELETE ON audit_events
+             FOR EACH ROW EXECUTE FUNCTION block_audit_events_mutation()`,
+            `CREATE OR REPLACE FUNCTION block_finalized_audit_session_mutation()
+             RETURNS trigger AS $$
+             BEGIN
+               IF OLD.status IN ('completed', 'failed')
+                 AND (to_jsonb(NEW) IS DISTINCT FROM to_jsonb(OLD)) THEN
+                 RAISE EXCEPTION 'finalized audit_sessions rows are immutable';
+               END IF;
+               RETURN NEW;
+             END;
+             $$ LANGUAGE plpgsql`,
+            `DROP TRIGGER IF EXISTS trg_block_finalized_audit_session_update ON audit_sessions`,
+            `CREATE TRIGGER trg_block_finalized_audit_session_update
+             BEFORE UPDATE ON audit_sessions
+             FOR EACH ROW EXECUTE FUNCTION block_finalized_audit_session_mutation()`,
             // SCANS (root entity — maps 1:1 to audits but decoupled for forensic replay)
             `CREATE TABLE IF NOT EXISTS scan_runs (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

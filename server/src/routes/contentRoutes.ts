@@ -5,6 +5,7 @@ import { usageGate } from '../middleware/usageGate.js';
 import { meetsMinimumTier } from '../../../shared/types.js';
 import type { CanonicalTier, LegacyTier } from '../../../shared/types.js';
 import { callAIProvider, PROVIDERS } from '../services/aiProviders.js';
+import { sanitizePromptInput as sanitizeInput } from '../utils/sanitize.js';
 
 const router = express.Router();
 
@@ -12,10 +13,6 @@ const CONTENT_DEADLINE_MS = 30_000;
 const MAX_INPUT_CHARS = 6_000;
 
 const getApiKey = () => process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '';
-
-function sanitizeInput(input: string, maxLen = MAX_INPUT_CHARS): string {
-  return `<user_content>\n${String(input).slice(0, maxLen)}\n</user_content>`;
-}
 
 function withDeadline<T>(promise: Promise<T>, label: string, ms = CONTENT_DEADLINE_MS): Promise<T> {
   return new Promise<T>((resolve, reject) => {

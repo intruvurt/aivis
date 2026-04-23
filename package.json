@@ -27,6 +27,7 @@
     "smoke:prod": "node ./tools/verify-prod-endpoints-smoke.mjs",
     "smoke:prod:crawl": "node ./tools/verify-prod-crawl-surface.mjs",
     "smoke:visibility:gate": "node ./tools/verify-visibility-gate.mjs",
+    "smoke:audit-trace:determinism": "npm --prefix server run verify:audit-trace-determinism",
     "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs",
     "worker:bix": "npm --prefix server run worker:bix",
     "worker:citations": "npm --prefix server run worker:citations",
@@ -34,7 +35,7 @@
     "queue:debug": "node ./tools/debug-queue.mjs",
     "system:health": "node ./tools/system-health.mjs",
     "bix:simulate": "node ./tools/simulate-bix.mjs",
-    "audit:full": "npm run smoke:features && npm run smoke:analyze && npm run smoke:wiring:static",
+    "audit:full": "npm run smoke:features && npm run smoke:analyze && npm run smoke:wiring:static && npm run smoke:audit-trace:determinism",
     "clean": "rm -rf node_modules client/node_modules server/node_modules"
   },
   "dependencies": {

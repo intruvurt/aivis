@@ -253,6 +253,7 @@ import trackingRoutes from "./routes/trackingRoutes.js";
 import datasetRoutes from "./routes/datasetRoutes.js";
 import featureFlagsRoutes from "./routes/featureFlagsRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import auditTraceSessionRoutes from "./routes/auditTraceSessionRoutes.js";
 import {
   startTrialExpiryLoop,
   stopTrialExpiryLoop,
@@ -1701,6 +1702,7 @@ app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/growth", growthEngineRoutes);
 app.use("/api/orgs", orgRoutes);
 app.use("/api/agreements", agreementRoutes);
+app.use("/api/public", auditTraceSessionRoutes);
 app.use("/v1", v1Routes);
 app.use("/v1/webhooks", v1WebhookRoutes);
 app.use("/widget", widgetPublicRouter);

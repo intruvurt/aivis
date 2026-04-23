@@ -13,7 +13,7 @@ import {
   type MismatchData,
   type MismatchStatus,
 } from '../components/mismatch/AIMismatchPanel';
-import { LiveAuditNarrative } from '../components/homepage/LiveAuditNarrative';
+import { AuditTraceStream } from '../components/homepage/LiveAuditNarrative';
 import { MARKETING_CLAIMS } from '../constants/marketingClaims';
 import { PRICING } from '../../../shared/types';
 import type { EvidenceLedgerEntry } from '../../../shared/types';
@@ -657,7 +657,7 @@ const Landing = () => {
               {landingPhase === 'idle' && (
                 <>
                   <div className="mb-8">
-                    <LiveAuditNarrative />
+                    <AuditTraceStream />
                   </div>
                 </>
               )}

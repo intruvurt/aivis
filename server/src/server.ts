@@ -49,6 +49,7 @@ import reverseEngineerApi from "./routes/reverseEngineerApi.js";
 import schemaGeneratorRoutes from "./routes/schemaGeneratorRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
 import { queryScanRoutes } from "./routes/queryScanRoutes.js";
+import workerProgressRoutes from "./routes/workerProgressRoutes.js";
 import { getPricingInfo } from "./controllers/paymentController.js";
 import { getUserById } from "./models/User.js";
 import {
@@ -272,6 +273,7 @@ import { startTrackingWorker } from "./workers/trackingWorker.js";
 import { startPRWorker } from "./workers/prWorker.js";
 import { startRawDocumentWorker } from "./workers/rawDocument.worker.js";
 import { startAnalyzeCompilerWorker } from "./workers/analyzeCompilerWorker.js";
+import { getProgressTracker } from "./services/workerProgressSSE.js";
 import { startScheduler } from "./services/scheduler.js";
 import { startSelfHealingLoop } from "./services/selfHealingService.js";
 import { bootstrapAgencyAutomation } from "./services/agencyAutomationService.js";
@@ -1676,6 +1678,7 @@ app.use("/api/paypal", paypalRoutes);
 app.use("/api/queue", auditQueueRoutes);
 app.use("/api/analyze", analyzeCompilerRoutes);
 app.use("/internal", internalCompilerRoutes);
+app.use("/api/workers", workerProgressRoutes);
 app.get("/api/pricing", getPricingInfo);
 app.use("/api/cite-ledger", citeLedgerRoutes);
 app.use("/api/graph", graphRoutes);
@@ -16484,6 +16487,10 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startPRWorker();
     startRawDocumentWorker();
     startAnalyzeCompilerWorker();
+    // Initialize worker progress tracking
+    const progressTracker = getProgressTracker();
+    progressTracker.startSync(5000); // Sync metrics every 5 seconds
+    console.log('[WorkerProgress] Tracker initialized and syncing');
     startScheduler();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();

@@ -6,7 +6,11 @@
 
 import type { Request, Response } from 'express';
 import { Router } from 'express';
-import { getProgressTracker, sendWorkerProgressSSE, getAllWorkerProgress } from '../services/workerProgressSSE.js';
+import {
+  getProgressTracker,
+  sendWorkerProgressSSE,
+  getAllWorkerProgress,
+} from '../services/workerProgressSSE.js';
 
 const router = Router();
 
@@ -15,7 +19,7 @@ const router = Router();
  * Get current status of all registered workers (polling endpoint).
  */
 router.get('/all', (_req: Request, res: Response) => {
-  getAllWorkerProgress(_req, res);
+  getAllWorkerProgress(res);
 });
 
 /**
@@ -44,6 +48,10 @@ router.get('/:workerId/progress', (req: Request, res: Response) => {
  */
 router.get('/:workerId/metrics', (req: Request, res: Response) => {
   const workerId = req.params.workerId;
+  if (!workerId || typeof workerId !== 'string') {
+    res.status(400).json({ error: 'Invalid workerId' });
+    return;
+  }
   const tracker = getProgressTracker();
   const metrics = tracker.getMetrics(workerId);
 
@@ -61,6 +69,10 @@ router.get('/:workerId/metrics', (req: Request, res: Response) => {
  */
 router.post('/:workerId/reset', (req: Request, res: Response) => {
   const workerId = req.params.workerId;
+  if (!workerId || typeof workerId !== 'string') {
+    res.status(400).json({ error: 'Invalid workerId' });
+    return;
+  }
   const tracker = getProgressTracker();
 
   tracker.updateMetrics(workerId, {

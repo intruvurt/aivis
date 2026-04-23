@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Competitor Retrieval Dissection: Why They Win the Citation | AiVIS Forensics</title>
+    <meta
+      name="description"
+      content="Learn exactly why ChatGPT, Perplexity, and Claude cite your competitor instead of you. Real forensic breakdown: source preference signals, authority markers, and content synthesis advantages."
+    />
+    <meta
+      name="keywords"
+      content="competitor analysis, source preference, retrieval bias, authority signals, citation advantage, synthesis preference, comparative forensics"
+    />
+    <meta
+      property="og:title"
+      content="Why Your Competitor Gets Cited (And You Don't): A Forensic Breakdown"
+    />
+    <meta
+      property="og:description"
+      content="Real evidence showing which signals give competitors the citation advantage. CITE LEDGER comparative analysis."
+    />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://aivis.biz/diagnostic-pages/competitor-retrieval-analysis" />
+  </head>
+  <body>
+    <article>
+      <header>
+        <h1>Competitor Retrieval Dissection: Why AI Models Choose Them Over You</h1>
+        <p class="subtitle">
+          Forensic source preference analysis: The exact signals that give competitors the citation
+          advantage.
+        </p>
+        <time datetime="2026-04-23">April 23, 2026</time>
+      </header>
+
+      <section id="intro">
+        <h2>The Core Question: Why Them, Not You?</h2>
+        <p>
+          Both you and your competitor rank in the search results for the same query. Both have
+          relevant content. But when ChatGPT or Perplexity generates an answer, it cites the
+          competitor and ignores you.
+        </p>
+        <p>
+          This is not luck. Models have systematic reasons for source preference. Understanding
+          those reasons—and extracting them from CITE LEDGER—is what separates diagnostic thinking
+          from guessing.
+        </p>
+        <p><strong>The difference:</strong></p>
+        <ul>
+          <li>
+            <strong>Speculation:</strong> "They probably have better schema" or "Their content might
+            be clearer"
+          </li>
+          <li>
+            <strong>Diagnosis:</strong> "Model chose them because they have 7 published author
+            credentials listed as FAQPage structured data; you have 0. That's a quantifiable gap."
+          </li>
+        </ul>
+      </section>
+
+      <section id="preference-vectors">
+        <h2>Seven Source Preference Vectors Models Use</h2>
+        <p>Models evaluate competitor vs. you along these dimensions. Each is ledger-traceable:</p>
+
+        <article>
+          <h3>1. Author Authority Vector</h3>
+          <p>
+            <strong>What models measure:</strong> Explicit author credentials, publication history,
+            cited mentions in other authoritative sources.
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>Your page: No author listed, or generic "by the Marketing Team"</li>
+            <li>
+              Competitor: Author is a recognized researcher (10+ published papers cited in Google
+              Scholar), credentials in page schema
+            </li>
+            <li>Model decision: Competitor wins authority gate</li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> CITE LEDGER shows "author_authority_comparison" with
+            numeric scores
+          </p>
+        </article>
+
+        <article>
+          <h3>2. Citation Network Vector</h3>
+          <p>
+            <strong>What models measure:</strong> How many authoritative sources cite this page? Do
+            other trusted pages link to it with credible anchor text?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>Your page: 3 backlinks, all from blogs</li>
+            <li>
+              Competitor: 47 backlinks, including from .edu domains, government sources, academic
+              journals
+            </li>
+            <li>
+              Model decision: Competitor page is validated by the ecosystem you're not part of
+            </li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> "citation_network_density" with backlink source
+            classification
+          </p>
+        </article>
+
+        <article>
+          <h3>3. Semantic Consistency Vector</h3>
+          <p>
+            <strong>What models measure:</strong> Does this page's claims align with consensus
+            information from other sources the model trusts?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>
+              Your page: Claims "AI models can be 100% objective" (contradicts authoritative
+              sources)
+            </li>
+            <li>
+              Competitor: Claims "AI models have inherent biases in training data" (aligns with
+              published research consensus)
+            </li>
+            <li>Model decision: Competitor page passes the consistency verification gate</li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> "semantic_consistency_score" + "consensus_alignment"
+          </p>
+        </article>
+
+        <article>
+          <h3>4. Content Structure Extraction Vector</h3>
+          <p>
+            <strong>What models measure:</strong> Can the page be cleanly parsed into quotable
+            blocks? Is the information structured for extraction?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>
+              Your page: Long prose paragraphs, no FAQ schema, no definition blocks, mixed
+              formatting
+            </li>
+            <li>
+              Competitor: FAQPage schema with clear Q&A, definition lists, bulleted summaries at
+              strategic points
+            </li>
+            <li>
+              Model decision: Competitor page is extraction-optimized; model can quote cleanly
+            </li>
+          </ul>
+          <p><strong>Forensic marker:</strong> "extraction_structure_score" with schema analysis</p>
+        </article>
+
+        <article>
+          <h3>5. Recency and Freshness Vector</h3>
+          <p>
+            <strong>What models measure:</strong> When was this page last updated? Does it reference
+            current data?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>Your page: Last updated 18 months ago; references 2024 statistics</li>
+            <li>
+              Competitor: Updated 2 weeks ago; references 2026 research published this quarter
+            </li>
+            <li>Model decision: For current events or trending topics, competitor is preferred</li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> "content_freshness_score" with date analysis + data
+            recency flagging
+          </p>
+        </article>
+
+        <article>
+          <h3>6. Domain Authority Reputation Vector</h3>
+          <p>
+            <strong>What models measure:</strong> What's the track record of this domain? Has it
+            published misinformation before? Is it well-established?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>
+              Your page: Domain 3 years old, mixed history (some pages fact-checked with errors)
+            </li>
+            <li>
+              Competitor: Domain 15+ years old, established reputation, no significant
+              misinformation incidents
+            </li>
+            <li>Model decision: Competitor domain is trusted based on historical track record</li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> "domain_reputation_score" with misinformation incident
+            count
+          </p>
+        </article>
+
+        <article>
+          <h3>7. Query Intent Alignment Vector</h3>
+          <p>
+            <strong>What models measure:</strong> How precisely does this page match the specific
+            user intent (informational vs. commercial vs. navigational)?
+          </p>
+          <p><strong>Ledger evidence:</strong></p>
+          <ul>
+            <li>Your page: Generic guide on the topic; covers multiple angles</li>
+            <li>
+              Competitor: Precisely answers the specific question in user query; narrow scope, deep
+              depth
+            </li>
+            <li>Model decision: For a specific query, competitor is the better match</li>
+          </ul>
+          <p>
+            <strong>Forensic marker:</strong> "query_intent_alignment" score + semantic matching
+            depth
+          </p>
+        </article>
+      </section>
+
+      <section id="case-study">
+        <h2>Real Dissection: Why ApiDoc.io Beats Your API Reference</h2>
+        <p>
+          <strong>Scenario:</strong> Two API documentation pages competing for the query "how to
+          authenticate with OAuth 2.0"
+        </p>
+        <p><strong>Your domain:</strong> api.yourcompany.example.com/oauth-auth</p>
+        <p><strong>Competitor:</strong> apidoc.io/guides/oauth-2-authentication</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Vector</th>
+              <th>Your Page</th>
+              <th>Competitor Page</th>
+              <th>Model Preference</th>
+              <th>Citation Probability</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Author Authority</strong></td>
+              <td>Generic "by API Team"</td>
+              <td>Dr. Sarah Chen (5+ OAuth RFCs published)</td>
+              <td>Competitor</td>
+              <td>15% (you) vs 85% (competitor)</td>
+            </tr>
+            <tr>
+              <td><strong>Citation Network</strong></td>
+              <td>2 backlinks (internal only)</td>
+              <td>34 backlinks (ietf.org, github.com, stackoverflow.com)</td>
+              <td>Competitor</td>
+              <td>10% vs 90%</td>
+            </tr>
+            <tr>
+              <td><strong>Semantic Consistency</strong></td>
+              <td>Aligns with RFC 6749 specs ✓</td>
+              <td>Also aligns with RFC 6749 specs ✓</td>
+              <td>Tie</td>
+              <td>50% vs 50%</td>
+            </tr>
+            <tr>
+              <td><strong>Content Structure</strong></td>
+              <td>Prose + code blocks (no FAQ schema)</td>
+              <td>FAQPage schema (8 Q&A blocks) + diagram schema</td>
+              <td>Competitor</td>
+              <td>20% vs 80%</td>
+            </tr>
+            <tr>
+              <td><strong>Recency</strong></td>
+              <td>Updated 6 months ago</td>
+              <td>Updated 2 weeks ago (new OAuth 2.1 spec noted)</td>
+              <td>Competitor</td>
+              <td>25% vs 75%</td>
+            </tr>
+            <tr>
+              <td><strong>Domain Authority</strong></td>
+              <td>api.yourcompany.example.com (known product domain, neutral history)</td>
+              <td>apidoc.io (documentation authority, strong trust)</td>
+              <td>Competitor</td>
+              <td>35% vs 65%</td>
+            </tr>
+            <tr>
+              <td><strong>Query Intent Alignment</strong></td>
+              <td>Your OAuth guide is specific (good match)</td>
+              <td>Competitor guide is also specific (good match)</td>
+              <td>Tie</td>
+              <td>50% vs 50%</td>
+            </tr>
+            <tr style="font-weight: bold; background: #f0f0f0">
+              <td><strong>COMPOSITE SCORE</strong></td>
+              <td colspan="2">Aggregate: Your → 26%, Competitor → 74%</td>
+              <td>Competitor Wins</td>
+              <td><strong>26% (you) vs 74% (competitor)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <strong>The forensic conclusion:</strong> You lose on 5 of 7 vectors. Most fixable: author
+          attribution, schema structure, recency. Hardest to fix: domain reputation (takes time to
+          build).
+        </p>
+      </section>
+
+      <section id="dissection-steps">
+        <h2>How to Run Your Own Competitor Dissection</h2>
+        <p>Using AiVIS CITE LEDGER:</p>
+
+        <ol>
+          <li>
+            <strong>Identify competitor URLs that beat you</strong> for your top 10 queries (get
+            from CITE LEDGER synthesis logs)
+          </li>
+          <li><strong>Run CITE LEDGER on both URLs</strong> (yours + competitor)</li>
+          <li>
+            <strong>Compare 7-vector scores:</strong> Authority, citation network, consistency,
+            structure, recency, reputation, intent alignment
+          </li>
+          <li>
+            <strong>Identify minimum 3 vectors where competitor leads significantly</strong> (>0.15
+            point gap)
+          </li>
+          <li>
+            <strong>Prioritize fixes</strong> by effort × impact (easiest + highest impact first)
+          </li>
+          <li><strong>Re-audit after 2 weeks</strong> to measure vector improvement</li>
+        </ol>
+      </section>
+
+      <section id="strategic-gaps">
+        <h2>Strategic Gap Types and Remediation</h2>
+
+        <article>
+          <h3>Structural Gaps (Low Effort, High Impact)</h3>
+          <ul>
+            <li><strong>Gap:</strong> You have prose; competitor has FAQPage schema</li>
+            <li><strong>Fix:</strong> 4–6 hours to add FAQ schema to top 5 pages</li>
+            <li><strong>Expected impact:</strong> +15–20 points on extraction structure vector</li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Attribution Gaps (Medium Effort, High Impact)</h3>
+          <ul>
+            <li><strong>Gap:</strong> Competitor lists 3+ author credentials; you list 0</li>
+            <li><strong>Fix:</strong> 2–3 days to implement author schema, bylines, bio pages</li>
+            <li><strong>Expected impact:</strong> +25–30 points on author authority vector</li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Citation Network Gaps (High Effort, Medium Impact)</h3>
+          <ul>
+            <li><strong>Gap:</strong> Competitor has 40 backlinks from .edu/.gov; you have 5</li>
+            <li>
+              <strong>Fix:</strong> 4–8 weeks of outreach, content collaboration, guest features
+            </li>
+            <li>
+              <strong>Expected impact:</strong> +10–15 points on citation network vector over 2
+              months
+            </li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Reputation Gaps (Long-term, Medium Impact)</h3>
+          <ul>
+            <li>
+              <strong>Gap:</strong> Your domain is newer with mixed history; competitor is
+              established 15+ years
+            </li>
+            <li>
+              <strong>Fix:</strong> 6–12 months of consistent, high-quality publishing + zero
+              misinformation incidents
+            </li>
+            <li>
+              <strong>Expected impact:</strong> +5–10 points on domain reputation vector (over time)
+            </li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="ledger-trace">
+        <h2>Ledger Trace: Competitor Analysis in CITE LEDGER</h2>
+        <pre><code>query: "how to authenticate with OAuth 2.0"
+comparison_analysis_id: comp-oauth-2026-04-23
+
+your_domain: api.yourcompany.example.com
+competitor_domain: apidoc.io
+
+ledger_events:
+
+  VECTOR_COMPARISON:
+    - vector: author_authority
+      your_score: 0.32
+      competitor_score: 0.87
+      gap: -0.55 (CRITICAL)
+      reason: "Competitor has published author (Dr. Sarah Chen, 5 RFCs); you have generic team attribution"
+      
+    - vector: citation_network
+      your_score: 0.15
+      competitor_score: 0.78
+      gap: -0.63 (CRITICAL)
+      reason: "Competitor has 34 backlinks from authoritative sources (ietf.org, github.com); you have 2 internal only"
+      
+    - vector: content_structure
+      your_score: 0.42
+      competitor_score: 0.89
+      gap: -0.47 (CRITICAL)
+      reason: "Competitor has FAQPage schema (8 Q&A blocks); you have prose only"
+      
+    - vector: recency
+      your_score: 0.61
+      competitor_score: 0.94
+      gap: -0.33 (MODERATE)
+      reason: "Your last update: 6 months ago; Competitor: 2 weeks ago (OAuth 2.1 notes added)"
+      
+    - vector: domain_reputation
+      your_score: 0.55
+      competitor_score: 0.91
+      gap: -0.36 (MODERATE)
+      reason: "Competitor: 15+ year reputation, zero incidents; you: 3 years, neutral history"
+      
+  COMPOSITE_SCORE:
+    your_likely_citation_probability: 26%
+    competitor_likely_citation_probability: 74%
+    
+  PRIORITY_FIXES:
+    - priority: 1
+      vector: author_authority
+      effort: medium
+      expected_impact: "+25 points"
+      action: "Add author schema with credentials; write author bio"
+    - priority: 2
+      vector: content_structure
+      effort: low
+      expected_impact: "+15 points"
+      action: "Convert top 5 pages to FAQPage schema"
+    - priority: 3
+      vector: citation_network
+      effort: high
+      expected_impact: "+20 points (over 8 weeks)"
+      action: "Outreach campaign to .edu/.gov sites"</code></pre>
+      </section>
+
+      <section id="conclusion">
+        <h2>The Insight: Competition is Measurable</h2>
+        <p>
+          You don't lose to competitors by chance. Models have systematic reasons for preferring
+          them. Those reasons are forensically traceable in CITE LEDGER.
+        </p>
+        <p>
+          The entities that reclaim citation ground are the ones that identify their specific 2–3
+          vector gaps (not generic "do better content"), fix them in priority order, and re-audit to
+          measure actual improvement.
+        </p>
+      </section>
+
+      <footer>
+        <p><strong>This diagnostic page is evidence-instrumented by AiVIS CITE LEDGER.</strong></p>
+        <p>Analyze your competitors: <a href="https://aivis.biz">Run comparative dissection</a></p>
+      </footer>
+    </article>
+  </body>
+</html>

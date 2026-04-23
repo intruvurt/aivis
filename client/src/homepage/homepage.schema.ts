@@ -22,36 +22,36 @@ import {
 
 export const HOMEPAGE_FAQ_ITEMS = [
     {
-        q: 'What is AI visibility and why does it matter for my website?',
-        a: 'AI visibility is the degree to which AI answer engines including ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, trust, and cite your website when answering user queries. A website can rank first in traditional search and still be completely invisible to AI answer engines if it lacks the structural signals those systems require. As AI-driven answers replace click-through results for millions of queries, AI visibility directly affects whether your brand gets cited or ignored.',
+        q: 'What is AiVIS and what makes it different from other AI optimization tools?',
+        a: 'AiVIS is not an optimization tool—it is a diagnostic forensics system. Where other tools say "here\'s how to rank," AiVIS says "here\'s why the model rejected you." We instrument the decision machine itself: showing which semantic bridges you\'re missing, where your entity decays, why a competitor was chosen instead of you, and the exact prompt-to-source mappings the model uses. You get evidence, not advice.',
     },
     {
-        q: 'Why is AI ignoring my website even though it ranks well in Google?',
-        a: 'Traditional search ranking and AI citation readiness are measured differently. Google ranks pages based on links, authority, and relevance. AI answer engines prioritize pages that have clear structured data (JSON-LD schema), unambiguous heading hierarchies, verifiable author attribution, outbound citations to authoritative sources, and content that directly answers specific questions. A page can be highly ranked but still fail all of these signals, making it invisible to AI systems that generate cited answers.',
+        q: 'Why should I care about AI citation over traditional search ranking?',
+        a: 'Traditional search gives you links. AI-generated answers remove the links entirely and generate synthesis instead. In a ChatGPT or Perplexity answer, your brand is either cited as a source or invisible. No middle ground. You can rank #1 in Google Search and be completely absent from AI answer synthesis if the model\'s retrieval logic decides to skip you. AI visibility is becoming the gate for expert authority in search.',
     },
     {
-        q: 'What is CITE LEDGER and how does it score my website?',
-        a: 'CITE LEDGER is the verification layer inside AiVIS.biz that checks whether AI systems can extract, attribute, and cite your content. It produces a score from 0 to 100 across seven weighted dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%). Every finding is tied to verifiable on-page evidence; if a signal cannot be proven from the live page, it is not included in the score. Hard-blocker caps prevent inflated scores when critical signals are missing.',
+        q: 'What does the CITE LEDGER actually show me?',
+        a: 'CITE LEDGER is an immutable forensic log of model decisions. When you run a scan, we show you: which search results the model considered, where it chose to cite competitors instead of you, what semantic bridges it needed that you don\'t have, where your entity went unstable (decay patterns), and proof of the retrieval logic it used. Every claim traces to a verifiable ledger entry—no guessing, no assumptions.',
     },
     {
-        q: 'What does BRAG stand for and what makes it different from standard SEO audits?',
-        a: 'BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence methodology behind every AiVIS.biz finding. Unlike standard SEO audits that flag issues based on assumptions or estimated scores, BRAG requires every finding to be tied to a stable, verifiable identifier from the live page. If the evidence is not present on the page at the time of the audit, the finding is not reported. This makes AiVIS.biz results reproducible, defensible, and directly actionable rather than speculative.',
+        q: 'How is diagnostic reporting different from standard audit findings?',
+        a: 'Standard audits list problems: "Add more schema," "Fix your headers." Diagnostic reports explain *why* those problems matter for this model. We show: the exact query pattern that triggers your gap, what the model does when it encounters it, why competitors aren\'t affected, and the specific semantic shift that would restore retrieval. It\'s forensic analysis, not a checklist.',
     },
     {
-        q: 'Which AI answer engines does AiVIS.biz test my website against?',
-        a: 'AiVIS.biz audits citation readiness against the four major AI answer engines: ChatGPT (OpenAI), Perplexity AI, Google AI Overviews, and Claude (Anthropic). Each system uses different extraction and trust signals. AiVIS.biz maps your page\'s structural signals against the shared requirements across all four engines, identifying which gaps are universal and which are engine-specific, so fixes are prioritized by maximum cross-engine impact.',
+        q: 'Which AI models and search systems does AiVIS analyze?',
+        a: 'AiVIS maps your content readiness against ChatGPT, Perplexity AI, Google AI Overviews, and Claude. Each has different extraction and trust signals. We identify which gaps are universal (affecting all four) and which are engine-specific. Fixes are prioritized by maximum cross-engine impact—meaning one change can restore visibility across multiple systems simultaneously.',
     },
     {
-        q: 'What is the most common reason AI answer engines do not cite a website?',
-        a: 'The most common reason is missing or incomplete structured data. When a page has no JSON-LD schema, AI systems cannot resolve what the page is, who published it, or what entity it represents. The second most common reason is the absence of direct question-and-answer content. AI engines prefer pages that explicitly answer questions in a standalone format, such as FAQ sections, definition blocks, or step-by-step guides. Pages that only describe a product or service in general prose are frequently passed over in favor of pages that answer specific queries directly.',
+        q: 'What is entity decay and why does it matter?',
+        a: 'Entity decay happens when a model stops citing your brand or topic over time because it\'s reassigned trust to a competitor or found conflicting information. Unlike traditional search rankings (which update in weeks), model entity decay can happen in days. AiVIS shows you the decay timeline: when it started, which queries were affected first, which competitors gained during your decay period, and what signal patterns restore stability. It\'s real-time competitive intelligence.',
     },
     {
-        q: 'How long does it take to improve my AI visibility score after making fixes?',
-        a: 'Structural fixes such as adding JSON-LD schema, correcting heading hierarchy, and resolving canonical URL issues can be re-crawled and reflected in AI systems within days to a few weeks depending on how frequently your site is indexed. Content fixes such as adding FAQ blocks, author attribution, and outbound citations take effect as soon as the updated page is crawled. AiVIS.biz supports a baseline-fix-re-audit workflow: run an initial audit, implement prioritized fixes, then re-audit to verify and measure score improvement.',
+        q: 'How do I know if the report is actually correct or just theoretical?',
+        a: 'Every diagnostic output traces to CITE LEDGER—our immutable forensic ledger. We don\'t make claims about "should work" or "likely to help." We capture the actual decision path the model took, the sources it evaluated, the ones it rejected, and the reasoning signals it used. If we can\'t verify it from the scan, we don\'t report it. You get forensic evidence, not theory.',
     },
     {
-        q: 'Who should use AiVIS.biz and what do I need to get started?',
-        a: `AiVIS.biz is built for founders, marketers, developers, and agencies who need to understand why their content is not being cited by AI answer engines. If AI models are ignoring your brand, misquoting your content, or attributing your expertise to competitors, AiVIS.biz shows you exactly why and what to fix. To get started, enter any URL into the audit tool. No account is required for an initial scan. Results include a 0 to 100 ${BRAND.product} score, category grades, BRAG evidence-linked findings, and a prioritized implementation fix list.`,
+        q: 'What happens after I run a diagnostic scan?',
+        a: `Results include: a citability score (0-100 based on seven forensic dimensions), entity decay patterns with timelines, competitor analysis (why they rank higher for shared topics), semantic bridge gaps (what connections are missing), and prompt-to-source mapping (which queries route away from you). Each finding links to ${BRAND.product} ledger entries you can inspect. You can then re-scan after fixes to measure actual impact against the baseline.`,
     },
 ] as const;
 
@@ -74,7 +74,7 @@ export function generateHomepageStructuredData(): Record<string, unknown>[] {
             height: 400,
         },
         description:
-            'Intruvurt Labs builds AI visibility and citation readiness tools. AiVIS.biz is the flagship product, an evidence-backed audit platform that measures whether AI answer engines can extract, trust, and cite your website content.',
+            'Intruvurt Labs builds diagnostic forensics systems for AI visibility. AiVIS.biz is the flagship product: a forensic instrumentation platform that explains why AI models decide to cite, reject, or rerank your content. Every finding traces to an immutable ledger of model decisions.',
         foundingDate: '2026',
         contactPoint: {
             '@type': 'ContactPoint',
@@ -88,26 +88,28 @@ export function generateHomepageStructuredData(): Record<string, unknown>[] {
             'https://github.com/dobleduche',
         ],
         knowsAbout: [
-            'AI visibility',
-            'Answer engine optimization',
-            'AI citation readiness',
-            'Structured data and JSON-LD schema',
-            'ChatGPT citation signals',
-            'Perplexity AI indexing',
-            'Google AI Overviews',
-            'BRAG evidence-linked auditing',
+            'AI citation diagnostics',
+            'Citation collapse forensics',
+            'Entity decay detection',
+            'Semantic bridge failure analysis',
+            'Competitor retrieval analysis',
+            'Prompt-to-source mapping',
+            'AI reasoning transparency',
+            'Decision instrumentation',
+            'Forensic source preference analysis',
+            'CITE LEDGER immutable ledger',
         ],
         hasOfferCatalog: {
             '@type': 'OfferCatalog',
-            name: 'AiVIS.biz AI Visibility Audit Tools',
+            name: 'AiVIS.biz Diagnostic AI Visibility Tools',
             itemListElement: [
                 {
                     '@type': 'Offer',
                     itemOffered: {
                         '@type': 'Service',
-                        name: 'AI Visibility Audit',
+                        name: 'AI Citation Diagnostics',
                         description:
-                            'A CITE LEDGER audit that scores any URL across seven weighted dimensions and returns BRAG evidence-linked findings with prioritized fixes.',
+                            'Forensic analysis of why AI models cite your competitors instead of you. CITE LEDGER traces every decision.',
                         url: BASE_URL,
                     },
                 },
@@ -119,24 +121,24 @@ export function generateHomepageStructuredData(): Record<string, unknown>[] {
         homepageOrganizationSchema,
         buildWebSiteSchema(),
         buildSoftwareApplicationSchema({
-            name: 'AiVIS - AI Visibility Audit',
+            name: 'AiVIS - AI Citation Diagnostics',
             description:
-                'AiVIS.biz audits how AI answer engines including ChatGPT, Perplexity AI, Google AI Overviews, and Claude read, interpret, and cite your website. Every finding is tied to verifiable on-page evidence through BRAG evidence identifiers and scored via CITE LEDGER across seven weighted dimensions.',
+                'AiVIS.biz is the forensic instrumentation layer for AI visibility. It shows exactly why ChatGPT, Perplexity AI, Google AI Overviews, and Claude cite your competitors instead of you. Every finding traces to CITE LEDGER—an immutable audit log of model decisions.',
             applicationCategory: 'BusinessApplication',
             operatingSystem: 'Web',
             featureList: [
-                'AI citation readiness scoring (0-100)',
-                'CITE LEDGER seven-dimension weighted audit',
-                'BRAG evidence-linked findings',
-                'Schema and structured data analysis',
-                'Content depth and AI readability scoring',
-                'Meta tag and Open Graph validation',
-                'Prioritized implementation fix list',
-                'Support for ChatGPT, Perplexity AI, Google AI Overviews, and Claude',
+                'Citability diagnostics score (0-100)',
+                'CITE LEDGER forensic decision ledger',
+                'Entity decay timeline analysis',
+                'Competitor retrieval dissection',
+                'Semantic bridge gap detection',
+                'Prompt-to-source mapping',
+                'Citation collapse point analysis',
+                'Multi-engine reasoning trace (ChatGPT, Perplexity, Google AI Overviews, Claude)',
             ],
             offers: [
                 {
-                    name: 'Free AI visibility audit',
+                    name: 'Free diagnostic scan',
                     price: String(tiers.observer.price),
                     priceCurrency: 'USD',
                     availability: 'https://schema.org/InStock',

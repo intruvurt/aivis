@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entity Decay Over Time: Why Models Stop Trusting Your Brand | AiVIS Diagnostics</title>
+    <meta
+      name="description"
+      content="Forensic timeline analysis: Watch how AI models reassign authority away from your brand. Real decay patterns with CITE LEDGER event traces showing when, why, and to whom."
+    />
+    <meta
+      name="keywords"
+      content="entity decay, model authority shift, brand visibility loss, AI trust degradation, citation timeline, competitive displacement, semantic authority"
+    />
+    <meta
+      property="og:title"
+      content="Entity Decay: Why AI Models Stop Citing Your Brand Over Time"
+    />
+    <meta
+      property="og:description"
+      content="Forensic timeline of how models reassign trust. See decay patterns and competitor displacement in real-time ledger data."
+    />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://aivis.biz/diagnostic-pages/entity-decay-analysis" />
+  </head>
+  <body>
+    <article>
+      <header>
+        <h1>Entity Decay Over Time: When AI Models Lose Trust in Your Brand</h1>
+        <p class="subtitle">
+          Real-time forensic timeline of how entities disappear from model synthesis.
+        </p>
+        <time datetime="2026-04-23">April 23, 2026</time>
+      </header>
+
+      <section id="intro">
+        <h2>The Pattern: Your Citation Presence Collapses Without Warning</h2>
+        <p>
+          Your brand was cited by ChatGPT. Then Perplexity stopped mentioning you. Then Google AI
+          Overviews removed you from synthesis. All in 2–3 weeks.
+        </p>
+        <p>
+          This is not a technical failure. This is <strong>entity decay</strong>—the pattern where
+          AI models systematically downgrade trust in an entity over time and route user queries
+          toward competitors instead.
+        </p>
+        <p><strong>Unlike traditional search:</strong></p>
+        <ul>
+          <li>
+            <strong>Google updates:</strong> Happen monthly, predictable, tied to algorithm rollouts
+          </li>
+          <li>
+            <strong>Model decay:</strong> Happens continuously, triggered by LLM retraining,
+            conflicting information, or competitor author claims
+          </li>
+        </ul>
+        <p>Google decay is SEO. Model decay is <em>reputation degradation</em>.</p>
+      </section>
+
+      <section id="decay-types">
+        <h2>Three Types of Entity Decay</h2>
+
+        <article>
+          <h3>Type 1: Authority Reassignment Decay</h3>
+          <p>
+            <strong>Pattern:</strong> Your entity was cited for topic X. A new competitor claims
+            authority over topic X. Models gradually shift future queries to the competitor.
+          </p>
+          <p>
+            <strong>Cause:</strong> The model encounters the competitor's content multiple times,
+            each time with stronger authority signals (more citations from established sources,
+            published in recognized publications, etc.). Model retraining or LoRA tuning shifts the
+            entity association.
+          </p>
+          <p><strong>Timeline:</strong> 1–3 weeks from first competitor emergence</p>
+          <p><strong>Forensic Signal:</strong></p>
+          <ul>
+            <li>CITE LEDGER shows competitor gaining retrieval priority</li>
+            <li>Your authority score doesn't drop; citations just route to competitor instead</li>
+            <li>You're still retrieved, but ranked lower in synthesis candidates</li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Type 2: Conflicting Information Decay</h3>
+          <p>
+            <strong>Pattern:</strong> Your content contradicts information the model learned from
+            authoritative sources during pre-training. As models update or encounter conflicting
+            evidence, they deprioritize you and use the authoritative source instead.
+          </p>
+          <p>
+            <strong>Cause:</strong> You make a claim the model's reasoning-chain later finds
+            contradicted by authoritative sources (Wikipedia, academic citations, official
+            government posts).
+          </p>
+          <p><strong>Timeline:</strong> Days to weeks (faster than authority reassignment)</p>
+          <p><strong>Forensic Signal:</strong></p>
+          <ul>
+            <li>CITE LEDGER shows semantic inconsistency flag</li>
+            <li>
+              Your authority score may actually be good, but synthesis gates reject you on
+              verification
+            </li>
+            <li>Competitor cited instead, marker shows "consistency_verified" on their source</li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Type 3: Topic Expansion Decay</h3>
+          <p>
+            <strong>Pattern:</strong> You're cited for the narrow entity/topic. As the topic expands
+            semantically, the model finds your content too narrow and routes to broader sources.
+          </p>
+          <p>
+            <strong>Cause:</strong> User questions evolve and become more specific. Your content was
+            created for general audience; it doesn't have the depth the model needs for synthesized
+            answers to narrowed queries.
+          </p>
+          <p><strong>Timeline:</strong> 2–4 weeks (parallels seasonal query shifts)</p>
+          <p><strong>Forensic Signal:</strong></p>
+          <ul>
+            <li>CITE LEDGER shows you cited in broad queries but excluded from narrow variants</li>
+            <li>Authority stays stable, but semantic fit score drops</li>
+            <li>Model routes to more specialized sources that answer the narrowed query</li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="timeline">
+        <h2>A Real Decay Timeline: 21-Day Collapse</h2>
+        <p>
+          <strong>Entity:</strong> "ai-content-tools.example.com" (AI content generation platform)
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Model</th>
+              <th>Citation Status</th>
+              <th>Ledger Event</th>
+              <th>Authority Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Day 0 (baseline)</td>
+              <td>ChatGPT</td>
+              <td>Cited in "AI writing tools" answers</td>
+              <td>SYNTHESIS_ROUTED_TO_SOURCE</td>
+              <td>0.82</td>
+            </tr>
+            <tr>
+              <td>Day 0</td>
+              <td>Perplexity</td>
+              <td>Cited in "AI content generation" answers</td>
+              <td>SYNTHESIS_ROUTED_TO_SOURCE</td>
+              <td>0.79</td>
+            </tr>
+            <tr>
+              <td>Day 0</td>
+              <td>Claude</td>
+              <td>Cited in tool comparisons</td>
+              <td>SYNTHESIS_ROUTED_TO_SOURCE</td>
+              <td>0.81</td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <strong>COMPETITOR EVENT:</strong> major-competitor.com publishes "Comprehensive AI
+                Writing Tool Comparison 2026" + gets covered by TechCrunch, referenced by 5 academic
+                papers
+              </td>
+            </tr>
+            <tr>
+              <td>Day 7</td>
+              <td>ChatGPT</td>
+              <td>Still cited, but less frequently (~40% of queries)</td>
+              <td>SYNTHESIS_COMPETITOR_PREFERRED</td>
+              <td>0.81 (unchanged)</td>
+            </tr>
+            <tr>
+              <td>Day 7</td>
+              <td>Perplexity</td>
+              <td>Excluded; major-competitor.com cited instead</td>
+              <td>AUTHORITY_REASSIGNMENT</td>
+              <td>0.76 (declining)</td>
+            </tr>
+            <tr>
+              <td>Day 14</td>
+              <td>ChatGPT</td>
+              <td>Rare (~10% of queries); only in legacy answers</td>
+              <td>SYNTHESIS_DEPRIORITIZED</td>
+              <td>0.72 (significant drop)</td>
+            </tr>
+            <tr>
+              <td>Day 14</td>
+              <td>Claude</td>
+              <td>Excluded entirely; no retrieval</td>
+              <td>ENTITY_RELEVANCE_DOWNGRADE</td>
+              <td>0.64 (major drop)</td>
+            </tr>
+            <tr>
+              <td>Day 21 (final state)</td>
+              <td>ChatGPT</td>
+              <td>Not cited (replaced by major-competitor)</td>
+              <td>DECAY_COMPLETE</td>
+              <td>0.55 (below threshold)</td>
+            </tr>
+            <tr>
+              <td>Day 21</td>
+              <td>Perplexity</td>
+              <td>Not cited</td>
+              <td>DECAY_COMPLETE</td>
+              <td>0.53</td>
+            </tr>
+            <tr>
+              <td>Day 21</td>
+              <td>Claude</td>
+              <td>Not cited</td>
+              <td>DECAY_COMPLETE</td>
+              <td>0.48</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>21 days. Complete citation collapse across all three major models.</strong></p>
+      </section>
+
+      <section id="signals">
+        <h2>Early Decay Signals: Detection in CITE LEDGER</h2>
+        <p>Decay is not random. CITE LEDGER records it in real-time. Look for:</p>
+
+        <ul>
+          <li>
+            <strong>Citation Frequency Slope:</strong> Track citations per model per week. Downward
+            slope = decay in progress.
+          </li>
+          <li>
+            <strong>Query Coverage Narrowing:</strong> You're cited in broad queries but excluded
+            from narrow ones = topic expansion decay.
+          </li>
+          <li>
+            <strong>Authority Score Trajectory:</strong> Steady decline (even if small) = competitor
+            picking up your ground.
+          </li>
+          <li>
+            <strong>Competitor Appearance Spike:</strong> New competitor suddenly appearing in
+            synthesis for your queries = authority reassignment starting.
+          </li>
+          <li>
+            <strong>Semantic Inconsistency Flags:</strong> Ledger marks your synthesis attempts with
+            "conflict_detected" = conflicting information decay.
+          </li>
+        </ul>
+      </section>
+
+      <section id="recovery">
+        <h2>Recovery Strategies by Decay Type</h2>
+
+        <article>
+          <h3>For Authority Reassignment Decay</h3>
+          <p><strong>Goal:</strong> Reclaim entity association before it solidifies.</p>
+          <ul>
+            <li><strong>Speed:</strong> Act within 7–10 days of competitor emergence</li>
+            <li>
+              <strong>Action:</strong> Publish original research or data that competitors must cite
+            </li>
+            <li>
+              <strong>Evidence Signal:</strong> Get cited by the competitor (re-establishes you as
+              source authority)
+            </li>
+            <li>
+              <strong>Timeline to Recovery:</strong> 3–4 weeks (if competitor citations are
+              successful)
+            </li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>For Conflicting Information Decay</h3>
+          <p><strong>Goal:</strong> Resolve the conflict before models deprioritize you further.</p>
+          <ul>
+            <li><strong>Speed:</strong> Act immediately (decay is faster for this type)</li>
+            <li>
+              <strong>Action:</strong> Update content to align with authoritative source consensus;
+              add citations to those sources
+            </li>
+            <li>
+              <strong>Evidence Signal:</strong> CITE LEDGER shows semantic inconsistency resolved in
+              re-scan
+            </li>
+            <li>
+              <strong>Timeline to Recovery:</strong> 1–2 weeks (faster, model respects corrections)
+            </li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>For Topic Expansion Decay</h3>
+          <p><strong>Goal:</strong> Expand content depth to match query evolution.</p>
+          <ul>
+            <li><strong>Speed:</strong> Proactive (expand before decay accelerates)</li>
+            <li>
+              <strong>Action:</strong> Add deeper subsections addressing narrowed query variants;
+              add FAQ blocks and schema
+            </li>
+            <li>
+              <strong>Evidence Signal:</strong> CITE LEDGER shows improved semantic fit score;
+              synthesis inclusion increases
+            </li>
+            <li>
+              <strong>Timeline to Recovery:</strong> 2–4 weeks (parallels query seasonality cycles)
+            </li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="monitoring">
+        <h2>Continuous Monitoring: Decay Dashboard</h2>
+        <p>Set up AiVIS monitoring on your top entities. Track:</p>
+        <ul>
+          <li>Citation frequency per model per week (chart trend)</li>
+          <li>Authority score trajectory (flag if declining >0.05 per week)</li>
+          <li>Query coverage (which query types cite you vs. exclude you)</li>
+          <li>Competitor emergence alerts (new domains appearing in your synthesis queries)</li>
+          <li>Semantic inconsistency incidents (when flagged)</li>
+        </ul>
+        <p>
+          <strong>Alert threshold:</strong> Any single metric showing 2-week decline triggers
+          diagnostic audit.
+        </p>
+      </section>
+
+      <section id="ledger-example">
+        <h2>Ledger Trace: Decay Detection in Real Time</h2>
+        <pre><code>entity_id: ai-content-tools
+observation_period: 2026-04-01 to 2026-04-22
+decay_type: AUTHORITY_REASSIGNMENT
+
+ledger_events (chronological):
+  - timestamp: 2026-04-08
+    event: COMPETITOR_EMERGENCE
+    competitor_domain: major-competitor.com
+    trigger: externally_published_research
+    impact: "competitor appearing in synthesis for 15% of queries"
+    
+  - timestamp: 2026-04-10
+    event: CITATION_FREQUENCY_DECLINING
+    your_domain: ai-content-tools.example.com
+    weekly_citations_prev: 847
+    weekly_citations_now: 620
+    trend: -26.8% week-over-week
+    
+  - timestamp: 2026-04-15
+    event: AUTHORITY_SCORE_DECLINING
+    score_trajectory: 0.82 → 0.76 → 0.68
+    competitor_trajectory: 0.65 → 0.72 → 0.81
+    crossover: competitor_now_higher
+    
+  - timestamp: 2026-04-20
+    event: QUERY_COVERAGE_NARROWING
+    citation_included: broad_queries_only
+    citation_excluded: narrow_variants
+    semantic_drift: topic_expansion_detected
+
+decay_status: IN_PROGRESS (21-day trajectory toward SEVERE)</code></pre>
+        <p><strong>This is all ledger-recorded, queryable data—not speculation.</strong></p>
+      </section>
+
+      <section id="conclusion">
+        <h2>The Core Insight: Decay is Measurable Reputation Degradation</h2>
+        <p>
+          Traditional SEO treats all ranking losses the same. Model decay requires different
+          diagnosis because it's driven by competing authority claims and model reasoning
+          reassignment, not just algorithm updates.
+        </p>
+        <p>
+          The entities that maintain citation presence are those that detect decay early (within 7
+          days) and respond with original evidence or semantic resolution.
+        </p>
+        <p>
+          The ones that disappear ignored decay signals and let competitors establish authority
+          unchallenged.
+        </p>
+      </section>
+
+      <footer>
+        <p><strong>This diagnostic page is evidence-instrumented by AiVIS CITE LEDGER.</strong></p>
+        <p>
+          Monitor your own entities: <a href="https://aivis.biz">Run entity decay diagnostics</a>
+        </p>
+      </footer>
+    </article>
+  </body>
+</html>

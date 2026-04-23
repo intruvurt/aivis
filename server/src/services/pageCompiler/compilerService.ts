@@ -12,6 +12,7 @@ import type {
     EntityNode,
     PageSpec,
 } from './types.js';
+import { compileDiagnosticPages } from './diagnosticContentGenerator.js';
 
 const PIPELINE: AnalyzeState[] = [
     'SCAN_INIT',
@@ -198,25 +199,28 @@ function derivePageSpecs(gaps: EntityGap[], entities: EntityNode[]): PageSpec[] 
         });
 }
 
-function compilePages(pageSpecs: Array<PageSpec & { id: string }>, entities: EntityNode[]): CompiledPage[] {
-    const byKey = new Map(entities.map((entity) => [entity.entityKey, entity]));
-    return pageSpecs.map((spec) => {
-        const name = byKey.get(spec.entityKey)?.name || spec.entityKey;
-        const sections = spec.requiredSections.map((section) => ({
-            heading: section,
-            content: `${name}: ${section} in the context of AI visibility and citation retrieval behavior.`,
-            entities: [name],
-        }));
-
-        return {
-            pageSpecId: spec.id,
-            title: spec.title,
-            slug: spec.slug,
-            sections,
-            claims: [`${name} is evaluated through citation presence and structural traceability.`],
-            internalLinks: spec.internalLinks,
-        };
-    });
+/**
+ * Compile pages using diagnostic content generator
+ * instead of generic placeholder content.
+ * 
+ * Each page: forensic analysis of why citations fail for this entity.
+ * Every claim: tied to evidence and intent.
+ * Every recommendation: based on gap analysis.
+ */
+function compilePages(
+    pageSpecs: Array<PageSpec & { id: string }>,
+    entities: EntityNode[],
+    gaps?: EntityGap[],
+    competitors?: Array<{ competitor: string; vector: string; gap: number }>,
+    queries?: Array<{ prompt: string; status: string; winner: string }>,
+): CompiledPage[] {
+    return compileDiagnosticPages(
+        pageSpecs,
+        entities,
+        gaps || [],
+        competitors || [],
+        queries || [],
+    );
 }
 
 async function loadMappedEntities(jobId: string): Promise<EntityNode[]> {
@@ -366,6 +370,18 @@ export async function runCompileStage(jobId: string): Promise<void> {
     if (String(job.rows[0].state) !== 'CONTENT_COMPILATION') return;
 
     const mappedEntities = await loadMappedEntities(jobId);
+    const gapRows = await pool.query(
+        `SELECT entity_key, gap_type, severity, reason FROM entity_gap_models WHERE job_id = $1`,
+        [jobId],
+    );
+    const gaps: EntityGap[] = gapRows.rows.map((row) => ({
+        entityKey: String(row.entity_key),
+        gapType: String(row.gap_type) as EntityGap['gapType'],
+        severity: Number(row.severity),
+        gap: Number(row.severity),
+        reason: String(row.reason),
+    }));
+
     const specRows = await pool.query(
         `SELECT id, entity_key, intent, title, slug, target_query_cluster, required_sections, schema_type, priority, internal_links
          FROM page_specs WHERE job_id = $1 ORDER BY priority DESC, created_at ASC`,
@@ -385,7 +401,7 @@ export async function runCompileStage(jobId: string): Promise<void> {
         internalLinks: Array.isArray(row.internal_links) ? row.internal_links.map(String) : [],
     }));
 
-    const compiledPages = compilePages(pageSpecs, mappedEntities);
+    const compiledPages = compilePages(pageSpecs, mappedEntities, gaps);
     for (const page of compiledPages) {
         const markdown = page.sections.map((section) => `## ${section.heading}\n\n${section.content}`).join('\n\n');
         const html = page.sections.map((section) => `<h2>${section.heading}</h2><p>${section.content}</p>`).join('');

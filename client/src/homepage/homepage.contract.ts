@@ -16,9 +16,9 @@ export const BRAND = {
     name: 'AiVIS.biz',
     product: 'CITE LEDGER',
     domain: 'https://aivis.biz',
-    tagline: `${BRAG_ACRONYM} evidence-linked scores`,
-    secondaryTagline: 'get cited fixes',
-    slogan: 'Verify whether AI answer engines can find, extract, and cite your content — and trace every gap to a crawl event.',
+    tagline: `See why the model said no`,
+    secondaryTagline: 'diagnostic instrumentation for AI visibility',
+    slogan: 'Stop guessing why AI ignores you. See the exact decision machine — source-by-source forensics of citation collapse, retrieval failure, and semantic gaps.',
     author: {
         name: 'Ryan Mason',
         twitter: '@dobleduche',
@@ -28,7 +28,7 @@ export const BRAND = {
 /* ── CITE LEDGER canonical definition ───────────────────────────────────── */
 
 export const CITE_LEDGER_DEFINITION =
-    'CITE LEDGER is a structured attribution system developed by AiVIS that tracks how AI models interpret, reference, and cite web content across answer engines like ChatGPT, Perplexity, Google AI Overviews, and Claude.' as const;
+    'CITE LEDGER is the immutable forensic log that records why AI models made citation choices — showing precisely where your content was selected, rejected, or reranked against competitors.' as const;
 
 /* ── BRAG (re-exported from shared for colocation) ──────────────────────── */
 
@@ -64,10 +64,10 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 /* ── Meta tags ──────────────────────────────────────────────────────────── */
 
 export const META = {
-    title: `AiVIS — AI Visibility Audit | Evidence-Backed by ${BRAND.product}`,
-    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} scores pages using ${BRAG.expansion} (BRAG) — an evidence framework that links every finding to a verifiable crawl event, citation_ledger entry, or registry computation.`,
-    // NOTE: description must include CITE_LEDGER_DEFINITION and BRAG.expansion verbatim — enforced at build time.
-    keywords: `${BRAND.product}, ${BRAND.name}, ${BRAG.acronym} evidence scores, AI citation audit, ChatGPT citation verification, Perplexity citation, Claude citation, structured data verification, AI answer verification, AI citation ledger, evidence-linked audit, anti-hallucination audit, ${BRAG.acronym} framework, entity disambiguation, citation readiness, AI extraction verification, machine readability, fix protocol, citation proof, AI answer distortion`,
+    title: `AiVIS — See Why the Model Said No | Diagnostic AI Visibility`,
+    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} shows you the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. This is system instrumentation, not optimization advice.`,
+    // NOTE: description must include CITE_LEDGER_DEFINITION and diagnostic framing verbatim — enforced at build time.
+    keywords: `AI citation diagnostics, why AI ignores you, competitor retrieval analysis, semantic bridge failure, entity decay detection, citation collapse forensics, AI reasoning transparency, ${BRAND.name}, ${BRAG.acronym} evidence scoring, source preference mapping, ChatGPT selection logic, Perplexity retrieval analysis, Claude synthesis debugging, AI answer engine decision making, citation ledger, post-mortem AI visibility, system instrumentation, retrieval failure diagnosis`,
     author: BRAND.name,
     canonical: BRAND.domain,
 } as const;
@@ -78,7 +78,7 @@ export const OG = {
     type: 'website',
     siteName: BRAND.name,
     title: META.title,
-    description: `${BRAND.name} ${BRAND.product} verifies how ${PLATFORM_TARGETS.join(', ').replace(/, ([^,]+)$/, ', and $1')} interpret and cite your website. Every finding is evidence-linked through ${BRAG.acronym} — no hallucination, no assumptions.`,
+    description: `Forensic analysis: Why ${PLATFORM_TARGETS.join(', ').replace(/, ([^,]+)$/, ', and $1')} cite your competitors instead of you. See the citation collapse points, semantic bridges, and entity stability patterns. System instrumentation, not tips.`,
     url: BRAND.domain,
     locale: 'en_US',
     image: {
@@ -96,10 +96,10 @@ export const TWITTER = {
     card: 'summary_large_image',
     site: BRAND.author.twitter,
     creator: BRAND.author.twitter,
-    title: `${BRAND.name} | ${BRAND.product} — ${BRAG.acronym} Evidence-Linked Scores`,
-    description: OG.description,
+    title: `${BRAND.name} | See Why the Model Said No`,
+    description: `Forensic AI visibility: Why your content is ignored, where citations collapse, why competitors win. Post-mortem instrumentation for AI answer engines.`,
     image: OG.image.url,
-    imageAlt: `${BRAND.name} | ${BRAND.product} — ${BRAG.acronym} Evidence-Linked Scores`,
+    imageAlt: `${BRAND.name} | Diagnostic AI Citation Analysis`,
 } as const;
 
 /* ── Hero copy ──────────────────────────────────────────────────────────── */
@@ -107,14 +107,14 @@ export const TWITTER = {
 export const HERO = {
     headline: [
         BRAND.name,
-        BRAND.product,
-        'shows what AI actually sees on your site and where it gets it wrong',
+        'See Why the Model Said No',
+        'Forensic instrumentation of AI citation collapse.',
     ] as const,
     subHeadline:
-        'Run a live scan. Watch how AI parses your content, detects entities, and misses citations. Fix the gaps that affect how you are represented in AI answers.',
+        'Every model decision has a reason. Run a scan. Watch where your content gets selected vs. skipped vs. reranked. See semantic gaps, entity decay, competitor reassignment. This is diagnosis, not optimization.',
     description:
-        'No static reports. No delayed results. What you see is what the system processes in real time.',
-    ctaText: 'Run citation audit',
+        'Real-time forensics. Evidence-linked. Ledger-traceable. The exact decision machine laid bare.',
+    ctaText: 'Run diagnostic scan',
     inputPlaceholder: 'yourdomain.com',
 } as const;
 

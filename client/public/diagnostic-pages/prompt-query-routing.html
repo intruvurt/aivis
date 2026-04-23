@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt-to-Source Mapping: How AI Models Route Queries | AiVIS Reasoning Trace</title>
+    <meta
+      name="description"
+      content="Forensic reasoning trace: See how different query phrasings trigger different AI model source selections. Exact prompt semantics revealing retrieval routing logic."
+    />
+    <meta
+      name="keywords"
+      content="prompt routing, semantic variation, query rewriting, retrieval bias, language variation, reasoning trace, query intent, semantic equivalence"
+    />
+    <meta
+      property="og:title"
+      content="How AI Models Route Queries: Prompt Semantics and Source Selection"
+    />
+    <meta
+      property="og:description"
+      content="Discover which prompt phrasings route TO your content vs. AWAY from it. Forensic prompt-source mapping with CITE LEDGER traces."
+    />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://aivis.biz/diagnostic-pages/prompt-query-routing" />
+  </head>
+  <body>
+    <article>
+      <header>
+        <h1>Prompt-to-Source Mapping: How AI Models Route Queries to Sources</h1>
+        <p class="subtitle">
+          Forensic reasoning trace of query semantics → source selection logic in ChatGPT,
+          Perplexity, and Claude.
+        </p>
+        <time datetime="2026-04-23">April 23, 2026</time>
+      </header>
+
+      <section id="intro">
+        <h2>The Pattern: Same Query, Different Phrasing = Different Citations</h2>
+        <p>Ask ChatGPT: "What are the best project management tools?"</p>
+        <p>It cites a certain set of sources.</p>
+        <p>Ask it: "Compare project management software for remote teams"</p>
+        <p>It cites different sources.</p>
+        <p>Ask: "Which project management apps have the best Zapier integration?"</p>
+        <p>Yet another set.</p>
+        <p>
+          These are semantically similar queries, but the model's
+          <strong>prompt interpretation</strong> triggers different retrieval pathways, leading to
+          different source prioritization.
+        </p>
+        <p>
+          This is <strong>prompt-to-source mapping</strong>—the forensic trace of how semantic
+          nuance determines which sources the model selects.
+        </p>
+      </section>
+
+      <section id="why-matters">
+        <h2>Why This Matters: You're Missing Citations Because of Query Semantics</h2>
+        <p>
+          Your content might be perfect for query variant A but invisible for variant B—even though
+          they're semantically equivalent to a human.
+        </p>
+        <p>Models don't care about equivalence. They care about:</p>
+        <ul>
+          <li>
+            <strong>Exact keyword presence:</strong> "remote teams" vs "distributed teams" may
+            trigger different retrieval buckets
+          </li>
+          <li>
+            <strong>Intent classification:</strong> "best" (evaluative) vs "how to" (instructional)
+            route to different source types
+          </li>
+          <li>
+            <strong>Specificity signals:</strong> "project management tools" (broad) vs "project
+            management for legal teams" (specific) hit different indexes
+          </li>
+          <li>
+            <strong>Compound semantic clusters:</strong> "project management + Zapier + integration"
+            creates a unique retrieval path that might not include your tool comparison page
+          </li>
+        </ul>
+      </section>
+
+      <section id="routing-mechanisms">
+        <h2>Four Prompt-Routing Mechanisms</h2>
+
+        <article>
+          <h3>1. Keyword-Triggered Routing</h3>
+          <p><strong>Logic:</strong> If prompt contains keyword X, route to source bucket X.</p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>
+              Query: "best budget project management tools" → triggers "budget" bucket → sources
+              mentioning price comparison
+            </li>
+            <li>
+              Query: "project management tools for teams" → triggers "teams" bucket → sources
+              mentioning collaboration
+            </li>
+            <li>Your page: Covers both but isn't tagged for either specific bucket</li>
+            <li>
+              Result: Your page is retrieved but deprioritized because it doesn't specialize in the
+              triggered bucket
+            </li>
+          </ul>
+          <p>
+            <strong>Ledger marker:</strong> CITE LEDGER shows "keyword_bucket_classification" with
+            triggered keywords
+          </p>
+        </article>
+
+        <article>
+          <h3>2. Intent-Based Routing</h3>
+          <p>
+            <strong>Logic:</strong> Model classifies query intent (informational, comparative,
+            product-seeking, instructional, etc.) and routes to sources that specialize in that
+            intent.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>
+              Query 1: "what is project management?" (informational intent) → routes to
+              definition/explanation sources
+            </li>
+            <li>
+              Query 2: "compare project management tools" (comparative intent) → routes to
+              comparison/review sources
+            </li>
+            <li>
+              Query 3: "how to use Asana for timeline planning" (instructional intent) → routes to
+              tutorial/guide sources
+            </li>
+            <li>Your page: Is a general guide; doesn't specialize in any single intent focus</li>
+            <li>
+              Result: For each query variant, a more intent-specialized competitor source is
+              preferred
+            </li>
+          </ul>
+          <p>
+            <strong>Ledger marker:</strong> "intent_classification" + "intent_specialization_score"
+            for your content
+          </p>
+        </article>
+
+        <article>
+          <h3>3. Semantic Expansion Routing</h3>
+          <p>
+            <strong>Logic:</strong> Model expands prompt keywords into semantic clusters and routes
+            based on cluster matching.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>
+              Query: "project management tools" expands to cluster: [planning, scheduling, resource
+              allocation, task tracking, collaboration]
+            </li>
+            <li>
+              Query: "agile development management" expands to cluster: [sprint planning, iterative
+              cycles, team velocity, backlogs, retrospectives]
+            </li>
+            <li>
+              Overlap is partial, so models route to different sources (one specialized in general
+              PM, one in agile methodology)
+            </li>
+            <li>Your page: Covers PM generally; doesn't specialize in agile methodology</li>
+            <li>Result: For the agile query, competitor source (agile-focused) is prioritized</li>
+          </ul>
+          <p><strong>Ledger marker:</strong> "semantic_cluster_expansion" with derived keywords</p>
+        </article>
+
+        <article>
+          <h3>4. Entity-Context Routing</h3>
+          <p>
+            <strong>Logic:</strong> If prompt mentions a specific product/person/company, route to
+            sources that mention that entity prominently.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Query: "Asana pricing" → routes to sources mentioning Asana specifically</li>
+            <li>
+              Query: "Monday.com vs. Asana" → routes to comparison content mentioning both entities
+            </li>
+            <li>
+              Query: "project management for startups" → routes to sources mentioning startup
+              context
+            </li>
+            <li>
+              Your generic page: Mentions Asana once in passing; doesn't specialize on pricing
+            </li>
+            <li>
+              Result: Asana's official pricing page or a specialist competitor comparison is
+              preferred
+            </li>
+          </ul>
+          <p>
+            <strong>Ledger marker:</strong> "entity_context_routing" with primary entities detected
+          </p>
+        </article>
+      </section>
+
+      <section id="real-mapping">
+        <h2>Real Prompt-to-Source Mapping: Visualization</h2>
+        <p><strong>Topic:</strong> Project Management Tools</p>
+        <p><strong>Your domain:</strong> pmtools-guide.example.com</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Prompt / Query</th>
+              <th>Intent Classification</th>
+              <th>Semantic Cluster</th>
+              <th>Your Page</th>
+              <th>Model Selection</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"best project management tools"</td>
+              <td>Comparative</td>
+              <td>[recommendations, rankings, features]</td>
+              <td>Retrieved (rank 3)</td>
+              <td>Specialist review site</td>
+              <td>Competitor has more recent rankings + user ratings</td>
+            </tr>
+            <tr>
+              <td>"what is project management?"</td>
+              <td>Informational</td>
+              <td>[definition, methodology, principles]</td>
+              <td>Retrieved (rank 2)</td>
+              <td>Wikipedia / textbook source</td>
+              <td>Academic authority is expected for definitional queries</td>
+            </tr>
+            <tr>
+              <td>"project management tools for remote teams"</td>
+              <td>Comparative + Contextual</td>
+              <td>[remote work, collaboration, distributed, async]</td>
+              <td>Not retrieved</td>
+              <td>Buffer blog (remote work specialist)</td>
+              <td>Your page doesn't specialize in remote work context; competitor does</td>
+            </tr>
+            <tr>
+              <td>"how to use Asana"</td>
+              <td>Instructional</td>
+              <td>[tutorial, setup, workflow, guides]</td>
+              <td>Not retrieved</td>
+              <td>Asana's official help docs</td>
+              <td>Entity-specific instructional intent routes to product vendor sources</td>
+            </tr>
+            <tr>
+              <td>"Asana pricing"</td>
+              <td>Query-specific (product + attribute)</td>
+              <td>[pricing, cost, plans, billing]</td>
+              <td>Not retrieved</td>
+              <td>Asana official pricing page</td>
+              <td>Entity + specific attribute triggers direct product URL priority</td>
+            </tr>
+            <tr>
+              <td>"Monday.com vs. Asana"</td>
+              <td>Comparative + Entity comparison</td>
+              <td>[comparison, features, pros/cons, both entities]</td>
+              <td>Retrieved (rank 4)</td>
+              <td>Specialist comparison site</td>
+              <td>Your page covers both but is less detailed in head-to-head comparison</td>
+            </tr>
+            <tr>
+              <td>"project management for startups"</td>
+              <td>Comparative + Contextual</td>
+              <td>[startup, budget-conscious, lean, scaling]</td>
+              <td>Not retrieved</td>
+              <td>Y Combinator wiki + startup blogs</td>
+              <td>Startup-context routing routes away from general PM guides</td>
+            </tr>
+            <tr>
+              <td>"free project management tool features"</td>
+              <td>Comparative + Attribute-specific</td>
+              <td>[free/freemium, features, limitations]</td>
+              <td>Retrieved (rank 5)</td>
+              <td>PC Magazine article</td>
+              <td>Your page is generic on free tier; competitor specializes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <strong>Pattern:</strong> Your page is retrieved for general queries but deprioritized
+          (rank 3–5) in favor of intent-specialized or context-specialized competitors. For narrow
+          queries (entity-specific, free-tier-specific), you're not retrieved at all.
+        </p>
+      </section>
+
+      <section id="gap-diagnosis">
+        <h2>Your Semantic Routing Gaps</h2>
+        <p>Based on the mapping above, your content has:</p>
+
+        <ul>
+          <li>
+            <strong>Intent Coverage Gap:</strong> You cover "comparative" intent but not
+            "instructional" (how-to) or "definitional" (what is)
+          </li>
+          <li>
+            <strong>Context Specialization Gap:</strong> General PM guide; not specialized for
+            "remote teams," "startups," or "free tier"
+          </li>
+          <li>
+            <strong>Entity Emphasis Gap:</strong> You mention tools generically; competitors
+            specialize in Asana vs. Monday.com comparisons, making them preferred for
+            entity-specific queries
+          </li>
+          <li>
+            <strong>Attribute Specificity Gap:</strong> You don't specialize in pricing, free
+            features, or ease-of-use; lost to competitors for these attribute queries
+          </li>
+        </ul>
+      </section>
+
+      <section id="remediation">
+        <h2>Remediation: Expand Your Routing Surface</h2>
+
+        <article>
+          <h3>Strategy 1: Add Intent Specialization Sections</h3>
+          <p><strong>Current:</strong> One generic PM tools page</p>
+          <p><strong>Expand to:</strong></p>
+          <ul>
+            <li>
+              Informational section: "What is modern project management?" (addresses definitional
+              queries)
+            </li>
+            <li>
+              How-to section: "How to implement project management" (addresses instructional
+              queries)
+            </li>
+            <li>
+              Comparison FAQ: "Asana vs. Monday vs. Notion" (addresses entity-specific comparisons)
+            </li>
+          </ul>
+          <p>
+            <strong>Result:</strong> Instead of one page hitting one intent, you have semantic
+            surfaces for 4+ intents. More routing entry points.
+          </p>
+        </article>
+
+        <article>
+          <h3>Strategy 2: Create Context-Specialized Pages</h3>
+          <p><strong>Current:</strong> Generic "PM tools for teams"</p>
+          <p><strong>Expand to:</strong></p>
+          <ul>
+            <li>"Best PM tools for remote teams" (addresses remote work routing)</li>
+            <li>"Free PM tools for startups" (addresses startup + budget routing)</li>
+            <li>"PM tools for agile teams" (addresses agile methodology routing)</li>
+          </ul>
+          <p>
+            <strong>Result:</strong> Each specialized page matches a different semantic routing
+            pathway. Instead of losing context-specific queries, you now win them.
+          </p>
+        </article>
+
+        <article>
+          <h3>Strategy 3: Add Structured Data for Multiple Intents</h3>
+          <p><strong>Current:</strong> One schema for generic software tool</p>
+          <p><strong>Extend to:</strong></p>
+          <ul>
+            <li>
+              FAQPage schema for intent-specific Q&As ("What is PM?" + "What tools do startups
+              use?")
+            </li>
+            <li>ComparisonTable schema for entity comparisons</li>
+            <li>HowTo schema for instructional sections</li>
+          </ul>
+          <p>
+            <strong>Result:</strong> Schema diversity signals multiple intents to the model. You
+            become addressable for more routing pathways.
+          </p>
+        </article>
+      </section>
+
+      <section id="ledger-trace">
+        <h2>Ledger Trace: Prompt Routing Analysis</h2>
+        <pre><code>analysis_id: prompt_routing_pmtools_2026-04-23
+your_domain: pmtools-guide.example.com
+
+ledger_events:
+
+  PROMPT_1: "best project management tools"
+    intent_detected: comparative
+    semantic_cluster: [recommendations, rankings, features, user_ratings]
+    your_retrieval: yes (rank_3)
+    selected_source: G2Reviews.com (rank_1)
+    routing_reason: "comparative_specialization + user_ratings"
+    
+  PROMPT_2: "project management for remote teams"
+    intent_detected: comparative + contextual
+    semantic_cluster: [remote_work, async_communication, distributed_teams, timezone_handling]
+    your_retrieval: no
+    selected_source: Buffer.com (rank_1)
+    routing_reason: "remote_work_context_specialization"
+    ledger_note: "Your page retrieved but deprioritized due to missing remote_work semantic signals in schema + content"
+    
+  PROMPT_3: "how to use Asana"
+    intent_detected: instructional_entity_specific
+    semantic_cluster: [tutorial, setup, workflow, entity_Asana]
+    your_retrieval: no
+    selected_source: Asana.com/help (rank_1)
+    routing_reason: "entity_context_routing + authoritative_source"
+    action_recommendation: "Add instructional How-to schema to reclaim instructional queries"
+    
+  PROMPT_4: "Asana vs Monday.com"
+    intent_detected: comparative_entity_comparison
+    semantic_cluster: [comparison, entity_Asana, entity_Monday, head_to_head]
+    your_retrieval: yes (rank_4)
+    selected_source: PCMag.com (rank_1)
+    routing_reason: "entity_specificity + comparison_depth"
+    ledger_note: "Your page exists but outranked by competitor on comparison_depth metric"
+
+  ROUTING_GAP_ANALYSIS:
+    your_coverage_surface:
+      - general_comparative: 70%
+      - remote_work_contextual: 0%
+      - instructional: 5%
+      - entity_specific_comparison: 40%
+      - definitional: 10%
+    
+    missing_routing_surfaces:
+      - startup_context: "No specialized content for startup routing"
+      - free_tier_comparison: "No free-tool-specific content"
+      - pricing_queries: "No pricing-specific content"
+      - industry_context: "No vertical specialization (legal, healthcare, etc.)"
+    
+    remediation_priority:
+      - priority_1: "Add How-to/instructional schema (easy, high_impact_routing)"
+      - priority_2: "Create remote_teams context page (medium_effort, high_impact_routing)"
+      - priority_3: "Expand entity_specific comparisons (medium_effort, medium_impact)"</code></pre>
+      </section>
+
+      <section id="advanced-strategy">
+        <h2>Advanced Strategy: Multi-Surface Semantic Optimization</h2>
+        <p>Instead of one general page, create an ecosystem:</p>
+
+        <ul>
+          <li>
+            <strong>Hub page:</strong> "Project Management Tools 2026" (general, hits broad routing)
+          </li>
+          <li>
+            <strong>Intent surfaces:</strong> How-to guides, definitional posts, comparison schemas
+          </li>
+          <li>
+            <strong>Context surfaces:</strong> Remote work, startup, enterprise, healthcare
+            specializations
+          </li>
+          <li>
+            <strong>Entity surfaces:</strong> Asana guide, Monday.com guide, Notion guide, etc.
+            (entity-specific routing)
+          </li>
+          <li>
+            <strong>Attribute surfaces:</strong> Pricing guide, free tools guide, ease-of-use guide
+            (attribute-specific routing)
+          </li>
+        </ul>
+
+        <p>
+          <strong>Result:</strong> Single topic becomes 15–20 pages, each optimized for a specific
+          prompt-routing pathway. Your coverage surface expands from 70% (general comparisons) to
+          85%+ across all intent/context/entity variations.
+        </p>
+      </section>
+
+      <section id="conclusion">
+        <h2>The Core Insight: Prompts Are Not Commodities</h2>
+        <p>
+          Models treat slight variations in prompt phrasing as triggers for different retrieval
+          pathways. Understanding those pathways—and optimizing your content to address multiple
+          pathways simultaneously—is how you maximize citation probability across query variation.
+        </p>
+        <p>
+          The entities that capture broad citation presence are not the ones with the "best" single
+          page. They're the ones that surface content for every semantic variation of their topic.
+        </p>
+      </section>
+
+      <footer>
+        <p><strong>This diagnostic page is evidence-instrumented by AiVIS CITE LEDGER.</strong></p>
+        <p>Map your own prompt routing: <a href="https://aivis.biz">Analyze query semantics</a></p>
+      </footer>
+    </article>
+  </body>
+</html>

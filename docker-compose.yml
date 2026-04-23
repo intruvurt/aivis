@@ -30,3 +30,33 @@ services:
     depends_on:
       - redis
       - postgres
+
+        scan-worker:
+    build: ./workers/scan-worker
+    depends_on: [redis]
+    command: node index.js
+
+  entity-worker:
+    build: ./workers/entity-worker
+    depends_on: [redis, python-intel]
+    command: node index.js
+
+  gap-worker:
+    build: ./workers/gap-worker
+    depends_on: [redis, python-intel]
+    command: node index.js
+
+  page-worker:
+    build: ./workers/page-worker
+    depends_on: [redis]
+    command: node index.js
+
+  publish-worker:
+    build: ./workers/publish-worker
+    depends_on: [redis]
+    command: node index.js
+
+  feedback-worker:
+    build: ./workers/feedback-worker
+    depends_on: [redis]
+    command: node index.js

@@ -28,7 +28,7 @@ export const BRAND = {
 /* ── CITE LEDGER canonical definition ───────────────────────────────────── */
 
 export const CITE_LEDGER_DEFINITION =
-    'CITE LEDGER is the immutable forensic log that records why AI models made citation choices — showing precisely where your content was selected, rejected, or reranked against competitors.' as const;
+    'AiVIS CITE LEDGER is the immutable forensic log that records why AI models made citation choices — showing precisely where your content was selected, rejected, or reranked against competitors.' as const;
 
 /* ── BRAG (re-exported from shared for colocation) ──────────────────────── */
 
@@ -65,7 +65,7 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 
 export const META = {
     title: `AiVIS — See Why the Model Said No | Diagnostic AI Visibility`,
-    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} shows you the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. This is system instrumentation, not optimization advice.`,
+    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} shows you the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. ${BRAG.expansion}. This is system instrumentation, not optimization advice.`,
     // NOTE: description must include CITE_LEDGER_DEFINITION and diagnostic framing verbatim — enforced at build time.
     keywords: `AI citation diagnostics, why AI ignores you, competitor retrieval analysis, semantic bridge failure, entity decay detection, citation collapse forensics, AI reasoning transparency, ${BRAND.name}, ${BRAG.acronym} evidence scoring, source preference mapping, ChatGPT selection logic, Perplexity retrieval analysis, Claude synthesis debugging, AI answer engine decision making, citation ledger, post-mortem AI visibility, system instrumentation, retrieval failure diagnosis`,
     author: BRAND.name,
@@ -97,7 +97,7 @@ export const TWITTER = {
     site: BRAND.author.twitter,
     creator: BRAND.author.twitter,
     title: `${BRAND.name} | See Why the Model Said No`,
-    description: `Forensic AI visibility: Why your content is ignored, where citations collapse, why competitors win. Post-mortem instrumentation for AI answer engines.`,
+    description: OG.description,
     image: OG.image.url,
     imageAlt: `${BRAND.name} | Diagnostic AI Citation Analysis`,
 } as const;
@@ -107,6 +107,7 @@ export const TWITTER = {
 export const HERO = {
     headline: [
         BRAND.name,
+        BRAND.product,
         'See Why the Model Said No',
         'Forensic instrumentation of AI citation collapse.',
     ] as const,

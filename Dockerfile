@@ -46,8 +46,9 @@ COPY client/package*.json client/
 COPY shared/ shared/
 
 # Install dependencies (cached unless package.json changes)
+# CYPRESS_INSTALL_BINARY=0 skips the ~600MB Cypress binary download (not needed at build time)
 RUN npm --prefix server install --include=dev
-RUN npm --prefix client install --include=dev
+RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --include=dev
 
 # Copy source code (this layer updates frequently)
 COPY . /app/.

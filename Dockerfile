@@ -67,9 +67,7 @@ FROM node:24-bookworm-slim AS runtime
 # Install only runtime Chrome dependencies (smaller than builder)
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	ca-certificates \
-	fonts-liberation \
-	libasound2 \
-	libatk-bridge2.0-0 \
+     curl \
 	libatk1.0-0 \
 	libcairo2 \
 	libcups2 \
@@ -113,6 +111,18 @@ COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/server/package.json ./server/package.json
 
+# Runtime hardening: drop root privileges and keep writable app home.
+RUN groupadd --system aivis && useradd --system --gid aivis --create-home aivis \
+    && chown -R aivis:aivis /app
+
 ENV NODE_ENV=production
+ENV PORT=10000
+
+EXPOSE 10000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${PORT}/api/health" || exit 1
+
+USER aivis
 
 CMD ["npm", "--prefix", "server", "run", "start:prod"]

@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { getPool } from './postgresql.js';
 import { enqueueAuditJob } from '../infra/queues/auditQueue.js';
+import { appendCreditLedgerEvent } from './creditLedger.js';
 
 export type LeadTarget = {
   domain: string;
@@ -138,6 +139,19 @@ export async function redeemReferralBonus(args: {
     [args.userId]
   );
 
+  await appendCreditLedgerEvent({
+    userId: args.userId,
+    type: 'adjustment',
+    delta: 5,
+    source: 'system',
+    requestId: `growth-referral:${args.userId}:${code}:${args.convertedUserId}`,
+    metadata: {
+      referralCode: code,
+      convertedUserId: args.convertedUserId,
+      reason: 'growth_referral_bonus',
+    },
+  });
+
   return { granted: true, creditsAdded: 5 };
 }
 
@@ -147,4 +161,4 @@ export function buildViralReportSnippet(args: {
   competitorScore: number;
 }): string {
   return `This site vs competitors\n\nYou: ${Math.round(args.score)}\nCompetitor: ${Math.round(args.competitorScore)}\n\nSee if your site is being ignored too.`;
-}
+}

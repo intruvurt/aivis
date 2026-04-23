@@ -33,8 +33,38 @@ import {
   sendSubscriptionCancelledEmail,
   sendPaymentFailedEmail,
 } from '../services/emailService.js';
+import { appendCreditLedgerEvent } from '../services/creditLedger.js';
 import { getPool } from '../services/postgresql.js';
 import { logWebhookSignatureFailure, sanitizeAndLogError } from '../lib/securityEventLogger.js';
+
+async function claimStripeEventForProcessing(event: any): Promise<boolean> {
+  const result = await getPool().query(
+    `INSERT INTO stripe_events (id, type, payload)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (id) DO NOTHING
+     RETURNING id`,
+    [String(event.id || ''), String(event.type || 'unknown'), JSON.stringify(event || {})],
+  );
+  return result.rows.length > 0;
+}
+
+async function markStripeEventProcessed(eventId: string): Promise<void> {
+  await getPool().query(
+    `UPDATE stripe_events
+     SET processed_at = NOW(), error = NULL
+     WHERE id = $1`,
+    [eventId],
+  );
+}
+
+async function markStripeEventFailed(eventId: string, errorMessage: string): Promise<void> {
+  await getPool().query(
+    `UPDATE stripe_events
+     SET error = LEFT($2, 1500)
+     WHERE id = $1`,
+    [eventId, String(errorMessage || 'Unknown Stripe handler failure')],
+  );
+}
 
 // FRONTEND_URL may be comma-separated (for CORS). Take the first origin for Stripe redirects.
 const FRONTEND_URL = (process.env.FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'https://aivis.biz')
@@ -188,6 +218,22 @@ async function grantInitialTierBonusIfEligible(args: {
      VALUES ($1, $2, $3, 0, 'usd', 'completed', $4, $5)`,
     [args.userId, `tier_initial_bonus_${tier}`, totalCreditsAdded, bonusPercent, milestoneQualified ? 'tier-initial-bonus-milestone' : 'tier-initial-bonus']
   );
+
+  await appendCreditLedgerEvent({
+    userId: args.userId,
+    type: 'subscription_grant',
+    delta: totalCreditsAdded,
+    source: 'system',
+    requestId: `tier-initial-bonus:${args.userId}:${tier}:${billingPeriod}`,
+    metadata: {
+      tier,
+      billingPeriod,
+      bonusPercent,
+      baseCredits,
+      bonusCredits,
+      milestoneQualified,
+    },
+  });
 
   return {
     granted: true,
@@ -664,6 +710,11 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   }
 
   try {
+    const shouldProcess = await claimStripeEventForProcessing(event);
+    if (!shouldProcess) {
+      return res.json({ received: true, duplicate: true, eventType: event.type, eventId: event.id });
+    }
+
     // Route to appropriate handler
     switch (event.type) {
       // ---- Checkout Events ----
@@ -737,8 +788,10 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`);
     }
 
+    await markStripeEventProcessed(String(event.id));
     res.json({ received: true });
   } catch (error: any) {
+    await markStripeEventFailed(String(event?.id || ''), error?.message || String(error || 'webhook-handler-failure')).catch(() => { });
     sanitizeAndLogError(`[Stripe Webhook] Error handling ${event.type}`, error, req);
     // Return 200 to acknowledge receipt (Stripe will retry on 5xx)
     res.status(200).json({

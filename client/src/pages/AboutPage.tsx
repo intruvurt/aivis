@@ -124,6 +124,7 @@ import {
   buildOrganizationSchema,
   buildWebPageSchema,
   buildBreadcrumbSchema,
+  buildFaqSchema,
   buildPersonSchema,
 } from '../lib/seoSchema';
 import { PLATFORM_NARRATIVE } from '../constants/platformNarrative';
@@ -164,7 +165,7 @@ const ABOUT_STRUCTURED_DATA = [
   }),
   buildWebPageSchema({
     path: '/about',
-    name: 'About AiVIS.biz — AI Visibility Audit & Remediation Platform',
+    name: 'About AiVIS.biz - AI Visibility Audit & Remediation Platform',
     description:
       'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable record of how a brand is extracted, attributed, and cited within AI-generated answers.',
   }),
@@ -172,6 +173,31 @@ const ABOUT_STRUCTURED_DATA = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
   ]),
+  buildFaqSchema(
+    [
+      {
+        question: 'What does AiVIS.biz actually measure?',
+        answer:
+          'AiVIS.biz measures whether AI answer engines can extract, trust, and cite web content. It evaluates citation readiness using evidence-linked findings tied to observable structural signals such as schema, heading hierarchy, metadata quality, and content extractability.',
+      },
+      {
+        question: 'What is CITE LEDGER in the AiVIS.biz system?',
+        answer:
+          'CITE LEDGER is the attribution layer that records how content signals are parsed and validated across the audit workflow. It anchors visibility claims to verifiable evidence instead of unverifiable summaries.',
+      },
+      {
+        question: 'What is BRAG and why does AiVIS.biz use it?',
+        answer:
+          'BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence protocol that requires every finding and remediation path to map back to crawl-observable signals so teams can reproduce and verify outcomes.',
+      },
+      {
+        question: 'Who is AiVIS.biz built for?',
+        answer:
+          'AiVIS.biz is built for founders, marketers, developers, and agencies that need to diagnose why AI systems ignore or misattribute their content and then apply evidence-backed corrective actions.',
+      },
+    ],
+    { path: '/about' }
+  ),
 ];
 
 export default function AboutPage() {
@@ -229,13 +255,13 @@ export default function AboutPage() {
           <FadeUp delay={0.15}>
             <p className="text-base md:text-lg text-white/65 max-w-2xl mx-auto leading-relaxed">
               AiVIS.biz is an AI visibility and entity authority system founded in 2026 that
-              measures how AI systems interpret, trust, and cite web content. It operates through
+              measures how AI systems interpret, trust and cite web content. It operates through
               CITE LEDGER™, a structured attribution layer that records parsing, validation, and
-              citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading),
+              citation behavior across answer engines and BRAG (Based-Retrieval-Auditable-Grading),
               an evidence-linked registry that ties each audit finding to verifiable on-page
               signals. Together, these systems define citation readiness by quantifying
               extractability, entity clarity, and trust alignment, producing a verifiable record of
-              how a brand is extracted, attributed, and cited within AI-generated answers, based on
+              how a brand is extracted, attributed and cited within AI-generated answers, based on
               traceable evidence from source content.
             </p>
           </FadeUp>

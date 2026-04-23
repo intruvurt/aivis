@@ -2,25 +2,51 @@
 import { Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { buildBreadcrumbSchema, buildWebPageSchema } from '../lib/seoSchema';
+import { buildBreadcrumbSchema, buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
 import PublicPageFrame from '../components/PublicPageFrame';
 
 export default function PrivacyPage() {
   usePageMeta({
     title: 'Privacy Policy',
     description:
-      'How AiVIS.biz collects, uses, and protects your data across AI analysis, competitor tracking, citation testing, and brand mention scanning.',
+      'How AiVIS.biz collects, uses, and protects data across AI analysis, citation testing, competitor tracking, and evidence-led visibility workflows.',
     path: '/privacy',
     structuredData: [
       buildWebPageSchema({
         path: '/privacy',
         name: 'AiVIS.biz Privacy Policy',
-        description: 'Data collection, usage, and protection practices for the AiVIS.biz platform.',
+        description:
+          'Data collection, usage, retention, and protection practices for the AiVIS.biz evidence-backed visibility platform.',
       }),
       buildBreadcrumbSchema([
         { name: 'Home', path: '/' },
         { name: 'Privacy Policy', path: '/privacy' },
       ]),
+      buildFaqSchema(
+        [
+          {
+            question: 'What data does AiVIS.biz send to AI providers during analysis?',
+            answer:
+              'AiVIS.biz sends extracted public page content and structural signals required to run visibility analysis. Account credentials, payment details, and private billing data are not sent to AI model providers.',
+          },
+          {
+            question: 'Does AiVIS.biz sell personal data?',
+            answer:
+              'No. AiVIS.biz does not sell, rent, or trade personal information. Data sharing is limited to processors required to operate hosting, payments, email, security checks, and model routing.',
+          },
+          {
+            question: 'How long are audit evidence records retained?',
+            answer:
+              'Core evidence tables including scan event logs and citation ledger records are retained while the account is active, then removed according to account deletion and legal retention rules described in this policy.',
+          },
+          {
+            question: 'How can I request export or deletion of my data?',
+            answer:
+              'You can request access, export, correction, restriction, or deletion by contacting privacy@aivis.biz. AiVIS.biz responds within 30 days and applies the same rights baseline across supported regions.',
+          },
+        ],
+        { path: '/privacy' }
+      ),
     ],
   });
 
@@ -31,10 +57,10 @@ export default function PrivacyPage() {
     <PublicPageFrame
       icon={Shield}
       title="Privacy Policy"
-      subtitle="How AiVIS.biz collects, uses, and protects your data"
+      subtitle="How AiVIS.biz collects, uses, and protects data in an evidence-backed visibility system"
       maxWidthClass="max-w-4xl"
     >
-      <p className="text-white/55 text-sm mb-10">Last updated: April 5, 2026</p>
+      <p className="text-white/55 text-sm mb-10">Last updated: April 23, 2026</p>
 
       <div className="prose prose-invert prose-slate max-w-none space-y-8 text-white/75 leading-relaxed bg-charcoal-deep rounded-2xl p-6 border border-white/10">
         {/* ── Summary ── */}
@@ -46,9 +72,14 @@ export default function PrivacyPage() {
             personal information collected through this Service.
           </p>
           <p className="mt-2">
-            We collect only the data necessary to operate a multi-model AI answer audit system. We
-            never sell personal data. We never use it for advertising. You can request access,
-            correction, export, or deletion at any time.
+            We collect data required to operate a deterministic visibility pipeline: audit
+            execution, citation verification, evidence persistence, and account security. We do not
+            sell personal data and we do not use personal data for ad targeting.
+          </p>
+          <p className="mt-2">
+            You can request access, correction, export, restriction, or deletion at any time. This
+            policy explains what enters the system, what leaves it, how long records are retained,
+            and which processors operate specific parts of the platform.
           </p>
           <p className="mt-2">
             This Privacy Policy should be read alongside our{' '}
@@ -344,10 +375,11 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-semibold text-white mb-3">5. Brand Mention Scanning</h2>
           <p>
-            The brand mention feature scans publicly available content across 15 external sources to
-            find references to your brand, domain, or configured keywords. These sources include
-            Reddit, Hacker News, Mastodon, DuckDuckGo, Bing, Google News, GitHub, Quora, Product
-            Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, and Lobsters.
+            The brand mention feature scans publicly available content across 19+ external sources
+            to find references to your brand, domain, or configured keywords. Core sources include
+            Reddit, Hacker News, Mastodon, GitHub, Quora, Product Hunt, Wikipedia, YouTube, Dev.to,
+            Medium, Stack Overflow, Twitter/X, Bluesky, Lemmy, Google News, DuckDuckGo, Bing, and
+            Lobsters.
           </p>
           <p className="mt-2">
             Mention scanning queries public APIs and public web pages. We do not create accounts on,

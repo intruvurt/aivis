@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { executeTransaction, getPool } from './postgresql.js';
+import { appendCreditLedgerEvent } from './creditLedger.js';
 
 const REFERRAL_CODE_LENGTH = 8;
 const REFERRAL_CREDITS_TO_REFERRER = Number(process.env.REFERRAL_CREDITS_TO_REFERRER || 5);
@@ -196,6 +197,21 @@ export async function settleReferralCreditsIfEligible(referredUserId: string): P
       [referrerUserId, referrerCredits]
     );
 
+    await appendCreditLedgerEvent({
+      userId: referrerUserId,
+      type: 'adjustment',
+      delta: referrerCredits,
+      source: 'system',
+      requestId: `referral:${attribution.id}:referrer:${referrerUserId}`,
+      metadata: {
+        attributionId: attribution.id,
+        referredUserId,
+        reason: 'referral_reward_referrer',
+        multiplier,
+      },
+      client,
+    });
+
     await client.query(
       `INSERT INTO scan_pack_credits (user_id, credits_remaining)
        VALUES ($1, $2)
@@ -204,6 +220,21 @@ export async function settleReferralCreditsIfEligible(referredUserId: string): P
                      updated_at = NOW()`,
       [referredUserId, referredCredits]
     );
+
+    await appendCreditLedgerEvent({
+      userId: referredUserId,
+      type: 'adjustment',
+      delta: referredCredits,
+      source: 'system',
+      requestId: `referral:${attribution.id}:referred:${referredUserId}`,
+      metadata: {
+        attributionId: attribution.id,
+        referrerUserId,
+        reason: 'referral_reward_referred',
+        multiplier,
+      },
+      client,
+    });
 
     const finalizeRes = await client.query(
       `UPDATE referral_attributions

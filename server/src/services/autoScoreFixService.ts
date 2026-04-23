@@ -15,6 +15,14 @@
 import crypto from 'crypto';
 import { getPool, executeTransaction } from './postgresql.js';
 import { consumePackCredits } from './scanPackCredits.js';
+import { appendCreditLedgerEvent, getCreditLedgerBalance } from './creditLedger.js';
+import {
+  computeLatentPriority,
+  computeQueueDelayMs,
+  normalizeFairnessBoost,
+  type AgentExecutionProfile,
+  type ExecutionRequest,
+} from './executionExchange.js';
 import { callAIProvider, SIGNAL_AI1 } from './aiProviders.js';
 import { renderPrompt } from './promptRegistry.js';
 import { isGitHubAppConfigured, getInstallationForUser, getInstallationForWorkspace, createPRViaApp } from './githubAppService.js';
@@ -190,7 +198,17 @@ async function refundFailureCredits(userId: string, jobId: string, amount: numbe
       'SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1',
       [userId]
     );
-    const balanceAfter = Math.round(Math.max(0, Number(rows[0]?.credits_remaining || 0)) * 100) / 100;
+    await appendCreditLedgerEvent({
+      userId,
+      type: 'refund',
+      delta: refundAmount,
+      source: 'system',
+      requestId: `asf-refund-failure:${jobId}`,
+      metadata: { jobId, reason: 'auto_score_fix_refund_failure' },
+      client,
+    });
+
+    const balanceAfter = await getCreditLedgerBalance(userId, client);
 
     await client.query(
       `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
@@ -1124,25 +1142,186 @@ async function processAutoScoreFixJob(jobId: string): Promise<void> {
 
 let workerRunning = false;
 
+type AutoScoreFixClaimCandidate = {
+  id: string;
+  user_id: string;
+  workspace_id: string | null;
+  target_url: string;
+  audit_id: string | null;
+  status: JobStatus;
+  created_at: string;
+  evidence_snapshot: AutoScoreFixJobInput['auditEvidence'] | null;
+};
+
+function toUnitInterval(value: number): number {
+  return Math.max(0, Math.min(1, Number(value || 0)));
+}
+
+function hashPayload(value: unknown): string {
+  try {
+    return crypto.createHash('sha256').update(JSON.stringify(value ?? {})).digest('hex');
+  } catch {
+    return crypto.randomUUID().replace(/-/g, '');
+  }
+}
+
+async function loadAgentExecutionProfile(client: any, userId: string, workspaceId?: string | null): Promise<AgentExecutionProfile> {
+  const scopeWorkspace = String(workspaceId || '').trim();
+  const whereWorkspace = scopeWorkspace ? 'AND workspace_id = $2' : '';
+  const params = scopeWorkspace ? [userId, scopeWorkspace] : [userId];
+
+  const { rows } = await client.query(
+    `SELECT
+       COUNT(*)::int AS total,
+       COUNT(*) FILTER (WHERE status IN ('approved','pending_approval'))::int AS success_count,
+       COUNT(*) FILTER (WHERE status = 'failed')::int AS failed_count,
+       COUNT(*) FILTER (WHERE status IN ('cancelled','rejected','expired'))::int AS unstable_count,
+       AVG(COALESCE(score_delta, 0))::float AS avg_score_delta,
+       AVG(NULLIF(implementation_duration_minutes, 0))::float AS avg_minutes,
+       MAX(EXTRACT(EPOCH FROM updated_at) * 1000)::bigint AS updated_at_ms
+     FROM auto_score_fix_jobs
+     WHERE user_id = $1
+       ${whereWorkspace}
+       AND status IN ('approved','pending_approval','failed','cancelled','rejected','expired')`,
+    params,
+  );
+
+  const row = rows[0] || {};
+  const total = Math.max(0, Number(row.total || 0));
+  const successCount = Math.max(0, Number(row.success_count || 0));
+  const failedCount = Math.max(0, Number(row.failed_count || 0));
+  const unstableCount = Math.max(0, Number(row.unstable_count || 0));
+  const avgScoreDelta = Number(row.avg_score_delta || 0);
+  const avgMinutes = Number(row.avg_minutes || 0);
+  const updatedAtMs = Number(row.updated_at_ms || Date.now());
+
+  const successRate = total > 0 ? toUnitInterval(successCount / total) : 0.5;
+  const avgPipelineQuality = total > 0 ? toUnitInterval((Math.max(-30, Math.min(30, avgScoreDelta)) + 30) / 60) : 0.5;
+  const retryFrequency = total > 0 ? toUnitInterval(failedCount / total) : 0.5;
+  const requestStability = total > 0 ? toUnitInterval(1 - (unstableCount / total)) : 0.5;
+  const resourceEfficiency = Number.isFinite(avgMinutes) && avgMinutes > 0
+    ? toUnitInterval(1 - (Math.min(avgMinutes, 120) / 120))
+    : 0.5;
+
+  return {
+    agentId: userId,
+    tenantId: scopeWorkspace || userId,
+    successRate,
+    avgPipelineQuality,
+    retryFrequency,
+    requestStability,
+    resourceEfficiency,
+    updatedAtMs,
+  };
+}
+
+async function computeTenantFairnessBoost(client: any, workspaceId?: string | null): Promise<number> {
+  const tenantId = String(workspaceId || '').trim();
+  if (!tenantId) return 1;
+
+  const { rows } = await client.query(
+    `SELECT
+       COUNT(*)::int AS total_count,
+       COUNT(*) FILTER (WHERE workspace_id = $1)::int AS tenant_count
+     FROM auto_score_fix_jobs
+     WHERE updated_at >= NOW() - INTERVAL '60 minutes'
+       AND status IN ('generating', 'creating_pr', 'pending_approval', 'approved', 'failed')`,
+    [tenantId],
+  );
+
+  const totalCount = Math.max(0, Number(rows?.[0]?.total_count || 0));
+  const tenantCount = Math.max(0, Number(rows?.[0]?.tenant_count || 0));
+  if (totalCount <= 0) return 1;
+
+  const tenantShare = tenantCount / totalCount;
+  const targetShare = 0.25;
+  const rawBoost = 1 - ((tenantShare - targetShare) * 0.6);
+  return normalizeFairnessBoost(rawBoost);
+}
+
 async function claimNextAutoScoreFixJobId(): Promise<string | null> {
+  const exchangeDisabled = process.env.DISABLE_EXECUTION_EXCHANGE === 'true';
+  const candidateWindow = Math.max(3, Math.min(20, Number(process.env.EXECUTION_EXCHANGE_CANDIDATE_WINDOW || 12)));
+
   return executeTransaction(async (client: any) => {
     const { rows } = await client.query(
-      `SELECT id
+      `SELECT id, user_id, workspace_id, target_url, audit_id, status, created_at, evidence_snapshot
        FROM auto_score_fix_jobs
        WHERE status IN ('pending', 'generating', 'creating_pr')
        ORDER BY created_at ASC
-       LIMIT 1
-       FOR UPDATE SKIP LOCKED`
+       LIMIT $1
+       FOR UPDATE SKIP LOCKED`,
+      [candidateWindow],
     );
     if (!rows.length) return null;
 
-    const jobId = String(rows[0].id);
+    let chosen = rows[0] as AutoScoreFixClaimCandidate;
+
+    if (!exchangeDisabled && rows.length > 1) {
+      const nowMs = Date.now();
+      const profileCache = new Map<string, AgentExecutionProfile>();
+      const fairnessCache = new Map<string, number>();
+
+      let bestPriority = Number.NEGATIVE_INFINITY;
+
+      for (const candidate of rows as AutoScoreFixClaimCandidate[]) {
+        const tenantKey = String(candidate.workspace_id || '').trim() || String(candidate.user_id);
+        const profileKey = `${candidate.user_id}:${tenantKey}`;
+
+        let profile = profileCache.get(profileKey);
+        if (!profile) {
+          profile = await loadAgentExecutionProfile(client, String(candidate.user_id), candidate.workspace_id);
+          profileCache.set(profileKey, profile);
+        }
+
+        let fairnessBoost = fairnessCache.get(tenantKey);
+        if (fairnessBoost === undefined) {
+          fairnessBoost = await computeTenantFairnessBoost(client, candidate.workspace_id);
+          fairnessCache.set(tenantKey, fairnessBoost);
+        }
+
+        const ageMs = Math.max(0, nowMs - new Date(String(candidate.created_at)).getTime());
+        const ageUrgency = toUnitInterval(ageMs / (30 * 60 * 1000));
+        const jitterMs = computeQueueDelayMs(String(candidate.id));
+        const urgencyWeight = toUnitInterval(ageUrgency + 0.15 - (jitterMs / 7000));
+
+        const request: ExecutionRequest = {
+          requestId: String(candidate.id),
+          agentId: String(candidate.user_id),
+          tenantId: tenantKey,
+          pool: 'scorefix.run_pipeline',
+          urgencyWeight,
+          createdAtMs: new Date(String(candidate.created_at)).getTime(),
+          estimatedCost: AUTO_SCORE_FIX_CREDIT_COST,
+          payloadHash: hashPayload({
+            targetUrl: candidate.target_url,
+            auditId: candidate.audit_id,
+            evidence: candidate.evidence_snapshot,
+          }),
+        };
+
+        const priority = computeLatentPriority({
+          request,
+          profile,
+          nowMs,
+          fairnessBoost,
+          jitterSeed: `${candidate.id}:${tenantKey}:${candidate.created_at}`,
+        });
+
+        if (priority > bestPriority) {
+          bestPriority = priority;
+          chosen = candidate;
+        }
+      }
+    }
+
+    const jobId = String(chosen.id);
     await client.query(
       `UPDATE auto_score_fix_jobs
        SET status = CASE WHEN status = 'pending' THEN 'generating' ELSE status END,
            updated_at = NOW()
        WHERE id = $1`,
-      [jobId]
+      [jobId],
     );
     return jobId;
   });
@@ -1517,11 +1696,20 @@ export async function rejectJob(jobId: string, userId: string, workspaceId?: str
              updated_at = NOW()`,
       [userId, refundAmount]
     );
+    await appendCreditLedgerEvent({
+      userId,
+      type: 'refund',
+      delta: refundAmount,
+      source: 'system',
+      requestId: `asf-reject-refund:${jobId}`,
+      metadata: { jobId, refundPercent: AUTO_SCORE_FIX_REFUND_PERCENT, reason: 'auto_score_fix_rejection_refund' },
+      client,
+    });
+    const balanceAfter = await getCreditLedgerBalance(userId, client);
     await client.query(
       `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
-       SELECT $1, $2, credits_remaining, 'auto_score_fix_rejection_refund', $3
-       FROM scan_pack_credits WHERE user_id = $1`,
-      [userId, refundAmount, JSON.stringify({ jobId, refund_percent: 80 })]
+       VALUES ($1, $2, $3, 'auto_score_fix_rejection_refund', $4)`,
+      [userId, refundAmount, balanceAfter, JSON.stringify({ jobId, refund_percent: 80 })]
     );
   });
 
@@ -1594,11 +1782,20 @@ export async function cancelJob(
              updated_at = NOW()`,
       [userId, refundAmount]
     );
+    await appendCreditLedgerEvent({
+      userId,
+      type: 'refund',
+      delta: refundAmount,
+      source: 'system',
+      requestId: `asf-cancel-refund:${jobId}`,
+      metadata: { jobId, refundPercent: 1, reason: 'auto_score_fix_cancel_refund' },
+      client,
+    });
+    const balanceAfter = await getCreditLedgerBalance(userId, client);
     await client.query(
       `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
-       SELECT $1, $2, credits_remaining, 'auto_score_fix_cancel_refund', $3
-       FROM scan_pack_credits WHERE user_id = $1`,
-      [userId, refundAmount, JSON.stringify({ jobId, refund_percent: 100, reason: 'User cancelled before PR approval' })]
+       VALUES ($1, $2, $3, 'auto_score_fix_cancel_refund', $4)`,
+      [userId, refundAmount, balanceAfter, JSON.stringify({ jobId, refund_percent: 100, reason: 'User cancelled before PR approval' })]
     );
   });
 
@@ -1641,13 +1838,28 @@ export function startAutoScoreFixExpiryLoop(): void {
                      updated_at = NOW()`,
               [job.user_id, refundAmount]
             );
+            await appendCreditLedgerEvent({
+              userId: String(job.user_id),
+              type: 'refund',
+              delta: refundAmount,
+              source: 'system',
+              requestId: `asf-expiry-refund:${job.id}`,
+              metadata: {
+                jobId: job.id,
+                refundPercent: AUTO_SCORE_FIX_REFUND_PERCENT,
+                feePercent: AUTO_SCORE_FIX_FEE_PERCENT,
+                reason: 'auto_score_fix_expiry_refund',
+              },
+              client,
+            });
+            const balanceAfter = await getCreditLedgerBalance(String(job.user_id), client);
             await client.query(
               `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
-               SELECT $1, $2, credits_remaining, 'auto_score_fix_expiry_refund', $3
-               FROM scan_pack_credits WHERE user_id = $1`,
+               VALUES ($1, $2, $3, 'auto_score_fix_expiry_refund', $4)`,
               [
                 job.user_id,
                 refundAmount,
+                balanceAfter,
                 JSON.stringify({
                   jobId: job.id,
                   refund_percent: 80,

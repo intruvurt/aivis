@@ -57,7 +57,7 @@ function loadBlogContentMap() {
   // Parse generated file (JSON-like)
   if (fs.existsSync(generatedPath)) {
     try {
-      const raw = fs.readFileSync(generatedPath, 'utf8');
+      const raw = fs.readFileSync(generatedPath, 'utf8').replace(/^\uFEFF/, '');
       const jsonStr = raw
         .replace(/^\/\*[\s\S]*?\*\/\s*export\s+const\s+\w+\s*=\s*/, '')
         .replace(/;\s*$/, '');
@@ -1976,6 +1976,136 @@ function buildFaqSchema(items) {
   };
 }
 
+function buildHomepageCoreSchemas(canonicalUrl) {
+  const homepageFaqItems = [
+    {
+      question: 'What is AI visibility and why does it matter for my website?',
+      answer:
+        'AI visibility is the degree to which AI answer engines including ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, trust, and cite your website when answering user queries. A website can rank first in traditional search and still be completely invisible to AI answer engines if it lacks the structural signals those systems require. As AI-driven answers replace click-through results for millions of queries, AI visibility directly affects whether your brand gets cited or ignored.',
+    },
+    {
+      question: 'Why is AI ignoring my website even though it ranks well in Google?',
+      answer:
+        'Traditional search ranking and AI citation readiness are measured differently. Google ranks pages based on links, authority, and relevance. AI answer engines prioritize pages that have clear structured data (JSON-LD schema), unambiguous heading hierarchies, verifiable author attribution, outbound citations to authoritative sources, and content that directly answers specific questions. A page can be highly ranked but still fail all of these signals, making it invisible to AI systems that generate cited answers.',
+    },
+    {
+      question: 'What is CITE LEDGER and how does it score my website?',
+      answer:
+        'CITE LEDGER is the verification layer inside AiVIS.biz that checks whether AI systems can extract, attribute, and cite your content. It produces a score from 0 to 100 across seven weighted dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%). Every finding is tied to verifiable on-page evidence. If a signal cannot be proven from the live page, it is not included in the score. Hard-blocker caps prevent inflated scores when critical signals are missing.',
+    },
+    {
+      question: 'What does BRAG stand for and what makes it different from standard SEO audits?',
+      answer:
+        'BRAG stands for Based-Retrieval-Auditable-Grading. It is the evidence methodology behind every AiVIS.biz finding. Unlike standard SEO audits that flag issues based on assumptions or estimated scores, BRAG requires every finding to be tied to a stable, verifiable identifier from the live page. If the evidence is not present on the page at the time of the audit, the finding is not reported. This makes AiVIS.biz results reproducible, defensible, and directly actionable rather than speculative.',
+    },
+    {
+      question: 'Which AI answer engines does AiVIS.biz test my website against?',
+      answer:
+        "AiVIS.biz audits citation readiness against the four major AI answer engines: ChatGPT (OpenAI), Perplexity AI, Google AI Overviews, and Claude (Anthropic). Each system uses different extraction and trust signals. AiVIS.biz maps your page's structural signals against the shared requirements across all four engines, identifying which gaps are universal and which are engine-specific, so fixes are prioritized by maximum cross-engine impact.",
+    },
+    {
+      question: 'What is the most common reason AI answer engines do not cite a website?',
+      answer:
+        'The most common reason is missing or incomplete structured data. When a page has no JSON-LD schema, AI systems cannot resolve what the page is, who published it, or what entity it represents. The second most common reason is the absence of direct question-and-answer content. AI engines prefer pages that explicitly answer questions in a standalone format, such as FAQ sections, definition blocks, or step-by-step guides. Pages that only describe a product or service in general prose are frequently passed over in favor of pages that answer specific queries directly.',
+    },
+    {
+      question: 'How long does it take to improve my AI visibility score after making fixes?',
+      answer:
+        'Structural fixes such as adding JSON-LD schema, correcting heading hierarchy, and resolving canonical URL issues can be re-crawled and reflected in AI systems within days to a few weeks depending on how frequently your site is indexed. Content fixes such as adding FAQ blocks, author attribution, and outbound citations take effect as soon as the updated page is crawled. AiVIS.biz supports a baseline-fix-re-audit workflow: run an initial audit, implement prioritized fixes, then re-audit to verify and measure score improvement.',
+    },
+    {
+      question: 'Who should use AiVIS.biz and what do I need to get started?',
+      answer:
+        'AiVIS.biz is built for founders, marketers, developers, and agencies who need to understand why their content is not being cited by AI answer engines. If AI models are ignoring your brand, misquoting your content, or attributing your expertise to competitors, AiVIS.biz shows you exactly why and what to fix. To get started, enter any URL into the audit tool. No account is required for an initial scan. Results include a 0 to 100 CITE LEDGER score, category grades, BRAG evidence-linked findings, and a prioritized implementation fix list.',
+    },
+  ];
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://aivis.biz/#organization',
+    name: 'Intruvurt Labs',
+    legalName: 'Intruvurt Labs',
+    url: 'https://aivis.biz',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://aivis.biz/aivis-logo.png',
+      width: 400,
+      height: 400,
+    },
+    description:
+      'Intruvurt Labs builds AI visibility and citation readiness tools. AiVIS.biz is the flagship product, an evidence-backed audit platform that measures whether AI answer engines can extract, trust, and cite your website content.',
+    foundingDate: '2026',
+    sameAs: [
+      'https://twitter.com/intruvurt',
+      'https://www.linkedin.com/in/web4aidev',
+      'https://github.com/dobleduche',
+    ],
+  };
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://aivis.biz/#website',
+    url: 'https://aivis.biz',
+    name: 'AiVIS.biz',
+    description: 'Evidence-backed AI visibility and citation readiness auditing for websites.',
+    publisher: { '@id': 'https://aivis.biz/#organization' },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://aivis.biz/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
+  const softwareApplicationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': 'https://aivis.biz/#software-application',
+    name: 'AiVIS - AI Visibility Audit',
+    alternateName: 'AiVIS.biz',
+    url: canonicalUrl,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description:
+      'AiVIS.biz audits how AI answer engines including ChatGPT, Perplexity AI, Google AI Overviews, and Claude read, interpret, and cite your website. Every finding is tied to verifiable on-page evidence through BRAG evidence identifiers and scored via CITE LEDGER across seven weighted dimensions.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+      url: canonicalUrl,
+    },
+    creator: { '@id': 'https://aivis.biz/#organization' },
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    featureList: [
+      'AI citation readiness scoring (0-100)',
+      'CITE LEDGER seven-dimension weighted audit',
+      'BRAG evidence-linked findings',
+      'Schema and structured data analysis',
+      'Content depth and AI readability scoring',
+      'Meta tag and Open Graph validation',
+      'Prioritized implementation fix list',
+      'Support for ChatGPT, Perplexity AI, Google AI Overviews, and Claude',
+    ],
+  };
+
+  const faqSchema = buildFaqSchema(homepageFaqItems);
+
+  return [organizationSchema, websiteSchema, softwareApplicationSchema, faqSchema]
+    .map((schema) => jsonLdScript(schema))
+    .join('\n');
+}
+
+function removeJsonLdByType(html, schemaType) {
+  const pattern = new RegExp(
+    `<script type="application\\/ld\\+json">(?:(?!<\\/script>)[\\s\\S])*?"@type":\\s*"${schemaType}"(?:(?!<\\/script>)[\\s\\S])*?<\\/script>`,
+    'g'
+  );
+  return html.replace(pattern, '');
+}
+
 function buildCollectionPageSchema({ canonicalUrl, name, description, parts = [] }) {
   return {
     '@context': 'https://schema.org',
@@ -2241,6 +2371,131 @@ const routeSpecificEnrichment = {
       ].join('\n');
     },
   },
+  '/about': {
+    tldr: 'The About route defines AiVIS.biz as an evidence-backed AI visibility system and clarifies the product identity, methodology vocabulary, and citation-readiness mission in machine-readable terms.',
+    sections: [
+      {
+        heading: 'Entity definition and trust positioning',
+        paragraphs: [
+          'This page establishes what AiVIS.biz is and what it is not: a deterministic visibility engine focused on extraction, trust, and citation outcomes rather than generic SEO scoring.',
+          'It ties core terms such as CITE LEDGER and BRAG to concrete platform behavior so answer engines can resolve the entity with higher confidence.',
+        ],
+      },
+      {
+        heading: 'Why this route matters for citation systems',
+        paragraphs: [
+          'About pages are often used as trust anchors in model retrieval. A precise, evidence-aligned About route improves attribution quality and reduces ambiguity around product scope and claims.',
+        ],
+        listItems: [
+          'Clarifies the platform mission and provenance.',
+          'Aligns naming across product, methodology, and evidence layers.',
+          'Supports citation trust with explicit system framing.',
+        ],
+      },
+    ],
+    buildExtraHead() {
+      return jsonLdScript(
+        buildFaqSchema([
+          {
+            question: 'What does AiVIS.biz measure?',
+            answer:
+              'AiVIS.biz measures whether AI answer engines can extract, trust, and cite web content using evidence-linked signals and corrective-action workflows.',
+          },
+          {
+            question: 'What are CITE LEDGER and BRAG?',
+            answer:
+              'CITE LEDGER is the structured evidence layer for citation readiness analysis, and BRAG is the audit protocol that links findings to crawl-observable proof.',
+          },
+          {
+            question: 'Who is AiVIS.biz built for?',
+            answer:
+              'AiVIS.biz is built for teams that need to diagnose and fix AI visibility failures where content is ignored, misattributed, or uncited.',
+          },
+        ])
+      );
+    },
+  },
+
+  '/methodology': {
+    tldr: 'The Methodology route explains how AiVIS.biz transforms crawl-observed signals into reproducible citation-readiness outputs using weighted dimensions, evidence mapping, and validation loops.',
+    sections: [
+      {
+        heading: 'How methodology anchors evidence quality',
+        paragraphs: [
+          'This page defines the scoring system and evidence protocol used to classify extraction risk, trust gaps, and remediation priorities.',
+          'It distinguishes deterministic findings from advisory findings so users can prioritize changes with measurable reliability.',
+        ],
+      },
+      {
+        heading: 'Operational value for teams',
+        paragraphs: [
+          'Methodology detail makes audit outputs reproducible. Teams can baseline, implement fixes, and re-audit with clear traceability from finding to corrective action.',
+        ],
+      },
+    ],
+    buildExtraHead() {
+      return jsonLdScript(
+        buildFaqSchema([
+          {
+            question: 'What does the methodology score represent?',
+            answer:
+              'It represents how reliably AI systems can extract and cite a page based on weighted structural and trust signals derived from crawl-observed evidence.',
+          },
+          {
+            question: 'Why does AiVIS.biz use BRAG evidence mapping?',
+            answer:
+              'BRAG enforces traceability by requiring each finding and recommendation to link back to verifiable page evidence.',
+          },
+          {
+            question: 'How should teams apply methodology outputs?',
+            answer:
+              'Teams should prioritize deterministic blockers, implement mapped fixes, and re-audit against baseline snapshots to verify movement.',
+          },
+        ])
+      );
+    },
+  },
+
+  '/insights': {
+    tldr: 'The Insights Hub translates recurring audit signals into implementation playbooks so teams can move from diagnosis to citation-focused execution.',
+    sections: [
+      {
+        heading: 'What this insights route contributes',
+        paragraphs: [
+          'This route groups strategy content by AI visibility intent and maps playbooks to structural signals that repeatedly affect extraction and citation outcomes.',
+          'It helps machines and teams connect thought content to practical remediation workflows instead of treating insights as standalone opinion pieces.',
+        ],
+      },
+      {
+        heading: 'How to use insights with audits',
+        paragraphs: [
+          'Run a baseline audit, apply relevant playbook changes, and verify score and evidence movement on re-audit. This closes the loop between education and measurable platform outcomes.',
+        ],
+      },
+    ],
+    buildExtraHead() {
+      return jsonLdScript(
+        buildFaqSchema([
+          {
+            question: 'What is the role of the AiVIS.biz Insights Hub?',
+            answer:
+              'The Insights Hub provides evidence-aligned implementation playbooks for improving AI visibility, machine readability, and citation readiness.',
+          },
+          {
+            question: 'Are insights tied to real audit dimensions?',
+            answer:
+              'Yes. Insights are mapped to recurring structural signals such as schema quality, heading hierarchy, metadata clarity, and extractable content patterns.',
+          },
+          {
+            question: 'How should teams operationalize insights?',
+            answer:
+              'Teams should pair insights with baseline audits, apply targeted changes, and confirm impact through re-audit evidence deltas.',
+          },
+        ])
+      );
+    },
+  },
+
   '/api-docs': {
     tldr: 'The API Docs route defines how developers authenticate with AiVIS.biz, which endpoints exist, what scopes are enforced, and how audit data can be consumed safely in production workflows.',
     sections: [
@@ -2616,6 +2871,58 @@ const routeSpecificEnrichment = {
             question: 'Does AiVIS.biz have SOC 2 certification?',
             answer:
               'AiVIS.biz is on a SOC 2 Type I readiness path with controls covering access management, incident response, and change management.',
+          },
+        ])
+      );
+    },
+  },
+
+  '/privacy': {
+    tldr: 'The Privacy Policy defines what data enters the AiVIS.biz evidence pipeline, how it is processed, which processors receive specific data classes, and how users can exercise access, export, correction, restriction, and deletion rights.',
+    sections: [
+      {
+        heading: 'What this privacy route clarifies',
+        paragraphs: [
+          'This page is not generic legal filler. It documents the exact data classes needed to run audits, citation verification, and account security while separating those from data classes that are never sold or used for ad targeting.',
+          'For machine readability, the route explicitly maps inputs (submitted URLs, extracted page signals, account metadata) to processing steps, retention windows, and user rights workflows.',
+        ],
+      },
+      {
+        heading: 'Privacy boundaries in the evidence system',
+        paragraphs: [
+          'AiVIS.biz keeps server authority over pipeline execution and evidence persistence. Core records such as scan events and citation ledger entries are used to support reproducible visibility findings and remediation workflows.',
+          'The policy also distinguishes provider roles: model routing, hosting, payments, email delivery, and threat checks each receive only the data required for their operational purpose.',
+        ],
+        listItems: [
+          'No sale, rental, or broker-style transfer of personal data.',
+          'No targeted advertising profile construction from personal account data.',
+          'Rights requests handled through a documented contact path with response deadlines.',
+        ],
+      },
+      {
+        heading: 'Why this page improves citation trust',
+        paragraphs: [
+          'Answer engines and crawlers treat explicit policy detail as a trust and governance signal. A complete privacy route increases confidence that platform claims are backed by defined processing boundaries rather than vague statements.',
+        ],
+      },
+    ],
+    buildExtraHead(canonicalUrl) {
+      return jsonLdScript(
+        buildFaqSchema([
+          {
+            question: 'What data does AiVIS.biz send to AI providers during analysis?',
+            answer:
+              'AiVIS.biz sends extracted public page content and structural signals required for analysis. Account credentials and payment instrument details are not sent to AI model providers.',
+          },
+          {
+            question: 'Does AiVIS.biz sell personal data?',
+            answer:
+              'No. AiVIS.biz does not sell, rent, or trade personal information. Data sharing is limited to processors needed to run hosting, payments, model routing, security checks, and transactional messaging.',
+          },
+          {
+            question: 'How can users request export or deletion?',
+            answer:
+              'Users can submit privacy rights requests by contacting privacy@aivis.biz. The platform supports access, correction, export, restriction, and deletion workflows with documented response timelines.',
           },
         ])
       );
@@ -3031,7 +3338,18 @@ function prerenderHtml(route) {
   }
 
   if (route.path === '/methodology' && fs.existsSync(methodologyTemplatePath)) {
-    return fs.readFileSync(methodologyTemplatePath, 'utf8');
+    const canonicalUrl = `https://aivis.biz${route.path === '/' ? '' : route.path}`;
+    const templateHtml = fs.readFileSync(methodologyTemplatePath, 'utf8');
+    const enrichment = routeSpecificEnrichment[route.path];
+    const extraHead = [enrichment?.buildExtraHead?.(canonicalUrl, route), route.extraHead]
+      .filter(Boolean)
+      .join('\n');
+    const citeLedgerJson = citeLedgerScript(buildCiteLedgerBlock(canonicalUrl, route.title));
+    const headInsert = [extraHead, citeLedgerJson].filter(Boolean).join('\n');
+    const withInjectedHead = headInsert
+      ? templateHtml.replace('</head>', `${headInsert}\n</head>`)
+      : templateHtml;
+    return `<!-- prerendered-route:${route.path} -->\n${withInjectedHead}`;
   }
 
   const canonicalUrl = `https://aivis.biz${route.path === '/' ? '' : route.path}`;
@@ -3109,6 +3427,13 @@ function prerenderHtml(route) {
     `<script type="application/ld+json">\n      {\n        "@context": "https://schema.org",\n        "@type": "WebPage",\n        "@id": "${canonicalUrl}#webpage",\n        "name": "${escapeJson(route.title)}",\n        "url": "${canonicalUrl}",\n        "description": "${escapeJson(normalizedDescription)}",\n        "isPartOf": { "@id": "https://aivis.biz/#website" },\n        "about": { "@id": "https://aivis.biz/#software-application" },\n        "publisher": { "@id": "https://aivis.biz/#organization" },\n        "inLanguage": "en-US",\n        "dateModified": "${BUILD_DATE}",\n        "primaryImageOfPage": {\n          "@type": "ImageObject",\n          "url": "https://aivis.biz/og-image2.png"\n        }\n      }\n    </script>`
   );
 
+  if (route.path === '/') {
+    html = removeJsonLdByType(html, 'SoftwareApplication');
+    html = removeJsonLdByType(html, 'Organization');
+    html = removeJsonLdByType(html, 'WebSite');
+    html = removeJsonLdByType(html, 'FAQPage');
+  }
+
   if (route.path !== '/') {
     html = html.replace(
       '</head>',
@@ -3176,6 +3501,7 @@ function prerenderHtml(route) {
   const extraHead = [enrichment?.buildExtraHead?.(canonicalUrl, route), route.extraHead]
     .filter(Boolean)
     .join('\n');
+  const homepageCoreSchemas = route.path === '/' ? buildHomepageCoreSchemas(canonicalUrl) : '';
 
   // LAYER 2: CITE LEDGER Layer (Evidence & Traceability)
   // Inject machine-readable evidence structure so crawlers know this page
@@ -3185,8 +3511,10 @@ function prerenderHtml(route) {
   // the structural presence tells machines: "This page has verifiable signals"
   const citeLedgerJson = citeLedgerScript(buildCiteLedgerBlock(canonicalUrl, route.title));
 
-  if (extraHead) {
-    html = html.replace('</head>', `${extraHead}\n  ${citeLedgerJson}\n  </head>`);
+  const headInsert = [homepageCoreSchemas, extraHead, citeLedgerJson].filter(Boolean).join('\n');
+
+  if (headInsert) {
+    html = html.replace('</head>', `${headInsert}\n  </head>`);
   } else {
     html = html.replace('</head>', `${citeLedgerJson}\n  </head>`);
   }

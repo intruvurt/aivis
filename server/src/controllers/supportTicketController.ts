@@ -134,6 +134,112 @@ export async function listTickets(req: Request, res: Response) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
+/* GET /api/support/tickets/stream - Stream user's tickets via SSE          */
+/* ────────────────────────────────────────────────────────────────────────── */
+export async function streamTickets(req: Request, res: Response) {
+  const user = req.user as any;
+  if (!user?.id) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders();
+
+  let isClosed = false;
+  let chunkInterval: ReturnType<typeof setInterval> | null = null;
+  let resolveTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const send = (event: string, data: Record<string, unknown>) => {
+    if (isClosed) return;
+    res.write(`event: ${event}\n`);
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  const heartbeatInterval = setInterval(() => {
+    if (!isClosed) res.write(': heartbeat\n\n');
+  }, 20_000);
+
+  const cleanup = () => {
+    if (isClosed) return;
+    isClosed = true;
+    clearInterval(heartbeatInterval);
+    if (chunkInterval) clearInterval(chunkInterval);
+    if (resolveTimer) clearTimeout(resolveTimer);
+    if (!res.writableEnded) res.end();
+  };
+
+  req.on('close', cleanup);
+
+  try {
+    const status = req.query.status as string | undefined;
+    const limit = Math.min(Number(req.query.limit) || 50, 100);
+    const offset = Math.max(Number(req.query.offset) || 0, 0);
+
+    let query = `SELECT * FROM support_tickets WHERE user_id = $1`;
+    const params: unknown[] = [user.id];
+
+    if (status && VALID_STATUSES.includes(status as SupportTicketStatus)) {
+      query += ` AND status = $${params.length + 1}`;
+      params.push(status);
+    }
+
+    query += ` ORDER BY updated_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(limit, offset);
+
+    const pool = getPool();
+
+    send('phase', { phase: 'requesting', label: 'stream connected' });
+    const { rows } = await pool.query(query, params);
+    const total = rows.length;
+
+    send('phase', {
+      phase: 'receiving',
+      label: total > 0 ? 'streaming ticket records' : 'no tickets found',
+      expected: total,
+    });
+
+    if (total === 0) {
+      send('phase', { phase: 'resolving', label: 'finalizing stream' });
+      send('complete', { total: 0 });
+      return cleanup();
+    }
+
+    let index = 0;
+    chunkInterval = setInterval(() => {
+      if (isClosed) return;
+
+      if (index < rows.length) {
+        send('chunk', {
+          ticket: rows[index],
+          index: index + 1,
+          total,
+        });
+        index += 1;
+        return;
+      }
+
+      if (chunkInterval) {
+        clearInterval(chunkInterval);
+        chunkInterval = null;
+      }
+
+      send('phase', { phase: 'resolving', label: 'finalizing stream' });
+      resolveTimer = setTimeout(() => {
+        send('complete', { total });
+        cleanup();
+      }, 120);
+    }, 120);
+  } catch (err: any) {
+    console.error('[Support] Stream tickets error:', err.message);
+    send('error', { message: 'Failed to stream tickets' });
+    cleanup();
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
 /* GET /api/support/tickets/:id - Get single ticket with messages            */
 /* ────────────────────────────────────────────────────────────────────────── */
 export async function getTicket(req: Request, res: Response) {

@@ -50,7 +50,7 @@ import type {
   SupportTicket as SupportTicketType,
   SupportTicketStatus,
 } from '@shared/types';
-import { useSupportTickets } from '../hooks/useSupportTickets';
+import { useSupportTickets, type MotionState } from '../hooks/useSupportTickets';
 import { useAuthStore } from '../stores/authStore';
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -816,6 +816,8 @@ const PRIORITY_META: Record<string, { label: string; dot: string }> = {
 
 type HelpTab = 'knowledge' | 'guides' | 'tickets' | 'new-ticket' | 'ticket-detail';
 
+type TicketFilter = SupportTicketStatus | 'all';
+
 type GuideId = 'seo' | 'aeo' | 'geo' | 'playbook';
 
 interface LearningGuide {
@@ -929,7 +931,7 @@ export default function HelpCenter() {
   const [replyText, setReplyText] = useState('');
 
   // Ticket filter
-  const [ticketFilter, setTicketFilter] = useState<string>('all');
+  const [ticketFilter, setTicketFilter] = useState<TicketFilter>('all');
 
   // Learning guide modal state
   const [openGuide, setOpenGuide] = useState<GuideId | null>(null);
@@ -939,8 +941,10 @@ export default function HelpCenter() {
     activeTicket,
     total,
     isLoading: ticketsLoading,
+    motion: ticketMotion,
     error: ticketsError,
     fetchTickets,
+    streamTickets,
     fetchTicket,
     createTicket,
     replyToTicket,
@@ -949,12 +953,48 @@ export default function HelpCenter() {
     clearError,
   } = useSupportTickets();
 
+  const isTicketPhaseActive =
+    ticketMotion.phase === 'requesting' ||
+    ticketMotion.phase === 'receiving' ||
+    ticketMotion.phase === 'resolving';
+  const isFetchingTicketList = isTicketPhaseActive && ticketMotion.operation === 'list';
+  const isCreatingTicket = isTicketPhaseActive && ticketMotion.operation === 'create';
+  const isReplyingToTicket = isTicketPhaseActive && ticketMotion.operation === 'reply';
+  const showTicketMotion = ticketMotion.phase !== 'idle' && ticketMotion.operation !== 'idle';
+
+  const ticketPhaseMeta = useMemo(() => {
+    const operationLabel: Record<MotionState['operation'], string> = {
+      idle: 'Idle',
+      list: 'Tickets',
+      detail: 'Thread',
+      create: 'Submission',
+      reply: 'Reply',
+      close: 'Closure',
+    };
+
+    const phaseLabel: Record<MotionState['phase'], string> = {
+      idle: 'Idle',
+      requesting: 'Requesting',
+      receiving: 'Receiving',
+      resolving: 'Resolving',
+      complete: 'Complete',
+      error: 'Error',
+    };
+
+    return {
+      title: `${operationLabel[ticketMotion.operation]} • ${phaseLabel[ticketMotion.phase]}`,
+      isError: ticketMotion.phase === 'error',
+      isComplete: ticketMotion.phase === 'complete',
+    };
+  }, [ticketMotion.operation, ticketMotion.phase]);
+
   // Load tickets when switching to tickets tab
   useEffect(() => {
     if (activeTab === 'tickets' && isLoggedIn) {
-      fetchTickets(ticketFilter === 'all' ? undefined : ticketFilter);
+      const cleanup = streamTickets(ticketFilter === 'all' ? undefined : ticketFilter);
+      return () => cleanup();
     }
-  }, [activeTab, isLoggedIn, ticketFilter, fetchTickets]);
+  }, [activeTab, isLoggedIn, ticketFilter, streamTickets]);
 
   const handleCreateTicket = async () => {
     if (!ticketSubject.trim() || !ticketDescription.trim()) return;
@@ -963,6 +1003,8 @@ export default function HelpCenter() {
       category: ticketCategory,
       priority: ticketPriority,
       description: ticketDescription.trim(),
+      requester_name: requesterName,
+      requester_email: requesterEmail,
     });
     if (result) {
       setTicketSuccess(`Ticket ${result.ticket_number} created successfully.`);
@@ -2684,7 +2726,16 @@ export default function HelpCenter() {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1 bg-white/5 border border-white/8 rounded-lg p-0.5">
-                        {['all', 'open', 'in_progress', 'resolved', 'closed'].map((f) => (
+                        {(
+                          [
+                            'all',
+                            'open',
+                            'in_progress',
+                            'waiting_on_customer',
+                            'resolved',
+                            'closed',
+                          ] as TicketFilter[]
+                        ).map((f) => (
                           <button
                             key={f}
                             onClick={() => setTicketFilter(f)}
@@ -2698,7 +2749,9 @@ export default function HelpCenter() {
                               ? 'All'
                               : f === 'in_progress'
                                 ? 'In Progress'
-                                : f.charAt(0).toUpperCase() + f.slice(1)}
+                                : f === 'waiting_on_customer'
+                                  ? 'Awaiting Reply'
+                                  : f.charAt(0).toUpperCase() + f.slice(1)}
                           </button>
                         ))}
                       </div>
@@ -2719,10 +2772,48 @@ export default function HelpCenter() {
                     </div>
                   )}
 
-                  {ticketsLoading && tickets.length === 0 ? (
+                  {showTicketMotion && (
+                    <div
+                      className={`rounded-lg border p-3 ${
+                        ticketPhaseMeta.isError
+                          ? 'bg-red-500/10 border-red-400/20'
+                          : ticketPhaseMeta.isComplete
+                            ? 'bg-emerald-500/10 border-emerald-400/20'
+                            : 'bg-cyan-500/10 border-cyan-400/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-4 mb-2">
+                        <p className="text-[11px] uppercase tracking-wider font-semibold text-white/70">
+                          {ticketPhaseMeta.title}
+                        </p>
+                        <p className="text-[11px] text-white/60">
+                          {Math.round(ticketMotion.progress)}%
+                        </p>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <motion.div
+                          className={`h-full ${
+                            ticketPhaseMeta.isError
+                              ? 'bg-red-400/80'
+                              : ticketPhaseMeta.isComplete
+                                ? 'bg-emerald-400/80'
+                                : 'bg-cyan-400/80'
+                          }`}
+                          initial={{ width: 0 }}
+                          animate={{
+                            width: `${Math.min(100, Math.max(0, ticketMotion.progress))}%`,
+                          }}
+                          transition={{ duration: 0.25, ease: 'easeOut' }}
+                        />
+                      </div>
+                      <p className="text-xs text-white/55 mt-2">{ticketMotion.label}</p>
+                    </div>
+                  )}
+
+                  {isFetchingTicketList && tickets.length === 0 ? (
                     <div className="text-center py-16">
                       <Spinner className="w-6 h-6 mx-auto" />
-                      <p className="text-white/40 text-sm mt-3">Loading tickets...</p>
+                      <p className="text-white/40 text-sm mt-3">{ticketMotion.label}</p>
                     </div>
                   ) : tickets.length === 0 ? (
                     <div className="text-center py-20">
@@ -2736,18 +2827,22 @@ export default function HelpCenter() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <motion.div layout className="space-y-2">
                       {tickets.map((ticket) => {
                         const statusMeta =
                           STATUS_META[ticket.status as SupportTicketStatus] || STATUS_META.open;
                         const priorityMeta = PRIORITY_META[ticket.priority] || PRIORITY_META.normal;
                         const StatusIcon = statusMeta.icon;
                         return (
-                          <button
+                          <motion.button
                             key={ticket.id}
                             onClick={() => handleOpenTicket(ticket)}
                             className="w-full text-left rounded-xl bg-white/[0.03] border border-white/8 hover:bg-white/[0.05] hover:border-white/12 transition-all p-4 group"
                             type="button"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.22, ease: 'easeOut' }}
+                            layout
                           >
                             <div className="flex items-start gap-3.5">
                               <div
@@ -2788,10 +2883,10 @@ export default function HelpCenter() {
                               </div>
                               <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors shrink-0 mt-1" />
                             </div>
-                          </button>
+                          </motion.button>
                         );
                       })}
-                    </div>
+                    </motion.div>
                   )}
                 </>
               )}
@@ -2971,18 +3066,18 @@ export default function HelpCenter() {
                       <button
                         onClick={handleCreateTicket}
                         disabled={
-                          ticketsLoading ||
+                          isCreatingTicket ||
                           ticketSubject.trim().length < 3 ||
                           ticketDescription.trim().length < 10
                         }
                         className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-sm font-semibold hover:bg-cyan-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                       >
-                        {ticketsLoading ? (
+                        {isCreatingTicket ? (
                           <Spinner className="w-4 h-4" />
                         ) : (
                           <Send className="w-4 h-4" />
                         )}
-                        Submit Ticket
+                        {isCreatingTicket ? ticketMotion.label : 'Submit Ticket'}
                       </button>
                       <button
                         onClick={() => setActiveTab('tickets')}
@@ -3134,6 +3229,8 @@ export default function HelpCenter() {
               {activeTicket.ticket.status !== 'closed' && (
                 <div className="rounded-xl bg-white/[0.03] border border-white/8 p-4">
                   <textarea
+                    id="ticket-reply"
+                    name="ticketReply"
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your reply..."
@@ -3145,11 +3242,15 @@ export default function HelpCenter() {
                     <p className="text-[10px] text-white/20">{replyText.length}/5000</p>
                     <button
                       onClick={handleReply}
-                      disabled={!replyText.trim() || ticketsLoading}
+                      disabled={!replyText.trim() || isReplyingToTicket}
                       className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/15 border border-cyan-400/25 text-cyan-300 text-sm font-medium hover:bg-cyan-500/25 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      Send Reply
+                      {isReplyingToTicket ? (
+                        <Spinner className="w-3.5 h-3.5" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5" />
+                      )}
+                      {isReplyingToTicket ? ticketMotion.label : 'Send Reply'}
                     </button>
                   </div>
                 </div>

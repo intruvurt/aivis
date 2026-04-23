@@ -6,6 +6,7 @@ import {
   type CanonicalTier,
   uiTierFromCanonical,
 } from '../../../shared/types.js';
+import crypto from 'crypto';
 
 /* ────────── helpers ────────── */
 
@@ -120,6 +121,8 @@ export async function gateToolAction(
     action,
     tier,
     monthlyUsage: usedThisMonth + 1,
+    source: 'gateway',
+    requestId: `tool-gate:${userId}:${action}:${currentMonthKey()}:${usedThisMonth + 1}:${crypto.randomUUID()}`,
   });
 
   if (!result.consumed) {

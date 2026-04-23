@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useInitializeSettings } from './hooks/useInitializeSettings';
 import { useAuthStore } from './stores/authStore';
@@ -13,6 +13,7 @@ import ScanShell from './components/ScanShell';
 import { CookieConsent } from './components/CookieConsent';
 import PageLoadingSpinner from './components/PageLoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
+import AppBootLoader from './components/AppBootLoader';
 import Landing from './pages/Landing';
 
 /* ── Lazy-loaded pages (code-split for fast initial load) ── */
@@ -198,10 +199,27 @@ export default function App() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const fetchWorkspaces = useWorkspaceStore((s) => s.fetchWorkspaces);
 
+  // Boot state: shows AppBootLoader while auth + data are resolving
+  const [isBootComplete, setIsBootComplete] = useState(false);
+
+  useEffect(() => {
+    if (isHydrated) {
+      // Small delay to ensure smooth visual transition (prevents boot flash)
+      const timer = setTimeout(() => setIsBootComplete(true), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isHydrated]);
+
   useEffect(() => {
     if (isHydrated && isAuthenticated) fetchWorkspaces();
   }, [isHydrated, isAuthenticated, fetchWorkspaces]);
 
+  // Phase 1: Blank/Boot Loader while auth system initializes
+  if (!isBootComplete) {
+    return <AppBootLoader />;
+  }
+
+  // Phase 2 & 3: Full app rendered with proper routing
   return (
     <div className="brand-vivid-ui">
       <Toaster
@@ -228,264 +246,245 @@ export default function App() {
       <ScrollToTop />
       <TrailingSlashRedirect />
 
-      {!isHydrated ? null : (
-        <React.Suspense fallback={<PageLoadingSpinner />}>
-          <Routes>
-            {/* ═══ Public Marketing Shell ═══ */}
-            <Route element={<PublicLayout />}>
-              <Route
-                path="/"
-                element={isAuthenticated ? <Navigate to="/app" replace /> : <Landing />}
-              />
-              <Route path="/landing" element={<Landing />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/auth" element={<AuthRouteGate />} />
-              <Route path="/reset-auth" element={<ResetAuth />} />
-              <Route path="/verify-email" element={<VerifyEmailPage />} />
-              <Route path="/verify-license" element={<VerifyLicensePage />} />
-              <Route path="/invite/:token" element={<InviteAcceptPage />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/sample-report" element={<SampleReport />} />
-              <Route path="/press" element={<PressPage />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/guide" element={<GuidePage />} />
-              <Route path="/api-docs" element={<ApiDocsPage />} />
-              <Route path="/help" element={<HelpCenter />} />
-              <Route path="/support" element={<Navigate to="/help" replace />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/compliance" element={<CompliancePage />} />
-              <Route path="/disclosures" element={<DisclosuresPage />} />
-              <Route path="/methodology" element={<MethodologyPage />} />
-              <Route path="/triple-check-methodology" element={<TripleCheckMethodologyPage />} />
-
-              {/* ── Taxonomy: About layer ── */}
-              <Route path="/about-aivis" element={<AboutAivisPage />} />
-              <Route path="/what-is-aivis" element={<WhatIsAivisPage />} />
-              <Route path="/why-aivis-exists" element={<WhyAivisExistsPage />} />
-
-              {/* ── Taxonomy: Methodology layer ── */}
-              <Route path="/methodology/cite-ledger" element={<CiteLedgerPage />} />
-              <Route path="/what-is-cite-ledger" element={<WhatIsCiteLedgerPage />} />
-              <Route
-                path="/methodology/triple-check-protocol"
-                element={<TripleCheckProtocolPage />}
-              />
-              <Route
-                path="/methodology/brag-evidence-trails"
-                element={<BragEvidenceTrailsPage />}
-              />
-              <Route
-                path="/methodology/entity-resolution-model"
-                element={<EntityResolutionModelPage />}
-              />
-
-              {/* ── Taxonomy: Evidence layer ── */}
-              <Route path="/evidence/ledger-index" element={<LedgerIndexPage />} />
-              <Route path="/evidence/citation-reports" element={<CitationReportsPage />} />
-              <Route path="/evidence/drift-analysis" element={<DriftAnalysisPage />} />
-              <Route path="/evidence/query-results-log" element={<QueryResultsLogPage />} />
-
-              <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
-              <Route path="/partnership-payments" element={<PartnershipPaymentPage />} />
-              <Route path="/r/:code" element={<ReferralRedirect />} />
-              <Route path="/changelog" element={<ChangelogPage />} />
-              <Route path="/compare" element={<ComparisonPage />} />
-              <Route path="/compare/aivis-vs-otterly" element={<CompareOtterlyPage />} />
-              <Route path="/compare/aivis-vs-reaudit" element={<CompareReauditPage />} />
-              <Route path="/compare/aivis-vs-profound" element={<CompareProfoundPage />} />
-              <Route path="/compare/aivis-vs-semrush" element={<CompareSemrushPage />} />
-              <Route path="/compare/aivis-vs-ahrefs" element={<CompareAhrefsPage />} />
-              <Route path="/compare/aivis-vs-rankscale" element={<CompareRankScalePage />} />
-              <Route path="/competitive-landscape" element={<CompetitiveLandscapePage />} />
-              <Route path="/glossary" element={<GlossaryPage />} />
-              <Route path="/integrations" element={<IntegrationsHubPage />} />
-              <Route path="/why-ai-visibility" element={<WhyAIVisibility />} />
-              <Route path="/ai-search-visibility-2026" element={<AISearchVisibility2026 />} />
-              <Route path="/insights" element={<InsightsPage />} />
-              <Route path="/blogs" element={<BlogsPage />} />
-              <Route path="/blogs/:slug" element={<BlogPostPage />} />
-              <Route path="/aeo-playbook-2026" element={<AEOPlaybook2026 />} />
-              <Route path="/geo-ai-ranking-2026" element={<GeoAIRanking2026 />} />
-              <Route
-                path="/conversational-query-playbook-2026"
-                element={<ConversationalQueryPlaybook2026 />}
-              />
-              <Route
-                path="/voice-search-ai-answer-optimization-2026"
-                element={<VoiceSearchAIAnswerOptimization2026 />}
-              />
-              <Route path="/entity/:entitySlug" element={<EntityNodePage />} />
-              <Route path="/entity/:entitySlug/audit/:shareId" element={<PublicReportPage />} />
-              <Route path="/reports/public/:shareId" element={<PublicReportPage />} />
-              <Route path="/report/public/:shareId" element={<PublicReportPage />} />
-              <Route path="/report/:shareId" element={<PublicReportPage />} />
-              <Route path="/s/:mode/:shareId" element={<PublicReportPage />} />
-              <Route path="/payment-success" element={<PaymentSuccessPage />} />
-              <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
-
-              {/* ── Keyword pages (100-page SEO system) ── */}
-              <Route path="/platforms" element={<KeywordClusterIndex />} />
-              <Route path="/platforms/:slug" element={<KeywordPageTemplate />} />
-              <Route path="/problems" element={<KeywordClusterIndex />} />
-              <Route path="/problems/:slug" element={<KeywordPageTemplate />} />
-              <Route path="/signals" element={<KeywordClusterIndex />} />
-              <Route path="/signals/:slug" element={<KeywordPageTemplate />} />
-              <Route path="/industries" element={<KeywordClusterIndex />} />
-              <Route path="/industries/:slug" element={<KeywordPageTemplate />} />
-              <Route path="/compare/:slug" element={<KeywordPageTemplate />} />
-              <Route path="/badge" element={<BadgeEmbedPage />} />
-              <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
-              <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
-            </Route>
-
-            {/* ═══ Free Tools (no auth required — server rate-limits) ═══ */}
-            <Route path="/tools" element={<AppLayout />}>
-              <Route path="schema-validator" element={<SchemaValidatorPage />} />
-              <Route path="robots-checker" element={<RobotsCheckerPage />} />
-              <Route path="content-extractability" element={<ContentExtractabilityPage />} />
-              <Route path="server-headers" element={<ServerHeadersPage />} />
-              <Route path="language-checker" element={<LanguageCheckerPage />} />
-            </Route>
-
-            {/* ═══ SCAN SYSTEM — no sidebar, no topbar, full-viewport state machine ═══ */}
-            <Route element={<ScanShell />}>
-              <Route path="/app/scan" element={<AnalyzePage />} />
-              <Route path="/app/audits/:id" element={<AuditDetails />} />
-            </Route>
-
-            {/* ═══ Authenticated App Shell ═══ */}
+      {/* App only renders after boot is complete */}
+      <React.Suspense fallback={<PageLoadingSpinner />}>
+        <Routes>
+          {/* ═══ Public Marketing Shell ═══ */}
+          <Route element={<PublicLayout />}>
             <Route
-              path="/app"
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              {/* /app → scan entry */}
-              <Route index element={<Navigate to="/app/scan" replace />} />
-              {/* Legacy analyze path — redirect to canonical scan route */}
-              <Route path="analyze" element={<Navigate to="/app/scan" replace />} />
-              {/* Legacy overview — Dashboard preserved for users with audit history */}
-              <Route path="overview" element={<Dashboard />} />
-              <Route path="snapshot" element={<SnapshotPage />} />
-              <Route path="analytics" element={<AnalyticsPage />} />
-              <Route path="evidence" element={<EvidenceRegistryPage />} />
-              <Route path="keywords" element={<KeywordsPage />} />
-              <Route path="competitors" element={<CompetitorsPage />} />
-              <Route path="niche-discovery" element={<NicheDiscoveryPage />} />
-              <Route path="citations" element={<CitationsPage />} />
-              <Route path="reports" element={<ReportsPage />} />
-              <Route path="reverse-engineer" element={<ReverseEngineerPage />} />
-              <Route path="prompt-intelligence" element={<PromptIntelligencePage />} />
-              <Route path="answer-presence" element={<AnswerPresencePage />} />
-              <Route path="brand-integrity" element={<BrandIntegrityPage />} />
-              <Route path="score-fix" element={<ScoreFixPage />} />
-              <Route path="site-crawl" element={<SiteCrawlPage />} />
-              <Route path="pipeline" element={<PipelinePage />} />
-              <Route path="dataset" element={<DatasetStudioPage />} />
-              <Route path="benchmarks" element={<AiVisibilityBenchmark />} />
-              <Route path="workflow" element={<PlatformWorkflowPage />} />
-              <Route path="mcp" element={<McpConsolePage />} />
-              <Route path="gsc" element={<GscConsolePage />} />
-              <Route path="schema-validator" element={<SchemaValidatorPage />} />
-              <Route path="server-headers" element={<ServerHeadersPage />} />
-              <Route path="robots-checker" element={<RobotsCheckerPage />} />
-              <Route path="content-extractability" element={<ContentExtractabilityPage />} />
-              <Route path="language-checker" element={<LanguageCheckerPage />} />
-              <Route path="domain-rating" element={<DomainRatingPage />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="referrals" element={<ReferralsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="billing" element={<BillingPage />} />
-              <Route path="compliance-dashboard" element={<ComplianceDashboardPage />} />
-              <Route path="notifications" element={<NotificationsPage />} />
-              <Route path="admin" element={<Admin />} />
-              <Route path="team" element={<TeamPage />} />
-              <Route path="agency" element={<AgencyPage />} />
-              <Route path="badge" element={<BadgeEmbedPage />} />
-              <Route path="api-docs" element={<ApiDocsPage />} />
-              <Route path="integrations" element={<IntegrationsHubPage />} />
-              <Route path="help" element={<HelpCenter />} />
-              <Route path="debugger" element={<DebuggerPage />} />{' '}
-            </Route>
-
-            <Route path="/audit/:id" element={<LegacyAuditRedirect />} />
-
-            {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
-            <Route path="/analyze" element={<Navigate to="/app/scan" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/app/scan" replace />} />
-            <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
-            <Route path="/evidence" element={<Navigate to="/app/evidence" replace />} />
-            <Route path="/keywords" element={<Navigate to="/app/keywords" replace />} />
-            <Route path="/competitors" element={<Navigate to="/app/competitors" replace />} />
-            <Route path="/citations" element={<Navigate to="/app/citations" replace />} />
-            <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
-            <Route
-              path="/reverse-engineer"
-              element={<Navigate to="/app/reverse-engineer" replace />}
+              path="/"
+              element={isAuthenticated ? <Navigate to="/app" replace /> : <Landing />}
             />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/auth" element={<AuthRouteGate />} />
+            <Route path="/reset-auth" element={<ResetAuth />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/verify-license" element={<VerifyLicensePage />} />
+            <Route path="/invite/:token" element={<InviteAcceptPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/sample-report" element={<SampleReport />} />
+            <Route path="/press" element={<PressPage />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/guide" element={<GuidePage />} />
+            <Route path="/api-docs" element={<ApiDocsPage />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/support" element={<Navigate to="/help" replace />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/compliance" element={<CompliancePage />} />
+            <Route path="/disclosures" element={<DisclosuresPage />} />
+            <Route path="/methodology" element={<MethodologyPage />} />
+            <Route path="/triple-check-methodology" element={<TripleCheckMethodologyPage />} />
+
+            {/* ── Taxonomy: About layer ── */}
+            <Route path="/about-aivis" element={<AboutAivisPage />} />
+            <Route path="/what-is-aivis" element={<WhatIsAivisPage />} />
+            <Route path="/why-aivis-exists" element={<WhyAivisExistsPage />} />
+
+            {/* ── Taxonomy: Methodology layer ── */}
+            <Route path="/methodology/cite-ledger" element={<CiteLedgerPage />} />
+            <Route path="/what-is-cite-ledger" element={<WhatIsCiteLedgerPage />} />
             <Route
-              path="/prompt-intelligence"
-              element={<Navigate to="/app/prompt-intelligence" replace />}
+              path="/methodology/triple-check-protocol"
+              element={<TripleCheckProtocolPage />}
             />
+            <Route path="/methodology/brag-evidence-trails" element={<BragEvidenceTrailsPage />} />
             <Route
-              path="/answer-presence"
-              element={<Navigate to="/app/answer-presence" replace />}
-            />
-            <Route
-              path="/brand-integrity"
-              element={<Navigate to="/app/brand-integrity" replace />}
-            />
-            <Route path="/score-fix" element={<Navigate to="/app/score-fix" replace />} />
-            <Route path="/site-crawl" element={<Navigate to="/app/site-crawl" replace />} />
-            <Route path="/pipeline" element={<Navigate to="/app/pipeline" replace />} />
-            <Route path="/benchmarks" element={<Navigate to="/app/benchmarks" replace />} />
-            <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
-            <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />
-            <Route
-              path="/server-headers"
-              element={<Navigate to="/tools/server-headers" replace />}
-            />
-            <Route
-              path="/schema-validator"
-              element={<Navigate to="/tools/schema-validator" replace />}
-            />
-            <Route
-              path="/robots-checker"
-              element={<Navigate to="/tools/robots-checker" replace />}
-            />
-            <Route
-              path="/content-extractability"
-              element={<Navigate to="/tools/content-extractability" replace />}
-            />
-            <Route
-              path="/language-checker"
-              element={<Navigate to="/tools/language-checker" replace />}
+              path="/methodology/entity-resolution-model"
+              element={<EntityResolutionModelPage />}
             />
 
-            <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
-            <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
-            <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
-            <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
-            <Route path="/notifications" element={<Navigate to="/app/notifications" replace />} />
-            <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
-            <Route path="/team" element={<Navigate to="/app/team" replace />} />
-            <Route
-              path="/niche-discovery"
-              element={<Navigate to="/app/niche-discovery" replace />}
-            />
-            <Route path="/workflow" element={<Navigate to="/app/workflow" replace />} />
+            {/* ── Taxonomy: Evidence layer ── */}
+            <Route path="/evidence/ledger-index" element={<LedgerIndexPage />} />
+            <Route path="/evidence/citation-reports" element={<CitationReportsPage />} />
+            <Route path="/evidence/drift-analysis" element={<DriftAnalysisPage />} />
+            <Route path="/evidence/query-results-log" element={<QueryResultsLogPage />} />
 
-            {/* Catch-all */}
-            <Route path="*" element={<PublicLayout />}>
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </React.Suspense>
-      )}
+            <Route path="/partnership-terms" element={<PartnershipTermsPage />} />
+            <Route path="/partnership-payments" element={<PartnershipPaymentPage />} />
+            <Route path="/r/:code" element={<ReferralRedirect />} />
+            <Route path="/changelog" element={<ChangelogPage />} />
+            <Route path="/compare" element={<ComparisonPage />} />
+            <Route path="/compare/aivis-vs-otterly" element={<CompareOtterlyPage />} />
+            <Route path="/compare/aivis-vs-reaudit" element={<CompareReauditPage />} />
+            <Route path="/compare/aivis-vs-profound" element={<CompareProfoundPage />} />
+            <Route path="/compare/aivis-vs-semrush" element={<CompareSemrushPage />} />
+            <Route path="/compare/aivis-vs-ahrefs" element={<CompareAhrefsPage />} />
+            <Route path="/compare/aivis-vs-rankscale" element={<CompareRankScalePage />} />
+            <Route path="/competitive-landscape" element={<CompetitiveLandscapePage />} />
+            <Route path="/glossary" element={<GlossaryPage />} />
+            <Route path="/integrations" element={<IntegrationsHubPage />} />
+            <Route path="/why-ai-visibility" element={<WhyAIVisibility />} />
+            <Route path="/ai-search-visibility-2026" element={<AISearchVisibility2026 />} />
+            <Route path="/insights" element={<InsightsPage />} />
+            <Route path="/blogs" element={<BlogsPage />} />
+            <Route path="/blogs/:slug" element={<BlogPostPage />} />
+            <Route path="/aeo-playbook-2026" element={<AEOPlaybook2026 />} />
+            <Route path="/geo-ai-ranking-2026" element={<GeoAIRanking2026 />} />
+            <Route
+              path="/conversational-query-playbook-2026"
+              element={<ConversationalQueryPlaybook2026 />}
+            />
+            <Route
+              path="/voice-search-ai-answer-optimization-2026"
+              element={<VoiceSearchAIAnswerOptimization2026 />}
+            />
+            <Route path="/entity/:entitySlug" element={<EntityNodePage />} />
+            <Route path="/entity/:entitySlug/audit/:shareId" element={<PublicReportPage />} />
+            <Route path="/reports/public/:shareId" element={<PublicReportPage />} />
+            <Route path="/report/public/:shareId" element={<PublicReportPage />} />
+            <Route path="/report/:shareId" element={<PublicReportPage />} />
+            <Route path="/s/:mode/:shareId" element={<PublicReportPage />} />
+            <Route path="/payment-success" element={<PaymentSuccessPage />} />
+            <Route path="/payment-canceled" element={<PaymentCanceledPage />} />
+
+            {/* ── Keyword pages (100-page SEO system) ── */}
+            <Route path="/platforms" element={<KeywordClusterIndex />} />
+            <Route path="/platforms/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/problems" element={<KeywordClusterIndex />} />
+            <Route path="/problems/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/signals" element={<KeywordClusterIndex />} />
+            <Route path="/signals/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/industries" element={<KeywordClusterIndex />} />
+            <Route path="/industries/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/compare/:slug" element={<KeywordPageTemplate />} />
+            <Route path="/badge" element={<BadgeEmbedPage />} />
+            <Route path="/login" element={<Navigate to="/auth?mode=signin" replace />} />
+            <Route path="/register" element={<Navigate to="/auth?mode=signup" replace />} />
+          </Route>
+
+          {/* ═══ Free Tools (no auth required — server rate-limits) ═══ */}
+          <Route path="/tools" element={<AppLayout />}>
+            <Route path="schema-validator" element={<SchemaValidatorPage />} />
+            <Route path="robots-checker" element={<RobotsCheckerPage />} />
+            <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="server-headers" element={<ServerHeadersPage />} />
+            <Route path="language-checker" element={<LanguageCheckerPage />} />
+          </Route>
+
+          {/* ═══ SCAN SYSTEM — no sidebar, no topbar, full-viewport state machine ═══ */}
+          <Route element={<ScanShell />}>
+            <Route path="/app/scan" element={<AnalyzePage />} />
+            <Route path="/app/audits/:id" element={<AuditDetails />} />
+          </Route>
+
+          {/* ═══ Authenticated App Shell ═══ */}
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* /app → scan entry */}
+            <Route index element={<Navigate to="/app/scan" replace />} />
+            {/* Legacy analyze path — redirect to canonical scan route */}
+            <Route path="analyze" element={<Navigate to="/app/scan" replace />} />
+            {/* Legacy overview — Dashboard preserved for users with audit history */}
+            <Route path="overview" element={<Dashboard />} />
+            <Route path="snapshot" element={<SnapshotPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="evidence" element={<EvidenceRegistryPage />} />
+            <Route path="keywords" element={<KeywordsPage />} />
+            <Route path="competitors" element={<CompetitorsPage />} />
+            <Route path="niche-discovery" element={<NicheDiscoveryPage />} />
+            <Route path="citations" element={<CitationsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="reverse-engineer" element={<ReverseEngineerPage />} />
+            <Route path="prompt-intelligence" element={<PromptIntelligencePage />} />
+            <Route path="answer-presence" element={<AnswerPresencePage />} />
+            <Route path="brand-integrity" element={<BrandIntegrityPage />} />
+            <Route path="score-fix" element={<ScoreFixPage />} />
+            <Route path="site-crawl" element={<SiteCrawlPage />} />
+            <Route path="pipeline" element={<PipelinePage />} />
+            <Route path="dataset" element={<DatasetStudioPage />} />
+            <Route path="benchmarks" element={<AiVisibilityBenchmark />} />
+            <Route path="workflow" element={<PlatformWorkflowPage />} />
+            <Route path="mcp" element={<McpConsolePage />} />
+            <Route path="gsc" element={<GscConsolePage />} />
+            <Route path="schema-validator" element={<SchemaValidatorPage />} />
+            <Route path="server-headers" element={<ServerHeadersPage />} />
+            <Route path="robots-checker" element={<RobotsCheckerPage />} />
+            <Route path="content-extractability" element={<ContentExtractabilityPage />} />
+            <Route path="language-checker" element={<LanguageCheckerPage />} />
+            <Route path="domain-rating" element={<DomainRatingPage />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="referrals" element={<ReferralsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="billing" element={<BillingPage />} />
+            <Route path="compliance-dashboard" element={<ComplianceDashboardPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="admin" element={<Admin />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="agency" element={<AgencyPage />} />
+            <Route path="badge" element={<BadgeEmbedPage />} />
+            <Route path="api-docs" element={<ApiDocsPage />} />
+            <Route path="integrations" element={<IntegrationsHubPage />} />
+            <Route path="help" element={<HelpCenter />} />
+            <Route path="debugger" element={<DebuggerPage />} />{' '}
+          </Route>
+
+          <Route path="/audit/:id" element={<LegacyAuditRedirect />} />
+
+          {/* ═══ Legacy redirects: old paths → /app/* ═══ */}
+          <Route path="/analyze" element={<Navigate to="/app/scan" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/app/scan" replace />} />
+          <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+          <Route path="/evidence" element={<Navigate to="/app/evidence" replace />} />
+          <Route path="/keywords" element={<Navigate to="/app/keywords" replace />} />
+          <Route path="/competitors" element={<Navigate to="/app/competitors" replace />} />
+          <Route path="/citations" element={<Navigate to="/app/citations" replace />} />
+          <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
+          <Route
+            path="/reverse-engineer"
+            element={<Navigate to="/app/reverse-engineer" replace />}
+          />
+          <Route
+            path="/prompt-intelligence"
+            element={<Navigate to="/app/prompt-intelligence" replace />}
+          />
+          <Route path="/answer-presence" element={<Navigate to="/app/answer-presence" replace />} />
+          <Route path="/brand-integrity" element={<Navigate to="/app/brand-integrity" replace />} />
+          <Route path="/score-fix" element={<Navigate to="/app/score-fix" replace />} />
+          <Route path="/site-crawl" element={<Navigate to="/app/site-crawl" replace />} />
+          <Route path="/pipeline" element={<Navigate to="/app/pipeline" replace />} />
+          <Route path="/benchmarks" element={<Navigate to="/app/benchmarks" replace />} />
+          <Route path="/mcp" element={<Navigate to="/app/mcp" replace />} />
+          <Route path="/gsc" element={<Navigate to="/app/gsc" replace />} />
+          <Route path="/server-headers" element={<Navigate to="/tools/server-headers" replace />} />
+          <Route
+            path="/schema-validator"
+            element={<Navigate to="/tools/schema-validator" replace />}
+          />
+          <Route path="/robots-checker" element={<Navigate to="/tools/robots-checker" replace />} />
+          <Route
+            path="/content-extractability"
+            element={<Navigate to="/tools/content-extractability" replace />}
+          />
+          <Route
+            path="/language-checker"
+            element={<Navigate to="/tools/language-checker" replace />}
+          />
+
+          <Route path="/domain-rating" element={<Navigate to="/app/domain-rating" replace />} />
+          <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+          <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+          <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
+          <Route path="/notifications" element={<Navigate to="/app/notifications" replace />} />
+          <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
+          <Route path="/team" element={<Navigate to="/app/team" replace />} />
+          <Route path="/niche-discovery" element={<Navigate to="/app/niche-discovery" replace />} />
+          <Route path="/workflow" element={<Navigate to="/app/workflow" replace />} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<PublicLayout />}>
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </React.Suspense>
     </div>
   );
 }

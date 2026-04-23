@@ -1,5 +1,6 @@
 import { getPool, executeTransaction } from './postgresql.js';
 import { createUserNotification } from './notificationService.js';
+import { appendCreditLedgerEvent, getCreditLedgerBalance } from './creditLedger.js';
 import {
   MILESTONES,
   type MilestoneKey,
@@ -84,12 +85,22 @@ export async function awardMilestone(
         [userId, creditAmount],
       );
 
+      await appendCreditLedgerEvent({
+        userId,
+        type: 'adjustment',
+        delta: creditAmount,
+        source: 'system',
+        requestId: `milestone:${userId}:${milestoneKey}`,
+        metadata: {
+          milestoneKey,
+          label: def.label,
+          reason: 'milestone_reward',
+        },
+        client,
+      });
+
       // Ledger entry
-      const balSnap = await client.query(
-        `SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1`,
-        [userId],
-      );
-      const balanceAfter = Number(balSnap.rows[0]?.credits_remaining || 0);
+      const balanceAfter = await getCreditLedgerBalance(userId, client);
 
       await client.query(
         `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
@@ -117,7 +128,7 @@ export async function awardMilestone(
       title: `${def.icon} Milestone: ${def.label}`,
       message: `${def.description} - ${def.creditReward} credits rewarded!`,
       metadata: { milestoneKey, creditReward: def.creditReward },
-    }).catch(() => {});
+    }).catch(() => { });
 
     return { awarded: true, creditReward: def.creditReward };
   });

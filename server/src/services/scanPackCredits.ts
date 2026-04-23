@@ -1,5 +1,7 @@
 import { executeTransaction, getPool } from './postgresql.js';
 import { createUserNotification } from './notificationService.js';
+import { appendCreditLedgerEvent, getCreditLedgerBalance, withCreditDecisionLock } from './creditLedger.js';
+import crypto from 'crypto';
 
 function roundCredits(value: number): number {
   return Math.round(Math.max(0, Number(value || 0)) * 100) / 100;
@@ -76,12 +78,7 @@ export function getScanPackByPriceId(priceId?: string | null): (typeof SCAN_PACK
 }
 
 export async function getAvailablePackCredits(userId: string): Promise<number> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    'SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1',
-    [userId]
-  );
-  return roundCredits(Number(rows[0]?.credits_remaining || 0));
+  return getCreditLedgerBalance(userId);
 }
 
 export async function consumeOnePackCredit(userId: string): Promise<{ consumed: boolean; remaining: number }> {
@@ -99,58 +96,93 @@ export async function consumePackCredits(
     return { consumed: false, remaining: await getAvailablePackCredits(userId) };
   }
 
-  return executeTransaction(async (client: any) => {
-    const { rows } = await client.query(
-      `UPDATE scan_pack_credits
-       SET credits_remaining = ROUND((credits_remaining - $2)::numeric, 2),
-           updated_at = NOW()
-       WHERE user_id = $1 AND credits_remaining >= $2
-       RETURNING credits_remaining`,
-      [userId, roundedAmount]
-    );
+  const requestId = String((metadata as any)?.requestId || (metadata as any)?.idempotencyKey || crypto.randomUUID());
 
-    if (!rows.length) {
-      const snapshot = await client.query(
-        'SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1',
-        [userId]
+  return withCreditDecisionLock(userId, requestId, async () =>
+    executeTransaction(async (client: any) => {
+      const normalizedReason = String(reason || 'usage');
+      const existing = await client.query(
+        `SELECT id FROM credit_ledger WHERE user_id = $1 AND request_id = $2 LIMIT 1`,
+        [userId, requestId],
       );
-      return { consumed: false, remaining: roundCredits(Number(snapshot.rows[0]?.credits_remaining || 0)) };
-    }
+      if (existing.rows.length > 0) {
+        const remaining = await getCreditLedgerBalance(userId, client);
+        return { consumed: true, remaining };
+      }
 
-    const remaining = roundCredits(Number(rows[0].credits_remaining || 0));
-    const normalizedReason = String(reason || 'usage');
-    await client.query(
-      `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [
+      const balanceBefore = await getCreditLedgerBalance(userId, client);
+      if (balanceBefore < roundedAmount) {
+        return { consumed: false, remaining: balanceBefore };
+      }
+
+      await client.query(
+        `INSERT INTO scan_pack_credits (user_id, credits_remaining)
+         VALUES ($1, 0)
+         ON CONFLICT (user_id) DO NOTHING`,
+        [userId],
+      );
+
+      const { rows } = await client.query(
+        `UPDATE scan_pack_credits
+         SET credits_remaining = ROUND((GREATEST(credits_remaining - $2, 0))::numeric, 2),
+             updated_at = NOW()
+         WHERE user_id = $1
+         RETURNING credits_remaining`,
+        [userId, roundedAmount]
+      );
+
+      const projectionRemaining = roundCredits(Number(rows[0]?.credits_remaining || 0));
+      await appendCreditLedgerEvent({
         userId,
-        -roundedAmount,
-        remaining,
-        normalizedReason,
-        JSON.stringify({
+        type: 'usage',
+        delta: -roundedAmount,
+        source: String((metadata as any)?.source || 'api') as any,
+        requestId,
+        metadata: {
           ...(metadata || {}),
+          reason: normalizedReason,
           purpose: normalizedReason,
           amount: roundedAmount,
           trackedAt: new Date().toISOString(),
-        }),
-      ]
-    );
+        },
+        client,
+      });
 
-    await createUserNotification({
-      userId,
-      eventType: 'credit_spent',
-      title: 'Credits used',
-      message: `${roundedAmount.toFixed(2)} credits used for ${toReadableReason(normalizedReason)}.`,
-      metadata: {
-        amount: roundedAmount,
-        remaining,
-        reason: normalizedReason,
-        ...(metadata || {}),
-      },
-    }).catch(() => {});
+      const remaining = await getCreditLedgerBalance(userId, client);
+      await client.query(
+        `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [
+          userId,
+          -roundedAmount,
+          remaining,
+          normalizedReason,
+          JSON.stringify({
+            ...(metadata || {}),
+            purpose: normalizedReason,
+            amount: roundedAmount,
+            trackedAt: new Date().toISOString(),
+            projectionRemaining,
+          }),
+        ]
+      );
 
-    return { consumed: true, remaining };
-  });
+      await createUserNotification({
+        userId,
+        eventType: 'credit_spent',
+        title: 'Credits used',
+        message: `${roundedAmount.toFixed(2)} credits used for ${toReadableReason(normalizedReason)}.`,
+        metadata: {
+          amount: roundedAmount,
+          remaining,
+          reason: normalizedReason,
+          ...(metadata || {}),
+        },
+      }).catch(() => { });
+
+      return { consumed: true, remaining };
+    })
+  );
 }
 
 export async function grantPackCreditsFromCheckoutSession(args: {
@@ -172,6 +204,16 @@ export async function grantPackCreditsFromCheckoutSession(args: {
   const creditsToAdd = roundCredits(getEffectivePackScans(pack.scans, bonusPercent));
 
   return executeTransaction(async (client: any) => {
+    const ledgerRequestId = `stripe:checkout:${args.stripeSessionId}`;
+    const existing = await client.query(
+      `SELECT id FROM credit_ledger WHERE user_id = $1 AND request_id = $2 LIMIT 1`,
+      [args.userId, ledgerRequestId],
+    );
+    if (existing.rows.length > 0) {
+      const balance = await getCreditLedgerBalance(args.userId, client);
+      return { granted: false, creditsAdded: 0, totalRemaining: balance };
+    }
+
     const txInsert = await client.query(
       `INSERT INTO scan_pack_transactions
          (user_id, pack_key, credits_added, amount_cents, currency, stripe_session_id, stripe_payment_intent_id, status, bonus_percent, bonus_source)
@@ -209,7 +251,22 @@ export async function grantPackCreditsFromCheckoutSession(args: {
       [args.userId, creditsToAdd]
     );
 
-    const totalRemaining = roundCredits(Number(upsert.rows[0]?.credits_remaining || 0));
+    await appendCreditLedgerEvent({
+      userId: args.userId,
+      type: 'topup',
+      delta: creditsToAdd,
+      source: 'stripe',
+      requestId: ledgerRequestId,
+      metadata: {
+        packKey: pack.key,
+        stripeSessionId: args.stripeSessionId,
+        stripePaymentIntentId: args.stripePaymentIntentId || null,
+        bonusPercent,
+      },
+      client,
+    });
+
+    const totalRemaining = await getCreditLedgerBalance(args.userId, client);
     await client.query(
       `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
        VALUES ($1, $2, $3, $4, $5)`,
@@ -241,7 +298,7 @@ export async function grantPackCreditsFromCheckoutSession(args: {
         stripeSessionId: args.stripeSessionId,
         bonusPercent,
       },
-    }).catch(() => {});
+    }).catch(() => { });
 
     return {
       granted: true,

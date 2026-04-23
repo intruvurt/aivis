@@ -415,7 +415,11 @@ router.get('/:workspaceId/activity', async (req: Request, res: Response) => {
     const actorUserId = String(req.user?.id || '');
     const members = await listWorkspaceMembers(workspaceId, actorUserId);
     const userById = new Map(members.map((member: any) => [String(member.user_id), member]));
-    const limit = Number(req.query.limit || 25);
+
+    // Safely extract a single limit param
+    const limitParam = req.query.limit;
+    const limit = Array.isArray(limitParam) ? Number(limitParam[0]) : Number(limitParam || 25);
+
     const activity = await listWorkspaceActivity(workspaceId, limit);
 
     res.json({

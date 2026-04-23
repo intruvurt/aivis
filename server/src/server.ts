@@ -15819,6 +15819,74 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     );
   }
 
+  // Validate FRONTEND_URL at startup — a missing or schemeless value causes malformed OAuth redirects
+  const _frontendUrlVal = String(process.env.FRONTEND_URL || '').trim();
+  if (NODE_ENV === 'production') {
+    if (!_frontendUrlVal) {
+      console.error('[Startup] CRITICAL: FRONTEND_URL env var is not set. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com');
+    } else if (!/^https?:\/\//i.test(_frontendUrlVal)) {
+      console.error(`[Startup] CRITICAL: FRONTEND_URL="${_frontendUrlVal}" is missing the https:// scheme prefix. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com`);
+    }
+  }
+
+  const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
+
+    // Dev-only: validate pricing contract consistency
+    if (NODE_ENV === "development") {
+      import("./config/stripeConfig.js").then(({ default: STRIPE_PRICING }) => {
+        const driftErrors: string[] = [];
+        const check = (label: string, actual: number, expected: number) => {
+          if (actual !== expected)
+            driftErrors.push(`${label}: got ${actual}, expected ${expected}`);
+        };
+        check(
+          "alignment monthly cents",
+          STRIPE_PRICING.alignment?.amountCents,
+          PRICING.alignment.billing.monthly * 100,
+        );
+        check(
+          "alignment yearly cents",
+          STRIPE_PRICING.alignment?.yearlyAmountCents,
+          PRICING.alignment.billing.yearly * 100,
+        );
+        check(
+          "signal monthly cents",
+          STRIPE_PRICING.signal?.amountCents,
+          PRICING.signal.billing.monthly * 100,
+        );
+        check(
+          "signal yearly cents",
+          STRIPE_PRICING.signal?.yearlyAmountCents,
+          PRICING.signal.billing.yearly * 100,
+        );
+        check(
+          "scorefix monthly cents",
+          STRIPE_PRICING.scorefix?.amountCents,
+          PRICING.scorefix.billing.monthly * 100,
+        );
+        if (driftErrors.length) {
+          console.error(
+            "[Pricing Drift] Stripe config does not match PRICING contract:\n  " +
+            driftErrors.join("\n  "),
+          );
+        } else {
+          console.log("[Pricing] All Stripe amounts match PRICING contract ✓");
+        }
+      });
+    }
+  });
+
+  // Render proxy compatibility
+  // Global 5-minute hard wall: prevents zombie requests that bypass route-level timeouts.
+  // Analyze routes override to 60s via PROXY_HARD_LIMIT_MS; SSE connections extend via keep-alive.
+  server.keepAliveTimeout = 120_000;
+  server.headersTimeout = 121_000;
+  server.requestTimeout = 300_000; // 5 min hard ceiling
+  server.timeout = 300_000;
+
+  console.log("[Startup] HTTP timeouts set for reverse proxy compatibility");
+
   let databaseReady = false;
   try {
     await runMigrations();
@@ -15834,7 +15902,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     }
   } catch (err: any) {
     console.error("[Startup] Migration error (non-fatal):", err.message);
-    // Don't exit - allow server to start with partial schema
+    // Don't exit - server is already listening and can run in degraded mode.
   }
 
   const startupGateRaw = String(
@@ -15894,64 +15962,6 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     );
   }
 
-  // Validate FRONTEND_URL at startup — a missing or schemeless value causes malformed OAuth redirects
-  const _frontendUrlVal = String(process.env.FRONTEND_URL || '').trim();
-  if (NODE_ENV === 'production') {
-    if (!_frontendUrlVal) {
-      console.error('[Startup] CRITICAL: FRONTEND_URL env var is not set. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com');
-    } else if (!/^https?:\/\//i.test(_frontendUrlVal)) {
-      console.error(`[Startup] CRITICAL: FRONTEND_URL="${_frontendUrlVal}" is missing the https:// scheme prefix. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com`);
-    }
-  }
-
-  const server = app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
-
-    // Dev-only: validate pricing contract consistency
-    if (NODE_ENV === "development") {
-      import("./config/stripeConfig.js").then(({ default: STRIPE_PRICING }) => {
-        const driftErrors: string[] = [];
-        const check = (label: string, actual: number, expected: number) => {
-          if (actual !== expected)
-            driftErrors.push(`${label}: got ${actual}, expected ${expected}`);
-        };
-        check(
-          "alignment monthly cents",
-          STRIPE_PRICING.alignment?.amountCents,
-          PRICING.alignment.billing.monthly * 100,
-        );
-        check(
-          "alignment yearly cents",
-          STRIPE_PRICING.alignment?.yearlyAmountCents,
-          PRICING.alignment.billing.yearly * 100,
-        );
-        check(
-          "signal monthly cents",
-          STRIPE_PRICING.signal?.amountCents,
-          PRICING.signal.billing.monthly * 100,
-        );
-        check(
-          "signal yearly cents",
-          STRIPE_PRICING.signal?.yearlyAmountCents,
-          PRICING.signal.billing.yearly * 100,
-        );
-        check(
-          "scorefix monthly cents",
-          STRIPE_PRICING.scorefix?.amountCents,
-          PRICING.scorefix.billing.monthly * 100,
-        );
-        if (driftErrors.length) {
-          console.error(
-            "[Pricing Drift] Stripe config does not match PRICING contract:\n  " +
-            driftErrors.join("\n  "),
-          );
-        } else {
-          console.log("[Pricing] All Stripe amounts match PRICING contract ✓");
-        }
-      });
-    }
-  });
-
   // Bootstrap scheduled citation ranking jobs from DB (non-blocking)
   if (databaseReady) {
     bootstrapScheduler().catch((err: Error) => {
@@ -15965,16 +15975,6 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
       "[Startup] Citation scheduler bootstrap skipped because database is unavailable",
     );
   }
-
-  // Render proxy compatibility
-  // Global 5-minute hard wall: prevents zombie requests that bypass route-level timeouts.
-  // Analyze routes override to 60s via PROXY_HARD_LIMIT_MS; SSE connections extend via keep-alive.
-  server.keepAliveTimeout = 120_000;
-  server.headersTimeout = 121_000;
-  server.requestTimeout = 300_000; // 5 min hard ceiling
-  server.timeout = 300_000;
-
-  console.log("[Startup] HTTP timeouts set for reverse proxy compatibility");
 
   // ── Scheduled rescan loop ─────────────────────────────────────────────────
   // Internal analyze: reuses the scrape→AI pipeline for automated rescans.

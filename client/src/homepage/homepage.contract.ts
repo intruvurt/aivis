@@ -22,6 +22,9 @@ export const BRAND = {
     author: {
         name: 'Ryan Mason',
         twitter: '@dobleduche',
+        linkedin: 'https://www.linkedin.com/in/web4aidev/',
+        github: 'https://github.com/dobleduche',
+        medium: 'https://intruvurt.medium.com/',
     },
 } as const;
 
@@ -65,7 +68,7 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 
 export const META = {
     title: `AiVIS — See Why the Model Said No | Diagnostic AI Visibility`,
-    description: `${CITE_LEDGER_DEFINITION} ${BRAND.name} shows you the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. ${BRAG.expansion}. This is system instrumentation, not optimization advice.`,
+    description: `${CITE_LEDGER_DEFINITION} ${BRAG.expansion} powers ${BRAND.name} to show the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. This is system instrumentation, not optimization advice.`,
     // NOTE: description must include CITE_LEDGER_DEFINITION and diagnostic framing verbatim — enforced at build time.
     keywords: `AI citation diagnostics, why AI ignores you, competitor retrieval analysis, semantic bridge failure, entity decay detection, citation collapse forensics, AI reasoning transparency, ${BRAND.name}, ${BRAG.acronym} evidence scoring, source preference mapping, ChatGPT selection logic, Perplexity retrieval analysis, Claude synthesis debugging, AI answer engine decision making, citation ledger, post-mortem AI visibility, system instrumentation, retrieval failure diagnosis`,
     author: BRAND.name,

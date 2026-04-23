@@ -1,39 +1,10 @@
 #!/bin/sh
-# Pre-commit hook for code quality checks
+set -eu
 
-echo "🔍 Running pre-commit checks..."
-
-# Run linter
-echo "📋 Checking code with ESLint..."
-npm run lint
-if [ $? -ne 0 ]; then
-    echo "❌ ESLint failed. Please fix errors before committing."
-    exit 1
+if [ "${HUSKY_SKIP:-0}" = "1" ] || [ "${HUSKY_SKIP_PRECOMMIT:-0}" = "1" ]; then
+    echo "Skipping pre-commit checks (HUSKY_SKIP/HUSKY_SKIP_PRECOMMIT)."
+    exit 0
 fi
 
-# Run formatter check
-echo "✨ Checking code formatting..."
-npm run format:check
-if [ $? -ne 0 ]; then
-    echo "❌ Code formatting issues found. Run 'npm run format' to fix."
-    exit 1
-fi
-
-# Run type check
-echo "🔤 Type checking TypeScript..."
-npm run type-check
-if [ $? -ne 0 ]; then
-    echo "❌ TypeScript errors found. Please fix before committing."
-    exit 1
-fi
-
-# Run tests
-echo "🧪 Running tests..."
-npm test -- --run
-if [ $? -ne 0 ]; then
-    echo "❌ Tests failed. Please fix before committing."
-    exit 1
-fi
-
-echo "✅ All pre-commit checks passed!"
-exit 0
+echo "Running staged pre-commit checks..."
+npm run precommit

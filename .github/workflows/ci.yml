@@ -64,11 +64,8 @@ jobs:
             server/node_modules
           key: node-modules-${{ hashFiles('package.json', 'client/package.json', 'server/package.json') }}
 
-      - name: Lint client
-        run: npm --prefix client run lint
-
-      - name: Lint server
-        run: npm --prefix server run lint
+      - name: Lint (root quality script)
+        run: npm run quality:lint
 
   # ─── Type check (client + server via root script) ──────────────────────────
   typecheck:
@@ -90,11 +87,8 @@ jobs:
             server/node_modules
           key: node-modules-${{ hashFiles('package.json', 'client/package.json', 'server/package.json') }}
 
-      - name: Type check client
-        run: npm --prefix client run typecheck
-
-      - name: Type check server
-        run: npm --prefix server run typecheck
+      - name: Type check (root quality script)
+        run: npm run quality:typecheck
 
   # ─── Tests ─────────────────────────────────────────────────────────────────
   test-client:

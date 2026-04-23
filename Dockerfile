@@ -103,11 +103,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy only production node_modules and dist files from builder
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/server/node_modules ./server/node_modules
 COPY --from=builder /app/server/dist ./server/dist
 COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/.puppeteerrc.cjs ./.puppeteerrc.cjs
+COPY --from=builder /app/server/.puppeteerrc.cjs ./server/.puppeteerrc.cjs
 COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
 
 # Copy minimal runtime files

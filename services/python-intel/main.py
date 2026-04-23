@@ -3,17 +3,27 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-class EntityRequest(BaseModel):
+class TextIn(BaseModel):
     text: str
 
-@app.post("/extract-entities")
-def extract_entities(req: EntityRequest):
-    # placeholder NLP logic
+@app.post("/entities")
+def entities(req: TextIn):
+    # lightweight deterministic NLP (replace with spaCy later)
+    words = req.text.split()
+
     entities = [
-        {"name": "AI Visibility", "type": "concept", "confidence": 0.92}
+        {"name": w, "type": "concept", "confidence": 0.7}
+        for w in words[:5]
     ]
 
     return {
         "entities": entities,
         "relationships": []
+    }
+
+@app.post("/gap-score")
+def gap_score(req: dict):
+    return {
+        "gap_score": 0.73,
+        "missing": ["definition", "mechanism"]
     }

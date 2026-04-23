@@ -42,6 +42,7 @@ import mentionRoutes from "./routes/mentions.js";
 import entityRoutes from "./routes/entity.js";
 import citeLedgerRoutes from "./routes/citeLedger.js";
 import graphRoutes from "./routes/graphRoutes.js";
+import { getRssFeedXml } from "./services/rssFeedService.js";
 import AutoScoreFixRoutes from "./routes/autoScoreFixRoutes.js";
 import ScoreFixRoutes from "./routes/scoreFixRoutes.js";
 import reverseEngineerApi from "./routes/reverseEngineerApi.js";
@@ -1678,6 +1679,22 @@ app.use("/internal", internalCompilerRoutes);
 app.get("/api/pricing", getPricingInfo);
 app.use("/api/cite-ledger", citeLedgerRoutes);
 app.use("/api/graph", graphRoutes);
+
+// RSS 2.0 feed — publicly accessible (no auth required)
+// Consumed by LLM ingestion surfaces and search engine crawlers
+app.get("/api/feed.xml", async (req, res) => {
+  try {
+    const eventType = req.query.type as string | undefined;
+    const entity = req.query.entity as string | undefined;
+    const xml = await getRssFeedXml({ event_type: eventType as any, entity });
+    res.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=300");
+    res.send(xml);
+  } catch {
+    res.status(500).send("Feed unavailable");
+  }
+});
+
 app.use("/api", queryScanRoutes);
 app.use("/api/competitors", competitorRoutes);
 app.use("/api/citations", citationRoutes);

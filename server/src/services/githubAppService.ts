@@ -2,7 +2,7 @@
  * GitHub App Service
  *
  * Manages GitHub App authentication (JWT + installation tokens),
- * installation lifecycle, and repository access for AiVIS.biz AutoFix Engine.
+ * installation lifecycle, and repository access for the AiVIS Auto Score Fix PR app.
  *
  * GitHub App ≠ OAuth: acts as a system identity with fine-grained per-repo permissions.
  * Uses RS256 JWT signed with the app's private key to obtain short-lived installation tokens.
@@ -12,11 +12,42 @@
  *   GITHUB_APP_PRIVATE_KEY     - PEM-encoded RSA private key (newlines as \n)
  *   GITHUB_APP_WEBHOOK_SECRET  - webhook signature secret
  *   GITHUB_APP_CLIENT_ID       - OAuth client ID for the GitHub App (install flow)
- *   GITHUB_APP_SLUG            - e.g. "aivis-autofix-engine" (for install URL)
+ *   GITHUB_APP_SLUG            - e.g. "aivis-auto-score-fix-pr" (for install URL)
  */
 
 import crypto from 'crypto';
 import { getPool } from './postgresql.js';
+
+const DEFAULT_GITHUB_APP_NAME = 'AiVIS Auto Score Fix PR';
+const DEFAULT_GITHUB_APP_SLUG = 'aivis-auto-score-fix-pr';
+
+export interface GitHubAppMetadata {
+  name: string;
+  slug: string;
+  appUrl: string;
+  installUrl: string;
+  permissions: Array<{ name: string; access: 'read' | 'write' }>;
+}
+
+export function getGitHubAppSlug(): string {
+  return (process.env.GITHUB_APP_SLUG || DEFAULT_GITHUB_APP_SLUG).trim() || DEFAULT_GITHUB_APP_SLUG;
+}
+
+export function getGitHubAppMetadata(): GitHubAppMetadata {
+  const slug = getGitHubAppSlug();
+
+  return {
+    name: DEFAULT_GITHUB_APP_NAME,
+    slug,
+    appUrl: `https://github.com/apps/${encodeURIComponent(slug)}`,
+    installUrl: `https://github.com/apps/${encodeURIComponent(slug)}/installations/new`,
+    permissions: [
+      { name: 'Contents', access: 'write' },
+      { name: 'Pull requests', access: 'write' },
+      { name: 'Metadata', access: 'read' },
+    ],
+  };
+}
 
 let githubInstallationsTableReady = false;
 

@@ -9,11 +9,25 @@
   display: flex;
   min-height: 100dvh;
   background:
-    radial-gradient(circle at top left, rgba(255, 138, 61, 0.12), transparent 22%),
-    radial-gradient(circle at 90% 0%, rgba(86, 195, 182, 0.1), transparent 18%),
-    linear-gradient(180deg, #0b0908 0%, #15110f 48%, #100d0c 100%);
+    radial-gradient(circle at 12% 0%, rgba(15, 118, 110, 0.18), transparent 26%),
+    radial-gradient(circle at 88% 6%, rgba(234, 88, 12, 0.18), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(14, 116, 144, 0.14), transparent 28%),
+    linear-gradient(180deg, #071117 0%, #0c1720 45%, #0a1218 100%);
   color: #f4ede5;
   position: relative;
+}
+
+.aurora-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+  opacity: 0.18;
 }
 
 /* ─── Mobile overlay (dims content when sidebar is open) ─────────────────── */
@@ -48,8 +62,8 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(22, 17, 14, 0.96), rgba(11, 10, 9, 0.98));
-  border-right: 1px solid rgba(255, 184, 96, 0.12);
+  background: linear-gradient(180deg, rgba(8, 18, 24, 0.96), rgba(7, 12, 18, 0.98));
+  border-right: 1px solid rgba(103, 232, 249, 0.12);
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.03);
   height: 100dvh;
   position: sticky;
@@ -98,7 +112,7 @@
   align-items: center;
   gap: 8px;
   padding: 14px 12px 12px;
-  border-bottom: 1px solid rgba(255, 184, 96, 0.12);
+  border-bottom: 1px solid rgba(103, 232, 249, 0.12);
   flex-shrink: 0;
 }
 
@@ -113,7 +127,7 @@
 .aurora-sidebar-subtitle {
   font-size: 9px;
   font-weight: 600;
-  color: rgba(255, 184, 96, 0.88);
+  color: rgba(103, 232, 249, 0.82);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   display: block;
@@ -166,18 +180,18 @@
 
 .aurora-sidebar-link:hover {
   background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 184, 96, 0.18);
+  border-color: rgba(103, 232, 249, 0.2);
   color: #fff6ec;
 }
 
 .aurora-sidebar-link.is-active {
-  background: linear-gradient(135deg, rgba(255, 138, 61, 0.16), rgba(255, 184, 96, 0.08));
-  border-color: rgba(255, 184, 96, 0.22);
-  color: #ffcc8a;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(249, 115, 22, 0.12));
+  border-color: rgba(103, 232, 249, 0.24);
+  color: #bef7ff;
 }
 
 .aurora-sidebar-link.is-active .aurora-nav-icon {
-  color: #ff9b57;
+  color: #67e8f9;
 }
 
 /* ─── Nav icon wrapper ───────────────────────────────────────────────────── */
@@ -201,8 +215,8 @@
   text-transform: uppercase;
   padding: 2px 5px;
   border-radius: 4px;
-  background: rgba(255, 184, 96, 0.08);
-  color: rgba(255, 223, 184, 0.58);
+  background: rgba(103, 232, 249, 0.08);
+  color: rgba(189, 248, 255, 0.62);
   flex-shrink: 0;
 }
 
@@ -210,7 +224,7 @@
 
 .aurora-user-pill {
   padding: 8px;
-  border-top: 1px solid rgba(255, 184, 96, 0.12);
+  border-top: 1px solid rgba(103, 232, 249, 0.12);
   flex-shrink: 0;
 }
 
@@ -221,7 +235,7 @@
   padding: 7px 8px;
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 184, 96, 0.12);
+  border: 1px solid rgba(103, 232, 249, 0.12);
   cursor: default;
   min-width: 0;
 }
@@ -230,14 +244,14 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 138, 61, 0.18);
-  border: 1px solid rgba(255, 184, 96, 0.28);
+  background: rgba(14, 165, 233, 0.16);
+  border: 1px solid rgba(103, 232, 249, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: #ffc37a;
+  color: #9be9ff;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -287,7 +301,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 138, 61, 0.05), transparent 18%),
+    radial-gradient(circle at top left, rgba(103, 232, 249, 0.06), transparent 18%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.06), transparent 18%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 18%);
   pointer-events: none;
 }
@@ -314,7 +329,7 @@
   height: 36px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 184, 96, 0.12);
+  border: 1px solid rgba(103, 232, 249, 0.12);
   color: rgba(255, 238, 219, 0.74);
   cursor: pointer;
   transition:
@@ -324,7 +339,7 @@
 }
 
 .aurora-menu-btn:hover {
-  background: rgba(255, 138, 61, 0.1);
+  background: rgba(14, 165, 233, 0.12);
   color: #fff7ee;
 }
 
@@ -337,17 +352,17 @@
 /* ─── Shared reusable primitives ─────────────────────────────────────────── */
 
 .aurora-card {
-  background: linear-gradient(180deg, rgba(27, 22, 19, 0.92), rgba(16, 13, 11, 0.96));
-  border: 1px solid rgba(255, 184, 96, 0.12);
+  background: linear-gradient(180deg, rgba(10, 20, 28, 0.92), rgba(8, 14, 20, 0.96));
+  border: 1px solid rgba(103, 232, 249, 0.12);
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.34);
 }
 
 .aurora-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 184, 96, 0.14);
+  border: 1px solid rgba(103, 232, 249, 0.14);
   border-radius: 14px;
   padding: 8px 12px;
   font-size: 13px;
@@ -357,7 +372,7 @@
 }
 
 .aurora-input:focus {
-  border-color: rgba(255, 138, 61, 0.45);
+  border-color: rgba(103, 232, 249, 0.45);
 }
 
 .aurora-btn {
@@ -376,21 +391,21 @@
 }
 
 .aurora-btn-primary {
-  background: linear-gradient(135deg, #ffb15e, #ff8747);
-  color: #180f0a;
+  background: linear-gradient(135deg, #67e8f9, #f97316);
+  color: #04131a;
 }
 
 .aurora-btn-primary:hover {
-  background: linear-gradient(135deg, #ffc983, #ff9e62);
+  background: linear-gradient(135deg, #a5f3fc, #fb923c);
 }
 
 .aurora-btn-ghost {
   background: rgba(255, 255, 255, 0.04);
   color: rgba(255, 240, 224, 0.74);
-  border: 1px solid rgba(255, 184, 96, 0.12);
+  border: 1px solid rgba(103, 232, 249, 0.12);
 }
 
 .aurora-btn-ghost:hover {
-  background: rgba(255, 138, 61, 0.08);
+  background: rgba(14, 165, 233, 0.08);
   color: #fff9f3;
 }

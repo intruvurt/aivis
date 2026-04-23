@@ -692,6 +692,18 @@ const CATEGORIES: HelpCategory[] = [
         tags: ['ci/cd', 'deploy', 'pipeline', 'webhook', 'regression', 'automation'],
       },
       {
+        q: 'What does the AiVIS.biz Auto Score Fix PR GitHub App do and what permissions does it request?',
+        a: 'The GitHub App connects a repository directly to AiVIS.biz Auto Score Fix so the platform can turn evidence-backed findings into pull requests without storing broad personal access tokens. It requests Contents: write, Pull requests: write, and Metadata: read so it can create a remediation branch, commit targeted changes, and open a PR against the selected repository or organization installation.',
+        tags: [
+          'github app',
+          'auto score fix',
+          'permissions',
+          'contents write',
+          'pull requests write',
+          'metadata read',
+        ],
+      },
+      {
         q: 'What is the MCP Server Console and who should use it?',
         a: "The MCP Console exposes 15+ AiVIS.biz tools to AI coding agents including Claude Desktop, Cursor, and Windsurf through the Model Context Protocol standard. Use it if you work inside an AI-assisted coding or research environment and want to run audits, pull reports, and query analytics directly inside your agent's tool interface. Requires Alignment+ tier.",
         tags: [

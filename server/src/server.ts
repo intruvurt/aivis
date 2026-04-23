@@ -127,6 +127,10 @@ import {
 } from "./services/postgresql.js";
 import { resolveWorkspaceForUser } from "./services/tenantService.js";
 import { persistAuditRecord } from "./services/auditPersistenceService.js";
+import {
+  createAnalysisLedgerContext,
+  fireLedgerEvent,
+} from "./services/analysisPipelineLedger.js";
 import { getPublicBenchmarkData } from "./services/benchmarkService.js";
 import { extractContactsFromHtml } from "./lib/contactUtils.js";
 import featureRoutes from "./routes/featureRoutes.js";
@@ -9760,6 +9764,10 @@ app.post(
       });
       res.setHeader("X-Audit-Request-Id", requestId);
 
+      // Deterministic ledger context — serialises all writes for this trace.
+      // requestId is the trace_id; all writes are fire-and-forget after res.json().
+      const ledger = createAnalysisLedgerContext(requestId);
+
       const {
         url: rawUrl,
         apiKey: clientKey,
@@ -10063,11 +10071,23 @@ app.post(
         );
       }
       emitProgress(requestId, "crawl", 15);
+      // Ledger: audit started
+      fireLedgerEvent(ledger.started({
+        url: targetUrl,
+        tier: normalizedRequestTier,
+        userId: ownerUserId,
+      }));
+
       let scraped: Awaited<ReturnType<typeof scrapeWebsite>>;
       let scrapeWarning: string | null = null;
 
       try {
         scraped = await scrapeWebsite(targetUrl);
+        // Ledger: crawl complete
+        fireLedgerEvent(ledger.crawlComplete({
+          url: targetUrl,
+          wordCount: Number((scraped?.data as any)?.wordCount ?? 0) || undefined,
+        }));
       } catch (scrapeErr: any) {
         if (requireLiveAi) {
           if (!STRICT_LIVE_SOFT_FAIL_ENABLED) {
@@ -12951,6 +12971,17 @@ For each recommendation:
           console.error(`[${requestId}] Cache write failed:`, e?.message),
         );
       }
+
+      // Ledger: record score + completion (fire-and-forget, after response is sent)
+      fireLedgerEvent(ledger.scoreComputed({
+        score: result.visibility_score,
+        visibilityIndex: typeof (result as any).visibility_index === 'number'
+          ? (result as any).visibility_index
+          : undefined,
+      }));
+      fireLedgerEvent(ledger.completed({ score: result.visibility_score }));
+      // Prime the snapshot cache in background
+      ledger.snapshot().catch(() => { });
 
       (async () => {
         try {

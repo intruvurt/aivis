@@ -1,11 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "./ui/Button";
+import React, { useState, useEffect } from 'react';
+import { Button } from './ui/Button';
 
-const KEY = "cookie-consent";
+const KEY = 'cookie-consent';
+const COOKIE_NAME = 'aivis_cookie_consent';
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+function readConsentCookie(): string | null {
+  try {
+    if (typeof document === 'undefined') return null;
+    const prefix = `${COOKIE_NAME}=`;
+    const match = document.cookie
+      .split(';')
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(prefix));
+
+    if (!match) return null;
+    return decodeURIComponent(match.slice(prefix.length));
+  } catch {
+    return null;
+  }
+}
+
+function writeConsentCookie(value: string) {
+  try {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${COOKIE_NAME}=${encodeURIComponent(value)}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
+  } catch {
+    // Ignore cookie write failures
+  }
+}
+
+function clearConsentCookie() {
+  try {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${COOKIE_NAME}=; Max-Age=0; Path=/; SameSite=Lax`;
+  } catch {
+    // Ignore cookie clear failures
+  }
+}
 
 function safeGet(key: string): string | null {
   try {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       return localStorage.getItem(key);
     }
   } catch {
@@ -16,7 +52,7 @@ function safeGet(key: string): string | null {
 
 function safeSet(key: string, value: string) {
   try {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       localStorage.setItem(key, value);
     }
   } catch {
@@ -26,17 +62,23 @@ function safeSet(key: string, value: string) {
 
 /** Check whether the user has accepted cookies */
 export function hasConsent(): boolean {
-  return safeGet(KEY) === "accepted";
+  return safeGet(KEY) === 'accepted' || readConsentCookie() === 'accepted';
 }
 
 /** Revoke cookie consent */
 export function revokeConsent(): void {
-  try { if (typeof window !== "undefined") localStorage.removeItem(KEY); } catch { /* noop */ }
+  try {
+    if (typeof window !== 'undefined') localStorage.removeItem(KEY);
+  } catch {
+    /* noop */
+  }
+  clearConsentCookie();
 }
 
 /** Set cookie consent to a specific value */
 export function setConsentValue(value: string): void {
   safeSet(KEY, value);
+  writeConsentCookie(value);
 }
 
 export function CookieConsent() {
@@ -44,52 +86,66 @@ export function CookieConsent() {
 
   // Check consent status after component mounts on client
   useEffect(() => {
-    const consent = safeGet(KEY);
+    const consent = safeGet(KEY) || readConsentCookie();
     // Show banner only if no prior consent exists
     setShow(!consent);
   }, []);
 
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== KEY) return;
+      setShow(!event.newValue);
+    };
+
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   const accept = () => {
-    safeSet(KEY, "accepted");
+    setConsentValue('accepted');
     setShow(false);
   };
 
   const dismiss = () => {
-    safeSet(KEY, "dismissed");
+    setConsentValue('dismissed');
     setShow(false);
   };
 
   if (!show) return null;
 
   return (
-    <div 
-role="dialog" 
-    aria-labelledby="cookie-consent-heading"
-    className="fixed bottom-0 left-0 right-0 bg-slate-900 text-white p-4 z-50 animate-in slide-in-from-bottom-2 no-print"
-  >
-    <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div id="cookie-consent-heading" className="text-sm text-center sm:text-left text-slate-300">
-        We use browser storage to remember your session in this tab and optional analytics after consent.
-        Your consent choice is stored locally in this browser.
-      </div>
-      <div className="flex flex-wrap justify-center sm:justify-start gap-3">
-        <Button
-          onClick={dismiss}
-          variant="ghost"
-          className="text-slate-400 hover:text-white hover:bg-white/10"
-          aria-label="Dismiss cookie consent banner"
+    <div
+      role="dialog"
+      aria-labelledby="cookie-consent-heading"
+      className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-2 no-print border-t border-white/10 bg-[linear-gradient(180deg,rgba(8,12,18,0.96),rgba(11,17,24,0.98))] p-4 text-white shadow-[0_-24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
+    >
+      <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div
+          id="cookie-consent-heading"
+          className="text-sm text-center sm:text-left text-slate-300"
         >
-          Close
-        </Button>
-        <Button
-          onClick={accept}
-          className="bg-indigo-600 text-white hover:bg-indigo-500 border border-indigo-500 shadow-lg shadow-indigo-900/50"
-          aria-label="Accept cookies"
-        >
-          Accept
-        </Button>
+          We use essential browser storage for authentication and settings. Optional analytics stay
+          off until you accept, and your consent preference is persisted in local storage and a
+          first-party cookie on this browser.
+        </div>
+        <div className="flex flex-wrap justify-center sm:justify-start gap-3">
+          <Button
+            onClick={dismiss}
+            variant="ghost"
+            className="text-slate-400 hover:text-white hover:bg-white/10"
+            aria-label="Dismiss cookie consent banner"
+          >
+            Close
+          </Button>
+          <Button
+            onClick={accept}
+            className="border border-cyan-300/35 bg-[linear-gradient(135deg,#0f766e,#155e75)] text-white shadow-lg shadow-cyan-950/40 hover:opacity-95"
+            aria-label="Accept cookies"
+          >
+            Accept
+          </Button>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

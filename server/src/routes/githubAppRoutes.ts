@@ -2,7 +2,7 @@
  * GitHub App Routes
  *
  * Handles GitHub App installation lifecycle, webhooks, and repo introspection
- * for the AiVIS.biz AutoFix Engine.
+ * for the AiVIS Auto Score Fix PR app.
  *
  * Webhook endpoint is unauthenticated (verified via HMAC-SHA256 signature).
  * All other endpoints require user authentication.
@@ -17,6 +17,7 @@ import { workspaceRequired } from '../middleware/workspaceRequired.js';
 import { requireWorkspacePermission } from '../middleware/workspacePermission.js';
 import {
   isGitHubAppConfigured,
+  getGitHubAppMetadata,
   verifyWebhookSignature,
   saveInstallation,
   getInstallationForUser,
@@ -247,9 +248,10 @@ router.get('/status', async (req: Request, res: Response) => {
   const userId = String((req as any).user?.id || '');
   const workspaceId = String(req.workspace?.id || '');
   const configured = isGitHubAppConfigured();
+  const app = getGitHubAppMetadata();
 
   if (!configured) {
-    return res.json({ configured: false, installed: false, installation: null });
+    return res.json({ configured: false, installed: false, installation: null, app });
   }
 
   try {
@@ -258,15 +260,16 @@ router.get('/status', async (req: Request, res: Response) => {
       configured: true,
       installed: !!installation,
       workspace_id: workspaceId,
+      app,
       installation: installation
         ? {
-            workspace_id: installation.workspace_id ?? null,
-            installation_id: installation.installation_id,
-            account_login: installation.account_login,
-            account_type: installation.account_type,
-            repo_selection: installation.repo_selection,
-            created_at: installation.created_at,
-          }
+          workspace_id: installation.workspace_id ?? null,
+          installation_id: installation.installation_id,
+          account_login: installation.account_login,
+          account_type: installation.account_type,
+          repo_selection: installation.repo_selection,
+          created_at: installation.created_at,
+        }
         : null,
     });
   } catch (err: any) {
@@ -282,15 +285,14 @@ router.get('/status', async (req: Request, res: Response) => {
  * Encodes a signed state param so the callback can identify the user without auth.
  */
 router.get('/install-url', requireWorkspacePermission('integrations:manage'), (req: Request, res: Response) => {
-  const slug = (process.env.GITHUB_APP_SLUG || '').trim();
-  if (!slug) {
-    return res.status(503).json({ error: 'GitHub App is not configured' });
-  }
+  const app = getGitHubAppMetadata();
   const userId = String((req as any).user?.id || '');
   const workspaceId = String(req.workspace?.id || '');
   const state = encodeAppState({ userId, workspaceId, nonce: randomUUID(), ts: Date.now() });
   return res.json({
-    url: `https://github.com/apps/${encodeURIComponent(slug)}/installations/new?state=${encodeURIComponent(state)}`,
+    configured: isGitHubAppConfigured(),
+    app,
+    url: `${app.installUrl}?state=${encodeURIComponent(state)}`,
   });
 });
 

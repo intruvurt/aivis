@@ -359,6 +359,29 @@ POST /api/oauth/revoke       # Revoke token`}
             </ul>
           </div>
 
+          <div className="rounded-xl border border-emerald-400/25 bg-charcoal-light/35 p-5">
+            <div className="flex items-center gap-2 text-emerald-300">
+              <Lock className="w-4 h-4" />
+              <h3 className="text-base font-semibold">GitHub App</h3>
+            </div>
+            <p className="mt-2 text-sm text-white/70 leading-relaxed">
+              AiVIS.biz Auto Score Fix PR installs as a GitHub App so remediation PRs can be created
+              with repo-scoped permissions instead of long-lived personal access tokens.
+            </p>
+            <pre className="mt-3 p-3 rounded-lg bg-charcoal border border-white/10 text-xs text-white/85 overflow-x-auto">
+              {`GET /api/github-app/status       # Installation + permission metadata
+GET /api/github-app/install-url  # Signed install flow URL
+GET /api/github-app/repos        # Accessible repositories
+GET /api/github-app/branches     # Repository branches`}
+            </pre>
+            <ul className="mt-3 space-y-1.5 text-xs text-white/60">
+              <li>• Permissions: Contents write, Pull requests write, Metadata read</li>
+              <li>• Signed callback ties installation to the current workspace</li>
+              <li>• Installation tokens are short-lived and minted server-side</li>
+              <li>• Repo access can be restricted by GitHub installation settings</li>
+            </ul>
+          </div>
+
           {/* MCP */}
           <div className="rounded-xl border border-amber-400/25 bg-charcoal-light/35 p-5">
             <div className="flex items-center gap-2 text-amber-300">

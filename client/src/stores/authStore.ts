@@ -207,11 +207,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         clearLegacyAuthStorage();
         const savedToken = get().token ?? readPersistedToken();
 
-        if (!savedToken) {
-            set({ isHydrated: true, user: null, token: null, isAuthenticated: false });
-            return;
-        }
-
+        // Always attempt a refresh so cookie-backed sessions survive new tabs,
+        // browser restarts, and OAuth returns even when sessionStorage is empty.
         set({ isHydrated: false, user: null, token: savedToken, isAuthenticated: false });
         void get().refreshUser();
     },

@@ -434,8 +434,17 @@ export default function PrivacyPage() {
               when the browser tab closes. Not a cookie; never sent to third parties.
             </li>
             <li>
-              <strong className="text-white">localStorage:</strong> Cookie-consent preference, UI
-              settings, theme preference. No personal data.
+              <strong className="text-white">localStorage:</strong> Consent preference and UI
+              settings such as onboarding state, dismissed notices, and interface defaults. No
+              personal data.
+            </li>
+            <li>
+              <strong className="text-white">first-party cookies:</strong> The secure
+              <span className="font-mono text-white"> aivis_session </span>
+              cookie keeps authenticated sessions available across tabs and browser restarts, and
+              the
+              <span className="font-mono text-white"> aivis_cookie_consent </span>
+              cookie mirrors your analytics consent preference for consistent behavior.
             </li>
           </ul>
 

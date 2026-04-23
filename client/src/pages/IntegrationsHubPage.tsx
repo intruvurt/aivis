@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   PlugZap,
   ShieldCheck,
@@ -16,33 +16,34 @@ import {
   Lock,
   Bot,
   Zap,
-} from "lucide-react";
-import { API_URL } from "../config";
-import { useAuthStore } from "../stores/authStore";
-import useFeatureStatus from "../hooks/useFeatureStatus";
-import AdvancedFeaturesPanel from "../components/AdvancedFeaturesPanel";
-import { TIER_LIMITS, uiTierFromCanonical } from "../../../shared/types";
-import { usePageMeta } from "../hooks/usePageMeta";
+} from 'lucide-react';
+import { API_URL } from '../config';
+import { useAuthStore } from '../stores/authStore';
+import useFeatureStatus from '../hooks/useFeatureStatus';
+import AdvancedFeaturesPanel from '../components/AdvancedFeaturesPanel';
+import { TIER_LIMITS, uiTierFromCanonical } from '../../../shared/types';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 type EndpointCheck = {
   key: string;
   label: string;
   path: string;
-  method: "GET" | "POST";
-  status: "idle" | "ok" | "warn" | "fail";
+  method: 'GET' | 'POST';
+  status: 'idle' | 'ok' | 'warn' | 'fail';
   httpStatus?: number;
   note?: string;
 };
 
 function baseApi(path: string): string {
-  const base = (API_URL || "").replace(/\/+$/, "");
+  const base = (API_URL || '').replace(/\/+$/, '');
   return `${base}${path}`;
 }
 
 export default function IntegrationsHubPage() {
   usePageMeta({
     title: 'Integrations Hub',
-    description: 'Explore AiVIS.biz integrations, automation endpoints, and connected workflows for analytics and operations.',
+    description:
+      'Explore AiVIS.biz integrations, automation endpoints, and connected workflows for analytics and operations.',
     path: '/integrations',
   });
 
@@ -63,7 +64,8 @@ export default function IntegrationsHubPage() {
             </div>
             <h1 className="text-xl font-bold text-white mb-2">Integrations &amp; Automation</h1>
             <p className="text-sm text-white/55 max-w-md mx-auto mb-2">
-              API access, webhooks, and scheduled rescans start on Alignment. OAuth 2.0 and MCP Server require Signal or higher.
+              API access, webhooks, and scheduled rescans start on Alignment. OAuth 2.0 and MCP
+              Server require Signal or higher.
             </p>
             <p className="text-xs text-white/35 mb-7">
               Observer [Free] includes manual audits only.
@@ -79,11 +81,15 @@ export default function IntegrationsHubPage() {
               ].map((f) => (
                 <div key={f.label} className="rounded-xl border border-white/8 bg-white/[0.03] p-3">
                   <p className="text-xs font-medium text-white/70">{f.label}</p>
-                  <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${
-                    f.tier === 'Signal+'
-                      ? 'border-violet-400/30 bg-violet-500/10 text-violet-300'
-                      : 'border-cyan-400/30 bg-cyan-500/10 text-cyan-300'
-                  }`}>{f.tier}</span>
+                  <span
+                    className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${
+                      f.tier === 'Signal+'
+                        ? 'border-violet-400/30 bg-violet-500/10 text-violet-300'
+                        : 'border-cyan-400/30 bg-cyan-500/10 text-cyan-300'
+                    }`}
+                  >
+                    {f.tier}
+                  </span>
                 </div>
               ))}
             </div>
@@ -100,17 +106,56 @@ export default function IntegrationsHubPage() {
   }
 
   const [checks, setChecks] = useState<EndpointCheck[]>([
-    { key: "features-status", label: "Feature Status", path: "/api/features/status", method: "GET", status: "idle" },
-    { key: "webhooks-catalog", label: "Webhook Catalog", path: "/api/features/webhooks/catalog", method: "GET", status: "idle" },
-    { key: "auto-score-fix-status", label: "Auto Score Fix Status", path: "/api/auto-score-fix/status", method: "GET", status: "idle" },
-    { key: "openapi-spec", label: "OpenAPI 3.0 Spec", path: "/api/v1/openapi.json", method: "GET", status: "idle" },
-    { key: "oauth-authorize", label: "OAuth 2.0 Provider", path: "/api/oauth/authorize", method: "GET", status: "idle" },
-    { key: "mcp-server", label: "MCP Server", path: "/api/mcp/tools", method: "GET", status: "idle" },
+    {
+      key: 'features-status',
+      label: 'Feature Status',
+      path: '/api/features/status',
+      method: 'GET',
+      status: 'idle',
+    },
+    {
+      key: 'webhooks-catalog',
+      label: 'Webhook Catalog',
+      path: '/api/features/webhooks/catalog',
+      method: 'GET',
+      status: 'idle',
+    },
+    {
+      key: 'auto-score-fix-status',
+      label: 'Auto Score Fix Status',
+      path: '/api/auto-score-fix/status',
+      method: 'GET',
+      status: 'idle',
+    },
+    {
+      key: 'openapi-spec',
+      label: 'OpenAPI 3.0 Spec',
+      path: '/api/v1/openapi.json',
+      method: 'GET',
+      status: 'idle',
+    },
+    {
+      key: 'oauth-authorize',
+      label: 'OAuth 2.0 Provider',
+      path: '/api/oauth/authorize',
+      method: 'GET',
+      status: 'idle',
+    },
+    {
+      key: 'mcp-server',
+      label: 'MCP Server',
+      path: '/api/mcp/tools',
+      method: 'GET',
+      status: 'idle',
+    },
   ]);
   const [runningChecks, setRunningChecks] = useState(false);
 
   const headers = useMemo(
-    () => ({ "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) }),
+    () => ({
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    }),
     [token]
   );
 
@@ -124,7 +169,7 @@ export default function IntegrationsHubPage() {
           const res = await fetch(baseApi(item.path), {
             method: item.method,
             headers,
-            credentials: "include",
+            credentials: 'include',
           });
 
           const body = await res.json().catch(() => ({}));
@@ -132,50 +177,53 @@ export default function IntegrationsHubPage() {
           if (res.ok) {
             return {
               ...item,
-              status: "ok" as const,
+              status: 'ok' as const,
               httpStatus: res.status,
-              note: body?.success === false ? "Route responded with success=false payload" : "Endpoint reachable and responded",
+              note:
+                body?.success === false
+                  ? 'Route responded with success=false payload'
+                  : 'Endpoint reachable and responded',
             };
           }
 
           if (res.status === 401 || res.status === 403 || res.status === 402) {
             return {
               ...item,
-              status: "warn" as const,
+              status: 'warn' as const,
               httpStatus: res.status,
-              note: body?.error || "Endpoint reachable but gated by auth/tier/credits",
+              note: body?.error || 'Endpoint reachable but gated by auth/tier/credits',
             };
           }
 
           if (res.status === 400) {
             return {
               ...item,
-              status: "warn" as const,
+              status: 'warn' as const,
               httpStatus: res.status,
-              note: body?.error || "Endpoint reachable - requires parameters",
+              note: body?.error || 'Endpoint reachable - requires parameters',
             };
           }
 
           if (res.status === 503) {
             return {
               ...item,
-              status: "warn" as const,
+              status: 'warn' as const,
               httpStatus: res.status,
-              note: body?.error || "Endpoint reachable - feature temporarily locked",
+              note: body?.error || 'Endpoint reachable - feature temporarily locked',
             };
           }
 
           return {
             ...item,
-            status: "fail" as const,
+            status: 'fail' as const,
             httpStatus: res.status,
-            note: body?.error || "Endpoint returned an error",
+            note: body?.error || 'Endpoint returned an error',
           };
         } catch (err: any) {
           return {
             ...item,
-            status: "fail" as const,
-            note: err?.message || "Network request failed",
+            status: 'fail' as const,
+            note: err?.message || 'Network request failed',
           };
         }
       })
@@ -210,10 +258,12 @@ export default function IntegrationsHubPage() {
                 <PlugZap className="h-3.5 w-3.5" />
                 Integration Hub
               </div>
-              <h1 className="mt-4 text-2xl brand-title sm:text-3xl">Third-party integrations and automation tooling</h1>
+              <h1 className="mt-4 text-2xl brand-title sm:text-3xl">
+                Third-party integrations and automation tooling
+              </h1>
               <p className="mt-3 max-w-4xl text-sm leading-7 text-white/65">
-                This space exists to explain each integration’s purpose, validate API endpoint reachability,
-                and keep automation setup discoverable outside Settings.
+                This space exists to explain each integration’s purpose, validate API endpoint
+                reachability, and keep automation setup discoverable outside Settings.
               </p>
             </div>
 
@@ -227,7 +277,7 @@ export default function IntegrationsHubPage() {
                 disabled={runningChecks}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/75 hover:text-white transition disabled:opacity-50"
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${runningChecks ? "animate-spin" : ""}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${runningChecks ? 'animate-spin' : ''}`} />
                 Revalidate
               </button>
               <Link
@@ -244,22 +294,30 @@ export default function IntegrationsHubPage() {
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
             <div className="text-xs text-white/50">Tier</div>
-            <div className="mt-1 text-lg font-semibold capitalize text-white">{featureStatus?.tier || user?.tier || "observer"}</div>
+            <div className="mt-1 text-lg font-semibold capitalize text-white">
+              {featureStatus?.tier || user?.tier || 'observer'}
+            </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
             <div className="text-xs text-white/50">Automation & API</div>
-            <div className="mt-1 text-lg font-semibold text-white">{featureStatus?.features?.apiAccess?.available ? "Enabled" : "Gated"}</div>
-            <div className="text-xs text-white/50 mt-1">Updated {updatedAtLabel || "--:--"}</div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {featureStatus?.features?.apiAccess?.available ? 'Enabled' : 'Gated'}
+            </div>
+            <div className="text-xs text-white/50 mt-1">Updated {updatedAtLabel || '--:--'}</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
             <div className="text-xs text-white/50">Endpoint Checks</div>
-            <div className="mt-1 text-lg font-semibold text-emerald-300">{statusCounts.ok} pass</div>
+            <div className="mt-1 text-lg font-semibold text-emerald-300">
+              {statusCounts.ok} pass
+            </div>
             <div className="text-xs text-amber-300 mt-1">{statusCounts.warn} gated</div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
             <div className="text-xs text-white/50">Endpoint Errors</div>
             <div className="mt-1 text-lg font-semibold text-red-300">{statusCounts.fail} fail</div>
-            <div className="text-xs text-white/50 mt-1">Auth/tier gates count as “gated”, not failures</div>
+            <div className="text-xs text-white/50 mt-1">
+              Auth/tier gates count as “gated”, not failures
+            </div>
           </div>
         </section>
 
@@ -274,15 +332,17 @@ export default function IntegrationsHubPage() {
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <div className="text-sm font-semibold text-white">{check.label}</div>
-                    <div className="text-xs text-white/50 mt-0.5">{check.method} {check.path}</div>
+                    <div className="text-xs text-white/50 mt-0.5">
+                      {check.method} {check.path}
+                    </div>
                   </div>
-                  {check.status === "ok" && <CheckCircle2 className="h-4 w-4 text-emerald-300" />}
-                  {check.status === "warn" && <AlertTriangle className="h-4 w-4 text-amber-300" />}
-                  {check.status === "fail" && <XCircle className="h-4 w-4 text-red-300" />}
-                  {check.status === "idle" && <Wrench className="h-4 w-4 text-white/45" />}
+                  {check.status === 'ok' && <CheckCircle2 className="h-4 w-4 text-emerald-300" />}
+                  {check.status === 'warn' && <AlertTriangle className="h-4 w-4 text-amber-300" />}
+                  {check.status === 'fail' && <XCircle className="h-4 w-4 text-red-300" />}
+                  {check.status === 'idle' && <Wrench className="h-4 w-4 text-white/45" />}
                 </div>
-                <div className="mt-2 text-xs text-white/65">{check.note || "Not checked yet"}</div>
-                {typeof check.httpStatus === "number" && (
+                <div className="mt-2 text-xs text-white/65">{check.note || 'Not checked yet'}</div>
+                {typeof check.httpStatus === 'number' && (
                   <div className="mt-2 text-[11px] text-white/45">HTTP {check.httpStatus}</div>
                 )}
               </div>
@@ -301,7 +361,9 @@ export default function IntegrationsHubPage() {
               <div>
                 <h2 className="text-lg font-bold text-white">MCP Console</h2>
                 <p className="text-sm text-white/50 max-w-lg">
-                  Connect AI agents like Claude Desktop and Cursor to your AiVIS.biz account. 8 tools for auditing, analytics, and competitor tracking - all via Model Context Protocol.
+                  Connect AI agents like Claude Desktop and Cursor to your AiVIS.biz account. 8
+                  tools for auditing, analytics, and competitor tracking - all via Model Context
+                  Protocol.
                 </p>
               </div>
             </div>
@@ -322,41 +384,96 @@ export default function IntegrationsHubPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><CalendarClock className="h-4 w-4" /> Scheduled rescans</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Continuously re-audit critical URLs so score drift and content regressions are caught automatically.</p>
-              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">Alignment+</span>
+              <div className="flex items-center gap-2 text-white">
+                <CalendarClock className="h-4 w-4" /> Scheduled rescans
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Continuously re-audit critical URLs so score drift and content regressions are
+                caught automatically.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">
+                Alignment+
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><KeyRound className="h-4 w-4" /> API keys</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Programmatic access for CI/CD, internal dashboards, and agency workflows using scoped keys.</p>
-              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">Alignment+</span>
+              <div className="flex items-center gap-2 text-white">
+                <KeyRound className="h-4 w-4" /> API keys
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Programmatic access for CI/CD, internal dashboards, and agency workflows using
+                scoped keys.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">
+                Alignment+
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><Webhook className="h-4 w-4" /> Webhooks</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Push audit events to Slack, Zapier, Discord, and custom endpoints to trigger downstream automation.</p>
-              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">Alignment+</span>
+              <div className="flex items-center gap-2 text-white">
+                <Webhook className="h-4 w-4" /> Webhooks
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Push audit events to Slack, Zapier, Discord, and custom endpoints to trigger
+                downstream automation.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">
+                Alignment+
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><PlugZap className="h-4 w-4" /> Auto Score Fix</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Convert findings into evidence-linked PR changes against GitHub, GitLab, or Bitbucket repositories.</p>
-              <span className="mt-2 inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-300 uppercase tracking-wide">Active</span>
+              <div className="flex items-center gap-2 text-white">
+                <PlugZap className="h-4 w-4" /> Auto Score Fix
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Convert findings into evidence-linked PR changes with the AiVIS Auto Score Fix PR
+                GitHub App or token-backed Git provider connections.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-300 uppercase tracking-wide">
+                Active
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><FileJson2 className="h-4 w-4" /> OpenAPI 3.0 Spec</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Machine-readable API spec at <code className="text-white/75">/api/v1/openapi.json</code> for SDK generation, Postman import, and CI integration.</p>
-              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">Alignment+</span>
+              <div className="flex items-center gap-2 text-white">
+                <FileJson2 className="h-4 w-4" /> OpenAPI 3.0 Spec
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Machine-readable API spec at{' '}
+                <code className="text-white/75">/api/v1/openapi.json</code> for SDK generation,
+                Postman import, and CI integration.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-300 uppercase tracking-wide">
+                Alignment+
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><Lock className="h-4 w-4" /> OAuth 2.0 Provider</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Register OAuth clients for authorization-code flow. Enables third-party apps and CI pipelines to act on behalf of your account.</p>
-              <span className="mt-2 inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">Signal+</span>
+              <div className="flex items-center gap-2 text-white">
+                <Lock className="h-4 w-4" /> OAuth 2.0 Provider
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Register OAuth clients for authorization-code flow. Enables third-party apps and CI
+                pipelines to act on behalf of your account.
+              </p>
+              <span className="mt-2 inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">
+                Signal+
+              </span>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2 text-white"><Bot className="h-4 w-4" /> MCP Server</div>
-              <p className="mt-2 text-xs leading-6 text-white/60">Expose AiVIS.biz tools to AI agents via Model Context Protocol. 8 tools including audit execution, history retrieval, and analytics queries.</p>
+              <div className="flex items-center gap-2 text-white">
+                <Bot className="h-4 w-4" /> MCP Server
+              </div>
+              <p className="mt-2 text-xs leading-6 text-white/60">
+                Expose AiVIS.biz tools to AI agents via Model Context Protocol. 8 tools including
+                audit execution, history retrieval, and analytics queries.
+              </p>
               <div className="mt-2 flex items-center gap-2">
-                <span className="inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">Signal+</span>
-                <Link to="/app/mcp" className="text-[10px] text-violet-300 hover:text-violet-200 underline underline-offset-2">Open MCP Console →</Link>
+                <span className="inline-block rounded-full border border-violet-400/30 bg-violet-500/10 px-2 py-0.5 text-[10px] text-violet-300 uppercase tracking-wide">
+                  Signal+
+                </span>
+                <Link
+                  to="/app/mcp"
+                  className="text-[10px] text-violet-300 hover:text-violet-200 underline underline-offset-2"
+                >
+                  Open MCP Console →
+                </Link>
               </div>
             </div>
           </div>
@@ -365,7 +482,9 @@ export default function IntegrationsHubPage() {
         <section className="rounded-xl border border-white/10 bg-[#111827]/90 p-6 shadow-2xl sm:p-8">
           <div className="flex items-center justify-between gap-3 mb-4">
             <h2 className="text-lg brand-title">Integration controls</h2>
-            <span className="text-xs text-white/50">Moved from buried settings path for direct discoverability</span>
+            <span className="text-xs text-white/50">
+              Moved from buried settings path for direct discoverability
+            </span>
           </div>
           <AdvancedFeaturesPanel />
         </section>

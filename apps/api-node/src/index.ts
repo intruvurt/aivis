@@ -1,5 +1,5 @@
 import express from "express";
-import { publishEvent } from "@aivis/event-bus";
+import { publish } from "./bus";
 
 const app = express();
 app.use(express.json());
@@ -7,11 +7,12 @@ app.use(express.json());
 app.post("/api/analyze", async (req, res) => {
   const jobId = crypto.randomUUID();
 
-  await publishEvent({
-    type: "ANALYZE_CREATED",
+  await publish({
+    id: crypto.randomUUID(),
     job_id: jobId,
+    type: "ANALYZE_CREATED",
     payload: req.body,
-    timestamp: Date.now()
+    ts: Date.now()
   });
 
   res.json({ jobId, status: "queued" });

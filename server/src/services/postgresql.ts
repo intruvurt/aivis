@@ -1671,6 +1671,8 @@ export async function runMigrations(): Promise<void> {
               UNIQUE (job_id, sequence)
             )`,
             `CREATE INDEX IF NOT EXISTS idx_analyze_job_events_job_seq ON analyze_job_events(job_id, sequence ASC)`,
+            `ALTER TABLE analyze_job_events DROP CONSTRAINT IF EXISTS analyze_job_events_event_type_check`,
+            `ALTER TABLE analyze_job_events ADD CONSTRAINT analyze_job_events_event_type_check CHECK (event_type IN ('SCAN_CREATED','ENTITIES_RESOLVED','GAP_ANALYZED','PAGE_SPEC_CREATED','PAGE_COMPILED','SCHEMA_BOUND','GRAPH_LINKED','READY_REACHED','PAGE_PUBLISHED','RESCAN_COMPLETED','STAGE_FAILED'))`,
             `CREATE TABLE IF NOT EXISTS entity_nodes (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
               job_id UUID NOT NULL REFERENCES analyze_jobs(id) ON DELETE CASCADE,

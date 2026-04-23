@@ -39,7 +39,7 @@ router.post(
             });
 
             if (created.queued) {
-                await enqueueAnalyzeCompilerJob({ jobId: created.jobId });
+                await enqueueAnalyzeCompilerJob({ jobId: created.jobId, stage: 'scan' });
             }
 
             return res.status(202).json({

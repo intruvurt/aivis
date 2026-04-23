@@ -40,7 +40,12 @@ const EVENT_TYPES = {
     GAP_ANALYZED: 'GAP_ANALYZED',
     PAGE_SPEC_CREATED: 'PAGE_SPEC_CREATED',
     PAGE_COMPILED: 'PAGE_COMPILED',
+    SCHEMA_BOUND: 'SCHEMA_BOUND',
+    GRAPH_LINKED: 'GRAPH_LINKED',
+    READY_REACHED: 'READY_REACHED',
     PAGE_PUBLISHED: 'PAGE_PUBLISHED',
+    RESCAN_COMPLETED: 'RESCAN_COMPLETED',
+    STAGE_FAILED: 'STAGE_FAILED',
 } as const;
 
 function normalizeInputSource(input: string, source?: AnalyzeInputSource): AnalyzeInputSource {
@@ -437,7 +442,7 @@ export async function runSchemaStage(jobId: string): Promise<void> {
         );
     }
 
-    await appendEvent(jobId, 'SCHEMA_BINDING', 'SCHEMA_BOUND', { count: pages.rows.length }, { schema_count: pages.rows.length });
+    await appendEvent(jobId, 'SCHEMA_BINDING', EVENT_TYPES.SCHEMA_BOUND, { count: pages.rows.length }, { schema_count: pages.rows.length });
     await transitionState(jobId, 'SCHEMA_BINDING', 'GRAPH_LINKING');
 }
 
@@ -457,9 +462,9 @@ export async function runGraphStage(jobId: string): Promise<void> {
         );
     }
 
-    await appendEvent(jobId, 'GRAPH_LINKING', 'GRAPH_LINKED', { count: Math.max(0, pages.rows.length - 1) }, { link_count: Math.max(0, pages.rows.length - 1) });
+    await appendEvent(jobId, 'GRAPH_LINKING', EVENT_TYPES.GRAPH_LINKED, { count: Math.max(0, pages.rows.length - 1) }, { link_count: Math.max(0, pages.rows.length - 1) });
     await transitionState(jobId, 'GRAPH_LINKING', 'READY');
-    await appendEvent(jobId, 'READY', 'READY', { stages: PIPELINE.length }, { ready: true });
+    await appendEvent(jobId, 'READY', EVENT_TYPES.READY_REACHED, { stages: PIPELINE.length }, { ready: true });
     await pool.query(`UPDATE analyze_jobs SET completed_at = NOW(), updated_at = NOW() WHERE id = $1`, [jobId]);
 }
 
@@ -538,7 +543,7 @@ export async function failAnalyzeCompilerJob(jobId: string, reason: string): Pro
         `UPDATE analyze_jobs SET state = 'FAILED', failure_reason = $2, updated_at = NOW() WHERE id = $1`,
         [jobId, reason],
     );
-    await appendEvent(jobId, 'FAILED', 'job.failed', { reason }, { failed: true, reason });
+    await appendEvent(jobId, 'FAILED', EVENT_TYPES.STAGE_FAILED, { reason }, { failed: true, reason });
 }
 
 export async function getAnalyzeCompilerJob(jobId: string): Promise<Record<string, unknown> | null> {
@@ -551,7 +556,7 @@ export async function getAnalyzeCompilerJob(jobId: string): Promise<Record<strin
     if (!job.rows.length) return null;
 
     const [events, specs, pages, links, artifacts] = await Promise.all([
-        pool.query(`SELECT sequence, stage, event_type, payload, state_delta, event_hash, created_at FROM analyze_job_events WHERE job_id = $1 ORDER BY sequence ASC LIMIT 300`, [jobId]),
+        pool.query(`SELECT sequence, stage, event_type, payload, state_delta, parent_hash, event_hash, created_at FROM analyze_job_events WHERE job_id = $1 ORDER BY sequence ASC LIMIT 300`, [jobId]),
         pool.query(`SELECT id, entity_key, intent, title, slug, priority, schema_type FROM page_specs WHERE job_id = $1 ORDER BY priority DESC`, [jobId]),
         pool.query(`SELECT id, page_spec_id, title, slug, sections, claims, internal_links, updated_at FROM page_builds WHERE job_id = $1 ORDER BY created_at ASC`, [jobId]),
         pool.query(`SELECT from_page_build_id, to_page_build_id, reason FROM page_link_graph WHERE job_id = $1 ORDER BY created_at ASC`, [jobId]),
@@ -616,7 +621,7 @@ export async function rescanAnalyzeCompilerJob(jobId: string): Promise<Record<st
         [jobId, pre, post, delta, citationsFound, pages.rows.length > 0],
     );
 
-    await appendEvent(jobId, 'READY', 'job.rescanned', {
+    await appendEvent(jobId, 'READY', EVENT_TYPES.RESCAN_COMPLETED, {
         pre_visibility: pre,
         post_visibility: post,
         delta,

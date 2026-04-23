@@ -26,6 +26,7 @@
     "verify:features": "tsx tools/verifyFeatureWiring.ts",
     "verify:determinism": "tsx tools/verifyDeterminism.ts",
     "verify:audit-trace-determinism": "tsx tools/verifyAuditTraceDeterminism.ts",
+    "smoke:analyze-compiler-e2e": "node --import tsx tools/smokeAnalyzeCompilerE2E.ts",
     "verify:auto-score-fix": "tsx tools/verifyAutoScoreFixWiring.ts",
     "test:citation-core-v2": "node --import tsx tools/testCitationCoreV2.ts",
     "worker:bix": "node --import tsx src/workers/bix.worker.ts",

@@ -1,12 +1,23 @@
 import { Worker } from 'bullmq';
 import { getBullMQConnection } from '../infra/queues/connection.js';
-import type { AnalyzeCompilerJobData } from '../infra/queues/analyzeCompilerQueue.js';
+import { enqueueAnalyzeCompilerJob, type AnalyzeCompilerJobData } from '../infra/queues/analyzeCompilerQueue.js';
 import {
     failAnalyzeCompilerJob,
-    runAnalyzeCompilerPipeline,
+    runStageCommand,
 } from '../services/pageCompiler/compilerService.js';
+import type { AnalyzeStageCommand } from '../services/pageCompiler/types.js';
 
 let workerInstance: Worker<AnalyzeCompilerJobData> | null = null;
+
+const NEXT_STAGE: Record<AnalyzeStageCommand, AnalyzeStageCommand | null> = {
+    scan: 'entities',
+    entities: 'gaps',
+    gaps: 'pagespec',
+    pagespec: 'compile',
+    compile: 'schema',
+    schema: 'graph',
+    graph: null,
+};
 
 export function startAnalyzeCompilerWorker(): void {
     const connection = getBullMQConnection();
@@ -20,7 +31,14 @@ export function startAnalyzeCompilerWorker(): void {
         'analyze-compiler',
         async (job) => {
             try {
-                await runAnalyzeCompilerPipeline(job.data.jobId);
+                await runStageCommand(job.data.jobId, job.data.stage);
+                const next = NEXT_STAGE[job.data.stage];
+                if (next) {
+                    await enqueueAnalyzeCompilerJob({
+                        jobId: job.data.jobId,
+                        stage: next,
+                    });
+                }
             } catch (err: unknown) {
                 const message = err instanceof Error ? err.message : String(err);
                 await failAnalyzeCompilerJob(job.data.jobId, message);

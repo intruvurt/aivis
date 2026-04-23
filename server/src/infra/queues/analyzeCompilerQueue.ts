@@ -1,8 +1,10 @@
 import { Queue } from 'bullmq';
 import { getBullMQConnection } from './connection.js';
+import type { AnalyzeStageCommand } from '../../services/pageCompiler/types.js';
 
 export interface AnalyzeCompilerJobData {
     jobId: string;
+    stage: AnalyzeStageCommand;
 }
 
 let analyzeCompilerQueueInstance: Queue<AnalyzeCompilerJobData> | null = null;
@@ -29,8 +31,8 @@ export async function enqueueAnalyzeCompilerJob(data: AnalyzeCompilerJobData): P
     const queue = getAnalyzeCompilerQueue();
     if (!queue) throw new Error('Analyze compiler queue unavailable - Redis not configured');
 
-    const job = await queue.add('compile-pages', data, {
-        jobId: `analyze-compiler:${data.jobId}`,
+    const job = await queue.add(`stage:${data.stage}`, data, {
+        jobId: `analyze-compiler:${data.jobId}:${data.stage}`,
         priority: 2,
     });
 

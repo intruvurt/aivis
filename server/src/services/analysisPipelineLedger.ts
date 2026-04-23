@@ -31,10 +31,10 @@
 
 import {
     appendLedgerEvent,
-    replayAndSnapshot,
     CURRENT_REDUCER_VERSION,
     type AuditEventType,
 } from './ledgerService.js';
+import { replayAndSnapshot } from './replayEngine.js';
 
 type Noop = () => void;
 const noop: Noop = () => undefined;

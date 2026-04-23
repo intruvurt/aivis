@@ -13,6 +13,12 @@ interface TicketWithMessages {
   messages: SupportTicketMessage[];
 }
 
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof Error && err.message) return err.message;
+  if (typeof err === 'string' && err.trim()) return err;
+  return fallback;
+}
+
 export function useSupportTickets() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [activeTicket, setActiveTicket] = useState<TicketWithMessages | null>(null);
@@ -32,8 +38,8 @@ export function useSupportTickets() {
       const data = await res.json();
       setTickets(data.tickets || []);
       setTotal(data.total || 0);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load tickets');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to load tickets'));
     } finally {
       setIsLoading(false);
     }
@@ -47,8 +53,8 @@ export function useSupportTickets() {
       if (!res.ok) throw new Error('Ticket not found');
       const data = await res.json();
       setActiveTicket({ ticket: data.ticket, messages: data.messages || [] });
-    } catch (err: any) {
-      setError(err.message || 'Failed to load ticket');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to load ticket'));
     } finally {
       setIsLoading(false);
     }
@@ -69,8 +75,8 @@ export function useSupportTickets() {
       }
       const data = await res.json();
       return data.ticket;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create ticket');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to create ticket'));
       return null;
     } finally {
       setIsLoading(false);
@@ -92,8 +98,8 @@ export function useSupportTickets() {
       // Refresh the ticket to get updated messages
       await fetchTicket(ticketId);
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Failed to send reply');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to send reply'));
       return false;
     }
   }, [fetchTicket]);
@@ -107,8 +113,8 @@ export function useSupportTickets() {
       if (!res.ok) throw new Error('Failed to close ticket');
       await fetchTickets();
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Failed to close ticket');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to close ticket'));
       return false;
     }
   }, [fetchTickets]);

@@ -21,10 +21,14 @@ import { Link } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { buildBreadcrumbSchema } from '../lib/seoSchema';
 import { useLiveFindings } from '../hooks/useLiveFindings';
+import GuideScanFlow from '../components/guide/GuideScanFlow';
+import GuideExecutionChecklist from '../components/guide/GuideExecutionChecklist';
+import type { GuideChecklistItem, GuideFlowStage } from '../components/guide/guideTypes';
 
 const GUIDE_SECTIONS = [
   { id: 'system-definition', label: 'What This Is' },
   { id: 'start-here', label: 'Start Here' },
+  { id: 'execution-checklist', label: 'Checklist' },
   { id: 'baseline-setup', label: 'Baseline Setup' },
   { id: 'run-first-audit', label: 'Run First Audit' },
   { id: 'read-results-correctly', label: 'Read Results' },
@@ -69,6 +73,123 @@ const HOW_TO_STEPS = [
   {
     name: 'Scale to adjacent pages',
     text: 'After one page improves, apply the same pattern to 2–3 related pages.',
+  },
+];
+
+const GUIDE_FLOW_STAGES: GuideFlowStage[] = [
+  {
+    id: 'flow-start',
+    title: 'Define one high-value URL',
+    summary: 'Pick one revenue page and keep the target stable for your first full cycle.',
+    eta: '2 min',
+    anchorId: 'baseline-setup',
+    ctaLabel: 'Baseline setup',
+    ctaTo: '/app/analyze',
+  },
+  {
+    id: 'flow-audit',
+    title: 'Run baseline audit',
+    summary: 'Capture score, grades, and evidence before any edits so your delta is provable.',
+    eta: '30-60 sec',
+    anchorId: 'run-first-audit',
+    ctaLabel: 'Run first audit',
+    ctaTo: '/app/analyze',
+  },
+  {
+    id: 'flow-read',
+    title: 'Read output by signal class',
+    summary: 'Prioritize trust and extraction blockers before low-impact formatting tweaks.',
+    eta: '8 min',
+    anchorId: 'read-results-correctly',
+    ctaLabel: 'Read results',
+  },
+  {
+    id: 'flow-fix',
+    title: 'Ship top 3 fixes',
+    summary: 'Execute structure, extractability, and trust passes in that order.',
+    eta: '2-3 days',
+    anchorId: 'execute-fixes',
+    ctaLabel: 'Execute fixes',
+    ctaTo: '/app/score-fix',
+  },
+  {
+    id: 'flow-verify',
+    title: 'Re-audit same URL',
+    summary: 'Re-run the exact page and compare score plus category movement.',
+    eta: '30-60 sec',
+    anchorId: 'retest-and-prove',
+    ctaLabel: 'Retest + proof',
+    ctaTo: '/app/reports',
+  },
+  {
+    id: 'flow-scale',
+    title: 'Scale proven pattern',
+    summary: 'Apply the winning fix package to adjacent pages and keep weekly cadence.',
+    eta: 'Weekly',
+    anchorId: 'operating-cadence',
+    ctaLabel: 'Operating cadence',
+  },
+];
+
+const GUIDE_CHECKLIST_ITEMS: GuideChecklistItem[] = [
+  {
+    id: 'check-url',
+    title: 'Select one target URL',
+    detail: 'Start with one money page or one service page and keep that URL fixed for cycle one.',
+    eta: '2 min',
+    priority: 'high',
+    anchorId: 'baseline-setup',
+    actionLabel: 'Open Analyze',
+    actionTo: '/app/analyze',
+  },
+  {
+    id: 'check-baseline',
+    title: 'Run baseline audit',
+    detail: 'Save score, category grades, and recommendation set before touching content.',
+    eta: '30-60 sec',
+    priority: 'critical',
+    anchorId: 'run-first-audit',
+    actionLabel: 'Run Audit',
+    actionTo: '/app/analyze',
+  },
+  {
+    id: 'check-fixes',
+    title: 'Ship 3 highest-impact fixes',
+    detail:
+      'Prioritize structure, extractability, and trust fixes over cosmetic content edits in pass one.',
+    eta: '2-3 days',
+    priority: 'critical',
+    anchorId: 'execute-fixes',
+    actionLabel: 'Open Score Fix',
+    actionTo: '/app/score-fix',
+  },
+  {
+    id: 'check-retest',
+    title: 'Re-audit same URL',
+    detail: 'Measure score and category deltas on the exact same URL to prove causality.',
+    eta: '30-60 sec',
+    priority: 'high',
+    anchorId: 'retest-and-prove',
+    actionLabel: 'Open Reports',
+    actionTo: '/app/reports',
+  },
+  {
+    id: 'check-proof',
+    title: 'Document before/after proof',
+    detail: 'Export and store report snapshots with timestamps for repeatable evidence.',
+    eta: '10 min',
+    priority: 'medium',
+    anchorId: 'retest-and-prove',
+    actionLabel: 'Open Reports',
+    actionTo: '/app/reports',
+  },
+  {
+    id: 'check-scale',
+    title: 'Scale to adjacent pages',
+    detail: 'Apply the same fix package to 2-3 related URLs in your next weekly cycle.',
+    eta: '1 week',
+    priority: 'medium',
+    anchorId: 'operating-cadence',
   },
 ];
 
@@ -307,6 +428,8 @@ export default function GuidePage() {
           ))}
         </aside>
 
+        <GuideScanFlow stages={GUIDE_FLOW_STAGES} />
+
         {/* ── System Definition ── */}
         <section
           id="system-definition"
@@ -499,6 +622,8 @@ export default function GuidePage() {
             </div>
           </div>
         </header>
+
+        <GuideExecutionChecklist items={GUIDE_CHECKLIST_ITEMS} />
 
         <section
           id="baseline-setup"

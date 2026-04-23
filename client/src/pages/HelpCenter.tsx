@@ -887,8 +887,11 @@ export default function HelpCenter() {
   });
 
   const navigate = useNavigate();
-  const { user, token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const isLoggedIn = !!token;
+  const requesterName =
+    user?.display_name || user?.full_name || user?.name || user?.email || 'Signed-in user';
+  const requesterEmail = user?.email || null;
 
   // Tab state
   const [activeTab, setActiveTab] = useState<HelpTab>('knowledge');
@@ -2846,12 +2849,30 @@ export default function HelpCenter() {
                   )}
 
                   <div className="space-y-5 rounded-xl bg-white/[0.03] border border-white/8 p-6">
+                    {/* Requester context */}
+                    <div className="rounded-lg bg-cyan-500/8 border border-cyan-400/20 p-3.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-cyan-200/80">
+                        Requester
+                      </p>
+                      <p className="text-sm font-medium text-white mt-1">{requesterName}</p>
+                      {requesterEmail && (
+                        <p className="text-xs text-white/45 mt-0.5">{requesterEmail}</p>
+                      )}
+                    </div>
+
                     {/* Subject */}
                     <div>
-                      <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">
+                      <label
+                        htmlFor="ticket-subject"
+                        className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2"
+                      >
                         Subject
                       </label>
                       <input
+                        id="ticket-subject"
+                        name="ticketSubject"
+                        type="text"
+                        autoComplete="off"
                         value={ticketSubject}
                         onChange={(e) => setTicketSubject(e.target.value)}
                         placeholder="Brief summary of your issue"
@@ -2863,10 +2884,15 @@ export default function HelpCenter() {
                     {/* Category + Priority row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">
+                        <label
+                          htmlFor="ticket-category"
+                          className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2"
+                        >
                           Category
                         </label>
                         <select
+                          id="ticket-category"
+                          name="ticketCategory"
                           value={ticketCategory}
                           onChange={(e) =>
                             setTicketCategory(e.target.value as SupportTicketCategory)
@@ -2885,10 +2911,15 @@ export default function HelpCenter() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">
+                        <label
+                          htmlFor="ticket-priority"
+                          className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2"
+                        >
                           Priority
                         </label>
                         <select
+                          id="ticket-priority"
+                          name="ticketPriority"
                           value={ticketPriority}
                           onChange={(e) =>
                             setTicketPriority(e.target.value as SupportTicketPriority)
@@ -2913,10 +2944,16 @@ export default function HelpCenter() {
 
                     {/* Description */}
                     <div>
-                      <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">
+                      <label
+                        htmlFor="ticket-description"
+                        className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2"
+                      >
                         Description
                       </label>
                       <textarea
+                        id="ticket-description"
+                        name="ticketDescription"
+                        autoComplete="off"
                         value={ticketDescription}
                         onChange={(e) => setTicketDescription(e.target.value)}
                         placeholder="Describe your issue in detail. Include steps to reproduce, expected behavior, and any relevant URLs or IDs."

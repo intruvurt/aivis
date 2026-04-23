@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Check, ChevronRight, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import TierRecommendationQuiz from '../components/pricing/TierRecommendationQuiz';
 
 interface TierPricingData {
   key: string;
@@ -67,6 +68,12 @@ export default function PricingPage() {
       return;
     }
     navigate(`/checkout?tier=${tier.key}&cycle=${billingCycle}`);
+  };
+
+  const handleCheckoutByTierKey = (tierKey: string) => {
+    const tier = tiers.find((item) => item.key === tierKey);
+    if (!tier) return;
+    handleCheckout(tier);
   };
 
   if (loading) {
@@ -143,6 +150,16 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      {tiers.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TierRecommendationQuiz
+            tiers={tiers}
+            billingCycle={billingCycle}
+            onSelectTier={handleCheckoutByTierKey}
+          />
+        </section>
+      )}
 
       {/* ERROR STATE */}
       {error && (

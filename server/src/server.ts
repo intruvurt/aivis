@@ -364,6 +364,12 @@ app.disable("x-powered-by");
 // interfere with CORS responses.
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin as string | undefined;
+  const normalizedPath = req.path.length > 1 ? req.path.replace(/\/+$/, "") : req.path;
+  const isPublicCorsPath =
+    normalizedPath === "/api/health" ||
+    normalizedPath === "/health" ||
+    normalizedPath === "/api/public/audit/session/latest" ||
+    normalizedPath.startsWith("/api/public/audit/session/latest/");
 
   // Normalize origin helper
   const normalizeOriginHelper = (o: string): string => {
@@ -382,16 +388,22 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   // Allow all responses to include CORS headers if origin is valid
   if (origin) {
     const normalizedOrigin = normalizeOriginHelper(origin);
-    if (NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Access-Control-Allow-Credentials", "true");
+    if (isPublicCorsPath || NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) {
+      if (isPublicCorsPath) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+      } else {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+      }
       res.setHeader("Vary", "Origin");
 
       // Preflight response
       if (req.method === "OPTIONS") {
         res.setHeader(
           "Access-Control-Allow-Methods",
-          "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+          isPublicCorsPath
+            ? "GET, OPTIONS"
+            : "GET, POST, PUT, PATCH, DELETE, OPTIONS",
         );
         res.setHeader(
           "Access-Control-Allow-Headers",

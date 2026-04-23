@@ -37,13 +37,17 @@ export function TopInputBar() {
     <form onSubmit={handleSubmit} className="w-full flex gap-3">
       <div className="relative flex-1">
         <input
+          id="scan-url-input"
+          name="scanUrl"
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => dispatch({ type: 'FOCUS_INPUT' })}
           onBlur={() => dispatch({ type: 'BLUR_INPUT' })}
           placeholder="https://yoursite.com"
-          autoComplete="off"
+          autoComplete="url"
+          inputMode="url"
+          aria-label="Website URL to analyze"
           spellCheck={false}
           className="w-full px-4 py-3.5 pr-10 rounded-xl bg-[#111827]/80 border border-white/15 text-white placeholder-white/30 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all"
         />

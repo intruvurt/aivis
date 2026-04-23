@@ -336,7 +336,7 @@ export async function replayTrace(
             const expectedHash = computeStateHash(snap.state as Record<string, unknown>);
             if (expectedHash === snap.stateHash) {
                 fromSequence = snap.sequenceAt + 1;
-                baseState = { ...snap.state as AuditProjection };
+                baseState = { ...(snap.state as unknown as AuditProjection) };
             } else {
                 console.warn(`[replay] Snapshot hash mismatch for trace ${traceId} — replaying from scratch`);
             }

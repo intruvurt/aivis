@@ -20,5 +20,5 @@
     "rootDir": ".."
   },
   "include": ["src/**/*.ts", "../shared/**/*.ts"],
-  "exclude": ["node_modules", "dist", "src/tests/**/*", "src/**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "src/tests/**/*", "src/**/*.test.ts", "src/workers/exampleStreamWorker.template.ts"]
 }

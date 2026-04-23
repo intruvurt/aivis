@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/server/src/server.js",
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=20.19"
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -73,6 +73,7 @@
     "robots-parser": "^3.0.1",
     "stripe": "^17.7.0",
     "tesseract.js": "^7.0.0",
+    "uuid": "9.0.1",
     "validator": "^13.15.26",
     "xml2js": "^0.6.2",
     "zod": "^4.3.6"
@@ -104,8 +105,10 @@
     "esbuild": "^0.25.0",
     "path-to-regexp": "^6.2.3",
     "minimatch": "^10.2.1",
-    "uuid": "9.0.1",
     "undici": "^7.23.1",
-    "html-encoding-sniffer": "2.0.0"
+    "html-encoding-sniffer": "2.0.0",
+    "bullmq": {
+      "uuid": "9.0.1"
+    }
   }
 }

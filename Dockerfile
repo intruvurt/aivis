@@ -1,4 +1,4 @@
-FROM node:22.12.0-bookworm-slim AS builder
+FROM node:24.11.0-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -11,8 +11,8 @@ COPY server/package*.json server/
 COPY client/package*.json client/
 COPY shared/ shared/
 
-RUN npm --prefix server ci
-RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client ci
+RUN npm --prefix server install
+RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install
 
 COPY . .
 
@@ -22,7 +22,7 @@ RUN npm --prefix server run build
 RUN npx puppeteer browsers install chrome
 
 
-FROM node:22.12.0-bookworm-slim AS runtime
+FROM node:24.11.0-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \

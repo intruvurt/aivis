@@ -3,3 +3,4 @@ uvicorn
 spacy
 sentence-transformers
 numpy
+pydantic

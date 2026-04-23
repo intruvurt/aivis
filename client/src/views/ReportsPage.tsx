@@ -1,10 +1,9 @@
 // client/src/views/ReportsPage.tsx
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Spinner from '../components/Spinner';
 import {
-  ArrowLeft,
   FileText,
   Download,
   Calendar,
@@ -33,7 +32,6 @@ import { meetsMinimumTier } from '@shared/types';
 
 import { useAuthStore } from '../stores/authStore';
 import { useAnalysisStore } from '../stores/analysisStore';
-import { useSettingsStore } from '../stores/settingsStore';
 import UpgradeWall from '../components/UpgradeWall';
 import FeatureInstruction, { ButtonTooltip, InfoTip } from '../components/FeatureInstruction';
 import { API_URL, PUBLIC_APP_ORIGIN } from '../config';
@@ -83,6 +81,53 @@ interface FixpackQueueItem {
   expectedLiftMin: number;
   expectedLiftMax: number;
   targetGateIds: string[];
+}
+
+type TimelineTarget = {
+  key: string;
+  url: string;
+  events: Report[];
+};
+
+type TimelineState = {
+  targetKey: string;
+  cursor: number;
+};
+
+type TimelineAction =
+  | { type: 'sync'; targets: TimelineTarget[] }
+  | { type: 'set-target'; targetKey: string; maxCursor: number }
+  | { type: 'set-cursor'; cursor: number; maxCursor: number };
+
+function clampCursor(value: number, max: number): number {
+  if (!Number.isFinite(value)) return 0;
+  if (max <= 0) return 0;
+  return Math.max(0, Math.min(max, Math.floor(value)));
+}
+
+function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
+  if (action.type === 'sync') {
+    if (action.targets.length === 0) return { targetKey: '', cursor: 0 };
+    const hasActive = action.targets.some((target) => target.key === state.targetKey);
+    const targetKey = hasActive ? state.targetKey : action.targets[0].key;
+    const target = action.targets.find((item) => item.key === targetKey);
+    return {
+      targetKey,
+      cursor: clampCursor(state.cursor, Math.max(0, (target?.events.length || 1) - 1)),
+    };
+  }
+
+  if (action.type === 'set-target') {
+    return {
+      targetKey: action.targetKey,
+      cursor: clampCursor(state.cursor, action.maxCursor),
+    };
+  }
+
+  return {
+    ...state,
+    cursor: clampCursor(action.cursor, action.maxCursor),
+  };
 }
 
 const PAGE_USE_CASES = [
@@ -214,10 +259,37 @@ function formatDelta(value: number): string {
   return value > 0 ? `+${value}` : `${value}`;
 }
 
+function toMinuteBucket(createdAt: string): number {
+  const ms = new Date(createdAt).getTime();
+  if (!Number.isFinite(ms)) return 0;
+  return Math.floor(ms / 60000);
+}
+
+function buildReportIdentityKey(report: Pick<Report, 'auditId' | 'url' | 'createdAt'>): string {
+  if (report.auditId) return `audit:${String(report.auditId)}`;
+  return `${buildReportTargetKey(report.url)}|minute:${toMinuteBucket(report.createdAt)}`;
+}
+
+function isShareExpired(expiresAt?: string): boolean {
+  if (!expiresAt) return false;
+  const ms = new Date(expiresAt).getTime();
+  if (!Number.isFinite(ms)) return false;
+  return ms <= Date.now();
+}
+
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export default function ReportsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { token, isAuthenticated, refreshUser, logout, user } = useAuthStore();
+  const { token, isAuthenticated, isHydrated, refreshUser, logout, user } = useAuthStore();
   const { history, removeFromHistory } = useAnalysisStore();
 
   // Read ?audit=<id> param from notification deep-links
@@ -230,7 +302,11 @@ export default function ReportsPage() {
     path: '/reports',
   });
 
-  const hasAccess = meetsMinimumTier((user?.tier as any) || 'observer', 'alignment');
+  const normalizedUserTier = typeof user?.tier === 'string' ? user.tier : ('observer' as const);
+  const hasAccess = meetsMinimumTier(
+    normalizedUserTier as 'observer' | 'starter' | 'alignment' | 'signal' | 'agency' | 'scorefix',
+    'alignment'
+  );
 
   const [filter, setFilter] = useState<'all' | 'completed' | 'processing'>('all');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -243,7 +319,7 @@ export default function ReportsPage() {
   );
   const [consolidateByUrl, setConsolidateByUrl] = useState(true);
   const [share, setShare] = useState<ShareState>({ open: false });
-  const [shareExpiryDays, setShareExpiryDays] = useState<number>(30);
+  const [shareExpiryDays] = useState<number>(30);
   const [apiAudits, setApiAudits] = useState<ApiAudit[]>([]);
   const [apiAuditsTotal, setApiAuditsTotal] = useState<number | null>(null);
   const [auditResultsByAuditId, setAuditResultsByAuditId] = useState<
@@ -252,6 +328,7 @@ export default function ReportsPage() {
   // fixpack_status keyed by `${auditId}:${fixpackId}` → 'open' | 'in-progress' | 'validated'
   const [fixpackStatuses, setFixpackStatuses] = useState<Record<string, string>>({});
   const fixpackFetchedAuditIds = useRef(new Set<string>());
+  const auditDetailsInFlight = useRef(new Set<string>());
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [compareTargetKey, setCompareTargetKey] = useState('');
   const [baselineReportId, setBaselineReportId] = useState('');
@@ -259,9 +336,12 @@ export default function ReportsPage() {
 
   // Auth guard
   useEffect(() => {
+    if (!isHydrated) return;
+
     if (!isAuthenticated && token) {
       refreshUser().then((success) => {
-        if (!success) {
+        const snapshot = useAuthStore.getState();
+        if (!success && !snapshot.token) {
           logout();
           navigate('/auth?mode=signin');
         }
@@ -272,7 +352,7 @@ export default function ReportsPage() {
     if (!isAuthenticated && !token) {
       navigate('/auth?mode=signin');
     }
-  }, [isAuthenticated, token, refreshUser, logout, navigate]);
+  }, [isHydrated, isAuthenticated, token, refreshUser, logout, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated || !hasAccess) return;
@@ -368,8 +448,9 @@ export default function ReportsPage() {
         })();
 
         const score = Number(audit.visibility_score || 0);
-        const createdAt = audit.created_at || new Date().toISOString();
-        const timestamp = new Date(createdAt).getTime() || Date.now() - idx;
+        const createdAt = audit.created_at || '1970-01-01T00:00:00.000Z';
+        const parsedTimestamp = new Date(createdAt).getTime();
+        const timestamp = Number.isFinite(parsedTimestamp) ? parsedTimestamp : idx;
         const seo = audit.seo_diagnostics;
         const seoSummary: Report['seoSummary'] =
           seo && typeof seo === 'object'
@@ -404,19 +485,14 @@ export default function ReportsPage() {
   // - remoteReports (/api/audits) are canonical server truth and are always preferred.
   // - localReports (useAnalysisStore().history) are local-only client memory; they fill
   //   gaps where the server snapshot doesn't exist yet (e.g. immediately after a new scan).
-  // - Dedup key: normalized target URL + exact ISO timestamp. When both exist for the same
-  //   audit, the server snapshot wins and the local entry is dropped.
+  // - Dedup key: prefer canonical audit id, else normalized URL + minute bucket.
+  //   This absorbs timestamp drift between local and server snapshots.
   const reports: Report[] = useMemo(() => {
     const merged = [...remoteReports];
-    const seen = new Set(
-      remoteReports.map(
-        (report) =>
-          `${buildReportTargetKey(report.url)}|${new Date(report.createdAt).toISOString()}`
-      )
-    );
+    const seen = new Set(remoteReports.map((report) => buildReportIdentityKey(report)));
 
     for (const report of localReports) {
-      const key = `${buildReportTargetKey(report.url)}|${new Date(report.createdAt).toISOString()}`;
+      const key = buildReportIdentityKey(report);
       if (seen.has(key)) continue;
       seen.add(key);
       merged.push(report);
@@ -424,6 +500,50 @@ export default function ReportsPage() {
 
     return merged;
   }, [remoteReports, localReports]);
+
+  const timelineTargets = useMemo(() => {
+    const grouped = new Map<string, Report[]>();
+
+    reports.forEach((report) => {
+      if (report.status !== 'completed') return;
+      const key = buildReportTargetKey(report.url);
+      const list = grouped.get(key) || [];
+      list.push(report);
+      grouped.set(key, list);
+    });
+
+    return Array.from(grouped.entries())
+      .map(([key, events]) => ({
+        key,
+        url: events[0]?.url || '',
+        events: [...events].sort((left, right) => left.timestamp - right.timestamp),
+      }))
+      .filter((target) => target.events.length > 0)
+      .sort((left, right) => {
+        const leftLatest = left.events[left.events.length - 1]?.timestamp || 0;
+        const rightLatest = right.events[right.events.length - 1]?.timestamp || 0;
+        return rightLatest - leftLatest;
+      });
+  }, [reports]);
+
+  const [timelineState, dispatchTimeline] = useReducer(timelineReducer, {
+    targetKey: '',
+    cursor: 0,
+  });
+
+  useEffect(() => {
+    dispatchTimeline({ type: 'sync', targets: timelineTargets });
+  }, [timelineTargets]);
+
+  const activeTimelineTarget = useMemo(
+    () => timelineTargets.find((target) => target.key === timelineState.targetKey) || null,
+    [timelineTargets, timelineState.targetKey]
+  );
+
+  const timelineEvents = activeTimelineTarget?.events || [];
+  const timelineCursor = clampCursor(timelineState.cursor, Math.max(0, timelineEvents.length - 1));
+  const timelineCursorReport = timelineEvents[timelineCursor] || null;
+  const timelinePreviousReport = timelineCursor > 0 ? timelineEvents[timelineCursor - 1] : null;
 
   useEffect(() => {
     if (!isAuthenticated || !hasAccess) return;
@@ -435,9 +555,11 @@ export default function ReportsPage() {
       .map((report) => String(report.auditId));
 
     const missingAuditIds = candidateAuditIds.filter(
-      (auditId) => !(auditId in auditResultsByAuditId)
+      (auditId) => !(auditId in auditResultsByAuditId) && !auditDetailsInFlight.current.has(auditId)
     );
     if (missingAuditIds.length === 0) return;
+
+    missingAuditIds.forEach((auditId) => auditDetailsInFlight.current.add(auditId));
 
     let cancelled = false;
 
@@ -470,6 +592,8 @@ export default function ReportsPage() {
             ] as const;
           } catch {
             return [auditId, null] as const;
+          } finally {
+            auditDetailsInFlight.current.delete(auditId);
           }
         })
       );
@@ -573,6 +697,15 @@ export default function ReportsPage() {
 
     return Array.from(grouped.values());
   }, [filteredReports, consolidateByUrl]);
+
+  const cursorScopedDisplayedReports = useMemo(() => {
+    if (!timelineCursorReport || !activeTimelineTarget) return displayedReports;
+    return displayedReports.filter((report) => {
+      const targetKey = buildReportTargetKey(report.url);
+      if (targetKey !== activeTimelineTarget.key) return true;
+      return report.timestamp <= timelineCursorReport.timestamp;
+    });
+  }, [displayedReports, activeTimelineTarget, timelineCursorReport]);
 
   const compareTargets = useMemo(() => {
     const grouped = new Map<string, Report[]>();
@@ -917,7 +1050,7 @@ export default function ReportsPage() {
         current === 'open' ? 'in-progress' : current === 'in-progress' ? 'validated' : 'open';
       setFixpackStatuses((prev) => ({ ...prev, [key]: next }));
       try {
-        await apiFetch(
+        const patchResponse = await apiFetch(
           `${API_URL}/api/audits/${auditId}/fixpacks/${encodeURIComponent(fixpackId)}`,
           {
             method: 'PATCH',
@@ -925,6 +1058,27 @@ export default function ReportsPage() {
             body: JSON.stringify({ status: next }),
           }
         );
+
+        if (!patchResponse.ok) {
+          throw new Error(`Failed to update fixpack status (${patchResponse.status})`);
+        }
+
+        const refreshedResponse = await apiFetch(`${API_URL}/api/audits/${auditId}/fixpacks`);
+        if (refreshedResponse.ok) {
+          const refreshedPayload = (await refreshedResponse.json().catch(() => null)) as {
+            fixpacks?: Array<{ fixpack_id: string; status: string }>;
+          } | null;
+
+          if (Array.isArray(refreshedPayload?.fixpacks)) {
+            setFixpackStatuses((prev) => {
+              const synced = { ...prev };
+              refreshedPayload.fixpacks!.forEach(({ fixpack_id, status }) => {
+                synced[`${auditId}:${fixpack_id}`] = status;
+              });
+              return synced;
+            });
+          }
+        }
       } catch {
         // Revert on failure
         setFixpackStatuses((prev) => ({ ...prev, [key]: current }));
@@ -1145,6 +1299,24 @@ export default function ReportsPage() {
       const scoreColor =
         score >= 80 ? '#10b981' : score >= 60 ? '#06b6d4' : score >= 40 ? '#f59e0b' : '#ef4444';
       const recs = Array.isArray(analysis.recommendations) ? analysis.recommendations : [];
+      const reportTitle = escapeHtml(report.name || report.url);
+      const reportUrl = escapeHtml(report.url);
+      const summaryHtml = analysis.summary
+        ? `<div class="summary">${escapeHtml(analysis.summary)}</div>`
+        : '';
+      const recommendationsHtml = recs
+        .map(
+          (r: any, i: number) =>
+            `<div class="rec"><div class="rec-title">${i + 1}. ${escapeHtml(r.title || r.recommendation || '')}</div><div class="rec-body">${escapeHtml(r.description || r.details || r.reasoning || '')}</div></div>`
+        )
+        .join('');
+      const contentAnalysisHtml = analysis.content_analysis
+        ? `<h2>Content Analysis</h2><table><tr><th>Metric</th><th>Value</th></tr>
+          <tr><td>Word Count</td><td>${escapeHtml(analysis.content_analysis.word_count ?? 'N/A')}</td></tr>
+          <tr><td>Headings</td><td>${escapeHtml(analysis.content_analysis.heading_count ?? 'N/A')}</td></tr>
+          <tr><td>Internal Links</td><td>${escapeHtml(analysis.content_analysis.internal_links ?? 'N/A')}</td></tr>
+          <tr><td>External Links</td><td>${escapeHtml(analysis.content_analysis.external_links ?? 'N/A')}</td></tr></table>`
+        : '';
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
         body{font-family:system-ui,sans-serif;background:#fff;color:#1a1a2e;margin:40px;line-height:1.6}
         h1{font-size:22px;margin-bottom:4px} h2{font-size:16px;margin-top:24px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}
@@ -1155,21 +1327,13 @@ export default function ReportsPage() {
         table{width:100%;border-collapse:collapse;margin-top:8px} td,th{text-align:left;padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:13px}
         th{font-weight:600;background:#f9fafb}
       </style></head><body>
-        <h1>${report.name || report.url}</h1>
-        <p class="meta">${report.url} &mdash; ${new Date(report.createdAt).toLocaleDateString()}</p>
+        <h1>${reportTitle}</h1>
+        <p class="meta">${reportUrl} &mdash; ${new Date(report.createdAt).toLocaleDateString()}</p>
         <div class="score">${score}/100</div>
-        ${analysis.summary ? `<div class="summary">${String(analysis.summary).replace(/</g, '&lt;')}</div>` : ''}
+        ${summaryHtml}
         <h2>Recommendations (${recs.length})</h2>
-        ${recs.map((r: any, i: number) => `<div class="rec"><div class="rec-title">${i + 1}. ${String(r.title || r.recommendation || '').replace(/</g, '&lt;')}</div><div class="rec-body">${String(r.description || r.details || r.reasoning || '').replace(/</g, '&lt;')}</div></div>`).join('')}
-        ${
-          analysis.content_analysis
-            ? `<h2>Content Analysis</h2><table><tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Word Count</td><td>${analysis.content_analysis.word_count ?? 'N/A'}</td></tr>
-          <tr><td>Headings</td><td>${analysis.content_analysis.heading_count ?? 'N/A'}</td></tr>
-          <tr><td>Internal Links</td><td>${analysis.content_analysis.internal_links ?? 'N/A'}</td></tr>
-          <tr><td>External Links</td><td>${analysis.content_analysis.external_links ?? 'N/A'}</td></tr></table>`
-            : ''
-        }
+        ${recommendationsHtml}
+        ${contentAnalysisHtml}
         <p class="meta" style="margin-top:32px">Generated by AiVIS.biz CITE LEDGER &mdash; BRAG Evidence-Linked Scores &mdash; ${new Date().toISOString().split('T')[0]}</p>
       </body></html>`;
 
@@ -1301,57 +1465,59 @@ export default function ReportsPage() {
     if (!share.open) return;
     const report = share.report;
 
-    // Always regenerate a fresh share token on every copy - previous link is
-    // superseded and will expire per the user's configured expiration policy.
     let freshLink = share.link;
     let freshExpiresAt = share.expiresAt;
+    const shouldRegenerate = !freshLink || isShareExpired(share.expiresAt);
+
     try {
-      const endpointPath = '/api/audits/share-link';
-      const endpoints = [endpointPath, `${API_URL}${endpointPath}`].filter(
-        (value, index, arr) => arr.indexOf(value) === index
-      );
-
-      type SharePayload = {
-        token?: string;
-        slug?: string;
-        share_path?: string;
-        expires_at?: string;
-        scan_label?: string;
-        scan_ordinal?: number;
-        public_view?: { tier?: string; redacted?: boolean };
-      };
-      let freshPayload: SharePayload | null = null;
-
-      for (const endpoint of endpoints) {
-        const response = await apiFetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: report.url,
-            analyzedAt: report.createdAt,
-            auditId: report.auditId,
-            expiration_days: share.open
-              ? (share.expirationDays ?? shareExpiryDays)
-              : shareExpiryDays,
-          }),
-        });
-        if (!response.ok) continue;
-        const contentType = String(response.headers.get('content-type') || '').toLowerCase();
-        if (!contentType.includes('application/json')) continue;
-        const parsed = (await response.json().catch(() => null)) as SharePayload | null;
-        if (!parsed?.token && !parsed?.share_path) continue;
-        freshPayload = parsed;
-        break;
-      }
-
-      if (freshPayload) {
-        freshLink = resolvePublicShareUrl(freshPayload.share_path, freshPayload.token);
-        freshExpiresAt = freshPayload.expires_at;
-        setShare((s) =>
-          s.open
-            ? { ...s, link: freshLink, expiresAt: freshPayload.expires_at, copyError: false }
-            : s
+      if (shouldRegenerate) {
+        const endpointPath = '/api/audits/share-link';
+        const endpoints = [endpointPath, `${API_URL}${endpointPath}`].filter(
+          (value, index, arr) => arr.indexOf(value) === index
         );
+
+        type SharePayload = {
+          token?: string;
+          slug?: string;
+          share_path?: string;
+          expires_at?: string;
+          scan_label?: string;
+          scan_ordinal?: number;
+          public_view?: { tier?: string; redacted?: boolean };
+        };
+        let freshPayload: SharePayload | null = null;
+
+        for (const endpoint of endpoints) {
+          const response = await apiFetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              url: report.url,
+              analyzedAt: report.createdAt,
+              auditId: report.auditId,
+              expiration_days: share.open
+                ? (share.expirationDays ?? shareExpiryDays)
+                : shareExpiryDays,
+            }),
+          });
+          if (!response.ok) continue;
+          const contentType = String(response.headers.get('content-type') || '').toLowerCase();
+          if (!contentType.includes('application/json')) continue;
+          const parsed = (await response.json().catch(() => null)) as SharePayload | null;
+          if (!parsed?.token && !parsed?.share_path) continue;
+          freshPayload = parsed;
+          break;
+        }
+
+        if (freshPayload) {
+          freshLink = resolvePublicShareUrl(freshPayload.share_path, freshPayload.token);
+          freshExpiresAt = freshPayload.expires_at;
+          setShare((s) =>
+            s.open
+              ? { ...s, link: freshLink, expiresAt: freshPayload.expires_at, copyError: false }
+              : s
+          );
+        }
       }
     } catch {
       // Non-fatal: fall back to existing link
@@ -1364,7 +1530,11 @@ export default function ReportsPage() {
       if (!didCopy) throw new Error('Clipboard copy failed');
       setShare((s) => (s.open ? { ...s, copied: true, copyError: false } : s));
       const expiryText = formatShareExpiryLabel(freshExpiresAt);
-      toast.success(`New share link generated and copied. ${expiryText}`);
+      toast.success(
+        shouldRegenerate
+          ? `New share link generated and copied. ${expiryText}`
+          : `Share link copied. ${expiryText}`
+      );
       window.setTimeout(
         () => setShare((s) => (s.open ? { ...s, copied: false, copyError: false } : s)),
         2000
@@ -1762,13 +1932,13 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            {displayedReports.length > 0 && (
+            {cursorScopedDisplayedReports.length > 0 && (
               <div className="mb-8">
                 <PlatformProofLoopCard
-                  url={displayedReports[0]?.url}
+                  url={cursorScopedDisplayedReports[0]?.url}
                   score={
-                    displayedReports[0]?.status === 'completed'
-                      ? displayedReports[0].score
+                    cursorScopedDisplayedReports[0]?.status === 'completed'
+                      ? cursorScopedDisplayedReports[0].score
                       : undefined
                   }
                   title="Validation loop"
@@ -2169,9 +2339,108 @@ export default function ReportsPage() {
                 </section>
               )}
 
+            {timelineTargets.length > 0 && activeTimelineTarget && timelineCursorReport && (
+              <section className="brand-bar-top card-charcoal rounded-2xl p-5 sm:p-6 mb-8">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-cyan-200">
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                      Timeline scrubber
+                    </div>
+                    <h3 className="mt-3 text-lg font-semibold text-white">
+                      Replay report events deterministically by cursor
+                    </h3>
+                    <p className="mt-1 text-sm text-white/60">
+                      The report list is rendered from an immutable event stream and clipped at the
+                      selected cursor point.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[26rem]">
+                    <label className="flex flex-col gap-2 text-xs text-white/60">
+                      Target URL
+                      <select
+                        value={timelineState.targetKey}
+                        onChange={(event) =>
+                          dispatchTimeline({
+                            type: 'set-target',
+                            targetKey: event.target.value,
+                            maxCursor: Math.max(
+                              0,
+                              (timelineTargets.find((target) => target.key === event.target.value)
+                                ?.events.length || 1) - 1
+                            ),
+                          })
+                        }
+                        className="rounded-lg border border-white/10 bg-charcoal px-3 py-2 text-sm text-white/85"
+                      >
+                        {timelineTargets.map((target) => (
+                          <option key={target.key} value={target.key}>
+                            {target.url}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="flex flex-col gap-2 text-xs text-white/60">
+                      Cursor
+                      <input
+                        type="range"
+                        min={0}
+                        max={Math.max(0, timelineEvents.length - 1)}
+                        value={timelineCursor}
+                        onChange={(event) =>
+                          dispatchTimeline({
+                            type: 'set-cursor',
+                            cursor: Number(event.target.value),
+                            maxCursor: Math.max(0, timelineEvents.length - 1),
+                          })
+                        }
+                        className="accent-cyan-400"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-white/45">Event</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {formatScanLabel(timelineCursor + 1)} of {timelineEvents.length}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-white/45">Timestamp</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {formatDate(timelineCursorReport.createdAt)}{' '}
+                      {formatTime(timelineCursorReport.createdAt)}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-white/45">Score delta</p>
+                    <p
+                      className={`mt-1 text-sm font-semibold ${
+                        timelinePreviousReport
+                          ? timelineCursorReport.score - timelinePreviousReport.score > 0
+                            ? 'text-emerald-300'
+                            : timelineCursorReport.score - timelinePreviousReport.score < 0
+                              ? 'text-red-300'
+                              : 'text-white'
+                          : 'text-white/70'
+                      }`}
+                    >
+                      {timelinePreviousReport
+                        ? formatDelta(timelineCursorReport.score - timelinePreviousReport.score)
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* Reports List */}
             <div className="min-w-0 space-y-3">
-              {displayedReports.map((report) => (
+              {cursorScopedDisplayedReports.map((report) => (
                 <div
                   key={report.id}
                   id={report.auditId ? `report-${report.auditId}` : undefined}
@@ -2397,7 +2666,7 @@ export default function ReportsPage() {
                 </div>
               ))}
 
-              {displayedReports.length === 0 && (
+              {cursorScopedDisplayedReports.length === 0 && (
                 <div className="text-center py-16">
                   <FileText className="w-12 h-12 text-white/70 mx-auto mb-4" />
                   <p className="text-white/55 text-lg font-medium">No reports yet</p>

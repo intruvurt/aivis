@@ -625,40 +625,89 @@
   </head>
 
   <body>
-    <div id="root">
-      <!-- Minimal loading skeleton - React replaces this on mount -->
-      <div
-        style="
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #0b0f1a;
-          font-family: system-ui, sans-serif;
-        "
-      >
-        <p
-          style="position: absolute; left: -10000px; top: auto; white-space: normal"
-          role="doc-subtitle"
-        >
-          AiVIS.biz - CITE LEDGER | Evidence-Linked Scores · Get Fixes Fast
-        </p>
-        <div style="text-align: center">
+    <style>
+      @keyframes aivis-pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      @keyframes aivis-scan {
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(200%);
+        }
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #05070f;
+        font-family: system-ui, sans-serif;
+        transition: opacity 0.4s ease;
+      }
+      #boot-inner {
+        text-align: center;
+        position: relative;
+      }
+      #boot-logo {
+        margin: 0 auto 16px;
+        display: block;
+        border-radius: 10px;
+        animation: aivis-pulse 1.6s ease-in-out infinite;
+      }
+      #boot-scan {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border-radius: 10px;
+        pointer-events: none;
+      }
+      #boot-scan::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 30%;
+        background: linear-gradient(to bottom, transparent, rgba(34, 211, 238, 0.15), transparent);
+        animation: aivis-scan 2s linear infinite;
+      }
+      #boot-text {
+        color: rgba(34, 211, 238, 0.7);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        margin: 0;
+        animation: aivis-pulse 1.6s ease-in-out infinite;
+      }
+    </style>
+
+    <!-- Pre-hydration boot shell — sits outside #root so React mount doesn't destroy it -->
+    <div id="boot" aria-hidden="true">
+      <div id="boot-inner">
+        <div style="position: relative; width: 48px; height: 48px; margin: 0 auto 16px">
           <img
+            id="boot-logo"
             src="/aivis-logo.png"
-            alt="AiVIS.biz | CITE LEDGER"
+            alt=""
             width="48"
             height="48"
-            style="margin: 0 auto 16px; display: block; border-radius: 10px"
+            style="border-radius: 10px; display: block"
           />
-          <p
-            id="boot-loading-text"
-            style="color: rgba(255, 255, 255, 0.6); font-size: 14px; margin: 0"
-          >
-            Loading&hellip;
-          </p>
+          <div id="boot-scan"></div>
         </div>
+        <p id="boot-text">Initialising&hellip;</p>
       </div>
+    </div>
+
+    <div id="root">
       <!-- SEO crawlable content: present in initial HTML payload for JS-free crawlers; visually hidden -->
       <div
         aria-hidden="true"

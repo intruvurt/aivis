@@ -43,6 +43,8 @@ useAuthStore.getState().hydrate();
 (window as any).__AIVIS_BOOTSTRAPPED = true;
 markChunkBootSuccess();
 
+const boot = document.getElementById('boot');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppErrorBoundary>
@@ -52,3 +54,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </AppErrorBoundary>
   </React.StrictMode>
 );
+
+if (boot) {
+  requestAnimationFrame(() => {
+    boot.style.opacity = '0';
+    setTimeout(() => boot.remove(), 450);
+  });
+}

@@ -6,13 +6,13 @@
     <title>AiVIS.biz Pricing | AI Visibility Audit Plans</title>
     <meta
       name="description"
-      content="AiVIS.biz plans: Observer free tier, Starter at $15/mo, Alignment at $49/mo, Signal at $149/mo, and Score Fix one-time $299. Multi-model AI validation and team reporting."
+      content="AiVIS pricing is a feature-licensed visibility system. Runtime limits and eligibility are enforced server-side at /api/payment/pricing."
     />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="AiVIS.biz Pricing | AI Visibility Audit Plans" />
     <meta
       property="og:description"
-      content="AiVIS.biz plans: Observer free tier, Starter at $15/mo, Alignment at $49/mo, Signal at $149/mo, and Score Fix one-time $299. Multi-model AI validation and team reporting."
+      content="AiVIS pricing is a feature-licensed visibility system. Runtime limits and eligibility are enforced server-side at /api/payment/pricing."
     />
     <meta property="og:url" content="https://aivis.biz/pricing" />
     <meta property="og:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
@@ -20,7 +20,7 @@
     <meta name="twitter:title" content="AiVIS.biz Pricing | AI Visibility Audit Plans" />
     <meta
       name="twitter:description"
-      content="AiVIS.biz plans: Observer free tier, Starter at $15/mo, Alignment at $49/mo, Signal at $149/mo, and Score Fix one-time $299. Multi-model AI validation and team reporting."
+      content="AiVIS pricing is a feature-licensed visibility system. Runtime limits and eligibility are enforced server-side at /api/payment/pricing."
     />
     <meta name="twitter:image" content="https://aivis.biz/og-image2.png?v=20260321b" />
     <meta
@@ -107,7 +107,7 @@
                 "name": "Is AiVIS.biz free to use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Observer is permanently free and includes 3 audits per month, a composite 0–100 visibility score, six-category dimension grading, and prioritized findings. No credit card is required to start."
+                  "text": "Yes. Observer is permanently free and includes 3 audits per month, 0-100 visibility scoring, six-dimension analysis, and prioritized findings. No card is required."
                 }
               },
               {
@@ -115,15 +115,31 @@
                 "name": "What is the difference between Observer, Starter, Alignment, and Signal?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Observer gives you evidence-linked reports, historical tracking, and a baseline optimization loop. Starter unlocks full recommendations with implementation code, PDF exports, and shareable links. Alignment adds multi-model AI validation, competitor context, and citation testing workflows. Signal adds API access, advanced automation, reverse-engineer tools, and team-scale operations."
+                  "text": "Observer provides baseline scoring and findings. Starter adds implementation-ready recommendations, PDF export, and share links. Alignment adds multi-model validation, competitor context, and citation behavior testing. Signal adds API access, automation hooks, advanced entity tracing, and team-scale operations."
                 }
               },
               {
                 "@type": "Question",
-                "name": "What does multi-model AI validation mean?",
+                "name": "How are pricing and limits enforced?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Multi-model validation runs a secondary AI critique pass using a separate model. This surfaces advisory findings that crawl analysis alone cannot fully detect, like answer completeness, claim substantiation, and entity specificity. It is available on Alignment and Signal plans."
+                  "text": "Pricing display is informational. Runtime limits and eligibility are enforced server-side via /api/payment/pricing and validated at request time."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do share links behave?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Share links create immutable snapshots of a specific audit. Access can be full or redacted depending on account policy. Links are validated at creation and only change when explicitly regenerated."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does Score Fix billing work?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Score Fix is a consumption remediation layer with credits. It is not a recurring subscription tier and operates on existing audit snapshots."
                 }
               },
               {
@@ -131,7 +147,7 @@
                 "name": "How does annual billing work?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Observer remains free. Starter, Alignment, and Signal annual totals are shown at checkout and billing settings, and you can switch from monthly to annual at any time."
+                  "text": "Annual billing, where available, applies to subscription tiers only and is charged upfront. Observer remains free."
                 }
               },
               {
@@ -139,23 +155,7 @@
                 "name": "Can I cancel at any time?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period. Annual plan refund windows and terms are shown during checkout."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Do audits roll over if I don't use them all?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "No. Audit allowances reset at the start of each billing cycle. If your team consistently exceeds your allowance, upgrading to a higher tier is usually more cost-effective than staying on a constrained plan."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What payment methods are accepted?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers. Crypto payment options are available by contacting support."
+                  "text": "Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Access remains active through the paid period."
                 }
               }
             ]
@@ -342,8 +342,8 @@
     <main class="wrap">
       <h1>AiVIS.biz Pricing</h1>
       <p class="lead">
-        Choose the tier that matches your AI visibility workflow. This page gives a machine-readable
-        and user-readable pricing snapshot for crawlers and no-JS contexts.
+        AiVIS pricing is a feature-licensed visibility system. Every tier maps to executable
+        capabilities enforced server-side.
       </p>
 
       <p class="notice">
@@ -366,33 +366,38 @@
             <td class="plan">Observer</td>
             <td class="scan">3</td>
             <td class="price">Free</td>
-            <td>Core audit scoring and recommendations.</td>
+            <td>
+              Baseline visibility scoring with six-dimension analysis and prioritized findings.
+            </td>
           </tr>
           <tr>
             <td class="plan">Starter</td>
             <td class="scan">15</td>
             <td class="price">$15/mo</td>
-            <td>Full recommendations with implementation code, PDF exports, shareable links.</td>
+            <td>Execution-ready recommendations, PDF export, and share-link snapshots.</td>
           </tr>
           <tr>
             <td class="plan">Alignment</td>
             <td class="scan">60</td>
             <td class="price">$49/mo</td>
-            <td>Multi-model AI validation, competitor context, citation testing workflows.</td>
+            <td>
+              Cross-model validation with discrepancy flags, competitor context, citation behavior
+              tests.
+            </td>
           </tr>
           <tr>
             <td class="plan">Signal</td>
             <td class="scan">200</td>
             <td class="price">$149/mo</td>
             <td>
-              Triple-check pipeline, API access, reverse-engineer tools, team-scale operations.
+              Continuous scanning mode with API access, automation hooks, and advanced tracing.
             </td>
           </tr>
           <tr>
             <td class="plan">Score Fix [AutoFix PR]</td>
             <td class="scan">250 credits</td>
             <td class="price">$299 one-time</td>
-            <td>Evidence-linked remediation pack with implementation-ready fixes.</td>
+            <td>Consumption-based remediation credits with implementation-ready fixes.</td>
           </tr>
         </tbody>
       </table>
@@ -402,15 +407,18 @@
         endpoints.
       </p>
 
+      <p class="foot">
+        Feature access resolves as: user -&gt; tier -&gt; feature flags -&gt; runtime enforcement.
+      </p>
+
       <section class="faq" aria-label="Pricing questions">
         <h2>Pricing questions</h2>
 
         <article class="faq-item">
           <h3 class="faq-q">Is AiVIS.biz free to use?</h3>
           <p class="faq-a">
-            Yes. Observer is permanently free and includes 3 audits per month, a composite 0–100
-            visibility score, six-category dimension grading, and prioritized findings. No credit
-            card is required to start.
+            Yes. Observer is permanently free and includes 3 audits per month, 0-100 visibility
+            scoring, six-dimension analysis, and prioritized findings. No card is required.
           </p>
         </article>
 
@@ -419,31 +427,43 @@
             What is the difference between Observer, Starter, Alignment, and Signal?
           </h3>
           <p class="faq-a">
-            Observer gives you evidence-linked reports, historical tracking, and a baseline
-            optimization loop. Starter unlocks full recommendations with implementation code, PDF
-            exports, and shareable links. Alignment adds multi-model AI validation, competitor
-            context, and citation testing workflows. Signal adds API access, advanced automation,
-            reverse-engineer tools, and team-scale operations.
+            Observer provides baseline scoring and findings. Starter adds implementation-ready
+            recommendations, PDF export, and share links. Alignment adds multi-model validation,
+            competitor context, and citation behavior testing. Signal adds API access, automation
+            hooks, advanced entity tracing, and team-scale operations.
           </p>
         </article>
 
         <article class="faq-item">
-          <h3 class="faq-q">What does multi-model AI validation mean?</h3>
+          <h3 class="faq-q">How are pricing and limits enforced?</h3>
           <p class="faq-a">
-            Multi-model validation runs a secondary AI critique pass using a separate model. This
-            surfaces advisory findings that crawl analysis alone cannot fully detect, like answer
-            completeness, claim substantiation, and entity specificity. It is available on Alignment
-            and Signal plans.
+            Pricing display is informational. Runtime limits and eligibility are enforced
+            server-side via /api/payment/pricing and validated at request time.
+          </p>
+        </article>
+
+        <article class="faq-item">
+          <h3 class="faq-q">How do share links behave?</h3>
+          <p class="faq-a">
+            Share links create immutable snapshots of a specific audit. Access can be full or
+            redacted depending on account policy. Links are validated at creation and only change
+            when explicitly regenerated.
+          </p>
+        </article>
+
+        <article class="faq-item">
+          <h3 class="faq-q">How does Score Fix billing work?</h3>
+          <p class="faq-a">
+            Score Fix is a consumption remediation layer with credits. It is not a recurring
+            subscription tier and operates on existing audit snapshots.
           </p>
         </article>
 
         <article class="faq-item">
           <h3 class="faq-q">How does annual billing work?</h3>
           <p class="faq-a">
-            Annual billing is charged upfront and includes discounted pricing versus month-to-month
-            plans where available. Observer remains free. Starter, Alignment, and Signal annual
-            totals are shown at checkout and billing settings, and you can switch from monthly to
-            annual at any time.
+            Annual billing, where available, applies to subscription tiers only and is charged
+            upfront. Observer remains free.
           </p>
         </article>
 
@@ -451,26 +471,7 @@
           <h3 class="faq-q">Can I cancel at any time?</h3>
           <p class="faq-a">
             Yes. Paid plans are managed in Billing Center and can be canceled from account settings.
-            Your plan remains active through the current paid period. Annual plan refund windows and
-            terms are shown during checkout.
-          </p>
-        </article>
-
-        <article class="faq-item">
-          <h3 class="faq-q">Do audits roll over if I don't use them all?</h3>
-          <p class="faq-a">
-            No. Audit allowances reset at the start of each billing cycle. If your team consistently
-            exceeds your allowance, upgrading to a higher tier is usually more cost-effective than
-            staying on a constrained plan.
-          </p>
-        </article>
-
-        <article class="faq-item">
-          <h3 class="faq-q">What payment methods are accepted?</h3>
-          <p class="faq-a">
-            AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced
-            billing can be arranged for qualifying Signal annual customers. Crypto payment options
-            are available by contacting support.
+            Access remains active through the paid period.
           </p>
         </article>
       </section>

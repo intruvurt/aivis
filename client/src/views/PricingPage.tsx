@@ -216,50 +216,37 @@ const PRICING_FAQ_ITEMS = [
   {
     question: 'Is AiVIS.biz free to use?',
     answer:
-      'Yes. Observer is permanently free and includes 3 CITE LEDGER audits per month with evidence-backed scoring and prioritized findings. No credit card is required to start.',
+      'Yes. Observer is permanently free and includes 3 audits per month, 0-100 visibility scoring, six-dimension analysis, and prioritized findings. No card is required.',
   },
   {
-    question: 'What is included in every plan?',
+    question: 'What is the difference between Observer, Starter, Alignment, and Signal?',
     answer:
-      'Every plan includes CITE LEDGER evidence-backed scoring, BRAG evidence IDs, and prioritized recommendations tied to real page signals. Higher tiers expand audit volume, automation, and collaboration rather than changing the scoring method itself.',
+      'Observer provides baseline scoring and findings. Starter adds implementation-ready recommendations, PDF export, and share links. Alignment adds multi-model validation, competitor context, and citation behavior testing. Signal adds API access, automation hooks, advanced entity tracing, and team-scale operations.',
   },
   {
-    question: 'What is the difference between Alignment and Signal?',
-    answer: `Alignment focuses on intelligence workflows: competitor tracking, brand mention scanning, reverse-engineer tools, and recurring rescans. Signal adds the triple-check AI validation pipeline, citation testing, API and webhook access, white-label reporting, and team workspaces with up to ${TIER_LIMITS.signal.maxTeamMembers} seats.`,
-  },
-  {
-    question: 'What is the triple-check pipeline?',
+    question: 'How are pricing and limits enforced?',
     answer:
-      'The triple-check pipeline runs three independent model passes on every audit. A primary model scores the site, a second model peer-critiques and can adjust the score within a bounded range, and a third model validates the final result. It is available on Signal and Score Fix.',
+      'Pricing display is informational. Runtime limits and eligibility are enforced server-side via /api/payment/pricing and validated at request time.',
   },
   {
-    question: 'What is Score Fix AutoFix PR?',
-    answer: `Score Fix is a recurring managed remediation plan at $${PRICING.scorefix.billing.monthly}/month with ${PRICING.scorefix.credits} monthly remediation credits. It includes Signal-tier analysis plus automated GitHub pull request generation for schema, metadata, heading, and content fixes.`,
-  },
-  {
-    question: 'What does brand mention tracking scan?',
+    question: 'How do share links behave?',
     answer:
-      'Brand mention tracking scans 19 public sources including Reddit, Hacker News, Mastodon, DuckDuckGo and Bing site search, Google News RSS, GitHub, Quora, Product Hunt, Stack Overflow, Wikipedia, Dev.to, Medium, YouTube, Lobsters, Bluesky, Twitter/X, Lemmy, and GitHub Discussions. It is available on Alignment and above.',
+      'Share links create immutable snapshots of a specific audit. Access can be full or redacted depending on account policy. Links are validated at creation and only change when explicitly regenerated.',
+  },
+  {
+    question: 'How does Score Fix billing work?',
+    answer:
+      'Score Fix is a consumption remediation layer with credits. It is not a recurring subscription tier and operates on existing audit snapshots.',
   },
   {
     question: 'How does annual billing work?',
     answer:
-      'Annual billing is charged upfront and includes discounted pricing versus month-to-month plans where available. Starter, Alignment, and Signal annual totals are shown at checkout and in billing settings, and you can switch from monthly to annual when eligible.',
+      'Annual billing, where available, applies to subscription tiers only and is charged upfront. Observer remains free.',
   },
   {
     question: 'Can I cancel at any time?',
     answer:
-      'Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Your plan remains active through the current paid period.',
-  },
-  {
-    question: "Do audits roll over if I don't use them all?",
-    answer:
-      'No. Audit allowances and Score Fix remediation credits reset at the start of each billing cycle.',
-  },
-  {
-    question: 'What payment methods are accepted?',
-    answer:
-      'AiVIS.biz accepts major credit and debit cards through Stripe. Enterprise invoiced billing can be arranged for qualifying Signal annual customers - contact sales@aivis.biz. Crypto payment options are available by contacting support.',
+      'Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Access remains active through the paid period.',
   },
 ] as const;
 
@@ -473,8 +460,8 @@ function PricingCard({
 }: {
   tier: TierPricing;
   billingPeriod: BillingPeriod;
-  onSelect: (tierKey: string) => void;
-  onStartTrial?: () => void;
+  onSelect: (tierKey: string) => void | Promise<void>;
+  onStartTrial?: () => void | Promise<void>;
   currentTier?: string;
   isLoading?: boolean;
   isHighlighted?: boolean;
@@ -1087,13 +1074,11 @@ export default function PricingPage() {
 
           <div className="lonely-text">
             <h1 className="text-4xl md:text-5xl brand-title-lg mb-4">
-              There are things the internet sees.
-              <br />
-              There are things AI repeats.
+              AiVIS Pricing: Canonical System View
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              Most brands live somewhere between those two and never know the difference. AiVIS
-              shows you the gap.
+              AiVIS pricing is a feature-licensed visibility system. All limits, permissions, and
+              feature eligibility are enforced server-side at /api/payment/pricing.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -1140,12 +1125,11 @@ export default function PricingPage() {
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
           <h2 className="text-2xl font-bold text-white mb-3">
-            How deeply do you want to see how AI understands your site?
+            Tier access is runtime-validated, not UI-guessed
           </h2>
-          <p className="text-white/75">Every tier uses the same evidence-linked scoring model.</p>
           <p className="text-white/65">
-            Higher tiers unlock deeper interpretation reconstruction: Surface, Structure, Drift, and
-            Infrastructure.
+            Subscription tiers control audit capacity and feature access. Score Fix is a separate
+            remediation credit model operating on existing snapshots.
           </p>
         </div>
 
@@ -1203,18 +1187,19 @@ export default function PricingPage() {
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8 mb-4">
             {tiers.map((tier) => (
-              <PricingCard
-                key={tier.key}
-                tier={tier}
-                billingPeriod={billingPeriod}
-                onSelect={handleSelectTier}
-                onStartTrial={handleStartTrial}
-                currentTier={currentTier}
-                isLoading={isCheckingOutTier === tier.key}
-                isHighlighted={tier.key === 'signal'}
-                canStartTrial={canStartTrial}
-                isStartingTrial={isStartingTrial}
-              />
+              <div key={tier.key}>
+                <PricingCard
+                  tier={tier}
+                  billingPeriod={billingPeriod}
+                  onSelect={handleSelectTier}
+                  onStartTrial={handleStartTrial}
+                  currentTier={currentTier}
+                  isLoading={isCheckingOutTier === tier.key}
+                  isHighlighted={tier.key === 'signal'}
+                  canStartTrial={canStartTrial}
+                  isStartingTrial={isStartingTrial}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -1222,6 +1207,45 @@ export default function PricingPage() {
         {error && tiers.length > 0 && (
           <p className="text-center text-amber-300/80 text-xs mb-4">{error}</p>
         )}
+
+        <section className="mt-10 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5 surface-structured-muted">
+          <h2 className="text-lg font-semibold text-white">System Rules (Authoritative)</h2>
+          <ul className="mt-3 space-y-2 text-sm text-white/75">
+            <li>All pricing and limits resolve from /api/payment/pricing.</li>
+            <li>Feature access is enforced server-side at request time.</li>
+            <li>UI can display features, but backend determines eligibility.</li>
+            <li>Exports and share links are immutable snapshot artifacts, not live documents.</li>
+            <li>Score Fix operates as remediation credits independent of tier names.</li>
+          </ul>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5 surface-structured-muted">
+          <h2 className="text-lg font-semibold text-white">Feature Access Model</h2>
+          <p className="mt-2 text-sm text-white/70">
+            Capability resolution is flag-based, not label-based. Requests resolve user, tier,
+            feature flags, then runtime enforcement.
+          </p>
+          <div className="mt-3 rounded-xl border border-white/10 bg-charcoal/50 p-4">
+            <pre className="text-xs text-white/75 overflow-x-auto">{`user -> tier -> feature flags -> runtime enforcement`}</pre>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
+            {[
+              'audits_per_month',
+              'pdf_export',
+              'share_links',
+              'multi_model_validation',
+              'api_access',
+              'remediation_credits',
+            ].map((flag) => (
+              <span
+                key={flag}
+                className="px-2 py-1 rounded-full border border-white/12 bg-charcoal text-white/80"
+              >
+                {flag}
+              </span>
+            ))}
+          </div>
+        </section>
 
         {/* ── Quick comparison table ──────────────────────── */}
         <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">

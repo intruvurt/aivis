@@ -32,6 +32,8 @@ import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import authRoutes from "./routes/authRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import auditQueueRoutes from "./routes/auditQueueRoutes.js";
+import analyzeCompilerRoutes from "./routes/analyzeCompilerRoutes.js";
+import internalCompilerRoutes from "./routes/internalCompilerRoutes.js";
 import { createLicenseAPI } from "./licensing/verification-api.js";
 import competitorRoutes from "./routes/competitors.js";
 import citationRoutes from "./routes/citations.js";
@@ -268,6 +270,7 @@ import { startFixWorker } from "./workers/fixWorker.js";
 import { startTrackingWorker } from "./workers/trackingWorker.js";
 import { startPRWorker } from "./workers/prWorker.js";
 import { startRawDocumentWorker } from "./workers/rawDocument.worker.js";
+import { startAnalyzeCompilerWorker } from "./workers/analyzeCompilerWorker.js";
 import { startScheduler } from "./services/scheduler.js";
 import { startSelfHealingLoop } from "./services/selfHealingService.js";
 import { bootstrapAgencyAutomation } from "./services/agencyAutomationService.js";
@@ -1670,6 +1673,8 @@ app.use("/api/billing", paymentRoutes);
 app.use("/api/stripe", paymentRoutes);
 app.use("/api/paypal", paypalRoutes);
 app.use("/api/queue", auditQueueRoutes);
+app.use("/api/analyze", analyzeCompilerRoutes);
+app.use("/internal", internalCompilerRoutes);
 app.get("/api/pricing", getPricingInfo);
 app.use("/api/cite-ledger", citeLedgerRoutes);
 app.use("/api/graph", graphRoutes);
@@ -3307,6 +3312,11 @@ app.get(
     }
   },
 );
+
+// Compatibility alias for platforms that probe /health directly.
+app.get("/health", (_req, res) => {
+  res.redirect(307, "/api/health");
+});
 
 app.get(
   "/api/ready",
@@ -16456,6 +16466,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     startTrackingWorker();
     startPRWorker();
     startRawDocumentWorker();
+    startAnalyzeCompilerWorker();
     startScheduler();
     startSelfHealingLoop();
     bootstrapAgencyAutomation();

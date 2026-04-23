@@ -37,6 +37,7 @@
     "smoke:visibility:gate": "node ./tools/verify-visibility-gate.mjs",
     "smoke:audit-trace:determinism": "npm --prefix server run verify:audit-trace-determinism",
     "smoke:wiring:static": "node ./tools/verify-platform-wiring-static.mjs",
+    "audit:system-truth": "node ./tools/system-truth-validator.mjs",
     "worker:bix": "npm --prefix server run worker:bix",
     "worker:citations": "npm --prefix server run worker:citations",
     "worker:fix": "npm --prefix server run worker:fix",

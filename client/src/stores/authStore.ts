@@ -84,7 +84,7 @@ function writePersistedToken(token: string | null) {
     }
 }
 
-async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs = 15000) {
+async function fetchWithTimeout(input: string | URL | Request, init: RequestInit, timeoutMs = 15000) {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -94,34 +94,45 @@ async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, tim
     }
 }
 
-function normalizeAuthUser(raw: any): AuthUser | null {
+function normalizeAuthUser(raw: unknown): AuthUser | null {
     if (!raw || typeof raw !== "object") return null;
 
+    const source = raw as Record<string, unknown>;
+
     const user: AuthUser = {
-        id: String(raw.id ?? ""),
-        email: String(raw.email ?? ""),
-        name: typeof raw.name === "string" ? raw.name : undefined,
-        role: typeof raw.role === "string" ? raw.role : undefined,
-        tier: (raw.tier as AuthTier) ?? "observer",
-        trial_ends_at: raw.trial_ends_at ?? null,
-        trial_active: raw.trial_active === true,
-        trial_used: raw.trial_used === true,
-        full_name: raw.full_name ?? raw.name ?? undefined,
-        display_name: raw.display_name ?? raw.name ?? undefined,
-        created_at: raw.created_at ?? undefined,
-        avatar_url: raw.avatar_url ?? undefined,
-        org_logo_url: raw.org_logo_url ?? undefined,
-        org_favicon_url: raw.org_favicon_url ?? undefined,
-        company: raw.company ?? undefined,
-        website: raw.website ?? undefined,
-        is_verified: raw.is_verified === true,
-        verification_grace_active: raw.verification_grace_active === true,
-        verification_grace_until: raw.verification_grace_until ?? null,
+        id: String(source.id ?? ""),
+        email: String(source.email ?? ""),
+        name: typeof source.name === "string" ? source.name : undefined,
+        role: typeof source.role === "string" ? source.role : undefined,
+        tier: (source.tier as AuthTier) ?? "observer",
+        trial_ends_at:
+            typeof source.trial_ends_at === "string" || source.trial_ends_at === null
+                ? (source.trial_ends_at as string | null)
+                : null,
+        trial_active: source.trial_active === true,
+        trial_used: source.trial_used === true,
+        full_name: (source.full_name as string | undefined) ?? (source.name as string | undefined) ?? undefined,
+        display_name:
+            (source.display_name as string | undefined) ?? (source.name as string | undefined) ?? undefined,
+        created_at: source.created_at as string | undefined,
+        avatar_url: source.avatar_url as string | undefined,
+        org_logo_url: source.org_logo_url as string | undefined,
+        org_favicon_url: source.org_favicon_url as string | undefined,
+        company: source.company as string | undefined,
+        website: source.website as string | undefined,
+        is_verified: source.is_verified === true,
+        verification_grace_active: source.verification_grace_active === true,
+        verification_grace_until:
+            typeof source.verification_grace_until === "string" || source.verification_grace_until === null
+                ? (source.verification_grace_until as string | null)
+                : null,
     };
 
     if (!user.id || !user.email) return null;
     return user;
 }
+
+let refreshUserInFlight: Promise<boolean> | null = null;
 
 export const useAuthStore = create<AuthState>((set, get) => ({
     isHydrated: false,
@@ -165,42 +176,62 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     refreshUser: async () => {
-        try {
-            const currentToken = get().token;
-            const headers: Record<string, string> = { "Content-Type": "application/json" };
-            if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
+        if (refreshUserInFlight) return refreshUserInFlight;
 
-            const response = await fetchWithTimeout(`${API_URL}/api/user/refresh`, {
-                method: "POST",
-                headers,
-                credentials: "include",
-            });
+        refreshUserInFlight = (async () => {
+            try {
+                const currentToken = get().token;
+                const headers: Record<string, string> = { "Content-Type": "application/json" };
+                if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
 
-            if (!response.ok) {
-                writePersistedToken(null);
-                set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
+                const response = await fetchWithTimeout(`${API_URL}/api/user/refresh`, {
+                    method: "POST",
+                    headers,
+                    credentials: "include",
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        writePersistedToken(null);
+                        set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
+                        return false;
+                    }
+
+                    const snapshot = get();
+                    set({
+                        isHydrated: true,
+                        isAuthenticated: !!snapshot.user || !!snapshot.token,
+                    });
+                    return false;
+                }
+
+                const data = await response.json().catch(() => null);
+                const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
+                const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null) ?? currentToken;
+
+                writePersistedToken(nextToken);
+
+                set({
+                    user: nextUser,
+                    token: nextToken,
+                    isAuthenticated: !!nextUser || !!nextToken,
+                    isHydrated: true,
+                });
+
+                return !!nextUser || !!nextToken;
+            } catch {
+                const snapshot = get();
+                set({
+                    isHydrated: true,
+                    isAuthenticated: !!snapshot.user || !!snapshot.token,
+                });
                 return false;
+            } finally {
+                refreshUserInFlight = null;
             }
+        })();
 
-            const data = await response.json().catch(() => null);
-            const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
-            const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null) ?? currentToken;
-
-            writePersistedToken(nextToken);
-
-            set({
-                user: nextUser,
-                token: nextToken,
-                isAuthenticated: !!nextUser,
-                isHydrated: true,
-            });
-
-            return !!nextUser;
-        } catch {
-            writePersistedToken(null);
-            set({ user: null, token: null, isAuthenticated: false, isHydrated: true });
-            return false;
-        }
+        return refreshUserInFlight;
     },
 
     hydrate: () => {
@@ -209,7 +240,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         // Always attempt a refresh so cookie-backed sessions survive new tabs,
         // browser restarts, and OAuth returns even when sessionStorage is empty.
-        set({ isHydrated: false, user: null, token: savedToken, isAuthenticated: false });
+        set({
+            isHydrated: false,
+            user: null,
+            token: savedToken,
+            isAuthenticated: !!savedToken,
+        });
         void get().refreshUser();
     },
 

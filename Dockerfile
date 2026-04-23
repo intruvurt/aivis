@@ -1,4 +1,4 @@
-FROM node:24.11.0-bookworm-slim AS builder
+FROM node:20.11.0-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -22,7 +22,7 @@ RUN npm --prefix server run build
 RUN npx puppeteer browsers install chrome
 
 
-FROM node:24.11.0-bookworm-slim AS runtime
+FROM node:20.11.0-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \

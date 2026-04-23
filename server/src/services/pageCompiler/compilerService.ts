@@ -185,13 +185,34 @@ function derivePageSpecs(gaps: EntityGap[], entities: EntityNode[]): PageSpec[] 
         .map((gap, idx) => {
             const entity = byKey.get(gap.entityKey);
             const entityName = entity?.name || gap.entityKey;
+            const diagnosticIntent: PageSpec['intent'][] = ['define', 'compare', 'prove', 'explain'];
+            const intent = diagnosticIntent[idx % diagnosticIntent.length];
+            const diagnosticTitleByIntent: Record<PageSpec['intent'], string> = {
+                define: `${entityName}: Citation Collapse Points`,
+                compare: `${entityName}: Competitor Retrieval Analysis`,
+                explain: `${entityName}: Prompt-to-Source Routing`,
+                prove: `${entityName}: Entity Decay Timeline`,
+                demonstrate: `${entityName}: Diagnostic Breakdown`,
+            };
+            const diagnosticSlugByIntent: Record<PageSpec['intent'], string> = {
+                define: `${slugify(entityName)}-citation-collapse-points`,
+                compare: `${slugify(entityName)}-competitor-retrieval-analysis`,
+                explain: `${slugify(entityName)}-prompt-query-routing`,
+                prove: `${slugify(entityName)}-entity-decay-analysis`,
+                demonstrate: `${slugify(entityName)}-diagnostic-breakdown`,
+            };
+
             return {
                 entityKey: gap.entityKey,
-                intent: idx % 2 === 0 ? 'explain' : 'define',
-                title: `What is ${entityName}`,
-                slug: slugify(entityName),
-                targetQueryCluster: [`${entityName} definition`, `${entityName} explanation`, `${entityName} impact`],
-                requiredSections: ['definition', 'why it matters', 'measurement method', 'mitigation strategies'],
+                intent,
+                title: diagnosticTitleByIntent[intent],
+                slug: diagnosticSlugByIntent[intent],
+                targetQueryCluster: [
+                    `${entityName} citation collapse`,
+                    `${entityName} AI retrieval analysis`,
+                    `${entityName} model source selection`,
+                ],
+                requiredSections: ['forensic state', 'collapse gate analysis', 'evidence trace', 'corrective action graph'],
                 schemaType: 'Article',
                 priority: Number(gap.opportunityScore.toFixed(3)),
                 internalLinks: [],
@@ -371,15 +392,16 @@ export async function runCompileStage(jobId: string): Promise<void> {
 
     const mappedEntities = await loadMappedEntities(jobId);
     const gapRows = await pool.query(
-        `SELECT entity_key, gap_type, severity, reason FROM entity_gap_models WHERE job_id = $1`,
+        `SELECT entity_key, status, opportunity_score, citation_presence, missing_page_types
+         FROM entity_gap_models WHERE job_id = $1`,
         [jobId],
     );
     const gaps: EntityGap[] = gapRows.rows.map((row) => ({
         entityKey: String(row.entity_key),
-        gapType: String(row.gap_type) as EntityGap['gapType'],
-        severity: Number(row.severity),
-        gap: Number(row.severity),
-        reason: String(row.reason),
+        status: String(row.status) as EntityGap['status'],
+        opportunityScore: Number(row.opportunity_score),
+        citationPresence: Boolean(row.citation_presence),
+        missingPageTypes: Array.isArray(row.missing_page_types) ? row.missing_page_types.map(String) : [],
     }));
 
     const specRows = await pool.query(
@@ -440,12 +462,40 @@ export async function runSchemaStage(jobId: string): Promise<void> {
     );
 
     for (const page of pages.rows) {
+        const slug = String(page.slug);
+        const title = String(page.title);
+        const entityKey = String(page.entity_key);
+        const diagnosticConcept = slug.includes('citation-collapse')
+            ? 'citation-collapse-points'
+            : slug.includes('entity-decay')
+                ? 'entity-decay-analysis'
+                : slug.includes('competitor-retrieval')
+                    ? 'competitor-retrieval-analysis'
+                    : slug.includes('prompt-query-routing')
+                        ? 'prompt-query-routing'
+                        : 'visibility-loss-diagnosis';
+
         const schema = {
             '@context': 'https://schema.org',
             '@type': 'Article',
-            headline: String(page.title),
-            about: String(page.entity_key),
-            mainEntity: String(page.entity_key),
+            headline: title,
+            description: `Diagnostic system analysis for ${entityKey}: ${diagnosticConcept}.`,
+            about: [entityKey, diagnosticConcept],
+            mainEntity: entityKey,
+            genre: 'Diagnostic System Analysis',
+            keywords: [
+                'AI visibility diagnostics',
+                'citation state analysis',
+                'retrieval behavior forensics',
+                diagnosticConcept,
+            ],
+            isPartOf: { '@id': 'https://aivis.biz/#website' },
+            mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': `https://aivis.biz/generated/${jobId}/${slug}.html`,
+            },
+            author: { '@id': 'https://aivis.biz/#organization' },
+            publisher: { '@id': 'https://aivis.biz/#organization' },
         };
 
         await pool.query(
@@ -454,7 +504,7 @@ export async function runSchemaStage(jobId: string): Promise<void> {
              ON CONFLICT (page_build_id) DO UPDATE
              SET schema_payload = EXCLUDED.schema_payload,
                  entity_mentions = EXCLUDED.entity_mentions`,
-            [jobId, String(page.id), JSON.stringify(schema), JSON.stringify([String(page.entity_key)])],
+            [jobId, String(page.id), JSON.stringify(schema), JSON.stringify([entityKey, diagnosticConcept])],
         );
     }
 

@@ -42,34 +42,35 @@ function generateCitationCollapsePointsPage(
     entityName: string,
     gaps: EntityGap[],
 ): CompiledPage {
-    const authorityGaps = gaps.filter((g) => g.gapType === 'authority');
-    const structureGaps = gaps.filter((g) => g.gapType === 'structure');
-    const semanticGaps = gaps.filter((g) => g.gapType === 'semantic');
+    const uncitedGaps = gaps.filter((g) => g.status === 'uncited');
+    const underrepresentedGaps = gaps.filter((g) => g.status === 'underrepresented');
+    const representedGaps = gaps.filter((g) => g.status === 'represented');
+    const missingSignalCount = gaps.reduce((acc, gap) => acc + gap.missingPageTypes.length, 0);
 
     const sections = [
         {
             heading: 'The Collapse Point: Why AI Models Exclude This Entity',
-            content: `This diagnostic examines where AI models decide NOT to cite "${entityName}" despite finding the content in search results. Collapse happens at one of four gates: retrieval, trust, semantic fit, or synthesis integration. Based on current visibility signals, this entity's collapse point is primarily at the ${authorityGaps.length > 0 ? 'trust/authority gate' : structureGaps.length > 0 ? 'synthesis integration gate' : 'semantic fit gate'}.`,
+            content: `This diagnostic examines where AI models decide NOT to cite "${entityName}" despite finding the content in search results. Collapse happens at one of four gates: retrieval, trust, semantic fit, or synthesis integration. Based on current visibility signals, this entity's collapse point is primarily at the ${uncitedGaps.length > 0 ? 'trust/authority gate' : underrepresentedGaps.length > 0 ? 'semantic fit gate' : 'synthesis integration gate'}.`,
             entities: [entityName],
         },
         {
             heading: 'Forensic Breakdown: Which Gate Is Blocking This Entity',
             content: `
 Gate Analysis:
-${authorityGaps.length > 0
-                    ? `- TRUST GATE: BLOCKED. Missing author credentials (${authorityGaps[0]?.gap || '?'} missing signals). Models are finding this content but deprioritizing it due to weak author/domain authority signals.`
+${uncitedGaps.length > 0
+                    ? `- TRUST GATE: BLOCKED. Missing credibility signals (${missingSignalCount || '?'} missing content structures). Models are finding this content but deprioritizing it due to weak trust evidence.`
                     : `- TRUST GATE: PASSING. Authority signals are acceptable.`
                 }
-${structureGaps.length > 0
-                    ? `- SYNTHESIS INTEGRATION GATE: BLOCKED. Content structure prevents clean extraction (${structureGaps[0]?.gap || '?'} structured sections needed). Models can't synthesize quotable passages cleanly.`
-                    : `- SYNTHESIS INTEGRATION GATE: PASSING. Content structure is extraction-ready.`
-                }
-${semanticGaps.length > 0
-                    ? `- SEMANTIC FIT GATE: BLOCKED. Query variants (${semanticGaps.length} patterns) exclude this content due to specificity/context mismatches.`
+${underrepresentedGaps.length > 0
+                    ? `- SEMANTIC FIT GATE: BLOCKED. Query variants (${underrepresentedGaps.length} patterns) exclude this content due to specificity/context mismatches.`
                     : `- SEMANTIC FIT GATE: PASSING. Semantic coverage is broad.`
                 }
+${representedGaps.length > 0 && uncitedGaps.length === 0
+                    ? `- SYNTHESIS INTEGRATION GATE: BLOCKED. Content structure prevents clean extraction (${missingSignalCount || '?'} structured sections needed). Models can't synthesize quotable passages cleanly.`
+                    : `- SYNTHESIS INTEGRATION GATE: PASSING. Content structure is extraction-ready.`
+                }
 
-This entity's primary collapse vector is: ${authorityGaps.length > 0 ? 'Authority/Trust (fix: author schema + citations)' : structureGaps.length > 0 ? 'Synthesis Structure (fix: FAQ schema + extraction sections)' : 'Semantic Fit (fix: context specialization + intent sections)'}.
+This entity's primary collapse vector is: ${uncitedGaps.length > 0 ? 'Authority/Trust (fix: evidence-backed authorship + citations)' : underrepresentedGaps.length > 0 ? 'Semantic Fit (fix: context specialization + intent sections)' : 'Synthesis Structure (fix: FAQ schema + extraction sections)'}.\
       `,
             entities: [entityName],
         },
@@ -88,8 +89,8 @@ The data shows this entity is retrieved but deprioritized OR retrieved successfu
             heading: 'Immediate Remediation Priority',
             content: `
 Effort-Impact Matrix:
-1. ${authorityGaps.length > 0 ? 'Add Author Schema + Credentials (2-4 hours work, +20-30pt authority boost)' : 'Add FAQ Schema (1-2 hours work, +10-15pt structure boost)'}
-2. ${structureGaps.length > 0 ? 'Convert Content to Q&A Format (4-8 hours work, +15-20pt extraction boost)' : 'Add Topical Depth Section (4-6 hours work, +10-15pt semantic boost)'}
+1. ${uncitedGaps.length > 0 ? 'Add author and evidence signals (2-4 hours work, +20-30pt authority boost)' : 'Add FAQ Schema (1-2 hours work, +10-15pt structure boost)'}
+2. ${underrepresentedGaps.length > 0 ? 'Add topical depth sections (4-6 hours work, +10-15pt semantic boost)' : 'Convert content to Q&A extraction format (4-8 hours work, +15-20pt extraction boost)'}
 3. Verify with Re-audit (after fixes, run diagnostic again to measure improvement)
 
 The key insight: You're not losing because of keyword rankings. You're losing at a decision gate the model applies AFTER finding your content. Fixing that specific gate matters more than generic "SEO improvements."
@@ -104,7 +105,7 @@ The key insight: You're not losing because of keyword rankings. You're losing at
         slug: spec.slug,
         sections,
         claims: [
-            `${entityName} has a citation collapse at the ${authorityGaps.length > 0 ? 'trust' : structureGaps.length > 0 ? 'synthesis' : 'semantic'} gate.`,
+            `${entityName} has a citation collapse at the ${uncitedGaps.length > 0 ? 'trust' : underrepresentedGaps.length > 0 ? 'semantic' : 'synthesis'} gate.`,
             `This collapse is measurable in CITE LEDGER and forensically traceable.`,
             `Fixing this specific gate is higher-ROI than generic optimization.`,
         ],
@@ -433,39 +434,43 @@ export function compileDiagnosticPages(
         if (!entity) return [];
 
         const relevantGaps = gaps.filter((g) => g.entityKey === spec.entityKey);
-        const relevantCompetitors = competitorData.filter((c) => c.competitor === spec.entityKey);
-        const relevantQueries = queryVariants.filter((q) => q.status === spec.entityKey);
+        const relevantCompetitors = competitorData
+            .filter((c) => c.competitor !== spec.entityKey)
+            .map((c) => ({ competitor: c.competitor, advantageVector: c.vector, gap: c.gap }));
+        const relevantQueries = queryVariants
+            .filter((q) => q.prompt.toLowerCase().includes(entity.name.toLowerCase()))
+            .map((q) => ({
+                prompt: q.prompt,
+                yourStatus: q.status as 'cited' | 'retrieved_not_cited' | 'not_retrieved',
+                winningSource: q.winner,
+            }));
 
-        // Route based on spec intent/type
-        if (spec.intent === 'citation-collapse-diagnosis') {
+        // Route using canonical intents from shared contracts.
+        if (spec.intent === 'define' || spec.intent === 'demonstrate') {
             return [generateCitationCollapsePointsPage(spec, entity.name, relevantGaps)];
         }
-        if (spec.intent === 'entity-decay-timeline') {
+        if (spec.intent === 'prove') {
             return [
                 generateEntityDecayPage(
                     spec,
                     entity.name,
                     relevantGaps.map((g) => ({
-                        signal: g.reason,
-                        severity: g.gap > 0.3 ? 'high' : g.gap > 0.15 ? 'medium' : 'low',
-                        trend: 'stable',
+                        signal: g.missingPageTypes.length > 0 ? g.missingPageTypes.join(', ') : 'no critical gap signals',
+                        severity: g.opportunityScore >= 0.8 ? 'high' : g.opportunityScore >= 0.6 ? 'medium' : 'low',
+                        trend: g.status === 'uncited' ? 'accelerating' : g.status === 'underrepresented' ? 'declining' : 'stable',
                     })),
                 ),
             ];
         }
-        if (spec.intent === 'competitor-dissection') {
+        if (spec.intent === 'compare') {
             return [generateCompetitorDissectionPage(spec, entity.name, relevantCompetitors)];
         }
-        if (spec.intent === 'prompt-routing-analysis') {
+        if (spec.intent === 'explain') {
             return [
                 generatePromptRoutingPage(
                     spec,
                     entity.name,
-                    relevantQueries.map((q) => ({
-                        prompt: q.prompt,
-                        yourStatus: q.status as 'cited' | 'retrieved_not_cited' | 'not_retrieved',
-                        winningSource: q.winner,
-                    })),
+                    relevantQueries,
                 ),
             ];
         }

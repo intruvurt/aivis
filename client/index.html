@@ -302,17 +302,17 @@
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "url": "https://aivis.biz",
-        "description": "Evidence-backed AI visibility scoring across content depth, schema, metadata and citability. Returns 0-100 score with category grades and prioritized fixes.",
+        "description": "Diagnostic AI visibility system that explains why answer engines cite competitors instead of you using evidence-linked citation states and corrective action paths.",
         "creator": { "@id": "https://aivis.biz/#organization" },
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "featureList": [
-          "AI visibility search audits",
-          "Evidence-backed findings",
-          "Structured data analysis",
-          "Heading and metadata analysis",
-          "Technical trust checks",
-          "Report history",
-          "Citation readiness insights",
+          "Citation collapse point detection",
+          "Entity decay diagnostics",
+          "Prompt-to-source routing analysis",
+          "Competitor retrieval forensics",
+          "Evidence-linked CITE LEDGER findings",
+          "Visibility loss reports",
+          "Corrective action path generation",
           "Multi-model validation on eligible tiers",
           "Autofix PR(GitHub) generation on eligible tiers"
         ],
@@ -370,7 +370,7 @@
             "urlTemplate": "https://aivis.biz/analyze?url={target_url}"
           },
           "query-input": "required name=target_url",
-          "description": "Run an AI visibility audit on any URL"
+          "description": "Run an AI visibility diagnostic on any URL"
         },
         "screenshot": {
           "@type": "ImageObject",
@@ -417,7 +417,7 @@
         "@id": "https://aivis.biz/#website",
         "name": "AiVIS.biz - CITE LEDGER | Evidence-Linked Scores",
         "url": "https://aivis.biz",
-        "description": "AiVIS.biz analyzes whether AI systems like ChatGPT, Perplexity AI, Google AI Overviews, and Claude can correctly read, interpret, and cite your website. Every result is tied to real on-page evidence, not assumptions.",
+        "description": "AiVIS.biz instruments AI answer generation to show why sources are selected or excluded, with diagnostics tied to citation evidence and corrective actions.",
         "publisher": { "@id": "https://aivis.biz/#organization" },
         "potentialAction": {
           "@type": "SearchAction",
@@ -438,18 +438,18 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What is AI search visibility and why does it matter?",
+            "name": "What is a citation collapse point in AI visibility diagnostics?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "AI search visibility is the degree to which an AI system; such as ChatGPT, Perplexity, Claude or Google Gemini Overviews; can parse, trust and cite your website content in generated answers. A page that scores poorly for AI search visibility is unlikely to appear as a source or citation in AI generated responses, regardless of its traditional search ranking. AI search visibility depends on structured data quality, heading clarity, content depth, metadata completeness and machine readable formatting."
+              "text": "A citation collapse point is the specific decision gate where an AI system stops using your source in synthesis, even after retrieval. AiVIS traces this failure to evidence-backed states such as trust weakness, semantic mismatch, or extraction failure, then maps each state to a corrective action path."
             }
           },
           {
             "@type": "Question",
-            "name": "How does AiVIS.biz calculate a search visibility score?",
+            "name": "How does AiVIS.biz explain why a competitor is cited instead of me?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "AiVIS.biz runs a multi-stage audit pipeline: it crawls the target URL with a real browser, extracts structural signals (headings, schema, meta tags, body content, links), runs technical checks, then passes the evidence to a primary AI model for scoring. On Signal and Score Fix tiers, a second AI model peer-critiques the findings and a third validates the final result. The 0-100 CITE LEDGER score is a weighted composite across seven dimensions: Schema and Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags and Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security and Trust (10%). Each finding is tied back to real page evidence."
+              "text": "AiVIS runs a deterministic pipeline that extracts entities, tests citation behavior, and writes immutable ledger events. It then compares your source against cited competitors across retrieval, trust, semantic fit, and synthesis integration so the output explains exactly where competitor preference emerges and what evidence supports that result."
             }
           },
           {

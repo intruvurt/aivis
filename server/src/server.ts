@@ -383,7 +383,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   // Allow all responses to include CORS headers if origin is valid
   if (origin) {
-    if (isPublicCorsPath || isAllowedCorsOrigin(origin)) {
+    const allowOrigin =
+      isPublicCorsPath || isAllowedCorsOrigin(origin) || isTrustedAivisOrigin(origin);
+    if (allowOrigin) {
       if (isPublicCorsPath) {
         res.setHeader("Access-Control-Allow-Origin", "*");
       } else {
@@ -1249,6 +1251,22 @@ const isAllowedCorsOrigin = (origin: string): boolean => {
     return false;
   }
 };
+
+const isTrustedAivisOrigin = (origin: string): boolean => {
+  const normalized = normalizeOrigin(origin);
+  if (!normalized) return false;
+  try {
+    const host = new URL(normalized).hostname.toLowerCase();
+    return (
+      host === "aivis.biz" ||
+      host === "www.aivis.biz" ||
+      host === "api.aivis.biz" ||
+      host.endsWith(".aivis.biz")
+    );
+  } catch {
+    return false;
+  }
+};
 console.log("[CORS] Allowed origins (normalized):", NORMALIZED_ALLOWED_ORIGINS);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1567,7 +1585,7 @@ app.use(
         return callback(null, false);
       }
       const normalizedOrigin = normalizeOrigin(origin);
-      const isAllowed = isAllowedCorsOrigin(origin);
+      const isAllowed = isAllowedCorsOrigin(origin) || isTrustedAivisOrigin(origin);
       if (isAllowed) {
         return callback(null, true);
       }
@@ -1600,6 +1618,25 @@ app.use(
 // Explicit preflight handler - bulletproof CORS OPTIONS support
 // Express 5 / path-to-regexp v8: "*" is no longer valid, use "(.*)"
 app.options("(.*)", cors());
+
+// Explicit auth preflight handler for browser login/signup flows.
+// Some proxies/CDNs are strict about OPTIONS on auth paths; handle early and deterministically.
+app.options("/api/auth/(.*)", (req, res) => {
+  const origin = String(req.headers.origin || "");
+  if (origin && (isAllowedCorsOrigin(origin) || isTrustedAivisOrigin(origin))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With, X-Request-Id, X-Workspace-Id, Cache-Control, Pragma",
+    );
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Max-Age", "86400");
+    res.setHeader("Vary", "Origin");
+    return res.status(204).end();
+  }
+  return res.status(204).end();
+});
 
 // Response timeout enforcement (55s to stay under Railway 60s proxy limit)
 // Prevents hung connections from blocking pool and infrastructure

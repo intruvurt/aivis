@@ -1,9 +1,9 @@
 {
-  "watch": ["server/src/server.ts", "server/lib/*.ts", "server/services/*.ts", "server/middleware/*.ts", "server/routes/*.ts", "client/src/components/*.tsx", "api/*.ts", "utils/*.ts", "db/migrations/*.sql"],
-  "ext": "js,json,ts,env,env.local,env.development,env.production,env.test,env.staging,env.qa",
-  "ignore": ["node_modules", "dist", "__tests__", "tests", "migrations", "seeds"],
-  "exec": "tsx server/src/server.ts",
+  "watch": ["src/**/*.ts", "../shared/**/*.ts"],
+  "ext": "ts,json,env",
+  "ignore": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.spec.ts"],
+  "exec": "tsx src/server.ts",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "development"
   }
 }

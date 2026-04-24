@@ -377,24 +377,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     normalizedPath === "/api/public/audit/session/latest" ||
     normalizedPath.startsWith("/api/public/audit/session/latest/");
 
-  // Normalize origin helper
-  const normalizeOriginHelper = (o: string): string => {
-    const raw = String(o || "").trim().replace(/\/+$/, "");
-    if (!raw) return "";
-    try {
-      return new URL(raw).origin.toLowerCase().replace(/\/+$/, "");
-    } catch {
-      return raw.toLowerCase().replace(/\/+$/, "");
-    }
-  };
-
   // Use the same NORMALIZED_ALLOWED_ORIGINS list built at startup
   // (includes FRONTEND_URL, EXTRA_CORS_ORIGINS, and hardcoded origins).
 
   // Allow all responses to include CORS headers if origin is valid
   if (origin) {
-    const normalizedOrigin = normalizeOriginHelper(origin);
-    if (isPublicCorsPath || NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin)) {
+    if (isPublicCorsPath || isAllowedCorsOrigin(origin)) {
       if (isPublicCorsPath) {
         res.setHeader("Access-Control-Allow-Origin", "*");
       } else {
@@ -1195,7 +1183,10 @@ function assertCriticalEnvForProduction(): void {
 assertCriticalEnvForProduction();
 
 const normalizeOrigin = (origin: string): string => {
-  const raw = String(origin || "").trim().replace(/\/+$/, "");
+  const raw = String(origin || "")
+    .trim()
+    .replace(/^['"]+|['"]+$/g, "")
+    .replace(/\/+$/, "");
   if (!raw) return "";
   try {
     return new URL(raw).origin.toLowerCase().replace(/\/+$/, "");
@@ -1231,6 +1222,32 @@ const ALLOWED_ORIGINS = [
 const NORMALIZED_ALLOWED_ORIGINS = [
   ...new Set(ALLOWED_ORIGINS.map(normalizeOrigin)),
 ];
+const ALLOWED_ORIGIN_HOSTNAMES = new Set(
+  NORMALIZED_ALLOWED_ORIGINS.map((origin) => {
+    try {
+      return new URL(origin).hostname.toLowerCase();
+    } catch {
+      return "";
+    }
+  }).filter(Boolean),
+);
+
+const isAllowedCorsOrigin = (origin: string): boolean => {
+  const normalized = normalizeOrigin(origin);
+  if (!normalized) return false;
+  if (NORMALIZED_ALLOWED_ORIGINS.includes(normalized)) return true;
+
+  try {
+    const parsed = new URL(normalized);
+    const host = parsed.hostname.toLowerCase();
+    if (host === "localhost" && ALLOWED_ORIGIN_HOSTNAMES.has("localhost")) {
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    }
+    return ALLOWED_ORIGIN_HOSTNAMES.has(host);
+  } catch {
+    return false;
+  }
+};
 console.log("[CORS] Allowed origins (normalized):", NORMALIZED_ALLOWED_ORIGINS);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1549,7 +1566,7 @@ app.use(
         return callback(null, false);
       }
       const normalizedOrigin = normalizeOrigin(origin);
-      const isAllowed = NORMALIZED_ALLOWED_ORIGINS.includes(normalizedOrigin);
+      const isAllowed = isAllowedCorsOrigin(origin);
       if (isAllowed) {
         return callback(null, true);
       }

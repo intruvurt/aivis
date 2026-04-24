@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
 import {
+  deriveAiTrustScore,
   getLatestCloudflareSignal,
   ingestCloudflareMetrics,
   listCloudflareSignalHistory,
@@ -63,6 +64,41 @@ router.get('/history', async (req: Request, res: Response) => {
     return res.json({ success: true, history });
   } catch (err: any) {
     const message = String(err?.message || err || 'Unable to read Cloudflare signal history');
+    return res.status(500).json({ success: false, error: message });
+  }
+});
+
+router.get('/trust', async (req: Request, res: Response) => {
+  try {
+    const url = String(req.query.url || '').trim();
+    const workspaceId = req.query.workspace_id ? String(req.query.workspace_id) : null;
+    const refresh = String(req.query.refresh || '').toLowerCase() === 'true';
+    if (!url) return res.status(400).json({ success: false, error: 'url is required' });
+
+    if (refresh) {
+      const userId = String((req as any).user?.id || '').trim();
+      if (userId) {
+        await ingestCloudflareMetrics({
+          url,
+          userId,
+          workspaceId,
+          lookbackMinutes: 60,
+        });
+      }
+    }
+
+    const signal = await getLatestCloudflareSignal(url, workspaceId);
+    if (!signal) {
+      return res.status(404).json({
+        success: false,
+        error: 'No Cloudflare metrics found for this url yet',
+      });
+    }
+
+    const trust = deriveAiTrustScore(signal);
+    return res.json({ success: true, trust, signal });
+  } catch (err: any) {
+    const message = String(err?.message || err || 'Unable to compute AI trust score');
     return res.status(500).json({ success: false, error: message });
   }
 });

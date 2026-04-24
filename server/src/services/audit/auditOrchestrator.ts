@@ -3,10 +3,12 @@ import { analyzeContent } from './contentAnalysis.js';
 import { analyzeEntityClarity } from './entityClarity.js';
 import { analyzeTechnical } from './technicalAnalysis.js';
 import { analyzePrivateExposureLite } from './privateExposureLite.js';
+import { analyzeWithCloudflareUrlScanner } from './cloudflareUrlScannerService.js';
 import type { ContentAnalysisResult } from './contentAnalysis.js';
 import type { EntityClarityResult } from './entityClarity.js';
 import type { TechnicalAnalysisResult } from './technicalAnalysis.js';
 import type { PrivateExposureLiteResult } from './privateExposureLite.js';
+import type { CloudflareUrlScannerResult } from './cloudflareUrlScannerService.js';
 import type { AuditEvidence, AuditFinding, AuditFix, AuditScoreBreakdown } from '../../../../shared/types/audit.js';
 
 export interface AuditOrchestrationInput {
@@ -18,6 +20,7 @@ export interface AuditOrchestrationOutput {
   entity: EntityClarityResult;
   technical: TechnicalAnalysisResult;
   privateExposure: PrivateExposureLiteResult;
+  cloudflare: CloudflareUrlScannerResult;
 }
 
 export interface ComposedAuditReport {
@@ -56,15 +59,17 @@ export async function orchestrateAudit(
       entity: empty,
       technical: empty,
       privateExposure: empty,
+      cloudflare: empty,
     };
   }
 
   // Run analysis engines in parallel for performance
-  const [content, entity, technical, privateExposure] = await Promise.all([
+  const [content, entity, technical, privateExposure, cloudflare] = await Promise.all([
     analyzeContent({ html, finalUrl }),
     analyzeEntityClarity({ html, finalUrl }),
     analyzeTechnical({ html, finalUrl }),
     analyzePrivateExposureLite({ html, finalUrl }),
+    analyzeWithCloudflareUrlScanner({ url: finalUrl }),
   ]);
 
   return {
@@ -72,6 +77,7 @@ export async function orchestrateAudit(
     entity,
     technical,
     privateExposure,
+    cloudflare,
   };
 }
 
@@ -82,7 +88,7 @@ export function composeAuditReport(
   analysis: AuditOrchestrationOutput,
   _tier: string,
 ): ComposedAuditReport {
-  const modules = [analysis.content, analysis.entity, analysis.technical, analysis.privateExposure];
+  const modules = [analysis.content, analysis.entity, analysis.technical, analysis.privateExposure, analysis.cloudflare];
   const findings = modules.flatMap((m) => m.findings);
   const evidence = dedupeById(modules.flatMap((m) => m.evidence));
   const fixes = dedupeById(modules.flatMap((m) => m.fixes));

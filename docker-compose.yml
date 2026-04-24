@@ -17,11 +17,11 @@ services:
     networks:
       - aivis_net
     expose:
-      - "3001"
+      - "3000"
     environment:
       - NODE_ENV=production
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3001"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -37,13 +37,13 @@ services:
     networks:
       - aivis_net
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NODE_ENV=production
-      - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aivis
+      - REDIS_URL=redis://default:EVKlKT5bVAm6pO107bHau2q5sF0jVzef@redis-15672.c11.us-east-1-2.ec2.cloud.redislabs.com:15672
+      - DATABASE_URL=postgresql://postgres.ylavumolfaozbjciocve:P7SVno9AGvMG5equ@aws-1-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3

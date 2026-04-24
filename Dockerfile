@@ -1,4 +1,4 @@
-FROM node:20.19.6-bookworm-slim AS builder
+FROM node:22.22.2-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -23,6 +23,7 @@ RUN npm --prefix server install --legacy-peer-deps
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
 # ----------------------------
+# ----------------------------
 # Source layer
 # ----------------------------
 COPY . .
@@ -44,7 +45,7 @@ RUN npm --prefix server run build
 # ----------------------------
 # RUNTIME
 # ----------------------------
-FROM node:20.19.6-bookworm-slim AS runtime
+FROM node:22.22.2-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \
@@ -66,9 +67,9 @@ ENV PORT=3000
 # ----------------------------
 # App artifacts only
 # ----------------------------
-COPY --from=builder /app/server/dist ./server/dist
-COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/server/package.json ./server/package.json
+COPY --from=builder ./server/dist ./server/dist
+COPY --from=builder ./client/dist ./client/dist
+COPY --from=builder ./server/package.json ./server/package.json
 
 # ----------------------------
 # Clean install (production only)
@@ -78,13 +79,13 @@ RUN npm --prefix server install --omit=dev --legacy-peer-deps
 # ----------------------------
 # Permissions
 # ----------------------------
-RUN chown -R aivis:aivis /app
+RUN chown -R aivis:aivis ./server/dist ./client/dist
 
 EXPOSE 3000
 
 USER aivis
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -fsS "http://127.0.0.1:${PORT}/api/health" || exit 1
+  CMD curl -fsS "https://localhost:${PORT}/api/health" || exit 1
 
-CMD ["node", "server/dist/index.js"]
+CMD ["node", "server/dist/server.js"]

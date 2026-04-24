@@ -1,4 +1,4 @@
-FROM node:20.19.6-bookworm-slim AS builder
+FROM node:22.22.2-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -10,14 +10,17 @@ WORKDIR /app
 # Dependency isolation layer
 # ----------------------------
 COPY package*.json tsconfig.json ./
-COPY server/package*.json server/
-COPY client/package*.json client/
+RUN mkdir -p server client
+COPY server/package.json server/package.json
+COPY client/package.json client/package.json
 COPY shared/ shared/
+RUN test -f /app/server/package.json && test -f /app/client/package.json
 
 # Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
 RUN npm cache clean --force
 
-RUN npm --prefix server install --legacy-peer-deps
+RUN npm --prefix server install --legacy-peer-deps \
+    && (npm --prefix server ls bullmq >/dev/null 2>&1 || npm --prefix server install bullmq@^5.76.1 --legacy-peer-deps)
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
 # ----------------------------
@@ -42,7 +45,7 @@ RUN npm --prefix server run build
 # ----------------------------
 # RUNTIME
 # ----------------------------
-FROM node:20.19.6-bookworm-slim AS runtime
+FROM node:22.22.2-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \
@@ -71,7 +74,8 @@ COPY --from=builder /app/server/package.json ./server/package.json
 # ----------------------------
 # Clean install (production only)
 # ----------------------------
-RUN npm --prefix server install --omit=dev --legacy-peer-deps
+RUN npm --prefix server install --omit=dev --legacy-peer-deps \
+    && (npm --prefix server ls bullmq >/dev/null 2>&1 || npm --prefix server install bullmq@^5.76.1 --omit=dev --legacy-peer-deps)
 
 # ----------------------------
 # Permissions

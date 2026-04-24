@@ -1,4 +1,4 @@
-FROM node:20.19-bookworm-slim AS builder
+FROM node:20.19.6-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -6,23 +6,43 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# ----------------------------
+# Dependency isolation layer
+# ----------------------------
 COPY package*.json tsconfig.json ./
 COPY server/package*.json server/
 COPY client/package*.json client/
 COPY shared/ shared/
 
-RUN npm --prefix server install
-RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install
+# Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
+RUN npm cache clean --force
 
+RUN npm --prefix server install --legacy-peer-deps
+RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
+
+# ----------------------------
+# Source layer
+# ----------------------------
 COPY . .
 
+# ----------------------------
+# Build client first (Vite safety)
+# ----------------------------
+ENV NODE_ENV=production
+ENV VITE_BUILD=true
+
 RUN npm --prefix client run build
+
+# ----------------------------
+# Build server
+# ----------------------------
 RUN npm --prefix server run build
 
-RUN npx puppeteer browsers install chrome
 
-
-FROM node:20.19-bookworm-slim AS runtime
+# ----------------------------
+# RUNTIME
+# ----------------------------
+FROM node:20.19.6-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \
@@ -39,19 +59,26 @@ WORKDIR /app
 RUN groupadd --system aivis && useradd --system --gid aivis --create-home aivis
 
 ENV NODE_ENV=production
-ENV PORT=3000
-ENV PUPPETEER_CACHE_DIR=/home/aivis/.cache/puppeteer
+ENV PORT=3001
 
+# ----------------------------
+# App artifacts only
+# ----------------------------
 COPY --from=builder /app/server/dist ./server/dist
 COPY --from=builder /app/client/dist ./client/dist
 COPY --from=builder /app/server/package.json ./server/package.json
 
-RUN mkdir -p /home/aivis/.cache/puppeteer \
-    && chown -R aivis:aivis /home/aivis
+# ----------------------------
+# Clean install (production only)
+# ----------------------------
+RUN npm --prefix server install --omit=dev --legacy-peer-deps
 
-RUN npm --prefix server ci --omit=dev
+# ----------------------------
+# Permissions
+# ----------------------------
+RUN chown -R aivis:aivis /app
 
-EXPOSE 3000
+EXPOSE 3001
 
 USER aivis
 

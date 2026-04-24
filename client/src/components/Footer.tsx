@@ -42,9 +42,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-20 border-t border-white/[0.06] bg-[#060c18] text-white">
+    <footer className="relative z-20 border-t border-white/[0.06] bg-[#060607] text-white">
       {/* ── Top accent line ── */}
-      <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-violet-400/35 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Main grid ── */}

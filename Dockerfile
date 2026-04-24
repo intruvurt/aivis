@@ -17,7 +17,7 @@ COPY shared/ shared/
 # Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
 RUN npm cache clean --force
 
-RUN npm --prefix server install --legacy-peer-deps
+RUN npm --prefix server ci --legacy-peer-deps
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
 # ----------------------------

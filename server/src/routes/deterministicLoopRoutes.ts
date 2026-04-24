@@ -11,8 +11,11 @@ import {
 
 const router = Router();
 
-router.use(authRequired);
-router.use(workspaceRequired);
+// Scope auth/workspace checks only to deterministic loop namespaces.
+// This router is mounted at /api in server.ts, so unscoped router.use(authRequired)
+// would accidentally intercept unrelated public endpoints like /api/health.
+router.use(['/determinism', '/fix', '/analysis'], authRequired);
+router.use(['/determinism', '/fix', '/analysis'], workspaceRequired);
 
 router.get('/determinism/checks', async (_req: Request, res: Response) => {
     try {

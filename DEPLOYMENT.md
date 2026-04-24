@@ -86,79 +86,52 @@ railway variables set NODE_ENV=production
 railway up
 ```
 
-### Option 3: Docker Deployment
+### Option 3: Container Deployment (Podman-first, Docker-compatible)
 
-#### Build Docker Images
+If Docker is unavailable on your machine, use Podman as a drop-in replacement.
+The repository now includes runtime-agnostic scripts that detect Docker first and
+fallback to Podman automatically.
 
-**Backend Dockerfile:**
+#### Why this path
 
-```dockerfile
-FROM node:18-alpine
+- Works with Docker and Podman using the same project commands.
+- Avoids local blocking when Docker daemon is unavailable.
+- Uses the repository's real `Dockerfile` and `docker-compose.yml` (single app +
+  postgres + redis topology).
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY server.ts ./
-COPY services ./services
-
-EXPOSE 3001
-
-CMD ["node", "server.ts"]
-```
-
-**Frontend Dockerfile:**
-
-```dockerfile
-FROM node:18-alpine as builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-**docker-compose.yml:**
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: .
-    environment:
-      - OPEN_ROUTER_API_KEY=${OPEN_ROUTER_API_KEY}
-      - PORT=3001
-      - NODE_ENV=production
-    ports:
-      - "3001:3001"
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    environment:
-      - VITE_API_URL=http://backend:3001
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-```
-
-Deploy:
+#### Build and run
 
 ```bash
-docker-compose up -d
+# validate compose config via whichever runtime is available
+npm run container:config
+
+# build images
+npm run container:build
+
+# start stack
+npm run container:up
+
+# follow logs
+npm run container:logs
+
+# stop stack
+npm run container:down
+```
+
+If your host still has a legacy start command configured as
+`npm --prefix server run start`, keep it temporarily — a compatibility shim is
+included at `server/server/package.json` so both old and new start commands work.
+
+For Railway deployments, set `DATABASE_URL`, `REDIS_URL`, and `JWT_SECRET` in
+Railway Variables (service settings). The compose file does not require a
+checked-in `.env` file.
+
+#### Direct Podman usage (if you prefer explicit commands)
+
+```bash
+podman compose config
+podman compose build
+podman compose up -d
 ```
 
 ### Option 4: Traditional VPS (DigitalOcean, AWS EC2, etc.)

@@ -13,8 +13,11 @@ import type { AnalyticsEventType } from '../config/posthogEvents.js';
 
 const router = Router();
 
-router.use(authRequired);
-router.use(workspaceRequired);
+// Scope middleware to analytics gateway paths only.
+// This router is mounted at /api; unscoped auth middleware would capture
+// unrelated public routes under /api (e.g. /api/health).
+router.use('/analytics', authRequired);
+router.use('/analytics', workspaceRequired);
 
 /**
  * GET /api/analytics/events

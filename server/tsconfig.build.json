@@ -32,6 +32,7 @@
     "src/controllers/brandController.ts",
     "src/controllers/statusController.ts",
     "src/controllers/statusUpdateController.ts",
+    "src/workers/exampleStreamWorker.template.ts",
     "src/routes/aiRoutes.ts",
     "src/routes/auditRoutes.ts",
     "src/routes/brand.ts",

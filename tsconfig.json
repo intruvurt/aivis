@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "6.0",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
   },
   "files": [],
   "references": [

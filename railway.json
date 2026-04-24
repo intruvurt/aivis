@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "buildCommand": "npm --prefix server install --include=dev && npm --prefix server run build",
+    "buildCommand": "npm run build:client && npm run build:server",
     "nixpacksPlan": {
       "providers": ["..."]
     },
@@ -12,7 +12,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "npm --prefix server run start",
+    "startCommand": "npm --prefix server run start:prod",
     "healthcheckPath": "/api/health",
     "sleepApplication": false,
     "useLegacyStacker": false,

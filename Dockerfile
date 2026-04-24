@@ -24,6 +24,7 @@ RUN npm --prefix server install --legacy-peer-deps \
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
 # ----------------------------
+# ----------------------------
 # Source layer
 # ----------------------------
 COPY . .
@@ -80,13 +81,13 @@ RUN npm --prefix server install --omit=dev --legacy-peer-deps \
 # ----------------------------
 # Permissions
 # ----------------------------
-RUN chown -R aivis:aivis /app
+RUN chown -R aivis:aivis ./server/dist ./client/dist
 
 EXPOSE 3000
 
 USER aivis
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -fsS "http://127.0.0.1:${PORT}/api/health" || exit 1
+  CMD curl -fsS "https://localhost:${PORT}/api/health" || exit 1
 
-CMD ["node", "server/dist/index.js"]
+CMD ["node", "server/dist/server.js"]

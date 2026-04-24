@@ -15,7 +15,8 @@
     "../shared/**/*.d.ts",
     "tools/**/*.ts",
     "tools/**/*.d.ts",
-    "src/tests/**/*.ts"
+    "src/tests/**/*.ts",
+    "python/**/*.py"
   ],
   "exclude": [
     "node_modules",

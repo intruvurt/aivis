@@ -111,6 +111,11 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("recharts")) return "recharts";
           if (id.includes("zustand") || id.includes("@tanstack")) return "state";
           if (id.includes("lucide-react")) return "icons";
+          if (id.includes("date-fns")) return "date-fns";
+          if (id.includes("react")) return "react";
+          if (id.includes("lodash")) return "lodash";
+          if (id.includes("axios")) return "axios";
+
 
           return "vendor";
         },

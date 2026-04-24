@@ -9,6 +9,8 @@
 
     "noEmit": true,
     "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
 
     "baseUrl": ".",
     "paths": {
@@ -21,8 +23,15 @@
     "tools/**/*.ts",
     "shared/types.ts",
     "server/src/lib/utils/evidenceUtils.ts",
-    "api/**/*.ts"
-, "client/eslint.config.ts", "client/src/vite.config.ts"  ],
+    "api/**/*.ts",
+    "client/eslint.config.ts",
+    "client/src/vite.config.ts",
+    "apps/**/*.ts",
+    "packages/**/*.ts",
+    "config/**/*.ts",
+    "scripts/**/*.ts",
+    "python/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",

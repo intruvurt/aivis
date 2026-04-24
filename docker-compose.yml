@@ -171,9 +171,19 @@ services:
       - aivis_net
     command: node index.js
 
-  feedback-worker:
-    build: ./workers/feedback-worker
-    container_name: feedback_worker
+  feedback-loop-worker:
+    build: ./workers/feedback-loop-worker
+    container_name: feedback_loop_worker
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - aivis_net
+    command: node index.js
+
+  visibility-worker:
+    build: ./workers/visibility-worker
+    container_name: visibility_worker
     restart: unless-stopped
     depends_on:
       - redis

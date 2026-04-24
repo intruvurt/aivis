@@ -1225,6 +1225,20 @@ const ALLOWED_ORIGINS = [
 const NORMALIZED_ALLOWED_ORIGINS = [
   ...new Set(ALLOWED_ORIGINS.map(normalizeOrigin)),
 ];
+
+// Cloudflare Pages preview support (optional, enabled by default).
+// This prevents rotating preview subdomains from being blocked while still
+// scoping to a project prefix (default: aivis-*.pages.dev).
+const ALLOW_CLOUDFLARE_PAGES_PREVIEW_ORIGINS =
+  String(process.env.ALLOW_CLOUDFLARE_PAGES_PREVIEW_ORIGINS || "true")
+    .trim()
+    .toLowerCase() !== "false";
+const CLOUDFLARE_PAGES_PREVIEW_PREFIX = String(
+  process.env.CLOUDFLARE_PAGES_PREVIEW_PREFIX || "aivis-",
+)
+  .trim()
+  .toLowerCase();
+
 const ALLOWED_ORIGIN_HOSTNAMES = new Set(
   NORMALIZED_ALLOWED_ORIGINS.map((origin) => {
     try {
@@ -1235,10 +1249,25 @@ const ALLOWED_ORIGIN_HOSTNAMES = new Set(
   }).filter(Boolean),
 );
 
+const isAllowedCloudflarePagesPreviewOrigin = (normalizedOrigin: string): boolean => {
+  if (!ALLOW_CLOUDFLARE_PAGES_PREVIEW_ORIGINS) return false;
+  try {
+    const parsed = new URL(normalizedOrigin);
+    const host = parsed.hostname.toLowerCase();
+    if (parsed.protocol !== "https:") return false;
+    if (!host.endsWith(".pages.dev")) return false;
+    if (!CLOUDFLARE_PAGES_PREVIEW_PREFIX) return false;
+    return host.startsWith(CLOUDFLARE_PAGES_PREVIEW_PREFIX);
+  } catch {
+    return false;
+  }
+};
+
 const isAllowedCorsOrigin = (origin: string): boolean => {
   const normalized = normalizeOrigin(origin);
   if (!normalized) return false;
   if (NORMALIZED_ALLOWED_ORIGINS.includes(normalized)) return true;
+  if (isAllowedCloudflarePagesPreviewOrigin(normalized)) return true;
 
   try {
     const parsed = new URL(normalized);

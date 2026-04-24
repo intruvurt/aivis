@@ -5,6 +5,7 @@ import {
   ingestCloudflareMetrics,
   listCloudflareSignalHistory,
 } from '../services/cloudflareMetricsService.js';
+import { submitBrandProtectionUrls } from '../services/cloudflareBrandProtectionService.js';
 
 const router = Router();
 router.use(authRequired);
@@ -62,6 +63,26 @@ router.get('/history', async (req: Request, res: Response) => {
     return res.json({ success: true, history });
   } catch (err: any) {
     const message = String(err?.message || err || 'Unable to read Cloudflare signal history');
+    return res.status(500).json({ success: false, error: message });
+  }
+});
+
+router.post('/brand-protection/submit', async (req: Request, res: Response) => {
+  try {
+    const userId = String((req as any).user?.id || '').trim();
+    if (!userId) return res.status(401).json({ success: false, error: 'Unauthorized' });
+
+    const accountId = String(req.body?.account_id || process.env.CF_ACCOUNT_ID || '').trim();
+    if (!accountId) return res.status(400).json({ success: false, error: 'account_id is required' });
+
+    const response = await submitBrandProtectionUrls({
+      account_id: accountId,
+      urls: Array.isArray(req.body?.urls) ? req.body.urls : [],
+    });
+
+    return res.json({ success: true, ...response });
+  } catch (err: any) {
+    const message = String(err?.message || err || 'Unable to submit brand protection URLs');
     return res.status(500).json({ success: false, error: message });
   }
 });

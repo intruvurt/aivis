@@ -68,9 +68,9 @@ ENV PORT=3000
 # ----------------------------
 # App artifacts only
 # ----------------------------
-COPY --from=builder ./server/dist ./server/dist
-COPY --from=builder ./client/dist ./client/dist
-COPY --from=builder ./server/package.json ./server/package.json
+COPY --from=builder /app/server/dist ./server/dist
+COPY --from=builder /app/client/dist ./client/dist
+COPY server/package.json ./server/package.json
 
 # ----------------------------
 # Clean install (production only)

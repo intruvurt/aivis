@@ -49,6 +49,14 @@ export type CloudflareSignalSummary = {
   observedAt: string;
 };
 
+export type CloudflareTrustScore = {
+  url: string;
+  score: number;
+  issues: string[];
+  impact: string;
+  observedAt: string;
+};
+
 function hashUrl(url: string): string {
   return hashNormalizedUrl(url);
 }
@@ -331,4 +339,52 @@ export async function listCloudflareSignalHistory(url: string, workspaceId?: str
   );
 
   return res.rows as CloudflareMetricRow[];
+}
+
+export function deriveAiTrustScore(signal: CloudflareSignalSummary): CloudflareTrustScore {
+  let score = 100;
+  const issues: string[] = [];
+
+  const latency = Number(signal.metrics.avgLatencyMs || 0);
+  const cacheHitRate = Number(signal.metrics.cacheHitRate || 0);
+  const requests = Number(signal.metrics.requests || 0);
+  const aiHits = Number(signal.metrics.aiCrawlerHits || 0);
+
+  if (latency > 1200) {
+    score -= 20;
+    issues.push(`High edge latency detected (${latency}ms).`);
+  } else if (latency > 700) {
+    score -= 10;
+    issues.push(`Elevated edge latency detected (${latency}ms).`);
+  }
+
+  if (cacheHitRate < 0.35) {
+    score -= 15;
+    issues.push(`Low cache hit-rate (${(cacheHitRate * 100).toFixed(1)}%).`);
+  }
+
+  if (requests < 20) {
+    score -= 10;
+    issues.push('Low traffic sample; trust signal confidence is reduced.');
+  }
+
+  if (aiHits === 0) {
+    score -= 25;
+    issues.push('No AI crawler requests observed in this sampling window.');
+  }
+
+  const bounded = clamp(Math.round(score), 0, 100);
+  const impact = bounded >= 80
+    ? 'Strong trust posture for AI citation readiness.'
+    : bounded >= 60
+      ? 'Moderate trust posture; targeted remediation can improve citation confidence.'
+      : 'Weak trust posture; likely reducing AI confidence and citation eligibility.';
+
+  return {
+    url: signal.url,
+    score: bounded,
+    issues,
+    impact,
+    observedAt: signal.observedAt,
+  };
 }

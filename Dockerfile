@@ -9,10 +9,10 @@ WORKDIR /app
 # ----------------------------
 # Dependency isolation layer
 # ----------------------------
-COPY package*.json tsconfig.json ./
-COPY server/package*.json server/
-COPY client/package*.json client/
-COPY shared/ shared/
+COPY /package*.json tsconfig.json ./
+COPY /server/package*.json /server/
+COPY /client/package*.json /client/
+COPY /shared/ /shared/
 
 # Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
 RUN npm cache clean --force
@@ -20,6 +20,7 @@ RUN npm cache clean --force
 RUN npm --prefix server install --legacy-peer-deps
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
+# ----------------------------
 # ----------------------------
 # Source layer
 # ----------------------------
@@ -64,9 +65,9 @@ ENV PORT=3000
 # ----------------------------
 # App artifacts only
 # ----------------------------
-COPY --from=builder /app/server/dist ./server/dist
-COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/server/package.json ./server/package.json
+COPY --from=builder ./server/dist ./server/dist
+COPY --from=builder ./client/dist ./client/dist
+COPY --from=builder ./server/package.json ./server/package.json
 
 # ----------------------------
 # Clean install (production only)
@@ -76,13 +77,13 @@ RUN npm --prefix server install --omit=dev --legacy-peer-deps
 # ----------------------------
 # Permissions
 # ----------------------------
-RUN chown -R aivis:aivis /app
+RUN chown -R aivis:aivis ./server/dist ./client/dist
 
 EXPOSE 3000
 
 USER aivis
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -fsS "http://127.0.0.1:${PORT}/api/health" || exit 1
+  CMD curl -fsS "https://localhost:${PORT}/api/health" || exit 1
 
-CMD ["node", "server/dist/index.js"]
+CMD ["node", "server/dist/server.js"]

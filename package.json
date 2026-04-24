@@ -12,7 +12,7 @@
     "build:client": "npm --prefix client install --include=dev && npm --prefix client run build",
     "build:server": "npm --prefix server install --include=dev && npm --prefix server run build",
     "build": "npm run build:client && npm run build:server",
-    "start": "npm --prefix server run start",
+    "start": "npm --prefix server run start:prod",
     "format:check": "npm --prefix client run format:check",
     "lint": "npm --prefix client run lint && npm --prefix server run lint",
     "quality:lint": "npm --prefix client run lint && npm --prefix server run lint",

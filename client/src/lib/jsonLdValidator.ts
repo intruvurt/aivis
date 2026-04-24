@@ -6,6 +6,7 @@
  */
 
 import Ajv, { type JSONSchemaType } from 'ajv';
+import addFormats from 'ajv-formats';
 
 export interface ValidationError {
   path: string;
@@ -21,6 +22,7 @@ export interface ValidationResult {
 }
 
 const ajv = new Ajv({ strict: false, allErrors: true });
+addFormats(ajv);
 
 /**
  * Base schema properties required by all schema.org types

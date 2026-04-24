@@ -17,7 +17,7 @@ COPY shared/ shared/
 # Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
 RUN npm cache clean --force
 
-RUN npm --prefix server ci --legacy-peer-deps
+RUN npm --prefix server install --legacy-peer-deps
 RUN CYPRESS_INSTALL_BINARY=0 npm --prefix client install --legacy-peer-deps
 
 # ----------------------------
@@ -59,7 +59,7 @@ WORKDIR /app
 RUN groupadd --system aivis && useradd --system --gid aivis --create-home aivis
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=3000
 
 # ----------------------------
 # App artifacts only
@@ -78,7 +78,7 @@ RUN npm --prefix server install --omit=dev --legacy-peer-deps
 # ----------------------------
 RUN chown -R aivis:aivis /app
 
-EXPOSE 3001
+EXPOSE 3000
 
 USER aivis
 

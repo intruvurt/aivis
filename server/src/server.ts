@@ -1213,6 +1213,7 @@ const ALLOWED_ORIGINS = [
   ...new Set([
     normalizeOrigin("https://aivis.biz"),
     normalizeOrigin("https://www.aivis.biz"),
+    normalizeOrigin("https://api.aivis.biz"),
     normalizeOrigin("http://localhost:5173"),
     normalizeOrigin("http://localhost:3000"),
     ...(FRONTEND_URL

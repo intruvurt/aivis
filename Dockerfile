@@ -10,9 +10,11 @@ WORKDIR /app
 # Dependency isolation layer
 # ----------------------------
 COPY package*.json tsconfig.json ./
-COPY server/package*.json server/
-COPY client/package*.json client/
+RUN mkdir -p server client
+COPY server/package.json server/package.json
+COPY client/package.json client/package.json
 COPY shared/ shared/
+RUN test -f /app/server/package.json && test -f /app/client/package.json
 
 # Clean deterministic install (fixes Vite + motion-dom + Rollup issues)
 RUN npm cache clean --force

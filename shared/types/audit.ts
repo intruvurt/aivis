@@ -96,6 +96,12 @@ export interface AuditScoreBreakdown {
   technicalIntegrity?: number;
   accessibilitySurface?: number;
   securityExposure?: number;
+  /** Cloudflare URL Scanner: security verdict score (0–100) */
+  cfSecurityScore?: number;
+  /** Cloudflare URL Scanner: performance / Core Web Vitals score (0–100) */
+  cfPerformanceScore?: number;
+  /** Cloudflare URL Scanner: accessibility score (0–100) */
+  cfAccessibilityScore?: number;
 }
 
 export interface AuditModuleResult {

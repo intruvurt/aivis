@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => ({
     strictPort: true,
     proxy: {
       "/api": {
-        target: "https://api.aivis.biz",
+        target: "https://aivis.biz",
         changeOrigin: true,
         secure: false,
       },
@@ -111,6 +111,7 @@ export default defineConfig(({ mode }) => ({
           if (id.includes("recharts")) return "recharts";
           if (id.includes("zustand") || id.includes("@tanstack")) return "state";
           if (id.includes("lucide-react")) return "icons";
+
 
           return "vendor";
         },

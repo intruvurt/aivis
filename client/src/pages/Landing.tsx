@@ -66,6 +66,90 @@ const LANDING_STRUCTURED_DATA = generateHomepageStructuredData();
 
 const FAQ_ITEMS = HOMEPAGE_FAQ_ITEMS;
 
+const HOMEPAGE_LAST_UPDATED = 'April 24, 2026';
+
+const CITE_LEDGER_WEIGHTS = [
+  {
+    name: 'Schema and Structured Data',
+    weight: 20,
+    detail: 'Whether your page speaks the language AI parsers use.',
+  },
+  {
+    name: 'Content Depth',
+    weight: 18,
+    detail: 'Whether your page has enough substance to be worth extracting.',
+  },
+  {
+    name: 'Technical Trust',
+    weight: 15,
+    detail: 'Whether your delivery stack signals reliability to crawlers.',
+  },
+  {
+    name: 'Meta Tags and Open Graph',
+    weight: 15,
+    detail: 'Whether page identity and intent are clearly declared.',
+  },
+  {
+    name: 'AI Readability',
+    weight: 12,
+    detail: 'Whether content structure is machine-extractable.',
+  },
+  {
+    name: 'Heading Structure',
+    weight: 10,
+    detail: 'Whether topic hierarchy is clear and consistent.',
+  },
+  {
+    name: 'Security and Trust',
+    weight: 10,
+    detail: 'Whether domain and transport signals support legitimacy.',
+  },
+] as const;
+
+const SEO_VS_AIVIS_ROWS = [
+  {
+    seo: 'Keyword coverage, backlinks, page speed, mobile checks, crawl errors',
+    aivis:
+      'Entity clarity, schema-to-content accuracy, crawler extractability, BRAG-verified trust signals, synthesis depth, heading segmentation, citation readiness',
+  },
+  {
+    seo: 'Measures ranking potential in link-based search surfaces',
+    aivis: 'Measures citation probability in answer engines that synthesize responses',
+  },
+  {
+    seo: 'Generic benchmark recommendations',
+    aivis: 'Page-specific evidence tied to CITE LEDGER and BRAG identifiers',
+  },
+] as const;
+
+const QUERY_COVERAGE_MAP = [
+  'What is AI visibility for websites',
+  'How do I get my website cited by ChatGPT',
+  'Why is my website not showing in Perplexity answers',
+  'What is CITE LEDGER',
+  'What is BRAG grading methodology',
+  'How does Google AI Overviews decide what to cite',
+  'AI visibility audit tool',
+  'How to check if my website is citation ready for AI',
+  'Difference between SEO and AI visibility',
+  'Why does ChatGPT cite my competitor and not me',
+  'AI search citation readiness score',
+  'How to improve AI citation readiness',
+  'Best tool to audit AI visibility',
+  'What schema does ChatGPT use to cite websites',
+] as const;
+
+const TRUST_SOURCES = [
+  { label: 'Schema.org documentation', href: 'https://schema.org/' },
+  {
+    label: 'Google Search Central: AI and structured data guidance',
+    href: 'https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data',
+  },
+  { label: 'OpenAI platform and model documentation', href: 'https://platform.openai.com/docs' },
+  { label: 'Anthropic documentation', href: 'https://docs.anthropic.com/' },
+  { label: 'Perplexity product documentation', href: 'https://docs.perplexity.ai/' },
+] as const;
+
 const DEFAULT_MISMATCH_DATA: MismatchData = {
   url: 'https://example.com',
   scannedAt: new Date().toISOString(),
@@ -656,6 +740,25 @@ const Landing = () => {
               {/* Compact value prop — only show full version when idle */}
               {landingPhase === 'idle' && (
                 <>
+                  <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/70 mb-3">
+                    AI citation readiness audit
+                  </p>
+                  <h1
+                    className="text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-4"
+                    data-speakable
+                  >
+                    AiVIS.biz: Know If AI Can Actually Cite Your Website
+                  </h1>
+                  <p className="text-sm sm:text-base text-white/70 max-w-2xl mx-auto leading-relaxed mb-2">
+                    You invested in your site, your product, and your content. But when someone asks
+                    ChatGPT or Perplexity a question your page should answer, your brand still
+                    disappears from the response.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/55 max-w-2xl mx-auto leading-relaxed mb-8">
+                    AiVIS audits the structural signals answer engines use to extract, trust, and
+                    cite content. CITE LEDGER ties each score to evidence on your live page, with
+                    BRAG identifiers for traceable fixes.
+                  </p>
                   <div className="mb-8">
                     <AuditTraceStream />
                   </div>
@@ -813,6 +916,207 @@ const Landing = () => {
                       </p>
                     </div>
                   </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="py-14 bg-[#07090f] border-b border-white/8">
+              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="rounded-2xl border border-white/10 bg-[#0d111b]/70 p-6 sm:p-8">
+                  <p className="text-xs text-white/45 mb-3">
+                    By AiVIS Research Team · Last updated: {HOMEPAGE_LAST_UPDATED}
+                  </p>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    What AI visibility means in practice
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    AI visibility is how detectable, interpretable, and citation-worthy your website
+                    is to answer engines. It is not the same thing as classical SEO. A page can rank
+                    in search and still fail to appear when language models synthesize an answer.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    Search engines rank relevance among links. Answer engines extract claims, weigh
+                    trust, and choose whether to cite a source while generating text. Those
+                    mechanics reward structural clarity, consistent entity identity, and
+                    evidence-supported content blocks.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8">
+                    Most pages fail this layer for predictable reasons: thin primary content,
+                    missing FAQ blocks, inconsistent schema, weak heading hierarchy, and no
+                    freshness or author trust markers. AiVIS scores those exact signals and maps
+                    them to corrective actions that increase citation probability.
+                  </p>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    What CITE LEDGER verifies
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    CITE LEDGER is the verification layer inside AiVIS. Every finding in your audit
+                    has to map to a stable evidence record taken from your submitted URL. If it
+                    cannot be proven from the live page, it does not enter the score.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    This avoids generic checklists. You get page-specific diagnostics based on what
+                    an answer engine crawler can actually parse right now, then a prioritized
+                    remediation list tied to the same evidence keys.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    Hard blocker caps apply. If critical trust or parsing signals are missing, the
+                    final score cannot inflate even if lower-impact categories look strong. That
+                    keeps the audit conservative and reproducible.
+                  </p>
+
+                  <div className="grid sm:grid-cols-2 gap-3 mb-8">
+                    {CITE_LEDGER_WEIGHTS.map((item) => (
+                      <div
+                        key={item.name}
+                        className="rounded-lg border border-white/10 bg-black/30 p-4"
+                      >
+                        <p className="text-sm font-semibold text-white">
+                          {item.name} <span className="text-cyan-300">({item.weight}%)</span>
+                        </p>
+                        <p className="text-xs text-white/55 mt-1">{item.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    BRAG makes grading traceable
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    BRAG stands for Based-Retrieval-Auditable-Grading. Every issue, score component,
+                    and fix recommendation is linked to a BRAG identifier so you can inspect where
+                    it came from and why it was assigned.
+                  </p>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-8">
+                    This allows repeat audits to show real movement. When you update schema,
+                    strengthen definitions, or improve structure, the evidence set changes and the
+                    score updates with an auditable trail. Read the full protocol in the{' '}
+                    <Link
+                      to="/methodology"
+                      className="text-cyan-300 hover:text-cyan-200 underline underline-offset-2"
+                    >
+                      methodology reference
+                    </Link>
+                    .
+                  </p>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    Who this is for
+                  </h2>
+                  <div className="space-y-3 mb-8 text-sm sm:text-base text-white/70">
+                    <p>
+                      <span className="text-white font-semibold">Founders and operators:</span> You
+                      need to know why your product is not being cited in generated answers even
+                      when the topic is relevant to your market.
+                    </p>
+                    <p>
+                      <span className="text-white font-semibold">Marketers and strategists:</span>{' '}
+                      You need a way to measure answer-engine extractability that sits alongside
+                      your existing ranking stack.
+                    </p>
+                    <p>
+                      <span className="text-white font-semibold">
+                        Developers and technical teams:
+                      </span>{' '}
+                      You need exact structural failures tied to rendered output, schema, canonical
+                      signals, and content topology.
+                    </p>
+                    <p>
+                      <span className="text-white font-semibold">Agencies and consultants:</span>{' '}
+                      You need defensible diagnostics you can present to clients as evidence-backed
+                      remediation plans.
+                    </p>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    How the audit works
+                  </h2>
+                  <ol className="space-y-3 mb-8 text-sm sm:text-base text-white/70 list-decimal list-inside">
+                    <li>Enter the URL you want to test.</li>
+                    <li>AiVIS crawls live rendered output and parses extraction signals.</li>
+                    <li>CITE LEDGER scores seven weighted dimensions.</li>
+                    <li>BRAG IDs bind each finding to auditable page evidence.</li>
+                    <li>You receive prioritized fixes and can re-run to measure movement.</li>
+                  </ol>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    Traditional SEO audit vs CITE LEDGER audit
+                  </h2>
+                  <div className="overflow-x-auto mb-8">
+                    <table className="min-w-full border border-white/10 rounded-lg overflow-hidden">
+                      <thead className="bg-white/5 text-left">
+                        <tr>
+                          <th className="px-4 py-3 text-xs uppercase tracking-wide text-white/60">
+                            Traditional SEO audit
+                          </th>
+                          <th className="px-4 py-3 text-xs uppercase tracking-wide text-white/60">
+                            AiVIS CITE LEDGER audit
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {SEO_VS_AIVIS_ROWS.map((row, index) => (
+                          <tr key={index} className="border-t border-white/10 align-top">
+                            <td className="px-4 py-3 text-sm text-white/70">{row.seo}</td>
+                            <td className="px-4 py-3 text-sm text-white/70">{row.aivis}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    Sources and trust references
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    AiVIS is built to produce citation state outputs and corrective action paths. We
+                    recommend validating structured data and extraction assumptions against primary
+                    documentation.
+                  </p>
+                  <ul className="space-y-2 mb-8">
+                    {TRUST_SOURCES.map((source) => (
+                      <li key={source.href}>
+                        <a
+                          href={source.href}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="text-sm text-cyan-300 hover:text-cyan-200 underline underline-offset-2"
+                        >
+                          {source.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    Natural language query coverage
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-4">
+                    This homepage is intentionally structured to answer high-intent questions answer
+                    engines commonly receive about AI citation readiness.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-2 mb-8">
+                    {QUERY_COVERAGE_MAP.map((query) => (
+                      <p
+                        key={query}
+                        className="text-xs sm:text-sm text-white/60 rounded border border-white/10 bg-black/20 px-3 py-2"
+                      >
+                        {query}
+                      </p>
+                    ))}
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" data-speakable>
+                    Final takeaway
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+                    Citation outcomes are not random. They are driven by extractability, trust
+                    consistency, and evidence density. If your competitors are being cited and you
+                    are not, the gap is structural and it can be measured. Run the audit, inspect
+                    the ledger, and fix the highest-impact blockers first.
+                  </p>
                 </div>
               </div>
             </section>

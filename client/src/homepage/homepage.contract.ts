@@ -16,9 +16,9 @@ export const BRAND = {
     name: 'AiVIS.biz',
     product: 'CITE LEDGER',
     domain: 'https://aivis.biz',
-    tagline: `See why the model said no`,
-    secondaryTagline: 'diagnostic instrumentation for AI visibility',
-    slogan: 'Stop guessing why AI ignores you. See the exact decision machine — source-by-source forensics of citation collapse, retrieval failure, and semantic gaps.',
+    tagline: 'Know If AI Can Actually Cite Your Website',
+    secondaryTagline: 'evidence-backed AI citation readiness auditing',
+    slogan: 'AiVIS audits whether ChatGPT, Perplexity, Google AI Overviews, and Claude can read, trust, and cite your website using CITE LEDGER evidence trails.',
     author: {
         name: 'Ryan Mason',
         twitter: '@dobleduche',
@@ -31,7 +31,7 @@ export const BRAND = {
 /* ── CITE LEDGER canonical definition ───────────────────────────────────── */
 
 export const CITE_LEDGER_DEFINITION =
-    'AiVIS CITE LEDGER is the immutable forensic log that records why AI models made citation choices — showing precisely where your content was selected, rejected, or reranked against competitors.' as const;
+    'AiVIS CITE LEDGER is the verification layer that ties every score and finding to real, stable on-page evidence from your submitted URL.' as const;
 
 /* ── BRAG (re-exported from shared for colocation) ──────────────────────── */
 
@@ -67,8 +67,8 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 /* ── Meta tags ──────────────────────────────────────────────────────────── */
 
 export const META = {
-    title: `AiVIS — See Why the Model Said No | Diagnostic AI Visibility`,
-    description: `${CITE_LEDGER_DEFINITION} ${BRAG.expansion} powers ${BRAND.name} to show the exact decision points where AI models reject, rerank, or forget your content. Every gap is forensically mapped: where the semantic bridge breaks, why competitors rank higher, what entity decay looks like. This is system instrumentation, not optimization advice.`,
+    title: 'AiVIS.biz | AI Citation Readiness Audit - CITE LEDGER Score',
+    description: `${CITE_LEDGER_DEFINITION} ${BRAG.expansion} powers AiVIS audits for ChatGPT, Perplexity, Google AI Overviews, and Claude. Enter a URL and get a real score backed by on-page evidence, not assumptions.`,
     // NOTE: description must include CITE_LEDGER_DEFINITION and diagnostic framing verbatim — enforced at build time.
     keywords: `AI citation diagnostics, why AI ignores you, competitor retrieval analysis, semantic bridge failure, entity decay detection, citation collapse forensics, AI reasoning transparency, ${BRAND.name}, ${BRAG.acronym} evidence scoring, source preference mapping, ChatGPT selection logic, Perplexity retrieval analysis, Claude synthesis debugging, AI answer engine decision making, citation ledger, post-mortem AI visibility, system instrumentation, retrieval failure diagnosis`,
     author: BRAND.name,
@@ -81,7 +81,7 @@ export const OG = {
     type: 'website',
     siteName: BRAND.name,
     title: META.title,
-    description: `Forensic analysis: Why ${PLATFORM_TARGETS.join(', ').replace(/, ([^,]+)$/, ', and $1')} cite your competitors instead of you. See the citation collapse points, semantic bridges, and entity stability patterns. System instrumentation, not tips.`,
+    description: META.description,
     url: BRAND.domain,
     locale: 'en_US',
     image: {
@@ -99,7 +99,7 @@ export const TWITTER = {
     card: 'summary_large_image',
     site: BRAND.author.twitter,
     creator: BRAND.author.twitter,
-    title: `${BRAND.name} | See Why the Model Said No`,
+    title: META.title,
     description: OG.description,
     image: OG.image.url,
     imageAlt: `${BRAND.name} | Diagnostic AI Citation Analysis`,
@@ -109,16 +109,16 @@ export const TWITTER = {
 
 export const HERO = {
     headline: [
-        BRAND.name,
+        'AiVIS.biz: Know If AI Can Actually Cite Your Website',
         BRAND.product,
-        'See Why the Model Said No',
-        'Forensic instrumentation of AI citation collapse.',
+        'Evidence-backed AI visibility auditing',
+        'Score your citation readiness with traceable proof.',
     ] as const,
     subHeadline:
-        'Every model decision has a reason. Run a scan. Watch where your content gets selected vs. skipped vs. reranked. See semantic gaps, entity decay, competitor reassignment. This is diagnosis, not optimization.',
+        'AiVIS audits the structural signals AI answer engines rely on to decide what gets cited and what gets ignored.',
     description:
-        'Real-time forensics. Evidence-linked. Ledger-traceable. The exact decision machine laid bare.',
-    ctaText: 'Run diagnostic scan',
+        'Every score is tied to CITE LEDGER evidence and BRAG identifiers from your live page.',
+    ctaText: 'Run your free audit',
     inputPlaceholder: 'yourdomain.com',
 } as const;
 

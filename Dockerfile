@@ -1,4 +1,4 @@
-FROM node:20.19.6-bookworm-slim AS builder
+FROM node:22-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates fonts-liberation curl \
@@ -42,7 +42,7 @@ RUN npm --prefix server run build
 # ----------------------------
 # RUNTIME
 # ----------------------------
-FROM node:20.19.6-bookworm-slim AS runtime
+FROM node:22-bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl \

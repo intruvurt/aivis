@@ -128,6 +128,7 @@ import {
   healthCheck,
   getDatabaseStatus,
   executeTransaction,
+  resetPool,
 } from "./services/postgresql.js";
 import { resolveWorkspaceForUser } from "./services/tenantService.js";
 import { persistAuditRecord } from "./services/auditPersistenceService.js";
@@ -1213,6 +1214,7 @@ const ALLOWED_ORIGINS = [
   ...new Set([
     normalizeOrigin("https://aivis.biz"),
     normalizeOrigin("https://www.aivis.biz"),
+    normalizeOrigin("https://api.aivis.biz"),
     normalizeOrigin("http://localhost:5173"),
     normalizeOrigin("http://localhost:3000"),
     ...(FRONTEND_URL
@@ -15771,13 +15773,37 @@ async function shutdown(signal: string) {
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
 
+function isTransientDbDisconnect(err: unknown): boolean {
+  const message =
+    err instanceof Error ? err.message : String(err || "");
+  return /EDBHANDLEREXITED|connection to database closed|Connection terminated unexpectedly|ECONNRESET|57P01|08P01/i.test(
+    message,
+  );
+}
+
 process.on("uncaughtException", (e) => {
+  if (isTransientDbDisconnect(e)) {
+    console.error(
+      "[uncaughtException] Transient DB disconnect detected — resetting pool and continuing:",
+      e,
+    );
+    resetPool();
+    return;
+  }
   console.error("[uncaughtException] Fatal - shutting down:", e);
   if (process.env.SENTRY_DSN) Sentry.captureException(e);
   shutdown("EXCEPTION");
 });
 
 process.on("unhandledRejection", (reason) => {
+  if (isTransientDbDisconnect(reason)) {
+    console.error(
+      "[unhandledRejection] Transient DB disconnect detected — resetting pool and continuing:",
+      reason,
+    );
+    resetPool();
+    return;
+  }
   console.error(
     "[unhandledRejection] Unhandled promise rejection — initiating shutdown:",
     reason,

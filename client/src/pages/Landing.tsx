@@ -695,12 +695,27 @@ const Landing = () => {
               {landingPhase === 'idle' && (
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-xs text-white/30">No login · No credit card · Free scan</p>
+                  <div className="flex flex-wrap justify-center gap-2 text-[11px]">
+                    <Link
+                      to="/pricing?intent=alignment-trial"
+                      className="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-emerald-200/90 hover:bg-emerald-400/20 transition-colors"
+                    >
+                      Alignment: 14-day free trial
+                    </Link>
+                    <Link
+                      to="/pricing?intent=signal-trial"
+                      className="inline-flex items-center rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-cyan-100/90 hover:bg-cyan-400/20 transition-colors"
+                    >
+                      Signal: 7-day free trial
+                    </Link>
+                  </div>
                   <div className="flex flex-wrap justify-center gap-4 text-xs text-white/35">
                     {[
                       'Answer distortion',
                       'Missing citations',
                       'Entity confusion',
-                      'Fix protocol',
+                      'Replayable debugger',
+                      'Evidence heatmap',
                     ].map((item) => (
                       <span key={item} className="flex items-center gap-1.5">
                         <span className="w-1 h-1 rounded-full bg-red-400/50" />
@@ -720,6 +735,12 @@ const Landing = () => {
                       className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/65 transition-colors"
                     >
                       <span className="text-white/25">→</span> How it works
+                    </Link>
+                    <Link
+                      to="/pricing"
+                      className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/65 transition-colors"
+                    >
+                      <span className="text-white/25">→</span> Compare Alignment vs Signal
                     </Link>
                   </div>
                 </div>
@@ -892,6 +913,10 @@ const Landing = () => {
                   </span>
                 </h2>
                 <p className="text-base text-white/45 mb-8">{MARKETING_CLAIMS.modelAllocation}</p>
+                <p className="text-xs text-white/35 mb-6">
+                  Start free, then unlock deeper citation evidence with Alignment (14-day trial) or
+                  run multi-model verification in Signal (7-day trial).
+                </p>
                 <a
                   href="#hero-scanner"
                   onClick={(e) => {
@@ -904,6 +929,14 @@ const Landing = () => {
                 >
                   Run Live Scan
                 </a>
+                <div className="mt-4">
+                  <Link
+                    to="/pricing"
+                    className="text-xs text-white/45 hover:text-white/75 transition-colors"
+                  >
+                    View trial terms and tier capabilities
+                  </Link>
+                </div>
               </div>
             </section>
           </>

@@ -1,0 +1,8 @@
+{
+  "name": "aivis-server-compat-shim",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix .. run start:prod",
+    "start:prod": "npm --prefix .. run start:prod"
+  }
+}

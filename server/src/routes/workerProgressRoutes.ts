@@ -19,7 +19,7 @@ const router = Router();
  * Get current status of all registered workers (polling endpoint).
  */
 router.get('/all', (_req: Request, res: Response) => {
-  getAllWorkerProgress(res);
+  getAllWorkerProgress(_req, res);
 });
 
 /**

@@ -75,6 +75,8 @@ lerna-debug.log*
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+!client/package-lock.json
+!server/package-lock.json
 
 # Build outputs
 

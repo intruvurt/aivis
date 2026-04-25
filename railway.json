@@ -4,7 +4,7 @@
     "builder": "DOCKERFILE",
     "buildCommand": "npm run build:client && npm run build:server",
     "nixpacksPlan": {
-      "providers": ["..."]
+      "providers": ["nodejs", "pnpm"]
     },
     "dockerfilePath": "/Dockerfile",
     "buildEnvironment": "V3"

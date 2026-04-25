@@ -137,9 +137,9 @@ export function getPool(): Pool {
       max: 30,
       min: 2,
       // Supabase/Railway proxies may close idle connections after 5-10 minutes
-      // Keep our timeout shorter to detect and recreate before proxy closes
-      idleTimeoutMillis: 240_000, // 4 minutes (before proxy typically closes at 5-10min)
-      connectionTimeoutMillis: 15_000, // 15 seconds to establish connection
+      // Keep our timeout shorter (3 min) to detect and recreate before proxy closes
+      idleTimeoutMillis: 180_000, // 3 minutes (safeguard against proxy timeout)
+      connectionTimeoutMillis: 8_000, // 8 seconds to establish connection (assert early)
       statement_timeout: 120_000, // 2 minutes for queries (was 30s, too short for large scans)
       allowExitOnIdle: false, // Keep pool alive even if idle
       application_name: 'aivis-server',

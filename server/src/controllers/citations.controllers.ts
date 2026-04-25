@@ -1867,7 +1867,14 @@ async function runCitationTestAsync(
 
       await pool.query(
         `INSERT INTO citation_results (citation_test_id, query, platform, mentioned, position, excerpt, competitors_mentioned, mention_quality_score, is_false_positive)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ON CONFLICT (citation_test_id, query, platform) DO UPDATE SET
+           mentioned = EXCLUDED.mentioned,
+           position = EXCLUDED.position,
+           excerpt = EXCLUDED.excerpt,
+           mention_quality_score = EXCLUDED.mention_quality_score,
+           is_false_positive = EXCLUDED.is_false_positive,
+           updated_at = NOW()`,
         [
           testId,
           citationResult.query,

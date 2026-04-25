@@ -99,7 +99,13 @@ export function ScanProvider({ children }: { children: ReactNode }) {
     cites: CiteEntry[];
     entities: EntityRef[];
     scores: Partial<LayerScores>;
-  }>({ cites: [], entities: [], scores: {} });
+    timeline: Array<{
+      stage: ScanStage;
+      timestamp: number;
+      progress?: number;
+      sourceType?: string;
+    }>;
+  }>({ cites: [], entities: [], scores: {}, timeline: [] });
 
   /**
    * Schedule a non-blocking flush via requestIdleCallback (with setTimeout
@@ -133,7 +139,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
       scanIdRef.current = scanId;
       const sid = scanId;
       getEngine().reset(scanId);
-      accumulatedRef.current = { cites: [], entities: [], scores: {} };
+      accumulatedRef.current = { cites: [], entities: [], scores: {}, timeline: [] };
 
       // Shadow-projection: tell the debug store which scan is active
       const debugTap = useDebugStore.getState();
@@ -168,6 +174,12 @@ export function ScanProvider({ children }: { children: ReactNode }) {
           if (raw.type === 'PIPELINE_STAGE') {
             const mapped = PIPELINE_STAGE_MAP[raw.stage];
             if (mapped) {
+              accumulatedRef.current.timeline.push({
+                stage: mapped,
+                timestamp: Date.now(),
+                progress: raw.progress,
+                sourceType: raw.type,
+              });
               engine.ingest(sid, {
                 type: 'STAGE_UPDATE',
                 stage: mapped,
@@ -192,6 +204,12 @@ export function ScanProvider({ children }: { children: ReactNode }) {
               INTERPRETATION: 0.9,
               SCORE_UPDATED: 1,
             };
+            accumulatedRef.current.timeline.push({
+              stage: legacyStage,
+              timestamp: Date.now(),
+              progress: progressByType[raw.type],
+              sourceType: raw.type,
+            });
             engine.ingest(sid, {
               type: 'STAGE_UPDATE',
               stage: legacyStage,
@@ -268,6 +286,7 @@ export function ScanProvider({ children }: { children: ReactNode }) {
                   semantic: acc.scores.semantic ?? 50,
                   authority: acc.scores.authority ?? 50,
                 },
+                timeline: acc.timeline,
               };
               engine.ingest(sid, {
                 type: 'STAGE_UPDATE',

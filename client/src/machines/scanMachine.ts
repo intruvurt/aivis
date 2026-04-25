@@ -68,6 +68,7 @@ export interface ScanResult {
   cites:           CiteEntry[];
   entities:        EntityRef[];
   scores:          LayerScores;
+  timeline?:       TimelineEvent[];
 }
 
 // ── State ─────────────────────────────────────────────────────────────────────

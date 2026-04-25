@@ -520,10 +520,11 @@ function buildMismatchData(result: ScanResult | null): MismatchData {
   const entities = entityNames.map((name, index) => {
     const lower = name.toLowerCase();
     const blockerHit = blockerPool.find((blocker) => blocker.includes(lower));
+    const sourceEvidence = result.entities[index]?.confidence ?? 0.61;
     let status: MismatchStatus = 'correct';
     if (blockerHit) status = 'missing';
-    else if (index % 4 === 1) status = 'distorted';
-    else if (index % 4 === 2) status = 'weak';
+    else if (sourceEvidence < 0.5) status = 'distorted';
+    else if (sourceEvidence < 0.72) status = 'weak';
 
     const similarityByStatus: Record<MismatchStatus, number> = {
       correct: 0.84,
@@ -544,9 +545,23 @@ function buildMismatchData(result: ScanResult | null): MismatchData {
       sourceMentions: [`source-${(index % 3) + 1}`],
       aiMentions: status === 'missing' ? [] : [`ai-${(index % 3) + 1}`],
       status,
-      similarity: similarityByStatus[status],
-      impactScore: impactByStatus[status],
-      confidence: Math.max(0.35, Math.min(0.95, result.entities[index]?.confidence ?? 0.61)),
+      similarity:
+        status === 'correct'
+          ? Math.max(0.72, sourceEvidence)
+          : status === 'weak'
+            ? Math.max(0.52, Math.min(0.7, sourceEvidence))
+            : status === 'distorted'
+              ? Math.max(0.3, Math.min(0.5, sourceEvidence))
+              : similarityByStatus[status],
+      impactScore:
+        status === 'correct'
+          ? Math.max(14, Math.round((1 - sourceEvidence) * 50))
+          : status === 'weak'
+            ? Math.max(42, Math.round((1 - sourceEvidence) * 90))
+            : status === 'distorted'
+              ? Math.max(60, Math.round((1 - sourceEvidence) * 120))
+              : impactByStatus[status],
+      confidence: Math.max(0.35, Math.min(0.95, sourceEvidence)),
       evidenceLinks: [`ev_entity_${index + 1}`],
     };
   });
@@ -609,6 +624,63 @@ function buildMismatchData(result: ScanResult | null): MismatchData {
     ])
   );
 
+  const timelineEvents = result.timeline ?? [];
+  const pipelineStages = [
+    {
+      key: 'ingesting',
+      label: 'ingestion',
+      detail: 'Validating target URL and collecting raw HTML.',
+    },
+    {
+      key: 'chunking',
+      label: 'chunking',
+      detail: 'Segmenting source into extraction-ready sections.',
+    },
+    {
+      key: 'embedding',
+      label: 'embedding',
+      detail: 'Mapping evidence into machine-readable representation.',
+    },
+    {
+      key: 'entity_resolving',
+      label: 'entity resolution',
+      detail: 'Resolving entity names and aliases against source claims.',
+    },
+    {
+      key: 'edge_building',
+      label: 'edge graph',
+      detail: 'Linking extracted facts to citation and trust pathways.',
+    },
+    {
+      key: 'scoring',
+      label: 'scoring',
+      detail: 'Computing deterministic visibility and mismatch impact.',
+    },
+  ] as const;
+
+  const stageTimeLabels = new Map<string, string>();
+  for (const event of timelineEvents) {
+    if (!stageTimeLabels.has(event.stage)) {
+      const elapsedMs = Math.max(0, event.timestamp - timelineEvents[0]?.timestamp);
+      stageTimeLabels.set(event.stage, `${Math.round(elapsedMs / 100) / 10}s`);
+    }
+  }
+
+  const timeline = pipelineStages.map((stage, index) => {
+    const defaultMs = Math.max(
+      0,
+      Math.round((result.processing_ms / pipelineStages.length) * index)
+    );
+    const fallbackLabel = `${Math.round(defaultMs / 100) / 10}s`;
+    return {
+      key: stage.key,
+      label: stage.label,
+      timestampLabel: stageTimeLabels.get(stage.key) || fallbackLabel,
+      progressLabel: `${Math.round(((index + 1) / pipelineStages.length) * 100)}%`,
+      detail: stage.detail,
+    };
+  });
+
   return {
     url: result.url,
     scannedAt: result.scanned_at,
@@ -622,16 +694,7 @@ function buildMismatchData(result: ScanResult | null): MismatchData {
             evidenceLinks: evidenceIdsByEntity.get(entity.name) || entity.evidenceLinks,
           }))
         : DEFAULT_MISMATCH_DATA.entities,
-    timeline: [
-      { key: 'ingestion', label: 'ingestion', timestampLabel: '00:00' },
-      { key: 'entity-detection', label: 'entity detection', timestampLabel: '00:03' },
-      { key: 'mismatch-detection', label: 'mismatch detection', timestampLabel: '00:06' },
-      {
-        key: 'scoring',
-        label: 'scoring',
-        timestampLabel: `${Math.max(8, Math.round(result.processing_ms / 1000))}s`,
-      },
-    ],
+    timeline,
     ledgerEntries,
   };
 }
@@ -771,7 +834,7 @@ const Landing = () => {
                   <p className="text-xs uppercase tracking-widest text-cyan-400/70 mb-2 font-mono">
                     live execution
                   </p>
-                  <h1 className="text-2xl font-bold text-white">System is reading your site</h1>
+                  <h1 className="text-2xl font-bold text-white">AiVIS.biz is reading your site</h1>
                 </div>
               )}
 
@@ -782,7 +845,7 @@ const Landing = () => {
                     mismatch report
                   </p>
                   <h1 className="text-2xl font-bold text-white">
-                    Mismatch detected
+                    AiVIS.biz mismatch detected
                     <span className="ml-3 text-red-300 font-black tabular-nums">
                       {mismatchData.mismatchScore}/100
                     </span>

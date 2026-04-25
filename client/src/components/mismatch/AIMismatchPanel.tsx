@@ -34,6 +34,8 @@ export interface MismatchTimelineStage {
   key: string;
   label: string;
   timestampLabel: string;
+  progressLabel?: string;
+  detail?: string;
 }
 
 export interface MismatchData {
@@ -103,6 +105,31 @@ export function AIMismatchPanel({ data }: AIMismatchPanelProps) {
   const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
   const [lockedEntity, setLockedEntity] = useState<string | null>(null);
   const [timelineIndex, setTimelineIndex] = useState(data.timeline.length - 1);
+  const [isReplaying, setIsReplaying] = useState(false);
+
+  useEffect(() => {
+    if (data.timeline.length < 2) {
+      setIsReplaying(false);
+      return;
+    }
+
+    if (!isReplaying) return;
+    let frame = 0;
+    setTimelineIndex(0);
+
+    const interval = window.setInterval(() => {
+      frame += 1;
+      if (frame >= data.timeline.length - 1) {
+        setTimelineIndex(data.timeline.length - 1);
+        setIsReplaying(false);
+        window.clearInterval(interval);
+        return;
+      }
+      setTimelineIndex(frame);
+    }, 320);
+
+    return () => window.clearInterval(interval);
+  }, [data.timeline, isReplaying]);
 
   useEffect(() => {
     setTimelineIndex(data.timeline.length - 1);
@@ -159,20 +186,8 @@ export function AIMismatchPanel({ data }: AIMismatchPanelProps) {
         <MismatchTimeline
           stages={data.timeline}
           timelineIndex={timelineIndex}
-          onReplay={() => {
-            if (data.timeline.length < 2) return;
-            let idx = 0;
-            setTimelineIndex(0);
-            const interval = window.setInterval(() => {
-              idx += 1;
-              setTimelineIndex((current) => {
-                if (idx >= data.timeline.length - 1) {
-                  window.clearInterval(interval);
-                }
-                return Math.min(data.timeline.length - 1, current + 1);
-              });
-            }, 380);
-          }}
+          isReplaying={isReplaying}
+          onReplay={() => setIsReplaying((prev) => !prev)}
           onScrub={(next) => setTimelineIndex(next)}
         />
 
@@ -603,14 +618,19 @@ function DetailPill({ label, value }: { label: string; value: string }) {
 function MismatchTimeline({
   stages,
   timelineIndex,
+  isReplaying,
   onReplay,
   onScrub,
 }: {
   stages: MismatchTimelineStage[];
   timelineIndex: number;
+  isReplaying: boolean;
   onReplay: () => void;
   onScrub: (next: number) => void;
 }) {
+  const boundedIndex = Math.min(timelineIndex, Math.max(0, stages.length - 1));
+  const activeStage = stages[boundedIndex] ?? null;
+
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0b1020] p-4">
       <div className="flex items-center justify-between gap-3 mb-3">
@@ -618,9 +638,10 @@ function MismatchTimeline({
         <button
           type="button"
           onClick={onReplay}
+          disabled={stages.length < 2}
           className="text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-white/20 text-white/70 hover:border-white/35"
         >
-          Replay scan
+          {isReplaying ? 'Pause replay' : 'Replay scan'}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
@@ -642,11 +663,29 @@ function MismatchTimeline({
         type="range"
         min={0}
         max={Math.max(0, stages.length - 1)}
-        value={Math.min(timelineIndex, Math.max(0, stages.length - 1))}
+        value={boundedIndex}
         onChange={(event) => onScrub(Number(event.target.value))}
         className="w-full accent-cyan-400"
         aria-label="Scrub mismatch timeline"
       />
+      {activeStage && (
+        <div className="mt-3 rounded-lg border border-cyan-400/20 bg-cyan-500/5 p-3">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-widest text-cyan-200/70">
+            <span>{activeStage.label}</span>
+            <span>·</span>
+            <span>{activeStage.timestampLabel}</span>
+            {activeStage.progressLabel ? (
+              <>
+                <span>·</span>
+                <span>{activeStage.progressLabel}</span>
+              </>
+            ) : null}
+          </div>
+          <p className="mt-2 text-xs text-white/75">
+            {activeStage.detail || 'Stage detail is available after a live scan.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

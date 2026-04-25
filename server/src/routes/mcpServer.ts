@@ -27,11 +27,61 @@ import { computeCitationRankScore } from '../services/citationRankScoreService.j
 
 const router = Router();
 
+// ── Rate limiting for failed auth attempts ──────────────────────────────────
+
+interface FailedAuthAttempt {
+  count: number;
+  resetAt: number;
+}
+
+const failedAuthAttempts = new Map<string, FailedAuthAttempt>();
+
+function recordAuthFailure(clientIp: string): void {
+  const key = `failed_${clientIp}`;
+  const now = Date.now();
+  const attempt = failedAuthAttempts.get(key);
+
+  if (!attempt || now > attempt.resetAt) {
+    failedAuthAttempts.set(key, { count: 1, resetAt: now + 60_000 });
+  } else {
+    attempt.count++;
+  }
+}
+
+function checkAuthRateLimit(clientIp: string): { allowed: boolean; retryAfterMs: number } {
+  const key = `failed_${clientIp}`;
+  const attempt = failedAuthAttempts.get(key);
+  const now = Date.now();
+
+  if (!attempt || now > attempt.resetAt) {
+    return { allowed: true, retryAfterMs: 0 };
+  }
+
+  if (attempt.count > 10) {
+    const waitMs = Math.min(attempt.count * 500, 30_000);
+    return { allowed: false, retryAfterMs: waitMs };
+  }
+
+  return { allowed: true, retryAfterMs: 0 };
+}
+
 // ── Auth: accept both API key and OAuth token ────────────────────────────────
 
 async function mcpAuth(req: Request, res: Response, next: NextFunction) {
+  const clientIp = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown') as string;
+  const rateLimitCheck = checkAuthRateLimit(clientIp);
+
+  if (!rateLimitCheck.allowed) {
+    res.set('Retry-After', String(Math.ceil(rateLimitCheck.retryAfterMs / 1000)));
+    return res.status(429).json({
+      error: 'Too many failed authentication attempts',
+      retryAfterMs: rateLimitCheck.retryAfterMs,
+    });
+  }
+
   const token = getRequestAuthToken(req);
   if (!token) {
+    recordAuthFailure(clientIp);
     return res.status(401).json({ error: 'Missing Authorization header. Use Bearer avis_* or avist_*' });
   }
   const pool = getPool();
@@ -40,6 +90,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
   if (token.startsWith('avis_')) {
     const result = await validateApiKey(token);
     if (!result.ok) {
+      recordAuthFailure(clientIp);
       const isTierBlocked = result.reason === 'tier_blocked';
       return res.status(isTierBlocked ? 403 : 401).json({ error: isTierBlocked ? 'MCP Server requires Alignment or higher plan.' : 'Invalid API key', code: result.reason });
     }
@@ -62,6 +113,7 @@ async function mcpAuth(req: Request, res: Response, next: NextFunction) {
       [tokenHash]
     );
     if (!rows.length || rows[0].revoked || new Date(rows[0].expires_at) < new Date()) {
+      recordAuthFailure(clientIp);
       return res.status(401).json({ error: 'Invalid or expired OAuth token' });
     }
     // Enforce tier gate on OAuth token path - same check as API key validation

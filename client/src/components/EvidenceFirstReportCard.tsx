@@ -81,6 +81,9 @@ function getDomainFromUrl(url: string): string {
  * Based on verified evidence count / expected baseline
  */
 function calculateEvidenceCoverage(result: AnalysisResponse | AuditResult): number {
+  if ('avs' in result && result.avs) {
+    return Math.round(result.visibility_score || 0);
+  }
   if ('evidence' in result && Array.isArray(result.evidence)) {
     const evidenceCount = result.evidence.length;
     // Expected baseline: 15 key pieces of evidence
@@ -169,6 +172,10 @@ function detectDriftSignals(result: AnalysisResponse | AuditResult): {
   return { count: signals.length, signals };
 }
 
+function getAVS(result: AnalysisResponse | AuditResult) {
+  return 'avs' in result ? result.avs : undefined;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SUB-COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +218,9 @@ function ReportHeader({ result }: { result: AnalysisResponse | AuditResult }) {
  */
 function EvidenceCoverageBlock({ result }: { result: AnalysisResponse | AuditResult }) {
   const coverage = calculateEvidenceCoverage(result);
+  const avs = getAVS(result);
+  const pillars = avs ? Object.values(avs.pillars) : [];
+  const topReasons = avs?.reasons.slice(0, 3) ?? [];
   const coverageColor =
     coverage >= 80
       ? 'from-emerald-500 to-cyan-400'
@@ -222,7 +232,17 @@ function EvidenceCoverageBlock({ result }: { result: AnalysisResponse | AuditRes
 
   return (
     <div className="px-6 py-6 border-b border-slate-700/30">
-      <p className="text-xs text-slate-400 uppercase tracking-wide mb-3">AI Citation Probability</p>
+      <div className="mb-3 flex items-center justify-between gap-4">
+        <p className="text-xs text-slate-400 uppercase tracking-wide">
+          {avs ? 'AI Visibility Score (AVS)' : 'AI Citation Probability'}
+        </p>
+        {avs && (
+          <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold text-cyan-100">
+            <Zap className="w-3.5 h-3.5" />
+            Confidence {avs.confidence.score}%
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-6">
         {/* Circular gauge */}
         <div className="relative w-24 h-24 shrink-0">
@@ -304,8 +324,108 @@ function EvidenceCoverageBlock({ result }: { result: AnalysisResponse | AuditRes
                   ? 'Significant gaps detected. Consider addressing missing evidence types.'
                   : 'Critical evidence gaps. Major barriers to AI citation and attribution.'}
           </p>
+          {avs && (
+            <p className="mt-2 text-[11px] leading-relaxed text-slate-500">{avs.methodology}</p>
+          )}
         </div>
       </div>
+
+      {avs && (
+        <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="rounded-xl border border-slate-700/50 bg-slate-900/40 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Pillar Breakdown
+            </p>
+            <div className="space-y-3">
+              {pillars.map((pillar) => {
+                const percent =
+                  pillar.maxPoints > 0 ? Math.round((pillar.score / pillar.maxPoints) * 100) : 0;
+                return (
+                  <div key={pillar.key}>
+                    <div className="mb-1 flex items-center justify-between gap-3 text-xs">
+                      <span className="font-medium text-white">{pillar.label}</span>
+                      <span className="text-slate-300">
+                        {pillar.score.toFixed(1)}/{pillar.maxPoints}
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${coverageColor}`}
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                    <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+                      {pillar.summary}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-700/50 bg-slate-900/40 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Why This Score
+            </p>
+            <div className="space-y-3">
+              {topReasons.length > 0 ? (
+                topReasons.map((reason) => (
+                  <div
+                    key={`${reason.pillar}-${reason.issue}`}
+                    className="rounded-lg border border-rose-400/10 bg-rose-500/5 p-3"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-white">{reason.issue}</p>
+                      <span className="text-xs font-semibold text-rose-300">
+                        {reason.impact.toFixed(1)}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
+                      {reason.pillar}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                      {reason.rationale}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">
+                  No high-impact deductions detected in the evidence-backed rule set.
+                </p>
+              )}
+
+              <div className="rounded-lg border border-slate-700/50 bg-slate-950/50 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                  Confidence Basis
+                </p>
+                <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <p className="text-slate-500">Data</p>
+                    <p className="font-semibold text-white">
+                      {avs.confidence.components.dataCompleteness}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Crawl Depth</p>
+                    <p className="font-semibold text-white">
+                      {avs.confidence.components.crawlDepth}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500">Agreement</p>
+                    <p className="font-semibold text-white">
+                      {avs.confidence.components.evidenceAgreement}%
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                  {avs.confidence.basis}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

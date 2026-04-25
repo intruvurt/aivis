@@ -64,9 +64,52 @@ export interface ScoreSnapshot {
   scoreCap: number | null;
   finalScore: number;
   scoreVersion: string;
+  avs: AVSScoreSummary;
 }
 
-const SCORE_VERSION = 'v1';
+export type AVSPillarKey = 'crawlability' | 'comprehension' | 'authority' | 'freshness';
+
+export interface AVSPillarScore {
+  key: AVSPillarKey;
+  label: string;
+  weightPercent: number;
+  maxPoints: number;
+  score: number;
+  normalizedScore: number;
+  signalCount: number;
+  evidenceIds: string[];
+  summary: string;
+  confidence: number;
+}
+
+export interface AVSReason {
+  pillar: AVSPillarKey;
+  issue: string;
+  impact: number;
+  evidenceIds: string[];
+  rationale: string;
+}
+
+export interface AVSConfidenceSummary {
+  score: number;
+  label: 'high' | 'medium' | 'low';
+  components: {
+    dataCompleteness: number;
+    crawlDepth: number;
+    evidenceAgreement: number;
+  };
+  basis: string;
+}
+
+export interface AVSScoreSummary {
+  name: 'AI Visibility Score';
+  methodology: string;
+  pillars: Record<AVSPillarKey, AVSPillarScore>;
+  reasons: AVSReason[];
+  confidence: AVSConfidenceSummary;
+}
+
+const SCORE_VERSION = 'avs-v2';
 const FAMILY_WEIGHT: Record<RuleFamily, number> = {
   crawlability: 10,
   indexability: 10,
@@ -82,6 +125,259 @@ const FAMILY_WEIGHT: Record<RuleFamily, number> = {
   ecommerce: 0, // weight 0 = no false penalties; rules add +points when passing
   authority: 0, // weight 0 = no false penalties; rules add +points when passing
 };
+
+const AVS_PILLAR_CONFIG: Readonly<Record<AVSPillarKey, {
+  label: string;
+  maxPoints: number;
+  families: RuleFamily[];
+}>> = {
+  crawlability: {
+    label: 'Crawlability',
+    maxPoints: 25,
+    families: ['crawlability', 'indexability', 'renderability'],
+  },
+  comprehension: {
+    label: 'Comprehension',
+    maxPoints: 30,
+    families: ['metadata', 'schema', 'entity', 'content'],
+  },
+  authority: {
+    label: 'Authority',
+    maxPoints: 30,
+    families: ['citation', 'trust', 'authority', 'ecommerce'],
+  },
+  freshness: {
+    label: 'Freshness',
+    maxPoints: 15,
+    families: [],
+  },
+};
+
+const EXPECTED_CRAWL_KEYS = [
+  'robots_ai_crawlers',
+  'ai_crawler_access',
+  'llms_txt',
+  'sitemap',
+  'canonical',
+  'page_load_ms',
+  'lcp_ms',
+] as const;
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function roundTo(value: number, decimals = 1): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function uniqueEvidenceIds(results: RuleResult[]): string[] {
+  return [...new Set(results.flatMap((result) => result.evidenceIds))];
+}
+
+function parseIsoDate(value: unknown): Date | null {
+  if (typeof value !== 'string' || value.trim().length < 8) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function latestFreshnessDate(evidenceMap: Map<string, EvidenceItem>): Date | null {
+  const candidates: Date[] = [];
+
+  const sitemap = evidenceMap.get('sitemap');
+  const sitemapValue = sitemap?.value as Record<string, unknown> | undefined;
+  const freshestMod = parseIsoDate(sitemapValue?.freshestMod);
+  if (freshestMod) candidates.push(freshestMod);
+
+  const rawStructuredEntities = evidenceMap.get('structured_data')?.value as Record<string, unknown> | undefined;
+  const rawEntities = Array.isArray(rawStructuredEntities?.raw)
+    ? (rawStructuredEntities.raw as Array<Record<string, unknown>>)
+    : [];
+  for (const entity of rawEntities) {
+    const dateModified = parseIsoDate(entity.dateModified ?? entity['schema:dateModified']);
+    const datePublished = parseIsoDate(entity.datePublished ?? entity['schema:datePublished']);
+    if (dateModified) candidates.push(dateModified);
+    if (datePublished) candidates.push(datePublished);
+  }
+
+  if (candidates.length === 0) return null;
+  return candidates.reduce((latest, current) => (current > latest ? current : latest));
+}
+
+function buildFreshnessPillar(evidenceMap: Map<string, EvidenceItem>): AVSPillarScore {
+  const config = AVS_PILLAR_CONFIG.freshness;
+  const sitemap = evidenceMap.get('sitemap');
+  const sitemapValue = sitemap?.value as Record<string, unknown> | undefined;
+  const structuredData = evidenceMap.get('structured_data');
+  const latestDate = latestFreshnessDate(evidenceMap);
+  const now = Date.now();
+
+  let recencyComponent = 0;
+  if (latestDate) {
+    const ageDays = (now - latestDate.getTime()) / (1000 * 60 * 60 * 24);
+    if (ageDays <= 30) recencyComponent = 1;
+    else if (ageDays <= 90) recencyComponent = 0.8;
+    else if (ageDays <= 180) recencyComponent = 0.6;
+    else if (ageDays <= 365) recencyComponent = 0.35;
+    else recencyComponent = 0.1;
+  }
+
+  const updatesComponent = sitemapValue?.hasLastmod === true ? 1 : latestDate ? 0.6 : 0;
+  const crawlFrequencyComponent = sitemapValue?.present === true
+    ? sitemapValue?.hasLastmod === true
+      ? 1
+      : Number(sitemapValue?.urlCount ?? 0) > 0
+        ? 0.6
+        : 0.2
+    : 0;
+  const activityComponent = structuredData?.status === 'present' || latestDate ? 1 : 0;
+  const normalizedScore = clamp(
+    recencyComponent * 0.4 + updatesComponent * 0.3 + crawlFrequencyComponent * 0.2 + activityComponent * 0.1,
+    0,
+    1,
+  );
+
+  const signalCount = [latestDate, sitemapValue?.present, sitemapValue?.hasLastmod, structuredData?.status === 'present']
+    .filter(Boolean).length;
+  const evidenceIds = [sitemap?.evidence_id, structuredData?.evidence_id].filter(
+    (value): value is string => typeof value === 'string' && value.length > 0,
+  );
+
+  let summary = 'No recency evidence detected; freshness confidence is low.';
+  if (latestDate) {
+    const ageDays = Math.max(0, Math.round((now - latestDate.getTime()) / (1000 * 60 * 60 * 24)));
+    summary = ageDays <= 90
+      ? `Recent freshness signal detected ${ageDays} day${ageDays === 1 ? '' : 's'} ago.`
+      : `Latest observed freshness signal is ${ageDays} days old.`;
+  } else if (sitemapValue?.hasLastmod === true) {
+    summary = 'Sitemap lastmod is available, but the freshest date could not be parsed.';
+  }
+
+  return {
+    key: 'freshness',
+    label: config.label,
+    weightPercent: config.maxPoints,
+    maxPoints: config.maxPoints,
+    score: roundTo(normalizedScore * config.maxPoints, 1),
+    normalizedScore: roundTo(normalizedScore, 3),
+    signalCount,
+    evidenceIds,
+    summary,
+    confidence: signalCount >= 3 ? 0.9 : signalCount >= 2 ? 0.7 : signalCount >= 1 ? 0.45 : 0.2,
+  };
+}
+
+function buildAVSReasons(ruleResults: RuleResult[], evidenceMap: Map<string, EvidenceItem>): AVSReason[] {
+  const reasons = ruleResults
+    .filter((result) => !result.passed)
+    .map((result) => {
+      const pillar = (Object.entries(AVS_PILLAR_CONFIG).find(([, config]) =>
+        config.families.includes(result.family)
+      )?.[0] ?? 'authority') as AVSPillarKey;
+      const pillarConfig = AVS_PILLAR_CONFIG[pillar];
+      const denominator = Math.max(
+        1,
+        pillarConfig.families.reduce((sum, family) => sum + Math.max(0, FAMILY_WEIGHT[family]), 0),
+      );
+      const evidenceLabel = result.evidenceKeys
+        .map((key) => evidenceMap.get(key)?.label)
+        .filter((label): label is string => typeof label === 'string' && label.length > 0)
+        .join(', ');
+
+      return {
+        pillar,
+        issue: result.title,
+        impact: -roundTo((Math.abs(result.scoreImpact) / denominator) * pillarConfig.maxPoints, 1),
+        evidenceIds: result.evidenceIds,
+        rationale: evidenceLabel
+          ? `${result.description} Observed via ${evidenceLabel}.`
+          : result.description,
+      };
+    })
+    .sort((left, right) => left.impact - right.impact);
+
+  const freshnessPillar = buildFreshnessPillar(evidenceMap);
+  if (freshnessPillar.score < 10) {
+    reasons.push({
+      pillar: 'freshness',
+      issue: 'Weak recency signals',
+      impact: -roundTo(freshnessPillar.maxPoints - freshnessPillar.score, 1),
+      evidenceIds: freshnessPillar.evidenceIds,
+      rationale: freshnessPillar.summary,
+    });
+  }
+
+  return reasons.slice(0, 6);
+}
+
+function buildAVSConfidence(evidence: EvidenceItem[], contradictions: number): AVSConfidenceSummary {
+  const observedEvidence = evidence.filter((item) => item.status === 'present' || item.status === 'partial').length;
+  const dataCompleteness = evidence.length > 0 ? (observedEvidence / evidence.length) * 100 : 0;
+  const observedCrawlKeys = EXPECTED_CRAWL_KEYS.filter((key) => {
+    const item = evidence.find((candidate) => candidate.key === key);
+    return item && item.status !== 'absent' && item.status !== 'error';
+  }).length;
+  const crawlDepth = (observedCrawlKeys / EXPECTED_CRAWL_KEYS.length) * 100;
+  const evidenceAgreement = clamp(100 - contradictions * 20, 0, 100);
+  const score = roundTo(dataCompleteness * 0.45 + crawlDepth * 0.3 + evidenceAgreement * 0.25, 0);
+
+  return {
+    score,
+    label: score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low',
+    components: {
+      dataCompleteness: roundTo(dataCompleteness, 0),
+      crawlDepth: roundTo(crawlDepth, 0),
+      evidenceAgreement: roundTo(evidenceAgreement, 0),
+    },
+    basis: 'Confidence is derived from evidence completeness, crawl-surface coverage, and contradiction-free agreement across extracted signals.',
+  };
+}
+
+function buildAVSSummary(
+  familyScores: ScoreBreakdown,
+  ruleResults: RuleResult[],
+  evidence: EvidenceItem[],
+  contradictionCount: number,
+): AVSScoreSummary {
+  const evidenceMap = new Map<string, EvidenceItem>();
+  for (const item of evidence) evidenceMap.set(item.key, item);
+
+  const pillars = {} as Record<AVSPillarKey, AVSPillarScore>;
+  for (const key of ['crawlability', 'comprehension', 'authority'] as const) {
+    const config = AVS_PILLAR_CONFIG[key];
+    const maxWeight = config.families.reduce((sum, family) => sum + Math.max(0, FAMILY_WEIGHT[family]), 0);
+    const achieved = config.families.reduce((sum, family) => sum + familyScores[family], 0);
+    const normalizedScore = maxWeight > 0 ? achieved / maxWeight : 0;
+    const pillarResults = ruleResults.filter((result) => config.families.includes(result.family));
+    const failedTitles = pillarResults.filter((result) => !result.passed).map((result) => result.title);
+
+    pillars[key] = {
+      key,
+      label: config.label,
+      weightPercent: config.maxPoints,
+      maxPoints: config.maxPoints,
+      score: roundTo(normalizedScore * config.maxPoints, 1),
+      normalizedScore: roundTo(normalizedScore, 3),
+      signalCount: pillarResults.length,
+      evidenceIds: uniqueEvidenceIds(pillarResults),
+      summary: failedTitles.length > 0
+        ? `${failedTitles.slice(0, 2).join('; ')}${failedTitles.length > 2 ? '; more gaps detected.' : '.'}`
+        : `${config.label} signals are consistently present.`,
+      confidence: pillarResults.length > 0 ? 1 : 0.25,
+    };
+  }
+
+  pillars.freshness = buildFreshnessPillar(evidenceMap);
+
+  return {
+    name: 'AI Visibility Score',
+    methodology: 'AVS combines evidence-backed crawlability, comprehension, authority, and freshness pillars. Each pillar is derived from deterministic rule results or direct recency evidence rather than opaque averages.',
+    pillars,
+    reasons: buildAVSReasons(ruleResults, evidenceMap),
+    confidence: buildAVSConfidence(evidence, contradictionCount),
+  };
+}
 
 // ─── Rule definitions ─────────────────────────────────────────────────────────
 
@@ -821,7 +1117,11 @@ export function evaluateRules(
 
 // ─── Score computation ────────────────────────────────────────────────────────
 
-export function computeScore(ruleResults: RuleResult[]): ScoreSnapshot {
+export function computeScore(
+  ruleResults: RuleResult[],
+  evidence: EvidenceItem[] = [],
+  contradictionCount = 0,
+): ScoreSnapshot {
   const familyScores: ScoreBreakdown = {
     crawlability: 0,
     indexability: 0,
@@ -865,6 +1165,7 @@ export function computeScore(ruleResults: RuleResult[]): ScoreSnapshot {
     scoreCap,
     finalScore: Math.round(finalScore * 100) / 100,
     scoreVersion: SCORE_VERSION,
+    avs: buildAVSSummary(familyScores, ruleResults, evidence, contradictionCount),
   };
 }
 

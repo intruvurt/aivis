@@ -721,6 +721,48 @@ export interface TripleCheckSummary {
   confidence: 'high' | 'medium' | 'low';
 }
 
+export type AVSPillarKey = 'crawlability' | 'comprehension' | 'authority' | 'freshness';
+
+export interface AVSPillarScore {
+  key: AVSPillarKey;
+  label: string;
+  weightPercent: number;
+  maxPoints: number;
+  score: number;
+  normalizedScore: number;
+  signalCount: number;
+  evidenceIds: string[];
+  summary: string;
+  confidence: number;
+}
+
+export interface AVSReason {
+  pillar: AVSPillarKey;
+  issue: string;
+  impact: number;
+  evidenceIds: string[];
+  rationale: string;
+}
+
+export interface AVSConfidenceSummary {
+  score: number;
+  label: 'high' | 'medium' | 'low';
+  components: {
+    dataCompleteness: number;
+    crawlDepth: number;
+    evidenceAgreement: number;
+  };
+  basis: string;
+}
+
+export interface AVSScoreSummary {
+  name: 'AI Visibility Score';
+  methodology: string;
+  pillars: Record<AVSPillarKey, AVSPillarScore>;
+  reasons: AVSReason[];
+  confidence: AVSConfidenceSummary;
+}
+
 /* ========================= Core analysis response ========================= */
 
 export interface RecommendationEvidenceSummary {
@@ -789,6 +831,7 @@ export interface RagPipelinePayload {
 
 export interface AnalysisResponse {
   visibility_score: number;
+  avs?: AVSScoreSummary;
 
   /**
    * Legacy/UI aliases - retained for backwards compatibility with older
@@ -912,6 +955,7 @@ export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
   const r = obj as unknown as Record<string, unknown>;
   return (
     typeof r.visibility_score === 'number' &&
+    (r.avs === undefined || typeof r.avs === 'object') &&
     typeof r.url === 'string' &&
     typeof r.analyzed_at === 'string' &&
     Array.isArray(r.recommendations) &&

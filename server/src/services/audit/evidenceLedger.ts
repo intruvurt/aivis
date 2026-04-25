@@ -330,6 +330,7 @@ function structuredDataEvidence(sd?: StructuredData): RawEvidenceItem {
       hasLocalBusiness: sd?.hasLocalBusiness ?? false,
       hasFAQ: sd?.hasFAQ ?? false,
       hasService: sd?.hasService ?? false,
+      raw: Array.isArray(sd?.raw) ? sd.raw : [],
     },
     status: count > 0 ? 'present' : 'absent',
     confidence: 1.0,
@@ -451,19 +452,33 @@ function tldrEvidence(
 
 // ─── New evidence helpers ─────────────────────────────────────────────────────
 
-function sitemapEvidence(sitemap?: { fetched: boolean; present: boolean; urlCount?: number }): RawEvidenceItem {
+function sitemapEvidence(sitemap?: {
+  fetched: boolean;
+  present: boolean;
+  urlCount?: number;
+  hasLastmod?: boolean;
+  freshestMod?: string;
+}): RawEvidenceItem {
   const notes: string[] = [];
   const present = sitemap?.present ?? false;
 
   if (!present) notes.push('No sitemap.xml found - search engines and AI crawlers cannot discover pages efficiently.');
   if (present && (sitemap?.urlCount ?? 0) === 0) notes.push('Sitemap exists but contains no URL entries.');
   if (present && (sitemap?.urlCount ?? 0) > 0) notes.push(`Sitemap contains ${sitemap!.urlCount} URLs.`);
+  if (present && sitemap?.hasLastmod) {
+    notes.push(`Sitemap exposes lastmod freshness signals${sitemap.freshestMod ? ` (freshest: ${sitemap.freshestMod})` : ''}.`);
+  }
 
   return {
     category: 'indexability',
     key: 'sitemap',
     label: 'XML Sitemap',
-    value: { present, urlCount: sitemap?.urlCount ?? 0 },
+    value: {
+      present,
+      urlCount: sitemap?.urlCount ?? 0,
+      hasLastmod: sitemap?.hasLastmod ?? false,
+      freshestMod: sitemap?.freshestMod ?? null,
+    },
     status: present ? 'present' : 'absent',
     confidence: sitemap?.fetched ? 1.0 : 0.3,
     notes,

@@ -299,7 +299,7 @@ async function runSingleJob() {
       const ruleResults = evaluateRules(evidence.items, evidence.contradictions.length);
 
       // 3. Compute visibility score from rule results
-      const scoreSnapshot = computeScore(ruleResults);
+      const scoreSnapshot = computeScore(ruleResults, evidenceLedger.items, evidenceLedger.contradictions.length);
       finalScore = Math.round(scoreSnapshot.finalScore);
 
       // 4. Run BRAG validation gate to issue evidence-backed finding IDs

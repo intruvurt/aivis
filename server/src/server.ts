@@ -10273,7 +10273,7 @@ app.post(
       // Then run the 30-rule deterministic rule engine pre-AI to establish evidence-derived score bounds.
       const evidenceLedger = extractEvidenceFromScrapedData(requestId, scraped);
       const ruleResults = evaluateRules(evidenceLedger.items, evidenceLedger.contradictions.length);
-      const ruleSnapshot = computeRuleScore(ruleResults);
+      const ruleSnapshot = computeRuleScore(ruleResults, evidenceLedger.items, evidenceLedger.contradictions.length);
 
       // ── Pipeline state tracker ──
       // Tracks each sequential stage for transparency and failure visibility.
@@ -10321,6 +10321,7 @@ app.post(
         const processingTime = Date.now() - startTime;
         return res.status(200).json({
           visibility_score: 0,
+          avs: ruleSnapshot.avs,
           ai_platform_scores: { chatgpt: 0, perplexity: 0, google_ai: 0, claude: 0 },
           recommendations: [],
           schema_markup: { json_ld_count: 0, has_organization_schema: false, has_faq_schema: false, schema_types: [] },
@@ -10340,7 +10341,7 @@ app.post(
           triple_check_enabled: false,
           model_count: 0,
           evidence_manifest: { total_items: evidenceLedger.items.length, present_count: 0, absent_count: evidenceLedger.items.filter(i => i.status === 'absent').length, partial_count: evidenceLedger.items.filter(i => i.status === 'partial').length, error_count: evidenceLedger.items.filter(i => i.status === 'error').length },
-          rule_engine: { score: ruleSnapshot.finalScore, hard_blocker_count: ruleSnapshot.hardBlockerCount, score_cap: ruleSnapshot.scoreCap, family_scores: ruleSnapshot.familyScores, contradiction_count: evidenceLedger.contradictions.length, score_version: ruleSnapshot.scoreVersion },
+          rule_engine: { score: ruleSnapshot.finalScore, hard_blocker_count: ruleSnapshot.hardBlockerCount, score_cap: ruleSnapshot.scoreCap, family_scores: ruleSnapshot.familyScores, contradiction_count: evidenceLedger.contradictions.length, score_version: ruleSnapshot.scoreVersion, avs: ruleSnapshot.avs },
           pipeline_state: {
             stages: pipelineStages,
             completed: true,
@@ -12687,6 +12688,7 @@ For each recommendation:
         topical_keywords: aiAnalysis.topical_keywords || [],
         keyword_intelligence: aiAnalysis.keyword_intelligence || [],
         brand_entities: aiAnalysis.brand_entities || [],
+        avs: ruleSnapshot.avs,
         findability_goals: findabilityGoals,
         goal_alignment: {
           coverage: Number(goalAlignment.coverage.toFixed(3)),
@@ -12703,6 +12705,7 @@ For each recommendation:
           family_scores: ruleSnapshot.familyScores,
           contradiction_count: evidenceLedger.contradictions.length,
           score_version: ruleSnapshot.scoreVersion,
+          avs: ruleSnapshot.avs,
         },
         ...(privateExposureScanResult
           ? { private_exposure_scan: privateExposureScanResult }

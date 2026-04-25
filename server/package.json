@@ -19,6 +19,9 @@
     "worker:bix": "tsx src/workers/bix.worker.ts",
     "worker:citations": "tsx src/workers/citation.worker.ts",
     "worker:fix": "tsx src/workers/fix.worker.ts",
+    "worker:bix:prod": "node --import ./dist/server/src/instrument.js dist/server/src/workers/bix.worker.js",
+    "worker:citations:prod": "node --import ./dist/server/src/instrument.js dist/server/src/workers/citation.worker.js",
+    "worker:fix:prod": "node --import ./dist/server/src/instrument.js dist/server/src/workers/fix.worker.js",
     "verify:audit-trace-determinism": "tsx tools/verifyAuditTraceDeterminism.ts",
     "verify:determinism": "tsx tools/verifyDeterminism.ts",
     "smoke:analyze:e2e": "tsx tools/smokeAnalyzeCompilerE2E.ts"

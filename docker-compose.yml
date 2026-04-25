@@ -19,6 +19,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      RUN_BACKGROUND_LOOPS: "false"
       DATABASE_URL: ${DATABASE_URL?DATABASE_URL is required}
       REDIS_URL: ${REDIS_URL?REDIS_URL is required}
       JWT_SECRET: ${JWT_SECRET?JWT_SECRET is required}
@@ -27,6 +28,60 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+
+  worker_fix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aivis_worker_fix
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["npm", "--prefix", "server", "run", "worker:fix:prod"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL?REDIS_URL is required}
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET is required}
+
+  worker_citations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aivis_worker_citations
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["npm", "--prefix", "server", "run", "worker:citations:prod"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL?REDIS_URL is required}
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET is required}
+
+  worker_bix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aivis_worker_bix
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["npm", "--prefix", "server", "run", "worker:bix:prod"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL?REDIS_URL is required}
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET is required}
 
   postgres:
     image: postgres:16-alpine

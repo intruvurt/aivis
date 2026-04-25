@@ -15984,6 +15984,15 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
 
 // Start server
 (async function start() {
+  const runBackgroundLoopsRaw = String(
+    process.env.RUN_BACKGROUND_LOOPS ?? process.env.RUN_WORKERS ?? "true",
+  )
+    .trim()
+    .toLowerCase();
+  const runBackgroundLoops = !["0", "false", "no", "off"].includes(
+    runBackgroundLoopsRaw,
+  );
+
   // ── Fail-fast: reject startup if critical env vars are missing ──────────
   const missingVars: string[] = [];
   if (!process.env.DATABASE_URL) missingVars.push("DATABASE_URL");
@@ -16205,16 +16214,20 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   }
 
   // Bootstrap scheduled citation ranking jobs from DB (non-blocking)
-  if (databaseReady) {
+  if (databaseReady && runBackgroundLoops) {
     bootstrapScheduler().catch((err: Error) => {
       console.warn(
         "[Startup] Citation scheduler bootstrap error (non-fatal):",
         err.message,
       );
     });
-  } else {
+  } else if (!databaseReady) {
     console.warn(
       "[Startup] Citation scheduler bootstrap skipped because database is unavailable",
+    );
+  } else {
+    console.warn(
+      "[Startup] Citation scheduler bootstrap skipped because RUN_BACKGROUND_LOOPS=false",
     );
   }
 
@@ -16332,7 +16345,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   // Inject analyzer into MCP audit processor
   setMcpAnalyzer(analyzeInternally);
 
-  if (databaseReady) {
+  if (databaseReady && runBackgroundLoops) {
     startRescanLoop(analyzeInternally, {
       onCompleted: async ({
         userId,
@@ -16718,9 +16731,13 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
     bootstrapAgencyAutomation();
     startCitationRevalidationLoop();
     console.log("[AuditQueue] Redis queue worker loop started");
-  } else {
+  } else if (!databaseReady) {
     console.warn(
       "[Startup] Skipping DB-backed worker loops because database is unavailable",
+    );
+  } else {
+    console.warn(
+      "[Startup] Background worker loops disabled via RUN_BACKGROUND_LOOPS/RUN_WORKERS",
     );
   }
 })();

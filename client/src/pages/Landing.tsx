@@ -25,20 +25,22 @@ import {
   HomepageGuard,
 } from '../homepage';
 
-interface PlatformStats {
-  status: string;
-  db: string;
-  uptime: number;
-  totalUsers?: number;
-  completedAudits?: number;
-  averageScore?: number;
+interface PublicBenchmarksPayload {
+  total_audits?: number;
 }
 
-async function getPlatformStats(): Promise<PlatformStats | null> {
+interface PublicBenchmarksResponse {
+  success?: boolean;
+  benchmarks?: PublicBenchmarksPayload;
+}
+
+async function getPublicBenchmarks(): Promise<PublicBenchmarksPayload | null> {
   try {
-    const r = await fetch(`${API_URL}/api/health`);
+    const r = await fetch(`${API_URL}/api/public/benchmarks`);
     if (!r.ok) return null;
-    return r.json();
+    const data = (await r.json()) as PublicBenchmarksResponse;
+    if (!data?.success || !data.benchmarks) return null;
+    return data.benchmarks;
   } catch {
     return null;
   }
@@ -734,7 +736,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
-  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
+  const [publicBenchmarks, setPublicBenchmarks] = useState<PublicBenchmarksPayload | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
   // ── Scan state machine ──────────────────────────────────────────────────────
@@ -774,12 +776,12 @@ const Landing = () => {
 
   useEffect(() => {
     let cancelled = false;
-    getPlatformStats().then((d) => {
-      if (!cancelled) setPlatformStats(d);
+    getPublicBenchmarks().then((d) => {
+      if (!cancelled) setPublicBenchmarks(d);
     });
     const iv = setInterval(() => {
-      getPlatformStats().then((d) => {
-        if (!cancelled) setPlatformStats(d);
+      getPublicBenchmarks().then((d) => {
+        if (!cancelled) setPublicBenchmarks(d);
       });
     }, 30_000);
     return () => {
@@ -977,9 +979,10 @@ const Landing = () => {
                     { label: 'Evidence framework', value: 'BRAG', accent: 'text-emerald-300' },
                     {
                       label: 'Sites audited',
-                      value: platformStats?.completedAudits
-                        ? `${Number(platformStats.completedAudits).toLocaleString()}+`
-                        : '2,400+',
+                      value:
+                        typeof publicBenchmarks?.total_audits === 'number'
+                          ? Number(publicBenchmarks.total_audits).toLocaleString()
+                          : 'Unavailable',
                       accent: 'text-amber-300',
                     },
                   ].map(({ label, value, accent }) => (

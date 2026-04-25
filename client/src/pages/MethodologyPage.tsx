@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ChevronDown,
@@ -22,6 +22,7 @@ import {
   buildTechArticleSchema,
   buildHowToSchema,
 } from '../lib/seoSchema';
+import { API_URL } from '../config';
 
 const BRAG_PROTOCOL_LABEL = `${BRAG_TRAIL_LABEL} protocol`;
 
@@ -272,36 +273,65 @@ const methodologyFaq = [
   },
 ] as const;
 
-/* ─── Platform aggregate stats ───────────────────────────────────────── */
+/* ─── Public aggregate telemetry ─────────────────────────────────────── */
 
-const platformStats = [
-  { value: '14,200+', label: 'Audits run', note: 'All-time across all platform tiers' },
-  {
-    value: '39 / 100',
-    label: 'Average visibility score',
-    note: 'Median composite across all audited pages',
-  },
-  {
-    value: '71%',
-    label: 'Fail structured data checks',
-    note: 'Missing or invalid JSON-LD on crawl',
-  },
-  {
-    value: '58%',
-    label: 'Block at least one AI crawler',
-    note: 'GPTBot, ClaudeBot, or PerplexityBot disallowed in robots.txt',
-  },
-  {
-    value: '67%',
-    label: 'Missing a clean H1 hierarchy',
-    note: 'No H1, duplicate H1, or H1/title mismatch',
-  },
-  {
-    value: '+18 pts',
-    label: 'Avg score lift after first fix cycle',
-    note: 'Based on pages re-audited after applying BRAG recommendations',
-  },
-] as const;
+interface PublicBenchmarksPayload {
+  total_audits?: number;
+  avg_score?: number;
+}
+
+interface PublicInsightsPayload {
+  pct_no_schema?: number;
+  pct_ai_crawler_blocked?: number;
+  pct_missing_h1?: number;
+}
+
+interface PublicProofPayload {
+  avg_improvement?: number;
+}
+
+interface PublicEnvelope<T> {
+  success?: boolean;
+  benchmarks?: T;
+  insights?: T;
+  proof?: T;
+}
+
+async function getPublicBenchmarks(): Promise<PublicBenchmarksPayload | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/public/benchmarks`);
+    if (!response.ok) return null;
+    const data = (await response.json()) as PublicEnvelope<PublicBenchmarksPayload>;
+    if (!data?.success || !data.benchmarks) return null;
+    return data.benchmarks;
+  } catch {
+    return null;
+  }
+}
+
+async function getPublicInsights(): Promise<PublicInsightsPayload | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/public/insights`);
+    if (!response.ok) return null;
+    const data = (await response.json()) as PublicEnvelope<PublicInsightsPayload>;
+    if (!data?.success || !data.insights) return null;
+    return data.insights;
+  } catch {
+    return null;
+  }
+}
+
+async function getPublicProof(): Promise<PublicProofPayload | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/public/proof`);
+    if (!response.ok) return null;
+    const data = (await response.json()) as PublicEnvelope<PublicProofPayload>;
+    if (!data?.success || !data.proof) return null;
+    return data.proof;
+  } catch {
+    return null;
+  }
+}
 
 /* ─── 7 most common extraction failures ─────────────────────────────── */
 
@@ -367,6 +397,84 @@ const failureModes = [
 /* ─── Component ──────────────────────────────────────────────────────── */
 
 export default function MethodologyPage() {
+  const [publicBenchmarks, setPublicBenchmarks] = useState<PublicBenchmarksPayload | null>(null);
+  const [publicInsights, setPublicInsights] = useState<PublicInsightsPayload | null>(null);
+  const [publicProof, setPublicProof] = useState<PublicProofPayload | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all([getPublicBenchmarks(), getPublicInsights(), getPublicProof()]).then(
+      ([benchmarks, insights, proof]) => {
+        if (cancelled) return;
+        setPublicBenchmarks(benchmarks);
+        setPublicInsights(insights);
+        setPublicProof(proof);
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const platformStats = useMemo(() => {
+    const formatCount = (value?: number): string =>
+      typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString() : 'Unavailable';
+
+    const formatScore = (value?: number): string =>
+      typeof value === 'number' && Number.isFinite(value)
+        ? `${Math.round(value)} / 100`
+        : 'Unavailable';
+
+    const formatPercent = (value?: number): string =>
+      typeof value === 'number' && Number.isFinite(value) ? `${Math.round(value)}%` : 'Unavailable';
+
+    const formatDelta = (value?: number): string =>
+      typeof value === 'number' && Number.isFinite(value)
+        ? `${Math.round(value) >= 0 ? '+' : ''}${Math.round(value)} pts`
+        : 'Unavailable';
+
+    return [
+      {
+        value: formatCount(publicBenchmarks?.total_audits),
+        label: 'Audits run',
+        note: 'All-time across all platform tiers',
+      },
+      {
+        value: formatScore(publicBenchmarks?.avg_score),
+        label: 'Average visibility score',
+        note: 'Median composite across all audited pages',
+      },
+      {
+        value: formatPercent(publicInsights?.pct_no_schema),
+        label: 'Fail structured data checks',
+        note: 'Missing or invalid JSON-LD on crawl',
+      },
+      {
+        value: formatPercent(publicInsights?.pct_ai_crawler_blocked),
+        label: 'Block at least one AI crawler',
+        note: 'GPTBot, ClaudeBot, or PerplexityBot disallowed in robots.txt',
+      },
+      {
+        value: formatPercent(publicInsights?.pct_missing_h1),
+        label: 'Missing a clean H1 hierarchy',
+        note: 'No H1, duplicate H1, or H1/title mismatch',
+      },
+      {
+        value: formatDelta(publicProof?.avg_improvement),
+        label: 'Avg score lift after first fix cycle',
+        note: 'Based on pages re-audited after applying BRAG recommendations',
+      },
+    ] as const;
+  }, [publicBenchmarks, publicInsights, publicProof]);
+
+  const calibrationAuditCountText =
+    typeof publicBenchmarks?.total_audits === 'number' &&
+    Number.isFinite(publicBenchmarks.total_audits)
+      ? `${publicBenchmarks.total_audits.toLocaleString()} audits`
+      : 'currently available public audit volume (temporarily unavailable)';
+
   usePageMeta({
     title: 'AiVIS.biz Methodology | CITE LEDGER & BRAG Evidence Protocol',
     description: `How AiVIS.biz audits AI answer readiness: six weighted dimensions, the CITE LEDGER evidence pipeline, and the ${BRAG_PROTOCOL_LABEL} that ground every finding in crawl-observable data.`,
@@ -528,10 +636,10 @@ export default function MethodologyPage() {
           </p>
           <p className="mt-4 text-sm leading-7 text-white/54">
             Each dimension is scored independently from 0 to 100 before weighting is applied.
-            Weights are calibrated from aggregate patterns across 14,000+ audits and reflect each
-            dimension's measured impact on AI extraction fidelity. Content, schema, and readability
-            carry the heaviest weights because they determine whether AI models can extract,
-            attribute, and accurately cite content.
+            Weights are calibrated from aggregate patterns across {calibrationAuditCountText} and
+            reflect each dimension's measured impact on AI extraction fidelity. Content, schema, and
+            readability carry the heaviest weights because they determine whether AI models can
+            extract, attribute, and accurately cite content.
           </p>
         </div>
       </section>

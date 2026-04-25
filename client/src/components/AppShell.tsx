@@ -68,6 +68,7 @@ export default function AppShell() {
 
   // Close sidebar on every route change (handles back/forward navigation on mobile)
   const location = useLocation();
+  const isScanRoute = location.pathname === '/app/scan';
   useEffect(() => {
     close();
   }, [location.pathname, close]);
@@ -80,6 +81,88 @@ export default function AppShell() {
     !!verificationGraceUntil &&
     Number.isFinite(new Date(String(verificationGraceUntil)).getTime()) &&
     new Date(String(verificationGraceUntil)).getTime() > Date.now();
+
+  if (isScanRoute) {
+    return (
+      <div className="min-h-screen bg-[#05070d] text-white">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Skip to content
+        </a>
+
+        <header className="sticky top-0 z-[60] border-b border-white/10 bg-[#070a12]/88 backdrop-blur-md">
+          <div className="mx-auto flex h-16 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center gap-3">
+              <Link
+                to="/app/scan"
+                className="text-xs font-semibold tracking-[0.18em] text-cyan-200/90 uppercase"
+              >
+                AiVIS Scan Workspace
+              </Link>
+              <span className="hidden text-[11px] text-white/35 md:inline">Live audit surface</span>
+            </div>
+
+            <nav className="hidden items-center gap-2 lg:flex">
+              <Link
+                to="/app/reports"
+                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+              >
+                Reports
+              </Link>
+              <Link
+                to="/app/score-fix"
+                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+              >
+                Score Fix
+              </Link>
+              <Link
+                to="/app/reverse-engineer"
+                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+              >
+                Reverse Engineer
+              </Link>
+              <Link
+                to="/app/site-crawl"
+                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+              >
+                Site Crawl
+              </Link>
+            </nav>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/app/help"
+                className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white"
+              >
+                Help
+              </Link>
+              <Link
+                to="/app/settings"
+                className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white"
+              >
+                Settings
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <main id="main-content" role="main" aria-label="Scan workspace content">
+          <OutletErrorBoundary key={location.pathname}>
+            <Suspense fallback={<PageLoadingIndicator />}>
+              <Outlet />
+            </Suspense>
+          </OutletErrorBoundary>
+        </main>
+
+        <GlobalCommandPalette />
+        <Suspense fallback={null}>
+          <GuideBot />
+        </Suspense>
+      </div>
+    );
+  }
 
   return (
     <div className="aurora-shell">

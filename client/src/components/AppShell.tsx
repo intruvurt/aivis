@@ -69,6 +69,8 @@ export default function AppShell() {
   // Close sidebar on every route change (handles back/forward navigation on mobile)
   const location = useLocation();
   const isScanRoute = location.pathname === '/app/scan';
+  const isAuditDetailRoute = /^\/app\/audits\/[^/]+$/.test(location.pathname);
+  const isImmersiveScanSurface = isScanRoute || isAuditDetailRoute;
   useEffect(() => {
     close();
   }, [location.pathname, close]);
@@ -82,7 +84,10 @@ export default function AppShell() {
     Number.isFinite(new Date(String(verificationGraceUntil)).getTime()) &&
     new Date(String(verificationGraceUntil)).getTime() > Date.now();
 
-  if (isScanRoute) {
+  if (isImmersiveScanSurface) {
+    const surfaceLabel = isAuditDetailRoute ? 'AiVIS Audit Review' : 'AiVIS Scan Workspace';
+    const surfaceHint = isAuditDetailRoute ? 'Evidence review surface' : 'Live audit surface';
+
     return (
       <div className="min-h-screen bg-[#05070d] text-white">
         <a
@@ -92,55 +97,57 @@ export default function AppShell() {
           Skip to content
         </a>
 
-        <header className="sticky top-0 z-[60] border-b border-white/10 bg-[#070a12]/88 backdrop-blur-md">
-          <div className="mx-auto flex h-16 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6">
-            <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-[60] border-b border-white/10 bg-[#070a12]/90 backdrop-blur-md">
+          <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center gap-2.5">
               <Link
                 to="/app/scan"
-                className="text-xs font-semibold tracking-[0.18em] text-cyan-200/90 uppercase"
+                className="text-[11px] font-semibold tracking-[0.14em] text-cyan-200/90 uppercase"
               >
-                AiVIS Scan Workspace
+                {surfaceLabel}
               </Link>
-              <span className="hidden text-[11px] text-white/35 md:inline">Live audit surface</span>
+              <span className="hidden text-[10px] uppercase tracking-[0.08em] text-white/32 md:inline">
+                {surfaceHint}
+              </span>
             </div>
 
-            <nav className="hidden items-center gap-2 lg:flex">
+            <nav className="hidden items-center gap-1.5 lg:flex">
               <Link
                 to="/app/reports"
-                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
               >
                 Reports
               </Link>
               <Link
                 to="/app/score-fix"
-                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
               >
                 Score Fix
               </Link>
               <Link
                 to="/app/reverse-engineer"
-                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
               >
                 Reverse Engineer
               </Link>
               <Link
                 to="/app/site-crawl"
-                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
               >
                 Site Crawl
               </Link>
             </nav>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Link
                 to="/app/help"
-                className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-white/12 px-2.5 py-1 text-[11px] tracking-[0.04em] text-white/68 uppercase transition hover:border-white/30 hover:text-white"
               >
                 Help
               </Link>
               <Link
                 to="/app/settings"
-                className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-white/12 px-2.5 py-1 text-[11px] tracking-[0.04em] text-white/68 uppercase transition hover:border-white/30 hover:text-white"
               >
                 Settings
               </Link>

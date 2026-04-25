@@ -35,6 +35,7 @@ import {
   Trophy,
   Target,
   Gift,
+  CreditCard,
   type LucideIcon,
 } from 'lucide-react';
 

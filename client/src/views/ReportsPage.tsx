@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import PlatformProofLoopCard from '../components/PlatformProofLoopCard';
 import type { AnalysisResponse } from '@shared/types';
-import { meetsMinimumTier } from '@shared/types';
 
 import { useAuthStore } from '../stores/authStore';
 import { useAnalysisStore } from '../stores/analysisStore';
@@ -302,11 +301,7 @@ export default function ReportsPage() {
     path: '/reports',
   });
 
-  const normalizedUserTier = typeof user?.tier === 'string' ? user.tier : ('observer' as const);
-  const hasAccess = meetsMinimumTier(
-    normalizedUserTier as 'observer' | 'starter' | 'alignment' | 'signal' | 'agency' | 'scorefix',
-    'alignment'
-  );
+  const hasAccess = isAuthenticated;
 
   const [filter, setFilter] = useState<'all' | 'completed' | 'processing'>('all');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -322,6 +317,7 @@ export default function ReportsPage() {
   const [shareExpiryDays] = useState<number>(30);
   const [apiAudits, setApiAudits] = useState<ApiAudit[]>([]);
   const [apiAuditsTotal, setApiAuditsTotal] = useState<number | null>(null);
+  const [auditsAccessDenied, setAuditsAccessDenied] = useState(false);
   const [auditResultsByAuditId, setAuditResultsByAuditId] = useState<
     Record<string, AnalysisResponse | null>
   >({});
@@ -355,14 +351,19 @@ export default function ReportsPage() {
   }, [isHydrated, isAuthenticated, token, refreshUser, logout, navigate]);
 
   useEffect(() => {
-    if (!isAuthenticated || !hasAccess) return;
+    if (!isAuthenticated) return;
 
     let cancelled = false;
 
     const fetchAudits = async () => {
       try {
         const response = await apiFetch(`${API_URL}/api/audits?limit=100`);
-        if (!response.ok) return;
+        if (!response.ok) {
+          if (!cancelled) {
+            setAuditsAccessDenied(response.status === 403);
+          }
+          return;
+        }
 
         const payload = (await response.json().catch(() => null)) as {
           audits?: ApiAudit[];
@@ -370,6 +371,7 @@ export default function ReportsPage() {
         } | null;
         const audits = Array.isArray(payload?.audits) ? payload!.audits : [];
         if (!cancelled) {
+          setAuditsAccessDenied(false);
           setApiAudits(audits);
           setApiAuditsTotal(
             Number.isFinite(Number(payload?.total)) ? Number(payload?.total) : audits.length
@@ -377,6 +379,7 @@ export default function ReportsPage() {
         }
       } catch {
         if (!cancelled) {
+          setAuditsAccessDenied(false);
           setApiAudits([]);
           setApiAuditsTotal(null);
         }
@@ -387,7 +390,7 @@ export default function ReportsPage() {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, hasAccess]);
+  }, [isAuthenticated]);
 
   const localReports: Report[] = useMemo(() => {
     return history
@@ -1807,7 +1810,7 @@ export default function ReportsPage() {
 
       {/* Content */}
       <div>
-        {!hasAccess ? (
+        {!hasAccess || auditsAccessDenied ? (
           <UpgradeWall
             feature="Report History"
             description="View, download, and share your past analysis reports."

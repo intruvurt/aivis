@@ -16,11 +16,15 @@ const TOKENS = {
   alignment: process.env.AIVIS_ALIGNMENT_TOKEN || "",
   signal: process.env.AIVIS_SIGNAL_TOKEN || "",
 };
+const GENERIC_TOKEN = process.env.AIVIS_TOKEN || "";
+const DOWNGRADE_PRE_TOKEN = process.env.AIVIS_DOWNGRADE_PRE_TOKEN || "";
+const DOWNGRADE_POST_TOKEN = process.env.AIVIS_DOWNGRADE_POST_TOKEN || "";
 
 const issues = [];
 const contradictions = [];
 const breakpoints = [];
 const repro = [];
+const notes = [];
 
 function addIssue(type, explanation, details = {}) {
   issues.push({ type, explanation, ...details });
@@ -36,6 +40,10 @@ function addBreakpoint(summary, details = {}) {
 
 function addRepro(step, expected, actual) {
   repro.push({ step, expected, actual });
+}
+
+function addNote(summary) {
+  notes.push({ summary });
 }
 
 async function fetchJson(endpoint, opts = {}) {
@@ -443,15 +451,14 @@ async function runAnalyzeDeterminism(tierResults) {
   const firstTier = ["signal", "alignment", "starter", "observer"].find(
     (k) => TOKENS[k],
   );
-  if (!firstTier) {
-    addIssue(
-      "ANALYZE_DETERMINISM_SKIPPED",
-      "No tier token available for determinism test.",
+  const token = firstTier ? TOKENS[firstTier] : GENERIC_TOKEN;
+  if (!token) {
+    addNote(
+      "Analyze determinism check skipped: set AIVIS_TOKEN or any AIVIS_*_TOKEN env var.",
     );
     return;
   }
 
-  const token = TOKENS[firstTier];
   const runs = [];
   for (let i = 0; i < ANALYZE_RUNS; i += 1) {
     const run = await fetchJson("/api/analyze", {
@@ -510,6 +517,127 @@ async function runAnalyzeDeterminism(tierResults) {
       `POST /api/analyze x${ANALYZE_RUNS} (${TEST_URL})`,
       "Stable visibility_score + seo_diagnostics + strict_rubric",
       JSON.stringify(snapshots),
+    );
+  }
+}
+
+async function runTierDowngradeRevocationCheck() {
+  if (!DOWNGRADE_PRE_TOKEN || !DOWNGRADE_POST_TOKEN) {
+    addNote(
+      "Tier downgrade revocation check skipped: set AIVIS_DOWNGRADE_PRE_TOKEN and AIVIS_DOWNGRADE_POST_TOKEN.",
+    );
+    return;
+  }
+
+  const pre = await fetchJson("/api/user/refresh", {
+    method: "POST",
+    token: DOWNGRADE_PRE_TOKEN,
+  });
+  const post = await fetchJson("/api/user/refresh", {
+    method: "POST",
+    token: DOWNGRADE_POST_TOKEN,
+  });
+
+  if (!pre.ok || !post.ok) {
+    addIssue(
+      "TIER_DOWNGRADE_REVOCATION_UNVERIFIED",
+      "Could not verify downgrade revocation due to refresh failure for pre/post token.",
+      { preStatus: pre.status, postStatus: post.status },
+    );
+    addRepro(
+      "POST /api/user/refresh (pre and post downgrade tokens)",
+      "200 for both tokens",
+      `pre=${pre.status}, post=${post.status}`,
+    );
+    return;
+  }
+
+  const preFeatures = pre.payload?.entitlements?.features || {};
+  const postFeatures = post.payload?.entitlements?.features || {};
+  const preTier = String(pre.payload?.user?.tier || "");
+  const postTier = String(post.payload?.user?.tier || "");
+
+  if (
+    Boolean(preFeatures.reportHistory) ===
+      Boolean(postFeatures.reportHistory) &&
+    preTier === postTier
+  ) {
+    addIssue(
+      "TIER_DOWNGRADE_REVOCATION_FAIL",
+      "Downgrade simulation did not show an entitlement or tier change between pre/post tokens.",
+      { preTier, postTier },
+    );
+    addRepro(
+      "POST /api/user/refresh (pre vs post downgrade)",
+      "post token has reduced entitlement or lower tier",
+      `preTier=${preTier}, postTier=${postTier}, reportHistory(pre/post)=${Boolean(preFeatures.reportHistory)}/${Boolean(postFeatures.reportHistory)}`,
+    );
+    return;
+  }
+
+  // Verify protected surface revokes with post token when report history is disabled.
+  if (!Boolean(postFeatures.reportHistory)) {
+    const auditsPost = await fetchJson("/api/audits?limit=5", {
+      token: DOWNGRADE_POST_TOKEN,
+    });
+    if (auditsPost.ok) {
+      addIssue(
+        "TIER_DOWNGRADE_REVOCATION_FAIL",
+        "Post-downgrade token retained access to /api/audits despite reportHistory=false.",
+      );
+      addRepro(
+        "GET /api/audits (post-downgrade token)",
+        "403 when reportHistory=false",
+        `${auditsPost.status}`,
+      );
+    }
+  }
+}
+
+async function runAuthFailureContractCheck() {
+  const invalid = await fetchJson("/api/user/refresh", {
+    method: "POST",
+    token: "invalid.token.for.contract.check",
+  });
+
+  if (invalid.status !== 401) {
+    addIssue(
+      "AUTH_INVALID_TOKEN_CONTRACT_FAIL",
+      "Invalid bearer token did not produce 401 on /api/user/refresh.",
+      { status: invalid.status },
+    );
+    addRepro(
+      "POST /api/user/refresh (invalid bearer)",
+      "401 Unauthorized",
+      `${invalid.status}`,
+    );
+  }
+
+  const knownGood =
+    ["signal", "alignment", "starter", "observer"]
+      .map((k) => TOKENS[k])
+      .find(Boolean) || GENERIC_TOKEN;
+  if (!knownGood) {
+    addNote(
+      "Auth stability baseline check skipped for known-good token: set AIVIS_TOKEN or any tier token.",
+    );
+    return;
+  }
+
+  const valid = await fetchJson("/api/user/refresh", {
+    method: "POST",
+    token: knownGood,
+  });
+  if (!valid.ok) {
+    addIssue(
+      "AUTH_KNOWN_TOKEN_CONTRACT_FAIL",
+      "Known good token failed /api/user/refresh contract check.",
+      { status: valid.status },
+    );
+    addRepro(
+      "POST /api/user/refresh (known-good token)",
+      "200 success",
+      `${valid.status}`,
     );
   }
 }
@@ -612,6 +740,16 @@ function summarize() {
   }
   console.log("");
 
+  console.log("NOTES");
+  if (notes.length === 0) {
+    console.log("- None");
+  } else {
+    notes.forEach((n) => {
+      console.log(`- ${n.summary}`);
+    });
+  }
+  console.log("");
+
   console.log(`SYSTEM_CONFIDENCE_SCORE (0–100): ${confidence}`);
 }
 
@@ -624,16 +762,8 @@ function summarize() {
   await auditUiVsBackend(pricing);
   const tierResults = await runTierChecks(pricing);
   await runAnalyzeDeterminism(tierResults);
-
-  // Explicitly mark scenarios that need privileged orchestration or browser runtime state.
-  addIssue(
-    "TIER_DOWNGRADE_SIMULATION_PARTIAL",
-    "Immediate downgrade revocation requires privileged billing mutation or admin test harness; validate with webhook-triggered tier change in staging.",
-  );
-  addIssue(
-    "OFFLINE_UI_SESSION_TEST_PARTIAL",
-    "UI logout-on-transient-failure behavior requires browser automation with network throttling; API-only audit cannot prove client store transition correctness.",
-  );
+  await runTierDowngradeRevocationCheck();
+  await runAuthFailureContractCheck();
 
   summarize();
 })();

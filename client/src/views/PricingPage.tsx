@@ -236,7 +236,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: 'How does Score Fix billing work?',
     answer:
-      'Score Fix is a consumption remediation layer with credits. It is not a recurring subscription tier and operates on existing audit snapshots.',
+      'Score Fix is a remediation layer with credits and operates on existing audit snapshots. Billing model and limits are sourced from /api/payment/pricing and enforced server-side.',
   },
   {
     question: 'How does annual billing work?',

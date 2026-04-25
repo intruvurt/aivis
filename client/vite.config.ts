@@ -99,6 +99,7 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: mode !== "production",
+    modulePreload: false,
     chunkSizeWarningLimit: 550,
     rollupOptions: {
       output: {

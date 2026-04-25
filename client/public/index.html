@@ -1,1181 +1,881 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Search Visibility - Enterprise AI Search Optimization Platform</title>
+    <!-- Inline SVG favicon (data URI) to prevent /favicon.ico 404 requests -->
+    <link
+      rel="icon"
+      href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%2306b6d4"/><text x="50%" y="54%" font-size="48" text-anchor="middle" fill="white" font-family="Arial,Helvetica,sans-serif">A</text></svg>'
+    />
+    <meta
+      name="description"
+      content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability across AI search engines and traditional search."
+    />
+    <meta
+      name="keywords"
+      content="AI search, SEO, search visibility, website audit, AI indexing, search optimization"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Search Visibility - Enterprise AI Search Optimization Platform</title>
-  <!-- Inline SVG favicon (data URI) to prevent /favicon.ico 404 requests -->
-  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%2306b6d4"/><text x="50%" y="54%" font-size="48" text-anchor="middle" fill="white" font-family="Arial,Helvetica,sans-serif">A</text></svg>' />
-  <meta name="description"
-    content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability across AI search engines and traditional search." />
-  <meta name="keywords" content="AI search, SEO, search visibility, website audit, AI indexing, search optimization" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AiVis - Enterprise AI Search Visibility Platform" />
+    <meta
+      property="og:description"
+      content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability."
+    />
+    <meta property="og:image" content="/og-image.jpg" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="AiVis - Enterprise AI Search Visibility Platform" />
-  <meta property="og:description"
-    content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability." />
-  <meta property="og:image" content="/og-image.jpg" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AiVis - Enterprise AI Search Visibility Platform" />
+    <meta
+      name="twitter:description"
+      content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability."
+    />
+    <meta name="twitter:image" content="/og-image.jpg" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AiVis - Enterprise AI Search Visibility Platform" />
-  <meta name="twitter:description"
-    content="Enterprise-grade AI search visibility auditing platform. Analyze, optimize, and track your website's discoverability." />
-  <meta name="twitter:image" content="/og-image.jpg" />
-
-  <!-- Schema.org for AI Search -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "AiVIS.biz",
-    "url": "https://aivis.biz",
-    "description": "Enterprise grade AI search visibility with evidence-backed auditing platform",
-    "applicationCategory": "BusinessApplication",
-    "offers": {
-      "@type": "Offer",
-      "name": "Alignment [Core]",
-      "price": "49",
-      "priceCurrency": "USD",
-      "url": "https://aivis.biz/pricing",
-      "priceValidUntil": "2026-12-31"
-    },
-     }
-  </script>
-
-  <!-- Enhanced Error Monitor Script with Response Body -->
-  <script>
-    // Send message to parent
-    function sendToParent(type, message, details) {
-      if (window.parent && window.parent !== window) {
-        var data = {
-          type: type,
-          message: message,
-          timestamp: new Date().toISOString(),
-          details: details
-        };
-        window.parent.postMessage(data, '*');
+    <!-- Schema.org for AI Search -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AiVIS.biz",
+        "url": "https://aivis.biz",
+        "description": "Enterprise grade AI search visibility with evidence-backed auditing platform",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "name": "Alignment [Core]",
+          "price": "49",
+          "priceCurrency": "USD",
+          "url": "https://aivis.biz/pricing",
+          "priceValidUntil": "2026-12-31"
+        }
       }
-    }
+    </script>
 
-    // Override console methods
-    var originalConsole = {
-      log: console.log,
-      error: console.error
-    };
+    <!-- Enhanced Error Monitor Script with Response Body -->
+    <script>
+      // Send message to parent
+      function sendToParent(type, message, details) {
+        if (window.parent && window.parent !== window) {
+          var data = {
+            type: type,
+            message: message,
+            timestamp: new Date().toISOString(),
+            details: details,
+          };
+          window.parent.postMessage(data, '*');
+        }
+      }
 
-    console.log = function () {
-      originalConsole.log.apply(console, arguments);
-      var message = Array.prototype.slice.call(arguments).join(' ');
-      sendToParent('console.log', message);
-    };
-
-    console.error = function () {
-      originalConsole.error.apply(console, arguments);
-      var message = Array.prototype.slice.call(arguments).join(' ');
-      sendToParent('console.error', message);
-    };
-
-    // Monitor ALL network requests with response body
-    function setupNetworkMonitoring() {
-      if (window.__networkMonitorInitialized) return;
-      window.__networkMonitorInitialized = true;
-
-      console.log('Setting up network monitoring with response body...');
-
-      // 1. Intercept XMLHttpRequest (covers most HTTP requests)
-      var originalXHROpen = XMLHttpRequest.prototype.open;
-      var originalXHRSend = XMLHttpRequest.prototype.send;
-
-      XMLHttpRequest.prototype.open = function (method, url) {
-        this._monitorMethod = method;
-        this._monitorUrl = url;
-        return originalXHROpen.apply(this, arguments);
+      // Override console methods
+      var originalConsole = {
+        log: console.log,
+        error: console.error,
       };
 
-      XMLHttpRequest.prototype.send = function () {
-        var xhr = this;
+      console.log = function () {
+        originalConsole.log.apply(console, arguments);
+        var message = Array.prototype.slice.call(arguments).join(' ');
+        sendToParent('console.log', message);
+      };
 
-        xhr.addEventListener('load', function () {
-          if (xhr.status >= 400) {
-            var responseText = '';
-            try {
-              responseText = xhr.responseText;
-              // Try to parse as JSON for better formatting
-              var responseData = JSON.parse(responseText);
-              responseText = JSON.stringify(responseData, null, 2);
-            } catch (e) {
-              // If not JSON, use as-is
-              responseText = xhr.responseText;
+      console.error = function () {
+        originalConsole.error.apply(console, arguments);
+        var message = Array.prototype.slice.call(arguments).join(' ');
+        sendToParent('console.error', message);
+      };
+
+      // Monitor ALL network requests with response body
+      function setupNetworkMonitoring() {
+        if (window.__networkMonitorInitialized) return;
+        window.__networkMonitorInitialized = true;
+
+        console.log('Setting up network monitoring with response body...');
+
+        // 1. Intercept XMLHttpRequest (covers most HTTP requests)
+        var originalXHROpen = XMLHttpRequest.prototype.open;
+        var originalXHRSend = XMLHttpRequest.prototype.send;
+
+        XMLHttpRequest.prototype.open = function (method, url) {
+          this._monitorMethod = method;
+          this._monitorUrl = url;
+          return originalXHROpen.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.send = function () {
+          var xhr = this;
+
+          xhr.addEventListener('load', function () {
+            if (xhr.status >= 400) {
+              var responseText = '';
+              try {
+                responseText = xhr.responseText;
+                // Try to parse as JSON for better formatting
+                var responseData = JSON.parse(responseText);
+                responseText = JSON.stringify(responseData, null, 2);
+              } catch (e) {
+                // If not JSON, use as-is
+                responseText = xhr.responseText;
+              }
+
+              var message = 'HTTP ' + xhr.status + ': ' + xhr.statusText + ' - ' + xhr._monitorUrl;
+              var details = {
+                url: xhr._monitorUrl,
+                method: xhr._monitorMethod,
+                status: xhr.status,
+                statusText: xhr.statusText,
+                responseBody: responseText,
+                responseHeaders: xhr.getAllResponseHeaders(),
+              };
+
+              sendToParent('network.error', message, details);
             }
+          });
 
-            var message = 'HTTP ' + xhr.status + ': ' + xhr.statusText + ' - ' + xhr._monitorUrl;
+          xhr.addEventListener('error', function () {
+            var message = 'Network Error: ' + xhr._monitorUrl;
             var details = {
               url: xhr._monitorUrl,
               method: xhr._monitorMethod,
-              status: xhr.status,
-              statusText: xhr.statusText,
-              responseBody: responseText,
-              responseHeaders: xhr.getAllResponseHeaders()
+              error: 'Network request failed',
             };
-
             sendToParent('network.error', message, details);
-          }
-        });
+          });
 
-        xhr.addEventListener('error', function () {
-          var message = 'Network Error: ' + xhr._monitorUrl;
-          var details = {
-            url: xhr._monitorUrl,
-            method: xhr._monitorMethod,
-            error: 'Network request failed'
-          };
-          sendToParent('network.error', message, details);
-        });
+          return originalXHRSend.apply(this, arguments);
+        };
 
-        return originalXHRSend.apply(this, arguments);
-      };
+        // 2. Intercept fetch API with response body
+        var originalFetch = window.fetch;
+        window.fetch = function (url, options) {
+          var method = (options && options.method) || 'GET';
 
-      // 2. Intercept fetch API with response body
-      var originalFetch = window.fetch;
-      window.fetch = function (url, options) {
-        var method = (options && options.method) || 'GET';
+          return originalFetch(url, options)
+            .then(function (response) {
+              if (!response.ok) {
+                // Clone response to read body
+                var responseClone = response.clone();
+                return responseClone.text().then(function (responseText) {
+                  var parsedResponse = '';
+                  try {
+                    var responseData = JSON.parse(responseText);
+                    parsedResponse = JSON.stringify(responseData, null, 2);
+                  } catch (e) {
+                    parsedResponse = responseText;
+                  }
 
-        return originalFetch(url, options).then(function (response) {
-          if (!response.ok) {
-            // Clone response to read body
-            var responseClone = response.clone();
-            return responseClone.text().then(function (responseText) {
-              var parsedResponse = '';
-              try {
-                var responseData = JSON.parse(responseText);
-                parsedResponse = JSON.stringify(responseData, null, 2);
-              } catch (e) {
-                parsedResponse = responseText;
+                  var message =
+                    'HTTP ' + response.status + ': ' + response.statusText + ' - ' + url;
+                  var details = {
+                    url: url,
+                    method: method,
+                    status: response.status,
+                    statusText: response.statusText,
+                    responseBody: parsedResponse,
+                    responseHeaders: Object.fromEntries(response.headers.entries()),
+                  };
+
+                  // Log to console as well for immediate devtool visibility
+                  try {
+                    console.error('Network Error Detected:', message, details);
+                  } catch (e) {}
+                  sendToParent('network.error', message, details);
+                  return response;
+                });
               }
-
-              var message = 'HTTP ' + response.status + ': ' + response.statusText + ' - ' + url;
+              return response;
+            })
+            .catch(function (error) {
+              var message = 'Fetch Error: ' + error.message + ' - ' + url;
               var details = {
                 url: url,
                 method: method,
-                status: response.status,
-                statusText: response.statusText,
-                responseBody: parsedResponse,
-                responseHeaders: Object.fromEntries(response.headers.entries())
+                error: error.message,
               };
-
-              // Log to console as well for immediate devtool visibility
-              try { console.error('Network Error Detected:', message, details); } catch (e) {}
-              sendToParent('network.error', message, details);
-              return response;
+              sendToParent('network.error3', message, details);
+              throw error;
             });
-          }
-          return response;
-        }).catch(function (error) {
-          var message = 'Fetch Error: ' + error.message + ' - ' + url;
-          var details = {
-            url: url,
-            method: method,
-            error: error.message
-          };
-          sendToParent('network.error3', message, details);
-          throw error;
-        });
-      };
-
-      console.log('Network monitoring with response body setup complete');
-    }
-
-    // Setup network monitoring immediately
-    setupNetworkMonitoring();
-
-    // Also setup when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupNetworkMonitoring);
-    }
-
-    // And when window loads
-    window.addEventListener('load', setupNetworkMonitoring);
-  </script>
-
-  <script>
-    (function () {
-
-      // State management
-      let isSelectionEnabled = false;
-      let isEditingEnabled = false;
-      let hoveredElement = null;
-      let selectedElement = null;
-      let editingElement = null;
-      let originalStyles = new Map();
-      let originalContent = new Map();
-
-      // New state for one-element-at-a-time editing
-      let currentlyModifiedElement = null;
-      let modifiedStyles = new Map();
-      let modifiedContent = new Map();
-
-      // Store original image src for proper restoration
-      let originalImageSrc = new Map();
-
-      // Styles for different states
-      const HOVER_STYLE = {
-        outline: '2px dashed #7C4CE1',
-        outlineOffset: '2px',
-        cursor: 'pointer'
-      };
-
-      const SELECTED_STYLE = {
-        outline: '2px solid #7C4CE1',
-        outlineOffset: '2px',
-        // backgroundColor: 'rgba(40, 167, 69, 0.1)'
-      };
-
-      const EDITING_STYLE = {
-        outline: '2px solid #7C4CE1',
-        outlineOffset: '2px',
-        cursor: 'text'
-        // Don't override backgroundColor - let the element keep its original color
-      };
-
-      // Generate unique selector for element
-      function generateSelector(element) {
-        // Safety check for null/undefined element
-        if (!element) {
-          return '';
-        }
-
-        if (element.id) {
-          return '#' + element.id;
-        }
-
-        let selector = element.tagName.toLowerCase();
-
-        if (element.className) {
-          const classes = element.className.split(' ').filter(c => c.trim());
-          if (classes.length > 0) {
-            selector += '.' + classes.join('.');
-          }
-        }
-
-        const parent = element.parentElement;
-        if (parent) {
-          const siblings = Array.from(parent.children).filter(
-            child => child.tagName === element.tagName
-          );
-          if (siblings.length > 1) {
-            const index = siblings.indexOf(element) + 1;
-            selector += ':nth-child(' + index + ')';
-          }
-        }
-
-        return selector;
-      }
-
-      // Get element attributes
-      function getElementAttributes(element) {
-        const attrs = {};
-        for (let i = 0; i < element.attributes.length; i++) {
-          const attr = element.attributes[i];
-          attrs[attr.name] = attr.value;
-        }
-        return attrs;
-      }
-
-      // Get computed styles
-      function getComputedStylesObject(element) {
-        const computedStyle = window.getComputedStyle(element);
-        return {
-          color: computedStyle.color,
-          backgroundColor: computedStyle.backgroundColor,
-          fontSize: computedStyle.fontSize,
-          fontFamily: computedStyle.fontFamily,
-          fontWeight: computedStyle.fontWeight,
-          textAlign: computedStyle.textAlign,
-          padding: computedStyle.padding,
-          margin: computedStyle.margin,
-          border: computedStyle.border,
-          borderRadius: computedStyle.borderRadius,
-          width: computedStyle.width,
-          height: computedStyle.height
         };
+
+        console.log('Network monitoring with response body setup complete');
       }
 
-      // React Dynamic Content Detection
-      function isReactApp() {
-        return !!(window.React ||
-          window.__REACT_DEVTOOLS_GLOBAL_HOOK__ ||
-          document.querySelector('[data-reactroot]') ||
-          document.querySelector('[data-react-helmet]'));
+      // Setup network monitoring immediately
+      setupNetworkMonitoring();
+
+      // Also setup when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupNetworkMonitoring);
       }
 
-      function hasReactFiber(element) {
-        try {
-          // Check for React Fiber properties (React 16+)
-          const fiberKey = Object.keys(element).find(key =>
-            key.startsWith('__reactInternalFiber') ||
-            key.startsWith('__reactFiber') ||
-            key.startsWith('_reactInternalFiber')
-          );
+      // And when window loads
+      window.addEventListener('load', setupNetworkMonitoring);
+    </script>
 
-          if (fiberKey) {
-            const fiber = element[fiberKey];
-            if (fiber && (fiber.elementType || fiber.type)) {
-              return {
-                isReactElement: true,
-                componentName: (fiber.elementType && fiber.elementType.name) ||
-                  (fiber.type && fiber.type.name) ||
-                  'Component',
-                hasProps: !!fiber.memoizedProps,
-                hasState: !!fiber.memoizedState
-              };
+    <script>
+      (function () {
+        // State management
+        let isSelectionEnabled = false;
+        let isEditingEnabled = false;
+        let hoveredElement = null;
+        let selectedElement = null;
+        let editingElement = null;
+        let originalStyles = new Map();
+        let originalContent = new Map();
+
+        // New state for one-element-at-a-time editing
+        let currentlyModifiedElement = null;
+        let modifiedStyles = new Map();
+        let modifiedContent = new Map();
+
+        // Store original image src for proper restoration
+        let originalImageSrc = new Map();
+
+        // Styles for different states
+        const HOVER_STYLE = {
+          outline: '2px dashed #7C4CE1',
+          outlineOffset: '2px',
+          cursor: 'pointer',
+        };
+
+        const SELECTED_STYLE = {
+          outline: '2px solid #7C4CE1',
+          outlineOffset: '2px',
+          // backgroundColor: 'rgba(40, 167, 69, 0.1)'
+        };
+
+        const EDITING_STYLE = {
+          outline: '2px solid #7C4CE1',
+          outlineOffset: '2px',
+          cursor: 'text',
+          // Don't override backgroundColor - let the element keep its original color
+        };
+
+        // Generate unique selector for element
+        function generateSelector(element) {
+          // Safety check for null/undefined element
+          if (!element) {
+            return '';
+          }
+
+          if (element.id) {
+            return '#' + element.id;
+          }
+
+          let selector = element.tagName.toLowerCase();
+
+          if (element.className) {
+            const classes = element.className.split(' ').filter((c) => c.trim());
+            if (classes.length > 0) {
+              selector += '.' + classes.join('.');
             }
           }
 
-          // Check parent elements for React Fiber (up to 3 levels)
-          let parent = element.parentElement;
-          let depth = 0;
-          while (parent && depth < 3) {
-            const parentFiberKey = Object.keys(parent).find(key =>
-              key.startsWith('__reactInternalFiber') ||
-              key.startsWith('__reactFiber')
+          const parent = element.parentElement;
+          if (parent) {
+            const siblings = Array.from(parent.children).filter(
+              (child) => child.tagName === element.tagName
+            );
+            if (siblings.length > 1) {
+              const index = siblings.indexOf(element) + 1;
+              selector += ':nth-child(' + index + ')';
+            }
+          }
+
+          return selector;
+        }
+
+        // Get element attributes
+        function getElementAttributes(element) {
+          const attrs = {};
+          for (let i = 0; i < element.attributes.length; i++) {
+            const attr = element.attributes[i];
+            attrs[attr.name] = attr.value;
+          }
+          return attrs;
+        }
+
+        // Get computed styles
+        function getComputedStylesObject(element) {
+          const computedStyle = window.getComputedStyle(element);
+          return {
+            color: computedStyle.color,
+            backgroundColor: computedStyle.backgroundColor,
+            fontSize: computedStyle.fontSize,
+            fontFamily: computedStyle.fontFamily,
+            fontWeight: computedStyle.fontWeight,
+            textAlign: computedStyle.textAlign,
+            padding: computedStyle.padding,
+            margin: computedStyle.margin,
+            border: computedStyle.border,
+            borderRadius: computedStyle.borderRadius,
+            width: computedStyle.width,
+            height: computedStyle.height,
+          };
+        }
+
+        // React Dynamic Content Detection
+        function isReactApp() {
+          return !!(
+            window.React ||
+            window.__REACT_DEVTOOLS_GLOBAL_HOOK__ ||
+            document.querySelector('[data-reactroot]') ||
+            document.querySelector('[data-react-helmet]')
+          );
+        }
+
+        function hasReactFiber(element) {
+          try {
+            // Check for React Fiber properties (React 16+)
+            const fiberKey = Object.keys(element).find(
+              (key) =>
+                key.startsWith('__reactInternalFiber') ||
+                key.startsWith('__reactFiber') ||
+                key.startsWith('_reactInternalFiber')
             );
 
-            if (parentFiberKey) {
-              const parentFiber = parent[parentFiberKey];
-              if (parentFiber && (parentFiber.elementType || parentFiber.type)) {
+            if (fiberKey) {
+              const fiber = element[fiberKey];
+              if (fiber && (fiber.elementType || fiber.type)) {
                 return {
                   isReactElement: true,
-                  componentName: (parentFiber.elementType && parentFiber.elementType.name) ||
-                    (parentFiber.type && parentFiber.type.name) ||
+                  componentName:
+                    (fiber.elementType && fiber.elementType.name) ||
+                    (fiber.type && fiber.type.name) ||
                     'Component',
-                  hasProps: !!parentFiber.memoizedProps,
-                  hasState: !!parentFiber.memoizedState,
-                  inheritedFromParent: true
+                  hasProps: !!fiber.memoizedProps,
+                  hasState: !!fiber.memoizedState,
                 };
               }
             }
-            parent = parent.parentElement;
-            depth++;
-          }
-        } catch (error) {
-          // Silently fail if React Fiber detection fails
-        }
 
-        return false;
-      }
-
-      function isPartOfReactList(element) {
-        try {
-          // Check multiple levels up the DOM tree for list patterns
-          let currentElement = element;
-          let depth = 0;
-
-          while (currentElement && depth < 4) {
-            const parent = currentElement.parentElement;
-            if (!parent) break;
-
-            // Check if current element is part of a list pattern
-            const siblings = Array.from(parent.children);
-            const similarElements = siblings.filter(sibling =>
-              sibling.tagName === currentElement.tagName &&
-              sibling.className === currentElement.className &&
-              sibling !== currentElement
-            );
-
-            // Check for list pattern (require at least 2 similar elements for deeper checks)
-            if (similarElements.length >= 2) {
-              // Check for content variation (sign of data-driven content)
-              const allSimilarElements = [currentElement, ...similarElements];
-              const uniqueTextContent = new Set(
-                allSimilarElements.map(el => el.textContent?.trim().toLowerCase())
+            // Check parent elements for React Fiber (up to 3 levels)
+            let parent = element.parentElement;
+            let depth = 0;
+            while (parent && depth < 3) {
+              const parentFiberKey = Object.keys(parent).find(
+                (key) => key.startsWith('__reactInternalFiber') || key.startsWith('__reactFiber')
               );
-              const hasVariedContent = uniqueTextContent.size > 1;
 
-              // Check for data-like parent container indicators
-              const parentClassLower = parent.className.toLowerCase();
-              const hasDataParent = /list|grid|items|cards|collection|container|wrapper|map|flag/.test(parentClassLower);
+              if (parentFiberKey) {
+                const parentFiber = parent[parentFiberKey];
+                if (parentFiber && (parentFiber.elementType || parentFiber.type)) {
+                  return {
+                    isReactElement: true,
+                    componentName:
+                      (parentFiber.elementType && parentFiber.elementType.name) ||
+                      (parentFiber.type && parentFiber.type.name) ||
+                      'Component',
+                    hasProps: !!parentFiber.memoizedProps,
+                    hasState: !!parentFiber.memoizedState,
+                    inheritedFromParent: true,
+                  };
+                }
+              }
+              parent = parent.parentElement;
+              depth++;
+            }
+          } catch (error) {
+            // Silently fail if React Fiber detection fails
+          }
 
-              // Check for data-like content patterns in the elements
-              const hasDataLikeContent = allSimilarElements.some(el => {
-                const text = el.textContent || '';
-                // Look for patterns that suggest dynamic data
-                return /\d{2,}|\d{4}-\d{2}-\d{2}|#\w+|@\w+/.test(text) ||
-                  text.length > 15 || // Longer text suggests data content
-                  el.querySelector('img') || // Contains images (like flags)
-                  el.querySelector('[src]'); // Has src attribute (images)
-              });
+          return false;
+        }
 
-              // Special check for flag-like structures
-              const isFlagStructure = /flag|marker|item|card/.test(parent.className.toLowerCase()) ||
-                allSimilarElements.some(el =>
-                  el.querySelector('img') &&
-                  (el.textContent?.length > 5 || el.querySelector('[alt*="flag"]'))
+        function isPartOfReactList(element) {
+          try {
+            // Check multiple levels up the DOM tree for list patterns
+            let currentElement = element;
+            let depth = 0;
+
+            while (currentElement && depth < 4) {
+              const parent = currentElement.parentElement;
+              if (!parent) break;
+
+              // Check if current element is part of a list pattern
+              const siblings = Array.from(parent.children);
+              const similarElements = siblings.filter(
+                (sibling) =>
+                  sibling.tagName === currentElement.tagName &&
+                  sibling.className === currentElement.className &&
+                  sibling !== currentElement
+              );
+
+              // Check for list pattern (require at least 2 similar elements for deeper checks)
+              if (similarElements.length >= 2) {
+                // Check for content variation (sign of data-driven content)
+                const allSimilarElements = [currentElement, ...similarElements];
+                const uniqueTextContent = new Set(
+                  allSimilarElements.map((el) => el.textContent?.trim().toLowerCase())
                 );
+                const hasVariedContent = uniqueTextContent.size > 1;
 
-              // Consider it a React list if we have strong indicators
-              if (hasVariedContent && (hasDataParent || hasDataLikeContent || isFlagStructure)) {
-                return {
-                  isReactList: true,
-                  itemCount: similarElements.length + 1,
-                  parentTag: parent.tagName,
-                  parentClass: parent.className,
-                  hasVariedContent,
-                  hasDataParent,
-                  hasDataLikeContent,
-                  isFlagStructure,
-                  detectionLevel: depth
-                };
+                // Check for data-like parent container indicators
+                const parentClassLower = parent.className.toLowerCase();
+                const hasDataParent =
+                  /list|grid|items|cards|collection|container|wrapper|map|flag/.test(
+                    parentClassLower
+                  );
+
+                // Check for data-like content patterns in the elements
+                const hasDataLikeContent = allSimilarElements.some((el) => {
+                  const text = el.textContent || '';
+                  // Look for patterns that suggest dynamic data
+                  return (
+                    /\d{2,}|\d{4}-\d{2}-\d{2}|#\w+|@\w+/.test(text) ||
+                    text.length > 15 || // Longer text suggests data content
+                    el.querySelector('img') || // Contains images (like flags)
+                    el.querySelector('[src]')
+                  ); // Has src attribute (images)
+                });
+
+                // Special check for flag-like structures
+                const isFlagStructure =
+                  /flag|marker|item|card/.test(parent.className.toLowerCase()) ||
+                  allSimilarElements.some(
+                    (el) =>
+                      el.querySelector('img') &&
+                      (el.textContent?.length > 5 || el.querySelector('[alt*="flag"]'))
+                  );
+
+                // Consider it a React list if we have strong indicators
+                if (hasVariedContent && (hasDataParent || hasDataLikeContent || isFlagStructure)) {
+                  return {
+                    isReactList: true,
+                    itemCount: similarElements.length + 1,
+                    parentTag: parent.tagName,
+                    parentClass: parent.className,
+                    hasVariedContent,
+                    hasDataParent,
+                    hasDataLikeContent,
+                    isFlagStructure,
+                    detectionLevel: depth,
+                  };
+                }
               }
-            }
 
-            // Move up one level
-            currentElement = parent;
-            depth++;
+              // Move up one level
+              currentElement = parent;
+              depth++;
+            }
+          } catch (error) {
+            // Silently fail
           }
-        } catch (error) {
-          // Silently fail
+
+          return false;
         }
 
-        return false;
-      }
+        // Cache for dynamic container detection to avoid re-computation
+        const dynamicContainerCache = new Map();
 
-      // Cache for dynamic container detection to avoid re-computation
-      const dynamicContainerCache = new Map();
+        function checkDynamicInheritance(element) {
+          try {
+            let parent = element.parentElement;
+            let depth = 0;
 
-      function checkDynamicInheritance(element) {
-        try {
-          let parent = element.parentElement;
-          let depth = 0;
+            while (parent && depth < 4) {
+              // Check cache first
+              if (dynamicContainerCache.has(parent)) {
+                const cachedResult = dynamicContainerCache.get(parent);
+                if (cachedResult.isDynamic && cachedResult.confidence >= 0.7) {
+                  return {
+                    inheritedDynamic: true,
+                    inheritedFrom: parent,
+                    parentConfidence: cachedResult.confidence,
+                    inheritanceDepth: depth,
+                    parentReasons: cachedResult.reasons,
+                  };
+                }
+              } else {
+                // Detect parent's dynamic status
+                const parentDetection = detectReactDynamicContentDirect(parent);
+                dynamicContainerCache.set(parent, parentDetection);
 
-          while (parent && depth < 4) {
-            // Check cache first
-            if (dynamicContainerCache.has(parent)) {
-              const cachedResult = dynamicContainerCache.get(parent);
-              if (cachedResult.isDynamic && cachedResult.confidence >= 0.7) {
-                return {
-                  inheritedDynamic: true,
-                  inheritedFrom: parent,
-                  parentConfidence: cachedResult.confidence,
-                  inheritanceDepth: depth,
-                  parentReasons: cachedResult.reasons
-                };
+                if (parentDetection.isDynamic && parentDetection.confidence >= 0.7) {
+                  return {
+                    inheritedDynamic: true,
+                    inheritedFrom: parent,
+                    parentConfidence: parentDetection.confidence,
+                    inheritanceDepth: depth,
+                    parentReasons: parentDetection.reasons,
+                  };
+                }
               }
+
+              parent = parent.parentElement;
+              depth++;
+            }
+          } catch (error) {
+            // Silently fail
+          }
+
+          return false;
+        }
+
+        function detectReactDynamicContentDirect(element) {
+          const detectionResults = {
+            isDynamic: false,
+            confidence: 0,
+            reasons: [],
+            framework: null,
+            editingStrategy: 'dom-only',
+            componentInfo: null,
+          };
+
+          try {
+            if (!isReactApp()) {
+              detectionResults.framework = 'non-react';
+              return detectionResults;
+            }
+
+            detectionResults.framework = 'react';
+
+            // 1. React Fiber detection
+            const reactFiber = hasReactFiber(element);
+            if (reactFiber && reactFiber.isReactElement) {
+              detectionResults.confidence += 0.3;
+              detectionResults.reasons.push('react-component');
+              detectionResults.componentInfo = reactFiber;
+            }
+
+            // 2. React list pattern detection
+            const reactList = isPartOfReactList(element);
+            if (reactList && reactList.isReactList) {
+              detectionResults.confidence += 0.5;
+              detectionResults.reasons.push('react-list-item');
+              detectionResults.componentInfo = {
+                ...detectionResults.componentInfo,
+                listInfo: reactList,
+              };
+            }
+
+            // Determine if dynamic and editing strategy
+            if (detectionResults.confidence >= 0.8) {
+              detectionResults.isDynamic = true;
+              detectionResults.editingStrategy = 'state-update-required';
+            } else if (detectionResults.confidence >= 0.5) {
+              detectionResults.isDynamic = true;
+              detectionResults.editingStrategy = 'dom-with-warning';
             } else {
-              // Detect parent's dynamic status
-              const parentDetection = detectReactDynamicContentDirect(parent);
-              dynamicContainerCache.set(parent, parentDetection);
-
-              if (parentDetection.isDynamic && parentDetection.confidence >= 0.7) {
-                return {
-                  inheritedDynamic: true,
-                  inheritedFrom: parent,
-                  parentConfidence: parentDetection.confidence,
-                  inheritanceDepth: depth,
-                  parentReasons: parentDetection.reasons
-                };
-              }
+              detectionResults.isDynamic = false;
+              detectionResults.editingStrategy = 'dom-only';
             }
-
-            parent = parent.parentElement;
-            depth++;
-          }
-        } catch (error) {
-          // Silently fail
-        }
-
-        return false;
-      }
-
-      function detectReactDynamicContentDirect(element) {
-        const detectionResults = {
-          isDynamic: false,
-          confidence: 0,
-          reasons: [],
-          framework: null,
-          editingStrategy: 'dom-only',
-          componentInfo: null
-        };
-
-        try {
-          if (!isReactApp()) {
-            detectionResults.framework = 'non-react';
-            return detectionResults;
-          }
-
-          detectionResults.framework = 'react';
-
-          // 1. React Fiber detection
-          const reactFiber = hasReactFiber(element);
-          if (reactFiber && reactFiber.isReactElement) {
-            detectionResults.confidence += 0.3;
-            detectionResults.reasons.push('react-component');
-            detectionResults.componentInfo = reactFiber;
-          }
-
-          // 2. React list pattern detection
-          const reactList = isPartOfReactList(element);
-          if (reactList && reactList.isReactList) {
-            detectionResults.confidence += 0.5;
-            detectionResults.reasons.push('react-list-item');
-            detectionResults.componentInfo = {
-              ...detectionResults.componentInfo,
-              listInfo: reactList
-            };
-          }
-
-          // Determine if dynamic and editing strategy
-          if (detectionResults.confidence >= 0.8) {
-            detectionResults.isDynamic = true;
-            detectionResults.editingStrategy = 'state-update-required';
-          } else if (detectionResults.confidence >= 0.5) {
-            detectionResults.isDynamic = true;
-            detectionResults.editingStrategy = 'dom-with-warning';
-          } else {
+          } catch (error) {
+            detectionResults.framework = 'react';
             detectionResults.isDynamic = false;
             detectionResults.editingStrategy = 'dom-only';
           }
 
-        } catch (error) {
-          detectionResults.framework = 'react';
-          detectionResults.isDynamic = false;
-          detectionResults.editingStrategy = 'dom-only';
+          return detectionResults;
         }
 
-        return detectionResults;
-      }
+        function detectReactDynamicContent(element) {
+          // First, run direct detection
+          const detectionResults = detectReactDynamicContentDirect(element);
 
-      function detectReactDynamicContent(element) {
-        // First, run direct detection
-        const detectionResults = detectReactDynamicContentDirect(element);
+          try {
+            // If confidence is low, check for inheritance from dynamic parents
+            if (detectionResults.confidence < 0.5) {
+              const inheritance = checkDynamicInheritance(element);
 
-        try {
-          // If confidence is low, check for inheritance from dynamic parents
-          if (detectionResults.confidence < 0.5) {
-            const inheritance = checkDynamicInheritance(element);
+              if (inheritance && inheritance.inheritedDynamic) {
+                // Inherit dynamic status with conservative confidence boost
+                detectionResults.isDynamic = true;
+                detectionResults.confidence = Math.min(0.6, detectionResults.confidence + 0.4);
+                detectionResults.editingStrategy = 'dom-with-warning'; // Conservative strategy for inherited
+                detectionResults.reasons.push('inherited-from-dynamic-parent');
+                detectionResults.componentInfo = {
+                  ...detectionResults.componentInfo,
+                  inheritance: {
+                    inheritedFrom:
+                      inheritance.inheritedFrom.tagName +
+                      (inheritance.inheritedFrom.className
+                        ? '.' + inheritance.inheritedFrom.className
+                        : ''),
+                    parentConfidence: inheritance.parentConfidence,
+                    inheritanceDepth: inheritance.inheritanceDepth,
+                    parentReasons: inheritance.parentReasons,
+                  },
+                };
+              }
+            }
+          } catch (error) {}
 
-            if (inheritance && inheritance.inheritedDynamic) {
-              // Inherit dynamic status with conservative confidence boost
-              detectionResults.isDynamic = true;
-              detectionResults.confidence = Math.min(0.6, detectionResults.confidence + 0.4);
-              detectionResults.editingStrategy = 'dom-with-warning'; // Conservative strategy for inherited
-              detectionResults.reasons.push('inherited-from-dynamic-parent');
-              detectionResults.componentInfo = {
-                ...detectionResults.componentInfo,
-                inheritance: {
-                  inheritedFrom: inheritance.inheritedFrom.tagName +
-                    (inheritance.inheritedFrom.className ? '.' + inheritance.inheritedFrom.className : ''),
-                  parentConfidence: inheritance.parentConfidence,
-                  inheritanceDepth: inheritance.inheritanceDepth,
-                  parentReasons: inheritance.parentReasons
-                }
-              };
+          return detectionResults;
+        }
+
+        // Apply styles to element
+        function applyStyles(element, styles) {
+          if (!originalStyles.has(element)) {
+            const original = {};
+            Object.keys(styles).forEach((prop) => {
+              original[prop] = element.style[prop] || '';
+            });
+            originalStyles.set(element, original);
+          }
+
+          Object.assign(element.style, styles);
+        }
+
+        // Remove styles from element
+        function removeStyles(element) {
+          if (originalStyles.has(element)) {
+            const original = originalStyles.get(element);
+            Object.assign(element.style, original);
+            originalStyles.delete(element);
+          }
+        }
+
+        // Check if element is editable
+        function isEditableElement(element) {
+          const editableTags = [
+            'P',
+            'H1',
+            'H2',
+            'H3',
+            'H4',
+            'H5',
+            'H6',
+            'SPAN',
+            'DIV',
+            'A',
+            'BUTTON',
+            'LABEL',
+          ];
+          return editableTags.includes(element.tagName) || element.contentEditable === 'true';
+        }
+
+        // Check if element can be edited (not dynamic)
+        function canElementBeEdited(element) {
+          if (!isEditableElement(element)) {
+            return false;
+          }
+
+          // Check if element is marked as dynamic
+          const dynamicInfo = detectReactDynamicContent(element);
+          if (dynamicInfo.isDynamic) {
+            return false;
+          }
+
+          return true;
+        }
+
+        // Helper function to find the first text node in an element
+        function findFirstTextNode(element) {
+          // Traverse the element's child nodes to find the first text node
+          for (let i = 0; i < element.childNodes.length; i++) {
+            const node = element.childNodes[i];
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
+              return node;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              // Recursively search in child elements
+              const textNode = findFirstTextNode(node);
+              if (textNode) return textNode;
             }
           }
-        } catch (error) {
+          return null;
         }
 
-        return detectionResults;
-      }
+        // Selection Mode Event Handlers
+        function handleMouseOver(event) {
+          if (!isSelectionEnabled) return;
 
-      // Apply styles to element
-      function applyStyles(element, styles) {
-        if (!originalStyles.has(element)) {
-          const original = {};
-          Object.keys(styles).forEach(prop => {
-            original[prop] = element.style[prop] || '';
-          });
-          originalStyles.set(element, original);
-        }
-
-        Object.assign(element.style, styles);
-      }
-
-      // Remove styles from element
-      function removeStyles(element) {
-        if (originalStyles.has(element)) {
-          const original = originalStyles.get(element);
-          Object.assign(element.style, original);
-          originalStyles.delete(element);
-        }
-      }
-
-      // Check if element is editable
-      function isEditableElement(element) {
-        const editableTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SPAN', 'DIV', 'A', 'BUTTON', 'LABEL'];
-        return editableTags.includes(element.tagName) || element.contentEditable === 'true';
-      }
-
-      // Check if element can be edited (not dynamic)
-      function canElementBeEdited(element) {
-        if (!isEditableElement(element)) {
-          return false;
-        }
-
-        // Check if element is marked as dynamic
-        const dynamicInfo = detectReactDynamicContent(element);
-        if (dynamicInfo.isDynamic) {
-          return false;
-        }
-
-        return true;
-      }
-
-      // Helper function to find the first text node in an element
-      function findFirstTextNode(element) {
-        // Traverse the element's child nodes to find the first text node
-        for (let i = 0; i < element.childNodes.length; i++) {
-          const node = element.childNodes[i];
-          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
-            return node;
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // Recursively search in child elements
-            const textNode = findFirstTextNode(node);
-            if (textNode) return textNode;
-          }
-        }
-        return null;
-      }
-
-      // Selection Mode Event Handlers
-      function handleMouseOver(event) {
-        if (!isSelectionEnabled) return;
-
-        const element = event.target;
-
-        // Don't allow selection of form elements
-        if (element.tagName === 'FORM') return;
-
-        // Don't hover if this element is already selected
-        if (element === selectedElement) return;
-
-        // Don't hover if we're currently editing this same element
-        if (editingElement && editingElement === element) return;
-
-        // Remove hover from previous element
-        if (hoveredElement && hoveredElement !== selectedElement) {
-          removeStyles(hoveredElement);
-        }
-
-        hoveredElement = element;
-        applyStyles(element, HOVER_STYLE);
-
-        // Send hover information to parent
-        const elementInfo = {
-          tagName: element.tagName,
-          className: element.className || '',
-          id: element.id || '',
-          textContent: element.textContent?.substring(0, 100) || '',
-          rect: element.getBoundingClientRect(),
-          selector: generateSelector(element),
-          attributes: getElementAttributes(element),
-          computedStyles: getComputedStylesObject(element),
-          isEditable: isEditableElement(element)
-        };
-
-        parent.postMessage({
-          type: 'ELEMENT_HOVER',
-          data: elementInfo
-        }, '*');
-      }
-
-      function handleMouseOut(event) {
-        if (!isSelectionEnabled) return;
-
-        const element = event.target;
-
-        // Don't remove hover styles from selected element
-        if (element === selectedElement) return;
-
-        // Don't remove hover styles if we're currently editing this element
-        if (editingElement && editingElement === element) return;
-
-        if (element === hoveredElement) {
-          removeStyles(element);
-          hoveredElement = null;
-
-          parent.postMessage({
-            type: 'ELEMENT_HOVER_OUT',
-            data: null
-          }, '*');
-        }
-      }
-
-      function handleClick(event) {
-        if (!isSelectionEnabled) return;
-
-        const element = event.target;
-
-        // Don't allow selection of form elements
-        if (element.tagName === 'FORM') return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        // For input fields, allow selection but prevent focus
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
-          // Use setTimeout to blur after the browser's default focus behavior
-          setTimeout(() => {
-            element.blur(); // Remove focus after selection to prevent typing
-          }, 0);
-        }
-
-        // Store reference to previous editing element
-        const previousEditingElement = editingElement;
-
-        // If there's an editing element and we're clicking on a different element, end editing immediately
-        if (editingElement && editingElement !== element) {
-          // End editing without blur to avoid delays
-          handleEditingEndImmediate(editingElement);
-        }
-
-        // If selecting a different element and there's a currently modified element, restore it
-        if (currentlyModifiedElement && currentlyModifiedElement !== element) {
-          // Store the selector BEFORE setting to null
-          const previousElementSelector = generateSelector(currentlyModifiedElement);
-
-          restoreElementToOriginal(currentlyModifiedElement);
-          currentlyModifiedElement = null;
-
-          parent.postMessage({
-            type: 'CURRENT_MODIFIED_ELEMENT_CHANGED',
-            data: {
-              previousElement: previousElementSelector,
-              newElement: generateSelector(element)
-            }
-          }, '*');
-        }
-
-        // Remove selection from previous element
-        if (selectedElement && selectedElement !== element) {
-          removeStyles(selectedElement);
-        }
-
-        // Remove hover styles from the element we're about to select
-        if (hoveredElement === element) {
-          removeStyles(element);
-          hoveredElement = null;
-        }
-
-        selectedElement = element;
-        applyStyles(element, SELECTED_STYLE);
-
-        // Store original image src for IMG elements (only if not already stored)
-        if (element.tagName === 'IMG' && !originalImageSrc.has(element)) {
-          originalImageSrc.set(element, element.src || '');
-        }
-
-        // Detect React dynamic content
-        const dynamicInfo = detectReactDynamicContent(element);
-
-        // Send complete element information to parent with dynamic detection
-        const elementInfo = {
-          tagName: element.tagName,
-          className: element.className || '',
-          id: element.id || '',
-          innerHTML: element.innerHTML,
-          textContent: element.textContent || '',
-          rect: element.getBoundingClientRect(),
-          selector: generateSelector(element),
-          attributes: getElementAttributes(element),
-          computedStyles: getComputedStylesObject(element),
-          isEditable: isEditableElement(element),
-
-          // Enhanced with React dynamic content detection
-          isDynamic: dynamicInfo.isDynamic,
-          dynamicConfidence: dynamicInfo.confidence,
-          framework: dynamicInfo.framework,
-          editingStrategy: dynamicInfo.editingStrategy,
-          detectionReasons: dynamicInfo.reasons,
-          componentInfo: dynamicInfo.componentInfo
-        };
-
-        parent.postMessage({
-          type: 'ELEMENT_SELECTED',
-          data: elementInfo
-        }, '*');
-
-        // Only make editable elements editable if BOTH selection AND editing modes are enabled AND element is not dynamic
-        if (canElementBeEdited(element) && isEditingEnabled) {
-          makeElementEditable(element);
-        }
-      }
-
-      // Editing Mode Functions
-      function makeElementEditable(element) {
-        if (!isEditableElement(element)) return;
-
-        if (!originalContent.has(element)) {
-          originalContent.set(element, {
-            innerHTML: element.innerHTML,
-            textContent: element.textContent,
-            contentEditable: element.contentEditable
-          });
-        }
-
-        // Store original content for modification tracking (before editing starts)
-        if (!modifiedContent.has(element)) {
-          modifiedContent.set(element, {
-            innerHTML: element.innerHTML,
-            textContent: element.textContent
-          });
-        }
-
-        // If this is a new element being modified, restore the previous one
-        if (currentlyModifiedElement && currentlyModifiedElement !== element) {
-          restoreElementToOriginal(currentlyModifiedElement);
-        }
-
-        // Set this as the currently modified element
-        currentlyModifiedElement = element;
-
-        element.contentEditable = 'true';
-        element.focus();
-
-        // Smart text selection based on element type and content
-        try {
-          const hasChildElements = element.children.length > 0;
-          const hasOnlyTextContent = element.childNodes.length === 1 &&
-            element.childNodes[0].nodeType === Node.TEXT_NODE;
-
-          if (hasOnlyTextContent && element.textContent.trim().length > 0) {
-            // Only select text if the element contains ONLY text (no child elements)
-            const range = document.createRange();
-            range.selectNodeContents(element);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else if (hasChildElements) {
-            // For elements with child elements, place cursor at the beginning
-            // without selecting anything to prevent accidental deletion
-            const range = document.createRange();
-            const firstTextNode = findFirstTextNode(element);
-
-            if (firstTextNode) {
-              // Place cursor at the beginning of the first text node
-              range.setStart(firstTextNode, 0);
-              range.setEnd(firstTextNode, 0);
-            } else {
-              // If no text node, place cursor at the beginning of the element
-              range.setStart(element, 0);
-              range.setEnd(element, 0);
-            }
-
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            // For empty elements, just place cursor at the beginning
-            const range = document.createRange();
-            range.setStart(element, 0);
-            range.setEnd(element, 0);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-          }
-        } catch (error) {
-        }
-
-        editingElement = element;
-        applyStyles(element, EDITING_STYLE);
-
-        // Listen for content changes
-        element.addEventListener('input', handleContentChange);
-        element.addEventListener('blur', handleEditingEnd);
-        element.addEventListener('keydown', handleEditingKeydown);
-
-        parent.postMessage({
-          type: 'ELEMENT_EDITING_STARTED',
-          data: {
-            selector: generateSelector(element)
-          }
-        }, '*');
-
-      }
-
-      function handleContentChange(event) {
-        const element = event.target;
-
-        // If this is a new element being modified, restore the previous one
-        if (currentlyModifiedElement && currentlyModifiedElement !== element) {
-          restoreElementToOriginal(currentlyModifiedElement);
-        }
-
-        // Set this as the currently modified element
-        currentlyModifiedElement = element;
-
-        parent.postMessage({
-          type: 'ELEMENT_CONTENT_CHANGED',
-          data: {
-            selector: generateSelector(element),
-            newContent: element.innerHTML,
-            newTextContent: element.textContent
-          }
-        }, '*');
-      }
-
-      function handleEditingEnd(event) {
-        const element = event.target;
-
-        element.contentEditable = 'false';
-        element.removeEventListener('input', handleContentChange);
-        element.removeEventListener('blur', handleEditingEnd);
-        element.removeEventListener('keydown', handleEditingKeydown);
-
-        removeStyles(element);
-
-        // Restore selection style if this was the selected element
-        if (element === selectedElement) {
-          applyStyles(element, SELECTED_STYLE);
-        }
-
-        editingElement = null;
-
-        parent.postMessage({
-          type: 'ELEMENT_EDITING_ENDED',
-          data: {
-            selector: generateSelector(element),
-            finalContent: element.innerHTML,
-            finalTextContent: element.textContent
-          }
-        }, '*');
-      }
-
-      // Immediate editing end function (without blur event)
-      function handleEditingEndImmediate(element) {
-        if (!element || element !== editingElement) return;
-
-        // Remove event listeners FIRST to prevent conflicts
-        element.removeEventListener('input', handleContentChange);
-        element.removeEventListener('blur', handleEditingEnd);
-        element.removeEventListener('keydown', handleEditingKeydown);
-
-        // Set contentEditable to false
-        element.contentEditable = 'false';
-
-        // Remove editing styles
-        removeStyles(element);
-
-        // Clear the editingElement reference immediately
-        editingElement = null;
-
-        parent.postMessage({
-          type: 'ELEMENT_EDITING_ENDED',
-          data: {
-            selector: generateSelector(element),
-            finalContent: element.innerHTML,
-            finalTextContent: element.textContent
-          }
-        }, '*');
-
-      }
-
-      function handleEditingKeydown(event) {
-        if (event.key === 'Escape') {
-          // Cancel editing and restore original content
           const element = event.target;
-          const original = originalContent.get(element);
-          if (original) {
-            element.innerHTML = original.innerHTML;
-            element.contentEditable = original.contentEditable;
-          }
-          element.blur();
-        } else if (event.key === 'Enter' && !event.shiftKey) {
-          // End editing on Enter (unless Shift+Enter for new line)
-          event.target.blur();
-        }
-      }
 
-      function handleDoubleClick(event) {
-        if (!isSelectionEnabled || !isEditingEnabled) return;
+          // Don't allow selection of form elements
+          if (element.tagName === 'FORM') return;
 
-        event.preventDefault();
-        event.stopPropagation();
+          // Don't hover if this element is already selected
+          if (element === selectedElement) return;
 
-        const element = event.target;
+          // Don't hover if we're currently editing this same element
+          if (editingElement && editingElement === element) return;
 
-        if (canElementBeEdited(element)) {
-          makeElementEditable(element);
-        }
-      }
-
-      // Selection Mode Control
-      function enableSelection() {
-        if (isSelectionEnabled) return;
-
-        isSelectionEnabled = true;
-        document.addEventListener('mouseover', handleMouseOver, true);
-        document.addEventListener('mouseout', handleMouseOut, true);
-        document.addEventListener('click', handleClick, true);
-        document.addEventListener('dblclick', handleDoubleClick, true);
-
-        document.body.style.cursor = 'crosshair';
-
-        parent.postMessage({
-          type: 'SELECTION_MODE_ENABLED',
-          data: { enabled: true }
-        }, '*');
-      }
-
-      function disableSelection() {
-        if (!isSelectionEnabled) return;
-
-        isSelectionEnabled = false;
-        document.removeEventListener('mouseover', handleMouseOver, true);
-        document.removeEventListener('mouseout', handleMouseOut, true);
-        document.removeEventListener('click', handleClick, true);
-        document.removeEventListener('dblclick', handleDoubleClick, true);
-
-        // Clean up hover state
-        if (hoveredElement) {
-          removeStyles(hoveredElement);
-          hoveredElement = null;
-        }
-
-        // Clean up selected state
-        if (selectedElement) {
-          removeStyles(selectedElement);
-          selectedElement = null;
-        }
-
-        // End any active editing
-        if (editingElement) {
-          editingElement.blur();
-        }
-
-        document.body.style.cursor = '';
-
-        parent.postMessage({
-          type: 'SELECTION_MODE_DISABLED',
-          data: { enabled: false }
-        }, '*');
-
-      }
-
-      // Editing Mode Control
-      function enableEditing() {
-        isEditingEnabled = true;
-
-        parent.postMessage({
-          type: 'EDITING_MODE_ENABLED',
-          data: { enabled: true }
-        }, '*');
-      }
-
-      function disableEditing() {
-        isEditingEnabled = false;
-
-        // End any active editing
-        if (editingElement) {
-          editingElement.blur();
-        }
-
-        parent.postMessage({
-          type: 'EDITING_MODE_DISABLED',
-          data: { enabled: false }
-        }, '*');
-
-      }
-
-      // Restore element to its original state
-      function restoreElementToOriginal(element) {
-        if (!element) return;
-
-        const selector = generateSelector(element);
-        let hasRestorations = false;
-        let restoredProperties = [];
-
-        // Restore style modifications (including image src)
-        if (modifiedStyles.has(element)) {
-          const originalValues = modifiedStyles.get(element);
-          Object.keys(originalValues).forEach(property => {
-            if (property === 'src' && element.tagName === 'IMG') {
-              // Special handling for image src
-              element.src = originalValues[property];
-            } else {
-              // Regular style properties
-              element.style[property] = originalValues[property];
-            }
-          });
-          restoredProperties.push(...Object.keys(originalValues));
-          modifiedStyles.delete(element);
-          hasRestorations = true;
-        }
-
-        // Restore content modifications
-        if (modifiedContent.has(element)) {
-          const originalContentData = modifiedContent.get(element);
-          element.innerHTML = originalContentData.innerHTML;
-          restoredProperties.push('innerHTML');
-          modifiedContent.delete(element);
-          hasRestorations = true;
-        }
-
-        // Only send message if there were actual restorations
-        if (hasRestorations) {
-          parent.postMessage({
-            type: 'ELEMENT_MODIFICATIONS_RESTORED',
-            data: {
-              selector: selector,
-              restoredProperties: restoredProperties,
-              computedStyles: getComputedStylesObject(element),
-              newContent: element.innerHTML,
-              newTextContent: element.textContent,
-              // Include updated attributes for images
-              attributes: getElementAttributes(element)
-            }
-          }, '*');
-        }
-      }
-
-      // Utility Functions
-      function applyStyleChange(selector, property, value) {
-        const element = document.querySelector(selector);
-        if (element) {
-
-          // Store original value if this is the first modification to this property
-          if (!modifiedStyles.has(element)) {
-            modifiedStyles.set(element, {});
+          // Remove hover from previous element
+          if (hoveredElement && hoveredElement !== selectedElement) {
+            removeStyles(hoveredElement);
           }
 
-          const elementModifications = modifiedStyles.get(element);
-          if (!(property in elementModifications)) {
-            // Store the current value as original (before any modifications)
-            elementModifications[property] = element.style[property] || '';
+          hoveredElement = element;
+          applyStyles(element, HOVER_STYLE);
+
+          // Send hover information to parent
+          const elementInfo = {
+            tagName: element.tagName,
+            className: element.className || '',
+            id: element.id || '',
+            textContent: element.textContent?.substring(0, 100) || '',
+            rect: element.getBoundingClientRect(),
+            selector: generateSelector(element),
+            attributes: getElementAttributes(element),
+            computedStyles: getComputedStylesObject(element),
+            isEditable: isEditableElement(element),
+          };
+
+          parent.postMessage(
+            {
+              type: 'ELEMENT_HOVER',
+              data: elementInfo,
+            },
+            '*'
+          );
+        }
+
+        function handleMouseOut(event) {
+          if (!isSelectionEnabled) return;
+
+          const element = event.target;
+
+          // Don't remove hover styles from selected element
+          if (element === selectedElement) return;
+
+          // Don't remove hover styles if we're currently editing this element
+          if (editingElement && editingElement === element) return;
+
+          if (element === hoveredElement) {
+            removeStyles(element);
+            hoveredElement = null;
+
+            parent.postMessage(
+              {
+                type: 'ELEMENT_HOVER_OUT',
+                data: null,
+              },
+              '*'
+            );
+          }
+        }
+
+        function handleClick(event) {
+          if (!isSelectionEnabled) return;
+
+          const element = event.target;
+
+          // Don't allow selection of form elements
+          if (element.tagName === 'FORM') return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          // For input fields, allow selection but prevent focus
+          if (
+            element.tagName === 'INPUT' ||
+            element.tagName === 'TEXTAREA' ||
+            element.tagName === 'SELECT'
+          ) {
+            // Use setTimeout to blur after the browser's default focus behavior
+            setTimeout(() => {
+              element.blur(); // Remove focus after selection to prevent typing
+            }, 0);
           }
 
-          // If this is a new element being modified, restore the previous one
+          // Store reference to previous editing element
+          const previousEditingElement = editingElement;
+
+          // If there's an editing element and we're clicking on a different element, end editing immediately
+          if (editingElement && editingElement !== element) {
+            // End editing without blur to avoid delays
+            handleEditingEndImmediate(editingElement);
+          }
+
+          // If selecting a different element and there's a currently modified element, restore it
           if (currentlyModifiedElement && currentlyModifiedElement !== element) {
+            // Store the selector BEFORE setting to null
+            const previousElementSelector = generateSelector(currentlyModifiedElement);
+
             restoreElementToOriginal(currentlyModifiedElement);
+            currentlyModifiedElement = null;
+
+            parent.postMessage(
+              {
+                type: 'CURRENT_MODIFIED_ELEMENT_CHANGED',
+                data: {
+                  previousElement: previousElementSelector,
+                  newElement: generateSelector(element),
+                },
+              },
+              '*'
+            );
           }
 
-          // Set this as the currently modified element
-          currentlyModifiedElement = element;
+          // Remove selection from previous element
+          if (selectedElement && selectedElement !== element) {
+            removeStyles(selectedElement);
+          }
 
-          // Apply the new style
-          element.style[property] = value;
+          // Remove hover styles from the element we're about to select
+          if (hoveredElement === element) {
+            removeStyles(element);
+            hoveredElement = null;
+          }
 
-          parent.postMessage({
-            type: 'ELEMENT_STYLE_CHANGED',
-            data: {
-              selector: selector,
-              property: property,
-              value: value,
-              computedStyles: getComputedStylesObject(element)
-            }
-          }, '*')
+          selectedElement = element;
+          applyStyles(element, SELECTED_STYLE);
+
+          // Store original image src for IMG elements (only if not already stored)
+          if (element.tagName === 'IMG' && !originalImageSrc.has(element)) {
+            originalImageSrc.set(element, element.src || '');
+          }
+
+          // Detect React dynamic content
+          const dynamicInfo = detectReactDynamicContent(element);
+
+          // Send complete element information to parent with dynamic detection
+          const elementInfo = {
+            tagName: element.tagName,
+            className: element.className || '',
+            id: element.id || '',
+            innerHTML: element.innerHTML,
+            textContent: element.textContent || '',
+            rect: element.getBoundingClientRect(),
+            selector: generateSelector(element),
+            attributes: getElementAttributes(element),
+            computedStyles: getComputedStylesObject(element),
+            isEditable: isEditableElement(element),
+
+            // Enhanced with React dynamic content detection
+            isDynamic: dynamicInfo.isDynamic,
+            dynamicConfidence: dynamicInfo.confidence,
+            framework: dynamicInfo.framework,
+            editingStrategy: dynamicInfo.editingStrategy,
+            detectionReasons: dynamicInfo.reasons,
+            componentInfo: dynamicInfo.componentInfo,
+          };
+
+          parent.postMessage(
+            {
+              type: 'ELEMENT_SELECTED',
+              data: elementInfo,
+            },
+            '*'
+          );
+
+          // Only make editable elements editable if BOTH selection AND editing modes are enabled AND element is not dynamic
+          if (canElementBeEdited(element) && isEditingEnabled) {
+            makeElementEditable(element);
+          }
         }
-      }
 
-      function updateElementContent(selector, content) {
-        const element = document.querySelector(selector);
-        if (element) {
-          // Store original content if this is the first modification
+        // Editing Mode Functions
+        function makeElementEditable(element) {
+          if (!isEditableElement(element)) return;
+
+          if (!originalContent.has(element)) {
+            originalContent.set(element, {
+              innerHTML: element.innerHTML,
+              textContent: element.textContent,
+              contentEditable: element.contentEditable,
+            });
+          }
+
+          // Store original content for modification tracking (before editing starts)
           if (!modifiedContent.has(element)) {
             modifiedContent.set(element, {
               innerHTML: element.innerHTML,
-              textContent: element.textContent
+              textContent: element.textContent,
             });
           }
 
@@ -1187,36 +887,73 @@
           // Set this as the currently modified element
           currentlyModifiedElement = element;
 
-          // Update the content
-          if (isEditableElement(element)) {
-            element.textContent = content;
-          }
+          element.contentEditable = 'true';
+          element.focus();
 
-          parent.postMessage({
-            type: 'ELEMENT_CONTENT_UPDATED',
-            data: {
-              selector: selector,
-              newContent: element.innerHTML,
-              newTextContent: element.textContent
+          // Smart text selection based on element type and content
+          try {
+            const hasChildElements = element.children.length > 0;
+            const hasOnlyTextContent =
+              element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE;
+
+            if (hasOnlyTextContent && element.textContent.trim().length > 0) {
+              // Only select text if the element contains ONLY text (no child elements)
+              const range = document.createRange();
+              range.selectNodeContents(element);
+              const selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
+            } else if (hasChildElements) {
+              // For elements with child elements, place cursor at the beginning
+              // without selecting anything to prevent accidental deletion
+              const range = document.createRange();
+              const firstTextNode = findFirstTextNode(element);
+
+              if (firstTextNode) {
+                // Place cursor at the beginning of the first text node
+                range.setStart(firstTextNode, 0);
+                range.setEnd(firstTextNode, 0);
+              } else {
+                // If no text node, place cursor at the beginning of the element
+                range.setStart(element, 0);
+                range.setEnd(element, 0);
+              }
+
+              const selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
+            } else {
+              // For empty elements, just place cursor at the beginning
+              const range = document.createRange();
+              range.setStart(element, 0);
+              range.setEnd(element, 0);
+              const selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
             }
-          }, '*');
+          } catch (error) {}
+
+          editingElement = element;
+          applyStyles(element, EDITING_STYLE);
+
+          // Listen for content changes
+          element.addEventListener('input', handleContentChange);
+          element.addEventListener('blur', handleEditingEnd);
+          element.addEventListener('keydown', handleEditingKeydown);
+
+          parent.postMessage(
+            {
+              type: 'ELEMENT_EDITING_STARTED',
+              data: {
+                selector: generateSelector(element),
+              },
+            },
+            '*'
+          );
         }
-      }
 
-      function updateImageSrc(selector, src) {
-        const element = document.querySelector(selector);
-        if (element && element.tagName === 'IMG') {
-          // Store original src if this is the first modification
-          if (!modifiedStyles.has(element)) {
-            modifiedStyles.set(element, {});
-          }
-
-          const elementModifications = modifiedStyles.get(element);
-          if (!('src' in elementModifications)) {
-            // Use the stored original src from originalImageSrc Map
-            const originalSrc = originalImageSrc.get(element) || element.src || '';
-            elementModifications['src'] = originalSrc;
-          }
+        function handleContentChange(event) {
+          const element = event.target;
 
           // If this is a new element being modified, restore the previous one
           if (currentlyModifiedElement && currentlyModifiedElement !== element) {
@@ -1226,116 +963,470 @@
           // Set this as the currently modified element
           currentlyModifiedElement = element;
 
-          // Update the image src
-          element.src = src;
-
-          parent.postMessage({
-            type: 'ELEMENT_IMAGE_SRC_UPDATED',
-            data: {
-              selector: selector,
-              newSrc: src,
-              attributes: getElementAttributes(element)
-            }
-          }, '*');
-
-        }
-      }
-
-      function clearSelection() {
-        // Restore any currently modified element before clearing selection
-        if (currentlyModifiedElement) {
-          restoreElementToOriginal(currentlyModifiedElement);
-          currentlyModifiedElement = null;
-        }
-
-        if (selectedElement) {
-          removeStyles(selectedElement);
-          selectedElement = null;
-
-          parent.postMessage({
-            type: 'SELECTION_CLEARED',
-            data: null
-          }, '*');
-
-        }
-      }
-
-      // Message Handler
-      window.addEventListener('message', function (event) {
-        const { type, data } = event.data;
-
-        switch (type) {
-          case 'ENABLE_SELECTION':
-            enableSelection();
-            break;
-
-          case 'DISABLE_SELECTION':
-            disableSelection();
-            break;
-
-          case 'ENABLE_EDITING':
-            enableEditing();
-            break;
-
-          case 'DISABLE_EDITING':
-            disableEditing();
-            break;
-
-          case 'START_EDITING':
-            if (selectedElement && canElementBeEdited(selectedElement)) {
-              makeElementEditable(selectedElement);
-            }
-            break;
-
-          case 'APPLY_STYLE':
-            if (data && data.selector && data.property && data.value) {
-              applyStyleChange(data.selector, data.property, data.value);
-            }
-            break;
-
-          case 'UPDATE_CONTENT':
-            if (data && data.selector && data.content !== undefined) {
-              updateElementContent(data.selector, data.content);
-            }
-            break;
-
-          case 'UPDATE_IMAGE_SRC':
-            if (data && data.selector && data.src !== undefined) {
-              updateImageSrc(data.selector, data.src);
-            }
-            break;
-
-          case 'CLEAR_SELECTION':
-            clearSelection();
-            break;
-
-          case 'GET_STATUS':
-            parent.postMessage({
-              type: 'SCRIPT_STATUS',
+          parent.postMessage(
+            {
+              type: 'ELEMENT_CONTENT_CHANGED',
               data: {
-                selectionEnabled: isSelectionEnabled,
-                editingEnabled: isEditingEnabled,
-                hasSelectedElement: !!selectedElement,
-                isEditing: !!editingElement
+                selector: generateSelector(element),
+                newContent: element.innerHTML,
+                newTextContent: element.textContent,
+              },
+            },
+            '*'
+          );
+        }
+
+        function handleEditingEnd(event) {
+          const element = event.target;
+
+          element.contentEditable = 'false';
+          element.removeEventListener('input', handleContentChange);
+          element.removeEventListener('blur', handleEditingEnd);
+          element.removeEventListener('keydown', handleEditingKeydown);
+
+          removeStyles(element);
+
+          // Restore selection style if this was the selected element
+          if (element === selectedElement) {
+            applyStyles(element, SELECTED_STYLE);
+          }
+
+          editingElement = null;
+
+          parent.postMessage(
+            {
+              type: 'ELEMENT_EDITING_ENDED',
+              data: {
+                selector: generateSelector(element),
+                finalContent: element.innerHTML,
+                finalTextContent: element.textContent,
+              },
+            },
+            '*'
+          );
+        }
+
+        // Immediate editing end function (without blur event)
+        function handleEditingEndImmediate(element) {
+          if (!element || element !== editingElement) return;
+
+          // Remove event listeners FIRST to prevent conflicts
+          element.removeEventListener('input', handleContentChange);
+          element.removeEventListener('blur', handleEditingEnd);
+          element.removeEventListener('keydown', handleEditingKeydown);
+
+          // Set contentEditable to false
+          element.contentEditable = 'false';
+
+          // Remove editing styles
+          removeStyles(element);
+
+          // Clear the editingElement reference immediately
+          editingElement = null;
+
+          parent.postMessage(
+            {
+              type: 'ELEMENT_EDITING_ENDED',
+              data: {
+                selector: generateSelector(element),
+                finalContent: element.innerHTML,
+                finalTextContent: element.textContent,
+              },
+            },
+            '*'
+          );
+        }
+
+        function handleEditingKeydown(event) {
+          if (event.key === 'Escape') {
+            // Cancel editing and restore original content
+            const element = event.target;
+            const original = originalContent.get(element);
+            if (original) {
+              element.innerHTML = original.innerHTML;
+              element.contentEditable = original.contentEditable;
+            }
+            element.blur();
+          } else if (event.key === 'Enter' && !event.shiftKey) {
+            // End editing on Enter (unless Shift+Enter for new line)
+            event.target.blur();
+          }
+        }
+
+        function handleDoubleClick(event) {
+          if (!isSelectionEnabled || !isEditingEnabled) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          const element = event.target;
+
+          if (canElementBeEdited(element)) {
+            makeElementEditable(element);
+          }
+        }
+
+        // Selection Mode Control
+        function enableSelection() {
+          if (isSelectionEnabled) return;
+
+          isSelectionEnabled = true;
+          document.addEventListener('mouseover', handleMouseOver, true);
+          document.addEventListener('mouseout', handleMouseOut, true);
+          document.addEventListener('click', handleClick, true);
+          document.addEventListener('dblclick', handleDoubleClick, true);
+
+          document.body.style.cursor = 'crosshair';
+
+          parent.postMessage(
+            {
+              type: 'SELECTION_MODE_ENABLED',
+              data: { enabled: true },
+            },
+            '*'
+          );
+        }
+
+        function disableSelection() {
+          if (!isSelectionEnabled) return;
+
+          isSelectionEnabled = false;
+          document.removeEventListener('mouseover', handleMouseOver, true);
+          document.removeEventListener('mouseout', handleMouseOut, true);
+          document.removeEventListener('click', handleClick, true);
+          document.removeEventListener('dblclick', handleDoubleClick, true);
+
+          // Clean up hover state
+          if (hoveredElement) {
+            removeStyles(hoveredElement);
+            hoveredElement = null;
+          }
+
+          // Clean up selected state
+          if (selectedElement) {
+            removeStyles(selectedElement);
+            selectedElement = null;
+          }
+
+          // End any active editing
+          if (editingElement) {
+            editingElement.blur();
+          }
+
+          document.body.style.cursor = '';
+
+          parent.postMessage(
+            {
+              type: 'SELECTION_MODE_DISABLED',
+              data: { enabled: false },
+            },
+            '*'
+          );
+        }
+
+        // Editing Mode Control
+        function enableEditing() {
+          isEditingEnabled = true;
+
+          parent.postMessage(
+            {
+              type: 'EDITING_MODE_ENABLED',
+              data: { enabled: true },
+            },
+            '*'
+          );
+        }
+
+        function disableEditing() {
+          isEditingEnabled = false;
+
+          // End any active editing
+          if (editingElement) {
+            editingElement.blur();
+          }
+
+          parent.postMessage(
+            {
+              type: 'EDITING_MODE_DISABLED',
+              data: { enabled: false },
+            },
+            '*'
+          );
+        }
+
+        // Restore element to its original state
+        function restoreElementToOriginal(element) {
+          if (!element) return;
+
+          const selector = generateSelector(element);
+          let hasRestorations = false;
+          let restoredProperties = [];
+
+          // Restore style modifications (including image src)
+          if (modifiedStyles.has(element)) {
+            const originalValues = modifiedStyles.get(element);
+            Object.keys(originalValues).forEach((property) => {
+              if (property === 'src' && element.tagName === 'IMG') {
+                // Special handling for image src
+                element.src = originalValues[property];
+              } else {
+                // Regular style properties
+                element.style[property] = originalValues[property];
               }
-            }, '*');
-            break;
+            });
+            restoredProperties.push(...Object.keys(originalValues));
+            modifiedStyles.delete(element);
+            hasRestorations = true;
+          }
+
+          // Restore content modifications
+          if (modifiedContent.has(element)) {
+            const originalContentData = modifiedContent.get(element);
+            element.innerHTML = originalContentData.innerHTML;
+            restoredProperties.push('innerHTML');
+            modifiedContent.delete(element);
+            hasRestorations = true;
+          }
+
+          // Only send message if there were actual restorations
+          if (hasRestorations) {
+            parent.postMessage(
+              {
+                type: 'ELEMENT_MODIFICATIONS_RESTORED',
+                data: {
+                  selector: selector,
+                  restoredProperties: restoredProperties,
+                  computedStyles: getComputedStylesObject(element),
+                  newContent: element.innerHTML,
+                  newTextContent: element.textContent,
+                  // Include updated attributes for images
+                  attributes: getElementAttributes(element),
+                },
+              },
+              '*'
+            );
+          }
         }
-      });
 
-      // Inject CSS to remove default browser selection styles
-      function injectSelectionOverrideCSS() {
-        const styleId = 'editing-script-selection-override';
+        // Utility Functions
+        function applyStyleChange(selector, property, value) {
+          const element = document.querySelector(selector);
+          if (element) {
+            // Store original value if this is the first modification to this property
+            if (!modifiedStyles.has(element)) {
+              modifiedStyles.set(element, {});
+            }
 
-        // Remove existing style if it exists
-        const existingStyle = document.getElementById(styleId);
-        if (existingStyle) {
-          existingStyle.remove();
+            const elementModifications = modifiedStyles.get(element);
+            if (!(property in elementModifications)) {
+              // Store the current value as original (before any modifications)
+              elementModifications[property] = element.style[property] || '';
+            }
+
+            // If this is a new element being modified, restore the previous one
+            if (currentlyModifiedElement && currentlyModifiedElement !== element) {
+              restoreElementToOriginal(currentlyModifiedElement);
+            }
+
+            // Set this as the currently modified element
+            currentlyModifiedElement = element;
+
+            // Apply the new style
+            element.style[property] = value;
+
+            parent.postMessage(
+              {
+                type: 'ELEMENT_STYLE_CHANGED',
+                data: {
+                  selector: selector,
+                  property: property,
+                  value: value,
+                  computedStyles: getComputedStylesObject(element),
+                },
+              },
+              '*'
+            );
+          }
         }
 
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
+        function updateElementContent(selector, content) {
+          const element = document.querySelector(selector);
+          if (element) {
+            // Store original content if this is the first modification
+            if (!modifiedContent.has(element)) {
+              modifiedContent.set(element, {
+                innerHTML: element.innerHTML,
+                textContent: element.textContent,
+              });
+            }
+
+            // If this is a new element being modified, restore the previous one
+            if (currentlyModifiedElement && currentlyModifiedElement !== element) {
+              restoreElementToOriginal(currentlyModifiedElement);
+            }
+
+            // Set this as the currently modified element
+            currentlyModifiedElement = element;
+
+            // Update the content
+            if (isEditableElement(element)) {
+              element.textContent = content;
+            }
+
+            parent.postMessage(
+              {
+                type: 'ELEMENT_CONTENT_UPDATED',
+                data: {
+                  selector: selector,
+                  newContent: element.innerHTML,
+                  newTextContent: element.textContent,
+                },
+              },
+              '*'
+            );
+          }
+        }
+
+        function updateImageSrc(selector, src) {
+          const element = document.querySelector(selector);
+          if (element && element.tagName === 'IMG') {
+            // Store original src if this is the first modification
+            if (!modifiedStyles.has(element)) {
+              modifiedStyles.set(element, {});
+            }
+
+            const elementModifications = modifiedStyles.get(element);
+            if (!('src' in elementModifications)) {
+              // Use the stored original src from originalImageSrc Map
+              const originalSrc = originalImageSrc.get(element) || element.src || '';
+              elementModifications['src'] = originalSrc;
+            }
+
+            // If this is a new element being modified, restore the previous one
+            if (currentlyModifiedElement && currentlyModifiedElement !== element) {
+              restoreElementToOriginal(currentlyModifiedElement);
+            }
+
+            // Set this as the currently modified element
+            currentlyModifiedElement = element;
+
+            // Update the image src
+            element.src = src;
+
+            parent.postMessage(
+              {
+                type: 'ELEMENT_IMAGE_SRC_UPDATED',
+                data: {
+                  selector: selector,
+                  newSrc: src,
+                  attributes: getElementAttributes(element),
+                },
+              },
+              '*'
+            );
+          }
+        }
+
+        function clearSelection() {
+          // Restore any currently modified element before clearing selection
+          if (currentlyModifiedElement) {
+            restoreElementToOriginal(currentlyModifiedElement);
+            currentlyModifiedElement = null;
+          }
+
+          if (selectedElement) {
+            removeStyles(selectedElement);
+            selectedElement = null;
+
+            parent.postMessage(
+              {
+                type: 'SELECTION_CLEARED',
+                data: null,
+              },
+              '*'
+            );
+          }
+        }
+
+        // Message Handler
+        window.addEventListener('message', function (event) {
+          const { type, data } = event.data;
+
+          switch (type) {
+            case 'ENABLE_SELECTION':
+              enableSelection();
+              break;
+
+            case 'DISABLE_SELECTION':
+              disableSelection();
+              break;
+
+            case 'ENABLE_EDITING':
+              enableEditing();
+              break;
+
+            case 'DISABLE_EDITING':
+              disableEditing();
+              break;
+
+            case 'START_EDITING':
+              if (selectedElement && canElementBeEdited(selectedElement)) {
+                makeElementEditable(selectedElement);
+              }
+              break;
+
+            case 'APPLY_STYLE':
+              if (data && data.selector && data.property && data.value) {
+                applyStyleChange(data.selector, data.property, data.value);
+              }
+              break;
+
+            case 'UPDATE_CONTENT':
+              if (data && data.selector && data.content !== undefined) {
+                updateElementContent(data.selector, data.content);
+              }
+              break;
+
+            case 'UPDATE_IMAGE_SRC':
+              if (data && data.selector && data.src !== undefined) {
+                updateImageSrc(data.selector, data.src);
+              }
+              break;
+
+            case 'CLEAR_SELECTION':
+              clearSelection();
+              break;
+
+            case 'GET_STATUS':
+              parent.postMessage(
+                {
+                  type: 'SCRIPT_STATUS',
+                  data: {
+                    selectionEnabled: isSelectionEnabled,
+                    editingEnabled: isEditingEnabled,
+                    hasSelectedElement: !!selectedElement,
+                    isEditing: !!editingElement,
+                  },
+                },
+                '*'
+              );
+              break;
+          }
+        });
+
+        // Inject CSS to remove default browser selection styles
+        function injectSelectionOverrideCSS() {
+          const styleId = 'editing-script-selection-override';
+
+          // Remove existing style if it exists
+          const existingStyle = document.getElementById(styleId);
+          if (existingStyle) {
+            existingStyle.remove();
+          }
+
+          const style = document.createElement('style');
+          style.id = styleId;
+          style.textContent = `
           /* Don't override background colors - let elements keep their original colors */
           *[contenteditable="true"]:focus {
             /* Keep original element colors */
@@ -1376,78 +1467,73 @@
           }
         `;
 
-        document.head.appendChild(style);
-      }
-
-      // Initialize CSS overrides
-      injectSelectionOverrideCSS();
-
-      // URL monitoring functionality
-      function sendCurrentUrl() {
-        const currentUrl = window.location.pathname + window.location.search + window.location.hash;
-        parent.postMessage({
-          type: 'URL_CHANGED',
-          data: {
-            pathname: window.location.pathname,
-            search: window.location.search,
-            hash: window.location.hash,
-            fullUrl: currentUrl,
-            href: window.location.href
-          }
-        }, '*');
-      }
-
-      // Send initial URL on script load
-      sendCurrentUrl();
-
-      // Monitor URL changes using popstate event (for browser back/forward)
-      window.addEventListener('popstate', function (event) {
-        sendCurrentUrl();
-      });
-
-      // Override pushState and replaceState to catch programmatic URL changes
-      const originalPushState = history.pushState;
-      const originalReplaceState = history.replaceState;
-
-      history.pushState = function () {
-        originalPushState.apply(history, arguments);
-        // Use setTimeout to ensure URL has been updated
-        setTimeout(sendCurrentUrl, 0);
-      };
-
-      history.replaceState = function () {
-        originalReplaceState.apply(history, arguments);
-        // Use setTimeout to ensure URL has been updated
-        setTimeout(sendCurrentUrl, 0);
-      };
-
-      // Initialize and notify parent
-      parent.postMessage({
-        type: 'EDITING_SCRIPT_READY',
-        data: {
-          ready: true,
-          selectionEnabled: isSelectionEnabled,
-          editingEnabled: isEditingEnabled
+          document.head.appendChild(style);
         }
-      }, '*');
 
-    })();
-  </script>
-  <script type="module" crossorigin src="/assets/index-CoM7eQ7o.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/react-DfJT-LlT.js">
-  <link rel="modulepreload" crossorigin href="/assets/react-dom-3CcXsgC8.js">
-  <link rel="modulepreload" crossorigin href="/assets/state-D_cCd7KE.js">
-  <link rel="modulepreload" crossorigin href="/assets/router-FWSsFnG6.js">
-  <link rel="modulepreload" crossorigin href="/assets/icons-cZlgQwHF.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-C7dMFzGG.js">
-  <link rel="modulepreload" crossorigin href="/assets/chart-deps-B12fJHWW.js">
-  <link rel="modulepreload" crossorigin href="/assets/recharts-C1-vTUAY.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-DcQCBz3Z.css">
-</head>
+        // Initialize CSS overrides
+        injectSelectionOverrideCSS();
 
-<body>
-  <div id="root"></div>
+        // URL monitoring functionality
+        function sendCurrentUrl() {
+          const currentUrl =
+            window.location.pathname + window.location.search + window.location.hash;
+          parent.postMessage(
+            {
+              type: 'URL_CHANGED',
+              data: {
+                pathname: window.location.pathname,
+                search: window.location.search,
+                hash: window.location.hash,
+                fullUrl: currentUrl,
+                href: window.location.href,
+              },
+            },
+            '*'
+          );
+        }
 
-</body>
+        // Send initial URL on script load
+        sendCurrentUrl();
 
+        // Monitor URL changes using popstate event (for browser back/forward)
+        window.addEventListener('popstate', function (event) {
+          sendCurrentUrl();
+        });
+
+        // Override pushState and replaceState to catch programmatic URL changes
+        const originalPushState = history.pushState;
+        const originalReplaceState = history.replaceState;
+
+        history.pushState = function () {
+          originalPushState.apply(history, arguments);
+          // Use setTimeout to ensure URL has been updated
+          setTimeout(sendCurrentUrl, 0);
+        };
+
+        history.replaceState = function () {
+          originalReplaceState.apply(history, arguments);
+          // Use setTimeout to ensure URL has been updated
+          setTimeout(sendCurrentUrl, 0);
+        };
+
+        // Initialize and notify parent
+        parent.postMessage(
+          {
+            type: 'EDITING_SCRIPT_READY',
+            data: {
+              ready: true,
+              selectionEnabled: isSelectionEnabled,
+              editingEnabled: isEditingEnabled,
+            },
+          },
+          '*'
+        );
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-CoM7eQ7o.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

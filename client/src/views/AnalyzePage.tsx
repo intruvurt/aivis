@@ -145,6 +145,13 @@ type AuditExpectation = {
   detail: string;
 };
 
+type ToolLauncher = {
+  title: string;
+  description: string;
+  to: string;
+  icon: React.ElementType;
+};
+
 type DemoBaselineSnapshot = {
   url: string;
   visibility_score: number;
@@ -178,6 +185,33 @@ const AUDIT_EXPECTATIONS: AuditExpectation[] = [
 ];
 
 const QUICK_EXAMPLES = ['aivis.biz', 'openai.com', 'stripe.com', 'hubspot.com'];
+
+const TOOL_LAUNCHERS: ToolLauncher[] = [
+  {
+    title: 'Reports',
+    description: 'Open completed audits, evidence, and score history tied to real runs.',
+    to: '/app/reports',
+    icon: Workflow,
+  },
+  {
+    title: 'Score Fix',
+    description: 'Route blockers into remediation paths and implementation actions.',
+    to: '/app/score-fix',
+    icon: Wand2,
+  },
+  {
+    title: 'Reverse Engineer',
+    description: 'Inspect how answer engines reinterpret your page and where meaning drifts.',
+    to: '/app/reverse-engineer',
+    icon: Info,
+  },
+  {
+    title: 'Site Crawl',
+    description: 'Scan page-level extractability issues across the wider site, not just one URL.',
+    to: '/app/site-crawl',
+    icon: Globe,
+  },
+];
 
 const PROGRESS_LABELS: Record<string, string> = {
   idle: 'Idle',
@@ -1396,6 +1430,40 @@ function _LegacyRender_UNUSED() {
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white/75" />
                     <span>{item}</span>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-5">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-white/75" />
+                <h3 className="text-sm font-semibold text-white/85">Launch live tooling</h3>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-white/60">
+                These are real working surfaces already wired into the platform. Use them before or
+                after an audit to inspect evidence, execute remediation, and validate site-wide
+                blockers.
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {TOOL_LAUNCHERS.map(({ title, description, to, icon: Icon }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    className="group rounded-2xl border border-white/10 bg-charcoal p-4 transition-colors hover:border-orange-300/35 hover:bg-charcoal-light"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-xl border border-white/10 bg-charcoal-deep p-2 text-white/80">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                          <span>{title}</span>
+                          <ArrowRight className="h-3.5 w-3.5 text-white/40 transition-transform group-hover:translate-x-0.5 group-hover:text-white/70" />
+                        </div>
+                        <p className="mt-1 text-xs leading-6 text-white/55">{description}</p>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

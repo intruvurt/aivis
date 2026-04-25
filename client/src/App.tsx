@@ -9,7 +9,6 @@ import { useWorkspaceStore } from './stores/workspaceStore';
 
 import PublicLayout from './components/PublicLayout';
 import AppLayout from './components/AppLayout';
-import ScanShell from './components/ScanShell';
 import { CookieConsent } from './components/CookieConsent';
 import PageLoadingSpinner from './components/PageLoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -364,12 +363,6 @@ export default function App() {
             <Route path="language-checker" element={<LanguageCheckerPage />} />
           </Route>
 
-          {/* ═══ SCAN SYSTEM — no sidebar, no topbar, full-viewport state machine ═══ */}
-          <Route element={<ScanShell />}>
-            <Route path="/app/scan" element={<AnalyzePage />} />
-            <Route path="/app/audits/:id" element={<AuditDetails />} />
-          </Route>
-
           {/* ═══ Authenticated App Shell ═══ */}
           <Route
             path="/app"
@@ -381,6 +374,8 @@ export default function App() {
           >
             {/* /app → scan entry */}
             <Route index element={<Navigate to="/app/scan" replace />} />
+            <Route path="scan" element={<AnalyzePage />} />
+            <Route path="audits/:id" element={<AuditDetails />} />
             {/* Legacy analyze path — redirect to canonical scan route */}
             <Route path="analyze" element={<Navigate to="/app/scan" replace />} />
             {/* Legacy overview — Dashboard preserved for users with audit history */}

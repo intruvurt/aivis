@@ -93,15 +93,51 @@ export async function getEntityJobs(entityId: string, limit = 20) {
  */
 export async function getCiteLedgerForRun(auditRunId: string) {
   const pool = getPool();
-  const { rows } = await pool.query(
-    `SELECT id, sequence, brag_id, content_hash, previous_hash,
-            chain_hash, entity_id, evidence_id, created_at
-     FROM cite_ledger
-     WHERE audit_run_id = $1
-     ORDER BY sequence ASC`,
-    [auditRunId],
-  );
-  return rows;
+  try {
+    const { rows: schemaRows } = await pool.query<{ column_name: string }>(
+      `SELECT column_name
+         FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'cite_ledger'`,
+    );
+
+    const available = new Set(schemaRows.map((r) => String(r.column_name || '').trim()));
+    if (available.size === 0) {
+      return [];
+    }
+
+    const orderedColumns = [
+      'id',
+      'sequence',
+      'brag_id',
+      'content_hash',
+      'previous_hash',
+      'chain_hash',
+      'entity_id',
+      'evidence_id',
+      'created_at',
+    ];
+
+    const selected = orderedColumns.filter((column) => available.has(column));
+    const safeColumns = selected.length > 0 ? selected : ['id'];
+
+    const { rows } = await pool.query(
+      `SELECT ${safeColumns.join(', ')}
+         FROM cite_ledger
+        WHERE audit_run_id = $1
+        ORDER BY sequence ASC`,
+      [auditRunId],
+    );
+    return rows;
+  } catch (err: any) {
+    const code = String(err?.code || '');
+    if (code === '42P01' || code === '42703') {
+      console.warn(
+        `[cite-ledger] getCiteLedgerForRun schema mismatch for audit_run_id=${auditRunId}: ${err?.message || 'unknown error'}`,
+      );
+      return [];
+    }
+    throw err;
+  }
 }
 
 /**

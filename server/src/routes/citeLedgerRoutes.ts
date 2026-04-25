@@ -23,6 +23,9 @@ import { getPool } from "../services/postgresql.js";
 
 export const citeLedgerRoutes = Router();
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 async function userOwnsAudit(auditId: string, userId: string): Promise<boolean> {
   const pool = getPool();
   const { rows } = await pool.query(
@@ -71,6 +74,9 @@ citeLedgerRoutes.get(
       const { auditRunId } = req.params;
       if (!auditRunId || typeof auditRunId !== "string") {
         return res.status(400).json({ error: "auditRunId is required" });
+      }
+      if (!UUID_RE.test(auditRunId.trim())) {
+        return res.status(400).json({ error: "Invalid auditRunId format" });
       }
       const entries = await getCiteLedgerForRun(auditRunId);
       return res.json({ auditRunId, entries, count: entries.length });

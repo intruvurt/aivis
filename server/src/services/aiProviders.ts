@@ -285,8 +285,14 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
     ? `${String(args.opts.systemPrompt).trim()}\n\ndo this for real`
     : undefined;
 
-  // Reduce default token usage to lower latency/cost; callers can override
-  const maxTokens = args.opts?.max_tokens ?? 1200;
+  // Clamp token requests to avoid low-credit 402 loops and reduce fallback thrash.
+  const requestedMaxTokens = args.opts?.max_tokens ?? 1200;
+  const configuredMaxTokenCapRaw = Number(process.env.AI_MAX_TOKENS_CAP || 1200);
+  const configuredMaxTokenCap =
+    Number.isFinite(configuredMaxTokenCapRaw) && configuredMaxTokenCapRaw > 0
+      ? Math.floor(configuredMaxTokenCapRaw)
+      : 1200;
+  const maxTokens = Math.max(64, Math.min(requestedMaxTokens, configuredMaxTokenCap));
 
   // Keep each AI call bounded so /api/analyze can complete before proxy kills the socket.
   // Default raised from 18s→30s to accommodate 3000-token JSON responses (~20-30s at typical speed).

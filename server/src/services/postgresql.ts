@@ -1780,6 +1780,58 @@ export async function runMigrations(): Promise<void> {
               ai_answer_presence BOOLEAN,
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             )`,
+            // Deterministic audit ledger must exist for replay/event persistence.
+            `CREATE TABLE IF NOT EXISTS audit_ledger_events (
+              event_id TEXT PRIMARY KEY,
+              trace_id TEXT NOT NULL,
+              sequence BIGINT NOT NULL,
+              ts BIGINT NOT NULL,
+              event_type TEXT NOT NULL CHECK (event_type IN (
+                'audit.started',
+                'crawl.complete',
+                'entity.resolved',
+                'query.expanded',
+                'citation.tested',
+                'ai.reconciled',
+                'score.computed',
+                'audit.completed',
+                'audit.failed'
+              )),
+              payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+              state_delta JSONB NOT NULL DEFAULT '{}'::jsonb,
+              reducer_version TEXT NOT NULL,
+              parent_hash TEXT,
+              event_hash TEXT NOT NULL,
+              UNIQUE (trace_id, sequence)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_ale_trace_seq ON audit_ledger_events (trace_id, sequence ASC)`,
+            `CREATE INDEX IF NOT EXISTS idx_ale_ts ON audit_ledger_events (ts)`,
+            `CREATE INDEX IF NOT EXISTS idx_ale_event_type ON audit_ledger_events (event_type)`,
+            `CREATE TABLE IF NOT EXISTS audit_snapshots (
+              id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+              trace_id TEXT NOT NULL,
+              sequence_at BIGINT NOT NULL,
+              state JSONB NOT NULL,
+              reducer_version TEXT NOT NULL,
+              state_hash TEXT NOT NULL,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              UNIQUE (trace_id, sequence_at, reducer_version)
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_as_trace_seq ON audit_snapshots (trace_id, sequence_at DESC)`,
+            `CREATE TABLE IF NOT EXISTS cite_ledger (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              audit_run_id UUID NOT NULL,
+              sequence INTEGER NOT NULL,
+              brag_id VARCHAR(80) NOT NULL,
+              content_hash VARCHAR(128) NOT NULL,
+              previous_hash VARCHAR(128) NOT NULL,
+              chain_hash VARCHAR(128) NOT NULL,
+              created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE INDEX IF NOT EXISTS idx_cite_ledger_run ON cite_ledger(audit_run_id)`,
+            `CREATE UNIQUE INDEX IF NOT EXISTS idx_cite_ledger_run_seq ON cite_ledger(audit_run_id, sequence)`,
+            `ALTER TABLE cite_ledger ADD COLUMN IF NOT EXISTS entity_id TEXT`,
+            `ALTER TABLE cite_ledger ADD COLUMN IF NOT EXISTS evidence_id VARCHAR(20)`,
             `DO $$
             DECLARE
               rec RECORD;

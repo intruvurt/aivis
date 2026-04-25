@@ -62,7 +62,7 @@ void main(){
 const EDGE_FRAG = `#version 300 es
 precision mediump float;
 out vec4 col;
-void main(){ col=vec4(1.0,1.0,1.0,0.065); }`;
+void main(){ col=vec4(0.74,0.9,1.0,0.2); }`;
 
 // ── GLSL –– node pass (POINTS + SDF circle + glow) ───────────────────────────
 const NODE_VERT = `#version 300 es
@@ -86,10 +86,10 @@ void main(){
   vec2 pc=gl_PointCoord-0.5;
   float d=length(pc)*2.0;
   if(d>1.0) discard;
-  float circle=1.0-smoothstep(0.55,0.92,d);
-  float glow=exp(-d*d*2.2)*0.38;
+  float circle=1.0-smoothstep(0.45,0.92,d);
+  float glow=exp(-d*d*1.8)*0.52;
   float alpha=clamp(circle+glow,0.0,1.0);
-  col=vec4(v_col*(circle+glow*0.55),alpha);
+  col=vec4(v_col*(circle+glow*0.68),alpha);
 }`;
 
 // ── Shader helpers ────────────────────────────────────────────────────────────
@@ -401,11 +401,14 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
     const { w: iw, h: ih } = sizeRef.current;
     gl.viewport(0, 0, iw, ih);
 
-    // Physics constants
-    const K_REPULSE = 7000;
-    const K_SPRING = 110;
+    // Physics constants tuned for smoother dark-UI readability.
+    const K_REPULSE = 5400;
+    const K_SPRING = 124;
     const DAMPING = 0.87;
-    const CENTER_PULL = 0.0015;
+    const CENTER_PULL = 0.0014;
+    const reduceMotion =
+      document.documentElement.classList.contains('reduce-motion') ||
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     function tick() {
       const sim = simRef.current;
@@ -415,7 +418,8 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
       const fc = frameRef.current;
 
       // ── Physics ──────────────────────────────────────────────────────────
-      if (fc < 300 || fc % 2 === 0) {
+      const shouldStepPhysics = reduceMotion ? fc < 120 || fc % 6 === 0 : fc < 260 || fc % 2 === 0;
+      if (shouldStepPhysics) {
         const len = sim.length;
         // Coulomb repulsion O(n²)
         for (let i = 0; i < len; i++) {
@@ -501,22 +505,23 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
         const [r, g, b] = getRgb(node);
         const isHov = node.id === hov,
           isSel = node.id === sel;
-        const alpha = isHov || isSel ? 1.0 : node.status === 'pending' ? 0.28 : 0.82;
+        const alpha = isHov || isSel ? 1.0 : node.status === 'pending' ? 0.45 : 0.9;
         nc[i * 3] = r * alpha;
         nc[i * 3 + 1] = g * alpha;
         nc[i * 3 + 2] = b * alpha;
-        const pulse =
-          node.status === 'conflict'
-            ? 1 + Math.sin(t * 2.5) * 0.22
+        const pulse = reduceMotion
+          ? 1
+          : node.status === 'conflict'
+            ? 1 + Math.sin(t * 2.2) * 0.16
             : node.status === 'uncertain'
-              ? 1 + Math.sin(t * 1.4 + node.x * 0.05) * 0.07
+              ? 1 + Math.sin(t * 1.2 + node.x * 0.05) * 0.05
               : 1;
         const base = isHov || isSel ? node.radius * 1.45 : node.radius;
         ns[i] = base * dpr * pulse * 2; // radius → diameter for gl.PointSize
       }
 
       // ── Draw ──────────────────────────────────────────────────────────────
-      gl.clearColor(0, 0, 0, 1);
+      gl.clearColor(0.02, 0.03, 0.05, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       if (ei > 0) {
@@ -572,25 +577,35 @@ export function EntityGraph({ nodes, edges, selectedNodeId, onNodeHover, onNodeC
       className="relative w-full h-full overflow-hidden bg-black"
       style={{ cursor: tooltip ? 'pointer' : 'crosshair' }}
     >
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(120% 95% at 50% 50%, rgba(8,20,38,0.14) 0%, rgba(3,10,20,0.42) 58%, rgba(2,6,14,0.72) 100%)',
+          zIndex: 0,
+        }}
+      />
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
-        style={{ display: 'block', width: '100%', height: '100%' }}
+        style={{ display: 'block', width: '100%', height: '100%', position: 'relative', zIndex: 1 }}
       />
 
       {/* Single DOM tooltip — repositioned on hover, never re-mounted */}
       {tooltip && (
         <div
-          className="pointer-events-none absolute font-mono text-[10px] leading-relaxed z-10"
+          className="pointer-events-none absolute font-mono text-[12px] leading-relaxed z-10"
           style={{
             left: tooltip.x + 16,
             top: tooltip.y - 10,
-            background: 'rgba(0,0,0,0.88)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            padding: '6px 10px',
-            color: 'rgba(255,255,255,0.8)',
+            background: 'linear-gradient(145deg, rgba(4,16,28,0.94), rgba(10,22,40,0.9))',
+            border: '1px solid rgba(148,163,184,0.42)',
+            boxShadow: '0 14px 30px rgba(2,6,23,0.58)',
+            backdropFilter: 'blur(3px)',
+            padding: '10px 12px',
+            color: 'rgba(255,255,255,0.94)',
             whiteSpace: 'nowrap',
           }}
         >

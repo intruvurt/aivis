@@ -144,9 +144,10 @@
   left: var(--fl-space-gap);
   font-size: var(--fl-type-meta-size);
   line-height: var(--fl-type-meta-lh);
-  color: var(--fl-text-secondary);
+  color: rgba(226, 232, 240, 0.88);
   font-family: monospace;
   pointer-events: none;
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.55);
 }
 
 .fl-graph__overlay-tr {
@@ -164,9 +165,10 @@
   left: var(--fl-space-gap);
   font-size: 11px;
   line-height: 16px;
-  color: var(--fl-text-secondary);
+  color: rgba(226, 232, 240, 0.82);
   font-family: monospace;
   pointer-events: none;
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.55);
 }
 
 /* ── §8: Right panel — inspector, 336px fixed ─────────────────────────────── */

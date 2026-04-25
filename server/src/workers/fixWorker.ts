@@ -8,6 +8,7 @@ import { getBullMQConnection } from '../infra/queues/connection.js';
 import { getPool } from '../services/postgresql.js';
 import { enqueuePRJob } from '../infra/queues/prQueue.js';
 import { getTemplateByRuleId, matchRuleIdFromTitle } from '../services/fixpackGenerator.js';
+import type { PRJobData } from '../infra/queues/prQueue.js';
 import type { SSFREvidenceItem, SSFRFixpackAsset } from '../../../shared/types.js';
 import type { FixJobData } from '../infra/queues/fixQueue.js';
 
@@ -27,6 +28,7 @@ async function processFixJob(data: FixJobData): Promise<void> {
   if (!issueRows.length) throw new Error(`Issue ${data.issueId} not found`);
 
   const issue = issueRows[0];
+  const evidenceContext = await buildEvidenceContext(pool, issue, data);
 
   // 2. Load project repo info
   const { rows: projectRows } = await pool.query(
@@ -77,7 +79,8 @@ async function processFixJob(data: FixJobData): Promise<void> {
     baseBranch: 'main',
     files: fixFiles,
     title: `fix(aivis): ${issue.title.slice(0, 60)}`,
-    body: buildPRBody(issue, data.expectedDelta),
+    body: buildPRBody(issue, data.expectedDelta, evidenceContext),
+    evidenceContext,
   });
 
   // 6. Update fix status
@@ -191,7 +194,127 @@ function buildEvidenceFromRaw(issue: any): SSFREvidenceItem[] {
   return items;
 }
 
-function buildPRBody(issue: any, expectedDelta: number): string {
+async function buildEvidenceContext(
+  pool: ReturnType<typeof getPool>,
+  issue: any,
+  data: FixJobData,
+): Promise<NonNullable<PRJobData['evidenceContext']>> {
+  const handoffTraceId = `handoff_${data.projectId}_${data.issueId}_${Date.now()}`;
+  const sourceUrl = typeof issue.evidence_url === 'string' ? issue.evidence_url : null;
+  const explicitAuditId =
+    typeof issue.audit_id === 'string'
+      ? issue.audit_id
+      : typeof issue.audit_id === 'number'
+        ? String(issue.audit_id)
+        : null;
+
+  let auditRow: any | null = null;
+
+  if (explicitAuditId) {
+    const byId = await pool.query(
+      `SELECT id, url, visibility_score, result, updated_at
+         FROM audits
+        WHERE id = $1
+        LIMIT 1`,
+      [explicitAuditId],
+    );
+    auditRow = byId.rows[0] || null;
+  }
+
+  if (!auditRow && sourceUrl) {
+    const byUrl = await pool.query(
+      `SELECT id, url, visibility_score, result, updated_at
+         FROM audits
+        WHERE url = $1
+        ORDER BY updated_at DESC
+        LIMIT 1`,
+      [sourceUrl],
+    );
+    auditRow = byUrl.rows[0] || null;
+  }
+
+  const result =
+    auditRow?.result && typeof auditRow.result === 'object'
+      ? (auditRow.result as Record<string, any>)
+      : {};
+  const bragValidation =
+    result?.brag_validation && typeof result.brag_validation === 'object'
+      ? (result.brag_validation as Record<string, any>)
+      : {};
+  const findings = Array.isArray(bragValidation?.findings)
+    ? (bragValidation.findings as Array<Record<string, any>>)
+    : [];
+  const recommendationList = Array.isArray(result?.recommendations)
+    ? (result.recommendations as Array<Record<string, any>>)
+    : [];
+  const bragFindingsCount =
+    typeof result?.brag_findings_count === 'number'
+      ? result.brag_findings_count
+      : typeof bragValidation?.finding_count === 'number'
+        ? bragValidation.finding_count
+        : findings.length;
+  const bragRejectedCount =
+    typeof bragValidation?.rejected_count === 'number'
+      ? bragValidation.rejected_count
+      : undefined;
+  const bragCoverageRatio =
+    typeof bragValidation?.coverage_ratio === 'number'
+      ? bragValidation.coverage_ratio
+      : typeof bragFindingsCount === 'number' && typeof bragRejectedCount === 'number'
+        ? Number((bragFindingsCount / Math.max(1, bragFindingsCount + bragRejectedCount)).toFixed(4))
+        : undefined;
+
+  return {
+    auditId: auditRow?.id ? String(auditRow.id) : explicitAuditId,
+    sourceUrl: auditRow?.url || sourceUrl,
+    visibilityScore:
+      typeof auditRow?.visibility_score === 'number'
+        ? auditRow.visibility_score
+        : typeof result?.visibility_score === 'number'
+          ? result.visibility_score
+          : null,
+    evidenceCount:
+      typeof result?.evidence_count === 'number' ? result.evidence_count : undefined,
+    bragFindingsCount: typeof bragFindingsCount === 'number' ? bragFindingsCount : undefined,
+    bragRejectedCount,
+    bragCoverageRatio,
+    citeLedgerCount:
+      typeof bragValidation?.cite_ledger_count === 'number'
+        ? bragValidation.cite_ledger_count
+        : undefined,
+    rootHash:
+      typeof bragValidation?.root_hash === 'string' ? bragValidation.root_hash : null,
+    gateVersion:
+      typeof bragValidation?.gate_version === 'string'
+        ? bragValidation.gate_version
+        : null,
+    topFindingIds: findings
+      .map((finding) => (typeof finding?.brag_id === 'string' ? finding.brag_id : ''))
+      .filter(Boolean)
+      .slice(0, 5),
+    topFindingTitles: findings
+      .map((finding) => (typeof finding?.title === 'string' ? finding.title : ''))
+      .filter(Boolean)
+      .slice(0, 3),
+    recommendationCount: recommendationList.length,
+    topRecommendationTitles: recommendationList
+      .map((rec) => (typeof rec?.title === 'string' ? rec.title : ''))
+      .filter(Boolean)
+      .slice(0, 3),
+    handoffTraceId,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function buildPRBody(
+  issue: any,
+  expectedDelta: number,
+  evidenceContext?: PRJobData['evidenceContext'],
+): string {
+  const evidenceBlock = evidenceContext
+    ? `\n### Evidence Truth Snapshot\n- audit_id: ${evidenceContext.auditId || 'unknown'}\n- source_url: ${evidenceContext.sourceUrl || 'unknown'}\n- visibility_score: ${evidenceContext.visibilityScore ?? 'unknown'}\n- evidence_count: ${evidenceContext.evidenceCount ?? 'unknown'}\n- BRAG findings/rejected: ${evidenceContext.bragFindingsCount ?? 'unknown'} / ${evidenceContext.bragRejectedCount ?? 'unknown'}\n- BRAG coverage_ratio: ${evidenceContext.bragCoverageRatio ?? 'unknown'}\n- cite_ledger_entries: ${evidenceContext.citeLedgerCount ?? 'unknown'}\n- root_hash: ${evidenceContext.rootHash || 'unknown'}\n- gate_version: ${evidenceContext.gateVersion || 'unknown'}\n- recommendation_count: ${evidenceContext.recommendationCount ?? 'unknown'}\n${evidenceContext.topFindingIds?.length ? `- top_finding_ids: ${evidenceContext.topFindingIds.slice(0, 5).join(', ')}\n` : ''}${evidenceContext.topRecommendationTitles?.length ? `- top_recommendations: ${evidenceContext.topRecommendationTitles.slice(0, 3).join(' | ')}\n` : ''}- handoff_trace: ${evidenceContext.handoffTraceId || 'unknown'}\n`
+    : '';
+
   return `## AiVIS.biz AutoFix
 
 **Issue:** ${issue.title}
@@ -203,6 +326,7 @@ Addresses the identified AI visibility issue automatically.
 
 ### Evidence
 ${issue.evidence_message || 'See audit report for details.'}
+${evidenceBlock}
 
 ---
 *Generated by AiVIS Auto Score Fix*

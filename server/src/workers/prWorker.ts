@@ -12,6 +12,9 @@ let workerInstance: Worker<PRJobData> | null = null;
 
 async function processPRJob(data: PRJobData): Promise<void> {
   const pool = getPool();
+  const evidenceBlock = data.evidenceContext
+    ? `\n\n### Worker Handoff Evidence Context\n- handoff_trace: ${data.evidenceContext.handoffTraceId || 'unknown'}\n- audit_id: ${data.evidenceContext.auditId || 'unknown'}\n- source_url: ${data.evidenceContext.sourceUrl || 'unknown'}\n- visibility_score: ${data.evidenceContext.visibilityScore ?? 'unknown'}\n- evidence_count: ${data.evidenceContext.evidenceCount ?? 'unknown'}\n- BRAG findings/rejected: ${data.evidenceContext.bragFindingsCount ?? 'unknown'} / ${data.evidenceContext.bragRejectedCount ?? 'unknown'}\n- BRAG coverage_ratio: ${data.evidenceContext.bragCoverageRatio ?? 'unknown'}\n- cite_ledger_entries: ${data.evidenceContext.citeLedgerCount ?? 'unknown'}\n- root_hash: ${data.evidenceContext.rootHash || 'unknown'}\n- gate_version: ${data.evidenceContext.gateVersion || 'unknown'}\n- recommendation_count: ${data.evidenceContext.recommendationCount ?? 'unknown'}\n${data.evidenceContext.topFindingIds?.length ? `- top_finding_ids: ${data.evidenceContext.topFindingIds.slice(0, 5).join(', ')}\n` : ''}${data.evidenceContext.topFindingTitles?.length ? `- top_finding_titles: ${data.evidenceContext.topFindingTitles.slice(0, 3).join(' | ')}\n` : ''}${data.evidenceContext.topRecommendationTitles?.length ? `- top_recommendations: ${data.evidenceContext.topRecommendationTitles.slice(0, 3).join(' | ')}\n` : ''}`
+    : '';
 
   if (!isGitHubAppConfigured()) {
     await pool.query(
@@ -29,7 +32,7 @@ async function processPRJob(data: PRJobData): Promise<void> {
     repo: data.repoName,
     baseBranch: data.baseBranch,
     title: data.title,
-    body: data.body,
+    body: `${data.body}${evidenceBlock}`,
     files: data.files.map((f) => ({ ...f, operation: 'update' as const })),
   });
 

@@ -624,12 +624,17 @@ function CognitionOverlay({
       {/* Narrative-first overlay */}
       <div
         className="fl-graph__overlay-tl font-mono"
-        style={{ color: 'rgba(255,255,255,0.85)', pointerEvents: 'auto', maxWidth: 420 }}
+        style={{ color: 'rgba(241,245,249,0.94)', pointerEvents: 'auto', maxWidth: 440 }}
       >
         {result ? (
           <div
             className="rounded-md border px-3 py-2"
-            style={{ borderColor: 'rgba(255,255,255,0.14)', background: 'rgba(2,8,23,0.7)' }}
+            style={{
+              borderColor: 'rgba(148,163,184,0.35)',
+              background: 'linear-gradient(145deg, rgba(3,12,24,0.9), rgba(10,24,42,0.86))',
+              boxShadow: '0 12px 28px rgba(2,6,23,0.45)',
+              backdropFilter: 'blur(4px)',
+            }}
           >
             <div className="text-[10px] tracking-widest uppercase text-white/40">
               Decision Surface

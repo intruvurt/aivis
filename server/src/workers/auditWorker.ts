@@ -356,6 +356,28 @@ async function runSingleJob() {
         console.warn(`[audit-worker] Cite ledger pipeline error (non-fatal): ${err?.message || err}`);
       });
 
+      const bragFindingsCount = bragValidation.findings?.length ?? 0;
+      const bragRejectedCount = bragValidation.rejected_count ?? 0;
+      const bragEvidenceTotal = bragFindingsCount + bragRejectedCount;
+      const bragCoverageRatio =
+        bragEvidenceTotal > 0
+          ? Number((bragFindingsCount / bragEvidenceTotal).toFixed(4))
+          : 1;
+      const bragTruthState =
+        evidence.items.length > 0 && (bragFindingsCount > 0 || bragRejectedCount > 0)
+          ? 'evidence_backed'
+          : 'insufficient_evidence';
+      const topFindings = Array.isArray(bragValidation.findings)
+        ? bragValidation.findings
+            .slice(0, 5)
+            .map((finding) => ({
+              id: finding.brag_id,
+              title: finding.title,
+              severity: finding.severity,
+              confidence: finding.confidence,
+            }))
+        : [];
+
       // Build result payload
       finalResult = {
         success: true,
@@ -363,7 +385,33 @@ async function runSingleJob() {
         scrape: scraped.data,
         evidence_count: evidence.items.length,
         rule_count: ruleResults.length,
-        brag_findings_count: bragValidation.findings?.length ?? 0,
+        brag_findings_count: bragFindingsCount,
+        brag_validation: {
+          truth_state: bragTruthState,
+          finding_count: bragFindingsCount,
+          rejected_count: bragRejectedCount,
+          cite_ledger_count: bragValidation.cite_ledger?.length ?? 0,
+          coverage_ratio: bragCoverageRatio,
+          root_hash: bragValidation.root_hash,
+          gate_version: bragValidation.gate_version,
+          derived_score: bragValidation.derived_score,
+          findings: topFindings,
+        },
+        truth_packet: {
+          state: bragTruthState,
+          verified_at: new Date().toISOString(),
+          score_source: 'evidence',
+          verifiable: evidence.items.length > 0,
+          evidence_count: evidence.items.length,
+          brag: {
+            finding_count: bragFindingsCount,
+            rejected_count: bragRejectedCount,
+            coverage_ratio: bragCoverageRatio,
+            root_hash: bragValidation.root_hash,
+            gate_version: bragValidation.gate_version,
+            top_findings: topFindings,
+          },
+        },
       };
     } catch (pipelineErr: any) {
       console.error(`[audit-worker] Pipeline execution error: ${pipelineErr?.message || pipelineErr}`);

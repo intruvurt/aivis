@@ -17,6 +17,24 @@ export interface PRJobData {
   files: Array<{ path: string; content: string; justification: string }>;
   title: string;
   body: string;
+  evidenceContext?: {
+    auditId?: string | null;
+    sourceUrl?: string | null;
+    visibilityScore?: number | null;
+    evidenceCount?: number;
+    bragFindingsCount?: number;
+    bragRejectedCount?: number;
+    bragCoverageRatio?: number;
+    citeLedgerCount?: number;
+    rootHash?: string | null;
+    gateVersion?: string | null;
+    topFindingIds?: string[];
+    topFindingTitles?: string[];
+    recommendationCount?: number;
+    topRecommendationTitles?: string[];
+    handoffTraceId?: string;
+    createdAt?: string;
+  };
 }
 
 let prQueueInstance: Queue<PRJobData> | null = null;

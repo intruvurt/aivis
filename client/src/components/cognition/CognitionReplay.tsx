@@ -15,7 +15,7 @@
  * debugStore.setReplayIndex so CausalityGraph reacts to commit navigation.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { MainGrid } from '../layout/MainGrid';
 import CommitGraph from './CommitGraph';
 import CommitInspector from './CommitInspector';

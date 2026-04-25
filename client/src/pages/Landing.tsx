@@ -150,6 +150,25 @@ const TRUST_SOURCES = [
   { label: 'Perplexity product documentation', href: 'https://docs.perplexity.ai/' },
 ] as const;
 
+const HERO_QUICK_ANSWERS = [
+  {
+    q: 'What does AiVIS measure?',
+    a: 'AiVIS scores citation readiness on a 0-100 scale using seven weighted categories: schema, content depth, technical trust, metadata, AI readability, heading structure, and security signals.',
+  },
+  {
+    q: 'Why can a readable page still be uncited?',
+    a: 'Answer engines can parse prose but still skip citations when structure is weak. Missing hierarchy clarity, thin answer blocks, or inconsistent entity framing lowers citation confidence.',
+  },
+  {
+    q: 'How is each score explainable?',
+    a: 'AiVIS ties findings to CITE LEDGER evidence so each diagnosis maps to a traceable citation state or a corrective action path.',
+  },
+  {
+    q: 'What is the fastest remediation loop?',
+    a: 'Keep the target URL fixed, ship one structural fix, re-audit the same URL, then compare score movement to confirm attributable lift.',
+  },
+] as const;
+
 const DEFAULT_MISMATCH_DATA: MismatchData = {
   url: 'https://example.com',
   scannedAt: new Date().toISOString(),
@@ -834,7 +853,7 @@ const Landing = () => {
                   <p className="text-xs uppercase tracking-widest text-cyan-400/70 mb-2 font-mono">
                     live execution
                   </p>
-                  <h1 className="text-2xl font-bold text-white">AiVIS.biz is reading your site</h1>
+                  <h2 className="text-2xl font-bold text-white">AiVIS.biz is reading your site</h2>
                 </div>
               )}
 
@@ -844,12 +863,12 @@ const Landing = () => {
                   <p className="text-xs uppercase tracking-widest text-emerald-400/70 mb-2 font-mono">
                     mismatch report
                   </p>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h2 className="text-2xl font-bold text-white">
                     AiVIS.biz mismatch detected
                     <span className="ml-3 text-red-300 font-black tabular-nums">
                       {mismatchData.mismatchScore}/100
                     </span>
-                  </h1>
+                  </h2>
                 </div>
               )}
 
@@ -910,6 +929,33 @@ const Landing = () => {
                     </Link>
                   </div>
                 </div>
+              )}
+
+              {landingPhase === 'idle' && (
+                <section
+                  className="mt-8 rounded-2xl border border-white/10 bg-[#0d1018]/90 p-4 sm:p-6 text-left"
+                  aria-label="Quick answers for AI extraction"
+                >
+                  <h2 className="text-sm sm:text-base font-semibold text-cyan-100 mb-4">
+                    Quick answers answer engines can extract
+                  </h2>
+                  <div className="grid gap-3 sm:gap-4">
+                    {HERO_QUICK_ANSWERS.map((item) => (
+                      <article
+                        key={item.q}
+                        className="rounded-xl border border-white/10 bg-black/20 p-3 sm:p-4"
+                      >
+                        <h3 className="text-sm sm:text-base font-semibold text-white">{item.q}</h3>
+                        <p
+                          className="mt-1.5 text-xs sm:text-sm leading-6 text-white/70"
+                          data-speakable
+                        >
+                          {item.a}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </section>
               )}
             </motion.div>
           </div>

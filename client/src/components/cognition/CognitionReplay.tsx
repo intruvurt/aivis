@@ -65,13 +65,25 @@ function CognitionTopBar() {
   const allBranches = useReplayStore((s) => s.allBranches);
   const cursor = useReplayStore((s) => s.cursor);
 
+  const scanLabel = useMemo(() => {
+    if (!scanId) return '';
+    try {
+      const parsed = new URL(scanId);
+      const compactPath =
+        parsed.pathname.length > 18 ? `${parsed.pathname.slice(0, 18)}…` : parsed.pathname;
+      return `${parsed.hostname}${compactPath === '/' ? '' : compactPath}`;
+    } catch {
+      return scanId.length > 42 ? `${scanId.slice(0, 42)}…` : scanId;
+    }
+  }, [scanId]);
+
   return (
     <>
       <span className="cr-topbar-label">Cognition Replay</span>
 
       {scanId && (
         <span className="cr-topbar-scanid" title={scanId}>
-          scan <span className="cr-topbar-scanid-val">{scanId.slice(0, 12)}</span>
+          scan <span className="cr-topbar-scanid-val">{scanLabel}</span>
         </span>
       )}
 

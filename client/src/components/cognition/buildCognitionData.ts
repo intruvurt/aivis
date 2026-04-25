@@ -35,6 +35,13 @@ function priorityToStatus(priority: string): NodeStatus {
     return 'confirmed';
 }
 
+function hasEvidenceBinding(rec: AnalysisResponse['recommendations'][number]): boolean {
+    return (
+        (Array.isArray(rec.evidence_ids) && rec.evidence_ids.length > 0) ||
+        (typeof rec.brag_id === 'string' && rec.brag_id.trim().length > 0)
+    );
+}
+
 let _uidCounter = 0;
 function uid(prefix: string): string {
     return `${prefix}-${++_uidCounter}`;
@@ -217,9 +224,11 @@ export function buildCognitionData(analysis: AnalysisResponse): CognitionData {
     }
 
     // ── Phase 6: Issues (high-priority recommendations) ───────────────────────
-    const issues = (analysis.recommendations ?? [])
+    const candidateIssues = (analysis.recommendations ?? [])
         .filter((r) => r.priority === 'high' || r.priority === 'medium')
         .slice(0, 6);
+    const issues = candidateIssues.filter(hasEvidenceBinding);
+    const issuesWithoutEvidence = candidateIssues.filter((r) => !hasEvidenceBinding(r));
     const issueNodeIds: string[] = [];
 
     for (const rec of issues) {
@@ -265,6 +274,10 @@ export function buildCognitionData(analysis: AnalysisResponse): CognitionData {
             agent: 'issue-detector',
             confidence: rec.priority === 'high' ? 0.2 : 0.5,
             evidence: [
+                ...(rec.brag_id ? [`+ brag trail: ${rec.brag_id}`] : []),
+                ...(Array.isArray(rec.evidence_ids) && rec.evidence_ids.length > 0
+                    ? [`+ evidence ids: ${rec.evidence_ids.slice(0, 3).join(', ')}`]
+                    : []),
                 rec.description
                     ? `! ${rec.description.slice(0, 80)}`
                     : '! blocker detected',
@@ -275,6 +288,43 @@ export function buildCognitionData(analysis: AnalysisResponse): CognitionData {
             ].filter(Boolean),
             relatedNodeIds: [nodeId],
             isBranch: rec.priority === 'high',
+        });
+    }
+
+    // Explicitly project recommendations missing evidence bindings as gap nodes.
+    // This keeps the UI truth-bound: either evidence-backed finding OR missing-evidence gap.
+    for (const rec of issuesWithoutEvidence) {
+        const nodeId = uid('gap');
+        const label = `Missing evidence for: ${rec.title}`;
+        nodes.push({
+            id: nodeId,
+            label: label.length > 56 ? `${label.slice(0, 54)}…` : label,
+            type: 'gap',
+            confidence: 0.15,
+            status: 'conflict',
+            radius: 6,
+            revealedAtStep: step,
+        });
+
+        commits.push({
+            id: uid('commit'),
+            stepIndex: step++,
+            type: 'gap',
+            label: `gap: no evidence bound to recommendation`,
+            agent: 'evidence-gate',
+            confidence: 0.15,
+            evidence: ['! recommendation has no evidence_ids or brag_id binding'],
+            changes: [
+                `! recommendation: ${rec.title.slice(0, 64)}`,
+                '+ action: attach evidence refs before surfacing as finding',
+            ],
+            relatedNodeIds: [nodeId],
+            gapItem: {
+                type: 'citation',
+                description: `Recommendation is unbound: ${rec.title}`,
+                action: 'Re-run audit and attach evidence_ids or brag_id before presenting this finding.',
+            },
+            isBranch: true,
         });
     }
 

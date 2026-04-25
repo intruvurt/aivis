@@ -543,6 +543,51 @@ function CognitionOverlay({
 
   const issueNode = selectedNode ?? primaryIssueNode;
 
+  const matchedRecommendation = useMemo(() => {
+    if (!issueNode || !result) return null;
+    if (issueNode.type !== 'issue' && issueNode.type !== 'gap') return null;
+
+    const nodeLabel = normalizeToken(issueNode.label.replace(/^Missing evidence for:\s*/i, ''));
+    if (!nodeLabel) return null;
+
+    return (
+      (result.recommendations ?? []).find((r) => {
+        const title = normalizeToken(r.title || '');
+        if (!title) return false;
+        return title.includes(nodeLabel) || nodeLabel.includes(title);
+      }) ?? null
+    );
+  }, [issueNode, result]);
+
+  const issueEvidenceLines = useMemo(() => {
+    if (!issueNode || !result) return [] as string[];
+
+    const lines: string[] = [];
+    const targetUrl = result.analysis_integrity?.normalized_target_url || result.url;
+    if (targetUrl) lines.push(`target: ${targetUrl}`);
+
+    if (matchedRecommendation?.brag_id) {
+      lines.push(`brag_id: ${matchedRecommendation.brag_id}`);
+    }
+
+    if (
+      Array.isArray(matchedRecommendation?.evidence_ids) &&
+      matchedRecommendation.evidence_ids.length > 0
+    ) {
+      lines.push(`evidence_ids: ${matchedRecommendation.evidence_ids.slice(0, 4).join(', ')}`);
+    }
+
+    if (issueNode.type === 'gap' && /missing evidence/i.test(issueNode.label)) {
+      lines.push('evidence_status: missing_binding');
+    }
+
+    if (lines.length === 1) {
+      lines.push('evidence_status: no explicit recommendation evidence bound to this node');
+    }
+
+    return lines;
+  }, [issueNode, result, matchedRecommendation]);
+
   const nodeConflictCount = useCallback(
     (nodeId: string): number => {
       let count = 0;
@@ -559,19 +604,32 @@ function CognitionOverlay({
 
   const nodeFixPath = useCallback(
     (node: NonNullable<typeof issueNode>) => {
-      const rec = (result?.recommendations ?? []).find(
-        (r) =>
-          node.label.toLowerCase().includes(r.title.toLowerCase().slice(0, 20)) ||
-          r.title.toLowerCase().includes(node.label.toLowerCase().slice(0, 20))
-      );
+      const rec = (result?.recommendations ?? []).find((r) => {
+        const nodeLabel = normalizeToken(node.label.replace(/^Missing evidence for:\s*/i, ''));
+        const recTitle = normalizeToken(r.title || '');
+        if (!nodeLabel || !recTitle) return false;
+        return nodeLabel.includes(recTitle) || recTitle.includes(nodeLabel);
+      });
 
       if (rec?.description) {
         return [
           rec.title,
           rec.description,
+          (Array.isArray(rec.evidence_ids) && rec.evidence_ids.length > 0) ||
+          (typeof rec.brag_id === 'string' && rec.brag_id.length > 0)
+            ? 'Evidence binding present. Apply fix and re-scan same URL for attributable delta.'
+            : 'Recommendation is missing evidence binding. Attach evidence_ids or brag_id before actioning.',
           rec.category
             ? `Re-test ${rec.category.toLowerCase()} after applying fix`
             : 'Re-scan to verify evidence change',
+        ];
+      }
+
+      if (node.type === 'gap' && /missing evidence/i.test(node.label)) {
+        return [
+          'Bind this finding to evidence before execution',
+          'Ensure recommendation includes evidence_ids and/or brag_id from the current scan ledger',
+          'Re-run scan on the same canonical URL and verify the finding is now evidence-backed',
         ];
       }
 
@@ -742,6 +800,12 @@ function CognitionOverlay({
           <div className="mt-2 text-[11px] text-white/70">
             Impact: lowers entity confidence and citation consistency.
           </div>
+          <div className="mt-2 text-[10px] tracking-wide uppercase text-white/45">Evidence</div>
+          <ul className="mt-1 text-[11px] text-white/75 space-y-1">
+            {issueEvidenceLines.map((line, i) => (
+              <li key={`${issueNode.id}-ev-${i}`}>- {line}</li>
+            ))}
+          </ul>
           <div className="mt-1 text-[11px] text-white/60">
             Node stats: confidence {issueNode.confidence.toFixed(2)} · mentions{' '}
             {issueNode.sources ?? 0} · linked conflicts {nodeConflictCount(issueNode.id)}

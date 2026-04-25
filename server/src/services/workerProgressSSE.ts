@@ -49,6 +49,7 @@ export class WorkerProgressTracker {
   private redis = getRedis();
   private metrics: Map<string, WorkerProgressMetrics> = new Map();
   private updateInterval: NodeJS.Timeout | null = null;
+  private syncInFlight = false;
 
   /**
    * Register a worker and start tracking its progress.
@@ -199,11 +200,21 @@ export class WorkerProgressTracker {
     if (this.updateInterval) return;
 
     this.updateInterval = setInterval(async () => {
+      if (this.syncInFlight) return;
+      this.syncInFlight = true;
       const allWorkers = this.getAllMetrics();
-      for (const worker of allWorkers) {
-        await this.syncMetricsFromRedis(worker.workerId);
+      try {
+        for (const worker of allWorkers) {
+          await this.syncMetricsFromRedis(worker.workerId);
+        }
+      } finally {
+        this.syncInFlight = false;
       }
     }, intervalMs);
+
+    if (typeof this.updateInterval === 'object' && 'unref' in this.updateInterval) {
+      this.updateInterval.unref();
+    }
 
     console.log('[WorkerProgressTracker] Started metric sync loop');
   }
@@ -258,7 +269,6 @@ export function sendWorkerProgressSSE(
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
 
   // Send initial metrics
   const initialMetrics = tracker.getMetrics(workerId);

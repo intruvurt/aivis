@@ -26,6 +26,12 @@ const PYTHON_INTERNAL_KEY = process.env.PYTHON_INTERNAL_KEY || '';
 const ENTITY_SIMILARITY_THRESHOLD = 0.88; // cosine similarity cutoff for entity merge
 const INGEST_TIMEOUT_MS = 60_000;
 
+function isMissingRelationError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { code?: string; message?: string };
+  return e.code === '42P01' || /relation .* does not exist/i.test(String(e.message || ''));
+}
+
 // ---------------------------------------------------------------------------
 // Types (internal — not exported via shared/types to avoid coupling)
 // ---------------------------------------------------------------------------
@@ -362,6 +368,19 @@ export async function runGraphIngestion(
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
+    if (isMissingRelationError(err)) {
+      console.warn('[graphIngest] skipped (missing relation):', msg);
+      emitStage(input.scanId, input.seqRef, 'ingestion_failed', 1.0, {
+        error: 'graph_ingestion_schema_unavailable',
+      });
+      return {
+        scanId: input.scanId || 'graph-ingestion-skipped',
+        entityCount: 0,
+        claimCount: 0,
+        edgesGenerated: 0,
+        durationMs: Date.now() - startMs,
+      };
+    }
     console.error('[graphIngest] pipeline error:', msg);
     emitStage(input.scanId, input.seqRef, 'ingestion_failed', 1.0, { error: msg });
     throw err;

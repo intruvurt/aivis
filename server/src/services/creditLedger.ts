@@ -16,21 +16,38 @@ function roundCredits(value: number): number {
     return Math.round(Math.max(0, Number(value || 0)) * 100) / 100;
 }
 
+function isMissingRelationError(err: unknown): boolean {
+    if (!err || typeof err !== 'object') return false;
+    const e = err as { code?: string; message?: string };
+    return e.code === '42P01' || /relation .* does not exist/i.test(String(e.message || ''));
+}
+
 export async function getCreditLedgerBalance(userId: string, client?: PoolClient): Promise<number> {
     const queryable = client || getPool();
-    const ledger = await queryable.query(
-        `SELECT COALESCE(SUM(delta), 0) AS balance, COUNT(*)::int AS event_count
-     FROM credit_ledger
-     WHERE user_id = $1`,
-        [userId],
-    );
-    const fallback = await queryable.query(
-        'SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1',
-        [userId],
-    );
+    let ledgerBalance = 0;
+    let legacyBalance = 0;
 
-    const ledgerBalance = roundCredits(Number(ledger.rows?.[0]?.balance || 0));
-    const legacyBalance = roundCredits(Number(fallback.rows?.[0]?.credits_remaining || 0));
+    try {
+        const ledger = await queryable.query(
+            `SELECT COALESCE(SUM(delta), 0) AS balance, COUNT(*)::int AS event_count
+         FROM credit_ledger
+         WHERE user_id = $1`,
+            [userId],
+        );
+        ledgerBalance = roundCredits(Number(ledger.rows?.[0]?.balance || 0));
+    } catch (err: unknown) {
+        if (!isMissingRelationError(err)) throw err;
+    }
+
+    try {
+        const fallback = await queryable.query(
+            'SELECT credits_remaining FROM scan_pack_credits WHERE user_id = $1',
+            [userId],
+        );
+        legacyBalance = roundCredits(Number(fallback.rows?.[0]?.credits_remaining || 0));
+    } catch (err: unknown) {
+        if (!isMissingRelationError(err)) throw err;
+    }
 
     return Math.max(ledgerBalance, legacyBalance);
 }
@@ -51,21 +68,29 @@ export async function appendCreditLedgerEvent(args: {
         return { inserted: false };
     }
 
-    const result = await queryable.query(
-        `INSERT INTO credit_ledger (id, user_id, type, delta, source, request_id, stripe_event_id, metadata)
-     VALUES (gen_random_uuid(), $1, $2, $3, $4, NULLIF($5, ''), NULLIF($6, ''), $7)
-     ON CONFLICT DO NOTHING
-     RETURNING id`,
-        [
-            args.userId,
-            args.type,
-            delta,
-            args.source,
-            args.requestId || null,
-            args.stripeEventId || null,
-            args.metadata ? JSON.stringify(args.metadata) : null,
-        ],
-    );
+    let result;
+    try {
+        result = await queryable.query(
+            `INSERT INTO credit_ledger (id, user_id, type, delta, source, request_id, stripe_event_id, metadata)
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, NULLIF($5, ''), NULLIF($6, ''), $7)
+         ON CONFLICT DO NOTHING
+         RETURNING id`,
+            [
+                args.userId,
+                args.type,
+                delta,
+                args.source,
+                args.requestId || null,
+                args.stripeEventId || null,
+                args.metadata ? JSON.stringify(args.metadata) : null,
+            ],
+        );
+    } catch (err: unknown) {
+        if (isMissingRelationError(err)) {
+            return { inserted: false };
+        }
+        throw err;
+    }
 
     return { inserted: result.rows.length > 0 };
 }

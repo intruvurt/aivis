@@ -170,9 +170,12 @@ export function startDbCleanupLoop(): void {
   if (cleanupTimer) return;
 
   // Run once soon after startup (30s delay) then on interval
-  setTimeout(() => {
+  const bootstrapTimeout = setTimeout(() => {
     runCleanup();
   }, 30_000);
+  if (typeof bootstrapTimeout === 'object' && 'unref' in bootstrapTimeout) {
+    bootstrapTimeout.unref();
+  }
 
   cleanupTimer = setInterval(runCleanup, CLEANUP_INTERVAL_MS);
 

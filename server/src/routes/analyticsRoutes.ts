@@ -10,15 +10,35 @@ import { authRequired } from '../middleware/authRequired.js';
 
 const router = Router();
 
+function getPostHogApiKey(): string {
+    return process.env.POSTHOG_API_KEY || process.env.POSTHOG_KEY || '';
+}
+
+function getPostHogApiEndpoint(): string {
+    return process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com';
+}
+
+function parseDays(input: unknown, fallback: number): number {
+    const parsed = Number.parseInt(String(input ?? fallback), 10);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.min(365, Math.max(1, parsed));
+}
+
+function getAuthHeader(): Record<string, string> {
+    const key = getPostHogApiKey();
+    return key ? { Authorization: `Bearer ${key}` } : {};
+}
+
 // PostHog instance
 let posthogClient: any;
 (async () => {
     try {
         const moduleRef = await import('posthog-node');
         const PostHogCtor = (moduleRef as any).PostHog || (moduleRef as any).default;
-        if (PostHogCtor) {
-            posthogClient = new PostHogCtor(process.env.POSTHOG_KEY || '', {
-                apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
+        const apiKey = getPostHogApiKey();
+        if (PostHogCtor && apiKey) {
+            posthogClient = new PostHogCtor(apiKey, {
+                apiHost: getPostHogApiEndpoint(),
             });
         }
     } catch (err) {
@@ -75,15 +95,14 @@ router.get('/events/count', authRequired, async (req: Request, res: Response) =>
             });
         }
 
+        const daysCount = parseDays(days, 7);
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - parseInt(days as string));
+        startDate.setDate(startDate.getDate() - daysCount);
 
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=${event}&after=${startDate.toISOString()}&limit=1`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=${event}&after=${startDate.toISOString()}&limit=1`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 
@@ -94,7 +113,7 @@ router.get('/events/count', authRequired, async (req: Request, res: Response) =>
             event,
             count: data.count || 0,
             timeRange: {
-                days: parseInt(days as string),
+                days: daysCount,
                 startDate: startDate.toISOString(),
                 endDate: new Date().toISOString(),
             },
@@ -131,16 +150,15 @@ router.get('/visitors', authRequired, async (req: Request, res: Response) => {
             });
         }
 
+        const daysCount = parseDays(days, 7);
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - parseInt(days as string));
+        startDate.setDate(startDate.getDate() - daysCount);
 
         // Query for page view events to count unique visitors
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=$pageview&after=${startDate.toISOString()}&limit=1`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=$pageview&after=${startDate.toISOString()}&limit=1`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 
@@ -150,7 +168,7 @@ router.get('/visitors', authRequired, async (req: Request, res: Response) => {
             success: true,
             uniqueVisitors: data.count || 0,
             timeRange: {
-                days: parseInt(days as string),
+                days: daysCount,
                 startDate: startDate.toISOString(),
                 endDate: new Date().toISOString(),
             },
@@ -187,8 +205,9 @@ router.get('/engagement', authRequired, async (req: Request, res: Response) => {
             });
         }
 
+        const daysCount = parseDays(days, 7);
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - parseInt(days as string));
+        startDate.setDate(startDate.getDate() - daysCount);
 
         // Track key engagement events
         const analyticsEventNames = [
@@ -201,11 +220,9 @@ router.get('/engagement', authRequired, async (req: Request, res: Response) => {
         const eventCounts = await Promise.all(
             analyticsEventNames.map(async (eventName) => {
                 const response = await fetch(
-                    `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=${eventName}&after=${startDate.toISOString()}&limit=1`,
+                    `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=${eventName}&after=${startDate.toISOString()}&limit=1`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                        },
+                        headers: getAuthHeader(),
                     }
                 );
                 const data = await response.json();
@@ -220,7 +237,7 @@ router.get('/engagement', authRequired, async (req: Request, res: Response) => {
             success: true,
             engagement: eventCounts,
             timeRange: {
-                days: parseInt(days as string),
+                days: daysCount,
                 startDate: startDate.toISOString(),
                 endDate: new Date().toISOString(),
             },
@@ -258,16 +275,17 @@ router.get('/retention', authRequired, async (req: Request, res: Response) => {
         }
 
         // Fetch retention data from PostHog API
+        const daysCount = parseDays(days, 30);
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/insights/retention/`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/insights/retention/`,
             {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
+                    ...getAuthHeader(),
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    date_from: new Date(Date.now() - parseInt(days as string) * 24 * 60 * 60 * 1000).toISOString(),
+                    date_from: new Date(Date.now() - daysCount * 24 * 60 * 60 * 1000).toISOString(),
                     target_event: 'scan_completed',
                     returning_event: 'scan_started',
                 }),
@@ -280,7 +298,7 @@ router.get('/retention', authRequired, async (req: Request, res: Response) => {
             success: true,
             retention: data.result || [],
             timeRange: {
-                days: parseInt(days as string),
+                days: daysCount,
             },
         });
     } catch (err: any) {
@@ -315,33 +333,28 @@ router.get('/product-metrics', authRequired, async (req: Request, res: Response)
             });
         }
 
+        const daysCount = parseDays(days, 30);
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - parseInt(days as string));
+        startDate.setDate(startDate.getDate() - daysCount);
 
         // Fetch multiple metrics in parallel
         const [scansRes, citationsRes, usersRes] = await Promise.all([
             fetch(
-                `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=scan_completed&after=${startDate.toISOString()}&limit=1`,
+                `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=scan_completed&after=${startDate.toISOString()}&limit=1`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                    },
+                    headers: getAuthHeader(),
                 }
             ),
             fetch(
-                `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=citation_viewed&after=${startDate.toISOString()}&limit=1`,
+                `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=citation_viewed&after=${startDate.toISOString()}&limit=1`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                    },
+                    headers: getAuthHeader(),
                 }
             ),
             fetch(
-                `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/events/?event=$pageview&after=${startDate.toISOString()}&distinct=true&limit=1`,
+                `${getPostHogApiEndpoint()}/api/projects/${projectId}/events/?event=$pageview&after=${startDate.toISOString()}&distinct=true&limit=1`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                    },
+                    headers: getAuthHeader(),
                 }
             ),
         ]);
@@ -360,7 +373,7 @@ router.get('/product-metrics', authRequired, async (req: Request, res: Response)
                 uniqueUsers: users.count || 0,
             },
             timeRange: {
-                days: parseInt(days as string),
+                days: daysCount,
                 startDate: startDate.toISOString(),
                 endDate: new Date().toISOString(),
             },
@@ -406,11 +419,11 @@ router.post('/query', authRequired, async (req: Request, res: Response) => {
 
         // Custom HogQL query
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/query/`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/query/`,
             {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
+                    ...getAuthHeader(),
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({

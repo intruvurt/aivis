@@ -14386,6 +14386,43 @@ function requireAdminKey(req: Request, res: Response): boolean {
   return true;
 }
 
+async function getSchemaReadiness() {
+  const pool = getPool();
+  const requiredTables = [
+    "users",
+    "audits",
+    "analysis_cache",
+    "credit_ledger",
+    "scan_pack_credits",
+    "scans",
+    "entities",
+    "claims",
+    "cluster_members",
+  ];
+
+  const checks = await Promise.all(
+    requiredTables.map(async (tableName) => {
+      const { rows } = await pool.query(
+        `SELECT to_regclass($1) IS NOT NULL AS present`,
+        [tableName],
+      );
+      return {
+        table: tableName,
+        present: Boolean(rows?.[0]?.present),
+      };
+    }),
+  );
+
+  const missing = checks.filter((c) => !c.present).map((c) => c.table);
+  return {
+    ok: missing.length === 0,
+    required: requiredTables.length,
+    present: requiredTables.length - missing.length,
+    missing,
+    checks,
+  };
+}
+
 app.post("/api/admin/cache/clear", adminLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
 
@@ -15336,6 +15373,7 @@ app.get("/api/admin/health-deep", adminLimiter, async (req, res) => {
   try {
     const pool = getPool();
     const dbStartedAt = Date.now();
+    const schemaReadiness = await getSchemaReadiness();
     const dbResult = await pool.query(
       "SELECT NOW() AS now, current_database() AS database",
     );
@@ -15364,6 +15402,7 @@ app.get("/api/admin/health-deep", adminLimiter, async (req, res) => {
         server_time: dbResult.rows[0]?.now || null,
         latency_ms: dbLatencyMs,
       },
+      schema_readiness: schemaReadiness,
       latency_ms: Date.now() - startedAt,
     });
   } catch (e: any) {
@@ -15374,6 +15413,26 @@ app.get("/api/admin/health-deep", adminLimiter, async (req, res) => {
       checked_at: new Date().toISOString(),
       error: e?.message || "Deep health check failed",
       latency_ms: Date.now() - startedAt,
+    });
+  }
+});
+
+// ─── Admin: compact schema readiness report ─────────────────────────────────
+app.get("/api/admin/schema-readiness", adminLimiter, async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  try {
+    const schemaReadiness = await getSchemaReadiness();
+    return res.status(schemaReadiness.ok ? 200 : 503).json({
+      success: schemaReadiness.ok,
+      checked_at: new Date().toISOString(),
+      schema_readiness: schemaReadiness,
+    });
+  } catch (e: any) {
+    console.error("[Admin] Schema readiness failed:", e);
+    return res.status(503).json({
+      success: false,
+      checked_at: new Date().toISOString(),
+      error: e?.message || "Schema readiness failed",
     });
   }
 });
@@ -16088,6 +16147,60 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   } else {
     console.log(
       "[Startup] Determinism startup gate disabled (set DETERMINISM_STARTUP_GATE=true to enable)",
+    );
+  }
+
+  // Optional schema readiness gate
+  const schemaGateEnabled = ["1", "true", "yes", "on"].includes(
+    String(process.env.SCHEMA_READINESS_GATE || "").trim().toLowerCase(),
+  );
+  const schemaGateHardFail = ["1", "true", "yes", "on"].includes(
+    String(process.env.SCHEMA_READINESS_GATE_HARD_FAIL || "").trim().toLowerCase(),
+  );
+
+  if (schemaGateEnabled) {
+    if (!databaseReady) {
+      const msg =
+        "[Startup] Schema readiness gate skipped because database is unavailable";
+      if (schemaGateHardFail) {
+        console.error(`${msg}; failing startup due to SCHEMA_READINESS_GATE_HARD_FAIL=true`);
+        process.exit(1);
+      }
+      console.warn(msg);
+    } else {
+      try {
+        const schemaReadiness = await getSchemaReadiness();
+        if (!schemaReadiness.ok) {
+          const missing = schemaReadiness.missing.join(", ") || "unknown";
+          const msg = `[Startup] Schema readiness failed; missing tables: ${missing}`;
+          if (schemaGateHardFail) {
+            console.error(`${msg}. Refusing to start server.`);
+            process.exit(1);
+          }
+          console.error(`${msg}. Continuing in degraded mode.`);
+        } else {
+          console.log(
+            `[Startup] Schema readiness passed (${schemaReadiness.present}/${schemaReadiness.required})`,
+          );
+        }
+      } catch (err: any) {
+        const msg = err?.message || String(err);
+        if (schemaGateHardFail) {
+          console.error(
+            "[Startup] Schema readiness gate errored; refusing to start server:",
+            msg,
+          );
+          process.exit(1);
+        }
+        console.error(
+          "[Startup] Schema readiness gate errored; continuing in degraded mode:",
+          msg,
+        );
+      }
+    }
+  } else {
+    console.log(
+      "[Startup] Schema readiness gate disabled (set SCHEMA_READINESS_GATE=true to enable)",
     );
   }
 

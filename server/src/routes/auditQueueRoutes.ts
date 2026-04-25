@@ -49,11 +49,15 @@ router.get(
   "/audit/progress/:jobId",
   authRequired,
   async (req: Request, res: Response) => {
+    const actorUserId = String((req as any).user?.id || '');
     const jobId = String(req.params.jobId || "");
     const job = await getAuditJob(jobId);
     if (!job) {
       res.setHeader("Access-Control-Allow-Origin", String(req.headers.origin || "*"));
       return res.status(404).json({ success: false, error: "Job not found" });
+    }
+    if (!actorUserId || String(job.payload?.userId || '') !== actorUserId) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
     }
 
     // Set up SSE headers and send response

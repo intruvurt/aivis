@@ -64,118 +64,127 @@ export async function buildHeatmapSurface(
 ): Promise<HeatmapSurface> {
   const pool = getPool();
 
-  // 1. Fetch the last two completed tests for this user+url
-  const { rows: tests } = await pool.query<{ id: string; created_at: string }>(
-    `SELECT id, created_at
-     FROM citation_tests
-     WHERE user_id = $1
-       AND url    = $2
-       AND status = 'completed'
-     ORDER BY created_at DESC
-     LIMIT 2`,
-    [userId, url],
-  );
+  try {
 
-  if (tests.length === 0) {
-    return emptyHeatmap(url);
-  }
+    // 1. Fetch the last two completed tests for this user+url
+    const { rows: tests } = await pool.query<{ id: string; created_at: string }>(
+      `SELECT id, created_at
+       FROM citation_tests
+       WHERE user_id = $1
+         AND url    = $2
+         AND status = 'completed'
+       ORDER BY created_at DESC
+       LIMIT 2`,
+      [userId, url],
+    );
 
-  const currentTestId = tests[0].id;
-  const previousTestId = tests.length > 1 ? tests[1].id : null;
+    if (tests.length === 0) {
+      return emptyHeatmap(url);
+    }
 
-  // 2. Pull citation_results for the current (plus optionally previous) test
-  const testIds = previousTestId ? [currentTestId, previousTestId] : [currentTestId];
+    const currentTestId = tests[0].id;
+    const previousTestId = tests.length > 1 ? tests[1].id : null;
 
-  const { rows: rawRows } = await pool.query<RawCitationRow>(
-    `SELECT
-       cr.query,
-       cr.platform,
-       cr.mentioned,
-       cr.mention_quality_score,
-       cr.excerpt,
-       cr.created_at,
-       cr.citation_test_id AS test_id
-     FROM citation_results cr
-     WHERE cr.citation_test_id = ANY($1::uuid[])
-       AND (cr.is_false_positive IS NULL OR cr.is_false_positive = FALSE)
-     ORDER BY cr.query, cr.platform, cr.created_at DESC`,
-    [testIds],
-  );
+    // 2. Pull citation_results for the current (plus optionally previous) test
+    const testIds = previousTestId ? [currentTestId, previousTestId] : [currentTestId];
 
-  // 3. Partition by test
-  const currentRows = rawRows.filter((r) => r.test_id === currentTestId);
-  const previousRows = previousTestId
-    ? rawRows.filter((r) => r.test_id === previousTestId)
-    : [];
+    const { rows: rawRows } = await pool.query<RawCitationRow>(
+      `SELECT
+         cr.query,
+         cr.platform,
+         cr.mentioned,
+         cr.mention_quality_score,
+         cr.excerpt,
+         cr.created_at,
+         cr.citation_test_id AS test_id
+       FROM citation_results cr
+       WHERE cr.citation_test_id = ANY($1::uuid[])
+         AND (cr.is_false_positive IS NULL OR cr.is_false_positive = FALSE)
+       ORDER BY cr.query, cr.platform, cr.created_at DESC`,
+      [testIds],
+    );
 
-  // 4. Aggregate current test into query × engine map
-  const currentMap = buildQueryEngineMap(currentRows);
-  const previousMap = previousTestId ? buildQueryEngineMap(previousRows) : null;
+    // 3. Partition by test
+    const currentRows = rawRows.filter((r) => r.test_id === currentTestId);
+    const previousRows = previousTestId
+      ? rawRows.filter((r) => r.test_id === previousTestId)
+      : [];
 
-  // 5. Collect unique queries (sorted for stable display order)
-  const allQueries = Array.from(currentMap.keys()).sort();
+    // 4. Aggregate current test into query × engine map
+    const currentMap = buildQueryEngineMap(currentRows);
+    const previousMap = previousTestId ? buildQueryEngineMap(previousRows) : null;
 
-  // 6. Build surface rows
-  const rows: HeatmapRow[] = allQueries.map((query) => {
-    const engineMap = currentMap.get(query)!;
+    // 5. Collect unique queries (sorted for stable display order)
+    const allQueries = Array.from(currentMap.keys()).sort();
 
-    const cells: HeatmapCell[] = ENGINES.map((engine) => {
-      const agg = engineMap.get(engine) ?? null;
-      return {
-        engine,
-        cited: agg?.mentioned ?? false,
-        citationCount: agg?.count ?? 0,
-        confidence: agg?.confidence ?? 0,
-        lastSeenAt: agg?.lastSeenAt ?? null,
-        excerpt: agg?.excerpt ?? null,
-      };
+    // 6. Build surface rows
+    const rows: HeatmapRow[] = allQueries.map((query) => {
+      const engineMap = currentMap.get(query)!;
+
+      const cells: HeatmapCell[] = ENGINES.map((engine) => {
+        const agg = engineMap.get(engine) ?? null;
+        return {
+          engine,
+          cited: agg?.mentioned ?? false,
+          citationCount: agg?.count ?? 0,
+          confidence: agg?.confidence ?? 0,
+          lastSeenAt: agg?.lastSeenAt ?? null,
+          excerpt: agg?.excerpt ?? null,
+        };
+      });
+
+      const totalCitations = cells.reduce((sum, c) => sum + c.citationCount, 0);
+      const citedEngines = cells.filter((c) => c.cited).length;
+      const visibilityProbability = citedEngines / ENGINES.length;
+
+      const gapAction =
+        visibilityProbability < 1 ? buildGapAction(query, cells) : null;
+
+      return { query, cells, totalCitations, visibilityProbability, gapAction };
     });
 
-    const totalCitations = cells.reduce((sum, c) => sum + c.citationCount, 0);
-    const citedEngines = cells.filter((c) => c.cited).length;
-    const visibilityProbability = citedEngines / ENGINES.length;
-
-    const gapAction =
-      visibilityProbability < 1 ? buildGapAction(query, cells) : null;
-
-    return { query, cells, totalCitations, visibilityProbability, gapAction };
-  });
-
-  // 7. Delta tracking: compare current vs previous test
-  const deltas: HeatmapDelta[] = [];
-  if (previousMap) {
-    for (const query of allQueries) {
-      for (const engine of ENGINES) {
-        const cur = currentMap.get(query)?.get(engine)?.mentioned ?? false;
-        const prev = previousMap.get(query)?.get(engine)?.mentioned ?? false;
-        if (cur && !prev) deltas.push({ query, engine, change: 'gained' });
-        if (!cur && prev) deltas.push({ query, engine, change: 'lost' });
+    // 7. Delta tracking: compare current vs previous test
+    const deltas: HeatmapDelta[] = [];
+    if (previousMap) {
+      for (const query of allQueries) {
+        for (const engine of ENGINES) {
+          const cur = currentMap.get(query)?.get(engine)?.mentioned ?? false;
+          const prev = previousMap.get(query)?.get(engine)?.mentioned ?? false;
+          if (cur && !prev) deltas.push({ query, engine, change: 'gained' });
+          if (!cur && prev) deltas.push({ query, engine, change: 'lost' });
+        }
       }
     }
+
+    const totalCited = rows.filter((r) => r.totalCitations > 0).length;
+
+    const surface: HeatmapSurface = {
+      entity: url,
+      url,
+      rows,
+      generatedAt: new Date().toISOString(),
+      deltas,
+      totalCited,
+      totalQueries: rows.length,
+    };
+
+    emitBackboneEvent('heatmap.surface.built', {
+      source: 'heatmap',
+      userId,
+      domain: url,
+      totalQueries: surface.totalQueries,
+      totalCited: surface.totalCited,
+      deltaCount: surface.deltas.length,
+    });
+
+    return surface;
+  } catch (err) {
+    if (isMissingRelationError(err)) {
+      console.warn('[Heatmap] Missing relation during heatmap build. Returning empty heatmap:', (err as Error).message);
+      return emptyHeatmap(url);
+    }
+    throw err;
   }
-
-  const totalCited = rows.filter((r) => r.totalCitations > 0).length;
-
-  const surface: HeatmapSurface = {
-    entity: url,
-    url,
-    rows,
-    generatedAt: new Date().toISOString(),
-    deltas,
-    totalCited,
-    totalQueries: rows.length,
-  };
-
-  emitBackboneEvent('heatmap.surface.built', {
-    source: 'heatmap',
-    userId,
-    domain: url,
-    totalQueries: surface.totalQueries,
-    totalCited: surface.totalCited,
-    deltaCount: surface.deltas.length,
-  });
-
-  return surface;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -283,4 +292,11 @@ function engineLabel(engine: CitationEngine): string {
     google_ai: 'Google AI',
   };
   return labels[engine];
+}
+
+function isMissingRelationError(err: unknown): boolean {
+  const message = typeof err === 'object' && err !== null
+    ? String((err as { message?: string }).message || '')
+    : String(err || '');
+  return /relation .* does not exist/i.test(message);
 }

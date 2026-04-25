@@ -149,6 +149,12 @@ Impact: ${action.impact || 'medium'}
 
 ${contextBlock ? `Page Context:\n${contextBlock}` : ''}
 
+AEO primitive constraints (non-negotiable):
+- Preserve entity identity. Do not dilute or broaden the entity scope beyond the audited page and recommendation.
+- Keep brand/entity naming canonical and consistent across the output.
+- Tie every remediation to observable evidence signals (citation presence, missing citation state, structured extraction quality).
+- Prefer deterministic, implementation-ready structures over generic advice.
+
 ${formatInstruction}
 
 After the implementation, add a single paragraph starting with "Explanation:" that explains what this fix does and why it matters for AI visibility.

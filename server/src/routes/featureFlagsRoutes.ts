@@ -10,15 +10,37 @@ import { authRequired } from '../middleware/authRequired.js';
 
 const router = Router();
 
+function getPostHogApiKey(): string {
+    return process.env.POSTHOG_API_KEY || process.env.POSTHOG_KEY || '';
+}
+
+function getPostHogApiEndpoint(): string {
+    return process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com';
+}
+
+function getAuthHeader(): Record<string, string> {
+    const key = getPostHogApiKey();
+    return key ? { Authorization: `Bearer ${key}` } : {};
+}
+
+function requireActorUserId(req: Request, targetUserId: string): { ok: boolean; actorId?: string } {
+    const actorId = String((req as any)?.user?.id || '');
+    if (!actorId || actorId !== String(targetUserId)) {
+        return { ok: false };
+    }
+    return { ok: true, actorId };
+}
+
 // Use real PostHog instance (from config)
 let posthogClient: any;
 (async () => {
     try {
         const moduleRef = await import('posthog-node');
         const PostHogCtor = (moduleRef as any).PostHog || (moduleRef as any).default;
-        if (PostHogCtor) {
-            posthogClient = new PostHogCtor(process.env.POSTHOG_KEY || '', {
-                apiHost: process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com',
+        const apiKey = getPostHogApiKey();
+        if (PostHogCtor && apiKey) {
+            posthogClient = new PostHogCtor(apiKey, {
+                apiHost: getPostHogApiEndpoint(),
             });
         }
     } catch (err) {
@@ -32,12 +54,13 @@ let posthogClient: any;
  */
 router.post('/flags/evaluate', authRequired, async (req: Request, res: Response) => {
     try {
-        const { flagKey, userId } = req.body;
+        const { flagKey } = req.body;
+        const userId = String((req as any)?.user?.id || '');
 
         if (!flagKey || !userId) {
             return res.status(400).json({
                 success: false,
-                error: 'flagKey and userId are required',
+                error: 'flagKey is required',
             });
         }
 
@@ -73,12 +96,13 @@ router.post('/flags/evaluate', authRequired, async (req: Request, res: Response)
  */
 router.post('/flags/evaluate-batch', authRequired, async (req: Request, res: Response) => {
     try {
-        const { flagKeys, userId } = req.body;
+        const { flagKeys } = req.body;
+        const userId = String((req as any)?.user?.id || '');
 
         if (!Array.isArray(flagKeys) || !userId) {
             return res.status(400).json({
                 success: false,
-                error: 'flagKeys (array) and userId are required',
+                error: 'flagKeys (array) is required',
             });
         }
 
@@ -118,7 +142,12 @@ router.post('/flags/evaluate-batch', authRequired, async (req: Request, res: Res
  */
 router.get('/person/:userId', authRequired, async (req: Request, res: Response) => {
     try {
-        const { userId } = req.params;
+        const rawUserId = req.params.userId;
+        const userId = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+
+        if (!requireActorUserId(req, userId).ok) {
+            return res.status(403).json({ success: false, error: 'Forbidden: user scope violation' });
+        }
 
         if (!userId) {
             return res.status(400).json({
@@ -144,11 +173,9 @@ router.get('/person/:userId', authRequired, async (req: Request, res: Response) 
         }
 
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/persons/?distinct_id=${userId}`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/persons/?distinct_id=${userId}`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 
@@ -191,8 +218,13 @@ router.get('/person/:userId', authRequired, async (req: Request, res: Response) 
  */
 router.patch('/person/:userId', authRequired, async (req: Request, res: Response) => {
     try {
-        const { userId } = req.params;
+        const rawUserId = req.params.userId;
+        const userId = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
         const { properties } = req.body;
+
+        if (!requireActorUserId(req, userId).ok) {
+            return res.status(403).json({ success: false, error: 'Forbidden: user scope violation' });
+        }
 
         if (!userId || !properties || typeof properties !== 'object') {
             return res.status(400).json({
@@ -248,11 +280,9 @@ router.get('/cohorts', authRequired, async (req: Request, res: Response) => {
         }
 
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/cohorts/`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/cohorts/`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 
@@ -283,7 +313,12 @@ router.get('/cohorts', authRequired, async (req: Request, res: Response) => {
  */
 router.get('/cohorts/:userId/membership', authRequired, async (req: Request, res: Response) => {
     try {
-        const { userId } = req.params;
+        const rawUserId = req.params.userId;
+        const userId = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+
+        if (!requireActorUserId(req, userId).ok) {
+            return res.status(403).json({ success: false, error: 'Forbidden: user scope violation' });
+        }
 
         if (!userId) {
             return res.status(400).json({
@@ -309,11 +344,9 @@ router.get('/cohorts/:userId/membership', authRequired, async (req: Request, res
 
         // Get person to see cohort membership
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/persons/?distinct_id=${userId}`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/persons/?distinct_id=${userId}`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 
@@ -380,11 +413,9 @@ router.post('/cohorts/stats', authRequired, async (req: Request, res: Response) 
 
         // Fetch all cohorts and filter by names
         const response = await fetch(
-            `${process.env.POSTHOG_API_ENDPOINT || 'https://app.posthog.com'}/api/projects/${projectId}/cohorts/`,
+            `${getPostHogApiEndpoint()}/api/projects/${projectId}/cohorts/`,
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.POSTHOG_KEY}`,
-                },
+                headers: getAuthHeader(),
             }
         );
 

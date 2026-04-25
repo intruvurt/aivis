@@ -134,9 +134,13 @@ router.get('/audit/:id', async (req: Request, res: Response) => {
 // ── GET /v1/audit/progress/:id - SSE progress stream ─────────────────────────
 
 router.get('/audit/progress/:id', async (req: Request, res: Response) => {
+  const userId = getUserId(req);
   const jobId = String(req.params.id || '');
   const job = await getAuditJob(jobId);
   if (!job) return res.status(404).json({ error: 'Job not found' });
+  if (!userId || String(job.payload?.userId || '') !== userId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');

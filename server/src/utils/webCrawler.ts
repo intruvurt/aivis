@@ -1,13 +1,19 @@
 import axios from "axios";
 import robotsParser from "robots-parser";
 import xml2js from "xml2js";
-import { buildEvidence } from "./evidence.ts";
+import { buildEvidence } from "./evidence.js";
+
+type AnyError = { message?: string; code?: string };
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 /**
  * Stage 2: Discovery - Fetch robots.txt and sitemap.xml
  */
-export const performDiscovery = async (baseUrl) => {
-  const evidence = [];
+export const performDiscovery = async (baseUrl: string) => {
+  const evidence: unknown[] = [];
   const discoveryData = {
     robotsTxt: null,
     sitemap: null,
@@ -53,11 +59,11 @@ export const performDiscovery = async (baseUrl) => {
           description: `robots.txt not found (HTTP ${robotsResponse.status})`
         }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       evidence.push(buildEvidence({
         proof: null,
         source: robotsUrl,
-        description: `Failed to fetch robots.txt: ${error.message}`
+        description: `Failed to fetch robots.txt: ${errorMessage(error)}`
       }));
     }
 
@@ -100,19 +106,19 @@ export const performDiscovery = async (baseUrl) => {
           description: `sitemap.xml not found (HTTP ${sitemapResponse.status})`
         }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       evidence.push(buildEvidence({
         proof: null,
         source: sitemapUrl,
-        description: `Failed to fetch sitemap.xml: ${error.message}`
+        description: `Failed to fetch sitemap.xml: ${errorMessage(error)}`
       }));
     }
 
-  } catch (error) {
+  } catch (error: unknown) {
     evidence.push(buildEvidence({
       proof: null,
       source: "Discovery Stage",
-      description: `Discovery stage error: ${error.message}`
+      description: `Discovery stage error: ${errorMessage(error)}`
     }));
   }
 
@@ -122,8 +128,8 @@ export const performDiscovery = async (baseUrl) => {
 /**
  * Stage 3: Crawl - Fetch homepage and key pages
  */
-export const performCrawl = async (url) => {
-  const evidence = [];
+export const performCrawl = async (url: string) => {
+  const evidence: unknown[] = [];
   const crawlData: {
     statusCode: number | null;
     headers: Record<string, any>;
@@ -193,16 +199,17 @@ export const performCrawl = async (url) => {
       }
     });
 
-  } catch (error) {
-    crawlData.error = error.message;
+  } catch (error: unknown) {
+    const err = (error ?? {}) as AnyError;
+    crawlData.error = err.message || String(error);
     
-    if (error.code === "ECONNABORTED") {
+    if (err.code === "ECONNABORTED") {
       evidence.push(buildEvidence({
         proof: null,
         source: url,
         description: "Request timeout after 15 seconds"
       }));
-    } else if (error.code === "ENOTFOUND") {
+    } else if (err.code === "ENOTFOUND") {
       evidence.push(buildEvidence({
         proof: null,
         source: url,
@@ -212,7 +219,7 @@ export const performCrawl = async (url) => {
       evidence.push(buildEvidence({
         proof: null,
         source: url,
-        description: `Crawl failed: ${error.message}`
+        description: `Crawl failed: ${errorMessage(error)}`
       }));
     }
   }

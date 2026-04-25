@@ -92,13 +92,19 @@ export function validateHomepageContract(): ValidationError[] {
     }
 
     /* ── 8. Hero headline must contain brand + product ────────────────────── */
-    if (!HERO.headline.includes(BRAND.name)) {
+    const heroContainsBrand = HERO.headline.some((line) =>
+        String(line).toLowerCase().includes(BRAND.name.toLowerCase()),
+    );
+    if (!heroContainsBrand) {
         errors.push({
             code: 'HERO_BRAND',
             message: `Hero headline missing brand name: ${BRAND.name}`,
         });
     }
-    if (!HERO.headline.includes(BRAND.product)) {
+    const heroContainsProduct = HERO.headline.some((line) =>
+        String(line).toLowerCase().includes(BRAND.product.toLowerCase()),
+    );
+    if (!heroContainsProduct) {
         errors.push({
             code: 'HERO_PRODUCT',
             message: `Hero headline missing product name: ${BRAND.product}`,

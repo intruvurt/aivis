@@ -1,12 +1,30 @@
 import * as cheerio from "cheerio";
 import { buildEvidence } from "./evidence.js";
 
+type HeadingTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+type JsonLdRecord = Record<string, unknown>;
+
+type ExtractedData = {
+  metaTags: Record<string, string>;
+  title: string | null;
+  headings: Record<HeadingTag, string[]>;
+  jsonLd: JsonLdRecord[];
+  links: {
+    canonical: string | null;
+    alternate: Array<{ href: string; hreflang?: string }>;
+    internal: number;
+    external: number;
+  };
+  bodyText: string | null;
+  wordCount: number;
+};
+
 /**
  * Stage 4: Extraction - Extract all relevant signals from HTML
  */
 export const extractContent = (html: string, url: string) => {
-  const evidence = [];
-  const extractedData = {
+  const evidence: unknown[] = [];
+  const extractedData: ExtractedData = {
     metaTags: {},
     title: null,
     headings: { h1: [], h2: [], h3: [], h4: [], h5: [], h6: [] },
@@ -37,7 +55,7 @@ export const extractContent = (html: string, url: string) => {
     }
 
     // Extract meta tags
-    $("meta").each((i, elem) => {
+    $("meta").each((_i, elem) => {
       const name = $(elem).attr("name") || $(elem).attr("property");
       const content = $(elem).attr("content");
       if (name && content) {
@@ -61,8 +79,8 @@ export const extractContent = (html: string, url: string) => {
     }
 
     // Extract headings
-    ["h1", "h2", "h3", "h4", "h5", "h6"].forEach(tag => {
-      $(tag).each((i, elem) => {
+    (["h1", "h2", "h3", "h4", "h5", "h6"] as HeadingTag[]).forEach((tag) => {
+      $(tag).each((_i, elem) => {
         const text = $(elem).text().trim();
         if (text) {
           extractedData.headings[tag].push(text);
@@ -87,11 +105,12 @@ export const extractContent = (html: string, url: string) => {
     }
 
     // Extract JSON-LD
-    $('script[type="application/ld+json"]').each((i, elem) => {
+    $('script[type="application/ld+json"]').each((_i, elem) => {
       try {
-        const jsonLd = JSON.parse($(elem).html());
+        const raw = $(elem).html() || "{}";
+        const jsonLd = JSON.parse(raw) as JsonLdRecord;
         extractedData.jsonLd.push(jsonLd);
-      } catch (e) {
+      } catch {
         // Invalid JSON-LD, skip
       }
     });
@@ -101,7 +120,7 @@ export const extractContent = (html: string, url: string) => {
         proof: `${extractedData.jsonLd.length} JSON-LD block(s) found`,
         source: url,
         verifiedBy: "JSON Parser",
-        description: `Schema types: ${extractedData.jsonLd.map(ld => ld["@type"] || "Unknown").join(", ")}`
+        description: `Schema types: ${extractedData.jsonLd.map((ld) => String(ld["@type"] || "Unknown")).join(", ")}`
       }));
     } else {
       evidence.push(buildEvidence({
@@ -130,7 +149,7 @@ export const extractContent = (html: string, url: string) => {
     }
 
     // Extract alternate links
-    $('link[rel="alternate"]').each((i, elem) => {
+    $('link[rel="alternate"]').each((_i, elem) => {
       const href = $(elem).attr("href");
       const hreflang = $(elem).attr("hreflang");
       if (href) {
@@ -148,7 +167,7 @@ export const extractContent = (html: string, url: string) => {
     }
 
     // Count links
-    $("a[href]").each((i, elem) => {
+    $("a[href]").each((_i, elem) => {
       const href = $(elem).attr("href");
       if (href) {
         if (href.startsWith("http://") || href.startsWith("https://")) {
@@ -182,11 +201,12 @@ export const extractContent = (html: string, url: string) => {
       description: "Body text content extracted"
     }));
 
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     evidence.push(buildEvidence({
       proof: null,
       source: url,
-      description: `Content extraction error: ${error.message}`
+      description: `Content extraction error: ${message}`
     }));
   }
 

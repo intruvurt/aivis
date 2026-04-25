@@ -1,10 +1,10 @@
-import { validateAndNormalizeUrl } from "./urlValidator.ts";
-import { performDiscovery, performCrawl } from "./webCrawler.ts";
-import { extractContent } from "./contentExtractor.ts";
-import { performTechnicalChecks } from "./technicalChecker.ts";
-import { analyzeContentClarity } from "./contentAnalyzer.ts";
-import { calculateScores, determineVisibilityStatus, generateRisks, generateRecommendations } from "./scoringEngine.ts";
-import { buildEvidence } from "./evidence.ts";
+import { validateAndNormalizeUrl } from "./urlValidator.js";
+import { performDiscovery, performCrawl } from "./webCrawler.js";
+import { extractContent } from "./contentExtractor.js";
+import { performTechnicalChecks } from "./technicalChecker.js";
+import { analyzeContentClarity } from "./contentAnalyzer.js";
+import { calculateScores, determineVisibilityStatus, generateRisks, generateRecommendations } from "./scoringEngine.js";
+import { buildEvidence } from "./evidence.js";
 
 /**
  * Main Forensic Web Analysis Pipeline
@@ -43,6 +43,10 @@ export const runForensicPipeline = async (inputUrl: string) => {
     }
 
     const normalizedUrl = stage1.normalizedUrl;
+    if (!normalizedUrl) {
+      pipelineResult.errors.push('Normalized URL is unavailable');
+      return pipelineResult;
+    }
 
     // Stage 2: Discovery
     console.log("Stage 2: Discovery");
@@ -108,13 +112,14 @@ export const runForensicPipeline = async (inputUrl: string) => {
 
     pipelineResult.success = true;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     console.error("Pipeline error:", error);
-    pipelineResult.errors.push(`Pipeline execution error: ${error.message}`);
+    pipelineResult.errors.push(`Pipeline execution error: ${message}`);
     pipelineResult.allEvidence.push(buildEvidence({
       proof: null,
       source: inputUrl,
-      description: `Fatal pipeline error: ${error.message}`
+      description: `Fatal pipeline error: ${message}`
     }));
   }
 

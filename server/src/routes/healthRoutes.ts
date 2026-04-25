@@ -7,10 +7,19 @@
 import { Router, Request, Response } from 'express';
 import { getPool } from '../services/postgresql.js';
 import { triggerMaintenanceCycle } from '../services/databaseMaintenanceService.js';
-import { authRequired } from '../middleware/auth.js';
-import { isAdmin } from '../middleware/isAdmin.js';
+import { authRequired } from '../middleware/authRequired.js';
 
 const router = Router();
+
+const isAdmin = (req: Request, res: Response, next: () => void) => {
+  const provided = req.headers['x-admin-key'];
+  const expected = process.env.ADMIN_API_KEY;
+  const token = Array.isArray(provided) ? provided[0] : provided;
+  if (!expected || token !== expected) {
+    return res.status(403).json({ success: false, error: 'Forbidden' });
+  }
+  next();
+};
 
 interface PoolStats {
   totalConnections: number;
@@ -138,7 +147,7 @@ router.get('/admin/diagnostics', authRequired, isAdmin, async (_req: Request, re
         latencyMs: dbLatencyMs,
         idlePercentage: Math.round((poolStats.idleConnections / poolStats.totalConnections) * 100),
       },
-      metrics: countResult.rows[0] || {},
+      metrics: countResult[0] || {},
       alerts: [] as string[],
     };
 

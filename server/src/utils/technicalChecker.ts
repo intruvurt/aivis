@@ -1,11 +1,24 @@
-import { buildEvidence } from "./evidence.ts";
+import { buildEvidence } from "./evidence.js";
 
 /**
  * Stage 5: Technical Checks - Evaluate technical SEO signals
  */
-export const performTechnicalChecks = (crawlData, extractedData, url) => {
-  const evidence = [];
-  const technicalData = {
+type TechnicalData = {
+  canonical: { present: boolean; correct: boolean };
+  redirects: { hasRedirects: boolean; count: number };
+  https: { enforced: boolean };
+  compression: { enabled: boolean };
+  caching: { configured: boolean };
+  viewport: { present: boolean };
+  hreflang: { present: boolean; count: number };
+  openGraph: { present: boolean; tags: string[] };
+  twitterCards: { present: boolean; tags: string[] };
+  schema: { present: boolean; types: string[] };
+};
+
+export const performTechnicalChecks = (crawlData: any, extractedData: any, url: string) => {
+  const evidence: unknown[] = [];
+  const technicalData: TechnicalData = {
     canonical: { present: false, correct: false },
     redirects: { hasRedirects: false, count: 0 },
     https: { enforced: false },
@@ -196,7 +209,7 @@ export const performTechnicalChecks = (crawlData, extractedData, url) => {
     // Check Schema/JSON-LD
     if (extractedData.jsonLd.length > 0) {
       technicalData.schema.present = true;
-      technicalData.schema.types = extractedData.jsonLd.map(ld => ld["@type"] || "Unknown");
+      technicalData.schema.types = extractedData.jsonLd.map((ld: Record<string, unknown>) => String(ld["@type"] || "Unknown"));
       evidence.push(buildEvidence({
         proof: `${extractedData.jsonLd.length} schema block(s): ${technicalData.schema.types.join(", ")}`,
         source: url,
@@ -211,11 +224,12 @@ export const performTechnicalChecks = (crawlData, extractedData, url) => {
       }));
     }
 
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     evidence.push(buildEvidence({
       proof: null,
       source: url,
-      description: `Technical checks error: ${error.message}`
+      description: `Technical checks error: ${message}`
     }));
   }
 

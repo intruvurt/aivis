@@ -1,4 +1,5 @@
-import pool from '../config/db.ts';
+import type { PoolClient, QueryResult } from 'pg';
+import pool from '../config/db.js';
 
 /**
  * Simple query wrapper for PostgreSQL
@@ -6,7 +7,7 @@ import pool from '../config/db.ts';
  * @param {Array} params - Query parameters
  * @returns {Promise} Query result
  */
-export const query = async (text, params) => {
+export const query = async (text: string, params: unknown[] = []): Promise<QueryResult> => {
   try {
     const result = await pool.query(text, params);
     return result;
@@ -20,7 +21,7 @@ export const query = async (text, params) => {
  * Get a client from the pool for transactions
  * @returns {Promise} PostgreSQL client
  */
-export const getClient = async () => {
+export const getClient = async (): Promise<PoolClient> => {
   try {
     const client = await pool.connect();
     return client;

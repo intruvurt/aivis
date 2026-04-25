@@ -1,11 +1,11 @@
 import punycode from "punycode";
 import { URL } from "url";
-import { buildEvidence } from "./evidence.ts";
+import { buildEvidence } from "./evidence.js";
 
 /**
  * Safe private IP detection (replaces vulnerable private-ip package)
  */
-function isPrivateIP(ip) {
+function isPrivateIP(ip: string): boolean {
   const parts = ip.split('.').map(Number);
   if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
     return false;
@@ -26,9 +26,9 @@ function isPrivateIP(ip) {
  * Stage 1: Input Normalization
  * Validates and normalizes URLs with SSRF protection
  */
-export const validateAndNormalizeUrl = (inputUrl) => {
-  const evidence = [];
-  const errors = [];
+export const validateAndNormalizeUrl = (inputUrl: string) => {
+  const evidence: unknown[] = [];
+  const errors: string[] = [];
 
   try {
     // Step 1: Validate URL syntax
@@ -41,12 +41,13 @@ export const validateAndNormalizeUrl = (inputUrl) => {
         verifiedBy: "Node.ts URL API",
         description: "URL passed syntax validation"
       }));
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       errors.push("Invalid URL syntax");
       evidence.push(buildEvidence({
         proof: null,
         source: "URL Parser",
-        description: `URL syntax validation failed: ${error.message}`
+        description: `URL syntax validation failed: ${message}`
       }));
       return { valid: false, evidence, errors, normalizedUrl: null };
     }
@@ -81,11 +82,12 @@ export const validateAndNormalizeUrl = (inputUrl) => {
           description: "Internationalized domain name normalized to ASCII"
         }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       evidence.push(buildEvidence({
         proof: null,
         source: "Punycode Converter",
-        description: `Punycode conversion failed: ${error.message}`
+        description: `Punycode conversion failed: ${message}`
       }));
     }
 
@@ -168,12 +170,13 @@ export const validateAndNormalizeUrl = (inputUrl) => {
       }
     };
 
-  } catch (error) {
-    errors.push(`Validation error: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    errors.push(`Validation error: ${message}`);
     evidence.push(buildEvidence({
       proof: null,
       source: "URL Validator",
-      description: `Unexpected validation error: ${error.message}`
+      description: `Unexpected validation error: ${message}`
     }));
     return { valid: false, evidence, errors, normalizedUrl: null };
   }

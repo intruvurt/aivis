@@ -10,7 +10,7 @@ export const TIER_LIMITS = {
     allowBulk: false,
     allowRescan: false,
     teamSeats: 0,
-    maxProjects: 1
+    maxProjects: 1,
   },
   "Jump Start": {
     scansPerMonth: 50,
@@ -23,7 +23,7 @@ export const TIER_LIMITS = {
     allowBulk: false,
     allowRescan: false,
     teamSeats: 3,
-    maxProjects: 3
+    maxProjects: 3,
   },
   Pro: {
     scansPerMonth: 200,
@@ -36,7 +36,7 @@ export const TIER_LIMITS = {
     allowBulk: false,
     allowRescan: true,
     teamSeats: 10,
-    maxProjects: 5
+    maxProjects: 5,
   },
   Business: {
     scansPerMonth: 2000,
@@ -49,7 +49,7 @@ export const TIER_LIMITS = {
     allowBulk: true,
     allowRescan: true,
     teamSeats: 10,
-    maxProjects: 25
+    maxProjects: 25,
   },
   Enterprise: {
     scansPerMonth: -1, // unlimited
@@ -62,7 +62,7 @@ export const TIER_LIMITS = {
     allowBulk: true,
     allowRescan: true,
     teamSeats: -1, // unlimited
-    maxProjects: -1 // unlimited
+    maxProjects: -1, // unlimited
   },
   Agency: {
     scansPerMonth: -1, // unlimited
@@ -75,40 +75,51 @@ export const TIER_LIMITS = {
     allowBulk: true,
     allowRescan: true,
     teamSeats: -1, // unlimited
-    maxProjects: -1 // unlimited
-  }
+    maxProjects: -1, // unlimited
+  },
 };
 
-export const getUserTierLimits = (tier) => {
-  return TIER_LIMITS[tier] || TIER_LIMITS.Free;
+type PricingTierName = keyof typeof TIER_LIMITS;
+
+type PricingUser = {
+  tier: string;
+  lastResetDate: string | Date;
+  usageCount: number;
 };
 
-export const checkUsageLimit = (user, action) => {
+type UsageAction = "scan" | string;
+
+export const getUserTierLimits = (tier: string) => {
+  return TIER_LIMITS[tier as PricingTierName] || TIER_LIMITS.Free;
+};
+
+export const checkUsageLimit = (user: PricingUser, action: UsageAction) => {
   const limits = getUserTierLimits(user.tier);
-  
+
   // Reset monthly count if needed
   const now = new Date();
   const lastReset = new Date(user.lastResetDate);
-  const monthsSinceReset = (now.getFullYear() - lastReset.getFullYear()) * 12 + 
-                           (now.getMonth() - lastReset.getMonth());
-  
+  const monthsSinceReset =
+    (now.getFullYear() - lastReset.getFullYear()) * 12 +
+    (now.getMonth() - lastReset.getMonth());
+
   if (monthsSinceReset >= 1) {
     return { allowed: true, resetNeeded: true };
   }
-  
+
   // Check scan limit
   if (action === "scan") {
     if (limits.scansPerMonth === -1) {
       return { allowed: true, resetNeeded: false };
     }
     if (user.usageCount >= limits.scansPerMonth) {
-      return { 
-        allowed: false, 
+      return {
+        allowed: false,
         resetNeeded: false,
-        error: `Monthly scan limit reached. Upgrade to scan more.`
+        error: `Monthly scan limit reached. Upgrade to scan more.`,
       };
     }
   }
-  
+
   return { allowed: true, resetNeeded: false };
 };

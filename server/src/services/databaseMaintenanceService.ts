@@ -10,7 +10,12 @@
 
 import { getPool } from './postgresql.js';
 import { TIER_LIMITS } from '../../../shared/types.js';
-import { logger } from '../lib/logger.js';
+
+const logger = {
+  info: (...args: unknown[]) => console.log(...args),
+  warn: (...args: unknown[]) => console.warn(...args),
+  error: (...args: unknown[]) => console.error(...args),
+};
 
 const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 const SESSION_EXPIRE_THRESHOLD_DAYS = 30;
@@ -191,4 +196,4 @@ export async function triggerMaintenanceCycle(): Promise<CleanupResult> {
   return executeMaintenanceCycle();
 }
 
-export { CleanupResult };
+export type { CleanupResult };

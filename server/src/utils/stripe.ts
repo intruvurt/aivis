@@ -1,8 +1,20 @@
 import Stripe from "stripe";
 
-let stripeInstance;
+let stripeInstance: Stripe | undefined;
 
-export const getStripeInstance = () => {
+type CheckoutBrand = {
+  platformFee: number;
+  stripeAccount?: string;
+  customDomain?: string;
+  tenant_id: string;
+};
+
+type CheckoutUser = {
+  email: string;
+  _id: { toString(): string };
+};
+
+export const getStripeInstance = (): Stripe => {
   if (!stripeInstance) {
     const stripeKey = process.env.STRIPE_SECRET_KEY || "";
     stripeInstance = new Stripe(stripeKey, {
@@ -12,7 +24,7 @@ export const getStripeInstance = () => {
   return stripeInstance;
 };
 
-export const createStripeConnectAccount = async (tenantId, email) => {
+export const createStripeConnectAccount = async (tenantId: string, email: string) => {
   const stripe = getStripeInstance();
   
   try {
@@ -33,7 +45,7 @@ export const createStripeConnectAccount = async (tenantId, email) => {
   }
 };
 
-export const createAccountLink = async (accountId, refreshUrl, returnUrl) => {
+export const createAccountLink = async (accountId: string, refreshUrl: string, returnUrl: string) => {
   const stripe = getStripeInstance();
   
   try {
@@ -51,7 +63,12 @@ export const createAccountLink = async (accountId, refreshUrl, returnUrl) => {
   }
 };
 
-export const createCheckoutSessionWithPlatformFee = async (brand, user, priceId, amount) => {
+export const createCheckoutSessionWithPlatformFee = async (
+  brand: CheckoutBrand,
+  user: CheckoutUser,
+  priceId: string,
+  amount: number,
+) => {
   const stripe = getStripeInstance();
   
   try {

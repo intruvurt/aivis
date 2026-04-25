@@ -108,7 +108,12 @@ export const determineVisibilityStatus = (overallScore: number) => {
 };
 
 export const generateRisks = (scores: Record<string, number>, technicalData: any, contentData: any) => {
-  const risks = [];
+  const risks: Array<{
+    category: string;
+    severity: 'high' | 'medium' | 'low';
+    description: string;
+    recommendation: string;
+  }> = [];
 
   if (scores.crawlability < 50) {
     risks.push({
@@ -168,7 +173,12 @@ export const generateRisks = (scores: Record<string, number>, technicalData: any
 };
 
 export const generateRecommendations = (scores: Record<string, number>, risks: any[]) => {
-  const recommendations = [];
+  const recommendations: Array<{
+    category: string;
+    priority: 'high' | 'medium';
+    action: string;
+    impact: string;
+  }> = [];
 
   // Priority recommendations based on lowest scores
   const sortedScores = Object.entries(scores)

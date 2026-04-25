@@ -14,7 +14,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react()],
+  plugins: [react() as any],
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, '.') },

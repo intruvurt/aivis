@@ -18,7 +18,7 @@ export class LicenseCLI {
       type: 'text',
       name: 'licenseKey',
       message: 'Enter your license key:',
-      validate: (value) => value.length > 0 || 'License key required',
+      validate: (value: string) => value.length > 0 || 'License key required',
     });
     
     if (!response.licenseKey) {
@@ -46,7 +46,7 @@ export class LicenseCLI {
       type: 'text',
       name: 'licenseKey',
       message: 'Enter license key to validate:',
-      validate: (value) => value.length > 0 || 'License key required',
+      validate: (value: string) => value.length > 0 || 'License key required',
     });
     
     if (!response.licenseKey) {
@@ -76,7 +76,7 @@ export class LicenseCLI {
       type: 'text',
       name: 'licenseKey',
       message: 'Enter license key to deactivate:',
-      validate: (value) => value.length > 0 || 'License key required',
+      validate: (value: string) => value.length > 0 || 'License key required',
     });
     
     if (!response.licenseKey) {

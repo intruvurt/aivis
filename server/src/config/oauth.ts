@@ -74,11 +74,11 @@ export const configureOAuth = (): void => {
     )
   );
 
-  passport.serializeUser((user, done) => {
+  passport.serializeUser((user: Express.User, done: (err: Error | null, id?: unknown) => void) => {
     done(null, user);
   });
 
-  passport.deserializeUser((user, done) => {
+  passport.deserializeUser((user: unknown, done: (err: Error | null, user?: Express.User) => void) => {
     done(null, user as Express.User);
   });
 };

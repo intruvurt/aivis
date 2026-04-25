@@ -7,11 +7,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY server/package.json server/package.json
+COPY server/package-lock.json server/package-lock.json
 COPY client/package.json client/package.json
+COPY client/package-lock.json client/package-lock.json
 COPY shared/ shared/
 
-RUN npm --prefix server install --include=dev --legacy-peer-deps \
-    && CYPRESS_INSTALL_BINARY=0 npm --prefix client install --include=dev --legacy-peer-deps
+RUN npm --prefix server ci \
+    && CYPRESS_INSTALL_BINARY=0 npm --prefix client ci
 
 COPY . .
 
@@ -43,8 +45,9 @@ ENV PORT=3000
 COPY --from=builder /app/server/dist /app/server/dist
 COPY --from=builder /app/client/dist /app/client/dist
 COPY --from=builder /app/server/package.json /app/server/package.json
+COPY --from=builder /app/server/package-lock.json /app/server/package-lock.json
 
-RUN npm --prefix server install --omit=dev --legacy-peer-deps
+RUN npm --prefix server ci --omit=dev
 
 RUN chown -R aivis:aivis /app/server/dist /app/client/dist /app/server/node_modules
 
@@ -55,4 +58,4 @@ USER aivis
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD curl -fsS "http://localhost:${PORT}/api/health" || exit 1
 
-CMD ["node", "server/dist/server/src/server.js"]
+CMD ["node", "--import", "./server/dist/server/src/instrument.js", "server/dist/server/src/server.js"]

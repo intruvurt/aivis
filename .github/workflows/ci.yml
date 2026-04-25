@@ -34,15 +34,15 @@ jobs:
 
       - name: Install root dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install
+        run: npm ci
 
       - name: Install client dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm --prefix client install --include=dev
+        run: npm --prefix client ci
 
       - name: Install server dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm --prefix server install --include=dev
+        run: npm --prefix server ci
 
   # ─── Lint (client + server via root script) ────────────────────────────────
   lint:
@@ -161,9 +161,7 @@ jobs:
           VITE_API_URL: https://api.aivis.biz
 
       - name: Build server
-        run: |
-          node server/tools/stageClientDist.mjs
-          npx --prefix server tsc -p server/tsconfig.build.json || true
+        run: npm --prefix server run build:server
 
   # ─── Security audit ────────────────────────────────────────────────────────
   security:

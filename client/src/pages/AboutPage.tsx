@@ -332,6 +332,11 @@ export default function AboutPage() {
           <p className="text-sm text-white/45">
             Not because they were bad. Because they were unclear to machines.
           </p>
+          <p className="text-xs text-white/30 mt-3">
+            AiVIS.biz is a product of{' '}
+            <span className="text-white/45 font-medium">Intruvurt Labs, LLC</span> — incorporated in
+            the State of Georgia, United States.
+          </p>
         </section>
       </FadeUp>
 

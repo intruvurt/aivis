@@ -24,6 +24,7 @@ export function buildOrganizationSchema(): Record<string, unknown> {
     '@type': 'Organization',
     '@id': ORGANIZATION_ID,
     name: 'AiVIS.biz',
+    legalName: 'Intruvurt Labs, LLC',
     alternateName: 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
     url: BASE_URL,
     description:

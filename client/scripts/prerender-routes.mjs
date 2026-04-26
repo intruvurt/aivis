@@ -2929,6 +2929,49 @@ const routeSpecificEnrichment = {
     },
   },
 
+  '/terms': {
+    tldr: 'The Terms of Service govern the contractual relationship between users and Intruvurt Labs, LLC — the company that operates AiVIS.biz — covering acceptable use, subscription billing, AI output disclaimers, intellectual property, and account termination conditions.',
+    sections: [
+      {
+        heading: 'What these terms govern',
+        paragraphs: [
+          'These terms establish the legal basis for using the AiVIS.biz evidence pipeline. They define permitted uses of the audit system, what data users submit versus what the platform generates, how subscription tiers and billing operate, and the conditions under which accounts may be suspended or terminated.',
+          'The Service is operated by Intruvurt Labs, LLC, incorporated in the State of Georgia, United States. AiVIS.biz is a product of Intruvurt Labs, LLC.',
+        ],
+      },
+      {
+        heading: 'AI output disclaimer and scope',
+        paragraphs: [
+          'Analysis results are produced in part by third-party large language models. AiVIS.biz applies evidence-based scoring constraints derived from deterministic page signals to reduce hallucination risk, but does not guarantee accuracy, completeness, or fitness for any particular purpose.',
+          'Visibility scores are diagnostic indicators. Recommendations should be evaluated using professional judgment before implementation.',
+        ],
+        listItems: [
+          'Cached results may not reflect the current state of a submitted page.',
+          'The triple-check pipeline (Signal tier) uses three sequential models whose outputs may disagree.',
+          'Results do not constitute professional SEO, legal, marketing, or business advice.',
+        ],
+      },
+      {
+        heading: 'Acceptable use',
+        paragraphs: [
+          'The platform is designed for legitimate visibility auditing of publicly accessible URLs. Users may only submit URLs they are authorized to analyze.',
+        ],
+        listItems: [
+          'No bypassing of rate limits, authentication controls, or tier-gating.',
+          'No automated account creation or credential sharing.',
+          'No submission of URLs containing malware, phishing payloads, or content designed to exploit the pipeline.',
+          'No resale or redistribution of audit outputs without a written agreement.',
+        ],
+      },
+      {
+        heading: 'Intellectual property',
+        paragraphs: [
+          'Intruvurt Labs, LLC retains intellectual property over the AiVIS.biz methodology, scoring formulas, BRAG evidence protocol, and CITE LEDGER infrastructure. Users retain ownership of their submitted URLs and extracted findings from their own domains.',
+        ],
+      },
+    ],
+  },
+
   '/workflow': {
     tldr: 'The Workflow page turns AiVIS.biz from a one-off audit tool into a repeatable AI visibility operations loop with baseline, remediation, and re-audit stages.',
     sections: [
@@ -3301,10 +3344,10 @@ function renderRouteBody(route, canonicalUrl) {
       ],
     },
     {
-      heading: 'What this page contributes',
+      heading: 'What this page covers',
       id: 'next-step',
       paragraphs: [
-        'Every prerendered AiVIS.biz page contributes to a stronger public knowledge graph by reinforcing terminology such as AI visibility, answer-engine readiness, citation analysis, evidence-backed scoring, and implementation workflows. Even when JavaScript is unavailable, this HTML snapshot ensures the route preserves enough content depth and metadata quality to remain understandable and indexable.',
+        'Every AiVIS.biz route is structured to give crawlers and answer engines enough plain-language context to understand its role in the audit workflow. Pages carry canonical metadata, heading hierarchy, and operational summaries so that even without JavaScript execution, the purpose and scope of each section remains clear and indexable.',
       ],
     },
   ];
@@ -3320,11 +3363,7 @@ function renderRouteBody(route, canonicalUrl) {
 					<h2 id="tldr" style="font-size: 20px; margin: 0 0 10px;">TLDR</h2>
 					<p style="margin: 0; color: #374151;">${tldr}</p>
 				</section>
-				<section aria-labelledby="prerender-note">
-					<h2 id="prerender-note" style="font-size: 20px; margin: 0 0 10px;">Prerendered route snapshot</h2>
-					<p style="margin: 0 0 12px; color: #4b5563;">This HTML snapshot ensures route-specific crawlable content and metadata for <strong>${escapeHtml(route.path)}</strong>.</p>
-					<p style="margin: 0; color: #4b5563;">Canonical URL: <a href="${canonicalUrl}" style="color:#1d4ed8;">${canonicalUrl}</a></p>
-				</section>
+					<!-- canonical: ${canonicalUrl} -->
 				${detailSections.map((section) => renderSection(section)).join('')}
 			</main>
 			${PRERENDER_FOOTER}

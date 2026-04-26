@@ -59,7 +59,13 @@ function GraphPlaceholder({ seq }: { seq: number }) {
 
 // ── TopBar ────────────────────────────────────────────────────────────────────
 
-function CognitionTopBar() {
+function CognitionTopBar({
+  actions,
+  label = 'Cognition Replay',
+}: {
+  actions?: React.ReactNode;
+  label?: string;
+}) {
   const scanId = useReplayStore((s) => s.scanId);
   const commits = useReplayStore((s) => s.commits);
   const allBranches = useReplayStore((s) => s.allBranches);
@@ -84,7 +90,7 @@ function CognitionTopBar() {
 
   return (
     <>
-      <span className="cr-topbar-label">Cognition Replay</span>
+      <span className="cr-topbar-label">{label}</span>
 
       {scanId && (
         <span className="cr-topbar-scanid" title={scanId}>
@@ -101,6 +107,8 @@ function CognitionTopBar() {
         </span>
         <span className="cr-topbar-stat cr-topbar-stat--seq">#{cursor.seq}</span>
       </div>
+
+      {actions != null && <div className="fl-topbar__controls">{actions}</div>}
     </>
   );
 }
@@ -127,6 +135,10 @@ interface CognitionReplayProps {
   stageRail?: React.ReactNode;
   /** Contextual evidence panel below graph — desktop only in stageMode */
   stagePanel?: React.ReactNode;
+  /** Optional controls rendered on the top bar (e.g. exit/back nav) */
+  topBarActions?: React.ReactNode;
+  /** Optional top bar label override */
+  topBarLabel?: string;
 }
 
 export default function CognitionReplay({
@@ -136,6 +148,8 @@ export default function CognitionReplay({
   stageMode = false,
   stageRail,
   stagePanel,
+  topBarActions,
+  topBarLabel,
 }: CognitionReplayProps) {
   const cursor = useReplayStore((s) => s.cursor);
 
@@ -147,7 +161,7 @@ export default function CognitionReplay({
   return (
     <MainGrid
       className={className}
-      topBar={<CognitionTopBar />}
+      topBar={<CognitionTopBar actions={topBarActions} label={topBarLabel} />}
       left={<CommitGraph />}
       center={center}
       right={<CommitInspector />}

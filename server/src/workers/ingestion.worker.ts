@@ -11,7 +11,6 @@ if (isMainModule) {
     console.log('[ingestion-worker] starting raw-document processing worker');
     startRawDocumentWorker();
 
-    const noop = () => { };
-    process.on('SIGINT', noop);
-    process.on('SIGTERM', noop);
+    process.on('SIGINT', () => { console.log('[ingestion-worker] SIGINT — exiting'); process.exit(0); });
+    process.on('SIGTERM', () => { console.log('[ingestion-worker] SIGTERM — exiting'); process.exit(0); });
 }

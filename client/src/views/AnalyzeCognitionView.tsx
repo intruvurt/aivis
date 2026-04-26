@@ -14,7 +14,7 @@
 
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CognitionReplay from '../components/cognition/CognitionReplay';
 import ScanStageTimeline, {
   pipelineStepToStage,
@@ -226,6 +226,7 @@ interface CognitionOverlayProps {
   scanStep: string;
   result: AnalysisResponse | null;
   onReset: () => void;
+  onExitReplay?: () => void;
   timelineScanId?: string | null;
   timelineEvents: TimelineEvent[];
 }
@@ -237,9 +238,11 @@ function CognitionOverlay({
   scanStep,
   result,
   onReset,
+  onExitReplay,
   timelineScanId,
   timelineEvents,
 }: CognitionOverlayProps) {
+  const navigate = useNavigate();
   const [cognData, setCognData] = useState<CognitionData | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -765,6 +768,19 @@ function CognitionOverlay({
 
   const score = result?.visibility_score;
 
+  // Keyboard escape for replay mode: return to results tab when available.
+  useEffect(() => {
+    if (!result || !onExitReplay) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      onExitReplay();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [result, onExitReplay]);
+
   // Center panel: entity graph
   const graphSlot = (
     <div className="relative w-full h-full">
@@ -1054,6 +1070,37 @@ function CognitionOverlay({
           We inject our EntityGraph as the center slot. */}
       <CognitionReplay
         graphSlot={graphSlot}
+        topBarLabel={scanning && !result ? 'Scan Live' : 'Cognition Replay'}
+        topBarActions={
+          <>
+            {result && onExitReplay && (
+              <button
+                type="button"
+                onClick={onExitReplay}
+                className="text-[10px] font-mono text-cyan-200 border border-cyan-400/35 bg-cyan-400/10 px-2 py-1 hover:bg-cyan-400/18 transition-colors"
+                title="Return to Results"
+              >
+                ← results
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onReset}
+              className="text-[10px] font-mono text-white/70 border border-white/20 px-2 py-1 hover:text-white hover:border-white/35 transition-colors"
+              title="Start a new scan"
+            >
+              new url
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/app/overview')}
+              className="text-[10px] font-mono text-white/65 border border-white/15 px-2 py-1 hover:text-white/90 hover:border-white/30 transition-colors"
+              title="Back to app navigation"
+            >
+              app nav
+            </button>
+          </>
+        }
         // Hide timeline during scan — scrubbing is for post-scan replay
         hideTimeline={scanning && !result}
         // Stage-primary desktop layout
@@ -1099,6 +1146,8 @@ export interface AnalyzeCognitionViewProps {
   onSubmit: (url: string) => void;
   /** Called when the user clicks "new scan" — parent should clear its result state */
   onReset?: () => void;
+  /** Optional replay exit action (e.g. switch back to results tab) */
+  onExitReplay?: () => void;
   timelineScanId?: string | null;
   timelineEvents: TimelineEvent[];
 }
@@ -1110,6 +1159,7 @@ export default function AnalyzeCognitionView({
   error,
   onSubmit,
   onReset,
+  onExitReplay,
   timelineScanId,
   timelineEvents,
 }: AnalyzeCognitionViewProps) {
@@ -1139,6 +1189,7 @@ export default function AnalyzeCognitionView({
           scanStep={step}
           result={result}
           onReset={handleReset}
+          onExitReplay={onExitReplay}
           timelineScanId={timelineScanId}
           timelineEvents={timelineEvents}
         />

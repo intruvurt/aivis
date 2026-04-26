@@ -1,4 +1,11 @@
 // server/server.ts
+//
+// ⚠️  WARNING: THIS IS NOT THE PRODUCTION ENTRY POINT.
+// The canonical server is server/src/server.ts (compiled to dist/server/src/server.js).
+// This file is an outer development shell with only 2 routes mounted.
+// It is NOT included in the server tsconfig (rootDir includes src/ only).
+// Do NOT run this file in production — it bypasses the full citation pipeline.
+//
 import "dotenv/config";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
@@ -8,6 +15,11 @@ import validator from "validator";
 import * as Sentry from "@sentry/node";
 
 import { AnalysisCacheService } from "./services/analysisCacheService.js";
+import {
+  buildAuditApiResponse,
+  normalizeFinalAuditSchema,
+  parseAuditOutputMode,
+} from "./services/auditFormatter.js";
 import { scrapeWebsite } from "./services/scraper.js";
 import { PROVIDERS, callAIProvider } from "./services/aiProviders.js";
 import { authRequired } from "./middleware/authRequired.js";
@@ -146,6 +158,7 @@ app.post(
   incrementUsage,
   async (req: Request, res: Response) => {
     const start = Date.now();
+    const outputMode = parseAuditOutputMode(req.query.output_mode);
 
     try {
       const { url } = req.body ?? {};
@@ -160,12 +173,13 @@ app.post(
       // 🔥 CACHE FIRST
       const cached = await AnalysisCacheService.get(targetUrl);
       if (cached) {
-        return res.json({ ...cached, cached: true });
+        const normalizedCached = normalizeFinalAuditSchema(cached, targetUrl);
+        return res.json(buildAuditApiResponse(normalizedCached, outputMode, true));
       }
 
       // 🔥 HARD TIMEOUT
       const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), 20000),
+        setTimeout(() => reject(new Error("Timeout")), 55_000), // aligned with pipeline budget
       );
 
       const result = await Promise.race([
@@ -180,14 +194,15 @@ app.post(
             provider: PROVIDERS[0].provider,
             model: PROVIDERS[0].model,
             prompt,
-            apiKey: process.env.OPEN_ROUTER_API_KEY!,
+            apiKey: process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '',  // guarded: never assert undefined as string
           });
 
           const parsed = safeJsonParse(aiRaw);
           if (!parsed) throw new Error("Invalid AI JSON");
 
+          const normalized = normalizeFinalAuditSchema(parsed, targetUrl);
           const final = {
-            ...parsed,
+            ...normalized,
             processing_time_ms: Date.now() - start,
           };
 
@@ -197,7 +212,8 @@ app.post(
         timeout,
       ]);
 
-      return res.json(result);
+      const normalizedResult = normalizeFinalAuditSchema(result, targetUrl);
+      return res.json(buildAuditApiResponse(normalizedResult, outputMode, false));
     } catch (err: any) {
       console.error("Analyze error:", err);
       if (process.env.SENTRY_DSN) Sentry.captureException(err);
@@ -243,7 +259,10 @@ async function start() {
 start();
 
 /* -------------------- SHUTDOWN -------------------- */
-process.on("SIGTERM", async () => {
+async function shutdownShell(signal: string) {
+  console.log(`[${signal}] Shell server shutting down`);
   await closePool();
   process.exit(0);
-});
+}
+process.on("SIGTERM", () => shutdownShell("SIGTERM"));
+process.on("SIGINT", () => shutdownShell("SIGINT"));

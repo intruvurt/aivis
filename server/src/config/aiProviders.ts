@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { AIVIS_MASTER_SYSTEM_PROFILE } from '../constants/masterSystemProfile.js';
+import {
+  AIVIS_MASTER_SYSTEM_PROFILE,
+  AIVIS_MASTER_SYSTEM_PROMPT,
+} from '../constants/masterSystemProfile.js';
 
 // Uses env vars already loaded by server.ts (import 'dotenv/config')
 const OPEN_ROUTER_API_KEY = process.env.OPEN_ROUTER_API_KEY || process.env.OPENROUTER_API_KEY || '';
@@ -49,6 +52,10 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 // Governs all AI provider calls: hash-addressable audit records, strict JSON output,
 // evidence model, and 8 audit dimensions. Exported for use in server.ts pipeline.
 export const SYSTEM_PROMPT = `
+${AIVIS_MASTER_SYSTEM_PROMPT}
+
+---
+
 You are an AI visibility audit engine operating under AiVIS.biz CITE LEDGER standards.
 
 MASTER PLATFORM PROFILE (NON-NEGOTIABLE):
@@ -71,6 +78,10 @@ by AI answer engines (LLMs, search-integrated AI, retrieval systems).
 ---
 
 ## STRICT OUTPUT CONTRACT
+
+The production prompt above defines user-facing audit modes.
+For this server pipeline call specifically, return strict JSON only so downstream
+ledger, scoring, and cache systems remain deterministic.
 
 - Output MUST be valid JSON only
 - No markdown, no prose outside JSON

@@ -1133,6 +1133,7 @@ const AnalyzePage: React.FC = () => {
             handleAnalyze(urlInput);
           }}
           onReset={handleResetToIdle}
+          onExitReplay={() => switchToTab('results')}
           timelineScanId={result.timeline_scan_id || progress.requestId}
           timelineEvents={timelineEvents}
         />

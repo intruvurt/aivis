@@ -16000,6 +16000,9 @@ app.use((req, res) => {
   return res.status(404).json({ error: "Not found", code: "NOT_FOUND" });
 });
 
+// Module-level ref so shutdown() can close the HTTP server before draining the pool.
+let _httpServer: ReturnType<typeof app.listen> | null = null;
+
 // Graceful shutdown
 async function shutdown(signal: string) {
   console.log(`[${signal}] Shutting down — stopping background loops`);
@@ -16010,6 +16013,21 @@ async function shutdown(signal: string) {
   stopAllAutoScoreFixLoops();
   stopMcpAuditLoop();
   stopNewsletterLoop();
+
+  // Close HTTP server first so no new connections are accepted while we drain.
+  if (_httpServer) {
+    await new Promise<void>((resolve) => {
+      const timer = setTimeout(() => {
+        console.warn("[Shutdown] HTTP server did not close in 10s — forcing drain");
+        resolve();
+      }, 10_000);
+      _httpServer!.close(() => {
+        clearTimeout(timer);
+        resolve();
+      });
+    });
+  }
+
   await closePool();
   process.exit(0);
 }
@@ -16129,6 +16147,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
 
   const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
+    _httpServer = server;
 
     // Dev-only: validate pricing contract consistency
     if (NODE_ENV === "development") {

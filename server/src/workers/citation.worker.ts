@@ -13,7 +13,6 @@ if (isMainModule) {
     void bootstrapScheduler();
     startCitationRevalidationLoop();
 
-    const noop = () => { };
-    process.on('SIGINT', noop);
-    process.on('SIGTERM', noop);
+    process.on('SIGINT', () => { console.log('[citation-worker] SIGINT — exiting'); process.exit(0); });
+    process.on('SIGTERM', () => { console.log('[citation-worker] SIGTERM — exiting'); process.exit(0); });
 }

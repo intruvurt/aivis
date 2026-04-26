@@ -13,7 +13,6 @@ if (isMainModule) {
     startScheduler();
     startAuditWorkerLoop();
 
-    const noop = () => { };
-    process.on('SIGINT', noop);
-    process.on('SIGTERM', noop);
+    process.on('SIGINT', () => { console.log('[bix-worker] SIGINT — exiting'); process.exit(0); });
+    process.on('SIGTERM', () => { console.log('[bix-worker] SIGTERM — exiting'); process.exit(0); });
 }

@@ -11,7 +11,6 @@ if (isMainModule) {
     console.log('[fix-worker] starting fix queue worker');
     startFixWorker();
 
-    const noop = () => { };
-    process.on('SIGINT', noop);
-    process.on('SIGTERM', noop);
+    process.on('SIGINT', () => { console.log('[fix-worker] SIGINT — exiting'); process.exit(0); });
+    process.on('SIGTERM', () => { console.log('[fix-worker] SIGTERM — exiting'); process.exit(0); });
 }

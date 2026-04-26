@@ -1,22 +1,67 @@
 /* ========================= Product Definition (LOCKED) ========================= */
 /**
- * AI Search Visibility Audit & Monitoring Tool
+ * AIVIS — AI Citation Truth Engine
  *
- * PURPOSE: Determine how AI systems parse, trust, and surface a website
- *          in AI-driven search and answer engines
+ * SYSTEM OF RECORD: Whether AI models can cite you — with immutable ledger
+ * evidence, not vanity analytics.
  *
- * FOCUS AREAS:
- * - Machine interpretation (how AI reads the site)
- * - Extractability (can AI pull structured data)
- * - Structural clarity (schema, headings, semantic HTML)
- * - Evidence availability (can AI find and cite facts)
+ * CORE PIPELINE (canonical order, non-negotiable):
+ *   URL input → evidence scan → citation resolution → immutable ledger commit
+ *   → derived registry computation → action graph
+ *
+ * EVIDENCE LAYERS (each API feeds one coherent truth ledger):
+ *   Cloudflare  → behavior + traffic physics (AI crawler detection, cache trust)
+ *   Geekflare   → technical citability (Lighthouse, TLS, load time, broken links)
+ *   SERP + KG   → authority/entity validation (SERP presence, KG entity existence)
+ *   GSC         → demand + intent drift (query decline, topic shift, demand gaps)
+ *
+ * 4-PART MOAT (what competitors cannot replicate):
+ *   1. Deterministic execution  — same pipeline, same stage order, every time
+ *   2. Immutable citation ledger — claims are audit-traceable after the fact
+ *   3. Derived registry only     — no fabricated scores; all metrics from ledger rows
+ *   4. Evidence-tied remediation — actions come from gaps, not generic advice
  *
  * NOT ABOUT:
- * - Market demand
- * - Idea quality
- * - Validation
- * - Growth advice
+ *   - Rankings, backlinks, or traditional SEO
+ *   - Vanity analytics or dashboard impressions
+ *   - Market demand or idea validation
  */
+
+/**
+ * Canonical positioning constants for AIVIS.
+ * These are the source-of-truth strings used across marketing, API responses,
+ * and system prompts. Do not duplicate or redefine elsewhere.
+ */
+export const AIVIS_POSITIONING = {
+  core_statement: 'AIVIS is the system of record for whether AI models can cite you — with immutable ledger evidence, not vanity analytics.',
+  tagline: 'Not where you rank. Whether AI will quote you at all.',
+  product_class: 'AI Citation Truth Engine',
+  evidence_layers: {
+    cloudflare: 'Behavior + traffic physics layer — AI crawler detection, cache hit/latency reliability, trust gate scoring.',
+    geekflare: 'Technical citability layer — Lighthouse, load time, TLS, broken links as AI-crawl readiness signals.',
+    serp_kg: 'Authority + entity validation layer — SERP presence and Knowledge Graph entity confirmation.',
+    gsc: 'Demand + intent drift layer — query decline, topic shift, demand-to-ledger gap mapping.',
+  } as const,
+  moat: [
+    'Deterministic execution: same pipeline, same stage order, every time.',
+    'Immutable citation ledger: every claim is audit-traceable after the fact.',
+    'Derived registry only: no fabricated scores — all metrics computed from committed ledger rows.',
+    'Evidence-tied remediation: every fix action is traceable to a specific ledger gap.',
+  ] as const,
+  operating_model: [
+    'Input: URL + optional brand seed',
+    'Evidence scan: run canonical pipeline, resolve cited vs uncited',
+    'Truth record: commit scan_id + citation ledger rows',
+    'Decision layer: derive registry, identify exact missing presence',
+    'Action layer: generate fix actions linked to ledger evidence',
+  ] as const,
+  gtm_use_cases: [
+    'Pre-launch AI readiness audit — technical + entity + citation baseline before publish',
+    'Post-publish citation verification — confirm whether models actually cite you after launch',
+    'Competitive displacement watch — surface where competitors are cited and you are not',
+    'Always-on score repair (Scorefix) — recurring retention loop tied to citation decay',
+  ] as const,
+} as const;
 
 /* ========================= Canonical tier system ========================= */
 
@@ -65,12 +110,12 @@ const UI_DISPLAY_NAMES: Readonly<Record<UiTier, string>> = {
 };
 
 const TIER_POSITIONING: Readonly<Record<CanonicalTier, string>> = {
-  observer: 'detection audit — see what AI systems misread on your site; free forever',
-  starter: 'full audit with all recommendations, implementation code, and fix-ready outputs',
-  alignment: 'structured optimization system — turn extraction failures into evidence-backed fixes',
-  signal: 'verified AI answer pipeline — triple-check consensus across 3 models',
-  agency: 'multi-client visibility operations platform — bulk scanning, org branding, white-label reports',
-  scorefix: 'continuous evidence repair system — keeps AI citation integrity stable through automated ledger monitoring, drift detection, and GitHub PR remediation',
+  observer: 'free citation probe — see whether AI systems can parse and cite your page; immutable ledger record included',
+  starter: 'full citation audit — complete evidence scan with prioritized fix actions tied to ledger gaps',
+  alignment: 'structured citation engineering — turn evidence failures into citation-ready pages with step-by-step ledger-backed fixes',
+  signal: 'triple-verified citation truth — triple-check consensus across 3 AI models with peer validation and score reconciliation',
+  agency: 'multi-client citation operations — bulk evidence scanning, org-level citation registries, white-label ledger reports',
+  scorefix: 'continuous citation repair — automated ledger monitoring, citation decay detection, and GitHub PR remediation tied to real evidence gaps',
 };
 
 const TIER_AUDIENCE: Readonly<Record<CanonicalTier, string>> = {

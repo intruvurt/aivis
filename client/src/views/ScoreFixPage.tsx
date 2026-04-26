@@ -479,9 +479,9 @@ export default function ScoreFixPage() {
                   <Sparkles className="h-3.5 w-3.5" />
                   SCORE FIX
                 </div>
-                <h1 className="mt-3 max-w-4xl text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl lg:leading-[1.08]">
+                <h2 className="mt-3 max-w-4xl text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl lg:leading-[1.08]">
                   Score Fix AutoFix PR — Automated GitHub Remediation for Citation Readiness
-                </h1>
+                </h2>
                 <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300 sm:text-[15px]">
                   Score Fix turns audit findings into evidence-linked remediation. When the
                   automation pipeline is configured, it can open GitHub pull requests with schema

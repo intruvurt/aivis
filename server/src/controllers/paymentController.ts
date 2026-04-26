@@ -528,8 +528,9 @@ export const getCurrentSubscription = async (req: Request, res: Response) => {
 
     const planNameMap: Record<string, string> = {
       observer: 'Observer [Free]',
-      alignment: 'Alignment [Core]',
-      signal: 'Signal [Pro]',
+      starter: 'Starter',
+      alignment: 'Alignment',
+      signal: 'Signal',
       scorefix: 'Score Fix [AutoFix PR]',
     };
 
@@ -1095,7 +1096,8 @@ async function handleSubscriptionUpdated(subscription: any) {
 
   // Handle status-based tier changes
   if (subscription.status === 'active' && userId && newTierKey) {
-    await updateUserTier(userId, newTierKey, String(subscription.id), stripeCustomerId);
+    const billingPeriod = String(subscription.metadata?.billing_period || 'monthly');
+    await updateUserTier(userId, newTierKey, String(subscription.id), billingPeriod);
 
     createUserNotification({
       userId,
@@ -1364,10 +1366,12 @@ async function updateUserTier(userId: string, tierKey: string, subscriptionId: s
   const tierMap: Record<string, string> = {
     free: 'observer',
     observer: 'observer',
+    starter: 'starter',
     alignment: 'alignment',
     pro: 'alignment',
     signal: 'signal',
     scorefix: 'scorefix',
+    agency: 'agency',
     business: 'signal',
     enterprise: 'signal',
     whitelabel: 'signal',

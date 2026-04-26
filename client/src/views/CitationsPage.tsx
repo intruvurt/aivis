@@ -1,15 +1,16 @@
-import React, { useState, useCallback, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore";
-import { useAnalysisStore } from "../stores/analysisStore";
-import CitationTracker from "../components/CitationTracker";
-import NicheRankingPanel from "../components/NicheRankingPanel";
-import CitationTrendSparkline from "../components/CitationTrendSparkline";
-import CompetitorShareTable from "../components/CompetitorShareTable";
-import ConsistencyMatrix from "../components/ConsistencyMatrix";
-import DropAlertBanner from "../components/DropAlertBanner";
-import CoOccurrencePanel from "../components/CoOccurrencePanel";
-import EntityFingerprintPanel from "../components/EntityFingerprintPanel";
+import React, { useState, useCallback, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { useAnalysisStore } from '../stores/analysisStore';
+import CitationTracker from '../components/CitationTracker';
+import CitationIntelligencePanel from '../components/CitationIntelligencePanel';
+import NicheRankingPanel from '../components/NicheRankingPanel';
+import CitationTrendSparkline from '../components/CitationTrendSparkline';
+import CompetitorShareTable from '../components/CompetitorShareTable';
+import ConsistencyMatrix from '../components/ConsistencyMatrix';
+import DropAlertBanner from '../components/DropAlertBanner';
+import CoOccurrencePanel from '../components/CoOccurrencePanel';
+import EntityFingerprintPanel from '../components/EntityFingerprintPanel';
 import {
   ArrowLeft,
   Eye,
@@ -32,71 +33,133 @@ import {
   Target,
   Loader2,
   Fingerprint,
-} from "lucide-react";
-import { meetsMinimumTier } from "@shared/types";
-import { usePageMeta } from "../hooks/usePageMeta";
-import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
-import UpgradeWall from "../components/UpgradeWall";
-import { normalizePublicUrlInput } from "../utils/targetKey";
-import PageQASection from "../components/PageQASection";
-import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+} from 'lucide-react';
+import { meetsMinimumTier } from '@shared/types';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PlatformProofLoopCard from '../components/PlatformProofLoopCard';
+import UpgradeWall from '../components/UpgradeWall';
+import { normalizePublicUrlInput } from '../utils/targetKey';
+import PageQASection from '../components/PageQASection';
+import { buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
 
 const CITATIONS_FAQ = [
   {
-    question: "What is an AI citation?",
-    answer: "An AI citation occurs when an answer engine such as ChatGPT, Perplexity, Claude, or Google AI Overviews references your website as the source of a specific claim, fact, or answer. Citations appear as hyperlinked attributions in generated answers and are the primary form of organic traffic from AI platforms. Unlike traditional backlinks, AI citations are awarded based on evidence density, entity clarity, and answer-block structure rather than domain authority alone.",
+    question: 'What is an AI citation?',
+    answer:
+      'An AI citation occurs when an answer engine such as ChatGPT, Perplexity, Claude, or Google AI Overviews references your website as the source of a specific claim, fact, or answer. Citations appear as hyperlinked attributions in generated answers and are the primary form of organic traffic from AI platforms. Unlike traditional backlinks, AI citations are awarded based on evidence density, entity clarity, and answer-block structure rather than domain authority alone.',
   },
   {
-    question: "Which AI platforms use citations in their answers?",
-    answer: "Perplexity AI cites sources in virtually every answer and is the most citation-transparent platform. ChatGPT with browsing and the GPT-4o web search mode returns attributed citations. Google AI Overviews cite supporting pages next to answer summaries. Claude's web search mode adds citation numbers. Each platform has different thresholds for citation eligibility, which is why testing across all four reveals gaps that single-platform monitoring misses.",
+    question: 'Which AI platforms use citations in their answers?',
+    answer:
+      "Perplexity AI cites sources in virtually every answer and is the most citation-transparent platform. ChatGPT with browsing and the GPT-4o web search mode returns attributed citations. Google AI Overviews cite supporting pages next to answer summaries. Claude's web search mode adds citation numbers. Each platform has different thresholds for citation eligibility, which is why testing across all four reveals gaps that single-platform monitoring misses.",
   },
   {
-    question: "Why is Perplexity citing my competitors instead of me?",
-    answer: "Perplexity selects sources based on a combination of topical relevance, extraction clarity, answer completeness, and freshness. If competitors are cited instead of you, the most common causes are: their pages have more direct question-answer pairs aligned to the query, their entity markup is more specific (clearer service category, audience, and geography), their evidence sections are denser with verifiable specifics, or their pages load and render faster for live crawls. The AiVIS.biz citation test shows exactly which query types surface competitors and why.",
+    question: 'Why is Perplexity citing my competitors instead of me?',
+    answer:
+      'Perplexity selects sources based on a combination of topical relevance, extraction clarity, answer completeness, and freshness. If competitors are cited instead of you, the most common causes are: their pages have more direct question-answer pairs aligned to the query, their entity markup is more specific (clearer service category, audience, and geography), their evidence sections are denser with verifiable specifics, or their pages load and render faster for live crawls. The AiVIS.biz citation test shows exactly which query types surface competitors and why.',
   },
   {
-    question: "What makes a web page citation-eligible for AI answer engines?",
-    answer: "Citation-eligible pages share five structural properties: they answer a specific question directly in the first 150 words of the answer section, they have unambiguous entity signals (business type, audience, service scope clearly stated), they carry aligned JSON-LD schema that matches visible content, they provide verifiable evidence such as examples, numbers, or methodological notes, and they have no extraction blockers such as JavaScript-only rendering, aggressive bot detection, or robots.txt restrictions on AI crawlers.",
+    question: 'What makes a web page citation-eligible for AI answer engines?',
+    answer:
+      'Citation-eligible pages share five structural properties: they answer a specific question directly in the first 150 words of the answer section, they have unambiguous entity signals (business type, audience, service scope clearly stated), they carry aligned JSON-LD schema that matches visible content, they provide verifiable evidence such as examples, numbers, or methodological notes, and they have no extraction blockers such as JavaScript-only rendering, aggressive bot detection, or robots.txt restrictions on AI crawlers.',
   },
   {
-    question: "What is co-occurrence and why does it matter for AI citations?",
-    answer: "Co-occurrence is when your brand or entity appears in the same context as target topics across multiple sources. AI models train on web-scale text and learn entity associations through co-occurrence patterns. If your brand consistently appears alongside 'AI visibility', 'answer engine optimization', or 'citation readiness' across your own site, earned mentions, and third-party references, the model builds a stronger association that increases the probability of citation in relevant answer contexts.",
+    question: 'What is co-occurrence and why does it matter for AI citations?',
+    answer:
+      "Co-occurrence is when your brand or entity appears in the same context as target topics across multiple sources. AI models train on web-scale text and learn entity associations through co-occurrence patterns. If your brand consistently appears alongside 'AI visibility', 'answer engine optimization', or 'citation readiness' across your own site, earned mentions, and third-party references, the model builds a stronger association that increases the probability of citation in relevant answer contexts.",
   },
   {
-    question: "How do I increase my citation rate across AI platforms?",
-    answer: "The highest-impact improvements are: restructuring long-form content into concise direct-answer blocks with clear question headings, adding FAQ schema with questions that mirror actual AI prompts, ensuring your entity is unambiguously defined in the first paragraph of every page, removing or fixing JavaScript rendering issues that prevent full content extraction, and building topical co-occurrence through consistent publication on the core topics where you want to be cited. AiVIS.biz citation tests show which specific query types and platforms are blocking your brand.",
+    question: 'How do I increase my citation rate across AI platforms?',
+    answer:
+      'The highest-impact improvements are: restructuring long-form content into concise direct-answer blocks with clear question headings, adding FAQ schema with questions that mirror actual AI prompts, ensuring your entity is unambiguously defined in the first paragraph of every page, removing or fixing JavaScript rendering issues that prevent full content extraction, and building topical co-occurrence through consistent publication on the core topics where you want to be cited. AiVIS.biz citation tests show which specific query types and platforms are blocking your brand.',
   },
   {
-    question: "What is the difference between a brand mention and a citation?",
-    answer: "A brand mention is any appearance of your brand name or URL in an AI-generated text, including indirect references or summaries that do not link to a source. A citation is a specific attribution with a direct link back to your page, typically shown as a numbered reference or hyperlink. Citations have higher traceable traffic value, but brand mentions influence the model's association strength and can raise citation probability over time as the model's training corpus updates.",
+    question: 'What is the difference between a brand mention and a citation?',
+    answer:
+      "A brand mention is any appearance of your brand name or URL in an AI-generated text, including indirect references or summaries that do not link to a source. A citation is a specific attribution with a direct link back to your page, typically shown as a numbered reference or hyperlink. Citations have higher traceable traffic value, but brand mentions influence the model's association strength and can raise citation probability over time as the model's training corpus updates.",
   },
 ];
 
 /* ── Tab IDs ─────────────────────────────────────────────────────────────── */
-type CitationTab = "engine" | "intelligence" | "entity" | "automation";
+type CitationTab = 'engine' | 'intelligence' | 'entity' | 'automation';
 
 /* ── Static data ─────────────────────────────────────────────────────────── */
 const QUICK_STATS = [
-  { icon: Search, label: "AI Platforms", value: "4", sublabel: "ChatGPT · Perplexity · Claude · Google AI" },
-  { icon: Globe, label: "Web Verification", value: "4", sublabel: "DuckDuckGo + Bing + Brave + DDG Instant" },
-  { icon: BarChart3, label: "Queries / Test", value: "20–400", sublabel: "Scaled by tier" },
-  { icon: TrendingUp, label: "Trend Window", value: "30d", sublabel: "Rolling mention history" },
+  {
+    icon: Search,
+    label: 'AI Platforms',
+    value: '4',
+    sublabel: 'ChatGPT · Perplexity · Claude · Google AI',
+  },
+  {
+    icon: Globe,
+    label: 'Web Verification',
+    value: '4',
+    sublabel: 'DuckDuckGo + Bing + Brave + DDG Instant',
+  },
+  { icon: BarChart3, label: 'Queries / Test', value: '20–400', sublabel: 'Scaled by tier' },
+  { icon: TrendingUp, label: 'Trend Window', value: '30d', sublabel: 'Rolling mention history' },
 ];
 
 const WORKFLOW_STEPS = [
-  { step: 1, label: "Enter URL", detail: "Paste any URL - queries are generated from page content, entities, and keywords." },
-  { step: 2, label: "AI generates queries", detail: "Realistic prompts are built from your audited entity profile and topic signals." },
-  { step: 3, label: "Multi-platform test", detail: "Each query runs across 4 AI platforms + 3 web search engines simultaneously." },
-  { step: 4, label: "Review & act", detail: "See mention rates, excerpts, competitor presence, and diagnostic fixes." },
+  {
+    step: 1,
+    label: 'Enter URL',
+    detail: 'Paste any URL - queries are generated from page content, entities, and keywords.',
+  },
+  {
+    step: 2,
+    label: 'AI generates queries',
+    detail: 'Realistic prompts are built from your audited entity profile and topic signals.',
+  },
+  {
+    step: 3,
+    label: 'Multi-platform test',
+    detail: 'Each query runs across 4 AI platforms + 3 web search engines simultaneously.',
+  },
+  {
+    step: 4,
+    label: 'Review & act',
+    detail: 'See mention rates, excerpts, competitor presence, and diagnostic fixes.',
+  },
 ];
 
 const AGENCY_FEATURES = [
-  { icon: Users, label: "Client query packs", detail: "Save reusable query packs per client, execute them on schedule, and compare results over time." },
-  { icon: Clock, label: "Scheduled ranking jobs", detail: "Set recurring niche-ranking tests that run automatically and alert on position drops." },
-  { icon: FileText, label: "CSV + evidence exports", detail: "Export full citation test data, evidence panels, and diagnostic reports for client deliverables." },
-  { icon: RefreshCw, label: "Before/after validation", detail: "Re-run the same query set after content fixes to prove citation share improvement with evidence." },
-  { icon: Target, label: "Niche competitive ranking", detail: "AI-powered competitive positioning scorer that ranks your brand against the top 50–100 in your niche." },
-  { icon: AlertTriangle, label: "Drop alert monitoring", detail: "Get notified when mention rate drops ≥15 percentage points. Email alerts included for Signal+." },
+  {
+    icon: Users,
+    label: 'Client query packs',
+    detail:
+      'Save reusable query packs per client, execute them on schedule, and compare results over time.',
+  },
+  {
+    icon: Clock,
+    label: 'Scheduled ranking jobs',
+    detail: 'Set recurring niche-ranking tests that run automatically and alert on position drops.',
+  },
+  {
+    icon: FileText,
+    label: 'CSV + evidence exports',
+    detail:
+      'Export full citation test data, evidence panels, and diagnostic reports for client deliverables.',
+  },
+  {
+    icon: RefreshCw,
+    label: 'Before/after validation',
+    detail:
+      'Re-run the same query set after content fixes to prove citation share improvement with evidence.',
+  },
+  {
+    icon: Target,
+    label: 'Niche competitive ranking',
+    detail:
+      'AI-powered competitive positioning scorer that ranks your brand against the top 50–100 in your niche.',
+  },
+  {
+    icon: AlertTriangle,
+    label: 'Drop alert monitoring',
+    detail:
+      'Get notified when mention rate drops ≥15 percentage points. Email alerts included for Signal+.',
+  },
 ];
 
 export default function CitationsPage() {
@@ -105,43 +168,51 @@ export default function CitationsPage() {
   const latestResult = useAnalysisStore((s) => s.result);
 
   usePageMeta({
-    title: "AI Citation Tracker",
-    description: "Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude mention your brand.",
-    path: "/citations",
+    title: 'AI Citation Tracker',
+    description:
+      'Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude mention your brand.',
+    path: '/citations',
     structuredData: [
       buildWebPageSchema({
-        path: "/citations",
-        name: "AI Citation Tracker | AiVIS.biz",
-        description: "Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude cite your brand in generated answers.",
+        path: '/citations',
+        name: 'AI Citation Tracker | AiVIS.biz',
+        description:
+          'Generate citation queries from any URL and test whether AI platforms like ChatGPT, Perplexity, and Claude cite your brand in generated answers.',
       }),
-      buildFaqSchema(CITATIONS_FAQ, { path: "/citations" }),
+      buildFaqSchema(CITATIONS_FAQ, { path: '/citations' }),
     ],
   });
 
   React.useEffect(() => {
-    if (!isAuthenticated) navigate("/auth?mode=signin");
+    if (!isAuthenticated) navigate('/auth?mode=signin');
   }, [isAuthenticated, navigate]);
 
-  const userTier = (user?.tier as any) || "observer";
-  const hasAccess = meetsMinimumTier(userTier, "alignment");
-  const hasSignal = meetsMinimumTier(userTier, "signal");
+  const userTier = (user?.tier as any) || 'observer';
+  const hasAccess = meetsMinimumTier(userTier, 'alignment');
+  const hasSignal = meetsMinimumTier(userTier, 'signal');
 
   /* URL input state - defaults to latest audited URL if available */
-  const defaultUrl = latestResult?.url || "";
+  const defaultUrl = latestResult?.url || '';
   const [urlInput, setUrlInput] = useState(defaultUrl);
   const [activeUrl, setActiveUrl] = useState(defaultUrl);
-  const [activeTab, setActiveTab] = useState<CitationTab>("engine");
+  const [activeTab, setActiveTab] = useState<CitationTab>('engine');
   const engineRef = useRef<HTMLDivElement>(null);
 
-  const handleUrlSubmit = useCallback((e?: React.FormEvent) => {
-    e?.preventDefault();
-    const normalized = normalizePublicUrlInput(urlInput.trim());
-    if (!normalized) return;
-    setActiveUrl(normalized);
-    setActiveTab("engine");
-    // Scroll to engine section
-    setTimeout(() => engineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-  }, [urlInput]);
+  const handleUrlSubmit = useCallback(
+    (e?: React.FormEvent) => {
+      e?.preventDefault();
+      const normalized = normalizePublicUrlInput(urlInput.trim());
+      if (!normalized) return;
+      setActiveUrl(normalized);
+      setActiveTab('engine');
+      // Scroll to engine section
+      setTimeout(
+        () => engineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        100
+      );
+    },
+    [urlInput]
+  );
 
   React.useEffect(() => {
     if (defaultUrl && !activeUrl) {
@@ -151,15 +222,14 @@ export default function CitationsPage() {
   }, [defaultUrl, activeUrl]);
 
   const TABS: { id: CitationTab; label: string; icon: React.ElementType; minTier: string }[] = [
-    { id: "engine", label: "Citation Engine", icon: Zap, minTier: "alignment" },
-    { id: "intelligence", label: "Intelligence", icon: BarChart3, minTier: "alignment" },
-    { id: "entity", label: "Entity Fingerprint", icon: Fingerprint, minTier: "alignment" },
-    { id: "automation", label: "Automation & Agency", icon: Users, minTier: "signal" },
+    { id: 'engine', label: 'Citation Engine', icon: Zap, minTier: 'alignment' },
+    { id: 'intelligence', label: 'Intelligence', icon: BarChart3, minTier: 'alignment' },
+    { id: 'entity', label: 'Entity Fingerprint', icon: Fingerprint, minTier: 'alignment' },
+    { id: 'automation', label: 'Automation & Agency', icon: Users, minTier: 'signal' },
   ];
 
   return (
     <div className="space-y-6">
-
       {/* Page heading */}
       <div className="flex items-center justify-between">
         <div>
@@ -167,7 +237,9 @@ export default function CitationsPage() {
             <Eye className="h-5 w-5 text-slate-400 shrink-0" />
             AI Citation Tracker
           </h1>
-          <p className="mt-1 text-sm text-slate-400">Generate citation queries from any URL and test where AI platforms mention you.</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Generate citation queries from any URL and test where AI platforms mention you.
+          </p>
         </div>
         <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] uppercase tracking-wide text-slate-400">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -188,7 +260,9 @@ export default function CitationsPage() {
                 Enter any URL to generate citation queries
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/55">
-                Queries are generated from the page's actual content, entities, keywords, and structure - not generic templates. Each URL produces a unique set of realistic AI-answer prompts.
+                Queries are generated from the page's actual content, entities, keywords, and
+                structure - not generic templates. Each URL produces a unique set of realistic
+                AI-answer prompts.
               </p>
 
               <form onSubmit={handleUrlSubmit} className="mt-5">
@@ -218,7 +292,10 @@ export default function CitationsPage() {
                 {defaultUrl && urlInput !== defaultUrl && (
                   <button
                     type="button"
-                    onClick={() => { setUrlInput(defaultUrl); setActiveUrl(defaultUrl); }}
+                    onClick={() => {
+                      setUrlInput(defaultUrl);
+                      setActiveUrl(defaultUrl);
+                    }}
                     className="mt-2 text-xs text-cyan-400/70 hover:text-cyan-300 transition-colors"
                   >
                     ← Use latest audited URL: {defaultUrl}
@@ -232,13 +309,20 @@ export default function CitationsPage() {
               {QUICK_STATS.map((stat) => {
                 const Icon = stat.icon;
                 return (
-                  <div key={stat.label} className="rounded-xl border border-white/8 bg-charcoal-deep/60 p-3">
+                  <div
+                    key={stat.label}
+                    className="rounded-xl border border-white/8 bg-charcoal-deep/60 p-3"
+                  >
                     <div className="flex items-center gap-1.5 mb-1">
                       <Icon className="h-3 w-3 text-white/50" />
-                      <span className="text-[10px] uppercase tracking-wide text-white/45">{stat.label}</span>
+                      <span className="text-[10px] uppercase tracking-wide text-white/45">
+                        {stat.label}
+                      </span>
                     </div>
                     <div className="text-lg font-bold text-white/90 leading-none">{stat.value}</div>
-                    <div className="text-[10px] text-white/40 mt-0.5 leading-tight">{stat.sublabel}</div>
+                    <div className="text-[10px] text-white/40 mt-0.5 leading-tight">
+                      {stat.sublabel}
+                    </div>
                   </div>
                 );
               })}
@@ -248,11 +332,18 @@ export default function CitationsPage() {
           {/* Workflow steps - collapsed on mobile */}
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {WORKFLOW_STEPS.map((item) => (
-              <div key={item.step} className="flex items-start gap-2 rounded-xl border border-white/6 bg-charcoal/40 p-3">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/15 text-[10px] font-bold text-white/60">{item.step}</span>
+              <div
+                key={item.step}
+                className="flex items-start gap-2 rounded-xl border border-white/6 bg-charcoal/40 p-3"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/15 text-[10px] font-bold text-white/60">
+                  {item.step}
+                </span>
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-white/80">{item.label}</div>
-                  <div className="text-[10px] leading-relaxed text-white/45 hidden sm:block">{item.detail}</div>
+                  <div className="text-[10px] leading-relaxed text-white/45 hidden sm:block">
+                    {item.detail}
+                  </div>
                 </div>
               </div>
             ))}
@@ -268,9 +359,9 @@ export default function CitationsPage() {
               requiredTier="alignment"
               icon={<Quote className="w-12 h-12 text-white/80" />}
               featurePreview={[
-                "Live query testing across ChatGPT, Perplexity, Claude, and Gemini",
-                "Citation rate %, mention context, and citation strength per platform",
-                "Drop alerts when your mention rate falls ≥15 percentage points",
+                'Live query testing across ChatGPT, Perplexity, Claude, and Gemini',
+                'Citation rate %, mention context, and citation strength per platform',
+                'Drop alerts when your mention rate falls ≥15 percentage points',
               ]}
             />
           </div>
@@ -289,17 +380,21 @@ export default function CitationsPage() {
                     onClick={() => !locked && setActiveTab(tab.id)}
                     className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-colors shrink-0 ${
                       activeTab === tab.id
-                        ? "bg-white/10 text-white"
+                        ? 'bg-white/10 text-white'
                         : locked
-                          ? "text-white/30 cursor-not-allowed"
-                          : "text-white/55 hover:text-white/80 hover:bg-white/5"
+                          ? 'text-white/30 cursor-not-allowed'
+                          : 'text-white/55 hover:text-white/80 hover:bg-white/5'
                     }`}
                     type="button"
                     disabled={locked}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
                     {tab.label}
-                    {locked && <span className="text-[9px] uppercase tracking-wider text-white/25 ml-1">Signal+</span>}
+                    {locked && (
+                      <span className="text-[9px] uppercase tracking-wider text-white/25 ml-1">
+                        Signal+
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -312,7 +407,10 @@ export default function CitationsPage() {
               <span className="text-xs font-medium text-white/85 truncate">{activeUrl}</span>
               <button
                 type="button"
-                onClick={() => { setActiveUrl(""); setUrlInput(""); }}
+                onClick={() => {
+                  setActiveUrl('');
+                  setUrlInput('');
+                }}
                 className="ml-auto text-[10px] text-white/40 hover:text-white/70 transition-colors shrink-0"
               >
                 Change
@@ -320,7 +418,7 @@ export default function CitationsPage() {
             </div>
 
             {/* ── Tab: Citation Engine ──────────────────────────────────── */}
-            {activeTab === "engine" && (
+            {activeTab === 'engine' && (
               <div ref={engineRef} className="mt-4 space-y-4">
                 <CitationTracker url={activeUrl} token={token} userTier={userTier} />
 
@@ -334,8 +432,10 @@ export default function CitationsPage() {
             )}
 
             {/* ── Tab: Intelligence ────────────────────────────────────── */}
-            {activeTab === "intelligence" && (
+            {activeTab === 'intelligence' && (
               <div className="mt-4 space-y-4">
+                <CitationIntelligencePanel url={activeUrl} />
+
                 <DropAlertBanner url={activeUrl} />
 
                 <div className="grid gap-4 lg:grid-cols-2">
@@ -349,8 +449,14 @@ export default function CitationsPage() {
 
                 {!hasSignal && (
                   <div className="rounded-2xl border border-white/8 bg-charcoal-deep p-5 text-center">
-                    <p className="text-sm text-white/55">Co-occurrence scanning and niche ranking require <strong className="text-white/80">Signal</strong> tier.</p>
-                    <Link to="/pricing" className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400/70 hover:text-cyan-300">
+                    <p className="text-sm text-white/55">
+                      Co-occurrence scanning and niche ranking require{' '}
+                      <strong className="text-white/80">Signal</strong> tier.
+                    </p>
+                    <Link
+                      to="/pricing"
+                      className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400/70 hover:text-cyan-300"
+                    >
                       View plans <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
@@ -359,26 +465,31 @@ export default function CitationsPage() {
             )}
 
             {/* ── Tab: Entity Fingerprint ──────────────────────────────── */}
-            {activeTab === "entity" && (
+            {activeTab === 'entity' && (
               <div className="mt-4">
                 <EntityFingerprintPanel />
               </div>
             )}
 
             {/* ── Tab: Automation & Agency ──────────────────────────────── */}
-            {activeTab === "automation" && (
+            {activeTab === 'automation' && (
               <div className="mt-4 space-y-5">
                 {/* Agency features overview */}
                 <section className="rounded-2xl border border-white/10 bg-charcoal p-5 sm:p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Zap className="h-4 w-4 text-amber-400" />
-                    <h3 className="text-base font-semibold text-white">Agency & automation toolkit</h3>
+                    <h3 className="text-base font-semibold text-white">
+                      Agency & automation toolkit
+                    </h3>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {AGENCY_FEATURES.map((item) => {
                       const Icon = item.icon;
                       return (
-                        <div key={item.label} className="rounded-xl border border-white/8 bg-charcoal-deep p-4">
+                        <div
+                          key={item.label}
+                          className="rounded-xl border border-white/8 bg-charcoal-deep p-4"
+                        >
                           <div className="flex items-center gap-2 mb-2">
                             <Icon className="h-4 w-4 text-white/60" />
                             <span className="text-sm font-medium text-white/85">{item.label}</span>
@@ -403,12 +514,16 @@ export default function CitationsPage() {
             <Globe className="h-10 w-10 text-white/30 mx-auto mb-3" />
             <h3 className="text-lg font-semibold text-white">Enter a URL above to begin</h3>
             <p className="mt-2 max-w-md mx-auto text-sm text-white/55">
-              Citation queries are uniquely generated from each URL's content, entities, and structural signals. Paste any URL to start.
+              Citation queries are uniquely generated from each URL's content, entities, and
+              structural signals. Paste any URL to start.
             </p>
             {defaultUrl && (
               <button
                 type="button"
-                onClick={() => { setUrlInput(defaultUrl); setActiveUrl(defaultUrl); }}
+                onClick={() => {
+                  setUrlInput(defaultUrl);
+                  setActiveUrl(defaultUrl);
+                }}
                 className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-white/20 to-white/10 px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
               >
                 <ArrowRight className="h-4 w-4" />

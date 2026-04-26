@@ -25,8 +25,7 @@ import {
   AuditEngineIcon,
 } from '../components/icons';
 import { useAuthStore } from '../stores/authStore';
-import ComprehensiveAnalysis from '../components/ComprehensiveAnalysis';
-import TextSummaryView from '../components/TextSummaryView';
+import AuditForensicReport from '../components/AuditForensicReport';
 import ShareButtons from '../components/ShareButtons';
 import { API_URL } from '../config';
 import type { AnalysisResponse, PipelineScanStage, ScanEvent, TextSummary } from '@shared/types';
@@ -372,15 +371,23 @@ const AnalyzePage: React.FC = () => {
   const [scanLimitReached, setScanLimitReached] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
-  const [resultView, setResultView] = useState<'summary' | 'technical'>('summary');
+  // 'results' | 'replay' — persisted so replay never auto-opens
+  const [resultTabView, setResultTabView] = useState<'results' | 'replay'>(() => {
+    try {
+      const stored = window.localStorage.getItem('aivis.resultView.preference');
+      if (stored === 'replay') return 'replay';
+    } catch {
+      // no-op
+    }
+    return 'results';
+  });
+  const [hasSeenResults, setHasSeenResults] = useState(false);
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
   const [browsingPromptVisible, setBrowsingPromptVisible] = useState(false);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [showReplay, setShowReplay] = useState(false);
   const browsingPromptRef = useRef<HTMLDivElement>(null);
-  const resultTextSummary = result
-    ? (result as AnalysisResultWithTextSummary).text_summary
-    : undefined;
 
   usePageMeta({
     title: 'Analyze',
@@ -732,6 +739,7 @@ const AnalyzePage: React.FC = () => {
 
     try {
       setLoading(true);
+      setShowReplay(true);
       setError(null);
       setScanLimitReached(false);
       setResult(null);
@@ -820,7 +828,15 @@ const AnalyzePage: React.FC = () => {
       }
 
       setResult(data);
-      setResultView((data as AnalysisResultWithTextSummary).text_summary ? 'summary' : 'technical');
+      setShowReplay(false);
+      // Always open results first — never auto-show replay on a new scan
+      setResultTabView('results');
+      setHasSeenResults(true);
+      try {
+        window.localStorage.setItem('aivis.resultView.preference', 'results');
+      } catch {
+        /**/
+      }
       setProgress((p) => ({ ...p, step: 'complete', percent: 100 }));
       setLastAnalyzedUrl(data.url || normalizedUrl);
 
@@ -979,27 +995,170 @@ const AnalyzePage: React.FC = () => {
     setDemoBaseline(null);
   };
 
+  const handleResetToIdle = () => {
+    setResult(null);
+    setError(null);
+    setTimelineEvents([]);
+    latestTimelineSeqRef.current = -1;
+    setProgress({ requestId: null, step: 'idle', percent: 0 });
+    setScanLimitReached(false);
+    setShowReplay(false);
+    setHasSeenResults(false);
+    setResultTabView('results');
+  };
+
+  const switchToTab = (tab: 'results' | 'replay') => {
+    // Replay only accessible once user has seen results for this scan
+    if (tab === 'replay' && !hasSeenResults) return;
+    setResultTabView(tab);
+    try {
+      window.localStorage.setItem('aivis.resultView.preference', tab);
+    } catch {
+      /**/
+    }
+  };
+
+  const userTier = (user?.tier as 'observer' | 'alignment' | 'signal' | 'scorefix') || 'observer';
+
+  // During active scan, show the cognition/replay view
+  if (loading || (!result && showReplay)) {
+    return (
+      <AnalyzeCognitionView
+        loading={loading}
+        step={progress.step}
+        result={result}
+        error={error}
+        onSubmit={(urlInput: string) => {
+          setUrl(urlInput);
+          handleAnalyze(urlInput);
+        }}
+        onReset={handleResetToIdle}
+        timelineScanId={result?.timeline_scan_id || progress.requestId}
+        timelineEvents={timelineEvents}
+      />
+    );
+  }
+
+  // No result yet — show cognition/input view
+  if (!result) {
+    return (
+      <AnalyzeCognitionView
+        loading={false}
+        step={progress.step}
+        result={null}
+        error={error}
+        onSubmit={(urlInput: string) => {
+          setUrl(urlInput);
+          handleAnalyze(urlInput);
+        }}
+        onReset={handleResetToIdle}
+        timelineScanId={progress.requestId}
+        timelineEvents={timelineEvents}
+      />
+    );
+  }
+
+  // ── Post-scan results view ──────────────────────────────────────────
   return (
-    <AnalyzeCognitionView
-      loading={loading}
-      step={progress.step}
-      result={result}
-      error={error}
-      onSubmit={(urlInput: string) => {
-        setUrl(urlInput);
-        handleAnalyze(urlInput);
-      }}
-      onReset={() => {
-        setResult(null);
-        setError(null);
-        setTimelineEvents([]);
-        latestTimelineSeqRef.current = -1;
-        setProgress({ requestId: null, step: 'idle', percent: 0 });
-        setScanLimitReached(false);
-      }}
-      timelineScanId={result?.timeline_scan_id || progress.requestId}
-      timelineEvents={timelineEvents}
-    />
+    <div className="space-y-4 text-white">
+      {/* Top bar: URL + Results|Replay tab switch + actions */}
+      <div className="rounded-xl border border-white/10 bg-[#0d111c]/80 px-4 py-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs text-white/40 truncate">{result.url}</p>
+          </div>
+
+          {/* Results | Replay switch */}
+          <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-0.5">
+            <button
+              type="button"
+              onClick={() => switchToTab('results')}
+              className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+                resultTabView === 'results'
+                  ? 'bg-cyan-500/15 border border-cyan-400/30 text-cyan-200'
+                  : 'text-white/50 hover:text-white/75'
+              }`}
+            >
+              Results
+            </button>
+            <button
+              type="button"
+              onClick={() => switchToTab('replay')}
+              disabled={!hasSeenResults}
+              title={!hasSeenResults ? 'View results first' : 'Replay scan'}
+              className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+                resultTabView === 'replay'
+                  ? 'bg-white/10 border border-white/20 text-white/80'
+                  : !hasSeenResults
+                    ? 'text-white/25 cursor-not-allowed'
+                    : 'text-white/50 hover:text-white/75'
+              }`}
+            >
+              Replay
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setUrl(result.url || '');
+                void handleAnalyze(result.url || '');
+              }}
+              className="px-3 py-1.5 text-xs rounded-lg border border-white/15 text-white/60 hover:bg-white/8 hover:text-white/80 transition-colors"
+            >
+              Re-run
+            </button>
+            <button
+              type="button"
+              onClick={handleResetToIdle}
+              className="px-3 py-1.5 text-xs rounded-lg border border-white/10 text-white/40 hover:text-white/65 hover:border-white/20 transition-colors"
+            >
+              New URL
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab content */}
+      {resultTabView === 'replay' && hasSeenResults ? (
+        <AnalyzeCognitionView
+          loading={false}
+          step="complete"
+          result={result}
+          error={null}
+          onSubmit={(urlInput: string) => {
+            setUrl(urlInput);
+            handleAnalyze(urlInput);
+          }}
+          onReset={handleResetToIdle}
+          timelineScanId={result.timeline_scan_id || progress.requestId}
+          timelineEvents={timelineEvents}
+        />
+      ) : (
+        <AuditForensicReport
+          result={result}
+          tier={userTier}
+          onRerunAudit={() => {
+            setUrl(result.url || '');
+            void handleAnalyze(result.url || '');
+          }}
+        />
+      )}
+
+      {/* Share row */}
+      {resultTabView === 'results' && (
+        <div className="rounded-xl border border-white/10 bg-[#0d111c]/60 p-4">
+          <ShareButtons
+            url={result.url}
+            score={result.visibility_score}
+            analyzedAt={result.analyzed_at}
+            auditId={result.audit_id}
+            title="AI Visibility Audit"
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

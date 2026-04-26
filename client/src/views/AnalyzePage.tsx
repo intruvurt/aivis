@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import AnalyzeCognitionView from './AnalyzeCognitionView';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
@@ -1063,7 +1064,7 @@ const AnalyzePage: React.FC = () => {
   return (
     <div className="space-y-4 text-white">
       {/* Top bar: URL + Results|Replay tab switch + actions */}
-      <div className="rounded-xl border border-white/10 bg-[#0d111c]/80 px-4 py-3">
+      <div className="rounded-xl border border-[color:var(--border)] bg-[rgba(13,18,16,0.9)] px-4 py-3 shadow-[0_16px_32px_rgba(0,0,0,0.2)]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-xs text-white/40 truncate">{result.url}</p>
@@ -1076,7 +1077,7 @@ const AnalyzePage: React.FC = () => {
               onClick={() => switchToTab('results')}
               className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
                 resultTabView === 'results'
-                  ? 'bg-cyan-500/15 border border-cyan-400/30 text-cyan-200'
+                  ? 'bg-[#22ff6e]/15 border border-[#22ff6e]/30 text-[#dfffe9]'
                   : 'text-white/50 hover:text-white/75'
               }`}
             >
@@ -1122,44 +1123,51 @@ const AnalyzePage: React.FC = () => {
       </div>
 
       {/* Tab content */}
-      {resultTabView === 'replay' && hasSeenResults ? (
-        <AnalyzeCognitionView
-          loading={false}
-          step="complete"
-          result={result}
-          error={null}
-          onSubmit={(urlInput: string) => {
-            setUrl(urlInput);
-            handleAnalyze(urlInput);
-          }}
-          onReset={handleResetToIdle}
-          onExitReplay={() => switchToTab('results')}
-          timelineScanId={result.timeline_scan_id || progress.requestId}
-          timelineEvents={timelineEvents}
-        />
-      ) : (
-        <ScanResultScreen
-          result={result}
-          tier={userTier}
-          onRerunAudit={() => {
-            setUrl(result.url || '');
-            void handleAnalyze(result.url || '');
-          }}
-        />
-      )}
-
-      {/* Share row */}
-      {resultTabView === 'results' && (
-        <div className="rounded-xl border border-white/10 bg-[#0d111c]/60 p-4">
-          <ShareButtons
-            url={result.url}
-            score={result.visibility_score}
-            analyzedAt={result.analyzed_at}
-            auditId={result.audit_id}
-            title="AI Visibility Audit"
-          />
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {resultTabView === 'replay' && hasSeenResults ? (
+          <motion.div
+            key="replay"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+          >
+            <AnalyzeCognitionView
+              loading={false}
+              step="complete"
+              result={result}
+              error={null}
+              onSubmit={(urlInput: string) => {
+                setUrl(urlInput);
+                handleAnalyze(urlInput);
+              }}
+              onReset={handleResetToIdle}
+              onExitReplay={() => switchToTab('results')}
+              timelineScanId={result.timeline_scan_id || progress.requestId}
+              timelineEvents={timelineEvents}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="results"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+          >
+            <ScanResultScreen
+              result={result}
+              tier={userTier}
+              onRerunAudit={() => {
+                setUrl(result.url || '');
+                void handleAnalyze(result.url || '');
+              }}
+              auditId={result.audit_id}
+              analyzedAt={result.analyzed_at}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -1468,7 +1476,7 @@ function _LegacyRender_UNUSED() {
                 <button
                   onClick={handleAnalyze}
                   disabled={!canAnalyze}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-400 px-6 py-4 text-sm font-semibold text-slate-950 transition-all hover:bg-orange-300 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] px-6 py-4 text-sm font-semibold text-[#08110c] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {loading ? (
                     <>
@@ -1507,11 +1515,11 @@ function _LegacyRender_UNUSED() {
               </div>
               <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-charcoal">
                 <div
-                  className={`h-2 transition-all duration-700 ease-out ${getProgressTone(progress.percent) === 'good' ? 'bg-gradient-to-r from-emerald-300/80 to-emerald-200/60' : 'bg-gradient-to-r from-cyan-400/40 to-white/18'}`}
+                  className={`h-2 transition-all duration-700 ease-out ${getProgressTone(progress.percent) === 'good' ? 'bg-gradient-to-r from-emerald-300/80 to-emerald-200/60' : 'bg-gradient-to-r from-[#22ff6e]/45 to-[#ffcf70]/22'}`}
                   style={{ width: `${progress.percent}%` }}
                 />
               </div>
-              <div className="mt-2 text-xs text-cyan-100/80">
+              <div className="mt-2 text-xs text-[#dfffe9]/80">
                 {getProgressNarrative(progress.percent)}
               </div>
 
@@ -1536,7 +1544,7 @@ function _LegacyRender_UNUSED() {
                       key={step.key}
                       className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-all duration-500 ease-out ${
                         step.status === 'active'
-                          ? 'border border-cyan-400/20 bg-charcoal scale-[1.01] shadow-sm shadow-cyan-500/5'
+                          ? 'border border-[#22ff6e]/20 bg-charcoal scale-[1.01] shadow-sm shadow-[#22ff6e]/5'
                           : step.status === 'completed'
                             ? 'opacity-70'
                             : 'opacity-30'
@@ -1549,7 +1557,7 @@ function _LegacyRender_UNUSED() {
                       {step.status === 'completed' ? (
                         <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400 transition-transform duration-300" />
                       ) : step.status === 'active' ? (
-                        <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.4)]" />
+                        <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-[#22ff6e] shadow-[0_0_6px_rgba(34,255,110,0.35)]" />
                       ) : (
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/15" />
                       )}
@@ -1565,7 +1573,7 @@ function _LegacyRender_UNUSED() {
                         {step.label}
                       </span>
                       {step.status === 'active' && (
-                        <span className="ml-auto text-[10px] text-cyan-300/60 animate-pulse">
+                        <span className="ml-auto text-[10px] text-[#22ff6e]/60 animate-pulse">
                           running
                         </span>
                       )}
@@ -1667,7 +1675,7 @@ function _LegacyRender_UNUSED() {
                     onClick={() => setResultView('summary')}
                     className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
                       resultView === 'summary'
-                        ? 'bg-cyan-400/15 text-cyan-100'
+                        ? 'bg-[#22ff6e]/15 text-[#dfffe9]'
                         : 'text-white/60 hover:text-white'
                     }`}
                   >
@@ -1678,7 +1686,7 @@ function _LegacyRender_UNUSED() {
                     onClick={() => setResultView('technical')}
                     className={`rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
                       resultView === 'technical'
-                        ? 'bg-cyan-400/15 text-cyan-100'
+                        ? 'bg-[#22ff6e]/15 text-[#dfffe9]'
                         : 'text-white/60 hover:text-white'
                     }`}
                   >
@@ -1721,21 +1729,21 @@ function _LegacyRender_UNUSED() {
                 </div>
               )}
 
-              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-                <div className="text-[11px] uppercase tracking-wide text-cyan-200">
+              <div className="rounded-2xl border border-[#22ff6e]/20 bg-[#22ff6e]/10 p-4">
+                <div className="text-[11px] uppercase tracking-wide text-[#dfffe9]">
                   Before / After proof mode
                 </div>
 
                 {!demoBaseline && (
                   <div className="mt-2 space-y-2">
-                    <p className="text-xs text-cyan-100/80">
+                    <p className="text-xs text-[#dfffe9]/80">
                       Set this audit as your baseline, apply a fix, then rerun the same URL to show
                       measurable lift.
                     </p>
                     <button
                       type="button"
                       onClick={saveCurrentAsDemoBaseline}
-                      className="rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/20 transition-colors"
+                      className="rounded-xl border border-[#22ff6e]/35 bg-[#22ff6e]/15 px-3 py-2 text-xs font-semibold text-[#dfffe9] hover:bg-[#22ff6e]/20 transition-colors"
                     >
                       Save as baseline (Before)
                     </button>
@@ -1744,7 +1752,7 @@ function _LegacyRender_UNUSED() {
 
                 {demoBaseline && !baselineDelta && (
                   <div className="mt-2 space-y-2">
-                    <p className="text-xs text-cyan-100/80">
+                    <p className="text-xs text-[#dfffe9]/80">
                       Baseline exists for <span className="font-semibold">{demoBaseline.url}</span>.
                       Re-audit that same target to unlock delta proof.
                     </p>
@@ -1752,7 +1760,7 @@ function _LegacyRender_UNUSED() {
                       <button
                         type="button"
                         onClick={saveCurrentAsDemoBaseline}
-                        className="rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/20 transition-colors"
+                        className="rounded-xl border border-[#22ff6e]/35 bg-[#22ff6e]/15 px-3 py-2 text-xs font-semibold text-[#dfffe9] hover:bg-[#22ff6e]/20 transition-colors"
                       >
                         Replace baseline
                       </button>
@@ -1796,7 +1804,7 @@ function _LegacyRender_UNUSED() {
                         {baselineDelta.categoryDeltas.map((row) => (
                           <div
                             key={row.label}
-                            className="flex items-center justify-between text-xs text-cyan-100/85"
+                            className="flex items-center justify-between text-xs text-[#dfffe9]/85"
                           >
                             <span className="truncate pr-3">{row.label}</span>
                             <span className={row.delta >= 0 ? 'text-emerald-200' : 'text-rose-200'}>
@@ -1812,7 +1820,7 @@ function _LegacyRender_UNUSED() {
                       <button
                         type="button"
                         onClick={saveCurrentAsDemoBaseline}
-                        className="rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/20 transition-colors"
+                        className="rounded-xl border border-[#22ff6e]/35 bg-[#22ff6e]/15 px-3 py-2 text-xs font-semibold text-[#dfffe9] hover:bg-[#22ff6e]/20 transition-colors"
                       >
                         Promote current as new baseline
                       </button>

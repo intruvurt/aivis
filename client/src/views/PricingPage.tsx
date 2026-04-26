@@ -1086,7 +1086,7 @@ export default function PricingPage() {
                 Free tier live now
               </span>
               {canStartTrial && (
-                <span className="px-2.5 py-1 rounded-full border border-cyan-300/35 bg-cyan-500/12 text-cyan-200 font-black tracking-[0.1em] uppercase">
+                <span className="px-2.5 py-1 rounded-full border border-[#22ff6e]/35 bg-[#22ff6e]/12 text-[#dfffe9] font-black tracking-[0.1em] uppercase">
                   14-day Signal trial available
                 </span>
               )}
@@ -1108,7 +1108,7 @@ export default function PricingPage() {
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-cyan-400/70" />
+            <Zap className="w-3.5 h-3.5 text-[#22ff6e]/70" />
             {avgScore ? `${avgScore}/100` : '…'} avg visibility score
           </span>
           <span className="text-white/15">|</span>
@@ -1118,7 +1118,7 @@ export default function PricingPage() {
           </span>
           <span className="text-white/15">|</span>
           <span className="flex items-center gap-1.5">
-            <CreditCard className="w-3.5 h-3.5 text-violet-400/70" />
+            <CreditCard className="w-3.5 h-3.5 text-[#ffb830]/70" />
             Stripe-secured billing
           </span>
         </div>

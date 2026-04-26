@@ -61,7 +61,7 @@ type ToolGroup = {
 const RESEARCH_GROUPS: ToolGroup[] = [
   {
     heading: 'Analysis',
-    accent: 'text-cyan-400',
+    accent: 'text-[#22ff6e]',
     links: [
       {
         to: '/app/analytics',
@@ -69,7 +69,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
         icon: BarChart3,
         desc: 'Score history & trends',
         minTier: 'observer',
-        color: 'text-cyan-400',
+        color: 'text-[#22ff6e]',
       },
       {
         to: '/app/reports',
@@ -77,7 +77,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
         icon: FileText,
         desc: 'Saved audit reports',
         minTier: 'observer',
-        color: 'text-cyan-300',
+        color: 'text-[#c8ffd8]',
       },
       {
         to: '/app/site-crawl',
@@ -85,7 +85,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
         icon: Layers,
         desc: 'Multi-page SEO crawl',
         minTier: 'alignment',
-        color: 'text-cyan-500',
+        color: 'text-[#22ff6e]',
       },
     ],
   },
@@ -125,7 +125,7 @@ const RESEARCH_GROUPS: ToolGroup[] = [
 const AI_TOOL_GROUPS: ToolGroup[] = [
   {
     heading: 'AI Intelligence',
-    accent: 'text-violet-400',
+    accent: 'text-[#ffb830]',
     links: [
       {
         to: '/app/citations',
@@ -133,7 +133,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
         icon: Eye,
         desc: 'AI citation tracking',
         minTier: 'alignment',
-        color: 'text-violet-400',
+        color: 'text-[#ffb830]',
       },
       {
         to: '/app/reverse-engineer',
@@ -141,7 +141,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
         icon: AnswerDecompilerIcon,
         desc: 'Deconstruct AI answers',
         minTier: 'alignment',
-        color: 'text-violet-300',
+        color: 'text-[#ffd27a]',
       },
       {
         to: '/app/prompt-intelligence',
@@ -149,7 +149,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
         icon: Brain,
         desc: 'AI query pattern analysis',
         minTier: 'alignment',
-        color: 'text-violet-200',
+        color: 'text-[#ffefc5]',
       },
       {
         to: '/app/answer-presence',
@@ -157,7 +157,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
         icon: Globe,
         desc: 'AI answer inclusion tracking',
         minTier: 'alignment',
-        color: 'text-cyan-400',
+        color: 'text-[#22ff6e]',
       },
       {
         to: '/app/brand-integrity',
@@ -193,7 +193,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
   },
   {
     heading: 'Platform',
-    accent: 'text-indigo-400',
+    accent: 'text-[#c8ffd8]',
     links: [
       {
         to: '/app/mcp',
@@ -201,7 +201,7 @@ const AI_TOOL_GROUPS: ToolGroup[] = [
         icon: Cpu,
         desc: 'AI agent tool server',
         minTier: 'alignment',
-        color: 'text-indigo-400',
+        color: 'text-[#c8ffd8]',
       },
       {
         to: '/app/gsc',
@@ -228,14 +228,14 @@ type DocsLink = {
 };
 
 const DOCS_LINKS: DocsLink[] = [
-  { to: '/guide', label: 'Guide', icon: BookOpen, color: 'text-sky-300' },
-  { to: '/api-docs', label: 'API Docs', icon: Cpu, color: 'text-indigo-300' },
-  { to: '/blogs', label: 'Blog', icon: FileText, color: 'text-cyan-300' },
-  { to: '/methodology', label: 'Methodology', icon: FlaskConical, color: 'text-violet-300' },
+  { to: '/guide', label: 'Guide', icon: BookOpen, color: 'text-[#c8ffd8]' },
+  { to: '/api-docs', label: 'API Docs', icon: Cpu, color: 'text-[#ffb830]' },
+  { to: '/blogs', label: 'Blog', icon: FileText, color: 'text-[#22ff6e]' },
+  { to: '/methodology', label: 'Methodology', icon: FlaskConical, color: 'text-[#ffd27a]' },
   { to: '/help', label: 'Help Center', icon: HelpCircle, color: 'text-emerald-300' },
   { to: '/compliance', label: 'Compliance & Security', icon: Shield, color: 'text-rose-300' },
-  { to: '/insights', label: 'Insights', icon: Eye, color: 'text-cyan-300' },
-  { to: '/app/benchmarks', label: 'Benchmarks', icon: Target, color: 'text-orange-300' },
+  { to: '/insights', label: 'Insights', icon: Eye, color: 'text-[#22ff6e]' },
+  { to: '/app/benchmarks', label: 'Benchmarks', icon: Target, color: 'text-[#ffb830]' },
   { to: '/changelog', label: 'Changelog', icon: FileText, color: 'text-white/70' },
   { to: '/compare', label: 'Compare', icon: BarChart3, color: 'text-indigo-300' },
   {
@@ -257,9 +257,9 @@ type UserMenuLink = {
 
 /** Extra links moved into the user menu for discoverability */
 const USER_EXTRA_LINKS: UserMenuLink[] = [
-  { to: '/about', label: 'About', icon: BookOpen, color: 'text-sky-300' },
-  { to: '/support', label: 'Support', icon: Users, color: 'text-emerald-300' },
-  { to: '/integrations', label: 'Integrations', icon: Target, color: 'text-violet-300' },
+  { to: '/about', label: 'About', icon: BookOpen, color: 'text-[#c8ffd8]' },
+  { to: '/support', label: 'Support', icon: Users, color: 'text-[#22ff6e]' },
+  { to: '/integrations', label: 'Integrations', icon: Target, color: 'text-[#ffb830]' },
 ];
 
 /* ── Compact workspace switcher ──────────────── */
@@ -290,22 +290,22 @@ function WorkspaceSwitcher() {
     <div className="relative hidden md:block" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors text-xs"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 social-pill bg-[rgba(17,24,20,0.82)] hover:bg-[rgba(21,29,24,0.96)] transition-colors text-xs"
         title="Switch workspace"
         aria-label="Switch workspace"
-        aria-expanded={open}
+        aria-expanded={open ? 'true' : 'false'}
       >
-        <Layers className="w-3.5 h-3.5 text-cyan-400/70" />
-        <span className="text-white/70 truncate max-w-[100px]">
+        <Layers className="w-3.5 h-3.5 text-[#22ff6e]/70" />
+        <span className="text-[color:var(--text-dim)] truncate max-w-[100px]">
           {active?.workspaceName || 'Workspace'}
         </span>
         <ChevronDown
-          className={`w-3 h-3 text-white/40 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-3 h-3 text-[color:var(--text-muted)] transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
       {open && (
-        <div className="absolute right-0 mt-1.5 w-56 bg-gradient-to-b from-[#2d3548] to-[#272f3e] border border-white/12 rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-[200]">
-          <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+        <div className="absolute right-0 mt-1.5 w-56 bg-[rgba(13,18,16,0.98)] border border-[color:var(--border)] rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-[200]">
+          <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--text-muted)]">
             Workspaces
           </p>
           {workspaces.map((w) => (
@@ -317,8 +317,8 @@ function WorkspaceSwitcher() {
               }}
               className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
                 w.workspaceId === activeWorkspaceId
-                  ? 'text-cyan-300 bg-cyan-500/10'
-                  : 'text-white/70 hover:text-white hover:bg-white/5'
+                  ? 'text-[#dfffe9] bg-[#22ff6e]/10'
+                  : 'text-[color:var(--text-dim)] hover:text-[color:var(--text)] hover:bg-[rgba(17,24,20,0.92)]'
               }`}
             >
               <Layers className="w-3.5 h-3.5 flex-shrink-0" />
@@ -430,48 +430,48 @@ export default function TopNav() {
     observer: {
       label: 'Observer',
       className:
-        'bg-gradient-to-r from-charcoal-deep via-charcoal to-charcoal-light border border-white/25 text-white',
-      navActive: 'bg-emerald-500/20 border border-emerald-300/45 text-emerald-100',
-      navHover: 'hover:bg-emerald-500/12 hover:text-emerald-100',
-      menuBorder: 'border-emerald-300/40',
-      mobileMenuBorder: 'border-emerald-300/45',
+        'bg-[linear-gradient(135deg,rgba(17,24,20,0.96),rgba(13,18,16,0.98))] border border-[color:var(--border)] text-[color:var(--text)]',
+      navActive: 'bg-[#22ff6e]/12 border border-[#22ff6e]/35 text-[#dfffe9]',
+      navHover: 'hover:bg-[#22ff6e]/8 hover:text-[#dfffe9]',
+      menuBorder: 'border-[#2d4038]',
+      mobileMenuBorder: 'border-[#22ff6e]/45',
       tierImage: '/observer.png',
     },
     alignment: {
       label: 'Alignment',
       className:
-        'bg-gradient-to-r from-[#f97316] via-[#fbbf24] to-[#22d3ee] border border-white/25 text-charcoal-deep',
-      navActive: 'bg-indigo-500/20 border border-indigo-300/45 text-indigo-100',
-      navHover: 'hover:bg-indigo-500/12 hover:text-indigo-100',
-      menuBorder: 'border-indigo-300/40',
-      mobileMenuBorder: 'border-indigo-300/45',
+        'bg-[linear-gradient(135deg,rgba(255,184,48,0.18),rgba(34,255,110,0.12))] border border-[#ffb830]/25 text-[#f5ffef]',
+      navActive: 'bg-[#ffb830]/14 border border-[#ffb830]/35 text-[#ffe0a3]',
+      navHover: 'hover:bg-[#ffb830]/10 hover:text-[#ffe0a3]',
+      menuBorder: 'border-[#2d4038]',
+      mobileMenuBorder: 'border-[#ffb830]/45',
       tierImage: null,
     },
     signal: {
       label: 'Signal',
       className:
-        'bg-gradient-to-r from-[#0a6ea8] via-[#118ad1] to-[#37a6de] border border-white/25 text-white',
-      navActive: 'bg-cyan-500/20 border border-cyan-300/45 text-cyan-100',
-      navHover: 'hover:bg-cyan-500/12 hover:text-cyan-100',
-      menuBorder: 'border-cyan-300/40',
-      mobileMenuBorder: 'border-cyan-300/45',
+        'bg-[linear-gradient(135deg,rgba(34,255,110,0.18),rgba(13,107,47,0.34))] border border-[#22ff6e]/25 text-[#e8f0ea]',
+      navActive: 'bg-[#22ff6e]/12 border border-[#22ff6e]/35 text-[#dfffe9]',
+      navHover: 'hover:bg-[#22ff6e]/8 hover:text-[#dfffe9]',
+      menuBorder: 'border-[#2d4038]',
+      mobileMenuBorder: 'border-[#22ff6e]/45',
       tierImage: '/signal.png',
     },
     scorefix: {
       label: 'Score Fix',
       className:
-        'bg-gradient-to-r from-fuchsia-600 via-violet-600 to-pink-500 border border-white/25 text-white',
-      navActive: 'bg-amber-500/20 border border-amber-300/45 text-amber-100',
-      navHover: 'hover:bg-amber-500/12 hover:text-amber-100',
-      menuBorder: 'border-amber-300/40',
-      mobileMenuBorder: 'border-amber-300/45',
+        'bg-[linear-gradient(135deg,rgba(255,184,48,0.18),rgba(255,87,87,0.16))] border border-[#ffb830]/25 text-[#fff6dc]',
+      navActive: 'bg-[#ffb830]/14 border border-[#ffb830]/35 text-[#ffe0a3]',
+      navHover: 'hover:bg-[#ffb830]/10 hover:text-[#ffe0a3]',
+      menuBorder: 'border-[#2d4038]',
+      mobileMenuBorder: 'border-[#ffb830]/45',
       tierImage: '/resell--aivis-outputs.png',
     },
   }[tierKey];
 
   const navActiveClass = `${tierTheme.navActive}`;
-  const navInactiveClass = `text-white/65 ${tierTheme.navHover}`;
-  const menuPanelClass = `bg-charcoal-deep border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
+  const navInactiveClass = `text-[color:var(--text-dim)] ${tierTheme.navHover}`;
+  const menuPanelClass = `bg-[rgba(13,18,16,0.98)] border ${tierTheme.menuBorder} rounded-xl shadow-2xl shadow-black/25 overflow-hidden`;
   const dropdownScrollClass =
     'max-h-[min(70vh,calc(100vh-5.5rem))] overflow-y-auto overscroll-contain';
 
@@ -511,7 +511,7 @@ export default function TopNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="sticky top-0 z-[90] border-b border-white/8 bg-charcoal-light overflow-visible"
+      className="sticky top-0 z-[90] border-b border-[color:var(--border)] bg-[rgba(13,18,16,0.94)] backdrop-blur-md overflow-visible"
     >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div className="flex items-center gap-2 shrink-0">
@@ -524,11 +524,13 @@ export default function TopNav() {
               height={28}
               className="h-7 w-7 shrink-0 rounded-lg object-contain"
             />
-            <span className="text-[15px] font-bold text-white tracking-tight">AiVIS.biz</span>
+            <span className="text-[15px] font-bold text-[color:var(--text)] tracking-tight">
+              AiVIS.biz
+            </span>
           </Link>
 
           <span
-            className="hidden min-[1700px]:inline-flex items-center px-3 py-1 rounded-md border border-white/10 bg-charcoal/40 text-[10px] xl:text-[11px] text-white/70 tracking-[0.08em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+            className="hidden min-[1700px]:inline-flex items-center px-3 py-1 rounded-md border border-[color:var(--border)] bg-[rgba(17,24,20,0.82)] text-[10px] xl:text-[11px] text-[color:var(--text-dim)] tracking-[0.08em] uppercase whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
             title="CITE LEDGER — BRAG Evidence-Linked Scores"
           >
             CITE LEDGER — BRAG Evidence-Linked Scores
@@ -559,7 +561,7 @@ export default function TopNav() {
                 type="button"
                 onClick={() => setResearchOpen(!researchOpen)}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isResearchActive ? navActiveClass : navInactiveClass}`}
-                aria-expanded={researchOpen}
+                aria-expanded={researchOpen ? 'true' : 'false'}
                 aria-haspopup="menu"
               >
                 {t('nav.research')}
@@ -635,7 +637,7 @@ export default function TopNav() {
                 type="button"
                 onClick={() => setAiToolsOpen(!aiToolsOpen)}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isAiToolActive ? navActiveClass : navInactiveClass}`}
-                aria-expanded={aiToolsOpen}
+                aria-expanded={aiToolsOpen ? 'true' : 'false'}
                 aria-haspopup="menu"
               >
                 {t('nav.aiTools')}
@@ -711,7 +713,7 @@ export default function TopNav() {
                 type="button"
                 onClick={() => setDocsOpen(!docsOpen)}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors ${isDocsActive ? navActiveClass : navInactiveClass}`}
-                aria-expanded={docsOpen}
+                aria-expanded={docsOpen ? 'true' : 'false'}
                 aria-haspopup="menu"
               >
                 {t('nav.docs')}
@@ -819,7 +821,7 @@ export default function TopNav() {
             }}
             className="lg:hidden p-2 text-white/65 hover:text-white transition-colors"
             aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
+            aria-expanded={mobileOpen ? 'true' : 'false'}
             aria-controls="mobile-nav-menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -849,7 +851,7 @@ export default function TopNav() {
                 <button
                   type="button"
                   onClick={() => setNotificationsOpen((prev) => !prev)}
-                  className="relative p-2 rounded-lg border border-white/10 bg-charcoal-light/50 text-white/80 hover:text-white hover:bg-charcoal-light transition-colors"
+                  className="relative p-2 rounded-lg border border-[color:var(--border)] bg-[rgba(17,24,20,0.82)] text-[color:var(--text-dim)] hover:text-[color:var(--text)] hover:bg-[rgba(21,29,24,0.96)] transition-colors"
                   aria-label="Notifications"
                   title={
                     unreadNotifications > 0
@@ -950,10 +952,10 @@ export default function TopNav() {
                 <button
                   type="button"
                   aria-label="User menu"
-                  aria-expanded={menuOpen}
+                  aria-expanded={menuOpen ? 'true' : 'false'}
                   aria-haspopup="menu"
                   onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex items-center gap-2 p-1 pr-3 social-pill bg-charcoal-light/60 hover:bg-charcoal-light transition-colors"
+                  className="flex items-center gap-2 p-1 pr-3 social-pill bg-[rgba(17,24,20,0.82)] hover:bg-[rgba(21,29,24,0.96)] transition-colors"
                 >
                   <div className="w-7 h-7 social-icon-chip bg-gradient-to-br from-white/28 to-white/14 flex items-center justify-center">
                     {avatarUrl ? (
@@ -1211,9 +1213,9 @@ export default function TopNav() {
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg border transition-colors ${
                   mobileResearchOpen || isResearchActive
                     ? navActiveClass
-                    : `text-white/90 bg-charcoal-light/70 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
+                    : `text-[color:var(--text)] bg-[rgba(17,24,20,0.82)] ${tierTheme.menuBorder} hover:text-[color:var(--text)] ${tierTheme.navHover}`
                 }`}
-                aria-expanded={mobileResearchOpen}
+                aria-expanded={mobileResearchOpen ? 'true' : 'false'}
               >
                 <span className="font-semibold tracking-wide">{t('nav.research')}</span>
                 <ChevronDown
@@ -1275,9 +1277,9 @@ export default function TopNav() {
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg border transition-colors ${
                   mobileAiToolsOpen || isAiToolActive
                     ? navActiveClass
-                    : `text-white/90 bg-charcoal-light/70 ${tierTheme.menuBorder} hover:text-white ${tierTheme.navHover}`
+                    : `text-[color:var(--text)] bg-[rgba(17,24,20,0.82)] ${tierTheme.menuBorder} hover:text-[color:var(--text)] ${tierTheme.navHover}`
                 }`}
-                aria-expanded={mobileAiToolsOpen}
+                aria-expanded={mobileAiToolsOpen ? 'true' : 'false'}
               >
                 <span className="font-semibold tracking-wide">{t('nav.aiTools')}</span>
                 <ChevronDown
@@ -1339,9 +1341,9 @@ export default function TopNav() {
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg border transition-colors ${
                   mobileDocsOpen || isDocsActive
                     ? navActiveClass
-                    : `text-white/75 bg-charcoal-light/50 border-white/10 hover:text-white ${tierTheme.navHover}`
+                    : `text-[color:var(--text-dim)] bg-[rgba(17,24,20,0.82)] border-[color:var(--border)] hover:text-[color:var(--text)] ${tierTheme.navHover}`
                 }`}
-                aria-expanded={mobileDocsOpen}
+                aria-expanded={mobileDocsOpen ? 'true' : 'false'}
               >
                 <span className="font-semibold tracking-wide">{t('nav.docs')}</span>
                 <ChevronDown

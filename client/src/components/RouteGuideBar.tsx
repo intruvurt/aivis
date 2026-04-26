@@ -23,7 +23,7 @@ export default function RouteGuideBar({ guide }: RouteGuideBarProps) {
           <h2 className="route-guide-title">{guide.title}</h2>
           <p className="route-guide-summary">{guide.summary}</p>
           <p className="route-guide-next">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
+            <Sparkles className="h-3.5 w-3.5 text-[#22ff6e]" aria-hidden="true" />
             <span>{guide.nextStep}</span>
           </p>
           {guide.instructions?.length ? (
@@ -31,7 +31,7 @@ export default function RouteGuideBar({ guide }: RouteGuideBarProps) {
               {guide.instructions.slice(0, 3).map((step) => (
                 <li key={step} className="flex items-start gap-2">
                   <span
-                    className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-300/70"
+                    className="mt-1 h-1.5 w-1.5 rounded-full bg-[#22ff6e]/70"
                     aria-hidden="true"
                   />
                   <span>{step}</span>

@@ -307,7 +307,7 @@ import {
   extractEvidenceFromScrape,
   enrichEvidenceFromAnalysis,
 } from "./services/evidenceExtractor.js";
-import { scoreEvidence } from "./services/scoringEngine.js";
+import { scoreEvidence, computeCitationDivergence } from "./services/scoringEngine.js";
 import { buildPreviewResult } from "./services/previewScanner.js";
 import { runScan } from "./services/scanOrchestrator.js";
 import { appendScanEvent, readScanEvents } from "./services/scanEventStream.js";
@@ -13444,6 +13444,22 @@ For each recommendation:
                     : undefined,
                 }).then((result) => {
                   (fullPayload as Record<string, unknown>).answer_presence = result;
+
+                  // Compute citation divergence: gap between on-page technical
+                  // score and actual off-page citation behaviour.
+                  try {
+                    const divergence = computeCitationDivergence(finalVisibilityScore, result);
+                    (fullPayload as Record<string, unknown>).citation_divergence = divergence;
+                    if (divergence.direction !== 'aligned') {
+                      console.log(
+                        `[${requestId}] Citation divergence: ${divergence.direction} delta=${divergence.divergence_delta} ` +
+                        `(on_page=${divergence.on_page_score}, off_page=${divergence.off_page_score}, confidence=${divergence.confidence})`,
+                      );
+                    }
+                  } catch (divErr) {
+                    console.warn(`[${requestId}] Citation divergence computation failed (non-fatal):`, (divErr as Error)?.message);
+                  }
+
                   console.log(
                     `[${requestId}] Answer presence: ${result.mentions_found}/${result.queries_tested} queries mentioned, score=${result.answer_presence_score}`,
                   );

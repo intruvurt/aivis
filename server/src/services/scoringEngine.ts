@@ -15,6 +15,8 @@ import type {
   ScoringResult,
   CategoryScore,
   FixClass,
+  CitationDivergenceSignal,
+  AnswerPresenceResult,
 } from '../../../shared/types.js';
 
 // ─── Category weights (sum = 1.0) ──────────────────────────────────────────
@@ -240,4 +242,121 @@ function buildReasoning(
   if (score >= 90) return `Strong ${category.replace(/_/g, ' ')} - ${present}/${total} evidence items verified.`;
   if (score >= 60) return `Acceptable ${category.replace(/_/g, ' ')} - ${present}/${total} items present. Missing: ${missing.join(', ')}.`;
   return `Weak ${category.replace(/_/g, ' ')} - only ${present}/${total} items present. Critical gaps: ${missing.join(', ')}.`;
+}
+
+// ─── Citation Divergence ───────────────────────────────────────────────────
+//
+// Measures the gap between on-page technical extractability (schema, structure,
+// meta tags) and actual off-page citation behaviour observed in AI systems.
+//
+// The "Peec.ai effect": a brand with near-zero on-page schema can still appear
+// in top-10 AI answers because AI models synthesise brand identity from the
+// aggregate external web footprint — G2, LinkedIn, press, community —
+// not exclusively from the homepage itself.
+
+const DIVERGENCE_THRESHOLD = 20; // pts — below this = "aligned"
+
+/**
+ * Compute a citation divergence signal from the on-page technical score
+ * and the off-page answer presence evidence.
+ *
+ * Pure function — no side effects, no I/O.
+ */
+export function computeCitationDivergence(
+  onPageScore: number,
+  answerPresence: AnswerPresenceResult,
+): CitationDivergenceSignal {
+  // Off-page score: weighted composite from three answer_presence sub-scores.
+  //   authority_alignment (0.40) — presence in authoritative, high-rank sources
+  //   citation_coverage   (0.40) — fraction of queries where entity has a citation
+  //   answer_presence     (0.20) — composite AI answer presence
+  const offPageScore = Math.round(
+    answerPresence.authority_alignment_score * 0.40 +
+    answerPresence.citation_coverage_score * 0.40 +
+    answerPresence.answer_presence_score * 0.20,
+  );
+
+  const delta = offPageScore - onPageScore;
+
+  // Confidence: higher when more queries tested and mentions found.
+  // Drops towards 0 if we have very few data points.
+  const queriesTested = answerPresence.queries_tested ?? 0;
+  const mentionsFraction = queriesTested > 0
+    ? (answerPresence.mentions_found ?? 0) / queriesTested
+    : 0;
+  const confidence = Math.min(
+    1,
+    Math.max(0, (queriesTested / 10) * 0.6 + mentionsFraction * 0.4),
+  );
+
+  // Direction classification
+  let direction: CitationDivergenceSignal['direction'];
+  if (delta >= DIVERGENCE_THRESHOLD) {
+    direction = 'off_page_dominant';
+  } else if (delta <= -DIVERGENCE_THRESHOLD) {
+    direction = 'on_page_dominant';
+  } else {
+    direction = 'aligned';
+  }
+
+  // Dominant signal
+  let dominantSignal: CitationDivergenceSignal['dominant_signal'];
+  if (direction === 'off_page_dominant') {
+    dominantSignal = 'external_authority';
+  } else if (onPageScore >= 60 && direction === 'on_page_dominant') {
+    dominantSignal = 'structured_data';
+  } else if (onPageScore >= 60) {
+    dominantSignal = 'content_quality';
+  } else {
+    dominantSignal = 'mixed';
+  }
+
+  // Plain-language explanation
+  let explanation: string;
+  if (direction === 'off_page_dominant') {
+    const absDelta = Math.abs(delta);
+    if (absDelta >= 40) {
+      explanation =
+        `This site is being cited in AI answers despite weak on-page structure. ` +
+        `Off-page authority (press coverage, review platforms, community mentions) is ` +
+        `overriding the ${onPageScore}/100 technical score by a large margin. ` +
+        `AI models are synthesising its identity from the external web footprint, not the homepage.`;
+    } else {
+      explanation =
+        `Off-page signals are outperforming on-page structure by ${absDelta} points. ` +
+        `The site has meaningful external visibility (reviews, mentions, press) that ` +
+        `AI systems are picking up despite gaps in schema and structured data.`;
+    }
+  } else if (direction === 'on_page_dominant') {
+    explanation =
+      `On-page structure is strong but external citation signals are weak. ` +
+      `The technical foundation is in place — focus now shifts to building the ` +
+      `external footprint (reviews, press, community) that drives AI citation frequency.`;
+  } else {
+    explanation =
+      `On-page and off-page signals are roughly aligned. ` +
+      `Citation behaviour is consistent with what the technical score would predict.`;
+  }
+
+  // Scoring context note
+  let scoringContext: string | undefined;
+  if (direction === 'off_page_dominant') {
+    scoringContext =
+      `The technical score (${onPageScore}/100) accurately reflects on-page extractability ` +
+      `but understates real-world AI citation frequency. A separate off-page confidence ` +
+      `score (${offPageScore}/100) better reflects how often this brand appears in AI answers. ` +
+      `Both scores are useful: on-page shows what to fix structurally; off-page shows ` +
+      `the citation reality AI systems are operating with today.`;
+  }
+
+  return {
+    on_page_score: onPageScore,
+    off_page_score: offPageScore,
+    divergence_delta: delta,
+    direction,
+    confidence: Math.round(confidence * 100) / 100,
+    explanation,
+    dominant_signal: dominantSignal,
+    ...(scoringContext ? { scoring_context: scoringContext } : {}),
+  };
 }

@@ -81,9 +81,9 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
   }, [location.pathname, clear]);
 
   const kindIcon = (kind: SearchResultKind) => {
-    if (kind === 'blog') return <FileText className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />;
-    if (kind === 'audit') return <BarChart3 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />;
-    return <Globe className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />;
+    if (kind === 'blog') return <FileText className="w-3.5 h-3.5 text-[#ffb830] flex-shrink-0" />;
+    if (kind === 'audit') return <BarChart3 className="w-3.5 h-3.5 text-[#22ff6e] flex-shrink-0" />;
+    return <Globe className="w-3.5 h-3.5 text-[#c8ffd8] flex-shrink-0" />;
   };
 
   const kindLabel = (kind: SearchResultKind) => {
@@ -124,7 +124,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
 
   return (
     <header
-      className="sticky top-0 z-30 h-16 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[linear-gradient(180deg,rgba(19,15,13,0.92),rgba(14,11,10,0.84))] backdrop-blur-xl border-b border-[#f4b860]/10 shadow-[0_1px_0_0_rgba(255,184,96,0.12),0_16px_36px_rgba(0,0,0,0.24)]"
+      className="sticky top-0 z-30 h-16 flex items-center justify-between gap-4 px-4 sm:px-6 bg-[linear-gradient(180deg,rgba(13,18,16,0.94),rgba(8,12,10,0.88))] backdrop-blur-xl border-b border-[color:var(--border)] shadow-[0_1px_0_0_rgba(34,255,110,0.08),0_16px_36px_rgba(0,0,0,0.24)]"
       role="banner"
       aria-label="App toolbar"
     >
@@ -142,7 +142,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Search */}
         <div className="relative flex-1 max-w-md" ref={wrapperRef}>
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[color:var(--text-muted)]"
             aria-hidden="true"
           />
           <input
@@ -153,26 +153,26 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             onKeyDown={onKeyDown}
             placeholder={t('topbar.searchAudits', 'Search audits, pages, blogs...')}
             aria-label={t('topbar.searchAudits', 'Search audits, pages, blogs')}
-            aria-expanded={isOpen}
+            aria-expanded={isOpen ? 'true' : 'false'}
             aria-controls="global-search-results"
             aria-activedescendant={activeIdx >= 0 ? `gsr-${activeIdx}` : undefined}
             role="combobox"
             autoComplete="off"
-            className="w-full h-10 pl-9 pr-3 rounded-2xl bg-white/[0.04] border border-[#f4b860]/12 text-sm text-[#fff4e6] placeholder:text-white/32 focus:outline-none focus:border-[#ff8a3d]/55 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#ff8a3d]/15 transition-all"
+            className="w-full h-10 pl-9 pr-3 rounded-2xl bg-[rgba(17,24,20,0.78)] border border-[color:var(--border)] text-sm text-[color:var(--text)] placeholder:text-[color:var(--text-muted)] focus:outline-none focus:border-[#22ff6e]/40 focus:bg-[rgba(21,29,24,0.96)] focus:ring-2 focus:ring-[#22ff6e]/10 transition-all"
           />
           {isOpen && results.length > 0 && (
             <ul
               id="global-search-results"
               role="listbox"
-              className="absolute top-full left-0 right-0 mt-2 max-h-80 overflow-y-auto rounded-2xl bg-[#120f0d] border border-[#f4b860]/14 shadow-xl shadow-black/40 z-50"
+              className="absolute top-full left-0 right-0 mt-2 max-h-80 overflow-y-auto rounded-2xl bg-[rgba(13,18,16,0.98)] border border-[color:var(--border)] shadow-xl shadow-black/40 z-50"
             >
               {results.map((r, i) => (
                 <li
                   key={`${r.kind}-${r.path}`}
                   id={`gsr-${i}`}
                   role="option"
-                  aria-selected={i === activeIdx}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 cursor-pointer text-sm transition-colors ${i === activeIdx ? 'bg-[#241b15] text-white' : 'text-white/72 hover:bg-[#211812] hover:text-white'}`}
+                  aria-selected={i === activeIdx ? 'true' : 'false'}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 cursor-pointer text-sm transition-colors ${i === activeIdx ? 'bg-[rgba(34,255,110,0.08)] text-[color:var(--text)]' : 'text-[color:var(--text-dim)] hover:bg-[rgba(17,24,20,0.92)] hover:text-[color:var(--text)]'}`}
                   onMouseDown={() => goTo(r)}
                   onMouseEnter={() => setActiveIdx(i)}
                 >
@@ -180,15 +180,17 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-medium">{r.label}</div>
                     {r.description && (
-                      <div className="truncate text-xs text-white/36">{r.description}</div>
+                      <div className="truncate text-xs text-[color:var(--text-muted)]">
+                        {r.description}
+                      </div>
                     )}
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider text-white/26 flex-shrink-0">
+                  <span className="text-[10px] uppercase tracking-wider text-[color:var(--text-muted)] flex-shrink-0">
                     {kindLabel(r.kind)}
                   </span>
                   {r.score != null && (
                     <span
-                      className={`text-xs font-mono flex-shrink-0 ${r.score >= 70 ? 'text-emerald-400' : r.score >= 40 ? 'text-amber-400' : 'text-red-400'}`}
+                      className={`text-xs font-mono flex-shrink-0 ${r.score >= 70 ? 'text-[#22ff6e]' : r.score >= 40 ? 'text-[#ffb830]' : 'text-[#ff8a7a]'}`}
                     >
                       {r.score}
                     </span>
@@ -198,7 +200,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             </ul>
           )}
           {isOpen && results.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl bg-[#120f0d] border border-[#f4b860]/14 shadow-xl shadow-black/40 z-50 px-4 py-3 text-sm text-white/40">
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl bg-[rgba(13,18,16,0.98)] border border-[color:var(--border)] shadow-xl shadow-black/40 z-50 px-4 py-3 text-sm text-[color:var(--text-muted)]">
               No results for &ldquo;{query}&rdquo;
             </div>
           )}
@@ -220,7 +222,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
               navigate('/app/analyze');
             }
           }}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[linear-gradient(135deg,#ffbe6f,#ff8a3d)] text-[#180f0a] text-xs font-semibold hover:brightness-110 transition-colors border border-[#ffd6a2]/30 shadow-[0_10px_24px_rgba(255,138,61,0.16)]"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] text-xs font-semibold hover:brightness-110 transition-colors border border-[#dfffe9]/30 shadow-[0_10px_24px_rgba(34,255,110,0.16)]"
         >
           <Search className="w-3.5 h-3.5" />
           {t('topbar.runAudit', 'Run Audit')}
@@ -229,7 +231,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Documentation */}
         <Link
           to="/app/api-docs"
-          className="p-2 rounded-xl text-white/48 hover:text-white hover:bg-white/[0.05] transition-colors"
+          className="p-2 rounded-xl text-[color:var(--text-muted)] hover:text-[color:var(--text)] hover:bg-[rgba(17,24,20,0.92)] transition-colors"
           title={t('topbar.documentation', 'Documentation')}
           aria-label={t('topbar.documentation', 'Documentation')}
         >
@@ -239,7 +241,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         {/* Notifications */}
         <Link
           to="/app/notifications"
-          className="relative p-2 rounded-xl text-white/48 hover:text-white hover:bg-white/[0.05] transition-colors"
+          className="relative p-2 rounded-xl text-[color:var(--text-muted)] hover:text-[color:var(--text)] hover:bg-[rgba(17,24,20,0.92)] transition-colors"
           aria-label={
             unreadCount > 0
               ? t('topbar.notificationsUnread', 'Notifications ({{count}} unread)', {
@@ -250,20 +252,20 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff8a3d] ring-2 ring-[#110d0b]" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ffb830] ring-2 ring-[#0b100d]" />
           )}
         </Link>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-[#f4b860]/12 mx-1" aria-hidden="true" />
+        <div className="w-px h-6 bg-[color:var(--border)] mx-1" aria-hidden="true" />
 
         {/* User */}
         <Link
           to="/app/settings"
-          className="flex items-center gap-2 p-1.5 rounded-xl text-white/58 hover:text-white hover:bg-white/[0.05] transition-colors"
+          className="flex items-center gap-2 p-1.5 rounded-xl text-[color:var(--text-dim)] hover:text-[color:var(--text)] hover:bg-[rgba(17,24,20,0.92)] transition-colors"
           aria-label={t('settings.title', 'User settings')}
         >
-          <div className="w-8 h-8 rounded-xl bg-[#181310] border border-[#f4b860]/12 flex items-center justify-center text-[11px] font-bold text-[#fff3df]">
+          <div className="w-8 h-8 rounded-xl bg-[rgba(17,24,20,0.96)] border border-[color:var(--border)] flex items-center justify-center text-[11px] font-bold text-[color:var(--text)]">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
@@ -285,7 +287,7 @@ export default function AppTopBar({ onMenuClick }: AppTopBarProps) {
             logout();
             navigate('/');
           }}
-          className="p-2 rounded-xl text-white/34 hover:text-[#ff8a7a] hover:bg-white/[0.05] transition-colors"
+          className="p-2 rounded-xl text-[color:var(--text-muted)] hover:text-[#ff8a7a] hover:bg-[rgba(17,24,20,0.92)] transition-colors"
           title={t('topbar.signOut', 'Sign out')}
           aria-label={t('topbar.signOut', 'Sign out')}
         >

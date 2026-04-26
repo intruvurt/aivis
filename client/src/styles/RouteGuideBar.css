@@ -4,8 +4,8 @@
  * ─────────────────────────────────────────────────────────────────────────── */
 
 .route-guide-shell {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.07), rgba(139, 92, 246, 0.05));
-  border: 1px solid rgba(6, 182, 212, 0.14);
+  background: linear-gradient(135deg, rgba(17, 24, 20, 0.96), rgba(13, 18, 16, 0.92));
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px 18px;
   margin-bottom: 20px;
@@ -25,9 +25,9 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(6, 182, 212, 0.9);
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  color: rgba(34, 255, 110, 0.9);
+  background: rgba(34, 255, 110, 0.08);
+  border: 1px solid rgba(34, 255, 110, 0.2);
   padding: 2px 8px;
   border-radius: 999px;
   line-height: 1.6;
@@ -38,9 +38,9 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(139, 92, 246, 0.9);
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: rgba(255, 184, 48, 0.95);
+  background: rgba(255, 184, 48, 0.08);
+  border: 1px solid rgba(255, 184, 48, 0.18);
   padding: 2px 8px;
   border-radius: 999px;
   line-height: 1.6;
@@ -63,14 +63,14 @@
 .route-guide-title {
   font-size: 14px;
   font-weight: 600;
-  color: #e4e4e7;
+  color: var(--text);
   margin: 0 0 4px;
   line-height: 1.35;
 }
 
 .route-guide-summary {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.52);
+  color: var(--text-dim);
   margin: 0 0 8px;
   line-height: 1.55;
 }
@@ -82,7 +82,7 @@
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -93,9 +93,9 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  background: rgba(6, 182, 212, 0.12);
-  border: 1px solid rgba(6, 182, 212, 0.25);
-  color: rgba(6, 182, 212, 0.95);
+  background: rgba(34, 255, 110, 0.1);
+  border: 1px solid rgba(34, 255, 110, 0.2);
+  color: rgba(223, 255, 233, 0.95);
   font-size: 12px;
   font-weight: 600;
   padding: 8px 14px;
@@ -109,9 +109,9 @@
 }
 
 .route-guide-action:hover {
-  background: rgba(6, 182, 212, 0.2);
-  border-color: rgba(6, 182, 212, 0.4);
-  color: rgb(6, 182, 212);
+  background: rgba(34, 255, 110, 0.16);
+  border-color: rgba(34, 255, 110, 0.34);
+  color: rgb(223, 255, 233);
 }
 
 /* ─── Responsive: stack on narrow viewports ─────────────────────────────── */

@@ -117,12 +117,12 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-labelledby="cookie-consent-heading"
-      className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-2 no-print border-t border-white/10 bg-[linear-gradient(180deg,rgba(8,12,18,0.96),rgba(11,17,24,0.98))] p-4 text-white shadow-[0_-24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-2 no-print border-t border-[color:var(--border)] bg-[linear-gradient(180deg,rgba(8,12,10,0.96),rgba(13,18,16,0.98))] p-4 text-white shadow-[0_-24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
     >
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div
           id="cookie-consent-heading"
-          className="text-sm text-center sm:text-left text-slate-300"
+          className="text-sm text-center sm:text-left text-[color:var(--text-dim)]"
         >
           We use essential browser storage for authentication and settings. Optional analytics stay
           off until you accept, and your consent preference is persisted in local storage and a
@@ -132,14 +132,14 @@ export function CookieConsent() {
           <Button
             onClick={dismiss}
             variant="ghost"
-            className="text-slate-400 hover:text-white hover:bg-white/10"
+            className="text-[color:var(--text-muted)] hover:text-white hover:bg-white/10"
             aria-label="Dismiss cookie consent banner"
           >
             Close
           </Button>
           <Button
             onClick={accept}
-            className="border border-cyan-300/35 bg-[linear-gradient(135deg,#0f766e,#155e75)] text-white shadow-lg shadow-cyan-950/40 hover:opacity-95"
+            className="border border-[#22ff6e]/30 bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] shadow-lg shadow-[#22ff6e]/20 hover:brightness-110"
             aria-label="Accept cookies"
           >
             Accept

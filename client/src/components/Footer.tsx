@@ -42,9 +42,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative z-20 border-t border-white/[0.06] bg-[#060607] text-white">
+    <footer className="relative z-20 border-t border-[color:var(--border)] bg-[linear-gradient(180deg,#0b100d_0%,#080c0a_100%)] text-[color:var(--text)]">
       {/* ── Top accent line ── */}
-      <div className="h-px bg-gradient-to-r from-transparent via-violet-400/35 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#22ff6e]/35 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Main grid ── */}
@@ -59,20 +59,20 @@ export default function Footer() {
                 height="32"
                 className="h-8 w-8 rounded-lg object-contain"
               />
-              <span className="text-lg font-bold tracking-tight text-white">
-                AI<span className="text-cyan-400">VIS</span>
+              <span className="text-lg font-bold tracking-tight text-[color:var(--text)]">
+                AI<span className="text-[#22ff6e]">VIS</span>
               </span>
             </div>
-            <p className="text-[13px] leading-relaxed text-white/50 max-w-xs mb-5">
+            <p className="text-[13px] leading-relaxed text-[color:var(--text-dim)] max-w-xs mb-5">
               AiVIS.biz is an AI visibility and entity authority system founded in 2026 that
               measures how AI systems interpret, trust, and cite web content. It operates through
               CITE LEDGER™ and BRAG (Based-Retrieval-Auditable-Grading), producing a verifiable
               record of how a brand is extracted, attributed, and cited within AI-generated answers.
             </p>
-            <div className="flex flex-col gap-2 text-xs text-white/40">
+            <div className="flex flex-col gap-2 text-xs text-[color:var(--text-muted)]">
               <a
                 href="mailto:support@aivis.biz"
-                className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-[#22ff6e]"
               >
                 <Mail className="h-3.5 w-3.5" />
                 support@aivis.biz
@@ -81,7 +81,7 @@ export default function Footer() {
                 href="https://aivis.biz"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 transition-colors hover:text-cyan-300"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-[#22ff6e]"
               >
                 <Globe className="h-3.5 w-3.5" />
                 aivis.biz
@@ -92,7 +92,7 @@ export default function Footer() {
           {/* Link columns */}
           {linkGroups.map((group) => (
             <div key={group.title}>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/30 mb-4">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--text-muted)] mb-4">
                 {group.title}
               </h4>
               <ul className="space-y-2.5">
@@ -103,7 +103,7 @@ export default function Footer() {
                         href={link.to}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-1 text-[13px] text-white/50 transition-colors hover:text-white"
+                        className="group inline-flex items-center gap-1 text-[13px] text-[color:var(--text-dim)] transition-colors hover:text-[color:var(--text)]"
                       >
                         {link.label}
                         <ExternalLink className="h-2.5 w-2.5 opacity-0 -translate-y-px group-hover:opacity-60 transition-opacity" />
@@ -111,7 +111,7 @@ export default function Footer() {
                     ) : (
                       <Link
                         to={link.to}
-                        className="text-[13px] text-white/50 transition-colors hover:text-white"
+                        className="text-[13px] text-[color:var(--text-dim)] transition-colors hover:text-[color:var(--text)]"
                       >
                         {link.label}
                       </Link>
@@ -124,27 +124,27 @@ export default function Footer() {
         </div>
 
         {/* ── Divider ── */}
-        <div className="h-px bg-white/[0.06]" />
+        <div className="h-px bg-[color:var(--border)]" />
 
         {/* ── Bottom bar ── */}
         <div className="flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-[11px] text-white/30">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-[11px] text-[color:var(--text-muted)]">
             <span className="inline-flex items-center gap-1.5">
-              <Lock className="h-3 w-3 text-emerald-500/60" />
+              <Lock className="h-3 w-3 text-[#22ff6e]/70" />
               <span>TLS encrypted</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Shield className="h-3 w-3 text-cyan-400/50" />
+              <Shield className="h-3 w-3 text-[#22ff6e]/55" />
               <span>No data resale</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Zap className="h-3 w-3 text-amber-400/50" />
+              <Zap className="h-3 w-3 text-[#ffb830]/60" />
               <span>GDPR compliant</span>
             </span>
             <CloudflareBadge variant="footer" />
           </div>
 
-          <p className="text-[11px] text-white/25">
+          <p className="text-[11px] text-[color:var(--text-muted)]">
             © {currentYear} AiVIS.biz. All rights reserved.
           </p>
         </div>

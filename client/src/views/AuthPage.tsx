@@ -53,7 +53,7 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   if (s <= 2) return { score: 2, label: 'Fair', color: 'bg-orange-500' };
   if (s <= 3) return { score: 3, label: 'Good', color: 'bg-yellow-500' };
   if (s <= 4) return { score: 4, label: 'Strong', color: 'bg-emerald-500' };
-  return { score: 5, label: 'Excellent', color: 'bg-cyan-400' };
+  return { score: 5, label: 'Excellent', color: 'bg-[#22ff6e]' };
 }
 
 const TRUST_FEATURES = [
@@ -340,7 +340,8 @@ export default function AuthPage() {
             avatar_url: user.avatar_url,
             is_verified: user.is_verified === true,
             verification_grace_active:
-              payload?.verification_grace_active === true || user?.verification_grace_active === true,
+              payload?.verification_grace_active === true ||
+              user?.verification_grace_active === true,
             verification_grace_until:
               payload?.verification_grace_until || user?.verification_grace_until || null,
           },
@@ -652,11 +653,7 @@ export default function AuthPage() {
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={startGoogleOAuth}
-                  className={socialButtonClass}
-                >
+                <button type="button" onClick={startGoogleOAuth} className={socialButtonClass}>
                   <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fill="#4285F4"
@@ -678,11 +675,7 @@ export default function AuthPage() {
                   Continue with Google
                 </button>
 
-                <button
-                  type="button"
-                  onClick={startGithubOAuth}
-                  className={socialButtonClass}
-                >
+                <button type="button" onClick={startGithubOAuth} className={socialButtonClass}>
                   <svg
                     className="w-5 h-5"
                     viewBox="0 0 24 24"
@@ -899,11 +892,7 @@ export default function AuthPage() {
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={startGoogleOAuth}
-                  className={socialButtonClass}
-                >
+                <button type="button" onClick={startGoogleOAuth} className={socialButtonClass}>
                   <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fill="#4285F4"
@@ -925,11 +914,7 @@ export default function AuthPage() {
                   Continue with Google
                 </button>
 
-                <button
-                  type="button"
-                  onClick={startGithubOAuth}
-                  className={socialButtonClass}
-                >
+                <button type="button" onClick={startGithubOAuth} className={socialButtonClass}>
                   <svg
                     className="w-5 h-5"
                     viewBox="0 0 24 24"
@@ -1064,14 +1049,14 @@ export default function AuthPage() {
           By continuing, you agree to our{' '}
           <Link
             to="/terms"
-            className="text-sky-400/80 hover:text-sky-300 underline underline-offset-2"
+            className="text-[#22ff6e]/80 hover:text-[#dfffe9] underline underline-offset-2"
           >
             Terms of Service
           </Link>{' '}
           and{' '}
           <Link
             to="/privacy"
-            className="text-sky-400/80 hover:text-sky-300 underline underline-offset-2"
+            className="text-[#22ff6e]/80 hover:text-[#dfffe9] underline underline-offset-2"
           >
             Privacy Policy
           </Link>

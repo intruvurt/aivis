@@ -49,8 +49,8 @@ export const APP_NAV_GROUPS: NavGroup[] = [
     {
         key: "scan",
         titleKey: "sidebar.scan",
-        iconClass: "text-blue-400",
-        iconBg: "bg-blue-500/10",
+        iconClass: "text-[#22ff6e]",
+        iconBg: "bg-[#22ff6e]/10",
         items: [
             { to: "/app/scan", labelKey: "sidebar.seeVisibility", iconName: "Search" },
             { to: "/app/reports", labelKey: "sidebar.reports", iconName: "FileText" },
@@ -61,8 +61,8 @@ export const APP_NAV_GROUPS: NavGroup[] = [
     {
         key: "evidence",
         titleKey: "sidebar.evidence",
-        iconClass: "text-violet-400",
-        iconBg: "bg-violet-500/10",
+        iconClass: "text-[#ffb830]",
+        iconBg: "bg-[#ffb830]/10",
         items: [
             { to: "/app/analytics", labelKey: "sidebar.analytics", iconName: "BarChart3" },
             { to: "/app/evidence", labelKey: "sidebar.evidenceRegistry", iconName: "Database", minTier: "alignment" },
@@ -74,8 +74,8 @@ export const APP_NAV_GROUPS: NavGroup[] = [
     {
         key: "registry",
         titleKey: "sidebar.registry",
-        iconClass: "text-emerald-400",
-        iconBg: "bg-emerald-500/10",
+        iconClass: "text-[#22ff6e]",
+        iconBg: "bg-[#22ff6e]/10",
         items: [
             { to: "/app/prompt-intelligence", labelKey: "sidebar.queryGaps", iconName: "Brain", minTier: "alignment" },
             { to: "/app/answer-presence", labelKey: "sidebar.answerPresence", iconName: "Eye", minTier: "alignment" },
@@ -87,8 +87,8 @@ export const APP_NAV_GROUPS: NavGroup[] = [
     {
         key: "account",
         titleKey: "sidebar.account",
-        iconClass: "text-slate-400",
-        iconBg: "bg-slate-500/10",
+        iconClass: "text-[color:var(--text-dim)]",
+        iconBg: "bg-[rgba(17,24,20,0.92)]",
         items: [
             { to: "/app/billing", labelKey: "sidebar.billing", iconName: "CreditCard" },
             { to: "/app/settings", labelKey: "sidebar.settings", iconName: "Settings" },

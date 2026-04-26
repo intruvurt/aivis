@@ -1,5 +1,5 @@
 /* ── Custom Font Imports ── */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 @import './styles/aurora-shell.css';
 @import './styles/forensic-grid.css';
 @import './styles/cognition-replay.css';
@@ -9,32 +9,50 @@
 @tailwind utilities;
 
 :root {
-  /* Fonts */
-  --font-header: 'Space Grotesk', sans-serif;
-  --font-body: 'IBM Plex Sans', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-header: 'Syne', sans-serif;
+  --font-body: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  --bg-pitch: 11 10 9;
-  --bg-card: 11 22 30;
-  --matte-silver: 236 228 214;
-  --glass-stroke: 255 255 255;
+  --bg: #080c0a;
+  --bg-elevated: #0d1210;
+  --bg-panel: #111814;
+  --bg-panel-strong: #151d18;
+  --border: #1e2b24;
+  --border-bright: #2d4038;
+  --text: #e8f0ea;
+  --text-dim: #8aa293;
+  --text-muted: #5c7565;
+  --signal: #22ff6e;
+  --signal-dim: #0d6b2f;
+  --signal-glow: rgba(34, 255, 110, 0.14);
+  --amber: #ffb830;
+  --amber-dim: rgba(255, 184, 48, 0.16);
+  --red: #ff5757;
+  --red-dim: rgba(255, 87, 87, 0.14);
+  --blue: #4db8ff;
+  --purple: #a78bfa;
 
-  --neon-cyan: #67e8f9;
-  --neon-amber: #f97316;
-  --neon-red: #ef4444;
-  --accent-gold: #22d3ee;
-  --panel-glow: rgba(14, 165, 233, 0.2);
+  /* legacy aliases kept for existing components */
+  --bg-pitch: 8 12 10;
+  --bg-card: 13 18 16;
+  --matte-silver: 232 240 234;
+  --glass-stroke: 45 64 56;
+  --neon-cyan: var(--signal);
+  --neon-amber: var(--amber);
+  --neon-red: var(--red);
+  --accent-gold: var(--signal);
+  --panel-glow: rgba(34, 255, 110, 0.18);
 
-  --app-radius: 20px;
+  --app-radius: 18px;
 }
 
 @layer base {
   html {
     background:
-      radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 30%),
-      radial-gradient(circle at top right, rgba(249, 115, 22, 0.14), transparent 28%),
-      linear-gradient(180deg, #061018 0%, #0b1620 45%, #08121a 100%);
-    color: #f3ede3;
+      radial-gradient(circle at top left, rgba(34, 255, 110, 0.14), transparent 26%),
+      radial-gradient(circle at top right, rgba(255, 184, 48, 0.08), transparent 24%),
+      linear-gradient(180deg, #080c0a 0%, #0b100d 46%, #070a08 100%);
+    color: var(--text);
     font-family: var(--font-body);
     scroll-behavior: smooth;
   }
@@ -42,30 +60,30 @@
   body {
     min-height: 100vh;
     background: transparent;
-    color: #f3ede3;
+    color: var(--text);
   }
 
   /* ── Global form element dark reset ── */
   input,
   textarea,
   select {
-    background-color: #111116;
-    color: #e4e4e7;
-    border-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--bg-panel);
+    color: var(--text);
+    border-color: var(--border);
   }
 
   input::placeholder,
   textarea::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(138, 162, 147, 0.65);
   }
 
   /* ── input-field utility ── */
   .input-field {
     display: block;
     width: 100%;
-    background-color: #111116;
-    color: #e4e4e7;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--bg-panel);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 0.625rem 0.875rem;
     font-size: 0.875rem;
@@ -74,12 +92,12 @@
   }
 
   .input-field::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(138, 162, 147, 0.65);
   }
 
   .input-field:focus {
-    border-color: rgba(251, 146, 60, 0.4);
-    box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.1);
+    border-color: var(--signal);
+    box-shadow: 0 0 0 2px rgba(34, 255, 110, 0.1);
   }
 
   h1,
@@ -90,7 +108,7 @@
     font-family: var(--font-header);
     letter-spacing: -0.03em;
     text-transform: none;
-    color: rgb(var(--matte-silver));
+    color: var(--text);
   }
 
   code,
@@ -104,22 +122,22 @@
     width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: rgb(var(--bg-pitch));
+    background: var(--bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: rgb(var(--matte-silver), 0.3);
+    background: rgba(45, 64, 56, 0.9);
     transition: background 0.2s;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--neon-cyan);
+    background: var(--signal-dim);
   }
 }
 
 @layer components {
   /* ── The "Napster" Card ── */
   .cyber-card {
-    background: linear-gradient(145deg, rgba(9, 22, 29, 0.92) 0%, rgba(7, 14, 20, 0.94) 100%);
-    border: 1px solid rgba(103, 232, 249, 0.16);
+    background: linear-gradient(180deg, rgba(13, 18, 16, 0.96) 0%, rgba(10, 15, 12, 0.98) 100%);
+    border: 1px solid rgba(45, 64, 56, 0.9);
     box-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
@@ -128,7 +146,7 @@
   }
 
   .cyber-card:hover {
-    border-color: var(--neon-cyan);
+    border-color: var(--signal-dim);
     transform: translate(-2px, -2px);
     box-shadow: 0 28px 70px var(--panel-glow);
   }
@@ -139,16 +157,16 @@
     letter-spacing: 0.08em;
     padding: 0.5rem 1.5rem;
     font-family: var(--font-header);
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-amber));
-    color: #04131a;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(34, 255, 110, 0.14), rgba(13, 107, 47, 0.32));
+    color: var(--signal);
+    border: 1px solid rgba(34, 255, 110, 0.28);
     border-radius: 999px;
     transition: 0.2s;
   }
 
   .btn-silver:hover {
-    background: linear-gradient(135deg, #a5f3fc, #fb923c);
-    box-shadow: 0 0 20px rgba(14, 165, 233, 0.28);
+    background: linear-gradient(135deg, rgba(34, 255, 110, 0.22), rgba(255, 184, 48, 0.18));
+    box-shadow: 0 0 20px rgba(34, 255, 110, 0.22);
     transform: scale(1.05);
   }
 
@@ -157,24 +175,41 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--neon-amber);
+    background: var(--signal);
     box-shadow:
-      0 0 12px var(--neon-amber),
-      0 0 20px var(--neon-amber);
+      0 0 12px var(--signal),
+      0 0 20px var(--signal);
   }
 
   /* ── Input Overhaul ── */
   .cyber-field {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(var(--matte-silver), 0.3);
-    color: white;
+    background: rgba(17, 24, 20, 0.88);
+    border: 1px solid rgba(45, 64, 56, 0.88);
+    color: var(--text);
     padding: 0.75rem;
     outline: none;
     font-family: var(--font-body);
   }
 
   .cyber-field:focus {
-    border-color: #22d3ee;
+    border-color: var(--signal);
+  }
+
+  .aivis-panel {
+    position: relative;
+    background: linear-gradient(180deg, rgba(13, 18, 16, 0.96) 0%, rgba(10, 15, 12, 0.98) 100%);
+    border: 1px solid rgba(45, 64, 56, 0.9);
+    border-radius: 18px;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.32);
+  }
+
+  .aivis-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(34, 255, 110, 0.4), transparent);
+    pointer-events: none;
   }
 }
 
@@ -185,9 +220,9 @@
 
   .bg-mesh {
     background-image:
-      linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
+      linear-gradient(rgba(45, 64, 56, 0.42) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45, 64, 56, 0.42) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   .scanline {
@@ -197,7 +232,7 @@
     background: linear-gradient(
       0deg,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 243, 255, 0.05) 50%,
+      rgba(34, 255, 110, 0.06) 50%,
       rgba(0, 0, 0, 0) 100%
     );
     opacity: 0.1;
@@ -206,6 +241,49 @@
     animation: scanline 8s linear infinite;
     pointer-events: none;
   }
+}
+
+.brand-vivid-ui {
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(34, 255, 110, 0.08), transparent 24%),
+    radial-gradient(circle at top right, rgba(255, 184, 48, 0.06), transparent 20%),
+    linear-gradient(180deg, #080c0a 0%, #0b100d 48%, #070a08 100%);
+}
+
+.aivis-theme-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.aivis-theme-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(30, 43, 36, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 43, 36, 0.55) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.34;
+}
+
+.aivis-theme-shell::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  opacity: 0.32;
 }
 
 @keyframes scanline {

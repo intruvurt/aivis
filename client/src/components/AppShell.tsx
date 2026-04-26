@@ -89,24 +89,24 @@ export default function AppShell() {
     const surfaceHint = isAuditDetailRoute ? 'Evidence review surface' : 'Live audit surface';
 
     return (
-      <div className="min-h-screen bg-[#05070d] text-white">
+      <div className="aivis-theme-shell min-h-screen bg-[linear-gradient(180deg,#080c0a_0%,#0b100d_48%,#070a08_100%)] text-[color:var(--text)]">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#22ff6e] focus:text-[#08110c] focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-[#dfffe9]"
         >
           Skip to content
         </a>
 
-        <header className="sticky top-0 z-[60] border-b border-white/10 bg-[#070a12]/90 backdrop-blur-md">
+        <header className="sticky top-0 z-[60] border-b border-[color:var(--border)] bg-[rgba(8,12,10,0.92)] backdrop-blur-md">
           <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-2.5">
               <Link
                 to="/app/scan"
-                className="text-[11px] font-semibold tracking-[0.14em] text-cyan-200/90 uppercase"
+                className="text-[11px] font-semibold tracking-[0.14em] text-[#22ff6e] uppercase"
               >
                 {surfaceLabel}
               </Link>
-              <span className="hidden text-[10px] uppercase tracking-[0.08em] text-white/32 md:inline">
+              <span className="hidden text-[10px] uppercase tracking-[0.08em] text-[color:var(--text-muted)] md:inline">
                 {surfaceHint}
               </span>
             </div>
@@ -114,25 +114,25 @@ export default function AppShell() {
             <nav className="hidden items-center gap-1.5 lg:flex">
               <Link
                 to="/app/reports"
-                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-[color:var(--text-dim)] uppercase transition hover:border-[#22ff6e]/35 hover:text-[#dfffe9]"
               >
                 Reports
               </Link>
               <Link
                 to="/app/score-fix"
-                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-[color:var(--text-dim)] uppercase transition hover:border-[#22ff6e]/35 hover:text-[#dfffe9]"
               >
                 Score Fix
               </Link>
               <Link
                 to="/app/reverse-engineer"
-                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-[color:var(--text-dim)] uppercase transition hover:border-[#22ff6e]/35 hover:text-[#dfffe9]"
               >
                 Reverse Engineer
               </Link>
               <Link
                 to="/app/site-crawl"
-                className="rounded-full border border-white/14 px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-white/78 uppercase transition hover:border-cyan-300/45 hover:text-cyan-100"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] font-medium tracking-[0.06em] text-[color:var(--text-dim)] uppercase transition hover:border-[#22ff6e]/35 hover:text-[#dfffe9]"
               >
                 Site Crawl
               </Link>
@@ -141,13 +141,13 @@ export default function AppShell() {
             <div className="flex items-center gap-1.5">
               <Link
                 to="/app/help"
-                className="rounded-full border border-white/12 px-2.5 py-1 text-[11px] tracking-[0.04em] text-white/68 uppercase transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] tracking-[0.04em] text-[color:var(--text-dim)] uppercase transition hover:border-[#2d4038] hover:text-[color:var(--text)]"
               >
                 Help
               </Link>
               <Link
                 to="/app/settings"
-                className="rounded-full border border-white/12 px-2.5 py-1 text-[11px] tracking-[0.04em] text-white/68 uppercase transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-[color:var(--border)] px-2.5 py-1 text-[11px] tracking-[0.04em] text-[color:var(--text-dim)] uppercase transition hover:border-[#2d4038] hover:text-[color:var(--text)]"
               >
                 Settings
               </Link>
@@ -172,10 +172,10 @@ export default function AppShell() {
   }
 
   return (
-    <div className="aurora-shell">
+    <div className="aurora-shell aivis-theme-shell">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#22ff6e] focus:text-[#08110c] focus:text-sm focus:font-semibold focus:outline-none focus:ring-2 focus:ring-[#dfffe9]"
       >
         Skip to content
       </a>
@@ -191,18 +191,18 @@ export default function AppShell() {
       <div className="aurora-main">
         <AppTopBar onMenuClick={() => setSidebarOpen(true)} />
         {verificationReminderVisible ? (
-          <div className="mx-4 mt-4 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-500/18 via-orange-500/12 to-rose-500/12 px-4 py-3 text-[13px] text-amber-100 shadow-[0_14px_32px_rgba(0,0,0,0.28)] sm:mx-6">
+          <div className="mx-4 mt-4 rounded-2xl border border-[#ffb830]/30 bg-[linear-gradient(135deg,rgba(255,184,48,0.12),rgba(17,24,20,0.96))] px-4 py-3 text-[13px] text-[#ffe0a3] shadow-[0_14px_32px_rgba(0,0,0,0.28)] sm:mx-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p>
                 Verify your email to keep uninterrupted access. Grace period ends on{' '}
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-[color:var(--text)]">
                   {new Date(String(verificationGraceUntil)).toLocaleString()}
                 </span>
                 .
               </p>
               <Link
                 to="/auth?mode=signin"
-                className="inline-flex items-center justify-center rounded-full border border-amber-100/40 bg-amber-100/15 px-3 py-1.5 text-[12px] font-semibold text-amber-50 transition hover:bg-amber-100/25"
+                className="inline-flex items-center justify-center rounded-full border border-[#ffb830]/35 bg-[#ffb830]/10 px-3 py-1.5 text-[12px] font-semibold text-[#ffe0a3] transition hover:bg-[#ffb830]/18"
               >
                 Resend verification
               </Link>

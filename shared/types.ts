@@ -578,6 +578,12 @@ export interface Recommendation {
   estimatedVisibilityLoss?: string;
   /** Scorefix category for auto-PR routing */
   scorefix_category?: string;
+  /**
+   * Exact content the user should add to their page to fix this issue.
+   * May be a sentence, paragraph, schema block, or HTML snippet.
+   * When present, this is displayed verbatim as a copy-pasteable fix.
+   */
+  suggested_content?: string;
 }
 
 /* ========================= Content & structural analysis ========================= */
@@ -1072,6 +1078,17 @@ export interface AnalysisResponse {
   claim_resolution?: ClaimResolutionResult;
   /** Pipeline-generated strategic operating model and action map */
   strategic_breakdown?: StrategicBreakdown;
+  /**
+   * Citation divergence signal — measures the gap between on-page technical
+   * score and actual off-page citation behavior.
+   *
+   * A high positive delta means the brand is being cited (off-page authority,
+   * press, community) despite weak on-page structure. This is the "Peec.ai
+   * effect" where external footprint overrides homepage deficiencies.
+   *
+   * Populated as a side-effect of the answer_presence pipeline run.
+   */
+  citation_divergence?: CitationDivergenceSignal;
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {
@@ -1710,6 +1727,62 @@ export interface GapItem {
  * Full result of the answer presence pipeline (Steps 1-7 from spec).
  * All scores derived ONLY from observed QueryEvidence — no synthetic metrics.
  */
+/**
+ * Citation Divergence Signal
+ *
+ * Captures the gap between on-page technical extractability (schema, structure,
+ * meta tags) and actual off-page citation behavior observed in AI systems.
+ *
+ * This is the "Peec.ai effect": a brand with near-zero on-page schema can still
+ * appear in top-10 AI answers because AI models synthesize brand identity from
+ * the aggregate external web footprint — G2 reviews, LinkedIn, press coverage,
+ * community discussion — not exclusively from the homepage itself.
+ */
+export interface CitationDivergenceSignal {
+  /** On-page technical score — schema, structure, meta, AI extractability */
+  on_page_score: number;
+  /**
+   * Off-page citation behavior score (0-100), derived from:
+   *   - authority_alignment_score (presence in authoritative sources)
+   *   - citation_coverage_score (fraction of queries where entity appears)
+   *   - answer_presence_score (composite presence in AI-generated answers)
+   */
+  off_page_score: number;
+  /**
+   * off_page_score − on_page_score.
+   * Positive = off-page authority is carrying citation despite weak on-page.
+   * Negative = on-page is technically strong but not being cited (unusual).
+   */
+  divergence_delta: number;
+  /**
+   * Classification of the divergence pattern.
+   * - off_page_dominant: external authority is overriding on-page gaps
+   * - on_page_dominant: well-structured but not externally cited (yet)
+   * - aligned: both signals agree within ±20 pts
+   */
+  direction: 'off_page_dominant' | 'on_page_dominant' | 'aligned';
+  /**
+   * Confidence in this signal (0-1).
+   * Low when answer_presence has few queries tested or low mention counts.
+   */
+  confidence: number;
+  /** Plain-language explanation of the divergence */
+  explanation: string;
+  /**
+   * What is driving the dominant signal.
+   * external_authority = press, reviews, community mentions
+   * structured_data = schema/JSON-LD is doing the work
+   * content_quality = content depth without external footprint
+   * mixed = multiple factors at similar weight
+   */
+  dominant_signal: 'external_authority' | 'structured_data' | 'content_quality' | 'mixed';
+  /**
+   * Interpretive note for the scoring model — explains to the user why the
+   * composite score may not reflect real citation behavior.
+   */
+  scoring_context?: string;
+}
+
 export interface AnswerPresenceResult {
   /** Canonical primary entity name extracted from the page */
   primary_entity: string;

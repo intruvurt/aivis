@@ -1319,12 +1319,12 @@ const Landing = () => {
             </section>
 
             {/* Final CTA */}
-            <section className="py-20 relative overflow-hidden bg-gradient-to-br from-[#060607] via-[#0a0e1a] to-[#060607] border-t border-white/8">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(34,211,238,0.06),transparent)]" />
+            <section className="py-20 relative overflow-hidden bg-[linear-gradient(135deg,#080c0a_0%,#0b100d_55%,#070a08_100%)] border-t border-[color:var(--border)]">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(34,255,110,0.08),transparent)]" />
               <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4" data-speakable>
                   See how AI reads your site
-                  <span className="block bg-gradient-to-r from-cyan-300 via-white to-violet-300 bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-[#22ff6e] via-[#f5ffef] to-[#ffcf70] bg-clip-text text-transparent">
                     then correct what it gets wrong
                   </span>
                 </h2>
@@ -1341,7 +1341,7 @@ const Landing = () => {
                     setPreviewResult(null);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-600 text-white px-9 py-4 rounded-full text-lg font-bold hover:from-cyan-400 hover:to-violet-500 transition-all shadow-lg shadow-violet-500/25 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] px-9 py-4 rounded-full text-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-[#22ff6e]/20 cursor-pointer"
                 >
                   Run Live Scan
                 </a>
@@ -1365,10 +1365,10 @@ const Landing = () => {
 // ─── ScanLiveFeed — STATE 1 surface ──────────────────────────────────────────
 function ScanLiveFeed() {
   const PIPELINE_STEPS = [
-    { key: 'ingesting', label: 'ingesting content', color: 'text-cyan-300', ts: '00:00' },
-    { key: 'chunking', label: 'segmenting into chunks', color: 'text-cyan-300/75', ts: '00:01' },
-    { key: 'entities', label: 'detecting entities', color: 'text-violet-300', ts: '00:03' },
-    { key: 'queries', label: 'expanding query space', color: 'text-violet-300/75', ts: '00:05' },
+    { key: 'ingesting', label: 'ingesting content', color: 'text-[#22ff6e]', ts: '00:00' },
+    { key: 'chunking', label: 'segmenting into chunks', color: 'text-[#b3ff61]', ts: '00:01' },
+    { key: 'entities', label: 'detecting entities', color: 'text-[#ffcf70]', ts: '00:03' },
+    { key: 'queries', label: 'expanding query space', color: 'text-[#ffe0a3]', ts: '00:05' },
     { key: 'citations', label: 'checking citations', color: 'text-red-300', ts: '00:07' },
     { key: 'ai', label: 'running AI interpretation', color: 'text-amber-300', ts: '00:09' },
     { key: 'scoring', label: 'computing mismatch score', color: 'text-emerald-300', ts: '00:12' },
@@ -1383,12 +1383,12 @@ function ScanLiveFeed() {
   }, [visibleCount]);
 
   return (
-    <section className="py-10 bg-[#0b0f1a] border-t border-white/8">
+    <section className="py-10 bg-[linear-gradient(180deg,#0b100d_0%,#080c0a_100%)] border-t border-[color:var(--border)]">
       <div className="max-w-xl mx-auto px-4 sm:px-6">
         <p className="text-[10px] uppercase tracking-widest text-white/30 mb-4 font-mono text-center">
           pipeline execution
         </p>
-        <div className="rounded-2xl border border-white/10 bg-[#070d1a] p-4 font-mono text-sm">
+        <div className="rounded-2xl border border-[color:var(--border)] bg-[rgba(13,18,16,0.92)] p-4 font-mono text-sm shadow-[0_16px_32px_rgba(0,0,0,0.2)]">
           {PIPELINE_STEPS.slice(0, visibleCount).map((step, i) => (
             <motion.div
               key={step.key}
@@ -1442,9 +1442,9 @@ function MismatchConversionEngine({
   return (
     <>
       {/* ── 1. Ledger snapshot bar ── */}
-      <section className="py-6 bg-[#0b0f1a] border-t border-white/10">
+      <section className="py-6 bg-[linear-gradient(180deg,#0b100d_0%,#080c0a_100%)] border-t border-[color:var(--border)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="rounded-2xl border border-white/10 bg-[#070d1a] p-4 sm:p-5">
+          <div className="rounded-2xl border border-[color:var(--border)] bg-[rgba(13,18,16,0.92)] p-4 sm:p-5">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">
@@ -1475,7 +1475,7 @@ function MismatchConversionEngine({
                   Ledger depth
                 </p>
                 <p className="text-sm font-bold text-white/60 mt-1">
-                  Seeing <span className="text-cyan-300 font-black">{seenPct}%</span>
+                  Seeing <span className="text-[#22ff6e] font-black">{seenPct}%</span>
                 </p>
               </div>
             </div>
@@ -1488,7 +1488,7 @@ function MismatchConversionEngine({
         <AIMismatchPanel data={mismatchData} />
 
         {/* ── 3. Locked depth trigger ── */}
-        <div className="relative bg-[#05070d] border-t border-white/10">
+        <div className="relative bg-[linear-gradient(180deg,#080c0a_0%,#070a08_100%)] border-t border-[color:var(--border)]">
           {/* Gradient fade over the bottom of the mismatch panel */}
           <div
             className="absolute -top-24 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-[#05070d] pointer-events-none z-10"
@@ -1496,12 +1496,12 @@ function MismatchConversionEngine({
           />
           <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 py-8">
             {!lockedDepthVisible ? (
-              <div className="rounded-2xl border border-white/12 bg-[#0a1020]/80 p-6 text-center backdrop-blur">
+              <div className="rounded-2xl border border-[color:var(--border)] bg-[rgba(13,18,16,0.88)] p-6 text-center backdrop-blur shadow-[0_18px_36px_rgba(0,0,0,0.22)]">
                 <p className="text-xs uppercase tracking-widest text-white/35 font-mono mb-3">
                   surface interpretation only
                 </p>
                 <p className="text-2xl font-bold text-white mb-1">
-                  You are seeing <span className="text-cyan-300">{seenPct}%</span> of the ledger
+                  You are seeing <span className="text-[#22ff6e]">{seenPct}%</span> of the ledger
                 </p>
                 <p className="text-sm text-white/45 mb-5 max-w-md mx-auto">
                   Full evidence chain, entity conflict breakdown, fix protocol, and AI
@@ -1527,7 +1527,7 @@ function MismatchConversionEngine({
                 <button
                   type="button"
                   onClick={() => setLockedDepthVisible(true)}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-cyan-500 text-white px-6 py-3 rounded-xl text-sm font-bold hover:from-violet-400 hover:to-cyan-400 transition shadow-lg shadow-violet-500/20"
+                  className="inline-flex items-center gap-2 bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] px-6 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition shadow-lg shadow-[#22ff6e]/20"
                 >
                   Unlock full interpretation layer →
                 </button>
@@ -1546,7 +1546,7 @@ function MismatchConversionEngine({
       </div>
 
       {/* ── 4. Rescan link ── */}
-      <div className="py-4 text-center bg-[#05070d]">
+      <div className="py-4 text-center bg-[linear-gradient(180deg,#080c0a_0%,#070a08_100%)]">
         <button
           type="button"
           onClick={onRescan}
@@ -1604,7 +1604,7 @@ function PricingConsequence({
 
       {/* Seen vs locked */}
       <div className="grid sm:grid-cols-2 gap-4 mb-8 max-w-xl mx-auto">
-        <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-5">
+        <div className="rounded-2xl border border-[#22ff6e]/20 bg-[#22ff6e]/5 p-5">
           <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">
             You've seen
           </p>
@@ -1695,13 +1695,13 @@ function PricingConsequence({
         </div>
 
         {/* Core — highlighted */}
-        <div className="rounded-2xl border border-cyan-400/30 bg-gradient-to-b from-[#0d2030]/80 to-[#0a1a2a]/80 p-5 flex flex-col ring-1 ring-cyan-400/15 relative overflow-hidden">
+        <div className="rounded-2xl border border-[#22ff6e]/25 bg-[linear-gradient(180deg,rgba(17,24,20,0.96),rgba(13,18,16,0.9))] p-5 flex flex-col ring-1 ring-[#22ff6e]/12 relative overflow-hidden">
           <div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(34,211,238,0.07),transparent)]"
+            className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(34,255,110,0.08),transparent)]"
             aria-hidden="true"
           />
           <div className="relative">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 mb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#22ff6e] mb-1">
               Core · ${PRICING.alignment.billing.monthly}/mo
             </p>
             <h3 className="text-lg font-bold text-white mb-1">Understand the problem</h3>
@@ -1717,7 +1717,7 @@ function PricingConsequence({
                 `${PRICING.alignment.limits.scans} reconstructions/month`,
               ].map((f) => (
                 <li key={f} className="flex items-start gap-1.5 text-white/70">
-                  <span className="text-cyan-400 shrink-0">·</span> {f}
+                  <span className="text-[#22ff6e] shrink-0">·</span> {f}
                 </li>
               ))}
             </ul>
@@ -1725,7 +1725,7 @@ function PricingConsequence({
               type="button"
               disabled={loadingTier !== null && loadingTier !== 'alignment'}
               onClick={() => onPayment('alignment')}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-400 hover:to-cyan-500 transition shadow-lg shadow-cyan-500/20 disabled:opacity-60 disabled:cursor-wait"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] hover:brightness-110 transition shadow-lg shadow-[#22ff6e]/20 disabled:opacity-60 disabled:cursor-wait"
             >
               {loadingTier === 'alignment' ? 'Processing…' : 'Unlock full evidence →'}
             </button>
@@ -1733,8 +1733,8 @@ function PricingConsequence({
         </div>
 
         {/* Pro */}
-        <div className="rounded-2xl border border-violet-400/25 bg-[#160d2a]/60 p-5 flex flex-col">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-violet-400 mb-1">
+        <div className="rounded-2xl border border-[#ffb830]/25 bg-[rgba(28,20,8,0.6)] p-5 flex flex-col">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#ffb830] mb-1">
             Pro · ${PRICING.signal.billing.monthly}/mo
           </p>
           <h3 className="text-lg font-bold text-white mb-1">Control the system</h3>
@@ -1747,7 +1747,7 @@ function PricingConsequence({
               'Full API access',
             ].map((f) => (
               <li key={f} className="flex items-start gap-1.5 text-white/50">
-                <span className="text-violet-400 shrink-0">·</span> {f}
+                <span className="text-[#ffb830] shrink-0">·</span> {f}
               </li>
             ))}
           </ul>
@@ -1755,7 +1755,7 @@ function PricingConsequence({
             type="button"
             disabled={loadingTier !== null && loadingTier !== 'signal'}
             onClick={() => onPayment('signal')}
-            className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold border border-violet-400/30 text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 transition disabled:opacity-60 disabled:cursor-wait"
+            className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold border border-[#ffb830]/30 text-[#ffe0a3] bg-[#ffb830]/10 hover:bg-[#ffb830]/18 transition disabled:opacity-60 disabled:cursor-wait"
           >
             {loadingTier === 'signal' ? 'Processing…' : 'Get Pro →'}
           </button>
@@ -1766,7 +1766,7 @@ function PricingConsequence({
         Live pricing verified at checkout.{' '}
         <Link
           to="/pricing"
-          className="text-cyan-300/40 hover:text-cyan-300 underline transition-colors"
+          className="text-[#22ff6e]/45 hover:text-[#22ff6e] underline transition-colors"
         >
           Full pricing page →
         </Link>
@@ -1787,13 +1787,13 @@ function PostResultMethodology({ forceVisible }: { forceVisible: boolean }) {
           {[
             {
               n: '01',
-              color: 'text-cyan-300',
+              color: 'text-[#22ff6e]',
               title: 'Every score traces to evidence',
               desc: 'Each scraped field receives a unique BRAG evidence ID. No finding exists without a source reference.',
             },
             {
               n: '02',
-              color: 'text-violet-300',
+              color: 'text-[#ffcf70]',
               title: 'Not keyword-based',
               desc: 'AI systems reconstruct meaning, not rank by keywords. We measure reconstruction accuracy, not placement.',
             },

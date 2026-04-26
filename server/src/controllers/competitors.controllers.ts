@@ -8,11 +8,33 @@ import { checkCompetitorMilestones } from '../services/milestoneService.js';
 import { scrapeDDGRaw, scrapeBingRaw } from '../services/webSearch.js';
 import { textMentionsBrand } from '../services/searchDisambiguation.js';
 import { getFingerprint } from '../services/entityFingerprint.js';
+import { isUrlscanAvailable, scanAndEnrich } from '../services/urlscanService.js';
+import { ensureDefaultWorkspaceForUser } from '../services/tenantService.js';
 
 type CompetitorSuggestion = {
   nickname: string;
   url: string;
 };
+
+/**
+ * Fire-and-forget: submit competitor URL to urlscan.io, wait for screenshot,
+ * then persist the screenshot URL on the competitor_tracking row.
+ */
+async function screenshotCompetitorBackground(competitorId: string, url: string): Promise<void> {
+  try {
+    const enrichment = await scanAndEnrich(url, 90_000);
+    if (enrichment.screenshotUrl) {
+      const pool = getPool();
+      await pool.query(
+        `UPDATE competitor_tracking SET screenshot_url = $1, updated_at = NOW() WHERE id = $2`,
+        [enrichment.screenshotUrl, competitorId],
+      );
+      console.log(`[competitors] Screenshot stored for ${url}`);
+    }
+  } catch (err: any) {
+    console.warn(`[competitors] Screenshot capture failed for ${url}: ${err?.message}`);
+  }
+}
 
 const NICHE_COMPETITOR_SUGGESTIONS: Record<string, { label: string; suggestions: CompetitorSuggestion[] }> = {
   'home-services': {
@@ -284,6 +306,7 @@ export async function listCompetitors(req: Request, res: Response) {
         ct.monitoring_enabled, ct.monitor_frequency, ct.next_monitor_at,
         ct.last_checked_at, ct.last_change_detected_at,
         ct.last_change_evidence, ct.last_score_change_reason,
+        ct.screenshot_url, ct.auto_discovered,
         ct.created_at, ct.updated_at,
         COALESCE(a.result, fb.result) as latest_result,
         COALESCE(ct.latest_audit_id, fb.id) as resolved_audit_id
@@ -372,15 +395,26 @@ export async function createCompetitor(req: Request, res: Response) {
       });
     }
 
-    // Insert competitor
-    // Insert competitor - monitoring defaults to OFF; user must explicitly enable it.
+    // Insert competitor - enable monitoring so the autopilot loop audits it immediately.
+    // Resolve (or create) the user's default workspace so the autopilot loop can claim this row.
+    const workspaceCtx = await ensureDefaultWorkspaceForUser(userId, userObj?.name || userObj?.email).catch(() => null);
+    const workspaceId = workspaceCtx?.workspaceId || null;
+
     const { rows: created } = await pool.query(
-      `INSERT INTO competitor_tracking (user_id, competitor_url, nickname, monitoring_enabled, canonical_domain, track_keywords)
-       VALUES ($1, $2, $3, FALSE, $4, $5)
+      `INSERT INTO competitor_tracking
+         (user_id, competitor_url, nickname, monitoring_enabled, next_monitor_at, canonical_domain, track_keywords, workspace_id)
+       VALUES ($1, $2, $3, TRUE, NOW(), $4, $5, $6)
        ON CONFLICT (user_id, competitor_url)
-       DO UPDATE SET nickname = $3, canonical_domain = $4, track_keywords = $5, updated_at = NOW()
+       DO UPDATE SET
+         nickname = $3,
+         canonical_domain = $4,
+         track_keywords = $5,
+         workspace_id = COALESCE(competitor_tracking.workspace_id, $6),
+         monitoring_enabled = TRUE,
+         next_monitor_at = LEAST(competitor_tracking.next_monitor_at, NOW()),
+         updated_at = NOW()
        RETURNING *`,
-      [userId, normalized.url, safeNickname, canonicalDomain, JSON.stringify(safeKeywords)]
+      [userId, normalized.url, safeNickname, canonicalDomain, JSON.stringify(safeKeywords), workspaceId]
     );
 
     // Auto-link existing audit if available
@@ -407,6 +441,11 @@ export async function createCompetitor(req: Request, res: Response) {
 
     // Check competitor milestones in background
     checkCompetitorMilestones(userId).catch((e: any) => console.warn('[Competitors] Milestone check failed:', e?.message));
+
+    // Fire background screenshot (urlscan.io — non-blocking, ~30-90s)
+    if (isUrlscanAvailable()) {
+      screenshotCompetitorBackground(comp.id, normalized.url).catch(() => { });
+    }
 
     return res.status(201).json({ success: true, competitor: comp });
   } catch (err: any) {
@@ -530,8 +569,8 @@ export async function getCompetitorComparison(req: Request, res: Response) {
     });
 
     // Find opportunities (things competitors do that you don't)
-    const opportunities: Array<{title: string; description: string; impact: string; competitor_doing_it: string[]}> = [];
-    const yourAdv: Array<{title: string; description: string; lead_amount: string}> = [];
+    const opportunities: Array<{ title: string; description: string; impact: string; competitor_doing_it: string[] }> = [];
+    const yourAdv: Array<{ title: string; description: string; lead_amount: string }> = [];
 
     // ── Helper: upsert an opportunity entry ────────────────────────────────
     function pushOpportunity(title: string, description: string, impact: string, nickname: string) {

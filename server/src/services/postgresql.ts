@@ -5022,6 +5022,12 @@ export async function runMigrations(): Promise<void> {
       _q(
         `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS track_keywords JSONB DEFAULT '[]'`,
       );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS screenshot_url TEXT`,
+      );
+      _q(
+        `ALTER TABLE competitor_tracking ADD COLUMN IF NOT EXISTS auto_discovered BOOLEAN NOT NULL DEFAULT FALSE`,
+      );
 
       // ── Multi-tenant AI citation/mention tracker ──
       _q(`

@@ -8,6 +8,7 @@ import { hasFeatureAccess } from '../middleware/featureGate.js';
 import { getUserById } from '../models/User.js';
 import { buildScoreChangeReason, detectSubstantialChange } from './changeDetectionService.js';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
+import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -489,6 +490,143 @@ export async function processDueCompetitorAutopilot(
 }
 
 let competitorIntervalId: ReturnType<typeof setInterval> | null = null;
+let discoveryIntervalId: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * Auto-discover niche competitors for each user by finding keyword-overlapping
+ * domains from their audit history and inserting them with auto_discovered=TRUE.
+ * Runs every 6 hours. Respects tier competitor limits.
+ */
+export async function processCompetitorAutoDiscovery(): Promise<number> {
+  const pool = getPool();
+  let inserted = 0;
+
+  try {
+    // Find eligible users: alignment+ tier, have a website, have audits with keywords
+    const { rows: users } = await pool.query(`
+      SELECT DISTINCT
+        u.id AS user_id,
+        u.tier,
+        u.website,
+        w.id AS workspace_id
+      FROM users u
+      LEFT JOIN workspaces w ON w.created_by_user_id = u.id AND w.is_default = TRUE
+      WHERE u.website IS NOT NULL
+        AND u.website != ''
+        AND u.tier IN ('alignment','signal','agency','scorefix')
+        AND EXISTS (
+          SELECT 1 FROM audits a
+          WHERE a.user_id = u.id
+            AND a.result->'topical_keywords' IS NOT NULL
+            AND jsonb_array_length(COALESCE(a.result->'topical_keywords','[]')) > 0
+        )
+      LIMIT 50
+    `);
+
+    for (const user of users) {
+      try {
+        const tier = uiTierFromCanonical((user.tier || 'observer') as CanonicalTier | LegacyTier);
+        const maxCompetitors = Number(TIER_LIMITS[tier]?.competitors ?? 0);
+        if (maxCompetitors === 0) continue;
+
+        // Count currently tracked competitors
+        const { rows: countRows } = await pool.query(
+          `SELECT COUNT(*) AS cnt FROM competitor_tracking WHERE user_id = $1`,
+          [user.user_id],
+        );
+        const currentCount = parseInt(countRows[0]?.cnt || '0', 10);
+        const slotsAvailable = maxCompetitors - currentCount;
+        if (slotsAvailable <= 0) continue;
+
+        // Normalize user's own domain
+        let userDomain = '';
+        try {
+          const candidate = /^https?:\/\//i.test(user.website) ? user.website : `https://${user.website}`;
+          userDomain = new URL(candidate).hostname.replace(/^www\./, '').toLowerCase();
+        } catch { continue; }
+        if (!userDomain) continue;
+
+        // Get target keywords from user's own domain audit
+        const { rows: kwRows } = await pool.query(
+          `SELECT result->'topical_keywords' AS keywords
+           FROM audits
+           WHERE user_id = $1 AND url ILIKE $2
+           ORDER BY created_at DESC LIMIT 1`,
+          [user.user_id, `%${userDomain}%`],
+        );
+        const targetKeywords: string[] = Array.isArray(kwRows[0]?.keywords)
+          ? kwRows[0].keywords.map((k: unknown) => String(k).toLowerCase())
+          : [];
+        if (targetKeywords.length === 0) continue;
+
+        // Get already-tracked competitor domains
+        const { rows: tracked } = await pool.query(
+          `SELECT competitor_url FROM competitor_tracking WHERE user_id = $1`,
+          [user.user_id],
+        );
+        const trackedDomains = new Set<string>(
+          tracked.map((r: any) => {
+            try { return new URL(r.competitor_url).hostname.replace(/^www\./, '').toLowerCase(); }
+            catch { return ''; }
+          }).filter(Boolean),
+        );
+        trackedDomains.add(userDomain);
+
+        // Find other audited URLs with keyword overlap
+        const { rows: candidates } = await pool.query(
+          `SELECT DISTINCT ON (lower(regexp_replace(regexp_replace(url, '^https?://(www\\.)?', ''), '/+$', '')))
+             url, result->'topical_keywords' AS keywords
+           FROM audits
+           WHERE user_id = $1
+             AND url NOT ILIKE $2
+             AND result->'topical_keywords' IS NOT NULL
+           ORDER BY lower(regexp_replace(regexp_replace(url, '^https?://(www\\.)?', ''), '/+$', '')),
+                    created_at DESC
+           LIMIT 40`,
+          [user.user_id, `%${userDomain}%`],
+        );
+
+        let toAdd = Math.min(slotsAvailable, 3); // cap auto-adds per run
+
+        for (const c of candidates) {
+          if (toAdd <= 0) break;
+          let domain = '';
+          try { domain = new URL(c.url).hostname.replace(/^www\./, '').toLowerCase(); }
+          catch { continue; }
+          if (trackedDomains.has(domain)) continue;
+
+          const cKeywords: string[] = Array.isArray(c.keywords)
+            ? c.keywords.map((k: unknown) => String(k).toLowerCase())
+            : [];
+          const overlap = targetKeywords.filter(k => cKeywords.includes(k)).length;
+          const overlapRatio = targetKeywords.length > 0 ? overlap / targetKeywords.length : 0;
+          if (overlap < 2 && overlapRatio < 0.2) continue;
+
+          const safeNickname = domain.split('.')[0] || domain;
+          try {
+            await pool.query(
+              `INSERT INTO competitor_tracking
+                 (user_id, competitor_url, nickname, monitoring_enabled, next_monitor_at,
+                  canonical_domain, auto_discovered, workspace_id)
+               VALUES ($1, $2, $3, TRUE, NOW(), $4, TRUE, $5)
+               ON CONFLICT (user_id, competitor_url) DO NOTHING`,
+              [user.user_id, c.url, safeNickname, domain, user.workspace_id || null],
+            );
+            trackedDomains.add(domain);
+            inserted++;
+            toAdd--;
+          } catch { /* skip duplicates */ }
+        }
+      } catch (err: any) {
+        console.warn(`[competitor-discovery] Failed for user ${user.user_id}: ${err?.message}`);
+      }
+    }
+  } catch (err: any) {
+    console.error(`[competitor-discovery] process error: ${err?.message}`);
+  }
+
+  return inserted;
+}
 
 export function startCompetitorAutopilotLoop(
   analyzeInternally: (userId: string, workspaceId: string, url: string) => Promise<string | null>,
@@ -510,6 +648,18 @@ export function startCompetitorAutopilotLoop(
   }, 10 * 60 * 1000);
 
   setTimeout(() => processDueCompetitorAutopilot(analyzeInternally), 45_000);
+
+  // Auto-discovery: find and add niche competitors from audit history every 6 hours.
+  discoveryIntervalId = setInterval(async () => {
+    const added = await processCompetitorAutoDiscovery();
+    if (added > 0) console.log(`[competitor-discovery] Auto-added ${added} niche competitor(s)`);
+  }, 6 * 60 * 60 * 1000);
+
+  // Initial discovery run after 3 minutes (let the DB warm up first)
+  setTimeout(async () => {
+    const added = await processCompetitorAutoDiscovery();
+    if (added > 0) console.log(`[competitor-discovery] Initial auto-add: ${added} niche competitor(s)`);
+  }, 3 * 60 * 1000);
 }
 
 /**
@@ -547,5 +697,10 @@ export function stopRescanLoop(): void {
   if (competitorIntervalId) {
     clearInterval(competitorIntervalId);
     competitorIntervalId = null;
+  }
+
+  if (discoveryIntervalId) {
+    clearInterval(discoveryIntervalId);
+    discoveryIntervalId = null;
   }
 }

@@ -183,6 +183,7 @@ export async function runForensicPipeline(
         technicalSEO: 0,
         metaTags: 0,
         headingStructure: 0,
+        securityTrust: 0,
       },
     },
     risks: [],
@@ -279,8 +280,8 @@ export async function runForensicPipeline(
         risk.severity === 'high'
           ? 'high'
           : risk.severity === 'medium'
-          ? 'medium'
-          : 'low',
+            ? 'medium'
+            : 'low',
       action: `Address: ${risk.description ?? risk.message ?? 'identified issue'}`,
       impact: risk.impact ?? 'Improves AI visibility',
     }));

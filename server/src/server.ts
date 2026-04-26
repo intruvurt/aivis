@@ -911,6 +911,8 @@ const DETERMINISTIC_CATEGORY_LABELS = new Set([
   "Schema & Structured Data",
   "Meta Tags & Open Graph",
   "Technical SEO",
+  "AI Readability & Citability",
+  "Security & Trust",
 ]);
 
 function normalizeAuditTargetKey(input: string): string {
@@ -3701,7 +3703,7 @@ app.get("/llms.txt", (_req, res) => {
 https://aivis.biz/
 
 AiVIS.biz scores whether answer engines can parse, trust, and cite a page.
-Scoring model: content depth, heading structure, schema coverage, metadata quality, technical SEO, and AI readability. Returns 0-100.
+Scoring model: schema and structured data (20%), content depth (18%), technical trust (15%), meta tags (15%), AI readability (12%), heading structure (10%), and security and trust (10%). Returns 0-100.
 
 Core pages
 - Homepage: https://aivis.biz/
@@ -5928,12 +5930,13 @@ function normalizeWritingAudit(raw: any, contentType: WritingContentType) {
 // Cross-model normalisation
 // ─────────────────────────────────────────────────────────────────────────────
 const REQUIRED_CATEGORIES: { label: string; weight: number }[] = [
-  { label: "Content Depth & Quality", weight: 0.2 },
-  { label: "Heading Structure & H1", weight: 0.12 },
+  { label: "Content Depth & Quality", weight: 0.18 },
+  { label: "Heading Structure & H1", weight: 0.1 },
   { label: "Schema & Structured Data", weight: 0.2 },
-  { label: "Meta Tags & Open Graph", weight: 0.13 },
+  { label: "Meta Tags & Open Graph", weight: 0.15 },
   { label: "Technical SEO", weight: 0.15 },
-  { label: "AI Readability & Citability", weight: 0.2 },
+  { label: "AI Readability & Citability", weight: 0.12 },
+  { label: "Security & Trust", weight: 0.1 },
 ];
 
 function scoreToGrade(score: number): "A" | "B" | "C" | "D" | "F" {
@@ -7150,6 +7153,68 @@ function computeEvidenceScores(
     floor: rF,
     ceiling: rC,
     reasons: rR,
+  });
+
+  // ── Security & Trust ──
+  const secR: string[] = [];
+  let secF = 0,
+    secC = 100;
+  const sameAsCount = Array.isArray(schema?.same_as_links)
+    ? schema.same_as_links.length
+    : Number(schema?.same_as_count || 0);
+  const hasPersonSchema = schemaTypes.includes("person");
+  const hasAuthorSignal =
+    hasPersonSchema ||
+    /"author"\s*:/i.test(String(schema?.raw_json_ld || "")) ||
+    /\b(author|byline)\b/i.test(String(rawHtml || ""));
+  const hasPolicySignal = /\b(privacy|terms|security|trust|contact)\b/i.test(
+    String(rawHtml || ""),
+  );
+
+  if (!isHttps) {
+    secC = Math.min(secC, 35);
+    secR.push("HTTPS missing");
+  } else {
+    secF = Math.max(secF, 35);
+    secR.push("HTTPS enforced");
+  }
+
+  if (sameAsCount >= 2) {
+    secF = Math.max(secF, 48);
+    secR.push(`${sameAsCount} sameAs trust links detected`);
+  } else if (sameAsCount === 1) {
+    secF = Math.max(secF, 35);
+    secR.push("Limited sameAs trust links");
+  } else {
+    secC = Math.min(secC, 72);
+    secR.push("No sameAs trust links");
+  }
+
+  if (hasAuthorSignal) {
+    secF = Math.max(secF, 45);
+    secR.push("Author/entity trust signal detected");
+  } else {
+    secC = Math.min(secC, 78);
+    secR.push("No explicit author/entity trust signal");
+  }
+
+  if (hasPolicySignal) {
+    secF = Math.max(secF, 52);
+    secR.push("Trust-policy/contact signals present");
+  } else {
+    secC = Math.min(secC, 82);
+    secR.push("Limited policy/trust disclosure signals");
+  }
+
+  if (isHttps && sameAsCount >= 2 && hasAuthorSignal && hasPolicySignal) {
+    secF = Math.max(secF, 88);
+    secR.push("Strong trust baseline: transport, identity, and policy signals");
+  }
+
+  b["Security & Trust"] = normalizeBound({
+    floor: secF,
+    ceiling: secC,
+    reasons: secR,
   });
 
   return b;
@@ -13850,6 +13915,7 @@ app.post(
   - "Meta Tags & Open Graph"
   - "Technical SEO"
   - "AI Readability & Citability"
+  - "Security & Trust"
 
   Grading: A=90-100, B=75-89, C=50-74, D=25-49, F=0-24. Grade letter MUST match numeric score.
   Return 8 to 12 recommendations minimum.
@@ -13934,6 +14000,7 @@ Required category_grades labels (EXACT strings):
 - "Meta Tags & Open Graph"
 - "Technical SEO"
 - "AI Readability & Citability"
+- "Security & Trust"
 
 MANDATORY SCORING BOUNDS (enforced server-side):\n${boundsBlock}
 Score near the LOWER end of each range unless evidence clearly demonstrates exceptional quality.

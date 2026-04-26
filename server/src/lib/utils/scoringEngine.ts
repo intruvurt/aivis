@@ -8,6 +8,7 @@ export interface ScoreComponents {
   technicalSEO: number;
   metaTags: number;
   headingStructure: number;
+  securityTrust: number;
 }
 
 export interface ComputedScores {
@@ -45,16 +46,18 @@ export function computeScores(
   const technicalSEOScore = calculateTechnicalSEOScore(technicalData, discoveryData);
   const metaTagsScore = calculateMetaTagsScore(technicalData, extractedData);
   const headingStructureScore = calculateHeadingStructureScore(contentData);
+  const securityTrustScore = calculateSecurityTrustScore(technicalData, contentData, extractedData);
 
   // Weights are aligned with published methodology:
-  // Content Depth 20%, Schema 20%, AI Readability 20%, Technical SEO 15%, Meta Tags 13%, Heading Structure 12%
+  // Schema 20%, Content Depth 18%, Technical Trust 15%, Meta Tags 15%, AI Readability 12%, Heading Structure 10%, Security & Trust 10%
   const overall = Math.round(
-    contentDepthScore * 0.20 +
+    contentDepthScore * 0.18 +
     schemaScore * 0.20 +
-    aiReadabilityScore * 0.20 +
+    aiReadabilityScore * 0.12 +
     technicalSEOScore * 0.15 +
-    metaTagsScore * 0.13 +
-    headingStructureScore * 0.12
+    metaTagsScore * 0.15 +
+    headingStructureScore * 0.10 +
+    securityTrustScore * 0.10
   );
 
   return {
@@ -66,8 +69,44 @@ export function computeScores(
       technicalSEO: technicalSEOScore,
       metaTags: metaTagsScore,
       headingStructure: headingStructureScore,
+      securityTrust: securityTrustScore,
     }
   };
+}
+
+function calculateSecurityTrustScore(
+  technicalData: any,
+  contentData: any,
+  extractedData?: any,
+): number {
+  let score = 100;
+  const penalties: { [key: string]: number } = {};
+
+  if (!technicalData?.https?.enforced) {
+    penalties['no_https'] = 35;
+  }
+
+  const sameAsLinks = Array.isArray(extractedData?.schema?.sameAs)
+    ? extractedData.schema.sameAs.length
+    : 0;
+  if (sameAsLinks === 0) {
+    penalties['no_sameas_links'] = 15;
+  } else if (sameAsLinks === 1) {
+    penalties['limited_sameas_links'] = 8;
+  }
+
+  if (!contentData?.hasContact) {
+    penalties['no_contact_signal'] = 12;
+  }
+
+  if (!contentData?.hasAbout) {
+    penalties['no_about_signal'] = 10;
+  }
+
+  const totalPenalty = Object.values(penalties).reduce((sum, p) => sum + p, 0);
+  score = Math.max(0, score - totalPenalty);
+
+  return Math.round(score);
 }
 
 /**

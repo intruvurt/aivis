@@ -15,13 +15,16 @@ export const calculateScores = (allEvidence: any[], discoveryData: any, technica
   };
 
   const weights = {
+    // Canonical rubric alignment (mapped to legacy forensic categories):
+    // schema 20, content 18, technical trust 15, meta/indexability 15,
+    // AI readability 12, heading structure proxy 10, security/trust 10.
     crawlability: 15,
-    indexability: 15,
-    schemaPresence: 10,
-    contentClarity: 20,
+    indexability: 10,
+    schemaPresence: 20,
+    contentClarity: 18,
     entityTrust: 10,
     technicalHygiene: 15,
-    aiReadability: 15
+    aiReadability: 12
   };
 
   try {
@@ -86,12 +89,12 @@ export const calculateScores = (allEvidence: any[], discoveryData: any, technica
     // Calculate Overall Score (weighted average)
     scores.overall = Math.round(
       (scores.crawlability * weights.crawlability +
-       scores.indexability * weights.indexability +
-       scores.schemaPresence * weights.schemaPresence +
-       scores.contentClarity * weights.contentClarity +
-       scores.entityTrust * weights.entityTrust +
-       scores.technicalHygiene * weights.technicalHygiene +
-       scores.aiReadability * weights.aiReadability) / 100
+        scores.indexability * weights.indexability +
+        scores.schemaPresence * weights.schemaPresence +
+        scores.contentClarity * weights.contentClarity +
+        scores.entityTrust * weights.entityTrust +
+        scores.technicalHygiene * weights.technicalHygiene +
+        scores.aiReadability * weights.aiReadability) / 100
     );
 
   } catch (error) {

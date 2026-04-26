@@ -3470,8 +3470,13 @@ function prerenderHtml(route) {
     html = removeJsonLdByType(html, 'SoftwareApplication');
     html = removeJsonLdByType(html, 'Organization');
     html = removeJsonLdByType(html, 'WebSite');
-    html = removeJsonLdByType(html, 'FAQPage');
   }
+
+  // Always strip the base FAQPage — it's homepage-specific content baked into
+  // baseHtml. Every route that needs its own FAQPage injects it via buildExtraHead.
+  // Without this, inner pages that add a route-specific FAQPage end up with two
+  // blocks (base + route-specific), which Google rejects as "Duplicate field FAQPage".
+  html = removeJsonLdByType(html, 'FAQPage');
 
   if (route.path !== '/') {
     html = html.replace(

@@ -5,7 +5,7 @@ let posthog: any = null;
 let initialized = false;
 let enabled = false;
 
-export function initAnalytics() {
+export async function initAnalytics() {
   if (initialized) return;
   initialized = true;
 
@@ -17,10 +17,9 @@ export function initAnalytics() {
   }
 
   try {
-    // Dynamic import of posthog-node
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const PostHog = require('posthog-node');
-    posthog = new PostHog.PostHog(apiKey, {
+    // ESM-compatible dynamic import of posthog-node
+    const { PostHog } = await import('posthog-node');
+    posthog = new PostHog(apiKey, {
       host: 'https://us.posthog.com',
       flushAt: 1,
       flushInterval: 0,

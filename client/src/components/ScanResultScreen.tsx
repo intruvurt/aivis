@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { AnalysisResponse } from '@shared/types';
-import { getScoreBandInfo } from '../utils/scoreUtils';
+import { getScoreBand } from '../utils/scoreUtils';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -164,7 +164,7 @@ function EngineChip({ name, score }: { name: string; score: number }) {
 // ─── Score ring ───────────────────────────────────────────────────────────────
 
 function ScoreRing({ score }: { score: number }) {
-  const band = getScoreBandInfo(score);
+  const band = getScoreBand(score);
   const r = 44;
   const circ = 2 * Math.PI * r;
   const offset = circ * (1 - score / 100);
@@ -204,7 +204,7 @@ function ScoreRing({ score }: { score: number }) {
 
 function DimensionCard({ label, score, weight }: { label: string; score: number; weight: number }) {
   const earnedPts = Math.round((score / 100) * weight);
-  const band = getScoreBandInfo(score);
+  const band = getScoreBand(score);
   const fillPct = `${score}%`;
 
   return (
@@ -584,7 +584,7 @@ function UpgradeGate({ feature }: { feature: string }) {
 
 export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) {
   const score = result.visibility_score ?? 0;
-  const band = getScoreBandInfo(score);
+  const band = getScoreBand(score);
 
   const canSeeDimensions = atLeast(tier, 'starter');
   const canSeeIssues = atLeast(tier, 'alignment');

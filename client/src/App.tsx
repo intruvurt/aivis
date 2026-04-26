@@ -23,7 +23,7 @@ const PartnershipTermsPage = React.lazy(() => import('./pages/PartnershipAgreeme
 const PartnershipPaymentPage = React.lazy(() => import('./pages/PartnershipPaymentPage'));
 const ReferralRedirect = React.lazy(() => import('./pages/ReferralRedirect'));
 const AuthPage = React.lazy(() => import('./views/AuthPage'));
-const AnalyticsPage = React.lazy(() => import('./views/AnalyticsPage'));
+const AnalyticsPage = React.lazy(() => import('./views/VisibilityIntelligencePage'));
 const EvidenceRegistryPage = React.lazy(() => import('./views/EvidenceRegistryPage'));
 const KeywordsPage = React.lazy(() => import('./views/KeywordsPage'));
 const CompetitorsPage = React.lazy(() => import('./views/CompetitorsPage'));
@@ -283,6 +283,8 @@ export default function App() {
             <Route path="/why-aivis-exists" element={<WhyAivisExistsPage />} />
 
             {/* ── Taxonomy: Methodology layer ── */}
+            <Route path="/cite-ledger" element={<CiteLedgerPage />} />
+            <Route path="/brag-methodology" element={<BragEvidenceTrailsPage />} />
             <Route path="/methodology/cite-ledger" element={<CiteLedgerPage />} />
             <Route path="/what-is-cite-ledger" element={<WhatIsCiteLedgerPage />} />
             <Route

@@ -1,29 +1,40 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Shield, ArrowRight, Database, Hash, Fingerprint } from "lucide-react";
-import { usePageMeta } from "../../hooks/usePageMeta";
-import PublicPageFrame from "../../components/PublicPageFrame";
-import { BRAG_ACRONYM, BRAG_EXPANSION, BRAG_TRAIL_LABEL } from "@shared/types";
-import { buildWebPageSchema, buildBreadcrumbSchema } from "../../lib/seoSchema";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  AlertTriangle,
+  BarChart3,
+  CheckCircle2,
+  Database,
+  Fingerprint,
+  Shield,
+  Sparkles,
+} from 'lucide-react';
+import { usePageMeta } from '../../hooks/usePageMeta';
+import PublicPageFrame from '../../components/PublicPageFrame';
+import { BRAG_ACRONYM, BRAG_EXPANSION, BRAG_TRAIL_LABEL } from '@shared/types';
+import { buildWebPageSchema, buildBreadcrumbSchema } from '../../lib/seoSchema';
 
 export default function BragEvidenceTrailsPage() {
+  const location = useLocation();
+  const canonicalPath =
+    location.pathname === '/brag-methodology'
+      ? '/brag-methodology'
+      : '/methodology/brag-evidence-trails';
+
   usePageMeta({
-    title: `${BRAG_TRAIL_LABEL} Methodology — Deterministic Finding IDs`,
-    description:
-      `${BRAG_ACRONYM} (${BRAG_EXPANSION}) assigns a deterministic ID to every audit finding. Trails map citation relationships, measure drift, and compute confidence from evidence manifests.`,
-    path: "/methodology/brag-evidence-trails",
+    title: `${BRAG_ACRONYM} Methodology | Scoring Anchor`,
+    description: `${BRAG_ACRONYM} anchors AiVIS scoring semantics by forcing every finding to resolve through benchmark, rationale, authority, and gap evidence classes.`,
+    path: canonicalPath,
     structuredData: [
       buildWebPageSchema({
-        name: `${BRAG_TRAIL_LABEL} Methodology`,
-        description:
-          `${BRAG_ACRONYM} assigns a deterministic ID to every audit finding. Trails map citation relationships and measure drift.`,
-        path: "/methodology/brag-evidence-trails",
+        name: `${BRAG_ACRONYM} Methodology | Scoring Anchor`,
+        description: `${BRAG_ACRONYM} methodology page describing evidence classes, scoring interpretation, and remediation linkage.`,
+        path: canonicalPath,
       }),
       buildBreadcrumbSchema([
-        { name: "Home", path: "/" },
-        { name: "About AiVIS", path: "/about-aivis" },
-        { name: "Methodology", path: "/methodology" },
-        { name: BRAG_TRAIL_LABEL, path: "/methodology/brag-evidence-trails" },
+        { name: 'Home', path: '/' },
+        { name: 'Methodology', path: '/methodology' },
+        { name: `${BRAG_ACRONYM} Methodology`, path: canonicalPath },
       ]),
     ],
   });
@@ -31,116 +42,168 @@ export default function BragEvidenceTrailsPage() {
   return (
     <PublicPageFrame
       icon={Shield}
-      title={BRAG_TRAIL_LABEL}
-      subtitle={`${BRAG_ACRONYM} — ${BRAG_EXPANSION}. How every finding gets a verifiable identity.`}
+      title={`${BRAG_ACRONYM} Methodology`}
+      subtitle={`${BRAG_ACRONYM} (${BRAG_EXPANSION}) is the scoring anchor that keeps AiVIS outputs evidence-bound, reproducible, and action-linked.`}
       backTo="/methodology"
     >
-      {/* ─── What is BRAG ────────────────────────────────────────── */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-white mb-4">What Is {BRAG_ACRONYM}</h2>
-        <p className="text-slate-300 leading-relaxed text-lg">
-          {BRAG_ACRONYM} stands for <strong className="text-white">{BRAG_EXPANSION}</strong>. It is
-          the naming and linking system that gives every AiVIS audit finding a deterministic,
-          content-derived identifier. Each {BRAG_ACRONYM} ID follows the pattern{" "}
-          <code className="text-cyan-400 bg-white/5 px-1.5 py-0.5 rounded text-sm">
-            BRAG-&#123;source&#125;-&#123;sha256_12&#125;
-          </code>{" "}
-          where <em>source</em> is the pipeline stage and <em>sha256_12</em> is the first 12
-          characters of the finding's content hash.
+      <section className="mb-10 rounded-2xl border border-orange-300/20 bg-orange-400/6 p-5">
+        <p className="text-xs uppercase tracking-[0.18em] text-orange-200/85 mb-2">
+          Scoring anchor
+        </p>
+        <p className="text-lg text-slate-100 leading-relaxed">
+          {BRAG_ACRONYM} defines how AiVIS interprets evidence quality before assigning confidence
+          and remediation priority. The framework exists to prevent metrics from becoming
+          disconnected from reality.
         </p>
       </section>
 
-      {/* ─── Trail construction ──────────────────────────────────── */}
       <section className="mb-10">
-        <h2 className="text-2xl font-bold text-white mb-6">Trail Construction</h2>
-        <div className="space-y-6">
-          <div className="p-5 rounded-xl border border-orange-500/15 bg-orange-500/[0.02]">
-            <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-              <Hash className="w-4 h-4 text-orange-400" /> ID Generation
-            </h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              When a pipeline stage emits a finding, the {BRAG_ACRONYM} ID is generated
-              deterministically from the source stage name and the SHA-256 content hash. The same
-              input always produces the same ID. No randomness is involved.
+        <h2 className="text-2xl font-bold text-white mb-4">
+          What {BRAG_ACRONYM} means in the model
+        </h2>
+        <p className="text-slate-300 leading-relaxed mb-4">
+          {BRAG_ACRONYM} expands to <strong className="text-white">{BRAG_EXPANSION}</strong>. These
+          are not marketing labels. They are evidence classes used to classify claim quality and
+          assign action urgency in the pipeline.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <article className="rounded-xl border border-white/10 bg-white/4 p-4">
+            <h3 className="text-white font-semibold">B: Benchmark</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Verifiable quantitative anchors: measurable deltas, counts, rates, or constrained
+              thresholds tied to source evidence.
             </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/4 p-4">
+            <h3 className="text-white font-semibold">R: Rationale</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Causal or methodological explanation linking technical structure to extraction and
+              citation outcomes.
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/4 p-4">
+            <h3 className="text-white font-semibold">A: Authority</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Signals that the claim source is legitimate, attributable, and stable enough for model
+              trust routing.
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/4 p-4">
+            <h3 className="text-white font-semibold">G: Gap</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Explicit identification of missing evidence, structural blockers, and unresolved
+              failure paths requiring remediation.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-4">How BRAG anchors scoring</h2>
+        <div className="space-y-3 text-sm text-slate-300">
+          <p className="rounded-lg border border-white/10 bg-white/4 p-3">
+            <strong className="text-white">1. Classification:</strong> findings are tagged by BRAG
+            evidence class before confidence scoring.
+          </p>
+          <p className="rounded-lg border border-white/10 bg-white/4 p-3">
+            <strong className="text-white">2. Confidence shaping:</strong> missing benchmark or
+            authority evidence lowers trust and increases remediation priority.
+          </p>
+          <p className="rounded-lg border border-white/10 bg-white/4 p-3">
+            <strong className="text-white">3. Action routing:</strong> gap-heavy findings route to
+            corrective workflows; benchmark-backed findings route to performance tracking.
+          </p>
+          <p className="rounded-lg border border-white/10 bg-white/4 p-3">
+            <strong className="text-white">4. Ledger linkage:</strong> all BRAG-tagged findings are
+            persisted into CITE LEDGER for replay-safe auditing.
+          </p>
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-4">
+          Disambiguation: methodology vs generic analytics
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-red-300/20 bg-red-400/8 p-4">
+            <div className="flex items-center gap-2 text-red-200 font-semibold">
+              <AlertTriangle className="h-4 w-4" /> Generic analytics framing
+            </div>
+            <ul className="mt-3 space-y-2 text-sm text-slate-200">
+              <li>Request counters without citation interpretation</li>
+              <li>Disconnected score numbers with no evidence path</li>
+              <li>No actionable mapping between issue and fix</li>
+            </ul>
           </div>
-          <div className="p-5 rounded-xl border border-orange-500/15 bg-orange-500/[0.02]">
-            <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-orange-400" /> Evidence Binding
-            </h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Each finding carries an array of <em>evidence_keys</em> — references to the specific
-              data points that produced it (DOM node paths, schema properties, HTTP headers, etc.).
-              The {BRAG_ACRONYM} ID only exists if its evidence keys resolve. Missing evidence →
-              no trail entry.
-            </p>
-          </div>
-          <div className="p-5 rounded-xl border border-orange-500/15 bg-orange-500/[0.02]">
-            <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-              <Database className="w-4 h-4 text-cyan-400" /> Ledger Insertion
-            </h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              After validation, the finding is written to the Cite Ledger as a permanent entry.
-              The {BRAG_ACRONYM} ID becomes the primary reference key. All downstream outputs
-              (scores, recommendations, exports) reference findings by their {BRAG_ACRONYM} ID.
-            </p>
+          <div className="rounded-xl border border-emerald-300/20 bg-emerald-400/8 p-4">
+            <div className="flex items-center gap-2 text-emerald-200 font-semibold">
+              <CheckCircle2 className="h-4 w-4" /> BRAG methodology framing
+            </div>
+            <ul className="mt-3 space-y-2 text-sm text-slate-200">
+              <li>Evidence class attached to every diagnostic output</li>
+              <li>Citation state and corrective path always present</li>
+              <li>Visibility movement attributed to specific structural changes</li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* ─── Drift measurement ───────────────────────────────────── */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold text-white mb-4">Drift Measurement</h2>
-        <p className="text-slate-300 text-sm leading-relaxed">
-          When the same page is audited at different points in time, the {BRAG_ACRONYM} trail
-          enables drift analysis. If a finding's evidence keys change but the recommendation
-          remains, the drift is structural. If the finding disappears entirely, the drift is a
-          regression. All drift is computed by comparing Cite Ledger entries across audit
-          timestamps.
-        </p>
-      </section>
-
-      {/* ─── Finding structure ───────────────────────────────────── */}
-      <section className="mb-10">
-        <h2 className="text-xl font-bold text-white mb-4">Finding Structure</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-slate-300">
-            <thead className="text-xs uppercase text-slate-500 border-b border-white/10">
-              <tr>
-                <th className="py-3 pr-4">Field</th>
-                <th className="py-3">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">brag_id</td><td>Deterministic ID ({`BRAG-{source}-{sha256_12}`})</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">source</td><td>Pipeline stage that produced the finding</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">title</td><td>Human-readable finding title</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">severity</td><td>critical | high | medium | low | info</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">is_hard_blocker</td><td>Whether this finding blocks BRAG gate passage</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">evidence_keys</td><td>Array of evidence references</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">evidence_statuses</td><td>Per-key validation results</td></tr>
-              <tr><td className="py-2 pr-4 font-mono text-orange-400">confidence</td><td>0–1 confidence derived from evidence completeness</td></tr>
-            </tbody>
-          </table>
+        <h2 className="text-2xl font-bold text-white mb-4">BRAG in the remediation loop</h2>
+        <div className="space-y-4 text-slate-300 leading-relaxed">
+          <p>
+            BRAG output is designed for autonomous optimization workflows. Fix workers consume
+            gap-tagged findings, apply deterministic remediation patterns, and return updated
+            evidence snapshots.
+          </p>
+          <p>
+            This is why AiVIS should be interpreted as AI search visibility infrastructure rather
+            than an analytics dashboard. The system does not stop at diagnosis; it closes the loop
+            from detection to action and verification.
+          </p>
         </div>
       </section>
 
-      {/* ─── Cross-layer navigation ──────────────────────────────── */}
+      <section className="mb-10 rounded-2xl border border-cyan-300/20 bg-cyan-400/6 p-5">
+        <div className="flex items-center gap-2 text-cyan-100 font-semibold">
+          <BarChart3 className="h-4 w-4" /> Implementation note
+        </div>
+        <p className="mt-2 text-sm text-slate-200">
+          Visibility scores should always be rendered with causal context, such as evidence gaps and
+          active fixes. A bare score without BRAG interpretation is intentionally incomplete.
+        </p>
+      </section>
+
       <nav className="grid sm:grid-cols-3 gap-4" aria-label="Related methodology">
-        <Link to="/methodology/cite-ledger" className="p-4 rounded-lg border border-white/10 hover:border-cyan-500/30 transition-colors group">
-          <Database className="w-4 h-4 text-cyan-400 mb-2" />
-          <div className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors">Cite Ledger</div>
-          <div className="text-xs text-slate-500 mt-1">Source of truth</div>
+        <Link
+          to="/cite-ledger"
+          className="p-4 rounded-lg border border-white/10 hover:border-cyan-500/30 transition-colors group"
+        >
+          <Database className="w-4 h-4 text-cyan-300 mb-2" />
+          <div className="text-sm font-semibold text-white group-hover:text-cyan-200 transition-colors">
+            CITE LEDGER
+          </div>
+          <div className="text-xs text-slate-500 mt-1">Ownership and truth model</div>
         </Link>
-        <Link to="/methodology/entity-resolution-model" className="p-4 rounded-lg border border-white/10 hover:border-violet-500/30 transition-colors group">
-          <Fingerprint className="w-4 h-4 text-violet-400 mb-2" />
-          <div className="text-sm font-semibold text-white group-hover:text-violet-300 transition-colors">Entity Resolution</div>
-          <div className="text-xs text-slate-500 mt-1">Identity protection</div>
+        <Link
+          to="/methodology/entity-resolution-model"
+          className="p-4 rounded-lg border border-white/10 hover:border-violet-500/30 transition-colors group"
+        >
+          <Fingerprint className="w-4 h-4 text-violet-300 mb-2" />
+          <div className="text-sm font-semibold text-white group-hover:text-violet-200 transition-colors">
+            Entity resolution
+          </div>
+          <div className="text-xs text-slate-500 mt-1">Identity continuity</div>
         </Link>
-        <Link to="/evidence/drift-analysis" className="p-4 rounded-lg border border-white/10 hover:border-green-500/30 transition-colors group">
-          <Shield className="w-4 h-4 text-green-400 mb-2" />
-          <div className="text-sm font-semibold text-white group-hover:text-green-300 transition-colors">Drift Analysis</div>
-          <div className="text-xs text-slate-500 mt-1">Measure attribution stability</div>
+        <Link
+          to="/app/analytics"
+          className="p-4 rounded-lg border border-white/10 hover:border-emerald-500/30 transition-colors group"
+        >
+          <Sparkles className="w-4 h-4 text-emerald-300 mb-2" />
+          <div className="text-sm font-semibold text-white group-hover:text-emerald-200 transition-colors">
+            Visibility Intelligence
+          </div>
+          <div className="text-xs text-slate-500 mt-1">State, interpretation, and impact</div>
         </Link>
       </nav>
     </PublicPageFrame>

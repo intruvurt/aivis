@@ -25,7 +25,7 @@ import {
   AuditEngineIcon,
 } from '../components/icons';
 import { useAuthStore } from '../stores/authStore';
-import AuditForensicReport from '../components/AuditForensicReport';
+import ScanResultScreen from '../components/ScanResultScreen';
 import ShareButtons from '../components/ShareButtons';
 import { API_URL } from '../config';
 import type { AnalysisResponse, PipelineScanStage, ScanEvent, TextSummary } from '@shared/types';
@@ -1136,7 +1136,7 @@ const AnalyzePage: React.FC = () => {
           timelineEvents={timelineEvents}
         />
       ) : (
-        <AuditForensicReport
+        <ScanResultScreen
           result={result}
           tier={userTier}
           onRerunAudit={() => {

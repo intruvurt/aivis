@@ -385,6 +385,7 @@ export async function processDueCompetitorAutopilot(
        ORDER BY ct.next_monitor_at ASC
        LIMIT 10`
     );
+    console.log(`[competitor-autopilot] Cycle candidates=${dueRows.length}`);
 
     for (const row of dueRows) {
       try {
@@ -643,10 +644,13 @@ export function startCompetitorAutopilotLoop(
   console.log(' Competitor autopilot loop started (10-min interval)');
   competitorIntervalId = setInterval(async () => {
     const count = await processDueCompetitorAutopilot(analyzeInternally);
-    if (count > 0) console.log(`[competitor-autopilot] Processed ${count} competitors`);
+    console.log(`[competitor-autopilot] Cycle processed=${count}`);
   }, 10 * 60 * 1000);
 
-  setTimeout(() => processDueCompetitorAutopilot(analyzeInternally), 45_000);
+  setTimeout(async () => {
+    const count = await processDueCompetitorAutopilot(analyzeInternally);
+    console.log(`[competitor-autopilot] Initial cycle processed=${count}`);
+  }, 45_000);
 
   // Auto-discovery: find and add niche competitors from audit history every 6 hours.
   discoveryIntervalId = setInterval(async () => {

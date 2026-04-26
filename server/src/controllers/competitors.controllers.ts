@@ -22,6 +22,7 @@ type CompetitorSuggestion = {
  */
 async function screenshotCompetitorBackground(competitorId: string, url: string): Promise<void> {
   try {
+    console.log(`[competitors] Screenshot job started for competitor_id=${competitorId} url=${url}`);
     const enrichment = await scanAndEnrich(url, 90_000);
     if (enrichment.screenshotUrl) {
       const pool = getPool();
@@ -29,10 +30,12 @@ async function screenshotCompetitorBackground(competitorId: string, url: string)
         `UPDATE competitor_tracking SET screenshot_url = $1, updated_at = NOW() WHERE id = $2`,
         [enrichment.screenshotUrl, competitorId],
       );
-      console.log(`[competitors] Screenshot stored for ${url}`);
+      console.log(`[competitors] Screenshot stored for competitor_id=${competitorId} url=${url}`);
+    } else {
+      console.warn(`[competitors] Screenshot job completed without image for competitor_id=${competitorId} url=${url}`);
     }
   } catch (err: any) {
-    console.warn(`[competitors] Screenshot capture failed for ${url}: ${err?.message}`);
+    console.warn(`[competitors] Screenshot capture failed for competitor_id=${competitorId} url=${url}: ${err?.message}`);
   }
 }
 
@@ -419,6 +422,9 @@ export async function createCompetitor(req: Request, res: Response) {
 
     // Auto-link existing audit if available
     const comp = created[0];
+    console.log(
+      `[competitors] Added competitor id=${comp.id} user_id=${userId} url=${normalized.url} monitoring_enabled=${String(comp.monitoring_enabled)} next_monitor_at=${String(comp.next_monitor_at || 'NOW()')}`,
+    );
     if (!comp.latest_audit_id) {
       try {
         const { rows: auditMatch } = await pool.query(

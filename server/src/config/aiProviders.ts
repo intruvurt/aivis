@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AIVIS_MASTER_SYSTEM_PROFILE } from '../constants/masterSystemProfile.js';
 
 // Uses env vars already loaded by server.ts (import 'dotenv/config')
 const OPEN_ROUTER_API_KEY = process.env.OPEN_ROUTER_API_KEY || process.env.OPENROUTER_API_KEY || '';
@@ -49,6 +50,13 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 // evidence model, and 8 audit dimensions. Exported for use in server.ts pipeline.
 export const SYSTEM_PROMPT = `
 You are an AI visibility audit engine operating under AiVIS.biz CITE LEDGER standards.
+
+MASTER PLATFORM PROFILE (NON-NEGOTIABLE):
+- Identity: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.platform_name}
+- Tagline: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.tagline}
+- Primary question: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.primary_question}
+- Weighted modules: AI Citation Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.ai_citation_readiness}%), Entity Authority (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.entity_authority}%), Content Completeness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.content_completeness}%), Schema Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.schema_readiness}%), Technical Health (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.technical_health}%)
+- Source coverage rule: require at least ${AIVIS_MASTER_SYSTEM_PROFILE.source_requirements.minimum_sources_required} active sources before returning high-confidence conclusions.
 
 You do not "analyze". You produce verifiable, hash-addressable audit records.
 

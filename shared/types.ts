@@ -829,6 +829,83 @@ export interface RagPipelinePayload {
   entity_scores?: Array<Record<string, unknown>>;
 }
 
+export type CitationStateBand = 'citable' | 'emerging' | 'uncited';
+
+export interface StrategicOperatingStage {
+  stage: 'detect' | 'resolve' | 'act' | 'verify' | 'monitor';
+  status: 'healthy' | 'watch' | 'critical';
+  rationale: string;
+  corrective_action?: string;
+}
+
+export interface StrategicActionPath {
+  title: string;
+  priority: RecommendationPriority;
+  category: string;
+  expected_citation_lift: string;
+  implementation: string;
+}
+
+export interface StrategicBreakdown {
+  category: 'ai_citation_intelligence';
+  positioning: {
+    core_question: string;
+    value_proposition: string;
+  };
+  master_system?: {
+    version: string;
+    tagline: string;
+    score_weights: {
+      ai_citation_readiness: number;
+      entity_authority: number;
+      content_completeness: number;
+      schema_readiness: number;
+      technical_health: number;
+    };
+    source_policy: {
+      minimum_sources_required: number;
+      active_sources: number;
+      requirement_met: boolean;
+    };
+    output_modes: Array<{
+      key: 'instant_audit' | 'continuous_monitoring' | 'content_optimizer';
+      enabled: boolean;
+    }>;
+    module_scores: Array<{
+      key:
+      | 'ai_citation_readiness'
+      | 'entity_authority'
+      | 'content_completeness'
+      | 'schema_readiness'
+      | 'technical_health';
+      label: string;
+      weight: number;
+      score: number;
+      status: 'healthy' | 'watch' | 'critical';
+      explanation: string;
+    }>;
+  };
+  citation_state: {
+    overall: CitationStateBand;
+    average_engine_score: number;
+    engine_states: Record<keyof AIPlatformScores, CitationStateBand>;
+    uncited_engines: Array<keyof AIPlatformScores>;
+  };
+  api_signal_coverage: {
+    cloudflare_bot_signals: boolean;
+    knowledge_graph_signals: boolean;
+    query_demand_signals: boolean;
+    serp_answer_signals: boolean;
+    technical_health_signals: boolean;
+    active_count?: number;
+    minimum_required?: number;
+    requirement_met?: boolean;
+  };
+  operating_model: StrategicOperatingStage[];
+  corrective_action_paths: StrategicActionPath[];
+  generated_at: string;
+}
+
 export interface AnalysisResponse {
   visibility_score: number;
   avs?: AVSScoreSummary;
@@ -948,6 +1025,8 @@ export interface AnalysisResponse {
    * and produces a composite score that degrades gracefully under disagreement.
    */
   claim_resolution?: ClaimResolutionResult;
+  /** Pipeline-generated strategic operating model and action map */
+  strategic_breakdown?: StrategicBreakdown;
 }
 
 export function isValidAnalysisResponse(obj: unknown): obj is AnalysisResponse {

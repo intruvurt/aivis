@@ -26,6 +26,7 @@ import {
   Shield,
   ArrowUpRight,
   TrendingUp,
+  Compass,
   Lock,
   ExternalLink,
 } from 'lucide-react';
@@ -615,6 +616,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
     score: g.score,
     weight: getDimensionWeight(g.label),
   }));
+  const strategic = result.strategic_breakdown;
 
   // Issues — sorted: critical → high → medium → low
   const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -746,7 +748,110 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
         )}
       </div>
 
-      {/* ─── 3. DIMENSION CARDS ─────────────────────────────────────────── */}
+      {/* ─── 3. STRATEGIC OPERATING MODEL ──────────────────────────────── */}
+      {strategic && (
+        <Section
+          icon={Compass}
+          title="Strategic Engine Model"
+          badge={strategic.citation_state.overall.toUpperCase()}
+        >
+          <div className="space-y-4">
+            <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 px-3 py-2">
+              <p className="text-[10px] uppercase tracking-widest text-cyan-300/70 mb-1">
+                Core question
+              </p>
+              <p className="text-sm text-white/85">{strategic.positioning.core_question}</p>
+              <p className="text-xs text-white/55 mt-1">
+                {strategic.positioning.value_proposition}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2">
+                <p className="text-[10px] text-white/35 uppercase">Cloudflare</p>
+                <p className="text-xs font-semibold text-white/80">
+                  {strategic.api_signal_coverage.cloudflare_bot_signals ? 'online' : 'missing'}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2">
+                <p className="text-[10px] text-white/35 uppercase">KG</p>
+                <p className="text-xs font-semibold text-white/80">
+                  {strategic.api_signal_coverage.knowledge_graph_signals ? 'online' : 'missing'}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2">
+                <p className="text-[10px] text-white/35 uppercase">GSC Demand</p>
+                <p className="text-xs font-semibold text-white/80">
+                  {strategic.api_signal_coverage.query_demand_signals ? 'online' : 'missing'}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2">
+                <p className="text-[10px] text-white/35 uppercase">SERP</p>
+                <p className="text-xs font-semibold text-white/80">
+                  {strategic.api_signal_coverage.serp_answer_signals ? 'online' : 'missing'}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2">
+                <p className="text-[10px] text-white/35 uppercase">Technical</p>
+                <p className="text-xs font-semibold text-white/80">
+                  {strategic.api_signal_coverage.technical_health_signals ? 'online' : 'missing'}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {strategic.operating_model.map((stage, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-white/75">
+                      {stage.stage}
+                    </p>
+                    <span
+                      className={`text-[10px] font-bold uppercase ${stage.status === 'healthy' ? 'text-emerald-300' : stage.status === 'watch' ? 'text-amber-300' : 'text-red-300'}`}
+                    >
+                      {stage.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/55 mt-1">{stage.rationale}</p>
+                  {stage.corrective_action && (
+                    <p className="text-xs text-cyan-200/70 mt-1">
+                      Action: {stage.corrective_action}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {strategic.corrective_action_paths.length > 0 && (
+              <div className="rounded-lg border border-white/10 bg-white/[0.015] px-3 py-3">
+                <p className="text-[10px] uppercase tracking-widest text-white/35 mb-2">
+                  Corrective action paths
+                </p>
+                <div className="space-y-2">
+                  {strategic.corrective_action_paths.slice(0, 3).map((path, i) => (
+                    <div key={i} className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm text-white/80">{path.title}</p>
+                        <p className="text-[11px] text-white/45">
+                          {path.category} · {path.priority}
+                        </p>
+                      </div>
+                      <span className="text-xs font-semibold text-emerald-300 whitespace-nowrap">
+                        +{path.expected_citation_lift}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
+
+      {/* ─── 4. DIMENSION CARDS ─────────────────────────────────────────── */}
       {dims.length > 0 && (
         <Section
           icon={TrendingUp}
@@ -781,7 +886,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
         </Section>
       )}
 
-      {/* ─── 4. ISSUES TRIAGE ───────────────────────────────────────────── */}
+      {/* ─── 5. ISSUES TRIAGE ───────────────────────────────────────────── */}
       {issues.length > 0 && (
         <Section
           icon={AlertTriangle}
@@ -800,7 +905,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
         </Section>
       )}
 
-      {/* ─── 5. FIX LIST ─────────────────────────────────────────────────── */}
+      {/* ─── 6. FIX LIST ─────────────────────────────────────────────────── */}
       {fixes.length > 0 && (
         <Section icon={Zap} title="Priority Fix Engine" badge={`${fixes.length} ranked fixes`}>
           {canSeeFixes ? (
@@ -820,7 +925,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
         </Section>
       )}
 
-      {/* ─── 6. BRAG EVIDENCE BLOCK ─────────────────────────────────────── */}
+      {/* ─── 7. BRAG EVIDENCE BLOCK ─────────────────────────────────────── */}
       {bragFindings.length > 0 && (
         <Section
           icon={Shield}
@@ -862,7 +967,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
         </Section>
       )}
 
-      {/* ─── 7. BOTTOM ACTION BAR (sticky) ──────────────────────────────── */}
+      {/* ─── 8. BOTTOM ACTION BAR (sticky) ──────────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#080c14]/95 backdrop-blur-md px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           {/* Primary: Re-scan */}

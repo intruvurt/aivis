@@ -1075,6 +1075,8 @@ function CognitionOverlay({
             timelineEvents={timelineEvents}
             scanStep={scanStep}
             scanning={scanning}
+            replayCursorSeq={cursorSeq}
+            replayMaxSeq={maxSeq}
           />
         }
       />

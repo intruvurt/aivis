@@ -441,6 +441,102 @@ function ScorePanel({ result }: { result: AnalysisResponse | null }) {
   );
 }
 
+function StrategicReplayPanel({
+  result,
+  replayCursorSeq,
+  replayMaxSeq,
+}: {
+  result: AnalysisResponse | null;
+  replayCursorSeq: number;
+  replayMaxSeq: number;
+}) {
+  const strategic = result?.strategic_breakdown;
+  if (!strategic) return null;
+
+  const max = Math.max(1, replayMaxSeq || 1);
+  const clampedSeq = Math.max(0, Math.min(replayCursorSeq, max));
+  const progress = clampedSeq / max;
+  const progressPct = Math.round(progress * 100);
+
+  const stageThresholds: Record<string, number> = {
+    detect: 0.12,
+    resolve: 0.3,
+    act: 0.52,
+    verify: 0.74,
+    monitor: 0.9,
+  };
+
+  const activeStage =
+    strategic.operating_model.find((s) => progress < (stageThresholds[s.stage] ?? 1))?.stage ??
+    'monitor';
+
+  return (
+    <>
+      <SectionLabel>strategic replay model</SectionLabel>
+      <Row
+        k="citation state"
+        v={strategic.citation_state.overall}
+        status={
+          strategic.citation_state.overall === 'citable'
+            ? 'pass'
+            : strategic.citation_state.overall === 'emerging'
+              ? 'warn'
+              : 'fail'
+        }
+      />
+      <Row k="replay progress" v={`${progressPct}% · seq ${clampedSeq}/${max}`} />
+      <Row k="active stage" v={activeStage} />
+
+      <div className="fl-deepview__timeline-list">
+        {strategic.operating_model.map((s) => {
+          const threshold = stageThresholds[s.stage] ?? 1;
+          const reached = progress >= threshold;
+          const stageState: 'pass' | 'warn' | 'fail' = reached
+            ? s.status === 'healthy'
+              ? 'pass'
+              : s.status === 'watch'
+                ? 'warn'
+                : 'fail'
+            : s.stage === activeStage
+              ? 'warn'
+              : 'fail';
+
+          const statusLabel = reached
+            ? s.status
+            : s.stage === activeStage
+              ? 'in-progress'
+              : 'pending';
+
+          return (
+            <div key={s.stage} className="fl-deepview__timeline-row">
+              <span className="fl-deepview__timeline-seq">{s.stage}</span>
+              <span className={`fl-deepview__val fl-deepview__val--${stageState}`}>
+                {statusLabel} · {s.rationale}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {strategic.corrective_action_paths.length > 0 && (
+        <>
+          <SectionLabel>top action paths</SectionLabel>
+          {strategic.corrective_action_paths.slice(0, 3).map((path, idx) => (
+            <Row
+              key={`${path.title}-${idx}`}
+              k={`${idx + 1}. ${path.priority}`}
+              v={`${path.title} (+${path.expected_citation_lift})`}
+              status={
+                path.priority === 'high' ? 'fail' : path.priority === 'medium' ? 'warn' : 'pass'
+              }
+            />
+          ))}
+        </>
+      )}
+    </>
+  );
+}
+
 // ── Public export ─────────────────────────────────────────────────────────────
 
 export interface StageDeepViewProps {
@@ -452,6 +548,8 @@ export interface StageDeepViewProps {
   timelineEvents: TimelineEvent[];
   scanStep: string;
   scanning: boolean;
+  replayCursorSeq: number;
+  replayMaxSeq: number;
 }
 
 export default function StageDeepView({
@@ -461,6 +559,8 @@ export default function StageDeepView({
   timelineScanId,
   timelineEvents,
   scanning,
+  replayCursorSeq,
+  replayMaxSeq,
 }: StageDeepViewProps) {
   return (
     <div className="fl-deepview" aria-label={`Stage details: ${stage}`}>
@@ -475,6 +575,11 @@ export default function StageDeepView({
         timelineEvents={timelineEvents}
         timelineScanId={timelineScanId}
         scanning={scanning}
+      />
+      <StrategicReplayPanel
+        result={result}
+        replayCursorSeq={replayCursorSeq}
+        replayMaxSeq={replayMaxSeq}
       />
     </div>
   );

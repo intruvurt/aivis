@@ -169,6 +169,7 @@ import { dispatchAuditReportDeliveries } from "./services/reportDeliveryService.
 import { generateTextSummary } from "./services/textSummaryGenerator.js";
 import { bootstrapScheduler } from "./services/citationScheduler.js";
 import { runNicheRanking } from "./services/citationRankingEngine.js";
+import { buildStrategicBreakdown } from "./services/strategicBreakdownService.js";
 import { settleReferralCreditsIfEligible } from "./services/referralCredits.js";
 import {
   startNewsletterLoop,
@@ -12659,22 +12660,51 @@ For each recommendation:
         pipelineScoreSource = 'hard_guard_zero';
       }
 
+      const normalizedPlatformScores = {
+        chatgpt: Math.round(Math.min(100, Math.max(0, rawPlatformScores.chatgpt))),
+        perplexity: Math.round(
+          Math.min(100, Math.max(0, rawPlatformScores.perplexity)),
+        ),
+        google_ai: Math.round(
+          Math.min(100, Math.max(0, rawPlatformScores.google_ai)),
+        ),
+        claude: Math.round(Math.min(100, Math.max(0, rawPlatformScores.claude))),
+      };
+
+      const strategicBreakdown = buildStrategicBreakdown({
+        visibilityScore: finalVisibilityScore,
+        aiPlatformScores: normalizedPlatformScores,
+        recommendations: finalizedRecommendationBundle.recommendations,
+        categoryGrades,
+        hasCloudflareBotSignals: Boolean(
+          scrapeInfo?.pipeline?.some(
+            (step: any) => step?.method === 'cf_browser_run' && step?.attempted,
+          ),
+        ),
+        hasKnowledgeGraphSignals: Boolean(
+          Number((domainIntelligence as any)?.entity_clarity_score || 0) > 0 ||
+          (aiAnalysis.brand_entities || []).length > 0,
+        ),
+        hasQueryDemandSignals: Boolean(
+          (aiAnalysis.keyword_intelligence || []).length > 0 ||
+          (aiAnalysis.topical_keywords || []).length > 0,
+        ),
+        hasSerpAnswerSignals: Boolean(
+          Array.isArray((domainIntelligence as any)?.citation_domains) &&
+          (domainIntelligence as any).citation_domains.length > 0,
+        ),
+        hasTechnicalHealthSignals: Boolean(
+          typeof technicalSignals?.status_code === 'number' &&
+          technicalSignals.status_code > 0,
+        ),
+        hasEvidenceFixIssues: (evidenceFixPlan?.issues || []).length > 0,
+        hasBragVerification: Boolean((bragValidation as any)?.root_hash),
+      });
+
       const result = attachTruthSignals({
         visibility_score: finalVisibilityScore,
-        ai_platform_scores: {
-          chatgpt: Math.round(
-            Math.min(100, Math.max(0, rawPlatformScores.chatgpt)),
-          ),
-          perplexity: Math.round(
-            Math.min(100, Math.max(0, rawPlatformScores.perplexity)),
-          ),
-          google_ai: Math.round(
-            Math.min(100, Math.max(0, rawPlatformScores.google_ai)),
-          ),
-          claude: Math.round(
-            Math.min(100, Math.max(0, rawPlatformScores.claude)),
-          ),
-        },
+        ai_platform_scores: normalizedPlatformScores,
+        strategic_breakdown: strategicBreakdown,
         ai_model_scores: modelScores,
         recommendations: finalizedRecommendationBundle.recommendations,
         category_grades: categoryGrades,

@@ -12,6 +12,7 @@ import { TIER_LIMITS, meetsMinimumTier, type CanonicalTier } from '../../../shar
 import { createTask, DAILY_TASK_LIMITS, type AgentTaskType } from '../services/agentTaskService.js';
 import { isSafeExternalUrl } from '../middleware/securityMiddleware.js';
 import { getBranding } from '../services/brandingService.js';
+import { AIVIS_MASTER_SYSTEM_PROFILE } from '../constants/masterSystemProfile.js';
 
 /* ────────────────────────────────────────────────────────────────────────────
  * Daily message limits per tier
@@ -755,6 +756,26 @@ Not at all. Reports are in plain language with prioritized recommendations. Each
 - /terms - Terms of service
 `.trim();
 
+const MASTER_SYSTEM_CONTEXT = `
+MASTER SYSTEM PROFILE:
+- Version: ${AIVIS_MASTER_SYSTEM_PROFILE.version}
+- Platform identity: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.platform_name}
+- Tagline: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.tagline}
+- Primary question: ${AIVIS_MASTER_SYSTEM_PROFILE.identity.primary_question}
+- Canonical weighted modules:
+  - AI Citation Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.ai_citation_readiness}%)
+  - Entity Authority (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.entity_authority}%)
+  - Content Completeness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.content_completeness}%)
+  - Schema Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.schema_readiness}%)
+  - Technical Health (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.technical_health}%)
+- Required live sources: minimum ${AIVIS_MASTER_SYSTEM_PROFILE.source_requirements.minimum_sources_required} of ${AIVIS_MASTER_SYSTEM_PROFILE.source_requirements.canonical_sources.length} canonical signals per execution.
+- Canonical source set: ${AIVIS_MASTER_SYSTEM_PROFILE.source_requirements.canonical_sources.join(', ')}
+- Output modes:
+${AIVIS_MASTER_SYSTEM_PROFILE.output_modes
+    .map((m) => `  - ${m.key}: ${m.intent}`)
+    .join('\n')}
+`.trim();
+
 /* ────────────────────────────────────────────────────────────────────────────
  * System prompt - locks the bot to platform-only knowledge
  * ──────────────────────────────────────────────────────────────────────────── */
@@ -799,6 +820,7 @@ RULES - FOLLOW STRICTLY:
 18. CONTEXTUAL PAGE NAVIGATION: When the user asks about a feature, always include a direct link to the relevant page. If the user's question maps to a specific tool (e.g. "how do competitors work" → [Competitors](/app/competitors)), link them there. Proactively suggest related pages the user may not know about.
 19. SUPPORT TICKET INTEGRATION: When TICKET_CONTEXT is provided below, summarize the ticket status, last response, and next steps. Users can say "open ticket about [issue]" to create one or "check ticket TK-XXXX" to look up status. Always include the ticket number in your response.
 20. **DATA-GROUNDED RESPONSES:** When the user asks about their own audit results, scores, competitors, or citations, reference the actual data from ENRICHED USER CONTEXT. Quote real numbers (audit count, credit balance, URLs audited). Never invent statistics or results.
+21. **MASTER SYSTEM ENFORCEMENT:** Keep responses aligned to the AiVIS master model: AI citation readiness, entity authority, content completeness, schema readiness, and technical health. Do not describe visibility as generic SEO rank tracking.
 
 USER CONTEXT:
 - Current tier: ${tier}
@@ -818,7 +840,10 @@ TICKET CONTEXT:
 ${ticketContext || 'TICKET_CONTEXT_AVAILABLE: false'}
 
 PLATFORM KNOWLEDGE BASE:
-${PLATFORM_KNOWLEDGE}`;
+${PLATFORM_KNOWLEDGE}
+
+MASTER SYSTEM CONTEXT:
+${MASTER_SYSTEM_CONTEXT}`;
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

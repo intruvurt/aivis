@@ -22,13 +22,13 @@ export default function BragEvidenceTrailsPage() {
       : '/methodology/brag-evidence-trails';
 
   usePageMeta({
-    title: `${BRAG_ACRONYM} Methodology | Scoring Anchor`,
-    description: `${BRAG_ACRONYM} anchors AiVIS scoring semantics by forcing every finding to resolve through benchmark, rationale, authority, and gap evidence classes.`,
+    title: `${BRAG_ACRONYM} Methodology | Based Retrieval Auditable Grading`,
+    description: `${BRAG_ACRONYM} (${BRAG_EXPANSION}) defines the evidence-linked grading semantics that anchor AiVIS citation-readiness scores and remediation priorities.`,
     path: canonicalPath,
     structuredData: [
       buildWebPageSchema({
-        name: `${BRAG_ACRONYM} Methodology | Scoring Anchor`,
-        description: `${BRAG_ACRONYM} methodology page describing evidence classes, scoring interpretation, and remediation linkage.`,
+        name: `${BRAG_ACRONYM} Methodology | Based Retrieval Auditable Grading`,
+        description: `${BRAG_ACRONYM} methodology page defining Benchmark, Rationale, Authority, and Gap classes and their impact on scoring and action paths.`,
         path: canonicalPath,
       }),
       buildBreadcrumbSchema([
@@ -48,51 +48,48 @@ export default function BragEvidenceTrailsPage() {
     >
       <section className="mb-10 rounded-2xl border border-orange-300/20 bg-orange-400/6 p-5">
         <p className="text-xs uppercase tracking-[0.18em] text-orange-200/85 mb-2">
-          Scoring anchor
+          Clear definition
         </p>
         <p className="text-lg text-slate-100 leading-relaxed">
-          {BRAG_ACRONYM} defines how AiVIS interprets evidence quality before assigning confidence
-          and remediation priority. The framework exists to prevent metrics from becoming
-          disconnected from reality.
+          {BRAG_ACRONYM} is the evidence-grading layer inside AiVIS. It ensures each finding is
+          anchored to verifiable proof and tied to a corrective path when citation readiness is
+          weak.
         </p>
       </section>
 
       <section className="mb-10">
-        <h2 className="text-2xl font-bold text-white mb-4">
-          What {BRAG_ACRONYM} means in the model
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Canonical expansion</h2>
         <p className="text-slate-300 leading-relaxed mb-4">
           {BRAG_ACRONYM} expands to <strong className="text-white">{BRAG_EXPANSION}</strong>. These
-          are not marketing labels. They are evidence classes used to classify claim quality and
-          assign action urgency in the pipeline.
+          are evidence classes used to classify claim quality and assign action urgency in the
+          pipeline.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <article className="rounded-xl border border-white/10 bg-white/4 p-4">
             <h3 className="text-white font-semibold">B: Benchmark</h3>
             <p className="mt-2 text-sm text-slate-300">
-              Verifiable quantitative anchors: measurable deltas, counts, rates, or constrained
-              thresholds tied to source evidence.
+              Verifiable quantitative anchors such as measurable deltas, counts, rates, and
+              threshold states tied to source evidence.
             </p>
           </article>
           <article className="rounded-xl border border-white/10 bg-white/4 p-4">
             <h3 className="text-white font-semibold">R: Rationale</h3>
             <p className="mt-2 text-sm text-slate-300">
-              Causal or methodological explanation linking technical structure to extraction and
-              citation outcomes.
+              Methodological explanation linking structural signals to extraction and citation
+              outcomes.
             </p>
           </article>
           <article className="rounded-xl border border-white/10 bg-white/4 p-4">
             <h3 className="text-white font-semibold">A: Authority</h3>
             <p className="mt-2 text-sm text-slate-300">
-              Signals that the claim source is legitimate, attributable, and stable enough for model
+              Evidence that source identity is legitimate, attributable, and stable enough for model
               trust routing.
             </p>
           </article>
           <article className="rounded-xl border border-white/10 bg-white/4 p-4">
             <h3 className="text-white font-semibold">G: Gap</h3>
             <p className="mt-2 text-sm text-slate-300">
-              Explicit identification of missing evidence, structural blockers, and unresolved
-              failure paths requiring remediation.
+              Explicit missing-evidence states and unresolved blockers requiring corrective action.
             </p>
           </article>
         </div>
@@ -118,6 +115,15 @@ export default function BragEvidenceTrailsPage() {
             persisted into CITE LEDGER for replay-safe auditing.
           </p>
         </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-4">What BRAG is not</h2>
+        <ul className="space-y-2 text-sm text-slate-300 list-disc pl-5">
+          <li>Not a vanity score layer detached from evidence.</li>
+          <li>Not generic analytics labeling for engagement charts.</li>
+          <li>Not a replacement for CITE LEDGER integrity rules.</li>
+        </ul>
       </section>
 
       <section className="mb-10">
@@ -172,6 +178,15 @@ export default function BragEvidenceTrailsPage() {
           Visibility scores should always be rendered with causal context, such as evidence gaps and
           active fixes. A bare score without BRAG interpretation is intentionally incomplete.
         </p>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-4">Associated terms</h2>
+        <div className="rounded-xl border border-white/10 bg-white/4 p-4 text-sm text-slate-300">
+          AiVIS, CITE LEDGER, BRAG, AI visibility, and AI citation readiness are linked concepts in
+          one evidence-backed system. BRAG provides grading semantics; CITE LEDGER provides
+          verification substrate and traceability.
+        </div>
       </section>
 
       <nav className="grid sm:grid-cols-3 gap-4" aria-label="Related methodology">

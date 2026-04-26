@@ -617,6 +617,7 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
     weight: getDimensionWeight(g.label),
   }));
   const strategic = result.strategic_breakdown;
+  const masterSystem = strategic?.master_system;
 
   // Issues — sorted: critical → high → medium → low
   const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -798,6 +799,58 @@ export default function ScanResultScreen({ result, tier, onRerunAudit }: Props) 
                 </p>
               </div>
             </div>
+
+            {masterSystem && (
+              <div className="rounded-lg border border-white/10 bg-white/[0.015] px-3 py-3 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-[10px] uppercase tracking-widest text-white/35">
+                    Master system v{masterSystem.version}
+                  </p>
+                  <span
+                    className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${
+                      masterSystem.source_policy.requirement_met
+                        ? 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10'
+                        : 'text-red-300 border-red-500/30 bg-red-500/10'
+                    }`}
+                  >
+                    source policy {masterSystem.source_policy.requirement_met ? 'met' : 'unmet'}
+                  </span>
+                </div>
+
+                <p className="text-xs text-white/55">
+                  active sources: {masterSystem.source_policy.active_sources}/
+                  {masterSystem.source_policy.minimum_sources_required} required
+                </p>
+
+                <div className="space-y-2">
+                  {masterSystem.module_scores.map((module, i) => (
+                    <div
+                      key={`${module.key}-${i}`}
+                      className="rounded-md border border-white/10 bg-white/[0.02] px-2.5 py-2"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <p className="text-xs font-semibold text-white/80">{module.label}</p>
+                        <span
+                          className={`text-[10px] font-bold uppercase ${
+                            module.status === 'healthy'
+                              ? 'text-emerald-300'
+                              : module.status === 'watch'
+                                ? 'text-amber-300'
+                                : 'text-red-300'
+                          }`}
+                        >
+                          {module.score}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-white/45">
+                        <span>weight {module.weight}%</span>
+                        <span>{module.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               {strategic.operating_model.map((stage, i) => (

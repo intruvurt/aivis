@@ -452,6 +452,7 @@ function StrategicReplayPanel({
 }) {
   const strategic = result?.strategic_breakdown;
   if (!strategic) return null;
+  const masterSystem = strategic.master_system;
 
   const max = Math.max(1, replayMaxSeq || 1);
   const clampedSeq = Math.max(0, Math.min(replayCursorSeq, max));
@@ -486,6 +487,35 @@ function StrategicReplayPanel({
       />
       <Row k="replay progress" v={`${progressPct}% · seq ${clampedSeq}/${max}`} />
       <Row k="active stage" v={activeStage} />
+
+      {masterSystem && (
+        <>
+          <SectionLabel>master system</SectionLabel>
+          <Row k="version" v={`v${masterSystem.version}`} />
+          <Row
+            k="source policy"
+            v={`${masterSystem.source_policy.active_sources}/${masterSystem.source_policy.minimum_sources_required}`}
+            status={masterSystem.source_policy.requirement_met ? 'pass' : 'fail'}
+          />
+          <Row
+            k="policy state"
+            v={masterSystem.source_policy.requirement_met ? 'met' : 'unmet'}
+            status={masterSystem.source_policy.requirement_met ? 'pass' : 'fail'}
+          />
+
+          <SectionLabel>weighted modules</SectionLabel>
+          {masterSystem.module_scores.map((module) => (
+            <Row
+              key={module.key}
+              k={`${module.label} (${module.weight}%)`}
+              v={`${module.score} · ${module.status}`}
+              status={
+                module.status === 'healthy' ? 'pass' : module.status === 'watch' ? 'warn' : 'fail'
+              }
+            />
+          ))}
+        </>
+      )}
 
       <div className="fl-deepview__timeline-list">
         {strategic.operating_model.map((s) => {

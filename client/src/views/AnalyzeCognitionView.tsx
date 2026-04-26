@@ -230,6 +230,8 @@ interface CognitionOverlayProps {
   timelineEvents: TimelineEvent[];
 }
 
+type ActionMode = 'all' | 'content' | 'citation' | 'extractability';
+
 function CognitionOverlay({
   scanning,
   scanStep,
@@ -246,6 +248,7 @@ function CognitionOverlay({
   // Stage-primary desktop layout: user can select a stage to inspect
   const [selectedStage, setSelectedStage] = useState<ScanStage>(pipelineStepToStage(scanStep));
   const [showStableNodes, setShowStableNodes] = useState(false);
+  const [actionMode, setActionMode] = useState<ActionMode>('all');
 
   // Follow active pipeline stage until user overrides
   const userOverrodeStageRef = useRef(false);
@@ -658,6 +661,100 @@ function CognitionOverlay({
     [issueNode, result]
   );
 
+  const actionableItems = useMemo(() => {
+    if (!result)
+      return [] as Array<{
+        mode: Exclude<ActionMode, 'all'>;
+        source: 'recommendation' | 'gap';
+        title: string;
+        detail: string;
+        priority?: string;
+        difficulty?: string;
+        evidenceBound?: boolean;
+      }>;
+
+    const modeForText = (text: string): Exclude<ActionMode, 'all'> => {
+      const t = normalizeToken(text);
+      if (
+        /extract|crawl|index|render|javascript|robots|headers|speed|core web|fetch|technical/.test(
+          t
+        )
+      ) {
+        return 'extractability';
+      }
+      if (/citation|evidence|entity|authority|trust|schema|source|ledger/.test(t)) {
+        return 'citation';
+      }
+      return 'content';
+    };
+
+    const fromRecommendations = (result.recommendations ?? []).map((r) => {
+      const text = `${r.category} ${r.title} ${r.description} ${r.implementation}`;
+      return {
+        mode: modeForText(text),
+        source: 'recommendation' as const,
+        title: r.title,
+        detail: r.description || r.implementation || r.impact,
+        priority: r.priority,
+        difficulty: r.difficulty,
+        evidenceBound:
+          (Array.isArray(r.evidence_ids) && r.evidence_ids.length > 0) ||
+          (typeof r.brag_id === 'string' && r.brag_id.length > 0),
+      };
+    });
+
+    const fromGaps = (result.answer_presence?.gaps ?? []).map((g) => {
+      const text = `${g.type} ${g.description} ${g.action}`;
+      const mode: Exclude<ActionMode, 'all'> =
+        g.type === 'content'
+          ? 'content'
+          : g.type === 'citation' || g.type === 'authority' || g.type === 'entity_clarity'
+            ? 'citation'
+            : modeForText(text);
+      return {
+        mode,
+        source: 'gap' as const,
+        title: g.description,
+        detail: g.action,
+        priority: 'high',
+        evidenceBound: true,
+      };
+    });
+
+    return [...fromGaps, ...fromRecommendations];
+  }, [result]);
+
+  const actionCounts = useMemo(
+    () => ({
+      all: actionableItems.length,
+      content: actionableItems.filter((i) => i.mode === 'content').length,
+      citation: actionableItems.filter((i) => i.mode === 'citation').length,
+      extractability: actionableItems.filter((i) => i.mode === 'extractability').length,
+    }),
+    [actionableItems]
+  );
+
+  const filteredActions = useMemo(() => {
+    if (actionMode === 'all') return actionableItems;
+    return actionableItems.filter((item) => item.mode === actionMode);
+  }, [actionMode, actionableItems]);
+
+  const readinessSnapshot = useMemo(() => {
+    const p = result?.answer_presence;
+    if (!p) {
+      return {
+        citationCoverage: null as number | null,
+        entityClarity: null as number | null,
+        authorityAlign: null as number | null,
+      };
+    }
+    return {
+      citationCoverage: p.citation_coverage_score,
+      entityClarity: p.entity_clarity_score,
+      authorityAlign: p.authority_alignment_score,
+    };
+  }, [result]);
+
   // Conflicts derived from engine state (shown in graph overlay)
   const conflicts = projectedState?.conflicts ?? [];
 
@@ -797,8 +894,38 @@ function CognitionOverlay({
           <div className="mt-1 text-[12px] text-white/90">
             Primary {issueNode.status === 'conflict' ? 'Conflict' : 'Focus'}: {issueNode.label}
           </div>
-          <div className="mt-2 text-[11px] text-white/70">
-            Impact: lowers entity confidence and citation consistency.
+          <div className="mt-2 text-[11px] text-white/70">Impact surface:</div>
+          <div className="mt-1 grid grid-cols-3 gap-1 text-[10px]">
+            <div className="rounded border border-white/10 bg-white/[0.03] px-2 py-1">
+              <div className="text-white/35">citation</div>
+              <div
+                className={`font-semibold ${(readinessSnapshot.citationCoverage ?? 0) >= 60 ? 'text-emerald-300' : (readinessSnapshot.citationCoverage ?? 0) >= 40 ? 'text-amber-300' : 'text-red-300'}`}
+              >
+                {readinessSnapshot.citationCoverage != null
+                  ? `${Math.round(readinessSnapshot.citationCoverage)}`
+                  : '—'}
+              </div>
+            </div>
+            <div className="rounded border border-white/10 bg-white/[0.03] px-2 py-1">
+              <div className="text-white/35">entity</div>
+              <div
+                className={`font-semibold ${(readinessSnapshot.entityClarity ?? 0) >= 60 ? 'text-emerald-300' : (readinessSnapshot.entityClarity ?? 0) >= 40 ? 'text-amber-300' : 'text-red-300'}`}
+              >
+                {readinessSnapshot.entityClarity != null
+                  ? `${Math.round(readinessSnapshot.entityClarity)}`
+                  : '—'}
+              </div>
+            </div>
+            <div className="rounded border border-white/10 bg-white/[0.03] px-2 py-1">
+              <div className="text-white/35">authority</div>
+              <div
+                className={`font-semibold ${(readinessSnapshot.authorityAlign ?? 0) >= 60 ? 'text-emerald-300' : (readinessSnapshot.authorityAlign ?? 0) >= 40 ? 'text-amber-300' : 'text-red-300'}`}
+              >
+                {readinessSnapshot.authorityAlign != null
+                  ? `${Math.round(readinessSnapshot.authorityAlign)}`
+                  : '—'}
+              </div>
+            </div>
           </div>
           <div className="mt-2 text-[10px] tracking-wide uppercase text-white/45">Evidence</div>
           <ul className="mt-1 text-[11px] text-white/75 space-y-1">
@@ -810,6 +937,65 @@ function CognitionOverlay({
             Node stats: confidence {issueNode.confidence.toFixed(2)} · mentions{' '}
             {issueNode.sources ?? 0} · linked conflicts {nodeConflictCount(issueNode.id)}
           </div>
+
+          <div className="mt-3 text-[10px] tracking-wide uppercase text-white/45">
+            Action Filters
+          </div>
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {(
+              [
+                ['all', 'all'],
+                ['content', 'content dev'],
+                ['citation', 'citation readiness'],
+                ['extractability', 'extractability'],
+              ] as Array<[ActionMode, string]>
+            ).map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setActionMode(mode)}
+                className={`text-[10px] px-2 py-1 border rounded transition-colors ${
+                  actionMode === mode
+                    ? 'text-white border-cyan-300/45 bg-cyan-300/10'
+                    : 'text-white/55 border-white/15 hover:text-white/80 hover:border-white/35'
+                }`}
+              >
+                {label} ({actionCounts[mode]})
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-2 text-[10px] tracking-wide uppercase text-white/45">
+            Engine Actions
+          </div>
+          <ul className="mt-1 text-[11px] text-white/80 space-y-1.5 max-h-28 overflow-auto pr-1">
+            {filteredActions.slice(0, 4).map((item, i) => (
+              <li
+                key={`${item.source}-${item.title}-${i}`}
+                className="border border-white/10 rounded px-2 py-1 bg-white/[0.03]"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-white/85">
+                    {i + 1}. {item.title}
+                  </span>
+                  <span className="text-[9px] text-white/40 uppercase">{item.source}</span>
+                </div>
+                <div className="mt-0.5 text-white/55">{item.detail}</div>
+                <div className="mt-0.5 text-[10px] text-white/40">
+                  {item.priority ? `priority ${item.priority}` : 'priority n/a'}
+                  {item.difficulty ? ` · difficulty ${item.difficulty}` : ''}
+                  {item.evidenceBound ? ' · evidence bound' : ' · evidence binding missing'}
+                </div>
+              </li>
+            ))}
+            {filteredActions.length === 0 && (
+              <li className="text-white/50">
+                No engine-bound actions in this filter yet. Run full scan and ensure recommendation
+                evidence binding.
+              </li>
+            )}
+          </ul>
+
           <div className="mt-2 text-[10px] tracking-wide uppercase text-white/45">Fix Path</div>
           <ol className="mt-1 text-[11px] text-white/80 space-y-1">
             {nodeFixPath(issueNode).map((stepText, i) => (
@@ -818,6 +1004,21 @@ function CognitionOverlay({
               </li>
             ))}
           </ol>
+
+          <div className="mt-2 flex items-center gap-2 text-[10px]">
+            <Link
+              to="/app/citations"
+              className="border border-white/15 px-2 py-1 text-white/60 hover:text-white/90 hover:border-white/35 transition-colors"
+            >
+              citation engine →
+            </Link>
+            <Link
+              to="/app/content-extractability"
+              className="border border-white/15 px-2 py-1 text-white/60 hover:text-white/90 hover:border-white/35 transition-colors"
+            >
+              extractability tool →
+            </Link>
+          </div>
         </div>
       )}
 

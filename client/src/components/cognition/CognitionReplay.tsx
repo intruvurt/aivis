@@ -65,6 +65,11 @@ function CognitionTopBar() {
   const allBranches = useReplayStore((s) => s.allBranches);
   const cursor = useReplayStore((s) => s.cursor);
 
+  // These counters are replay-graph artifacts derived from scan events,
+  // not source-control commits/branches.
+  const replaySteps = commits.length;
+  const replayTracks = allBranches.length;
+
   const scanLabel = useMemo(() => {
     if (!scanId) return '';
     try {
@@ -88,8 +93,12 @@ function CognitionTopBar() {
       )}
 
       <div className="fl-topbar__controls">
-        <span className="cr-topbar-stat">{commits.length} commits</span>
-        <span className="cr-topbar-stat">{allBranches.length} branches</span>
+        <span className="cr-topbar-stat" title="Derived replay steps from scan events">
+          {replaySteps} replay steps
+        </span>
+        <span className="cr-topbar-stat" title="Derived replay tracks from event lanes">
+          {replayTracks} replay tracks
+        </span>
         <span className="cr-topbar-stat cr-topbar-stat--seq">#{cursor.seq}</span>
       </div>
     </>

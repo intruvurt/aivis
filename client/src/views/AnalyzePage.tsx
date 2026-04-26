@@ -382,6 +382,7 @@ const AnalyzePage: React.FC = () => {
     return 'results';
   });
   const [hasSeenResults, setHasSeenResults] = useState(false);
+  const [resultView, setResultView] = useState<'summary' | 'technical'>('summary');
   const [lastAnalyzedUrl, setLastAnalyzedUrl] = useState<string | null>(null);
   const [demoBaseline, setDemoBaseline] = useState<DemoBaselineSnapshot | null>(null);
   const [browsingPromptVisible, setBrowsingPromptVisible] = useState(false);

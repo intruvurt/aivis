@@ -45,18 +45,22 @@ export const landingSchema = {
     {
       '@type': 'Organization',
       '@id': SHARED_IDS.org,
-      name: 'AiVIS',
-      legalName: 'Intruvurt Labs',
-      alternateName: 'AI Visibility Intelligence Platform',
-      url: 'https://aivis.biz/',
+      name: 'AiVIS.biz',
+      legalName: 'Intruvurt Labs, LLC',
+      alternateName: 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores',
+      url: BASE_URL,
       description:
-        'AiVIS measures whether AI answer engines can read, trust, and cite your website.',
+        'AiVIS.biz is an AI visibility and entity authority system founded in 2026 that measures how AI systems interpret, trust, and cite web content. It operates through CITE LEDGER™, a structured attribution layer that records parsing, validation, and citation behavior across answer engines, and BRAG (Based-Retrieval-Auditable-Grading), an evidence-linked registry that ties each audit finding to verifiable on-page signals.',
       logo: {
         '@type': 'ImageObject',
         url: `${BASE_URL}/aivis-logo.png`,
         contentUrl: `${BASE_URL}/aivis-logo.png`,
       },
-      foundingDate: '2025-12-01',
+      founder: {
+        '@type': 'Person',
+        name: 'Ryan Mason',
+      },
+      foundingDate: '2026-01-01',
       address: {
         '@type': 'PostalAddress',
         addressRegion: 'GA',
@@ -70,20 +74,23 @@ export const landingSchema = {
         telephone: '+1-706-907-5299',
       },
       sameAs: [
+        BASE_URL,
         'https://twitter.com/dobleduche',
         'https://bsky.app/profile/intruvurt.bsky.social',
-        'https://linkedin.com/in/web4aidev',
+        'https://www.linkedin.com/in/web4aidev',
         'https://dobleduche.substack.com/',
+        'https://github.com/dobleduche',
+        'https://github.com/dobleduche/brag',
       ],
       areaServed: 'Worldwide',
-      slogan: 'Evidence-backed AI visibility intelligence',
+      slogan: 'BRAG Evidence-Linked Scores — Get Cited Fixes',
     },
 
     // Founder (human authority)
     {
       '@type': 'Person',
       '@id': SHARED_IDS.founder,
-      name: 'Mase Bly',
+      name: 'Ryan Mason',
       jobTitle: 'Founder, CTO',
       url: 'https://aivis.biz',
       sameAs: ['https://twitter.com/dobleduche', 'https://linkedin.com/in/web4aidev'],

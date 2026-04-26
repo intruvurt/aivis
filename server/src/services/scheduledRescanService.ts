@@ -635,9 +635,8 @@ export function startCompetitorAutopilotLoop(
 
   const globalDisable = process.env.DISABLE_BACKGROUND_JOBS === 'true';
   const loopDisable = process.env.DISABLE_COMPETITOR_AUTOPILOT === 'true';
-  const scheduledRescansDisabled = process.env.DISABLE_SCHEDULED_RESCANS === 'true';
-  if (globalDisable || loopDisable || scheduledRescansDisabled) {
-    console.log('[competitor-autopilot] Loop disabled via env (DISABLE_COMPETITOR_AUTOPILOT, DISABLE_SCHEDULED_RESCANS, or DISABLE_BACKGROUND_JOBS)');
+  if (globalDisable || loopDisable) {
+    console.log('[competitor-autopilot] Loop disabled via env (DISABLE_COMPETITOR_AUTOPILOT or DISABLE_BACKGROUND_JOBS)');
     return;
   }
 

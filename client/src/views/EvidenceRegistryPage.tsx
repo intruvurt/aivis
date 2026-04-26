@@ -207,7 +207,7 @@ export default function EvidenceRegistryPage() {
             </div>
             <div className="rounded-2xl border border-slate-700 bg-slate-900 p-4">
               <p className="text-xs uppercase tracking-[0.14em] text-slate-400">Evidence Count</p>
-              <p className="mt-2 text-3xl font-semibold text-cyan-300">
+              <p className="mt-2 text-3xl font-semibold text-emerald-300">
                 {latestProjection?.totals.evidenceCount ??
                   seoHealth.fail + seoHealth.warn + seoHealth.pass}
               </p>
@@ -241,7 +241,7 @@ export default function EvidenceRegistryPage() {
                     className="rounded-xl border border-white/10 bg-slate-950/45 p-3"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-cyan-200">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-200">
                         {entry.claimType}
                       </span>
                       <span

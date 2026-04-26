@@ -611,7 +611,7 @@ export default function ScoreFixPage() {
             <Card className="rounded-[22px] border-white/10 bg-white/5 text-white shadow-2xl">
               <CardContent className="p-4 sm:p-5">
                 <div className="flex items-center gap-3">
-                  <AuditEngineIcon className="h-5 w-5 text-violet-300" />
+                  <AuditEngineIcon className="h-5 w-5 text-amber-300" />
                   <ContentBlueprintIcon className="h-5 w-5 text-amber-300" />
                   <h2 className="text-2xl brand-title">What Score Fix AutoFix PR does</h2>
                 </div>
@@ -652,7 +652,7 @@ export default function ScoreFixPage() {
               <CardContent className="p-4 sm:p-5">
                 <div className="flex items-center gap-3">
                   <ScoreFixIcon className="h-5 w-5 text-amber-300" />
-                  <AuditEngineIcon className="h-5 w-5 text-violet-300" />
+                  <AuditEngineIcon className="h-5 w-5 text-amber-300" />
                   <h2 className="text-2xl brand-title">Best fit</h2>
                 </div>
                 <div className="mt-6 space-y-3">
@@ -803,7 +803,7 @@ export default function ScoreFixPage() {
                                 key={id}
                                 className="rounded-lg border border-white/10 bg-charcoal-light/40 px-2.5 py-2"
                               >
-                                <div className="text-[11px] font-medium text-cyan-200">{id}</div>
+                                <div className="text-[11px] font-medium text-emerald-200">{id}</div>
                                 <div className="text-[11px] text-slate-300 mt-0.5">
                                   {ev?.label || ev?.source || 'Evidence item'}
                                 </div>
@@ -827,7 +827,7 @@ export default function ScoreFixPage() {
               <CardContent className="p-4 sm:p-5">
                 <div className="flex items-center gap-3">
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5">
-                    <Link2 className="h-5 w-5 text-cyan-300" />
+                    <Link2 className="h-5 w-5 text-emerald-300" />
                   </div>
                   <h2 className="text-2xl brand-title">What each automated PR contains</h2>
                 </div>

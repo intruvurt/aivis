@@ -1,45 +1,62 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Activity, ArrowRight, BarChart3, Check, ClipboardList, Clock3, Copy, Gauge, Globe, Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Activity,
+  ArrowRight,
+  BarChart3,
+  Check,
+  ClipboardList,
+  Clock3,
+  Copy,
+  Gauge,
+  Globe,
+  Loader2,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
 import Spinner from '../components/Spinner';
-import AppPageFrame from "../components/AppPageFrame";
-import ConversionCTA from "../components/ConversionCTA";
-import FeatureInstruction, { InfoTip } from "../components/FeatureInstruction";
-import { useAuthStore } from "../stores/authStore";
-import useFeatureStatus from "../hooks/useFeatureStatus";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import { useCountUp } from "../hooks/useCountUp";
-import { apiFetch } from "../utils/api";
-import { TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
-import { usePageMeta } from "../hooks/usePageMeta";
-import PageQASection from "../components/PageQASection";
-import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+import AppPageFrame from '../components/AppPageFrame';
+import ConversionCTA from '../components/ConversionCTA';
+import FeatureInstruction, { InfoTip } from '../components/FeatureInstruction';
+import { useAuthStore } from '../stores/authStore';
+import useFeatureStatus from '../hooks/useFeatureStatus';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useCountUp } from '../hooks/useCountUp';
+import { apiFetch } from '../utils/api';
+import { TIER_LIMITS, uiTierFromCanonical } from '@shared/types';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageQASection from '../components/PageQASection';
+import { buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
 
 const DASHBOARD_FAQ = [
   {
-    question: "What does AI visibility mean and why does it matter?",
-    answer: "AI visibility measures how likely your website, brand, or content is to appear in AI-generated answers from platforms like ChatGPT, Perplexity, Claude, and Google AI Overview. Unlike traditional search rankings which track click positions, AI visibility tracks whether your content is being cited, mentioned, or used as source material when users ask questions in conversational AI interfaces. As AI-generated answers increasingly answer queries without a search click, brands invisible to AI answer engines lose discovery channels entirely \u2014 even if their SEO rankings remain strong.",
+    question: 'What does AI visibility mean and why does it matter?',
+    answer:
+      'AI visibility measures how likely your website, brand, or content is to appear in AI-generated answers from platforms like ChatGPT, Perplexity, Claude, and Google AI Overview. Unlike traditional search rankings which track click positions, AI visibility tracks whether your content is being cited, mentioned, or used as source material when users ask questions in conversational AI interfaces. As AI-generated answers increasingly answer queries without a search click, brands invisible to AI answer engines lose discovery channels entirely \u2014 even if their SEO rankings remain strong.',
   },
   {
-    question: "How is my AI visibility score calculated?",
-    answer: "Your score is a composite of seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each dimension maps to specific evidence items detected during the live page crawl. Hard-blocker caps apply when critical signals are missing — for example, missing robots.txt caps the score at 30, and blocked AI crawlers cap it at 35. The deterministic scoring engine produces the same result for the same page state every time.",
+    question: 'How is my AI visibility score calculated?',
+    answer:
+      'Your score is a composite of seven evidence-backed dimensions: Schema & Structured Data (20%), Content Depth (18%), Technical Trust (15%), Meta Tags & Open Graph (15%), AI Readability (12%), Heading Structure (10%), and Security & Trust (10%). Each dimension maps to specific evidence items detected during the live page crawl. Hard-blocker caps apply when critical signals are missing — for example, missing robots.txt caps the score at 30, and blocked AI crawlers cap it at 35. The deterministic scoring engine produces the same result for the same page state every time.',
   },
   {
-    question: "What should I do first after my initial audit?",
-    answer: "Start with the highest-impact recommendations in your audit report \u2014 typically the top three items flagged as Critical or High priority. These usually relate to entity clarity (does your homepage clearly state what your business does, for whom, and with what outcomes), answer block presence (do you have dedicated sections that directly answer common questions about your product or service), and evidence specificity (do your claims include numbers, comparisons, or verifiable facts that AI can extract as authoritative specifics). Fixing these three categories typically produces the largest score improvement in the shortest time.",
+    question: 'What should I do first after my initial audit?',
+    answer:
+      'Start with the highest-impact recommendations in your audit report \u2014 typically the top three items flagged as Critical or High priority. These usually relate to entity clarity (does your homepage clearly state what your business does, for whom, and with what outcomes), answer block presence (do you have dedicated sections that directly answer common questions about your product or service), and evidence specificity (do your claims include numbers, comparisons, or verifiable facts that AI can extract as authoritative specifics). Fixing these three categories typically produces the largest score improvement in the shortest time.',
   },
   {
-    question: "How many scans do I get and when do they reset?",
-    answer: "Your monthly scan allocation resets on your billing cycle date. The exact count depends on your plan: Observer (free) gets 3 scans per month, Starter gets 15, Alignment gets 60, and Signal gets 200. Each scan runs the full AI visibility pipeline against one URL. Credits are not carried over between months. You can monitor your remaining scans in the dashboard header usage indicator at any time.",
+    question: 'How many scans do I get and when do they reset?',
+    answer:
+      'Your monthly scan allocation resets on your billing cycle date. The exact count depends on your plan: Observer (free) gets 3 scans per month, Starter gets 15, Alignment gets 60, and Signal gets 200. Each scan runs the full AI visibility pipeline against one URL. Credits are not carried over between months. You can monitor your remaining scans in the dashboard header usage indicator at any time.',
   },
   {
-    question: "Can I scan the same URL multiple times?",
-    answer: "Yes. Re-scanning the same URL after making content or structural changes is how you measure improvement. Each scan runs a fresh analysis against the live URL, so changes you make to your page between scans are reflected in subsequent results. Running a baseline scan before making changes and a follow-up scan after is the recommended workflow for validating the impact of specific AEO improvements.",
+    question: 'Can I scan the same URL multiple times?',
+    answer:
+      'Yes. Re-scanning the same URL after making content or structural changes is how you measure improvement. Each scan runs a fresh analysis against the live URL, so changes you make to your page between scans are reflected in subsequent results. Running a baseline scan before making changes and a follow-up scan after is the recommended workflow for validating the impact of specific AEO improvements.',
   },
   {
-    question: "Where can I find my past audit results?",
-    answer: "Your audit history appears in the Recent Audits section of the dashboard and in the full Audit History view (linked from the sidebar). Each audit shows the URL, the date analyzed, and the visibility score at the time of the scan. Clicking into any past audit opens the full report with the original analysis, recommendations, and evidence breakdown \u2014 even if the page has changed since. Report history retention depends on your plan tier.",
+    question: 'Where can I find my past audit results?',
+    answer:
+      'Your audit history appears in the Recent Audits section of the dashboard and in the full Audit History view (linked from the sidebar). Each audit shows the URL, the date analyzed, and the visibility score at the time of the scan. Clicking into any past audit opens the full report with the original analysis, recommendations, and evidence breakdown \u2014 even if the page has changed since. Report history retention depends on your plan tier.',
   },
 ];
 
@@ -70,17 +87,17 @@ function normalizeAudits(payload: any): AuditRecord[] {
     url: item?.url,
     createdAt: item?.createdAt || item?.created_at,
     created_at: item?.created_at || item?.createdAt,
-    status: item?.status || "completed",
+    status: item?.status || 'completed',
     overallScore:
-      typeof item?.overallScore === "number"
+      typeof item?.overallScore === 'number'
         ? item.overallScore
-        : typeof item?.visibility_score === "number"
+        : typeof item?.visibility_score === 'number'
           ? item.visibility_score
           : undefined,
     visibility_score:
-      typeof item?.visibility_score === "number"
+      typeof item?.visibility_score === 'number'
         ? item.visibility_score
-        : typeof item?.overallScore === "number"
+        : typeof item?.overallScore === 'number'
           ? item.overallScore
           : undefined,
     visibilityStatus: item?.visibilityStatus || item?.summary,
@@ -88,14 +105,26 @@ function normalizeAudits(payload: any): AuditRecord[] {
 }
 
 const DOMAIN_COLORS = [
-  "bg-orange-400", "bg-cyan-400", "bg-violet-400", "bg-emerald-400",
-  "bg-rose-400", "bg-amber-400", "bg-sky-400", "bg-fuchsia-400",
-  "bg-lime-400", "bg-indigo-400", "bg-teal-400", "bg-pink-400",
+  'bg-orange-400',
+  'bg-emerald-400',
+  'bg-amber-400',
+  'bg-emerald-400',
+  'bg-rose-400',
+  'bg-amber-400',
+  'bg-sky-400',
+  'bg-fuchsia-400',
+  'bg-lime-400',
+  'bg-amber-400',
+  'bg-teal-400',
+  'bg-pink-400',
 ];
 
 function domainColor(url: string): string {
   try {
-    const host = new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "");
+    const host = new URL(url.startsWith('http') ? url : `https://${url}`).hostname.replace(
+      /^www\./,
+      ''
+    );
     let hash = 0;
     for (let i = 0; i < host.length; i++) hash = ((hash << 5) - hash + host.charCodeAt(i)) | 0;
     return DOMAIN_COLORS[Math.abs(hash) % DOMAIN_COLORS.length];
@@ -106,7 +135,7 @@ function domainColor(url: string): string {
 
 function domainLabel(url: string): string {
   try {
-    return new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "");
+    return new URL(url.startsWith('http') ? url : `https://${url}`).hostname.replace(/^www\./, '');
   } catch {
     return url;
   }
@@ -115,25 +144,32 @@ function domainLabel(url: string): string {
 export default function Dashboard() {
   const [audits, setAudits] = useState<AuditRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [platformStats, setPlatformStats] = useState<{ total_audits: number; avg_score: number } | null>(null);
-  const userTier = useAuthStore((state) => state.user?.tier || "observer");
+  const [platformStats, setPlatformStats] = useState<{
+    total_audits: number;
+    avg_score: number;
+  } | null>(null);
+  const userTier = useAuthStore((state) => state.user?.tier || 'observer');
   const uiTier = uiTierFromCanonical(userTier as any);
   const canLoadHistory = TIER_LIMITS[uiTier].hasReportHistory;
   const { status: featureStatus } = useFeatureStatus();
   const scansUsed = Number(featureStatus?.usage?.usedThisMonth ?? 0);
-  const scansLimit = Number(featureStatus?.usage?.monthlyLimit ?? TIER_LIMITS[uiTier].scansPerMonth);
+  const scansLimit = Number(
+    featureStatus?.usage?.monthlyLimit ?? TIER_LIMITS[uiTier].scansPerMonth
+  );
 
   usePageMeta({
-    title: "Dashboard",
-    description: "Your AI visibility command center. Monitor scan usage, review recent audits, track scores, and access all AI optimization tools from one place.",
-    path: "/dashboard",
+    title: 'Dashboard',
+    description:
+      'Your AI visibility command center. Monitor scan usage, review recent audits, track scores, and access all AI optimization tools from one place.',
+    path: '/dashboard',
     structuredData: [
       buildWebPageSchema({
-        path: "/dashboard",
-        name: "AI Visibility Dashboard | AiVIS.biz",
-        description: "Monitor your AI visibility scores, manage audits, track usage, and access citation testing, competitor tracking, and answer engineering tools.",
+        path: '/dashboard',
+        name: 'AI Visibility Dashboard | AiVIS.biz',
+        description:
+          'Monitor your AI visibility scores, manage audits, track usage, and access citation testing, competitor tracking, and answer engineering tools.',
       }),
-      buildFaqSchema(DASHBOARD_FAQ, { path: "/dashboard" }),
+      buildFaqSchema(DASHBOARD_FAQ, { path: '/dashboard' }),
     ],
   });
 
@@ -146,21 +182,21 @@ export default function Dashboard() {
       }
 
       try {
-        const response = await apiFetch("/api/audits?limit=20");
+        const response = await apiFetch('/api/audits?limit=20');
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-          const isFeatureLocked = response.status === 403 && data?.code === "FEATURE_LOCKED";
+          const isFeatureLocked = response.status === 403 && data?.code === 'FEATURE_LOCKED';
           if (isFeatureLocked) {
             setAudits([]);
             return;
           }
-          throw new Error(data?.error || "Failed to load audit history");
+          throw new Error(data?.error || 'Failed to load audit history');
         }
 
         setAudits(normalizeAudits(data));
       } catch {
-        toast.error("Failed to load audits");
+        toast.error('Failed to load audits');
       } finally {
         setLoading(false);
       }
@@ -170,10 +206,14 @@ export default function Dashboard() {
   }, [canLoadHistory]);
 
   useEffect(() => {
-    apiFetch("/api/public/benchmarks")
+    apiFetch('/api/public/benchmarks')
       .then((r) => r.json())
       .then((d) => {
-        if (d?.benchmarks) setPlatformStats({ total_audits: d.benchmarks.total_audits || 0, avg_score: d.benchmarks.avg_score || 0 });
+        if (d?.benchmarks)
+          setPlatformStats({
+            total_audits: d.benchmarks.total_audits || 0,
+            avg_score: d.benchmarks.avg_score || 0,
+          });
       })
       .catch(() => {});
   }, []);
@@ -189,39 +229,42 @@ export default function Dashboard() {
   const primaryAudit = sortedAudits[0] || null;
 
   const metrics = useMemo(() => {
-    const completed = audits.filter((audit) => audit.status === "completed").length;
-    const processing = audits.filter((audit) => audit.status === "processing").length;
-    const scored = audits.filter((audit) => typeof audit.overallScore === "number");
+    const completed = audits.filter((audit) => audit.status === 'completed').length;
+    const processing = audits.filter((audit) => audit.status === 'processing').length;
+    const scored = audits.filter((audit) => typeof audit.overallScore === 'number');
     const averageScore = scored.length
-      ? Math.round(scored.reduce((total, audit) => total + (audit.overallScore || 0), 0) / scored.length)
+      ? Math.round(
+          scored.reduce((total, audit) => total + (audit.overallScore || 0), 0) / scored.length
+        )
       : 0;
     const needsAttention = audits.filter((audit) => (audit.overallScore || 0) < 70).length;
     return [
-      { label: "Total audits", value: audits.length, icon: ClipboardList },
-      { label: "Completed", value: completed, icon: Gauge },
-      { label: "Average score", value: averageScore, icon: Activity },
-      { label: "Needs attention", value: needsAttention + processing, icon: Clock3 },
+      { label: 'Total audits', value: audits.length, icon: ClipboardList },
+      { label: 'Completed', value: completed, icon: Gauge },
+      { label: 'Average score', value: averageScore, icon: Activity },
+      { label: 'Needs attention', value: needsAttention + processing, icon: Clock3 },
     ];
   }, [audits]);
 
   const priorityPages = useMemo(() => {
     return [...audits]
-      .filter((audit) => typeof audit.overallScore === "number")
+      .filter((audit) => typeof audit.overallScore === 'number')
       .sort((left, right) => (left.overallScore || 0) - (right.overallScore || 0))
       .slice(0, 3);
   }, [audits]);
 
   const primaryVerdict = useMemo(() => {
     const score = primaryAudit?.overallScore || 0;
-    if (!primaryAudit || typeof primaryAudit.overallScore !== "number") return "No completed audit yet";
-    if (score >= 80) return "Citation-ready with minor gaps";
-    if (score >= 65) return "Readable, but still missing trust signals";
-    if (score >= 40) return "Not citation-ready yet";
-    return "Critical visibility blockers detected";
+    if (!primaryAudit || typeof primaryAudit.overallScore !== 'number')
+      return 'No completed audit yet';
+    if (score >= 80) return 'Citation-ready with minor gaps';
+    if (score >= 65) return 'Readable, but still missing trust signals';
+    if (score >= 40) return 'Not citation-ready yet';
+    return 'Critical visibility blockers detected';
   }, [primaryAudit]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [tab, setTab] = useState<"overview" | "activity">("overview");
+  const [tab, setTab] = useState<'overview' | 'activity'>('overview');
   const scrollRef = useScrollReveal<HTMLDivElement>();
   const animatedScore = useCountUp(primaryAudit?.overallScore ?? 0, 850);
 
@@ -243,289 +286,345 @@ export default function Dashboard() {
       }
     >
       <div ref={scrollRef}>
-      <FeatureInstruction
-        headline="How the AI Command Center works"
-        steps={[
-          "Click 'New audit' to scan any URL. The 7-dimension scoring engine evaluates schema, content, readability, security, and more.",
-          "Each audit maps findings to BRAG Evidence IDs — traceable proof of what AI answer engines see (and miss) on your page.",
-          "Hard-blocker caps flag critical gaps: missing robots.txt, blocked AI crawlers, or absent schema that prevent citation.",
-          "Apply fixes directly from the report, or use Score Fix to generate automated pull requests with code patches.",
-        ]}
-        benefit="The AI Command Center connects audits, citations, competitors, and fixes into one evidence-backed pipeline."
-        defaultCollapsed
-      />
+        <FeatureInstruction
+          headline="How the AI Command Center works"
+          steps={[
+            "Click 'New audit' to scan any URL. The 7-dimension scoring engine evaluates schema, content, readability, security, and more.",
+            'Each audit maps findings to BRAG Evidence IDs — traceable proof of what AI answer engines see (and miss) on your page.',
+            'Hard-blocker caps flag critical gaps: missing robots.txt, blocked AI crawlers, or absent schema that prevent citation.',
+            'Apply fixes directly from the report, or use Score Fix to generate automated pull requests with code patches.',
+          ]}
+          benefit="The AI Command Center connects audits, citations, competitors, and fixes into one evidence-backed pipeline."
+          defaultCollapsed
+        />
 
-      {/* ── Tab bar ─────────────────────────────────────────────────── */}
-      <div className="inline-flex rounded-2xl border border-slate-700 bg-slate-950 p-1">
-        <button
-          type="button"
-          onClick={() => setTab("overview")}
-          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
-            tab === "overview" ? "bg-orange-400/20 text-orange-100" : "text-white/60 hover:text-white"
-          }`}
-        >
-          Overview
-        </button>
-        <button
-          type="button"
-          onClick={() => setTab("activity")}
-          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
-            tab === "activity" ? "bg-orange-400/20 text-orange-100" : "text-white/60 hover:text-white"
-          }`}
-        >
-          Activity
-        </button>
-      </div>
-
-      {platformStats && platformStats.total_audits > 0 && (
-        <section className="rounded-3xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-orange-300" />
-              <span className="font-semibold text-orange-300">{platformStats.total_audits.toLocaleString()}+ platform audits</span>
-            </div>
-            <span className="hidden sm:block h-4 w-px bg-white/12" />
-            <span className="text-white/58">Avg score: <span className="font-medium text-white/80">{platformStats.avg_score}/100</span></span>
-            <span className="hidden sm:block h-4 w-px bg-white/12" />
-            <Link to="/app/analytics" className="text-cyan-200 hover:text-white transition text-sm font-medium">View benchmarks →</Link>
-          </div>
-        </section>
-      )}
-
-      {/* ── Observer usage nudge ──────────────────────────────────── */}
-      {uiTier === "observer" && (
-        <ConversionCTA variant="usage-nudge" scansUsed={scansUsed} scansLimit={scansLimit} />
-      )}
-
-      {primaryAudit && typeof primaryAudit.overallScore === "number" && (
-        <section className="reveal rounded-3xl border border-cyan-300/20 bg-cyan-400/10 p-5 sm:p-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200/75">Latest verdict <InfoTip text="Your most recent 7-dimension AI visibility score. Hard-blocker caps flag critical gaps that prevent citation." /></p>
-              <div className="mt-3 flex items-end gap-4">
-                <div className="text-5xl font-semibold tracking-tight text-white animate-score-pop">{animatedScore}</div>
-                <div className="pb-1 text-sm text-cyan-100/80">{primaryVerdict}</div>
-              </div>
-              <p className="mt-3 text-sm text-white/70">
-                Focus on the highest-weight dimension gaps first. Re-scan after fixes to prove the score lift with evidence.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {primaryAudit._id && (
-                <Link
-                  to={`/app/audits/${primaryAudit._id}`}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
-                >
-                  Open latest report
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              )}
-              <Link
-                to="/app/score-fix"
-                className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
-              >
-                Fix these now
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Next fix (overview tab) ──────────────────────────────────── */}
-      {tab === "overview" && priorityPages.length > 0 && (
-        <section className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.06] p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200/75">Next fix</p>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">{priorityPages[0].url || "Untitled"}</p>
-              <p className="mt-1 text-sm text-white/60">Score: {priorityPages[0].overallScore ?? "-"} - lowest in your recent audits</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {priorityPages[0]._id && (
-                <Link
-                  to={`/app/audits/${priorityPages[0]._id}`}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
-                >
-                  Open report
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              )}
-              <Link
-                to="/app/score-fix"
-                className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
-              >
-                Fix this
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {tab === "activity" && (
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric, i) => (
-          <article key={metric.label} className="reveal card-lift rounded-3xl border border-slate-700 bg-slate-900 p-5" data-delay={i + 1}>
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/46">{metric.label}</p>
-              <metric.icon className="h-4 w-4 text-cyan-200" />
-            </div>
-            <p className="mt-4 text-3xl font-semibold tracking-tight text-white">{metric.value}</p>
-          </article>
-        ))}
-      </section>
-      )}
-
-      {/* ── Recent scans ──────────────────────────────────────────────── */}
-      {tab === "activity" && canLoadHistory && recentScans.length > 0 && (
-        <section className="reveal rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
-          <h2 className="text-lg font-semibold text-white">Recent scans</h2>
-          <p className="mt-1 text-sm text-white/56">Your latest audited URLs. Copy the report link or open the full analysis.</p>
-
-          <div className="mt-5 space-y-2">
-            {recentScans.map((audit) => {
-              const id = audit._id || audit.id || "";
-              const color = audit.url ? domainColor(audit.url) : DOMAIN_COLORS[0];
-              const host = audit.url ? domainLabel(audit.url) : "-";
-              const reportUrl = id ? `${window.location.origin}/app/audits/${id}` : "";
-              const score = audit.overallScore;
-
-              return (
-                <div
-                  key={id || audit.url}
-                  className="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 transition hover:bg-slate-800"
-                >
-                  {/* color dot */}
-                  <span className={`h-3 w-3 shrink-0 rounded-full ${color}`} />
-
-                  {/* url + host */}
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">{audit.url || "Untitled"}</p>
-                    <p className="truncate text-xs text-white/46">{host}</p>
-                  </div>
-
-                  {/* score pill */}
-                  {typeof score === "number" && (
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        score >= 80
-                          ? "bg-emerald-400/15 text-emerald-300"
-                          : score >= 50
-                            ? "bg-amber-400/15 text-amber-300"
-                            : "bg-rose-400/15 text-rose-300"
-                      }`}
-                    >
-                      {score}
-                    </span>
-                  )}
-
-                  {/* copy link */}
-                  {reportUrl && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(reportUrl);
-                        setCopiedId(id);
-                        setTimeout(() => setCopiedId((prev) => (prev === id ? null : prev)), 1500);
-                      }}
-                      className="shrink-0 rounded-lg p-1.5 text-white/40 transition hover:bg-white/8 hover:text-white/70"
-                      title="Copy report link"
-                    >
-                      {copiedId === id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                    </button>
-                  )}
-
-                  {/* open */}
-                  {id ? (
-                    <Link
-                      to={`/app/audits/${id}`}
-                      className="shrink-0 rounded-lg p-1.5 text-cyan-200 transition hover:bg-white/8 hover:text-white"
-                      title="Open report"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  ) : (
-                    <span className="h-3.5 w-3.5 shrink-0" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {tab === "activity" && (
-      <section className="rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">Priority pages</h2>
-            <p className="mt-1 text-sm text-white/56">
-              {canLoadHistory
-                ? "These are the lowest-scoring recent pages. Use the full report to inspect issue-level evidence."
-                : "Audit history unlocks on Alignment. Run a scan to see your latest score, then upgrade when you need retained history and evidence trails."}
-            </p>
-          </div>
+        {/* ── Tab bar ─────────────────────────────────────────────────── */}
+        <div className="inline-flex rounded-2xl border border-slate-700 bg-slate-950 p-1">
+          <button
+            type="button"
+            onClick={() => setTab('overview')}
+            className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
+              tab === 'overview'
+                ? 'bg-orange-400/20 text-orange-100'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            Overview
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('activity')}
+            className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
+              tab === 'activity'
+                ? 'bg-orange-400/20 text-orange-100'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            Activity
+          </button>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-14 text-white/60">
-            <Spinner className="h-5 w-5" />
-          </div>
-        ) : audits.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-900 px-6 py-12 text-center text-sm text-white/58">
-            {canLoadHistory
-              ? "No audits yet. Run your first audit to start building a visibility history."
-              : "Run your first audit to see what AI can verify now. Alignment adds retained report history, evidence trails, and rescan comparison."}
-          </div>
-        ) : (
-          <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
-            <table className="min-w-full divide-y divide-white/10 text-left text-sm">
-              <thead className="bg-slate-900 text-white/46">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Site</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold">Score</th>
-                  <th className="px-4 py-3 font-semibold">Created</th>
-                  <th className="px-4 py-3 font-semibold">Open</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {(priorityPages.length > 0 ? priorityPages : sortedAudits.slice(0, 12)).map((audit) => (
-                  <tr key={audit._id || audit.url} className="bg-transparent text-white/76">
-                    <td className="px-4 py-4">
-                      <div className="max-w-[26rem] truncate font-medium text-white">{audit.url || "Untitled audit"}</div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-medium capitalize text-white/72">
-                        {audit.status || "pending"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">{typeof audit.overallScore === "number" ? audit.overallScore : "-"}</td>
-                    <td className="px-4 py-4 text-white/58">{audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : "-"}</td>
-                    <td className="px-4 py-4">
-                      {audit._id ? (
-                        <Link to={`/app/audits/${audit._id}`} className="inline-flex items-center gap-1 text-sm font-medium text-cyan-200 transition hover:text-white">
-                          View
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      ) : (
-                        <span className="text-white/40">Unavailable</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {platformStats && platformStats.total_audits > 0 && (
+          <section className="rounded-3xl border border-slate-700 bg-slate-900 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-orange-300" />
+                <span className="font-semibold text-orange-300">
+                  {platformStats.total_audits.toLocaleString()}+ platform audits
+                </span>
+              </div>
+              <span className="hidden sm:block h-4 w-px bg-white/12" />
+              <span className="text-white/58">
+                Avg score:{' '}
+                <span className="font-medium text-white/80">{platformStats.avg_score}/100</span>
+              </span>
+              <span className="hidden sm:block h-4 w-px bg-white/12" />
+              <Link
+                to="/app/analytics"
+                className="text-emerald-200 hover:text-white transition text-sm font-medium"
+              >
+                View benchmarks →
+              </Link>
+            </div>
+          </section>
         )}
-      </section>
-      )}
-      <PageQASection
-        items={DASHBOARD_FAQ}
-        heading="Understanding AI visibility for your site"
-        className="mt-6"
-      />
+
+        {/* ── Observer usage nudge ──────────────────────────────────── */}
+        {uiTier === 'observer' && (
+          <ConversionCTA variant="usage-nudge" scansUsed={scansUsed} scansLimit={scansLimit} />
+        )}
+
+        {primaryAudit && typeof primaryAudit.overallScore === 'number' && (
+          <section className="reveal rounded-3xl border border-emerald-300/20 bg-emerald-400/10 p-5 sm:p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/75">
+                  Latest verdict{' '}
+                  <InfoTip text="Your most recent 7-dimension AI visibility score. Hard-blocker caps flag critical gaps that prevent citation." />
+                </p>
+                <div className="mt-3 flex items-end gap-4">
+                  <div className="text-5xl font-semibold tracking-tight text-white animate-score-pop">
+                    {animatedScore}
+                  </div>
+                  <div className="pb-1 text-sm text-emerald-100/80">{primaryVerdict}</div>
+                </div>
+                <p className="mt-3 text-sm text-white/70">
+                  Focus on the highest-weight dimension gaps first. Re-scan after fixes to prove the
+                  score lift with evidence.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {primaryAudit._id && (
+                  <Link
+                    to={`/app/audits/${primaryAudit._id}`}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+                  >
+                    Open latest report
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                )}
+                <Link
+                  to="/app/score-fix"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
+                >
+                  Fix these now
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Next fix (overview tab) ──────────────────────────────────── */}
+        {tab === 'overview' && priorityPages.length > 0 && (
+          <section className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.06] p-5 sm:p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200/75">
+              Next fix
+            </p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-white">
+                  {priorityPages[0].url || 'Untitled'}
+                </p>
+                <p className="mt-1 text-sm text-white/60">
+                  Score: {priorityPages[0].overallScore ?? '-'} - lowest in your recent audits
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {priorityPages[0]._id && (
+                  <Link
+                    to={`/app/audits/${priorityPages[0]._id}`}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+                  >
+                    Open report
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                )}
+                <Link
+                  to="/app/score-fix"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-orange-300"
+                >
+                  Fix this
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {tab === 'activity' && (
+          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {metrics.map((metric, i) => (
+              <article
+                key={metric.label}
+                className="reveal card-lift rounded-3xl border border-slate-700 bg-slate-900 p-5"
+                data-delay={i + 1}
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/46">
+                    {metric.label}
+                  </p>
+                  <metric.icon className="h-4 w-4 text-emerald-200" />
+                </div>
+                <p className="mt-4 text-3xl font-semibold tracking-tight text-white">
+                  {metric.value}
+                </p>
+              </article>
+            ))}
+          </section>
+        )}
+
+        {/* ── Recent scans ──────────────────────────────────────────────── */}
+        {tab === 'activity' && canLoadHistory && recentScans.length > 0 && (
+          <section className="reveal rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-white">Recent scans</h2>
+            <p className="mt-1 text-sm text-white/56">
+              Your latest audited URLs. Copy the report link or open the full analysis.
+            </p>
+
+            <div className="mt-5 space-y-2">
+              {recentScans.map((audit) => {
+                const id = audit._id || audit.id || '';
+                const color = audit.url ? domainColor(audit.url) : DOMAIN_COLORS[0];
+                const host = audit.url ? domainLabel(audit.url) : '-';
+                const reportUrl = id ? `${window.location.origin}/app/audits/${id}` : '';
+                const score = audit.overallScore;
+
+                return (
+                  <div
+                    key={id || audit.url}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 transition hover:bg-slate-800"
+                  >
+                    {/* color dot */}
+                    <span className={`h-3 w-3 shrink-0 rounded-full ${color}`} />
+
+                    {/* url + host */}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-white">
+                        {audit.url || 'Untitled'}
+                      </p>
+                      <p className="truncate text-xs text-white/46">{host}</p>
+                    </div>
+
+                    {/* score pill */}
+                    {typeof score === 'number' && (
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          score >= 80
+                            ? 'bg-emerald-400/15 text-emerald-300'
+                            : score >= 50
+                              ? 'bg-amber-400/15 text-amber-300'
+                              : 'bg-rose-400/15 text-rose-300'
+                        }`}
+                      >
+                        {score}
+                      </span>
+                    )}
+
+                    {/* copy link */}
+                    {reportUrl && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(reportUrl);
+                          setCopiedId(id);
+                          setTimeout(
+                            () => setCopiedId((prev) => (prev === id ? null : prev)),
+                            1500
+                          );
+                        }}
+                        className="shrink-0 rounded-lg p-1.5 text-white/40 transition hover:bg-white/8 hover:text-white/70"
+                        title="Copy report link"
+                      >
+                        {copiedId === id ? (
+                          <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                    )}
+
+                    {/* open */}
+                    {id ? (
+                      <Link
+                        to={`/app/audits/${id}`}
+                        className="shrink-0 rounded-lg p-1.5 text-emerald-200 transition hover:bg-white/8 hover:text-white"
+                        title="Open report"
+                      >
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    ) : (
+                      <span className="h-3.5 w-3.5 shrink-0" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {tab === 'activity' && (
+          <section className="rounded-3xl border border-slate-700 bg-slate-900 p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">Priority pages</h2>
+                <p className="mt-1 text-sm text-white/56">
+                  {canLoadHistory
+                    ? 'These are the lowest-scoring recent pages. Use the full report to inspect issue-level evidence.'
+                    : 'Audit history unlocks on Alignment. Run a scan to see your latest score, then upgrade when you need retained history and evidence trails.'}
+                </p>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center py-14 text-white/60">
+                <Spinner className="h-5 w-5" />
+              </div>
+            ) : audits.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-900 px-6 py-12 text-center text-sm text-white/58">
+                {canLoadHistory
+                  ? 'No audits yet. Run your first audit to start building a visibility history.'
+                  : 'Run your first audit to see what AI can verify now. Alignment adds retained report history, evidence trails, and rescan comparison.'}
+              </div>
+            ) : (
+              <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
+                <table className="min-w-full divide-y divide-white/10 text-left text-sm">
+                  <thead className="bg-slate-900 text-white/46">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold">Site</th>
+                      <th className="px-4 py-3 font-semibold">Status</th>
+                      <th className="px-4 py-3 font-semibold">Score</th>
+                      <th className="px-4 py-3 font-semibold">Created</th>
+                      <th className="px-4 py-3 font-semibold">Open</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {(priorityPages.length > 0 ? priorityPages : sortedAudits.slice(0, 12)).map(
+                      (audit) => (
+                        <tr key={audit._id || audit.url} className="bg-transparent text-white/76">
+                          <td className="px-4 py-4">
+                            <div className="max-w-[26rem] truncate font-medium text-white">
+                              {audit.url || 'Untitled audit'}
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-medium capitalize text-white/72">
+                              {audit.status || 'pending'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4">
+                            {typeof audit.overallScore === 'number' ? audit.overallScore : '-'}
+                          </td>
+                          <td className="px-4 py-4 text-white/58">
+                            {audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : '-'}
+                          </td>
+                          <td className="px-4 py-4">
+                            {audit._id ? (
+                              <Link
+                                to={`/app/audits/${audit._id}`}
+                                className="inline-flex items-center gap-1 text-sm font-medium text-emerald-200 transition hover:text-white"
+                              >
+                                View
+                                <ArrowRight className="h-3.5 w-3.5" />
+                              </Link>
+                            ) : (
+                              <span className="text-white/40">Unavailable</span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
+        <PageQASection
+          items={DASHBOARD_FAQ}
+          heading="Understanding AI visibility for your site"
+          className="mt-6"
+        />
       </div>
     </AppPageFrame>
   );

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   PlayCircle,
   RefreshCw,
@@ -13,18 +13,18 @@ import {
   ChevronRight,
   ThumbsUp,
   RotateCcw,
-} from "lucide-react";
-import apiFetch from "../utils/api";
-import { useAuthStore } from "../stores/authStore";
-import { meetsMinimumTier, uiTierFromCanonical } from "../../../shared/types";
-import UpgradeWall from "../components/UpgradeWall";
+} from 'lucide-react';
+import apiFetch from '../utils/api';
+import { useAuthStore } from '../stores/authStore';
+import { meetsMinimumTier, uiTierFromCanonical } from '../../../shared/types';
+import UpgradeWall from '../components/UpgradeWall';
 import type {
   PipelineRun,
   PipelineRunStatus,
   RemediationMode,
   LevelledFixpack,
-} from "../../../shared/types";
-import toast from "react-hot-toast";
+} from '../../../shared/types';
+import toast from 'react-hot-toast';
 
 /* ── Status badge helpers ──────────────────────────────────────────────── */
 
@@ -32,25 +32,32 @@ const STATUS_META: Record<
   PipelineRunStatus,
   { label: string; colour: string; icon: typeof Clock }
 > = {
-  pending:              { label: "Pending",           colour: "text-slate-400",  icon: Clock },
-  scanning:             { label: "Scanning",          colour: "text-blue-400",   icon: Loader2 },
-  scoring:              { label: "Scoring",           colour: "text-indigo-400", icon: Loader2 },
-  classifying:          { label: "Classifying",       colour: "text-purple-400", icon: Loader2 },
-  generating_fixpacks:  { label: "Generating fixes",  colour: "text-amber-400",  icon: Loader2 },
-  awaiting_approval:    { label: "Awaiting approval", colour: "text-yellow-300", icon: ThumbsUp },
-  applying:             { label: "Applying",          colour: "text-cyan-400",   icon: Loader2 },
-  rescanning:           { label: "Rescanning",        colour: "text-teal-400",   icon: RotateCcw },
-  completed:            { label: "Completed",         colour: "text-emerald-400",icon: CheckCircle2 },
-  failed:               { label: "Failed",            colour: "text-red-400",    icon: XCircle },
+  pending: { label: 'Pending', colour: 'text-slate-400', icon: Clock },
+  scanning: { label: 'Scanning', colour: 'text-emerald-400', icon: Loader2 },
+  scoring: { label: 'Scoring', colour: 'text-amber-400', icon: Loader2 },
+  classifying: { label: 'Classifying', colour: 'text-purple-400', icon: Loader2 },
+  generating_fixpacks: { label: 'Generating fixes', colour: 'text-amber-400', icon: Loader2 },
+  awaiting_approval: { label: 'Awaiting approval', colour: 'text-yellow-300', icon: ThumbsUp },
+  applying: { label: 'Applying', colour: 'text-emerald-400', icon: Loader2 },
+  rescanning: { label: 'Rescanning', colour: 'text-teal-400', icon: RotateCcw },
+  completed: { label: 'Completed', colour: 'text-emerald-400', icon: CheckCircle2 },
+  failed: { label: 'Failed', colour: 'text-red-400', icon: XCircle },
 };
 
 function StatusBadge({ status }: { status: PipelineRunStatus }) {
   const meta = STATUS_META[status] ?? STATUS_META.pending;
   const Icon = meta.icon;
-  const spinning = ["scanning", "scoring", "classifying", "generating_fixpacks", "applying", "rescanning"].includes(status);
+  const spinning = [
+    'scanning',
+    'scoring',
+    'classifying',
+    'generating_fixpacks',
+    'applying',
+    'rescanning',
+  ].includes(status);
   return (
     <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${meta.colour}`}>
-      <Icon className={`w-3.5 h-3.5 ${spinning ? "animate-spin" : ""}`} />
+      <Icon className={`w-3.5 h-3.5 ${spinning ? 'animate-spin' : ''}`} />
       {meta.label}
     </span>
   );
@@ -67,23 +74,32 @@ function FixpackCard({ fp }: { fp: LevelledFixpack }) {
         className="flex w-full items-center justify-between text-left"
       >
         <div>
-          <span className="text-xs font-semibold text-violet-400 mr-2">L{fp.level}</span>
+          <span className="text-xs font-semibold text-amber-400 mr-2">L{fp.level}</span>
           <span className="text-sm font-medium text-white">{fp.title}</span>
           <span className="ml-2 text-xs text-white/50">
             +{fp.expected_uplift_min}–{fp.expected_uplift_max} pts
           </span>
         </div>
-        {open ? <ChevronDown className="w-4 h-4 text-white/40" /> : <ChevronRight className="w-4 h-4 text-white/40" />}
+        {open ? (
+          <ChevronDown className="w-4 h-4 text-white/40" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-white/40" />
+        )}
       </button>
       {open && (
         <div className="mt-3 space-y-2 text-sm text-white/70">
           <p>{fp.summary}</p>
           {fp.patches.length > 0 && (
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-white/50 uppercase tracking-wide">Patches ({fp.patches.length})</p>
+              <p className="text-xs font-semibold text-white/50 uppercase tracking-wide">
+                Patches ({fp.patches.length})
+              </p>
               {fp.patches.map((p, i) => (
-                <div key={i} className="rounded bg-black/30 p-2 font-mono text-xs text-white/60 overflow-x-auto">
-                  <span className="text-violet-400">{p.operation}</span>{" "}
+                <div
+                  key={i}
+                  className="rounded bg-black/30 p-2 font-mono text-xs text-white/60 overflow-x-auto"
+                >
+                  <span className="text-amber-400">{p.operation}</span>{' '}
                   <span className="text-white/80">{p.file_path}</span>
                 </div>
               ))}
@@ -113,7 +129,7 @@ function RunDetail({
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
+      animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
       className="mt-3 space-y-4 border-t border-white/10 pt-4"
     >
@@ -133,7 +149,10 @@ function RunDetail({
           <Stat label="Findings" value={cl.findings.length} />
           <Stat label="Auto-fixable" value={cl.auto_fixable_count} />
           <Stat label="Manual only" value={cl.manual_only_count} />
-          <Stat label="Expected uplift" value={`+${cl.total_expected_uplift_min}–${cl.total_expected_uplift_max}`} />
+          <Stat
+            label="Expected uplift"
+            value={`+${cl.total_expected_uplift_min}–${cl.total_expected_uplift_max}`}
+          />
         </div>
       )}
 
@@ -154,7 +173,7 @@ function RunDetail({
         <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
           <p className="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
             <ArrowUpRight className="w-4 h-4" />
-            Rescan uplift: {run.rescan_uplift.score_before} → {run.rescan_uplift.score_after}{" "}
+            Rescan uplift: {run.rescan_uplift.score_before} → {run.rescan_uplift.score_after}{' '}
             <span className="text-emerald-300">(+{run.rescan_uplift.score_delta})</span>
           </p>
         </div>
@@ -162,16 +181,16 @@ function RunDetail({
 
       {/* Action buttons */}
       <div className="flex gap-2">
-        {run.status === "awaiting_approval" && (
+        {run.status === 'awaiting_approval' && (
           <button
             disabled={acting}
             onClick={() => onApprove(run.id)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
           >
             <ThumbsUp className="w-4 h-4" /> Approve fixes
           </button>
         )}
-        {["completed", "applying"].includes(run.status) && !run.rescan_uplift && (
+        {['completed', 'applying'].includes(run.status) && !run.rescan_uplift && (
           <button
             disabled={acting}
             onClick={() => onRescan(run.id)}
@@ -198,9 +217,9 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 
 export default function PipelinePage() {
   const user = useAuthStore((s) => s.user);
-  const userTier = uiTierFromCanonical((user as any)?.tier ?? "observer");
+  const userTier = uiTierFromCanonical((user as any)?.tier ?? 'observer');
 
-  if (!meetsMinimumTier(userTier, "alignment")) {
+  if (!meetsMinimumTier(userTier, 'alignment')) {
     return (
       <div className="max-w-3xl mx-auto py-16 px-4">
         <UpgradeWall
@@ -222,42 +241,46 @@ function PipelinePageInner() {
   const [acting, setActing] = useState(false);
 
   /* New run form state */
-  const [url, setUrl] = useState("");
-  const [mode, setMode] = useState<RemediationMode>("advisory");
+  const [url, setUrl] = useState('');
+  const [mode, setMode] = useState<RemediationMode>('advisory');
   const [submitting, setSubmitting] = useState(false);
 
   const fetchRuns = useCallback(async () => {
     try {
-      const res = await apiFetch("/api/pipeline?limit=50");
+      const res = await apiFetch('/api/pipeline?limit=50');
       const data = await res.json();
       if (data.success) setRuns(data.runs ?? []);
-    } catch { /* ignore */ } finally {
+    } catch {
+      /* ignore */
+    } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchRuns(); }, [fetchRuns]);
+  useEffect(() => {
+    fetchRuns();
+  }, [fetchRuns]);
 
   const startRun = async () => {
     const trimmed = url.trim();
     if (!trimmed) return;
     setSubmitting(true);
     try {
-      const res = await apiFetch("/api/pipeline/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await apiFetch('/api/pipeline/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: trimmed, mode }),
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Pipeline run started");
-        setUrl("");
+        toast.success('Pipeline run started');
+        setUrl('');
         fetchRuns();
       } else {
-        toast.error(data.error || "Failed to start pipeline");
+        toast.error(data.error || 'Failed to start pipeline');
       }
     } catch {
-      toast.error("Failed to start pipeline run");
+      toast.error('Failed to start pipeline run');
     } finally {
       setSubmitting(false);
     }
@@ -266,23 +289,37 @@ function PipelinePageInner() {
   const approve = async (id: string) => {
     setActing(true);
     try {
-      const res = await apiFetch(`/api/pipeline/${encodeURIComponent(id)}/approve`, { method: "POST" });
+      const res = await apiFetch(`/api/pipeline/${encodeURIComponent(id)}/approve`, {
+        method: 'POST',
+      });
       const data = await res.json();
-      if (data.success) { toast.success("Fixes approved"); fetchRuns(); }
-      else toast.error(data.error || "Approve failed");
-    } catch { toast.error("Approve failed"); }
-    finally { setActing(false); }
+      if (data.success) {
+        toast.success('Fixes approved');
+        fetchRuns();
+      } else toast.error(data.error || 'Approve failed');
+    } catch {
+      toast.error('Approve failed');
+    } finally {
+      setActing(false);
+    }
   };
 
   const rescan = async (id: string) => {
     setActing(true);
     try {
-      const res = await apiFetch(`/api/pipeline/${encodeURIComponent(id)}/rescan`, { method: "POST" });
+      const res = await apiFetch(`/api/pipeline/${encodeURIComponent(id)}/rescan`, {
+        method: 'POST',
+      });
       const data = await res.json();
-      if (data.success) { toast.success("Rescan complete"); fetchRuns(); }
-      else toast.error(data.error || "Rescan failed");
-    } catch { toast.error("Rescan failed"); }
-    finally { setActing(false); }
+      if (data.success) {
+        toast.success('Rescan complete');
+        fetchRuns();
+      } else toast.error(data.error || 'Rescan failed');
+    } catch {
+      toast.error('Rescan failed');
+    } finally {
+      setActing(false);
+    }
   };
 
   return (
@@ -290,7 +327,7 @@ function PipelinePageInner() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <PlayCircle className="w-6 h-6 text-violet-400" />
+          <PlayCircle className="w-6 h-6 text-amber-400" />
           Self-Healing Audit Pipeline
         </h1>
         <p className="text-sm text-white/50 mt-1">
@@ -307,12 +344,12 @@ function PipelinePageInner() {
             placeholder="example.com"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="flex-1 rounded-lg border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            className="flex-1 rounded-lg border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
           />
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as RemediationMode)}
-            className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+            className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
           >
             <option value="advisory">Advisory</option>
             <option value="assisted">Assisted</option>
@@ -321,9 +358,13 @@ function PipelinePageInner() {
           <button
             disabled={submitting || !url.trim()}
             onClick={startRun}
-            className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-violet-500 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
           >
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
+            {submitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <PlayCircle className="w-4 h-4" />
+            )}
             Run Pipeline
           </button>
         </div>
@@ -343,7 +384,7 @@ function PipelinePageInner() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+            <Loader2 className="w-6 h-6 text-amber-400 animate-spin" />
           </div>
         ) : runs.length === 0 ? (
           <div className="text-center py-12 text-white/40 text-sm">
@@ -366,9 +407,7 @@ function PipelinePageInner() {
                   <span className="text-sm text-white truncate max-w-[280px]">
                     {run.target_url}
                   </span>
-                  <span className="text-xs text-white/30 shrink-0">
-                    {run.mode}
-                  </span>
+                  <span className="text-xs text-white/30 shrink-0">{run.mode}</span>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   {run.scoring_result && (

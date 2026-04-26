@@ -1688,7 +1688,7 @@ export default function ReportsPage() {
                   onClick={() => setFilter(f)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-all ${
                     filter === f
-                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                       : 'text-slate-500 hover:text-white'
                   }`}
                   type="button"
@@ -1702,7 +1702,7 @@ export default function ReportsPage() {
               onClick={() => setConsolidateByUrl((prev) => !prev)}
               className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
                 consolidateByUrl
-                  ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                   : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
               }`}
               type="button"
@@ -1868,11 +1868,11 @@ export default function ReportsPage() {
                 {PAGE_USE_CASES.map((item, i) => {
                   const Icon = item.icon;
                   const accents = [
-                    'section-accent-cyan',
+                    'section-accent-emerald',
                     'section-accent-amber',
-                    'section-accent-violet',
+                    'section-accent-amber',
                   ];
-                  const iconColors = ['text-cyan-300', 'text-amber-300', 'text-violet-300'];
+                  const iconColors = ['text-emerald-300', 'text-amber-300', 'text-amber-300'];
                   return (
                     <div
                       key={item.title}
@@ -1895,8 +1895,8 @@ export default function ReportsPage() {
 
             {/* Agency Stat Cards */}
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-              <div className="card-charcoal agency-stat-cyan rounded-xl p-4">
-                <p className="text-xs font-semibold text-cyan-300/80 uppercase tracking-wide mb-2">
+              <div className="card-charcoal agency-stat-emerald rounded-xl p-4">
+                <p className="text-xs font-semibold text-emerald-300/80 uppercase tracking-wide mb-2">
                   Total Audits
                 </p>
                 <p className="text-3xl font-extrabold text-white">{canonicalCompletedCount}</p>
@@ -1922,8 +1922,8 @@ export default function ReportsPage() {
                   Best: <span className={`font-bold ${getScoreColor(bestScore)}`}>{bestScore}</span>
                 </p>
               </div>
-              <div className="card-charcoal agency-stat-violet rounded-xl p-4">
-                <p className="text-xs font-semibold text-violet-300/80 uppercase tracking-wide mb-2">
+              <div className="card-charcoal agency-stat-amber rounded-xl p-4">
+                <p className="text-xs font-semibold text-amber-300/80 uppercase tracking-wide mb-2">
                   Momentum
                 </p>
                 <p
@@ -1954,7 +1954,7 @@ export default function ReportsPage() {
               <section className="brand-bar-top card-charcoal rounded-2xl p-5 sm:p-6 mb-8">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="max-w-3xl">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-violet-200">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-amber-200">
                       <Wand2 className="w-3.5 h-3.5" />
                       Fixpack Ops Queue
                     </div>
@@ -2037,7 +2037,7 @@ export default function ReportsPage() {
                             <h4 className="text-sm font-semibold text-white">
                               {item.fixpackLabel}
                             </h4>
-                            <p className="mt-1 text-xs text-cyan-300/75 break-all">{item.url}</p>
+                            <p className="mt-1 text-xs text-emerald-300/75 break-all">{item.url}</p>
                             <p className="mt-2 text-xs text-white/55">
                               Targets: {item.targetGateIds.join(', ')} · Pass rate{' '}
                               {Math.round(item.passRate * 100)}% · {formatDate(item.createdAt)}
@@ -2104,7 +2104,7 @@ export default function ReportsPage() {
                 <section className="brand-bar-top card-charcoal rounded-2xl p-5 sm:p-6 mb-8">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="max-w-3xl">
-                      <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-cyan-200">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
                         <ArrowUpDown className="w-3.5 h-3.5" />
                         Compare two audits
                       </div>
@@ -2346,7 +2346,7 @@ export default function ReportsPage() {
               <section className="brand-bar-top card-charcoal rounded-2xl p-5 sm:p-6 mb-8">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-cyan-200">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
                       <ArrowUpDown className="w-3.5 h-3.5" />
                       Timeline scrubber
                     </div>
@@ -2399,7 +2399,7 @@ export default function ReportsPage() {
                             maxCursor: Math.max(0, timelineEvents.length - 1),
                           })
                         }
-                        className="accent-cyan-400"
+                        className="accent-emerald-400"
                       />
                     </label>
                   </div>
@@ -2476,12 +2476,12 @@ export default function ReportsPage() {
                           <h3 className="font-semibold text-white text-sm">{report.name}</h3>
                           {getStatusIcon(report.status)}
                           {consolidatedMetaByReportId[report.id]?.scanCount > 1 && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] bg-violet-900/30 border border-violet-500/30 text-violet-300">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-900/30 border border-amber-500/30 text-amber-300">
                               {consolidatedMetaByReportId[report.id].scanCount} scans
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-cyan-300/75 break-all mt-0.5">{report.url}</p>
+                        <p className="text-xs text-emerald-300/75 break-all mt-0.5">{report.url}</p>
                         {report.summary && (
                           <p className="mt-1.5 text-xs leading-5 text-white/55 max-w-2xl line-clamp-2">
                             {report.summary}
@@ -2623,7 +2623,7 @@ export default function ReportsPage() {
                           <button
                             onClick={() => handleShare(report)}
                             disabled={report.status !== 'completed' || sharingId === report.id}
-                            className="p-1.5 rounded-lg bg-charcoal hover:bg-charcoal-light transition-colors text-white/45 hover:text-cyan-300/80 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="p-1.5 rounded-lg bg-charcoal hover:bg-charcoal-light transition-colors text-white/45 hover:text-emerald-300/80 disabled:opacity-30 disabled:cursor-not-allowed"
                             title="Share public link"
                             type="button"
                           >
@@ -2677,7 +2677,7 @@ export default function ReportsPage() {
                     Run an analysis from the{' '}
                     <button
                       onClick={() => navigate('/app/analyze')}
-                      className="text-cyan-400 hover:underline"
+                      className="text-emerald-400 hover:underline"
                       type="button"
                     >
                       audit page

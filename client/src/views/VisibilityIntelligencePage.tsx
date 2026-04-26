@@ -198,7 +198,10 @@ export default function VisibilityIntelligencePage() {
   }, [analytics.improvementDeltas]);
 
   const rescansTriggered = useMemo(() => {
-    const totalEvents = analytics.dailyActivity.reduce((sum, day) => sum + Number(day.count || 0), 0);
+    const totalEvents = analytics.dailyActivity.reduce(
+      (sum, day) => sum + Number(day.count || 0),
+      0
+    );
     return Math.max(0, totalEvents - analytics.urlsAudited);
   }, [analytics.dailyActivity, analytics.urlsAudited]);
 
@@ -207,7 +210,8 @@ export default function VisibilityIntelligencePage() {
       return clamp(Math.round(publicProof.avg_improvement), 1, 40);
     }
     if (!analytics.averageScore) return 0;
-    const deltaPct = ((analytics.latestScore - analytics.averageScore) / analytics.averageScore) * 100;
+    const deltaPct =
+      ((analytics.latestScore - analytics.averageScore) / analytics.averageScore) * 100;
     return clamp(Math.round(deltaPct), -40, 40);
   }, [publicProof?.avg_improvement, analytics.latestScore, analytics.averageScore]);
 
@@ -249,12 +253,14 @@ export default function VisibilityIntelligencePage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-cyan-300/20 bg-[radial-gradient(120%_120%_at_50%_0%,rgba(34,211,238,0.18),rgba(5,8,14,0.95))] p-6 sm:p-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/80">Visibility Intelligence</p>
+      <section className="rounded-3xl border border-emerald-300/20 bg-[radial-gradient(120%_120%_at_50%_0%,rgba(16,185,129,0.18),rgba(5,8,14,0.95))] p-6 sm:p-8">
+        <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-200/80">
+          Visibility Intelligence
+        </p>
         <h1 className="mt-2 text-2xl sm:text-3xl font-black text-white">Your Visibility Health</h1>
         <p className="mt-2 max-w-3xl text-sm text-white/72">
-          AiVIS measures visibility state, not vanity analytics. Every signal below traces to audit evidence,
-          citation behavior, or an active corrective action path.
+          AiVIS measures visibility state, not vanity analytics. Every signal below traces to audit
+          evidence, citation behavior, or an active corrective action path.
         </p>
       </section>
 
@@ -263,14 +269,18 @@ export default function VisibilityIntelligencePage() {
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-white/45">Visibility Score</p>
             <div className="mt-2 flex items-end gap-3">
-              <span className="text-5xl font-black text-white tabular-nums">{analytics.latestScore}</span>
+              <span className="text-5xl font-black text-white tabular-nums">
+                {analytics.latestScore}
+              </span>
               <span className="mb-1 text-sm font-semibold text-emerald-300">
                 {signedNumber(scoreDelta)} this week
               </span>
             </div>
           </div>
           <div className="rounded-2xl border border-white/12 bg-black/25 px-4 py-3">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">North star status</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">
+              North star status
+            </p>
             <p className="mt-1 text-sm text-white/80">
               {analytics.latestScore >= 70
                 ? 'Citation-ready baseline with targeted blockers'
@@ -288,14 +298,16 @@ export default function VisibilityIntelligencePage() {
             ))
           ) : (
             <div className="rounded-xl border border-white/12 bg-white/5 p-3 sm:col-span-3">
-              <p className="text-sm text-white/75">No blocker cluster detected yet. Run more audits for stable issue ranking.</p>
+              <p className="text-sm text-white/75">
+                No blocker cluster detected yet. Run more audits for stable issue ranking.
+              </p>
             </div>
           )}
         </div>
       </section>
 
-      <section className="rounded-3xl border border-violet-300/18 bg-[linear-gradient(145deg,rgba(22,18,36,0.82),rgba(8,10,16,0.96))] p-6">
-        <div className="flex items-center gap-2 text-violet-200">
+      <section className="rounded-3xl border border-amber-300/18 bg-[linear-gradient(145deg,rgba(52,36,12,0.82),rgba(8,10,16,0.96))] p-6">
+        <div className="flex items-center gap-2 text-amber-200">
           <Brain className="h-4 w-4" />
           <h2 className="text-lg font-bold">AI Interpretation Layer</h2>
         </div>
@@ -321,8 +333,8 @@ export default function VisibilityIntelligencePage() {
           </div>
           <p className="mt-2 text-3xl font-black text-white tabular-nums">{fixesApplied}</p>
         </article>
-        <article className="rounded-2xl border border-cyan-300/18 bg-cyan-400/8 p-4">
-          <div className="flex items-center gap-2 text-cyan-200">
+        <article className="rounded-2xl border border-emerald-300/18 bg-emerald-400/8 p-4">
+          <div className="flex items-center gap-2 text-emerald-200">
             <Activity className="h-4 w-4" />
             <p className="text-xs uppercase tracking-[0.16em]">Audits Completed</p>
           </div>
@@ -339,7 +351,7 @@ export default function VisibilityIntelligencePage() {
 
       <section className="rounded-3xl border border-white/12 bg-[linear-gradient(120deg,rgba(7,10,16,0.96),rgba(18,26,40,0.96))] p-6">
         <div className="flex items-center gap-2 text-white">
-          <TrendingUp className="h-4 w-4 text-cyan-300" />
+          <TrendingUp className="h-4 w-4 text-emerald-300" />
           <h2 className="text-lg font-bold">Projected Impact</h2>
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -350,13 +362,18 @@ export default function VisibilityIntelligencePage() {
             </p>
           </div>
           <div className="rounded-2xl border border-white/12 bg-white/5 p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/50">AI Citation Likelihood</p>
-            <p className="mt-2 text-3xl font-black text-cyan-300">{signedNumber(projectedCitationGain)}%</p>
+            <p className="text-xs uppercase tracking-[0.14em] text-white/50">
+              AI Citation Likelihood
+            </p>
+            <p className="mt-2 text-3xl font-black text-emerald-300">
+              {signedNumber(projectedCitationGain)}%
+            </p>
           </div>
         </div>
         <p className="mt-3 text-xs text-white/50">
-          Projection model is derived from visibility trend movement, public improvement benchmarks, and
-          active structural blockers. When evidence is unavailable, projections degrade conservatively.
+          Projection model is derived from visibility trend movement, public improvement benchmarks,
+          and active structural blockers. When evidence is unavailable, projections degrade
+          conservatively.
         </p>
       </section>
 
@@ -364,7 +381,7 @@ export default function VisibilityIntelligencePage() {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => navigate('/app/scan')}
-            className="inline-flex items-center gap-2 rounded-xl border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/20"
+            className="inline-flex items-center gap-2 rounded-xl border border-emerald-300/30 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-400/20"
           >
             <Gauge className="h-4 w-4" /> Run new audit
           </button>

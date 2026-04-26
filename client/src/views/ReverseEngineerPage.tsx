@@ -1136,7 +1136,7 @@ function ResultSectionsOrganizer({ tool, sections }: { tool: Tool; sections: Sec
         {orderedSections.map((section, index) => (
           <div
             key={section.key}
-            className={`space-y-2 rounded-lg transition-colors ${draggedSectionKey === section.key ? 'border border-cyan-500/25 bg-cyan-500/5 p-1.5' : ''}`}
+            className={`space-y-2 rounded-lg transition-colors ${draggedSectionKey === section.key ? 'border border-emerald-500/25 bg-emerald-500/5 p-1.5' : ''}`}
             draggable
             onDragStart={() => setDraggedSectionKey(section.key)}
             onDragOver={(event) => event.preventDefault()}
@@ -1599,7 +1599,7 @@ function DecompileResult({ data }: { data: any }) {
               {shape.trustSignalPlacement.map((s: string, i: number) => (
                 <span
                   key={i}
-                  className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-0.5 text-[11px] text-cyan-200"
+                  className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-[11px] text-emerald-200"
                 >
                   {s}
                 </span>
@@ -1685,7 +1685,7 @@ function DecompileResult({ data }: { data: any }) {
                         </span>
                       )}
                       {contribution !== null && (
-                        <span className="rounded-full border border-cyan-400/15 bg-cyan-400/10 px-2 py-0.5 text-[10px] text-cyan-200/80">
+                        <span className="rounded-full border border-emerald-400/15 bg-emerald-400/10 px-2 py-0.5 text-[10px] text-emerald-200/80">
                           {(contribution * 100).toFixed(0)}% of answer
                         </span>
                       )}
@@ -1903,7 +1903,7 @@ function GhostResult({ data }: { data: any }) {
               {s.requiredEntities.map((e: string, j: number) => (
                 <span
                   key={j}
-                  className="rounded-md border border-cyan-400/15 bg-cyan-400/10 px-2 py-0.5 text-[11px] text-cyan-200/80"
+                  className="rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-0.5 text-[11px] text-emerald-200/80"
                 >
                   {e}
                 </span>
@@ -2212,7 +2212,7 @@ function GhostResult({ data }: { data: any }) {
           {linkPattern.hubStructure && (
             <div className="mb-3">
               <span className="text-xs text-white/40">Recommended structure: </span>
-              <span className="rounded-full border border-cyan-400/15 bg-cyan-400/10 px-2.5 py-0.5 text-[11px] text-cyan-200/80">
+              <span className="rounded-full border border-emerald-400/15 bg-emerald-400/10 px-2.5 py-0.5 text-[11px] text-emerald-200/80">
                 {String(linkPattern.hubStructure).replace(/_/g, ' ')}
               </span>
             </div>
@@ -2290,7 +2290,7 @@ function GhostResult({ data }: { data: any }) {
                     <div className="flex items-center gap-2 min-w-[120px]">
                       <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-cyan-400/60"
+                          className="h-full rounded-full bg-emerald-400/60"
                           style={{ width: `${Math.round(coverage * 100)}%` }}
                         />
                       </div>
@@ -2362,7 +2362,7 @@ function ModelDiffResult({ data }: { data: any }) {
                       </span>
                     )}
                     {r.impact && (
-                      <span className="rounded-full border border-cyan-400/15 bg-cyan-400/10 px-2 py-0.5 text-[10px] text-cyan-200/80">
+                      <span className="rounded-full border border-emerald-400/15 bg-emerald-400/10 px-2 py-0.5 text-[10px] text-emerald-200/80">
                         {r.impact} impact
                       </span>
                     )}
@@ -2901,7 +2901,7 @@ function RewriteResult({ data }: { data: any }) {
             <h3 className="text-sm sm:text-base font-semibold text-emerald-100 truncate">
               Rewritten Content
             </h3>
-            <span className="shrink-0 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-0.5 text-[11px] text-cyan-200">
+            <span className="shrink-0 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-[11px] text-emerald-200">
               {preset.replace(/_/g, ' ')}
             </span>
           </div>
@@ -3233,7 +3233,7 @@ export default function ReverseEngineerPage() {
           'Apply the insights to your content: restructure headings, add missing entities, match the answer shape AI prefers.',
         ]}
         benefit="Understand exactly how AI models construct answers so you can build content they want to cite."
-        accentClass="text-violet-400 border-violet-500/30 bg-violet-500/[0.06]"
+        accentClass="text-amber-400 border-amber-500/30 bg-amber-500/[0.06]"
         defaultCollapsed
       />
 
@@ -3463,7 +3463,7 @@ export default function ReverseEngineerPage() {
                         onClick={() => setSecondaryInput(preset.id)}
                         className={`rounded-xl border px-3 py-2 text-sm transition-all ${
                           secondaryInput === preset.id
-                            ? 'border-cyan-400/40 bg-cyan-400/15 text-cyan-200'
+                            ? 'border-emerald-400/40 bg-emerald-400/15 text-emerald-200'
                             : 'border-white/10 bg-charcoal-deep text-white/60 hover:border-white/20 hover:text-white/80'
                         }`}
                       >

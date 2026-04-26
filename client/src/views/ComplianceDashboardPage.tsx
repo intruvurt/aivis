@@ -1,21 +1,33 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Shield, FileText, Download, RefreshCw, CheckCircle2,
-  XCircle, Clock, Search, AlertTriangle, Loader2, ChevronDown,
-  ToggleLeft, ToggleRight, Activity, Lock,
-} from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
-import apiFetch from "../utils/api";
-import { API_URL } from "../config";
-import { usePageMeta } from "../hooks/usePageMeta";
-import toast from "react-hot-toast";
-import { getScoreColor } from "../utils/scoreUtils";
+  Shield,
+  FileText,
+  Download,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Search,
+  AlertTriangle,
+  Loader2,
+  ChevronDown,
+  ToggleLeft,
+  ToggleRight,
+  Activity,
+  Lock,
+} from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import apiFetch from '../utils/api';
+import { API_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import toast from 'react-hot-toast';
+import { getScoreColor } from '../utils/scoreUtils';
 
 /* ─── Types ─────────────────────────────────────── */
 
 type AuditLogRow = {
   id: string;
-  action_type: "scan_run" | "consent_update";
+  action_type: 'scan_run' | 'consent_update';
   subject: string;
   detail_num: number | null;
   detail_text: string | null;
@@ -24,8 +36,8 @@ type AuditLogRow = {
 
 type ConsentRecord = {
   id: string;
-  consent_type: "analytics" | "marketing" | "terms" | "privacy" | "consumer_disclaimer";
-  status: "accepted" | "declined" | "revoked";
+  consent_type: 'analytics' | 'marketing' | 'terms' | 'privacy' | 'consumer_disclaimer';
+  status: 'accepted' | 'declined' | 'revoked';
   policy_version: string;
   source: string;
   metadata: Record<string, unknown> | null;
@@ -33,46 +45,46 @@ type ConsentRecord = {
   updated_at: string;
 };
 
-type Tab = "audit-log" | "consent" | "export";
+type Tab = 'audit-log' | 'consent' | 'export';
 
 /* ─── Helpers ────────────────────────────────────── */
 
 const CONSENT_LABELS: Record<string, { label: string; desc: string }> = {
   analytics: {
-    label: "Analytics",
-    desc: "Allows usage analytics to improve the product experience.",
+    label: 'Analytics',
+    desc: 'Allows usage analytics to improve the product experience.',
   },
   marketing: {
-    label: "Marketing",
-    desc: "Allows personalised marketing and promotional communications.",
+    label: 'Marketing',
+    desc: 'Allows personalised marketing and promotional communications.',
   },
   terms: {
-    label: "Terms of Service",
-    desc: "Acceptance of the AiVIS.biz Terms of Service.",
+    label: 'Terms of Service',
+    desc: 'Acceptance of the AiVIS.biz Terms of Service.',
   },
   privacy: {
-    label: "Privacy Policy",
-    desc: "Acknowledgment of the AiVIS.biz Privacy Policy.",
+    label: 'Privacy Policy',
+    desc: 'Acknowledgment of the AiVIS.biz Privacy Policy.',
   },
   consumer_disclaimer: {
-    label: "Consumer Disclaimer",
-    desc: "Acknowledgment that AiVIS.biz provides technical diagnostics, not legal advice.",
+    label: 'Consumer Disclaimer',
+    desc: 'Acknowledgment that AiVIS.biz provides technical diagnostics, not legal advice.',
   },
 };
 
 const ACTION_ICONS: Record<string, React.ReactNode> = {
-  scan_run: <Search className="w-3.5 h-3.5 text-cyan-400" />,
-  consent_update: <Shield className="w-3.5 h-3.5 text-violet-400" />,
+  scan_run: <Search className="w-3.5 h-3.5 text-emerald-400" />,
+  consent_update: <Shield className="w-3.5 h-3.5 text-amber-400" />,
 };
 
 function formatTs(ts: string) {
   try {
     return new Date(ts).toLocaleString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   } catch {
     return ts;
@@ -80,19 +92,19 @@ function formatTs(ts: string) {
 }
 
 function scoreColor(score: number | null): string {
-  if (score === null) return "text-white/50";
+  if (score === null) return 'text-white/50';
   return getScoreColor(score);
 }
 
-function statusBadge(status: ConsentRecord["status"]) {
-  if (status === "accepted") {
+function statusBadge(status: ConsentRecord['status']) {
+  if (status === 'accepted') {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-medium">
         <CheckCircle2 className="w-3 h-3" /> Accepted
       </span>
     );
   }
-  if (status === "declined") {
+  if (status === 'declined') {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[11px] font-medium">
         <XCircle className="w-3 h-3" /> Declined
@@ -126,11 +138,11 @@ function TabButton({
       type="button"
       onClick={() => onClick(id)}
       className={[
-        "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+        'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
         active
-          ? "bg-cyan-500/10 border border-cyan-500/20 text-cyan-300"
-          : "border border-transparent text-white/50 hover:text-white/80 hover:bg-white/[0.04]",
-      ].join(" ")}
+          ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'
+          : 'border border-transparent text-white/50 hover:text-white/80 hover:bg-white/[0.04]',
+      ].join(' ')}
     >
       <Icon className="w-4 h-4" />
       {label}
@@ -144,7 +156,7 @@ function AuditLogTab() {
   const [rows, setRows] = useState<AuditLogRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "scan_run" | "consent_update">("all");
+  const [filter, setFilter] = useState<'all' | 'scan_run' | 'consent_update'>('all');
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 20;
 
@@ -154,52 +166,65 @@ function AuditLogTab() {
     try {
       const res = await apiFetch(`${API_URL}/api/compliance/audit-logs?limit=200`);
       const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.error ?? "Failed to load audit logs");
+      if (!res.ok || !body.success) throw new Error(body.error ?? 'Failed to load audit logs');
       setRows(body.data as AuditLogRow[]);
     } catch (e: any) {
-      setError(e.message ?? "Failed to load");
+      setError(e.message ?? 'Failed to load');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const filtered = filter === "all" ? rows : rows.filter((r) => r.action_type === filter);
+  const filtered = filter === 'all' ? rows : rows.filter((r) => r.action_type === filter);
   const pageRows = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-16">
-      <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
+      </div>
+    );
 
-  if (error) return (
-    <div className="flex items-center gap-2 text-red-400 text-sm py-8">
-      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-      {error}
-      <button type="button" onClick={load} className="ml-2 underline text-white/60 hover:text-white">Retry</button>
-    </div>
-  );
+  if (error)
+    return (
+      <div className="flex items-center gap-2 text-red-400 text-sm py-8">
+        <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+        {error}
+        <button
+          type="button"
+          onClick={load}
+          className="ml-2 underline text-white/60 hover:text-white"
+        >
+          Retry
+        </button>
+      </div>
+    );
 
   return (
     <div>
       {/* Filter + refresh bar */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        {(["all", "scan_run", "consent_update"] as const).map((f) => (
+        {(['all', 'scan_run', 'consent_update'] as const).map((f) => (
           <button
             key={f}
             type="button"
-            onClick={() => { setFilter(f); setPage(0); }}
+            onClick={() => {
+              setFilter(f);
+              setPage(0);
+            }}
             className={[
-              "px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
+              'px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors',
               filter === f
-                ? "bg-white/10 border-white/20 text-white"
-                : "border-white/8 text-white/50 hover:text-white/70 hover:border-white/15",
-            ].join(" ")}
+                ? 'bg-white/10 border-white/20 text-white'
+                : 'border-white/8 text-white/50 hover:text-white/70 hover:border-white/15',
+            ].join(' ')}
           >
-            {f === "all" ? "All events" : f === "scan_run" ? "Scans" : "Consent changes"}
+            {f === 'all' ? 'All events' : f === 'scan_run' ? 'Scans' : 'Consent changes'}
           </button>
         ))}
         <button
@@ -220,9 +245,15 @@ function AuditLogTab() {
               <thead>
                 <tr className="border-b border-white/8 bg-white/[0.03]">
                   <th className="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider w-8"></th>
-                  <th className="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider">Event</th>
-                  <th className="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider hidden md:table-cell">Detail</th>
-                  <th className="text-right px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider">Timestamp</th>
+                  <th className="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider">
+                    Event
+                  </th>
+                  <th className="text-left px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider hidden md:table-cell">
+                    Detail
+                  </th>
+                  <th className="text-right px-4 py-3 text-white/40 font-medium text-xs uppercase tracking-wider">
+                    Timestamp
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -230,23 +261,25 @@ function AuditLogTab() {
                   <tr
                     key={row.id}
                     className={[
-                      "border-b border-white/[0.05] transition-colors hover:bg-white/[0.02]",
-                      i === pageRows.length - 1 ? "border-b-0" : "",
-                    ].join(" ")}
+                      'border-b border-white/[0.05] transition-colors hover:bg-white/[0.02]',
+                      i === pageRows.length - 1 ? 'border-b-0' : '',
+                    ].join(' ')}
                   >
                     <td className="px-4 py-3">
-                      {ACTION_ICONS[row.action_type] ?? <Activity className="w-3.5 h-3.5 text-white/30" />}
+                      {ACTION_ICONS[row.action_type] ?? (
+                        <Activity className="w-3.5 h-3.5 text-white/30" />
+                      )}
                     </td>
                     <td className="px-4 py-3 max-w-[260px]">
                       <p className="text-white/80 truncate text-xs font-mono" title={row.subject}>
                         {row.subject}
                       </p>
                       <p className="text-white/35 text-[10px] mt-0.5">
-                        {row.action_type === "scan_run" ? "Scan run" : "Consent update"}
+                        {row.action_type === 'scan_run' ? 'Scan run' : 'Consent update'}
                       </p>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      {row.action_type === "scan_run" ? (
+                      {row.action_type === 'scan_run' ? (
                         row.detail_num !== null ? (
                           <span className={`font-semibold ${scoreColor(row.detail_num)}`}>
                             Score {row.detail_num}
@@ -255,7 +288,7 @@ function AuditLogTab() {
                       ) : (
                         <span className="text-white/55 text-xs">{row.detail_text}</span>
                       )}
-                      {row.detail_text && row.action_type === "scan_run" && (
+                      {row.detail_text && row.action_type === 'scan_run' && (
                         <span className="ml-2 text-white/30 text-[10px]">{row.detail_text}</span>
                       )}
                     </td>
@@ -314,18 +347,20 @@ function ConsentTrackingTab() {
     try {
       const res = await apiFetch(`${API_URL}/api/compliance/consent`);
       const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.error ?? "Failed to load consent records");
+      if (!res.ok || !body.success) throw new Error(body.error ?? 'Failed to load consent records');
       setRecords(body.data as ConsentRecord[]);
     } catch (e: any) {
-      setError(e.message ?? "Failed to load");
+      setError(e.message ?? 'Failed to load');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const allTypes = Object.keys(CONSENT_LABELS) as ConsentRecord["consent_type"][];
+  const allTypes = Object.keys(CONSENT_LABELS) as ConsentRecord['consent_type'][];
 
   // Build a map of type → record (most recent per type)
   const recordMap: Record<string, ConsentRecord | undefined> = {};
@@ -334,54 +369,63 @@ function ConsentTrackingTab() {
   }
 
   const updateConsent = async (
-    consentType: ConsentRecord["consent_type"],
-    newStatus: "accepted" | "declined" | "revoked"
+    consentType: ConsentRecord['consent_type'],
+    newStatus: 'accepted' | 'declined' | 'revoked'
   ) => {
     setUpdating(consentType);
     try {
       const res = await apiFetch(`${API_URL}/api/compliance/consent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consentType, status: newStatus, source: "web" }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ consentType, status: newStatus, source: 'web' }),
       });
       const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.error ?? "Update failed");
+      if (!res.ok || !body.success) throw new Error(body.error ?? 'Update failed');
       toast.success(`${CONSENT_LABELS[consentType]?.label ?? consentType} consent updated.`);
       await load();
     } catch (e: any) {
-      toast.error(e.message ?? "Failed to update consent");
+      toast.error(e.message ?? 'Failed to update consent');
     } finally {
       setUpdating(null);
     }
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-16">
-      <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
+      </div>
+    );
 
-  if (error) return (
-    <div className="flex items-center gap-2 text-red-400 text-sm py-8">
-      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-      {error}
-      <button type="button" onClick={load} className="ml-2 underline text-white/60 hover:text-white">Retry</button>
-    </div>
-  );
+  if (error)
+    return (
+      <div className="flex items-center gap-2 text-red-400 text-sm py-8">
+        <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+        {error}
+        <button
+          type="button"
+          onClick={load}
+          className="ml-2 underline text-white/60 hover:text-white"
+        >
+          Retry
+        </button>
+      </div>
+    );
 
   return (
     <div className="space-y-3">
       <p className="text-xs text-white/45 mb-5 leading-relaxed">
-        These records reflect your current consent status for each data category. Changes take effect immediately.
-        Revoking consent for analytics or marketing only affects future data collection — it does not delete previously collected data.
+        These records reflect your current consent status for each data category. Changes take
+        effect immediately. Revoking consent for analytics or marketing only affects future data
+        collection — it does not delete previously collected data.
       </p>
 
       {allTypes.map((type) => {
         const info = CONSENT_LABELS[type];
         const rec = recordMap[type];
-        const isAccepted = rec?.status === "accepted";
+        const isAccepted = rec?.status === 'accepted';
         const isBusy = updating === type;
-        const isLocked = type === "terms" || type === "privacy";
+        const isLocked = type === 'terms' || type === 'privacy';
 
         return (
           <div
@@ -409,11 +453,14 @@ function ConsentTrackingTab() {
               <p className="text-xs text-white/45 leading-relaxed">{info.desc}</p>
               {rec && (
                 <p className="text-[10px] text-white/25 mt-1.5">
-                  Last updated {formatTs(rec.updated_at)} · via {rec.source} · policy v{rec.policy_version}
+                  Last updated {formatTs(rec.updated_at)} · via {rec.source} · policy v
+                  {rec.policy_version}
                 </p>
               )}
               {!rec && (
-                <p className="text-[10px] text-amber-400/60 mt-1.5">No record — consent not yet captured.</p>
+                <p className="text-[10px] text-amber-400/60 mt-1.5">
+                  No record — consent not yet captured.
+                </p>
               )}
             </div>
 
@@ -424,7 +471,7 @@ function ConsentTrackingTab() {
                 ) : isAccepted ? (
                   <button
                     type="button"
-                    onClick={() => updateConsent(type, "revoked")}
+                    onClick={() => updateConsent(type, 'revoked')}
                     title="Revoke consent"
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 transition-colors"
                   >
@@ -433,7 +480,7 @@ function ConsentTrackingTab() {
                 ) : (
                   <button
                     type="button"
-                    onClick={() => updateConsent(type, "accepted")}
+                    onClick={() => updateConsent(type, 'accepted')}
                     title="Accept consent"
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 transition-colors"
                   >
@@ -457,19 +504,34 @@ function ConsentTrackingTab() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-white/8 bg-white/[0.03]">
-                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">Type</th>
-                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">Status</th>
-                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider hidden sm:table-cell">Source</th>
-                  <th className="text-right px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">Updated</th>
+                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="text-left px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider hidden sm:table-cell">
+                    Source
+                  </th>
+                  <th className="text-right px-4 py-2.5 text-white/35 font-medium uppercase tracking-wider">
+                    Updated
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {records.map((r, i) => (
-                  <tr key={r.id} className={i < records.length - 1 ? "border-b border-white/[0.05]" : ""}>
-                    <td className="px-4 py-2.5 text-white/60">{CONSENT_LABELS[r.consent_type]?.label ?? r.consent_type}</td>
+                  <tr
+                    key={r.id}
+                    className={i < records.length - 1 ? 'border-b border-white/[0.05]' : ''}
+                  >
+                    <td className="px-4 py-2.5 text-white/60">
+                      {CONSENT_LABELS[r.consent_type]?.label ?? r.consent_type}
+                    </td>
                     <td className="px-4 py-2.5">{statusBadge(r.status)}</td>
                     <td className="px-4 py-2.5 text-white/35 hidden sm:table-cell">{r.source}</td>
-                    <td className="px-4 py-2.5 text-white/35 text-right whitespace-nowrap">{formatTs(r.updated_at)}</td>
+                    <td className="px-4 py-2.5 text-white/35 text-right whitespace-nowrap">
+                      {formatTs(r.updated_at)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -492,50 +554,64 @@ function ExportTab() {
       const res = await apiFetch(`${API_URL}/api/compliance/export`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error((body as any).error ?? "Export failed");
+        throw new Error((body as any).error ?? 'Export failed');
       }
       const blob = await res.blob();
       const date = new Date().toISOString().slice(0, 10);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = `aivis-data-export-${date}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success("Data export downloaded.");
+      toast.success('Data export downloaded.');
     } catch (e: any) {
-      toast.error(e.message ?? "Export failed");
+      toast.error(e.message ?? 'Export failed');
     } finally {
       setDownloading(false);
     }
   };
 
   const INCLUDED = [
-    { icon: "👤", label: "Profile", detail: "Your account name, email, tier, and timestamps." },
-    { icon: "🔍", label: "Scan history", detail: "Up to 1,000 most recent audits: URL, score, tier, status, and created date." },
-    { icon: "✅", label: "Consent records", detail: "All accepted/declined/revoked entries with policy version and source." },
-    { icon: "💳", label: "Payment records", detail: "Payment IDs, amounts, currency, and status — no card numbers or PII." },
+    { icon: '👤', label: 'Profile', detail: 'Your account name, email, tier, and timestamps.' },
+    {
+      icon: '🔍',
+      label: 'Scan history',
+      detail: 'Up to 1,000 most recent audits: URL, score, tier, status, and created date.',
+    },
+    {
+      icon: '✅',
+      label: 'Consent records',
+      detail: 'All accepted/declined/revoked entries with policy version and source.',
+    },
+    {
+      icon: '💳',
+      label: 'Payment records',
+      detail: 'Payment IDs, amounts, currency, and status — no card numbers or PII.',
+    },
   ];
 
   const EXCLUDED = [
-    "Raw AI analysis payloads (available in Reports)",
-    "Competitore tracking data",
-    "Citation test results",
-    "Workspace member data for other users",
+    'Raw AI analysis payloads (available in Reports)',
+    'Competitore tracking data',
+    'Citation test results',
+    'Workspace member data for other users',
   ];
 
   return (
     <div className="max-w-2xl">
       <p className="text-sm text-white/65 leading-relaxed mb-6">
-        Download a machine-readable JSON export of all personal data held against your account.
-        This fulfils the Right of Access under GDPR Art. 15 and equivalent data portability rights.
+        Download a machine-readable JSON export of all personal data held against your account. This
+        fulfils the Right of Access under GDPR Art. 15 and equivalent data portability rights.
       </p>
 
       {/* What's included */}
       <div className="rounded-xl border border-white/8 bg-white/[0.02] p-5 mb-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">Included in export</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
+          Included in export
+        </h3>
         <div className="space-y-2.5">
           {INCLUDED.map((item) => (
             <div key={item.label} className="flex items-start gap-3">
@@ -551,7 +627,9 @@ function ExportTab() {
 
       {/* What's excluded */}
       <div className="rounded-xl border border-white/[0.06] bg-white/[0.01] p-4 mb-6">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-2">Not included</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-2">
+          Not included
+        </h3>
         <ul className="space-y-1">
           {EXCLUDED.map((item) => (
             <li key={item} className="flex items-center gap-2 text-xs text-white/35">
@@ -566,18 +644,18 @@ function ExportTab() {
         type="button"
         disabled={downloading}
         onClick={triggerExport}
-        className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-sm font-medium hover:bg-cyan-500/15 hover:border-cyan-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-medium hover:bg-emerald-500/15 hover:border-emerald-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {downloading ? (
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
           <Download className="w-4 h-4" />
         )}
-        {downloading ? "Preparing export…" : "Download my data (JSON)"}
+        {downloading ? 'Preparing export…' : 'Download my data (JSON)'}
       </button>
 
       <p className="text-[11px] text-white/25 mt-4 leading-relaxed">
-        For account deletion or manual GDPR requests, contact{" "}
+        For account deletion or manual GDPR requests, contact{' '}
         <a href="mailto:privacy@aivis.biz" className="underline text-white/40 hover:text-white/60">
           privacy@aivis.biz
         </a>
@@ -591,32 +669,32 @@ function ExportTab() {
 
 export default function ComplianceDashboardPage() {
   usePageMeta({
-    title: "Compliance Dashboard",
-    description: "Audit logs, consent tracking, and GDPR data export for your AiVIS.biz account.",
-    path: "/app/compliance-dashboard",
+    title: 'Compliance Dashboard',
+    description: 'Audit logs, consent tracking, and GDPR data export for your AiVIS.biz account.',
+    path: '/app/compliance-dashboard',
   });
 
   const user = useAuthStore((s) => s.user);
-  const [activeTab, setActiveTab] = useState<Tab>("audit-log");
+  const [activeTab, setActiveTab] = useState<Tab>('audit-log');
 
   const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: "audit-log", label: "Audit Log", icon: Activity },
-    { id: "consent", label: "Consent Tracking", icon: Shield },
-    { id: "export", label: "Data Export", icon: Download },
+    { id: 'audit-log', label: 'Audit Log', icon: Activity },
+    { id: 'consent', label: 'Consent Tracking', icon: Shield },
+    { id: 'export', label: 'Data Export', icon: Download },
   ];
 
   return (
     <div className="px-4 py-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-          <Shield className="w-5 h-5 text-cyan-400" />
+        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+          <Shield className="w-5 h-5 text-emerald-400" />
         </div>
         <div>
           <h1 className="text-xl font-semibold text-white">Compliance Dashboard</h1>
           <p className="text-sm text-white/50 mt-0.5">
-            Audit logs, consent records, and GDPR data export for{" "}
-            <span className="text-white/70">{user?.email ?? "your account"}</span>
+            Audit logs, consent records, and GDPR data export for{' '}
+            <span className="text-white/70">{user?.email ?? 'your account'}</span>
           </p>
         </div>
       </div>
@@ -643,9 +721,9 @@ export default function ComplianceDashboardPage() {
 
       {/* Tab content */}
       <div className="rounded-2xl border border-white/8 bg-white/[0.015] p-5">
-        {activeTab === "audit-log" && <AuditLogTab />}
-        {activeTab === "consent" && <ConsentTrackingTab />}
-        {activeTab === "export" && <ExportTab />}
+        {activeTab === 'audit-log' && <AuditLogTab />}
+        {activeTab === 'consent' && <ConsentTrackingTab />}
+        {activeTab === 'export' && <ExportTab />}
       </div>
     </div>
   );

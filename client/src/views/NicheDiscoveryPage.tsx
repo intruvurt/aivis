@@ -377,7 +377,7 @@ export default function NicheDiscoveryPage() {
             <div className="text-[11px] text-white/40 mt-0.5">Discoveries Run</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-cyan-300 tabular-nums">
+            <div className="text-2xl font-bold text-emerald-300 tabular-nums">
               {historyStats.totalFound}
             </div>
             <div className="text-[11px] text-white/40 mt-0.5">URLs Found</div>
@@ -389,7 +389,7 @@ export default function NicheDiscoveryPage() {
             <div className="text-[11px] text-white/40 mt-0.5">Valid URLs</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#111827]/90 p-4 text-center">
-            <div className="text-2xl font-bold text-violet-300 tabular-nums">
+            <div className="text-2xl font-bold text-amber-300 tabular-nums">
               {historyStats.totalScheduled}
             </div>
             <div className="text-[11px] text-white/40 mt-0.5">Scheduled for Audit</div>
@@ -583,7 +583,7 @@ export default function NicheDiscoveryPage() {
                           href={u.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition break-all"
+                          className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition break-all"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <span className="break-all">
@@ -754,7 +754,7 @@ export default function NicheDiscoveryPage() {
                       <span>{jUrls.length} found</span>
                       <span className="text-emerald-400/50">{jValid} valid</span>
                       {j.scheduled_count > 0 && (
-                        <span className="text-violet-400/50">{j.scheduled_count} scheduled</span>
+                        <span className="text-amber-400/50">{j.scheduled_count} scheduled</span>
                       )}
                     </div>
                   </div>

@@ -470,7 +470,7 @@ export default function GuidePage() {
               </ul>
             </div>
             <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 mb-2">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-2">
                 The output is
               </div>
               <ul className="space-y-1.5 text-xs text-white/65 list-disc pl-3">
@@ -627,7 +627,7 @@ export default function GuidePage() {
 
         <section
           id="baseline-setup"
-          className="section-anchor section-accent-cyan mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
+          className="section-anchor section-accent-emerald mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <h2 className="text-xl brand-title">1) Baseline setup before you touch content</h2>
           <ul className="mt-4 space-y-2 text-sm text-white/75 list-disc pl-5">
@@ -811,7 +811,7 @@ export default function GuidePage() {
 
         <section
           id="retest-and-prove"
-          className="section-anchor section-accent-violet mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
+          className="section-anchor section-accent-amber mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <h2 className="text-xl brand-title">5) Retest and prove the change</h2>
           <ol className="mt-4 space-y-2 text-sm text-white/75 list-decimal pl-5">
@@ -837,7 +837,7 @@ export default function GuidePage() {
         >
           <h2 className="text-xl brand-title">6) Full tool map: every page and when to use it</h2>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-blue-300/80">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-emerald-300/80">
             Core
           </h3>
           <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -886,7 +886,7 @@ export default function GuidePage() {
             ))}
           </div>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-violet-300/80">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-widest text-amber-300/80">
             Evidence &amp; Intelligence
           </h3>
           <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -1047,7 +1047,7 @@ export default function GuidePage() {
 
         <section
           id="vector-retrieval-system"
-          className="section-anchor section-accent-cyan mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
+          className="section-anchor section-accent-emerald mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <h2 className="text-xl brand-title">
             Vector databases in AiVIS.biz: what they are and why they matter
@@ -1102,7 +1102,7 @@ export default function GuidePage() {
 
         <section
           id="living-loop-entity-os"
-          className="section-anchor section-accent-violet mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
+          className="section-anchor section-accent-amber mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <h2 className="text-xl brand-title">LLM retrieval systems: from rules to geometry</h2>
           <p className="mt-3 text-sm text-white/75">
@@ -1234,7 +1234,7 @@ export default function GuidePage() {
 
         <section
           id="free-tools"
-          className="section-anchor section-accent-cyan mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
+          className="section-anchor section-accent-emerald mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <h2 className="text-xl brand-title">10) Free tools you can use without an account</h2>
           <p className="mt-3 text-sm text-white/75">
@@ -1277,7 +1277,7 @@ export default function GuidePage() {
           className="section-anchor mb-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <div className="flex items-center gap-2.5 mb-1">
-            <Database className="h-4 w-4 text-cyan-400" />
+            <Database className="h-4 w-4 text-emerald-400" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
               Live from the audit database
             </span>
@@ -1314,7 +1314,7 @@ export default function GuidePage() {
                     stat: `${findings.pct_no_org_schema}%`,
                     label: 'lack Organization schema',
                     sub: 'entity identity signal absent',
-                    color: 'text-violet-400',
+                    color: 'text-amber-400',
                   },
                 ].map((item) => (
                   <div
@@ -1341,7 +1341,7 @@ export default function GuidePage() {
                     stat: `${findings.avg_score}`,
                     label: 'avg visibility score',
                     sub: `across ${findings.total_audits.toLocaleString()} audited URLs`,
-                    color: 'text-cyan-400',
+                    color: 'text-emerald-400',
                   },
                   {
                     stat: `${findings.pct_ai_crawler_blocked}%`,
@@ -1453,7 +1453,7 @@ export default function GuidePage() {
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-charcoal-deep p-4">
               <h3 className="text-sm brand-title-muted">
-                <Clock3 className="mr-1 inline h-4 w-4 text-cyan-300" /> Week 1
+                <Clock3 className="mr-1 inline h-4 w-4 text-emerald-300" /> Week 1
               </h3>
               <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
                 <li>Baseline audit + report snapshot</li>
@@ -1477,7 +1477,7 @@ export default function GuidePage() {
               to="/app/analytics"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 hover:text-white"
             >
-              <TrendingUp className="h-3.5 w-3.5 text-cyan-300" /> Review Trend
+              <TrendingUp className="h-3.5 w-3.5 text-emerald-300" /> Review Trend
             </Link>
             <Link
               to="/app/workflow"
@@ -1657,7 +1657,7 @@ export default function GuidePage() {
           className="section-anchor mt-6 rounded-2xl border border-white/10 bg-charcoal p-6 sm:p-8"
         >
           <div className="flex items-center gap-2.5 mb-1">
-            <BookOpen className="h-4 w-4 text-violet-400" />
+            <BookOpen className="h-4 w-4 text-amber-400" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
               Internal linking
             </span>
@@ -1682,7 +1682,7 @@ export default function GuidePage() {
                         className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2.5 text-xs text-white/75 hover:border-white/25 hover:text-white transition"
                       >
                         <span>{item.label}</span>
-                        <ArrowRight className="h-3 w-3 shrink-0 text-cyan-400" />
+                        <ArrowRight className="h-3 w-3 shrink-0 text-emerald-400" />
                       </Link>
                     ) : (
                       <Link
@@ -1691,7 +1691,7 @@ export default function GuidePage() {
                         className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-charcoal-deep px-3 py-2.5 text-xs text-white/75 hover:border-white/25 hover:text-white transition"
                       >
                         <span>{item.label}</span>
-                        <ExternalLink className="h-3 w-3 shrink-0 text-violet-400" />
+                        <ExternalLink className="h-3 w-3 shrink-0 text-amber-400" />
                       </Link>
                     )
                   )}
@@ -1709,16 +1709,16 @@ export default function GuidePage() {
           <h2 className="text-xl brand-title">16) Dofollow backlink badge</h2>
           <p className="mt-3 text-sm text-white/75">
             Add the AiVIS.biz badge to your website footer to earn a{' '}
-            <strong className="text-cyan-300">high-quality dofollow backlink</strong> while showing
-            visitors your site is AI-visibility audited. Every impression and click is tracked so
-            you can measure referral impact.
+            <strong className="text-emerald-300">high-quality dofollow backlink</strong> while
+            showing visitors your site is AI-visibility audited. Every impression and click is
+            tracked so you can measure referral impact.
           </p>
           <div className="mt-4 rounded-xl border border-white/10 bg-charcoal-deep p-4">
             <h3 className="text-sm brand-title-muted">How it works</h3>
             <ul className="mt-2 space-y-1.5 text-xs text-white/70 list-disc pl-4">
               <li>
                 Grab your personalised embed snippet from the{' '}
-                <Link to="/badge" className="text-cyan-400 underline hover:text-cyan-300">
+                <Link to="/badge" className="text-emerald-400 underline hover:text-emerald-300">
                   Badge page
                 </Link>
                 .

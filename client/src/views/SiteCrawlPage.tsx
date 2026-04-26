@@ -1,24 +1,33 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore";
-import { meetsMinimumTier, TIER_LIMITS, uiTierFromCanonical } from "@shared/types";
-import type { CanonicalTier } from "@shared/types";
-import { usePageMeta } from "../hooks/usePageMeta";
-import UpgradeWall from "../components/UpgradeWall";
-import FeatureInstruction from "../components/FeatureInstruction";
-import { startSiteCrawl, listSiteCrawls, getSiteCrawl } from "../api";
-import type { SiteCrawlResult, SiteCrawlSummary, SiteCrawlPage } from "../api";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { meetsMinimumTier, TIER_LIMITS, uiTierFromCanonical } from '@shared/types';
+import type { CanonicalTier } from '@shared/types';
+import { usePageMeta } from '../hooks/usePageMeta';
+import UpgradeWall from '../components/UpgradeWall';
+import FeatureInstruction from '../components/FeatureInstruction';
+import { startSiteCrawl, listSiteCrawls, getSiteCrawl } from '../api';
+import type { SiteCrawlResult, SiteCrawlSummary, SiteCrawlPage } from '../api';
 import {
-  Globe, ChevronDown, ChevronRight, ExternalLink, AlertTriangle,
-  CheckCircle2, XCircle, Loader2, Clock, FileText, Link2,
-} from "lucide-react";
+  Globe,
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Clock,
+  FileText,
+  Link2,
+} from 'lucide-react';
 import Spinner from '../components/Spinner';
 
 /* ── Helpers ──────────────────────────────────────────── */
 
 function statusBadge(status: string) {
-  if (status === "pass") return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />;
-  if (status === "warn") return <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />;
+  if (status === 'pass') return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />;
+  if (status === 'warn') return <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />;
   return <XCircle className="h-3.5 w-3.5 text-red-400" />;
 }
 
@@ -34,9 +43,9 @@ function PageRow({ page, defaultOpen }: { page: SiteCrawlPage; defaultOpen?: boo
   const [open, setOpen] = useState(defaultOpen ?? false);
   const diag = page.seo_diagnostics || {};
   const diagEntries = Object.entries(diag);
-  const passCount = diagEntries.filter(([, v]) => v.status === "pass").length;
-  const warnCount = diagEntries.filter(([, v]) => v.status === "warn").length;
-  const failCount = diagEntries.filter(([, v]) => v.status === "fail").length;
+  const passCount = diagEntries.filter(([, v]) => v.status === 'pass').length;
+  const warnCount = diagEntries.filter(([, v]) => v.status === 'warn').length;
+  const failCount = diagEntries.filter(([, v]) => v.status === 'fail').length;
 
   return (
     <div className="border border-white/[0.06] rounded-lg bg-white/[0.02]">
@@ -44,13 +53,17 @@ function PageRow({ page, defaultOpen }: { page: SiteCrawlPage; defaultOpen?: boo
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.03] transition-colors"
       >
-        {open ? <ChevronDown className="h-4 w-4 text-white/40 shrink-0" /> : <ChevronRight className="h-4 w-4 text-white/40 shrink-0" />}
+        {open ? (
+          <ChevronDown className="h-4 w-4 text-white/40 shrink-0" />
+        ) : (
+          <ChevronRight className="h-4 w-4 text-white/40 shrink-0" />
+        )}
         <div className="min-w-0 flex-1">
           <p className="text-sm text-white truncate">{page.title || page.url}</p>
           <p className="text-[11px] text-white/40 truncate">{page.url}</p>
         </div>
         <span className="text-[10px] text-white/30 shrink-0">d{page.depth}</span>
-        {page.status === "error" ? (
+        {page.status === 'error' ? (
           <span className="text-xs text-red-400 shrink-0">Error</span>
         ) : (
           <div className="flex items-center gap-2 shrink-0 text-[11px]">
@@ -63,14 +76,14 @@ function PageRow({ page, defaultOpen }: { page: SiteCrawlPage; defaultOpen?: boo
 
       {open && (
         <div className="px-4 pb-4 space-y-3 border-t border-white/[0.06]">
-          {page.error && (
-            <p className="text-xs text-red-400 mt-2">{page.error}</p>
-          )}
+          {page.error && <p className="text-xs text-red-400 mt-2">{page.error}</p>}
 
           <div className="flex flex-wrap gap-4 mt-2 text-[11px] text-white/50">
             {page.word_count != null && <span>Words: {page.word_count.toLocaleString()}</span>}
             <span>Links found: {page.links_discovered}</span>
-            {page.canonical_url && <span className="truncate max-w-xs">Canonical: {page.canonical_url}</span>}
+            {page.canonical_url && (
+              <span className="truncate max-w-xs">Canonical: {page.canonical_url}</span>
+            )}
           </div>
 
           {diagEntries.length > 0 && (
@@ -93,7 +106,10 @@ function PageRow({ page, defaultOpen }: { page: SiteCrawlPage; defaultOpen?: boo
               <p className="text-[10px] uppercase tracking-wider text-white/30 mb-1">Issues</p>
               <div className="flex flex-wrap gap-1">
                 {page.issues.map((issue) => (
-                  <span key={issue} className="px-2 py-0.5 text-[10px] rounded bg-red-500/10 text-red-300 border border-red-500/20">
+                  <span
+                    key={issue}
+                    className="px-2 py-0.5 text-[10px] rounded bg-red-500/10 text-red-300 border border-red-500/20"
+                  >
                     {issue}
                   </span>
                 ))}
@@ -121,7 +137,11 @@ function CrawlDetail({ data, onBack }: { data: SiteCrawlResult; onBack: () => vo
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="Pages Crawled" value={data.total_pages_crawled} />
         <StatCard label="Avg Words" value={data.average_word_count} />
-        <StatCard label="Errors" value={data.pages_with_errors} accent={data.pages_with_errors > 0 ? "text-red-400" : "text-emerald-400"} />
+        <StatCard
+          label="Errors"
+          value={data.pages_with_errors}
+          accent={data.pages_with_errors > 0 ? 'text-red-400' : 'text-emerald-400'}
+        />
         <StatCard label="Duration" value={formatDuration(data.started_at, data.completed_at)} />
       </div>
 
@@ -146,10 +166,18 @@ function CrawlDetail({ data, onBack }: { data: SiteCrawlResult; onBack: () => vo
   );
 }
 
-function StatCard({ label, value, accent }: { label: string; value: string | number; accent?: string }) {
+function StatCard({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string | number;
+  accent?: string;
+}) {
   return (
     <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-center">
-      <p className={`text-lg font-semibold ${accent || "text-white"}`}>{value}</p>
+      <p className={`text-lg font-semibold ${accent || 'text-white'}`}>{value}</p>
       <p className="text-[10px] uppercase tracking-wider text-white/40">{label}</p>
     </div>
   );
@@ -160,18 +188,19 @@ function StatCard({ label, value, accent }: { label: string; value: string | num
 export default function SiteCrawlPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
-  const userTier = (user?.tier || "observer") as CanonicalTier;
+  const userTier = (user?.tier || 'observer') as CanonicalTier;
   const uiTier = uiTierFromCanonical(userTier);
-  const hasAccess = meetsMinimumTier(uiTier, "alignment");
+  const hasAccess = meetsMinimumTier(uiTier, 'alignment');
   const limits = TIER_LIMITS[userTier] || TIER_LIMITS.observer;
 
   usePageMeta({
-    title: "Site Crawl",
-    description: "Crawl and audit multiple pages across your website for structural and AI citation issues.",
-    path: "/site-crawl",
+    title: 'Site Crawl',
+    description:
+      'Crawl and audit multiple pages across your website for structural and AI citation issues.',
+    path: '/site-crawl',
   });
 
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState('');
   const [maxPages, setMaxPages] = useState(Math.min(50, limits.pagesPerScan));
   const [maxDepth, setMaxDepth] = useState(2);
   const [loading, setLoading] = useState(false);
@@ -183,7 +212,7 @@ export default function SiteCrawlPage() {
   const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) navigate("/auth?mode=signin");
+    if (!isAuthenticated) navigate('/auth?mode=signin');
   }, [isAuthenticated, navigate]);
 
   const loadHistory = useCallback(async () => {
@@ -199,7 +228,9 @@ export default function SiteCrawlPage() {
     }
   }, [hasAccess]);
 
-  useEffect(() => { loadHistory(); }, [loadHistory]);
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
 
   const handleCrawl = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,10 +245,10 @@ export default function SiteCrawlPage() {
         setResult(res.data);
         loadHistory(); // refresh history
       } else {
-        setError((res as any).error || "Crawl failed");
+        setError((res as any).error || 'Crawl failed');
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to start crawl");
+      setError(err?.message || 'Failed to start crawl');
     } finally {
       setLoading(false);
     }
@@ -230,7 +261,7 @@ export default function SiteCrawlPage() {
       const res = await getSiteCrawl(crawlId);
       if (res.success) setResult(res.data);
     } catch (err: any) {
-      setError(err?.message || "Failed to load crawl");
+      setError(err?.message || 'Failed to load crawl');
     } finally {
       setDetailLoading(false);
     }
@@ -240,7 +271,7 @@ export default function SiteCrawlPage() {
     <div className="space-y-6">
       <div>
         <h1 className="flex items-center gap-2 text-xl font-semibold text-white">
-          <Globe className="h-5 w-5 text-cyan-400" />
+          <Globe className="h-5 w-5 text-emerald-400" />
           Site Crawl
         </h1>
         <p className="text-sm text-white/50 mt-1">
@@ -251,13 +282,13 @@ export default function SiteCrawlPage() {
       <FeatureInstruction
         headline="How to use Site Crawl"
         steps={[
-          "Enter your root domain or a specific section URL to start the multi-page crawl.",
-          "Set max pages and depth — crawl results scale with your tier.",
-          "Review per-page SEO diagnostics: schema, canonical, heading structure, word count, and indexability.",
-          "Fix the pages with the most warnings and failures first, then re-crawl to validate.",
+          'Enter your root domain or a specific section URL to start the multi-page crawl.',
+          'Set max pages and depth — crawl results scale with your tier.',
+          'Review per-page SEO diagnostics: schema, canonical, heading structure, word count, and indexability.',
+          'Fix the pages with the most warnings and failures first, then re-crawl to validate.',
         ]}
         benefit="Catch structural SEO and AI readability issues across your entire site instead of auditing one page at a time."
-        accentClass="text-cyan-400 border-cyan-500/30 bg-cyan-500/[0.06]"
+        accentClass="text-emerald-400 border-emerald-500/30 bg-emerald-500/[0.06]"
         defaultCollapsed
       />
 
@@ -268,10 +299,10 @@ export default function SiteCrawlPage() {
           requiredTier="alignment"
           icon={<Globe className="h-12 w-12 text-white/80" />}
           featurePreview={[
-            "BFS crawl discovers pages via internal links",
-            "Per-page SEO diagnostics - schema, canonical, indexability",
-            "Tier-based page caps: 50 (Alignment), 250 (Signal), 500 (Score Fix)",
-            "Crawl history with pass/warn/fail breakdowns",
+            'BFS crawl discovers pages via internal links',
+            'Per-page SEO diagnostics - schema, canonical, indexability',
+            'Tier-based page caps: 50 (Alignment), 250 (Signal), 500 (Score Fix)',
+            'Crawl history with pass/warn/fail breakdowns',
           ]}
         />
       ) : (
@@ -281,21 +312,24 @@ export default function SiteCrawlPage() {
             <form onSubmit={handleCrawl} className="space-y-4">
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 space-y-4">
                 <div>
-                  <label htmlFor="crawl-url" className="block text-xs text-white/50 mb-1">Root URL</label>
+                  <label htmlFor="crawl-url" className="block text-xs text-white/50 mb-1">
+                    Root URL
+                  </label>
                   <input
                     id="crawl-url"
                     type="text"
                     placeholder="example.com"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
+                    className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="crawl-max-pages" className="block text-xs text-white/50 mb-1">
-                      Max Pages <span className="text-white/30">(limit: {limits.pagesPerScan})</span>
+                      Max Pages{' '}
+                      <span className="text-white/30">(limit: {limits.pagesPerScan})</span>
                     </label>
                     <input
                       id="crawl-max-pages"
@@ -303,8 +337,12 @@ export default function SiteCrawlPage() {
                       min={1}
                       max={limits.pagesPerScan}
                       value={maxPages}
-                      onChange={(e) => setMaxPages(Math.min(limits.pagesPerScan, Math.max(1, Number(e.target.value) || 1)))}
-                      className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
+                      onChange={(e) =>
+                        setMaxPages(
+                          Math.min(limits.pagesPerScan, Math.max(1, Number(e.target.value) || 1))
+                        )
+                      }
+                      className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                     />
                   </div>
                   <div>
@@ -317,20 +355,20 @@ export default function SiteCrawlPage() {
                       min={1}
                       max={4}
                       value={maxDepth}
-                      onChange={(e) => setMaxDepth(Math.min(4, Math.max(1, Number(e.target.value) || 1)))}
-                      className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
+                      onChange={(e) =>
+                        setMaxDepth(Math.min(4, Math.max(1, Number(e.target.value) || 1)))
+                      }
+                      className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
                     />
                   </div>
                 </div>
 
-                {error && (
-                  <p className="text-sm text-red-400">{error}</p>
-                )}
+                {error && <p className="text-sm text-red-400">{error}</p>}
 
                 <button
                   type="submit"
                   disabled={loading || !url.trim()}
-                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? (
                     <>
@@ -352,7 +390,7 @@ export default function SiteCrawlPage() {
           {(loading || detailLoading) && (
             <div className="flex items-center justify-center gap-3 py-12 text-white/50">
               <Spinner className="h-5 w-5" />
-              <span className="text-sm">{loading ? "Crawling pages…" : "Loading crawl…"}</span>
+              <span className="text-sm">{loading ? 'Crawling pages…' : 'Loading crawl…'}</span>
             </div>
           )}
 
@@ -376,7 +414,9 @@ export default function SiteCrawlPage() {
                   <Spinner className="h-4 w-4" /> Loading…
                 </div>
               ) : history.length === 0 ? (
-                <p className="text-sm text-white/30 py-4">No crawls yet. Start your first crawl above.</p>
+                <p className="text-sm text-white/30 py-4">
+                  No crawls yet. Start your first crawl above.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {history.map((crawl) => (
@@ -385,11 +425,13 @@ export default function SiteCrawlPage() {
                       onClick={() => viewCrawl(crawl.crawl_id)}
                       className="w-full flex items-center gap-4 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-left hover:bg-white/[0.04] transition-colors"
                     >
-                      <Globe className="h-4 w-4 text-cyan-400 shrink-0" />
+                      <Globe className="h-4 w-4 text-emerald-400 shrink-0" />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-white truncate">{crawl.root_url}</p>
                         <p className="text-[11px] text-white/40">
-                          {new Date(crawl.created_at).toLocaleDateString()} · {crawl.total_pages_crawled} pages · {formatDuration(crawl.started_at, crawl.completed_at)}
+                          {new Date(crawl.created_at).toLocaleDateString()} ·{' '}
+                          {crawl.total_pages_crawled} pages ·{' '}
+                          {formatDuration(crawl.started_at, crawl.completed_at)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 text-[11px]">

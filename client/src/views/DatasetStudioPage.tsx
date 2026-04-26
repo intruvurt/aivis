@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Database,
   Upload,
@@ -15,11 +15,11 @@ import {
   Trash2,
   Eye,
   RefreshCw,
-} from "lucide-react";
-import apiFetch from "../utils/api";
-import { useAuthStore } from "../stores/authStore";
-import { meetsMinimumTier, uiTierFromCanonical } from "../../../shared/types";
-import UpgradeWall from "../components/UpgradeWall";
+} from 'lucide-react';
+import apiFetch from '../utils/api';
+import { useAuthStore } from '../stores/authStore';
+import { meetsMinimumTier, uiTierFromCanonical } from '../../../shared/types';
+import UpgradeWall from '../components/UpgradeWall';
 import type {
   DatasetVertical,
   DatasetEntry,
@@ -27,24 +27,42 @@ import type {
   DatasetEntryOrigin,
   DatasetVerticalSummary,
   DatasetAuditProof,
-} from "../../../shared/types";
-import toast from "react-hot-toast";
+} from '../../../shared/types';
+import toast from 'react-hot-toast';
 
 /* ── Constants ─────────────────────────────────────────────────────────── */
 
-const STAGE_ORDER: DatasetEntryStage[] = ["ingested", "annotated", "synthesized", "audited"];
+const STAGE_ORDER: DatasetEntryStage[] = ['ingested', 'annotated', 'synthesized', 'audited'];
 
-const STAGE_META: Record<DatasetEntryStage, { label: string; colour: string; icon: typeof Upload }> = {
-  ingested:    { label: "Ingested",    colour: "text-blue-400",    icon: Upload },
-  annotated:   { label: "Annotated",   colour: "text-amber-400",   icon: Tag },
-  synthesized: { label: "Synthesized", colour: "text-purple-400",  icon: Sparkles },
-  audited:     { label: "Audited",     colour: "text-emerald-400", icon: ShieldCheck },
+const STAGE_META: Record<
+  DatasetEntryStage,
+  { label: string; colour: string; icon: typeof Upload }
+> = {
+  ingested: { label: 'Ingested', colour: 'text-emerald-400', icon: Upload },
+  annotated: { label: 'Annotated', colour: 'text-amber-400', icon: Tag },
+  synthesized: { label: 'Synthesized', colour: 'text-purple-400', icon: Sparkles },
+  audited: { label: 'Audited', colour: 'text-emerald-400', icon: ShieldCheck },
 };
 
-const VERTICAL_META: Record<DatasetVertical, { label: string; colour: string; description: string }> = {
-  ai_governance:      { label: "AI Governance",      colour: "border-violet-500/40 bg-violet-500/5",  description: "Legal & compliance frameworks" },
-  incident_response:  { label: "Incident Response",  colour: "border-cyan-500/40 bg-cyan-500/5",      description: "Cybersecurity event archives" },
-  agentic_interaction:{ label: "Agentic Interaction", colour: "border-amber-500/40 bg-amber-500/5",    description: "Human-AI interaction patterns" },
+const VERTICAL_META: Record<
+  DatasetVertical,
+  { label: string; colour: string; description: string }
+> = {
+  ai_governance: {
+    label: 'AI Governance',
+    colour: 'border-amber-500/40 bg-amber-500/5',
+    description: 'Legal & compliance frameworks',
+  },
+  incident_response: {
+    label: 'Incident Response',
+    colour: 'border-emerald-500/40 bg-emerald-500/5',
+    description: 'Cybersecurity event archives',
+  },
+  agentic_interaction: {
+    label: 'Agentic Interaction',
+    colour: 'border-amber-500/40 bg-amber-500/5',
+    description: 'Human-AI interaction patterns',
+  },
 };
 
 /* ── Helpers ───────────────────────────────────────────────────────────── */
@@ -67,17 +85,22 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
   const [loadingProof, setLoadingProof] = useState(false);
 
   useEffect(() => {
-    if (entry.stage !== "audited" || !entry.audit_hash) return;
+    if (entry.stage !== 'audited' || !entry.audit_hash) return;
     setLoadingProof(true);
     apiFetch(`/api/dataset/proof/${entry.id}`)
       .then((r) => r.json())
-      .then((d) => { if (d.success) setProof(d.proof); })
+      .then((d) => {
+        if (d.success) setProof(d.proof);
+      })
       .catch(() => {})
       .finally(() => setLoadingProof(false));
   }, [entry.id, entry.stage, entry.audit_hash]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -93,7 +116,12 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
           <StageBadge stage={entry.stage} />
           <span className="text-xs text-white/40">{entry.origin}</span>
           {entry.source_url && (
-            <a href={entry.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-violet-400 hover:underline truncate max-w-[200px]">
+            <a
+              href={entry.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-amber-400 hover:underline truncate max-w-[200px]"
+            >
               {entry.source_url}
             </a>
           )}
@@ -103,14 +131,18 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
           {entry.content && (
             <div>
               <p className="text-xs font-medium text-white/50 mb-1">Content</p>
-              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-40 overflow-y-auto">{entry.content}</pre>
+              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-40 overflow-y-auto">
+                {entry.content}
+              </pre>
             </div>
           )}
 
           {entry.labels && Object.keys(entry.labels).length > 0 && (
             <div>
               <p className="text-xs font-medium text-white/50 mb-1">Labels</p>
-              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs">{JSON.stringify(entry.labels, null, 2)}</pre>
+              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs">
+                {JSON.stringify(entry.labels, null, 2)}
+              </pre>
             </div>
           )}
 
@@ -124,7 +156,9 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
           {entry.provenance_jsonld && (
             <div>
               <p className="text-xs font-medium text-white/50 mb-1">JSON-LD Provenance</p>
-              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-48 overflow-y-auto">{JSON.stringify(entry.provenance_jsonld, null, 2)}</pre>
+              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-48 overflow-y-auto">
+                {JSON.stringify(entry.provenance_jsonld, null, 2)}
+              </pre>
             </div>
           )}
 
@@ -132,7 +166,9 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
           {proof && (
             <div>
               <p className="text-xs font-medium text-white/50 mb-1">Audit Proof</p>
-              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-48 overflow-y-auto">{JSON.stringify(proof, null, 2)}</pre>
+              <pre className="whitespace-pre-wrap bg-white/[0.03] rounded-lg p-3 text-xs max-h-48 overflow-y-auto">
+                {JSON.stringify(proof, null, 2)}
+              </pre>
             </div>
           )}
         </div>
@@ -145,28 +181,30 @@ function EntryDetail({ entry, onClose }: { entry: DatasetEntry; onClose: () => v
 
 export default function DatasetStudioPage() {
   const user = useAuthStore((s) => s.user);
-  const rawTier = user?.tier ?? "observer";
+  const rawTier = user?.tier ?? 'observer';
   const tier = uiTierFromCanonical(rawTier as any);
-  const canAccess = meetsMinimumTier(rawTier as any, "signal");
+  const canAccess = meetsMinimumTier(rawTier as any, 'signal');
 
   /* ── State ── */
-  const [activeVertical, setActiveVertical] = useState<DatasetVertical>("ai_governance");
-  const [summaries, setSummaries] = useState<Record<DatasetVertical, DatasetVerticalSummary | null>>({
+  const [activeVertical, setActiveVertical] = useState<DatasetVertical>('ai_governance');
+  const [summaries, setSummaries] = useState<
+    Record<DatasetVertical, DatasetVerticalSummary | null>
+  >({
     ai_governance: null,
     incident_response: null,
     agentic_interaction: null,
   });
   const [entries, setEntries] = useState<DatasetEntry[]>([]);
   const [loading, setLoading] = useState(false);
-  const [stageFilter, setStageFilter] = useState<DatasetEntryStage | "">("");
-  const [originFilter, setOriginFilter] = useState<DatasetEntryOrigin | "">("");
+  const [stageFilter, setStageFilter] = useState<DatasetEntryStage | ''>('');
+  const [originFilter, setOriginFilter] = useState<DatasetEntryOrigin | ''>('');
   const [selectedEntry, setSelectedEntry] = useState<DatasetEntry | null>(null);
 
   /* Ingest form */
   const [ingestOpen, setIngestOpen] = useState(false);
-  const [ingestUrl, setIngestUrl] = useState("");
-  const [ingestTitle, setIngestTitle] = useState("");
-  const [ingestContent, setIngestContent] = useState("");
+  const [ingestUrl, setIngestUrl] = useState('');
+  const [ingestTitle, setIngestTitle] = useState('');
+  const [ingestContent, setIngestContent] = useState('');
   const [ingesting, setIngesting] = useState(false);
 
   /* Synthesize form */
@@ -179,31 +217,33 @@ export default function DatasetStudioPage() {
   /* ── Data loading ── */
   const loadSummaries = useCallback(async () => {
     try {
-      const r = await apiFetch("/api/dataset/summary");
+      const r = await apiFetch('/api/dataset/summary');
       const d = await r.json();
       if (d.success && d.summaries) {
         const map: Record<string, DatasetVerticalSummary> = {};
         for (const s of d.summaries) map[s.vertical] = s;
         setSummaries({
-          ai_governance: map["ai_governance"] ?? null,
-          incident_response: map["incident_response"] ?? null,
-          agentic_interaction: map["agentic_interaction"] ?? null,
+          ai_governance: map['ai_governance'] ?? null,
+          incident_response: map['incident_response'] ?? null,
+          agentic_interaction: map['agentic_interaction'] ?? null,
         });
       }
-    } catch { /* silent */ }
+    } catch {
+      /* silent */
+    }
   }, []);
 
   const loadEntries = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ vertical: activeVertical, limit: "50" });
-      if (stageFilter) params.set("stage", stageFilter);
-      if (originFilter) params.set("origin", originFilter);
+      const params = new URLSearchParams({ vertical: activeVertical, limit: '50' });
+      if (stageFilter) params.set('stage', stageFilter);
+      if (originFilter) params.set('origin', originFilter);
       const r = await apiFetch(`/api/dataset/entries?${params}`);
       const d = await r.json();
       if (d.success) setEntries(d.entries ?? []);
     } catch {
-      toast.error("Failed to load entries");
+      toast.error('Failed to load entries');
     } finally {
       setLoading(false);
     }
@@ -222,14 +262,14 @@ export default function DatasetStudioPage() {
   /* ── Actions ── */
   const handleIngest = useCallback(async () => {
     if (!ingestUrl.trim() && !ingestContent.trim()) {
-      toast.error("Provide a source URL or content");
+      toast.error('Provide a source URL or content');
       return;
     }
     setIngesting(true);
     try {
-      const r = await apiFetch("/api/dataset/ingest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const r = await apiFetch('/api/dataset/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           vertical: activeVertical,
           source_url: ingestUrl.trim() || undefined,
@@ -239,18 +279,18 @@ export default function DatasetStudioPage() {
       });
       const d = await r.json();
       if (d.success) {
-        toast.success("Entry ingested");
-        setIngestUrl("");
-        setIngestTitle("");
-        setIngestContent("");
+        toast.success('Entry ingested');
+        setIngestUrl('');
+        setIngestTitle('');
+        setIngestContent('');
         setIngestOpen(false);
         loadEntries();
         loadSummaries();
       } else {
-        toast.error(d.error ?? "Ingestion failed");
+        toast.error(d.error ?? 'Ingestion failed');
       }
     } catch {
-      toast.error("Ingestion failed");
+      toast.error('Ingestion failed');
     } finally {
       setIngesting(false);
     }
@@ -259,9 +299,9 @@ export default function DatasetStudioPage() {
   const handleSynthesize = useCallback(async () => {
     setSynthesizing(true);
     try {
-      const r = await apiFetch("/api/dataset/synthesize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const r = await apiFetch('/api/dataset/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vertical: activeVertical, count: synthCount }),
       });
       const d = await r.json();
@@ -270,99 +310,110 @@ export default function DatasetStudioPage() {
         loadEntries();
         loadSummaries();
       } else {
-        toast.error(d.error ?? "Synthesis failed");
+        toast.error(d.error ?? 'Synthesis failed');
       }
     } catch {
-      toast.error("Synthesis failed");
+      toast.error('Synthesis failed');
     } finally {
       setSynthesizing(false);
     }
   }, [activeVertical, synthCount, loadEntries, loadSummaries]);
 
-  const handleAnnotate = useCallback(async (id: string) => {
-    setActionLoading(id);
-    try {
-      const r = await apiFetch(`/api/dataset/annotate/${id}`, { method: "POST" });
-      const d = await r.json();
-      if (d.success) {
-        toast.success("Entry annotated");
-        loadEntries();
-        loadSummaries();
-      } else {
-        toast.error(d.error ?? "Annotation failed");
+  const handleAnnotate = useCallback(
+    async (id: string) => {
+      setActionLoading(id);
+      try {
+        const r = await apiFetch(`/api/dataset/annotate/${id}`, { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+          toast.success('Entry annotated');
+          loadEntries();
+          loadSummaries();
+        } else {
+          toast.error(d.error ?? 'Annotation failed');
+        }
+      } catch {
+        toast.error('Annotation failed');
+      } finally {
+        setActionLoading(null);
       }
-    } catch {
-      toast.error("Annotation failed");
-    } finally {
-      setActionLoading(null);
-    }
-  }, [loadEntries, loadSummaries]);
+    },
+    [loadEntries, loadSummaries]
+  );
 
-  const handleAudit = useCallback(async (id: string) => {
-    setActionLoading(id);
-    try {
-      const r = await apiFetch(`/api/dataset/audit/${id}`, { method: "POST" });
-      const d = await r.json();
-      if (d.success) {
-        toast.success("Audit proof issued");
-        loadEntries();
-        loadSummaries();
-      } else {
-        toast.error(d.error ?? "Audit failed");
+  const handleAudit = useCallback(
+    async (id: string) => {
+      setActionLoading(id);
+      try {
+        const r = await apiFetch(`/api/dataset/audit/${id}`, { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+          toast.success('Audit proof issued');
+          loadEntries();
+          loadSummaries();
+        } else {
+          toast.error(d.error ?? 'Audit failed');
+        }
+      } catch {
+        toast.error('Audit failed');
+      } finally {
+        setActionLoading(null);
       }
-    } catch {
-      toast.error("Audit failed");
-    } finally {
-      setActionLoading(null);
-    }
-  }, [loadEntries, loadSummaries]);
+    },
+    [loadEntries, loadSummaries]
+  );
 
   const handleBatchAudit = useCallback(async () => {
-    const unaudited = entries.filter((e) => e.stage !== "audited").map((e) => e.id);
+    const unaudited = entries.filter((e) => e.stage !== 'audited').map((e) => e.id);
     if (!unaudited.length) {
-      toast("No entries to audit");
+      toast('No entries to audit');
       return;
     }
     setLoading(true);
     try {
-      const r = await apiFetch("/api/dataset/audit/batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const r = await apiFetch('/api/dataset/audit/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ entry_ids: unaudited }),
       });
       const d = await r.json();
       if (d.success) {
-        toast.success(`${d.results?.filter((x: { success: boolean }) => x.success).length ?? 0} entries audited`);
+        toast.success(
+          `${d.results?.filter((x: { success: boolean }) => x.success).length ?? 0} entries audited`
+        );
         loadEntries();
         loadSummaries();
       } else {
-        toast.error(d.error ?? "Batch audit failed");
+        toast.error(d.error ?? 'Batch audit failed');
       }
     } catch {
-      toast.error("Batch audit failed");
+      toast.error('Batch audit failed');
     } finally {
       setLoading(false);
     }
   }, [entries, loadEntries, loadSummaries]);
 
-  const handleDelete = useCallback(async (id: string) => {
-    setActionLoading(id);
-    try {
-      const r = await apiFetch(`/api/dataset/entries/${id}`, { method: "DELETE" });
-      const d = await r.json();
-      if (d.success) {
-        toast.success("Entry deleted");
-        loadEntries();
-        loadSummaries();
-      } else {
-        toast.error(d.error ?? "Delete failed");
+  const handleDelete = useCallback(
+    async (id: string) => {
+      setActionLoading(id);
+      try {
+        const r = await apiFetch(`/api/dataset/entries/${id}`, { method: 'DELETE' });
+        const d = await r.json();
+        if (d.success) {
+          toast.success('Entry deleted');
+          loadEntries();
+          loadSummaries();
+        } else {
+          toast.error(d.error ?? 'Delete failed');
+        }
+      } catch {
+        toast.error('Delete failed');
+      } finally {
+        setActionLoading(null);
       }
-    } catch {
-      toast.error("Delete failed");
-    } finally {
-      setActionLoading(null);
-    }
-  }, [loadEntries, loadSummaries]);
+    },
+    [loadEntries, loadSummaries]
+  );
 
   /* ── Upgrade wall ── */
   if (!canAccess) {
@@ -383,11 +434,12 @@ export default function DatasetStudioPage() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-          <Database className="w-6 h-6 text-violet-400" />
+          <Database className="w-6 h-6 text-amber-400" />
           Dataset Studio
         </h1>
         <p className="text-sm text-white/50 mt-1">
-          Build high-integrity, audit-verified datasets with four-stage pipeline: Ingest → Annotate → Synthesize → Audit
+          Build high-integrity, audit-verified datasets with four-stage pipeline: Ingest → Annotate
+          → Synthesize → Audit
         </p>
       </motion.div>
 
@@ -404,7 +456,7 @@ export default function DatasetStudioPage() {
               className={`rounded-xl border p-4 text-left transition-all ${
                 active
                   ? `${meta.colour} ring-1 ring-white/20`
-                  : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  : 'border-white/10 bg-white/[0.02] hover:border-white/20'
               }`}
             >
               <p className="text-sm font-semibold text-white">{meta.label}</p>
@@ -432,10 +484,16 @@ export default function DatasetStudioPage() {
             const meta = STAGE_META[stage];
             const Icon = meta.icon;
             const count =
-              stage === "ingested" ? activeSummary.total_entries - activeSummary.annotated_entries - activeSummary.synthesized_entries - activeSummary.audited_entries :
-              stage === "annotated" ? activeSummary.annotated_entries :
-              stage === "synthesized" ? activeSummary.synthesized_entries :
-              activeSummary.audited_entries;
+              stage === 'ingested'
+                ? activeSummary.total_entries -
+                  activeSummary.annotated_entries -
+                  activeSummary.synthesized_entries -
+                  activeSummary.audited_entries
+                : stage === 'annotated'
+                  ? activeSummary.annotated_entries
+                  : stage === 'synthesized'
+                    ? activeSummary.synthesized_entries
+                    : activeSummary.audited_entries;
             return (
               <div key={stage} className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
                 <div className="flex items-center gap-2 mb-1">
@@ -453,11 +511,15 @@ export default function DatasetStudioPage() {
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={() => setIngestOpen(!ingestOpen)}
-          className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 transition-colors"
+          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 transition-colors"
         >
           <Upload className="w-4 h-4" />
           Ingest Entry
-          {ingestOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+          {ingestOpen ? (
+            <ChevronDown className="w-3.5 h-3.5" />
+          ) : (
+            <ChevronRight className="w-3.5 h-3.5" />
+          )}
         </button>
 
         <button
@@ -465,7 +527,11 @@ export default function DatasetStudioPage() {
           disabled={synthesizing}
           className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 px-4 py-2 text-sm font-medium text-purple-300 hover:bg-purple-500/10 transition-colors disabled:opacity-50"
         >
-          {synthesizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          {synthesizing ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
           Synthesize {synthCount}
         </button>
 
@@ -479,7 +545,10 @@ export default function DatasetStudioPage() {
         </button>
 
         <button
-          onClick={() => { loadEntries(); loadSummaries(); }}
+          onClick={() => {
+            loadEntries();
+            loadSummaries();
+          }}
           className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm text-white/50 hover:text-white hover:border-white/20 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
@@ -503,7 +572,7 @@ export default function DatasetStudioPage() {
       {ingestOpen && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          animate={{ opacity: 1, height: 'auto' }}
           className="rounded-xl border border-white/10 bg-white/[0.02] p-5 space-y-3"
         >
           <p className="text-sm font-medium text-white">Ingest New Entry</p>
@@ -538,9 +607,13 @@ export default function DatasetStudioPage() {
             <button
               onClick={handleIngest}
               disabled={ingesting}
-              className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 transition-colors disabled:opacity-50"
             >
-              {ingesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              {ingesting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Upload className="w-4 h-4" />
+              )}
               Ingest
             </button>
           </div>
@@ -551,18 +624,20 @@ export default function DatasetStudioPage() {
       <div className="flex items-center gap-3 text-xs">
         <select
           value={stageFilter}
-          onChange={(e) => setStageFilter(e.target.value as DatasetEntryStage | "")}
+          onChange={(e) => setStageFilter(e.target.value as DatasetEntryStage | '')}
           className="rounded border border-white/10 bg-white/[0.03] px-2 py-1.5 text-white"
         >
           <option value="">All stages</option>
           {STAGE_ORDER.map((s) => (
-            <option key={s} value={s}>{STAGE_META[s].label}</option>
+            <option key={s} value={s}>
+              {STAGE_META[s].label}
+            </option>
           ))}
         </select>
 
         <select
           value={originFilter}
-          onChange={(e) => setOriginFilter(e.target.value as DatasetEntryOrigin | "")}
+          onChange={(e) => setOriginFilter(e.target.value as DatasetEntryOrigin | '')}
           className="rounded border border-white/10 bg-white/[0.03] px-2 py-1.5 text-white"
         >
           <option value="">All origins</option>
@@ -595,16 +670,23 @@ export default function DatasetStudioPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <StageBadge stage={entry.stage} />
                   <span className="text-[10px] text-white/30 uppercase">{entry.origin}</span>
-                  {entry.human_reviewed && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" title="Human reviewed" />}
+                  {entry.human_reviewed && (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" title="Human reviewed" />
+                  )}
                 </div>
-                <p className="text-sm font-medium text-white truncate">{entry.title || "(untitled)"}</p>
+                <p className="text-sm font-medium text-white truncate">
+                  {entry.title || '(untitled)'}
+                </p>
                 {entry.source_url && (
                   <p className="text-xs text-white/30 truncate">{entry.source_url}</p>
                 )}
               </div>
 
               {entry.audit_hash && (
-                <span className="hidden sm:inline text-[10px] text-emerald-400/60 font-mono truncate max-w-[100px]" title={entry.audit_hash}>
+                <span
+                  className="hidden sm:inline text-[10px] text-emerald-400/60 font-mono truncate max-w-[100px]"
+                  title={entry.audit_hash}
+                >
                   {entry.audit_hash.slice(0, 12)}…
                 </span>
               )}
@@ -618,33 +700,43 @@ export default function DatasetStudioPage() {
                   <Eye className="w-4 h-4" />
                 </button>
 
-                {entry.stage === "ingested" && (
+                {entry.stage === 'ingested' && (
                   <button
                     onClick={() => handleAnnotate(entry.id)}
                     disabled={actionLoading === entry.id}
                     className="p-1.5 rounded hover:bg-amber-500/10 text-amber-400/60 hover:text-amber-400 transition-colors"
                     title="Annotate"
                   >
-                    {actionLoading === entry.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
+                    {actionLoading === entry.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Tag className="w-4 h-4" />
+                    )}
                   </button>
                 )}
 
-                {entry.stage !== "audited" && (
+                {entry.stage !== 'audited' && (
                   <button
                     onClick={() => handleAudit(entry.id)}
                     disabled={actionLoading === entry.id}
                     className="p-1.5 rounded hover:bg-emerald-500/10 text-emerald-400/60 hover:text-emerald-400 transition-colors"
                     title="Audit"
                   >
-                    {actionLoading === entry.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                    {actionLoading === entry.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <ShieldCheck className="w-4 h-4" />
+                    )}
                   </button>
                 )}
 
                 {entry.provenance_jsonld && (
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(entry.provenance_jsonld, null, 2));
-                      toast.success("JSON-LD copied");
+                      navigator.clipboard.writeText(
+                        JSON.stringify(entry.provenance_jsonld, null, 2)
+                      );
+                      toast.success('JSON-LD copied');
                     }}
                     className="p-1.5 rounded hover:bg-white/10 text-white/40 hover:text-white transition-colors"
                     title="Copy JSON-LD"
@@ -668,7 +760,9 @@ export default function DatasetStudioPage() {
       )}
 
       {/* Entry detail modal */}
-      {selectedEntry && <EntryDetail entry={selectedEntry} onClose={() => setSelectedEntry(null)} />}
+      {selectedEntry && (
+        <EntryDetail entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
+      )}
     </div>
   );
 }

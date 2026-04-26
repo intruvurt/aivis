@@ -231,9 +231,9 @@ export async function processDueRescans(
               ]
             );
           } else {
-          const skippedNextRun = new Date(Date.now() + (FREQUENCY_MS[row.frequency] || FREQUENCY_MS.weekly));
-          await pool.query(
-            `UPDATE scheduled_rescans
+            const skippedNextRun = new Date(Date.now() + (FREQUENCY_MS[row.frequency] || FREQUENCY_MS.weekly));
+            await pool.query(
+              `UPDATE scheduled_rescans
              SET
                next_run_at = $1,
                last_checked_at = NOW(),
@@ -242,14 +242,14 @@ export async function processDueRescans(
                last_change_evidence = $4,
                updated_at = NOW()
              WHERE id = $5`,
-            [
-              skippedNextRun.toISOString(),
-              changeCheck.fingerprint,
-              JSON.stringify(changeCheck.snapshot),
-              JSON.stringify(changeCheck.evidence),
-              row.id,
-            ]
-          );
+              [
+                skippedNextRun.toISOString(),
+                changeCheck.fingerprint,
+                JSON.stringify(changeCheck.snapshot),
+                JSON.stringify(changeCheck.evidence),
+                row.id,
+              ]
+            );
           }
 
           if (hooks?.onSkipped) {
@@ -497,8 +497,9 @@ export function startCompetitorAutopilotLoop(
 
   const globalDisable = process.env.DISABLE_BACKGROUND_JOBS === 'true';
   const loopDisable = process.env.DISABLE_COMPETITOR_AUTOPILOT === 'true';
-  if (globalDisable || loopDisable) {
-    console.log('[competitor-autopilot] Loop disabled via env (DISABLE_COMPETITOR_AUTOPILOT or DISABLE_BACKGROUND_JOBS)');
+  const scheduledRescansDisabled = process.env.DISABLE_SCHEDULED_RESCANS === 'true';
+  if (globalDisable || loopDisable || scheduledRescansDisabled) {
+    console.log('[competitor-autopilot] Loop disabled via env (DISABLE_COMPETITOR_AUTOPILOT, DISABLE_SCHEDULED_RESCANS, or DISABLE_BACKGROUND_JOBS)');
     return;
   }
 

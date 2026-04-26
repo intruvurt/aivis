@@ -26,7 +26,7 @@ interface PageMeta {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'AiVIS.biz - CITE LEDGER | Evidence-Linked Scores';
+const SITE_NAME = 'AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 

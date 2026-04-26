@@ -34,6 +34,7 @@ import {
   deleteScheduledJobHandler,
   updateScheduledJobIntervalHandler,
   getMentionTrendHandler,
+  getCitationIntelligenceOverviewHandler,
   getCompetitorShareHandler,
   getConsistencyMatrixHandler,
   getDropAlertsHandler,
@@ -176,6 +177,9 @@ router.delete('/schedule/:id', requireSignal, deleteScheduledJobHandler);
 // ─────────────────────────────────────────────────────────────────────────────
 // CITATION INTELLIGENCE (Alignment+ / Signal)
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Unified tracker + ledger + signals + causal insights (alignment+)
+router.get('/intelligence/overview', requireAlignmentOrHigher, getCitationIntelligenceOverviewHandler);
 
 // Mention-rate sparkline history for a URL (alignment+)
 router.get('/trend', requireAlignmentOrHigher, getMentionTrendHandler);

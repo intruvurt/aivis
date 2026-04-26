@@ -37,6 +37,9 @@ import {
   matchesBlocklist,
 } from '../services/entityFingerprint.js';
 import { resolveEntityFromKG } from '../services/googleKnowledgeGraph.js';
+import { runCitationEvolutionEngine } from '../services/citationEvolutionEngine.js';
+import { getLatestCloudflareSignal, deriveAiTrustScore, listCloudflareSignalHistory } from '../services/cloudflareMetricsService.js';
+import { fetchGeekflareEnrichment, isGeekflareAvailable } from '../services/geekflareService.js';
 
 /** Safe JSON.parse with fallback — prevents one corrupted record from crashing entire response */
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -2821,6 +2824,291 @@ export async function updateScheduledJobIntervalHandler(req: Request, res: Respo
 }
 
 // ─── Citation Intelligence Handlers ──────────────────────────────────────────
+
+type CitationCoveragePoint = {
+  date: string;
+  cited: number;
+  total: number;
+  rate_pct: number;
+};
+
+type CompetitorSharePoint = {
+  competitor: string;
+  mentions: number;
+  share_pct: number;
+};
+
+function safeNumber(value: unknown): number {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : 0;
+}
+
+function average(values: number[]): number {
+  if (values.length === 0) return 0;
+  return values.reduce((sum, next) => sum + next, 0) / values.length;
+}
+
+function buildCausalInsights(input: {
+  recentCitationRate: number;
+  previousCitationRate: number;
+  recentTrustScore: number | null;
+  previousTrustScore: number | null;
+  aiCrawlerHitsRecent: number | null;
+  aiCrawlerHitsPrevious: number | null;
+}): Array<{ hypothesis: string; evidence: string; confidence: 'low' | 'medium' | 'high' }> {
+  const insights: Array<{ hypothesis: string; evidence: string; confidence: 'low' | 'medium' | 'high' }> = [];
+
+  const citationDelta = input.recentCitationRate - input.previousCitationRate;
+  const trustDelta = input.recentTrustScore !== null && input.previousTrustScore !== null
+    ? input.recentTrustScore - input.previousTrustScore
+    : null;
+
+  if (citationDelta > 3) {
+    insights.push({
+      hypothesis: 'Citation coverage is improving in recent runs.',
+      evidence: `Recent citation rate is ${input.recentCitationRate.toFixed(1)}% vs ${input.previousCitationRate.toFixed(1)}% previously.`,
+      confidence: citationDelta > 10 ? 'high' : 'medium',
+    });
+  } else if (citationDelta < -3) {
+    insights.push({
+      hypothesis: 'Citation coverage has regressed and may need remediation.',
+      evidence: `Recent citation rate is ${input.recentCitationRate.toFixed(1)}% vs ${input.previousCitationRate.toFixed(1)}% previously.`,
+      confidence: citationDelta < -10 ? 'high' : 'medium',
+    });
+  }
+
+  if (trustDelta !== null && Math.abs(trustDelta) >= 5) {
+    const direction = trustDelta > 0 ? 'up' : 'down';
+    insights.push({
+      hypothesis: trustDelta > 0
+        ? 'Infrastructure trust posture is likely supporting citation gains.'
+        : 'Infrastructure trust posture decline may be reducing citation likelihood.',
+      evidence: `Cloudflare-derived trust moved ${direction} by ${Math.abs(trustDelta).toFixed(1)} points.`,
+      confidence: Math.abs(trustDelta) >= 12 ? 'high' : 'medium',
+    });
+  }
+
+  if (
+    input.aiCrawlerHitsRecent !== null
+    && input.aiCrawlerHitsPrevious !== null
+    && input.aiCrawlerHitsRecent > input.aiCrawlerHitsPrevious
+    && citationDelta > 0
+  ) {
+    insights.push({
+      hypothesis: 'Higher AI crawler activity is correlating with better citation inclusion.',
+      evidence: `AI crawler hits increased from ${input.aiCrawlerHitsPrevious} to ${input.aiCrawlerHitsRecent} while citation rate improved by ${citationDelta.toFixed(1)} points.`,
+      confidence: 'medium',
+    });
+  }
+
+  if (insights.length === 0) {
+    insights.push({
+      hypothesis: 'Insufficient directional change for a strong cause-effect claim yet.',
+      evidence: 'Collect additional runs across at least two windows to improve causal confidence.',
+      confidence: 'low',
+    });
+  }
+
+  return insights.slice(0, 4);
+}
+
+/**
+ * GET /citations/intelligence/overview?url=...
+ * Unified AI Citation Intelligence view:
+ * tracker + cite-ledger time series + infra/entity alignment + causal insights.
+ */
+export async function getCitationIntelligenceOverviewHandler(req: Request, res: Response) {
+  const user = (req as any).user;
+  if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
+
+  const rawUrl = String((req.query as any).url || '');
+  if (!rawUrl) return res.status(400).json({ error: 'url query param required' });
+
+  const windowDays = Math.min(Math.max(Number((req.query as any).window_days) || 30, 7), 180);
+  const url = normalizeAuditTargetKey(rawUrl);
+  const pool = getPool();
+
+  try {
+    const [coverageRows, competitorRows, trendRows] = await Promise.all([
+      pool.query(
+        `SELECT
+           COUNT(*)::int AS total_responses,
+           COALESCE(SUM(CASE WHEN cr.mentioned THEN 1 ELSE 0 END), 0)::int AS cited_responses,
+           COUNT(DISTINCT cr.platform)::int AS engines_covered
+         FROM citation_results cr
+         JOIN citation_tests ct ON ct.id = cr.citation_test_id
+         WHERE ct.user_id = $1
+           AND ct.url = $2
+           AND cr.created_at >= NOW() - INTERVAL '1 day' * $3`,
+        [user.id, url, windowDays],
+      ),
+      pool.query(
+        `SELECT
+           LOWER(comp.competitor) AS competitor,
+           COUNT(*)::int AS mentions
+         FROM citation_results cr
+         JOIN citation_tests ct ON ct.id = cr.citation_test_id
+         CROSS JOIN LATERAL jsonb_array_elements_text(COALESCE(cr.competitors_mentioned, '[]'::jsonb)) AS comp(competitor)
+         WHERE ct.user_id = $1
+           AND ct.url = $2
+           AND cr.created_at >= NOW() - INTERVAL '1 day' * $3
+         GROUP BY LOWER(comp.competitor)
+         ORDER BY mentions DESC
+         LIMIT 5`,
+        [user.id, url, windowDays],
+      ),
+      pool.query<CitationCoveragePoint>(
+        `SELECT
+           TO_CHAR(DATE_TRUNC('day', cr.created_at), 'YYYY-MM-DD') AS date,
+           COALESCE(SUM(CASE WHEN cr.mentioned THEN 1 ELSE 0 END), 0)::int AS cited,
+           COUNT(*)::int AS total,
+           ROUND((COALESCE(SUM(CASE WHEN cr.mentioned THEN 1 ELSE 0 END), 0)::numeric / NULLIF(COUNT(*)::numeric, 0)) * 100, 1) AS rate_pct
+         FROM citation_results cr
+         JOIN citation_tests ct ON ct.id = cr.citation_test_id
+         WHERE ct.user_id = $1
+           AND ct.url = $2
+           AND cr.created_at >= NOW() - INTERVAL '1 day' * $3
+         GROUP BY DATE_TRUNC('day', cr.created_at)
+         ORDER BY DATE_TRUNC('day', cr.created_at) ASC`,
+        [user.id, url, windowDays],
+      ),
+    ]);
+
+    const coverage = coverageRows.rows[0] || { total_responses: 0, cited_responses: 0, engines_covered: 0 };
+    const totalResponses = safeNumber((coverage as any).total_responses);
+    const citedResponses = safeNumber((coverage as any).cited_responses);
+    const citationRatePct = totalResponses > 0 ? Number(((citedResponses / totalResponses) * 100).toFixed(1)) : 0;
+
+    const competitorShare: CompetitorSharePoint[] = competitorRows.rows.map((row: any) => {
+      const mentions = safeNumber(row.mentions);
+      return {
+        competitor: String(row.competitor || ''),
+        mentions,
+        share_pct: totalResponses > 0 ? Number(((mentions / totalResponses) * 100).toFixed(1)) : 0,
+      };
+    });
+
+    const citationTrend: CitationCoveragePoint[] = trendRows.rows.map((row: any) => ({
+      date: String(row.date),
+      cited: safeNumber(row.cited),
+      total: safeNumber(row.total),
+      rate_pct: safeNumber(row.rate_pct),
+    }));
+
+    const ledgerSeries = await pool.query<{ date: string; ledger_entries: number; audits: number }>(
+      `SELECT
+         TO_CHAR(DATE_TRUNC('day', cl.created_at), 'YYYY-MM-DD') AS date,
+         COUNT(*)::int AS ledger_entries,
+         COUNT(DISTINCT cl.audit_run_id)::int AS audits
+       FROM cite_ledger cl
+       JOIN audits a ON a.id = cl.audit_run_id
+       WHERE a.user_id = $1
+         AND a.url = $2
+         AND cl.created_at >= NOW() - INTERVAL '1 day' * $3
+       GROUP BY DATE_TRUNC('day', cl.created_at)
+       ORDER BY DATE_TRUNC('day', cl.created_at) ASC`,
+      [user.id, url, windowDays],
+    ).catch(() => ({ rows: [] as Array<{ date: string; ledger_entries: number; audits: number }> }));
+
+    const latestSignal = await getLatestCloudflareSignal(url).catch(() => null);
+    const cloudflareTrust = latestSignal ? deriveAiTrustScore(latestSignal) : null;
+    const cloudflareHistory = await listCloudflareSignalHistory(url, null, 6).catch(() => []);
+
+    const geekflare = isGeekflareAvailable()
+      ? await fetchGeekflareEnrichment(url).catch(() => ({}))
+      : {};
+
+    const identity = await resolveCitationIdentity(user.id, url);
+    const kgEntity = identity?.business_name
+      ? await resolveEntityFromKG(identity.business_name).catch(() => null)
+      : null;
+
+    const gscStatusRows = await pool.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM gsc_connections WHERE user_id = $1 AND is_active = TRUE) AS active_connections,
+         (SELECT MAX(gs.created_at)
+            FROM gsc_snapshots gs
+            JOIN gsc_properties gp ON gp.id = gs.property_id
+           WHERE gp.user_id = $1) AS latest_snapshot_at`,
+      [user.id],
+    ).catch(() => ({ rows: [{ active_connections: 0, latest_snapshot_at: null }] }));
+
+    const gscStatus = gscStatusRows.rows[0] || { active_connections: 0, latest_snapshot_at: null };
+
+    const recentBucket = citationTrend.slice(Math.max(0, citationTrend.length - Math.ceil(citationTrend.length / 2)));
+    const previousBucket = citationTrend.slice(0, Math.max(0, citationTrend.length - recentBucket.length));
+    const recentCitationRate = average(recentBucket.map((p) => p.rate_pct));
+    const previousCitationRate = average(previousBucket.map((p) => p.rate_pct));
+
+    const cfRecent = cloudflareHistory[0];
+    const cfPrevious = cloudflareHistory[cloudflareHistory.length - 1];
+    const causalInsights = buildCausalInsights({
+      recentCitationRate,
+      previousCitationRate,
+      recentTrustScore: cloudflareTrust?.score ?? null,
+      previousTrustScore: null,
+      aiCrawlerHitsRecent: cfRecent ? safeNumber((cfRecent as any).ai_crawler_hits) : null,
+      aiCrawlerHitsPrevious: cfPrevious ? safeNumber((cfPrevious as any).ai_crawler_hits) : null,
+    });
+
+    const latestAudit = await findLatestAuditForTarget(user.id, url);
+    const evolution = latestAudit?.result
+      ? (() => {
+        try {
+          return runCitationEvolutionEngine(latestAudit.result as any, {
+            scanId: String((latestAudit as any).scan_id || ''),
+          });
+        } catch {
+          return null;
+        }
+      })()
+      : null;
+
+    return res.json({
+      url,
+      window_days: windowDays,
+      tracker: {
+        cited_responses: citedResponses,
+        total_responses: totalResponses,
+        citation_rate_pct: citationRatePct,
+        engines_covered: safeNumber((coverage as any).engines_covered),
+        competitor_share: competitorShare,
+      },
+      cite_ledger_time_series: ledgerSeries.rows,
+      citation_coverage_time_series: citationTrend,
+      signal_layer: {
+        cloudflare: latestSignal
+          ? {
+            signal: latestSignal,
+            trust: cloudflareTrust,
+          }
+          : null,
+        geekflare,
+      },
+      entity_alignment: {
+        identity,
+        knowledge_graph: kgEntity,
+        gsc: {
+          active_connections: safeNumber((gscStatus as any).active_connections),
+          latest_snapshot_at: (gscStatus as any).latest_snapshot_at || null,
+        },
+      },
+      causal_insights: causalInsights,
+      action_path: evolution
+        ? {
+          citations: evolution.citations,
+          missing_citations: evolution.missing_citations,
+          action_plan: evolution.action_plan,
+          projected_score: evolution.projected_score,
+          quick_win_score: evolution.quick_win_score,
+        }
+        : null,
+    });
+  } catch (err: any) {
+    console.error('[Citations] intelligence overview failed:', err?.message || err);
+    return res.status(500).json({ error: 'Failed to build citation intelligence overview' });
+  }
+}
 
 /** GET /citations/trend?url= - mention-rate sparkline history (alignment+) */
 export async function getMentionTrendHandler(req: Request, res: Response) {

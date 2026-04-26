@@ -15922,9 +15922,10 @@ if (existsSync(clientDist)) {
     express.static(path.join(clientDist, "assets"), {
       maxAge: "365d",
       immutable: true,
+      redirect: false,
     }),
   );
-  app.use(express.static(clientDist, { maxAge: "1h", index: false }));
+  app.use(express.static(clientDist, { maxAge: "1h", index: false, redirect: false }));
 }
 
 // SPA fallback - serves HTML with CSP nonce injected into <script> tags

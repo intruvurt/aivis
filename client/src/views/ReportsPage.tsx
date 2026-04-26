@@ -1854,7 +1854,7 @@ export default function ReportsPage() {
                     Compare URLs
                   </button>
                   <button
-                    onClick={() => navigate('/guide?section=report-history&source=reports-page')}
+                    onClick={() => navigate('/guide#report-history&source=reports-page')}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-charcoal px-5 py-3 text-sm text-white/70 transition-colors hover:text-white"
                     type="button"
                   >

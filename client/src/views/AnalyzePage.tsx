@@ -1482,7 +1482,7 @@ function _LegacyRender_UNUSED() {
                 </button>
 
                 <Link
-                  to="/guide?section=audit-criteria&source=analyze-page"
+                  to="/guide#audit-criteria&source=analyze-page"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-charcoal-deep px-5 py-4 text-sm text-white/75 transition-colors hover:text-white"
                 >
                   View scoring criteria

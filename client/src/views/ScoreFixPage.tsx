@@ -518,7 +518,7 @@ export default function ScoreFixPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                   <Link
-                    to="/guide?section=audit-criteria&source=score-fix-page"
+                    to="/guide#audit-criteria&source=score-fix-page"
                     className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white hover:bg-white/10"
                   >
                     View audit criteria

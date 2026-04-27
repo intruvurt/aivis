@@ -493,15 +493,15 @@ function PricingCard({
     <div id={tier.key} className="relative group h-full">
       <div
         className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-2xl blur opacity-0 transition duration-500 ${
-          isHighlighted ? 'opacity-30' : 'group-hover:opacity-40'
+          isHighlighted ? 'opacity-50' : 'group-hover:opacity-35'
         }`}
       />
 
       <div
-        className={`relative h-full bg-charcoal rounded-2xl p-6 flex flex-col transition-all duration-300 hover:translate-y-[-2px] ${
+        className={`relative h-full bg-charcoal rounded-2xl p-7 flex flex-col transition-all duration-300 hover:translate-y-[-2px] ${
           isHighlighted
-            ? `${colors.border} border-2 shadow-xl ${colors.glow}`
-            : 'border border-white/10 hover:border-white/14'
+            ? `${colors.border} border-2 shadow-2xl ${colors.glow}`
+            : 'border border-white/10 hover:border-white/20'
         }`}
       >
         {isHighlighted && (
@@ -534,8 +534,8 @@ function PricingCard({
               {TIER_ICONS[tier.key] || <Shield className="w-6 h-6" />}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white">{tier.name}</h3>
-              <p className="text-xs text-white/60">
+              <h3 className="text-2xl font-bold text-white">{tier.name}</h3>
+              <p className="text-xs text-white/45">
                 {tierCopy?.headline || TIER_AUDIENCE[tier.key]}
               </p>
             </div>
@@ -586,24 +586,24 @@ function PricingCard({
           )}
         </div>
 
-        <p className="text-sm text-white/75 mb-5 pb-4 border-b border-white/8 min-h-[72px]">
+        <p className="text-sm text-white/60 mb-6 pb-5 border-b border-white/10 min-h-[72px] leading-relaxed">
           {tierCopy?.body || `→ ${TIER_POSITIONING[tier.key]}`}
         </p>
 
-        <ul className="space-y-2.5 mb-6 flex-grow min-h-[210px]">
+        <ul className="space-y-3 mb-8 flex-grow min-h-[210px]">
           {(tierCopy?.includes || tier.features).map((feature, idx) => (
             <li
               key={`${tier.key}-${idx}-${feature}`}
-              className="flex items-start gap-2.5 text-sm text-white/80"
+              className="flex items-start gap-2.5 text-sm text-white/75"
             >
-              <Check className="w-4 h-4 text-white/80 flex-shrink-0 mt-0.5" />
+              <Check className="w-4 h-4 text-emerald-400/80 flex-shrink-0 mt-0.5" />
               <span>{feature}</span>
             </li>
           ))}
         </ul>
 
         <div
-          className={`grid grid-cols-2 gap-2 mb-6 p-3 bg-charcoal-light rounded-lg border ${colors.border}`}
+          className={`grid grid-cols-2 gap-3 mb-6 p-4 bg-charcoal-light rounded-xl border ${colors.border}`}
         >
           <div className="text-center">
             <p className="text-lg font-bold text-white">{tier.limits.scans_per_month}</p>
@@ -1066,22 +1066,22 @@ export default function PricingPage() {
   return (
     <div className="text-white">
       <div className="max-w-6xl mx-auto px-4 py-16 relative">
-        <div id="overview" className="section-anchor text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
+        <div id="overview" className="section-anchor text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/70 mb-8">
             <Sparkles className="w-4 h-4" />
             AiVIS - AI Visibility Intelligence Platform
           </div>
 
           <div className="lonely-text">
-            <h1 className="text-4xl md:text-6xl brand-title-lg mb-4 leading-tight">
+            <h1 className="text-5xl md:text-7xl brand-title-lg mb-6 leading-tight tracking-tight">
               Know if AI will cite you
             </h1>
-            <p className="text-lg text-white/75 max-w-2xl mx-auto">
+            <p className="text-xl text-white/65 max-w-2xl mx-auto leading-relaxed">
               Stop guessing. See exactly why AI systems use your content, skip it, or cite a
               competitor instead.
             </p>
 
-            <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
+            <div className="mt-10 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
               <span className="px-2.5 py-1 rounded-full border border-emerald-300/35 bg-emerald-500/12 text-emerald-200 font-black tracking-[0.1em] uppercase">
                 Free tier live now
               </span>
@@ -1098,7 +1098,7 @@ export default function PricingPage() {
         </div>
 
         {/* ── Social proof strip ──────────────────────────── */}
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-white/50 mb-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-white/50 mb-12">
           <span className="flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-emerald-400/70" />
             <strong className="text-white/70">
@@ -1123,15 +1123,15 @@ export default function PricingPage() {
           </span>
         </div>
 
-        <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
-          <h2 className="text-2xl font-bold text-white mb-3">This is not SEO</h2>
-          <p className="text-white/65 max-w-3xl mx-auto">
+        <div className="text-center mb-10 rounded-2xl border border-white/8 bg-charcoal-light/40 p-7">
+          <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">This is not SEO</h2>
+          <p className="text-white/60 max-w-3xl mx-auto text-[15px] leading-relaxed">
             AiVIS tells you whether AI systems will actually quote your page - not just where it
             ranks in traditional search.
           </p>
         </div>
 
-        <div id="plans" className="section-anchor flex justify-center mb-8">
+        <div id="plans" className="section-anchor flex justify-center mb-10">
           <div className="relative bg-charcoal-light border border-white/10 rounded-full p-1.5 flex items-center">
             <button
               onClick={() => setBillingPeriod('monthly')}
@@ -1183,7 +1183,7 @@ export default function PricingPage() {
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8 mb-4">
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10 mb-8">
             {tiers.map((tier) => (
               <div key={tier.key}>
                 <PricingCard
@@ -1206,9 +1206,9 @@ export default function PricingPage() {
           <p className="text-center text-amber-300/80 text-xs mb-4">{error}</p>
         )}
 
-        <section className="mt-10 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5 surface-structured-muted">
+        <section className="mt-16 rounded-2xl border border-white/10 bg-charcoal-light/60 p-6 surface-structured-muted">
           <h2 className="text-lg font-semibold text-white">System Rules (Authoritative)</h2>
-          <ul className="mt-3 space-y-2 text-sm text-white/75">
+          <ul className="mt-4 space-y-2.5 text-sm text-white/65">
             <li>All pricing and limits resolve from /api/payment/pricing.</li>
             <li>Feature access is enforced server-side at request time.</li>
             <li>UI can display features, but backend determines eligibility.</li>
@@ -1217,9 +1217,9 @@ export default function PricingPage() {
           </ul>
         </section>
 
-        <section className="mt-6 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5 surface-structured-muted">
+        <section className="mt-6 rounded-2xl border border-white/10 bg-charcoal-light/60 p-6 surface-structured-muted">
           <h2 className="text-lg font-semibold text-white">Feature Access Model</h2>
-          <p className="mt-2 text-sm text-white/70">
+          <p className="mt-2 text-sm text-white/55">
             Capability resolution is flag-based, not label-based. Requests resolve user, tier,
             feature flags, then runtime enforcement.
           </p>
@@ -1246,10 +1246,10 @@ export default function PricingPage() {
         </section>
 
         {/* ── Quick comparison table ──────────────────────── */}
-        <div className="mt-12 mb-10 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
-          <div className="p-5 border-b border-white/8">
-            <h2 className="text-base font-semibold text-white">Compare plans at a glance</h2>
-            <p className="text-xs text-white/50 mt-1">
+        <div className="mt-16 mb-12 rounded-2xl border border-white/10 bg-charcoal-light/60 overflow-hidden">
+          <div className="p-6 border-b border-white/8">
+            <h2 className="text-lg font-semibold text-white">Compare plans at a glance</h2>
+            <p className="text-xs text-white/45 mt-1">
               Key capabilities by tier - check marks show included features
             </p>
           </div>
@@ -1321,7 +1321,7 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-10 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 mb-12">
           {VALUE_RAIL.map((item) => {
             const Icon = item.icon;
             return (
@@ -1343,7 +1343,7 @@ export default function PricingPage() {
           id="preview"
           className="section-anchor mt-10 mb-10 rounded-2xl border border-white/10 bg-charcoal-light p-4 sm:p-5 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-base brand-title-muted mb-3">What buyers get after the score</h2>
+          <h2 className="text-lg brand-title-muted mb-4">What buyers get after the score</h2>
           <div className="rounded-xl border border-white/10 bg-charcoal/50 p-3">
             <img
               src="/images/fix-pack-preview.svg"
@@ -1362,7 +1362,7 @@ export default function PricingPage() {
           id="audience"
           className="section-anchor mb-10 rounded-2xl border border-white/10 bg-charcoal-light p-5 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-base brand-title-muted mb-3">Best fit by workflow</h2>
+          <h2 className="text-lg brand-title-muted mb-4">Best fit by workflow</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {teamRoleUseCases.map((item) => (
               <div
@@ -1381,7 +1381,7 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div id="features" className="section-anchor mt-16 text-center">
+        <div id="features" className="section-anchor mt-20 text-center">
           <div className="inline-flex flex-wrap justify-center gap-4 p-4 bg-charcoal-light border border-white/10 rounded-2xl shadow-sm surface-structured-muted">
             {[
               'JSON-LD audit',
@@ -1401,7 +1401,7 @@ export default function PricingPage() {
               </span>
             ))}
           </div>
-          <p className="mt-6 text-white/60 text-sm lonely-text inline-block">
+          <p className="mt-8 text-white/50 text-sm lonely-text inline-block">
             Every plan covers core visibility analysis. Higher tiers change execution depth,
             coordination, and remediation support.
           </p>
@@ -1412,11 +1412,11 @@ export default function PricingPage() {
           className="section-anchor mt-8 rounded-2xl border border-white/10 bg-charcoal-light p-6 shadow-sm surface-structured-muted"
         >
           <h2 className="text-lg brand-title mb-2">How the tiers progress</h2>
-          <p className="text-sm text-white/75 mb-4 leading-relaxed">
+          <p className="text-sm text-white/60 mb-5 leading-relaxed">
             AiVIS measures whether AI systems can extract, validate, and cite your site. Each tier
             expands operational depth while keeping the same evidence model.
           </p>
-          <ul className="space-y-2 text-sm text-white/80">
+          <ul className="space-y-2.5 text-sm text-white/75">
             <li>
               <span className="font-semibold text-white">Observer</span> — Am I visible?
             </li>
@@ -1483,9 +1483,9 @@ export default function PricingPage() {
 
         <div
           id="pricing-faq"
-          className="section-anchor mt-8 rounded-2xl border border-white/10 bg-charcoal-light p-6 shadow-sm surface-structured-muted"
+          className="section-anchor mt-12 rounded-2xl border border-white/10 bg-charcoal-light p-6 shadow-sm surface-structured-muted"
         >
-          <h2 className="text-lg brand-title mb-4">Pricing questions</h2>
+          <h2 className="text-xl brand-title mb-5">Pricing questions</h2>
           <dl className="space-y-4">
             {PRICING_FAQ_ITEMS.map((item) => (
               <div
